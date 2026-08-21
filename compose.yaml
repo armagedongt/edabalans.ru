@@ -63,6 +63,7 @@ services:
       NC_AUTH_JWT_SECRET: "${NOCODB_JWT_SECRET}"
       NC_CONNECTION_ENCRYPT_KEY: "${NOCODB_CONNECTION_ENCRYPT_KEY}"
       NC_INVITE_ONLY_SIGNUP: "true"
+      NC_ALLOW_LOCAL_EXTERNAL_DBS: "true"
       NC_DB_POOL_MAX: "5"
     expose:
       - "8080"
