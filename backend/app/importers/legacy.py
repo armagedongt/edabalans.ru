@@ -171,7 +171,11 @@ def find_user_by_messenger(
 def make_user(
     db: Session, display_name: str, first_seen_at: datetime | None
 ) -> User:
-    user = User(display_name=display_name or None, first_seen_at=first_seen_at)
+    user = User(
+        display_name=display_name or None,
+        first_seen_at=first_seen_at,
+        data_origin="legacy_import",
+    )
     db.add(user)
     db.flush()
     return user

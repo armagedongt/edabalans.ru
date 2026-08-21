@@ -61,6 +61,10 @@ button { cursor: pointer; }
 .crm-name { font-size: 16px; font-weight: 800; overflow-wrap: anywhere; }
 .crm-email { margin-top: 3px; color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
 .crm-status { align-self: flex-start; padding: 6px 8px; border-radius: 999px; white-space: nowrap; font-size: 10px; font-weight: 800; }
+.crm-badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 5px; }
+.crm-origin { align-self: flex-start; padding: 6px 8px; border-radius: 999px; white-space: nowrap; font-size: 10px; font-weight: 800; }
+.origin-legacy { color: #6e647a; background: #efedf2; }
+.origin-native { color: #34733a; background: var(--green); }
 .st-lead { color: #7a6412; background: var(--yellow); }
 .st-buyer { color: #4d617b; background: var(--blue); }
 .st-processing { color: #8b5532; background: var(--peach); }

@@ -105,6 +105,7 @@ def list_users(
             User.id,
             User.display_name,
             User.status,
+            User.data_origin,
             User.first_seen_at,
             email.label("email"),
             telegram.label("telegram"),
@@ -149,6 +150,7 @@ def list_users(
             "id": str(row["id"]),
             "display_name": row["display_name"],
             "status": row["status"],
+            "data_origin": row["data_origin"],
             "email": row["email"],
             "telegram": row["telegram"],
             "purchase_count": row["purchase_count"] or 0,
@@ -163,7 +165,7 @@ def list_users(
 
 def list_payments(db: Session, limit: int = 200) -> list[dict]:
     rows = db.execute(
-        select(Payment, User.display_name, Product.code)
+        select(Payment, User.display_name, Product.code, Product.name)
         .outerjoin(User, User.id == Payment.user_id)
         .outerjoin(Product, Product.id == Payment.product_id)
         .order_by(Payment.source_event_at.desc().nullslast(), Payment.created_at.desc())
@@ -176,6 +178,7 @@ def list_payments(db: Session, limit: int = 200) -> list[dict]:
             "display_name": display_name,
             "email": payment.email_at_purchase,
             "product_code": product_code,
+            "product_name": product_name,
             "product_name_raw": payment.product_name_raw,
             "amount": money(payment.amount),
             "currency": payment.currency,
@@ -183,7 +186,7 @@ def list_payments(db: Session, limit: int = 200) -> list[dict]:
             "paid_at": payment.paid_at,
             "source_event_at": payment.source_event_at,
         }
-        for payment, display_name, product_code in rows
+        for payment, display_name, product_code, product_name in rows
     ]
 
 
@@ -206,7 +209,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         )
     )
     payments = db.execute(
-        select(Payment, Product.code)
+        select(Payment, Product.code, Product.name)
         .outerjoin(Product, Product.id == Payment.product_id)
         .where(Payment.user_id == user_id)
         .order_by(Payment.source_event_at.desc().nullslast(), Payment.created_at.desc())
@@ -240,11 +243,12 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             .order_by(ClientNote.created_at.desc())
         )
     )
-    paid = [payment for payment, _ in payments if payment.payment_status == "paid"]
+    paid = [payment for payment, _, _ in payments if payment.payment_status == "paid"]
     return {
         "id": str(user.id),
         "display_name": user.display_name,
         "status": user.status,
+        "data_origin": user.data_origin,
         "first_seen_at": user.first_seen_at,
         "emails": [
             {
@@ -271,6 +275,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             {
                 "id": str(payment.id),
                 "product_code": product_code,
+                "product_name": product_name,
                 "product_name_raw": payment.product_name_raw,
                 "amount": money(payment.amount),
                 "currency": payment.currency,
@@ -278,7 +283,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "paid_at": payment.paid_at,
                 "source_event_at": payment.source_event_at,
             }
-            for payment, product_code in payments
+            for payment, product_code, product_name in payments
         ],
         "accesses": [
             {

@@ -79,13 +79,14 @@
 
   function userCard(user) {
     const buyer = user.purchase_count > 0;
+    const origin = user.data_origin === "native" ? "Новая система" : "История";
     return `
       <article class="crm-client">
         <button class="crm-client-button" data-user-id="${esc(user.id)}">
           <div class="crm-client-top">
             <div><div class="crm-name">${esc(user.display_name || user.email || user.telegram || "Без имени")}</div>
             <div class="crm-email">${esc(user.email || "email не указан")}${user.telegram ? ` · @${esc(user.telegram)}` : ""}</div></div>
-            <span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span>
+            <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span></div>
           </div>
           <div class="crm-client-grid">
             <div class="crm-mini"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div></div>
@@ -136,7 +137,7 @@
       <tr ${payment.user_id ? `data-user-id="${esc(payment.user_id)}"` : ""}>
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
         <td><strong>${esc(payment.display_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || "")}</div></td>
-        <td>${esc(payment.product_name_raw)}</td>
+        <td>${esc(payment.product_name || "Продукт не определён")}</td>
         <td><span class="crm-status ${payment.status === "paid" ? "st-paid" : "st-processing"}">${esc(payment.status)}</span></td>
         <td class="crm-money">${money(payment.amount)}</td>
       </tr>`).join("");
@@ -155,6 +156,7 @@
         <div class="crm-card-title">Главный принцип</div>
         <p>Один человек хранится один раз в таблице <strong>users</strong>. Email, Telegram, оплаты, доступы, теги и данные приложений присоединяются к нему по единому <strong>user_id</strong>.</p>
         <p class="crm-row-meta">Поэтому база не превращается в одну таблицу с сотнями колонок, а карточка клиента собирает связанные сведения в одном понятном экране.</p>
+        <p class="crm-row-meta"><strong>История</strong> — данные, перенесённые из старых Google-таблиц и потому потенциально неполные. <strong>Новая система</strong> — клиенты, созданные российским API после переключения интеграций.</p>
       </section>
       <div class="crm-flow">
         <div class="crm-flow-step"><strong>1. Человек</strong>users → основная карточка и постоянный user_id</div>
@@ -179,7 +181,7 @@
   }
 
   function paymentRow(item) {
-    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name_raw)}</span><strong>${money(item.amount)}</strong></div>
+    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name || "Продукт не определён")}</span><strong>${money(item.amount)}</strong></div>
       <div class="crm-row-meta">${date(item.paid_at || item.source_event_at, true)} · ${esc(item.status)}${item.product_code ? ` · ${esc(item.product_code)}` : ""}</div></div>`;
   }
 
@@ -189,6 +191,7 @@
     const primaryEmail = user.emails[0] && user.emails[0].email;
     const telegram = user.messengers.find((item) => item.platform === "telegram");
     const firstSource = user.attribution.find((item) => item.source || item.utm_source || item.utm_campaign);
+    const origin = user.data_origin === "native" ? "Новая система" : "История";
     root.innerHTML = `
       <div class="crm-profile-head">
         <div class="crm-profile-id">
@@ -197,7 +200,7 @@
           <div><div class="crm-name">${esc(user.display_name || primaryEmail || "Без имени")}</div>
           <div class="crm-email">${esc(primaryEmail || "email не указан")}${telegram && telegram.username ? ` · @${esc(telegram.username)}` : ""}</div></div>
         </div>
-        <span class="crm-status ${user.purchase_count ? "st-buyer" : "st-lead"}">${user.purchase_count ? "Покупатель" : "Лид"}</span>
+        <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${user.purchase_count ? "st-buyer" : "st-lead"}">${user.purchase_count ? "Покупатель" : "Лид"}</span></div>
       </div>
       <div class="crm-kpis">
         <div class="crm-stat"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div></div>

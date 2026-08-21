@@ -48,6 +48,9 @@ class User(TimestampMixin, Base):
     id: Mapped[uuid.UUID] = uuid_pk()
     display_name: Mapped[str | None] = mapped_column(String(255))
     status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    data_origin: Mapped[str] = mapped_column(
+        String(32), default="native", server_default=text("'native'"), nullable=False
+    )
     first_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     merged_into_user_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL")

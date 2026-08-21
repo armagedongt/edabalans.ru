@@ -15,6 +15,7 @@ from app.models import (  # noqa: E402
     Resource,
     UserAccess,
     UserEmail,
+    User,
 )
 
 
@@ -146,6 +147,7 @@ def test_import_is_idempotent_and_applies_historical_calories_rule() -> None:
         assert second["payments_imported"] == 0
         assert second["payments_duplicate"] == 2
         assert db.scalar(select(func.count(Payment.id))) == 2
+        assert set(db.scalars(select(User.data_origin))) == {"legacy_import"}
 
 
 def test_duplicate_unidentified_client_rows_do_not_abort_batch() -> None:
