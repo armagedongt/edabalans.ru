@@ -1,0 +1,53 @@
+name: Test and deploy production
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: edabalans-production
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 2
+
+      - name: Validate Docker Compose
+        run: docker compose --env-file .env.example config --quiet
+
+      - name: Build backend
+        run: docker build --tag edabalans-backend-test ./backend
+
+      - name: Run backend tests
+        run: |
+          docker run --rm \
+            --user root \
+            --env PYTHONPATH=/app \
+            --env DATABASE_URL=postgresql+psycopg://test:test@127.0.0.1:5432/test \
+            --volume "$PWD/backend/tests:/app/tests:ro" \
+            --volume "$PWD/backend/requirements-dev.txt:/app/requirements-dev.txt:ro" \
+            edabalans-backend-test \
+            sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
+
+      - name: Block automatic database migrations
+        shell: bash
+        run: |
+          before="${{ github.event.before }}"
+          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
+            before="HEAD^"
+          fi
+
+          if git diff --name-only "$before" "$GITHUB_SHA" | grep -q '^backend/migrations/versions/'; then
+            echo "A database migration was detected. Automatic production deployment is blocked." >&2
+            exit 1
+          fi

@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+readonly APP_DIR="/opt/edabalans"
+readonly REPOSITORY="armagedongt/edabalans.ru"
+
+cd "${APP_DIR}"
+git fetch --quiet origin main
+
+readonly CURRENT_SHA="$(git rev-parse HEAD)"
+readonly TARGET_SHA="$(git rev-parse origin/main)"
+
+if [[ "${CURRENT_SHA}" == "${TARGET_SHA}" ]]; then
+    exit 0
+fi
+
+checks_json="$(
+    curl --fail --silent --show-error --max-time 20 \
+        --header "Accept: application/vnd.github+json" \
+        --header "X-GitHub-Api-Version: 2022-11-28" \
+        "https://api.github.com/repos/${REPOSITORY}/commits/${TARGET_SHA}/check-runs"
+)"
+
+test_result="$(
+    CHECKS_JSON="${checks_json}" python3 - <<'PY'
+import json
+import os
+
+payload = json.loads(os.environ["CHECKS_JSON"])
+runs = [
+    run
+    for run in payload.get("check_runs", [])
+    if run.get("name") == "Test"
+    and run.get("app", {}).get("slug") == "github-actions"
+]
+runs.sort(key=lambda run: run.get("started_at") or "", reverse=True)
+
+if not runs:
+    print("missing")
+elif runs[0].get("status") != "completed":
+    print("pending")
+else:
+    print(runs[0].get("conclusion") or "unknown")
+PY
+)"
+
+if [[ "${test_result}" != "success" ]]; then
+    echo "Commit ${TARGET_SHA} is not deployable yet: Test=${test_result}"
+    exit 0
+fi
+
+exec /usr/local/sbin/edabalans-deploy "${TARGET_SHA}"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Check GitHub for a tested Edabalans release
+
+[Timer]
+OnBootSec=2m
+OnUnitActiveSec=2m
+RandomizedDelaySec=15s
+Persistent=true
+Unit=edabalans-deploy-poll.service
+
+[Install]
+WantedBy=timers.target
