@@ -50,6 +50,7 @@
           <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
           <button class="crm-tab ${active === "buyers" ? "active" : ""}" data-view="buyers">Покупатели</button>
           <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
+          <button class="crm-tab ${active === "structure" ? "active" : ""}" data-view="structure">Как устроено</button>
         </div>
       </div>`;
   }
@@ -148,6 +149,35 @@
     bindUserCards();
   }
 
+  function renderStructure() {
+    root.innerHTML = top("structure") + `
+      <section class="crm-card">
+        <div class="crm-card-title">Главный принцип</div>
+        <p>Один человек хранится один раз в таблице <strong>users</strong>. Email, Telegram, оплаты, доступы, теги и данные приложений присоединяются к нему по единому <strong>user_id</strong>.</p>
+        <p class="crm-row-meta">Поэтому база не превращается в одну таблицу с сотнями колонок, а карточка клиента собирает связанные сведения в одном понятном экране.</p>
+      </section>
+      <div class="crm-flow">
+        <div class="crm-flow-step"><strong>1. Человек</strong>users → основная карточка и постоянный user_id</div>
+        <div class="crm-flow-step"><strong>2. Контакты</strong>user_emails + messenger_accounts → почты, Telegram и будущие каналы</div>
+        <div class="crm-flow-step"><strong>3. Продажи</strong>payments → каждая попытка оплаты и купленный продукт</div>
+        <div class="crm-flow-step"><strong>4. Доступ</strong>products + product_access_rules → user_accesses → что именно разрешено человеку</div>
+        <div class="crm-flow-step"><strong>5. Работа с клиентом</strong>tags + user_tags + client_notes + attribution_events → сегменты, заметки и источники</div>
+        <div class="crm-flow-step"><strong>6. Приложения</strong>отдельные таблицы DQS, тренировок и других продуктов будут ссылаться на тот же users.id</div>
+      </div>
+      <div class="crm-structure-grid">
+        <section class="crm-card"><div class="crm-card-title">CRM-ядро</div><div class="crm-row-meta">users, user_emails, messenger_accounts, payments, attribution_events, tags, user_tags, client_notes</div></section>
+        <section class="crm-card"><div class="crm-card-title">Продукты и права</div><div class="crm-row-meta">products, product_aliases, resources, product_access_rules, user_accesses</div></section>
+        <section class="crm-card"><div class="crm-card-title">Контроль переноса</div><div class="crm-row-meta">import_batches, legacy_import_records, user_merge_events — технический журнал импорта и объединения дублей</div></section>
+      </div>
+      <section class="crm-card" style="margin-top:10px">
+        <div class="crm-card-title">Полный паспорт базы</div>
+        <p class="crm-row-meta">В документе перечислены все таблицы, их поля, связи, правила изменения и схема добавления будущих приложений.</p>
+        <a class="crm-doc-link" href="https://github.com/armagedongt/edabalans.ru/blob/main/docs/CRM_DATA_MODEL.md" target="_blank" rel="noopener">Открыть документ</a>
+      </section>
+      <div class="crm-foot">Эта вкладка и документ обновляются вместе с каждой миграцией структуры базы</div>`;
+    bindTop();
+  }
+
   function paymentRow(item) {
     return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name_raw)}</span><strong>${money(item.amount)}</strong></div>
       <div class="crm-row-meta">${date(item.paid_at || item.source_event_at, true)} · ${esc(item.status)}${item.product_code ? ` · ${esc(item.product_code)}` : ""}</div></div>`;
@@ -231,6 +261,7 @@
   async function showView(view) {
     state.view = view;
     if (view === "payments") return renderPayments();
+    if (view === "structure") return renderStructure();
     return renderUsers(view === "buyers");
   }
 
