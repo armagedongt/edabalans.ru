@@ -9,7 +9,13 @@ from sqlalchemy.orm import Session  # noqa: E402
 
 from app.database import Base  # noqa: E402
 from app.importers.legacy import import_payload  # noqa: E402
-from app.models import Payment, Resource, UserAccess, UserEmail  # noqa: E402
+from app.models import (  # noqa: E402
+    LegacyImportRecord,
+    Payment,
+    Resource,
+    UserAccess,
+    UserEmail,
+)
 
 
 def payload() -> dict:
@@ -140,3 +146,17 @@ def test_import_is_idempotent_and_applies_historical_calories_rule() -> None:
         assert second["payments_imported"] == 0
         assert second["payments_duplicate"] == 2
         assert db.scalar(select(func.count(Payment.id))) == 2
+
+
+def test_duplicate_unidentified_client_rows_do_not_abort_batch() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    data = payload()
+    unidentified = ["177", "", "", "", "", "", "", "", "", "", "", "", ""]
+    data["clients"] = [data["clients"][0], unidentified, unidentified.copy()]
+
+    with Session(engine) as db:
+        result = import_payload(db, data)
+        assert result["clients_needs_review"] == 1
+        assert result["clients_duplicate"] == 1
+        assert db.scalar(select(func.count(LegacyImportRecord.id))) == 3

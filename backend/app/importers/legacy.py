@@ -375,11 +375,13 @@ def iter_payloads(rows: list[list[Any]]) -> Iterable[tuple[int, dict[str, Any]]]
 def import_clients(
     db: Session, batch: ImportBatch, rows: list[list[Any]], summary: dict[str, int]
 ) -> None:
+    seen_hashes: set[str] = set()
     for row_number, payload in iter_payloads(rows):
         row_hash = payload_hash(SOURCE_CLIENTS, payload)
-        if already_imported(db, SOURCE_CLIENTS, row_hash):
+        if row_hash in seen_hashes or already_imported(db, SOURCE_CLIENTS, row_hash):
             summary["clients_duplicate"] += 1
             continue
+        seen_hashes.add(row_hash)
 
         email = normalize_email(payload.get("Email"))
         platform_user_id = clean(payload.get("Telegram ID"))
@@ -500,11 +502,13 @@ def active_access_rules(
 def import_payments(
     db: Session, batch: ImportBatch, rows: list[list[Any]], summary: dict[str, int]
 ) -> None:
+    seen_hashes: set[str] = set()
     for row_number, payload in iter_payloads(rows):
         row_hash = payload_hash(SOURCE_PAYMENTS, payload)
-        if already_imported(db, SOURCE_PAYMENTS, row_hash):
+        if row_hash in seen_hashes or already_imported(db, SOURCE_PAYMENTS, row_hash):
             summary["payments_duplicate"] += 1
             continue
+        seen_hashes.add(row_hash)
 
         external_order_id = clean(payload.get("orderid")) or None
         external_payment_id = clean(payload.get("paymentid")) or None
