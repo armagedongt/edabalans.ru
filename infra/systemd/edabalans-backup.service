@@ -1,0 +1,17 @@
+[Unit]
+Description=Back up Edabalans PostgreSQL to Yandex Object Storage
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/opt/edabalans/infra/scripts/backup-postgres.sh
+User=root
+Group=root
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

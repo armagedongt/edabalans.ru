@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Local secrets. Never commit credentials.
+.secrets/
+
+# Runtime configuration, database dumps and backup artifacts.
+.env
+.env.*
+!.env.example
+*.dump
+*.sql
+backups/

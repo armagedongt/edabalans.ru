@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Edabalans PostgreSQL backup every day
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 Europe/Moscow
+Persistent=true
+RandomizedDelaySec=10m
+Unit=edabalans-backup.service
+
+[Install]
+WantedBy=timers.target

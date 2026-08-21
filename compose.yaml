@@ -1,0 +1,111 @@
+name: edabalans
+
+services:
+  caddy:
+    image: caddy:2.10.2-alpine
+    restart: unless-stopped
+    environment:
+      API_DOMAIN: "${API_DOMAIN}"
+      DATA_DOMAIN: "${DATA_DOMAIN}"
+      ACME_EMAIL: "${ACME_EMAIL}"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./infra/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+      nocodb:
+        condition: service_healthy
+    networks:
+      - edge
+
+  backend:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+    expose:
+      - "8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - edge
+      - database
+
+  nocodb:
+    image: nocodb/nocodb:2026.08.0
+    restart: unless-stopped
+    environment:
+      NC_DB: "pg://postgres:5432?u=${POSTGRES_USER}&p=${POSTGRES_PASSWORD}&d=nocodb_meta"
+      NC_SITE_URL: "https://${DATA_DOMAIN}"
+      NC_ADMIN_EMAIL: "${NOCODB_ADMIN_EMAIL}"
+      NC_ADMIN_PASSWORD: "${NOCODB_ADMIN_PASSWORD}"
+      NC_AUTH_JWT_SECRET: "${NOCODB_JWT_SECRET}"
+      NC_CONNECTION_ENCRYPT_KEY: "${NOCODB_CONNECTION_ENCRYPT_KEY}"
+      NC_INVITE_ONLY_SIGNUP: "true"
+      NC_DB_POOL_MAX: "5"
+    expose:
+      - "8080"
+    volumes:
+      - nocodb_data:/usr/app/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "wget -q --tries=1 --spider http://127.0.0.1:8080/api/v1/health || exit 1"
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 45s
+    networks:
+      - edge
+      - database
+
+  postgres:
+    image: postgres:17-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - database
+
+networks:
+  edge:
+  database:
+    internal: true
+
+volumes:
+  caddy_data:
+  caddy_config:
+  postgres_data:
+  nocodb_data:
