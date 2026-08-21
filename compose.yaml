@@ -7,6 +7,7 @@ services:
     environment:
       API_DOMAIN: "${API_DOMAIN}"
       DATA_DOMAIN: "${DATA_DOMAIN}"
+      APP_DOMAIN: "${APP_DOMAIN}"
       ACME_EMAIL: "${ACME_EMAIL}"
     ports:
       - "80:80"
@@ -30,6 +31,8 @@ services:
     restart: unless-stopped
     environment:
       DATABASE_URL: "${DATABASE_URL}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
     expose:
       - "8000"
     depends_on:

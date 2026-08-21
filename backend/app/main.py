@@ -4,10 +4,12 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
+from app.crm_routes import router as crm_router
 from app.database import get_db
 
 settings = get_settings()
 app = FastAPI(title=settings.app_name, version=settings.app_version)
+app.include_router(crm_router)
 
 
 @app.get("/health", tags=["system"])
