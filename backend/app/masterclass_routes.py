@@ -341,34 +341,86 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
     pricing = stage.pricing or {}
     single_price = int(pricing.get("single", 3900))
     bundle_table = pricing.get("bundle", {})
-    cards = []
-    if missing:
-        code, product = missing[0]
-        price = min(single_price, int(product["standard"]))
-        cards.append({"code": f"single:{code}", "title": product["name"], "description": product["description"], "details": [{"name": product["name"], "description": product["description"]}], "items": [code], "standard_price": product["standard"], "price": price})
-        if len(missing) > 1:
-            count = len(missing)
-            standard = sum(int(p["standard"]) for _,p in missing)
-            price = int(bundle_table.get(str(count), standard))
-            title = "Вообще всё, что вам может понадобиться"
-            cards.append({"code": "bundle:digital", "title": title, "description": "Все недостающие самостоятельные материалы одним комплектом.", "details": [{"name": p["name"], "description": p["description"]} for _, p in missing], "items": [c for c,_ in missing], "standard_price": standard, "price": price})
-    consultation_placements = {"closing-review", "post-review", "offers-hub"}
-    if placement in consultation_placements and stage.code in {"review", "last_week", "standard"} and "ACCESS_CONSULTATION" not in owned:
-        consult_price = int(pricing.get("consultation", 8900))
-        consultation_detail = {"name": "Индивидуальная консультация", "description": "Сначала Сергей разбирает дневник питания, затем вы обсуждаете выводы звонком или голосовыми сообщениями."}
-        cards.insert(0, {"code": "single:consultation", "title": "Индивидуальная консультация", "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.", "details": [consultation_detail], "items": ["consultation"], "standard_price": 8900, "price": consult_price})
+    cards: list[dict] = []
+
+    def single_card(code: str, product: dict, *, discounted: bool = True) -> dict:
+        standard = int(product["standard"])
+        return {
+            "code": f"single:{code}",
+            "title": product["name"],
+            "description": product["description"],
+            "details": [{"name": product["name"], "description": product["description"]}],
+            "items": [code],
+            "standard_price": standard,
+            "price": min(single_price, standard) if discounted else standard,
+        }
+
+    def digital_bundle() -> dict | None:
+        if len(missing) < 2:
+            return None
+        standard = sum(int(product["standard"]) for _, product in missing)
+        return {
+            "code": "bundle:digital",
+            "title": "Вообще всё, что вам может понадобиться",
+            "description": "Все недостающие самостоятельные материалы одним комплектом.",
+            "details": [{"name": product["name"], "description": product["description"]} for _, product in missing],
+            "items": [code for code, _ in missing],
+            "standard_price": standard,
+            "price": int(bundle_table.get(str(len(missing)), standard)),
+        }
+
+    consultation_detail = {
+        "name": "Индивидуальная консультация",
+        "description": "Сначала Сергей разбирает дневник питания, затем вы обсуждаете выводы звонком или голосовыми сообщениями.",
+    }
+    consultation_missing = "ACCESS_CONSULTATION" not in owned
+    consultation_visible = consultation_missing and placement in {
+        "closing-review", "post-review", "offers-hub"
+    }
+    consultation_card = {
+        "code": "single:consultation",
+        "title": "Индивидуальная консультация",
+        "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
+        "details": [consultation_detail],
+        "items": ["consultation"],
+        "standard_price": 8900,
+        "price": int(pricing.get("consultation", 8900)),
+    }
+
+    if stage.code in {"early", "second"}:
         if missing:
-            digital_standard = sum(int(product["standard"]) for _, product in missing)
-            digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
-            cards.insert(1, {
-                "code": "bundle:consultation",
-                "title": "Максимальный комплект с консультацией",
-                "description": "Индивидуальная консультация и все недостающие самостоятельные материалы одним комплектом.",
-                "details": [consultation_detail, *[{"name": p["name"], "description": p["description"]} for _, p in missing]],
-                "items": ["consultation", *[code for code, _ in missing]],
-                "standard_price": 8900 + digital_standard,
-                "price": consult_price + digital_price,
-            })
+            cards.append(single_card(*missing[0]))
+            bundle = digital_bundle()
+            if bundle:
+                cards.append(bundle)
+    elif stage.code == "review":
+        if consultation_visible:
+            cards.append(consultation_card)
+            if missing:
+                digital_standard = sum(int(product["standard"]) for _, product in missing)
+                digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
+                cards.append({
+                    "code": "bundle:consultation",
+                    "title": "Максимальный комплект с консультацией",
+                    "description": "Индивидуальная консультация и все недостающие самостоятельные материалы одним комплектом.",
+                    "details": [consultation_detail, *[{"name": p["name"], "description": p["description"]} for _, p in missing]],
+                    "items": ["consultation", *[code for code, _ in missing]],
+                    "standard_price": 8900 + digital_standard,
+                    "price": consultation_card["price"] + digital_price,
+                })
+        if missing:
+            cards.append(single_card(*missing[0]))
+    elif stage.code == "last_week":
+        if consultation_visible:
+            cards.append(consultation_card)
+        bundle = digital_bundle()
+        if bundle:
+            cards.append(bundle)
+        cards.extend(single_card(*item) for item in missing[: 3 - len(cards)])
+    else:
+        if consultation_visible:
+            cards.append(consultation_card)
+        cards.extend(single_card(*item, discounted=False) for item in missing[: 3 - len(cards)])
     for card in cards:
         card["saving"] = card["standard_price"] - card["price"]
         card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
