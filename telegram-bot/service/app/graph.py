@@ -77,7 +77,7 @@ def start_attribution_graph() -> dict[str, Any]:
         node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 6, Хранение="tg_tracking_* / attribution_events / user_tags"),
         node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Другая покупка не считается", 7, Статус="Проверка в Start ещё не подключена"),
         node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "tpl_start_has_masterclass", 8, Контент="tg_content_items"),
-        node("exit_buyer", "module_exit", "Стоп", "Ничего нового не запускать", 9, Результат="Существующие post-purchase процессы не меняются"),
+        node("exit_buyer", "module_exit", "Стоп", "Остановить Welcome/pre-purchase; нового не запускать", 9, Результат="Существующие post-purchase процессы не меняются"),
         node("first_visit", "condition", "Первое посещение бота?", "main_scenario_seen_at", 10, Хранение="messenger_accounts"),
         node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 11, Хранение="tg_step_deliveries"),
         node("send_complete", "message", "Отправить навигацию по интенсиву", "tpl_start_intensive_complete", 12, Контент="tg_content_items"),
@@ -85,7 +85,7 @@ def start_attribution_graph() -> dict[str, Any]:
         node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 14, Хранение="tg_sequence_runs"),
         node("send_waiting", "message", "Сообщить время следующего материала", "tpl_start_intensive_waiting", 15, Источник_времени="tg_sequence_runs.next_action_at"),
         node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 16, Запрещено="Не менять current_step_key и next_action_at"),
-        node("welcome_ever_started", "condition", "Welcome когда-либо запускался?", "Run или согласованный legacy-признак", 17, Нерешено="Точный legacy-признак"),
+        node("welcome_ever_started", "condition", "Новый Welcome когда-либо запускался?", "Run текущей версии; старый LeadTeh не считается", 17, Хранение="tg_sequence_runs / tg_sequence_versions"),
         node("exit_welcome", "module_exit", "Перейти в модуль Welcome", "Запустить Welcome и первую часть интенсива", 18, Следующий_модуль="welcome_intensive"),
         node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 19, Причина="Welcome был, но run нет и День 4 не отправлен"),
     ]
