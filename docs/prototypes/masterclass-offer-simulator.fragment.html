@@ -1,0 +1,310 @@
+<div id="edabalans-offer-simulator">
+  <style>
+    #edabalans-offer-simulator {
+      --eb-page: light-dark(#f5f5f7, #18181b);
+      --eb-panel: light-dark(#ffffff, #242428);
+      --eb-text: light-dark(#19191c, #f5f5f6);
+      --eb-soft: light-dark(#6c6c73, #b7b7be);
+      --eb-line: light-dark(#dedee3, #3d3d43);
+      --eb-action: light-dark(#242428, #f1f1f3);
+      --eb-action-text: light-dark(#ffffff, #1c1c1f);
+      --eb-highlight: light-dark(#eef7ee, #1d3323);
+      --eb-highlight-text: light-dark(#245f32, #bceac6);
+      --eb-warn: light-dark(#fff5e8, #382b1c);
+      --eb-warn-text: light-dark(#7d4b0a, #f2ca91);
+      --eb-danger: light-dark(#fff0f0, #3a2020);
+      --eb-danger-text: light-dark(#8b2929, #ffb9b9);
+      color: var(--eb-text);
+      font-family: Inter, Arial, sans-serif;
+      color-scheme: light dark;
+    }
+    #edabalans-offer-simulator * { box-sizing: border-box; }
+    #edabalans-offer-simulator .eb-shell { display: grid; gap: 18px; }
+    #edabalans-offer-simulator .eb-controls {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      padding: 16px;
+      background: var(--eb-panel);
+      border: 1px solid var(--eb-line);
+      border-radius: 18px;
+    }
+    #edabalans-offer-simulator .eb-field { display: grid; gap: 6px; }
+    #edabalans-offer-simulator label { font-weight: 500; }
+    #edabalans-offer-simulator select {
+      width: 100%; padding: 10px 12px; border: 1px solid var(--eb-line);
+      border-radius: 10px; background: var(--eb-page); color: var(--eb-text);
+    }
+    #edabalans-offer-simulator .eb-owned {
+      grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 8px 14px; padding-top: 4px;
+    }
+    #edabalans-offer-simulator .eb-owned label {
+      display: inline-flex; align-items: center; gap: 6px; font-weight: 400;
+    }
+    #edabalans-offer-simulator .eb-preview {
+      overflow: hidden; background: var(--eb-page); border: 1px solid var(--eb-line); border-radius: 24px;
+    }
+    #edabalans-offer-simulator .eb-topline {
+      display: flex; justify-content: space-between; gap: 12px; padding: 13px 18px;
+      border-bottom: 1px solid var(--eb-line); color: var(--eb-soft);
+    }
+    #edabalans-offer-simulator .eb-content { max-width: 760px; margin: 0 auto; padding: 28px 22px 30px; }
+    #edabalans-offer-simulator .eb-content h2,
+    #edabalans-offer-simulator .eb-content h3 { margin: 0; font-weight: 500; }
+    #edabalans-offer-simulator .eb-content p { margin: 10px 0; }
+    #edabalans-offer-simulator .eb-lead { color: var(--eb-soft); }
+    #edabalans-offer-simulator .eb-tariff {
+      display: inline-block; margin-bottom: 12px; padding: 7px 10px;
+      border-radius: 9px; background: var(--eb-panel); font-weight: 500;
+    }
+    #edabalans-offer-simulator .eb-note {
+      margin: 18px 0; padding: 14px 16px; border-radius: 14px;
+      background: var(--eb-warn); color: var(--eb-warn-text);
+    }
+    #edabalans-offer-simulator .eb-countdown { display: block; margin-top: 4px; font-weight: 500; }
+    #edabalans-offer-simulator .eb-error {
+      padding: 26px; border-radius: 18px; background: var(--eb-danger);
+      color: var(--eb-danger-text); text-align: center;
+    }
+    #edabalans-offer-simulator .eb-benefits { margin: 14px 0 22px; padding-left: 20px; color: var(--eb-soft); }
+    #edabalans-offer-simulator .eb-offers { display: grid; gap: 12px; margin-top: 18px; }
+    #edabalans-offer-simulator .eb-offer {
+      padding: 17px; background: var(--eb-panel); border: 1px solid var(--eb-line); border-radius: 16px;
+    }
+    #edabalans-offer-simulator .eb-offer.eb-recommended { background: var(--eb-highlight); }
+    #edabalans-offer-simulator .eb-kicker { margin-bottom: 7px; color: var(--eb-highlight-text); font-weight: 500; }
+    #edabalans-offer-simulator .eb-product-list { display: grid; gap: 10px; margin: 12px 0; }
+    #edabalans-offer-simulator .eb-product { padding-top: 9px; border-top: 1px solid var(--eb-line); }
+    #edabalans-offer-simulator .eb-product:first-child { padding-top: 0; border-top: 0; }
+    #edabalans-offer-simulator .eb-product strong { display: block; font-weight: 500; }
+    #edabalans-offer-simulator .eb-product span { display: block; margin-top: 3px; color: var(--eb-soft); }
+    #edabalans-offer-simulator .eb-detail-link {
+      display: inline-block; margin-top: 7px; padding: 0; border: 0; border-radius: 0;
+      background: transparent; color: var(--eb-text); text-decoration: underline; font-weight: 400;
+    }
+    #edabalans-offer-simulator .eb-detail-header {
+      position: sticky; top: 0; z-index: 2; margin: -28px -22px 24px; padding: 14px 22px;
+      background: var(--eb-panel); border-bottom: 1px solid var(--eb-line);
+    }
+    #edabalans-offer-simulator .eb-back { width: 100%; }
+    #edabalans-offer-simulator .eb-detail-copy { display: grid; gap: 16px; }
+    #edabalans-offer-simulator .eb-detail-copy ul { margin: 0; padding-left: 20px; color: var(--eb-soft); }
+    #edabalans-offer-simulator .eb-prices {
+      display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px; margin: 13px 0;
+    }
+    #edabalans-offer-simulator .eb-old { color: var(--eb-soft); text-decoration: line-through; }
+    #edabalans-offer-simulator .eb-now { font-size: 1.35em; font-weight: 500; }
+    #edabalans-offer-simulator .eb-saving { color: var(--eb-highlight-text); font-weight: 500; }
+    #edabalans-offer-simulator button {
+      padding: 10px 14px; border: 0; border-radius: 10px; background: var(--eb-action);
+      color: var(--eb-action-text); font: inherit; font-weight: 500; cursor: pointer;
+    }
+    #edabalans-offer-simulator .eb-links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 18px; }
+    #edabalans-offer-simulator .eb-links a { color: var(--eb-text); }
+    #edabalans-offer-simulator .eb-contact { color: inherit; font-weight: 500; }
+    #edabalans-offer-simulator .eb-empty { padding: 22px; text-align: center; color: var(--eb-soft); }
+    @media (max-width: 560px) {
+      #edabalans-offer-simulator .eb-controls { grid-template-columns: 1fr; }
+      #edabalans-offer-simulator .eb-owned { grid-column: 1; }
+      #edabalans-offer-simulator .eb-topline { display: grid; }
+      #edabalans-offer-simulator .eb-content { padding: 22px 15px 24px; }
+      #edabalans-offer-simulator .eb-detail-header { margin: -22px -15px 22px; padding: 12px 15px; }
+      #edabalans-offer-simulator .eb-prices { display: grid; gap: 4px; }
+    }
+  </style>
+
+  <div class="eb-shell">
+    <section class="eb-controls" aria-label="Параметры сценария">
+      <div class="eb-field">
+        <label for="eb-tariff">Входной тариф</label>
+        <select id="eb-tariff">
+          <option value="basic">Мастер-класс — 6 900 ₽</option>
+          <option value="recipes">МК + Система рецептов — 8 900 ₽</option>
+          <option value="consult">МК + рецепты + консультация — 15 900 ₽</option>
+        </select>
+      </div>
+      <div class="eb-field">
+        <label for="eb-stage">Какой экран смотрим</label>
+        <select id="eb-stage">
+          <option value="day2">1. День 2 — первое предложение</option>
+          <option value="recipes1">2. Первая часть рецептов</option>
+          <option value="beforeRecipes2">3. Перед второй частью рецептов</option>
+          <option value="review">4. Саморевью</option>
+          <option value="afterReview">5. Неделя после саморевью</option>
+          <option value="regular">6. Стандартные цены</option>
+        </select>
+      </div>
+      <div class="eb-owned" aria-label="Что докуплено после входа">
+        <label><input type="checkbox" data-owned="recipes"> Рецепты</label>
+        <label><input type="checkbox" data-owned="calories"> Калорийный</label>
+        <label><input type="checkbox" data-owned="training"> Тренировки</label>
+        <label><input type="checkbox" data-owned="reviews"> Записи консультаций</label>
+        <label><input type="checkbox" data-owned="consultation"> Консультация</label>
+      </div>
+    </section>
+
+    <section class="eb-preview" aria-live="polite">
+      <div class="eb-topline"><span id="eb-stage-label"></span><span id="eb-owned-label"></span></div>
+      <div class="eb-content" id="eb-screen"></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById('edabalans-offer-simulator');
+      const tariff = root.querySelector('#eb-tariff');
+      const stage = root.querySelector('#eb-stage');
+      const screen = root.querySelector('#eb-screen');
+      const stageLabel = root.querySelector('#eb-stage-label');
+      const ownedLabel = root.querySelector('#eb-owned-label');
+      const checks = [...root.querySelectorAll('[data-owned]')];
+      let timerId = null;
+
+      const tariffs = {
+        basic: 'Мастер-класс',
+        recipes: 'Мастер-класс + Система рецептов',
+        consult: 'Мастер-класс + Система рецептов + Индивидуальная консультация'
+      };
+      const products = {
+        recipes: { name: 'Система рецептов', regular: 3900, description: 'Как научиться собирать здоровые тарелки быстро, просто и вкусно. От выбора продуктов и готовой еды до приготовления собственных блюд.', details: ['Рецепты и конструктор блюд', 'Выбор продуктов и готовой еды', 'Работа со вкусом и организация готовки'] },
+        calories: { name: 'Мини-курс «Калорийный»', regular: 3900, description: 'Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории.', details: ['Энергетический баланс без лишней математики', 'Порции, калории и БЖУ на понятных примерах', 'Подсчёт как временный обучающий инструмент'] },
+        training: { name: 'Мини-курс «С дивана до тренировок»', regular: 3900, description: 'Как встать с дивана и начать получать от тренировок и удовольствие, и результат.', details: ['Выбор цели и подходящего уровня', 'Минимальный рабочий объём нагрузки', 'Начало тренировок без перегруза'] },
+        reviews: { name: 'Записи консультаций других участников', regular: 3900, description: 'Реальные разборы дневников других участников и логика решений на понятных примерах.', details: ['Чужие ситуации, в которых легко узнать себя', 'Разбор причин, а не только отдельных ошибок', 'Примеры решений, которые можно применить к себе'] },
+        consultation: { name: 'Индивидуальная консультация', regular: 8900, description: 'Сергей сначала разберёт ваш дневник, а затем обсудит выводы с вами звонком или голосовыми.', details: ['Предварительный разбор дневника', 'Обсуждение выводов звонком или голосовыми', 'Ответы на вопросы по вашей ситуации'] }
+      };
+      const digitalKeys = ['recipes', 'calories', 'training', 'reviews'];
+      const stages = {
+        day2: { label: 'День 2 · самое выгодное предложение', bundle: [0,1900,3900,5900,7900], single: 2900, hours: 168 },
+        recipes1: { label: 'Первая часть рецептов · та же цена', bundle: [0,1900,3900,5900,7900], single: 2900, hours: 96 },
+        beforeRecipes2: { label: 'Перед второй частью · второе предложение', bundle: [0,2500,4900,7400,9900], single: 3200, hours: 72 },
+        review: { label: 'Саморевью · консультация в фокусе', bundle: [0,2900,5700,8500,11300], single: 3500, consult: 7500, hours: 72 },
+        afterReview: { label: 'Неделя после саморевью · последняя выгода', bundle: [0,3600,7000,10400,13800], single: 3800, consult: 8400, hours: 168 },
+        regular: { label: 'Окно предложений завершено', single: 3900, consult: 8900, hours: null }
+      };
+      const deadlines = {};
+      const money = value => `${new Intl.NumberFormat('ru-RU').format(value)} ₽`;
+      const percent = (oldPrice, newPrice) => oldPrice ? Math.round((oldPrice - newPrice) / oldPrice * 100) : 0;
+      const initialOwned = () => {
+        const result = new Set();
+        if (tariff.value === 'recipes' || tariff.value === 'consult') result.add('recipes');
+        if (tariff.value === 'consult') result.add('consultation');
+        checks.forEach(box => { if (box.checked) result.add(box.dataset.owned); });
+        return result;
+      };
+      const visibleDigitals = owned => digitalKeys.filter(key => key !== 'reviews' || !owned.has('consultation'));
+      const productRows = keys => `<div class="eb-product-list">${keys.map(key => `<div class="eb-product"><strong>${products[key].name}</strong><span>${products[key].description}</span><button type="button" class="eb-detail-link" data-detail="${key}">Подробнее о программе</button></div>`).join('')}</div>`;
+      const offerMarkup = (title, keys, price, recommended, kicker) => {
+        const regular = keys.reduce((sum, key) => sum + products[key].regular, 0);
+        const saving = Math.max(0, regular - price);
+        return `<article class="eb-offer${recommended ? ' eb-recommended' : ''}">${kicker ? `<div class="eb-kicker">${kicker}</div>` : ''}<h3>${title}</h3>${productRows(keys)}<div class="eb-prices">${saving ? `<span class="eb-old">${money(regular)}</span>` : ''}<span class="eb-now">${money(price)}</span>${saving ? `<span class="eb-saving">Выгода ${money(saving)} · ${percent(regular, price)}%</span>` : ''}</div><button type="button" data-buy="${keys.join(',')}">Выбрать</button></article>`;
+      };
+
+      function ensureDeadline(cfg) {
+        if (!cfg.hours) return null;
+        if (!deadlines[stage.value]) deadlines[stage.value] = Date.now() + cfg.hours * 3600000;
+        return deadlines[stage.value];
+      }
+      function timerMarkup(cfg) {
+        const deadline = ensureDeadline(cfg);
+        if (!deadline) return '<div class="eb-note">Сейчас действуют стандартные цены без временного предложения.</div>';
+        const exact = new Intl.DateTimeFormat('ru-RU', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(deadline);
+        return `<div class="eb-note">Текущая цена действует до ${exact} по московскому времени.<span class="eb-countdown" id="eb-countdown"></span></div>`;
+      }
+      function startTimer() {
+        if (timerId) clearInterval(timerId);
+        const cfg = stages[stage.value];
+        const node = screen.querySelector('#eb-countdown');
+        if (!node || !cfg.hours) return;
+        const update = () => {
+          const remaining = Math.max(0, ensureDeadline(cfg) - Date.now());
+          const totalMinutes = Math.floor(remaining / 60000);
+          const days = Math.floor(totalMinutes / 1440);
+          const hours = Math.floor((totalMinutes % 1440) / 60);
+          const minutes = totalMinutes % 60;
+          node.textContent = `Осталось: ${days ? `${days} дн. ` : ''}${hours} ч. ${minutes} мин.`;
+        };
+        update(); timerId = setInterval(update, 1000);
+      }
+      function setPurchased(keys) {
+        keys.forEach(key => { const box = checks.find(item => item.dataset.owned === key); if (box) box.checked = true; });
+        render();
+      }
+      function earlyIntro(priority) {
+        if (priority === 'recipes') return '<h2>Дополните мастер-класс Системой рецептов</h2><p class="eb-lead">Через несколько дней в программе будет пауза. Система рецептов поможет применить продуктовые категории на практике и понять, какими блюдами добирать то, чего не хватает.</p>';
+        return '<h2>Добавьте основу для работы с рецептами</h2><p class="eb-lead">Рецепты дают конкретные примеры, а «Калорийный» помогает понять взвешивание, порции, калории и БЖУ. Курс откроется ближе к концу мастер-класса, но текущая цена действует только до указанной даты.</p>';
+      }
+
+      function render() {
+        const owned = initialOwned();
+        const cfg = stages[stage.value];
+        const eligibleDigitals = visibleDigitals(owned);
+        const missingDigital = eligibleDigitals.filter(key => !owned.has(key));
+        const hasConsult = owned.has('consultation');
+        const tariffText = tariffs[tariff.value];
+        stageLabel.textContent = cfg.label;
+        ownedLabel.textContent = `Дополнительно куплено: ${[...owned].filter(key => !['recipes', 'consultation'].includes(key) || tariff.value === 'basic').map(key => products[key].name).join(', ') || 'ничего'}`;
+
+        if (stage.value === 'recipes1' && owned.has('recipes')) {
+          screen.innerHTML = `<div class="eb-tariff">Ваш входной тариф: ${tariffText}</div><div class="eb-error"><h2>Доступ подтверждён</h2><p>Материал не удалось открыть из-за технической ошибки. Напишите Сергею:</p><p><a class="eb-contact" href="#" data-placeholder-link>@FitnessSergey</a></p></div>`;
+          bindActions(); return;
+        }
+
+        let intro;
+        if (stage.value === 'recipes1') {
+          intro = '<h2>Эта часть не входит в ваш тариф</h2><p class="eb-lead">Можно сделать небольшую паузу и продолжить мастер-класс с новыми материалами через несколько дней. Или открыть Систему рецептов сейчас — отдельно либо вместе с другими программами.</p><ul class="eb-benefits"><li>Понятный конструктор полезного приёма пищи</li><li>Выбор продуктов, готовой еды и сочетаний</li><li>Рецепты для добора нужных продуктовых категорий</li></ul>';
+        } else if (stage.value === 'day2' || stage.value === 'beforeRecipes2') {
+          const priority = missingDigital.includes('recipes') ? 'recipes' : (missingDigital.includes('calories') ? 'calories' : missingDigital[0]);
+          intro = priority ? earlyIntro(priority) : '<h2>У вас уже есть все самостоятельные программы</h2>';
+        } else if (stage.value === 'review') {
+          intro = '<h2>Подведите итоги мастер-класса вместе с Сергеем</h2><p class="eb-lead">Сергей сначала разберёт ваш дневник, затем вы обсудите выводы звонком или голосовыми.</p>';
+        } else if (stage.value === 'afterReview') {
+          intro = '<h2>Последнее предложение перед стандартными ценами</h2><p class="eb-lead">Можно выбрать отдельную программу или собрать оставшиеся самостоятельные продукты в один комплект.</p>';
+        } else {
+          intro = '<h2>Самостоятельные программы</h2><p class="eb-lead">Доступны по стандартной цене без временного предложения.</p>';
+        }
+
+        let offers = '';
+        if (stage.value === 'day2' || stage.value === 'recipes1' || stage.value === 'beforeRecipes2') {
+          if (missingDigital.length) {
+            const priority = missingDigital.includes('recipes') ? 'recipes' : (missingDigital.includes('calories') ? 'calories' : missingDigital[0]);
+            offers += offerMarkup(`Только ${products[priority].name}`, [priority], cfg.single, false, 'Можно приобрести отдельно');
+            if (missingDigital.length > 1) offers += offerMarkup('Вообще всё, что вам может понадобиться', missingDigital, cfg.bundle[missingDigital.length], true, 'В комплекте выгоднее');
+          }
+        } else if (stage.value === 'review') {
+          if (!hasConsult) {
+            offers += offerMarkup('Индивидуальная консультация', ['consultation'], cfg.consult, true, 'Главное предложение');
+            if (missingDigital.length) offers += offerMarkup('Консультация и все недостающие программы', ['consultation', ...missingDigital], cfg.consult + cfg.bundle[missingDigital.length], false, 'Максимальный комплект');
+          } else {
+            missingDigital.slice(0, 3).forEach(key => { offers += offerMarkup(products[key].name, [key], cfg.single, false, 'Можно приобрести отдельно'); });
+          }
+        } else if (stage.value === 'afterReview') {
+          if (missingDigital.length > 1) offers += offerMarkup('Все оставшиеся самостоятельные программы', missingDigital, cfg.bundle[missingDigital.length], true, 'Последний комплект со скидкой');
+          missingDigital.slice(0, missingDigital.length > 1 ? 2 : 3).forEach(key => { offers += offerMarkup(products[key].name, [key], cfg.single, false, 'Можно приобрести отдельно'); });
+          if (!hasConsult) offers += offerMarkup('Индивидуальная консультация', ['consultation'], cfg.consult, false, 'Можно приобрести отдельно');
+        } else {
+          missingDigital.slice(0, 3).forEach(key => { offers += offerMarkup(products[key].name, [key], cfg.single, false, stage.value === 'afterReview' ? 'Последняя цена перед стандартной' : 'Стандартная цена'); });
+        }
+
+        screen.innerHTML = `<div class="eb-tariff">Ваш входной тариф: ${tariffText}</div>${intro}${timerMarkup(cfg)}<div class="eb-offers">${offers || '<div class="eb-empty">У вас уже есть всё, что доступно на этом этапе. Ничего дополнительно не показываем.</div>'}</div><nav class="eb-links" aria-label="Описание продуктов">${eligibleDigitals.map(key => `<a href="#" data-placeholder-link data-product="${key}">${products[key].name}</a>`).join('')}<a href="#" data-placeholder-link data-product="consultation">Индивидуальная консультация</a></nav>`;
+        bindActions(); startTimer();
+      }
+      function bindActions() {
+        screen.querySelectorAll('[data-buy]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); setPurchased(button.dataset.buy.split(',').filter(Boolean)); }));
+        screen.querySelectorAll('[data-detail]').forEach(button => button.addEventListener('click', event => { event.preventDefault(); showProduct(button.dataset.detail); }));
+        screen.querySelectorAll('[data-placeholder-link]').forEach(link => link.addEventListener('click', event => { event.preventDefault(); showProduct(link.dataset.product); }));
+      }
+      function showProduct(key) {
+        if (!key || !products[key]) return;
+        if (timerId) clearInterval(timerId);
+        const product = products[key];
+        screen.innerHTML = `<div class="eb-detail-header"><button type="button" class="eb-back">← Вернуться к выбору и оплате</button></div><div class="eb-detail-copy"><h2>${product.name}</h2><p class="eb-lead">${product.description}</p><ul>${product.details.map(item => `<li>${item}</li>`).join('')}</ul><p><strong>Стандартная цена: ${money(product.regular)}</strong></p></div>`;
+        screen.querySelector('.eb-back').addEventListener('click', render);
+      }
+      tariff.addEventListener('change', () => { checks.forEach(box => { box.checked = false; }); render(); });
+      stage.addEventListener('change', render);
+      checks.forEach(box => box.addEventListener('change', render));
+      render();
+    })();
+  </script>
+</div>
+
