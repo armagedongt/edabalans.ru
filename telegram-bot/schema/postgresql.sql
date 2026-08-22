@@ -116,12 +116,31 @@ CREATE TABLE telegram.sequence_steps (
 CREATE TABLE telegram.sequence_edges (
     id uuid PRIMARY KEY,
     sequence_version_id uuid NOT NULL REFERENCES telegram.sequence_versions(id),
-    from_step_id uuid NOT NULL REFERENCES telegram.sequence_steps(id),
-    to_step_id uuid NOT NULL REFERENCES telegram.sequence_steps(id),
-    branch_key text NOT NULL DEFAULT 'next',
+    from_step_key text NOT NULL,
+    to_step_key text,
+    target_sequence_code text,
+    branch_key text NOT NULL DEFAULT 'default',
+    label text,
     condition jsonb NOT NULL DEFAULT '{}'::jsonb,
     priority integer NOT NULL DEFAULT 0,
-    UNIQUE (from_step_id, branch_key, priority)
+    enabled boolean NOT NULL DEFAULT true,
+    UNIQUE (sequence_version_id, from_step_key, branch_key, priority),
+    CHECK (to_step_key IS NOT NULL OR target_sequence_code IS NOT NULL)
+);
+
+CREATE TABLE telegram.bot_routes (
+    id uuid PRIMARY KEY,
+    code text NOT NULL UNIQUE,
+    name text NOT NULL,
+    trigger_kind text NOT NULL,
+    trigger_value text NOT NULL,
+    source_component text NOT NULL,
+    target_sequence_code text NOT NULL,
+    configuration jsonb NOT NULL DEFAULT '{}'::jsonb,
+    priority integer NOT NULL DEFAULT 0,
+    enabled boolean NOT NULL DEFAULT true,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now()
 );
 
 CREATE TABLE telegram.sequence_runs (

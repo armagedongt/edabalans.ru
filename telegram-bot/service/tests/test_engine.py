@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
 from app.engine import advance_run, resume_callback, start_run
-from app.models import BotInstance, Contact, ContentItem, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
+from app.models import BotInstance, BotRoute, Contact, ContentItem, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
 from app.seed import PREPURCHASE_CODE, seed_defaults
 
 
@@ -33,6 +33,8 @@ def test_seed_contains_exactly_30_message_slots(tmp_path):
         message_count = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert message_count == 30
         assert session.scalar(select(func.count(ContentItem.id))) == 30
+        assert session.scalar(select(func.count(SequenceEdge.id))) > 0
+        assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == PREPURCHASE_CODE
 
 
 def test_start_is_idempotent_and_waits_for_button(tmp_path):

@@ -20,7 +20,8 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, start_run
-from app.models import BotInstance, Broadcast, BroadcastRecipient, Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, UpdateReceipt
+from app.graph import overview_graph, sequence_graph
+from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, UpdateReceipt
 from app.schemas import AcceleratedRunIn, BroadcastIn, ContentUpdateIn, ManualMessageIn, StepUpdateIn, TrackingLinkIn
 from app.seed import PREPURCHASE_CODE, seed_defaults
 from app.telegram import TelegramClient
@@ -279,13 +280,24 @@ def process_update(update: dict, session: Session) -> dict:
         text = message.get("text", "")
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
+            route = session.scalar(
+                select(BotRoute)
+                .where(
+                    BotRoute.trigger_kind == "telegram_command",
+                    BotRoute.trigger_value == "/start",
+                    BotRoute.enabled.is_(True),
+                )
+                .order_by(BotRoute.priority)
+            )
+            sequence_code = route.target_sequence_code if route else PREPURCHASE_CODE
             if token:
                 link = session.scalar(select(TrackingLink).where(TrackingLink.token == token, TrackingLink.is_active.is_(True)))
                 if link:
                     contact.first_source_token = contact.first_source_token or token
                     contact.last_source_token = token
+                    sequence_code = link.target_sequence_code
                     session.add(TrackingEvent(tracking_link_id=link.id, contact_id=contact.id, event_type="start", metadata_json={}))
-            run = start_run(session, contact.id, PREPURCHASE_CODE)
+            run = start_run(session, contact.id, sequence_code)
             session.commit()
             advance_run(session, run, client())
     elif callback:
@@ -316,6 +328,16 @@ def list_sequences(session: Session = Depends(get_db)) -> list[dict]:
         .order_by(Sequence.name)
     ).all()
     return [{"code": seq.code, "name": seq.name, "status": seq.status, "version": ver.version_no, "version_status": ver.status, "steps": count} for seq, ver, count in rows]
+
+
+@app.get("/bot-api/map", dependencies=[Depends(require_admin)])
+def bot_map(sequence_code: str | None = None, version_status: str = "published", session: Session = Depends(get_db)) -> dict:
+    if version_status not in {"published", "draft", ""}:
+        raise HTTPException(422, "version_status must be published or draft")
+    try:
+        return sequence_graph(session, sequence_code, version_status) if sequence_code else overview_graph(session, version_status)
+    except LookupError:
+        raise HTTPException(404, "Sequence not found") from None
 
 
 @app.get("/bot-api/content", dependencies=[Depends(require_admin)])

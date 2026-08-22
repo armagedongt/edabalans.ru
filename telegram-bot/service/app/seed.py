@@ -5,11 +5,53 @@ from datetime import UTC, datetime
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import BotInstance, ContentItem, Sequence, SequenceStep, SequenceVersion
+from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
 
 
 PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
+
+
+def _ensure_edges(session: Session, version: SequenceVersion) -> None:
+    if session.scalar(select(SequenceEdge.id).where(SequenceEdge.sequence_version_id == version.id).limit(1)):
+        return
+    steps = list(
+        session.scalars(
+            select(SequenceStep)
+            .where(SequenceStep.sequence_version_id == version.id, SequenceStep.enabled.is_(True))
+            .order_by(SequenceStep.position)
+        )
+    )
+    for index, step in enumerate(steps):
+        config = step.configuration or {}
+        following = step.next_step_key or (steps[index + 1].step_key if index + 1 < len(steps) else None)
+        if step.kind == "STOP":
+            continue
+        if step.kind == "CONDITION":
+            true_step = config.get("true_step")
+            true_sequence = config.get("true_sequence")
+            false_step = config.get("false_step") or following
+            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=true_step or (None if true_sequence else following), target_sequence_code=true_sequence, branch_key="true", label="Да"))
+            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=false_step, branch_key="false", label="Нет"))
+        else:
+            target = config.get("step_key") if step.kind == "GOTO" else following
+            if target:
+                session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=target, branch_key="default", label="Далее"))
+
+
+def _ensure_routes(session: Session) -> None:
+    if not session.scalar(select(BotRoute).where(BotRoute.code == "main_start")):
+        session.add(BotRoute(
+            code="main_start",
+            name="Главный вход в бота",
+            trigger_kind="telegram_command",
+            trigger_value="/start",
+            source_component="telegram.start",
+            target_sequence_code=PREPURCHASE_CODE,
+            configuration={"pipeline": ["crm.identity.resolve", "attribution.resolve"]},
+            priority=10,
+            enabled=True,
+        ))
 
 
 def _messages() -> list[dict]:
@@ -75,5 +117,9 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         version = SequenceVersion(sequence_id=post.id, version_no=1, status="draft")
         session.add(version); session.flush()
         session.add(SequenceStep(sequence_version_id=version.id, step_key="placeholder", position=1, kind="STOP", label="Наполнение будет добавлено позже", configuration={"upsells":["recipes","calories","consultation"]}, enabled=False))
+    session.flush()
+    for version in session.scalars(select(SequenceVersion)):
+        _ensure_edges(session, version)
+    _ensure_routes(session)
     session.commit()
     return {"messages": len(_messages()), "sequences": 2}

@@ -111,6 +111,45 @@ class SequenceStep(TimestampMixin, Base):
     enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
 
+class SequenceEdge(TimestampMixin, Base):
+    __tablename__ = "tg_sequence_edges"
+    __table_args__ = (
+        UniqueConstraint(
+            "sequence_version_id",
+            "from_step_key",
+            "branch_key",
+            "priority",
+            name="uq_tg_sequence_edge_branch",
+        ),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    sequence_version_id: Mapped[str] = mapped_column(ForeignKey("tg_sequence_versions.id"), nullable=False, index=True)
+    from_step_key: Mapped[str] = mapped_column(String(120), nullable=False)
+    to_step_key: Mapped[str | None] = mapped_column(String(120))
+    target_sequence_code: Mapped[str | None] = mapped_column(String(100))
+    branch_key: Mapped[str] = mapped_column(String(40), default="default", nullable=False)
+    label: Mapped[str | None] = mapped_column(String(255))
+    condition: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
+class BotRoute(TimestampMixin, Base):
+    __tablename__ = "tg_bot_routes"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    code: Mapped[str] = mapped_column(String(100), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    trigger_kind: Mapped[str] = mapped_column(String(64), nullable=False, index=True)
+    trigger_value: Mapped[str] = mapped_column(String(255), nullable=False)
+    source_component: Mapped[str] = mapped_column(String(120), nullable=False)
+    target_sequence_code: Mapped[str] = mapped_column(String(100), nullable=False)
+    configuration: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+
+
 class SequenceRun(TimestampMixin, Base):
     __tablename__ = "tg_sequence_runs"
     __table_args__ = (Index("ix_tg_runs_due", "status", "next_action_at"),)

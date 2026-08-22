@@ -6,7 +6,7 @@ from typing import Any, Protocol
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.models import ContentItem, Contact, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
+from app.models import ContentItem, Contact, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
 
 
 class Sender(Protocol):
@@ -45,18 +45,67 @@ def _step(session: Session, run: SequenceRun) -> SequenceStep | None:
     return session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.step_key == run.current_step_key))
 
 
-def _next(session: Session, run: SequenceRun, step: SequenceStep) -> SequenceStep | None:
+def _legacy_next(session: Session, run: SequenceRun, step: SequenceStep) -> SequenceStep | None:
     if step.next_step_key:
         return session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.step_key == step.next_step_key))
     return session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.position > step.position, SequenceStep.enabled.is_(True)).order_by(SequenceStep.position))
 
 
-def _set_next(session: Session, run: SequenceRun, step: SequenceStep) -> None:
-    nxt = _next(session, run, step)
+def _edge(session: Session, run: SequenceRun, step: SequenceStep, branch_key: str) -> SequenceEdge | None:
+    edge = session.scalar(
+        select(SequenceEdge)
+        .where(
+            SequenceEdge.sequence_version_id == run.sequence_version_id,
+            SequenceEdge.from_step_key == step.step_key,
+            SequenceEdge.branch_key == branch_key,
+            SequenceEdge.enabled.is_(True),
+        )
+        .order_by(SequenceEdge.priority)
+    )
+    if not edge and branch_key != "default":
+        edge = session.scalar(
+            select(SequenceEdge)
+            .where(
+                SequenceEdge.sequence_version_id == run.sequence_version_id,
+                SequenceEdge.from_step_key == step.step_key,
+                SequenceEdge.branch_key == "default",
+                SequenceEdge.enabled.is_(True),
+            )
+            .order_by(SequenceEdge.priority)
+        )
+    return edge
+
+
+def _set_next(session: Session, run: SequenceRun, step: SequenceStep, branch_key: str = "default") -> bool:
+    edge = _edge(session, run, step, branch_key)
+    if edge and edge.target_sequence_code:
+        target = published_version(session, edge.target_sequence_code)
+        run.status = "completed" if target else "branch_pending"
+        run.finished_at = utcnow() if target else None
+        run.next_action_at = None
+        if target:
+            start_run(session, run.contact_id, edge.target_sequence_code, run.time_scale)
+        else:
+            run.context = {**run.context, "pending_sequence": edge.target_sequence_code}
+        return True
+    nxt = None
+    if edge and edge.to_step_key:
+        nxt = session.scalar(
+            select(SequenceStep).where(
+                SequenceStep.sequence_version_id == run.sequence_version_id,
+                SequenceStep.step_key == edge.to_step_key,
+                SequenceStep.enabled.is_(True),
+            )
+        )
+    elif not edge:
+        # Совместимость нужна только на время применения миграции, которая
+        # переводит старые next_step_key/configuration в явные связи.
+        nxt = _legacy_next(session, run, step)
     run.current_step_key = nxt.step_key if nxt else None
     if not nxt:
         run.status = "completed"
         run.finished_at = utcnow()
+    return False
 
 
 def _variable(session: Session, contact_id: str, key: str) -> Any:
@@ -138,24 +187,31 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 result = bool(run.context.get(f"has_product:{variable_key}") or _has_paid_product(session, contact, product_codes, variable_key))
             else:
                 result = bool(_variable(session, run.contact_id, condition))
-            if result and config.get("true_sequence"):
+            branch_key = "true" if result else "false"
+            if _edge(session, run, step, branch_key):
+                if _set_next(session, run, step, branch_key):
+                    break
+            elif result and config.get("true_sequence"):
                 target = published_version(session, config["true_sequence"])
                 if target:
                     run.status = "completed"; run.finished_at = utcnow(); start_run(session, run.contact_id, config["true_sequence"], run.time_scale); break
-                # A known but not-yet-published branch must still stop presale messages.
                 run.status = "branch_pending"
                 run.next_action_at = None
                 run.context = {**run.context, "pending_sequence": config["true_sequence"]}
                 break
-            target_key = config.get("true_step" if result else "false_step")
-            if target_key:
-                run.current_step_key = target_key
             else:
-                _set_next(session, run, step)
+                target_key = config.get("true_step" if result else "false_step")
+                if target_key:
+                    run.current_step_key = target_key
+                else:
+                    _set_next(session, run, step)
         elif step.kind == "DB_WRITE":
             _write_variable(session, run.contact_id, config["key"], config.get("value")); _set_next(session, run, step)
         elif step.kind == "GOTO":
-            run.current_step_key = config["step_key"]
+            if not _edge(session, run, step, "default"):
+                run.current_step_key = config["step_key"]
+            elif _set_next(session, run, step):
+                break
         elif step.kind == "STOP":
             run.status = "completed"; run.current_step_key = None; run.finished_at = utcnow(); break
         else:
