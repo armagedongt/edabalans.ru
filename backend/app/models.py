@@ -604,6 +604,36 @@ class ContentMetricSnapshot(Base):
     details_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
 
 
+class ContentComment(Base):
+    __tablename__ = "content_comments"
+    __table_args__ = (
+        UniqueConstraint("item_id", "external_id", name="uq_content_comment_external"),
+        Index("ix_content_comment_item_parent", "item_id", "parent_external_id"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    external_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    parent_external_id: Mapped[str | None] = mapped_column(String(128))
+    depth: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    author_name: Mapped[str | None] = mapped_column(String(255))
+    author_external_id: Mapped[str | None] = mapped_column(String(255))
+    is_owner_comment: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    permalink: Mapped[str | None] = mapped_column(Text)
+    rating: Mapped[int | None] = mapped_column(Integer)
+    pluses: Mapped[int | None] = mapped_column(Integer)
+    minuses: Mapped[int | None] = mapped_column(Integer)
+    emotions: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class ContentImportRun(Base):
     __tablename__ = "content_import_runs"
 

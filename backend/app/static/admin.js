@@ -280,6 +280,68 @@
     }));
   }
 
+  const contentNumber = (value) => value == null ? "—" : new Intl.NumberFormat("ru-RU").format(value);
+
+  function contentEntity(entity) {
+    const text = esc(entity.text || "");
+    if (entity.type === "link" || entity.type === "text_link") {
+      const href = entity.href || entity.text;
+      return href ? `<a href="${esc(href)}" target="_blank" rel="noopener">${text}</a>` : text;
+    }
+    if (entity.type === "bold") return `<strong>${text}</strong>`;
+    if (entity.type === "italic") return `<em>${text}</em>`;
+    if (entity.type === "underline") return `<u>${text}</u>`;
+    if (entity.type === "strikethrough") return `<s>${text}</s>`;
+    if (entity.type === "blockquote") return `<span class="content-quote">${text}</span>`;
+    return text;
+  }
+
+  function contentMedia(media, index) {
+    const label = media.type === "video_file" || media.type === "video" ? "Видео" : media.type === "photo" || media.type === "image" ? "Изображение" : "Медиа";
+    const href = media.source_url || media.preview_url;
+    return `<div class="content-media-marker"><b>▧ ${label} ${index + 1}</b><span>${href ? `<a href="${esc(href)}" target="_blank" rel="noopener">Открыть вложение ↗</a>` : "Файл не копировался; позиция сохранена"}</span></div>`;
+  }
+
+  function contentBody(item) {
+    if (!item.blocks || !item.blocks.length) return `<div class="content-post-text">${esc(item.text || "Текст ещё не импортирован")}</div>`;
+    const mediaByMessage = new Map();
+    item.media.forEach((media, index) => {
+      const id = media.metadata && media.metadata.telegram_message_id;
+      if (id != null) mediaByMessage.set(String(id), [...(mediaByMessage.get(String(id)) || []), [media, index]]);
+    });
+    const used = new Set();
+    const blocks = item.blocks.map((block) => {
+      const entities = block.entities || block.segments || [];
+      const text = entities.length ? entities.map(contentEntity).join("") : esc(block.text || "");
+      const positions = Array.isArray(block.media_positions) ? block.media_positions : [];
+      const attached = positions.map((position) => [item.media[position], position]).filter(([media]) => media);
+      (mediaByMessage.get(String(block.message_id)) || []).forEach((pair) => attached.push(pair));
+      attached.forEach(([, index]) => used.add(index));
+      const poll = block.poll ? `<div class="content-poll"><b>${esc(block.poll.question || "Опрос")}</b>${(block.poll.answers || []).map((answer) => `<span>${esc(answer)}</span>`).join("")}</div>` : "";
+      return `<div class="content-block">${text ? `<div>${text}</div>` : ""}${poll}${attached.map(([media, index]) => contentMedia(media, index)).join("")}</div>`;
+    }).join("");
+    const remaining = item.media.map((media, index) => used.has(index) ? "" : contentMedia(media, index)).join("");
+    return `<div class="content-post-text">${blocks}${remaining}</div>`;
+  }
+
+  function contentMetricCards(metrics) {
+    const reactions = (metrics.emotions || []).reduce((sum, item) => sum + Number(item.count || 0), 0);
+    const cards = [
+      ["Просмотры", metrics.views], ["Рейтинг", metrics.rating], ["Плюсы", metrics.pluses],
+      ["Минусы", metrics.minuses], ["Сохранения", metrics.saves],
+      ["Комментарии", metrics.comments_reported], ["Реакции", reactions || null],
+      ["Репосты", metrics.details && metrics.details.forwards]
+    ];
+    return `<div class="content-metrics">${cards.map(([label, value]) => `<div><small>${label}</small><b>${contentNumber(value)}</b></div>`).join("")}</div>`;
+  }
+
+  async function contentComments(item) {
+    if (item.source !== "pikabu") return "";
+    const comments = await api(`/admin/api/content/items/${encodeURIComponent(item.id)}/comments`);
+    const reported = item.metrics.comments_reported;
+    return `<article class="admin-card content-comments"><div class="content-comments-head"><div><h3>Комментарии</h3><p>Загружено ${comments.length}${reported == null ? "" : ` из ${reported}`}</p></div><a class="admin-action alt" href="${esc(item.canonical_url)}#comments" target="_blank" rel="noopener">Открыть на Pikabu ↗</a></div>${comments.length ? comments.map((comment) => `<div class="content-comment ${comment.is_owner_comment ? "owner" : ""}" style="--depth:${Math.min(comment.depth || 0, 6)}"><div><b>${esc(comment.author_name || "Без имени")}</b><span>${date(comment.published_at)} · рейтинг ${contentNumber(comment.rating)}</span></div><p>${esc(comment.text)}</p>${comment.permalink ? `<a href="${esc(comment.permalink)}" target="_blank" rel="noopener">Комментарий ↗</a>` : ""}</div>`).join("") : '<div class="admin-empty compact">Тексты комментариев ещё не собраны. Число комментариев и ссылка на обсуждение доступны выше.</div>'}</article>`;
+  }
+
   async function contentCatalog() {
     const params = new URLSearchParams(location.search);
     const selected = params.get("item");
@@ -287,27 +349,36 @@
     loading();
     if (selected) {
       const item = await api(`/admin/api/content/items/${encodeURIComponent(selected)}`);
+      const recommendations = { present: "Есть ссылки на другие материалы", mentioned_without_links: "Упомянуты без ссылок", absent: "Не упомянуты", review: "Нужно проверить" };
+      const links = item.links.map((link) => `<div class="content-link"><b>${esc(link.text || link.type || "Ссылка")}</b><a href="${esc(link.url)}" target="_blank" rel="noopener">${esc(link.url)}</a></div>`).join("") || '<div class="admin-empty compact">Ссылок нет</div>';
       root.innerHTML = `
         <button class="admin-back" id="admin-back">← Назад к каталогу</button>
-        <div class="admin-profile-head"><div class="admin-profile-id"><div><h2>${esc(item.title)}</h2><p>${esc(item.source)} · ${date(item.published_at)} · ID ${esc(item.external_id)}</p></div></div><div class="admin-actions">${item.app_deep_link ? `<a class="admin-action" href="${esc(item.app_deep_link)}">Открыть в Telegram</a>` : ""}<a class="admin-action alt" href="${esc(item.canonical_url)}" target="_blank" rel="noopener">Оригинал ↗</a></div></div>
-        <div class="admin-detail-grid">
-          <article class="admin-card"><h3>Текст</h3><div style="white-space:pre-wrap;line-height:1.55">${esc(item.text || "Текст ещё не импортирован")}</div></article>
-          <article class="admin-card"><h3>Разметка</h3><div class="admin-rows"><div class="admin-row"><span>CTA</span><b>${item.cta_url ? `<a href="${esc(item.cta_url)}" target="_blank" rel="noopener">${esc(item.cta_text || item.cta_url)} ↗</a>` : "нет"}</b></div><div class="admin-row"><span>Рекомендации</span><b>${esc(item.recommendations_status)}</b></div><div class="admin-row"><span>Медиа</span><b>${item.media.length} вложений</b></div><div class="admin-row"><span>Ссылки</span><b>${item.links.length}</b></div></div><h3 style="margin-top:18px">Концовка</h3><div style="white-space:pre-wrap;line-height:1.5">${esc(item.ending_text || "не выделена")}</div></article>
-        </div>`;
-      document.getElementById("admin-back").onclick = () => { location.href = "/admin/content"; };
+        <div class="admin-profile-head"><div class="admin-profile-id"><div><h2>${esc(item.title)}</h2><p>${item.source === "pikabu" ? "Pikabu" : "Telegram"} · ${date(item.published_at)} · ID ${esc(item.external_id)}</p></div></div><div class="admin-actions">${item.app_deep_link ? `<a class="admin-action" href="${esc(item.app_deep_link)}">Открыть в Telegram</a>` : ""}<a class="admin-action alt" href="${esc(item.canonical_url)}" target="_blank" rel="noopener">Оригинал ↗</a></div></div>
+        <div class="admin-detail-grid content-detail-grid">
+          <article class="admin-card"><h3>Текст</h3>${contentBody(item)}</article>
+          <article class="admin-card"><h3>Разметка</h3><div class="content-primary-link"><small>ОРИГИНАЛ</small><a href="${esc(item.canonical_url)}" target="_blank" rel="noopener">${esc(item.canonical_url)} ↗</a></div>${contentMetricCards(item.metrics)}<div class="content-section"><h4>CTA</h4>${item.cta_url ? `<b>${esc(item.cta_text || "CTA")}</b><a class="content-visible-url" href="${esc(item.cta_url)}" target="_blank" rel="noopener">${esc(item.cta_url)}</a>` : '<span class="admin-help">Нет CTA</span>'}</div><div class="admin-rows"><div class="admin-row"><span>Рекомендации</span><b>${esc(recommendations[item.recommendations_status] || item.recommendations_status)}</b></div><div class="admin-row"><span>Медиа</span><b>${item.media.length} вложений</b></div><div class="admin-row"><span>Ссылки</span><b>${item.links.length}</b></div></div><div class="content-section"><h4>Ссылки из поста</h4>${links}</div></article>
+        </div><div id="content-comments"></div>`;
+      document.getElementById("admin-back").onclick = () => { location.href = `/admin/content?source=${encodeURIComponent(item.source)}`; };
+      document.getElementById("content-comments").innerHTML = await contentComments(item);
       return;
     }
     const q = params.get("q") || "";
+    const source = ["pikabu", "telegram"].includes(params.get("source")) ? params.get("source") : "pikabu";
+    const sort = params.get("sort") || "date";
+    const hasLinks = params.get("links") || "";
     const [summary, rows] = await Promise.all([
       api("/admin/api/content/summary"),
-      api(`/admin/api/content/items?limit=250&q=${encodeURIComponent(q)}`)
+      api(`/admin/api/content/items?limit=1000&q=${encodeURIComponent(q)}&source=${source}&sort=${encodeURIComponent(sort)}&has_links=${encodeURIComponent(hasLinks)}`)
     ]);
+    const navUrl = (nextSource) => `/admin/content?source=${nextSource}`;
     root.innerHTML = `
-      <div class="admin-grid"><article class="admin-stat"><small>МАТЕРИАЛОВ</small><b>${summary.items}</b><span>в общей базе</span></article><article class="admin-stat"><small>ИСТОЧНИКОВ</small><b>${summary.sources}</b><span>Pikabu и Telegram</span></article></div>
-      <div class="admin-toolbar"><input class="admin-filter" id="content-filter" value="${esc(q)}" placeholder="Заголовок или ID поста"><button class="admin-action" id="content-search">Найти</button></div>
-      <div class="admin-list">${rows.map((item) => `<button class="admin-person" data-content-id="${esc(item.id)}"><div><h3>${esc(item.title)}</h3><p>${date(item.published_at)} · ${esc(item.source)} · ${esc(item.external_id)}</p></div><div class="admin-actions"><span class="admin-badge">${item.views == null ? "нет просмотров" : new Intl.NumberFormat("ru-RU").format(item.views)}</span><span class="admin-badge ${item.cta_url ? "" : "off"}">${item.cta_url ? "есть CTA" : "без CTA"}</span></div></button>`).join("") || '<div class="admin-empty">Материалы ещё не импортированы</div>'}</div>`;
-    root.querySelectorAll("[data-content-id]").forEach((button) => button.addEventListener("click", () => { location.href = `/admin/content?item=${encodeURIComponent(button.dataset.contentId)}`; }));
-    const search = () => { const value = document.getElementById("content-filter").value.trim(); location.href = `/admin/content${value ? `?q=${encodeURIComponent(value)}` : ""}`; };
+      <div class="content-source-tabs"><a class="${source === "pikabu" ? "active" : ""}" href="${navUrl("pikabu")}">Pikabu <b>${summary.by_source.pikabu || 0}</b></a><a class="${source === "telegram" ? "active" : ""}" href="${navUrl("telegram")}">Telegram <b>${summary.by_source.telegram || 0}</b></a></div>
+      <div class="admin-toolbar content-toolbar"><input class="admin-filter" id="content-filter" value="${esc(q)}" placeholder="Заголовок или ID поста"><select id="content-sort"><option value="date">По дате</option><option value="views">По просмотрам</option><option value="likes">По лайкам / реакциям</option><option value="rating">По рейтингу</option><option value="comments">По комментариям</option><option value="links">По числу ссылок</option></select><select id="content-links"><option value="">Все ссылки</option><option value="yes">Есть ссылки</option><option value="no">Без ссылок</option></select><button class="admin-action" id="content-search">Применить</button></div>
+      <div class="admin-list">${rows.map((item) => { const badges = [["просм.", item.views], ["рейтинг", item.rating], ["комм.", item.comments_reported], ["ссылок", item.link_count]].filter(([, value]) => value != null); return `<button class="admin-person content-person" data-content-id="${esc(item.id)}"><div><h3>${esc(item.title)}</h3><p>${date(item.published_at)} · ${esc(item.external_id)}</p></div><div class="content-preview-metrics">${badges.map(([label, value]) => `<span><b>${contentNumber(value)}</b> ${label}</span>`).join("")}<span class="admin-badge ${item.cta_url ? "" : "off"}">${item.cta_url ? "CTA" : "без CTA"}</span></div></button>`; }).join("") || '<div class="admin-empty">В этом источнике материалов пока нет</div>'}</div>`;
+    document.getElementById("content-sort").value = sort;
+    document.getElementById("content-links").value = hasLinks;
+    root.querySelectorAll("[data-content-id]").forEach((button) => button.addEventListener("click", () => { location.href = `/admin/content?source=${source}&item=${encodeURIComponent(button.dataset.contentId)}`; }));
+    const search = () => { const next = new URLSearchParams({ source, sort: document.getElementById("content-sort").value }); const value = document.getElementById("content-filter").value.trim(); const links = document.getElementById("content-links").value; if (value) next.set("q", value); if (links) next.set("links", links); location.href = `/admin/content?${next}`; };
     document.getElementById("content-search").onclick = search;
     document.getElementById("content-filter").addEventListener("keydown", (event) => { if (event.key === "Enter") search(); });
   }

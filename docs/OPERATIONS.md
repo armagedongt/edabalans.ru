@@ -122,6 +122,9 @@ docker compose exec backend python -m app.importers.pikabu_catalog \
 ```
 
 Реальный JSON после проверки не коммитится и удаляется из временного каталога.
+Повторный запуск с `--refresh` обновляет форматирование, позиции медиа, метрики и
+доступные комментарии. В отчёте отдельно сверяются `comments_reported` и
+`comments_loaded`; расхождение допустимо только как явно видимый partial.
 
 ### Каталог Telegram-канала
 
@@ -151,6 +154,29 @@ docker compose exec backend python -m app.importers.telegram_catalog \
 Повторный импорт не создаёт дубли публикаций или версий. Новая версия появляется
 только при изменении исходного контента; изменившиеся реакции и голоса создают
 отдельный metric snapshot.
+
+Просмотры и реакции, которых нет в Telegram Desktop JSON, собираются из публичной
+страницы канала отдельным text-only шагом. Файл и browser profile остаются вне Git:
+
+```powershell
+python tools/telegram_public_metrics_collect.py `
+  --channel Fitness_Talks `
+  --output C:\private\telegram\public-metrics.json `
+  --browser-profile C:\private\telegram\public-browser-profile `
+  --headless
+```
+
+Сначала выполняется dry-run, после подтверждённого backup — импорт:
+
+```bash
+docker compose exec backend python -m app.importers.telegram_public_metrics \
+  /tmp/telegram-public-metrics.json
+docker compose exec backend python -m app.importers.telegram_public_metrics \
+  /tmp/telegram-public-metrics.json --apply --backup-confirmed
+```
+
+Публичная страница не отдаёт надёжное число репостов и комментариев. Эти значения
+не подменяются нулями и остаются пустыми до подключения подтверждённого источника.
 
 ## Автоматическая публикация
 

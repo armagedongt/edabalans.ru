@@ -45,7 +45,7 @@
 | Силовые тренировки | `backend/app/app_routes.py`, `app_service.py`, `static/apps/strength.html`, legacy в `legacy/google/strength/` | `strength_states`, `strength_exercises`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Метаболизм | `backend/app/app_routes.py`, `app_service.py`, `static/apps/metabolism.html`, legacy в `legacy/google/metabolism/` | `metabolism_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Импорт и аудит | `backend/app/importers/` (включая приватные ручные оплаты через `manual_payments.py`), `tools/`, миграции | `import_batches`, `legacy_import_records`, `user_merge_events` | `CRM_DATA_MODEL.md`, `CRM_CORE_DESIGN.md` |
-| Каталог материалов | `backend/app/content_*.py`, `backend/app/importers/pikabu_catalog.py`, `backend/app/importers/telegram_catalog.py`, `tools/pikabu_collect.py` | все таблицы с префиксом `content_` | `CONTENT_CATALOG.md` |
+| Каталог материалов | `backend/app/content_*.py`, `backend/app/importers/pikabu_catalog.py`, `backend/app/importers/telegram_*.py`, `tools/pikabu_collect.py`, `tools/telegram_public_metrics_collect.py` | `content_sources`, `content_items`, `content_item_versions`, `content_media`, `content_links`, `content_metric_snapshots`, `content_comments`, `content_import_runs` | `CONTENT_CATALOG.md` |
 | Инфраструктура | `compose.yaml`, `infra/`, `.github/workflows/` | `alembic_version`; служебная БД NocoDB отдельно | `OPERATIONS.md` |
 
 ## Правила полноты документации

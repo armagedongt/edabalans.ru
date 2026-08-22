@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -38,6 +39,14 @@ def sample() -> dict:
             {"type": "image", "source_url": "https://cs20.pikabu.ru/image.jpg"},
             {"type": "video", "source_url": "https://pikabu.ru/video/story/example/1"},
         ],
+        "comments": [
+            {
+                "external_id": "399619776",
+                "author_name": "armagedongt",
+                "is_owner_comment": True,
+                "text": "Комментарий автора",
+            }
+        ],
     }
 
 
@@ -49,6 +58,7 @@ def test_normalized_payload_keeps_original_and_media_urls() -> None:
         "https://pikabu.ru/video/story/example/1",
     ]
     assert "content" not in result["media"][0]
+    assert result["comments"][0]["external_id"] == "399619776"
 
 
 def test_pikabu_redirect_is_decoded_and_reference_is_ignored() -> None:
@@ -89,6 +99,7 @@ def test_content_tables_are_registered() -> None:
         "content_media",
         "content_links",
         "content_metric_snapshots",
+        "content_comments",
         "content_import_runs",
     }.issubset(Base.metadata.tables)
 
@@ -108,3 +119,25 @@ def test_shared_media_and_metric_schema_supports_future_sources() -> None:
 def test_content_api_requires_admin_session() -> None:
     response = TestClient(app, base_url="https://testserver").get("/admin/api/content/summary")
     assert response.status_code == 401
+
+
+def test_content_comments_api_requires_admin_session() -> None:
+    response = TestClient(app, base_url="https://testserver").get(
+        "/admin/api/content/items/00000000-0000-0000-0000-000000000000/comments"
+    )
+    assert response.status_code == 401
+
+
+def test_content_admin_asset_exposes_requested_catalog_controls() -> None:
+    asset = (Path(__file__).parents[1] / "app" / "static" / "admin.js").read_text(
+        encoding="utf-8"
+    )
+    for marker in (
+        "content-source-tabs",
+        "По лайкам / реакциям",
+        "content-media-marker",
+        "Репосты",
+        "Ссылки из поста",
+        "/comments",
+    ):
+        assert marker in asset

@@ -10,6 +10,7 @@ from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from app.models import (
+    ContentComment,
     ContentImportRun,
     ContentItem,
     ContentItemVersion,
@@ -121,6 +122,7 @@ def normalized_payload(raw: dict) -> dict:
         "links": links,
         "media": media,
         "metrics": raw.get("metrics") or {},
+        "comments": raw.get("comments") or [],
     }
     hash_body = json.dumps(
         {
@@ -390,6 +392,16 @@ def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_js
 
             metrics = data["metrics"]
             if metrics:
+                details = metrics.get("details_json") or {}
+                if data["comments"]:
+                    details = {
+                        **details,
+                        "comments_loaded": len(data["comments"]),
+                        "comments_partial": (
+                            metrics.get("comments_reported") is not None
+                            and len(data["comments"]) < metrics.get("comments_reported")
+                        ),
+                    }
                 db.add(
                     ContentMetricSnapshot(
                         item_id=item.id,
@@ -401,8 +413,39 @@ def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_js
                         saves=metrics.get("saves"),
                         comments_reported=metrics.get("comments_reported"),
                         emotions=metrics.get("emotions") or [],
+                        details_json=details,
                     )
                 )
+            for comment in data["comments"]:
+                external_id = str(comment.get("external_id") or "").strip()
+                text_content = str(comment.get("text") or comment.get("text_content") or "").strip()
+                if not external_id or not text_content:
+                    continue
+                row = db.scalar(
+                    select(ContentComment).where(
+                        ContentComment.item_id == item.id,
+                        ContentComment.external_id == external_id,
+                    )
+                )
+                if row is None:
+                    row = ContentComment(item_id=item.id, external_id=external_id, text_content=text_content)
+                    db.add(row)
+                published_at = comment.get("published_at")
+                if isinstance(published_at, str) and published_at:
+                    published_at = datetime.fromisoformat(published_at.replace("Z", "+00:00"))
+                row.parent_external_id = str(comment.get("parent_external_id") or "").strip() or None
+                row.depth = max(0, int(comment.get("depth") or 0))
+                row.author_name = str(comment.get("author_name") or "").strip() or None
+                row.author_external_id = str(comment.get("author_external_id") or "").strip() or None
+                row.is_owner_comment = bool(comment.get("is_owner_comment"))
+                row.published_at = published_at
+                row.text_content = text_content
+                row.permalink = str(comment.get("permalink") or "").strip() or None
+                row.rating = comment.get("rating")
+                row.pluses = comment.get("pluses")
+                row.minuses = comment.get("minuses")
+                row.emotions = comment.get("emotions") or []
+                row.metadata_json = comment.get("metadata") or {}
         except (TypeError, ValueError) as exc:
             summary["failed"] += 1
             errors.append({"external_id": raw.get("external_id"), "error": str(exc)})
@@ -418,7 +461,14 @@ def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_js
 def content_summary(db: Session) -> dict:
     items = db.scalar(select(func.count(ContentItem.id))) or 0
     sources = db.scalar(select(func.count(ContentSource.id))) or 0
-    return {"items": items, "sources": sources}
+    by_source = dict(
+        db.execute(
+            select(ContentSource.platform, func.count(ContentItem.id))
+            .join(ContentItem, ContentItem.source_id == ContentSource.id)
+            .group_by(ContentSource.platform)
+        ).all()
+    )
+    return {"items": items, "sources": sources, "by_source": by_source}
 
 
 def telegram_app_deep_link(canonical_url: str, platform: str) -> str | None:
@@ -433,14 +483,17 @@ def telegram_app_deep_link(canonical_url: str, platform: str) -> str | None:
     return f"tg://resolve?domain={parts[0]}&post={parts[1]}"
 
 
-def list_content_items(db: Session, *, q: str = "", source: str = "", limit: int = 100, offset: int = 0) -> list[dict]:
+def list_content_items(
+    db: Session, *, q: str = "", source: str = "", sort: str = "date",
+    has_links: str = "", limit: int = 100, offset: int = 0
+) -> list[dict]:
     statement = select(ContentItem, ContentSource).join(ContentSource, ContentSource.id == ContentItem.source_id)
     if q:
         pattern = f"%{q.strip()}%"
         statement = statement.where(or_(ContentItem.title.ilike(pattern), ContentItem.external_id.ilike(pattern)))
     if source:
         statement = statement.where(ContentSource.platform == source)
-    rows = db.execute(statement.order_by(ContentItem.published_at.desc().nullslast()).offset(offset).limit(limit)).all()
+    rows = db.execute(statement).all()
     result = []
     for item, src in rows:
         metric = db.scalar(
@@ -449,6 +502,13 @@ def list_content_items(db: Session, *, q: str = "", source: str = "", limit: int
             .order_by(ContentMetricSnapshot.captured_at.desc())
             .limit(1)
         )
+        link_count = db.scalar(
+            select(func.count(ContentLink.id)).where(ContentLink.version_id == item.latest_version_id)
+        ) or 0
+        comments_loaded = db.scalar(
+            select(func.count(ContentComment.id)).where(ContentComment.item_id == item.id)
+        ) or 0
+        reactions = sum(int(row.get("count") or 0) for row in (metric.emotions if metric else []))
         result.append({
             "id": str(item.id), "source": src.platform, "external_id": item.external_id,
             "title": item.title, "canonical_url": item.canonical_url,
@@ -457,9 +517,27 @@ def list_content_items(db: Session, *, q: str = "", source: str = "", limit: int
             "ending_text": item.ending_text, "cta_url": item.cta_url,
             "recommendations_status": item.recommendations_status,
             "views": metric.views if metric else None, "rating": metric.rating if metric else None,
+            "pluses": metric.pluses if metric else None, "minuses": metric.minuses if metric else None,
             "saves": metric.saves if metric else None,
+            "comments_reported": metric.comments_reported if metric else None,
+            "comments_loaded": comments_loaded,
+            "reactions": reactions or None,
+            "link_count": link_count,
         })
-    return result
+    if has_links == "yes":
+        result = [item for item in result if item["link_count"] > 0]
+    elif has_links == "no":
+        result = [item for item in result if item["link_count"] == 0]
+    sort_keys = {
+        "date": lambda item: item["published_at"] or datetime.min.replace(tzinfo=timezone.utc),
+        "views": lambda item: item["views"] if item["views"] is not None else -1,
+        "likes": lambda item: item["pluses"] if item["pluses"] is not None else (item["reactions"] or -1),
+        "rating": lambda item: item["rating"] if item["rating"] is not None else -1,
+        "comments": lambda item: item["comments_reported"] if item["comments_reported"] is not None else item["comments_loaded"],
+        "links": lambda item: item["link_count"],
+    }
+    result.sort(key=sort_keys.get(sort, sort_keys["date"]), reverse=True)
+    return result[offset:offset + limit]
 
 
 def get_content_item(db: Session, item_id: uuid.UUID) -> dict | None:
@@ -470,6 +548,13 @@ def get_content_item(db: Session, item_id: uuid.UUID) -> dict | None:
     version = db.get(ContentItemVersion, item.latest_version_id) if item.latest_version_id else None
     links = db.scalars(select(ContentLink).where(ContentLink.version_id == item.latest_version_id).order_by(ContentLink.position)).all() if version else []
     media = db.scalars(select(ContentMedia).where(ContentMedia.version_id == item.latest_version_id).order_by(ContentMedia.position)).all() if version else []
+    metric = db.scalar(
+        select(ContentMetricSnapshot).where(ContentMetricSnapshot.item_id == item.id)
+        .order_by(ContentMetricSnapshot.captured_at.desc()).limit(1)
+    )
+    comments_loaded = db.scalar(
+        select(func.count(ContentComment.id)).where(ContentComment.item_id == item.id)
+    ) or 0
     return {
         "id": str(item.id), "source": source.platform if source else None,
         "external_id": item.external_id, "canonical_url": item.canonical_url,
@@ -481,6 +566,31 @@ def get_content_item(db: Session, item_id: uuid.UUID) -> dict | None:
         "ending_text": item.ending_text, "ending_kind": item.ending_kind,
         "cta_text": item.cta_text, "cta_url": item.cta_url,
         "recommendations_status": item.recommendations_status,
-        "links": [{"text": x.visible_text, "url": x.target_url, "type": x.link_type, "ignored_for_generation": x.ignored_for_generation} for x in links],
-        "media": [{"type": x.media_type, "source_url": x.source_url, "preview_url": x.preview_url, "position": x.position} for x in media],
+        "links": [{"text": x.visible_text, "url": x.target_url, "type": x.link_type, "is_cta": x.is_cta, "ignored_for_generation": x.ignored_for_generation} for x in links],
+        "media": [{"type": x.media_type, "source_url": x.source_url, "preview_url": x.preview_url, "position": x.position, "metadata": x.metadata_json} for x in media],
+        "metrics": {
+            "views": metric.views if metric else None, "rating": metric.rating if metric else None,
+            "pluses": metric.pluses if metric else None, "minuses": metric.minuses if metric else None,
+            "saves": metric.saves if metric else None,
+            "comments_reported": metric.comments_reported if metric else None,
+            "comments_loaded": comments_loaded,
+            "emotions": metric.emotions if metric else [],
+            "details": metric.details_json if metric else {},
+            "captured_at": metric.captured_at if metric else None,
+        },
     }
+
+
+def list_content_comments(db: Session, item_id: uuid.UUID, *, owner_only: bool = False) -> list[dict]:
+    statement = select(ContentComment).where(ContentComment.item_id == item_id)
+    if owner_only:
+        statement = statement.where(ContentComment.is_owner_comment.is_(True))
+    rows = db.scalars(statement.order_by(ContentComment.published_at.asc().nullsfirst(), ContentComment.external_id)).all()
+    return [{
+        "id": str(row.id), "external_id": row.external_id,
+        "parent_external_id": row.parent_external_id, "depth": row.depth,
+        "author_name": row.author_name, "is_owner_comment": row.is_owner_comment,
+        "published_at": row.published_at, "text": row.text_content,
+        "permalink": row.permalink, "rating": row.rating,
+        "pluses": row.pluses, "minuses": row.minuses, "emotions": row.emotions,
+    } for row in rows]
