@@ -145,6 +145,105 @@ def _start_system_messages() -> list[dict]:
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
 
 
+def _postpurchase_messages() -> list[dict]:
+    """Editable editorial slots for the disabled post-purchase module.
+
+    The module deliberately stays disabled until CRM events and the production bot
+    adapter are connected.  The owner can already prepare every message and media
+    asset in the admin without changing code.
+    """
+    rows = [
+        (
+            "postpurchase_identity",
+            "01 · После привязки — данные клиента",
+            "<b>Проверьте ваши данные</b>\n\n"
+            "Почта: {{email}}\n"
+            "Telegram: @{{telegram_username}}\n"
+            "Тариф: {{masterclass_tariff}}\n"
+            "Дата покупки: {{purchase_date}}\n\n"
+            "Всё верно? Если нет — выберите «Поменять почту». Новую почту нужно будет подтвердить кодом из письма.",
+            None,
+            ["после покупки", "онбординг", "данные клиента"],
+        ),
+        (
+            "postpurchase_questionnaire",
+            "02 · После привязки — анкета для пересылки",
+            "<b>Ваша анкета</b>\n\n"
+            "{{questionnaire_formatted}}\n\n"
+            "Перешлите это сообщение Сергею: @FitnessSergey. Даже если у вас самостоятельный тариф — пожалуйста, отправьте анкету, чтобы начать личный диалог.",
+            None,
+            ["после покупки", "онбординг", "анкета"],
+        ),
+        (
+            "postpurchase_dqs_support",
+            "03 · Через 6 часов после открытия DQS — поддержка",
+            "[Добавьте короткое сообщение поддержки после знакомства с DQS. Можно прикрепить видеокружок.]",
+            "video_note",
+            ["после покупки", "DQS", "поддержка", "медиа"],
+        ),
+        (
+            "postpurchase_recipes_missing",
+            "04А · Через 60 минут после рецептов — доступа нет",
+            "Вы уже дошли до блока с рецептами. Если хотите продолжить без паузы, откройте актуальные варианты: {{offers_url}}\n\n"
+            "Система сама покажет только то, чего у вас ещё нет, и действующую до {{offer_expires_at}} цену.",
+            None,
+            ["после покупки", "рецепты", "допродажа", "нет доступа"],
+        ),
+        (
+            "postpurchase_recipes_owned",
+            "04Б · Через 60 минут после рецептов — доступ есть",
+            "[Добавьте короткое сообщение после открытия рецептов и, если остались подходящие продукты, ссылку {{offers_url}}. Рецепты повторно не предлагать.]",
+            None,
+            ["после покупки", "рецепты", "допродажа", "доступ есть"],
+        ),
+        (
+            "postpurchase_tempo_late",
+            "05А · Контроль темпа — отстал больше чем на 2 дня",
+            "[Добавьте бережное напоминание вернуться к мастер-классу. Без давления и без повторного запуска уже пройденных этапов.]",
+            None,
+            ["после покупки", "темп", "напоминание"],
+        ),
+        (
+            "postpurchase_tempo_ok",
+            "05Б · Контроль темпа — идёт по графику",
+            "[Добавьте похвалу или короткий видеокружок для участника, который движется по графику.]",
+            "video_note",
+            ["после покупки", "темп", "поддержка", "медиа"],
+        ),
+        (
+            "postpurchase_recipes_second",
+            "06 · Вторая часть рецептов — напоминание об оффере",
+            "[Добавьте сообщение о второй точке рецептов. Перед отправкой повторно проверить покупки; показать только актуальную ссылку {{offers_url}} или ничего не отправлять.]",
+            None,
+            ["после покупки", "рецепты", "вторая часть", "допродажа"],
+        ),
+        (
+            "postpurchase_review_consultation",
+            "07А · Саморевью — консультация куплена",
+            "Вы дошли до итогового саморевью. Заполните его в личном кабинете и нажмите «Отправить Сергею», когда будете готовы к разбору.\n\n"
+            "Сначала Сергей разберёт дневник, затем вы обсудите выводы звонком или голосовыми — как вам удобнее.",
+            None,
+            ["после покупки", "саморевью", "консультация куплена"],
+        ),
+        (
+            "postpurchase_review_no_consultation",
+            "07Б · Саморевью — консультации нет",
+            "Итоговое саморевью поможет собрать выводы по мастер-классу, даже если вы делаете его только для себя.\n\n"
+            "Если захотите персональный разбор дневника и обсуждение выводов — актуальный вариант будет на странице {{offers_url}} до {{offer_expires_at}}.",
+            None,
+            ["после покупки", "саморевью", "консультация", "допродажа"],
+        ),
+        (
+            "postpurchase_final_offer",
+            "08 · Финальная неделя — последнее предложение",
+            "[Добавьте финальное сообщение: один комплект недостающих самостоятельных продуктов и не более двух отдельных продуктов. После срока автоматический дожим прекращается.]",
+            None,
+            ["после покупки", "финальное предложение", "допродажа"],
+        ),
+    ]
+    return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
+
+
 def seed_defaults(session: Session, username: str) -> dict[str, int]:
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
     if not bot:
@@ -152,7 +251,7 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         session.add(bot)
 
     items: dict[str, ContentItem] = {}
-    for row in [*_messages(), *_start_system_messages()]:
+    for row in [*_messages(), *_start_system_messages(), *_postpurchase_messages()]:
         code = f"tpl_{row['code']}"
         item = session.scalar(select(ContentItem).where(ContentItem.code == code))
         if not item:
@@ -182,11 +281,57 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
 
     post = session.scalar(select(Sequence).where(Sequence.code == POSTPURCHASE_CODE))
     if not post:
-        post = Sequence(code=POSTPURCHASE_CODE, name="После покупки мастер-класса", description="Отключённая заготовка: рецепты, калории, консультация", status="disabled")
+        post = Sequence(code=POSTPURCHASE_CODE, name="После покупки мастер-класса", description="Редактируемые сообщения онбординга, DQS, рецептов, темпа и саморевью. Отправка отключена до подключения CRM-событий.", status="disabled")
         session.add(post); session.flush()
         version = SequenceVersion(sequence_id=post.id, version_no=1, status="draft")
         session.add(version); session.flush()
         session.add(SequenceStep(sequence_version_id=version.id, step_key="placeholder", position=1, kind="STOP", label="Наполнение будет добавлено позже", configuration={"upsells":["recipes","calories","consultation"]}, enabled=False))
+    else:
+        post.description = "Редактируемые сообщения онбординга, DQS, рецептов, темпа и саморевью. Отправка отключена до подключения CRM-событий."
+        post.status = "disabled"
+
+    existing_postpurchase = session.scalar(
+        select(SequenceStep.id)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_identity")
+        .limit(1)
+    )
+    if not existing_postpurchase:
+        last_version = session.scalar(
+            select(SequenceVersion.version_no)
+            .where(SequenceVersion.sequence_id == post.id)
+            .order_by(SequenceVersion.version_no.desc())
+            .limit(1)
+        ) or 0
+        version = SequenceVersion(sequence_id=post.id, version_no=last_version + 1, status="draft")
+        session.add(version); session.flush()
+        specs = [
+            ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
+            ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
+            ("pp_wait_dqs", "DELAY", None, 21600, {"starts_after": "dqs_opened", "note": "Срок не переносится повторным открытием"}),
+            ("pp_dqs_support", "VIDEO_NOTE", "postpurchase_dqs_support", None, {"trigger": "dqs_opened+6h", "state": "editorial_slot"}),
+            ("pp_wait_recipes", "DELAY", None, 3600, {"starts_after": "recipes_part_1_opened", "note": "Перед отправкой повторно проверить покупки"}),
+            ("pp_recipes_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "recipes_part_1_opened+60m", "condition": "recipes_access=false", "state": "editorial_slot"}),
+            ("pp_recipes_owned", "MESSAGE", "postpurchase_recipes_owned", None, {"trigger": "recipes_part_1_opened+60m", "condition": "recipes_access=true AND has_missing_products", "state": "editorial_slot"}),
+            ("pp_tempo_late", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "progress_checkpoint", "condition": "delay_days>2", "state": "editorial_slot"}),
+            ("pp_tempo_ok", "VIDEO_NOTE", "postpurchase_tempo_ok", None, {"trigger": "progress_checkpoint", "condition": "delay_days<=2", "state": "editorial_slot"}),
+            ("pp_recipes_second", "MESSAGE", "postpurchase_recipes_second", None, {"trigger": "recipes_part_2_opened", "condition": "has_missing_products", "state": "editorial_slot"}),
+            ("pp_review_consultation", "MESSAGE", "postpurchase_review_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=true", "state": "editorial_slot"}),
+            ("pp_review_no_consultation", "MESSAGE", "postpurchase_review_no_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=false", "state": "editorial_slot"}),
+            ("pp_final_offer", "MESSAGE", "postpurchase_final_offer", None, {"trigger": "closing_offer_expired", "condition": "has_missing_products", "state": "editorial_slot"}),
+            ("pp_finish", "STOP", None, None, {"reason": "postpurchase_automatic_messages_complete"}),
+        ]
+        for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
+            session.add(SequenceStep(
+                sequence_version_id=version.id,
+                step_key=key,
+                position=position,
+                kind=kind,
+                label=items[content_code].title if content_code else key,
+                content_item_id=items[content_code].id if content_code else None,
+                delay_seconds=delay,
+                configuration=config,
+            ))
     session.flush()
     for version in session.scalars(select(SequenceVersion)):
         _ensure_edges(session, version)

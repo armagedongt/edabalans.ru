@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, make_engine
 from app.engine import advance_run, resume_callback, start_run
 from app.models import BotInstance, BotRoute, Contact, ContentItem, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
-from app.seed import PREPURCHASE_CODE, seed_defaults
+from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, seed_defaults
 
 
 class FakeSender:
@@ -32,7 +32,7 @@ def test_seed_contains_exactly_30_message_slots(tmp_path):
         version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == pre.id))
         message_count = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert message_count == 30
-        assert session.scalar(select(func.count(ContentItem.id))) == 35
+        assert session.scalar(select(func.count(ContentItem.id))) == 46
         assert "Навигация!" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_navigation_pin"))
         assert "Сделайте похудение проще" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
         assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_has_masterclass")).startswith("Привет! У вас уже есть мой Мастер-класс")
@@ -40,6 +40,34 @@ def test_seed_contains_exactly_30_message_slots(tmp_path):
         assert "похудение-это-есть.рф/intensiv" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_complete"))
         assert session.scalar(select(func.count(SequenceEdge.id))) > 0
         assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == PREPURCHASE_CODE
+
+
+def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        post = session.scalar(select(Sequence).where(Sequence.code == POSTPURCHASE_CODE))
+        assert post.status == "disabled"
+        version = session.scalar(
+            select(SequenceVersion)
+            .where(SequenceVersion.sequence_id == post.id)
+            .order_by(SequenceVersion.version_no.desc())
+        )
+        assert version.status == "draft"
+        steps = list(session.scalars(
+            select(SequenceStep)
+            .where(SequenceStep.sequence_version_id == version.id)
+            .order_by(SequenceStep.position)
+        ))
+        assert len(steps) == 14
+        assert steps[0].step_key == "pp_identity"
+        assert steps[-1].kind == "STOP"
+        assert any(step.delay_seconds == 21600 for step in steps)
+        assert any(step.delay_seconds == 3600 for step in steps)
+        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_questionnaire")).find("{{questionnaire_formatted}}") >= 0
+
+        # Re-running seed must not create another draft version or duplicate slots.
+        seed_defaults(session, "TetrisgfgfgfBot")
+        assert session.scalar(select(func.count(SequenceVersion.id)).where(SequenceVersion.sequence_id == post.id)) == 2
 
 
 def test_start_is_idempotent_and_waits_for_button(tmp_path):
