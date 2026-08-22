@@ -24,6 +24,8 @@ class ContentUpdateIn(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     body_source: str | None = Field(default=None, max_length=20000)
     labels: list[str] | None = None
+    media_kind: str | None = Field(default=None, max_length=32)
+    media_path: str | None = Field(default=None, max_length=2000)
 
 
 class StepUpdateIn(BaseModel):
@@ -38,3 +40,5 @@ class BroadcastIn(BaseModel):
     text: str = Field(min_length=1, max_length=4096)
     segment: dict = Field(default_factory=lambda: {"status": "active"})
     scheduled_at: str | None = None
+    media_kind: str | None = Field(default=None, max_length=32)
+    media_path: str | None = Field(default=None, max_length=2000)

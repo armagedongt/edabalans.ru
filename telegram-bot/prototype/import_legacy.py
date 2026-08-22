@@ -161,12 +161,55 @@ def load_items(source: sqlite3.Connection) -> dict[tuple[str, str], dict[str, An
             "links": [],
         }
 
+    chain_query = """
+        SELECT b.scenario_id, b.block_id, b.name AS block_name, b.classification,
+               b.raw_json, s.name AS scenario_name
+        FROM blocks b
+        JOIN scenarios s ON s.id = b.scenario_id
+        WHERE b.type = 'chain'
+    """
+    for row in source.execute(chain_query):
+        payload = json.loads(row["raw_json"] or "{}")
+        answer = payload.get("answer") if isinstance(payload.get("answer"), dict) else {}
+        chain = answer.get("chain") if isinstance(answer.get("chain"), list) else []
+        for index, raw_part in enumerate(chain):
+            if not isinstance(raw_part, dict):
+                continue
+            part_type = raw_part.get("type")
+            media_payload = raw_part.get(part_type) if isinstance(raw_part.get(part_type), dict) else None
+            body = raw_part.get("text") if isinstance(raw_part.get("text"), str) else ""
+            if media_payload and not body:
+                body = media_payload.get("caption") if isinstance(media_payload.get("caption"), str) else ""
+            if not body and not media_payload:
+                continue
+            block_id = f"{row['block_id']}:chain:{index}"
+            key = (str(row["scenario_id"]), block_id)
+            item = {
+                "scenario_id": key[0],
+                "block_id": key[1],
+                "scenario_name": row["scenario_name"],
+                "block_name": None,
+                "classification": row["classification"],
+                "body": body,
+                "media": [],
+                "links": [{"value": value, "raw_json": "{}"} for value in sorted(set(re.findall(r"https?://[^\s<>\"']+", body)))],
+            }
+            if media_payload:
+                media_payload = dict(media_payload)
+                if part_type == "audio":
+                    media_payload["type"] = "voice"
+                else:
+                    media_payload.setdefault("type", part_type)
+                item["media"].append(media_payload)
+            items[key] = item
+
     media_query = """
         SELECT m.scenario_id, m.block_id, m.raw_json, s.name AS scenario_name,
                b.name AS block_name, b.classification
         FROM media m
         JOIN scenarios s ON s.id = m.scenario_id
         LEFT JOIN blocks b ON b.scenario_id = m.scenario_id AND b.block_id = m.block_id
+        WHERE COALESCE(b.type, '') <> 'chain'
     """
     for row in source.execute(media_query):
         key = (str(row["scenario_id"]), str(row["block_id"]))

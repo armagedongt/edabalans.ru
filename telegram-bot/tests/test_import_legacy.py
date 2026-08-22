@@ -17,7 +17,7 @@ SPEC.loader.exec_module(IMPORTER)
 SOURCE_SCHEMA = """
 CREATE TABLE scenarios (id INTEGER PRIMARY KEY, name TEXT);
 CREATE TABLE blocks (
-    scenario_id INTEGER, block_id TEXT, name TEXT, classification TEXT,
+    scenario_id INTEGER, block_id TEXT, type TEXT, name TEXT, classification TEXT, raw_json TEXT,
     PRIMARY KEY (scenario_id, block_id)
 );
 CREATE TABLE texts (
@@ -38,7 +38,7 @@ class LegacyImportTest(unittest.TestCase):
         connection = sqlite3.connect(self.source)
         connection.executescript(SOURCE_SCHEMA)
         connection.execute("INSERT INTO scenarios VALUES (10, 'Тестовый сценарий')")
-        connection.execute("INSERT INTO blocks VALUES (10, '20', NULL, 'main_flow')")
+        connection.execute("INSERT INTO blocks VALUES (10, '20', 'text', NULL, 'main_flow', '{}')")
         connection.execute(
             "INSERT INTO texts VALUES (10, '20', ?, ?, NULL, 'main_flow')",
             ("*Жирный текст* 😊 [ссылка](https://example.com)", "Жирный текст 😊 ссылка"),
@@ -50,6 +50,10 @@ class LegacyImportTest(unittest.TestCase):
         connection.execute(
             "INSERT INTO links VALUES (10, '20', 'https://example.com', '{}')"
         )
+        connection.execute(
+            "INSERT INTO blocks VALUES (10, '30', 'chain', NULL, 'main_flow', ?)",
+            ('{"answer":{"chain":[{"type":"text","text":"Пост из цепочки"},{"type":"image","image":{"type":"image","name":"fat.jpg","mime_type":"image/jpeg","size":321,"url":"https://example.com/fat.jpg","caption":"Про висцеральный жир"}}]}}',),
+        )
         connection.commit()
         connection.close()
 
@@ -58,18 +62,18 @@ class LegacyImportTest(unittest.TestCase):
 
     def test_import_preserves_markup_media_and_links(self) -> None:
         result = IMPORTER.build_catalog(self.source, self.destination)
-        self.assertEqual(result["archive_items"], 1)
-        self.assertEqual(result["media_assets"], 1)
+        self.assertEqual(result["archive_items"], 3)
+        self.assertEqual(result["media_assets"], 2)
         self.assertEqual(result["links"], 1)
         connection = sqlite3.connect(self.destination)
-        row = connection.execute(
-            "SELECT source_text, plain_text, source_format, media_kind FROM archive_content_items"
-        ).fetchone()
+        row = connection.execute("SELECT source_text, plain_text, source_format, media_kind FROM archive_content_items WHERE source_block_id='20'").fetchone()
         self.assertIn("*Жирный текст*", row[0])
         self.assertIn("😊", row[0])
         self.assertIn("https://example.com", row[0])
         self.assertEqual(row[2], "markdown_v1")
         self.assertEqual(row[3], "video")
+        chain = connection.execute("SELECT source_text, media_kind FROM archive_content_items WHERE source_block_id LIKE '30:chain:%' ORDER BY source_block_id").fetchall()
+        self.assertEqual(chain, [("Пост из цепочки", None), ("Про висцеральный жир", "image")])
         connection.close()
 
     def test_archive_rows_are_immutable(self) -> None:

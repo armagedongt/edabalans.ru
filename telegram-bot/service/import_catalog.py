@@ -62,6 +62,8 @@ def run(source: Path, media_dir: Path | None = None, container_media_root: str =
                 origin_scenario_name=row["scenario_name"], origin_block_id=row["source_block_id"],
             )
             if item:
+                if item.media_path and item.media_path.startswith("/app/media/"):
+                    values["media_path"] = item.media_path
                 for key, value in values.items(): setattr(item, key, value)
             else:
                 session.add(ContentItem(code=code, **values)); imported += 1

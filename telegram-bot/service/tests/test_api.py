@@ -44,6 +44,17 @@ def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
     assert "Цепочки" in client.get("/bot").text
 
 
+def test_admin_can_upload_media(tmp_path, monkeypatch):
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
+    monkeypatch.setattr(main_module.settings, "media_root", str(tmp_path))
+    client = TestClient(app)
+    response = client.post("/bot-api/media", files={"file": ("photo.jpg", b"jpeg-data", "image/jpeg")})
+    assert response.status_code == 200
+    assert response.json()["media_kind"] == "photo"
+    assert (tmp_path / response.json()["media_path"].split("/")[-1]).read_bytes() == b"jpeg-data"
+
+
 def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'api.sqlite'}")
     Base.metadata.create_all(engine)
@@ -68,6 +79,12 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
     assert contacts[0]["run_status"] == "waiting"
+    overview = client.get("/bot-api/map").json()
+    assert overview["level"] == "overview"
+    assert any(node["id"] == "route:main_start" for node in overview["nodes"])
+    detail = client.get("/bot-api/map?sequence_code=prepurchase_masterclass").json()
+    assert detail["level"] == "sequence"
+    assert any(edge["branch"] == "true" for edge in detail["edges"])
     crm_user_id = "11111111-1111-1111-1111-111111111111"
     with Session(engine) as session:
         contact = session.scalar(select(Contact))
@@ -89,4 +106,5 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     stats = client.get("/bot-api/tracking-links").json()
     assert stats[0]["clicks"] == 1
     assert stats[0]["starts"] == 0
+    assert "YouTube" in client.get("/bot-api/tracking-platforms").json()
     app.dependency_overrides.clear()

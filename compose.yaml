@@ -73,6 +73,7 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       SCHEDULER_ENABLED: "true"
       AUTO_CREATE_SCHEMA: "false"
+      MEDIA_ROOT: "/app/media"
     expose:
       - "8001"
     volumes:

@@ -11,7 +11,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, Response, UploadFile
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy import delete, func, select, text
@@ -32,6 +32,14 @@ security = HTTPBasic(auto_error=False)
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 ADMIN_COOKIE = "edabalans_bot_admin"
 ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 7
+MEDIA_TYPES = {
+    "image/jpeg": ("photo", ".jpg"),
+    "image/png": ("photo", ".png"),
+    "image/webp": ("photo", ".webp"),
+    "video/mp4": ("video", ".mp4"),
+    "audio/mpeg": ("voice", ".mp3"),
+    "audio/ogg": ("voice", ".ogg"),
+}
 
 
 def client() -> TelegramClient:
@@ -327,7 +335,7 @@ def list_sequences(session: Session = Depends(get_db)) -> list[dict]:
         .group_by(Sequence.id, SequenceVersion.id)
         .order_by(Sequence.name)
     ).all()
-    return [{"code": seq.code, "name": seq.name, "status": seq.status, "version": ver.version_no, "version_status": ver.status, "steps": count} for seq, ver, count in rows]
+    return [{"code": seq.code, "name": seq.name, "description": seq.description, "status": seq.status, "version": ver.version_no, "version_status": ver.status, "steps": count} for seq, ver, count in rows]
 
 
 @app.get("/bot-api/map", dependencies=[Depends(require_admin)])
@@ -345,7 +353,23 @@ def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
     query = select(ContentItem).order_by(ContentItem.title)
     if q:
         query = query.where(ContentItem.title.ilike(f"%{q}%") | ContentItem.body_source.ilike(f"%{q}%"))
-    return [{"id":i.id,"code":i.code,"title":i.title,"body_source":i.body_source,"media_kind":i.media_kind,"labels":i.labels,"origin_system":i.origin_system,"origin_scenario_name":i.origin_scenario_name} for i in session.scalars(query.limit(500))]
+    return [{"id":i.id,"code":i.code,"title":i.title,"body_source":i.body_source,"media_kind":i.media_kind,"media_path":i.media_path,"labels":i.labels,"origin_system":i.origin_system,"origin_scenario_name":i.origin_scenario_name} for i in session.scalars(query.limit(2000))]
+
+
+def _sequence_rule(code: str) -> dict:
+    if code == PREPURCHASE_CODE:
+        return {
+            "start": "Сейчас запускается после /start. Для старой базы будет отдельный массовый запуск по признаку «ещё не получал новую цепочку».",
+            "stop": "Останавливается сразу после появления подтверждённой покупки мастер-класса.",
+            "next": "После покупки пользователь переходит в цепочку «После покупки мастер-класса».",
+        }
+    if code == "postpurchase_masterclass":
+        return {
+            "start": "Запускается после подтверждения покупки мастер-класса.",
+            "stop": "Завершается после прохождения всех сообщений или при ручной остановке.",
+            "next": "Внутри будут допродажи рецептов, калорий и консультации.",
+        }
+    return {"start": "Запускается по настроенному событию.", "stop": "Завершается последним блоком.", "next": "Дальнейший переход не настроен."}
 
 
 @app.get("/bot-api/sequences/{sequence_code}", dependencies=[Depends(require_admin)])
@@ -355,7 +379,7 @@ def sequence_detail(sequence_code: str, session: Session = Depends(get_db)) -> d
         raise HTTPException(404, "Sequence not found")
     version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == seq.id).order_by(SequenceVersion.version_no.desc()))
     rows = session.execute(select(SequenceStep, ContentItem).outerjoin(ContentItem, ContentItem.id == SequenceStep.content_item_id).where(SequenceStep.sequence_version_id == version.id).order_by(SequenceStep.position)).all()
-    return {"code":seq.code,"name":seq.name,"status":seq.status,"version":version.version_no,"steps":[{"id":step.id,"key":step.step_key,"position":step.position,"kind":step.kind,"label":step.label,"delay_seconds":step.delay_seconds,"enabled":step.enabled,"configuration":step.configuration,"content":{"id":content.id,"code":content.code,"title":content.title,"body_source":content.body_source,"media_kind":content.media_kind,"labels":content.labels} if content else None} for step,content in rows]}
+    return {"code":seq.code,"name":seq.name,"description":seq.description,"status":seq.status,"version":version.version_no,"rule":_sequence_rule(seq.code),"steps":[{"id":step.id,"key":step.step_key,"position":step.position,"kind":step.kind,"label":step.label,"delay_seconds":step.delay_seconds,"enabled":step.enabled,"configuration":step.configuration,"content":{"id":content.id,"code":content.code,"title":content.title,"body_source":content.body_source,"media_kind":content.media_kind,"media_path":content.media_path,"labels":content.labels} if content else None} for step,content in rows]}
 
 
 @app.patch("/bot-api/content/{content_id}", dependencies=[Depends(require_admin)])
@@ -366,7 +390,23 @@ def update_content(content_id: str, body: ContentUpdateIn, session: Session = De
     for field, value in body.model_dump(exclude_unset=True).items():
         setattr(item, field, value)
     session.commit()
-    return {"id":item.id,"title":item.title,"body_source":item.body_source,"labels":item.labels}
+    return {"id":item.id,"title":item.title,"body_source":item.body_source,"labels":item.labels,"media_kind":item.media_kind,"media_path":item.media_path}
+
+
+@app.post("/bot-api/media", dependencies=[Depends(require_admin)])
+async def upload_media(file: UploadFile = File(...)) -> dict:
+    media = MEDIA_TYPES.get(file.content_type or "")
+    if not media:
+        raise HTTPException(415, "Поддерживаются JPG, PNG, WEBP, MP4, MP3 и OGG")
+    data = await file.read(50 * 1024 * 1024 + 1)
+    if len(data) > 50 * 1024 * 1024:
+        raise HTTPException(413, "Файл больше 50 МБ")
+    media_kind, suffix = media
+    media_root = Path(settings.media_root)
+    media_root.mkdir(parents=True, exist_ok=True)
+    destination = media_root / f"admin-{secrets.token_hex(12)}{suffix}"
+    destination.write_bytes(data)
+    return {"media_kind": media_kind, "media_path": str(destination), "filename": file.filename}
 
 
 @app.patch("/bot-api/steps/{step_id}", dependencies=[Depends(require_admin)])
@@ -396,7 +436,8 @@ def list_contacts(session: Session = Depends(get_db)) -> list[dict]:
     for contact in contacts:
         run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id).order_by(SequenceRun.started_at.desc()))
         sent = session.scalar(select(func.count(StepDelivery.id)).where(StepDelivery.run_id == run.id, StepDelivery.status == "sent")) if run else 0
-        result.append({"id":contact.id,"telegram_user_id":contact.telegram_user_id,"username":contact.username,"name":" ".join(filter(None,[contact.first_name,contact.last_name])),"status":contact.status,"run_status":run.status if run else None,"current_step":run.current_step_key if run else None,"next_action_at":run.next_action_at if run else None,"sent":sent,"time_scale":run.time_scale if run else None,"error":run.last_error if run else None})
+        total = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE", "VIDEO", "VOICE", "PHOTO"]))) if run else 0
+        result.append({"id":contact.id,"telegram_user_id":contact.telegram_user_id,"username":contact.username,"name":" ".join(filter(None,[contact.first_name,contact.last_name])),"status":contact.status,"run_status":run.status if run else None,"current_step":run.current_step_key if run else None,"next_action_at":run.next_action_at if run else None,"sent":sent,"total":total,"time_scale":run.time_scale if run else None,"error":run.last_error if run else None,"last_seen_at":contact.last_seen_at,"created_at":contact.created_at})
     return result
 
 
@@ -476,8 +517,18 @@ def tracking_stats(session: Session = Depends(get_db)) -> list[dict]:
     for link, _ in rows:
         clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "click")) or 0
         starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "start")) or 0
-        result.append({"id":link.id,"token":link.token,"platform":link.platform,"placement":link.placement,"campaign":link.campaign,"clicks":clicks,"starts":starts})
+        unique_starts = session.scalar(select(func.count(func.distinct(TrackingEvent.contact_id))).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "start", TrackingEvent.contact_id.is_not(None))) or 0
+        conversion = round((unique_starts / clicks * 100), 1) if clicks else 0
+        base = settings.telegram_public_base_url.rstrip("/")
+        result.append({"id":link.id,"token":link.token,"platform":link.platform,"placement":link.placement,"campaign":link.campaign,"clicks":clicks,"starts":starts,"unique_starts":unique_starts,"conversion":conversion,"created_at":link.created_at,"url":f"{base}/r/{link.token}" if base else f"https://t.me/{settings.telegram_test_bot_username.lstrip('@')}?start={link.token}"})
     return result
+
+
+@app.get("/bot-api/tracking-platforms", dependencies=[Depends(require_admin)])
+def tracking_platforms(session: Session = Depends(get_db)) -> list[str]:
+    defaults = ["YouTube", "Пикабу", "Яндекс Директ", "Telegram", "ВКонтакте", "Сайт", "Email"]
+    existing = [value for value in session.scalars(select(TrackingLink.platform).distinct().order_by(TrackingLink.platform)) if value]
+    return list(dict.fromkeys([*defaults, *existing]))
 
 
 @app.post("/bot-api/broadcasts", dependencies=[Depends(require_admin)])
@@ -485,7 +536,7 @@ def create_broadcast(body: BroadcastIn, admin: str = Depends(require_admin), ses
     scheduled_at = datetime.fromisoformat(body.scheduled_at.replace("Z", "+00:00")) if body.scheduled_at else None
     if scheduled_at and scheduled_at.tzinfo is None:
         scheduled_at = scheduled_at.replace(tzinfo=UTC)
-    content = ContentItem(code=f"broadcast_{secrets.token_hex(6)}", title=body.title, body_source=body.text, labels=["разовая рассылка"], status="ready", origin_system="admin")
+    content = ContentItem(code=f"broadcast_{secrets.token_hex(6)}", title=body.title, body_source=body.text, media_kind=body.media_kind, media_path=body.media_path, labels=["разовая рассылка"], status="ready", origin_system="admin")
     session.add(content); session.flush()
     row = Broadcast(title=body.title, content_item_id=content.id, segment=body.segment, scheduled_at=scheduled_at, status="scheduled" if scheduled_at else "draft", created_by=admin)
     session.add(row); session.commit()
@@ -505,5 +556,5 @@ def launch_broadcast(broadcast_id: str, session: Session = Depends(get_db)) -> d
 
 @app.get("/bot-api/broadcasts", dependencies=[Depends(require_admin)])
 def list_broadcasts(session: Session = Depends(get_db)) -> list[dict]:
-    rows = session.execute(select(Broadcast, func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "sent"), func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "failed")).outerjoin(BroadcastRecipient, BroadcastRecipient.broadcast_id == Broadcast.id).group_by(Broadcast.id).order_by(Broadcast.created_at.desc())).all()
-    return [{"id":row.id,"title":row.title,"status":row.status,"scheduled_at":row.scheduled_at,"sent":sent,"failed":failed} for row,sent,failed in rows]
+    rows = session.execute(select(Broadcast, ContentItem, func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "sent"), func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "failed")).join(ContentItem, ContentItem.id == Broadcast.content_item_id).outerjoin(BroadcastRecipient, BroadcastRecipient.broadcast_id == Broadcast.id).group_by(Broadcast.id, ContentItem.id).order_by(Broadcast.created_at.desc())).all()
+    return [{"id":row.id,"title":row.title,"status":row.status,"scheduled_at":row.scheduled_at,"sent":sent,"failed":failed,"text":content.body_source,"media_kind":content.media_kind,"media_path":content.media_path} for row,content,sent,failed in rows]
