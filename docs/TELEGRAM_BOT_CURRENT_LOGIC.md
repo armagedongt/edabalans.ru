@@ -12,13 +12,13 @@ alias, закрытый порт PostgreSQL, Telegram `getMe` через proxy �
 Этот файл описывает **как Telegram-бот работает сейчас по факту**. Он не описывает
 интерфейс админки и не является описанием желаемой будущей логики.
 
-Модуль 1 «Первичный вход и атрибуция лида» подробно описан в
-`knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md` и
-`knowledge-base/modules/telegram/LEAD_ENTRY_TECHNICAL_SPEC.md`. Остальная часть
-welcome, покупки, закрепа, подписки и интенсива остаётся в
-`knowledge-base/modules/telegram/START_WELCOME_ROUTING.md` и исходном полном
-`plans/TELEGRAM_START_LINKS_SPEC.md`; она реализуется следующим самостоятельным
-модулем.
+Канонические требования ко всему глобальному модулю «Старт и атрибуция» находятся
+в `knowledge-base/modules/telegram/START_WELCOME_ROUTING.md`; технические детали
+его ссылочного подмеханизма — в `LEAD_ENTRY_OWNER_REQUIREMENTS.md` и
+`LEAD_ENTRY_TECHNICAL_SPEC.md`. Граница следующего модуля зафиксирована в
+`knowledge-base/modules/telegram/WELCOME_INTENSIVE.md`. Каноническая схема может
+описывать утверждённое целевое поведение, а этот файл всегда отдельно отмечает,
+какая его часть уже исполняется production-кодом.
 
 ## 1. Где находится источник истины
 

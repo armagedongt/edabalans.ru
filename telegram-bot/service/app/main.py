@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, start_run
-from app.graph import overview_graph, sequence_graph
+from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import PREPURCHASE_CODE, seed_defaults
@@ -249,7 +249,7 @@ def bot_admin(request: Request, credentials: HTTPBasicCredentials | None = Depen
 
 @app.get("/bot/{asset_name}", include_in_schema=False)
 def bot_admin_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"app.js", "login.js", "styles.css"}:
+    if asset_name not in {"app.js", "login.js", "styles.css", "module-map.css"}:
         raise HTTPException(404)
     return FileResponse(STATIC_ROOT / asset_name)
 
@@ -419,13 +419,19 @@ def list_sequences(session: Session = Depends(get_db)) -> list[dict]:
 
 
 @app.get("/bot-api/map", dependencies=[Depends(require_admin)])
-def bot_map(sequence_code: str | None = None, version_status: str = "published", session: Session = Depends(get_db)) -> dict:
+def bot_map(sequence_code: str | None = None, module_code: str | None = None, version_status: str = "published", session: Session = Depends(get_db)) -> dict:
     if version_status not in {"published", "draft", ""}:
         raise HTTPException(422, "version_status must be published or draft")
+    if sequence_code and module_code:
+        raise HTTPException(422, "Choose either sequence_code or module_code")
     try:
-        return sequence_graph(session, sequence_code, version_status) if sequence_code else overview_graph(session, version_status)
+        if sequence_code:
+            return sequence_graph(session, sequence_code, version_status)
+        if module_code:
+            return module_graph(module_code)
+        return module_overview_graph(session)
     except LookupError:
-        raise HTTPException(404, "Sequence not found") from None
+        raise HTTPException(404, "Module or sequence not found") from None
 
 
 @app.get("/bot-api/content", dependencies=[Depends(require_admin)])

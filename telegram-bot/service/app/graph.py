@@ -37,6 +37,90 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
     },
 }
 
+GLOBAL_MODULES: tuple[dict[str, str], ...] = (
+    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Требования утверждены · исполнение частичное"},
+    {"code": "welcome_intensive", "name": "Welcome и первая часть интенсива", "status": "Следующий в разработке"},
+    {"code": "prepurchase_nurture", "name": "Польза и продажи до покупки", "status": "Каркас и частичный контент"},
+    {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
+    {"code": "broadcasts", "name": "Разовые рассылки", "status": "Базовая механика"},
+    {"code": "direct_support", "name": "Личные сообщения клиентам", "status": "Базовая механика"},
+    {"code": "lottery", "name": "Лотерея", "status": "Запланировано"},
+    {"code": "quiz", "name": "Тесты и опросы", "status": "Запланировано"},
+)
+
+
+def module_overview_graph(_: Session) -> dict[str, Any]:
+    nodes = [{
+        "id": f"module:{module['code']}", "kind": "module", "label": module["name"],
+        "subtitle": module["status"], "module_code": module["code"],
+        "details": {"Код": module["code"], "Статус": module["status"], "Канон": "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md"},
+    } for module in GLOBAL_MODULES]
+    edges = [
+        {"id": "modules:start-welcome", "source": "module:start_attribution", "target": "module:welcome_intensive", "label": "Запустить Welcome", "branch": "default"},
+        {"id": "modules:welcome-prepurchase", "source": "module:welcome_intensive", "target": "module:prepurchase_nurture", "label": "Завершён без покупки", "branch": "false"},
+        {"id": "modules:welcome-postpurchase", "source": "module:welcome_intensive", "target": "module:postpurchase_masterclass", "label": "Мастер-класс куплен", "branch": "true"},
+        {"id": "modules:prepurchase-postpurchase", "source": "module:prepurchase_nurture", "target": "module:postpurchase_masterclass", "label": "Мастер-класс куплен", "branch": "true"},
+    ]
+    return {"level": "overview", "title": "Глобальные модули Telegram-бота", "description": "Каждый модуль раскрывается в отдельную согласованную блок-схему входов, условий и выходов.", "nodes": nodes, "edges": edges, "issues": []}
+
+
+def start_attribution_graph() -> dict[str, Any]:
+    def node(node_id: str, kind: str, label: str, subtitle: str, position: int, **details: Any) -> dict[str, Any]:
+        return {"id": node_id, "kind": kind, "label": label, "subtitle": subtitle, "position": position, "details": details}
+
+    nodes = [
+        node("entry_rule", "entry", "Создать/импортировать правило", "Админка ссылок", 1, Канон="LEAD_ENTRY_OWNER_REQUIREMENTS.md"),
+        node("entry_link", "entry", "Открыта bot/go/legacy/invite ссылка", "Обычный вход", 2, Источники="t.me, go., LeadTeh UUID, channel invite"),
+        node("entry_buyer", "entry", "Специальная ссылка покупателя", "Одноразовый CRM token", 3, Статус="Ещё не реализовано"),
+        node("telegram_start", "entry", "Нажата кнопка Start", "Telegram /start", 4, Исполнение="app/main.py:process_update"),
+        node("identity", "technical", "Найти contact и CRM user", "Идентификация", 5, Хранение="tg_contacts / messenger_accounts"),
+        node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 6, Хранение="tg_tracking_* / attribution_events / user_tags"),
+        node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Другая покупка не считается", 7, Статус="Проверка в Start ещё не подключена"),
+        node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "tpl_start_has_masterclass", 8, Контент="tg_content_items"),
+        node("exit_buyer", "module_exit", "Стоп", "Ничего нового не запускать", 9, Результат="Существующие post-purchase процессы не меняются"),
+        node("first_visit", "condition", "Первое посещение бота?", "main_scenario_seen_at", 10, Хранение="messenger_accounts"),
+        node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 11, Хранение="tg_step_deliveries"),
+        node("send_complete", "message", "Отправить навигацию по интенсиву", "tpl_start_intensive_complete", 12, Контент="tg_content_items"),
+        node("exit_complete", "module_exit", "Стоп", "Интенсив не перезапускать", 13, Результат="Текущие другие цепочки не меняются"),
+        node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 14, Хранение="tg_sequence_runs"),
+        node("send_waiting", "message", "Сообщить время следующего материала", "tpl_start_intensive_waiting", 15, Источник_времени="tg_sequence_runs.next_action_at"),
+        node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 16, Запрещено="Не менять current_step_key и next_action_at"),
+        node("welcome_ever_started", "condition", "Welcome когда-либо запускался?", "Run или согласованный legacy-признак", 17, Нерешено="Точный legacy-признак"),
+        node("exit_welcome", "module_exit", "Перейти в модуль Welcome", "Запустить Welcome и первую часть интенсива", 18, Следующий_модуль="welcome_intensive"),
+        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 19, Причина="Welcome был, но run нет и День 4 не отправлен"),
+    ]
+    edges = [
+        {"id": "e01", "source": "entry_rule", "target": "entry_link", "label": "Опубликовать", "branch": "default"},
+        {"id": "e02", "source": "entry_link", "target": "telegram_start", "label": "Открыть бот", "branch": "default"},
+        {"id": "e03", "source": "telegram_start", "target": "identity", "label": "Update", "branch": "default"},
+        {"id": "e04", "source": "entry_buyer", "target": "identity", "label": "Связать с CRM", "branch": "default"},
+        {"id": "e05", "source": "identity", "target": "attribution", "label": "Далее", "branch": "default"},
+        {"id": "e06", "source": "attribution", "target": "has_masterclass", "label": "Далее", "branch": "default"},
+        {"id": "e07", "source": "has_masterclass", "target": "send_buyer", "label": "Да", "branch": "true"},
+        {"id": "e08", "source": "send_buyer", "target": "exit_buyer", "label": "Отправлено", "branch": "default"},
+        {"id": "e09", "source": "has_masterclass", "target": "first_visit", "label": "Нет", "branch": "false"},
+        {"id": "e10", "source": "first_visit", "target": "exit_welcome", "label": "Да", "branch": "true"},
+        {"id": "e11", "source": "first_visit", "target": "day_four_sent", "label": "Нет", "branch": "false"},
+        {"id": "e12", "source": "day_four_sent", "target": "send_complete", "label": "Да", "branch": "true"},
+        {"id": "e13", "source": "send_complete", "target": "exit_complete", "label": "Отправлено", "branch": "default"},
+        {"id": "e14", "source": "day_four_sent", "target": "welcome_run_active", "label": "Нет", "branch": "false"},
+        {"id": "e15", "source": "welcome_run_active", "target": "send_waiting", "label": "Да", "branch": "true"},
+        {"id": "e16", "source": "send_waiting", "target": "exit_waiting", "label": "Отправлено", "branch": "default"},
+        {"id": "e17", "source": "welcome_run_active", "target": "welcome_ever_started", "label": "Нет", "branch": "false"},
+        {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
+        {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
+    ]
+    return {"level": "module", "module_code": "start_attribution", "title": "Старт и атрибуция", "status": "Требования утверждены · исполнение частичное", "description": "Целевой канон; неподключённые ветки явно отмечены в карточках.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "partial_implementation", "message": "Проверка покупки, полная повторная развилка и специальная ссылка покупателя ещё не исполняются целиком."}]}
+
+
+def module_graph(module_code: str) -> dict[str, Any]:
+    if module_code == "start_attribution":
+        return start_attribution_graph()
+    module = next((item for item in GLOBAL_MODULES if item["code"] == module_code), None)
+    if not module:
+        raise LookupError(module_code)
+    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Подробная схема появится после фиксации и утверждения требований.", "nodes": [{"id": "module_draft", "kind": "module", "label": module["name"], "subtitle": module["status"], "details": {"Статус": module["status"], "Канон": "MODULE_REGISTRY.md"}}], "edges": [], "issues": [{"severity": "warning", "code": "module_not_designed", "message": "Подробная схема этого модуля ещё не утверждена."}]}
+
 
 def component_for_step(step: SequenceStep) -> str | None:
     config = step.configuration or {}

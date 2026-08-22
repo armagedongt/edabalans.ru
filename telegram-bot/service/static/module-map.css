@@ -1,0 +1,19 @@
+.graph-node.entry rect { fill: #e2efff; stroke: #4e82c2; }
+.graph-node.entry text,
+.graph-node.entry .node-sub { fill: #17375e; }
+.graph-node.technical rect,
+.graph-node.system rect { fill: #f0f1ef; stroke: #969d97; }
+.graph-node.module rect { fill: #eef6e8; stroke: #6f986f; }
+.graph-node.condition rect { fill: #fff3d5; stroke: #cf9f31; }
+.graph-node.module_exit rect { fill: #e1f4e3; stroke: #3e8a53; }
+.graph-node.error rect,
+.graph-node.stop rect { fill: #fbe6e3; stroke: #bd6558; }
+.map-module-status {
+  display: inline-block;
+  margin-top: 7px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #fff3d5;
+  color: #795a16;
+  font-size: 11px;
+}

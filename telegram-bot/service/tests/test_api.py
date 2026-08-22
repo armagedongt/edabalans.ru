@@ -88,7 +88,14 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
-    assert any(node["id"] == "route:main_start" for node in overview["nodes"])
+    assert any(node["id"] == "module:start_attribution" for node in overview["nodes"])
+    module = client.get("/bot-api/map?module_code=start_attribution").json()
+    assert module["level"] == "module"
+    assert any(node["id"] == "exit_welcome" and node["kind"] == "module_exit" for node in module["nodes"])
+    assert any(node["id"] == "exit_error" and node["kind"] == "error" for node in module["nodes"])
+    assert any(edge["source"] == "welcome_run_active" and edge["target"] == "welcome_ever_started" and edge["branch"] == "false" for edge in module["edges"])
+    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_welcome" and edge["branch"] == "false" for edge in module["edges"])
+    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
     detail = client.get("/bot-api/map?sequence_code=prepurchase_masterclass").json()
     assert detail["level"] == "sequence"
     assert any(edge["branch"] == "true" for edge in detail["edges"])
