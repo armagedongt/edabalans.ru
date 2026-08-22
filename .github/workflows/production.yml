@@ -40,7 +40,7 @@ jobs:
             sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
 
       - name: Build Telegram service
-        run: docker build --tag edabalans-telegram-test ./telegram-bot
+        run: docker build --file ./telegram-bot/service/Dockerfile --tag edabalans-telegram-test ./telegram-bot
 
       - name: Run Telegram service tests
         run: |
