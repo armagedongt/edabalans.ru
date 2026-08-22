@@ -36,10 +36,10 @@ def test_tilda_origin_is_allowed_for_api_preflight() -> None:
     response = client.options(
         "/api/apps/metabolism",
         headers={
-            "Origin": "https://похудение-это-есть.рф",
+            "Origin": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
             "Access-Control-Request-Method": "PUT",
             "Access-Control-Request-Headers": "content-type",
         },
     )
     assert response.status_code == 200
-    assert response.headers["access-control-allow-origin"] == "https://похудение-это-есть.рф"
+    assert response.headers["access-control-allow-origin"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
