@@ -6,13 +6,17 @@
 существующий FastAPI backend и не добавляет миграции в общую CRM. Такой разрез
 позволяет не конфликтовать с параллельной разработкой CRM.
 
-В текущем этапе работают только локальные компоненты:
+Локальный архив по-прежнему отделён от production-компонентов:
 
 1. `leadteh-export/data/leadteh_archive.sqlite` — неизменяемый источник.
 2. `prototype/import_legacy.py` — повторяемый импорт.
 3. `telegram-bot/runtime/catalog.sqlite` — локальный производный каталог.
 4. `prototype/server.py` — локальный read/write-прототип без авторизации.
 5. `prototype/static/` — визуальная проверка библиотеки и цепочки.
+
+Исполняемый контур находится в `service/`: FastAPI webhook, scheduler, Telegram
+adapter, административный API и UI. В общей PostgreSQL он создаёт только таблицы
+с префиксом `tg_`; `tg_contacts.user_id` ссылается на центральный `users.id`.
 
 ## Целевая архитектура
 

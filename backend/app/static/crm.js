@@ -284,6 +284,8 @@
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await api(`/admin/api/users/${id}`);
+    let botState = null;
+    try { botState = await api(`/bot-api/users/${id}`); } catch (_) { /* Telegram may not be connected yet. */ }
     const primaryEmail = user.emails[0] && user.emails[0].email;
     const telegram = user.messengers.find((item) => item.platform === "telegram");
     const firstSource = user.attribution.find((item) => item.source || item.utm_source || item.utm_campaign);
@@ -317,6 +319,12 @@
           <section class="crm-card"><div class="crm-card-title">Доступы</div><div class="crm-tags">${accessTags(user.accesses.filter((item) => !item.revoked_at).map((item) => item.code))}</div></section>
         </div>
         <div>
+          <section class="crm-card"><div class="crm-card-title">Telegram-рассылка <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключён"}</span></div>
+            ${botState ? `<div class="crm-row-meta">Шаг: ${esc(botState.current_step || "—")} · отправлено ${botState.sent} из ${botState.total}</div>
+              <div style="height:8px;background:#edf1ea;border-radius:8px;overflow:hidden;margin:10px 0"><div style="height:100%;width:${botState.total ? Math.min(100, botState.sent / botState.total * 100) : 0}%;background:#2f6b47"></div></div>
+              ${botState.error ? `<div class="crm-row-meta" style="color:#a24b38">${esc(botState.error)}</div>` : ""}
+              <form class="crm-form" id="telegram-message-form"><textarea class="crm-textarea" id="telegram-message" placeholder="Написать этому клиенту в Telegram"></textarea><button class="crm-btn small" type="submit">Отправить сообщение</button></form>` : '<div class="crm-row-meta">У клиента пока нет связанного аккаунта тестового Telegram-бота.</div>'}
+          </section>
           <section class="crm-card"><div class="crm-card-title">Источник</div>
             <div class="crm-source"><div class="crm-k">ПЕРВЫЙ ИЗВЕСТНЫЙ</div><strong>${esc((firstSource && (firstSource.source || firstSource.utm_source)) || "Не указан")}</strong>
             <div class="crm-row-meta">${esc((firstSource && firstSource.utm_campaign) || "")}</div></div>
@@ -350,6 +358,15 @@
       if (!body) return;
       await api(`/admin/api/users/${id}/notes`, { method: "POST", body: JSON.stringify({ body }) });
       await openUser(id);
+    });
+    const telegramForm = document.getElementById("telegram-message-form");
+    if (telegramForm) telegramForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = document.getElementById("telegram-message").value.trim();
+      if (!text) return;
+      await api(`/bot-api/users/${id}/messages`, { method: "POST", body: JSON.stringify({ text }) });
+      document.getElementById("telegram-message").value = "";
+      event.submitter.textContent = "Отправлено";
     });
   }
 

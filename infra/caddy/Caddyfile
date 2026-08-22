@@ -14,7 +14,21 @@
 		-Server
 	}
 
-	reverse_proxy backend:8000
+	handle /telegram/webhook {
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /r/* {
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /bot* {
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle {
+		reverse_proxy backend:8000
+	}
 
 	log {
 		output stdout

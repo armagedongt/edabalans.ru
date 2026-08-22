@@ -20,6 +20,8 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+      telegram-bot:
+        condition: service_healthy
       nocodb:
         condition: service_healthy
     networks:
@@ -46,6 +48,42 @@ services:
         - python
         - -c
         - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=2)"
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - edge
+      - database
+
+  telegram-bot:
+    build:
+      context: ./telegram-bot
+      dockerfile: service/Dockerfile
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: "${DATABASE_URL}"
+      TELEGRAM_TEST_BOT_USERNAME: "${TELEGRAM_TEST_BOT_USERNAME}"
+      TELEGRAM_TEST_BOT_TOKEN: "${TELEGRAM_TEST_BOT_TOKEN}"
+      TELEGRAM_WEBHOOK_SECRET: "${TELEGRAM_WEBHOOK_SECRET}"
+      TELEGRAM_PUBLIC_BASE_URL: "https://${API_DOMAIN}"
+      ADMIN_USERNAME: "${ADMIN_USERNAME}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      SCHEDULER_ENABLED: "true"
+      AUTO_CREATE_SCHEMA: "false"
+    expose:
+      - "8001"
+    volumes:
+      - ./telegram-bot/runtime/media:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8001/health', timeout=2)"
       interval: 15s
       timeout: 5s
       retries: 5

@@ -1,0 +1,2 @@
+"""Isolated Telegram messaging service."""
+

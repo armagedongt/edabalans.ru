@@ -39,6 +39,19 @@ jobs:
             edabalans-backend-test \
             sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
 
+      - name: Build Telegram service
+        run: docker build --tag edabalans-telegram-test ./telegram-bot
+
+      - name: Run Telegram service tests
+        run: |
+          docker run --rm \
+            --user root \
+            --env PYTHONPATH=/app \
+            --volume "$PWD/telegram-bot/service/tests:/app/tests:ro" \
+            --volume "$PWD/telegram-bot/service/requirements-dev.txt:/app/requirements-dev.txt:ro" \
+            edabalans-telegram-test \
+            sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
+
       - name: Block automatic database migrations
         shell: bash
         run: |

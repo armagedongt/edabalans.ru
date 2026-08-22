@@ -23,6 +23,7 @@ docker compose ps
 curl -fsS https://api.edabalans.ru/health
 curl -fsS https://api.edabalans.ru/ready
 curl -fsS https://data.edabalans.ru/api/v1/health
+curl -fsS https://api.edabalans.ru/bot
 ufw status
 systemctl status edabalans-backup.timer
 ```
@@ -99,3 +100,16 @@ GitHub не получает SSH-ключ или иной доступ к VM. С
 Если коммит содержит новую миграцию PostgreSQL, автоматическая публикация блокируется.
 Такие изменения сначала проверяются отдельно и выпускаются вручную после объяснения
 последствий владельцу.
+
+## Тестовый Telegram-бот
+
+Контейнер `telegram-bot` доступен снаружи только через Caddy. Публичны маршруты
+`/telegram/webhook`, `/bot` и `/bot-api/*`; PostgreSQL по-прежнему не публикуется.
+Админка использует тот же Basic Auth, что CRM.
+
+Проверка webhook без вывода токена:
+
+```bash
+docker compose ps telegram-bot
+docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
+```
