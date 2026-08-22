@@ -22,6 +22,7 @@
 | Следующие версии Telegram-бота | `TELEGRAM_NEXT_VERSIONS.md` | `planned` |
 | Ссылки, корневой `/start`, welcome и первая версия интенсива | `TELEGRAM_START_LINKS_SPEC.md` | `approved_draft` |
 | Атрибуция пути «ссылка → канал → бот» | `TELEGRAM_CHANNEL_ATTRIBUTION_SPEC.md` | `approved_draft` |
+| Переходы с канала на сайт и связь с покупкой | `WEBSITE_CLICK_PURCHASE_ATTRIBUTION.md` | `planned` |
 | Продукты и офферы | `PRODUCTS_AND_OFFERS.md` | `planned` |
 | Долгосрочное развитие платформы | `PLATFORM_LONG_TERM.md` | `planned` |
 | Аудит найденных планов по репозиторию | `PLAN_SOURCES_AUDIT.md` | `current` |
