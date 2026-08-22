@@ -237,15 +237,93 @@ def attribution_from_url(url: str) -> dict[str, str | None]:
     }
 
 
+def validate_checkout(
+    checkout: OfferCheckout,
+    user: User | None,
+    amount: Decimal,
+    event_at: datetime,
+    *,
+    existing_payment: Payment | None = None,
+) -> None:
+    checkout_expires = checkout.expires_at
+    if checkout_expires.tzinfo is None:
+        checkout_expires = checkout_expires.replace(tzinfo=timezone.utc)
+    is_linked_payment = (
+        existing_payment is not None and checkout.payment_id == existing_payment.id
+    )
+    if not is_linked_payment and (
+        checkout.status != "pending"
+        or checkout_expires < event_at.astimezone(timezone.utc)
+    ):
+        raise TildaPayloadError("offer checkout is expired or already used")
+    if not user or str(user.id) != str(checkout.user_id):
+        raise TildaPayloadError("offer checkout belongs to another email")
+    if amount != checkout.amount:
+        raise TildaPayloadError("offer checkout price does not match")
+
+
+def grant_payment_access(
+    db: Session,
+    payment: Payment,
+    checkout: OfferCheckout | None,
+    occurred_at: datetime,
+) -> bool:
+    if payment.user_id is None or payment.payment_status != "paid":
+        return False
+
+    resource_sources: list[tuple[Any, str]] = []
+    if checkout is not None:
+        resource_codes = [
+            OFFER_RESOURCES[item]
+            for item in checkout.items
+            if item in OFFER_RESOURCES
+        ]
+        resources = {
+            row.code: row
+            for row in db.scalars(
+                select(Resource).where(Resource.code.in_(resource_codes))
+            )
+        }
+        if set(resource_codes) - set(resources):
+            raise TildaPayloadError("offer resources are not configured")
+        resource_sources = [
+            (resources[code].id, "paid_offer_checkout") for code in resource_codes
+        ]
+    elif payment.product_id is not None:
+        resource_sources = [
+            (rule.resource_id, "paid_product_rule")
+            for rule in active_access_rules(db, payment.product_id, occurred_at)
+        ]
+
+    access_granted = False
+    for resource_id, source in resource_sources:
+        already_granted = db.scalar(
+            select(UserAccess.id).where(
+                UserAccess.user_id == payment.user_id,
+                UserAccess.resource_id == resource_id,
+                UserAccess.source_payment_id == payment.id,
+            )
+        )
+        if already_granted is not None:
+            continue
+        db.add(
+            UserAccess(
+                user_id=payment.user_id,
+                resource_id=resource_id,
+                source_payment_id=payment.id,
+                source=source,
+                granted_at=occurred_at,
+            )
+        )
+        access_granted = True
+    return access_granted
+
+
 def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str]:
     external_order_id = first(payload, "orderid", "order_id") or None
     external_payment_id = first(payload, "paymentid", "payment_id") or None
     if not external_order_id and not external_payment_id:
         raise TildaPayloadError("orderid or paymentid is required")
-
-    existing = find_existing_payment(db, external_order_id, external_payment_id)
-    if existing is not None:
-        return {"status": "duplicate", "payment_id": str(existing.id)}
 
     raw_product = first(payload, "products", "Products", "product")
     if not raw_product:
@@ -265,16 +343,88 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     if checkout_match:
         if checkout is None:
             raise TildaPayloadError("offer checkout is unknown")
-        checkout_expires = checkout.expires_at
-        if checkout_expires.tzinfo is None:
-            checkout_expires = checkout_expires.replace(tzinfo=timezone.utc)
-        if checkout.status != "pending" or checkout_expires < event_at.astimezone(timezone.utc):
-            raise TildaPayloadError("offer checkout is expired or already used")
-        if not user or str(user.id) != str(checkout.user_id):
-            raise TildaPayloadError("offer checkout belongs to another email")
-        if amount != checkout.amount:
-            raise TildaPayloadError("offer checkout price does not match")
     referer = first(payload, "referer", "Referer")
+
+    existing = find_existing_payment(db, external_order_id, external_payment_id)
+    if existing is not None:
+        if payment_status != "paid" or existing.payment_status == "paid":
+            db.rollback()
+            return {"status": "duplicate", "payment_id": str(existing.id)}
+        if (
+            existing.external_order_id
+            and external_order_id
+            and existing.external_order_id != external_order_id
+        ) or (
+            existing.external_payment_id
+            and external_payment_id
+            and existing.external_payment_id != external_payment_id
+        ):
+            raise TildaPayloadError("payment update identifiers do not match")
+        if existing.product_name_raw != raw_product or existing.amount != amount:
+            raise TildaPayloadError("payment update does not match the original order")
+        if user is None and existing.user_id is not None:
+            user = db.get(User, existing.user_id)
+        if user is not None and existing.user_id is not None and user.id != existing.user_id:
+            raise TildaPayloadError("payment update belongs to another email")
+        linked_checkout = db.scalar(
+            select(OfferCheckout).where(OfferCheckout.payment_id == existing.id)
+        )
+        if (
+            checkout is not None
+            and linked_checkout is not None
+            and checkout.id != linked_checkout.id
+        ):
+            raise TildaPayloadError("payment update belongs to another offer checkout")
+        checkout = checkout or linked_checkout
+        if checkout is not None:
+            validate_checkout(
+                checkout,
+                user,
+                amount,
+                event_at,
+                existing_payment=existing,
+            )
+
+        existing.user_id = existing.user_id or (user.id if user else None)
+        existing.product_id = existing.product_id or (product.id if product else None)
+        existing.external_order_id = existing.external_order_id or external_order_id
+        existing.external_payment_id = (
+            existing.external_payment_id or external_payment_id
+        )
+        existing.payment_status = "paid"
+        existing.paid_at = event_at
+        existing.paid_at_is_estimated = True
+        existing.source_event_at = event_at
+        existing.raw_payload = payload
+        existing.external_request_id = (
+            first(payload, "requestid", "tranid") or existing.external_request_id
+        )
+        if checkout is not None:
+            checkout.status = "paid"
+        access_granted = grant_payment_access(db, existing, checkout, event_at)
+        if existing.user_id is not None and referer:
+            db.add(
+                AttributionEvent(
+                    user_id=existing.user_id,
+                    event_type="tilda_paid_order",
+                    landing_url=referer,
+                    occurred_at=event_at,
+                    **attribution_from_url(referer),
+                )
+            )
+        try:
+            db.commit()
+        except IntegrityError:
+            db.rollback()
+            return {"status": "duplicate", "payment_id": str(existing.id)}
+        return {
+            "status": "updated_to_paid",
+            "payment_id": str(existing.id),
+            "access": "granted" if access_granted else "not_granted",
+        }
+
+    if checkout is not None:
+        validate_checkout(checkout, user, amount, event_at)
 
     payment = Payment(
         user_id=user.id if user else None,
@@ -309,7 +459,7 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         checkout.payment_id = payment.id
         checkout.status = "paid" if payment_status == "paid" else payment_status
 
-    if user and referer:
+    if user and referer and payment_status == "paid":
         db.add(
             AttributionEvent(
                 user_id=user.id,
@@ -320,27 +470,7 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
             )
         )
 
-    access_granted = False
-    if user and checkout and payment_status == "paid":
-        resource_codes = [OFFER_RESOURCES[item] for item in checkout.items if item in OFFER_RESOURCES]
-        resources = {row.code: row for row in db.scalars(select(Resource).where(Resource.code.in_(resource_codes)))}
-        if set(resource_codes) - set(resources):
-            raise TildaPayloadError("offer resources are not configured")
-        for code in resource_codes:
-            db.add(UserAccess(user_id=user.id, resource_id=resources[code].id, source_payment_id=payment.id, source="paid_offer_checkout", granted_at=event_at))
-            access_granted = True
-    elif user and product and payment_status == "paid":
-        for rule in active_access_rules(db, product.id, event_at):
-            db.add(
-                UserAccess(
-                    user_id=user.id,
-                    resource_id=rule.resource_id,
-                    source_payment_id=payment.id,
-                    source="paid_product_rule",
-                    granted_at=event_at,
-                )
-            )
-            access_granted = True
+    access_granted = grant_payment_access(db, payment, checkout, event_at)
 
     try:
         db.commit()

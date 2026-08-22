@@ -203,3 +203,123 @@ def test_dynamic_offer_checkout_grants_exact_resources() -> None:
         assert db.scalar(select(func.count(UserAccess.id))) == 2
         assert db.scalar(select(OfferCheckout.status)) == "paid"
     app.dependency_overrides.clear()
+
+
+def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
+    client, session_factory = make_client()
+    with session_factory() as db:
+        user = User(display_name="Тестовый клиент", status="active")
+        db.add(user)
+        db.flush()
+        db.add(
+            UserEmail(
+                user_id=user.id,
+                email_original="Client@Example.Test",
+                email_normalized="client@example.test",
+                is_primary=True,
+                source="test",
+            )
+        )
+        db.add_all(
+            [
+                Resource(code="ACCESS_RECIPES", name="Рецепты"),
+                Resource(code="ACCESS_CALORIES", name="Калории"),
+            ]
+        )
+        checkout = OfferCheckout(
+            user_id=user.id,
+            offer_code="bundle:digital",
+            title="Комплект",
+            items=["recipes", "calories"],
+            amount=Decimal("3900"),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
+        db.add(checkout)
+        db.commit()
+        checkout_code = checkout.id.hex
+
+    payload = paid_payload()
+    payload.update(
+        {
+            "orderid": "offer-order-processing",
+            "paymentid": "offer-payment-processing",
+            "products": f"EB-{checkout_code} Комплект",
+            "price": "3900",
+            "Payment status": "processing",
+        }
+    )
+    processing = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert processing.status_code == 200
+    assert processing.json()["status"] == "saved_without_access"
+    assert processing.json()["access"] == "not_granted"
+    payment_id = processing.json()["payment_id"]
+    with session_factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 1
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
+        assert db.scalar(select(OfferCheckout.status)) == "processing"
+
+    payload["Payment status"] = "paid"
+    paid = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert paid.status_code == 200
+    assert paid.json() == {
+        "status": "updated_to_paid",
+        "payment_id": payment_id,
+        "access": "granted",
+    }
+    with session_factory() as db:
+        payment = db.scalar(select(Payment))
+        assert payment is not None
+        assert payment.payment_status == "paid"
+        assert db.scalar(select(func.count(Payment.id))) == 1
+        assert db.scalar(select(func.count(UserAccess.id))) == 2
+        assert db.scalar(select(OfferCheckout.status)) == "paid"
+
+    duplicate = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert duplicate.status_code == 200
+    assert duplicate.json()["status"] == "duplicate"
+    with session_factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 1
+        assert db.scalar(select(func.count(UserAccess.id))) == 2
+    app.dependency_overrides.clear()
+
+
+def test_processing_catalog_product_is_promoted_to_paid_once() -> None:
+    client, session_factory = make_client()
+    seed_catalog(session_factory)
+    payload = paid_payload()
+    payload["orderid"] = "catalog-order-processing"
+    payload["paymentid"] = "catalog-payment-processing"
+    payload["Payment status"] = "processing"
+
+    processing = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert processing.status_code == 200
+    assert processing.json()["status"] == "saved_without_access"
+    assert processing.json()["access"] == "not_granted"
+
+    payload["Payment status"] = "paid"
+    paid = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert paid.status_code == 200
+    assert paid.json()["status"] == "updated_to_paid"
+    assert paid.json()["access"] == "granted"
+    with session_factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 1
+        assert db.scalar(select(func.count(UserAccess.id))) == 1
+
+    duplicate = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert duplicate.status_code == 200
+    assert duplicate.json()["status"] == "duplicate"
+    with session_factory() as db:
+        assert db.scalar(select(func.count(UserAccess.id))) == 1
+    app.dependency_overrides.clear()
