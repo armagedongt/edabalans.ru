@@ -49,6 +49,10 @@
       headers: { "Content-Type": "application/json", ...(options && options.headers) },
       ...options
     });
+    if (response.status === 401) {
+      location.replace(`/admin?next=${encodeURIComponent(location.pathname + location.search)}`);
+      throw new Error("Сессия завершена");
+    }
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
       throw new Error(body.detail || `Ошибка сервера ${response.status}`);

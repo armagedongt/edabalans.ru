@@ -6,6 +6,7 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Админка · edabalans</title>
   <link rel="stylesheet" href="/admin/static/admin.css">
+  <link rel="stylesheet" href="/admin/static/admin-session.css">
 </head>
 <body>
   <aside class="admin-sidebar">
@@ -26,7 +27,7 @@
   <main class="admin-main">
     <header class="admin-header">
       <div><small id="admin-kicker">EDABALANS</small><h1 id="admin-title">Главное</h1></div>
-      <form id="admin-global-search"><input name="q" placeholder="Найти человека по имени, email или Telegram"><button>Найти</button></form>
+      <div class="admin-header-actions"><form id="admin-global-search"><input name="q" placeholder="Найти человека по имени, email или Telegram"><button>Найти</button></form><button class="admin-logout" id="admin-logout" type="button">Выйти</button></div>
     </header>
     <section id="admin-content"><div class="admin-empty">Загружаю…</div></section>
   </main>

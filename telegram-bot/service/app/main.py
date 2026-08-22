@@ -30,7 +30,7 @@ from app.telegram import TelegramClient
 settings = get_settings()
 security = HTTPBasic(auto_error=False)
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
-ADMIN_COOKIE = "edabalans_bot_admin"
+ADMIN_COOKIE = "edabalans_admin"
 ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 7
 MEDIA_TYPES = {
     "image/jpeg": ("photo", ".jpg"),

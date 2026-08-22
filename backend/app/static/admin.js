@@ -27,6 +27,10 @@
 
   async function api(path) {
     const response = await fetch(path, { credentials: "same-origin" });
+    if (response.status === 401) {
+      location.replace(`/admin?next=${encodeURIComponent(location.pathname + location.search)}`);
+      throw new Error("Сессия завершена");
+    }
     if (!response.ok) {
       const body = await response.json().catch(() => ({}));
       throw new Error(body.detail || `Ошибка сервера ${response.status}`);
@@ -174,6 +178,10 @@
     event.preventDefault();
     const q = new FormData(event.currentTarget).get("q").trim();
     location.href = `/admin/users${q ? `?q=${encodeURIComponent(q)}` : ""}`;
+  });
+  document.getElementById("admin-logout").addEventListener("click", async () => {
+    await fetch("/admin/api/logout", { method: "POST", credentials: "same-origin" });
+    location.replace("/admin");
   });
   window.addEventListener("popstate", () => run().catch(failure));
   run().catch(failure);

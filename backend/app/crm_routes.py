@@ -1,14 +1,25 @@
 from __future__ import annotations
 
 import uuid
+import time
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query
-from fastapi.responses import FileResponse
+from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
+from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.security import HTTPBasicCredentials
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.auth import require_admin
+from app.auth import (
+    ADMIN_COOKIE,
+    ADMIN_SESSION_SECONDS,
+    admin_identity,
+    admin_session_token,
+    require_admin,
+    security,
+    valid_admin_credentials,
+)
+from app.config import get_settings
 from app.crm_service import (
     add_note,
     add_tag,
@@ -69,6 +80,11 @@ class ResourceAction(BaseModel):
     resource_code: str = Field(min_length=1, max_length=80)
 
 
+class AdminLogin(BaseModel):
+    username: str = Field(min_length=1, max_length=320)
+    password: str = Field(min_length=1, max_length=1024)
+
+
 def protected_file(name: str) -> FileResponse:
     response = FileResponse(STATIC_DIR / name)
     response.headers["Cache-Control"] = "no-store"
@@ -77,28 +93,64 @@ def protected_file(name: str) -> FileResponse:
 
 @router.get("/admin", include_in_schema=False)
 @router.get("/admin/", include_in_schema=False)
-def admin_index(_: str = Depends(require_admin)) -> FileResponse:
-    return protected_file("admin.html")
+def admin_index(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse:
+    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
 
 
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js)$"),
-    _: str = Depends(require_admin),
+    request: Request,
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js)$"),
+    credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
+    if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
+        raise HTTPException(status_code=401, detail="admin authentication required")
     return protected_file(asset_name)
 
 
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
+    request: Request,
     section: str = ApiPath(pattern="^(users|crm|dqs|strength|metabolism|messaging)$"),
-    _: str = Depends(require_admin),
+    credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
-    return protected_file("admin.html")
+    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
+
+
+@router.post("/admin/api/login")
+def admin_login(body: AdminLogin, response: Response) -> dict[str, bool]:
+    if not valid_admin_credentials(body.username, body.password):
+        raise HTTPException(status_code=401, detail="Неверный логин или пароль")
+    settings = get_settings()
+    expires_at = int(time.time()) + ADMIN_SESSION_SECONDS
+    response.set_cookie(
+        ADMIN_COOKIE,
+        admin_session_token(settings.admin_username, expires_at),
+        max_age=ADMIN_SESSION_SECONDS,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        path="/",
+    )
+    return {"ok": True}
+
+
+@router.post("/admin/api/logout")
+def admin_logout(response: Response) -> dict[str, bool]:
+    response.delete_cookie(ADMIN_COOKIE, path="/")
+    return {"ok": True}
 
 
 @router.get("/crm", include_in_schema=False)
-def crm_index(_: str = Depends(require_admin)) -> FileResponse:
+def crm_index(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse | RedirectResponse:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/crm", status_code=303)
     return protected_file("crm.html")
 
 

@@ -1,0 +1,1 @@
+.admin-header-actions{display:flex;align-items:center;gap:8px;min-width:0}.admin-logout{height:42px;padding:0 13px;border:1px solid var(--line);border-radius:9px;background:#fff;color:var(--muted);cursor:pointer}.admin-logout:hover{color:var(--green);border-color:#9ab3a1}@media(max-width:760px){.admin-header-actions{width:100%}.admin-header-actions form{flex:1;min-width:0}}
