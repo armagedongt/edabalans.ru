@@ -25,6 +25,7 @@
 | Telegram-бот — устройство модуля | `../telegram-bot/README.md` | Запуск сервиса, каталоги и техническая структура |
 | Административные интерфейсы | `ADMIN_ARCHITECTURE.md` | Общая навигация и границы CRM/Telegram-админки |
 | Платежи Tilda | `TILDA_PAYMENTS.md` | Приём webhook, нормализация и запись оплаты |
+| Будущая синхронизация Tilda Members Area | `plans/TILDA_MEMBERS_SYNC.md` | Приоритет CRM, расхождения групп, ограничения API и вариант собственного кабинета |
 | Архив LeadTeh | `../leadteh-export/README.md` | Локальный экспорт и правила работы с архивом |
 | Legacy Google | `../legacy/google/README.md` | Исходный код и правила переноса старых приложений |
 
