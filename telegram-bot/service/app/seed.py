@@ -37,7 +37,7 @@ def _ensure_edges(session: Session, version: SequenceVersion) -> None:
             false_sequence = config.get("false_sequence")
             false_step = config.get("false_step") or following
             session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=true_step or (None if true_sequence else following), target_sequence_code=true_sequence, branch_key="true", label="Да"))
-            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=None if false_sequence else false_step, target_sequence_code=false_sequence, branch_key="false", label="Нет"))
+            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=None if false_sequence else false_step, target_sequence_code=false_sequence, branch_key="false", label="Нет", condition={"allow_cycle": True} if config.get("allow_false_cycle") else {}))
         else:
             target_sequence = config.get("target_sequence") if step.kind == "GOTO" else None
             target = config.get("step_key") if step.kind == "GOTO" else following
@@ -49,6 +49,14 @@ def _ensure_edges(session: Session, version: SequenceVersion) -> None:
                     target_sequence_code=target_sequence,
                     branch_key="default",
                     label="Перейти в следующий модуль" if target_sequence else "Далее",
+                ))
+            if step.kind == "WAIT_BUTTON" and config.get("timeout_step"):
+                session.add(SequenceEdge(
+                    sequence_version_id=version.id,
+                    from_step_key=step.step_key,
+                    to_step_key=config["timeout_step"],
+                    branch_key="timeout",
+                    label="Не нажал за 5 минут — продолжить без подписки",
                 ))
 
 
@@ -114,8 +122,6 @@ def _start_system_messages() -> list[dict]:
             "✅ Вместо уменьшения еды — увеличение насыщения\n"
             "✅ Вместо калорий — дневник питания по фото\n"
             "✅ Вместо погони за цифрами на весах — изменение образа жизни\n\n"
-            "Читайте бесплатный интенсив «Последнее похудение» на моём сайте:\n"
-            "<b>https://похудение-это-есть.рф/intensiv</b>\n\n"
             "<b>Часть #1</b> — План успешного похудения и главные ошибки в самом его начале. Почему похудение начинается не с голода и что изменить в питании, чтобы лучше насыщаться?!\n\n"
             "<b>Часть #2</b> — Как и зачем вести дневник питания БЕЗ калорий, что такое здоровое и нездоровое пищевое поведение, примеры реальных дневников и задания.\n\n"
             "<b>Часть #3</b> — Что такое «Вредная еда» на самом деле? Почему вам не стоит бояться «вредностей» из магазина и что реально вредит вашему здоровью.\n\n"
@@ -123,8 +129,7 @@ def _start_system_messages() -> list[dict]:
             "<b>У вас появится чёткое понимание:</b>\n\n"
             "✍️ На какие важные вещи вы раньше не обращали внимания и каким должен быть план похудения сейчас.\n\n"
             "✍️ Каких навыков вам не хватает, чтобы сделать похудение проще и какие первые шаги вы можете сделать уже сегодня!\n\n"
-            "Открывайте интенсив: <b>https://похудение-это-есть.рф/intensiv</b>\n\n"
-            "Не забудьте подписаться на мой Telegram-канал: <a href=\"https://t.me/Fitness_Talks/260\">Похудение — это есть!</a>, чтобы не пропускать новые посты.",
+            "Нажмите кнопку «Начать интенсив» — и я пришлю первый день прямо сюда.",
             None,
             ["система", "start", "первый вход", "приветствие", "интенсив"],
         ),
@@ -163,25 +168,10 @@ def _start_system_messages() -> list[dict]:
             "Welcome — подписка не найдена",
             "Пока не вижу подписку на канал. Подпишитесь, пожалуйста: "
             "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a>\n\n"
-            "Через пять минут я проверю ещё раз. Даже если подписка не "
-            "подтвердится, интенсив всё равно откроется.",
+            "После подписки нажмите кнопку «Проверить ещё раз». Если подписка "
+            "не подтвердится, через пять минут первый день всё равно придёт.",
             None,
             ["система", "welcome", "подписка", "не найдена"],
-        ),
-        (
-            "subscription_passed",
-            "Welcome — подписка подтверждена",
-            "Подписка подтверждена ✅\n\nОткрывайте бесплатный интенсив «Последнее похудение»:",
-            None,
-            ["система", "welcome", "подписка", "успех", "ссылка на интенсив"],
-        ),
-        (
-            "subscription_fail_open",
-            "Welcome — продолжить без подтверждения подписки",
-            "Не получилось подтвердить подписку, но задерживать интенсив не будем 👍\n\n"
-            "Открывайте бесплатный интенсив «Последнее похудение»:",
-            None,
-            ["система", "welcome", "подписка", "fail-open", "ссылка на интенсив"],
         ),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
@@ -300,10 +290,17 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="draft", origin_system="template")
             session.add(item)
             session.flush()
+        elif row["code"] == "start_welcome_offer" and "похудение-это-есть.рф/intensiv" in (item.body_source or ""):
+            # Upgrade only the known seeded preview; later owner edits remain untouched.
+            item.body_source = row["body"]
         if row["code"] == "entry_circle" and not item.media_path:
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH
         items[row["code"]] = item
+    for obsolete_code in ("tpl_subscription_passed", "tpl_subscription_fail_open"):
+        obsolete = session.scalar(select(ContentItem).where(ContentItem.code == obsolete_code))
+        if obsolete:
+            obsolete.status = "archived"
 
     legacy = session.scalar(select(Sequence).where(Sequence.code == LEGACY_PREPURCHASE_CODE))
     if legacy:
@@ -318,13 +315,13 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         welcome = Sequence(
             code=WELCOME_CODE,
             name="2. Welcome — запуск и первые четыре дня",
-            description="Навигация, кружок, CTA, видимая проверка подписки и три следующих полезных поста. Продажа начинается уже в основной цепочке.",
+            description="Навигация, кружок, CTA, мягкая подписка, четыре дня интенсива и три промежуточных поста. Продажа — в следующем модуле.",
             status="published",
         )
         session.add(welcome); session.flush()
     else:
         welcome.name = "2. Welcome — запуск и первые четыре дня"
-        welcome.description = "Навигация, кружок, CTA, видимая проверка подписки и три следующих полезных поста. Продажа начинается уже в основной цепочке."
+        welcome.description = "Навигация, кружок, CTA, мягкая подписка, четыре дня интенсива и три промежуточных поста. Продажа — в следующем модуле."
         welcome.status = "published"
     current_welcome_version = session.scalar(
         select(SequenceVersion)
@@ -334,7 +331,7 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
     current_welcome_has_layout = bool(current_welcome_version and session.scalar(
         select(SequenceStep.id).where(
             SequenceStep.sequence_version_id == current_welcome_version.id,
-            SequenceStep.step_key == "welcome_navigation",
+            SequenceStep.step_key == "welcome_subscription_retry_wait",
         )
     ))
     if not current_welcome_has_layout:
@@ -351,21 +348,31 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             ("welcome_circle", "VIDEO_NOTE", "entry_circle", None, {}, None),
             ("welcome_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}, None),
             ("welcome_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}, None),
-            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_step": "welcome_subscription_passed", "false_step": "welcome_subscription_failed"}, None),
-            ("welcome_subscription_passed", "MESSAGE", "subscription_passed", None, {"buttons": [{"text": "Открыть интенсив", "url": "https://похудение-это-есть.рф/intensiv"}]}, "welcome_delay_day2"),
-            ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}, None),
-            ("welcome_subscription_retry_delay", "DELAY", None, 300, {}, None),
-            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_step": "welcome_subscription_passed", "false_step": "welcome_subscription_fail_open"}, None),
-            ("welcome_subscription_fail_open", "MESSAGE", "subscription_fail_open", None, {"buttons": [{"text": "Открыть интенсив", "url": "https://похудение-это-есть.рф/intensiv"}]}, "welcome_delay_day2"),
-            ("welcome_delay_day2", "DELAY", None, 86400, {}, None),
-            ("welcome_paid_check_day2", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
-            ("welcome_day2", "MESSAGE", "day1_mid", None, {}, None),
-            ("welcome_delay_day3", "DELAY", None, 86400, {}, None),
-            ("welcome_paid_check_day3", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
-            ("welcome_day3", "MESSAGE", "day2_mid", None, {}, None),
-            ("welcome_delay_day4", "DELAY", None, 86400, {}, None),
-            ("welcome_paid_check_day4", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
-            ("welcome_day4", "MESSAGE", "day3_mid", None, {}, None),
+            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "before_day1", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed"}, None),
+            ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
+            ("welcome_subscription_retry_wait", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, None),
+            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed", "allow_false_cycle": True}, None),
+            ("welcome_day1", "MESSAGE", "day1", None, {}, None),
+            ("welcome_subscription_after_day1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day1"}, None),
+            ("welcome_delay_mid1", "DELAY", None, 39600, {}, None),
+            ("welcome_mid1", "MESSAGE", "day1_mid", None, {}, None),
+            ("welcome_subscription_after_mid1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid1"}, None),
+            ("welcome_delay_day2", "DELAY", None, 43200, {}, None),
+            ("welcome_day2", "MESSAGE", "day2", None, {}, None),
+            ("welcome_subscription_after_day2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day2"}, None),
+            ("welcome_delay_mid2", "DELAY", None, 43200, {}, None),
+            ("welcome_mid2", "MESSAGE", "day2_mid", None, {}, None),
+            ("welcome_subscription_after_mid2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid2"}, None),
+            ("welcome_delay_day3", "DELAY", None, 43200, {}, None),
+            ("welcome_day3", "MESSAGE", "day3", None, {}, None),
+            ("welcome_subscription_after_day3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day3"}, None),
+            ("welcome_delay_mid3", "DELAY", None, 43200, {}, None),
+            ("welcome_mid3", "MESSAGE", "day3_mid", None, {}, None),
+            ("welcome_subscription_after_mid3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid3"}, None),
+            ("welcome_delay_day4", "DELAY", None, 43200, {}, None),
+            ("welcome_day4", "MESSAGE", "day4", None, {}, None),
+            ("welcome_subscription_after_day4", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day4"}, None),
+            ("welcome_delay_exit", "DELAY", None, 43200, {}, None),
             ("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}, None),
         ]
         for position, (key, kind, content_code, delay, config, next_key) in enumerate(specs, 1):
@@ -389,13 +396,20 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         .where(SequenceVersion.sequence_id == sequence.id, SequenceVersion.status == "published")
         .order_by(SequenceVersion.version_no.desc())
     )
-    current_first_delay = session.scalar(
-        select(SequenceStep.delay_seconds).where(
+    current_first_delay_step = session.scalar(
+        select(SequenceStep).where(
             SequenceStep.sequence_version_id == current_nurture_version.id,
             SequenceStep.step_key == "nurture_delay_hard_sale_1",
         )
     ) if current_nurture_version else None
-    if current_first_delay != 86400:
+    current_first_sale = session.scalar(
+        select(SequenceStep.id).where(
+            SequenceStep.sequence_version_id == current_nurture_version.id,
+            SequenceStep.step_key == "nurture_hard_sale_1",
+        )
+    ) if current_nurture_version else None
+    current_nurture_has_layout = bool(current_nurture_version and current_first_sale and not current_first_delay_step)
+    if not current_nurture_has_layout:
         last_version = session.scalar(
             select(SequenceVersion.version_no)
             .where(SequenceVersion.sequence_id == sequence.id)
@@ -404,11 +418,12 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         ) or 0
         version = SequenceVersion(sequence_id=sequence.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
-        nurture_posts = [("hard_sale_1", 86400), ("hard_sale_2", 86400)]
+        nurture_posts = [("hard_sale_1", None), ("hard_sale_2", 86400)]
         nurture_posts += [(f"nurture_{n:02d}", 86400 if n <= 20 else 302400) for n in range(13, 31)]
         specs = []
         for content_code, delay in nurture_posts:
-            specs.append((f"nurture_delay_{content_code}", "DELAY", None, delay, {}))
+            if delay is not None:
+                specs.append((f"nurture_delay_{content_code}", "DELAY", None, delay, {}))
             specs.append((f"nurture_paid_check_{content_code}", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}))
             specs.append((f"nurture_{content_code}", "MESSAGE", content_code, None, {}))
         specs.append(("nurture_finish", "STOP", None, None, {}))

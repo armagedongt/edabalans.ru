@@ -85,7 +85,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
     assert len(fake.sent) == 5
     assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
-    assert "tpl_day1" not in [item[1] for item in fake.sent]
+    assert "tpl_day1" in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
     assert any(node["id"] == "module:start_attribution" for node in overview["nodes"])
@@ -101,8 +101,14 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
     detail = client.get("/bot-api/map?sequence_code=welcome_intensive").json()
     assert detail["level"] == "sequence"
-    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 9
-    assert next(node for node in detail["nodes"] if node["id"] == "welcome_offer")["content"]["code"] == "tpl_start_welcome_offer"
+    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 11
+    offer_node = next(node for node in detail["nodes"] if node["id"] == "welcome_offer")
+    assert offer_node["content"]["code"] == "tpl_start_welcome_offer"
+    old_callback = offer_node["configuration"]["buttons"][0]["callback_data"]
+    edited_button = client.patch(f"/bot-api/steps/{offer_node['step_id']}/presentation", json={"button_text": "Поехали"})
+    assert edited_button.status_code == 200
+    assert edited_button.json()["configuration"]["buttons"][0]["text"] == "Поехали"
+    assert edited_button.json()["configuration"]["buttons"][0]["callback_data"] == old_callback
     assert any(edge["branch"] == "true" for edge in detail["edges"])
     sequence_detail = client.get("/bot-api/sequences/welcome_intensive").json()
     logic_step = next(step for step in sequence_detail["steps"] if step["kind"] == "DELAY")

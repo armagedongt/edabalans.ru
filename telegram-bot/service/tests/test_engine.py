@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
-from app.engine import advance_run, resume_callback, start_run
-from app.models import BotInstance, BotRoute, Contact, ContentItem, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
+from app.engine import advance_run, resume_callback, resume_wait_timeout, start_run
+from app.graph import graph_issues
+from app.models import BotInstance, BotRoute, Contact, ContentItem, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, WELCOME_CODE, seed_defaults
 
 
@@ -40,10 +43,11 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
             sequence = session.scalar(select(Sequence).where(Sequence.code == code))
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
-        assert counts == {WELCOME_CODE: 9, PREPURCHASE_CODE: 20}
-        assert session.scalar(select(func.count(ContentItem.id))) == 49
+        assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 20}
+        assert session.scalar(select(func.count(ContentItem.id))) == 47
         assert "Навигация!" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_navigation_pin"))
         assert "Сделайте похудение проще" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
+        assert "похудение-это-есть.рф/intensiv" not in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
         circle = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_entry_circle"))
         assert circle.media_kind == "video_note"
         assert circle.media_path == "/app/media/welcome-intro-circle.mp4"
@@ -76,7 +80,7 @@ def test_seed_upgrades_intermediate_combined_layout_with_new_versions(tmp_path):
         assert latest_welcome.version_no == 2
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_welcome.id, SequenceStep.step_key == "welcome_navigation"))
         assert latest_nurture.version_no == 2
-        assert session.scalar(select(SequenceStep.delay_seconds).where(SequenceStep.sequence_version_id == latest_nurture.id, SequenceStep.step_key == "nurture_delay_hard_sale_1")) == 86400
+        assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_nurture.id, SequenceStep.step_key == "nurture_delay_hard_sale_1")) is None
 
 
 def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
@@ -139,7 +143,7 @@ def test_pin_error_does_not_stop_welcome(tmp_path):
         assert delivery.payload_snapshot["pin_error"] == "pin is unavailable"
 
 
-def test_subscription_failure_is_visible_and_fails_open(tmp_path):
+def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
         for step in session.scalars(select(SequenceStep).where(SequenceStep.step_key.in_(["welcome_subscription", "welcome_subscription_recheck"]))):
@@ -153,12 +157,27 @@ def test_subscription_failure_is_visible_and_fails_open(tmp_path):
         resume_callback(session, contact.id, "start_intensive")
         advance_run(session, run, sender)
         assert sender.sent[-1][1] == "tpl_start_subscription_reminder"
+        assert run.status == "waiting"
+        assert run.context["waiting_callback"] == "check_subscription"
+
+        # A retry loops through the same check and remains on the visible prompt.
+        resume_callback(session, contact.id, "check_subscription")
         advance_run(session, run, sender)
-        assert sender.sent[-1][1] == "tpl_subscription_fail_open"
+        assert run.status == "waiting"
+
+        # Five minutes from the first prompt is fail-open: Day 1 arrives directly.
+        run.next_action_at = datetime.now(UTC) - timedelta(seconds=1)
+        resume_wait_timeout(session, run)
+        advance_run(session, run, sender)
+        assert sender.sent[-1][1] == "tpl_day1"
         assert "tpl_subscription_passed" not in [item[1] for item in sender.sent]
+        assert "tpl_subscription_fail_open" not in [item[1] for item in sender.sent]
+        outcomes = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id)))
+        assert outcomes.count("subscription_check") >= 2
+        assert "subscription_fail_open" in outcomes
 
 
-def test_purchase_stops_presale_at_disabled_branch(tmp_path):
+def test_welcome_does_not_check_purchase(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
         bot = session.scalar(select(BotInstance))
@@ -170,7 +189,28 @@ def test_purchase_stops_presale_at_disabled_branch(tmp_path):
         sender = FakeSender(); advance_run(session, run, sender)
         resume_callback(session, contact.id, "start_intensive")
         advance_run(session, run, sender)
-        advance_run(session, run, sender)
-        assert run.status == "branch_pending"
-        assert run.context["pending_sequence"] == "postpurchase_masterclass"
-        assert session.scalar(select(func.count(StepDelivery.id)).where(StepDelivery.run_id == run.id)) == 4
+        assert sender.sent[-1][1] == "tpl_day1"
+        assert run.status == "active"
+        version = session.get(SequenceVersion, run.sequence_version_id)
+        welcome_steps = session.scalars(select(SequenceStep).where(SequenceStep.sequence_version_id == version.id)).all()
+        assert not any(step.configuration.get("condition") == "has_product" for step in welcome_steps)
+
+
+def test_welcome_timing_and_subscription_observation_steps(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        sequence = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+        version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id).order_by(SequenceVersion.version_no.desc()))
+        steps = {step.step_key: step for step in session.scalars(select(SequenceStep).where(SequenceStep.sequence_version_id == version.id))}
+        assert steps["welcome_delay_mid1"].delay_seconds == 11 * 3600
+        for key in ("welcome_delay_day2", "welcome_delay_mid2", "welcome_delay_day3", "welcome_delay_mid3", "welcome_delay_day4", "welcome_delay_exit"):
+            assert steps[key].delay_seconds == 12 * 3600
+        stages = {step.configuration.get("stage") for step in steps.values() if step.configuration.get("condition") == "subscription_check"}
+        assert {"before_day1", "after_prompt", "after_day1", "after_mid1", "after_day2", "after_mid2", "after_day3", "after_mid3", "after_day4"} <= stages
+        timeout_edge = session.scalar(select(SequenceEdge).where(
+            SequenceEdge.sequence_version_id == version.id,
+            SequenceEdge.from_step_key == "welcome_subscription_retry_wait",
+            SequenceEdge.branch_key == "timeout",
+        ))
+        assert timeout_edge.to_step_key == "welcome_day1"
+        assert not [issue for issue in graph_issues(session, version) if issue["severity"] == "error"]

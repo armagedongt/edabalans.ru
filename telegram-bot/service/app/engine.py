@@ -3,10 +3,10 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
-from sqlalchemy import select, text
+from sqlalchemy import or_, select, text
 from sqlalchemy.orm import Session
 
-from app.models import ContentItem, Contact, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, UserVariable
+from app.models import ContentItem, Contact, CrmMessengerAccount, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 
 
 class Sender(Protocol):
@@ -121,6 +121,51 @@ def _write_variable(session: Session, contact_id: str, key: str, value: Any) -> 
         session.add(UserVariable(contact_id=contact_id, key=key, value={"value": value}))
 
 
+def _record_subscription_check(
+    session: Session,
+    run: SequenceRun,
+    contact: Contact,
+    step: SequenceStep,
+    subscribed: bool | None,
+) -> None:
+    """Store the whole subscription journey as events, without inventing tags."""
+    config = step.configuration or {}
+    prompted = bool(run.context.get("subscription_prompted"))
+    if subscribed is None:
+        outcome = "not_checked_placeholder"
+    elif subscribed:
+        outcome = "subscribed_after_prompt" if prompted else "already_subscribed"
+    else:
+        if prompted:
+            outcome = "not_subscribed_after_prompt"
+        elif config.get("stage") == "before_day1":
+            outcome = "not_subscribed_initially"
+        else:
+            outcome = "not_subscribed_at_check"
+        run.context = {**run.context, "subscription_prompted": True}
+    session.add(TrackingEvent(
+        contact_id=contact.id,
+        user_id=contact.user_id,
+        telegram_user_id=contact.telegram_user_id,
+        event_type="subscription_check",
+        metadata_json={
+            "run_id": run.id,
+            "step_key": step.step_key,
+            "stage": config.get("stage", step.step_key),
+            "subscribed": subscribed,
+            "outcome": outcome,
+        },
+    ))
+    if contact.user_id:
+        account = session.scalar(select(CrmMessengerAccount).where(
+            CrmMessengerAccount.user_id == contact.user_id,
+            CrmMessengerAccount.platform == "telegram",
+        ))
+        if account:
+            account.subscription_status = "unknown" if subscribed is None else ("subscribed" if subscribed else "not_subscribed")
+            account.subscription_checked_at = utcnow()
+
+
 def has_paid_product(session: Session, contact: Contact, product_codes: list[str], variable_key: str) -> bool:
     if contact.user_id and session.bind and session.bind.dialect.name == "postgresql":
         placeholders = ",".join(f":code_{index}" for index in range(len(product_codes)))
@@ -188,11 +233,25 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
             run.next_action_at = utcnow() + timedelta(seconds=max(0, step.delay_seconds or 0) * max(run.time_scale, 0.0001))
             break
         elif step.kind == "WAIT_BUTTON":
-            run.status = "waiting"; run.next_action_at = None; run.context = {**run.context, "waiting_callback": config.get("callback_data")}; break
+            timeout_seconds = config.get("timeout_seconds")
+            context = {**run.context, "waiting_callback": config.get("callback_data")}
+            if timeout_seconds is not None:
+                deadline = context.get("waiting_timeout_at")
+                if not deadline:
+                    deadline = (utcnow() + timedelta(seconds=max(0, timeout_seconds) * max(run.time_scale, 0.0001))).isoformat()
+                    context["waiting_timeout_at"] = deadline
+                run.next_action_at = datetime.fromisoformat(deadline)
+            else:
+                run.next_action_at = None
+            run.status = "waiting"; run.context = context; break
         elif step.kind in {"CONDITION", "DB_READ"}:
             condition = config.get("condition") or config.get("key")
             if condition == "subscription_check" and not config.get("enabled", False):
                 result = True
+                _record_subscription_check(session, run, contact, step, None)
+            elif condition == "subscription_check":
+                result = bool(_variable(session, run.contact_id, condition))
+                _record_subscription_check(session, run, contact, step, result)
             elif condition == "has_product":
                 variable_key = config.get("product_code", "masterclass")
                 product_codes = config.get("product_codes") or [variable_key]
@@ -245,5 +304,32 @@ def resume_callback(session: Session, contact_id: str, callback_data: str) -> Se
     return run
 
 
+def resume_wait_timeout(session: Session, run: SequenceRun) -> SequenceRun:
+    """Continue a timed button wait through its explicit timeout edge."""
+    if run.status != "waiting" or not run.next_action_at or run.next_action_at > utcnow():
+        return run
+    step = _step(session, run)
+    if not step:
+        run.status = "completed"; run.finished_at = utcnow(); session.commit(); return run
+    contact = session.get(Contact, run.contact_id)
+    if contact:
+        session.add(TrackingEvent(
+            contact_id=contact.id,
+            user_id=contact.user_id,
+            telegram_user_id=contact.telegram_user_id,
+            event_type="subscription_fail_open",
+            metadata_json={"run_id": run.id, "step_key": step.step_key, "outcome": "remained_unsubscribed_after_prompt"},
+        ))
+    _set_next(session, run, step, "timeout")
+    run.status = "active"
+    run.next_action_at = utcnow()
+    run.context = {k: v for k, v in run.context.items() if k not in {"waiting_callback", "waiting_timeout_at"}}
+    session.commit()
+    return run
+
+
 def due_runs(session: Session, limit: int = 50) -> list[SequenceRun]:
-    return list(session.scalars(select(SequenceRun).where(SequenceRun.status == "active", SequenceRun.next_action_at <= utcnow()).order_by(SequenceRun.next_action_at).limit(limit)))
+    return list(session.scalars(select(SequenceRun).where(
+        SequenceRun.next_action_at <= utcnow(),
+        or_(SequenceRun.status == "active", SequenceRun.status == "waiting"),
+    ).order_by(SequenceRun.next_action_at).limit(limit)))

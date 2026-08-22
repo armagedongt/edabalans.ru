@@ -259,11 +259,13 @@ def sequence_graph(session: Session, sequence_code: str, status: str = "publishe
         component = SYSTEM_COMPONENTS.get(component_code or "", {})
         graph_node = {
             "id": step.step_key,
+            "step_id": step.id,
             "kind": step.kind.lower(),
             "label": step.label,
             "subtitle": content.title if content else (component.get("name") or step.kind),
             "position": step.position,
             "sequence_code": sequence.code,
+            "configuration": step.configuration or {},
             "details": {
                 "Хранение": f"tg_sequence_steps · {step.step_key}",
                 "Версия": str(version.version_no),

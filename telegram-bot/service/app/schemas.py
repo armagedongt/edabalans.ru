@@ -77,6 +77,10 @@ class StepUpdateIn(BaseModel):
     configuration: dict | None = None
 
 
+class StepPresentationIn(BaseModel):
+    button_text: str = Field(min_length=1, max_length=64)
+
+
 class BroadcastIn(BaseModel):
     title: str = Field(min_length=1, max_length=255)
     text: str = Field(min_length=1, max_length=4096)

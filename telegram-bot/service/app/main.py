@@ -19,11 +19,11 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
-from app.engine import advance_run, due_runs, resume_callback, start_run
+from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
-from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
@@ -145,6 +145,8 @@ async def scheduler_loop() -> None:
                 tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url) if settings.telegram_test_bot_token else None
                 if tg:
                     for run in due_runs(session):
+                        if run.status == "waiting":
+                            resume_wait_timeout(session, run)
                         advance_run(session, run, tg)
                     scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
                     for broadcast in scheduled:
@@ -412,7 +414,7 @@ def bot_map(sequence_code: str | None = None, module_code: str | None = None, ve
 
 @app.get("/bot-api/content", dependencies=[Depends(require_admin)])
 def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
-    query = select(ContentItem).order_by(ContentItem.title)
+    query = select(ContentItem).where(ContentItem.status != "archived").order_by(ContentItem.title)
     if q:
         query = query.where(ContentItem.title.ilike(f"%{q}%") | ContentItem.body_source.ilike(f"%{q}%"))
     return [{"id":i.id,"code":i.code,"title":i.title,"body_source":i.body_source,"media_kind":i.media_kind,"media_path":i.media_path,"labels":i.labels,"origin_system":i.origin_system,"origin_scenario_name":i.origin_scenario_name} for i in session.scalars(query.limit(2000))]
@@ -421,9 +423,9 @@ def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
 def _sequence_rule(code: str) -> dict:
     if code == WELCOME_CODE:
         return {
-            "start": "Начинается после проверок Start: навигация, кружок, CTA, подписка и четыре содержательных дня.",
-            "stop": "Останавливается при покупке мастер-класса либо после полезного поста четвёртого дня.",
-            "next": "Без покупки передаёт пользователя в основную рассылку; первый продающий пост приходит на пятый день.",
+            "start": "Начинается для нового пользователя после завершения модуля Start и атрибуции.",
+            "stop": "После Дня 4 ждёт 12 часов; покупка внутри Welcome не проверяется.",
+            "next": "Передаёт в основную рассылку: там сначала проверяется покупка, затем отправляется продажа.",
         }
     if code == PREPURCHASE_CODE:
         return {
@@ -483,6 +485,23 @@ def update_step(step_id: str, body: StepUpdateIn, session: Session = Depends(get
     if not step:
         raise HTTPException(404, "Step not found")
     raise HTTPException(409, "Логика графа доступна только для чтения; изменяйте тексты и медиа контентных блоков")
+
+
+@app.patch("/bot-api/steps/{step_id}/presentation", dependencies=[Depends(require_admin)])
+def update_step_presentation(step_id: str, body: StepPresentationIn, session: Session = Depends(get_db)) -> dict:
+    """Edit button wording while keeping callback, URL and graph routing immutable."""
+    step = session.get(SequenceStep, step_id)
+    if not step:
+        raise HTTPException(404, "Step not found")
+    configuration = dict(step.configuration or {})
+    buttons = [dict(button) for button in configuration.get("buttons", [])]
+    if not buttons:
+        raise HTTPException(409, "У этого сообщения нет редактируемой кнопки")
+    buttons[0]["text"] = body.button_text
+    configuration["buttons"] = buttons
+    step.configuration = configuration
+    session.commit()
+    return {"id": step.id, "button_text": buttons[0]["text"], "configuration": configuration}
 
 
 @app.get("/bot-api/contacts", dependencies=[Depends(require_admin)])
