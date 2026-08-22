@@ -642,6 +642,29 @@ def create_link_rule(body: LinkRuleIn, admin: str = Depends(require_admin), sess
     return _link_payload(session, row)
 
 
+@app.get("/bot-api/link-rules", dependencies=[Depends(require_admin)])
+def list_link_rules(session: Session = Depends(get_db)) -> list[dict]:
+    return [_link_payload(session, row) for row in session.scalars(select(TrackingLink).order_by(TrackingLink.created_at.desc()))]
+
+
+@app.post("/bot-api/link-rules/resolve-preview", dependencies=[Depends(require_admin)])
+def resolve_link_preview(body: dict, session: Session = Depends(get_db)) -> dict:
+    token = str(body.get("token", "")).strip()
+    link, alias, tag_ids, raw_query, status = resolve_start_payload(session, token)
+    if link:
+        tag_ids = list(dict.fromkeys([*list(session.scalars(select(TrackingLinkTag.tag_id).where(TrackingLinkTag.tracking_link_id == link.id))), *tag_ids]))
+    tags = list(session.scalars(select(CrmTag).where(CrmTag.id.in_(tag_ids)))) if tag_ids else []
+    return {"payload": token, "status": status, "route": {"kind": link.route_kind, "sequence_code": link.target_sequence_code, "step_key": link.target_step_key} if link else {"kind": "root", "sequence_code": PREPURCHASE_CODE, "step_key": None}, "rule": _link_payload(session, link) if link else None, "alias_id": alias.id if alias else None, "tags": [{"id": tag.id, "name": tag.name} for tag in tags], "raw_query": raw_query}
+
+
+@app.get("/bot-api/link-rules/{link_id}", dependencies=[Depends(require_admin)])
+def get_link_rule(link_id: str, session: Session = Depends(get_db)) -> dict:
+    row = session.get(TrackingLink, link_id)
+    if not row:
+        raise HTTPException(404, "Правило не найдено")
+    return _link_payload(session, row)
+
+
 @app.patch("/bot-api/link-rules/{link_id}", dependencies=[Depends(require_admin)])
 def update_link_rule(link_id: str, body: LinkRuleUpdate, session: Session = Depends(get_db)) -> dict:
     row = session.get(TrackingLink, link_id)
@@ -722,7 +745,7 @@ def revoke_channel_invite(alias_id: str, session: Session = Depends(get_db)) -> 
 
 @app.get("/bot-api/tracking-links", dependencies=[Depends(require_admin)])
 def tracking_stats(session: Session = Depends(get_db)) -> list[dict]:
-    return [_link_payload(session, row) for row in session.scalars(select(TrackingLink).order_by(TrackingLink.created_at.desc()))]
+    return list_link_rules(session)
 
 
 @app.get("/bot-api/tracking-events", dependencies=[Depends(require_admin)])
@@ -735,12 +758,30 @@ def tracking_events(link_id: str | None = None, event_type: str | None = None, s
     return [{"id": row.id, "link_id": row.tracking_link_id, "alias_id": row.alias_id, "user_id": row.user_id, "telegram_user_id": row.telegram_user_id, "type": row.event_type, "metadata": row.metadata_json, "occurred_at": row.occurred_at} for row in session.scalars(query)]
 
 
+@app.get("/bot-api/link-rules/{link_id}/events", dependencies=[Depends(require_admin)])
+def link_rule_events(link_id: str, session: Session = Depends(get_db)) -> list[dict]:
+    if not session.get(TrackingLink, link_id):
+        raise HTTPException(404, "Правило не найдено")
+    return tracking_events(link_id=link_id, session=session)
+
+
+@app.get("/bot-api/link-analytics", dependencies=[Depends(require_admin)])
+def link_analytics(session: Session = Depends(get_db)) -> dict:
+    rules = list_link_rules(session)
+    return {"rules": len(rules), "clicks": sum(row["clicks"] for row in rules), "starts": sum(row["starts"] for row in rules), "unique_starts": sum(row["unique_starts"] for row in rules), "items": rules}
+
+
 @app.get("/bot-api/tags", dependencies=[Depends(require_admin)])
 def search_tags(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
     query = select(CrmTag).where(CrmTag.status.in_(["active", "merged"])).order_by(CrmTag.name).limit(100)
     if q:
         query = query.where(CrmTag.name.ilike(f"%{q}%"))
     return [{"id": row.id, "name": row.name, "category": row.category, "status": row.status, "merged_into_tag_id": row.merged_into_tag_id} for row in session.scalars(query)]
+
+
+@app.get("/bot-api/tags/search", dependencies=[Depends(require_admin)])
+def search_tags_alias(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
+    return search_tags(q, session)
 
 
 @app.post("/bot-api/tags", dependencies=[Depends(require_admin)])
@@ -807,6 +848,11 @@ def apply_utm_rules(body: dict, session: Session = Depends(get_db)) -> dict:
     if not preview:
         session.commit()
     return {"preview": preview, "events": changed_events, "pending_sessions": changed_sessions}
+
+
+@app.post("/bot-api/utm/apply-preview", dependencies=[Depends(require_admin)])
+def preview_utm_rules(session: Session = Depends(get_db)) -> dict:
+    return apply_utm_rules({"preview": True}, session)
 
 
 @app.get("/bot-api/tracking-platforms", dependencies=[Depends(require_admin)])

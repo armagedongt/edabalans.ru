@@ -1,10 +1,14 @@
 # Техническое ТЗ модуля 1 «Первичный вход и атрибуция лида»
 
-Статус: `approved_for_implementation`  
+Статус: `implemented_locally_awaiting_migration_and_deploy`
 Версия: 1.0  
 Дата: 22.08.2026  
 Источник требований: `LEAD_ENTRY_OWNER_REQUIREMENTS.md`  
 Фактическое старое поведение: `../../../TELEGRAM_BOT_CURRENT_LOGIC.md`
+
+Реализация: commit `04bf9ca`; migration `20260822_0012`; service tests `13 passed`;
+JavaScript syntax check passed. Production-состояние не объявляется обновлённым до
+отдельной проверки миграции PostgreSQL и ручного выпуска.
 
 ## 1. Результат реализации
 
@@ -473,28 +477,32 @@ starts, unique users и event table. Общая карточка rule агрег
 покрывать:
 
 ```text
-GET    /bot-api/link-rules
+GET    /bot-api/link-rules                 # канонический список
 POST   /bot-api/link-rules
 GET    /bot-api/link-rules/{id}
 PATCH  /bot-api/link-rules/{id}
 POST   /bot-api/link-rules/{id}/aliases
-PATCH  /bot-api/link-aliases/{id}/status
+PATCH  /bot-api/link-aliases/{id}
 POST   /bot-api/link-rules/resolve-preview
 
 POST   /bot-api/utm/parse
 GET    /bot-api/utm/unresolved
 POST   /bot-api/utm/rules
 POST   /bot-api/utm/apply-preview
-POST   /bot-api/utm/apply
+POST   /bot-api/utm/apply                  # preview=false применяет явно
 
-GET    /bot-api/tags/search
+GET    /bot-api/tags
+GET    /bot-api/tags/search                # совместимый alias поиска
 POST   /bot-api/tags                 # явное действие, общий CRM service
 
-POST   /bot-api/channel-invites
-POST   /bot-api/channel-invites/{alias_id}/revoke
+POST   /bot-api/link-aliases/{id}/channel-invite
+POST   /bot-api/link-aliases/{id}/revoke-channel-invite
 
 GET    /bot-api/link-analytics
 GET    /bot-api/link-rules/{id}/events
+GET    /bot-api/tracking-events
+GET    /bot-api/tracking-links             # обратная совместимость старой админки
+POST   /bot-api/tracking-links             # обратная совместимость старой админки
 
 GET    /go/{token}                   # внутренний route за GO_DOMAIN
 ```
