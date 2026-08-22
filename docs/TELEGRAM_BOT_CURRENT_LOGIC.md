@@ -22,9 +22,11 @@ alias, закрытый порт PostgreSQL, Telegram `getMe` через proxy �
 
 ## 1. Где находится источник истины
 
-- Исполнение входящих событий и `/start`: `telegram-bot/service/app/main.py`,
-  функции `polling_loop()`, `process_update()`, `_upsert_contact()` и
-  `_repeat_start_text()`.
+- Приём входящих событий и `/start`: `telegram-bot/service/app/main.py`, функции
+  `polling_loop()`, `process_update()` и `_upsert_contact()`.
+- Исполняемое решение стартовой ветки: `telegram-bot/service/app/start_router.py`;
+  порядок правил зарегистрирован как `START_ROUTER_RULES` в `app/graph.py` и теми
+  же узлами показывается на карте админки.
 - Исполнение шагов цепочки: `telegram-bot/service/app/engine.py`, функции
   `start_run()`, `advance_run()`, `resume_callback()` и `due_runs()`.
 - Начальный шаблон двух цепочек: `telegram-bot/service/app/seed.py`.
@@ -171,31 +173,39 @@ Telegram `user` и `chat` и создаёт либо обновляет `tg_cont
 /start -> prepurchase_masterclass
 ```
 
-При первом `/start` функция `process_update()` создаёт `tg_sequence_runs` через
-`start_run()` и сразу вызывает `advance_run()`.
+После атрибуции `start_router.py` строго по порядку проверяет:
 
-При любом повторном `/start` новая цепочка не создаётся и текущая цепочка не
-переходит на следующий шаг. `_repeat_start_text()` отвечает:
+1. подтверждённую покупку одного из трёх тарифов мастер-класса либо активное право
+   `ACCESS_MASTERCLASS`;
+2. первое ли это посещение;
+3. доставлен ли четвёртый обязательный материал (`m09`);
+4. существует ли active/waiting run именно `prepurchase_masterclass`, который в
+   текущей версии содержит Welcome и интенсив;
+5. запускалась ли новая версия Welcome когда-либо.
 
-- пока ожидается кнопка — просит нажать старую кнопку «Начать интенсив»;
-- во время задержки — сообщает примерное время до следующего сообщения;
-- после отправки четвёртого дня (`m09`) — показывает оглавление интенсива;
-- в остальных случаях — сообщает, что следующее сообщение придёт по расписанию.
+Результат ровно один:
 
-Оглавление и хэштеги закреплены миграцией
-`backend/migrations/versions/20260822_0010_intensive_restart_guard.py`.
+- покупка → остановить Welcome/pre-purchase run и отправить
+  `tpl_start_has_masterclass`;
+- первый вход или новая рассылка ещё не запускалась → запустить Welcome;
+- День 4 доставлен → отправить `tpl_start_intensive_complete`;
+- Welcome run активен → отправить `tpl_start_intensive_waiting` с фактическим
+  `next_action_at`, не меняя шаг и расписание;
+- Welcome раньше запускался, но run потерян и День 4 не доставлен → записать
+  `start_routing_error` в `tg_tracking_events`, ничего человеку не отправлять.
 
-Это пока **не полная согласованная развилка**. До ответа повторному пользователю
-код ещё не проверяет покупку мастер-класса. Он не использует отдельные
-редактируемые выходы для покупателя, незавершённого интенсива и завершённого
-интенсива и не показывает эти решения отдельными узлами карты. Целевая логика,
-точные тексты и границы следующего модуля находятся в
-`knowledge-base/modules/telegram/START_WELCOME_ROUTING.md`.
+Системные ответы читаются из `tg_content_items`, а отправки записываются в
+`tg_manual_messages` с оператором `system:start_router`. Старый LeadTeh-тег первого
+посещения не считается запуском новой Welcome-версии.
 
-Пять согласованных текстов следующего router заведены в `tg_content_items` с
-кодами `tpl_start_navigation_pin`, `tpl_start_welcome_offer`,
-`tpl_start_has_masterclass`, `tpl_start_intensive_waiting` и
-`tpl_start_intensive_complete`, но текущий `process_update()` их ещё не исполняет.
+В админке **Пользователи → Что ответит Start** показывает решение по текущему
+состоянию без отправки и без изменения данных. API предпросмотра:
+`GET /bot-api/contacts/{contact_id}/start-preview`; чистая симуляция фактов:
+`POST /bot-api/start-router/simulate`.
+
+Не подключён только отдельный вход покупателя по одноразовой ссылке из checkout:
+его генерация требует связи со страницей покупки. Уже связанный с CRM покупатель
+распознаётся обычным `/start` сейчас.
 
 ## 6. Текущая цепочка до покупки
 

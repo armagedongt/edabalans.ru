@@ -84,7 +84,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     repeat = {"update_id": 102, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
     assert len(fake.sent) == 3
-    assert "Следующее сообщение" in fake.sent[-1][1]
+    assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
     assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
@@ -111,6 +111,10 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
     assert state["run_status"] == "active"
     assert state["sent"] == 2
+    preview = client.get(f"/bot-api/contacts/{contacts[0]['id']}/start-preview").json()
+    assert preview["decision"]["code"] == "intensive_waiting"
+    simulated = client.post("/bot-api/start-router/simulate", json={"is_first_visit":False,"has_masterclass":True,"day_four_sent":False,"has_active_welcome_run":True,"welcome_ever_started":True}).json()
+    assert simulated["decision"]["code"] == "masterclass_owned"
     sent = client.post(f"/bot-api/users/{crm_user_id}/messages", json={"text": "Проверка"}).json()
     assert sent["status"] == "sent"
     link = client.post("/bot-api/tracking-links", json={"platform":"youtube","placement":"video-1"}).json()

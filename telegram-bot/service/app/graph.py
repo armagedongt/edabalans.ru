@@ -38,7 +38,7 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
 }
 
 GLOBAL_MODULES: tuple[dict[str, str], ...] = (
-    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Требования утверждены · исполнение частичное"},
+    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Реализован и протестирован · checkout-ссылка отложена"},
     {"code": "welcome_intensive", "name": "Welcome и первая часть интенсива", "status": "Следующий в разработке"},
     {"code": "prepurchase_nurture", "name": "Польза и продажи до покупки", "status": "Каркас и частичный контент"},
     {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
@@ -46,6 +46,17 @@ GLOBAL_MODULES: tuple[dict[str, str], ...] = (
     {"code": "direct_support", "name": "Личные сообщения клиентам", "status": "Базовая механика"},
     {"code": "lottery", "name": "Лотерея", "status": "Запланировано"},
     {"code": "quiz", "name": "Тесты и опросы", "status": "Запланировано"},
+)
+
+# Исполнитель start_router проходит правила строго сверху вниз. Карта ниже обязана
+# показывать те же условия и выходы; тесты проверяют соответствие кодов решений.
+START_ROUTER_RULES: tuple[tuple[str, bool, str], ...] = (
+    ("has_masterclass", True, "masterclass_owned"),
+    ("is_first_visit", True, "launch_welcome"),
+    ("day_four_sent", True, "intensive_complete"),
+    ("has_active_welcome_run", True, "intensive_waiting"),
+    ("welcome_ever_started", False, "launch_welcome"),
+    ("__default__", True, "welcome_state_error"),
 )
 
 
@@ -75,7 +86,7 @@ def start_attribution_graph() -> dict[str, Any]:
         node("telegram_start", "entry", "Нажата кнопка Start", "Telegram /start", 4, Исполнение="app/main.py:process_update"),
         node("identity", "technical", "Найти contact и CRM user", "Идентификация", 5, Хранение="tg_contacts / messenger_accounts"),
         node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 6, Хранение="tg_tracking_* / attribution_events / user_tags"),
-        node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Другая покупка не считается", 7, Статус="Проверка в Start ещё не подключена"),
+        node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Платёж или активное право ACCESS_MASTERCLASS", 7, Исполнение="app/start_router.py"),
         node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "tpl_start_has_masterclass", 8, Контент="tg_content_items"),
         node("exit_buyer", "module_exit", "Стоп", "Остановить Welcome/pre-purchase; нового не запускать", 9, Результат="Существующие post-purchase процессы не меняются"),
         node("first_visit", "condition", "Первое посещение бота?", "main_scenario_seen_at", 10, Хранение="messenger_accounts"),
@@ -110,7 +121,7 @@ def start_attribution_graph() -> dict[str, Any]:
         {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
         {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
     ]
-    return {"level": "module", "module_code": "start_attribution", "title": "Старт и атрибуция", "status": "Требования утверждены · исполнение частичное", "description": "Целевой канон; неподключённые ветки явно отмечены в карточках.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "partial_implementation", "message": "Проверка покупки, полная повторная развилка и специальная ссылка покупателя ещё не исполняются целиком."}]}
+    return {"level": "module", "module_code": "start_attribution", "title": "Старт и атрибуция", "status": "Исполняется · специальная ссылка покупателя ждёт интеграции сайта", "description": "Условия карты исполняет start_router; вход покупателя по одноразовой ссылке подключается вместе с checkout.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "buyer_link_pending", "message": "Генерация одноразовой ссылки покупателя ещё не подключена к сайту/checkout."}]}
 
 
 def module_graph(module_code: str) -> dict[str, Any]:

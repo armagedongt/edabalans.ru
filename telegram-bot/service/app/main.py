@@ -24,6 +24,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import PREPURCHASE_CODE, seed_defaults
+from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
 from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, unresolved_utm_groups
 
@@ -41,16 +42,6 @@ MEDIA_TYPES = {
     "audio/mpeg": ("voice", ".mp3"),
     "audio/ogg": ("voice", ".ogg"),
 }
-INTENSIVE_INDEX_TEXT = """<b>Оглавление четырёхдневного интенсива</b>
-
-Нажмите на нужный хэштег — Telegram покажет сообщения этого дня:
-
-1️⃣ #интенсив_день_1
-2️⃣ #интенсив_день_2
-3️⃣ #интенсив_день_3
-4️⃣ #интенсив_день_4"""
-
-
 def client() -> TelegramClient:
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Telegram token is not configured")
@@ -119,40 +110,6 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
     session.flush()
     ensure_crm_identity(session, contact, user)
     return contact
-
-
-def _repeat_start_text(session: Session, contact: Contact, run: SequenceRun) -> str:
-    day_four_sent = session.scalar(
-        select(StepDelivery.id)
-        .join(SequenceRun, SequenceRun.id == StepDelivery.run_id)
-        .where(
-            SequenceRun.contact_id == contact.id,
-            StepDelivery.step_key == "m09",
-            StepDelivery.status == "sent",
-        )
-        .limit(1)
-    )
-    if day_four_sent:
-        return INTENSIVE_INDEX_TEXT
-    if run.status == "waiting" and (run.context or {}).get("waiting_callback") == "start_intensive":
-        return "Вы уже получили приветствие 👆 Нажмите кнопку «Начать интенсив» под ним — повторно вводить /start не нужно."
-    if run.next_action_at:
-        next_at = run.next_action_at
-        if next_at.tzinfo is None:
-            next_at = next_at.replace(tzinfo=UTC)
-        seconds = max(0, int((next_at - datetime.now(UTC)).total_seconds()))
-        if seconds >= 3600:
-            hours, minutes = divmod((seconds + 59) // 60, 60)
-            wait = f"{hours} ч {minutes} мин" if minutes else f"{hours} ч"
-        else:
-            wait = f"{max(1, (seconds + 59) // 60)} мин"
-        return f"Вы уже проходите интенсив 👍 Следующее сообщение придёт примерно через {wait}."
-    return "Вы уже начали работу с ботом 👍 Следующее сообщение придёт по расписанию — повторно вводить /start не нужно."
-
-
-def _send_text(chat_id: str, body: str) -> None:
-    content = SimpleNamespace(body_source=body, title="Системное сообщение", media_kind=None, media_path=None, telegram_file_id=None)
-    client().send_content(chat_id, content, {})
 
 
 def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient) -> tuple[int, int]:
@@ -374,20 +331,21 @@ def process_update(update: dict, session: Session) -> dict:
             is_first, _ = assign_first_touch(session, account, contact, link, alias, session_tag_ids, raw_query, payload_status)
             if link and link.route_kind == "published_step":
                 sequence_code = link.target_sequence_code
-            previous_run = session.scalar(
-                select(SequenceRun)
-                .where(SequenceRun.contact_id == contact.id)
-                .order_by(SequenceRun.started_at.desc())
+            facts, decision, welcome_run = inspect_start(session, contact, is_first)
+            tg = client()
+            run = execute_start_decision(
+                session,
+                contact,
+                decision,
+                welcome_run,
+                tg,
+                sequence_code,
+                link.target_step_key if link and link.route_kind == "published_step" else None,
+                update_id,
             )
-            if previous_run or not is_first:
-                session.commit()
-                _send_text(contact.chat_id, _repeat_start_text(session, contact, previous_run) if previous_run else "Вы уже знакомы с ботом 👍 Сейчас проверю ваш статус и покажу доступные материалы.")
-            else:
-                run = start_run(session, contact.id, sequence_code)
-                if link and link.route_kind == "published_step" and link.target_step_key:
-                    run.current_step_key = link.target_step_key
-                session.commit()
-                advance_run(session, run, client())
+            session.commit()
+            if run:
+                advance_run(session, run, tg)
     elif callback:
         msg = callback.get("message") or {}
         contact = _upsert_contact(session, bot, callback["from"], msg.get("chat") or {"id": callback["from"]["id"]})
@@ -545,6 +503,24 @@ def user_bot_state(user_id: str, session: Session = Depends(get_db)) -> dict:
     if not state:
         raise HTTPException(404, "Telegram contact not found")
     return state
+
+
+@app.get("/bot-api/contacts/{contact_id}/start-preview", dependencies=[Depends(require_admin)])
+def start_preview(contact_id: str, session: Session = Depends(get_db)) -> dict:
+    contact = session.get(Contact, contact_id)
+    if not contact:
+        raise HTTPException(404, "Contact not found")
+    facts, decision, run = inspect_start(session, contact, False)
+    return {"contact_id": contact.id, "facts": facts.__dict__, "decision": decision.to_dict(), "next_action_at": run.next_action_at if run else None}
+
+
+@app.post("/bot-api/start-router/simulate", dependencies=[Depends(require_admin)])
+def simulate_start_router(body: dict) -> dict:
+    try:
+        facts = StartFacts(**{key: bool(body[key]) for key in StartFacts.__dataclass_fields__})
+    except KeyError as exc:
+        raise HTTPException(422, f"Missing fact: {exc.args[0]}") from None
+    return {"facts": facts.__dict__, "decision": decision_from_facts(facts).to_dict()}
 
 
 @app.post("/bot-api/contacts/{contact_id}/accelerated-run", dependencies=[Depends(require_admin)])

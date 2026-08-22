@@ -121,7 +121,7 @@ def _write_variable(session: Session, contact_id: str, key: str, value: Any) -> 
         session.add(UserVariable(contact_id=contact_id, key=key, value={"value": value}))
 
 
-def _has_paid_product(session: Session, contact: Contact, product_codes: list[str], variable_key: str) -> bool:
+def has_paid_product(session: Session, contact: Contact, product_codes: list[str], variable_key: str) -> bool:
     if contact.user_id and session.bind and session.bind.dialect.name == "postgresql":
         placeholders = ",".join(f":code_{index}" for index in range(len(product_codes)))
         params = {f"code_{index}": code for index, code in enumerate(product_codes)}
@@ -133,6 +133,13 @@ def _has_paid_product(session: Session, contact: Contact, product_codes: list[st
                     WHERE p.user_id = :user_id
                       AND p.payment_status = 'paid'
                       AND pr.code IN ({placeholders})
+                    UNION ALL
+                    SELECT 1 FROM user_accesses ua
+                    JOIN resources r ON r.id = ua.resource_id
+                    WHERE ua.user_id = :user_id
+                      AND ua.revoked_at IS NULL
+                      AND (ua.expires_at IS NULL OR ua.expires_at > now())
+                      AND r.code = 'ACCESS_MASTERCLASS'
                 )
             """),
             {"user_id": contact.user_id, **params},
@@ -184,7 +191,7 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
             elif condition == "has_product":
                 variable_key = config.get("product_code", "masterclass")
                 product_codes = config.get("product_codes") or [variable_key]
-                result = bool(run.context.get(f"has_product:{variable_key}") or _has_paid_product(session, contact, product_codes, variable_key))
+                result = bool(run.context.get(f"has_product:{variable_key}") or has_paid_product(session, contact, product_codes, variable_key))
             else:
                 result = bool(_variable(session, run.contact_id, condition))
             branch_key = "true" if result else "false"
