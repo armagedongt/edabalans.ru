@@ -16,6 +16,7 @@ Telegram-бот — канал общей messaging-системы edabalans.ru.
 | Подмодуль | Канонический документ | Состояние |
 |---|---|---|
 | Ссылки, источники и атрибуция | `LINKS_AND_ATTRIBUTION.md` | целевая логика согласовывается, код ещё не реализован |
+| Подробные требования владельца к модулю 1 | `LEAD_ENTRY_OWNER_REQUIREMENTS.md` | approved_source |
 | Фактический `/start` и путь клиента | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | работает сейчас |
 | Welcome и первая версия интенсива | `../../../plans/TELEGRAM_START_LINKS_SPEC.md` | planned |
 | Цепочки и карта переходов | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | частично реализовано |
