@@ -2,7 +2,9 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+import hashlib
 import re
+import secrets
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -16,8 +18,8 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import (
-    MasterclassEvent, MasterclassNotification, OfferCheckout, OfferStage, QuestionnaireAnswer, QuestionnaireRun,
-    Resource, User, UserAccess, UserEmail, UserOffer,
+    MasterclassEvent, MasterclassNotification, MessengerLinkToken, OfferCheckout, OfferStage,
+    QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
@@ -86,6 +88,11 @@ class EventIn(BaseModel):
     event_type: str = Field(min_length=1, max_length=80)
     event_key: str = Field(min_length=1, max_length=160)
     placement: str | None = Field(default=None, max_length=80)
+
+
+class MessengerLinkIn(BaseModel):
+    email: str
+    platform: str = Field(default="telegram", pattern="^telegram$")
 
 
 class CheckoutIn(BaseModel):
@@ -217,6 +224,52 @@ def record_event(
             queue_notification(db, user.id, event, "dqs_support", datetime.now(timezone.utc) + timedelta(hours=6), "tpl_postpurchase_dqs_support")
     db.commit()
     return {"ok": True, "created": created, "event_id": str(event.id)}
+
+
+@router.post("/messenger-links")
+def create_messenger_link(
+    body: MessengerLinkIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    username = settings.telegram_test_bot_username.strip().lstrip("@")
+    if not re.fullmatch(r"[A-Za-z0-9_]{5,32}", username):
+        raise HTTPException(503, "Telegram bot is not configured")
+
+    now = datetime.now(timezone.utc)
+    purpose = "link_account"
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    for previous in db.scalars(select(MessengerLinkToken).where(
+        MessengerLinkToken.user_id == user.id,
+        MessengerLinkToken.platform == body.platform,
+        MessengerLinkToken.purpose == purpose,
+        MessengerLinkToken.consumed_at.is_(None),
+        MessengerLinkToken.expires_at > now,
+    )):
+        previous.expires_at = now
+
+    # 18 random bytes become 24 base64url characters. Together with the M
+    # prefix the Telegram start payload is only 25 characters long.
+    payload = "M" + secrets.token_urlsafe(18)
+    expires_at = now + timedelta(minutes=15)
+    db.add(MessengerLinkToken(
+        user_id=user.id,
+        platform=body.platform,
+        purpose=purpose,
+        token_hash=hashlib.sha256(payload.encode("ascii")).hexdigest(),
+        expires_at=expires_at,
+    ))
+    db.commit()
+    return {
+        "ok": True,
+        "platform": body.platform,
+        "deep_link": f"https://t.me/{username}?start={payload}",
+        "expires_at": expires_at.isoformat(),
+        "status": "generated",
+        "consumption": "pending",
+    }
 
 
 def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:

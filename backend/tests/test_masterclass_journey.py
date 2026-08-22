@@ -1,4 +1,5 @@
 import os
+import hashlib
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -16,14 +17,15 @@ from app.app_auth import create_app_session, create_placement_token  # noqa: E40
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
-    MasterclassEvent, MasterclassNotification, OfferCheckout, OfferStage, QuestionnaireAnswer, Resource,
-    User, UserAccess, UserEmail, UserOffer,
+    MasterclassEvent, MasterclassNotification, MessengerLinkToken, OfferCheckout, OfferStage,
+    QuestionnaireAnswer, Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
 
 TEST_SETTINGS = Settings(
     database_url="sqlite+pysqlite:///:memory:",
     admin_password="test-app-secret",
+    telegram_test_bot_username="EdabalansTestBot",
 )
 
 
@@ -44,6 +46,17 @@ def test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals():
     ).read_text(encoding="utf-8")
     assert "json_build_object('single',2900" in migration
     assert '\":2900' not in migration
+
+
+def test_messenger_link_migration_stores_only_token_hash():
+    migration = (
+        Path(__file__).parents[1]
+        / "migrations"
+        / "versions"
+        / "20260823_0016_messenger_link_tokens.py"
+    ).read_text(encoding="utf-8")
+    assert "token_hash varchar(64) NOT NULL UNIQUE" in migration
+    assert "token varchar" not in migration
 
 
 def setup(authenticated=True):
@@ -102,6 +115,39 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
         assert db.scalar(select(func.count(QuestionnaireAnswer.id))) == 1
         assert db.scalar(select(QuestionnaireAnswer.answer_text)) == "Обновлённый ответ"
         assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
+
+
+def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
+    client, factory = setup()
+    first = client.post("/api/masterclass/messenger-links", json={
+        "email": "member@example.test",
+        "platform": "telegram",
+    })
+    assert first.status_code == 200
+    first_payload = first.json()["deep_link"].split("?start=", 1)[1]
+    assert first.json()["deep_link"].startswith("https://t.me/EdabalansTestBot?start=M")
+    assert len(first_payload) <= 32
+    assert "=" not in first_payload
+
+    second = client.post("/api/masterclass/messenger-links", json={
+        "email": "member@example.test",
+        "platform": "telegram",
+    })
+    assert second.status_code == 200
+    second_payload = second.json()["deep_link"].split("?start=", 1)[1]
+    assert second_payload != first_payload
+
+    with factory() as db:
+        rows = list(db.scalars(select(MessengerLinkToken).order_by(MessengerLinkToken.created_at)))
+        assert len(rows) == 2
+        assert rows[0].token_hash == hashlib.sha256(first_payload.encode("ascii")).hexdigest()
+        assert rows[1].token_hash == hashlib.sha256(second_payload.encode("ascii")).hexdigest()
+        assert first_payload not in {row.token_hash for row in rows}
+        now = datetime.now(timezone.utc)
+        first_expiry = rows[0].expires_at.replace(tzinfo=timezone.utc) if rows[0].expires_at.tzinfo is None else rows[0].expires_at
+        second_expiry = rows[1].expires_at.replace(tzinfo=timezone.utc) if rows[1].expires_at.tzinfo is None else rows[1].expires_at
+        assert first_expiry <= now
+        assert second_expiry > now
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():

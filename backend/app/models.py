@@ -133,6 +133,26 @@ class MessengerAccount(Base):
     )
 
 
+class MessengerLinkToken(Base):
+    __tablename__ = "messenger_link_tokens"
+    __table_args__ = (
+        Index("ix_messenger_link_active", "user_id", "platform", "purpose", "expires_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    platform: Mapped[str] = mapped_column(String(32), nullable=False)
+    purpose: Mapped[str] = mapped_column(String(64), nullable=False)
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class Product(TimestampMixin, Base):
     __tablename__ = "products"
 

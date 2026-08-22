@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     smtp_from_email: str = ""
     smtp_use_ssl: bool = True
     smtp_starttls: bool = False
+    telegram_test_bot_username: str = ""
 
     @property
     def allowed_origins_list(self) -> list[str]:

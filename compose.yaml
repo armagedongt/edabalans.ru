@@ -45,6 +45,7 @@ services:
       SMTP_FROM_EMAIL: "${SMTP_FROM_EMAIL:-}"
       SMTP_USE_SSL: "${SMTP_USE_SSL:-true}"
       SMTP_STARTTLS: "${SMTP_STARTTLS:-false}"
+      TELEGRAM_TEST_BOT_USERNAME: "${TELEGRAM_TEST_BOT_USERNAME:-}"
     expose:
       - "8000"
     depends_on:
