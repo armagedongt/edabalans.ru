@@ -29,6 +29,15 @@ fi
 readonly PREVIOUS_SHA="$(git rev-parse HEAD)"
 deployment_started=false
 deployment_succeeded=false
+migration_deploy=false
+
+if git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -q '^backend/migrations/versions/'; then
+    migration_deploy=true
+    if [[ "${ALLOW_DATABASE_MIGRATIONS:-0}" != "1" ]]; then
+        echo "Deployment includes database migrations and requires ALLOW_DATABASE_MIGRATIONS=1 after manual verification" >&2
+        exit 5
+    fi
+fi
 
 rollback() {
     local exit_code="$?"
@@ -36,9 +45,14 @@ rollback() {
 
     if [[ "${deployment_started}" == "true" && "${deployment_succeeded}" != "true" ]]; then
         echo "Deployment failed; restoring ${PREVIOUS_SHA}"
-        git checkout --quiet --force "${PREVIOUS_SHA}"
-        docker compose build
-        docker compose up -d --remove-orphans --wait --wait-timeout 180
+        if [[ "${migration_deploy}" == "true" ]]; then
+            echo "Migration deployment failed after it may have changed the database; automatic code rollback is unsafe" >&2
+            echo "Keeping ${TARGET_SHA} checked out for manual recovery with the matching migration files" >&2
+        else
+            git checkout --quiet --force "${PREVIOUS_SHA}"
+            docker compose build
+            docker compose up -d --remove-orphans --wait --wait-timeout 180
+        fi
     fi
 
     exit "${exit_code}"

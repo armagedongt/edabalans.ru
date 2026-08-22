@@ -1,14 +1,16 @@
 # Техническое ТЗ модуля 1 «Первичный вход и атрибуция лида»
 
-Статус: `implemented_locally_awaiting_migration_and_deploy`
+Статус: `implemented_and_deployed_on_test_bot`
 Версия: 1.0  
 Дата: 22.08.2026  
 Источник требований: `LEAD_ENTRY_OWNER_REQUIREMENTS.md`  
 Фактическое старое поведение: `../../../TELEGRAM_BOT_CURRENT_LOGIC.md`
 
-Реализация: commit `04bf9ca`; migration `20260822_0012`; service tests `13 passed`;
-JavaScript syntax check passed. Production-состояние не объявляется обновлённым до
-отдельной проверки миграции PostgreSQL и ручного выпуска.
+Реализация: commits `04bf9ca` и `845acd0`; migration `20260822_0012`; service tests
+`13 passed`; JavaScript syntax check passed. На сервере проверены migration head,
+HTTPS `go.`, legacy redirect, admin API, закрытый PostgreSQL, Telegram `getMe` и
+штатное восстановление backup. Развёрнут только тестовый бот; live channel invite,
+Tilda и основной бот остаются отдельной приёмкой/переносом.
 
 ## 1. Результат реализации
 

@@ -15,9 +15,9 @@ Telegram-бот — канал общей messaging-системы edabalans.ru.
 
 | Подмодуль | Канонический документ | Состояние |
 |---|---|---|
-| Ссылки, источники и атрибуция | `LEAD_ENTRY_OWNER_REQUIREMENTS.md` + `LEAD_ENTRY_TECHNICAL_SPEC.md` | код `04bf9ca` и тесты готовы, migration/deploy ожидают проверки |
+| Ссылки, источники и атрибуция | `LEAD_ENTRY_OWNER_REQUIREMENTS.md` + `LEAD_ENTRY_TECHNICAL_SPEC.md` | развёрнуто на тестовом боте, migration `0012`, smoke/restore пройдены |
 | Подробные требования владельца к модулю 1 | `LEAD_ENTRY_OWNER_REQUIREMENTS.md` | approved_source |
-| Техническое ТЗ модуля 1 | `LEAD_ENTRY_TECHNICAL_SPEC.md` | approved_for_implementation |
+| Техническое ТЗ модуля 1 | `LEAD_ENTRY_TECHNICAL_SPEC.md` | implemented_and_deployed_on_test_bot |
 | Фактический `/start` и путь клиента | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | работает сейчас |
 | Welcome и первая версия интенсива | `../../../plans/TELEGRAM_START_LINKS_SPEC.md` | planned |
 | Цепочки и карта переходов | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | частично реализовано |
