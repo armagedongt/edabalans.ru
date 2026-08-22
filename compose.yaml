@@ -38,6 +38,13 @@ services:
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
       TILDA_WEBHOOK_TOKEN: "${TILDA_WEBHOOK_TOKEN}"
       ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-https://похудение-это-есть.рф}"
+      SMTP_HOST: "${SMTP_HOST:-}"
+      SMTP_PORT: "${SMTP_PORT:-465}"
+      SMTP_USERNAME: "${SMTP_USERNAME:-}"
+      SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
+      SMTP_FROM_EMAIL: "${SMTP_FROM_EMAIL:-}"
+      SMTP_USE_SSL: "${SMTP_USE_SSL:-true}"
+      SMTP_STARTTLS: "${SMTP_STARTTLS:-false}"
     expose:
       - "8000"
     depends_on:

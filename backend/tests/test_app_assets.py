@@ -54,7 +54,13 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert client.get("/assets/masterclass.css").status_code == 200
     loader = client.get("/embed.js").text
     assert "data-edabalans-placement" in loader
+    assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
+    assert "/api/app-auth/challenge" in loader
+    assert "sessionToken" in loader
+    masterclass = client.get("/assets/masterclass.js").text
+    assert "Authorization='Bearer '" in masterclass
+    assert "placement_token" in masterclass
 
 
 def test_tilda_origin_is_allowed_for_api_preflight() -> None:
@@ -63,11 +69,12 @@ def test_tilda_origin_is_allowed_for_api_preflight() -> None:
         headers={
             "Origin": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
             "Access-Control-Request-Method": "PUT",
-            "Access-Control-Request-Headers": "content-type",
+            "Access-Control-Request-Headers": "content-type,authorization",
         },
     )
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    assert "authorization" in response.headers["access-control-allow-headers"].lower()
 
 
 def test_strength_new_user_can_start_and_manage_own_workouts() -> None:

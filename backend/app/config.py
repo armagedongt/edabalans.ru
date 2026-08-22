@@ -11,6 +11,13 @@ class Settings(BaseSettings):
     admin_password: str = ""
     tilda_webhook_token: str = ""
     allowed_origins: str = "https://похудение-это-есть.рф"
+    smtp_host: str = ""
+    smtp_port: int = 465
+    smtp_username: str = ""
+    smtp_password: str = ""
+    smtp_from_email: str = ""
+    smtp_use_ssl: bool = True
+    smtp_starttls: bool = False
 
     @property
     def allowed_origins_list(self) -> list[str]:

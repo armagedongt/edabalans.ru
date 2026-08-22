@@ -5,6 +5,13 @@
     ? location.origin
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
+  var PROTECTED_APPS = {
+    'onboarding-questionnaire': true,
+    'masterclass-offers': true,
+    'recipes-part-1': true,
+    'recipes-part-2': true,
+    'closing-review': true
+  };
   var roots = {
     dqs: 'dqs-app',
     strength: 'strength-app',
@@ -46,18 +53,33 @@
   function rememberedIdentity() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_IDENTITY) || 'null');
-      return saved && validEmail(normalizeEmail(saved.email)) ? normalizeEmail(saved.email) : '';
+      if (!saved || !validEmail(normalizeEmail(saved.email))) return null;
+      return {
+        email: normalizeEmail(saved.email),
+        sessionToken: String(saved.sessionToken || ''),
+        expiresAt: Number(saved.expiresAt || 0)
+      };
     } catch (error) {
-      return '';
+      return null;
     }
   }
 
-  function remember(email) {
+  function remember(email, sessionToken, expiresIn) {
+    var current = rememberedIdentity() || {};
+    var token = sessionToken === undefined ? String(current.sessionToken || '') : String(sessionToken || '');
+    var expiresAt = expiresIn === undefined
+      ? Number(current.expiresAt || 0)
+      : Date.now() + Number(expiresIn || 0) * 1000;
     try {
-      localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({email: email, confirmedAt: new Date().toISOString()}));
+      localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
+        email: email,
+        sessionToken: token,
+        expiresAt: expiresAt,
+        confirmedAt: new Date().toISOString()
+      }));
       localStorage.setItem('dqs_email', email);
     } catch (error) {}
-    window.EdabalansIdentity = {email: email};
+    window.EdabalansIdentity = {email: email, sessionToken: token};
     var marker = document.getElementById('edabalans-member-email');
     if (!marker) {
       marker = document.createElement('input');
@@ -69,13 +91,13 @@
     marker.value = email;
   }
 
-  function askIdentity(mounts, candidate) {
+  function askIdentity(mounts, candidate, requireConfirmation) {
     var host = mounts[0];
     host.innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
       '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Вход в приложение</div>' +
       (candidate ? '<div style="line-height:1.45;margin-bottom:18px">Вы входите как:<br><b>' + candidate.replace(/</g, '&lt;') + '</b><br>Это ваш email?</div>' : '<div style="line-height:1.45;margin-bottom:14px">Не удалось автоматически определить email. Введите email, на который оформлена покупка.</div>') +
       '<input data-edabalans-email type="email" value="' + candidate.replace(/"/g, '&quot;') + '" placeholder="email@example.com" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #c7c7cc;border-radius:12px;font-size:16px;margin-bottom:12px">' +
-      '<button data-edabalans-confirm style="width:100%;padding:12px;border:0;border-radius:12px;background:#1d1d1f;color:#fff;font-size:16px;font-weight:600;cursor:pointer">Продолжить</button>' +
+      '<button data-edabalans-confirm style="width:100%;padding:12px;border:0;border-radius:12px;background:#1d1d1f;color:#fff;font-size:16px;font-weight:600;cursor:pointer">' + (requireConfirmation ? 'Получить код на почту' : 'Продолжить') + '</button>' +
       '<div data-edabalans-error style="color:#b42318;font-size:14px;margin-top:10px"></div></div>';
     host.querySelector('[data-edabalans-confirm]').addEventListener('click', function () {
       var email = normalizeEmail(host.querySelector('[data-edabalans-email]').value);
@@ -83,8 +105,63 @@
         host.querySelector('[data-edabalans-error]').textContent = 'Введите корректный email';
         return;
       }
-      remember(email);
-      start(mounts);
+      if (!requireConfirmation) {
+        remember(email, '', 0);
+        start(mounts);
+        return;
+      }
+      var button = host.querySelector('[data-edabalans-confirm]');
+      var error = host.querySelector('[data-edabalans-error]');
+      button.disabled = true;
+      error.textContent = 'Отправляю код…';
+      fetch(APP_HOST + '/api/app-auth/challenge', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({email: email})
+      }).then(function (response) {
+        return response.json().then(function (data) {
+          if (!response.ok) throw new Error(data.detail || 'Не удалось отправить код');
+          return data;
+        });
+      }).then(function (challenge) {
+        host.innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
+          '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Введите код</div>' +
+          '<div style="line-height:1.45;margin-bottom:18px">Шестизначный код отправлен на <b>' + email.replace(/</g, '&lt;') + '</b>. Он действует 10 минут.</div>' +
+          '<input data-edabalans-code inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #c7c7cc;border-radius:12px;font-size:22px;letter-spacing:6px;text-align:center;margin-bottom:12px">' +
+          '<button data-edabalans-verify style="width:100%;padding:12px;border:0;border-radius:12px;background:#1d1d1f;color:#fff;font-size:16px;font-weight:600;cursor:pointer">Войти</button>' +
+          '<button data-edabalans-back style="width:100%;padding:10px;border:0;background:transparent;color:#555;cursor:pointer">Изменить email</button>' +
+          '<div data-edabalans-error style="color:#b42318;font-size:14px;margin-top:10px"></div></div>';
+        host.querySelector('[data-edabalans-back]').onclick = function () {
+          askIdentity(mounts, email, true);
+        };
+        host.querySelector('[data-edabalans-verify]').onclick = function () {
+          var code = String(host.querySelector('[data-edabalans-code]').value || '').replace(/\D/g, '');
+          var verifyError = host.querySelector('[data-edabalans-error]');
+          if (code.length !== 6) {
+            verifyError.textContent = 'Введите все 6 цифр';
+            return;
+          }
+          verifyError.textContent = 'Проверяю…';
+          fetch(APP_HOST + '/api/app-auth/verify', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({challenge_token: challenge.challenge_token, code: code})
+          }).then(function (response) {
+            return response.json().then(function (data) {
+              if (!response.ok) throw new Error(data.detail || 'Неверный код');
+              return data;
+            });
+          }).then(function (session) {
+            remember(session.email, session.session_token, session.expires_in);
+            start(mounts);
+          }).catch(function (verifyFailure) {
+            verifyError.textContent = String(verifyFailure.message || verifyFailure);
+          });
+        };
+      }).catch(function (failure) {
+        button.disabled = false;
+        error.textContent = String(failure.message || failure);
+      });
     });
   }
 
@@ -113,6 +190,7 @@
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
+    var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
@@ -125,8 +203,8 @@
       })
       .then(function (html) {
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement}
-          : {mode: 'user', app: app, placement: placement};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken}
+          : {mode: 'user', app: app, placement: placement, placementToken: placementToken};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];
@@ -154,14 +232,22 @@
   function boot() {
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'));
     if (!mounts.length) return;
+    var protectedApps = mounts.some(function (mount) {
+      return Boolean(PROTECTED_APPS[String(mount.getAttribute('data-edabalans-app') || '').toLowerCase()]);
+    });
     var detected = detectTildaEmail();
     var remembered = rememberedIdentity();
-    if (remembered && (!detected || remembered === detected)) {
-      remember(remembered);
+    if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {
+      remember(remembered.email);
       start(mounts);
       return;
     }
-    askIdentity(mounts, detected || remembered);
+    if (!protectedApps && remembered && (!detected || remembered.email === detected)) {
+      remember(remembered.email);
+      start(mounts);
+      return;
+    }
+    askIdentity(mounts, detected || (remembered && remembered.email) || '', protectedApps);
   }
 
   window.EdabalansEmbed = {load: load, boot: boot};

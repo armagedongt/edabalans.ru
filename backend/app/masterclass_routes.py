@@ -5,13 +5,15 @@ from decimal import Decimal
 import re
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
+from app.app_service import primary_email
+from app.app_auth import create_placement_token, require_app_user, require_placement
 from app.auth import require_admin
+from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import (
     MasterclassEvent, MasterclassNotification, OfferCheckout, OfferStage, QuestionnaireAnswer, QuestionnaireRun,
@@ -61,6 +63,7 @@ STAGE_BY_PLACEMENT = {
     "recipes-part-2-gate": "second", "closing-review": "review",
     "post-review": "last_week",
 }
+EMBED_PLACEMENTS = tuple(STAGE_BY_PLACEMENT) + ("offers-hub",)
 
 
 def aware_utc(value: datetime | None) -> datetime | None:
@@ -88,6 +91,7 @@ class EventIn(BaseModel):
 class CheckoutIn(BaseModel):
     email: str
     placement: str
+    placement_token: str = Field(min_length=20, max_length=4096)
     offer_code: str
 
 
@@ -98,11 +102,13 @@ class StageUpdateIn(BaseModel):
     bundle: dict[str, int]
 
 
-def resolve_masterclass_user(db: Session, email: str) -> User:
-    try:
-        return resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
-    except AppAccessError as exc:
-        raise HTTPException(403, str(exc)) from exc
+def resolve_masterclass_user(
+    request: Request,
+    db: Session,
+    email: str,
+    settings: Settings,
+) -> User:
+    return require_app_user(request, email, db, "ACCESS_MASTERCLASS", settings)
 
 
 def questions(kind: str) -> list[tuple[str, str, str]]:
@@ -126,8 +132,14 @@ def queue_notification(db: Session, user_id: uuid.UUID, event: MasterclassEvent,
 
 
 @router.get("/questionnaires/{kind}")
-def questionnaire(kind: str, email: str, db: Session = Depends(get_db)) -> dict:
-    user = resolve_masterclass_user(db, email)
+def questionnaire(
+    kind: str,
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, email, settings)
     run = get_run(db, user.id, kind)
     if kind == "closing-review":
         event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == "closing_review_opened"))
@@ -141,8 +153,14 @@ def questionnaire(kind: str, email: str, db: Session = Depends(get_db)) -> dict:
 
 
 @router.put("/questionnaires/{kind}/answer")
-def save_answer(kind: str, body: AnswerIn, db: Session = Depends(get_db)) -> dict:
-    user = resolve_masterclass_user(db, body.email)
+def save_answer(
+    kind: str,
+    body: AnswerIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
     valid = {row[0] for row in questions(kind)}
     if body.question_code not in valid: raise HTTPException(422, "unknown question")
     run = get_run(db, user.id, kind)
@@ -157,9 +175,16 @@ def save_answer(kind: str, body: AnswerIn, db: Session = Depends(get_db)) -> dic
 
 
 @router.post("/questionnaires/{kind}/{action}")
-def finish_questionnaire(kind: str, action: str, body: RunActionIn, db: Session = Depends(get_db)) -> dict:
+def finish_questionnaire(
+    kind: str,
+    action: str,
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
     if action not in {"submit", "skip"}: raise HTTPException(404, "action not found")
-    user = resolve_masterclass_user(db, body.email)
+    user = resolve_masterclass_user(request, db, body.email, settings)
     run = get_run(db, user.id, kind)
     run.status = "submitted" if action == "submit" else "skipped"
     run.submitted_at = datetime.now(timezone.utc)
@@ -176,8 +201,13 @@ def finish_questionnaire(kind: str, action: str, body: RunActionIn, db: Session 
 
 
 @router.post("/events")
-def record_event(body: EventIn, db: Session = Depends(get_db)) -> dict:
-    user = resolve_masterclass_user(db, body.email)
+def record_event(
+    body: EventIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
     event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == body.event_key))
     created = event is None
     if created:
@@ -306,15 +336,33 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
 
 
 @router.get("/offers")
-def offers(email: str, placement: str, db: Session = Depends(get_db)) -> dict:
-    user = resolve_masterclass_user(db, email)
+def offers(
+    email: str,
+    placement: str,
+    placement_token: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, email, settings)
+    if placement not in EMBED_PLACEMENTS:
+        raise HTTPException(422, "unknown masterclass placement")
+    require_placement(request, placement, placement_token, settings)
     payload = build_offers(db, user, placement)
     db.commit(); return payload
 
 
 @router.post("/checkout")
-def checkout(body: CheckoutIn, db: Session = Depends(get_db)) -> dict:
-    user = resolve_masterclass_user(db, body.email)
+def checkout(
+    body: CheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    if body.placement not in EMBED_PLACEMENTS:
+        raise HTTPException(422, "unknown masterclass placement")
+    require_placement(request, body.placement, body.placement_token, settings)
     payload = build_offers(db, user, body.placement)
     card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
     if not card: raise HTTPException(409, "offer is no longer available")
@@ -335,10 +383,18 @@ def checkout(body: CheckoutIn, db: Session = Depends(get_db)) -> dict:
 
 
 @router.get("/gate/{part}")
-def recipe_gate(part: int, email: str, db: Session = Depends(get_db)) -> dict:
+def recipe_gate(
+    part: int,
+    email: str,
+    placement_token: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
     if part not in {1,2}: raise HTTPException(404, "recipe part not found")
-    user = resolve_masterclass_user(db, email)
+    user = resolve_masterclass_user(request, db, email, settings)
     placement = f"recipes-part-{part}-gate"
+    require_placement(request, placement, placement_token, settings)
     key = f"recipes_part_{part}_opened"
     event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == key))
     if not event:
@@ -361,6 +417,20 @@ def recipe_gate(part: int, email: str, db: Session = Depends(get_db)) -> dict:
 def admin_offer_stages(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     rows = list(db.scalars(select(OfferStage).order_by(OfferStage.created_at)))
     return {"ok": True, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status} for row in rows]}
+
+
+@router.get("/admin/embed-tokens")
+def admin_embed_tokens(
+    _: str = Depends(require_admin),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    return {
+        "ok": True,
+        "placements": {
+            placement: create_placement_token(placement, settings)
+            for placement in EMBED_PLACEMENTS
+        },
+    }
 
 
 @router.get("/admin/users")
