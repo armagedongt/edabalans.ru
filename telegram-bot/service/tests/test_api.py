@@ -79,6 +79,13 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
     assert contacts[0]["run_status"] == "waiting"
+    callback = {"update_id": 101, "callback_query": {"id": "cb-1", "from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "message": {"chat": {"id": 42}}, "data": "start_intensive"}}
+    assert client.post("/telegram/webhook", json=callback).json() == {"ok": True}
+    repeat = {"update_id": 102, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
+    assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
+    assert len(fake.sent) == 3
+    assert "Следующее сообщение" in fake.sent[-1][1]
+    assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
     assert any(node["id"] == "route:main_start" for node in overview["nodes"])
@@ -93,7 +100,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
         assert session.scalar(select(func.count(Contact.id))) == 1
         assert session.scalar(select(func.count(SequenceRun.id))) == 1
         assert session.scalar(select(func.count(StepDelivery.id))) == 2
-        assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 1
+        assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 3
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
     assert state["run_status"] == "waiting"
     assert state["sent"] == 2

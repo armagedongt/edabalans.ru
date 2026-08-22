@@ -40,6 +40,14 @@ MEDIA_TYPES = {
     "audio/mpeg": ("voice", ".mp3"),
     "audio/ogg": ("voice", ".ogg"),
 }
+INTENSIVE_INDEX_TEXT = """<b>Оглавление четырёхдневного интенсива</b>
+
+Нажмите на нужный хэштег — Telegram покажет сообщения этого дня:
+
+1️⃣ #интенсив_день_1
+2️⃣ #интенсив_день_2
+3️⃣ #интенсив_день_3
+4️⃣ #интенсив_день_4"""
 
 
 def client() -> TelegramClient:
@@ -117,6 +125,40 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
         contact.user_id = str(crm_user_id)
     session.flush()
     return contact
+
+
+def _repeat_start_text(session: Session, contact: Contact, run: SequenceRun) -> str:
+    day_four_sent = session.scalar(
+        select(StepDelivery.id)
+        .join(SequenceRun, SequenceRun.id == StepDelivery.run_id)
+        .where(
+            SequenceRun.contact_id == contact.id,
+            StepDelivery.step_key == "m09",
+            StepDelivery.status == "sent",
+        )
+        .limit(1)
+    )
+    if day_four_sent:
+        return INTENSIVE_INDEX_TEXT
+    if run.status == "waiting" and (run.context or {}).get("waiting_callback") == "start_intensive":
+        return "Вы уже получили приветствие 👆 Нажмите кнопку «Начать интенсив» под ним — повторно вводить /start не нужно."
+    if run.next_action_at:
+        next_at = run.next_action_at
+        if next_at.tzinfo is None:
+            next_at = next_at.replace(tzinfo=UTC)
+        seconds = max(0, int((next_at - datetime.now(UTC)).total_seconds()))
+        if seconds >= 3600:
+            hours, minutes = divmod((seconds + 59) // 60, 60)
+            wait = f"{hours} ч {minutes} мин" if minutes else f"{hours} ч"
+        else:
+            wait = f"{max(1, (seconds + 59) // 60)} мин"
+        return f"Вы уже проходите интенсив 👍 Следующее сообщение придёт примерно через {wait}."
+    return "Вы уже начали работу с ботом 👍 Следующее сообщение придёт по расписанию — повторно вводить /start не нужно."
+
+
+def _send_text(chat_id: str, body: str) -> None:
+    content = SimpleNamespace(body_source=body, title="Системное сообщение", media_kind=None, media_path=None, telegram_file_id=None)
+    client().send_content(chat_id, content, {})
 
 
 def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient) -> tuple[int, int]:
@@ -305,9 +347,18 @@ def process_update(update: dict, session: Session) -> dict:
                     contact.last_source_token = token
                     sequence_code = link.target_sequence_code
                     session.add(TrackingEvent(tracking_link_id=link.id, contact_id=contact.id, event_type="start", metadata_json={}))
-            run = start_run(session, contact.id, sequence_code)
-            session.commit()
-            advance_run(session, run, client())
+            previous_run = session.scalar(
+                select(SequenceRun)
+                .where(SequenceRun.contact_id == contact.id)
+                .order_by(SequenceRun.started_at.desc())
+            )
+            if previous_run:
+                session.commit()
+                _send_text(contact.chat_id, _repeat_start_text(session, contact, previous_run))
+            else:
+                run = start_run(session, contact.id, sequence_code)
+                session.commit()
+                advance_run(session, run, client())
     elif callback:
         msg = callback.get("message") or {}
         contact = _upsert_contact(session, bot, callback["from"], msg.get("chat") or {"id": callback["from"]["id"]})
