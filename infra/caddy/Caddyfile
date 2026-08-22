@@ -72,3 +72,23 @@
 		format json
 	}
 }
+
+{$GO_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	@short path_regexp short ^/([^/]+)$
+	handle @short {
+		rewrite * /go/{re.short.1}
+		reverse_proxy telegram-bot:8001
+	}
+
+	respond 404
+}

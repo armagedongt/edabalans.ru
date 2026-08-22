@@ -20,6 +20,48 @@ class TrackingLinkIn(BaseModel):
     target_sequence_code: str = "prepurchase_masterclass"
 
 
+class LinkRuleIn(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    target_kind: str = Field(default="bot_start", pattern="^(bot_start|channel_invite)$")
+    route_kind: str = Field(default="root", pattern="^(root|published_step)$")
+    target_sequence_code: str = Field(default="prepurchase_masterclass", max_length=100)
+    target_step_key: str | None = Field(default=None, max_length=120)
+    tag_ids: list[str] = Field(default_factory=list)
+    create_alias: bool = True
+
+
+class LinkRuleUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=255)
+    status: str | None = Field(default=None, pattern="^(active|archived|disabled)$")
+    route_kind: str | None = Field(default=None, pattern="^(root|published_step)$")
+    target_sequence_code: str | None = Field(default=None, max_length=100)
+    target_step_key: str | None = Field(default=None, max_length=120)
+    tag_ids: list[str] | None = None
+
+
+class AliasCreateIn(BaseModel):
+    alias_kind: str = Field(default="short", pattern="^(short|legacy)$")
+    token: str | None = Field(default=None, min_length=1, max_length=64)
+
+
+class AliasStatusIn(BaseModel):
+    status: str = Field(pattern="^(active|archived|disabled)$")
+
+
+class UtmParseIn(BaseModel):
+    url: str = Field(min_length=1, max_length=5000)
+
+
+class UtmRuleIn(BaseModel):
+    parameter_name: str = Field(min_length=1, max_length=128)
+    raw_value: str = Field(max_length=2000)
+    tag_id: str
+
+
+class TagCreateIn(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+
+
 class ContentUpdateIn(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=255)
     body_source: str | None = Field(default=None, max_length=20000)

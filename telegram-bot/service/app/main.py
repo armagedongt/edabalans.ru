@@ -13,18 +13,19 @@ from types import SimpleNamespace
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, Response, UploadFile
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import FileResponse, RedirectResponse
-from sqlalchemy import delete, func, select, text
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from sqlalchemy import delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, start_run
 from app.graph import overview_graph, sequence_graph
-from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, UpdateReceipt
-from app.schemas import AcceleratedRunIn, BroadcastIn, ContentUpdateIn, ManualMessageIn, StepUpdateIn, TrackingLinkIn
+from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import PREPURCHASE_CODE, seed_defaults
 from app.telegram import TelegramClient
+from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, unresolved_utm_groups
 
 
 settings = get_settings()
@@ -115,15 +116,8 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
     contact.language_code = user.get("language_code")
     contact.last_seen_at = datetime.now(UTC)
     contact.status = "active"
-    if not contact.user_id and session.bind and session.bind.dialect.name == "postgresql":
-        crm_user_id = session.execute(text("SELECT user_id FROM messenger_accounts WHERE platform='telegram' AND platform_user_id=:telegram_id"), {"telegram_id": telegram_id}).scalar_one_or_none()
-        if not crm_user_id:
-            crm_user_id = session.execute(text("INSERT INTO users (display_name,status,data_origin,first_seen_at) VALUES (:name,'active','native',now()) RETURNING id"), {"name": " ".join(filter(None, [user.get('first_name'), user.get('last_name')])) or None}).scalar_one()
-            session.execute(text("INSERT INTO messenger_accounts (user_id,platform,platform_user_id,username,first_name,first_seen_at,last_seen_at,linked_at,source) VALUES (:user_id,'telegram',:telegram_id,:username,:first_name,now(),now(),now(),'telegram_bot')"), {"user_id":crm_user_id,"telegram_id":telegram_id,"username":user.get("username"),"first_name":user.get("first_name")})
-        else:
-            session.execute(text("UPDATE messenger_accounts SET username=:username, first_name=:first_name, last_seen_at=now() WHERE platform='telegram' AND platform_user_id=:telegram_id"), {"telegram_id":telegram_id,"username":user.get("username"),"first_name":user.get("first_name")})
-        contact.user_id = str(crm_user_id)
     session.flush()
+    ensure_crm_identity(session, contact, user)
     return contact
 
 
@@ -301,15 +295,34 @@ def health() -> dict:
     }
 
 
-@app.get("/r/{token}", include_in_schema=False)
-def tracking_redirect(token: str, session: Session = Depends(get_db)) -> RedirectResponse:
-    link = session.scalar(select(TrackingLink).where(TrackingLink.token == token, TrackingLink.is_active.is_(True)))
-    if not link:
-        raise HTTPException(404, "Tracking link not found")
-    session.add(TrackingEvent(tracking_link_id=link.id, event_type="click", metadata_json={}))
+def _go_response(token: str, request: Request, session: Session) -> Response:
+    alias, suffix_warning = resolve_alias(session, token)
+    link = active_link(session, alias)
+    if not link or not alias:
+        raise HTTPException(404, "Ссылка не найдена или отключена")
+    query = {key: value for key, value in request.query_params.multi_items() if key.casefold().startswith("utm_")}
+    start_payload = alias.token
+    if query and link.target_kind == "bot_start":
+        start_payload = create_tracking_session(session, link, alias, query)
+    destination = alias.telegram_invite_url if link.target_kind == "channel_invite" else f"https://t.me/{settings.telegram_test_bot_username.lstrip('@')}?start={start_payload}"
+    if not destination:
+        raise HTTPException(409, "Для ссылки на канал ещё не создан Telegram invite URL")
+    session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, event_type="web_click", metadata_json={"raw_query": query, "warning": suffix_warning, "path_token": token}))
     session.commit()
-    username = settings.telegram_test_bot_username.lstrip("@")
-    return RedirectResponse(f"https://t.me/{username}?start={token}", status_code=307)
+    if suffix_warning:
+        safe_destination = destination.replace("&", "&amp;").replace('"', "&quot;")
+        return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><title>Открыть Telegram</title><style>body{{margin:0;background:#f4f6f2;font:17px system-ui;color:#18251c;display:grid;place-items:center;min-height:100vh}}main{{max-width:520px;margin:20px;padding:34px;background:white;border-radius:24px;box-shadow:0 18px 60px #20382722}}a{{display:block;text-align:center;margin-top:22px;padding:15px;border-radius:14px;background:#26734a;color:white;text-decoration:none;font-weight:700}}</style><main><h1>Перед переходом в Telegram</h1><p>Если Telegram у вас открывается только через VPN, включите его сейчас. Затем нажмите кнопку ниже.</p><a href=\"{safe_destination}\">Открыть Telegram</a></main></html>""")
+    return RedirectResponse(destination, status_code=307)
+
+
+@app.get("/go/{token}", include_in_schema=False)
+def go_redirect(token: str, request: Request, session: Session = Depends(get_db)) -> Response:
+    return _go_response(token, request, session)
+
+
+@app.get("/r/{token}", include_in_schema=False)
+def tracking_redirect(token: str, request: Request, session: Session = Depends(get_db)) -> Response:
+    return _go_response(token, request, session)
 
 
 def process_update(update: dict, session: Session) -> dict:
@@ -322,10 +335,22 @@ def process_update(update: dict, session: Session) -> dict:
 
     message = update.get("message")
     callback = update.get("callback_query")
-    update_type = "callback_query" if callback else "message"
+    member = update.get("chat_member")
+    join_request = update.get("chat_join_request")
+    update_type = "chat_member" if member else ("chat_join_request" if join_request else ("callback_query" if callback else "message"))
     session.add(UpdateReceipt(update_id=update_id, bot_instance_id=bot.id, update_type=update_type))
 
-    if message:
+    if member or join_request:
+        payload = member or join_request
+        invite_url = ((payload.get("invite_link") or {}).get("invite_link") or "").strip()
+        person = ((member or {}).get("new_chat_member") or {}).get("user") or (join_request or {}).get("from") or {}
+        accepted = bool(join_request) or ((member or {}).get("new_chat_member") or {}).get("status") in {"member", "administrator", "creator"}
+        alias = session.scalar(select(TrackingLinkAlias).where(TrackingLinkAlias.telegram_invite_url == invite_url)) if invite_url else None
+        link = active_link(session, alias)
+        if accepted and person.get("id") and link and alias:
+            event_kind = "channel_join_request" if join_request else "channel_join"
+            session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
+    elif message:
         contact = _upsert_contact(session, bot, message["from"], message["chat"])
         text = message.get("text", "")
         if text.startswith("/start"):
@@ -340,23 +365,27 @@ def process_update(update: dict, session: Session) -> dict:
                 .order_by(BotRoute.priority)
             )
             sequence_code = route.target_sequence_code if route else PREPURCHASE_CODE
-            if token:
-                link = session.scalar(select(TrackingLink).where(TrackingLink.token == token, TrackingLink.is_active.is_(True)))
-                if link:
-                    contact.first_source_token = contact.first_source_token or token
-                    contact.last_source_token = token
-                    sequence_code = link.target_sequence_code
-                    session.add(TrackingEvent(tracking_link_id=link.id, contact_id=contact.id, event_type="start", metadata_json={}))
+            link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, token)
+            if not link:
+                pending_link, pending_alias, pending_query = resolve_pending_channel_touch(session, contact.telegram_user_id)
+                if pending_link:
+                    link, alias, raw_query, payload_status = pending_link, pending_alias, pending_query, "known_channel_touch"
+            account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform == "telegram", CrmMessengerAccount.platform_user_id == contact.telegram_user_id))
+            is_first, _ = assign_first_touch(session, account, contact, link, alias, session_tag_ids, raw_query, payload_status)
+            if link and link.route_kind == "published_step":
+                sequence_code = link.target_sequence_code
             previous_run = session.scalar(
                 select(SequenceRun)
                 .where(SequenceRun.contact_id == contact.id)
                 .order_by(SequenceRun.started_at.desc())
             )
-            if previous_run:
+            if previous_run or not is_first:
                 session.commit()
-                _send_text(contact.chat_id, _repeat_start_text(session, contact, previous_run))
+                _send_text(contact.chat_id, _repeat_start_text(session, contact, previous_run) if previous_run else "Вы уже знакомы с ботом 👍 Сейчас проверю ваш статус и покажу доступные материалы.")
             else:
                 run = start_run(session, contact.id, sequence_code)
+                if link and link.route_kind == "published_step" and link.target_step_key:
+                    run.current_step_key = link.target_step_key
                 session.commit()
                 advance_run(session, run, client())
     elif callback:
@@ -552,27 +581,232 @@ def manual_message_by_user(user_id: str, body: ManualMessageIn, admin: str = Dep
 
 
 @app.post("/bot-api/tracking-links", dependencies=[Depends(require_admin)])
-def create_tracking_link(body: TrackingLinkIn, session: Session = Depends(get_db)) -> dict:
-    token = secrets.token_urlsafe(6).replace("-", "").replace("_", "")[:8]
-    row = TrackingLink(token=token, platform=body.platform, placement=body.placement, campaign=body.campaign, target_sequence_code=body.target_sequence_code)
-    session.add(row); session.commit()
+def create_tracking_link(body: TrackingLinkIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
+    modern = LinkRuleIn(name=f"{body.platform} · {body.placement}", target_sequence_code=body.target_sequence_code)
+    row = _create_link_rule(session, modern, admin, platform=body.platform, placement=body.placement, campaign=body.campaign)
+    session.commit()
+    return _link_payload(session, row)
+
+
+def _create_link_rule(session: Session, body: LinkRuleIn, admin: str, platform: str = "", placement: str = "", campaign: str | None = None) -> TrackingLink:
+    _validate_link_route(session, body.route_kind, body.target_sequence_code, body.target_step_key)
+    alias_token = generate_alias_token(session, body.target_kind)
+    row = TrackingLink(token=alias_token, name=body.name, platform=platform or "Не указана", placement=placement or body.name, campaign=campaign, target_kind=body.target_kind, route_kind=body.route_kind, target_sequence_code=body.target_sequence_code, target_step_key=body.target_step_key, created_by=admin)
+    session.add(row); session.flush()
+    for tag_id in dict.fromkeys(body.tag_ids):
+        if not session.get(CrmTag, tag_id):
+            raise HTTPException(422, f"Тег {tag_id} не найден")
+        session.add(TrackingLinkTag(tracking_link_id=row.id, tag_id=tag_id))
+    if body.create_alias:
+        session.add(TrackingLinkAlias(tracking_link_id=row.id, token=alias_token, alias_kind="short", created_by=admin))
+    return row
+
+
+def _validate_link_route(session: Session, route_kind: str, sequence_code: str, step_key: str | None) -> None:
+    if route_kind == "root":
+        return
+    if not step_key:
+        raise HTTPException(422, "Для исключения укажите опубликованный шаг")
+    exists = session.scalar(
+        select(SequenceStep.id)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
+        .where(Sequence.code == sequence_code, SequenceVersion.status == "published", SequenceStep.step_key == step_key, SequenceStep.enabled.is_(True))
+    )
+    if not exists:
+        raise HTTPException(422, "Указанный шаг не найден в опубликованной версии цепочки")
+
+
+def _link_payload(session: Session, link: TrackingLink) -> dict:
+    aliases = list(session.scalars(select(TrackingLinkAlias).where(TrackingLinkAlias.tracking_link_id == link.id).order_by(TrackingLinkAlias.created_at)))
+    tag_rows = session.execute(select(CrmTag.id, CrmTag.name).join(TrackingLinkTag, TrackingLinkTag.tag_id == CrmTag.id).where(TrackingLinkTag.tracking_link_id == link.id)).all()
+    clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type.in_(["click", "web_click"]))) or 0
+    start_filter = or_(TrackingEvent.event_type == "start", TrackingEvent.event_type.like("start_%"))
+    starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, start_filter)) or 0
+    unique_starts = session.scalar(select(func.count(func.distinct(TrackingEvent.user_id))).where(TrackingEvent.tracking_link_id == link.id, start_filter, TrackingEvent.user_id.is_not(None))) or 0
     username = settings.telegram_test_bot_username.lstrip("@")
-    base = settings.telegram_public_base_url.rstrip("/")
-    return {"id": row.id, "token": token, "url": f"{base}/r/{token}" if base else f"https://t.me/{username}?start={token}", "deep_link": f"https://t.me/{username}?start={token}"}
+    go_base = settings.telegram_public_base_url.rstrip("/")
+    alias_data = []
+    for alias in aliases:
+        direct = alias.telegram_invite_url if link.target_kind == "channel_invite" else f"https://t.me/{username}?start={alias.token}"
+        alias_clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, TrackingEvent.event_type.in_(["click", "web_click"]))) or 0
+        alias_starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, or_(TrackingEvent.event_type == "start", TrackingEvent.event_type.like("start_%")))) or 0
+        alias_data.append({"id": alias.id, "token": alias.token, "kind": alias.alias_kind, "status": alias.status, "direct_url": direct, "go_url": f"{go_base}/{alias.token}" if go_base else None, "warning_url": f"{go_base}/{alias.token}V" if go_base and alias.alias_kind == "short" else None, "clicks": alias_clicks, "starts": alias_starts})
+    return {"id": link.id, "name": link.name, "token": link.token, "platform": link.platform, "placement": link.placement, "campaign": link.campaign, "target_kind": link.target_kind, "route_kind": link.route_kind, "target_sequence_code": link.target_sequence_code, "target_step_key": link.target_step_key, "status": link.status, "is_active": link.is_active, "created_at": link.created_at, "tags": [{"id": tag_id, "name": name} for tag_id, name in tag_rows], "aliases": alias_data, "clicks": clicks, "starts": starts, "unique_starts": unique_starts, "conversion": round(unique_starts / clicks * 100, 1) if clicks else 0, "url": alias_data[0]["go_url"] if alias_data and alias_data[0]["go_url"] else (alias_data[0]["direct_url"] if alias_data else None), "deep_link": alias_data[0]["direct_url"] if alias_data else None}
+
+
+@app.post("/bot-api/link-rules", dependencies=[Depends(require_admin)])
+def create_link_rule(body: LinkRuleIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
+    row = _create_link_rule(session, body, admin)
+    session.commit()
+    return _link_payload(session, row)
+
+
+@app.patch("/bot-api/link-rules/{link_id}", dependencies=[Depends(require_admin)])
+def update_link_rule(link_id: str, body: LinkRuleUpdate, session: Session = Depends(get_db)) -> dict:
+    row = session.get(TrackingLink, link_id)
+    if not row:
+        raise HTTPException(404, "Правило не найдено")
+    new_route = body.route_kind or row.route_kind
+    new_sequence = body.target_sequence_code or row.target_sequence_code
+    new_step = body.target_step_key if body.target_step_key is not None else row.target_step_key
+    _validate_link_route(session, new_route, new_sequence, new_step)
+    for key in ("name", "status", "route_kind", "target_sequence_code", "target_step_key"):
+        value = getattr(body, key)
+        if value is not None:
+            setattr(row, key, value)
+    if body.status is not None:
+        row.is_active = body.status == "active"
+        row.archived_at = datetime.now(UTC) if body.status == "archived" else None
+    if body.tag_ids is not None:
+        session.execute(delete(TrackingLinkTag).where(TrackingLinkTag.tracking_link_id == row.id))
+        for tag_id in dict.fromkeys(body.tag_ids):
+            if not session.get(CrmTag, tag_id):
+                raise HTTPException(422, f"Тег {tag_id} не найден")
+            session.add(TrackingLinkTag(tracking_link_id=row.id, tag_id=tag_id))
+    session.commit()
+    return _link_payload(session, row)
+
+
+@app.post("/bot-api/link-rules/{link_id}/aliases", dependencies=[Depends(require_admin)])
+def add_link_alias(link_id: str, body: AliasCreateIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
+    link = session.get(TrackingLink, link_id)
+    if not link:
+        raise HTTPException(404, "Правило не найдено")
+    token = body.token.strip() if body.token else generate_alias_token(session, link.target_kind)
+    if session.scalar(select(TrackingLinkAlias.id).where(TrackingLinkAlias.token == token)):
+        raise HTTPException(409, "Такой публичный код уже используется")
+    alias = TrackingLinkAlias(tracking_link_id=link.id, token=token, alias_kind=body.alias_kind, created_by=admin)
+    session.add(alias); session.commit()
+    return _link_payload(session, link)
+
+
+@app.patch("/bot-api/link-aliases/{alias_id}", dependencies=[Depends(require_admin)])
+def set_link_alias_status(alias_id: str, body: AliasStatusIn, session: Session = Depends(get_db)) -> dict:
+    alias = session.get(TrackingLinkAlias, alias_id)
+    if not alias:
+        raise HTTPException(404, "Код не найден")
+    alias.status = body.status
+    alias.archived_at = datetime.now(UTC) if body.status == "archived" else None
+    session.commit()
+    return {"id": alias.id, "status": alias.status}
+
+
+@app.post("/bot-api/link-aliases/{alias_id}/channel-invite", dependencies=[Depends(require_admin)])
+def create_channel_invite(alias_id: str, session: Session = Depends(get_db)) -> dict:
+    alias = session.get(TrackingLinkAlias, alias_id)
+    link = session.get(TrackingLink, alias.tracking_link_id) if alias else None
+    if not alias or not link or link.target_kind != "channel_invite":
+        raise HTTPException(404, "Код ссылки на канал не найден")
+    if not settings.telegram_channel_id:
+        raise HTTPException(409, "TELEGRAM_CHANNEL_ID ещё не настроен")
+    if alias.telegram_invite_url:
+        return {"id": alias.id, "invite_url": alias.telegram_invite_url, "already_created": True}
+    result = client().create_chat_invite_link(settings.telegram_channel_id, f"{alias.token} · {link.name}", alias.creates_join_request)
+    alias.telegram_invite_url = result["invite_link"]
+    alias.telegram_chat_id = settings.telegram_channel_id
+    session.commit()
+    return {"id": alias.id, "invite_url": alias.telegram_invite_url, "already_created": False}
+
+
+@app.post("/bot-api/link-aliases/{alias_id}/revoke-channel-invite", dependencies=[Depends(require_admin)])
+def revoke_channel_invite(alias_id: str, session: Session = Depends(get_db)) -> dict:
+    alias = session.get(TrackingLinkAlias, alias_id)
+    if not alias or not alias.telegram_invite_url or not alias.telegram_chat_id:
+        raise HTTPException(404, "Активная invite-ссылка не найдена")
+    client().revoke_chat_invite_link(alias.telegram_chat_id, alias.telegram_invite_url)
+    alias.status = "archived"; alias.archived_at = datetime.now(UTC)
+    session.commit()
+    return {"id": alias.id, "status": alias.status}
 
 
 @app.get("/bot-api/tracking-links", dependencies=[Depends(require_admin)])
 def tracking_stats(session: Session = Depends(get_db)) -> list[dict]:
-    rows = session.execute(select(TrackingLink, func.count(TrackingEvent.id)).outerjoin(TrackingEvent, TrackingEvent.tracking_link_id == TrackingLink.id).group_by(TrackingLink.id).order_by(TrackingLink.created_at.desc())).all()
-    result = []
-    for link, _ in rows:
-        clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "click")) or 0
-        starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "start")) or 0
-        unique_starts = session.scalar(select(func.count(func.distinct(TrackingEvent.contact_id))).where(TrackingEvent.tracking_link_id == link.id, TrackingEvent.event_type == "start", TrackingEvent.contact_id.is_not(None))) or 0
-        conversion = round((unique_starts / clicks * 100), 1) if clicks else 0
-        base = settings.telegram_public_base_url.rstrip("/")
-        result.append({"id":link.id,"token":link.token,"platform":link.platform,"placement":link.placement,"campaign":link.campaign,"clicks":clicks,"starts":starts,"unique_starts":unique_starts,"conversion":conversion,"created_at":link.created_at,"url":f"{base}/r/{link.token}" if base else f"https://t.me/{settings.telegram_test_bot_username.lstrip('@')}?start={link.token}"})
+    return [_link_payload(session, row) for row in session.scalars(select(TrackingLink).order_by(TrackingLink.created_at.desc()))]
+
+
+@app.get("/bot-api/tracking-events", dependencies=[Depends(require_admin)])
+def tracking_events(link_id: str | None = None, event_type: str | None = None, session: Session = Depends(get_db)) -> list[dict]:
+    query = select(TrackingEvent).order_by(TrackingEvent.occurred_at.desc()).limit(1000)
+    if link_id:
+        query = query.where(TrackingEvent.tracking_link_id == link_id)
+    if event_type:
+        query = query.where(TrackingEvent.event_type == event_type)
+    return [{"id": row.id, "link_id": row.tracking_link_id, "alias_id": row.alias_id, "user_id": row.user_id, "telegram_user_id": row.telegram_user_id, "type": row.event_type, "metadata": row.metadata_json, "occurred_at": row.occurred_at} for row in session.scalars(query)]
+
+
+@app.get("/bot-api/tags", dependencies=[Depends(require_admin)])
+def search_tags(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
+    query = select(CrmTag).where(CrmTag.status.in_(["active", "merged"])).order_by(CrmTag.name).limit(100)
+    if q:
+        query = query.where(CrmTag.name.ilike(f"%{q}%"))
+    return [{"id": row.id, "name": row.name, "category": row.category, "status": row.status, "merged_into_tag_id": row.merged_into_tag_id} for row in session.scalars(query)]
+
+
+@app.post("/bot-api/tags", dependencies=[Depends(require_admin)])
+def create_tag(body: TagCreateIn, session: Session = Depends(get_db)) -> dict:
+    existing = session.scalar(select(CrmTag).where(func.lower(CrmTag.name) == body.name.strip().lower()))
+    if existing:
+        return {"id": existing.id, "name": existing.name, "created": False}
+    row = CrmTag(code=tag_code(body.name), name=body.name.strip(), category="manual", status="active")
+    session.add(row); session.commit()
+    return {"id": row.id, "name": row.name, "created": True}
+
+
+@app.post("/bot-api/utm/parse", dependencies=[Depends(require_admin)])
+def parse_utm(body: UtmParseIn, session: Session = Depends(get_db)) -> dict:
+    result = parse_utm_url(body.url)
+    for item in result["parameters"]:
+        rule = session.scalar(select(UtmTagRule).where(UtmTagRule.parameter_name == item["name"], UtmTagRule.normalized_value == item["normalized_value"], UtmTagRule.status == "active"))
+        tag = session.get(CrmTag, rule.tag_id) if rule else None
+        item["mapping"] = {"rule_id": rule.id, "tag_id": tag.id, "tag_name": tag.name} if tag else None
     return result
+
+
+@app.get("/bot-api/utm/unresolved", dependencies=[Depends(require_admin)])
+def unresolved_utm(session: Session = Depends(get_db)) -> list[dict]:
+    return unresolved_utm_groups(session)
+
+
+@app.post("/bot-api/utm/rules", dependencies=[Depends(require_admin)])
+def save_utm_rule(body: UtmRuleIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
+    parameter = body.parameter_name.strip().casefold()
+    normalized = normalize_value(body.raw_value)
+    if not parameter.startswith("utm_"):
+        raise HTTPException(422, "Разрешены только параметры utm_*")
+    if not session.get(CrmTag, body.tag_id):
+        raise HTTPException(422, "Выбранный тег не найден")
+    row = session.scalar(select(UtmTagRule).where(UtmTagRule.parameter_name == parameter, UtmTagRule.normalized_value == normalized))
+    if row:
+        row.raw_value = body.raw_value; row.tag_id = body.tag_id; row.status = "active"; row.created_by = admin
+    else:
+        row = UtmTagRule(parameter_name=parameter, raw_value=body.raw_value, normalized_value=normalized, tag_id=body.tag_id, created_by=admin)
+        session.add(row)
+    session.commit()
+    return {"id": row.id, "parameter_name": row.parameter_name, "normalized_value": row.normalized_value, "tag_id": row.tag_id}
+
+
+@app.post("/bot-api/utm/apply", dependencies=[Depends(require_admin)])
+def apply_utm_rules(body: dict, session: Session = Depends(get_db)) -> dict:
+    preview = bool(body.get("preview", True))
+    changed_sessions = changed_events = 0
+    for row in session.scalars(select(TrackingEvent).where(TrackingEvent.event_type == "web_click")):
+        raw = (row.metadata_json or {}).get("raw_query") or {}
+        resolved = exact_utm_matches(session, raw)
+        if resolved and (row.metadata_json or {}).get("resolved_tag_ids") != resolved:
+            changed_events += 1
+            if not preview:
+                row.metadata_json = {**(row.metadata_json or {}), "resolved_tag_ids": resolved}
+    from app.models import TrackingSession
+    for row in session.scalars(select(TrackingSession).where(TrackingSession.consumed_at.is_(None))):
+        resolved = exact_utm_matches(session, row.raw_query or {})
+        if resolved != list(row.resolved_tag_ids or []):
+            changed_sessions += 1
+            if not preview:
+                row.resolved_tag_ids = resolved
+    if not preview:
+        session.commit()
+    return {"preview": preview, "events": changed_events, "pending_sessions": changed_sessions}
 
 
 @app.get("/bot-api/tracking-platforms", dependencies=[Depends(require_admin)])

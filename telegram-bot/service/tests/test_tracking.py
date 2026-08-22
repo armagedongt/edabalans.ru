@@ -1,0 +1,125 @@
+from __future__ import annotations
+
+from urllib.parse import parse_qs, urlparse
+
+from fastapi.testclient import TestClient
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
+import app.main as main_module
+from app.database import Base, get_db, make_engine
+from app.main import app
+from app.models import CrmMessengerAccount, CrmTag, CrmUserTag, TrackingEvent, TrackingLinkAlias
+from app.seed import seed_defaults
+
+
+class FakeTelegram:
+    def __init__(self):
+        self.sent = []
+
+    def send_content(self, chat_id, content, configuration):
+        self.sent.append((chat_id, getattr(content, "code", None) or content.body_source))
+        return str(len(self.sent))
+
+
+def make_client(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'tracking.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        session.add(CrmTag(code="pikabu", name="Пикабу", category="source", status="active"))
+        session.add(CrmTag(code="post_speed", name="Пост - Скорость похудения", category="content", status="active"))
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: FakeTelegram())
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_username", "TetrisgfgfgfBot")
+    monkeypatch.setattr(main_module.settings, "telegram_public_base_url", "https://go.example.test")
+    return TestClient(app), engine
+
+
+def start_update(update_id: int, telegram_id: int, payload: str = "") -> dict:
+    text = "/start" + (f" {payload}" if payload else "")
+    return {"update_id": update_id, "message": {"from": {"id": telegram_id, "first_name": "Test"}, "chat": {"id": telegram_id}, "text": text}}
+
+
+def test_first_touch_assigns_tags_once_and_unknown_code_is_safe(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    tags = client.get("/bot-api/tags").json()
+    pikabu = next(tag for tag in tags if tag["name"] == "Пикабу")
+    created = client.post("/bot-api/link-rules", json={"name": "Главная Пикабу", "tag_ids": [pikabu["id"]]}).json()
+    token = created["aliases"][0]["token"]
+
+    assert client.post("/telegram/webhook", json=start_update(1, 501, token)).status_code == 200
+    assert client.post("/telegram/webhook", json=start_update(2, 501, token)).status_code == 200
+    assert client.post("/telegram/webhook", json=start_update(3, 502, "unknown-old-code")).status_code == 200
+
+    with Session(engine) as session:
+        first_account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "501"))
+        second_account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "502"))
+        assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == first_account.user_id)) == 1
+        assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == second_account.user_id)) == 0
+        event_types = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "501").order_by(TrackingEvent.occurred_at)))
+        assert event_types == ["start_first", "start_repeat"]
+        assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "502")) == "start_unknown"
+    app.dependency_overrides.clear()
+
+
+def test_go_utm_session_uses_only_saved_exact_mapping_and_v_is_web_only(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    tags = client.get("/bot-api/tags").json()
+    post_tag = next(tag for tag in tags if tag["name"] == "Пост - Скорость похудения")
+    created = client.post("/bot-api/link-rules", json={"name": "Статья про скорость"}).json()
+    token = created["aliases"][0]["token"]
+    client.post("/bot-api/utm/rules", json={"parameter_name": "utm_content", "raw_value": "speed", "tag_id": post_tag["id"]})
+
+    redirect = client.get(f"/go/{token}?utm_content=speed&utm_source=raw-source", follow_redirects=False)
+    assert redirect.status_code == 307
+    payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
+    assert payload.startswith("U")
+    assert client.post("/telegram/webhook", json=start_update(10, 601, payload)).status_code == 200
+    warning = client.get(f"/go/{token}V", follow_redirects=False)
+    assert warning.status_code == 200
+    assert "Перед переходом в Telegram" in warning.text
+    assert client.post("/telegram/webhook", json=start_update(11, 602, f"{token}V")).status_code == 200
+
+    with Session(engine) as session:
+        mapped = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "601"))
+        direct_v = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "602"))
+        mapped_names = list(session.scalars(select(CrmTag.name).join(CrmUserTag, CrmUserTag.tag_id == CrmTag.id).where(CrmUserTag.user_id == mapped.user_id)))
+        assert mapped_names == ["Пост - Скорость похудения"]
+        assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == direct_v.user_id)) == 0
+        assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "602")) == "start_unknown"
+    app.dependency_overrides.clear()
+
+
+def test_channel_invite_touch_is_claimed_on_first_bot_start(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    pikabu = next(tag for tag in client.get("/bot-api/tags").json() if tag["name"] == "Пикабу")
+    created = client.post("/bot-api/link-rules", json={"name": "Пикабу → канал", "target_kind": "channel_invite", "tag_ids": [pikabu["id"]]}).json()
+    alias_id = created["aliases"][0]["id"]
+    invite_url = "https://t.me/+testInvite"
+    with Session(engine) as session:
+        alias = session.get(TrackingLinkAlias, alias_id)
+        alias.telegram_invite_url = invite_url
+        alias.telegram_chat_id = "@Fitness_Talks"
+        session.commit()
+    joined = {"update_id": 20, "chat_member": {"from": {"id": 1}, "chat": {"id": -1001}, "new_chat_member": {"status": "member", "user": {"id": 701, "first_name": "Channel"}}, "invite_link": {"invite_link": invite_url}}}
+    assert client.post("/telegram/webhook", json=joined).status_code == 200
+    assert client.post("/telegram/webhook", json=start_update(21, 701)).status_code == 200
+
+    with Session(engine) as session:
+        account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "701"))
+        names = list(session.scalars(select(CrmTag.name).join(CrmUserTag, CrmUserTag.tag_id == CrmTag.id).where(CrmUserTag.user_id == account.user_id)))
+        assert names == ["Пикабу"]
+        join = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "channel_join"))
+        assert join.processed_at is not None
+        start = session.scalar(select(TrackingEvent).where(TrackingEvent.telegram_user_id == "701", TrackingEvent.event_type == "start_first"))
+        assert start.tracking_link_id == join.tracking_link_id
+    app.dependency_overrides.clear()

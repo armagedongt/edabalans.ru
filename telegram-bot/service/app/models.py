@@ -204,6 +204,65 @@ class TrackingLink(TimestampMixin, Base):
     campaign: Mapped[str | None] = mapped_column(String(255))
     target_sequence_code: Mapped[str] = mapped_column(String(100), default="prepurchase_masterclass", nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), default="Ссылка", nullable=False)
+    target_kind: Mapped[str] = mapped_column(String(32), default="bot_start", nullable=False)
+    route_kind: Mapped[str] = mapped_column(String(32), default="root", nullable=False)
+    target_step_key: Mapped[str | None] = mapped_column(String(120))
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    created_by: Mapped[str | None] = mapped_column(String(320))
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class TrackingLinkAlias(Base):
+    __tablename__ = "tg_tracking_link_aliases"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    tracking_link_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_links.id", ondelete="CASCADE"), index=True)
+    token: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    alias_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False, index=True)
+    telegram_invite_url: Mapped[str | None] = mapped_column(Text)
+    telegram_chat_id: Mapped[str | None] = mapped_column(String(64))
+    creates_join_request: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    created_by: Mapped[str | None] = mapped_column(String(320))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class TrackingLinkTag(Base):
+    __tablename__ = "tg_tracking_link_tags"
+
+    tracking_link_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_links.id", ondelete="CASCADE"), primary_key=True)
+    tag_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("tags.id", ondelete="RESTRICT"), primary_key=True)
+    purpose: Mapped[str] = mapped_column(String(32), default="other", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class UtmTagRule(TimestampMixin, Base):
+    __tablename__ = "tg_utm_tag_rules"
+    __table_args__ = (UniqueConstraint("parameter_name", "normalized_value", name="uq_tg_utm_rule"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    parameter_name: Mapped[str] = mapped_column(String(128), nullable=False)
+    raw_value: Mapped[str] = mapped_column(Text, nullable=False)
+    normalized_value: Mapped[str] = mapped_column(Text, nullable=False)
+    tag_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("tags.id", ondelete="RESTRICT"), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    created_by: Mapped[str | None] = mapped_column(String(320))
+
+
+class TrackingSession(Base):
+    __tablename__ = "tg_tracking_sessions"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    start_token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    tracking_link_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_links.id", ondelete="CASCADE"), nullable=False)
+    alias_id: Mapped[str] = mapped_column(ForeignKey("tg_tracking_link_aliases.id", ondelete="CASCADE"), nullable=False)
+    raw_query: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    resolved_tag_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
+    consumed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
 
 class TrackingEvent(Base):
@@ -212,9 +271,86 @@ class TrackingEvent(Base):
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
     tracking_link_id: Mapped[str | None] = mapped_column(ForeignKey("tg_tracking_links.id"), index=True)
     contact_id: Mapped[str | None] = mapped_column(ForeignKey("tg_contacts.id"), index=True)
+    alias_id: Mapped[str | None] = mapped_column(ForeignKey("tg_tracking_link_aliases.id"), index=True)
+    user_id: Mapped[str | None] = mapped_column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="SET NULL"), index=True)
+    telegram_user_id: Mapped[str | None] = mapped_column(String(64), index=True)
     event_type: Mapped[str] = mapped_column(String(64), nullable=False)
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    deduplication_key: Mapped[str | None] = mapped_column(String(255), unique=True)
+    processed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class CrmUser(TimestampMixin, Base):
+    __tablename__ = "users"
+
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
+    display_name: Mapped[str | None] = mapped_column(String(255))
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    data_origin: Mapped[str] = mapped_column(String(32), default="native", nullable=False)
+    first_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class CrmMessengerAccount(Base):
+    __tablename__ = "messenger_accounts"
+    __table_args__ = (UniqueConstraint("platform", "platform_user_id", name="uq_messenger_identity"),)
+
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    platform: Mapped[str] = mapped_column(String(32), nullable=False)
+    platform_user_id: Mapped[str | None] = mapped_column(String(128))
+    username: Mapped[str | None] = mapped_column(String(255))
+    first_name: Mapped[str | None] = mapped_column(String(255))
+    first_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    linked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    subscription_status: Mapped[str] = mapped_column(String(32), default="unknown", nullable=False)
+    subscription_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    main_scenario_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source: Mapped[str] = mapped_column(String(64), default="telegram_bot", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class CrmTag(Base):
+    __tablename__ = "tags"
+
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
+    code: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(32), default="manual", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    merged_into_tag_id: Mapped[str | None] = mapped_column(Uuid(as_uuid=False), ForeignKey("tags.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class CrmUserTag(Base):
+    __tablename__ = "user_tags"
+    __table_args__ = (UniqueConstraint("user_id", "tag_id", name="uq_user_tag"),)
+
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    tag_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("tags.id", ondelete="CASCADE"), nullable=False)
+    source: Mapped[str] = mapped_column(String(64), default="telegram_first_touch", nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class CrmAttributionEvent(Base):
+    __tablename__ = "attribution_events"
+
+    id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
+    user_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_raw: Mapped[str | None] = mapped_column(Text)
+    utm_source: Mapped[str | None] = mapped_column(String(255))
+    utm_medium: Mapped[str | None] = mapped_column(String(255))
+    utm_campaign: Mapped[str | None] = mapped_column(String(255))
+    utm_content: Mapped[str | None] = mapped_column(String(255))
+    utm_term: Mapped[str | None] = mapped_column(String(255))
+    ref_code: Mapped[str | None] = mapped_column(String(255))
+    landing_url: Mapped[str | None] = mapped_column(Text)
+    occurred_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
 class UserVariable(TimestampMixin, Base):
