@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Telegram · edabalans</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">е</span>
+        <div><strong>edabalans</strong><small>Админка</small></div>
+      </div>
+      <nav aria-label="Разделы">
+        <button class="nav-item active" data-page="library"><span>▤</span> Библиотека</button>
+        <button class="nav-item" data-page="sequence"><span>⇢</span> Цепочки</button>
+        <button class="nav-item" disabled><span>◉</span> Рассылки <em>позже</em></button>
+        <button class="nav-item" disabled><span>↗</span> Ссылки <em>позже</em></button>
+        <button class="nav-item" disabled><span>◇</span> Микропроекты <em>позже</em></button>
+      </nav>
+      <div class="module-note">Локальный прототип<br><span>не подключён к боту</span></div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">TELEGRAM</p>
+          <h1 id="page-title">Библиотека сообщений</h1>
+        </div>
+        <span class="safe-badge">Архив защищён</span>
+      </header>
+
+      <section id="library-page" class="page active">
+        <div class="stats" aria-label="Сводка">
+          <article><span>Архивных сообщений</span><strong id="stat-archive">—</strong></article>
+          <article><span>С медиа</span><strong id="stat-media">—</strong></article>
+          <article><span>Рабочих копий</span><strong id="stat-copies">—</strong></article>
+        </div>
+
+        <div class="workspace">
+          <section class="catalog-panel">
+            <div class="controls">
+              <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Найти текст, сценарий или фразу"></label>
+              <select id="media-filter" aria-label="Фильтр медиа">
+                <option value="">Все сообщения</option>
+                <option value="with">С медиа</option>
+                <option value="without">Без медиа</option>
+              </select>
+            </div>
+            <div class="catalog-meta"><strong id="result-count">0</strong> найдено <span>LeadTeh · только чтение</span></div>
+            <div id="catalog" class="catalog-list" aria-live="polite"></div>
+          </section>
+
+          <aside class="preview-panel">
+            <div class="preview-heading">
+              <div><span class="lock">●</span> Предпросмотр в Telegram</div>
+              <small id="preview-origin">Выберите сообщение</small>
+            </div>
+            <div class="phone">
+              <div class="phone-bar"><span>edabalans_bot</span><small>бот</small></div>
+              <div class="chat">
+                <article id="message-bubble" class="message-bubble empty">Выберите пост слева — здесь он будет выглядеть примерно так же, как у человека в Telegram.</article>
+              </div>
+            </div>
+            <button id="copy-button" class="primary-button" type="button" disabled>Создать рабочую копию</button>
+            <p id="copy-note" class="copy-note">Оригинал останется неизменным.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="sequence-page" class="page">
+        <div class="sequence-toolbar">
+          <div><span class="draft-badge">Черновик · версия 1</span><p>Демонстрационная цепочка, реальные шаги ещё не выбраны.</p></div>
+          <button class="secondary-button" type="button" disabled>Опубликовать позже</button>
+        </div>
+        <div class="sequence-layout">
+          <section>
+            <div id="sequence-flow" class="sequence-flow" aria-live="polite"></div>
+          </section>
+          <aside class="rules-panel">
+            <h2>Как это будет работать</h2>
+            <ol>
+              <li>Шаги идут сверху вниз.</li>
+              <li>Задержка считается от времени конкретного человека.</li>
+              <li>Условие разводит человека по подписанным веткам.</li>
+              <li>Опубликованная версия не меняется задним числом.</li>
+            </ol>
+            <div class="future-note"><strong>На следующем этапе</strong><br>перетаскивание, редактирование задержек и запись условий текстом.</div>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -20,3 +20,7 @@ Production-фундамент развёрнут на Timeweb Cloud:
 Технические инструкции и результаты проверок: `docs/OPERATIONS.md`.
 
 Проект CRM/Core и mapping двух legacy-таблиц: `docs/CRM_CORE_DESIGN.md`.
+
+Локальный read-only экспорт сценариев LeadTeh: `leadteh-export/README.md`.
+
+Изолированный фундамент Telegram-модуля и локальный прототип: `telegram-bot/README.md`.

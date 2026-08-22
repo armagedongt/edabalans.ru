@@ -226,3 +226,8 @@ __marimo__/
 *.dump
 *.sql
 backups/
+
+# LeadTeh export: credentials and exported account data stay local.
+leadteh-export/.env
+leadteh-export/data/
+leadteh-export/*.har
