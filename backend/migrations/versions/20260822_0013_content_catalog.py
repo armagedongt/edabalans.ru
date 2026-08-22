@@ -76,11 +76,11 @@ def upgrade() -> None:
             item_id uuid NOT NULL REFERENCES content_items(id) ON DELETE CASCADE,
             version_id uuid NOT NULL REFERENCES content_item_versions(id) ON DELETE CASCADE,
             media_type varchar(32) NOT NULL,
-            source_url text NOT NULL,
+            source_url text,
             preview_url text,
             position integer NOT NULL,
             metadata_json json NOT NULL DEFAULT '{}',
-            CONSTRAINT uq_content_media_position_url UNIQUE(version_id, position, source_url)
+            CONSTRAINT uq_content_media_position UNIQUE(version_id, position)
         );
         CREATE INDEX ix_content_media_item_id ON content_media(item_id);
         CREATE INDEX ix_content_media_version_id ON content_media(version_id);
@@ -112,7 +112,8 @@ def upgrade() -> None:
             minuses integer,
             saves integer,
             comments_reported integer,
-            emotions json NOT NULL DEFAULT '[]'
+            emotions json NOT NULL DEFAULT '[]',
+            details_json json NOT NULL DEFAULT '{}'
         );
         CREATE INDEX ix_content_metric_snapshots_item_id ON content_metric_snapshots(item_id);
         CREATE INDEX ix_content_metric_item_captured

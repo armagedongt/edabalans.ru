@@ -541,9 +541,7 @@ class ContentItemVersion(Base):
 class ContentMedia(Base):
     __tablename__ = "content_media"
     __table_args__ = (
-        UniqueConstraint(
-            "version_id", "position", "source_url", name="uq_content_media_position_url"
-        ),
+        UniqueConstraint("version_id", "position", name="uq_content_media_position"),
     )
 
     id: Mapped[uuid.UUID] = uuid_pk()
@@ -554,7 +552,7 @@ class ContentMedia(Base):
         ForeignKey("content_item_versions.id", ondelete="CASCADE"), index=True
     )
     media_type: Mapped[str] = mapped_column(String(32), nullable=False)
-    source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    source_url: Mapped[str | None] = mapped_column(Text)
     preview_url: Mapped[str | None] = mapped_column(Text)
     position: Mapped[int] = mapped_column(Integer, nullable=False)
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
@@ -603,6 +601,7 @@ class ContentMetricSnapshot(Base):
     saves: Mapped[int | None] = mapped_column(Integer)
     comments_reported: Mapped[int | None] = mapped_column(Integer)
     emotions: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    details_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
 
 
 class ContentImportRun(Base):

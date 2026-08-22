@@ -81,6 +81,18 @@ def test_content_tables_are_registered() -> None:
     }.issubset(Base.metadata.tables)
 
 
+def test_shared_media_and_metric_schema_supports_future_sources() -> None:
+    media = Base.metadata.tables["content_media"]
+    metrics = Base.metadata.tables["content_metric_snapshots"]
+
+    assert media.c.source_url.nullable is True
+    assert any(
+        constraint.name == "uq_content_media_position"
+        for constraint in media.constraints
+    )
+    assert "details_json" in metrics.c
+
+
 def test_content_api_requires_admin_session() -> None:
     response = TestClient(app, base_url="https://testserver").get("/admin/api/content/summary")
     assert response.status_code == 401
