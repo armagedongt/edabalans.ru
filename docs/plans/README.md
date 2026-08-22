@@ -20,6 +20,7 @@
 | Полноценная база знаний бизнеса | `PROJECT_KNOWLEDGE_BASE_SPEC.md` | `planned` |
 | Полная система документации файлов и таблиц | `PROJECT_DOCUMENTATION_SYSTEM.md` | `planned` |
 | Следующие версии Telegram-бота | `TELEGRAM_NEXT_VERSIONS.md` | `planned` |
+| Продукты и офферы | `PRODUCTS_AND_OFFERS.md` | `planned` |
 
 ## Существующие очереди в других разделах
 
