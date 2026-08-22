@@ -107,11 +107,11 @@ def upgrade() -> None:
         CREATE INDEX ix_masterclass_notification_due ON masterclass_notifications(status, due_at);
 
         INSERT INTO offer_stages(code,name,duration_hours,pricing) VALUES
-          ('early','Максимальная ранняя выгода',96,'{"single":2900,"bundle":{"1":1900,"2":3900,"3":5900,"4":7900}}'),
-          ('second','Второе предложение',72,'{"single":3300,"bundle":{"1":2500,"2":4900,"3":7400,"4":9900}}'),
-          ('review','Саморевью',72,'{"single":3500,"consultation":7500,"bundle":{"1":2900,"2":5700,"3":8500,"4":11300}}'),
-          ('last_week','Последняя неделя',168,'{"single":3800,"consultation":8400,"bundle":{"1":3600,"2":7000,"3":10400,"4":13800}}'),
-          ('standard','Стандартные цены',NULL,'{"single":3900,"consultation":8900,"bundle":{"1":3900,"2":7800,"3":11700,"4":15600}}');
+          ('early','Максимальная ранняя выгода',96,json_build_object('single',2900,'bundle',json_build_object('1',1900,'2',3900,'3',5900,'4',7900))),
+          ('second','Второе предложение',72,json_build_object('single',3300,'bundle',json_build_object('1',2500,'2',4900,'3',7400,'4',9900))),
+          ('review','Саморевью',72,json_build_object('single',3500,'consultation',7500,'bundle',json_build_object('1',2900,'2',5700,'3',8500,'4',11300))),
+          ('last_week','Последняя неделя',168,json_build_object('single',3800,'consultation',8400,'bundle',json_build_object('1',3600,'2',7000,'3',10400,'4',13800))),
+          ('standard','Стандартные цены',NULL,json_build_object('single',3900,'consultation',8900,'bundle',json_build_object('1',3900,'2',7800,'3',11700,'4',15600)));
 
         INSERT INTO resources(code,name,status) VALUES
           ('ACCESS_RECIPES','Система рецептов','active'),

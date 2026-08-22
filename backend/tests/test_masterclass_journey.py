@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -15,6 +16,17 @@ from app.models import (  # noqa: E402
     MasterclassEvent, MasterclassNotification, OfferCheckout, OfferStage, QuestionnaireAnswer, Resource,
     User, UserAccess, UserEmail, UserOffer,
 )
+
+
+def test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals():
+    migration = (
+        Path(__file__).parents[1]
+        / "migrations"
+        / "versions"
+        / "20260822_0015_masterclass_journey.py"
+    ).read_text(encoding="utf-8")
+    assert "json_build_object('single',2900" in migration
+    assert '\":2900' not in migration
 
 
 def setup():
