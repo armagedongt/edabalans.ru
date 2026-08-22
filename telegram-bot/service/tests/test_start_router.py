@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, make_engine
 from app.engine import advance_run, start_run
 from app.models import BotInstance, Contact, ManualMessage, SequenceRun, StepDelivery, TrackingEvent, UserVariable
-from app.seed import PREPURCHASE_CODE, seed_defaults
+from app.seed import START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartDecision, StartFacts, decision_from_facts, execute_start_decision, inspect_start
 
 
@@ -53,7 +53,7 @@ def test_router_reads_current_welcome_state(tmp_path):
         assert facts.welcome_ever_started is False
         assert decision.code == "launch_welcome"
 
-        run = start_run(session, contact.id, PREPURCHASE_CODE)
+        run = start_run(session, contact.id, WELCOME_CODE)
         sender = FakeSender()
         advance_run(session, run, sender)
         facts, decision, current = inspect_start(session, contact, False)
@@ -61,7 +61,7 @@ def test_router_reads_current_welcome_state(tmp_path):
         assert current.id == run.id
         assert decision.code == "intensive_waiting"
 
-        session.add(StepDelivery(run_id=run.id, step_key="m09", idempotency_key=f"{run.id}:m09:test", status="sent"))
+        session.add(StepDelivery(run_id=run.id, step_key="welcome_day4", idempotency_key=f"{run.id}:welcome_day4:test", status="sent"))
         session.commit()
         _, decision, _ = inspect_start(session, contact, False)
         assert decision.code == "intensive_complete"
@@ -72,12 +72,12 @@ def test_router_reads_current_welcome_state(tmp_path):
 def test_buyer_stops_presale_and_gets_editable_template(tmp_path):
     session, contact = prepared(tmp_path, "buyer")
     try:
-        run = start_run(session, contact.id, PREPURCHASE_CODE)
+        run = start_run(session, contact.id, WELCOME_CODE)
         session.add(UserVariable(contact_id=contact.id, key="has_product:masterclass", value={"value": True}))
         session.commit()
         _, decision, current = inspect_start(session, contact, False)
         sender = FakeSender()
-        execute_start_decision(session, contact, decision, current, sender, PREPURCHASE_CODE, update_id="buyer-1")
+        execute_start_decision(session, contact, decision, current, sender, START_ENTRY_CODE, update_id="buyer-1")
         session.commit()
         assert decision.code == "masterclass_owned"
         assert run.status == "completed"
@@ -91,12 +91,12 @@ def test_buyer_stops_presale_and_gets_editable_template(tmp_path):
 def test_lost_welcome_state_is_logged_without_message(tmp_path):
     session, contact = prepared(tmp_path, "error")
     try:
-        run = start_run(session, contact.id, PREPURCHASE_CODE)
+        run = start_run(session, contact.id, START_ENTRY_CODE)
         run.status = "completed"
         session.commit()
         _, decision, current = inspect_start(session, contact, False)
         sender = FakeSender()
-        execute_start_decision(session, contact, decision, current, sender, PREPURCHASE_CODE, update_id="error-1")
+        execute_start_decision(session, contact, decision, current, sender, START_ENTRY_CODE, update_id="error-1")
         session.commit()
         assert decision.code == "welcome_state_error"
         assert sender.sent == []

@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
 
 
-PREPURCHASE_CODE = "prepurchase_masterclass"
+START_ENTRY_CODE = "start_attribution_entry"
+WELCOME_CODE = "welcome_intensive"
+PREPURCHASE_CODE = "prepurchase_nurture"
+LEGACY_PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
 
 
@@ -30,28 +33,41 @@ def _ensure_edges(session: Session, version: SequenceVersion) -> None:
         if step.kind == "CONDITION":
             true_step = config.get("true_step")
             true_sequence = config.get("true_sequence")
+            false_sequence = config.get("false_sequence")
             false_step = config.get("false_step") or following
             session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=true_step or (None if true_sequence else following), target_sequence_code=true_sequence, branch_key="true", label="Да"))
-            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=false_step, branch_key="false", label="Нет"))
+            session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=None if false_sequence else false_step, target_sequence_code=false_sequence, branch_key="false", label="Нет"))
         else:
+            target_sequence = config.get("target_sequence") if step.kind == "GOTO" else None
             target = config.get("step_key") if step.kind == "GOTO" else following
-            if target:
-                session.add(SequenceEdge(sequence_version_id=version.id, from_step_key=step.step_key, to_step_key=target, branch_key="default", label="Далее"))
+            if target or target_sequence:
+                session.add(SequenceEdge(
+                    sequence_version_id=version.id,
+                    from_step_key=step.step_key,
+                    to_step_key=None if target_sequence else target,
+                    target_sequence_code=target_sequence,
+                    branch_key="default",
+                    label="Перейти в следующий модуль" if target_sequence else "Далее",
+                ))
 
 
 def _ensure_routes(session: Session) -> None:
-    if not session.scalar(select(BotRoute).where(BotRoute.code == "main_start")):
+    route = session.scalar(select(BotRoute).where(BotRoute.code == "main_start"))
+    if not route:
         session.add(BotRoute(
             code="main_start",
             name="Главный вход в бота",
             trigger_kind="telegram_command",
             trigger_value="/start",
             source_component="telegram.start",
-            target_sequence_code=PREPURCHASE_CODE,
+            target_sequence_code=START_ENTRY_CODE,
             configuration={"pipeline": ["crm.identity.resolve", "attribution.resolve"]},
             priority=10,
             enabled=True,
         ))
+    elif route.target_sequence_code == LEGACY_PREPURCHASE_CODE:
+        route.target_sequence_code = START_ENTRY_CODE
+        route.configuration = {"pipeline": ["crm.identity.resolve", "attribution.resolve"]}
 
 
 def _messages() -> list[dict]:
@@ -140,6 +156,16 @@ def _start_system_messages() -> list[dict]:
             "Любые вопросы — просто напишите мне в личные сообщения @FitnessSergey",
             None,
             ["система", "start", "интенсив", "навигация", "продажа"],
+        ),
+        (
+            "start_subscription_reminder",
+            "Первый Start — просьба подписаться на канал",
+            "Перед началом подпишитесь, пожалуйста, на мой Telegram-канал: "
+            "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a>\n\n"
+            "После подписки нажмите кнопку проверки ещё раз. Если подписка не "
+            "подтвердится, интенсив всё равно продолжится через пять минут.",
+            None,
+            ["система", "start", "подписка", "напоминание"],
         ),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
@@ -260,22 +286,78 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             session.flush()
         items[row["code"]] = item
 
+    legacy = session.scalar(select(Sequence).where(Sequence.code == LEGACY_PREPURCHASE_CODE))
+    if legacy:
+        legacy.status = "archived"
+
+    start_entry = session.scalar(select(Sequence).where(Sequence.code == START_ENTRY_CODE))
+    if not start_entry:
+        start_entry = Sequence(
+            code=START_ENTRY_CODE,
+            name="Служебная часть Start",
+            description="Редактируемые сообщения первого входа после проверок Start-router.",
+            status="published",
+        )
+        session.add(start_entry); session.flush()
+        version = SequenceVersion(sequence_id=start_entry.id, version_no=1, status="published", published_at=datetime.now(UTC))
+        session.add(version); session.flush()
+        specs = [
+            ("start_navigation", "MESSAGE", "start_navigation_pin", None, {"pin_after_send": True}),
+            ("start_circle", "VIDEO_NOTE", "entry_circle", None, {}),
+            ("start_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}),
+            ("start_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}),
+            ("start_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_sequence": WELCOME_CODE, "false_step": "start_subscription_reminder"}),
+            ("start_subscription_reminder", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}),
+            ("start_subscription_delay", "DELAY", None, 300, {}),
+            ("start_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_sequence": WELCOME_CODE, "false_sequence": WELCOME_CODE, "fail_open": True}),
+        ]
+        for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
+            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
+
+    welcome = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+    if not welcome:
+        welcome = Sequence(
+            code=WELCOME_CODE,
+            name="2. Welcome — четыре дня интенсива",
+            description="Ровно 8 сообщений: День 1–4 и четыре промежуточных поста. Между ними — задержки и проверки покупки.",
+            status="published",
+        )
+        session.add(welcome); session.flush()
+        version = SequenceVersion(sequence_id=welcome.id, version_no=1, status="published", published_at=datetime.now(UTC))
+        session.add(version); session.flush()
+        welcome_posts = [
+            ("day1", 0), ("day1_mid", 43200), ("day2", 39600), ("day2_mid", 43200),
+            ("day3", 43200), ("day3_mid", 43200), ("day4", 43200), ("day4_mid", 43200),
+        ]
+        specs = []
+        for content_code, delay in welcome_posts:
+            if delay:
+                specs.append((f"welcome_delay_{content_code}", "DELAY", None, delay, {}))
+            specs.append((f"welcome_paid_check_{content_code}", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}))
+            specs.append((f"welcome_{content_code}", "MESSAGE", content_code, None, {}))
+        specs.append(("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}))
+        for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
+            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
+
     sequence = session.scalar(select(Sequence).where(Sequence.code == PREPURCHASE_CODE))
     if not sequence:
-        sequence = Sequence(code=PREPURCHASE_CODE, name="До покупки мастер-класса — 30 постов", description="Вход, 4 дня интенсива, продажи и полезный дожим", status="published")
+        sequence = Sequence(
+            code=PREPURCHASE_CODE,
+            name="3. Основная рассылка до покупки",
+            description="Полезные и продающие сообщения после Welcome. Останавливается после покупки мастер-класса.",
+            status="published",
+        )
         session.add(sequence); session.flush()
         version = SequenceVersion(sequence_id=sequence.id, version_no=1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
-        specs: list[tuple[str, str, str | None, int | None, dict]] = []
-        specs += [("m01", "VIDEO_NOTE", "entry_circle", None, {}), ("m02", "MESSAGE", "entry_welcome", None, {"buttons":[{"text":"Начать интенсив","callback_data":"start_intensive"}] }), ("wait_start", "WAIT_BUTTON", None, None, {"callback_data":"start_intensive"}), ("subscription_placeholder", "CONDITION", None, None, {"condition":"subscription_check", "enabled":False, "fail_open_seconds":600})]
-        timed = [("day1",0),("day1_mid",43200),("day2",39600),("day2_mid",43200),("day3",43200),("day3_mid",43200),("day4",43200),("day4_mid",0),("hard_sale_1",43200),("hard_sale_2",86400)]
-        timed += [(f"nurture_{n:02d}", 86400 if n <= 20 else 302400) for n in range(13,31)]
-        message_no = 3
-        for code, delay in timed:
-            specs.append((f"delay_{code}", "DELAY", None, delay, {}))
-            specs.append((f"paid_check_{code}", "CONDITION", None, None, {"condition":"has_product", "product_code":"masterclass", "product_codes":["MASTERCLASS_BASIC","MASTERCLASS_RECIPES","MASTERCLASS_CONSULT"], "true_sequence":POSTPURCHASE_CODE}))
-            specs.append((f"m{message_no:02d}", "MESSAGE", code, None, {})); message_no += 1
-        specs.append(("finish", "STOP", None, None, {}))
+        nurture_posts = [("hard_sale_1", 43200), ("hard_sale_2", 86400)]
+        nurture_posts += [(f"nurture_{n:02d}", 86400 if n <= 20 else 302400) for n in range(13, 31)]
+        specs = []
+        for content_code, delay in nurture_posts:
+            specs.append((f"nurture_delay_{content_code}", "DELAY", None, delay, {}))
+            specs.append((f"nurture_paid_check_{content_code}", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}))
+            specs.append((f"nurture_{content_code}", "MESSAGE", content_code, None, {}))
+        specs.append(("nurture_finish", "STOP", None, None, {}))
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
             session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
 
@@ -337,4 +419,4 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         _ensure_edges(session, version)
     _ensure_routes(session)
     session.commit()
-    return {"messages": len(_messages()), "sequences": 2}
+    return {"messages": len(_messages()), "sequences": 4}

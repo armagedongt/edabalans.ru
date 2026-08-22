@@ -14,7 +14,7 @@ from types import SimpleNamespace
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, Response, UploadFile
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
-from sqlalchemy import delete, func, or_, select, text
+from sqlalchemy import case, delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -24,7 +24,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
-from app.seed import PREPURCHASE_CODE, seed_defaults
+from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
 from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, unresolved_utm_groups
@@ -324,7 +324,7 @@ def process_update(update: dict, session: Session) -> dict:
                 )
                 .order_by(BotRoute.priority)
             )
-            sequence_code = route.target_sequence_code if route else PREPURCHASE_CODE
+            sequence_code = route.target_sequence_code if route else START_ENTRY_CODE
             link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, token)
             if not link:
                 pending_link, pending_alias, pending_query = resolve_pending_channel_touch(session, contact.telegram_user_id)
@@ -369,14 +369,29 @@ def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None =
 
 @app.get("/bot-api/sequences", dependencies=[Depends(require_admin)])
 def list_sequences(session: Session = Depends(get_db)) -> list[dict]:
-    rows = session.execute(
-        select(Sequence, SequenceVersion, func.count(SequenceStep.id))
-        .join(SequenceVersion, SequenceVersion.sequence_id == Sequence.id)
-        .outerjoin(SequenceStep, SequenceStep.sequence_version_id == SequenceVersion.id)
-        .group_by(Sequence.id, SequenceVersion.id)
+    start_graph = module_graph(session, "start_attribution")
+    result = [{
+        "code": "start_attribution",
+        "name": "1. Старт и атрибуция",
+        "description": "Все входы, проверки, развилки и редактируемые ответы до передачи в Welcome.",
+        "status": "published",
+        "version": "system",
+        "version_status": "current",
+        "steps": len(start_graph["nodes"]),
+        "item_type": "module",
+    }]
+    sequences = session.scalars(
+        select(Sequence)
+        .where(Sequence.code.not_in([START_ENTRY_CODE, LEGACY_PREPURCHASE_CODE]), Sequence.status != "archived")
         .order_by(Sequence.name)
-    ).all()
-    return [{"code": seq.code, "name": seq.name, "description": seq.description, "status": seq.status, "version": ver.version_no, "version_status": ver.status, "steps": count} for seq, ver, count in rows]
+    )
+    for seq in sequences:
+        ver = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == seq.id).order_by(SequenceVersion.version_no.desc()))
+        if not ver:
+            continue
+        count = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == ver.id)) or 0
+        result.append({"code": seq.code, "name": seq.name, "description": seq.description, "status": seq.status, "version": ver.version_no, "version_status": ver.status, "steps": count, "item_type": "sequence"})
+    return result
 
 
 @app.get("/bot-api/map", dependencies=[Depends(require_admin)])
@@ -389,7 +404,7 @@ def bot_map(sequence_code: str | None = None, module_code: str | None = None, ve
         if sequence_code:
             return sequence_graph(session, sequence_code, version_status)
         if module_code:
-            return module_graph(module_code)
+            return module_graph(session, module_code)
         return module_overview_graph(session)
     except LookupError:
         raise HTTPException(404, "Module or sequence not found") from None
@@ -404,9 +419,15 @@ def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
 
 
 def _sequence_rule(code: str) -> dict:
+    if code == WELCOME_CODE:
+        return {
+            "start": "Начинается после завершения приветственной части Start и содержит 8 сообщений — День 1–4 и четыре промежуточных поста.",
+            "stop": "Останавливается при подтверждённой покупке мастер-класса или после передачи в основную рассылку.",
+            "next": "После восьмого сообщения пользователь переходит в основную рассылку до покупки.",
+        }
     if code == PREPURCHASE_CODE:
         return {
-            "start": "Сейчас запускается после /start. Для старой базы будет отдельный массовый запуск по признаку «ещё не получал новую цепочку».",
+            "start": "Запускается после завершения восьми сообщений Welcome без покупки мастер-класса.",
             "stop": "Останавливается сразу после появления подтверждённой покупки мастер-класса.",
             "next": "После покупки пользователь переходит в цепочку «После покупки мастер-класса».",
         }
@@ -481,7 +502,7 @@ def list_contacts(session: Session = Depends(get_db)) -> list[dict]:
     contacts = session.scalars(select(Contact).order_by(Contact.last_seen_at.desc())).all()
     result = []
     for contact in contacts:
-        run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id).order_by(SequenceRun.started_at.desc()))
+        run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id).order_by(case((SequenceRun.status.in_(["active", "waiting"]), 0), else_=1), SequenceRun.started_at.desc()))
         sent = session.scalar(select(func.count(StepDelivery.id)).where(StepDelivery.run_id == run.id, StepDelivery.status == "sent")) if run else 0
         total = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE", "VIDEO", "VOICE", "PHOTO"]))) if run else 0
         result.append({"id":contact.id,"telegram_user_id":contact.telegram_user_id,"username":contact.username,"name":" ".join(filter(None,[contact.first_name,contact.last_name])),"status":contact.status,"run_status":run.status if run else None,"current_step":run.current_step_key if run else None,"next_action_at":run.next_action_at if run else None,"sent":sent,"total":total,"time_scale":run.time_scale if run else None,"error":run.last_error if run else None,"last_seen_at":contact.last_seen_at,"created_at":contact.created_at})
@@ -492,7 +513,7 @@ def _user_bot_state(session: Session, user_id: str) -> dict | None:
     contact = session.scalar(select(Contact).where(Contact.user_id == user_id).order_by(Contact.last_seen_at.desc()))
     if not contact:
         return None
-    run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id).order_by(SequenceRun.started_at.desc()))
+    run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id).order_by(case((SequenceRun.status.in_(["active", "waiting"]), 0), else_=1), SequenceRun.started_at.desc()))
     sent = total = 0
     if run:
         sent = session.scalar(select(func.count(StepDelivery.id)).where(StepDelivery.run_id == run.id, StepDelivery.status == "sent")) or 0
@@ -639,7 +660,7 @@ def resolve_link_preview(body: dict, session: Session = Depends(get_db)) -> dict
     if link:
         tag_ids = list(dict.fromkeys([*list(session.scalars(select(TrackingLinkTag.tag_id).where(TrackingLinkTag.tracking_link_id == link.id))), *tag_ids]))
     tags = list(session.scalars(select(CrmTag).where(CrmTag.id.in_(tag_ids)))) if tag_ids else []
-    return {"payload": token, "status": status, "route": {"kind": link.route_kind, "sequence_code": link.target_sequence_code, "step_key": link.target_step_key} if link else {"kind": "root", "sequence_code": PREPURCHASE_CODE, "step_key": None}, "rule": _link_payload(session, link) if link else None, "alias_id": alias.id if alias else None, "tags": [{"id": tag.id, "name": tag.name} for tag in tags], "raw_query": raw_query}
+    return {"payload": token, "status": status, "route": {"kind": link.route_kind, "sequence_code": link.target_sequence_code, "step_key": link.target_step_key} if link else {"kind": "root", "sequence_code": START_ENTRY_CODE, "step_key": None}, "rule": _link_payload(session, link) if link else None, "alias_id": alias.id if alias else None, "tags": [{"id": tag.id, "name": tag.name} for tag in tags], "raw_query": raw_query}
 
 
 @app.get("/bot-api/link-rules/{link_id}", dependencies=[Depends(require_admin)])

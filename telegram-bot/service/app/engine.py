@@ -170,6 +170,8 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
             try:
                 delivery.attempt_count += 1
                 delivery.platform_message_id = sender.send_content(contact.chat_id, content, config)
+                if config.get("pin_after_send") and hasattr(sender, "pin_message"):
+                    sender.pin_message(contact.chat_id, delivery.platform_message_id)
                 delivery.status = "sent"; delivery.sent_at = utcnow(); delivery.error_message = None
             except Exception as exc:
                 message = str(exc)

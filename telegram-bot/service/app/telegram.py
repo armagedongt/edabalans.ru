@@ -53,7 +53,10 @@ class TelegramClient:
         reply_markup = None
         if buttons:
             reply_markup = {
-                "inline_keyboard": [[{"text": b["text"], "callback_data": b["callback_data"]}] for b in buttons]
+                "inline_keyboard": [[{
+                    "text": button["text"],
+                    **({"url": button["url"]} if button.get("url") else {"callback_data": button["callback_data"]}),
+                }] for button in buttons]
             }
         common: dict[str, Any] = {"chat_id": chat_id}
         if reply_markup:
@@ -83,6 +86,9 @@ class TelegramClient:
 
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:
         self.call("answerCallbackQuery", {"callback_query_id": callback_query_id, "text": text})
+
+    def pin_message(self, chat_id: str, message_id: str) -> None:
+        self.call("pinChatMessage", {"chat_id": chat_id, "message_id": message_id, "disable_notification": True})
 
     def delete_webhook(self) -> None:
         self.call("deleteWebhook", {"drop_pending_updates": False})

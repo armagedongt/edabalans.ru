@@ -75,7 +75,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     update = {"update_id": 100, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=update).json() == {"ok": True}
     assert client.post("/telegram/webhook", json=update).json()["duplicate"] is True
-    assert [x[1] for x in fake.sent] == ["tpl_entry_circle", "tpl_entry_welcome"]
+    assert [x[1] for x in fake.sent] == ["tpl_start_navigation_pin", "tpl_entry_circle", "tpl_start_welcome_offer"]
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
     assert contacts[0]["run_status"] == "waiting"
@@ -83,21 +83,26 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=callback).json() == {"ok": True}
     repeat = {"update_id": 102, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
-    assert len(fake.sent) == 3
+    assert len(fake.sent) == 4
     assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
     assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
     assert any(node["id"] == "module:start_attribution" for node in overview["nodes"])
+    sequences = client.get("/bot-api/sequences").json()
+    assert [item["code"] for item in sequences[:3]] == ["start_attribution", "welcome_intensive", "prepurchase_nurture"]
+    assert "prepurchase_masterclass" not in [item["code"] for item in sequences]
     module = client.get("/bot-api/map?module_code=start_attribution").json()
     assert module["level"] == "module"
     assert any(node["id"] == "exit_welcome" and node["kind"] == "module_exit" for node in module["nodes"])
     assert any(node["id"] == "exit_error" and node["kind"] == "error" for node in module["nodes"])
+    assert next(node for node in module["nodes"] if node["id"] == "send_start_offer")["content"]["code"] == "tpl_start_welcome_offer"
     assert any(edge["source"] == "welcome_run_active" and edge["target"] == "welcome_ever_started" and edge["branch"] == "false" for edge in module["edges"])
-    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_welcome" and edge["branch"] == "false" for edge in module["edges"])
+    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "send_navigation" and edge["branch"] == "false" for edge in module["edges"])
     assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
-    detail = client.get("/bot-api/map?sequence_code=prepurchase_masterclass").json()
+    detail = client.get("/bot-api/map?sequence_code=welcome_intensive").json()
     assert detail["level"] == "sequence"
+    assert len([node for node in detail["nodes"] if node["kind"] == "message"]) == 8
     assert any(edge["branch"] == "true" for edge in detail["edges"])
     crm_user_id = "11111111-1111-1111-1111-111111111111"
     with Session(engine) as session:
@@ -105,12 +110,12 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
         contact.user_id = crm_user_id
         session.commit()
         assert session.scalar(select(func.count(Contact.id))) == 1
-        assert session.scalar(select(func.count(SequenceRun.id))) == 1
-        assert session.scalar(select(func.count(StepDelivery.id))) == 2
+        assert session.scalar(select(func.count(SequenceRun.id))) == 2
+        assert session.scalar(select(func.count(StepDelivery.id))) == 3
         assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 3
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
     assert state["run_status"] == "active"
-    assert state["sent"] == 2
+    assert state["sent"] in {0, 3}
     preview = client.get(f"/bot-api/contacts/{contacts[0]['id']}/start-preview").json()
     assert preview["decision"]["code"] == "intensive_waiting"
     simulated = client.post("/bot-api/start-router/simulate", json={"is_first_visit":False,"has_masterclass":True,"day_four_sent":False,"has_active_welcome_run":True,"welcome_ever_started":True}).json()

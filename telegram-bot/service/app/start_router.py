@@ -11,12 +11,13 @@ from sqlalchemy.orm import Session
 from app.engine import has_paid_product, start_run
 from app.graph import START_ROUTER_RULES
 from app.models import Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceVersion, StepDelivery, TrackingEvent
-from app.seed import PREPURCHASE_CODE
+from app.seed import PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE
 
 
 MASTERCLASS_CODES = ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"]
 ACTIVE_RUN_STATUSES = ["active", "waiting"]
-DAY_FOUR_STEP_KEY = "m09"
+DAY_FOUR_STEP_KEY = "welcome_day4"
+PRESALE_SEQUENCE_CODES = [START_ENTRY_CODE, WELCOME_CODE, PREPURCHASE_CODE]
 
 
 @dataclass(frozen=True)
@@ -43,7 +44,7 @@ class StartDecision:
 
 DECISIONS = {
     "masterclass_owned": StartDecision("masterclass_owned", "Мастер-класс куплен: остановить сообщения до покупки и отправить памятку", "tpl_start_has_masterclass", sends_message=True),
-    "launch_welcome": StartDecision("launch_welcome", "Передать пользователя в модуль Welcome", starts_welcome=True),
+    "launch_welcome": StartDecision("launch_welcome", "Продолжить первый Start: навигация, кружок и приветствие", starts_welcome=True),
     "intensive_complete": StartDecision("intensive_complete", "Интенсив завершён: отправить навигацию", "tpl_start_intensive_complete", sends_message=True),
     "intensive_waiting": StartDecision("intensive_waiting", "Welcome идёт: сообщить время следующего материала", "tpl_start_intensive_waiting", sends_message=True),
     "welcome_state_error": StartDecision("welcome_state_error", "Welcome запускался, но активный run и День 4 отсутствуют: ручная проверка", manual_review=True),
@@ -62,7 +63,7 @@ def _welcome_runs(session: Session, contact_id: str):
         select(SequenceRun)
         .join(SequenceVersion, SequenceVersion.id == SequenceRun.sequence_version_id)
         .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
-        .where(SequenceRun.contact_id == contact_id, Sequence.code == PREPURCHASE_CODE)
+        .where(SequenceRun.contact_id == contact_id, Sequence.code.in_([START_ENTRY_CODE, WELCOME_CODE]))
     )
 
 
@@ -123,7 +124,17 @@ def _render_content(item: ContentItem, values: dict[str, str]) -> SimpleNamespac
 
 def stop_presale_runs(session: Session, contact_id: str) -> None:
     now = datetime.now(UTC)
-    for run in session.scalars(_welcome_runs(session, contact_id).where(SequenceRun.status.in_(ACTIVE_RUN_STATUSES))):
+    query = (
+        select(SequenceRun)
+        .join(SequenceVersion, SequenceVersion.id == SequenceRun.sequence_version_id)
+        .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
+        .where(
+            SequenceRun.contact_id == contact_id,
+            Sequence.code.in_(PRESALE_SEQUENCE_CODES),
+            SequenceRun.status.in_(ACTIVE_RUN_STATUSES),
+        )
+    )
+    for run in session.scalars(query):
         run.status = "completed"
         run.finished_at = now
         run.next_action_at = None
