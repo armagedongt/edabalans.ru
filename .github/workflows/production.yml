@@ -29,15 +29,30 @@ jobs:
         run: docker build --tag edabalans-backend-test ./backend
 
       - name: Run backend tests
+        shell: bash
         run: |
-          docker run --rm \
-            --user root \
-            --env PYTHONPATH=/app \
-            --env DATABASE_URL=postgresql+psycopg://test:test@127.0.0.1:5432/test \
-            --volume "$PWD/backend/tests:/app/tests:ro" \
-            --volume "$PWD/backend/requirements-dev.txt:/app/requirements-dev.txt:ro" \
-            edabalans-backend-test \
-            sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
+          set -o pipefail
+          test_log="$RUNNER_TEMP/backend-pytest.log"
+          if docker run --rm \
+              --user root \
+              --env PYTHONPATH=/app \
+              --env DATABASE_URL=postgresql+psycopg://test:test@127.0.0.1:5432/test \
+              --volume "$PWD/backend/tests:/app/tests:ro" \
+              --volume "$PWD/backend/requirements-dev.txt:/app/requirements-dev.txt:ro" \
+              edabalans-backend-test \
+              sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q" \
+              2>&1 | tee "$test_log"; then
+            exit 0
+          fi
+
+          # Public check annotations retain the useful pytest tail even when the
+          # repository's complete Actions log is unavailable to an operator.
+          message="$(tail -n 60 "$test_log")"
+          message="${message//'%'/'%25'}"
+          message="${message//$'\r'/'%0D'}"
+          message="${message//$'\n'/'%0A'}"
+          echo "::error title=Backend pytest failed::$message"
+          exit 1
 
       - name: Build Telegram service
         run: docker build --file ./telegram-bot/service/Dockerfile --tag edabalans-telegram-test ./telegram-bot
