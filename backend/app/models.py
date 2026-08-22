@@ -56,6 +56,14 @@ class User(TimestampMixin, Base):
     merged_into_user_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("users.id", ondelete="SET NULL")
     )
+    access_review_status: Mapped[str] = mapped_column(
+        String(32), default="not_required", server_default=text("'not_required'"), nullable=False
+    )
+    access_review_note: Mapped[str | None] = mapped_column(Text)
+    access_reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    tilda_access_status: Mapped[str] = mapped_column(
+        String(32), default="not_checked", server_default=text("'not_checked'"), nullable=False
+    )
 
 
 class UserEmail(Base):
@@ -114,6 +122,11 @@ class MessengerAccount(Base):
     first_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     linked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    subscription_status: Mapped[str] = mapped_column(
+        String(32), default="unknown", server_default=text("'unknown'"), nullable=False
+    )
+    subscription_checked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    main_scenario_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     source: Mapped[str] = mapped_column(String(64), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
@@ -216,9 +229,12 @@ class Payment(Base):
     external_request_id: Mapped[str | None] = mapped_column(String(255))
     email_at_purchase: Mapped[str | None] = mapped_column(String(320))
     product_name_raw: Mapped[str] = mapped_column(Text, nullable=False)
-    amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
     currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
     payment_status: Mapped[str] = mapped_column(String(32), nullable=False)
+    review_status: Mapped[str] = mapped_column(
+        String(32), default="not_required", server_default=text("'not_required'"), nullable=False
+    )
     payment_system: Mapped[str | None] = mapped_column(String(64))
     source_event_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     paid_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -296,6 +312,9 @@ class Tag(Base):
     merged_into_tag_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("tags.id", ondelete="SET NULL")
     )
+    audit_action: Mapped[str | None] = mapped_column(String(64))
+    audit_reason: Mapped[str | None] = mapped_column(Text)
+    archived_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

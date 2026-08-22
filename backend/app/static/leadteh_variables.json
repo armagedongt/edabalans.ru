@@ -1,0 +1,2272 @@
+[
+  {
+    "index": 1,
+    "name": "ID",
+    "filled": 13319,
+    "distinct": ">10000",
+    "types": "number:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 2,
+    "name": "Имя",
+    "filled": 13319,
+    "distinct": "8946",
+    "types": "text:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 3,
+    "name": "Мессенджер",
+    "filled": 13319,
+    "distinct": "3",
+    "types": "text:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 4,
+    "name": "Username",
+    "filled": 8769,
+    "distinct": "8769",
+    "types": "text:8769",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 5,
+    "name": "Телефон",
+    "filled": 469,
+    "distinct": "445",
+    "types": "text:469",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 6,
+    "name": "Email",
+    "filled": 40,
+    "distinct": "39",
+    "types": "text:40",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 7,
+    "name": "Адрес",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 8,
+    "name": "Первое сообщение",
+    "filled": 13319,
+    "distinct": "595",
+    "types": "text:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 9,
+    "name": "Дата создания",
+    "filled": 13319,
+    "distinct": ">10000",
+    "types": "date:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 10,
+    "name": "Telegram ID",
+    "filled": 13292,
+    "distinct": ">10000",
+    "types": "text:13292",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 11,
+    "name": "Referrer ID",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 12,
+    "name": "Теги",
+    "filled": 13319,
+    "distinct": "8798",
+    "types": "text:13319",
+    "category": "identity",
+    "action": "already_imported",
+    "reason": "Основные контакты и данные импорта уже перенесены в CRM"
+  },
+  {
+    "index": 13,
+    "name": "Рост",
+    "filled": 133,
+    "distinct": "35",
+    "types": "text:133",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 14,
+    "name": "Вес",
+    "filled": 134,
+    "distinct": "59",
+    "types": "text:134",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 15,
+    "name": "Возраст",
+    "filled": 133,
+    "distinct": "30",
+    "types": "text:133",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 16,
+    "name": "Пол",
+    "filled": 133,
+    "distinct": "13",
+    "types": "text:133",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 17,
+    "name": "текст",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 18,
+    "name": "TK_Пригласительная_ссылка",
+    "filled": 32,
+    "distinct": "32",
+    "types": "text:32",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 19,
+    "name": "Сидячая",
+    "filled": 35,
+    "distinct": "31",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 20,
+    "name": "Стоячая",
+    "filled": 35,
+    "distinct": "23",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 21,
+    "name": "Активная",
+    "filled": 35,
+    "distinct": "18",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 22,
+    "name": "Тренировочная",
+    "filled": 35,
+    "distinct": "7",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 23,
+    "name": "Пульс в покое",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 24,
+    "name": "Опросник_Активность",
+    "filled": 6,
+    "distinct": "4",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 25,
+    "name": "Степ_тест_пульс",
+    "filled": 6,
+    "distinct": "4",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 26,
+    "name": "Пульс_в_покое",
+    "filled": 6,
+    "distinct": "5",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 27,
+    "name": "Тест_ходьба",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 28,
+    "name": "Ходьба_тест_пульс",
+    "filled": 5,
+    "distinct": "5",
+    "types": "text:5",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 29,
+    "name": "Тест_ходьба_время",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 30,
+    "name": "Время_тренировки",
+    "filled": 8,
+    "distinct": "4",
+    "types": "text:8",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 31,
+    "name": "Пульс_тренировки",
+    "filled": 8,
+    "distinct": "6",
+    "types": "text:8",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 32,
+    "name": "Дефицит_тренировки",
+    "filled": 33,
+    "distinct": "4",
+    "types": "text:33",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 33,
+    "name": "Уровень_дефицита",
+    "filled": 32,
+    "distinct": "10",
+    "types": "text:32",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 34,
+    "name": "pre_BMR",
+    "filled": 132,
+    "distinct": "115",
+    "types": "text:132",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 35,
+    "name": "BMI",
+    "filled": 133,
+    "distinct": "120",
+    "types": "text:133",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 36,
+    "name": "множитель_Пола",
+    "filled": 132,
+    "distinct": "2",
+    "types": "text:132",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 37,
+    "name": "BMR",
+    "filled": 132,
+    "distinct": "130",
+    "types": "text:132",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 38,
+    "name": "MET",
+    "filled": 39,
+    "distinct": "38",
+    "types": "text:39",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 39,
+    "name": "BMR_FAT",
+    "filled": 39,
+    "distinct": "38",
+    "types": "text:39",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 40,
+    "name": "ккал_Сидячая",
+    "filled": 35,
+    "distinct": "35",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 41,
+    "name": "ккал_Стоячая",
+    "filled": 35,
+    "distinct": "35",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 42,
+    "name": "ккал_Активная",
+    "filled": 35,
+    "distinct": "32",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 43,
+    "name": "ккал_Тренировочная",
+    "filled": 35,
+    "distinct": "8",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 44,
+    "name": "Повседневная_ккал",
+    "filled": 35,
+    "distinct": "35",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 45,
+    "name": "TEF_ккал",
+    "filled": 35,
+    "distinct": "35",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 46,
+    "name": "Энерго_баланс_повседневный",
+    "filled": 35,
+    "distinct": "35",
+    "types": "text:35",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 47,
+    "name": "Энерго_баланс_для_дефицита",
+    "filled": 33,
+    "distinct": "33",
+    "types": "text:33",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 48,
+    "name": "Энерго_баланс_TOTAL",
+    "filled": 33,
+    "distinct": "33",
+    "types": "text:33",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 49,
+    "name": "Уровень_дефицита_вывод",
+    "filled": 30,
+    "distinct": "6",
+    "types": "text:30",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 50,
+    "name": "Рацион_в_ккал",
+    "filled": 30,
+    "distinct": "30",
+    "types": "text:30",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 51,
+    "name": "Дефицит_ккал",
+    "filled": 30,
+    "distinct": "29",
+    "types": "text:30",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 52,
+    "name": "Скорость_похудения",
+    "filled": 30,
+    "distinct": "29",
+    "types": "text:30",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 53,
+    "name": "target_HR",
+    "filled": 8,
+    "distinct": "7",
+    "types": "text:8",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 54,
+    "name": "O2_per_BPM",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 55,
+    "name": "EE",
+    "filled": 8,
+    "distinct": "4",
+    "types": "text:8",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 56,
+    "name": "HR_max",
+    "filled": 6,
+    "distinct": "4",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 57,
+    "name": "VO2max_from_HR",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 58,
+    "name": "VO2max_from_ASK",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 59,
+    "name": "Степ_тест_VO2Max",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 60,
+    "name": "Ходьба_тест_VO2Max",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 61,
+    "name": "VO2Max_TOTAL",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 62,
+    "name": "HRR_reserv",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 63,
+    "name": "МЕТ",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 64,
+    "name": "VO2max_rest",
+    "filled": 6,
+    "distinct": "6",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 65,
+    "name": "Пульс_в_покое_временное",
+    "filled": 6,
+    "distinct": "5",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 66,
+    "name": "Опросник_Активность_временно",
+    "filled": 6,
+    "distinct": "5",
+    "types": "text:6",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 67,
+    "name": "100_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 68,
+    "name": "105_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 69,
+    "name": "100_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 70,
+    "name": "100_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 71,
+    "name": "105_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 72,
+    "name": "105_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 73,
+    "name": "110_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 74,
+    "name": "110_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 75,
+    "name": "110_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 76,
+    "name": "115_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 77,
+    "name": "115_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 78,
+    "name": "115_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 79,
+    "name": "_90_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 80,
+    "name": "_90_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 81,
+    "name": "_90_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 82,
+    "name": "_95_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 83,
+    "name": "_95_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 84,
+    "name": "_95_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 85,
+    "name": "120_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 86,
+    "name": "120_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 87,
+    "name": "120_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 88,
+    "name": "125_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 89,
+    "name": "125_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 90,
+    "name": "125_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 91,
+    "name": "130_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 92,
+    "name": "130_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 93,
+    "name": "130_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 94,
+    "name": "135_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 95,
+    "name": "135_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 96,
+    "name": "135_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 97,
+    "name": "140_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 98,
+    "name": "140_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 99,
+    "name": "140_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 100,
+    "name": "145_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 101,
+    "name": "145_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 102,
+    "name": "145_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 103,
+    "name": "150_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 104,
+    "name": "150_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 105,
+    "name": "150_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 106,
+    "name": "155_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 107,
+    "name": "155_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 108,
+    "name": "155_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 109,
+    "name": "160_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 110,
+    "name": "160_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 111,
+    "name": "160_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 112,
+    "name": "165_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 113,
+    "name": "165_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 114,
+    "name": "165_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 115,
+    "name": "170_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 116,
+    "name": "170_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 117,
+    "name": "170_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 118,
+    "name": "175_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 119,
+    "name": "175_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 120,
+    "name": "175_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 121,
+    "name": "180_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 122,
+    "name": "180_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 123,
+    "name": "180_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 124,
+    "name": "185_EE_60",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 125,
+    "name": "185_EE_30",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 126,
+    "name": "185_EE_10",
+    "filled": 12,
+    "distinct": "12",
+    "types": "text:12",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 127,
+    "name": "TEF_TOTAL",
+    "filled": 30,
+    "distinct": "30",
+    "types": "text:30",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 128,
+    "name": "8",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 129,
+    "name": "Дефицит_тренировки_значение",
+    "filled": 32,
+    "distinct": "5",
+    "types": "text:32",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 130,
+    "name": "Белки_грамм",
+    "filled": 17,
+    "distinct": "16",
+    "types": "text:17",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 131,
+    "name": "Жиры_грамм",
+    "filled": 17,
+    "distinct": "16",
+    "types": "text:17",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 132,
+    "name": "Углеводы_грамм",
+    "filled": 17,
+    "distinct": "16",
+    "types": "text:17",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 133,
+    "name": "Клетчатка_грамм",
+    "filled": 17,
+    "distinct": "16",
+    "types": "text:17",
+    "category": "legacy_calculator",
+    "action": "archive",
+    "reason": "Промежуточные входы и расчёты старого калькулятора"
+  },
+  {
+    "index": 134,
+    "name": "Имя переменной",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 135,
+    "name": "Номер_ссылки",
+    "filled": 25,
+    "distinct": "19",
+    "types": "text:25",
+    "category": "technical_link",
+    "action": "archive",
+    "reason": "Техническая переменная старой выдачи ссылок"
+  },
+  {
+    "index": 136,
+    "name": "МК_Качество_Пригласительная_ссылка",
+    "filled": 117,
+    "distinct": "16",
+    "types": "text:117",
+    "category": "technical_link",
+    "action": "archive",
+    "reason": "Техническая переменная старой выдачи ссылок"
+  },
+  {
+    "index": 137,
+    "name": "Номер_ссылки_МК_Качество",
+    "filled": 137,
+    "distinct": "133",
+    "types": "text:137",
+    "category": "technical_link",
+    "action": "archive",
+    "reason": "Техническая переменная старой выдачи ссылок"
+  },
+  {
+    "index": 138,
+    "name": "Вопрос подписчика",
+    "filled": 7,
+    "distinct": "5",
+    "types": "text:7",
+    "category": "technical_link",
+    "action": "archive",
+    "reason": "Техническая переменная старой выдачи ссылок"
+  },
+  {
+    "index": 139,
+    "name": "TK_Пригласительная_ссылка:",
+    "filled": 2,
+    "distinct": "2",
+    "types": "text:2",
+    "category": "technical_link",
+    "action": "archive",
+    "reason": "Техническая переменная старой выдачи ссылок"
+  },
+  {
+    "index": 140,
+    "name": "ТЕСТ_Результат",
+    "filled": 854,
+    "distinct": "4",
+    "types": "text:854",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 141,
+    "name": "ТЕСТ_Похудеть_на",
+    "filled": 851,
+    "distinct": "10",
+    "types": "text:851",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 142,
+    "name": "ТЕСТ_Похудеть_Время",
+    "filled": 847,
+    "distinct": "9",
+    "types": "text:847",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 143,
+    "name": "ТЕСТ_Скорость_Похудения",
+    "filled": 847,
+    "distinct": "41",
+    "types": "text:847",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 144,
+    "name": "Скорость_Похудения_тест_Дефицит",
+    "filled": 846,
+    "distinct": "40",
+    "types": "text:846",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 145,
+    "name": "ТЕСТ_Скорость_Похудения_КГ",
+    "filled": 846,
+    "distinct": "40",
+    "types": "text:846",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 146,
+    "name": "Результат_Теста",
+    "filled": 825,
+    "distinct": "34",
+    "types": "text:825",
+    "category": "legacy_test",
+    "action": "archive",
+    "reason": "Результат старого теста; не используется новой системой"
+  },
+  {
+    "index": 147,
+    "name": "TG_ID",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 148,
+    "name": "fbclid",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 149,
+    "name": "Скидка 8 марта",
+    "filled": 27,
+    "distinct": "27",
+    "types": "text:27",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 150,
+    "name": "Скидка_Итого",
+    "filled": 7083,
+    "distinct": "12",
+    "types": "text:7083",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 151,
+    "name": "К_оплате",
+    "filled": 946,
+    "distinct": "163",
+    "types": "text:946",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 152,
+    "name": "к",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 153,
+    "name": "Спидка_по_ПРОМО-коду",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 154,
+    "name": "{{ $К_оплате }}",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 155,
+    "name": "Цена_калории_ДОП_локальная",
+    "filled": 1668,
+    "distinct": "4",
+    "types": "text:1668",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 156,
+    "name": "ТК-",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 157,
+    "name": "3650",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 158,
+    "name": "МК_уже_куплен",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "purchase_hint",
+    "action": "use_for_review",
+    "reason": "Подсказка для ручной проверки исторической покупки"
+  },
+  {
+    "index": 159,
+    "name": "Дал_доступ_к_сахару_сам",
+    "filled": 2,
+    "distinct": "1",
+    "types": "text:2",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 160,
+    "name": "Ответ на тест отказ от сладкого",
+    "filled": 514,
+    "distinct": "17",
+    "types": "text:514",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 161,
+    "name": "ХВ - ЭТАП",
+    "filled": 642,
+    "distinct": "7",
+    "types": "text:642",
+    "category": "legacy_funnel",
+    "action": "archive",
+    "reason": "Техническое состояние старой рассылки LeadTeh"
+  },
+  {
+    "index": 162,
+    "name": "Тариф_Мастер_класс",
+    "filled": 67,
+    "distinct": "4",
+    "types": "text:67",
+    "category": "purchase_hint",
+    "action": "use_for_review",
+    "reason": "Подсказка для ручной проверки исторической покупки"
+  },
+  {
+    "index": 163,
+    "name": "utm_source",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 164,
+    "name": "utm_medium",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 165,
+    "name": "utm_campaign",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 166,
+    "name": "utm_content",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 167,
+    "name": "utm_term",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 168,
+    "name": "Этап рассылки",
+    "filled": 7146,
+    "distinct": "9",
+    "types": "text:7146",
+    "category": "legacy_funnel",
+    "action": "archive",
+    "reason": "Техническое состояние старой рассылки LeadTeh"
+  },
+  {
+    "index": 169,
+    "name": "Пусто",
+    "filled": 6958,
+    "distinct": "1",
+    "types": "text:6958",
+    "category": "technical",
+    "action": "archive",
+    "reason": "Служебная или устаревшая переменная"
+  },
+  {
+    "index": 170,
+    "name": "etext",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 171,
+    "name": "yclid",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 172,
+    "name": "Места для консультаций",
+    "filled": 3,
+    "distinct": "1",
+    "types": "text:3",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 173,
+    "name": "Цена для консультаций",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 174,
+    "name": "Цена_МК_Сопровождение",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 175,
+    "name": "Скидка_Лотерея",
+    "filled": 296,
+    "distinct": "262",
+    "types": "text:296",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 176,
+    "name": "Накопленные_Оплаты",
+    "filled": 135,
+    "distinct": "42",
+    "types": "text:135",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 177,
+    "name": "Источник:",
+    "filled": 11254,
+    "distinct": "21",
+    "types": "text:11254",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 178,
+    "name": "Первая активность",
+    "filled": 11034,
+    "distinct": "1611",
+    "types": "text:11034",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 179,
+    "name": "msgid",
+    "filled": 6877,
+    "distinct": "6877",
+    "types": "text:6877",
+    "category": "legacy_funnel",
+    "action": "archive",
+    "reason": "Техническое состояние старой рассылки LeadTeh"
+  },
+  {
+    "index": 180,
+    "name": "Тариф_Мастер_класса",
+    "filled": 268,
+    "distinct": "17",
+    "types": "text:268",
+    "category": "purchase_hint",
+    "action": "use_for_review",
+    "reason": "Подсказка для ручной проверки исторической покупки"
+  },
+  {
+    "index": 181,
+    "name": "Купил калории отдельно",
+    "filled": 61,
+    "distinct": "1",
+    "types": "text:61",
+    "category": "purchase_hint",
+    "action": "use_for_review",
+    "reason": "Подсказка для ручной проверки исторической покупки"
+  },
+  {
+    "index": 182,
+    "name": "Источник: Без источника",
+    "filled": 104,
+    "distinct": "1",
+    "types": "text:104",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 183,
+    "name": "Счетчик_Оплат",
+    "filled": 12,
+    "distinct": "11",
+    "types": "text:12",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 184,
+    "name": "Вопрос_1",
+    "filled": 171,
+    "distinct": "171",
+    "types": "text:171",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 185,
+    "name": "Вопрос_2",
+    "filled": 170,
+    "distinct": "169",
+    "types": "text:170",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 186,
+    "name": "Вопрос_0",
+    "filled": 173,
+    "distinct": "101",
+    "types": "text:173",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 187,
+    "name": "Вопрос_3",
+    "filled": 169,
+    "distinct": "163",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 188,
+    "name": "Вопрос_4",
+    "filled": 169,
+    "distinct": "155",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 189,
+    "name": "Вопрос_5",
+    "filled": 169,
+    "distinct": "159",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 190,
+    "name": "Вопрос_6",
+    "filled": 169,
+    "distinct": "166",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 191,
+    "name": "Вопрос_7",
+    "filled": 169,
+    "distinct": "169",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 192,
+    "name": "Вопрос_8",
+    "filled": 169,
+    "distinct": "169",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 193,
+    "name": "Вопрос_9",
+    "filled": 169,
+    "distinct": "160",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 194,
+    "name": "Вопрос_10",
+    "filled": 169,
+    "distinct": "163",
+    "types": "text:169",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 195,
+    "name": "Вопрос_11",
+    "filled": 168,
+    "distinct": "168",
+    "types": "text:168",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 196,
+    "name": "Вопрос_12",
+    "filled": 165,
+    "distinct": "165",
+    "types": "text:165",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 197,
+    "name": "Вопрос_13",
+    "filled": 165,
+    "distinct": "164",
+    "types": "text:165",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 198,
+    "name": "Вопрос_14",
+    "filled": 165,
+    "distinct": "160",
+    "types": "text:165",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 199,
+    "name": "Вопрос_15",
+    "filled": 165,
+    "distinct": "121",
+    "types": "text:165",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 200,
+    "name": "Вопрос_16",
+    "filled": 165,
+    "distinct": "108",
+    "types": "text:165",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 201,
+    "name": "Вопрос_17",
+    "filled": 164,
+    "distinct": "164",
+    "types": "text:164",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 202,
+    "name": "Вопрос_18",
+    "filled": 163,
+    "distinct": "161",
+    "types": "text:163",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 203,
+    "name": "Ответ_по_стриму",
+    "filled": 156,
+    "distinct": "16",
+    "types": "text:156",
+    "category": "legacy_questionnaire",
+    "action": "archive",
+    "reason": "Ответ старой анкеты; сохранить только в исходном архиве"
+  },
+  {
+    "index": 204,
+    "name": "Номер_ ссылки_на_таблицу_LOCAL",
+    "filled": 156,
+    "distinct": "156",
+    "types": "text:156",
+    "category": "google_or_link",
+    "action": "archive",
+    "reason": "Служебная ссылка старой Google/LeadTeh-связки"
+  },
+  {
+    "index": 205,
+    "name": "Накопленные_Оплаты_20.06.2025",
+    "filled": 130,
+    "distinct": "19",
+    "types": "text:130",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 206,
+    "name": "Тариф_Калории",
+    "filled": 2,
+    "distinct": "2",
+    "types": "text:2",
+    "category": "purchase_hint",
+    "action": "use_for_review",
+    "reason": "Подсказка для ручной проверки исторической покупки"
+  },
+  {
+    "index": 207,
+    "name": "Целль_доната",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 208,
+    "name": "це",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 209,
+    "name": "цель",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 210,
+    "name": "Цель_доната",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 211,
+    "name": "цел",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 212,
+    "name": "Сколько_ошибок_похудения",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 213,
+    "name": "Email",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 214,
+    "name": "email",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 215,
+    "name": "paySupported",
+    "filled": 1,
+    "distinct": "1",
+    "types": "text:1",
+    "category": "technical",
+    "action": "archive",
+    "reason": "Служебная или устаревшая переменная"
+  },
+  {
+    "index": 216,
+    "name": "erid",
+    "filled": 573,
+    "distinct": "13",
+    "types": "text:573",
+    "category": "attribution",
+    "action": "use_structured",
+    "reason": "Перенести только в структурированную историю источников"
+  },
+  {
+    "index": 217,
+    "name": "is_api",
+    "filled": 14,
+    "distinct": "14",
+    "types": "text:14",
+    "category": "technical",
+    "action": "archive",
+    "reason": "Служебная или устаревшая переменная"
+  },
+  {
+    "index": 218,
+    "name": "Взял Скидку Решительным",
+    "filled": 47,
+    "distinct": "14",
+    "types": "text:47",
+    "category": "legacy_sales",
+    "action": "archive",
+    "reason": "Промежуточный расчёт старой оплаты или скидки"
+  },
+  {
+    "index": 219,
+    "name": "Дата_открыл_интенсива",
+    "filled": 1227,
+    "distinct": "1209",
+    "types": "text:1227",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 220,
+    "name": "Номер_Участника",
+    "filled": 5,
+    "distinct": "5",
+    "types": "text:5",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 221,
+    "name": "Лид-магнит: Директ - скорость похудения",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 222,
+    "name": "Лид-магнит:",
+    "filled": 384,
+    "distinct": "3",
+    "types": "text:384",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  },
+  {
+    "index": 223,
+    "name": "Код ответа",
+    "filled": 2,
+    "distinct": "1",
+    "types": "number:2",
+    "category": "technical",
+    "action": "archive",
+    "reason": "Служебная или устаревшая переменная"
+  },
+  {
+    "index": 224,
+    "name": "Ссылка",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 225,
+    "name": "Дата",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 226,
+    "name": "Дата_подписки_канал",
+    "filled": 0,
+    "distinct": "0",
+    "types": "empty",
+    "category": "empty",
+    "action": "archive",
+    "reason": "Колонка полностью пустая"
+  },
+  {
+    "index": 227,
+    "name": "Телега_или_Макс",
+    "filled": 8,
+    "distinct": "1",
+    "types": "text:8",
+    "category": "legacy_other",
+    "action": "review",
+    "reason": "Нужно показать в аудите; в рабочую CRM автоматически не переносить"
+  }
+]

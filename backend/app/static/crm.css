@@ -31,7 +31,7 @@ button { cursor: pointer; }
 .crm-subtitle { margin-top: 3px; color: var(--muted); font-size: 11px; }
 .crm-live { padding: 7px 11px; border-radius: 999px; color: #34733a; background: var(--green); font-size: 10px; font-weight: 800; }
 
-.crm-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 4px; background: #e3e5ec; border-radius: 14px; }
+.crm-tabs { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; padding: 4px; background: #e3e5ec; border-radius: 14px; }
 .crm-tab { height: 40px; border: 0; border-radius: 10px; background: transparent; color: #727789; font-weight: 800; }
 .crm-tab.active { color: #29263d; background: #fff; box-shadow: 0 2px 7px rgba(0, 0, 0, .08); }
 
@@ -88,6 +88,12 @@ button { cursor: pointer; }
 .crm-btn:disabled { cursor: default; opacity: .45; }
 .crm-tag-toolbar { grid-template-columns: 1fr 190px 150px; }
 .crm-tag-list { display: grid; gap: 9px; }
+.crm-tag-board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-items:start; }
+.crm-tag-column { min-width:0; padding:12px; border-radius:16px; background:#fff; box-shadow:var(--shadow); }
+.crm-tag-column h3 { margin:0 0 9px; font-size:13px; }
+.crm-tag-chip { display:block; width:100%; margin:5px 0; padding:8px; border:0; border-radius:10px; background:#f7f7f9; text-align:left; font-size:11px; }
+.crm-tag-chip small { display:block; margin-top:3px; color:var(--muted); }
+.crm-review-banner { padding:12px 14px; margin:10px 0; border-radius:14px; background:#fff4d8; color:#674b00; }
 .crm-tag-card { margin-bottom: 0; }
 .crm-tag-head { display: flex; justify-content: space-between; gap: 10px; }
 .crm-tag-edit { display: grid; grid-template-columns: minmax(220px, 1fr) 180px 120px auto auto; gap: 7px; margin-top: 11px; }
@@ -121,7 +127,7 @@ button { cursor: pointer; }
 
 @media (max-width: 860px) {
   .crm-stats { grid-template-columns: repeat(2, 1fr); }
-  .crm-list, .crm-grid { grid-template-columns: 1fr; }
+  .crm-list, .crm-grid, .crm-tag-board { grid-template-columns: 1fr; }
   .crm-kpis { grid-template-columns: repeat(2, 1fr); }
 }
 

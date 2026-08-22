@@ -20,6 +20,12 @@ from app.crm_service import (
     update_tag,
     update_user,
     user_detail,
+    list_access_reviews,
+    link_user_email,
+    set_access_review,
+    grant_manual_access,
+    revoke_manual_access,
+    list_resources,
 )
 from app.database import get_db
 
@@ -49,6 +55,20 @@ class TagMerge(BaseModel):
     target_name: str = Field(min_length=1, max_length=255)
 
 
+class EmailLink(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+
+
+class AccessReviewUpdate(BaseModel):
+    status: str = Field(max_length=32)
+    tilda_status: str = Field(max_length=32)
+    note: str | None = Field(default=None, max_length=10_000)
+
+
+class ResourceAction(BaseModel):
+    resource_code: str = Field(min_length=1, max_length=80)
+
+
 def protected_file(name: str) -> FileResponse:
     response = FileResponse(STATIC_DIR / name)
     response.headers["Cache-Control"] = "no-store"
@@ -68,6 +88,16 @@ def crm_css(_: str = Depends(require_admin)) -> FileResponse:
 @router.get("/crm/crm.js", include_in_schema=False)
 def crm_js(_: str = Depends(require_admin)) -> FileResponse:
     return protected_file("crm.js")
+
+
+@router.get("/admin/api/audit/tags")
+def admin_tag_audit(_: str = Depends(require_admin)) -> FileResponse:
+    return protected_file("leadteh_tag_plan.json")
+
+
+@router.get("/admin/api/audit/variables")
+def admin_variable_audit(_: str = Depends(require_admin)) -> FileResponse:
+    return protected_file("leadteh_variables.json")
 
 
 @router.get("/admin/api/summary")
@@ -136,6 +166,50 @@ def admin_add_tag(
     if not add_tag(db, user_id, payload.name):
         raise HTTPException(status_code=404, detail="user not found or invalid tag")
     return {"status": "saved"}
+
+
+@router.get("/admin/api/access-reviews")
+def admin_access_reviews(limit: int = Query(default=500, ge=1, le=500),
+                         _: str = Depends(require_admin), db: Session = Depends(get_db)) -> list[dict]:
+    return list_access_reviews(db, limit)
+
+
+@router.get("/admin/api/resources")
+def admin_resources(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> list[dict]:
+    return list_resources(db)
+
+
+@router.post("/admin/api/users/{user_id}/email")
+def admin_link_email(user_id: uuid.UUID, payload: EmailLink,
+                     admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    ok, result = link_user_email(db, user_id, payload.email, admin)
+    if not ok:
+        raise HTTPException(status_code=409 if result == "email_conflict" else 400, detail=result)
+    return {"status": result}
+
+
+@router.patch("/admin/api/users/{user_id}/access-review")
+def admin_set_access_review(user_id: uuid.UUID, payload: AccessReviewUpdate,
+                            admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    if not set_access_review(db, user_id, payload.status, payload.tilda_status, payload.note, admin):
+        raise HTTPException(status_code=400, detail="invalid review state or user")
+    return {"status": "saved"}
+
+
+@router.post("/admin/api/users/{user_id}/accesses")
+def admin_grant_access(user_id: uuid.UUID, payload: ResourceAction,
+                       admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    if not grant_manual_access(db, user_id, payload.resource_code, admin):
+        raise HTTPException(status_code=400, detail="user or resource not found")
+    return {"status": "granted"}
+
+
+@router.delete("/admin/api/users/{user_id}/accesses/{resource_code}")
+def admin_revoke_access(user_id: uuid.UUID, resource_code: str,
+                        admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    if not revoke_manual_access(db, user_id, resource_code, admin):
+        raise HTTPException(status_code=404, detail="active access not found")
+    return {"status": "revoked"}
 
 
 @router.get("/admin/api/payments")

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import uuid
+from datetime import datetime, timezone
 from decimal import Decimal
 
 from sqlalchemy import distinct, func, or_, select, text
@@ -20,7 +21,10 @@ from app.models import (
     UserEmail,
     UserPhone,
     UserTag,
+    AdminAppEdit,
 )
+
+CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 
 
 def money(value: Decimal | None) -> float:
@@ -33,11 +37,11 @@ def summary(db: Session) -> dict:
     ) or 0
     buyers = db.scalar(
         select(func.count(distinct(Payment.user_id))).where(
-            Payment.payment_status == "paid", Payment.user_id.is_not(None)
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES), Payment.user_id.is_not(None)
         )
     ) or 0
     paid_payments = db.scalar(
-        select(func.count(Payment.id)).where(Payment.payment_status == "paid")
+        select(func.count(Payment.id)).where(Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES))
     ) or 0
     revenue = db.scalar(
         select(func.sum(Payment.amount)).where(
@@ -74,7 +78,7 @@ def _user_scalar_subqueries():
     )
     purchases = (
         select(func.count(Payment.id))
-        .where(Payment.user_id == User.id, Payment.payment_status == "paid")
+        .where(Payment.user_id == User.id, Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES))
         .correlate(User)
         .scalar_subquery()
     )
@@ -90,7 +94,7 @@ def _user_scalar_subqueries():
     )
     last_purchase = (
         select(func.max(Payment.paid_at))
-        .where(Payment.user_id == User.id, Payment.payment_status == "paid")
+        .where(Payment.user_id == User.id, Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES))
         .correlate(User)
         .scalar_subquery()
     )
@@ -112,6 +116,8 @@ def list_users(
             User.status,
             User.data_origin,
             User.first_seen_at,
+            User.access_review_status,
+            User.tilda_access_status,
             email.label("email"),
             telegram.label("telegram"),
             purchases.label("purchase_count"),
@@ -163,6 +169,8 @@ def list_users(
             "ltv_rub": money(row["ltv_rub"]),
             "last_purchase_at": row["last_purchase_at"],
             "first_seen_at": row["first_seen_at"],
+            "access_review_status": row["access_review_status"],
+            "tilda_access_status": row["tilda_access_status"],
             "accesses": access_by_user[row["id"]],
         }
         for row in rows
@@ -186,9 +194,10 @@ def list_payments(db: Session, limit: int = 200) -> list[dict]:
             "product_code": product_code,
             "product_name": product_name,
             "product_name_raw": payment.product_name_raw,
-            "amount": money(payment.amount),
+            "amount": money(payment.amount) if payment.amount is not None else None,
             "currency": payment.currency,
             "status": payment.payment_status,
+            "review_status": payment.review_status,
             "paid_at": payment.paid_at,
             "source_event_at": payment.source_event_at,
         }
@@ -254,7 +263,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             JOIN tags source ON source.id = assignment.tag_id
             LEFT JOIN tags target ON target.id = source.merged_into_tag_id
             WHERE assignment.user_id = :user_id
-              AND COALESCE(target.status, source.status) <> 'ignored'
+              AND COALESCE(target.status, source.status) = 'active'
             ORDER BY name
             """
         ),
@@ -267,13 +276,16 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             .order_by(ClientNote.created_at.desc())
         )
     )
-    paid = [payment for payment, _, _ in payments if payment.payment_status == "paid"]
+    paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]
     return {
         "id": str(user.id),
         "display_name": user.display_name,
         "status": user.status,
         "data_origin": user.data_origin,
         "first_seen_at": user.first_seen_at,
+        "access_review_status": user.access_review_status,
+        "access_review_note": user.access_review_note,
+        "tilda_access_status": user.tilda_access_status,
         "emails": [
             {
                 "email": item.email_original,
@@ -288,6 +300,8 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "platform_user_id": item.platform_user_id,
                 "username": item.username,
                 "first_name": item.first_name,
+                "subscription_status": item.subscription_status,
+                "main_scenario_seen_at": item.main_scenario_seen_at,
             }
             for item in messengers
         ],
@@ -297,7 +311,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         ],
         "purchase_count": len(paid),
         "ltv_rub": money(
-            sum((payment.amount for payment in paid if payment.currency == "RUB"), Decimal())
+            sum((payment.amount for payment in paid if payment.currency == "RUB" and payment.amount is not None), Decimal())
         ),
         "payments": [
             {
@@ -305,9 +319,10 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "product_code": product_code,
                 "product_name": product_name,
                 "product_name_raw": payment.product_name_raw,
-                "amount": money(payment.amount),
+                "amount": money(payment.amount) if payment.amount is not None else None,
                 "currency": payment.currency,
                 "status": payment.payment_status,
+                "review_status": payment.review_status,
                 "paid_at": payment.paid_at,
                 "source_event_at": payment.source_event_at,
             }
@@ -404,8 +419,18 @@ TAG_CATEGORIES = {
     "lottery",
     "other",
     "technical",
+    "content",
+    "funnel",
+    "intensive",
+    "obsolete",
+    "purchase",
+    "routing",
+    "tariff",
+    "access_hint",
+    "review",
+    "content_review",
 }
-TAG_STATUSES = {"active", "ignored", "merged"}
+TAG_STATUSES = {"active", "archived", "review", "merged"}
 
 
 def list_tags(
@@ -431,6 +456,8 @@ def list_tags(
                 t.category,
                 t.status,
                 t.merged_into_tag_id,
+                t.audit_action,
+                t.audit_reason,
                 target.name AS merged_into_name,
                 count(DISTINCT ut.user_id) AS user_count,
                 string_agg(DISTINCT ut.source, ', ' ORDER BY ut.source) AS sources
@@ -455,6 +482,8 @@ def list_tags(
             "merged_into_name": row["merged_into_name"],
             "user_count": row["user_count"] or 0,
             "sources": row["sources"] or "",
+            "audit_action": row["audit_action"],
+            "audit_reason": row["audit_reason"],
         }
         for row in rows
     ]
@@ -463,14 +492,14 @@ def list_tags(
 def update_tag(
     db: Session, tag_id: uuid.UUID, name: str, category: str, status: str
 ) -> bool:
-    if category not in TAG_CATEGORIES or status not in {"active", "ignored"}:
+    if category not in TAG_CATEGORIES or status not in {"active", "archived", "review"}:
         return False
     result = db.execute(
         text(
             """
             UPDATE tags
             SET name = :name, category = :category, status = :status,
-                merged_into_tag_id = CASE WHEN :status = 'active' THEN NULL ELSE merged_into_tag_id END,
+                merged_into_tag_id = CASE WHEN :status IN ('active','review') THEN NULL ELSE merged_into_tag_id END,
                 updated_at = now()
             WHERE id = :tag_id
             """
@@ -491,5 +520,97 @@ def merge_tag(db: Session, source_tag_id: uuid.UUID, target_name: str) -> bool:
     source.status = "merged"
     source.merged_into_tag_id = target.id
     source.updated_at = func.now()
+    db.commit()
+    return True
+
+
+def list_access_reviews(db: Session, limit: int = 500) -> list[dict]:
+    email, telegram, purchases, _, _ = _user_scalar_subqueries()
+    rows = db.execute(
+        select(
+            User.id, User.display_name, User.access_review_status, User.access_review_note,
+            User.tilda_access_status, email.label("email"), telegram.label("telegram"),
+            purchases.label("purchase_count"),
+        )
+        .where(User.merged_into_user_id.is_(None), User.access_review_status != "not_required")
+        .order_by(User.updated_at.desc())
+        .limit(min(max(limit, 1), 500))
+    ).mappings().all()
+    return [{**dict(row), "id": str(row["id"]), "purchase_count": row["purchase_count"] or 0} for row in rows]
+
+
+def list_resources(db: Session) -> list[dict]:
+    return [{"code": item.code, "name": item.name} for item in db.scalars(
+        select(Resource).where(Resource.status == "active").order_by(Resource.name)
+    )]
+
+
+def link_user_email(db: Session, user_id: uuid.UUID, email: str, admin: str) -> tuple[bool, str]:
+    normalized = email.strip().lower()
+    if "@" not in normalized or len(normalized) > 320:
+        return False, "invalid_email"
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        return False, "user_not_found"
+    existing = db.scalar(select(UserEmail).where(UserEmail.email_normalized == normalized))
+    if existing and existing.user_id != user_id:
+        user.access_review_status = "conflict"
+        user.access_review_note = f"Email уже связан с другим user_id: {normalized}"
+        db.commit()
+        return False, "email_conflict"
+    if existing is None:
+        db.add(UserEmail(user_id=user_id, email_original=email.strip(), email_normalized=normalized,
+                         is_primary=True, verification_status="owner_confirmed", source="manual_admin",
+                         first_seen_at=datetime.now(timezone.utc)))
+    user.access_review_status = "pending"
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="link_email", details={"email": normalized}))
+    db.commit()
+    return True, "linked"
+
+
+def set_access_review(db: Session, user_id: uuid.UUID, status: str, tilda_status: str,
+                      note: str | None, admin: str) -> bool:
+    if status not in {"waiting_registration", "pending", "completed", "conflict", "not_required"}:
+        return False
+    if tilda_status not in {"not_checked", "pending", "granted", "not_required"}:
+        return False
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        return False
+    user.access_review_status = status
+    user.tilda_access_status = tilda_status
+    user.access_review_note = (note or "").strip() or None
+    user.access_reviewed_at = datetime.now(timezone.utc) if status == "completed" else None
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="access_review", details={"status": status, "tilda": tilda_status}))
+    db.commit()
+    return True
+
+
+def grant_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:
+    user = db.get(User, user_id)
+    resource = db.scalar(select(Resource).where(Resource.code == resource_code))
+    if user is None or resource is None:
+        return False
+    active = db.scalar(select(UserAccess).where(UserAccess.user_id == user_id,
+        UserAccess.resource_id == resource.id, UserAccess.revoked_at.is_(None)))
+    if active is None:
+        db.add(UserAccess(user_id=user_id, resource_id=resource.id, source_payment_id=None,
+                          source="manual_admin", granted_at=datetime.now(timezone.utc)))
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="grant_access", details={"resource_code": resource_code}))
+    db.commit()
+    return True
+
+
+def revoke_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:
+    access = db.scalar(select(UserAccess).join(Resource).where(UserAccess.user_id == user_id,
+        Resource.code == resource_code, UserAccess.revoked_at.is_(None)).order_by(UserAccess.granted_at.desc()))
+    if access is None:
+        return False
+    access.revoked_at = datetime.now(timezone.utc)
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="revoke_access", details={"resource_code": resource_code}))
     db.commit()
     return True

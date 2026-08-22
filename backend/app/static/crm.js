@@ -14,6 +14,10 @@
     lottery: "Лотерея",
     other: "Прочее",
     technical: "Служебные"
+    ,content: "Материалы", funnel: "Старые воронки", intensive: "Старый интенсив",
+    obsolete: "Устаревшее", purchase: "Покупки", routing: "Маршрутизация",
+    tariff: "Тарифы", access_hint: "Проверка доступов", review: "На разбор",
+    content_review: "Контент на разбор"
   };
 
   function esc(value) {
@@ -26,6 +30,7 @@
   }
 
   function money(value) {
+    if (value === null || value === undefined) return "сумма неизвестна";
     return new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 }).format(value || 0) + " ₽";
   }
 
@@ -62,6 +67,7 @@
           <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
           <button class="crm-tab ${active === "buyers" ? "active" : ""}" data-view="buyers">Покупатели</button>
           <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
+          <button class="crm-tab ${active === "access" ? "active" : ""}" data-view="access">Доступы</button>
           <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
           <button class="crm-tab ${active === "structure" ? "active" : ""}" data-view="structure">Как устроено</button>
         </div>
@@ -161,18 +167,18 @@
     bindTop();
     const q = state.tagQuery || "";
     const category = state.tagCategory || "";
-    const status = state.tagStatus || "active";
+    const status = state.tagStatus === undefined ? "active" : state.tagStatus;
     const params = new URLSearchParams({ q, category, status });
     state.tags = await api(`/admin/api/tags?${params}`);
     const categoryOptions = Object.entries(tagCategories).map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
     const cards = state.tags.map((tag) => `
       <article class="crm-card crm-tag-card" data-tag-id="${esc(tag.id)}">
         <div class="crm-tag-head"><div><strong>${esc(tag.name)}</strong><div class="crm-row-meta">${tag.user_count} человек · ${esc(tag.sources || "источник не указан")}</div></div>
-          <span class="crm-status ${tag.status === "merged" ? "st-processing" : tag.status === "ignored" ? "st-lead" : "st-paid"}">${tag.status === "merged" ? `объединён → ${esc(tag.merged_into_name)}` : tag.status === "ignored" ? "скрыт" : "активен"}</span></div>
+          <span class="crm-status ${tag.status === "active" ? "st-paid" : "st-processing"}">${tag.status === "merged" ? `объединён → ${esc(tag.merged_into_name)}` : esc(tag.status)}</span></div>
         ${tag.status === "merged" ? "" : `<div class="crm-tag-edit">
           <input class="crm-input tag-name" value="${esc(tag.name)}">
           <select class="crm-input tag-category">${categoryOptions.replace(`value="${esc(tag.category)}"`, `value="${esc(tag.category)}" selected`)}</select>
-          <select class="crm-input tag-status"><option value="active" ${tag.status === "active" ? "selected" : ""}>Активен</option><option value="ignored" ${tag.status === "ignored" ? "selected" : ""}>Скрыть</option></select>
+          <select class="crm-input tag-status"><option value="active" ${tag.status === "active" ? "selected" : ""}>Активен</option><option value="review" ${tag.status === "review" ? "selected" : ""}>На разбор</option><option value="archived" ${tag.status === "archived" ? "selected" : ""}>Архив</option></select>
           <button class="crm-btn small tag-save">Сохранить</button>
           <button class="crm-btn alt small tag-merge">Объединить</button>
         </div>`}
@@ -181,7 +187,7 @@
       <div class="crm-toolbar crm-tag-toolbar">
         <input class="crm-search" id="tag-search" placeholder="Поиск тега" value="${esc(q)}">
         <select class="crm-input" id="tag-category-filter"><option value="">Все группы</option>${categoryOptions}</select>
-        <select class="crm-input" id="tag-status-filter"><option value="active">Активные</option><option value="ignored">Скрытые</option><option value="merged">Объединённые</option><option value="">Все</option></select>
+        <select class="crm-input" id="tag-status-filter"><option value="active">Активные</option><option value="review">На разбор</option><option value="archived">Архив</option><option value="merged">Объединённые</option><option value="">Все</option></select>
       </div>
       <section class="crm-card"><div class="crm-card-title">Порядок в тегах <span class="crm-card-sub">${state.tags.length} вариантов</span></div>
         <div class="crm-row-meta">Переименование сразу меняет название у всех людей. «Объединить» сохраняет исходные назначения и показывает основной тег — действие обратимо.</div></section>
@@ -225,6 +231,48 @@
     });
   }
 
+  async function renderTagAudit() {
+    root.innerHTML = top("tags") + '<div class="crm-loading">Собираю каталог тегов…</div>';
+    bindTop();
+    const [tags, variables] = await Promise.all([
+      api("/admin/api/tags?status="), api("/admin/api/audit/variables")
+    ]);
+    const labels = {content:"Материалы",source:"Источники",tariff:"Тарифы и подсказки",
+      purchase:"Подтверждения покупок",subscription:"Подписки",routing:"Маршрутизация",
+      access_hint:"Проверка доступов",review:"На разбор",content_review:"Контент на разбор",
+      funnel:"Архив — старые воронки",intensive:"Архив — старый интенсив",
+      obsolete:"Архив — устаревшее",technical:"Архив — служебное"};
+    const grouped = {};
+    tags.forEach((tag) => (grouped[tag.category] ||= []).push(tag));
+    const columns = Object.entries(labels).map(([key,label]) => {
+      const items = grouped[key] || [];
+      return `<section class="crm-tag-column"><h3>${label} · ${items.length}</h3>${items.map((tag) =>
+        `<button class="crm-tag-chip" data-tag-id="${esc(tag.id)}"><strong>${esc(tag.name)}</strong><small>${tag.user_count} человек · ${esc(tag.status)}${tag.audit_reason ? ` · ${esc(tag.audit_reason)}` : ""}</small></button>`
+      ).join("") || '<div class="crm-row-meta">Пусто</div>'}</section>`;
+    }).join("");
+    const variableActions = variables.reduce((acc,item) => { acc[item.action]=(acc[item.action]||0)+1; return acc; },{});
+    root.innerHTML = top("tags") + `
+      <div class="crm-review-banner">Старые теги не удалены: архив скрыт из карточек, объединения обратимы, сомнительные записи находятся в «На разбор».</div>
+      <div class="crm-tag-board">${columns}</div>
+      <section class="crm-card" style="margin-top:10px"><div class="crm-card-title">Переменные LeadTeh <span class="crm-card-sub">${variables.length} разобрано</span></div>
+        <div class="crm-row-meta">Не превращаем 227 технических переменных в колонки CRM. Итог аудита: ${Object.entries(variableActions).map(([k,v])=>`${esc(k)} — ${v}`).join(" · ")}</div></section>
+      <div class="crm-foot">Нажмите тег, чтобы открыть точное редактирование</div>`;
+    bindTop();
+    root.querySelectorAll("[data-tag-id]").forEach((button) => button.addEventListener("click", () => {
+      state.tagQuery = button.querySelector("strong").textContent; state.tagStatus = ""; renderTags().catch(showError);
+    }));
+  }
+
+  async function renderAccessReviews() {
+    root.innerHTML = top("access") + '<div class="crm-loading">Загружаю очередь…</div>';
+    bindTop();
+    const rows = await api("/admin/api/access-reviews");
+    root.innerHTML = top("access") + `<section class="crm-card"><div class="crm-card-title">Ручная проверка доступов <span class="crm-card-sub">${rows.length} человек</span></div>
+      <div class="crm-row-meta">Сначала человек регистрируется в личном кабинете, затем связывает Telegram по email. Никакой исторический тег не выдаёт доступ автоматически.</div></section>
+      <div class="crm-list">${rows.map((user) => `<article class="crm-client"><button class="crm-client-button" data-user-id="${esc(user.id)}"><div class="crm-client-top"><div><div class="crm-name">${esc(user.display_name || user.email || user.telegram || "Без имени")}</div><div class="crm-email">${esc(user.email || "ждём регистрацию/email")} ${user.telegram ? `· @${esc(user.telegram)}` : ""}</div></div><span class="crm-status st-processing">${esc(user.access_review_status)}</span></div><div class="crm-row-meta">Покупок: ${user.purchase_count} · Tilda: ${esc(user.tilda_access_status)}</div></button></article>`).join("") || '<div class="crm-card crm-empty">Очередь пуста</div>'}</div>`;
+    bindTop(); bindUserCards();
+  }
+
   async function renderPayments() {
     root.innerHTML = top("payments") + '<div class="crm-loading">Загружаю оплаты…</div>';
     bindTop();
@@ -234,7 +282,7 @@
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
         <td><strong>${esc(payment.display_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || "")}</div></td>
         <td>${esc(payment.product_name || "Продукт не определён")}</td>
-        <td><span class="crm-status ${payment.status === "paid" ? "st-paid" : "st-processing"}">${esc(payment.status)}</span></td>
+        <td><span class="crm-status ${["paid","confirmed"].includes(payment.status) ? "st-paid" : "st-processing"}">${esc(payment.status)}</span>${payment.review_status === "pending" ? '<div class="crm-row-meta">нужна проверка</div>' : ""}</td>
         <td class="crm-money">${money(payment.amount)}</td>
       </tr>`).join("");
     root.innerHTML = top("payments") + `${stats()}
@@ -284,6 +332,7 @@
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await api(`/admin/api/users/${id}`);
+    const resources = await api("/admin/api/resources");
     let botState = null;
     try { botState = await api(`/bot-api/users/${id}`); } catch (_) { /* Telegram may not be connected yet. */ }
     const primaryEmail = user.emails[0] && user.emails[0].email;
@@ -311,12 +360,16 @@
           <section class="crm-card"><div class="crm-card-title">Контакты <span class="crm-card-sub">единый user_id</span></div>
             <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
               <button class="crm-btn small" type="submit">Сохранить имя</button></form>
-            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("")}
+            ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
             ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             ${user.messengers.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.platform)}</span><strong>${esc(item.username ? `@${item.username}` : item.platform_user_id || "без ID")}</strong></div></div>`).join("")}
           </section>
           <section class="crm-card"><div class="crm-card-title">История покупок</div>${user.payments.map(paymentRow).join("") || '<div class="crm-empty">Покупок пока нет</div>'}</section>
-          <section class="crm-card"><div class="crm-card-title">Доступы</div><div class="crm-tags">${accessTags(user.accesses.filter((item) => !item.revoked_at).map((item) => item.code))}</div></section>
+          <section class="crm-card"><div class="crm-card-title">Ручная проверка доступов <span class="crm-card-sub">${esc(user.access_review_status)}</span></div>
+            <div class="crm-tags">${user.accesses.filter((item)=>!item.revoked_at).map((item)=>`<button class="crm-tag revoke-access" data-code="${esc(item.code)}">${esc(item.name)} ×</button>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>
+            <form class="crm-two" id="grant-form" style="margin-top:10px"><select class="crm-input" id="resource-code">${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
+            <form class="crm-form" id="review-form" style="margin-top:10px"><select class="crm-input" id="review-status"><option value="waiting_registration">Ждём регистрацию</option><option value="pending">Проверить</option><option value="completed">Проверено</option><option value="conflict">Конфликт</option><option value="not_required">Не требуется</option></select><select class="crm-input" id="tilda-status"><option value="not_checked">Tilda не проверена</option><option value="pending">Tilda проверить</option><option value="granted">Tilda доступ открыт</option><option value="not_required">Tilda не требуется</option></select><textarea class="crm-textarea" id="review-note" placeholder="Что проверить">${esc(user.access_review_note || "")}</textarea><button class="crm-btn small">Сохранить проверку</button></form>
+          </section>
         </div>
         <div>
           <section class="crm-card"><div class="crm-card-title">Telegram-рассылка <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключён"}</span></div>
@@ -345,6 +398,13 @@
       await api(`/admin/api/users/${id}`, { method: "PATCH", body: JSON.stringify({ display_name: document.getElementById("display-name").value }) });
       await openUser(id);
     });
+    const emailForm = document.getElementById("email-form");
+    if (emailForm) emailForm.addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/email`, {method:"POST", body:JSON.stringify({email:document.getElementById("link-email").value})}); await openUser(id); });
+    document.getElementById("review-status").value = user.access_review_status;
+    document.getElementById("tilda-status").value = user.tilda_access_status;
+    document.getElementById("review-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/access-review`, {method:"PATCH", body:JSON.stringify({status:document.getElementById("review-status").value,tilda_status:document.getElementById("tilda-status").value,note:document.getElementById("review-note").value})}); await openUser(id); });
+    document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await openUser(id); });
+    root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await openUser(id); }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("tag-name").value.trim();
@@ -379,7 +439,8 @@
     if (view !== state.view && (view === "users" || view === "buyers")) state.offset = 0;
     state.view = view;
     if (view === "payments") return renderPayments();
-    if (view === "tags") return renderTags();
+    if (view === "access") return renderAccessReviews();
+    if (view === "tags") return renderTagAudit();
     if (view === "structure") return renderStructure();
     return renderUsers(view === "buyers");
   }
