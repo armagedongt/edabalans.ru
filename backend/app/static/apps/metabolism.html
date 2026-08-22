@@ -1,0 +1,1781 @@
+<div id="metabolism-app"></div>
+
+<style>
+:root{
+  --bg:#f5f5f7;
+  --card:#ffffff;
+  --text:#242235;
+  --muted:#7b8094;
+  --line:#e4e4eb;
+
+  --purple:#7042e8;
+  --purple-soft:#f0ebff;
+
+  --green-soft:#e3f1df;
+  --blue-soft:#e7f0f8;
+  --yellow-soft:#f6efcf;
+
+  --shadow:0 6px 22px rgba(30,30,55,.07);
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  padding:0;
+}
+
+#metabolism-app{
+  max-width:1000px;
+  margin:0 auto;
+  padding:7px;
+  font-family:Arial,sans-serif;
+  color:var(--text);
+}
+
+button,
+input,
+select{
+  font-family:inherit;
+}
+
+.mc-card{
+  background:var(--card);
+  border-radius:16px;
+  box-shadow:var(--shadow);
+}
+
+/* HEADER */
+
+.mc-header{
+  padding:11px 13px;
+}
+
+.mc-title{
+  font-size:19px;
+  font-weight:800;
+}
+
+.mc-sub{
+  margin-top:3px;
+  font-size:9px;
+  color:var(--muted);
+}
+
+/* SWITCH */
+
+.mc-switch{
+  margin-top:6px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:3px;
+  padding:3px;
+  background:#e5e5eb;
+  border-radius:12px;
+}
+
+.mc-switch-btn{
+  height:36px;
+  border:0;
+  border-radius:9px;
+  background:transparent;
+  color:#747887;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.mc-switch-btn.active{
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 2px 7px rgba(0,0,0,.07);
+}
+
+/* ACTIONS */
+
+.mc-actions{
+  margin-top:6px;
+  display:flex;
+  justify-content:flex-end;
+  gap:5px;
+}
+
+.mc-action{
+  height:30px;
+  border:0;
+  border-radius:8px;
+  padding:0 10px;
+  font-size:8px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.mc-copy{
+  background:var(--purple-soft);
+  color:var(--purple);
+}
+
+.mc-reset{
+  background:#efeff3;
+  color:#696d7c;
+}
+
+/* MAIN */
+
+.mc-main{
+  margin-top:6px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+
+.mc-panel{
+  padding:10px 11px;
+}
+
+.mc-panel-title{
+  font-size:13px;
+  font-weight:800;
+}
+
+.mc-panel-sub{
+  margin-top:2px;
+  font-size:7px;
+  color:var(--muted);
+}
+
+/* FORM */
+
+.mc-form{
+  margin-top:7px;
+  display:grid;
+  gap:4px;
+}
+
+.mc-row{
+  min-height:34px;
+  display:grid;
+  grid-template-columns:minmax(140px,1fr) 150px;
+  align-items:center;
+  gap:8px;
+  padding:4px 7px;
+  border-radius:9px;
+  background:#f7f7fa;
+}
+
+.mc-label{
+  font-size:9px;
+  font-weight:700;
+}
+
+.mc-input-wrap{
+  position:relative;
+}
+
+.mc-input,
+.mc-select{
+  width:100%;
+  height:28px;
+  border:1px solid #dedee6;
+  border-radius:7px;
+  background:#fff;
+  padding:0 7px;
+  outline:none;
+  font-size:11px;
+  font-weight:700;
+  color:var(--text);
+}
+
+.mc-input:focus,
+.mc-select:focus{
+  border-color:#b7a3ed;
+  box-shadow:0 0 0 2px #f1edfd;
+}
+
+.mc-input.has-unit{
+  padding-right:55px;
+}
+
+.mc-unit{
+  position:absolute;
+  right:7px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:7px;
+  color:#999daa;
+  pointer-events:none;
+}
+
+/* RESULTS */
+
+.mc-results{
+  margin-top:7px;
+  display:grid;
+  gap:4px;
+}
+
+.mc-result-row{
+  min-height:34px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+  padding:5px 8px;
+  border-radius:9px;
+  background:#f7f7fa;
+}
+
+.mc-result-name{
+  font-size:9px;
+  color:#676b7a;
+}
+
+.mc-result-num{
+  font-size:12px;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.mc-result-unit{
+  margin-left:2px;
+  font-size:7px;
+  font-weight:600;
+  color:#777b89;
+}
+
+.mc-result-row.balance{
+  background:var(--green-soft);
+}
+
+.mc-result-row.eat{
+  min-height:53px;
+  background:var(--purple);
+  color:#fff;
+}
+
+.mc-result-row.eat .mc-result-name{
+  color:rgba(255,255,255,.78);
+  font-size:10px;
+}
+
+.mc-result-row.eat .mc-result-num{
+  font-size:23px;
+}
+
+.mc-result-row.eat .mc-result-unit{
+  color:rgba(255,255,255,.8);
+}
+
+.mc-result-row.speed{
+  background:var(--blue-soft);
+}
+
+.mc-result-row.loss{
+  background:var(--yellow-soft);
+}
+
+/* TECH */
+
+.mc-tech-btn{
+  width:100%;
+  height:31px;
+  margin-top:6px;
+  border:0;
+  border-radius:8px;
+  background:#efeff3;
+  color:#696d7b;
+  font-size:8px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.mc-tech{
+  display:none;
+  margin-top:5px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  overflow:hidden;
+}
+
+.mc-tech.open{
+  display:block;
+}
+
+.mc-tech-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  padding:5px 7px;
+  border-bottom:1px solid var(--line);
+  font-size:7px;
+}
+
+.mc-tech-row:last-child{
+  border-bottom:0;
+}
+
+.mc-tech-name{
+  color:#7a7e8d;
+}
+
+.mc-tech-value{
+  font-weight:800;
+}
+
+/* COMPARE */
+
+.mc-compare{
+  margin-top:6px;
+  padding:10px 11px;
+}
+
+.mc-compare-title{
+  font-size:13px;
+  font-weight:800;
+}
+
+.mc-compare-sub{
+  margin-top:2px;
+  font-size:7px;
+  color:var(--muted);
+}
+
+.mc-compare-table-wrap{
+  margin-top:6px;
+  overflow-x:auto;
+}
+
+.mc-compare-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0 3px;
+}
+
+.mc-compare-table th{
+  padding:3px 6px;
+  text-align:right;
+  font-size:7px;
+  color:#8a8e9b;
+}
+
+.mc-compare-table th:first-child{
+  text-align:left;
+}
+
+.mc-compare-table td{
+  padding:6px;
+  background:#f7f7fa;
+  font-size:8px;
+}
+
+.mc-compare-table td:first-child{
+  border-radius:7px 0 0 7px;
+  font-weight:700;
+}
+
+.mc-compare-table td:last-child{
+  border-radius:0 7px 7px 0;
+}
+
+.mc-num{
+  text-align:right;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+.mc-diff{
+  color:#777b88;
+}
+
+.mc-footer{
+  padding:9px;
+  text-align:center;
+  color:#999ca7;
+  font-size:7px;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  #metabolism-app{
+    padding:5px;
+  }
+
+  .mc-title{
+    font-size:17px;
+  }
+
+  .mc-main{
+    grid-template-columns:1fr;
+  }
+
+  .mc-actions{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+
+  .mc-action{
+    width:100%;
+  }
+
+  .mc-compare-table{
+    min-width:500px;
+  }
+
+}
+
+@media(max-width:430px){
+
+  .mc-row{
+    grid-template-columns:minmax(100px,1fr) 125px;
+    gap:5px;
+  }
+
+  .mc-label{
+    font-size:8px;
+  }
+
+  .mc-result-name{
+    font-size:8px;
+  }
+
+  .mc-input.has-unit{
+    padding-right:45px;
+  }
+
+}
+</style>
+
+<script>
+(function(){
+
+var root=document.getElementById('metabolism-app');
+
+var STORAGE_KEY='metabolism_calc_v3';
+var API_URL='https://api.edabalans.ru/api/apps/metabolism';
+var memberEmail=
+  String(
+    (window.EdabalansIdentity&&window.EdabalansIdentity.email) ||
+    ((document.getElementById('edabalans-member-email')||{}).value) ||
+    ''
+  ).trim().toLowerCase();
+var serverVersion=null;
+var serverSaveTimer=null;
+
+var activeVariant=1;
+var techOpen=false;
+
+var variants={
+  1:createEmptyVariant(),
+  2:createEmptyVariant()
+};
+
+/*
+  Загружаем значения именно из ЭТОГО браузера.
+*/
+loadStorage();
+
+
+function loadServer(){
+  if(!memberEmail){
+    return Promise.reject(new Error('Не удалось определить email пользователя.'));
+  }
+  return fetch(API_URL+'?email='+encodeURIComponent(memberEmail))
+    .then(function(response){return response.json();})
+    .then(function(data){
+      if(!data.ok){throw new Error(data.error||'Нет доступа к калькулятору');}
+      if(data.variants&&Object.keys(data.variants).length){
+        if(data.variants[1]||data.variants['1']){variants[1]=data.variants[1]||data.variants['1'];}
+        if(data.variants[2]||data.variants['2']){variants[2]=data.variants[2]||data.variants['2'];}
+        if(data.activeVariant===1||data.activeVariant===2){activeVariant=data.activeVariant;}
+      }
+      serverVersion=data.version;
+      saveStorage(false);
+    });
+}
+
+
+function scheduleServerSave(){
+  if(!memberEmail||serverVersion===null){return;}
+  clearTimeout(serverSaveTimer);
+  serverSaveTimer=setTimeout(function(){
+    fetch(API_URL,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email:memberEmail,
+        variants:variants,
+        activeVariant:activeVariant,
+        version:serverVersion
+      })
+    })
+    .then(function(response){return response.json().then(function(data){return {status:response.status,data:data};});})
+    .then(function(result){
+      if(result.status===409){return loadServer().then(render);}
+      if(!result.data.ok){throw new Error(result.data.error||'Ошибка сохранения');}
+      serverVersion=result.data.version;
+    })
+    .catch(function(error){console.error('Metabolism save:',error);});
+  },700);
+}
+
+
+/* =====================================
+   EMPTY STATE
+===================================== */
+
+function createEmptyVariant(){
+
+  return {
+    gender:'',
+    age:'',
+    height:'',
+    weight:'',
+    fat_percent:'',
+    protein:'',
+    steps:'',
+    active_steps_percent:'',
+    train_week:'',
+    deficit:'',
+    time:30
+  };
+}
+
+
+/* =====================================
+   CALCULATION
+===================================== */
+
+function calculate(v){
+
+  /*
+    Пока основных данных не хватает,
+    полноценный расчёт не показываем.
+  */
+
+  if(!hasRequiredData(v)){
+    return null;
+  }
+
+  var genderValue=
+    v.gender==='Мужчина'
+    ? 5
+    : -161;
+
+  var fat=
+    fatCoefficient(
+      number(v.fat_percent)
+    );
+
+  var proteinExtra=
+    number(v.protein)-45;
+
+  var stepLength=
+    number(v.height)*
+    0.415/
+    100;
+
+  var activeK=
+    activeStepsCoefficient(
+      number(v.active_steps_percent)
+    );
+
+  var distance=
+    number(v.steps)*
+    stepLength/
+    1000;
+
+  var bmrRaw=
+    10*
+    number(v.weight)
+    +
+    6.25*
+    number(v.height)
+    -
+    5*
+    number(v.age)
+    +
+    genderValue;
+
+  var bmr=
+    bmrRaw*
+    fat;
+
+  var tefBase=
+    0.03*
+    bmr;
+
+  var tefProtein=
+    proteinExtra*
+    0.72;
+
+  var tef=
+    tefBase+
+    tefProtein;
+
+  var stepsGross=
+    number(v.weight)*
+    distance;
+
+  var neatBefore=
+    stepsGross*
+    activeK;
+
+  var neat=
+    neatBefore*
+    0.7;
+
+  var trainDay=
+    number(v.train_week)/
+    7;
+
+  var balance=
+    bmr+
+    tef+
+    trainDay+
+    neat;
+
+  var deficit=
+    number(v.deficit);
+
+  var eat=
+    balance-
+    deficit;
+
+  var speed=
+    deficit*
+    7/
+    7500*
+    1000;
+
+  var loss=
+    deficit*
+    number(v.time)/
+    7500;
+
+  return {
+    genderValue:genderValue,
+    fat:fat,
+
+    proteinExtra:proteinExtra,
+
+    stepLength:stepLength,
+    activeK:activeK,
+    distance:distance,
+
+    bmrRaw:bmrRaw,
+    bmr:bmr,
+
+    tefBase:tefBase,
+    tefProtein:tefProtein,
+    tef:tef,
+
+    stepsGross:stepsGross,
+    neatBefore:neatBefore,
+    neat:neat,
+
+    trainDay:trainDay,
+
+    balance:balance,
+    deficit:deficit,
+    eat:eat,
+
+    speed:speed,
+    loss:loss
+  };
+}
+
+
+function hasRequiredData(v){
+
+  if(!v.gender){
+    return false;
+  }
+
+  if(isBlank(v.age)){
+    return false;
+  }
+
+  if(isBlank(v.height)){
+    return false;
+  }
+
+  if(isBlank(v.weight)){
+    return false;
+  }
+
+  if(isBlank(v.fat_percent)){
+    return false;
+  }
+
+  if(isBlank(v.protein)){
+    return false;
+  }
+
+  if(isBlank(v.steps)){
+    return false;
+  }
+
+  if(isBlank(v.active_steps_percent)){
+    return false;
+  }
+
+  if(isBlank(v.train_week)){
+    return false;
+  }
+
+  if(isBlank(v.deficit)){
+    return false;
+  }
+
+  if(isBlank(v.time)){
+    return false;
+  }
+
+  return true;
+}
+
+
+function fatCoefficient(value){
+
+  if(value===15)return 1.02;
+  if(value===20)return 1.01;
+  if(value===25)return 1.00;
+  if(value===30)return 0.99;
+  if(value===35)return 0.98;
+  if(value===40)return 0.97;
+  if(value===45)return 0.96;
+  if(value===50)return 0.95;
+
+  return 1;
+}
+
+
+function activeStepsCoefficient(value){
+
+  if(value===0)return 0.8;
+  if(value===25)return 0.9;
+  if(value===50)return 1.0;
+  if(value===75)return 1.1;
+  if(value===100)return 1.2;
+
+  return 0.8;
+}
+
+
+/* =====================================
+   RENDER
+===================================== */
+
+function render(){
+
+  var v=
+    variants[
+      activeVariant
+    ];
+
+  var r=
+    calculate(v);
+
+  root.innerHTML=
+
+    '<div class="mc-card mc-header">'+
+
+      '<div class="mc-title">'+
+        'Калькулятор энергобаланса'+
+      '</div>'+
+
+      '<div class="mc-sub">'+
+        'Расчёт энергобаланса и скорости снижения веса'+
+      '</div>'+
+
+    '</div>'+
+
+    '<div class="mc-switch">'+
+
+      switchButton(1)+
+
+      switchButton(2)+
+
+    '</div>'+
+
+    '<div class="mc-actions">'+
+
+      '<button class="mc-action mc-copy" onclick="META.copy()">'+
+        'Скопировать 1 → 2'+
+      '</button>'+
+
+      '<button class="mc-action mc-reset" onclick="META.reset()">'+
+        'Очистить вариант'+
+      '</button>'+
+
+    '</div>'+
+
+    '<div class="mc-main">'+
+
+      renderInputPanel(v)+
+
+      renderResultPanel(v,r)+
+
+    '</div>'+
+
+    renderCompare()+
+
+    '<div class="mc-footer">'+
+      '© '+
+      new Date().getFullYear()+
+      ' Сергей Воронцов'+
+    '</div>';
+
+}
+
+
+/* =====================================
+   INPUT PANEL
+===================================== */
+
+function renderInputPanel(v){
+
+  return '<div class="mc-card mc-panel">'+
+
+    '<div class="mc-panel-title">'+
+      'Исходные данные'+
+    '</div>'+
+
+    '<div class="mc-panel-sub">'+
+      'Вариант '+
+      activeVariant+
+    '</div>'+
+
+    '<div class="mc-form">'+
+
+      selectRow(
+        'gender',
+        'Пол',
+        v.gender,
+        [
+          ['','Выберите'],
+          ['Мужчина','Мужчина'],
+          ['Женщина','Женщина']
+        ]
+      )+
+
+      numberRow(
+        'age',
+        'Возраст',
+        v.age,
+        'лет',
+        1
+      )+
+
+      numberRow(
+        'height',
+        'Рост',
+        v.height,
+        'см',
+        1
+      )+
+
+      numberRow(
+        'weight',
+        'Вес',
+        v.weight,
+        'кг',
+        0.1
+      )+
+
+      selectRow(
+        'fat_percent',
+        'Процент жира',
+        v.fat_percent,
+        [
+          ['','Выберите'],
+          [15,'15%'],
+          [20,'20%'],
+          [25,'25%'],
+          [30,'30%'],
+          [35,'35%'],
+          [40,'40%'],
+          [45,'45%'],
+          [50,'50%']
+        ]
+      )+
+
+      numberRow(
+        'protein',
+        'Белок',
+        v.protein,
+        'г/день',
+        1
+      )+
+
+      numberRow(
+        'steps',
+        'Шаги',
+        v.steps,
+        'в день',
+        100
+      )+
+
+      selectRow(
+        'active_steps_percent',
+        'Активные шаги',
+        v.active_steps_percent,
+        [
+          ['','Выберите'],
+          [0,'0%'],
+          [25,'25%'],
+          [50,'50%'],
+          [75,'75%'],
+          [100,'100%']
+        ]
+      )+
+
+      numberRow(
+        'train_week',
+        'Тренировки',
+        v.train_week,
+        'ккал/нед',
+        50
+      )+
+
+      numberRow(
+        'deficit',
+        'Дефицит',
+        v.deficit,
+        'ккал/день',
+        50
+      )+
+
+      numberRow(
+        'time',
+        'Срок',
+        v.time,
+        'дней',
+        1
+      )+
+
+    '</div>'+
+
+  '</div>';
+}
+
+
+/* =====================================
+   RESULT PANEL
+===================================== */
+
+function renderResultPanel(v,r){
+
+  return '<div class="mc-card mc-panel">'+
+
+    '<div class="mc-panel-title">'+
+      'Результат'+
+    '</div>'+
+
+    '<div class="mc-panel-sub">'+
+      'Вариант '+
+      activeVariant+
+    '</div>'+
+
+    '<div class="mc-results">'+
+
+      resultRow(
+        'Базовый метаболизм',
+        r ? round(r.bmr) : '—',
+        'ккал'
+      )+
+
+      resultRow(
+        'Повседневная активность',
+        r ? round(r.neat) : '—',
+        'ккал'
+      )+
+
+      resultRow(
+        'Тренировки / день',
+        r ? round(r.trainDay) : '—',
+        'ккал'
+      )+
+
+      resultRow(
+        'Термический эффект пищи',
+        r ? round(r.tef) : '—',
+        'ккал'
+      )+
+
+      resultRow(
+        'Энергетический баланс',
+        r ? round(r.balance) : '—',
+        'ккал',
+        'balance'
+      )+
+
+      resultRow(
+        'Дефицит',
+        r ? round(r.deficit) : '—',
+        'ккал'
+      )+
+
+      resultRow(
+        'Потребление',
+        r ? round(r.eat) : '—',
+        'ккал / день',
+        'eat'
+      )+
+
+      resultRow(
+        'Скорость похудения',
+        r ? round(r.speed) : '—',
+        'г / неделю',
+        'speed'
+      )+
+
+      resultRow(
+        'За '+
+        (
+          isBlank(v.time)
+          ? '—'
+          : round(v.time)
+        )+
+        ' дней',
+        r ? one(r.loss) : '—',
+        'кг',
+        'loss'
+      )+
+
+    '</div>'+
+
+    '<button class="mc-tech-btn" onclick="META.tech()">'+
+      (
+        techOpen
+        ? 'Скрыть технический расчёт'
+        : 'Показать технический расчёт'
+      )+
+    '</button>'+
+
+    renderTech(r)+
+
+  '</div>';
+}
+
+
+/* =====================================
+   INPUT ROWS
+===================================== */
+
+function numberRow(
+  key,
+  label,
+  value,
+  unit,
+  step
+){
+
+  return '<div class="mc-row">'+
+
+    '<div class="mc-label">'+
+      label+
+    '</div>'+
+
+    '<div class="mc-input-wrap">'+
+
+      '<input '+
+        'class="mc-input has-unit" '+
+        'type="number" '+
+        'step="'+step+'" '+
+        'value="'+escapeAttr(value)+'" '+
+        'onchange="META.setNumber(\''+key+'\',this.value)"'+
+      '>'+
+
+      '<span class="mc-unit">'+
+        unit+
+      '</span>'+
+
+    '</div>'+
+
+  '</div>';
+}
+
+
+function selectRow(
+  key,
+  label,
+  value,
+  options
+){
+
+  var html=
+
+    '<div class="mc-row">'+
+
+      '<div class="mc-label">'+
+        label+
+      '</div>'+
+
+      '<div class="mc-input-wrap">'+
+
+        '<select class="mc-select" onchange="META.setValue(\''+key+'\',this.value)">';
+
+  for(
+    var i=0;
+    i<options.length;
+    i++
+  ){
+
+    html+=
+
+      '<option value="'+
+        escapeAttr(
+          options[i][0]
+        )+
+      '" '+
+        (
+          String(options[i][0])===
+          String(value)
+          ? 'selected'
+          : ''
+        )+
+      '>'+
+        options[i][1]+
+      '</option>';
+
+  }
+
+  html+=
+
+        '</select>'+
+
+      '</div>'+
+
+    '</div>';
+
+  return html;
+}
+
+
+/* =====================================
+   RESULTS
+===================================== */
+
+function resultRow(
+  label,
+  value,
+  unit,
+  className
+){
+
+  return '<div class="mc-result-row '+(className||'')+'">'+
+
+    '<div class="mc-result-name">'+
+      label+
+    '</div>'+
+
+    '<div class="mc-result-num">'+
+      value+
+      (
+        value==='—'
+        ? ''
+        :
+        '<span class="mc-result-unit">'+
+          unit+
+        '</span>'
+      )+
+    '</div>'+
+
+  '</div>';
+}
+
+
+/* =====================================
+   TECH
+===================================== */
+
+function renderTech(r){
+
+  if(!r){
+
+    return '<div class="mc-tech '+(techOpen?'open':'')+'">'+
+
+      techRow(
+        'Технический расчёт',
+        '—'
+      )+
+
+    '</div>';
+  }
+
+  return '<div class="mc-tech '+(techOpen?'open':'')+'">'+
+
+    techRow(
+      'BMR raw',
+      one(r.bmrRaw)
+    )+
+
+    techRow(
+      'Коэффициент жира',
+      two(r.fat)
+    )+
+
+    techRow(
+      'Длина шага',
+      two(r.stepLength)+' м'
+    )+
+
+    techRow(
+      'Дистанция по шагам',
+      two(r.distance)+' км'
+    )+
+
+    techRow(
+      'Расход шагов gross',
+      round(r.stepsGross)+' ккал'
+    )+
+
+    techRow(
+      'Коэффициент активных шагов',
+      two(r.activeK)
+    )+
+
+    techRow(
+      'NEAT до ×0,7',
+      round(r.neatBefore)+' ккал'
+    )+
+
+    techRow(
+      'NEAT',
+      round(r.neat)+' ккал'
+    )+
+
+    techRow(
+      'TEF база',
+      round(r.tefBase)+' ккал'
+    )+
+
+    techRow(
+      'Белок сверх 45 г',
+      round(r.proteinExtra)+' г'
+    )+
+
+    techRow(
+      'TEF белка',
+      round(r.tefProtein)+' ккал'
+    )+
+
+    techRow(
+      'TEF общий',
+      round(r.tef)+' ккал'
+    )+
+
+    techRow(
+      'Тренировки / день',
+      round(r.trainDay)+' ккал'
+    )+
+
+  '</div>';
+}
+
+
+function techRow(label,value){
+
+  return '<div class="mc-tech-row">'+
+
+    '<div class="mc-tech-name">'+
+      label+
+    '</div>'+
+
+    '<div class="mc-tech-value">'+
+      value+
+    '</div>'+
+
+  '</div>';
+}
+
+
+/* =====================================
+   COMPARISON
+===================================== */
+
+function renderCompare(){
+
+  var a=
+    calculate(
+      variants[1]
+    );
+
+  var b=
+    calculate(
+      variants[2]
+    );
+
+  var rows=[
+    {
+      label:'Шаги',
+      a:displayInput(variants[1].steps),
+      b:displayInput(variants[2].steps),
+      unit:''
+    },
+    {
+      label:'Тренировки / нед',
+      a:displayInput(variants[1].train_week),
+      b:displayInput(variants[2].train_week),
+      unit:' ккал'
+    },
+    {
+      label:'Дефицит',
+      a:displayInput(variants[1].deficit),
+      b:displayInput(variants[2].deficit),
+      unit:' ккал'
+    },
+    {
+      label:'Энергобаланс',
+      a:a ? round(a.balance) : '—',
+      b:b ? round(b.balance) : '—',
+      unit:' ккал'
+    },
+    {
+      label:'Потребление',
+      a:a ? round(a.eat) : '—',
+      b:b ? round(b.eat) : '—',
+      unit:' ккал'
+    },
+    {
+      label:'Скорость похудения',
+      a:a ? round(a.speed) : '—',
+      b:b ? round(b.speed) : '—',
+      unit:' г/нед'
+    },
+    {
+      label:'Прогноз за срок',
+      a:a ? one(a.loss) : '—',
+      b:b ? one(b.loss) : '—',
+      unit:' кг'
+    }
+  ];
+
+  var html=
+
+    '<div class="mc-card mc-compare">'+
+
+      '<div class="mc-compare-title">'+
+        'Сравнение вариантов'+
+      '</div>'+
+
+      '<div class="mc-compare-sub">'+
+        'Вариант 1 и Вариант 2'+
+      '</div>'+
+
+      '<div class="mc-compare-table-wrap">'+
+
+        '<table class="mc-compare-table">'+
+
+          '<thead>'+
+
+            '<tr>'+
+
+              '<th>Показатель</th>'+
+
+              '<th>Вариант 1</th>'+
+
+              '<th>Вариант 2</th>'+
+
+              '<th>Разница</th>'+
+
+            '</tr>'+
+
+          '</thead>'+
+
+          '<tbody>';
+
+  for(
+    var i=0;
+    i<rows.length;
+    i++
+  ){
+
+    var diff=
+      compareDifference(
+        rows[i].a,
+        rows[i].b
+      );
+
+    html+=
+
+      '<tr>'+
+
+        '<td>'+
+          rows[i].label+
+        '</td>'+
+
+        '<td class="mc-num">'+
+          displayWithUnit(
+            rows[i].a,
+            rows[i].unit
+          )+
+        '</td>'+
+
+        '<td class="mc-num">'+
+          displayWithUnit(
+            rows[i].b,
+            rows[i].unit
+          )+
+        '</td>'+
+
+        '<td class="mc-num mc-diff">'+
+          displayWithUnit(
+            diff,
+            rows[i].unit
+          )+
+        '</td>'+
+
+      '</tr>';
+
+  }
+
+  html+=
+
+          '</tbody>'+
+
+        '</table>'+
+
+      '</div>'+
+
+    '</div>';
+
+  return html;
+}
+
+
+function compareDifference(a,b){
+
+  if(
+    a==='—' ||
+    b==='—'
+  ){
+    return '—';
+  }
+
+  var av=
+    parseNumberText(a);
+
+  var bv=
+    parseNumberText(b);
+
+  if(
+    av===null ||
+    bv===null
+  ){
+    return '—';
+  }
+
+  var diff=
+    Math.round(
+      (bv-av)*10
+    )/
+    10;
+
+  if(diff>0){
+    return '+'+String(diff).replace('.',',');
+  }
+
+  return String(diff).replace('.',',');
+}
+
+
+/* =====================================
+   SWITCH
+===================================== */
+
+function switchButton(n){
+
+  return '<button class="mc-switch-btn '+(activeVariant===n?'active':'')+'" onclick="META.variant('+n+')">'+
+    'Вариант '+n+
+  '</button>';
+}
+
+
+/* =====================================
+   LOCAL STORAGE
+===================================== */
+
+function saveStorage(syncServer){
+
+  try{
+
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        variants:variants,
+        activeVariant:activeVariant
+      })
+    );
+
+  }catch(e){}
+
+  if(syncServer!==false){scheduleServerSave();}
+}
+
+
+function loadStorage(){
+
+  try{
+
+    var raw=
+      localStorage.getItem(
+        STORAGE_KEY
+      );
+
+    if(!raw){
+      return;
+    }
+
+    var saved=
+      JSON.parse(raw);
+
+    if(
+      saved &&
+      saved.variants
+    ){
+
+      if(saved.variants[1]){
+        variants[1]=saved.variants[1];
+      }
+
+      if(saved.variants[2]){
+        variants[2]=saved.variants[2];
+      }
+
+    }
+
+    if(
+      saved.activeVariant===1 ||
+      saved.activeVariant===2
+    ){
+      activeVariant=
+        saved.activeVariant;
+    }
+
+  }catch(e){}
+}
+
+
+/* =====================================
+   HELPERS
+===================================== */
+
+function isBlank(value){
+
+  return (
+    value===null ||
+    typeof value==='undefined' ||
+    String(value)===''
+  );
+}
+
+
+function number(value){
+
+  var n=
+    Number(value);
+
+  return isFinite(n)
+    ? n
+    : 0;
+}
+
+
+function round(value){
+
+  return Math.round(
+    number(value)
+  );
+}
+
+
+function one(value){
+
+  return (
+    Math.round(
+      number(value)*10
+    )/
+    10
+  )
+  .toFixed(1)
+  .replace('.',',');
+}
+
+
+function two(value){
+
+  return (
+    Math.round(
+      number(value)*100
+    )/
+    100
+  )
+  .toFixed(2)
+  .replace('.',',');
+}
+
+
+function displayInput(value){
+
+  if(isBlank(value)){
+    return '—';
+  }
+
+  return String(value)
+  .replace('.',',');
+}
+
+
+function displayWithUnit(value,unit){
+
+  if(value==='—'){
+    return '—';
+  }
+
+  return value+unit;
+}
+
+
+function parseNumberText(value){
+
+  if(value==='—'){
+    return null;
+  }
+
+  var parsed=
+    Number(
+      String(value)
+      .replace(',','.')
+      .replace('+','')
+    );
+
+  return isFinite(parsed)
+    ? parsed
+    : null;
+}
+
+
+function escapeAttr(value){
+
+  if(
+    value===null ||
+    typeof value==='undefined'
+  ){
+    return '';
+  }
+
+  return String(value)
+  .replace(/&/g,'&amp;')
+  .replace(/"/g,'&quot;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;');
+}
+
+
+/* =====================================
+   PUBLIC
+===================================== */
+
+window.META={
+
+  variant:function(n){
+
+    activeVariant=n;
+
+    saveStorage();
+
+    render();
+  },
+
+
+  setValue:function(
+    key,
+    value
+  ){
+
+    variants[
+      activeVariant
+    ][key]=value;
+
+    saveStorage();
+
+    render();
+  },
+
+
+  setNumber:function(
+    key,
+    value
+  ){
+
+    variants[
+      activeVariant
+    ][key]=
+      value===''
+      ? ''
+      : Number(value);
+
+    saveStorage();
+
+    render();
+  },
+
+
+  copy:function(){
+
+    variants[2]=
+      JSON.parse(
+        JSON.stringify(
+          variants[1]
+        )
+      );
+
+    activeVariant=2;
+
+    saveStorage();
+
+    render();
+  },
+
+
+  reset:function(){
+
+    variants[
+      activeVariant
+    ]=
+      createEmptyVariant();
+
+    saveStorage();
+
+    render();
+  },
+
+
+  tech:function(){
+
+    techOpen=
+      !techOpen;
+
+    render();
+  }
+
+};
+
+
+/* =====================================
+   INIT
+===================================== */
+
+root.innerHTML='<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
+loadServer().then(render).catch(function(error){
+  root.innerHTML='<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:18px;background:#fff;color:#b42318;font-family:Arial,sans-serif">'+String(error.message||error)+'</div>';
+});
+
+})();
+</script>

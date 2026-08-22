@@ -924,13 +924,18 @@ body{
   text-decoration:none;
 }
 
-.dqs-help-reminder{
-  margin-top:12px;
-
-  font-size:12px;
-  line-height:1.45;
-
-  color:#8a8e9d;
+.dqs-profile-link{
+  display:inline-flex;
+  width:38px;
+  height:38px;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+  border-radius:999px;
+  background:var(--card);
+  color:var(--text);
+  box-shadow:var(--shadow-sm);
+  text-decoration:none;
 }
 
 
@@ -1550,7 +1555,7 @@ body{
 
 <script>
 const API_URL =
-  '<REDACTED_LEGACY_APPS_SCRIPT_URL>';
+  'https://api.edabalans.ru/api/apps/dqs';
 
 const DAY_COUNT = 30;
 
@@ -2786,12 +2791,6 @@ function openCategoryHelp(index){
 
         </div>
 
-
-        <div class="dqs-help-reminder">
-          Если забудете, как пользоваться DQS,
-          инструкцию всегда можно снова открыть
-          по ссылке «Как пользоваться» внизу дневника.
-        </div>
 
       </div>
 
@@ -4202,6 +4201,10 @@ function renderShell(
             DQS&nbsp;${formatScore(total)}
           </div>
 
+          <a class="dqs-profile-link" href="#openmembersbar" aria-label="Открыть профиль Tilda" title="Профиль">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </a>
+
         </div>
 
 
@@ -4903,6 +4906,16 @@ function renderCurrentView(
   preserveScroll = true
 ){
 
+  if(!currentUser || !currentUser.email){
+    showLogin();
+    return;
+  }
+
+  if(!currentUser.startDate){
+    showStartDate();
+    return;
+  }
+
   const y =
     window.scrollY;
 
@@ -5100,6 +5113,9 @@ async function saveDayToGoogle(
   const payloadRevision =
     payload.updated;
 
+  const sessionEmail =
+    currentUser && currentUser.email;
+
   savingDays[
     dayNumber
   ] = true;
@@ -5110,10 +5126,14 @@ async function saveDayToGoogle(
     const result =
       await api({
         action:'saveDay',
-        email:currentUser.email,
+        email:sessionEmail,
         day:String(dayNumber),
         data:JSON.stringify(payload)
       });
+
+    if(!currentUser || currentUser.email !== sessionEmail){
+      return;
+    }
 
 
     if(!result.ok){

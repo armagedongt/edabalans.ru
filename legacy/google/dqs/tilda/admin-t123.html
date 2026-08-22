@@ -1,289 +1,2354 @@
 <div id="dqs-admin-app"></div>
 
-
 <style>
 :root{
   --bg:#f5f5f7;
-  --card:#ffffff;
-  --text:#17172b;
+  --card:#fff;
+  --text:#242235;
   --muted:#7b8094;
-  --line:#e7e7ef;
-  --purple:#6f3de8;
-  --purple-soft:#f5f1ff;
-  --green:#2f8a39;
-  --green-soft:#edf8ec;
-  --orange:#a96b1f;
-  --orange-soft:#fff4df;
-  --red:#c64c3d;
-  --red-soft:#fff0ed;
-  --shadow:0 5px 18px rgba(20,20,40,.08);
-  --score-p2:#cfeec5;
-  --score-p1:#e8f3c7;
-  --score-0:#f6eabc;
-  --score-m1:#f7d8ab;
-  --score-m2:#f5c3b4;
-  --cat-green:#e8f5de;
-  --cat-rose:#f9e4e4;
-  --cat-blue:#e6eef9;
-  --cat-yellow:#f7eed1;
-  --cat-peach:#fae8dc;
+  --line:#e5e5ec;
+
+  --purple:#7042e8;
+  --purple-soft:#f0ebff;
+
+  --green-light:#dff2db;
+  --green-bright:#5cf05e;
+  --yellow:#f7e7ad;
+  --orange:#f7a73d;
+  --orange-soft:#fde1ae;
+  --blue:#b9d9ef;
+
+  --score-p2:#c9edc0;
+  --score-p1:#e2f1c7;
+  --score-0:#f6e8b8;
+  --score-m1:#f6d5a5;
+  --score-m2:#f2b7aa;
+
+  --shadow:0 6px 22px rgba(30,30,55,.07);
 }
+
 *{box-sizing:border-box}
-html,body{margin:0;padding:0}
-#dqs-admin-app{max-width:1100px;margin:0 auto;padding:10px;font-family:Arial,sans-serif;color:var(--text)}
-button,input,select{font-family:inherit}
-.da-card{background:#fff;border-radius:18px;box-shadow:var(--shadow)}
-.da-title{margin:0;font-size:27px;line-height:1.15;font-weight:800}
-.da-subtitle{margin-top:7px;color:var(--muted);font-size:13px;line-height:1.45}
-.da-muted{color:var(--muted)}
-.da-purple{color:var(--purple)}
-.da-btn{border:0;border-radius:12px;background:var(--purple);color:#fff;min-height:42px;padding:0 16px;font-size:14px;font-weight:800;cursor:pointer}
-.da-btn:active{transform:scale(.985)}
-.da-btn-light{border:0;border-radius:11px;background:#eff0f5;color:#4d5265;min-height:38px;padding:0 13px;font-size:12px;font-weight:800;cursor:pointer}
-.da-link-btn{border:0;background:none;padding:0;color:var(--purple);font-size:12px;font-weight:800;cursor:pointer}
-.da-error{margin-top:10px;color:#c62828;font-size:13px}
-.da-loading{text-align:center;padding:35px 15px;color:var(--muted);font-size:14px}
-.da-login{max-width:470px;margin:40px auto 0;padding:22px}
-.da-login-input{width:100%;margin-top:17px;height:46px;border:1px solid #d9dbe4;border-radius:12px;padding:0 14px;font-size:16px;outline:none}
-.da-login-input:focus{border-color:#b8a5f2;box-shadow:0 0 0 3px #f1edff}
-.da-login .da-btn{width:100%;margin-top:10px}
-.da-header{position:sticky;top:0;z-index:1000;background:var(--bg);padding:4px 0 8px}
-.da-header-card{min-height:58px;padding:8px 11px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.da-header-left{min-width:0}
-.da-header-title{font-size:18px;font-weight:800;line-height:1.15}
-.da-header-email{margin-top:3px;color:var(--muted);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.da-header-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
-.da-summary-grid{margin-top:6px;display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.da-summary-card{padding:13px 12px;min-height:76px}
-.da-summary-value{font-size:23px;line-height:1;font-weight:800}
-.da-summary-label{margin-top:7px;color:var(--muted);font-size:11px;line-height:1.25}
-.da-controls{margin-top:7px;padding:10px}
-.da-search{width:100%;height:42px;border:1px solid #dedfe7;border-radius:11px;padding:0 12px;font-size:14px;outline:none}
-.da-search:focus{border-color:#b7a3ef;box-shadow:0 0 0 3px #f2effd}
-.da-filter-row{margin-top:9px;display:flex;gap:6px;flex-wrap:wrap}
-.da-filter-btn{min-height:33px;border:0;border-radius:10px;padding:0 10px;background:#eff0f4;color:#6b7182;font-size:11px;font-weight:800;cursor:pointer}
-.da-filter-btn.active{color:var(--purple);background:var(--purple-soft)}
-.da-sort-row{margin-top:9px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-.da-sort-label{color:var(--muted);font-size:11px}
-.da-select{height:34px;border:1px solid #dedfe7;border-radius:9px;background:#fff;padding:0 8px;font-size:11px;color:#454a5c}
-.da-users{display:grid;gap:7px;margin-top:7px}
-.da-user-card{padding:13px;cursor:pointer;transition:transform .08s ease}
-.da-user-card:active{transform:scale(.992)}
-.da-user-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.da-user-email{min-width:0;font-size:14px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.da-user-status{flex:0 0 auto;border-radius:8px;padding:4px 7px;font-size:9px;font-weight:800}
-.da-status-active{color:var(--green);background:var(--green-soft)}
-.da-status-inactive{color:var(--orange);background:var(--orange-soft)}
-.da-status-complete{color:var(--purple);background:var(--purple-soft)}
-.da-user-grid{margin-top:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.da-mini-stat{background:#f7f7fa;border-radius:9px;padding:8px 7px}
-.da-mini-stat-value{font-size:13px;font-weight:800}
-.da-mini-stat-label{margin-top:3px;color:var(--muted);font-size:9px;line-height:1.2}
-.da-progress{margin-top:10px;height:7px;border-radius:999px;background:#ececf2;overflow:hidden}
-.da-progress-fill{height:100%;background:var(--purple);border-radius:999px}
-.da-empty-state{margin-top:7px;padding:30px 15px;text-align:center;color:var(--muted);font-size:13px}
-.da-profile-top{margin-top:6px;padding:13px}
-.da-back{border:0;background:#fff;box-shadow:var(--shadow);min-height:38px;border-radius:11px;padding:0 12px;font-size:12px;font-weight:800;cursor:pointer}
-.da-profile-email{margin-top:12px;font-size:19px;line-height:1.2;font-weight:800;overflow-wrap:anywhere}
-.da-profile-stats{margin-top:10px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
-.da-profile-stat{background:#f7f7fa;border-radius:9px;padding:8px}
-.da-profile-stat-value{font-size:13px;font-weight:800}
-.da-profile-stat-label{margin-top:3px;font-size:9px;line-height:1.2;color:var(--muted)}
-.da-tabs{margin-top:7px;height:43px;padding:3px;border-radius:13px;background:#e4e5eb;display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.da-tab{border:0;border-radius:10px;background:transparent;color:#74798a;font-size:12px;font-weight:800;cursor:pointer}
-.da-tab.active{background:#fff;color:#29263d;box-shadow:0 2px 7px rgba(0,0,0,.08)}
-.da-days{display:grid;gap:7px;margin-top:7px}
-.da-day-card{overflow:hidden}
-.da-day-head{padding:11px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
-.da-day-title{font-size:13px;font-weight:800}
-.da-day-date{margin-top:2px;color:var(--muted);font-size:10px}
-.da-day-dqs{flex:0 0 auto;background:var(--purple-soft);color:var(--purple);border-radius:10px;padding:7px 9px;font-size:12px;font-weight:800}
-.da-day-empty{color:#a0a4b1;background:#f3f3f6}
-.da-day-summary{border-top:1px solid var(--line);padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.da-day-summary-box{background:#f7f7fa;border-radius:8px;padding:7px;font-size:10px;color:#636879}
-.da-day-summary-box strong{display:block;margin-top:2px;font-size:12px;color:#242738}
-.da-compact-cats{border-top:1px solid var(--line);padding:7px;display:grid;grid-template-columns:repeat(2,1fr);gap:4px}
-.da-compact-cat{min-height:33px;border-radius:8px;padding:4px 7px;display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:10px}
-.da-compact-cat-left{display:flex;align-items:center;gap:5px;min-width:0}
-.da-compact-cat-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
-.da-compact-cat-right{white-space:nowrap;font-weight:800}
-.da-compact-zero{opacity:.34}
-.da-day-more{width:100%;min-height:34px;border:0;border-top:1px solid var(--line);background:#fff;color:var(--purple);font-size:10px;font-weight:800;cursor:pointer}
-.da-matrix-wrap{padding:6px;border-top:1px solid var(--line)}
-.da-matrix{width:100%;table-layout:fixed;border-collapse:separate;border-spacing:2px}
-.da-matrix th,.da-matrix td{text-align:center;border-radius:7px;overflow:hidden}
-.da-matrix th{height:24px;background:#f4f5f9;color:#5e6477;font-size:8px;font-weight:800}
-.da-matrix .da-icon-col{width:39px}
-.da-matrix-icon{min-height:29px;display:flex;align-items:center;justify-content:center;border-radius:7px;font-size:16px}
-.da-score-cell{position:relative;height:29px;background:#fff;border:1px solid #ececf2;font-size:8px;font-weight:800}
-.da-score-cell:before{content:'';position:absolute;inset:0 auto 0 0;width:0}
-.da-score-cell.full:before{width:100%}
-.da-score-cell.half:before{width:50%}
-.da-score-cell.s2:before{background:var(--score-p2)}
-.da-score-cell.s1:before{background:var(--score-p1)}
-.da-score-cell.s0:before{background:var(--score-0)}
-.da-score-cell.sm1:before{background:var(--score-m1)}
-.da-score-cell.sm2:before{background:var(--score-m2)}
-.da-score-cell span{position:relative;z-index:1}
-.da-analytics{margin-top:7px}
-.da-analytics-tabs{height:39px;padding:3px;border-radius:12px;background:#e4e5eb;display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.da-analytics-tab{border:0;border-radius:9px;background:transparent;font-size:11px;font-weight:800;color:#74798a;cursor:pointer}
-.da-analytics-tab.active{background:#fff;color:#29263d}
-.da-section{margin-top:7px;padding:13px}
-.da-section-title{font-size:15px;font-weight:800;margin-bottom:10px}
-.da-week-list{display:grid;gap:7px}
-.da-week-card{border:1px solid #ececf2;border-radius:12px;padding:10px}
-.da-week-head{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.da-week-title{font-size:12px;font-weight:800}
-.da-week-filled{color:var(--muted);font-size:9px}
-.da-week-grid{margin-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.da-week-stat{background:#f7f7fa;border-radius:8px;padding:7px}
-.da-week-stat-value{font-size:12px;font-weight:800}
-.da-week-stat-label{margin-top:2px;color:var(--muted);font-size:8px;line-height:1.2}
-.da-cat-stats{margin-top:8px;display:grid;gap:4px}
-.da-cat-stat{min-height:32px;border-radius:8px;padding:5px 7px;display:grid;grid-template-columns:minmax(110px,1.3fr) .7fr .8fr;align-items:center;gap:6px;font-size:9px}
-.da-cat-stat-name{display:flex;gap:5px;align-items:center;min-width:0;font-weight:700}
-.da-cat-stat-name span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.da-cat-stat-value{text-align:right;font-weight:800}
-.da-cat-stat-days{text-align:right;color:#676d80}
-.da-all-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
-.da-all-stat{background:#f7f7fa;border-radius:10px;padding:9px}
-.da-all-value{font-size:15px;font-weight:800}
-.da-all-label{margin-top:3px;color:var(--muted);font-size:9px;line-height:1.2}
-.da-compare{display:grid;gap:6px}
-.da-compare-row{padding:9px;border-radius:9px;background:#f7f7fa;display:grid;grid-template-columns:1.35fr .65fr auto .65fr;align-items:center;gap:6px;font-size:10px}
-.da-compare-label{font-weight:700}
-.da-compare-value{text-align:center;font-weight:800}
-.da-arrow{color:#a1a5b1;text-align:center}
-.da-chart{width:100%;overflow:hidden}
-.da-chart-svg{width:100%;height:auto;display:block}
-.da-chart-empty{padding:25px 10px;text-align:center;color:var(--muted);font-size:11px}
-.da-legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:7px;font-size:9px;color:#676d80}
-.da-legend-item{display:flex;align-items:center;gap:5px}
-.da-legend-dot{width:9px;height:9px;border-radius:50%;background:#777}
-.da-legend-dot.healthy{background:#65a95c}
-.da-legend-dot.unhealthy{background:#d47c65}
-.da-footer{text-align:center;padding:14px 8px 8px;color:#9396a3;font-size:10px}
-@media(max-width:700px){#dqs-admin-app{padding:6px}.da-summary-grid{grid-template-columns:repeat(3,1fr)}.da-summary-value{font-size:19px}.da-user-grid{grid-template-columns:repeat(2,1fr)}.da-profile-stats{grid-template-columns:repeat(2,1fr)}.da-profile-stat:last-child{grid-column:1/-1}.da-week-grid{grid-template-columns:repeat(3,1fr)}.da-all-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:410px){.da-header-title{font-size:16px}.da-summary-card{padding:10px 8px}.da-summary-value{font-size:17px}.da-summary-label{font-size:9px}.da-compact-cats{grid-template-columns:1fr}.da-cat-stat{grid-template-columns:minmax(100px,1.3fr) .7fr .8fr}}
+
+html,body{
+  margin:0;
+  padding:0;
+}
+
+#dqs-admin-app{
+  max-width:1180px;
+  margin:0 auto;
+  padding:8px;
+  font-family:Arial,sans-serif;
+  color:var(--text);
+}
+
+button,input{
+  font-family:inherit;
+}
+
+.da-card{
+  background:var(--card);
+  border-radius:17px;
+  box-shadow:var(--shadow);
+}
+
+/* HEADER */
+
+.da-header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  padding:4px 0 7px;
+  background:var(--bg);
+}
+
+.da-header-card{
+  min-height:54px;
+  padding:8px 13px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.da-header-title{
+  font-size:18px;
+  font-weight:800;
+}
+
+.da-header-email{
+  margin-top:3px;
+  font-size:9px;
+  color:var(--muted);
+}
+
+.da-header-actions{
+  display:flex;
+  gap:6px;
+  align-items:center;
+}
+
+.da-btn-light{
+  height:34px;
+  border:0;
+  border-radius:10px;
+  padding:0 12px;
+  background:#eff0f5;
+  color:#555b6d;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.da-btn-link{
+  height:34px;
+  border:0;
+  background:transparent;
+  padding:0 8px;
+  color:var(--purple);
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* LOGIN */
+
+.da-login{
+  max-width:440px;
+  margin:45px auto;
+  padding:22px;
+}
+
+.da-login-title{
+  font-size:24px;
+  font-weight:800;
+}
+
+.da-login-sub{
+  margin-top:6px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.da-input{
+  width:100%;
+  height:44px;
+  margin-top:15px;
+  padding:0 13px;
+  border:1px solid #dcdde5;
+  border-radius:12px;
+  outline:none;
+  font-size:14px;
+}
+
+.da-primary{
+  width:100%;
+  height:42px;
+  margin-top:8px;
+  border:0;
+  border-radius:12px;
+  background:var(--purple);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.da-error{
+  margin-top:10px;
+  color:#bb3838;
+  font-size:11px;
+}
+
+.da-loading{
+  max-width:500px;
+  margin:40px auto;
+  padding:24px;
+  text-align:center;
+  font-size:12px;
+  color:var(--muted);
+}
+
+/* USERS */
+
+.da-search-box{
+  padding:13px;
+  margin-top:5px;
+}
+
+.da-search-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:10px;
+}
+
+.da-search-title{
+  font-size:18px;
+  font-weight:800;
+}
+
+.da-search-count{
+  font-size:9px;
+  color:var(--muted);
+}
+
+.da-search{
+  width:100%;
+  height:42px;
+  margin-top:10px;
+  padding:0 13px;
+  border:1px solid #dcdde5;
+  border-radius:12px;
+  outline:none;
+  font-size:13px;
+}
+
+.da-results{
+  margin-top:6px;
+  display:grid;
+  gap:6px;
+}
+
+.da-user{
+  padding:10px 12px;
+  cursor:pointer;
+}
+
+.da-user:hover{
+  box-shadow:0 7px 25px rgba(30,30,55,.11);
+}
+
+.da-user-email{
+  font-size:13px;
+  font-weight:800;
+}
+
+.da-user-stats{
+  margin-top:7px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+
+.da-user-stat{
+  background:#f7f7fa;
+  border-radius:8px;
+  padding:6px 7px;
+}
+
+.da-user-value{
+  font-size:11px;
+  font-weight:800;
+}
+
+.da-user-label{
+  margin-top:2px;
+  font-size:7px;
+  color:var(--muted);
+}
+
+.da-empty{
+  padding:28px 12px;
+  text-align:center;
+  font-size:11px;
+  color:var(--muted);
+}
+
+/* PROFILE */
+
+.da-profile{
+  margin-top:5px;
+  padding:10px 12px;
+}
+
+.da-back{
+  height:32px;
+  border:0;
+  border-radius:9px;
+  background:#eff0f5;
+  padding:0 10px;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.da-profile-email{
+  margin-top:9px;
+  font-size:18px;
+  font-weight:800;
+}
+
+.da-profile-meta{
+  margin-top:3px;
+  font-size:9px;
+  color:var(--muted);
+}
+
+/* TABS */
+
+.da-tabs{
+  margin-top:6px;
+  padding:3px;
+  min-height:43px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:3px;
+  border-radius:13px;
+  background:#e5e5eb;
+}
+
+.da-tab{
+  border:0;
+  border-radius:10px;
+  background:transparent;
+  color:#777b8a;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.da-tab.active{
+  background:#fff;
+  color:var(--text);
+  box-shadow:0 2px 7px rgba(0,0,0,.08);
+}
+
+/* PERIOD */
+
+.da-period{
+  margin-top:6px;
+  padding:9px 10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.da-period-fast{
+  display:flex;
+  gap:4px;
+}
+
+.da-period-btn{
+  height:31px;
+  border:0;
+  border-radius:9px;
+  padding:0 10px;
+  background:#f0f0f4;
+  color:#6a6f7d;
+  font-size:9px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.da-period-btn.active{
+  background:var(--purple);
+  color:white;
+}
+
+.da-period-dates{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.da-date{
+  width:128px;
+  height:31px;
+  border:1px solid #dedee6;
+  border-radius:9px;
+  padding:0 7px;
+  background:#fff;
+  font-size:9px;
+}
+
+.da-date-label{
+  font-size:8px;
+  color:var(--muted);
+}
+
+/* COMMON */
+
+.da-common{
+  margin-top:6px;
+}
+
+.da-kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:6px;
+}
+
+.da-kpi{
+  padding:12px;
+  min-height:75px;
+}
+
+.da-kpi-value{
+  font-size:23px;
+  font-weight:800;
+}
+
+.da-kpi-label{
+  margin-top:7px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-section{
+  margin-top:6px;
+  padding:12px;
+}
+
+.da-section-title{
+  font-size:14px;
+  font-weight:800;
+}
+
+.da-section-sub{
+  margin-top:4px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-change{
+  margin-top:9px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+}
+
+.da-change-item{
+  padding:9px;
+  border-radius:10px;
+  background:#f7f7fa;
+}
+
+.da-change-value{
+  font-size:15px;
+  font-weight:800;
+}
+
+.da-change-label{
+  margin-top:3px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+/* CHART */
+
+.da-chart-wrap{
+  margin-top:8px;
+  width:100%;
+}
+
+.da-chart{
+  width:100%;
+  display:block;
+}
+
+.da-chart-legend{
+  margin-top:5px;
+  display:flex;
+  gap:14px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-dot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  margin-right:4px;
+}
+
+.da-dot.actual{background:var(--purple)}
+.da-dot.sma{background:#4c5262}
+
+/* MAP */
+
+.da-map-page{
+  margin-top:6px;
+}
+
+.da-map-card{
+  padding:10px 11px;
+  overflow-x:auto;
+}
+
+.da-map-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:15px;
+  margin-bottom:8px;
+}
+
+.da-map-title{
+  font-size:17px;
+  font-weight:800;
+}
+
+.da-map-sub{
+  margin-top:3px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-map-score{
+  text-align:right;
+}
+
+.da-map-score-label{
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-map-score-value{
+  margin-top:2px;
+  font-size:25px;
+  font-weight:800;
+  color:var(--purple);
+}
+
+.da-average-table{
+  width:100%;
+  min-width:850px;
+  border-collapse:separate;
+  border-spacing:0 3px;
+  table-layout:fixed;
+}
+
+.da-average-table th{
+  padding:3px 6px;
+  text-align:left;
+  font-size:7px;
+  color:#858897;
+}
+
+.da-average-table th:nth-child(2),
+.da-average-table th:nth-child(3),
+.da-average-table th:nth-child(4){
+  text-align:center;
+}
+
+.da-average-row td{
+  height:31px;
+  padding:4px 6px;
+  background:#f8f8fa;
+  font-size:9px;
+}
+
+.da-average-name{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-weight:800;
+}
+
+.da-average-num,
+.da-average-grams,
+.da-average-points{
+  text-align:center;
+}
+
+.da-average-num,
+.da-average-points{
+  font-weight:800;
+}
+
+/* PORTION STRIPS */
+
+.da-portion-strip,
+.da-feed-strip{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:2px;
+}
+
+.da-portion-cell{
+  height:20px;
+}
+
+.da-feed-cell{
+  height:17px;
+}
+
+.da-portion-cell,
+.da-feed-cell{
+  position:relative;
+  overflow:hidden;
+  border-radius:4px;
+  background:#ececf1;
+}
+
+.da-portion-fill,
+.da-feed-fill{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+}
+
+.s2 .da-portion-fill,
+.s2 .da-feed-fill{background:var(--score-p2)}
+
+.s1 .da-portion-fill,
+.s1 .da-feed-fill{background:var(--score-p1)}
+
+.s0 .da-portion-fill,
+.s0 .da-feed-fill{background:var(--score-0)}
+
+.sm1 .da-portion-fill,
+.sm1 .da-feed-fill{background:var(--score-m1)}
+
+.sm2 .da-portion-fill,
+.sm2 .da-feed-fill{background:var(--score-m2)}
+
+/* MATRIX */
+
+.da-days-matrix-page{
+  margin-top:6px;
+}
+
+.da-matrix-card{
+  padding:9px;
+  overflow-x:auto;
+}
+
+.da-matrix-title{
+  font-size:16px;
+  font-weight:800;
+  margin-bottom:7px;
+}
+
+.da-matrix-table{
+  width:100%;
+  min-width:1120px;
+  border-collapse:collapse;
+  table-layout:fixed;
+}
+
+.da-matrix-table th{
+  height:35px;
+  padding:3px 2px;
+  border:1px solid #e4e4e9;
+  background:#f6f6f8;
+  text-align:center;
+  font-size:8px;
+}
+
+.da-matrix-table td{
+  height:29px;
+  padding:2px;
+  border:1px solid #e7e7eb;
+  text-align:center;
+  font-size:8px;
+}
+
+.da-matrix-day{width:40px}
+.da-matrix-date{width:70px}
+.da-matrix-dqs{width:50px;font-weight:800}
+.da-matrix-div{width:45px;font-weight:800}
+.da-matrix-cat{width:49px}
+
+.da-th-icon{
+  font-size:14px;
+}
+
+.da-th-name{
+  margin-top:2px;
+  font-size:6px;
+}
+
+.da-day-empty td{
+  background:#fafafa;
+  color:#bbb;
+}
+
+.cell-promote-zero{background:var(--yellow)!important}
+.cell-promote-low{background:var(--green-light)!important}
+.cell-question{background:var(--blue)!important}
+.cell-warning{background:var(--orange-soft)!important}
+.cell-bad{background:var(--orange)!important;font-weight:800}
+
+.cell-div0{background:#cfa9cf!important}
+.cell-div1{background:#e5d5df!important}
+.cell-div2{background:#eee8c7!important}
+.cell-div3{background:#cce7c5!important}
+.cell-div4{background:var(--green-bright)!important;font-weight:800}
+
+/* FEED */
+
+.da-feed{
+  margin-top:6px;
+  display:grid;
+  gap:6px;
+}
+
+.da-day-card{
+  overflow:hidden;
+}
+
+.da-day-head{
+  padding:9px 11px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.da-day-title{
+  font-size:12px;
+  font-weight:800;
+}
+
+.da-day-date{
+  margin-top:2px;
+  font-size:8px;
+  color:var(--muted);
+}
+
+.da-day-score{
+  padding:6px 8px;
+  border-radius:9px;
+  background:var(--purple-soft);
+  color:var(--purple);
+  font-size:11px;
+  font-weight:800;
+}
+
+.da-day-score.empty{
+  background:#f1f1f4;
+  color:#999;
+}
+
+.da-day-body{
+  padding:0 8px 8px;
+  display:grid;
+  gap:2px;
+}
+
+.da-feed-row{
+  display:grid;
+  grid-template-columns:125px 1fr 55px;
+  gap:5px;
+  align-items:center;
+  min-height:27px;
+}
+
+.da-feed-name{
+  display:flex;
+  gap:5px;
+  align-items:center;
+  font-size:9px;
+  font-weight:700;
+}
+
+.da-feed-portions{
+  text-align:right;
+  font-size:8px;
+  font-weight:800;
+}
+
+.da-diversity{
+  display:block;
+  font-size:6px;
+  color:var(--purple);
+}
+
+.da-footer{
+  padding:13px 5px 8px;
+  text-align:center;
+  font-size:8px;
+  color:#9a9daa;
+}
+
+@media(max-width:700px){
+
+  #dqs-admin-app{
+    padding:5px;
+  }
+
+  .da-tabs{
+    grid-template-columns:repeat(2,1fr);
+    min-height:82px;
+  }
+
+  .da-period{
+    display:block;
+  }
+
+  .da-period-dates{
+    margin-top:7px;
+  }
+
+  .da-kpis{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .da-change{
+    grid-template-columns:1fr;
+  }
+
+  .da-feed-row{
+    grid-template-columns:92px 1fr 47px;
+  }
+}
 </style>
 
-
 <script>
-const DA_API_URL='<REDACTED_LEGACY_APPS_SCRIPT_URL>';
-const DA_ADMIN_EMAIL_KEY='dqs_admin_email';
-const DA_DAY_COUNT=30;
+(function(){
 
+var API_URL='<REDACTED_LEGACY_APPS_SCRIPT_URL>';
 
-const DA_CATEGORIES=[
-{name:'Фрукты',icon:'🍏',bg:'var(--cat-green)',group:'healthy',scores:[2,2,2,1,0,0,0,-1],diversity:'self'},
-{name:'Овощи',icon:'🍆',bg:'var(--cat-green)',group:'healthy',scores:[2,2,2,1,0,0,0,-1],diversity:'self'},
-{name:'Зелень',icon:'🌿',bg:'var(--cat-green)',group:'healthy',scores:[2,2,2,1,0,0,0,-1],diversity:'self'},
-{name:'Мясо',icon:'🥩',bg:'var(--cat-rose)',group:'healthy',scores:[2,2,1,0,0,-1,-2,-2],diversity:'self'},
-{name:'Молочка',icon:'🥛',bg:'var(--cat-rose)',group:'healthy',scores:[2,2,1,0,-1,-2,-2,-2],diversity:'leader'},
-{name:'Сыры',icon:'🧀',bg:'var(--cat-yellow)',group:'healthy',scores:[2,0,-1,-2,-2,-2,-2,-2],diversity:'child'},
-{name:'Орехи',icon:'🥜',bg:'var(--cat-yellow)',group:'healthy',scores:[2,0,-1,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Масло',icon:'🧈',bg:'var(--cat-yellow)',group:'healthy',scores:[1,0,0,-1,-2,-2,-2,-2],diversity:'none'},
-{name:'ЦЗ',icon:'🌾',bg:'var(--cat-blue)',group:'healthy',scores:[2,2,1,0,-1,-1,-1,-2],diversity:'leader'},
-{name:'Бобовые',icon:'🌱',bg:'var(--cat-blue)',group:'healthy',scores:[2,2,1,0,-1,-1,-1,-2],diversity:'child'},
-{name:'Картофель',icon:'🥔',bg:'var(--cat-blue)',group:'healthy',scores:[2,2,1,0,-1,-1,-1,-2],diversity:'child'},
-{name:'Др. гарниры',icon:'🍚',bg:'var(--cat-blue)',group:'healthy',scores:[0,-1,-2,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Сладости',icon:'🍰',bg:'var(--cat-peach)',group:'unhealthy',scores:[-2,-2,-2,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Напитки',icon:'🥤',bg:'var(--cat-peach)',group:'unhealthy',scores:[-2,-2,-2,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Алкоголь',icon:'🍺',bg:'var(--cat-peach)',group:'unhealthy',scores:[-2,-2,-2,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Жареное',icon:'🍟',bg:'var(--cat-peach)',group:'unhealthy',scores:[-2,-2,-2,-2,-2,-2,-2,-2],diversity:'none'},
-{name:'Типа мясо',icon:'🌭',bg:'var(--cat-peach)',group:'unhealthy',scores:[-2,-2,-2,-2,-2,-2,-2,-2],diversity:'none'}
+var ADMIN_KEY='dqs_admin_email';
+
+var root=document.getElementById('dqs-admin-app');
+
+var adminEmail='';
+var users=[];
+var search='';
+var currentUser=null;
+
+var currentTab='common';
+var periodMode='all';
+var periodFrom='';
+var periodTo='';
+
+var CATS=[
+  {name:'Фрукты',short:'Фрукты',icon:'🍏',scores:[2,2,2,1,0,0,0,-1],approx:[120,120],unit:'г',promote:true},
+  {name:'Овощи',short:'Овощи',icon:'🍆',scores:[2,2,2,1,0,0,0,-1],approx:[120,120],unit:'г',promote:true},
+  {name:'Зелень',short:'Зелень',icon:'🌿',scores:[2,2,2,1,0,0,0,-1],approx:[10,30],unit:'г',promote:true},
+  {name:'Мясо',short:'Мясо',icon:'🥩',scores:[2,2,1,0,0,-1,-2,-2],approx:[120,120],unit:'г',promote:true},
+  {name:'Молочка',short:'Молочка',icon:'🥛',scores:[2,2,1,0,-1,-2,-2,-2],approx:[120,250],unit:'г/мл',promote:true},
+  {name:'Сыры',short:'Сыры',icon:'🧀',scores:[2,0,-1,-2,-2,-2,-2,-2],approx:[15,45],unit:'г',limited:true},
+  {name:'Орехи',short:'Орехи',icon:'🥜',scores:[2,0,-1,-2,-2,-2,-2,-2],approx:[10,10],unit:'г',nuts:true},
+  {name:'Масло',short:'Масло',icon:'🧈',scores:[1,0,0,-1,-2,-2,-2,-2],approx:[6,15],unit:'г',limited:true},
+  {name:'ЦЗ',short:'ЦЗ',icon:'🌾',scores:[2,2,1,0,-1,-1,-1,-2],approx:[120,180],unit:'г',promote:true},
+  {name:'Бобовые',short:'Бобовые',icon:'🌱',scores:[2,2,1,0,-1,-1,-1,-2],approx:[170,220],unit:'г',promote:true},
+  {name:'Картофель',short:'Картоф.',icon:'🥔',scores:[2,2,1,0,-1,-1,-1,-2],approx:[180,250],unit:'г',promote:true},
+  {name:'Др. гарниры',short:'Др. гар.',icon:'🍚',scores:[0,-1,-2,-2,-2,-2,-2,-2],approx:[120,180],unit:'г',limited:true},
+  {name:'Сладости',short:'Сладкое',icon:'🍰',scores:[-2,-2,-2,-2,-2,-2,-2,-2],approx:[30,120],unit:'г',harmful:true},
+  {name:'Напитки',short:'Напитки',icon:'🥤',scores:[-2,-2,-2,-2,-2,-2,-2,-2],approx:[200,500],unit:'мл',drinks:true},
+  {name:'Алкоголь',short:'Алко',icon:'🍺',scores:[-2,-2,-2,-2,-2,-2,-2,-2],approx:[8,8],unit:'г этанола',harmful:true},
+  {name:'Жареное',short:'Жареное',icon:'🍟',scores:[-2,-2,-2,-2,-2,-2,-2,-2],approx:[60,120],unit:'г',harmful:true},
+  {name:'Типа мясо',short:'Типа мясо',icon:'🌭',scores:[-2,-2,-2,-2,-2,-2,-2,-2],approx:[60,120],unit:'г',harmful:true}
 ];
 
+/* API */
 
-let daAdminEmail='',daUsers=[],daGlobalSummary=null,daFilter='all',daSearch='',daSort='activity',daScreen='users',daCurrentUser=null,daProfileTab='days',daAnalyticsTab='weeks',daExpandedDays={};
+function api(params){
 
+  return new Promise(function(resolve,reject){
 
-function daApi(params){return new Promise((resolve,reject)=>{const callback='dqsAdminCallback_'+Date.now()+'_'+Math.floor(Math.random()*100000),script=document.createElement('script');let finished=false;function cleanup(){try{delete window[callback]}catch(e){}if(script&&script.parentNode)script.parentNode.removeChild(script)}const timeout=setTimeout(()=>{if(finished)return;finished=true;cleanup();reject(new Error('Google не ответил'))},20000);window[callback]=data=>{if(finished)return;finished=true;clearTimeout(timeout);cleanup();resolve(data)};const query=new URLSearchParams({...params,callback,_:Date.now()});script.src=DA_API_URL+'?'+query.toString();script.onerror=()=>{if(finished)return;finished=true;clearTimeout(timeout);cleanup();reject(new Error('Ошибка связи с Google'))};document.body.appendChild(script)})}
+    var callback='dqsAdmin_'+Date.now()+'_'+Math.floor(Math.random()*100000);
+    var script=document.createElement('script');
+    var finished=false;
 
+    function clean(){
+      try{delete window[callback]}catch(e){}
+      if(script.parentNode){
+        script.parentNode.removeChild(script);
+      }
+    }
 
-function daShowLogin(error=''){document.getElementById('dqs-admin-app').innerHTML=`<div class="da-card da-login"><h1 class="da-title">DQS — Админ-панель</h1><div class="da-subtitle">Введите email администратора.</div><input id="da-login-email" class="da-login-input" type="email" autocomplete="email" placeholder="email" value="${daEscape(localStorage.getItem(DA_ADMIN_EMAIL_KEY)||'')}"><button class="da-btn" onclick="daLogin()">Войти</button>${error?`<div class="da-error">${daEscape(error)}</div>`:''}</div>`}
-async function daLogin(){const input=document.getElementById('da-login-email'),email=String(input?input.value:'').trim().toLowerCase();if(!email){daShowLogin('Введите email');return}daShowLoading('Проверяю доступ...');try{const result=await daApi({action:'adminLogin',email});if(!result.ok){daShowLogin(result.error||'Нет доступа');return}daAdminEmail=email;localStorage.setItem(DA_ADMIN_EMAIL_KEY,email);await daLoadUsers()}catch(error){daShowLogin(error.message)}}
-function daLogout(){localStorage.removeItem(DA_ADMIN_EMAIL_KEY);daAdminEmail='';daUsers=[];daCurrentUser=null;daShowLogin()}
+    var timer=setTimeout(function(){
+      if(finished)return;
+      finished=true;
+      clean();
+      reject(new Error('Google не ответил'));
+    },20000);
 
+    window[callback]=function(data){
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      clean();
+      resolve(data);
+    };
 
-async function daLoadUsers(){daShowLoading('Загружаю пользователей...');try{const result=await daApi({action:'adminListUsers',email:daAdminEmail});if(!result.ok){if(result.error==='ACCESS_DENIED'){daLogout();return}throw new Error(result.error||'Не удалось загрузить пользователей')}daUsers=Array.isArray(result.users)?result.users:[];daGlobalSummary=result.summary||{total:daUsers.length,active3Days:0,completed30:0};daScreen='users';daRenderUsersScreen()}catch(error){document.getElementById('dqs-admin-app').innerHTML=`<div class="da-card da-login"><h1 class="da-title">Ошибка</h1><div class="da-subtitle">${daEscape(error.message)}</div><button class="da-btn" style="margin-top:15px" onclick="daLoadUsers()">Повторить</button></div>`}}
+    var q=new URLSearchParams();
 
+    Object.keys(params).forEach(function(key){
+      q.set(key,params[key]);
+    });
 
-function daRenderUsersScreen(){daScreen='users';const filtered=daGetFilteredUsers(),summary=daGlobalSummary||{total:daUsers.length,active3Days:0,completed30:0};document.getElementById('dqs-admin-app').innerHTML=`${daRenderHeader('DQS — пользователи')}<div class="da-summary-grid">${daSummaryCard(summary.total||0,'Всего пользователей')}${daSummaryCard(summary.active3Days||0,'Активны за 3 дня')}${daSummaryCard(summary.completed30||0,'Заполнили день №30')}</div><div class="da-card da-controls"><input id="da-search" class="da-search" type="text" placeholder="Поиск по email" value="${daEscape(daSearch)}" oninput="daOnSearch(this.value)"><div class="da-filter-row">${daFilterButton('all','Все')}${daFilterButton('active','Активные')}${daFilterButton('inactive','Не заполняли 3+ дня')}${daFilterButton('completed','30 дней')}</div><div class="da-sort-row"><div class="da-sort-label">Найдено: ${filtered.length}</div><select class="da-select" onchange="daSetSort(this.value)"><option value="activity" ${daSort==='activity'?'selected':''}>Последняя активность</option><option value="start" ${daSort==='start'?'selected':''}>Дата старта</option><option value="filled" ${daSort==='filled'?'selected':''}>Заполнено дней</option><option value="dqs" ${daSort==='dqs'?'selected':''}>Средний DQS</option></select></div></div><div class="da-users">${filtered.length?filtered.map(daRenderUserCard).join(''):`<div class="da-card da-empty-state">Пользователи не найдены.</div>`}</div>${daRenderFooter()}`}
-function daSummaryCard(value,label){return `<div class="da-card da-summary-card"><div class="da-summary-value">${daEscape(value)}</div><div class="da-summary-label">${daEscape(label)}</div></div>`}
-function daFilterButton(value,label){return `<button class="da-filter-btn ${daFilter===value?'active':''}" onclick="daSetFilter('${value}')">${daEscape(label)}</button>`}
-function daRenderUserCard(user){let statusText='Нет данных',statusClass='da-status-inactive';if(user.completed){statusText='30 дней';statusClass='da-status-complete'}else if(user.active3Days){statusText='Активен';statusClass='da-status-active'}else if(Number(user.filledDays||0)>0){statusText='3+ дня без записей'}const progress=Math.min(100,Math.max(0,Number(user.filledDays||0)/DA_DAY_COUNT*100));return `<div class="da-card da-user-card" onclick="daOpenUser('${daJs(user.email)}')"><div class="da-user-top"><div class="da-user-email">${daEscape(user.email)}</div><div class="da-user-status ${statusClass}">${statusText}</div></div><div class="da-user-grid">${daMiniStat(user.startDate?daFormatDateShort(user.startDate):'—','Старт')}${daMiniStat(`${user.filledDays||0} / ${DA_DAY_COUNT}`,'Заполнено')}${daMiniStat(daNullableScore(user.averageDqs),'Средний DQS')}${daMiniStat(daNullableScore(user.last7AverageDqs),'Последние 7')}</div><div class="da-progress"><div class="da-progress-fill" style="width:${progress}%"></div></div></div>`}
-function daMiniStat(value,label){return `<div class="da-mini-stat"><div class="da-mini-stat-value">${daEscape(value)}</div><div class="da-mini-stat-label">${daEscape(label)}</div></div>`}
-function daOnSearch(value){daSearch=String(value||'').trim().toLowerCase();daRenderUsersScreen();requestAnimationFrame(()=>{const input=document.getElementById('da-search');if(input){input.focus();const len=input.value.length;input.setSelectionRange(len,len)}})}
-function daSetFilter(value){daFilter=value;daRenderUsersScreen()}
-function daSetSort(value){daSort=value;daRenderUsersScreen()}
-function daGetFilteredUsers(){let users=daUsers.slice();if(daSearch)users=users.filter(user=>String(user.email||'').toLowerCase().includes(daSearch));if(daFilter==='active')users=users.filter(user=>user.active3Days);if(daFilter==='inactive')users=users.filter(user=>Number(user.filledDays||0)>0&&!user.active3Days&&!user.completed);if(daFilter==='completed')users=users.filter(user=>user.completed);users.sort((a,b)=>{if(daSort==='start')return String(b.startDate||'').localeCompare(String(a.startDate||''));if(daSort==='filled')return Number(b.filledDays||0)-Number(a.filledDays||0);if(daSort==='dqs')return Number(b.averageDqs??-99999)-Number(a.averageDqs??-99999);return daTimestamp(b.updatedAt)-daTimestamp(a.updatedAt)});return users}
+    q.set('callback',callback);
+    q.set('_',Date.now());
 
+    script.src=API_URL+'?'+q.toString();
 
-async function daOpenUser(email){daShowLoading('Загружаю данные клиента...');try{const result=await daApi({action:'adminGetUser',adminEmail:daAdminEmail,userEmail:email});if(!result.ok)throw new Error(result.error||'Не удалось загрузить пользователя');daCurrentUser=result.user;daCurrentUser.days=Array.isArray(daCurrentUser.days)?daCurrentUser.days:new Array(DA_DAY_COUNT).fill(null);daScreen='profile';daProfileTab='days';daAnalyticsTab='weeks';daExpandedDays={};daRenderProfile()}catch(error){alert(error.message);daRenderUsersScreen()}}
-function daRenderProfile(){if(!daCurrentUser){daRenderUsersScreen();return}const computed=daComputeUserAnalytics(daCurrentUser);document.getElementById('dqs-admin-app').innerHTML=`${daRenderHeader('DQS — клиент')}<div class="da-card da-profile-top"><button class="da-back" onclick="daBackToUsers()">← Назад</button><div class="da-profile-email">${daEscape(daCurrentUser.email)}</div><div class="da-profile-stats">${daProfileStat(daCurrentUser.startDate?daFormatDateShort(daCurrentUser.startDate):'—','Старт')}${daProfileStat(`${computed.filledDays} / ${DA_DAY_COUNT}`,'Заполнено')}${daProfileStat(computed.lastFilledDay?`№${computed.lastFilledDay}`:'—','Последний день')}${daProfileStat(daNullableScore(computed.averageDqs),'Средний DQS')}${daProfileStat(daNullableScore(computed.last7AverageDqs),'Последние 7')}</div></div><div class="da-tabs"><button class="da-tab ${daProfileTab==='days'?'active':''}" onclick="daSetProfileTab('days')">Дни</button><button class="da-tab ${daProfileTab==='analytics'?'active':''}" onclick="daSetProfileTab('analytics')">Аналитика</button></div>${daProfileTab==='days'?daRenderDays(computed):daRenderAnalytics(computed)}${daRenderFooter()}`}
-function daProfileStat(value,label){return `<div class="da-profile-stat"><div class="da-profile-stat-value">${daEscape(value)}</div><div class="da-profile-stat-label">${daEscape(label)}</div></div>`}
-function daBackToUsers(){daCurrentUser=null;daScreen='users';daRenderUsersScreen()}
-function daSetProfileTab(tab){daProfileTab=tab;daRenderProfile();window.scrollTo(0,0)}
+    script.onerror=function(){
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      clean();
+      reject(new Error('Ошибка связи с Google'));
+    };
 
+    document.body.appendChild(script);
 
-function daRenderDays(){let html='<div class="da-days">';for(let i=0;i<DA_DAY_COUNT;i++)html+=daRenderDayCard(i+1,daCurrentUser.days[i]);return html+'</div>'}
-function daRenderDayCard(dayNumber,day){const filled=daIsFilledDay(day),date=daCurrentUser.startDate?daAddDays(daCurrentUser.startDate,dayNumber-1):'';if(!filled)return `<div class="da-card da-day-card"><div class="da-day-head"><div><div class="da-day-title">День №${dayNumber}</div><div class="da-day-date">${date?daFormatDateLong(date):''}</div></div><div class="da-day-dqs da-day-empty">Не заполнено</div></div></div>`;const total=daCalcDayTotal(day),healthy=daCalcGroupTotal(day,'healthy'),unhealthy=daCalcGroupTotal(day,'unhealthy'),expanded=!!daExpandedDays[dayNumber];let cats='';for(let i=0;i<DA_CATEGORIES.length;i++){const cat=DA_CATEGORIES[i],portions=Number(day.p[i]||0),score=daCalcCategoryTotal(day,i);let diversityText='';if((cat.diversity==='self'||cat.diversity==='leader')&&day.d&&day.d[i]===true)diversityText=' · +1 разн.';cats+=`<div class="da-compact-cat ${portions===0&&!diversityText?'da-compact-zero':''}" style="background:${cat.bg}"><div class="da-compact-cat-left"><span>${cat.icon}</span><span class="da-compact-cat-name">${daEscape(cat.name)}</span></div><div class="da-compact-cat-right">${daFormatPortion(portions)} порц. · ${daFormatSigned(score)}${diversityText}</div></div>`}return `<div class="da-card da-day-card"><div class="da-day-head"><div><div class="da-day-title">День №${dayNumber}</div><div class="da-day-date">${date?daFormatDateLong(date):''}</div></div><div class="da-day-dqs">DQS ${daFormatScore(total)}</div></div><div class="da-day-summary"><div class="da-day-summary-box">Баллы за здоровые категории<strong>${daFormatSigned(healthy)}</strong></div><div class="da-day-summary-box">Баллы за нездоровые категории<strong>${daFormatSigned(unhealthy)}</strong></div></div><div class="da-compact-cats">${cats}</div>${expanded?daRenderMatrix(day):''}<button class="da-day-more" onclick="daToggleDay(${dayNumber})">${expanded?'Скрыть матрицу':'Подробнее: матрица #1–#8'}</button></div>`}
-function daToggleDay(dayNumber){daExpandedDays[dayNumber]=!daExpandedDays[dayNumber];daRenderProfile()}
+  });
+}
 
+/* LOGIN */
 
-function daRenderMatrix(day){let header='<tr><th class="da-icon-col"></th>';for(let i=1;i<=8;i++)header+=`<th>#${i}</th>`;header+='</tr>';let rows='';for(let i=0;i<DA_CATEGORIES.length;i++){const cat=DA_CATEGORIES[i],portions=Math.max(0,Number(day.p[i]||0)),whole=Math.floor(portions),fraction=Math.round((portions-whole)*2)/2;let cells='';for(let position=1;position<=8;position++){const score=daGetStepScore(i,position);let active='';if(position<=whole)active='full';else if(position===whole+1&&fraction>0)active='half';if(whole>=8&&position===8)active='full';cells+=`<td class="da-score-cell ${daScoreClass(score)} ${active}"><span>${score>0?'+'+score:score}</span></td>`}rows+=`<tr><td><div class="da-matrix-icon" style="background:${cat.bg}" title="${daEscape(cat.name)}">${cat.icon}</div></td>${cells}</tr>`}return `<div class="da-matrix-wrap"><table class="da-matrix"><thead>${header}</thead><tbody>${rows}</tbody></table></div>`}
+function showLogin(error){
 
+  root.innerHTML=
+    '<div class="da-card da-login">'+
+      '<div class="da-login-title">DQS — админка</div>'+
+      '<div class="da-login-sub">Введите email администратора.</div>'+
+      '<input id="login-email" class="da-input" type="email" placeholder="Email" value="'+esc(localStorage.getItem(ADMIN_KEY)||'')+'">'+
+      '<button class="da-primary" onclick="DQSADM.login()">Войти</button>'+
+      (error?'<div class="da-error">'+esc(error)+'</div>':'')+
+    '</div>';
+}
 
-function daRenderAnalytics(computed){return `<div class="da-analytics"><div class="da-analytics-tabs"><button class="da-analytics-tab ${daAnalyticsTab==='weeks'?'active':''}" onclick="daSetAnalyticsTab('weeks')">Недели</button><button class="da-analytics-tab ${daAnalyticsTab==='all'?'active':''}" onclick="daSetAnalyticsTab('all')">Всё время</button></div>${daAnalyticsTab==='weeks'?daRenderWeeks(computed):daRenderAllTime(computed)}</div>`}
-function daSetAnalyticsTab(tab){daAnalyticsTab=tab;daRenderProfile()}
-function daRenderWeeks(computed){let cards='';computed.weeks.forEach(week=>cards+=daRenderWeekCard(week));return `<div class="da-card da-section"><div class="da-section-title">Статистика по неделям</div><div class="da-week-list">${cards}</div></div><div class="da-card da-section"><div class="da-section-title">Средний DQS по неделям</div>${daRenderWeeklyBars(computed.weeks)}</div>`}
-function daRenderWeekCard(week){let cats='';week.categories.forEach((item,index)=>{const cat=DA_CATEGORIES[index];cats+=`<div class="da-cat-stat" style="background:${cat.bg}"><div class="da-cat-stat-name"><span>${cat.icon}</span><span>${daEscape(cat.name)}</span></div><div class="da-cat-stat-value">${daFormatScore(item.averagePortions)} порц.</div><div class="da-cat-stat-days">${item.daysWithCategory}/${week.filledDays||0} дней</div></div>`});return `<div class="da-week-card"><div class="da-week-head"><div class="da-week-title">${daEscape(week.label)}</div><div class="da-week-filled">Заполнено ${week.filledDays} из ${week.totalDays}</div></div><div class="da-week-grid">${daWeekStat(daNullableScore(week.averageDqs),'Средний DQS')}${daWeekStat(daNullableSigned(week.averageHealthy),'Здоровые категории')}${daWeekStat(daNullableSigned(week.averageUnhealthy),'Нездоровые категории')}</div><div class="da-cat-stats">${cats}</div></div>`}
-function daWeekStat(value,label){return `<div class="da-week-stat"><div class="da-week-stat-value">${daEscape(value)}</div><div class="da-week-stat-label">${daEscape(label)}</div></div>`}
-function daRenderAllTime(computed){return `<div class="da-card da-section"><div class="da-section-title">За всё время</div><div class="da-all-grid">${daAllStat(`${computed.filledDays} / ${DA_DAY_COUNT}`,'Заполнено')}${daAllStat(daNullableScore(computed.averageDqs),'Средний DQS')}${daAllStat(daNullableScore(computed.medianDqs),'Медиана DQS')}${daAllStat(computed.bestDay?`№${computed.bestDay.dayNumber} · ${daFormatScore(computed.bestDay.dqs)}`:'—','Лучший день')}${daAllStat(computed.worstDay?`№${computed.worstDay.dayNumber} · ${daFormatScore(computed.worstDay.dqs)}`:'—','Худший день')}${daAllStat(daNullableSigned(computed.averageHealthy),'Здоровые категории')}${daAllStat(daNullableSigned(computed.averageUnhealthy),'Нездоровые категории')}</div></div><div class="da-card da-section"><div class="da-section-title">Первые 7 vs последние 7 заполненных дней</div><div class="da-compare">${daCompareRow('DQS',computed.first7.averageDqs,computed.last7.averageDqs,false)}${daCompareRow('Здоровые категории',computed.first7.averageHealthy,computed.last7.averageHealthy,true)}${daCompareRow('Нездоровые категории',computed.first7.averageUnhealthy,computed.last7.averageUnhealthy,true)}</div></div><div class="da-card da-section"><div class="da-section-title">DQS по дням</div>${daRenderDqsChart(computed.dayEntries)}</div><div class="da-card da-section"><div class="da-section-title">Здоровые и нездоровые категории</div>${daRenderGroupChart(computed.dayEntries)}<div class="da-legend"><div class="da-legend-item"><span class="da-legend-dot healthy"></span>Баллы за здоровые категории</div><div class="da-legend-item"><span class="da-legend-dot unhealthy"></span>Баллы за нездоровые категории</div></div></div><div class="da-card da-section"><div class="da-section-title">Категории за всё время</div><div class="da-cat-stats">${daRenderAllCategoryStats(computed)}</div></div>`}
-function daAllStat(value,label){return `<div class="da-all-stat"><div class="da-all-value">${daEscape(value)}</div><div class="da-all-label">${daEscape(label)}</div></div>`}
-function daCompareRow(label,first,last,signed){return `<div class="da-compare-row"><div class="da-compare-label">${daEscape(label)}</div><div class="da-compare-value">${first===null?'—':signed?daFormatSigned(first):daFormatScore(first)}</div><div class="da-arrow">→</div><div class="da-compare-value">${last===null?'—':signed?daFormatSigned(last):daFormatScore(last)}</div></div>`}
-function daRenderAllCategoryStats(computed){let html='';computed.categories.forEach((item,index)=>{const cat=DA_CATEGORIES[index];html+=`<div class="da-cat-stat" style="background:${cat.bg}"><div class="da-cat-stat-name"><span>${cat.icon}</span><span>${daEscape(cat.name)}</span></div><div class="da-cat-stat-value">${daFormatScore(item.averagePortions)} порц.</div><div class="da-cat-stat-days">${item.daysWithCategory}/${computed.filledDays} дней</div></div>`});return html}
+function loading(text){
+  root.innerHTML='<div class="da-card da-loading">'+esc(text)+'</div>';
+}
 
+async function login(){
 
-function daComputeUserAnalytics(user){const entries=[];for(let i=0;i<DA_DAY_COUNT;i++){const day=user.days[i];if(daIsFilledDay(day))entries.push({dayNumber:i+1,dqs:daCalcDayTotal(day),healthy:daCalcGroupTotal(day,'healthy'),unhealthy:daCalcGroupTotal(day,'unhealthy'),day})}const dqsValues=entries.map(e=>e.dqs),first7Entries=entries.slice(0,7),last7Entries=entries.slice(-7);let bestDay=null,worstDay=null;entries.forEach(entry=>{if(!bestDay||entry.dqs>bestDay.dqs)bestDay=entry;if(!worstDay||entry.dqs<worstDay.dqs)worstDay=entry});const weeks=[daBuildWeek(user,1,7,'Неделя 1 · дни 1–7'),daBuildWeek(user,8,14,'Неделя 2 · дни 8–14'),daBuildWeek(user,15,21,'Неделя 3 · дни 15–21'),daBuildWeek(user,22,28,'Неделя 4 · дни 22–28'),daBuildWeek(user,29,30,'Дни 29–30')];return {filledDays:entries.length,lastFilledDay:entries.length?entries[entries.length-1].dayNumber:0,averageDqs:daAverage(dqsValues),last7AverageDqs:daAverage(last7Entries.map(e=>e.dqs)),medianDqs:daMedian(dqsValues),averageHealthy:daAverage(entries.map(e=>e.healthy)),averageUnhealthy:daAverage(entries.map(e=>e.unhealthy)),bestDay,worstDay,first7:daPeriodSummary(first7Entries),last7:daPeriodSummary(last7Entries),weeks,categories:daBuildCategoryStats(entries),dayEntries:entries}}
-function daPeriodSummary(entries){return {averageDqs:daAverage(entries.map(e=>e.dqs)),averageHealthy:daAverage(entries.map(e=>e.healthy)),averageUnhealthy:daAverage(entries.map(e=>e.unhealthy))}}
-function daBuildWeek(user,startDay,endDay,label){const entries=[];for(let d=startDay;d<=endDay;d++){const day=user.days[d-1];if(daIsFilledDay(day))entries.push({dayNumber:d,day,dqs:daCalcDayTotal(day),healthy:daCalcGroupTotal(day,'healthy'),unhealthy:daCalcGroupTotal(day,'unhealthy')})}return {label,totalDays:endDay-startDay+1,filledDays:entries.length,averageDqs:daAverage(entries.map(e=>e.dqs)),averageHealthy:daAverage(entries.map(e=>e.healthy)),averageUnhealthy:daAverage(entries.map(e=>e.unhealthy)),categories:daBuildCategoryStats(entries)}}
-function daBuildCategoryStats(entries){const stats=[];for(let cat=0;cat<DA_CATEGORIES.length;cat++){let portionSum=0,daysWithCategory=0;entries.forEach(entry=>{const portions=Number(entry.day.p[cat]||0);portionSum+=portions;if(portions>0)daysWithCategory++});stats.push({averagePortions:entries.length?daRound1(portionSum/entries.length):0,daysWithCategory})}return stats}
-function daIsFilledDay(day){if(!day)return false;if(Array.isArray(day.p)&&day.p.some(v=>Number(v||0)>0))return true;if(Array.isArray(day.d)&&day.d.some(v=>v===true))return true;return false}
-function daGetStepScore(catIndex,position){const scores=DA_CATEGORIES[catIndex].scores;return position<=scores.length?scores[position-1]:scores[scores.length-1]}
-function daCalcPortionScore(catIndex,portions){portions=Math.max(0,Number(portions||0));const whole=Math.floor(portions+1e-9),fraction=Math.round((portions-whole)*2)/2;let total=0;for(let i=1;i<=whole;i++)total+=daGetStepScore(catIndex,i);if(fraction>0)total+=fraction*daGetStepScore(catIndex,whole+1);return daRound1(total)}
-function daCalcCategoryTotal(day,catIndex){let total=daCalcPortionScore(catIndex,day.p[catIndex]);if([0,1,2,3,4,8].includes(catIndex)&&Array.isArray(day.d)&&day.d[catIndex]===true)total+=1;return daRound1(total)}
-function daCalcDayTotal(day){let total=0;for(let i=0;i<DA_CATEGORIES.length;i++)total+=daCalcCategoryTotal(day,i);return daRound1(total)}
-function daCalcGroupTotal(day,group){let total=0;for(let i=0;i<DA_CATEGORIES.length;i++)if(DA_CATEGORIES[i].group===group)total+=daCalcCategoryTotal(day,i);return daRound1(total)}
+  var input=document.getElementById('login-email');
+  var email=String(input?input.value:'').trim().toLowerCase();
 
+  if(!email){
+    showLogin('Введите email');
+    return;
+  }
 
-function daRenderDqsChart(entries){if(!entries.length)return `<div class="da-chart-empty">Пока нет данных.</div>`;const width=760,height=250,padL=38,padR=12,padT=14,padB=28,values=entries.map(e=>e.dqs);let min=Math.min(...values),max=Math.max(...values);if(min===max){min-=1;max+=1}const margin=Math.max(1,(max-min)*.12);min-=margin;max+=margin;const x=day=>padL+(day-1)/29*(width-padL-padR),y=value=>padT+(max-value)/(max-min)*(height-padT-padB),points=entries.map(e=>x(e.dayNumber)+','+y(e.dqs)).join(' ');let circles='',xLabels='';entries.forEach(e=>circles+=`<circle cx="${x(e.dayNumber)}" cy="${y(e.dqs)}" r="3.3" fill="#6f3de8"><title>День ${e.dayNumber}: ${daFormatScore(e.dqs)}</title></circle>`);[1,5,10,15,20,25,30].forEach(day=>xLabels+=`<text x="${x(day)}" y="${height-8}" text-anchor="middle" font-size="9" fill="#8b8f9e">${day}</text>`);const yMid=(min+max)/2;return `<div class="da-chart"><svg class="da-chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none"><line x1="${padL}" x2="${width-padR}" y1="${y(max)}" y2="${y(max)}" stroke="#ececf2"/><line x1="${padL}" x2="${width-padR}" y1="${y(yMid)}" y2="${y(yMid)}" stroke="#ececf2"/><line x1="${padL}" x2="${width-padR}" y1="${y(min)}" y2="${y(min)}" stroke="#ececf2"/><text x="4" y="${y(max)+3}" font-size="9" fill="#8b8f9e">${daFormatScore(max)}</text><text x="4" y="${y(yMid)+3}" font-size="9" fill="#8b8f9e">${daFormatScore(yMid)}</text><text x="4" y="${y(min)+3}" font-size="9" fill="#8b8f9e">${daFormatScore(min)}</text><polyline points="${points}" fill="none" stroke="#6f3de8" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>${circles}${xLabels}</svg></div>`}
-function daRenderGroupChart(entries){if(!entries.length)return `<div class="da-chart-empty">Пока нет данных.</div>`;const width=760,height=260,padL=40,padR=12,padT=14,padB=28,allValues=[];entries.forEach(e=>allValues.push(e.healthy,e.unhealthy));let min=Math.min(0,...allValues),max=Math.max(0,...allValues);if(min===max){min-=1;max+=1}const margin=Math.max(1,(max-min)*.08);min-=margin;max+=margin;const x=day=>padL+(day-1)/29*(width-padL-padR),y=value=>padT+(max-value)/(max-min)*(height-padT-padB),healthyPoints=entries.map(e=>x(e.dayNumber)+','+y(e.healthy)).join(' '),unhealthyPoints=entries.map(e=>x(e.dayNumber)+','+y(e.unhealthy)).join(' ');let xLabels='';[1,5,10,15,20,25,30].forEach(day=>xLabels+=`<text x="${x(day)}" y="${height-8}" text-anchor="middle" font-size="9" fill="#8b8f9e">${day}</text>`);return `<div class="da-chart"><svg class="da-chart-svg" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">${min<=0&&max>=0?`<line x1="${padL}" x2="${width-padR}" y1="${y(0)}" y2="${y(0)}" stroke="#cfd1da" stroke-width="1.2"/>`:''}<polyline points="${healthyPoints}" fill="none" stroke="#65a95c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><polyline points="${unhealthyPoints}" fill="none" stroke="#d47c65" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${xLabels}</svg></div>`}
-function daRenderWeeklyBars(weeks){const valid=weeks.filter(w=>w.averageDqs!==null);if(!valid.length)return `<div class="da-chart-empty">Пока нет данных.</div>`;let max=Math.max(...valid.map(w=>w.averageDqs)),min=Math.min(...valid.map(w=>w.averageDqs));if(min>0)min=0;if(max<0)max=0;const range=Math.max(1,max-min);let html='';weeks.forEach(week=>{if(week.averageDqs===null){html+=`<div style="margin-bottom:8px;font-size:10px;color:#a0a4b1">${daEscape(week.label)} — нет данных</div>`;return}const width=Math.max(3,(week.averageDqs-min)/range*100);html+=`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:10px;font-size:10px;margin-bottom:4px"><span>${daEscape(week.label)}</span><strong>${daFormatScore(week.averageDqs)}</strong></div><div style="height:8px;background:#ededf2;border-radius:99px;overflow:hidden"><div style="width:${width}%;height:100%;background:#6f3de8;border-radius:99px"></div></div></div>`});return html}
+  loading('Проверяю доступ...');
 
+  try{
 
-function daRenderHeader(title){return `<div class="da-header"><div class="da-card da-header-card"><div class="da-header-left"><div class="da-header-title">${daEscape(title)}</div><div class="da-header-email">${daEscape(daAdminEmail)}</div></div><div class="da-header-actions">${daScreen==='users'?`<button class="da-btn-light" onclick="daLoadUsers()">Обновить</button>`:''}<button class="da-link-btn" onclick="daLogout()">Выйти</button></div></div></div>`}
-function daRenderFooter(){return `<div class="da-footer">DQS Admin · © ${new Date().getFullYear()} Сергей Воронцов</div>`}
-function daShowLoading(text){document.getElementById('dqs-admin-app').innerHTML=`<div class="da-card da-loading">${daEscape(text)}</div>`}
-function daFormatScore(value){return daRound1(Number(value||0)).toFixed(1).replace('.',',')}
-function daFormatSigned(value){const num=daRound1(Number(value||0)),text=num.toFixed(1).replace('.',',');return num>0?'+'+text:text}
-function daNullableScore(value){return value===null||typeof value==='undefined'?'—':daFormatScore(value)}
-function daNullableSigned(value){return value===null||typeof value==='undefined'?'—':daFormatSigned(value)}
-function daFormatPortion(value){const num=Number(value||0);return Number.isInteger(num)?String(num):String(num).replace('.',',')}
-function daScoreClass(score){if(score===2)return's2';if(score===1)return's1';if(score===0)return's0';if(score===-1)return'sm1';return'sm2'}
-function daFormatDateShort(dateString){const date=daParseDate(dateString);return date?date.toLocaleDateString('ru-RU',{day:'numeric',month:'short'}):'—'}
-function daFormatDateLong(dateString){const date=daParseDate(dateString);return date?date.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'}):''}
-function daParseDate(value){if(!value||!/^\d{4}-\d{2}-\d{2}$/.test(String(value)))return null;const p=String(value).split('-').map(Number);return new Date(p[0],p[1]-1,p[2])}
-function daAddDays(dateString,count){const date=daParseDate(dateString);if(!date)return'';date.setDate(date.getDate()+Number(count||0));return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0')}
-function daRound1(value){return Math.round((Number(value||0)+Number.EPSILON)*10)/10}
-function daAverage(values){if(!values||!values.length)return null;return daRound1(values.reduce((total,value)=>total+Number(value||0),0)/values.length)}
-function daMedian(values){if(!values||!values.length)return null;const sorted=values.slice().sort((a,b)=>a-b),middle=Math.floor(sorted.length/2);return sorted.length%2?daRound1(sorted[middle]):daRound1((sorted[middle-1]+sorted[middle])/2)}
-function daTimestamp(value){if(!value)return 0;const t=new Date(value).getTime();return Number.isFinite(t)?t:0}
-function daEscape(value){return String(value??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;')}
-function daJs(value){return String(value??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,'\\n').replace(/\r/g,'')}
+    var result=await api({
+      action:'adminLogin',
+      email:email
+    });
 
+    if(!result.ok){
+      showLogin(result.error||'Нет доступа');
+      return;
+    }
 
-(async function daInit(){const email=String(localStorage.getItem(DA_ADMIN_EMAIL_KEY)||'').trim().toLowerCase();if(!email){daShowLogin();return}daAdminEmail=email;daShowLoading('Проверяю доступ...');try{const login=await daApi({action:'adminLogin',email});if(!login.ok){localStorage.removeItem(DA_ADMIN_EMAIL_KEY);daAdminEmail='';daShowLogin(login.error||'Нет доступа');return}await daLoadUsers()}catch(error){daShowLogin(error.message)}})();
+    adminEmail=email;
+    localStorage.setItem(ADMIN_KEY,email);
+
+    await loadUsers();
+
+  }catch(e){
+    showLogin(e.message);
+  }
+}
+
+function logout(){
+
+  localStorage.removeItem(ADMIN_KEY);
+
+  adminEmail='';
+  users=[];
+  currentUser=null;
+
+  showLogin('');
+}
+
+/* CLIENT LIST */
+
+async function loadUsers(){
+
+  loading('Загружаю клиентов...');
+
+  try{
+
+    var result=await api({
+      action:'adminListUsers',
+      email:adminEmail
+    });
+
+    if(!result.ok){
+      throw new Error(result.error||'Не удалось загрузить клиентов');
+    }
+
+    users=Array.isArray(result.users)?result.users:[];
+
+    renderUsers();
+
+  }catch(e){
+
+    root.innerHTML=
+      '<div class="da-card da-login">'+
+        '<div class="da-login-title">Ошибка</div>'+
+        '<div class="da-login-sub">'+esc(e.message)+'</div>'+
+        '<button class="da-primary" onclick="DQSADM.reload()">Повторить</button>'+
+      '</div>';
+  }
+}
+
+function getFilteredUsers(){
+
+  var q=String(search||'').trim().toLowerCase();
+
+  if(!q){
+    return users.slice();
+  }
+
+  return users.filter(function(user){
+    return String(user.email||'').toLowerCase().indexOf(q)!==-1;
+  });
+}
+
+function renderUsers(){
+
+  currentUser=null;
+
+  var found=getFilteredUsers();
+
+  var cards='';
+
+  for(var i=0;i<found.length;i++){
+    cards+=renderUserCard(found[i]);
+  }
+
+  if(!cards){
+    cards='<div class="da-card da-empty">Клиенты не найдены.</div>';
+  }
+
+  root.innerHTML=
+    header('DQS — клиенты')+
+    '<div class="da-card da-search-box">'+
+      '<div class="da-search-top">'+
+        '<div class="da-search-title">Клиенты</div>'+
+        '<div class="da-search-count">Всего: '+users.length+'</div>'+
+      '</div>'+
+      '<input id="search" class="da-search" placeholder="Поиск по email" value="'+esc(search)+'" oninput="DQSADM.search(this.value)">'+
+    '</div>'+
+    '<div class="da-results">'+cards+'</div>'+
+    footer();
+}
+
+function renderUserCard(user){
+
+  return '<div class="da-card da-user" onclick="DQSADM.openUser(\''+js(user.email)+'\')">'+
+    '<div class="da-user-email">'+esc(user.email)+'</div>'+
+    '<div class="da-user-stats">'+
+      userStat(user.startDate?dateShort(user.startDate):'—','Старт')+
+      userStat(Number(user.filledDays||0)+' / 30','Заполнено')+
+      userStat(nullableScore(user.averageDqs),'Средний DQS')+
+    '</div>'+
+  '</div>';
+}
+
+function userStat(value,label){
+
+  return '<div class="da-user-stat">'+
+    '<div class="da-user-value">'+esc(value)+'</div>'+
+    '<div class="da-user-label">'+esc(label)+'</div>'+
+  '</div>';
+}
+
+function onSearch(value){
+
+  search=String(value||'').trim().toLowerCase();
+
+  renderUsers();
+
+  setTimeout(function(){
+
+    var input=document.getElementById('search');
+
+    if(input){
+      input.focus();
+      input.setSelectionRange(input.value.length,input.value.length);
+    }
+
+  },0);
+}
+
+/* OPEN CLIENT */
+
+async function openUser(email){
+
+  loading('Загружаю DQS клиента...');
+
+  try{
+
+    var result=await api({
+      action:'adminGetUser',
+      adminEmail:adminEmail,
+      userEmail:email
+    });
+
+    if(!result.ok){
+      throw new Error(result.error||'Не удалось загрузить клиента');
+    }
+
+    currentUser=result.user||{};
+    currentUser.days=Array.isArray(currentUser.days)?currentUser.days:[];
+
+    currentTab='common';
+    periodMode='all';
+    periodFrom='';
+    periodTo='';
+
+    renderProfile();
+
+  }catch(e){
+
+    alert(e.message);
+    renderUsers();
+  }
+}
+
+/* PROFILE */
+
+function renderProfile(){
+
+  if(!currentUser){
+    renderUsers();
+    return;
+  }
+
+  root.innerHTML=
+    header('DQS — клиент')+
+
+    '<div class="da-card da-profile">'+
+      '<button class="da-back" onclick="DQSADM.back()">← Назад</button>'+
+      '<div class="da-profile-email">'+esc(currentUser.email||'')+'</div>'+
+      '<div class="da-profile-meta">'+
+        'Старт: '+(currentUser.startDate?dateLong(currentUser.startDate):'—')+
+        ' · Заполнено '+countAllFilled()+' из '+(currentUser.days.length||30)+
+      '</div>'+
+    '</div>'+
+
+    '<div class="da-tabs">'+
+      tabButton('common','Общие данные')+
+      tabButton('map','Карта')+
+      tabButton('matrix','По дням')+
+      tabButton('feed','Лента')+
+    '</div>'+
+
+    (
+      currentTab==='common' ? renderCommon() :
+      currentTab==='map' ? renderMap() :
+      currentTab==='matrix' ? renderMatrix() :
+      renderFeed()
+    )+
+
+    footer();
+}
+
+function tabButton(id,title){
+
+  return '<button class="da-tab '+(currentTab===id?'active':'')+'" onclick="DQSADM.tab(\''+id+'\')">'+
+    esc(title)+
+  '</button>';
+}
+
+/* PERIOD */
+
+function renderPeriod(){
+
+  var bounds=getAvailableBounds();
+  var current=currentPeriodBounds();
+
+  return '<div class="da-card da-period">'+
+
+    '<div class="da-period-fast">'+
+      periodButton('7','7 дней')+
+      periodButton('14','14 дней')+
+      periodButton('30','30 дней')+
+      periodButton('all','Всё время')+
+    '</div>'+
+
+    '<div class="da-period-dates">'+
+      '<span class="da-date-label">с</span>'+
+      '<input type="date" class="da-date" min="'+bounds.min+'" max="'+bounds.max+'" value="'+current.from+'" onchange="DQSADM.dateFrom(this.value)">'+
+      '<span class="da-date-label">по</span>'+
+      '<input type="date" class="da-date" min="'+bounds.min+'" max="'+bounds.max+'" value="'+current.to+'" onchange="DQSADM.dateTo(this.value)">'+
+    '</div>'+
+
+  '</div>';
+}
+
+function periodButton(mode,label){
+
+  return '<button class="da-period-btn '+(periodMode===mode?'active':'')+'" onclick="DQSADM.period(\''+mode+'\')">'+
+    esc(label)+
+  '</button>';
+}
+
+function setPeriod(mode){
+
+  periodMode=mode;
+  periodFrom='';
+  periodTo='';
+
+  renderProfile();
+}
+
+function setDateFrom(value){
+
+  periodMode='custom';
+  periodFrom=value;
+
+  if(periodTo && periodFrom>periodTo){
+    periodTo=periodFrom;
+  }
+
+  renderProfile();
+}
+
+function setDateTo(value){
+
+  periodMode='custom';
+  periodTo=value;
+
+  if(periodFrom && periodTo<periodFrom){
+    periodFrom=periodTo;
+  }
+
+  renderProfile();
+}
+
+function getAvailableBounds(){
+
+  var total=currentUser.days.length||30;
+  var first=currentUser.startDate||'';
+  var last=first?addDays(first,total-1):'';
+
+  return {
+    min:first,
+    max:last
+  };
+}
+
+function currentPeriodBounds(){
+
+  var bounds=getAvailableBounds();
+
+  if(!bounds.min){
+    return {from:'',to:''};
+  }
+
+  if(periodMode==='all'){
+    return {
+      from:bounds.min,
+      to:bounds.max
+    };
+  }
+
+  if(periodMode==='custom'){
+    return {
+      from:periodFrom||bounds.min,
+      to:periodTo||bounds.max
+    };
+  }
+
+  var count=Number(periodMode);
+
+  var end=getLastFilledDate()||bounds.max;
+  var start=addDays(end,-(count-1));
+
+  if(start<bounds.min){
+    start=bounds.min;
+  }
+
+  return {
+    from:start,
+    to:end
+  };
+}
+
+function getFilteredEntries(){
+
+  var range=currentPeriodBounds();
+  var entries=[];
+
+  for(var i=0;i<currentUser.days.length;i++){
+
+    var date=currentUser.startDate?addDays(currentUser.startDate,i):'';
+
+    if(date && range.from && date<range.from)continue;
+    if(date && range.to && date>range.to)continue;
+
+    entries.push({
+      dayNumber:i+1,
+      date:date,
+      day:currentUser.days[i],
+      filled:isFilled(currentUser.days[i])
+    });
+  }
+
+  return entries;
+}
+
+function getFilledEntries(){
+
+  return getFilteredEntries().filter(function(entry){
+    return entry.filled;
+  });
+}
+
+/* COMMON */
+
+function renderCommon(){
+
+  var entries=getFilteredEntries();
+
+  var filled=entries.filter(function(e){
+    return e.filled;
+  });
+
+  var dqsValues=filled.map(function(e){
+    return dayTotal(e.day);
+  });
+
+  var first7=filled.slice(0,7);
+  var last7=filled.slice(-7);
+
+  var firstAvg=average(first7.map(function(e){
+    return dayTotal(e.day);
+  }));
+
+  var lastAvg=average(last7.map(function(e){
+    return dayTotal(e.day);
+  }));
+
+  var change=(firstAvg!==null && lastAvg!==null)
+    ? round1(lastAvg-firstAvg)
+    : null;
+
+  return '<div class="da-common">'+
+
+    renderPeriod()+
+
+    '<div class="da-kpis">'+
+      kpi(entries.length,'Дней в периоде')+
+      kpi(filled.length+' / '+entries.length,'Заполнено')+
+      kpi(nullableScore(average(dqsValues)),'Средний DQS')+
+      kpi(nullableScore(lastAvg),'Последние 7 заполненных')+
+    '</div>'+
+
+    '<div class="da-card da-section">'+
+      '<div class="da-section-title">Изменение DQS</div>'+
+      '<div class="da-change">'+
+        changeItem(nullableScore(firstAvg),'Первые 7 заполненных')+
+        changeItem(nullableScore(lastAvg),'Последние 7 заполненных')+
+        changeItem(change===null?'—':signed(change),'Изменение')+
+      '</div>'+
+    '</div>'+
+
+    '<div class="da-card da-section">'+
+      '<div class="da-section-title">DQS по дням</div>'+
+      '<div class="da-section-sub">Фиолетовая линия — DQS за день. Тёмная — SMA по последним 7 заполненным дням.</div>'+
+      renderDqsChart(filled)+
+    '</div>'+
+
+  '</div>';
+}
+
+function kpi(value,label){
+
+  return '<div class="da-card da-kpi">'+
+    '<div class="da-kpi-value">'+esc(value)+'</div>'+
+    '<div class="da-kpi-label">'+esc(label)+'</div>'+
+  '</div>';
+}
+
+function changeItem(value,label){
+
+  return '<div class="da-change-item">'+
+    '<div class="da-change-value">'+esc(value)+'</div>'+
+    '<div class="da-change-label">'+esc(label)+'</div>'+
+  '</div>';
+}
+
+/* MAP */
+
+function renderMap(){
+
+  var filled=getFilledEntries();
+  var stats=categoryStats(filled);
+
+  var avgDqs=average(filled.map(function(e){
+    return dayTotal(e.day);
+  }));
+
+  return '<div class="da-map-page">'+
+
+    renderPeriod()+
+
+    '<div class="da-card da-map-card">'+
+
+      '<div class="da-map-header">'+
+        '<div>'+
+          '<div class="da-map-title">Среднее потребление</div>'+
+          '<div class="da-map-sub">Среднее количество порций в заполненный день за выбранный период.</div>'+
+        '</div>'+
+        '<div class="da-map-score">'+
+          '<div class="da-map-score-label">Средний DQS</div>'+
+          '<div class="da-map-score-value">'+nullableScore(avgDqs)+'</div>'+
+        '</div>'+
+      '</div>'+
+
+      renderAverageTable(stats)+
+
+    '</div>'+
+
+  '</div>';
+}
+
+function categoryStats(entries){
+
+  var result=[];
+
+  for(var c=0;c<CATS.length;c++){
+
+    var portions=0;
+    var points=0;
+
+    for(var i=0;i<entries.length;i++){
+
+      portions+=Number(
+        entries[i].day &&
+        entries[i].day.p &&
+        entries[i].day.p[c] || 0
+      );
+
+      points+=categoryTotal(entries[i].day,c);
+    }
+
+    result.push({
+      avgPortions:entries.length?round1(portions/entries.length):0,
+      avgPoints:entries.length?round1(points/entries.length):0
+    });
+  }
+
+  return result;
+}
+
+function renderAverageTable(stats){
+
+  var html=
+    '<table class="da-average-table">'+
+      '<colgroup>'+
+        '<col style="width:19%">'+
+        '<col style="width:9%">'+
+        '<col style="width:15%">'+
+        '<col style="width:9%">'+
+        '<col style="width:48%">'+
+      '</colgroup>'+
+      '<thead>'+
+        '<tr>'+
+          '<th>Категория</th>'+
+          '<th>Порции</th>'+
+          '<th>≈ граммы</th>'+
+          '<th>DQS</th>'+
+          '<th></th>'+
+        '</tr>'+
+      '</thead>'+
+      '<tbody>';
+
+  for(var i=0;i<CATS.length;i++){
+
+    var stat=stats[i];
+
+    html+=
+      '<tr class="da-average-row">'+
+        '<td>'+
+          '<div class="da-average-name">'+
+            '<span>'+CATS[i].icon+'</span>'+
+            '<span>'+esc(CATS[i].name)+'</span>'+
+          '</div>'+
+        '</td>'+
+        '<td class="da-average-num">'+formatPortion(stat.avgPortions)+'</td>'+
+        '<td class="da-average-grams">'+esc(physicalEquivalent(i,stat.avgPortions))+'</td>'+
+        '<td class="da-average-points">'+signed(stat.avgPoints)+'</td>'+
+        '<td>'+renderPortionStrip(i,stat.avgPortions,'average')+'</td>'+
+      '</tr>';
+  }
+
+  html+='</tbody></table>';
+
+  return html;
+}
+
+function physicalEquivalent(index,avg){
+
+  if(!avg){
+    return '0';
+  }
+
+  var cat=CATS[index];
+
+  var min=Math.round(avg*cat.approx[0]);
+  var max=Math.round(avg*cat.approx[1]);
+
+  if(min===max){
+    return '≈ '+min+' '+cat.unit;
+  }
+
+  return '≈ '+min+'–'+max+' '+cat.unit;
+}
+
+/* MATRIX */
+
+function renderMatrix(){
+
+  var entries=getFilteredEntries();
+
+  var html=
+    '<div class="da-days-matrix-page">'+
+      renderPeriod()+
+      '<div class="da-card da-matrix-card">'+
+        '<div class="da-matrix-title">Разбивка по дням</div>'+
+        '<table class="da-matrix-table">'+
+          '<thead>'+
+            '<tr>'+
+              '<th class="da-matrix-day">День</th>'+
+              '<th class="da-matrix-date">Дата</th>'+
+              '<th class="da-matrix-dqs">DQS</th>'+
+              '<th class="da-matrix-div">Разн.</th>';
+
+  for(var c=0;c<CATS.length;c++){
+
+    html+=
+      '<th class="da-matrix-cat" title="'+esc(CATS[c].name)+'">'+
+        '<div class="da-th-icon">'+CATS[c].icon+'</div>'+
+        '<div class="da-th-name">'+esc(CATS[c].short)+'</div>'+
+      '</th>';
+  }
+
+  html+='</tr></thead><tbody>';
+
+  for(var i=0;i<entries.length;i++){
+
+    var entry=entries[i];
+
+    if(!entry.filled){
+
+      html+=
+        '<tr class="da-day-empty">'+
+          '<td>'+entry.dayNumber+'</td>'+
+          '<td>'+dateTiny(entry.date)+'</td>'+
+          '<td></td>'+
+          '<td></td>';
+
+      for(var x=0;x<CATS.length;x++){
+        html+='<td></td>';
+      }
+
+      html+='</tr>';
+
+      continue;
+    }
+
+    var diversity=diversityCount(entry.day);
+
+    html+=
+      '<tr>'+
+        '<td>'+entry.dayNumber+'</td>'+
+        '<td>'+dateTiny(entry.date)+'</td>'+
+        '<td class="da-matrix-dqs">'+score(dayTotal(entry.day))+'</td>'+
+        '<td class="'+diversityCellClass(diversity)+'">'+diversity+'</td>';
+
+    for(var cat=0;cat<CATS.length;cat++){
+
+      var portions=Number(
+        entry.day &&
+        entry.day.p &&
+        entry.day.p[cat] || 0
+      );
+
+      html+=
+        '<td class="'+matrixCellClass(cat,portions)+'">'+
+          formatPortion(portions)+
+        '</td>';
+    }
+
+    html+='</tr>';
+  }
+
+  html+='</tbody></table></div></div>';
+
+  return html;
+}
+
+function matrixCellClass(index,portions){
+
+  var cat=CATS[index];
+
+  if(cat.promote){
+
+    if(portions===0){
+      return 'cell-promote-zero';
+    }
+
+    if(portions<=1.5){
+      return 'cell-promote-low';
+    }
+
+    return '';
+  }
+
+  if(cat.nuts){
+
+    if(portions===0 || portions>2){
+      return 'cell-question';
+    }
+
+    return '';
+  }
+
+  if(cat.drinks){
+
+    if(portions>3){
+      return 'cell-question';
+    }
+
+    if(portions>2.5){
+      return 'cell-warning';
+    }
+
+    return '';
+  }
+
+  if(cat.harmful){
+
+    if(portions>2.5){
+      return 'cell-bad';
+    }
+
+    return '';
+  }
+
+  if(cat.limited){
+
+    if(portionScore(index,portions)<=-2){
+      return 'cell-warning';
+    }
+  }
+
+  return '';
+}
+
+function diversityCellClass(value){
+
+  if(value<=0)return 'cell-div0';
+  if(value===1)return 'cell-div1';
+  if(value===2)return 'cell-div2';
+  if(value===3)return 'cell-div3';
+
+  return 'cell-div4';
+}
+
+/* FEED */
+
+function renderFeed(){
+
+  var entries=getFilteredEntries();
+
+  var html='<div>'+renderPeriod()+'<div class="da-feed">';
+
+  for(var i=0;i<entries.length;i++){
+    html+=renderFeedDay(entries[i]);
+  }
+
+  html+='</div></div>';
+
+  return html;
+}
+
+function renderFeedDay(entry){
+
+  if(!entry.filled){
+
+    return '<div class="da-card da-day-card">'+
+      '<div class="da-day-head">'+
+        '<div>'+
+          '<div class="da-day-title">День №'+entry.dayNumber+'</div>'+
+          '<div class="da-day-date">'+dateLong(entry.date)+'</div>'+
+        '</div>'+
+        '<div class="da-day-score empty">Не заполнено</div>'+
+      '</div>'+
+    '</div>';
+  }
+
+  var rows='';
+
+  for(var i=0;i<CATS.length;i++){
+
+    var portions=Number(
+      entry.day &&
+      entry.day.p &&
+      entry.day.p[i] || 0
+    );
+
+    rows+=
+      '<div class="da-feed-row">'+
+
+        '<div class="da-feed-name">'+
+          '<span>'+CATS[i].icon+'</span>'+
+          '<span>'+esc(CATS[i].name)+'</span>'+
+        '</div>'+
+
+        renderPortionStrip(i,portions,'feed')+
+
+        '<div class="da-feed-portions">'+
+          formatPortion(portions)+
+          (
+            hasDiversity(entry.day,i)
+            ? '<span class="da-diversity">+ разн.</span>'
+            : ''
+          )+
+        '</div>'+
+
+      '</div>';
+  }
+
+  return '<div class="da-card da-day-card">'+
+
+    '<div class="da-day-head">'+
+      '<div>'+
+        '<div class="da-day-title">День №'+entry.dayNumber+'</div>'+
+        '<div class="da-day-date">'+dateLong(entry.date)+'</div>'+
+      '</div>'+
+      '<div class="da-day-score">DQS '+score(dayTotal(entry.day))+'</div>'+
+    '</div>'+
+
+    '<div class="da-day-body">'+rows+'</div>'+
+
+  '</div>';
+}
+
+/* PORTION VISUAL */
+
+function renderPortionStrip(catIndex,portions,type){
+
+  var wrapper=type==='feed'?'da-feed-strip':'da-portion-strip';
+  var cellClass=type==='feed'?'da-feed-cell':'da-portion-cell';
+  var fillClass=type==='feed'?'da-feed-fill':'da-portion-fill';
+
+  var html='<div class="'+wrapper+'">';
+
+  var whole=Math.floor(portions);
+  var fraction=portions-whole;
+
+  for(var pos=1;pos<=8;pos++){
+
+    var fill=0;
+
+    if(pos<=whole){
+      fill=100;
+    }else if(pos===whole+1 && fraction>0){
+      fill=fraction*100;
+    }
+
+    var stepScore=getStepScore(catIndex,pos);
+
+    html+=
+      '<div class="'+cellClass+' '+scoreClass(stepScore)+'">'+
+        '<div class="'+fillClass+'" style="width:'+fill+'%"></div>'+
+      '</div>';
+  }
+
+  html+='</div>';
+
+  return html;
+}
+
+/* CHART */
+
+function renderDqsChart(entries){
+
+  if(!entries.length){
+    return '<div class="da-empty">Пока нет данных.</div>';
+  }
+
+  var series=[];
+
+  for(var i=0;i<entries.length;i++){
+
+    var start=Math.max(0,i-6);
+    var values=[];
+
+    for(var j=start;j<=i;j++){
+      values.push(dayTotal(entries[j].day));
+    }
+
+    series.push({
+      dayNumber:entries[i].dayNumber,
+      dqs:dayTotal(entries[i].day),
+      sma:average(values)
+    });
+  }
+
+  var W=900;
+  var H=250;
+  var PL=42;
+  var PR=15;
+  var PT=15;
+  var PB=29;
+
+  var all=[];
+
+  for(var n=0;n<series.length;n++){
+    all.push(series[n].dqs);
+    all.push(series[n].sma);
+  }
+
+  var min=Math.min.apply(null,all);
+  var max=Math.max.apply(null,all);
+
+  if(min===max){
+    min-=1;
+    max+=1;
+  }
+
+  var margin=Math.max(1,(max-min)*.12);
+
+  min-=margin;
+  max+=margin;
+
+  var firstDay=series[0].dayNumber;
+  var lastDay=series[series.length-1].dayNumber;
+
+  function x(day){
+
+    if(lastDay===firstDay){
+      return PL;
+    }
+
+    return PL+
+      ((day-firstDay)/(lastDay-firstDay))*
+      (W-PL-PR);
+  }
+
+  function y(value){
+
+    return PT+
+      ((max-value)/(max-min))*
+      (H-PT-PB);
+  }
+
+  function makePath(key){
+
+    var path='';
+
+    for(var i=0;i<series.length;i++){
+
+      path+=
+        (i?' L ':'M ')+
+        x(series[i].dayNumber).toFixed(1)+' '+
+        y(series[i][key]).toFixed(1);
+    }
+
+    return path;
+  }
+
+  var points='';
+
+  for(var p=0;p<series.length;p++){
+
+    points+=
+      '<circle cx="'+x(series[p].dayNumber)+'" cy="'+y(series[p].dqs)+'" r="3" fill="#7042e8">'+
+        '<title>День '+series[p].dayNumber+': '+score(series[p].dqs)+'</title>'+
+      '</circle>';
+  }
+
+  var mid=(min+max)/2;
+
+  return '<div class="da-chart-wrap">'+
+
+    '<svg class="da-chart" viewBox="0 0 '+W+' '+H+'">'+
+
+      '<line x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(max)+'" y2="'+y(max)+'" stroke="#ededf2"></line>'+
+      '<line x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(mid)+'" y2="'+y(mid)+'" stroke="#ededf2"></line>'+
+      '<line x1="'+PL+'" x2="'+(W-PR)+'" y1="'+y(min)+'" y2="'+y(min)+'" stroke="#ededf2"></line>'+
+
+      '<text x="4" y="'+(y(max)+3)+'" font-size="8" fill="#8b8f9e">'+score(max)+'</text>'+
+      '<text x="4" y="'+(y(mid)+3)+'" font-size="8" fill="#8b8f9e">'+score(mid)+'</text>'+
+      '<text x="4" y="'+(y(min)+3)+'" font-size="8" fill="#8b8f9e">'+score(min)+'</text>'+
+
+      '<path d="'+makePath('dqs')+'" fill="none" stroke="#7042e8" stroke-width="2"></path>'+
+      '<path d="'+makePath('sma')+'" fill="none" stroke="#4c5262" stroke-width="4"></path>'+
+
+      points+
+
+    '</svg>'+
+
+    '<div class="da-chart-legend">'+
+      '<span><i class="da-dot actual"></i>DQS</span>'+
+      '<span><i class="da-dot sma"></i>SMA 7</span>'+
+    '</div>'+
+
+  '</div>';
+}
+
+/* DQS CALCULATIONS */
+
+function countAllFilled(){
+
+  var count=0;
+
+  for(var i=0;i<currentUser.days.length;i++){
+
+    if(isFilled(currentUser.days[i])){
+      count++;
+    }
+  }
+
+  return count;
+}
+
+function isFilled(day){
+
+  if(!day){
+    return false;
+  }
+
+  if(Array.isArray(day.p)){
+
+    for(var i=0;i<day.p.length;i++){
+
+      if(Number(day.p[i]||0)>0){
+        return true;
+      }
+    }
+  }
+
+  if(Array.isArray(day.d)){
+
+    for(var j=0;j<day.d.length;j++){
+
+      if(day.d[j]===true){
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+function getLastFilledDate(){
+
+  if(!currentUser.startDate){
+    return '';
+  }
+
+  for(var i=currentUser.days.length-1;i>=0;i--){
+
+    if(isFilled(currentUser.days[i])){
+      return addDays(currentUser.startDate,i);
+    }
+  }
+
+  return '';
+}
+
+function getStepScore(catIndex,position){
+
+  var scores=CATS[catIndex].scores;
+
+  if(position<=scores.length){
+    return scores[position-1];
+  }
+
+  return scores[scores.length-1];
+}
+
+function portionScore(catIndex,portions){
+
+  portions=Math.max(0,Number(portions||0));
+
+  var whole=Math.floor(portions);
+  var fraction=portions-whole;
+
+  var total=0;
+
+  for(var position=1;position<=whole;position++){
+    total+=getStepScore(catIndex,position);
+  }
+
+  if(fraction>0){
+    total+=fraction*getStepScore(catIndex,whole+1);
+  }
+
+  return round1(total);
+}
+
+function hasDiversity(day,index){
+
+  if(!day || !Array.isArray(day.d)){
+    return false;
+  }
+
+  if([0,1,2,3,4,8].indexOf(index)===-1){
+    return false;
+  }
+
+  return day.d[index]===true;
+}
+
+function diversityCount(day){
+
+  if(!day || !Array.isArray(day.d)){
+    return 0;
+  }
+
+  var leaders=[0,1,2,3,4,8];
+  var total=0;
+
+  for(var i=0;i<leaders.length;i++){
+
+    if(day.d[leaders[i]]===true){
+      total++;
+    }
+  }
+
+  return total;
+}
+
+function categoryTotal(day,index){
+
+  var portions=
+    day &&
+    day.p
+    ? day.p[index]
+    : 0;
+
+  var total=portionScore(index,portions);
+
+  if(hasDiversity(day,index)){
+    total+=1;
+  }
+
+  return round1(total);
+}
+
+function dayTotal(day){
+
+  var total=0;
+
+  for(var i=0;i<CATS.length;i++){
+    total+=categoryTotal(day,i);
+  }
+
+  return round1(total);
+}
+
+function scoreClass(value){
+
+  if(value===2)return 's2';
+  if(value===1)return 's1';
+  if(value===0)return 's0';
+  if(value===-1)return 'sm1';
+
+  return 'sm2';
+}
+
+/* HEADER */
+
+function header(title){
+
+  return '<div class="da-header">'+
+
+    '<div class="da-card da-header-card">'+
+
+      '<div>'+
+        '<div class="da-header-title">'+esc(title)+'</div>'+
+        '<div class="da-header-email">'+esc(adminEmail)+'</div>'+
+      '</div>'+
+
+      '<div class="da-header-actions">'+
+        (
+          currentUser
+          ? ''
+          : '<button class="da-btn-light" onclick="DQSADM.reload()">Обновить</button>'
+        )+
+        '<button class="da-btn-link" onclick="DQSADM.logout()">Выйти</button>'+
+      '</div>'+
+
+    '</div>'+
+
+  '</div>';
+}
+
+function footer(){
+
+  return '<div class="da-footer">'+
+    'DQS Admin · © '+new Date().getFullYear()+' Сергей Воронцов'+
+  '</div>';
+}
+
+/* FORMAT */
+
+function average(values){
+
+  if(!values || !values.length){
+    return null;
+  }
+
+  var sum=0;
+
+  for(var i=0;i<values.length;i++){
+    sum+=Number(values[i]||0);
+  }
+
+  return round1(sum/values.length);
+}
+
+function round1(value){
+
+  return Math.round(
+    (Number(value||0)+Number.EPSILON)*10
+  )/10;
+}
+
+function score(value){
+
+  if(value===null || typeof value==='undefined'){
+    return '—';
+  }
+
+  return round1(value).toFixed(1).replace('.',',');
+}
+
+function nullableScore(value){
+
+  if(value===null || typeof value==='undefined'){
+    return '—';
+  }
+
+  return score(value);
+}
+
+function signed(value){
+
+  if(value===null || typeof value==='undefined'){
+    return '—';
+  }
+
+  var n=round1(value);
+
+  return n>0
+    ? '+'+score(n)
+    : score(n);
+}
+
+function formatPortion(value){
+
+  var n=round1(value);
+
+  if(Math.floor(n)===n){
+    return String(n);
+  }
+
+  return String(n).replace('.',',');
+}
+
+function parseDate(value){
+
+  if(!value){
+    return null;
+  }
+
+  var parts=String(value).split('-');
+
+  if(parts.length!==3){
+    return null;
+  }
+
+  return new Date(
+    Number(parts[0]),
+    Number(parts[1])-1,
+    Number(parts[2])
+  );
+}
+
+function addDays(value,days){
+
+  var date=parseDate(value);
+
+  if(!date){
+    return '';
+  }
+
+  date.setDate(
+    date.getDate()+Number(days||0)
+  );
+
+  return date.getFullYear()+
+    '-'+
+    String(date.getMonth()+1).padStart(2,'0')+
+    '-'+
+    String(date.getDate()).padStart(2,'0');
+}
+
+function dateShort(value){
+
+  var date=parseDate(value);
+
+  if(!date){
+    return '—';
+  }
+
+  return date.toLocaleDateString(
+    'ru-RU',
+    {
+      day:'numeric',
+      month:'short'
+    }
+  );
+}
+
+function dateLong(value){
+
+  var date=parseDate(value);
+
+  if(!date){
+    return '';
+  }
+
+  return date.toLocaleDateString(
+    'ru-RU',
+    {
+      day:'numeric',
+      month:'long',
+      year:'numeric'
+    }
+  );
+}
+
+function dateTiny(value){
+
+  var date=parseDate(value);
+
+  if(!date){
+    return '';
+  }
+
+  return date.toLocaleDateString(
+    'ru-RU',
+    {
+      day:'2-digit',
+      month:'2-digit'
+    }
+  );
+}
+
+function esc(value){
+
+  return String(
+    value===null ||
+    typeof value==='undefined'
+    ? ''
+    : value
+  )
+  .replace(/&/g,'&amp;')
+  .replace(/</g,'&lt;')
+  .replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;')
+  .replace(/'/g,'&#039;');
+}
+
+function js(value){
+
+  return String(value||'')
+  .replace(/\\/g,'\\\\')
+  .replace(/'/g,"\\'")
+  .replace(/\n/g,'\\n')
+  .replace(/\r/g,'');
+}
+
+/* PUBLIC */
+
+window.DQSADM={
+
+  login:login,
+  logout:logout,
+  reload:loadUsers,
+  search:onSearch,
+  openUser:openUser,
+
+  back:function(){
+
+    currentUser=null;
+    currentTab='common';
+
+    renderUsers();
+
+    window.scrollTo(0,0);
+  },
+
+  tab:function(value){
+
+    currentTab=value;
+
+    renderProfile();
+
+    window.scrollTo(0,0);
+  },
+
+  period:setPeriod,
+  dateFrom:setDateFrom,
+  dateTo:setDateTo
+};
+
+/* INIT */
+
+(async function(){
+
+  try{
+
+    var storedEmail=String(
+      localStorage.getItem(ADMIN_KEY)||''
+    )
+    .trim()
+    .toLowerCase();
+
+    if(!storedEmail){
+
+      showLogin('');
+
+      return;
+    }
+
+    adminEmail=storedEmail;
+
+    loading('Проверяю доступ...');
+
+    var loginResult=await api({
+      action:'adminLogin',
+      email:storedEmail
+    });
+
+    if(!loginResult.ok){
+
+      localStorage.removeItem(ADMIN_KEY);
+
+      adminEmail='';
+
+      showLogin(loginResult.error||'Нет доступа');
+
+      return;
+    }
+
+    await loadUsers();
+
+  }catch(e){
+
+    root.innerHTML=
+      '<div class="da-card da-login">'+
+        '<div class="da-login-title">Админка не загрузилась</div>'+
+        '<div class="da-error">'+esc(e.message)+'</div>'+
+      '</div>';
+  }
+
+})();
+
+})();
 </script>

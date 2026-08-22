@@ -1,4 +1,4 @@
-# Реестр Google-источников
+# Реестр источников legacy-приложений
 
 Проверено 22.08.2026. Даты изменения ниже получены из Google Drive.
 
@@ -18,3 +18,15 @@
 | [Силовые — база](https://docs.google.com/spreadsheets/d/1lcuFzG8T4aHhctCE5PXPjc3IjVnXhzUptrX_silrVIE/edit) | — | Сохранена только схема вкладок/заголовков |
 
 Google-файлы не удалялись и не изменялись.
+
+## Исходники, переданные владельцем 22.08.2026
+
+Эти файлы имеют приоритет над ранее экспортированными Google Docs для соответствующего
+frontend. Production URL и реальный admin-email обезличены при помещении в Git.
+
+| Исходник | SHA-256 присланного файла | Путь в репозитории |
+|---|---|---|
+| Клиент DQS | `613CD091616194124120441E2FECF6FC6B5A858E762551895E7D613B94488899` | `dqs/tilda/client-t123.html` |
+| Админка DQS | `EAB42A67B5321CC32657225B351A9CEDD1DAAC6291D332D40436E08053FC2BEE` | `dqs/tilda/admin-t123.html` |
+| Калькулятор метаболизма | `7212BBF7FCDE6DB5FBA863CA2BF694AA6CE0AB777F20F0A1A97EB3573A8E35DC` | `metabolism/tilda/client-t123.html` |
+| Силовые: клиент и тренерский режим | `6E46B15A26E128B3E9E5BD53F50D9E356650015159AD166C54EBD7EFC6D3B7A5` | `strength/tilda/client-t123.html` |

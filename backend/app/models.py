@@ -10,6 +10,7 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
+    Integer,
     Numeric,
     String,
     Text,
@@ -342,6 +343,76 @@ class UserMergeEvent(Base):
     from_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
     to_user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), index=True)
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class DqsState(TimestampMixin, Base):
+    __tablename__ = "dqs_states"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    start_date: Mapped[str | None] = mapped_column(String(10))
+    days: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    source: Mapped[str] = mapped_column(String(64), default="app", nullable=False)
+
+
+class StrengthState(TimestampMixin, Base):
+    __tablename__ = "strength_states"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    workout_types: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    hidden_exercises: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    workouts: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    source: Mapped[str] = mapped_column(String(64), default="app", nullable=False)
+
+
+class StrengthExercise(TimestampMixin, Base):
+    __tablename__ = "strength_exercises"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    code: Mapped[str] = mapped_column(String(128), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class MetabolismState(TimestampMixin, Base):
+    __tablename__ = "metabolism_states"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), unique=True, index=True
+    )
+    variants: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    active_variant: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    formula_version: Mapped[str] = mapped_column(
+        String(32), default="metabolism_v3", nullable=False
+    )
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    source: Mapped[str] = mapped_column(String(64), default="app", nullable=False)
+
+
+class AdminAppEdit(Base):
+    __tablename__ = "admin_app_edits"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    admin_username: Mapped[str] = mapped_column(String(255), nullable=False)
+    target_user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    app_code: Mapped[str] = mapped_column(String(32), nullable=False)
+    action: Mapped[str] = mapped_column(String(64), nullable=False)
+    details: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

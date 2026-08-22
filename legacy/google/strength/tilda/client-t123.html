@@ -1,0 +1,5845 @@
+<div id="strength-app">
+  <div style="padding:30px;text-align:center;font-family:Arial,sans-serif;color:#777;">
+    Загрузка…
+  </div>
+</div>
+
+<style>
+:root{
+  --st-text:#292733;
+  --st-muted:#858894;
+  --st-line:#dedfe6;
+  --st-bg:#f6f6f8;
+  --st-card:#ffffff;
+
+  --st-purple:#7042e8;
+  --st-purple-soft:#f0ebff;
+
+  --st-green:#e5f3e3;
+  --st-red:#fbe5e4;
+  --st-yellow:#f4c84f;
+
+  --st-plan-up:#dff1dc;
+  --st-plan-down:#fae5d5;
+
+  --ex1:#eef4ff;
+  --ex2:#f3efff;
+  --ex3:#edf7ef;
+  --ex4:#fff4e5;
+  --ex5:#fceef3;
+  --ex6:#edf8f7;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+#strength-app{
+  width:100%;
+  max-width:960px;
+  margin:0 auto;
+  padding:8px;
+  color:var(--st-text);
+  font-family:Arial,sans-serif;
+  font-size:14px;
+}
+
+#strength-app button,
+#strength-app input,
+#strength-app textarea,
+#strength-app select{
+  font-family:inherit;
+}
+
+#strength-app button{
+  cursor:pointer;
+}
+
+.st-card{
+  background:#fff;
+  border-radius:15px;
+  box-shadow:0 5px 18px rgba(30,30,55,.06);
+}
+
+.st-header{
+  padding:14px;
+}
+
+.st-top{
+  display:grid;
+  grid-template-columns:1fr 42px;
+  gap:10px;
+  align-items:center;
+}
+
+.st-title{
+  font-size:22px;
+  font-weight:800;
+}
+
+.st-profile{
+  width:42px;
+  height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:11px;
+  background:#efeff4;
+  text-decoration:none;
+}
+
+.st-profile svg{
+  width:21px;
+  height:21px;
+  stroke:#666a76;
+}
+
+.st-client-head{
+  margin-top:9px;
+  padding:10px 12px;
+  border-radius:10px;
+  background:#f5f4fa;
+}
+
+.st-client-name{
+  font-size:13px;
+  font-weight:800;
+}
+
+.st-client-email{
+  margin-top:3px;
+  font-size:18px;
+  line-height:1.2;
+  font-weight:800;
+  overflow-wrap:anywhere;
+  color:#514b60;
+}
+
+.st-back{
+  margin-top:8px;
+  min-height:34px;
+  padding:0 11px;
+  border:0;
+  border-radius:8px;
+  background:#efeff4;
+  color:#626674;
+  font-size:10px;
+  font-weight:800;
+}
+
+.st-main-tabs,
+.st-stat-tabs,
+.st-types{
+  margin-top:10px;
+  padding:4px;
+  display:grid;
+  gap:4px;
+  border-radius:11px;
+  background:#ededf2;
+}
+
+.st-main-tabs,
+.st-stat-tabs{
+  grid-template-columns:1fr 1fr;
+}
+
+.st-types{
+  grid-template-columns:repeat(3,1fr);
+}
+
+.st-main-tab,
+.st-stat-tab,
+.st-type{
+  min-height:38px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  color:#777a87;
+  font-size:11px;
+  font-weight:800;
+}
+
+.st-main-tab.active,
+.st-stat-tab.active,
+.st-type.active{
+  background:#fff;
+  color:var(--st-purple);
+  box-shadow:0 2px 6px rgba(0,0,0,.05);
+}
+
+/* ADMIN */
+
+.st-admin-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.st-add-user{
+  min-height:38px;
+  padding:0 13px;
+  border:0;
+  border-radius:9px;
+  background:var(--st-purple);
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+}
+
+.st-user-list{
+  margin-top:10px;
+  display:grid;
+  gap:8px;
+}
+
+.st-user-card{
+  width:100%;
+  padding:13px;
+  border:0;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 4px 14px rgba(30,30,55,.05);
+  text-align:left;
+}
+
+.st-user-card-name{
+  font-size:14px;
+  font-weight:800;
+}
+
+.st-user-card-email{
+  margin-top:3px;
+  font-size:13px;
+  color:#5f6270;
+  overflow-wrap:anywhere;
+}
+
+.st-user-card-meta{
+  margin-top:7px;
+  font-size:10px;
+  color:#8a8d97;
+}
+
+/* JOURNAL */
+
+.st-nav{
+  margin-top:10px;
+  display:grid;
+  grid-template-columns:42px 1fr 42px;
+  gap:8px;
+  align-items:center;
+}
+
+.st-arrow{
+  height:40px;
+  border:0;
+  border-radius:9px;
+  background:#efeff4;
+  color:#626572;
+  font-size:23px;
+}
+
+.st-nav-center{
+  text-align:center;
+}
+
+.st-nav-title{
+  font-size:17px;
+  font-weight:800;
+}
+
+.st-nav-sub{
+  margin-top:3px;
+  color:var(--st-muted);
+  font-size:10px;
+}
+
+.st-motivation{
+  margin-top:8px;
+  padding:9px 11px;
+  border-radius:9px;
+  background:#faf9ff;
+  color:#6d647e;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+}
+
+.st-actions{
+  margin-top:8px;
+  display:flex;
+  justify-content:space-between;
+  gap:7px;
+}
+
+.st-action-group{
+  display:flex;
+  gap:6px;
+}
+
+.st-action{
+  min-height:35px;
+  padding:0 12px;
+  border:0;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.st-manage{
+  background:#efeff4;
+  color:#626674;
+}
+
+.st-copy-plan{
+  background:#e9f2ff;
+  color:#536f9c;
+}
+
+.st-copy-fact{
+  background:var(--st-purple-soft);
+  color:var(--st-purple);
+}
+
+.st-action:disabled{
+  opacity:.35;
+  cursor:default;
+}
+
+.st-saving{
+  margin-top:6px;
+  text-align:right;
+  font-size:9px;
+  color:#8b8e98;
+}
+
+.st-saving.error{
+  color:#bd5959;
+}
+
+.st-days{
+  margin-top:11px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+
+.st-day-head{
+  padding:10px;
+  border-radius:11px;
+  background:#f1f1f4;
+}
+
+.st-day-head.current{
+  background:var(--st-purple-soft);
+}
+
+.st-day-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:7px;
+}
+
+.st-day-number{
+  font-size:14px;
+  font-weight:800;
+}
+
+.st-date-control{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.st-date-text{
+  color:#636672;
+  font-size:10px;
+}
+
+.st-date-text.empty{
+  color:#999ca6;
+}
+
+.st-date-button{
+  width:29px;
+  height:29px;
+  padding:0;
+  border:1px solid #d7d8e0;
+  border-radius:7px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.st-date-button svg{
+  width:15px;
+  height:15px;
+  stroke:#656975;
+}
+
+.st-hidden-date{
+  position:absolute;
+  width:1px;
+  height:1px;
+  opacity:0;
+}
+
+.st-weekday{
+  margin-top:5px;
+  color:#747783;
+  font-size:10px;
+  font-weight:700;
+}
+
+.st-day-state{
+  margin-top:2px;
+  color:var(--st-muted);
+  font-size:9px;
+}
+
+.st-ex-list{
+  margin-top:12px;
+  display:grid;
+  gap:14px;
+}
+
+.st-ex-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+  align-items:stretch;
+}
+
+.st-ex-day{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  border-radius:11px;
+  overflow:visible;
+  border-bottom:3px solid rgba(65,66,82,.14);
+}
+
+.ex0{background:var(--ex1);}
+.ex1{background:var(--ex2);}
+.ex2{background:var(--ex3);}
+.ex3{background:var(--ex4);}
+.ex4{background:var(--ex5);}
+.ex5{background:var(--ex6);}
+
+.st-ex-tools{
+  min-height:28px;
+  padding:5px 8px 0;
+  display:flex;
+  justify-content:flex-end;
+}
+
+.st-hide{
+  padding:0;
+  border:0;
+  background:transparent;
+  color:#858995;
+  font-size:9px;
+  font-weight:700;
+}
+
+.st-ex-head{
+  min-height:43px;
+  padding:4px 9px 8px;
+  display:flex;
+  align-items:center;
+  border-bottom:1px solid rgba(70,70,90,.09);
+}
+
+.st-ex-name{
+  width:100%;
+  border:0;
+  outline:none;
+  background:transparent;
+  color:var(--st-text);
+  font-size:14px;
+  line-height:1.2;
+  font-weight:800;
+}
+
+.st-groups,
+.st-set-head,
+.st-set{
+  display:grid;
+  grid-template-columns:
+    22px
+    46px 46px
+    10px
+    46px 46px 46px;
+  gap:2px;
+  justify-content:center;
+}
+
+.st-groups{
+  min-height:28px;
+  align-items:end;
+  padding:3px 4px 1px;
+  background:rgba(255,255,255,.48);
+}
+
+.st-group-plan{
+  grid-column:1 / 4;
+  text-align:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.st-group-fact{
+  grid-column:5 / 8;
+  text-align:center;
+  font-size:9px;
+  font-weight:800;
+}
+
+.st-set-head{
+  min-height:28px;
+  align-items:center;
+  padding:2px 4px 4px;
+  border-bottom:1px solid rgba(70,70,90,.08);
+  background:rgba(255,255,255,.48);
+  color:#838793;
+  font-size:8px;
+  text-align:center;
+}
+
+.st-divider{
+  width:1px;
+  height:22px;
+  margin:auto;
+  background:rgba(70,70,90,.25);
+}
+
+.st-set{
+  min-height:45px;
+  align-items:center;
+  padding:5px 4px;
+  border-bottom:1px solid rgba(70,70,90,.06);
+  background:rgba(255,255,255,.27);
+}
+
+.st-set-num{
+  text-align:center;
+  color:#828691;
+  font-size:10px;
+  font-weight:800;
+}
+
+.st-input{
+  width:100%;
+  min-width:0;
+  height:32px;
+  padding:0 2px;
+  border:1px solid #d6d7df;
+  border-radius:7px;
+  outline:none;
+  background:#fff;
+  color:var(--st-text);
+  text-align:center;
+  font-size:12px;
+  font-weight:800;
+}
+
+.st-input:focus{
+  border-color:#a88cea;
+}
+
+.plan-up{
+  background:var(--st-plan-up)!important;
+}
+
+.plan-down{
+  background:var(--st-plan-down)!important;
+}
+
+.st-rpe-button{
+  width:100%;
+  height:32px;
+  padding:0;
+  border:1px solid #d6d7df;
+  border-radius:7px;
+  background:#fff;
+  color:#41434d;
+  font-size:11px;
+  font-weight:800;
+}
+
+.rpe1{background:#edf3fa!important;}
+.rpe2{background:#eaf3f5!important;}
+.rpe3{background:#e7f3ed!important;}
+.rpe4{background:#e4f2e5!important;}
+.rpe5{background:#e5f1df!important;}
+.rpe6{background:#dff0d9!important;}
+.rpe7{background:#edf1cd!important;}
+.rpe8{background:#faefc8!important;}
+.rpe9{background:#f8dfc9!important;}
+.rpe10{background:#f3d8d6!important;}
+
+.st-rpe-floating{
+  position:fixed;
+  z-index:2147483000;
+  width:70px;
+  max-height:370px;
+  overflow:auto;
+  padding:4px;
+  display:grid;
+  gap:3px;
+  border:1px solid #dddde5;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:0 9px 28px rgba(25,25,45,.22);
+}
+
+.st-rpe-option{
+  min-height:29px;
+  border:0;
+  border-radius:7px;
+  font-size:12px;
+  font-weight:800;
+}
+
+.st-note{
+  margin-top:auto;
+  min-height:47px;
+  padding:7px 8px;
+  display:grid;
+  grid-template-columns:23px 1fr 13px;
+  gap:7px;
+  align-items:center;
+  border-top:1px solid rgba(70,70,90,.11);
+  border-radius:0 0 10px 10px;
+  background:rgba(255,255,255,.67);
+  cursor:pointer;
+}
+
+.st-note.has-note{
+  background:var(--st-red);
+}
+
+.st-note-symbol{
+  width:23px;
+  height:23px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:7px;
+  background:#eeeaf9;
+  color:var(--st-purple);
+  font-size:13px;
+  font-weight:900;
+}
+
+.st-note.has-note .st-note-symbol{
+  background:var(--st-yellow);
+  color:#684d08;
+}
+
+.st-note-title,
+.st-note-preview{
+  font-size:11px;
+}
+
+.st-note-title{
+  font-weight:800;
+}
+
+.st-note-preview{
+  margin-top:2px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  color:#737784;
+  font-weight:600;
+}
+
+/* CALENDAR */
+
+.st-calendar-wrap{
+  margin-top:10px;
+}
+
+.st-calendar-card{
+  padding:13px;
+}
+
+.st-calendar-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.st-calendar-title{
+  font-size:17px;
+  font-weight:800;
+}
+
+.st-calendar-nav{
+  display:flex;
+  gap:5px;
+}
+
+.st-cal-arrow{
+  width:35px;
+  height:35px;
+  border:0;
+  border-radius:8px;
+  background:#efeff4;
+  font-size:18px;
+}
+
+.st-calendar-legend{
+  margin-top:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+}
+
+.st-legend-item{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#666a76;
+  font-size:11px;
+}
+
+.st-legend-dot{
+  width:13px;
+  height:13px;
+  border-radius:4px;
+}
+
+.st-t1{background:#dfeaff;}
+.st-t2{background:#e8defe;}
+.st-t3{background:#def1e2;}
+
+.st-week-head,
+.st-calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+.st-week-head{
+  margin-top:13px;
+}
+
+.st-week-name{
+  text-align:center;
+  font-size:10px;
+  color:#8b8e98;
+}
+
+.st-calendar-day{
+  min-height:74px;
+  padding:7px;
+  border:1px solid #e4e4ea;
+  border-radius:9px;
+  background:#fafafa;
+  text-align:left;
+}
+
+.st-calendar-day.empty{
+  border-color:transparent;
+  background:transparent;
+}
+
+.st-calendar-day.t1{background:#e7efff;}
+.st-calendar-day.t2{background:#eee7ff;}
+.st-calendar-day.t3{background:#e7f4e9;}
+
+.st-cal-number{
+  font-size:12px;
+  font-weight:800;
+}
+
+.st-cal-workout{
+  margin-top:8px;
+  font-size:9px;
+  font-weight:800;
+}
+
+/* ANALYSIS */
+
+.st-analysis{
+  margin-top:10px;
+  display:grid;
+  gap:9px;
+}
+
+.st-analysis-controls,
+.st-chart-card,
+.st-method{
+  padding:13px;
+}
+
+.st-select{
+  width:100%;
+  height:40px;
+  padding:0 10px;
+  border:1px solid #d8d8e1;
+  border-radius:9px;
+  background:#fff;
+  font-size:13px;
+  font-weight:800;
+}
+
+.st-control-label{
+  margin-bottom:5px;
+  color:#7d808c;
+  font-size:10px;
+}
+
+.st-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+}
+
+.st-metric{
+  padding:12px;
+  border-radius:11px;
+  background:#f3f3f6;
+}
+
+.st-metric.main{
+  background:var(--st-purple-soft);
+}
+
+.st-metric-label{
+  color:#80838e;
+  font-size:9px;
+}
+
+.st-metric-value{
+  margin-top:4px;
+  font-size:21px;
+  font-weight:800;
+}
+
+.st-metric-unit{
+  margin-left:3px;
+  color:#777a86;
+  font-size:9px;
+}
+
+.st-chart-title,
+.st-method-title{
+  font-size:15px;
+  font-weight:800;
+}
+
+.st-chart-sub{
+  margin-top:3px;
+  color:#858995;
+  font-size:10px;
+}
+
+.st-chart svg{
+  width:100%;
+  height:auto;
+  display:block;
+  margin-top:10px;
+}
+
+.chart-grid{
+  stroke:#e6e6ec;
+  stroke-width:1;
+}
+
+.chart-line{
+  fill:none;
+  stroke:var(--st-purple);
+  stroke-width:3;
+}
+
+.chart-point{
+  fill:#fff;
+  stroke:var(--st-purple);
+  stroke-width:3;
+}
+
+.chart-label{
+  fill:#858995;
+  font-size:10px;
+}
+
+.chart-value{
+  fill:#4e4c58;
+  font-size:10px;
+  font-weight:700;
+}
+
+.st-method-text{
+  margin-top:8px;
+  color:#5f626d;
+  font-size:11px;
+  line-height:1.55;
+}
+
+.st-formula{
+  margin-top:10px;
+  padding:10px;
+  border-radius:9px;
+  background:#f5f5f8;
+  font-size:11px;
+  font-weight:700;
+}
+
+.st-method-links{
+  margin-top:10px;
+  display:grid;
+  gap:5px;
+}
+
+.st-method a{
+  color:var(--st-purple);
+  text-decoration:none;
+}
+
+/* MODAL */
+
+.st-modal-bg{
+  position:fixed;
+  z-index:2147482000;
+  inset:0;
+  padding:15px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(30,29,40,.42);
+}
+
+.st-modal{
+  width:100%;
+  max-width:520px;
+  max-height:88vh;
+  overflow:auto;
+  padding:16px;
+  border-radius:15px;
+  background:#fff;
+}
+
+.st-modal-title{
+  font-size:17px;
+  font-weight:800;
+}
+
+.st-modal-sub{
+  margin-top:4px;
+  color:#858894;
+  font-size:10px;
+}
+
+.st-modal-input,
+.st-modal-textarea{
+  width:100%;
+  margin-top:9px;
+  padding:10px;
+  border:1px solid #d8d8e1;
+  border-radius:9px;
+  outline:none;
+  font-size:13px;
+}
+
+.st-modal-input{
+  height:40px;
+}
+
+.st-modal-textarea{
+  height:145px;
+  resize:none;
+}
+
+.st-modal-read{
+  margin-top:12px;
+  padding:10px;
+  min-height:80px;
+  border-radius:9px;
+  background:#f5f5f7;
+  white-space:pre-wrap;
+}
+
+.st-modal-actions{
+  margin-top:11px;
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+}
+
+.st-modal-btn{
+  min-height:36px;
+  padding:0 13px;
+  border:0;
+  border-radius:8px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.st-modal-close{
+  background:#efeff4;
+}
+
+.st-modal-save{
+  background:var(--st-purple);
+  color:#fff;
+}
+
+.st-manager-list{
+  margin-top:10px;
+  display:grid;
+  gap:5px;
+}
+
+.st-manager-row{
+  padding:7px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:7px;
+  align-items:center;
+  border-radius:9px;
+  background:#f5f5f7;
+}
+
+.st-manager-name{
+  font-size:12px;
+  font-weight:800;
+}
+
+.st-manager-actions{
+  display:flex;
+  gap:4px;
+}
+
+.st-mini{
+  min-width:31px;
+  height:31px;
+  padding:0 7px;
+  border:0;
+  border-radius:7px;
+  background:#fff;
+  font-size:10px;
+  font-weight:800;
+}
+
+.st-empty{
+  margin-top:10px;
+  padding:30px;
+  text-align:center;
+}
+
+.st-error{
+  padding:20px;
+  border-radius:12px;
+  background:#fff;
+  color:#8b3d3d;
+}
+
+@media(max-width:700px){
+
+  #strength-app{
+    max-width:520px;
+    padding:5px;
+  }
+
+  .st-title{
+    font-size:20px;
+  }
+
+  .st-client-email{
+    font-size:16px;
+  }
+
+  .st-days{
+    display:block;
+  }
+
+  .st-day-head{
+    display:none;
+  }
+
+  .st-day-head.current{
+    display:block;
+  }
+
+  .st-ex-row{
+    display:block;
+  }
+
+  .st-ex-day{
+    display:none;
+  }
+
+  .st-ex-day.current{
+    display:flex;
+  }
+
+  .st-groups,
+  .st-set-head,
+  .st-set{
+    grid-template-columns:
+      24px
+      minmax(0,1fr)
+      minmax(0,1fr)
+      12px
+      minmax(0,1fr)
+      minmax(0,1fr)
+      minmax(0,1fr);
+    gap:3px;
+  }
+
+  .st-input,
+  .st-rpe-button{
+    height:38px;
+    font-size:14px;
+  }
+
+  .st-actions{
+    display:block;
+  }
+
+  .st-action-group{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+
+  .st-action-group + .st-action-group{
+    margin-top:5px;
+  }
+
+  .st-action{
+    width:100%;
+  }
+
+  .st-metrics{
+    grid-template-columns:1fr;
+  }
+
+  .st-calendar-day{
+    min-height:58px;
+    padding:5px;
+  }
+
+}
+</style>
+
+<script>
+(function(){
+
+/* =========================================================
+   CONFIG
+========================================================= */
+
+var API_URL =
+  '<REDACTED_LEGACY_APPS_SCRIPT_URL>';
+
+var ADMIN_EMAIL =
+  'admin@example.invalid';
+
+var root =
+  document.getElementById('strength-app');
+
+if(!root){
+  return;
+}
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+var app = {
+  email:'',
+  isAdmin:false,
+
+  mode:'loading',
+  adminUsers:[],
+  selectedUser:null,
+
+  mainTab:'training',
+  statsTab:'calendar',
+
+  workoutType:1,
+  selectedIndex:0,
+
+  workouts:{
+    1:null,
+    2:null,
+    3:null
+  },
+
+  calendarMonth:
+    new Date().getMonth(),
+
+  calendarYear:
+    new Date().getFullYear(),
+
+  statsExerciseId:'',
+
+  modal:null,
+  rpeMenu:null,
+
+  saveTimer:null,
+  saving:false,
+  saveError:'',
+
+  motivation:''
+};
+
+
+var motivations = [
+  'Давай. Ты сможешь.',
+  'Сегодня станешь немного сильнее.',
+  'Силы с тобой.',
+  'Начни с первого подхода.',
+  'Ещё одна тренировка в копилку.',
+  'Спокойно. Подход за подходом.',
+  'Работаем.',
+  'Ты уже здесь — половина дела сделана.',
+  'Сегодня просто сделай свою работу.',
+  'Сильнее, чем в прошлый раз.',
+  'Не спеши. Делай качественно.',
+  'Один хороший подход за другим.',
+  'Сегодняшняя работа — завтрашний результат.',
+  'Ты молодец. Продолжай.',
+  'Скоро отдохнёшь.',
+  'Ещё немного — и готово.',
+  'Соберись на этот подход.',
+  'Не нужно идеально. Нужно сделать.',
+  'Фокус на следующем подходе.',
+  'Каждый подход считается.'
+];
+
+app.motivation =
+  motivations[
+    Math.floor(
+      Math.random() *
+      motivations.length
+    )
+  ];
+
+
+/* =========================================================
+   HTTP
+========================================================= */
+
+function getApi(params){
+
+  var query = [];
+  var key;
+
+  for(key in params){
+
+    if(params.hasOwnProperty(key)){
+
+      query.push(
+        encodeURIComponent(key) +
+        '=' +
+        encodeURIComponent(
+          params[key]
+        )
+      );
+
+    }
+
+  }
+
+  return fetch(
+    API_URL +
+    '?' +
+    query.join('&'),
+    {
+      method:'GET',
+      redirect:'follow'
+    }
+  )
+  .then(function(response){
+
+    return response.json();
+
+  })
+  .then(function(data){
+
+    if(!data.ok){
+
+      throw new Error(
+        data.error ||
+        'Ошибка сервера'
+      );
+
+    }
+
+    return data;
+
+  });
+
+}
+
+
+function postApi(body){
+
+  return fetch(
+    API_URL,
+    {
+      method:'POST',
+
+      /*
+        text/plain специально,
+        чтобы браузер не делал
+        CORS preflight к Apps Script.
+      */
+
+      headers:{
+        'Content-Type':
+          'text/plain;charset=utf-8'
+      },
+
+      body:
+        JSON.stringify(body),
+
+      redirect:'follow'
+    }
+  )
+  .then(function(response){
+
+    return response.json();
+
+  })
+  .then(function(data){
+
+    if(!data.ok){
+
+      throw new Error(
+        data.error ||
+        'Ошибка сервера'
+      );
+
+    }
+
+    return data;
+
+  });
+
+}
+
+
+/* =========================================================
+   TILDA EMAIL
+========================================================= */
+
+function detectEmail(){
+
+  var result = [];
+  var i;
+  var inputs;
+  var matches;
+
+  function collect(text){
+
+    if(!text){
+      return;
+    }
+
+    matches =
+      String(text).match(
+        /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
+      );
+
+    if(!matches){
+      return;
+    }
+
+    for(
+      var j=0;
+      j<matches.length;
+      j++
+    ){
+
+      if(
+        result.indexOf(
+          matches[j]
+        ) === -1
+      ){
+
+        result.push(
+          matches[j]
+        );
+
+      }
+
+    }
+
+  }
+
+  try{
+
+    inputs =
+      document.querySelectorAll(
+        'input'
+      );
+
+    for(
+      i=0;
+      i<inputs.length;
+      i++
+    ){
+
+      if(
+        String(
+          inputs[i].name ||
+          ''
+        )
+        .toLowerCase()
+        .indexOf('email') > -1
+      ){
+
+        collect(
+          inputs[i].value
+        );
+
+      }
+
+    }
+
+    collect(
+      document.body.innerText
+    );
+
+  }catch(e){}
+
+  return (
+    result.length
+    ?
+    result[0]
+    :
+    ''
+  );
+
+}
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function blank(v){
+
+  return (
+    v === '' ||
+    v === null ||
+    typeof v ===
+      'undefined'
+  );
+
+}
+
+
+function esc(value){
+
+  if(
+    value === null ||
+    typeof value ===
+      'undefined'
+  ){
+    return '';
+  }
+
+  return String(value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+
+}
+
+
+function pad2(n){
+
+  return (
+    Number(n) < 10
+    ?
+    '0' + Number(n)
+    :
+    String(Number(n))
+  );
+
+}
+
+
+function formatDate(value){
+
+  var p;
+
+  if(!value){
+    return '';
+  }
+
+  p =
+    String(value)
+    .substring(0,10)
+    .split('-');
+
+  if(p.length !== 3){
+    return value;
+  }
+
+  return (
+    p[2] +
+    '.' +
+    p[1] +
+    '.' +
+    p[0]
+  );
+
+}
+
+
+function weekday(value){
+
+  var p;
+  var d;
+
+  var days = [
+    'Воскресенье',
+    'Понедельник',
+    'Вторник',
+    'Среда',
+    'Четверг',
+    'Пятница',
+    'Суббота'
+  ];
+
+  if(!value){
+    return '';
+  }
+
+  p =
+    String(value)
+    .substring(0,10)
+    .split('-');
+
+  d =
+    new Date(
+      Number(p[0]),
+      Number(p[1])-1,
+      Number(p[2])
+    );
+
+  return days[
+    d.getDay()
+  ];
+
+}
+
+
+function round1(value){
+
+  return (
+    Math.round(
+      Number(value) * 10
+    ) / 10
+  )
+  .toFixed(1)
+  .replace('.',',');
+}
+
+
+function dateKey(
+  year,
+  month,
+  day
+){
+
+  return (
+    year +
+    '-' +
+    pad2(month+1) +
+    '-' +
+    pad2(day)
+  );
+
+}
+
+
+function currentUserId(){
+
+  return (
+    app.selectedUser
+    ?
+    app.selectedUser.user_id
+    :
+    ''
+  );
+
+}
+
+
+function currentWorkout(){
+
+  return (
+    app.workouts[
+      app.workoutType
+    ] || {
+      workout_types:[],
+      exercise_catalog:[],
+      sessions:[],
+      session_exercises:[],
+      sets:[]
+    }
+  );
+
+}
+
+
+/* =========================================================
+   BACKEND → UI MODEL
+========================================================= */
+
+function buildWorkoutModel(raw){
+
+  var sessions = [];
+  var sessionMap = {};
+  var exerciseMap = {};
+  var i;
+  var row;
+  var s;
+  var ex;
+  var key;
+
+  raw = raw || {};
+
+  /*
+    Sessions
+  */
+
+  var rawSessions =
+    raw.sessions || [];
+
+  for(
+    i=0;
+    i<rawSessions.length;
+    i++
+  ){
+
+    row =
+      rawSessions[i];
+
+    s = {
+      session_id:
+        row.session_id,
+
+      number:
+        Number(
+          row.session_number
+        ),
+
+      date:
+        row.date
+        ?
+        String(row.date)
+          .substring(0,10)
+        :
+        '',
+
+      status:
+        row.status || '',
+
+      exercises:[]
+    };
+
+    sessions.push(s);
+
+    sessionMap[
+      String(
+        s.session_id
+      )
+    ] = s;
+
+  }
+
+  sessions.sort(
+    function(a,b){
+      return (
+        a.number -
+        b.number
+      );
+    }
+  );
+
+  /*
+    Session exercises
+  */
+
+  var rawEx =
+    raw.session_exercises ||
+    [];
+
+  for(
+    i=0;
+    i<rawEx.length;
+    i++
+  ){
+
+    row = rawEx[i];
+
+    s =
+      sessionMap[
+        String(
+          row.session_id
+        )
+      ];
+
+    if(!s){
+      continue;
+    }
+
+    ex = {
+      id:
+        String(
+          row.exercise_id
+        ),
+
+      name:
+        row.exercise_name ||
+        '',
+
+      sort_order:
+        Number(
+          row.sort_order ||
+          0
+        ),
+
+      note:
+        row.note || '',
+
+      sets:[]
+    };
+
+    s.exercises.push(ex);
+
+    key =
+      String(
+        row.session_id
+      ) +
+      '|' +
+      String(
+        row.exercise_id
+      );
+
+    exerciseMap[key] = ex;
+
+  }
+
+  /*
+    Sets
+  */
+
+  var rawSets =
+    raw.sets || [];
+
+  for(
+    i=0;
+    i<rawSets.length;
+    i++
+  ){
+
+    row = rawSets[i];
+
+    key =
+      String(
+        row.session_id
+      ) +
+      '|' +
+      String(
+        row.exercise_id
+      );
+
+    ex =
+      exerciseMap[key];
+
+    if(!ex){
+      continue;
+    }
+
+    ex.sets.push({
+      set_number:
+        Number(
+          row.set_number
+        ),
+
+      planWeight:
+        blank(row.plan_weight)
+        ?
+        ''
+        :
+        row.plan_weight,
+
+      planReps:
+        blank(row.plan_reps)
+        ?
+        ''
+        :
+        row.plan_reps,
+
+      factWeight:
+        blank(row.fact_weight)
+        ?
+        ''
+        :
+        row.fact_weight,
+
+      factReps:
+        blank(row.fact_reps)
+        ?
+        ''
+        :
+        row.fact_reps,
+
+      rpe:
+        blank(row.rpe)
+        ?
+        ''
+        :
+        row.rpe
+    });
+
+  }
+
+  /*
+    Sorting
+  */
+
+  for(
+    i=0;
+    i<sessions.length;
+    i++
+  ){
+
+    sessions[i]
+      .exercises
+      .sort(
+        function(a,b){
+          return (
+            a.sort_order -
+            b.sort_order
+          );
+        }
+      );
+
+    for(
+      var j=0;
+      j<
+      sessions[i].exercises.length;
+      j++
+    ){
+
+      sessions[i]
+        .exercises[j]
+        .sets
+        .sort(
+          function(a,b){
+            return (
+              a.set_number -
+              b.set_number
+            );
+          }
+        );
+
+    }
+
+  }
+
+  return {
+    workout_types:
+      raw.workout_types ||
+      [],
+
+    catalog:
+      raw.exercise_catalog ||
+      [],
+
+    sessions:sessions
+  };
+
+}
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+function loadAdminUsers(){
+
+  app.mode =
+    'loading';
+
+  render();
+
+  getApi({
+    action:'adminListUsers',
+    admin_email:
+      app.email
+  })
+  .then(function(result){
+
+    app.adminUsers =
+      result.users ||
+      [];
+
+    app.mode =
+      'adminList';
+
+    render();
+
+  })
+  .catch(showFatal);
+
+}
+
+
+function loadClient(user){
+
+  app.selectedUser =
+    user;
+
+  app.mode =
+    'loading';
+
+  render();
+
+  Promise.all([
+    getWorkoutType(
+      user,
+      1
+    ),
+    getWorkoutType(
+      user,
+      2
+    ),
+    getWorkoutType(
+      user,
+      3
+    )
+  ])
+  .then(function(results){
+
+    app.workouts[1] =
+      results[0];
+
+    app.workouts[2] =
+      results[1];
+
+    app.workouts[3] =
+      results[2];
+
+    chooseInitialWorkoutType();
+
+    app.mode =
+      'client';
+
+    render();
+
+  })
+  .catch(showFatal);
+
+}
+
+
+function getWorkoutType(
+  user,
+  type
+){
+
+  var params = {
+    action:
+      'getWorkout',
+
+    type:
+      type
+  };
+
+  /*
+    Админ открывает пользователя
+    по user_id.
+  */
+
+  if(app.isAdmin){
+
+    params.user_id =
+      user.user_id;
+
+    params.admin_email =
+      app.email;
+
+  }else{
+
+    params.email =
+      app.email;
+
+  }
+
+  return getApi(params)
+    .then(function(result){
+
+      return buildWorkoutModel(
+        result.workout
+      );
+
+    });
+
+}
+
+
+function chooseInitialWorkoutType(){
+
+  var type;
+
+  for(type=1;type<=3;type++){
+
+    if(
+      app.workouts[type] &&
+      (
+        app.workouts[type]
+          .sessions.length ||
+        app.workouts[type]
+          .catalog.length
+      )
+    ){
+
+      app.workoutType =
+        type;
+
+      break;
+    }
+
+  }
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  app.selectedIndex =
+    sessions.length
+    ?
+    sessions.length-1
+    :
+    0;
+
+}
+
+
+/* =========================================================
+   SAVE SESSION
+========================================================= */
+
+function sessionPayload(session){
+
+  var result = {
+    session_id:
+      session.session_id,
+
+    session_number:
+      session.number,
+
+    date:
+      session.date || '',
+
+    exercises:[]
+  };
+
+  var i;
+  var j;
+  var ex;
+  var outEx;
+
+  for(
+    i=0;
+    i<session.exercises.length;
+    i++
+  ){
+
+    ex =
+      session.exercises[i];
+
+    outEx = {
+      exercise_id:
+        ex.id,
+
+      exercise_name:
+        ex.name,
+
+      sort_order:
+        ex.sort_order ||
+        i+1,
+
+      note:
+        ex.note || '',
+
+      sets:[]
+    };
+
+    for(
+      j=0;
+      j<ex.sets.length;
+      j++
+    ){
+
+      outEx.sets.push({
+        set_number:
+          j+1,
+
+        plan_weight:
+          ex.sets[j]
+            .planWeight,
+
+        plan_reps:
+          ex.sets[j]
+            .planReps,
+
+        fact_weight:
+          ex.sets[j]
+            .factWeight,
+
+        fact_reps:
+          ex.sets[j]
+            .factReps,
+
+        rpe:
+          ex.sets[j]
+            .rpe
+      });
+
+    }
+
+    result.exercises.push(
+      outEx
+    );
+
+  }
+
+  return result;
+
+}
+
+
+function scheduleSave(
+  sessionIndex
+){
+
+  if(app.saveTimer){
+
+    clearTimeout(
+      app.saveTimer
+    );
+
+  }
+
+  app.saving = true;
+  app.saveError = '';
+
+  renderSavingOnly();
+
+  app.saveTimer =
+    setTimeout(
+      function(){
+
+        saveSessionNow(
+          sessionIndex
+        );
+
+      },
+      450
+    );
+
+}
+
+
+function saveSessionNow(
+  sessionIndex
+){
+
+  var workout =
+    currentWorkout();
+
+  var session =
+    workout
+      .sessions[
+        sessionIndex
+      ];
+
+  if(!session){
+    return;
+  }
+
+  var body = {
+    action:
+      'saveSession',
+
+    workout_type:
+      app.workoutType,
+
+    session:
+      sessionPayload(
+        session
+      )
+  };
+
+  if(app.isAdmin){
+
+    body.user_id =
+      currentUserId();
+
+    body.target_user_id =
+      currentUserId();
+
+    body.admin_email =
+      app.email;
+
+  }else{
+
+    body.email =
+      app.email;
+
+  }
+
+  postApi(body)
+    .then(function(){
+
+      app.saving = false;
+      app.saveError = '';
+
+      renderSavingOnly();
+
+    })
+    .catch(function(error){
+
+      app.saving = false;
+
+      app.saveError =
+        error.message ||
+        String(error);
+
+      renderSavingOnly();
+
+    });
+
+}
+
+
+function renderSavingOnly(){
+
+  var el =
+    document.getElementById(
+      'st-save-state'
+    );
+
+  if(!el){
+    return;
+  }
+
+  if(app.saveError){
+
+    el.className =
+      'st-saving error';
+
+    el.innerHTML =
+      'Ошибка сохранения: ' +
+      esc(app.saveError);
+
+    return;
+  }
+
+  el.className =
+    'st-saving';
+
+  el.innerHTML =
+    app.saving
+    ?
+    'Сохраняю…'
+    :
+    'Сохранено';
+
+}
+
+
+/* =========================================================
+   EXERCISE HELPERS
+========================================================= */
+
+function findExercise(
+  session,
+  id
+){
+
+  var i;
+
+  if(!session){
+    return null;
+  }
+
+  for(
+    i=0;
+    i<session.exercises.length;
+    i++
+  ){
+
+    if(
+      String(
+        session.exercises[i].id
+      ) ===
+      String(id)
+    ){
+
+      return (
+        session.exercises[i]
+      );
+
+    }
+
+  }
+
+  return null;
+
+}
+
+
+function previousExercise(
+  index,
+  id
+){
+
+  if(index <= 0){
+    return null;
+  }
+
+  return findExercise(
+    currentWorkout()
+      .sessions[
+        index-1
+      ],
+    id
+  );
+
+}
+
+
+function activeCatalog(){
+
+  var catalog =
+    currentWorkout()
+      .catalog.slice();
+
+  catalog.sort(
+    function(a,b){
+      return (
+        Number(
+          a.sort_order ||
+          0
+        ) -
+        Number(
+          b.sort_order ||
+          0
+        )
+      );
+    }
+  );
+
+  return catalog.filter(
+    function(item){
+
+      return !(
+        item.active === false ||
+        String(
+          item.active
+        ).toLowerCase() ===
+        'false'
+      );
+
+    }
+  );
+
+}
+
+
+function isFilled(session){
+
+  var i;
+  var j;
+
+  if(!session){
+    return false;
+  }
+
+  for(
+    i=0;
+    i<session.exercises.length;
+    i++
+  ){
+
+    for(
+      j=0;
+      j<
+      session.exercises[i]
+        .sets.length;
+      j++
+    ){
+
+      if(
+        !blank(
+          session.exercises[i]
+            .sets[j]
+            .rpe
+        )
+      ){
+
+        return true;
+
+      }
+
+    }
+
+  }
+
+  return false;
+
+}
+
+
+function isLatest(){
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  return (
+    sessions.length &&
+    app.selectedIndex ===
+      sessions.length-1
+  );
+
+}
+
+
+function clientLocked(index){
+
+  if(app.isAdmin){
+    return false;
+  }
+
+  var session =
+    currentWorkout()
+      .sessions[index];
+
+  return (
+    !session ||
+    !session.date
+  );
+
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function render(){
+
+  if(app.mode === 'loading'){
+
+    root.innerHTML =
+      '<div class="st-card" style="padding:30px;text-align:center;">'+
+        'Загрузка…'+
+      '</div>';
+
+    return;
+
+  }
+
+  if(app.mode === 'adminList'){
+
+    renderAdminList();
+    return;
+
+  }
+
+  if(app.mode === 'client'){
+
+    renderClient();
+    return;
+
+  }
+
+}
+
+
+function commonHeader(){
+
+  return (
+    '<div class="st-card st-header">'+
+      '<div class="st-top">'+
+        '<div>'+
+          '<div class="st-title">Силовые тренировки</div>'+
+        '</div>'+
+        '<a class="st-profile" href="#openmembersbar">'+
+          '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
+            '<circle cx="12" cy="8" r="4"></circle>'+
+            '<path d="M4.5 21c.8-4.2 3.3-6.3 7.5-6.3s6.7 2.1 7.5 6.3"></path>'+
+          '</svg>'+
+        '</a>'+
+      '</div>'
+  );
+
+}
+
+
+/* =========================================================
+   ADMIN LIST
+========================================================= */
+
+function renderAdminList(){
+
+  var html =
+    commonHeader();
+
+  html +=
+    '<div class="st-admin-title-row" style="margin-top:12px;">'+
+      '<div style="font-size:16px;font-weight:800;">Клиенты</div>'+
+      '<button class="st-add-user" onclick="ST.openAddUser()">+ Добавить пользователя</button>'+
+    '</div>'+
+    '</div>'+
+    '<div class="st-user-list">';
+
+  var users =
+    app.adminUsers.slice();
+
+  users.sort(
+    function(a,b){
+
+      return String(
+        a.display_name ||
+        a.email ||
+        ''
+      ).localeCompare(
+        String(
+          b.display_name ||
+          b.email ||
+          ''
+        )
+      );
+
+    }
+  );
+
+  for(
+    var i=0;
+    i<users.length;
+    i++
+  ){
+
+    html +=
+      '<button class="st-user-card" onclick="ST.openUser('+i+')">'+
+        '<div class="st-user-card-name">'+
+          esc(
+            users[i]
+              .display_name ||
+            'Без имени'
+          )+
+        '</div>'+
+        '<div class="st-user-card-email">'+
+          esc(
+            users[i].email
+          )+
+        '</div>'+
+        '<div class="st-user-card-meta">'+
+          'Тренировок: '+
+          Number(
+            users[i]
+              .session_count ||
+            0
+          )+
+          (
+            users[i]
+              .last_training_date
+            ?
+            ' · последняя '+
+            formatDate(
+              users[i]
+                .last_training_date
+            )
+            :
+            ''
+          )+
+        '</div>'+
+      '</button>';
+
+  }
+
+  if(!users.length){
+
+    html +=
+      '<div class="st-card st-empty">'+
+        'Пользователей пока нет.'+
+      '</div>';
+
+  }
+
+  html +=
+    '</div>'+
+    renderModal();
+
+  root.innerHTML =
+    html;
+
+}
+
+
+/* =========================================================
+   CLIENT
+========================================================= */
+
+function renderClient(){
+
+  var html =
+    commonHeader();
+
+  html +=
+    '<div class="st-client-head">'+
+      '<div class="st-client-name">'+
+        esc(
+          app.selectedUser
+            .display_name ||
+          'Пользователь'
+        )+
+      '</div>'+
+      '<div class="st-client-email">'+
+        esc(
+          app.selectedUser
+            .email
+        )+
+      '</div>'+
+    '</div>';
+
+  if(app.isAdmin){
+
+    html +=
+      '<button class="st-back" onclick="ST.backToUsers()">← К списку клиентов</button>';
+
+  }
+
+  html +=
+    renderMainTabs()+
+    renderTypes();
+
+  if(
+    app.mainTab ===
+    'training'
+  ){
+
+    html +=
+      renderJournalHeader();
+
+  }else{
+
+    html +=
+      renderStatsTabs();
+
+  }
+
+  html +=
+    '</div>';
+
+  if(
+    app.mainTab ===
+    'training'
+  ){
+
+    html +=
+      renderJournal();
+
+  }else if(
+    app.statsTab ===
+    'calendar'
+  ){
+
+    html +=
+      renderCalendar();
+
+  }else{
+
+    html +=
+      renderAnalysis();
+
+  }
+
+  html +=
+    renderModal()+
+    renderFloatingRpe();
+
+  root.innerHTML =
+    html;
+
+  renderSavingOnly();
+
+}
+
+
+function renderMainTabs(){
+
+  return (
+    '<div class="st-main-tabs">'+
+      '<button class="st-main-tab '+
+      (
+        app.mainTab ===
+        'training'
+        ?
+        'active'
+        :
+        ''
+      )+
+      '" onclick="ST.setMainTab(\'training\')">Тренировки</button>'+
+      '<button class="st-main-tab '+
+      (
+        app.mainTab ===
+        'stats'
+        ?
+        'active'
+        :
+        ''
+      )+
+      '" onclick="ST.setMainTab(\'stats\')">Статистика</button>'+
+    '</div>'
+  );
+
+}
+
+
+function renderTypes(){
+
+  var html =
+    '<div class="st-types">';
+
+  for(
+    var i=1;
+    i<=3;
+    i++
+  ){
+
+    html +=
+      '<button class="st-type '+
+      (
+        app.workoutType === i
+        ?
+        'active'
+        :
+        ''
+      )+
+      '" onclick="ST.setWorkoutType('+i+')">'+
+        'Тренировка '+i+
+      '</button>';
+
+  }
+
+  html += '</div>';
+
+  return html;
+
+}
+
+
+function renderJournalHeader(){
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  if(!sessions.length){
+
+    return (
+      '<div class="st-empty">'+
+        'У этой тренировки пока нет занятий.'+
+        (
+          app.isAdmin
+          ?
+          '<div style="margin-top:10px;"><button class="st-add-user" onclick="ST.createFirstSession()">Создать первую тренировку</button></div>'
+          :
+          ''
+        )+
+      '</div>'
+    );
+
+  }
+
+  var session =
+    sessions[
+      app.selectedIndex
+    ];
+
+  return (
+    '<div class="st-nav">'+
+      '<button class="st-arrow" onclick="ST.prevSession()">‹</button>'+
+      '<div class="st-nav-center">'+
+        '<div class="st-nav-title">Тренировка №'+
+          session.number+
+        '</div>'+
+        '<div class="st-nav-sub">'+
+          (
+            isFilled(session)
+            ?
+            'заполнена'
+            :
+            'не заполнена'
+          )+
+        '</div>'+
+      '</div>'+
+      '<button class="st-arrow" onclick="ST.nextSession()">›</button>'+
+    '</div>'+
+    '<div class="st-motivation">'+
+      esc(app.motivation)+
+    '</div>'+
+    renderActions()+
+    '<div id="st-save-state" class="st-saving">'+
+      (
+        app.saving
+        ?
+        'Сохраняю…'
+        :
+        ''
+      )+
+    '</div>'
+  );
+
+}
+
+
+function renderActions(){
+
+  if(!app.isAdmin){
+    return '';
+  }
+
+  var current =
+    currentWorkout()
+      .sessions[
+        app.selectedIndex
+      ];
+
+  return (
+    '<div class="st-actions">'+
+      '<div class="st-action-group">'+
+        '<button class="st-action st-manage" onclick="ST.openManager()">Добавить / изменить порядок</button>'+
+      '</div>'+
+      '<div class="st-action-group">'+
+        '<button class="st-action st-copy-plan" '+
+        (
+          isLatest()
+          ?
+          ''
+          :
+          'disabled'
+        )+
+        ' onclick="ST.copyNext(\'plan\')">Скопировать план → следующая</button>'+
+        '<button class="st-action st-copy-fact" '+
+        (
+          isLatest() &&
+          isFilled(current)
+          ?
+          ''
+          :
+          'disabled'
+        )+
+        ' onclick="ST.copyNext(\'fact\')">Скопировать факт → следующая</button>'+
+      '</div>'+
+    '</div>'
+  );
+
+}
+
+
+/* =========================================================
+   JOURNAL
+========================================================= */
+
+function visibleSessions(){
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  var result = [];
+
+  for(
+    var i=
+      app.selectedIndex-2;
+    i<=
+      app.selectedIndex;
+    i++
+  ){
+
+    if(
+      i>=0 &&
+      i<sessions.length
+    ){
+
+      result.push({
+        index:i,
+        session:sessions[i],
+        current:
+          i ===
+          app.selectedIndex
+      });
+
+    }else{
+
+      result.push({
+        index:-1,
+        session:null,
+        current:false
+      });
+
+    }
+
+  }
+
+  return result;
+
+}
+
+
+function renderJournal(){
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  if(!sessions.length){
+    return '';
+  }
+
+  var visible =
+    visibleSessions();
+
+  return (
+    renderDayHeads(
+      visible
+    )+
+    '<div class="st-ex-list">'+
+      renderExerciseRows(
+        visible
+      )+
+    '</div>'
+  );
+
+}
+
+
+function renderDayHeads(
+  visible
+){
+
+  var html =
+    '<div class="st-days">';
+
+  for(
+    var i=0;
+    i<visible.length;
+    i++
+  ){
+
+    if(
+      !visible[i].session
+    ){
+
+      html += '<div></div>';
+      continue;
+
+    }
+
+    var session =
+      visible[i].session;
+
+    html +=
+      '<div class="st-day-head '+
+      (
+        visible[i].current
+        ?
+        'current'
+        :
+        ''
+      )+
+      '">'+
+        '<div class="st-day-top">'+
+          '<div class="st-day-number">№'+
+            session.number+
+          '</div>'+
+          renderDateControl(
+            visible[i].index,
+            session.date
+          )+
+        '</div>'+
+        (
+          session.date
+          ?
+          '<div class="st-weekday">'+
+            weekday(
+              session.date
+            )+
+          '</div>'
+          :
+          ''
+        )+
+        '<div class="st-day-state">'+
+          (
+            isFilled(session)
+            ?
+            'заполнена'
+            :
+            'не заполнена'
+          )+
+        '</div>'+
+      '</div>';
+
+  }
+
+  html += '</div>';
+
+  return html;
+
+}
+
+
+function renderDateControl(
+  index,
+  date
+){
+
+  var id =
+    'st-date-' +
+    app.workoutType +
+    '-' +
+    index;
+
+  return (
+    '<div class="st-date-control">'+
+      '<div class="st-date-text '+
+      (
+        date
+        ?
+        ''
+        :
+        'empty'
+      )+
+      '">'+
+        (
+          date
+          ?
+          formatDate(date)
+          :
+          'Выбрать дату'
+        )+
+      '</div>'+
+      '<button class="st-date-button" onclick="ST.openDate(\''+id+'\')">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
+          '<rect x="3.5" y="5.5" width="17" height="15" rx="2"></rect>'+
+          '<path d="M7 3v5M17 3v5M3.5 10h17"></path>'+
+        '</svg>'+
+      '</button>'+
+      '<input id="'+id+'" class="st-hidden-date" type="date" value="'+esc(date)+'" onchange="ST.setDate('+index+',this.value)">'+
+    '</div>'
+  );
+
+}
+
+
+function renderExerciseRows(
+  visible
+){
+
+  var catalog =
+    activeCatalog();
+
+  var html = '';
+
+  for(
+    var c=0;
+    c<catalog.length;
+    c++
+  ){
+
+    var id =
+      String(
+        catalog[c]
+          .exercise_id
+      );
+
+    html +=
+      '<div class="st-ex-row">';
+
+    for(
+      var d=0;
+      d<visible.length;
+      d++
+    ){
+
+      html +=
+        renderExerciseDay(
+          visible[d],
+          id,
+          c
+        );
+
+    }
+
+    html += '</div>';
+
+  }
+
+  if(!catalog.length){
+
+    html =
+      '<div class="st-card st-empty">Нет активных упражнений.</div>';
+
+  }
+
+  return html;
+
+}
+
+
+function renderExerciseDay(
+  item,
+  id,
+  visualIndex
+){
+
+  if(!item.session){
+    return '<div></div>';
+  }
+
+  var ex =
+    findExercise(
+      item.session,
+      id
+    );
+
+  /*
+    Упражнение может быть
+    добавлено позже и отсутствовать
+    в старой тренировке.
+  */
+
+  if(!ex){
+    return '<div></div>';
+  }
+
+  var previous =
+    previousExercise(
+      item.index,
+      id
+    );
+
+  var html =
+    '<div class="st-ex-day ex'+
+    (
+      visualIndex % 6
+    )+
+    ' '+
+    (
+      item.current
+      ?
+      'current'
+      :
+      ''
+    )+
+    '">';
+
+  html +=
+    '<div class="st-ex-tools">'+
+    (
+      app.isAdmin
+      ?
+      '<button class="st-hide" onclick="ST.hideExercise(\''+id+'\')">Скрыть упражнение</button>'
+      :
+      ''
+    )+
+    '</div>'+
+    '<div class="st-ex-head">'+
+      '<input class="st-ex-name" value="'+esc(ex.name)+'" readonly>'+
+    '</div>'+
+    '<div class="st-groups">'+
+      '<div class="st-group-plan">План</div>'+
+      '<div class="st-group-fact">Факт</div>'+
+    '</div>'+
+    '<div class="st-set-head">'+
+      '<div>№</div>'+
+      '<div>Вес</div>'+
+      '<div>Повт.</div>'+
+      '<div class="st-divider"></div>'+
+      '<div>Вес</div>'+
+      '<div>Повт.</div>'+
+      '<div>RPE</div>'+
+    '</div>';
+
+  for(
+    var i=0;
+    i<ex.sets.length;
+    i++
+  ){
+
+    html +=
+      renderSet(
+        item.index,
+        id,
+        i,
+        ex.sets[i],
+        previous &&
+        previous.sets[i]
+        ?
+        previous.sets[i]
+        :
+        null
+      );
+
+  }
+
+  html +=
+    renderNote(
+      item.index,
+      id,
+      ex.note
+    )+
+    '</div>';
+
+  return html;
+
+}
+
+
+function planClass(
+  plan,
+  previous
+){
+
+  if(
+    blank(plan) ||
+    blank(previous)
+  ){
+    return '';
+  }
+
+  if(
+    Number(plan) >
+    Number(previous)
+  ){
+    return 'plan-up';
+  }
+
+  if(
+    Number(plan) <
+    Number(previous)
+  ){
+    return 'plan-down';
+  }
+
+  return '';
+
+}
+
+
+function rpeClass(rpe){
+
+  if(blank(rpe)){
+    return '';
+  }
+
+  return (
+    'rpe'+
+    String(
+      Number(rpe)
+    )
+  );
+
+}
+
+
+function renderSet(
+  sessionIndex,
+  id,
+  setIndex,
+  set,
+  previous
+){
+
+  return (
+    '<div class="st-set">'+
+      '<div class="st-set-num">'+
+        (setIndex+1)+
+      '</div>'+
+      '<input class="st-input '+
+        planClass(
+          set.planWeight,
+          previous
+          ?
+          previous.factWeight
+          :
+          ''
+        )+
+      '" type="number" step="0.1" value="'+esc(set.planWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planWeight\',this.value)">'+
+      '<input class="st-input '+
+        planClass(
+          set.planReps,
+          previous
+          ?
+          previous.factReps
+          :
+          ''
+        )+
+      '" type="number" step="1" value="'+esc(set.planReps)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planReps\',this.value)">'+
+      '<div class="st-divider"></div>'+
+      '<input class="st-input" type="number" step="0.1" value="'+esc(set.factWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'factWeight\',this.value)">'+
+      '<input class="st-input" type="number" step="1" value="'+esc(set.factReps)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'factReps\',this.value)">'+
+      '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+sessionIndex+',\''+id+'\','+setIndex+')">'+
+        (
+          blank(set.rpe)
+          ?
+          'RPE'
+          :
+          set.rpe
+        )+
+      '</button>'+
+    '</div>'
+  );
+
+}
+
+
+function renderNote(
+  index,
+  id,
+  note
+){
+
+  var has =
+    String(note || '')
+      .trim() !== '';
+
+  return (
+    '<div class="st-note '+
+    (
+      has
+      ?
+      'has-note'
+      :
+      ''
+    )+
+    '" onclick="ST.openNote('+index+',\''+id+'\')">'+
+      '<div class="st-note-symbol">'+
+        (
+          has
+          ?
+          '!'
+          :
+          'i'
+        )+
+      '</div>'+
+      '<div>'+
+        '<div class="st-note-title">Примечание</div>'+
+        '<div class="st-note-preview">'+
+          (
+            has
+            ?
+            esc(note)
+            :
+            (
+              app.isAdmin
+              ?
+              'Примечаний нет'
+              :
+              'Добавить примечание'
+            )
+          )+
+        '</div>'+
+      '</div>'+
+      '<div>›</div>'+
+    '</div>'
+  );
+
+}
+
+
+/* =========================================================
+   STATS CALENDAR
+========================================================= */
+
+function renderStatsTabs(){
+
+  return (
+    '<div class="st-stat-tabs">'+
+      '<button class="st-stat-tab '+
+      (
+        app.statsTab ===
+        'calendar'
+        ?
+        'active'
+        :
+        ''
+      )+
+      '" onclick="ST.setStatsTab(\'calendar\')">Календарь</button>'+
+      '<button class="st-stat-tab '+
+      (
+        app.statsTab ===
+        'analysis'
+        ?
+        'active'
+        :
+        ''
+      )+
+      '" onclick="ST.setStatsTab(\'analysis\')">Анализ</button>'+
+    '</div>'
+  );
+
+}
+
+
+function allDatedSessions(){
+
+  var result = [];
+
+  for(
+    var type=1;
+    type<=3;
+    type++
+  ){
+
+    var workout =
+      app.workouts[type];
+
+    if(!workout){
+      continue;
+    }
+
+    for(
+      var i=0;
+      i<workout.sessions.length;
+      i++
+    ){
+
+      if(
+        workout.sessions[i]
+          .date
+      ){
+
+        result.push({
+          type:type,
+          index:i,
+          session:
+            workout.sessions[i]
+        });
+
+      }
+
+    }
+
+  }
+
+  return result;
+
+}
+
+
+function sessionsForDate(key){
+
+  return allDatedSessions()
+    .filter(
+      function(item){
+
+        return (
+          item.session.date ===
+          key
+        );
+
+      }
+    );
+
+}
+
+
+function monthName(month){
+
+  return [
+    'Январь',
+    'Февраль',
+    'Март',
+    'Апрель',
+    'Май',
+    'Июнь',
+    'Июль',
+    'Август',
+    'Сентябрь',
+    'Октябрь',
+    'Ноябрь',
+    'Декабрь'
+  ][month];
+
+}
+
+
+function renderCalendar(){
+
+  var year =
+    app.calendarYear;
+
+  var month =
+    app.calendarMonth;
+
+  var first =
+    new Date(
+      year,
+      month,
+      1
+    );
+
+  var firstWeekday =
+    first.getDay();
+
+  firstWeekday =
+    firstWeekday === 0
+    ?
+    6
+    :
+    firstWeekday-1;
+
+  var days =
+    new Date(
+      year,
+      month+1,
+      0
+    ).getDate();
+
+  var html =
+    '<div class="st-calendar-wrap">'+
+      '<div class="st-card st-calendar-card">'+
+        '<div class="st-calendar-top">'+
+          '<div class="st-calendar-title">'+
+            monthName(month)+
+            ' '+
+            year+
+          '</div>'+
+          '<div class="st-calendar-nav">'+
+            '<button class="st-cal-arrow" onclick="ST.prevMonth()">‹</button>'+
+            '<button class="st-cal-arrow" onclick="ST.nextMonth()">›</button>'+
+          '</div>'+
+        '</div>'+
+        '<div class="st-calendar-legend">'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t1"></span>Тренировка 1</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t2"></span>Тренировка 2</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t3"></span>Тренировка 3</div>'+
+        '</div>'+
+        '<div class="st-week-head">'+
+          '<div class="st-week-name">ПН</div>'+
+          '<div class="st-week-name">ВТ</div>'+
+          '<div class="st-week-name">СР</div>'+
+          '<div class="st-week-name">ЧТ</div>'+
+          '<div class="st-week-name">ПТ</div>'+
+          '<div class="st-week-name">СБ</div>'+
+          '<div class="st-week-name">ВС</div>'+
+        '</div>'+
+        '<div class="st-calendar-grid">';
+
+  var i;
+
+  for(
+    i=0;
+    i<firstWeekday;
+    i++
+  ){
+
+    html +=
+      '<div class="st-calendar-day empty"></div>';
+
+  }
+
+  for(
+    var day=1;
+    day<=days;
+    day++
+  ){
+
+    var key =
+      dateKey(
+        year,
+        month,
+        day
+      );
+
+    var items =
+      sessionsForDate(key);
+
+    if(!items.length){
+
+      html +=
+        '<div class="st-calendar-day">'+
+          '<div class="st-cal-number">'+day+'</div>'+
+        '</div>';
+
+      continue;
+
+    }
+
+    var cls =
+      items.length === 1
+      ?
+      't'+items[0].type
+      :
+      '';
+
+    var labels = [];
+
+    for(
+      i=0;
+      i<items.length;
+      i++
+    ){
+
+      labels.push(
+        'Т'+
+        items[i].type+
+        ' №'+
+        items[i]
+          .session.number
+      );
+
+    }
+
+    html +=
+      '<button class="st-calendar-day '+cls+'" onclick="ST.openCalendarDay(\''+key+'\')">'+
+        '<div class="st-cal-number">'+day+'</div>'+
+        '<div class="st-cal-workout">'+
+          labels.join('<br>')+
+        '</div>'+
+      '</button>';
+
+  }
+
+  html +=
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  return html;
+
+}
+
+
+/* =========================================================
+   8RM
+========================================================= */
+
+function calculate8RM(
+  weight,
+  reps,
+  rpe
+){
+
+  weight =
+    Number(weight);
+
+  reps =
+    Number(reps);
+
+  rpe =
+    Number(rpe);
+
+  if(
+    !isFinite(weight) ||
+    !isFinite(reps) ||
+    !isFinite(rpe) ||
+    weight <= 0 ||
+    reps <= 0 ||
+    rpe < 1 ||
+    rpe > 10
+  ){
+
+    return null;
+
+  }
+
+  return (
+    weight *
+    (
+      1 +
+      (
+        reps +
+        10 -
+        rpe
+      ) / 30
+    ) /
+    (
+      1 +
+      8 / 30
+    )
+  );
+
+}
+
+
+function session8RM(
+  session,
+  exerciseId
+){
+
+  var ex =
+    findExercise(
+      session,
+      exerciseId
+    );
+
+  if(
+    !ex ||
+    ex.sets.length < 2
+  ){
+    return null;
+  }
+
+  var candidates = [];
+
+  /*
+    Первый подход исключён.
+  */
+
+  for(
+    var i=1;
+    i<ex.sets.length;
+    i++
+  ){
+
+    var s =
+      ex.sets[i];
+
+    var estimate =
+      calculate8RM(
+        s.factWeight,
+        s.factReps,
+        s.rpe
+      );
+
+    if(
+      estimate === null
+    ){
+      continue;
+    }
+
+    candidates.push({
+      weight:
+        Number(
+          s.factWeight
+        ),
+
+      reps:
+        Number(
+          s.factReps
+        ),
+
+      rpe:
+        Number(
+          s.rpe
+        ),
+
+      set:
+        i+1,
+
+      estimate:
+        estimate
+    });
+
+  }
+
+  if(!candidates.length){
+    return null;
+  }
+
+  var maxWeight =
+    candidates[0].weight;
+
+  for(
+    i=1;
+    i<candidates.length;
+    i++
+  ){
+
+    if(
+      candidates[i].weight >
+      maxWeight
+    ){
+
+      maxWeight =
+        candidates[i].weight;
+
+    }
+
+  }
+
+  var best = null;
+
+  for(
+    i=0;
+    i<candidates.length;
+    i++
+  ){
+
+    if(
+      candidates[i].weight !==
+      maxWeight
+    ){
+      continue;
+    }
+
+    if(
+      !best ||
+      candidates[i]
+        .estimate >
+      best.estimate
+    ){
+
+      best =
+        candidates[i];
+
+    }
+
+  }
+
+  return best;
+
+}
+
+
+function statsHistory(
+  exerciseId
+){
+
+  var sessions =
+    currentWorkout()
+      .sessions;
+
+  var result = [];
+
+  for(
+    var i=0;
+    i<sessions.length;
+    i++
+  ){
+
+    if(!sessions[i].date){
+      continue;
+    }
+
+    var best =
+      session8RM(
+        sessions[i],
+        exerciseId
+      );
+
+    if(!best){
+      continue;
+    }
+
+    result.push({
+      date:
+        sessions[i].date,
+
+      number:
+        sessions[i].number,
+
+      estimate:
+        best.estimate,
+
+      weight:
+        best.weight,
+
+      reps:
+        best.reps,
+
+      rpe:
+        best.rpe
+    });
+
+  }
+
+  return result;
+
+}
+
+
+function renderAnalysis(){
+
+  var catalog =
+    activeCatalog();
+
+  if(!catalog.length){
+
+    return (
+      '<div class="st-card st-empty">Нет упражнений для анализа.</div>'
+    );
+
+  }
+
+  if(!app.statsExerciseId){
+
+    app.statsExerciseId =
+      String(
+        catalog[0]
+          .exercise_id
+      );
+
+  }
+
+  var exists =
+    catalog.some(
+      function(item){
+
+        return (
+          String(
+            item.exercise_id
+          ) ===
+          String(
+            app.statsExerciseId
+          )
+        );
+
+      }
+    );
+
+  if(!exists){
+
+    app.statsExerciseId =
+      String(
+        catalog[0]
+          .exercise_id
+      );
+
+  }
+
+  var history =
+    statsHistory(
+      app.statsExerciseId
+    );
+
+  var html =
+    '<div class="st-analysis">'+
+      '<div class="st-card st-analysis-controls">'+
+        '<div class="st-control-label">Упражнение</div>'+
+        '<select class="st-select" onchange="ST.setStatsExercise(this.value)">';
+
+  for(
+    var i=0;
+    i<catalog.length;
+    i++
+  ){
+
+    html +=
+      '<option value="'+
+      esc(
+        catalog[i]
+          .exercise_id
+      )+
+      '" '+
+      (
+        String(
+          catalog[i]
+            .exercise_id
+        ) ===
+        String(
+          app.statsExerciseId
+        )
+        ?
+        'selected'
+        :
+        ''
+      )+
+      '>'+
+        esc(
+          catalog[i]
+            .exercise_name
+        )+
+      '</option>';
+
+  }
+
+  html +=
+        '</select>'+
+      '</div>';
+
+  if(history.length){
+
+    var latest =
+      history[
+        history.length-1
+      ];
+
+    var first =
+      history[0];
+
+    html +=
+      '<div class="st-metrics">'+
+        '<div class="st-metric main">'+
+          '<div class="st-metric-label">Расчётный максимум ×8</div>'+
+          '<div class="st-metric-value">'+
+            round1(
+              latest.estimate
+            )+
+            '<span class="st-metric-unit">кг</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="st-metric">'+
+          '<div class="st-metric-label">Изменение</div>'+
+          '<div class="st-metric-value">'+
+            (
+              latest.estimate -
+              first.estimate >
+              0
+              ?
+              '+'
+              :
+              ''
+            )+
+            round1(
+              latest.estimate -
+              first.estimate
+            )+
+            '<span class="st-metric-unit">кг</span>'+
+          '</div>'+
+        '</div>'+
+        '<div class="st-metric">'+
+          '<div class="st-metric-label">Исходный подход</div>'+
+          '<div class="st-metric-value">'+
+            latest.weight+
+            '<span class="st-metric-unit"> × '+
+              latest.reps+
+              ' @'+
+              latest.rpe+
+            '</span>'+
+          '</div>'+
+        '</div>'+
+      '</div>'+
+      renderChart(
+        history
+      );
+
+  }else{
+
+    html +=
+      '<div class="st-card st-empty">Недостаточно данных для расчёта.</div>';
+
+  }
+
+  html +=
+    renderMethod()+
+    '</div>';
+
+  return html;
+
+}
+
+
+function renderChart(history){
+
+  var W = 820;
+  var H = 330;
+
+  var left = 45;
+  var right = 18;
+  var top = 30;
+  var bottom = 52;
+
+  var plotW =
+    W-left-right;
+
+  var plotH =
+    H-top-bottom;
+
+  var min =
+    history[0].estimate;
+
+  var max =
+    history[0].estimate;
+
+  var i;
+
+  for(
+    i=1;
+    i<history.length;
+    i++
+  ){
+
+    min =
+      Math.min(
+        min,
+        history[i]
+          .estimate
+      );
+
+    max =
+      Math.max(
+        max,
+        history[i]
+          .estimate
+      );
+
+  }
+
+  var range =
+    Math.max(
+      4,
+      max-min
+    );
+
+  var low =
+    min-
+    range*.25;
+
+  var high =
+    max+
+    range*.25;
+
+  function x(index){
+
+    if(
+      history.length === 1
+    ){
+      return (
+        left+
+        plotW/2
+      );
+    }
+
+    return (
+      left+
+      index*
+      plotW/
+      (
+        history.length-1
+      )
+    );
+
+  }
+
+  function y(value){
+
+    return (
+      top+
+      (
+        high-value
+      ) /
+      (
+        high-low
+      ) *
+      plotH
+    );
+
+  }
+
+  var path = '';
+
+  for(
+    i=0;
+    i<history.length;
+    i++
+  ){
+
+    path +=
+      (
+        i === 0
+        ?
+        'M '
+        :
+        ' L '
+      )+
+      x(i)+
+      ' '+
+      y(
+        history[i]
+          .estimate
+      );
+
+  }
+
+  var html =
+    '<div class="st-card st-chart-card">'+
+      '<div class="st-chart-title">Прогресс расчётного максимума ×8</div>'+
+      '<div class="st-chart-sub">Одна точка — одна тренировка.</div>'+
+      '<svg viewBox="0 0 '+W+' '+H+'">';
+
+  for(
+    var g=0;
+    g<5;
+    g++
+  ){
+
+    var gy =
+      top+
+      g*
+      plotH/4;
+
+    var val =
+      high-
+      g*
+      (
+        high-low
+      )/4;
+
+    html +=
+      '<line class="chart-grid" x1="'+left+'" y1="'+gy+'" x2="'+(W-right)+'" y2="'+gy+'"></line>'+
+      '<text class="chart-label" x="'+(left-8)+'" y="'+(gy+4)+'" text-anchor="end">'+
+        round1(val)+
+      '</text>';
+
+  }
+
+  if(
+    history.length > 1
+  ){
+
+    html +=
+      '<path class="chart-line" d="'+path+'"></path>';
+
+  }
+
+  for(
+    i=0;
+    i<history.length;
+    i++
+  ){
+
+    html +=
+      '<circle class="chart-point" cx="'+x(i)+'" cy="'+y(history[i].estimate)+'" r="6"></circle>'+
+      '<text class="chart-value" x="'+x(i)+'" y="'+(y(history[i].estimate)-11)+'" text-anchor="middle">'+
+        round1(
+          history[i].estimate
+        )+
+      '</text>'+
+      '<text class="chart-label" x="'+x(i)+'" y="'+(H-22)+'" text-anchor="middle">'+
+        formatDate(
+          history[i].date
+        ).slice(0,5)+
+      '</text>';
+
+  }
+
+  html +=
+      '</svg>'+
+    '</div>';
+
+  return html;
+
+}
+
+
+function renderMethod(){
+
+  return (
+    '<div class="st-card st-method">'+
+      '<div class="st-method-title">Что такое расчётный максимум ×8</div>'+
+      '<div class="st-method-text">'+
+        'Это оценка веса, который вы предположительно могли бы выполнить на 8 повторений в свежем рабочем подходе после разминки. Первый подход упражнения в расчёт не входит.'+
+      '</div>'+
+      '<div class="st-method-text">'+
+        'Из остальных подходов сначала выбирается подход с самым большим фактическим весом. Если вес одинаковый — используется подход с более высоким расчётным результатом с учётом повторений и RPE.'+
+      '</div>'+
+      '<div class="st-formula">'+
+        '8RM = вес × [1 + (повторы + 10 − RPE) / 30] ÷ [1 + 8 / 30]'+
+      '</div>'+
+      '<div class="st-method-text">'+
+        'RPE интерпретируется через повторы в запасе: RPE 10 ≈ 0 повторов в запасе, RPE 9 ≈ 1, RPE 8 ≈ 2. Метрика используется для отслеживания динамики и не является измеренным максимумом.'+
+      '</div>'+
+      '<div class="st-method-links">'+
+        '<a target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/26049792/">Zourdos et al. — RPE и repetitions in reserve</a>'+
+        '<a target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/27531969/">Helms et al. — RIR-based RPE</a>'+
+        '<a target="_blank" href="https://pubmed.ncbi.nlm.nih.gov/7500624/">Оценка силы по весу и числу повторений</a>'+
+      '</div>'+
+    '</div>'
+  );
+
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+function renderModal(){
+
+  if(!app.modal){
+    return '';
+  }
+
+  if(
+    app.modal.type ===
+    'addUser'
+  ){
+
+    return (
+      '<div class="st-modal-bg">'+
+        '<div class="st-modal">'+
+          '<div class="st-modal-title">Добавить пользователя</div>'+
+          '<div class="st-modal-sub">Пользователь будет добавлен в базу и получит Тренировку 1 и Тренировку 2.</div>'+
+          '<input id="st-new-user-name" class="st-modal-input" placeholder="Имя">'+
+          '<input id="st-new-user-email" class="st-modal-input" placeholder="Email" type="email">'+
+          '<div class="st-modal-actions">'+
+            '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Отмена</button>'+
+            '<button class="st-modal-btn st-modal-save" onclick="ST.addUser()">Добавить</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'
+    );
+
+  }
+
+  if(
+    app.modal.type ===
+    'note'
+  ){
+
+    var session =
+      currentWorkout()
+        .sessions[
+          app.modal.sessionIndex
+        ];
+
+    var ex =
+      findExercise(
+        session,
+        app.modal.exerciseId
+      );
+
+    return (
+      '<div class="st-modal-bg">'+
+        '<div class="st-modal">'+
+          '<div class="st-modal-title">'+
+            esc(ex.name)+
+          '</div>'+
+          '<div class="st-modal-sub">Примечание к упражнению</div>'+
+          (
+            app.isAdmin
+            ?
+            '<div class="st-modal-read">'+
+              (
+                ex.note
+                ?
+                esc(ex.note)
+                :
+                'Примечаний нет'
+              )+
+            '</div>'
+            :
+            '<textarea id="st-note-text" class="st-modal-textarea">'+
+              esc(ex.note)+
+            '</textarea>'
+          )+
+          '<div class="st-modal-actions">'+
+            '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button>'+
+            (
+              app.isAdmin
+              ?
+              ''
+              :
+              '<button class="st-modal-btn st-modal-save" onclick="ST.saveNote()">Сохранить</button>'
+            )+
+          '</div>'+
+        '</div>'+
+      '</div>'
+    );
+
+  }
+
+  if(
+    app.modal.type ===
+    'manager'
+  ){
+
+    return renderManager();
+
+  }
+
+  if(
+    app.modal.type ===
+    'calendarDay'
+  ){
+
+    return renderCalendarDayModal(
+      app.modal.date
+    );
+
+  }
+
+  if(
+    app.modal.type ===
+    'dateWarning'
+  ){
+
+    return (
+      '<div class="st-modal-bg">'+
+        '<div class="st-modal">'+
+          '<div class="st-modal-title">Сначала укажите дату тренировки</div>'+
+          '<div class="st-modal-sub">После выбора даты можно заполнять вес, повторения, RPE и примечания.</div>'+
+          '<div class="st-modal-actions">'+
+            '<button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button>'+
+          '</div>'+
+        '</div>'+
+      '</div>'
+    );
+
+  }
+
+  return '';
+
+}
+
+
+function renderManager(){
+
+  var catalog =
+    currentWorkout()
+      .catalog.slice();
+
+  catalog.sort(
+    function(a,b){
+
+      return (
+        Number(
+          a.sort_order ||
+          0
+        ) -
+        Number(
+          b.sort_order ||
+          0
+        )
+      );
+
+    }
+  );
+
+  var html =
+    '<div class="st-modal-bg">'+
+      '<div class="st-modal">'+
+        '<div class="st-modal-title">Упражнения</div>'+
+        '<div class="st-modal-sub">Можно менять порядок, скрывать и добавлять упражнения.</div>'+
+        '<div class="st-manager-list">';
+
+  for(
+    var i=0;
+    i<catalog.length;
+    i++
+  ){
+
+    var active =
+      !(
+        catalog[i].active === false ||
+        String(
+          catalog[i].active
+        ).toLowerCase() ===
+        'false'
+      );
+
+    html +=
+      '<div class="st-manager-row" style="'+
+      (
+        active
+        ?
+        ''
+        :
+        'opacity:.5;'
+      )+
+      '">'+
+        '<div class="st-manager-name">'+
+          esc(
+            catalog[i]
+              .exercise_name
+          )+
+        '</div>'+
+        '<div class="st-manager-actions">'+
+          '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',-1)">↑</button>'+
+          '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',1)">↓</button>'+
+          '<button class="st-mini" onclick="ST.toggleExercise(\''+esc(catalog[i].exercise_id)+'\')">'+
+            (
+              active
+              ?
+              'Скрыть'
+              :
+              'Вернуть'
+            )+
+          '</button>'+
+        '</div>'+
+      '</div>';
+
+  }
+
+  html +=
+        '</div>'+
+        '<input id="st-new-exercise" class="st-modal-input" placeholder="Новое упражнение">'+
+        '<div class="st-modal-actions">'+
+          '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Готово</button>'+
+          '<button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить упражнение</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  return html;
+
+}
+
+
+function renderCalendarDayModal(
+  date
+){
+
+  var items =
+    sessionsForDate(date);
+
+  var html =
+    '<div class="st-modal-bg">'+
+      '<div class="st-modal">'+
+        '<div class="st-modal-title">'+
+          formatDate(date)+
+        '</div>'+
+        '<div class="st-modal-sub">'+
+          weekday(date)+
+        '</div>';
+
+  for(
+    var i=0;
+    i<items.length;
+    i++
+  ){
+
+    html +=
+      '<button class="st-user-card" style="margin-top:10px;" onclick="ST.jumpToSession('+items[i].type+','+items[i].index+')">'+
+        '<div class="st-user-card-name">Тренировка '+items[i].type+' · №'+items[i].session.number+'</div>'+
+        '<div class="st-user-card-meta">'+
+          (
+            isFilled(
+              items[i].session
+            )
+            ?
+            'Заполнена'
+            :
+            'Не заполнена'
+          )+
+        '</div>'+
+      '</button>';
+
+  }
+
+  html +=
+        '<div class="st-modal-actions">'+
+          '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+
+  return html;
+
+}
+
+
+/* =========================================================
+   RPE
+========================================================= */
+
+function renderFloatingRpe(){
+
+  if(!app.rpeMenu){
+    return '';
+  }
+
+  var html =
+    '<div class="st-rpe-floating" style="left:'+app.rpeMenu.left+'px;top:'+app.rpeMenu.top+'px;">';
+
+  for(
+    var i=1;
+    i<=10;
+    i++
+  ){
+
+    html +=
+      '<button class="st-rpe-option rpe'+i+'" onclick="ST.setRpe('+i+')">'+i+'</button>';
+
+  }
+
+  html += '</div>';
+
+  return html;
+
+}
+
+
+/* =========================================================
+   SAVE EXERCISE SETTINGS
+========================================================= */
+
+function saveExerciseSettings(){
+
+  var catalog =
+    currentWorkout()
+      .catalog;
+
+  var arr = [];
+
+  for(
+    var i=0;
+    i<catalog.length;
+    i++
+  ){
+
+    arr.push({
+      exercise_id:
+        catalog[i]
+          .exercise_id,
+
+      active:
+        !(
+          catalog[i].active === false ||
+          String(
+            catalog[i].active
+          ).toLowerCase() ===
+          'false'
+        ),
+
+      sort_order:
+        Number(
+          catalog[i]
+            .sort_order ||
+          i+1
+        )
+    });
+
+  }
+
+  postApi({
+    action:
+      'saveExerciseSettings',
+
+    user_id:
+      currentUserId(),
+
+    target_user_id:
+      currentUserId(),
+
+    admin_email:
+      app.email,
+
+    workout_type:
+      app.workoutType,
+
+    exercises:
+      arr
+  })
+  .catch(function(error){
+
+    alert(
+      'Не удалось сохранить упражнения: '+
+      error.message
+    );
+
+  });
+
+}
+
+
+/* =========================================================
+   PUBLIC
+========================================================= */
+
+window.ST = {
+
+  backToUsers:function(){
+
+    app.selectedUser = null;
+
+    loadAdminUsers();
+
+  },
+
+
+  openUser:function(index){
+
+    var sorted =
+      app.adminUsers.slice();
+
+    sorted.sort(
+      function(a,b){
+
+        return String(
+          a.display_name ||
+          a.email ||
+          ''
+        ).localeCompare(
+          String(
+            b.display_name ||
+            b.email ||
+            ''
+          )
+        );
+
+      }
+    );
+
+    loadClient(
+      sorted[index]
+    );
+
+  },
+
+
+  openAddUser:function(){
+
+    app.modal = {
+      type:'addUser'
+    };
+
+    render();
+
+  },
+
+
+  addUser:function(){
+
+    var nameEl =
+      document.getElementById(
+        'st-new-user-name'
+      );
+
+    var emailEl =
+      document.getElementById(
+        'st-new-user-email'
+      );
+
+    var email =
+      emailEl
+      ?
+      String(
+        emailEl.value ||
+        ''
+      ).trim()
+      :
+      '';
+
+    var name =
+      nameEl
+      ?
+      String(
+        nameEl.value ||
+        ''
+      ).trim()
+      :
+      '';
+
+    if(!email){
+
+      alert(
+        'Введите email'
+      );
+
+      return;
+
+    }
+
+    postApi({
+      action:
+        'adminAddUser',
+
+      admin_email:
+        app.email,
+
+      email:
+        email,
+
+      display_name:
+        name
+    })
+    .then(function(){
+
+      app.modal = null;
+
+      loadAdminUsers();
+
+    })
+    .catch(function(error){
+
+      alert(
+        error.message
+      );
+
+    });
+
+  },
+
+
+  setMainTab:function(tab){
+
+    app.mainTab = tab;
+    app.modal = null;
+    app.rpeMenu = null;
+
+    render();
+
+  },
+
+
+  setStatsTab:function(tab){
+
+    app.statsTab = tab;
+    app.modal = null;
+
+    render();
+
+  },
+
+
+  setWorkoutType:function(type){
+
+    app.workoutType =
+      Number(type);
+
+    var sessions =
+      currentWorkout()
+        .sessions;
+
+    app.selectedIndex =
+      sessions.length
+      ?
+      sessions.length-1
+      :
+      0;
+
+    app.statsExerciseId = '';
+
+    render();
+
+  },
+
+
+  prevSession:function(){
+
+    if(
+      app.selectedIndex > 0
+    ){
+
+      app.selectedIndex--;
+
+      render();
+
+    }
+
+  },
+
+
+  nextSession:function(){
+
+    if(
+      app.selectedIndex <
+      currentWorkout()
+        .sessions.length-1
+    ){
+
+      app.selectedIndex++;
+
+      render();
+
+    }
+
+  },
+
+
+  openDate:function(id){
+
+    var input =
+      document.getElementById(id);
+
+    if(!input){
+      return;
+    }
+
+    try{
+
+      if(input.showPicker){
+        input.showPicker();
+      }else{
+        input.click();
+      }
+
+    }catch(e){
+
+      input.click();
+
+    }
+
+  },
+
+
+  setDate:function(
+    index,
+    value
+  ){
+
+    currentWorkout()
+      .sessions[index]
+      .date =
+      value;
+
+    scheduleSave(index);
+
+    render();
+
+  },
+
+
+  numberClick:function(
+    event,
+    index
+  ){
+
+    if(
+      clientLocked(index)
+    ){
+
+      event.preventDefault();
+
+      try{
+        event.target.blur();
+      }catch(e){}
+
+      app.modal = {
+        type:'dateWarning'
+      };
+
+      render();
+
+      return false;
+
+    }
+
+    if(app.isAdmin){
+
+      setTimeout(
+        function(){
+
+          try{
+            event.target.select();
+          }catch(e){}
+
+        },
+        0
+      );
+
+    }
+
+    return true;
+
+  },
+
+
+  changeField:function(
+    index,
+    id,
+    setIndex,
+    field,
+    value
+  ){
+
+    if(
+      clientLocked(index)
+    ){
+
+      app.modal = {
+        type:'dateWarning'
+      };
+
+      render();
+
+      return;
+
+    }
+
+    var ex =
+      findExercise(
+        currentWorkout()
+          .sessions[index],
+        id
+      );
+
+    if(
+      !ex ||
+      !ex.sets[setIndex]
+    ){
+      return;
+    }
+
+    ex.sets[setIndex][field] =
+      value === ''
+      ?
+      ''
+      :
+      Number(value);
+
+    scheduleSave(index);
+
+    render();
+
+  },
+
+
+  openRpe:function(
+    event,
+    index,
+    id,
+    setIndex
+  ){
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if(
+      clientLocked(index)
+    ){
+
+      app.modal = {
+        type:'dateWarning'
+      };
+
+      render();
+
+      return;
+
+    }
+
+    var rect =
+      event.currentTarget
+        .getBoundingClientRect();
+
+    var height = 330;
+
+    var top =
+      rect.bottom+4;
+
+    if(
+      top+height >
+      window.innerHeight
+    ){
+
+      top =
+        Math.max(
+          5,
+          rect.top-height-4
+        );
+
+    }
+
+    var left =
+      rect.left+
+      rect.width/2-
+      35;
+
+    left =
+      Math.max(
+        5,
+        Math.min(
+          left,
+          window.innerWidth-75
+        )
+      );
+
+    app.rpeMenu = {
+      index:index,
+      id:id,
+      setIndex:setIndex,
+      left:left,
+      top:top
+    };
+
+    render();
+
+  },
+
+
+  setRpe:function(value){
+
+    if(!app.rpeMenu){
+      return;
+    }
+
+    var m =
+      app.rpeMenu;
+
+    var ex =
+      findExercise(
+        currentWorkout()
+          .sessions[
+            m.index
+          ],
+        m.id
+      );
+
+    if(!ex){
+      return;
+    }
+
+    ex.sets[
+      m.setIndex
+    ].rpe =
+      Number(value);
+
+    app.rpeMenu = null;
+
+    scheduleSave(
+      m.index
+    );
+
+    render();
+
+  },
+
+
+  openNote:function(
+    index,
+    id
+  ){
+
+    if(
+      clientLocked(index)
+    ){
+
+      app.modal = {
+        type:'dateWarning'
+      };
+
+      render();
+
+      return;
+
+    }
+
+    app.modal = {
+      type:'note',
+      sessionIndex:index,
+      exerciseId:id
+    };
+
+    render();
+
+  },
+
+
+  saveNote:function(){
+
+    if(
+      app.isAdmin ||
+      !app.modal ||
+      app.modal.type !==
+      'note'
+    ){
+      return;
+    }
+
+    var textarea =
+      document.getElementById(
+        'st-note-text'
+      );
+
+    var ex =
+      findExercise(
+        currentWorkout()
+          .sessions[
+            app.modal
+              .sessionIndex
+          ],
+        app.modal
+          .exerciseId
+      );
+
+    if(!ex){
+      return;
+    }
+
+    ex.note =
+      textarea
+      ?
+      textarea.value
+      :
+      '';
+
+    var index =
+      app.modal
+        .sessionIndex;
+
+    app.modal = null;
+
+    scheduleSave(index);
+
+    render();
+
+  },
+
+
+  openManager:function(){
+
+    if(!app.isAdmin){
+      return;
+    }
+
+    app.modal = {
+      type:'manager'
+    };
+
+    render();
+
+  },
+
+
+  hideExercise:function(id){
+
+    if(!app.isAdmin){
+      return;
+    }
+
+    var catalog =
+      currentWorkout()
+        .catalog;
+
+    for(
+      var i=0;
+      i<catalog.length;
+      i++
+    ){
+
+      if(
+        String(
+          catalog[i]
+            .exercise_id
+        ) ===
+        String(id)
+      ){
+
+        catalog[i]
+          .active = false;
+
+        break;
+
+      }
+
+    }
+
+    saveExerciseSettings();
+
+    render();
+
+  },
+
+
+  toggleExercise:function(id){
+
+    var catalog =
+      currentWorkout()
+        .catalog;
+
+    for(
+      var i=0;
+      i<catalog.length;
+      i++
+    ){
+
+      if(
+        String(
+          catalog[i]
+            .exercise_id
+        ) ===
+        String(id)
+      ){
+
+        var active =
+          !(
+            catalog[i].active ===
+              false ||
+            String(
+              catalog[i].active
+            ).toLowerCase() ===
+              'false'
+          );
+
+        catalog[i].active =
+          !active;
+
+        break;
+
+      }
+
+    }
+
+    saveExerciseSettings();
+
+    render();
+
+  },
+
+
+  moveExercise:function(
+    id,
+    direction
+  ){
+
+    var catalog =
+      currentWorkout()
+        .catalog;
+
+    catalog.sort(
+      function(a,b){
+
+        return (
+          Number(
+            a.sort_order ||
+            0
+          ) -
+          Number(
+            b.sort_order ||
+            0
+          )
+        );
+
+      }
+    );
+
+    var index = -1;
+
+    for(
+      var i=0;
+      i<catalog.length;
+      i++
+    ){
+
+      if(
+        String(
+          catalog[i]
+            .exercise_id
+        ) ===
+        String(id)
+      ){
+
+        index = i;
+        break;
+
+      }
+
+    }
+
+    var target =
+      index+
+      Number(direction);
+
+    if(
+      index < 0 ||
+      target < 0 ||
+      target >=
+        catalog.length
+    ){
+      return;
+    }
+
+    var temp =
+      catalog[index];
+
+    catalog[index] =
+      catalog[target];
+
+    catalog[target] =
+      temp;
+
+    for(
+      i=0;
+      i<catalog.length;
+      i++
+    ){
+
+      catalog[i]
+        .sort_order =
+        i+1;
+
+    }
+
+    saveExerciseSettings();
+
+    render();
+
+  },
+
+
+  addExercise:function(){
+
+    var input =
+      document.getElementById(
+        'st-new-exercise'
+      );
+
+    var name =
+      input
+      ?
+      String(
+        input.value ||
+        ''
+      ).trim()
+      :
+      '';
+
+    if(!name){
+      return;
+    }
+
+    postApi({
+      action:'addExercise',
+
+      admin_email:
+        app.email,
+
+      target_user_id:
+        currentUserId(),
+
+      workout_type:
+        app.workoutType,
+
+      exercise_name:
+        name
+    })
+    .then(function(){
+
+      return getWorkoutType(
+        app.selectedUser,
+        app.workoutType
+      );
+
+    })
+    .then(function(workout){
+
+      app.workouts[
+        app.workoutType
+      ] = workout;
+
+      app.modal = {
+        type:'manager'
+      };
+
+      render();
+
+    })
+    .catch(function(error){
+
+      alert(
+        error.message
+      );
+
+    });
+
+  },
+
+
+  createFirstSession:function(){
+
+    if(!app.isAdmin){
+      return;
+    }
+
+    var catalog =
+      activeCatalog();
+
+    var exercises = [];
+
+    for(
+      var i=0;
+      i<catalog.length;
+      i++
+    ){
+
+      exercises.push({
+        id:
+          catalog[i]
+            .exercise_id,
+
+        name:
+          catalog[i]
+            .exercise_name,
+
+        sort_order:
+          catalog[i]
+            .sort_order,
+
+        note:'',
+
+        sets:[
+          {
+            set_number:1,
+            planWeight:'',
+            planReps:'',
+            factWeight:'',
+            factReps:'',
+            rpe:''
+          }
+        ]
+      });
+
+    }
+
+    currentWorkout()
+      .sessions
+      .push({
+        session_id:'',
+        number:1,
+        date:'',
+        exercises:
+          exercises
+      });
+
+    app.selectedIndex = 0;
+
+    saveSessionNow(0);
+
+    render();
+
+  },
+
+
+  copyNext:function(mode){
+
+    if(
+      !app.isAdmin ||
+      !isLatest()
+    ){
+      return;
+    }
+
+    var workout =
+      currentWorkout();
+
+    var source =
+      workout.sessions[
+        app.selectedIndex
+      ];
+
+    var next = {
+      session_id:'',
+      number:
+        source.number+1,
+      date:'',
+      exercises:[]
+    };
+
+    for(
+      var i=0;
+      i<source.exercises.length;
+      i++
+    ){
+
+      var old =
+        source.exercises[i];
+
+      var ne = {
+        id:old.id,
+        name:old.name,
+        sort_order:
+          old.sort_order,
+        note:'',
+        sets:[]
+      };
+
+      for(
+        var j=0;
+        j<old.sets.length;
+        j++
+      ){
+
+        ne.sets.push({
+          set_number:j+1,
+
+          planWeight:
+            mode === 'fact'
+            ?
+            old.sets[j]
+              .factWeight
+            :
+            old.sets[j]
+              .planWeight,
+
+          planReps:
+            mode === 'fact'
+            ?
+            old.sets[j]
+              .factReps
+            :
+            old.sets[j]
+              .planReps,
+
+          factWeight:'',
+          factReps:'',
+          rpe:''
+        });
+
+      }
+
+      next.exercises.push(
+        ne
+      );
+
+    }
+
+    workout.sessions.push(
+      next
+    );
+
+    app.selectedIndex =
+      workout.sessions.length-1;
+
+    saveSessionNow(
+      app.selectedIndex
+    );
+
+    render();
+
+  },
+
+
+  prevMonth:function(){
+
+    app.calendarMonth--;
+
+    if(
+      app.calendarMonth < 0
+    ){
+
+      app.calendarMonth = 11;
+      app.calendarYear--;
+
+    }
+
+    render();
+
+  },
+
+
+  nextMonth:function(){
+
+    app.calendarMonth++;
+
+    if(
+      app.calendarMonth > 11
+    ){
+
+      app.calendarMonth = 0;
+      app.calendarYear++;
+
+    }
+
+    render();
+
+  },
+
+
+  openCalendarDay:function(date){
+
+    app.modal = {
+      type:'calendarDay',
+      date:date
+    };
+
+    render();
+
+  },
+
+
+  jumpToSession:function(
+    type,
+    index
+  ){
+
+    app.workoutType =
+      Number(type);
+
+    app.selectedIndex =
+      Number(index);
+
+    app.mainTab =
+      'training';
+
+    app.modal = null;
+
+    render();
+
+  },
+
+
+  setStatsExercise:function(id){
+
+    app.statsExerciseId =
+      id;
+
+    render();
+
+  },
+
+
+  closeModal:function(){
+
+    app.modal = null;
+
+    render();
+
+  }
+
+};
+
+
+/* =========================================================
+   GLOBAL CLICK
+========================================================= */
+
+document.addEventListener(
+  'click',
+  function(event){
+
+    if(!app.rpeMenu){
+      return;
+    }
+
+    var el =
+      event.target;
+
+    while(el){
+
+      if(
+        el.className &&
+        (
+          String(
+            el.className
+          ).indexOf(
+            'st-rpe-floating'
+          ) > -1 ||
+          String(
+            el.className
+          ).indexOf(
+            'st-rpe-button'
+          ) > -1 ||
+          String(
+            el.className
+          ).indexOf(
+            'st-rpe-option'
+          ) > -1
+        )
+      ){
+
+        return;
+
+      }
+
+      el =
+        el.parentNode;
+
+    }
+
+    app.rpeMenu = null;
+
+    render();
+
+  }
+);
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+function showFatal(error){
+
+  root.innerHTML =
+    '<div class="st-error">'+
+      '<b>Ошибка приложения</b>'+
+      '<div style="margin-top:8px;">'+
+        esc(
+          error &&
+          error.message
+          ?
+          error.message
+          :
+          String(error)
+        )+
+      '</div>'+
+    '</div>';
+
+}
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+function init(){
+
+  app.email =
+    detectEmail();
+
+  if(!app.email){
+
+    showFatal(
+      new Error(
+        'Не удалось определить email пользователя Tilda.'
+      )
+    );
+
+    return;
+
+  }
+
+  app.email =
+    String(app.email)
+      .trim()
+      .toLowerCase();
+
+  app.isAdmin =
+    app.email ===
+    ADMIN_EMAIL
+      .toLowerCase();
+
+  if(app.isAdmin){
+
+    loadAdminUsers();
+
+    return;
+
+  }
+
+  getApi({
+    action:'openUser',
+    email:app.email
+  })
+  .then(function(result){
+
+    loadClient(
+      result.user
+    );
+
+  })
+  .catch(showFatal);
+
+}
+
+
+try{
+
+  init();
+
+}catch(error){
+
+  showFatal(error);
+
+}
+
+})();
+</script>

@@ -18,15 +18,18 @@ Google Apps Script и Tilda T123. Она нужна для переноса по
 - `dqs/PRODUCT_CATEGORIES.md` — канонические правила категорий DQS;
 - `dqs/CONTEXT.md` — полный контекст DQS на 16.08.2026;
 - `dqs/apps-script/Code.gs` — legacy backend DQS;
-- `dqs/tilda/client-t123.html` — legacy клиент DQS;
-- `dqs/tilda/admin-t123.html` — legacy админка DQS;
+- `dqs/tilda/client-t123.html` — полный клиент DQS, переданный владельцем 22.08.2026;
+- `dqs/tilda/admin-t123.html` — полная админка DQS, переданная владельцем 22.08.2026;
 - `dqs/PENDING_CLIENT_CHANGES.md` — изменения, которые на момент источника не были
   внесены в production;
 - `dqs/SUPERSEDED_INTEGRATIONS_PLAN.md` — устаревший план, где Google Sheets и Apps
   Script должны были стать постоянным реестром покупок;
 - `strength/DATA_MODEL_AND_RULES.md` — правила и модель силовых тренировок;
 - `strength/apps-script/Code.gs` — legacy backend силовых;
-- `sheets/*.md` — только структура вкладок и заголовков, без пользовательских строк;
+- `strength/tilda/client-t123.html` — клиент и встроенный тренерский режим силовых;
+- `metabolism/tilda/client-t123.html` — локальный клиент калькулятора метаболизма;
+- `metabolism/REQUIREMENTS.md` — требования к серверному хранению калькулятора;
+- `sheets/*.md` — зафиксированная безопасная схема вкладок и заголовков;
 - `SOURCES.md` — реестр исходных Google-файлов и решение по каждому из них.
 
 ## Правила безопасности
@@ -37,6 +40,8 @@ Google Apps Script и Tilda T123. Она нужна для переноса по
 - Идентификаторы самих Google Docs/Sheets сохранены как ссылки на источники; это не
   экспорт данных и не ключи доступа.
 - Перед реальным импортом данных снова проверить backup и восстановление.
+- Реальные строки Google Sheets разрешено читать и переносить напрямую в PostgreSQL,
+  но нельзя сохранять в этой папке, временных Git-файлах или истории коммитов.
 
 ## Как использовать при переносе
 

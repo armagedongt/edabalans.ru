@@ -9,6 +9,20 @@ class Settings(BaseSettings):
     database_url: str
     admin_username: str = ""
     admin_password: str = ""
+    allowed_origins: str = "https://похудение-это-есть.рф"
+
+    @property
+    def allowed_origins_list(self) -> list[str]:
+        values = [item.strip() for item in self.allowed_origins.split(",") if item.strip()]
+        expanded: list[str] = []
+        for value in values:
+            expanded.append(value)
+            try:
+                scheme, host = value.split("://", 1)
+                expanded.append(f"{scheme}://{host.encode('idna').decode('ascii')}")
+            except (UnicodeError, ValueError):
+                pass
+        return list(dict.fromkeys(expanded))
 
     model_config = SettingsConfigDict(case_sensitive=False)
 

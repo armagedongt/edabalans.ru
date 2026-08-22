@@ -33,6 +33,7 @@ services:
       DATABASE_URL: "${DATABASE_URL}"
       ADMIN_USERNAME: "${ADMIN_USERNAME}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-https://похудение-это-есть.рф}"
     expose:
       - "8000"
     depends_on:
