@@ -169,7 +169,7 @@ def admin_add_tag(
 
 
 @router.get("/admin/api/access-reviews")
-def admin_access_reviews(limit: int = Query(default=500, ge=1, le=500),
+def admin_access_reviews(limit: int = Query(default=1000, ge=1, le=1000),
                          _: str = Depends(require_admin), db: Session = Depends(get_db)) -> list[dict]:
     return list_access_reviews(db, limit)
 

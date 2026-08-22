@@ -86,7 +86,7 @@
       <div class="crm-stats">
         <div class="crm-stat"><div class="crm-k">ЛЮДЕЙ В CRM</div><div class="crm-v">${data.users || 0}</div><div class="crm-s">единый user_id</div></div>
         <div class="crm-stat"><div class="crm-k">ПОКУПАТЕЛЕЙ</div><div class="crm-v">${data.buyers || 0}</div><div class="crm-s">есть подтверждённая оплата</div></div>
-        <div class="crm-stat"><div class="crm-k">ОПЛАЧЕННЫХ ОПЕРАЦИЙ</div><div class="crm-v">${data.paid_payments || 0}</div><div class="crm-s">история не перезаписывается</div></div>
+        <div class="crm-stat"><div class="crm-k">ПОКУПОК В ИСТОРИИ</div><div class="crm-v">${data.paid_payments || 0}</div><div class="crm-s">включая старые без известной суммы</div></div>
         <div class="crm-stat"><div class="crm-k">ВЫРУЧКА</div><div class="crm-v">${money(data.revenue_rub)}</div><div class="crm-s">подтверждённые RUB</div></div>
       </div>`;
   }

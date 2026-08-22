@@ -524,7 +524,7 @@ def merge_tag(db: Session, source_tag_id: uuid.UUID, target_name: str) -> bool:
     return True
 
 
-def list_access_reviews(db: Session, limit: int = 500) -> list[dict]:
+def list_access_reviews(db: Session, limit: int = 1000) -> list[dict]:
     email, telegram, purchases, _, _ = _user_scalar_subqueries()
     rows = db.execute(
         select(
@@ -534,7 +534,7 @@ def list_access_reviews(db: Session, limit: int = 500) -> list[dict]:
         )
         .where(User.merged_into_user_id.is_(None), User.access_review_status != "not_required")
         .order_by(User.updated_at.desc())
-        .limit(min(max(limit, 1), 500))
+        .limit(min(max(limit, 1), 1000))
     ).mappings().all()
     return [{**dict(row), "id": str(row["id"]), "purchase_count": row["purchase_count"] or 0} for row in rows]
 
