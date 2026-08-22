@@ -2763,11 +2763,7 @@ function renderJournalHeader(){
       '<div class="st-empty">'+
         'У этой тренировки пока нет занятий.'+
         (
-          app.isAdmin
-          ?
           '<div style="margin-top:10px;"><button class="st-add-user" onclick="ST.createFirstSession()">Создать первую тренировку</button></div>'
-          :
-          ''
         )+
       '</div>'
     );
@@ -2818,10 +2814,6 @@ function renderJournalHeader(){
 
 function renderActions(){
 
-  if(!app.isAdmin){
-    return '';
-  }
-
   var current =
     currentWorkout()
       .sessions[
@@ -2829,9 +2821,9 @@ function renderActions(){
       ];
 
   return (
-    '<div class="st-actions">'+
+      '<div class="st-actions">'+
       '<div class="st-action-group">'+
-        '<button class="st-action st-manage" onclick="ST.openManager()">Добавить / изменить порядок</button>'+
+        '<button class="st-action st-manage" onclick="ST.openManager()">Настроить упражнения</button>'+
       '</div>'+
       '<div class="st-action-group">'+
         '<button class="st-action st-copy-plan" '+
@@ -3160,11 +3152,7 @@ function renderExerciseDay(
   html +=
     '<div class="st-ex-tools">'+
     (
-      app.isAdmin
-      ?
       '<button class="st-hide" onclick="ST.hideExercise(\''+id+'\')">Скрыть упражнение</button>'
-      :
-      ''
     )+
     '</div>'+
     '<div class="st-ex-head">'+
@@ -4426,7 +4414,15 @@ function renderManager(){
     '<div class="st-modal-bg">'+
       '<div class="st-modal">'+
         '<div class="st-modal-title">Упражнения</div>'+
-        '<div class="st-modal-sub">Можно менять порядок, скрывать и добавлять упражнения.</div>'+
+        '<div class="st-modal-sub">'+
+          (
+            app.isAdmin
+            ?
+            'Можно менять порядок, скрывать и добавлять упражнения.'
+            :
+            'Можно менять порядок и скрывать ненужные упражнения. Их всегда можно вернуть.'
+          )+
+        '</div>'+
         '<div class="st-manager-list">';
 
   for(
@@ -4479,10 +4475,22 @@ function renderManager(){
 
   html +=
         '</div>'+
-        '<input id="st-new-exercise" class="st-modal-input" placeholder="Новое упражнение">'+
+        (
+          app.isAdmin
+          ?
+          '<input id="st-new-exercise" class="st-modal-input" placeholder="Новое упражнение">'
+          :
+          ''
+        )+
         '<div class="st-modal-actions">'+
           '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Готово</button>'+
-          '<button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить упражнение</button>'+
+          (
+            app.isAdmin
+            ?
+            '<button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить упражнение</button>'
+            :
+            ''
+          )+
         '</div>'+
       '</div>'+
     '</div>';
@@ -4618,25 +4626,36 @@ function saveExerciseSettings(){
 
   }
 
-  postApi({
+  var body = {
     action:
       'saveExerciseSettings',
-
-    user_id:
-      currentUserId(),
-
-    target_user_id:
-      currentUserId(),
-
-    admin_email:
-      app.email,
 
     workout_type:
       app.workoutType,
 
     exercises:
       arr
-  })
+  };
+
+  if(app.isAdmin){
+
+    body.user_id =
+      currentUserId();
+
+    body.target_user_id =
+      currentUserId();
+
+    body.admin_email =
+      app.email;
+
+  }else{
+
+    body.email =
+      app.email;
+
+  }
+
+  postApi(body)
   .catch(function(error){
 
     alert(
@@ -5186,10 +5205,6 @@ window.ST = {
 
   openManager:function(){
 
-    if(!app.isAdmin){
-      return;
-    }
-
     app.modal = {
       type:'manager'
     };
@@ -5200,10 +5215,6 @@ window.ST = {
 
 
   hideExercise:function(id){
-
-    if(!app.isAdmin){
-      return;
-    }
 
     var catalog =
       currentWorkout()
@@ -5377,6 +5388,10 @@ window.ST = {
 
   addExercise:function(){
 
+    if(!app.isAdmin){
+      return;
+    }
+
     var input =
       document.getElementById(
         'st-new-exercise'
@@ -5445,10 +5460,6 @@ window.ST = {
 
   createFirstSession:function(){
 
-    if(!app.isAdmin){
-      return;
-    }
-
     var catalog =
       activeCatalog();
 
@@ -5511,7 +5522,6 @@ window.ST = {
   copyNext:function(mode){
 
     if(
-      !app.isAdmin ||
       !isLatest()
     ){
       return;

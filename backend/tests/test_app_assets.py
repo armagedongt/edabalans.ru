@@ -43,3 +43,12 @@ def test_tilda_origin_is_allowed_for_api_preflight() -> None:
     )
     assert response.status_code == 200
     assert response.headers["access-control-allow-origin"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+
+
+def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
+    response = client.get("/apps/strength.html")
+
+    assert response.status_code == 200
+    assert "Создать первую тренировку" in response.text
+    assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in response.text
+    assert "body.email =\n      app.email;" in response.text
