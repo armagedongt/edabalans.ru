@@ -102,7 +102,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
         assert session.scalar(select(func.count(StepDelivery.id))) == 2
         assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 3
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
-    assert state["run_status"] == "waiting"
+    assert state["run_status"] == "active"
     assert state["sent"] == 2
     sent = client.post(f"/bot-api/users/{crm_user_id}/messages", json={"text": "Проверка"}).json()
     assert sent["status"] == "sent"
