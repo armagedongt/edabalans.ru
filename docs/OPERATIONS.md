@@ -94,6 +94,35 @@ docker compose exec backend python -m app.importers.tilda_members \
 После импорта проверяются число аккаунтов, созданных доступов, `needs_review`, две
 необновляемые группы, очередь `processing` и карточки Tilda в CRM.
 
+### Каталог Pikabu
+
+Collector запускается локально и сохраняет JSON и browser profile только вне Git:
+
+```powershell
+pip install -r backend/requirements-collector.txt
+playwright install chromium
+python tools/pikabu_collect.py `
+  --output C:\private\pikabu\catalog.json `
+  --browser-profile C:\private\pikabu\browser-profile
+```
+
+Collector не скачивает изображения и видео: в JSON остаются только URL. Сначала
+обязателен inspect без записи:
+
+```bash
+docker compose exec backend python -m app.importers.pikabu_catalog /tmp/catalog.json
+```
+
+Перед migration и первым `--apply` выполняются ручной backup и test restore. После
+этого владелец отдельно подтверждает импорт:
+
+```bash
+docker compose exec backend python -m app.importers.pikabu_catalog \
+  /tmp/catalog.json --apply --backup-confirmed
+```
+
+Реальный JSON после проверки не коммитится и удаляется из временного каталога.
+
 ## Автоматическая публикация
 
 Push в ветку `main` запускает `.github/workflows/production.yml`:

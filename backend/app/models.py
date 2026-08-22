@@ -465,3 +465,158 @@ class AdminAppEdit(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class ContentSource(TimestampMixin, Base):
+    __tablename__ = "content_sources"
+    __table_args__ = (
+        UniqueConstraint("platform", "account_key", name="uq_content_source_account"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    platform: Mapped[str] = mapped_column(String(32), nullable=False)
+    account_key: Mapped[str] = mapped_column(String(255), nullable=False)
+    display_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    canonical_url: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    last_synced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ContentItem(TimestampMixin, Base):
+    __tablename__ = "content_items"
+    __table_args__ = (
+        UniqueConstraint("source_id", "external_id", name="uq_content_item_external"),
+        Index("ix_content_items_published_at", "published_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    source_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_sources.id", ondelete="RESTRICT"), index=True
+    )
+    external_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    canonical_url: Mapped[str] = mapped_column(Text, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    author_name: Mapped[str | None] = mapped_column(String(255))
+    published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    source_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(32), default="published", nullable=False)
+    latest_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("content_item_versions.id", ondelete="SET NULL", use_alter=True)
+    )
+    source_tags: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    ending_text: Mapped[str | None] = mapped_column(Text)
+    ending_kind: Mapped[str | None] = mapped_column(String(32))
+    cta_text: Mapped[str | None] = mapped_column(Text)
+    cta_url: Mapped[str | None] = mapped_column(Text)
+    recommendations_status: Mapped[str] = mapped_column(
+        String(32), default="review", nullable=False
+    )
+    review_status: Mapped[str] = mapped_column(
+        String(32), default="pending", nullable=False
+    )
+
+
+class ContentItemVersion(Base):
+    __tablename__ = "content_item_versions"
+    __table_args__ = (
+        UniqueConstraint("item_id", "version_no", name="uq_content_item_version_no"),
+        UniqueConstraint("item_id", "content_hash", name="uq_content_item_version_hash"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    version_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    blocks: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    parser_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    source_updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    imported_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class ContentMedia(Base):
+    __tablename__ = "content_media"
+    __table_args__ = (
+        UniqueConstraint(
+            "version_id", "position", "source_url", name="uq_content_media_position_url"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    version_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_item_versions.id", ondelete="CASCADE"), index=True
+    )
+    media_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_url: Mapped[str] = mapped_column(Text, nullable=False)
+    preview_url: Mapped[str | None] = mapped_column(Text)
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ContentLink(Base):
+    __tablename__ = "content_links"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    version_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_item_versions.id", ondelete="CASCADE"), index=True
+    )
+    visible_text: Mapped[str | None] = mapped_column(Text)
+    wrapped_url: Mapped[str] = mapped_column(Text, nullable=False)
+    target_url: Mapped[str] = mapped_column(Text, nullable=False)
+    domain: Mapped[str | None] = mapped_column(String(255))
+    link_type: Mapped[str] = mapped_column(String(32), default="other", nullable=False)
+    is_cta: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    ignored_for_generation: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False
+    )
+    position: Mapped[int] = mapped_column(Integer, nullable=False)
+
+
+class ContentMetricSnapshot(Base):
+    __tablename__ = "content_metric_snapshots"
+    __table_args__ = (
+        Index("ix_content_metric_item_captured", "item_id", "captured_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    captured_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    metric_source: Mapped[str] = mapped_column(String(32), nullable=False)
+    views: Mapped[int | None] = mapped_column(Integer)
+    rating: Mapped[int | None] = mapped_column(Integer)
+    pluses: Mapped[int | None] = mapped_column(Integer)
+    minuses: Mapped[int | None] = mapped_column(Integer)
+    saves: Mapped[int | None] = mapped_column(Integer)
+    comments_reported: Mapped[int | None] = mapped_column(Integer)
+    emotions: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+
+
+class ContentImportRun(Base):
+    __tablename__ = "content_import_runs"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    source_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("content_sources.id", ondelete="SET NULL"), index=True
+    )
+    mode: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="running", nullable=False)
+    parser_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    summary: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)

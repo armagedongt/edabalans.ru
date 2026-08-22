@@ -280,11 +280,44 @@
     }));
   }
 
+  async function contentCatalog() {
+    const params = new URLSearchParams(location.search);
+    const selected = params.get("item");
+    setHeading("Каталог статей", "АВТОРСКИЕ МАТЕРИАЛЫ");
+    loading();
+    if (selected) {
+      const item = await api(`/admin/api/content/items/${encodeURIComponent(selected)}`);
+      root.innerHTML = `
+        <button class="admin-back" id="admin-back">← Назад к каталогу</button>
+        <div class="admin-profile-head"><div class="admin-profile-id"><div><h2>${esc(item.title)}</h2><p>${esc(item.source)} · ${date(item.published_at)} · ID ${esc(item.external_id)}</p></div></div><div class="admin-actions"><a class="admin-action alt" href="${esc(item.canonical_url)}" target="_blank" rel="noopener">Оригинал ↗</a></div></div>
+        <div class="admin-detail-grid">
+          <article class="admin-card"><h3>Текст</h3><div style="white-space:pre-wrap;line-height:1.55">${esc(item.text || "Текст ещё не импортирован")}</div></article>
+          <article class="admin-card"><h3>Разметка</h3><div class="admin-rows"><div class="admin-row"><span>CTA</span><b>${item.cta_url ? `<a href="${esc(item.cta_url)}" target="_blank" rel="noopener">${esc(item.cta_text || item.cta_url)} ↗</a>` : "нет"}</b></div><div class="admin-row"><span>Рекомендации</span><b>${esc(item.recommendations_status)}</b></div><div class="admin-row"><span>Медиа</span><b>${item.media.length} URL</b></div><div class="admin-row"><span>Ссылки</span><b>${item.links.length}</b></div></div><h3 style="margin-top:18px">Концовка</h3><div style="white-space:pre-wrap;line-height:1.5">${esc(item.ending_text || "не выделена")}</div></article>
+        </div>`;
+      document.getElementById("admin-back").onclick = () => { location.href = "/admin/content"; };
+      return;
+    }
+    const q = params.get("q") || "";
+    const [summary, rows] = await Promise.all([
+      api("/admin/api/content/summary"),
+      api(`/admin/api/content/items?source=pikabu&limit=250&q=${encodeURIComponent(q)}`)
+    ]);
+    root.innerHTML = `
+      <div class="admin-grid"><article class="admin-stat"><small>МАТЕРИАЛОВ</small><b>${summary.items}</b><span>в общей базе</span></article><article class="admin-stat"><small>ИСТОЧНИКОВ</small><b>${summary.sources}</b><span>Pikabu, затем Telegram</span></article></div>
+      <div class="admin-toolbar"><input class="admin-filter" id="content-filter" value="${esc(q)}" placeholder="Заголовок или ID поста"><button class="admin-action" id="content-search">Найти</button></div>
+      <div class="admin-list">${rows.map((item) => `<button class="admin-person" data-content-id="${esc(item.id)}"><div><h3>${esc(item.title)}</h3><p>${date(item.published_at)} · ${esc(item.source)} · ${esc(item.external_id)}</p></div><div class="admin-actions"><span class="admin-badge">${item.views == null ? "нет просмотров" : new Intl.NumberFormat("ru-RU").format(item.views)}</span><span class="admin-badge ${item.cta_url ? "" : "off"}">${item.cta_url ? "есть CTA" : "без CTA"}</span></div></button>`).join("") || '<div class="admin-empty">Материалы ещё не импортированы</div>'}</div>`;
+    root.querySelectorAll("[data-content-id]").forEach((button) => button.addEventListener("click", () => { location.href = `/admin/content?item=${encodeURIComponent(button.dataset.contentId)}`; }));
+    const search = () => { const value = document.getElementById("content-filter").value.trim(); location.href = `/admin/content${value ? `?q=${encodeURIComponent(value)}` : ""}`; };
+    document.getElementById("content-search").onclick = search;
+    document.getElementById("content-filter").addEventListener("keydown", (event) => { if (event.key === "Enter") search(); });
+  }
+
   async function run() {
     const active = section();
     selectNavigation(active);
     if (["dqs", "strength", "metabolism"].includes(active)) return application(active);
     if (active === "users") return users();
+    if (active === "content") return contentCatalog();
     return dashboard();
   }
 

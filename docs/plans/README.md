@@ -19,6 +19,9 @@
 |---|---|---|
 | Полноценная база знаний бизнеса | `PROJECT_KNOWLEDGE_BASE_SPEC.md` | `planned` |
 | Полная система документации файлов и таблиц | `PROJECT_DOCUMENTATION_SYSTEM.md` | `planned` |
+| Каталог авторских материалов: Pikabu, затем Telegram и блог | `CONTENT_CATALOG_SPEC.md` | `draft` |
+| Контрольный замер пяти постов Pikabu | `PIKABU_5_POST_BENCHMARK.md` | `draft` |
+| Импорт Telegram-канала в каталог материалов | `TELEGRAM_CONTENT_CATALOG_SPEC.md` | `draft` |
 | Следующие версии Telegram-бота | `TELEGRAM_NEXT_VERSIONS.md` | `planned` |
 | Ссылки, корневой `/start`, welcome и первая версия интенсива | `TELEGRAM_START_LINKS_SPEC.md` | `approved_draft` |
 | Атрибуция пути «ссылка → канал → бот» | `TELEGRAM_CHANNEL_ATTRIBUTION_SPEC.md` | `approved_draft` |

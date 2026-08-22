@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.config import get_settings
 from app.crm_routes import router as crm_router
+from app.content_routes import router as content_router
 from app.app_routes import router as app_router
 from app.tilda_routes import router as tilda_router
 from app.database import get_db
@@ -20,6 +21,7 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 app.include_router(crm_router)
+app.include_router(content_router)
 app.include_router(app_router)
 app.include_router(tilda_router)
 
