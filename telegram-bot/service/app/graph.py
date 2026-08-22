@@ -22,7 +22,7 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
     },
     "attribution.resolve": {
         "name": "Определить источник",
-        "description": "Разбирает токен ссылки и сохраняет первое и последнее касание.",
+        "description": "Разбирает токен ссылки и при первом посещении сохраняет источник и назначает связанные теги. Повторный /start источник не перезаписывает.",
         "source_ref": "telegram-bot/service/app/main.py:process_update",
     },
     "subscription.check": {
