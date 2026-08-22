@@ -7,6 +7,7 @@ from app.importers.telegram_catalog import (
     ensure_export_outside_repository,
     load_export,
     parse_export,
+    repository_root,
 )
 
 
@@ -74,3 +75,9 @@ def test_discussion_export_is_rejected_in_t1(tmp_path: Path) -> None:
 def test_real_export_inside_repository_is_rejected() -> None:
     with pytest.raises(ValueError, match="outside"):
         ensure_export_outside_repository(FIXTURE)
+
+
+def test_repository_root_matches_flat_production_image() -> None:
+    module = Path("/app/app/importers/telegram_catalog.py")
+
+    assert repository_root(module) == Path("/app").resolve()

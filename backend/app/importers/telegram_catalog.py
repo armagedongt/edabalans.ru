@@ -77,8 +77,16 @@ def load_export(path: Path) -> dict[str, Any]:
     return payload
 
 
+def repository_root(module_path: Path | None = None) -> Path:
+    module = (module_path or Path(__file__)).resolve()
+    checkout = module.parents[3]
+    # The production image copies backend/ contents directly into /app, so the
+    # fourth parent is filesystem root rather than the Git checkout root.
+    return module.parents[2] if checkout == Path(checkout.anchor) else checkout
+
+
 def ensure_export_outside_repository(path: Path) -> None:
-    repository = Path(__file__).resolve().parents[3]
+    repository = repository_root()
     try:
         path.resolve().relative_to(repository)
     except ValueError:
