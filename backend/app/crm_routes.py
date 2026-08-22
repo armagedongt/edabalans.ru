@@ -12,9 +12,12 @@ from app.auth import require_admin
 from app.crm_service import (
     add_note,
     add_tag,
+    list_tags,
     list_payments,
     list_users,
     summary,
+    merge_tag,
+    update_tag,
     update_user,
     user_detail,
 )
@@ -34,6 +37,16 @@ class NoteCreate(BaseModel):
 
 class TagCreate(BaseModel):
     name: str = Field(min_length=1, max_length=255)
+
+
+class TagUpdate(BaseModel):
+    name: str = Field(min_length=1, max_length=255)
+    category: str = Field(min_length=1, max_length=32)
+    status: str = Field(min_length=1, max_length=32)
+
+
+class TagMerge(BaseModel):
+    target_name: str = Field(min_length=1, max_length=255)
 
 
 def protected_file(name: str) -> FileResponse:
@@ -69,10 +82,11 @@ def admin_users(
     q: str = Query(default="", max_length=255),
     buyers_only: bool = False,
     limit: int = Query(default=100, ge=1, le=250),
+    offset: int = Query(default=0, ge=0),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> list[dict]:
-    return list_users(db, query=q, buyers_only=buyers_only, limit=limit)
+    return list_users(db, query=q, buyers_only=buyers_only, limit=limit, offset=offset)
 
 
 @router.get("/admin/api/users/{user_id}")
@@ -131,3 +145,38 @@ def admin_payments(
     db: Session = Depends(get_db),
 ) -> list[dict]:
     return list_payments(db, limit=limit)
+
+
+@router.get("/admin/api/tags")
+def admin_tags(
+    q: str = Query(default="", max_length=255),
+    category: str = Query(default="", max_length=32),
+    status: str = Query(default="", max_length=32),
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    return list_tags(db, query=q, category=category, status=status)
+
+
+@router.patch("/admin/api/tags/{tag_id}")
+def admin_update_tag(
+    tag_id: uuid.UUID,
+    payload: TagUpdate,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    if not update_tag(db, tag_id, payload.name, payload.category, payload.status):
+        raise HTTPException(status_code=400, detail="tag not found or invalid category/status")
+    return {"status": "saved"}
+
+
+@router.post("/admin/api/tags/{tag_id}/merge")
+def admin_merge_tag(
+    tag_id: uuid.UUID,
+    payload: TagMerge,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, str]:
+    if not merge_tag(db, tag_id, payload.target_name):
+        raise HTTPException(status_code=400, detail="target tag not found or invalid merge")
+    return {"status": "merged"}

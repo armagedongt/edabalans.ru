@@ -4,7 +4,7 @@ import re
 import uuid
 from decimal import Decimal
 
-from sqlalchemy import distinct, func, or_, select
+from sqlalchemy import distinct, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -18,6 +18,7 @@ from app.models import (
     User,
     UserAccess,
     UserEmail,
+    UserPhone,
     UserTag,
 )
 
@@ -97,7 +98,11 @@ def _user_scalar_subqueries():
 
 
 def list_users(
-    db: Session, query: str = "", buyers_only: bool = False, limit: int = 100
+    db: Session,
+    query: str = "",
+    buyers_only: bool = False,
+    limit: int = 100,
+    offset: int = 0,
 ) -> list[dict]:
     email, telegram, purchases, ltv, last_purchase = _user_scalar_subqueries()
     stmt = (
@@ -116,6 +121,7 @@ def list_users(
         .where(User.merged_into_user_id.is_(None))
         .order_by(last_purchase.desc().nullslast(), User.created_at.desc())
         .limit(min(max(limit, 1), 250))
+        .offset(max(offset, 0))
     )
     if buyers_only:
         stmt = stmt.where(purchases > 0)
@@ -208,6 +214,13 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             .order_by(MessengerAccount.created_at.asc())
         )
     )
+    phones = list(
+        db.scalars(
+            select(UserPhone)
+            .where(UserPhone.user_id == user_id)
+            .order_by(UserPhone.is_primary.desc(), UserPhone.created_at.asc())
+        )
+    )
     payments = db.execute(
         select(Payment, Product.code, Product.name)
         .outerjoin(Product, Product.id == Payment.product_id)
@@ -231,11 +244,22 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         )
     )
     tags = db.execute(
-        select(Tag.code, Tag.name)
-        .join(UserTag, UserTag.tag_id == Tag.id)
-        .where(UserTag.user_id == user_id)
-        .order_by(Tag.name)
-    ).all()
+        text(
+            """
+            SELECT DISTINCT
+                COALESCE(target.id, source.id) AS id,
+                COALESCE(target.name, source.name) AS name,
+                COALESCE(target.category, source.category) AS category
+            FROM user_tags assignment
+            JOIN tags source ON source.id = assignment.tag_id
+            LEFT JOIN tags target ON target.id = source.merged_into_tag_id
+            WHERE assignment.user_id = :user_id
+              AND COALESCE(target.status, source.status) <> 'ignored'
+            ORDER BY name
+            """
+        ),
+        {"user_id": user_id},
+    ).mappings().all()
     notes = list(
         db.scalars(
             select(ClientNote)
@@ -266,6 +290,10 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "first_name": item.first_name,
             }
             for item in messengers
+        ],
+        "phones": [
+            {"phone": item.phone_original, "primary": item.is_primary, "source": item.source}
+            for item in phones
         ],
         "purchase_count": len(paid),
         "ltv_rub": money(
@@ -306,7 +334,10 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             }
             for item in attribution
         ],
-        "tags": [{"code": code, "name": name} for code, name in tags],
+        "tags": [
+            {"id": str(item["id"]), "name": item["name"], "category": item["category"]}
+            for item in tags
+        ],
         "notes": [
             {"id": str(note.id), "body": note.body, "author": note.author, "created_at": note.created_at}
             for note in notes
@@ -349,13 +380,116 @@ def add_tag(db: Session, user_id: uuid.UUID, name: str) -> bool:
         return False
     tag = db.scalar(select(Tag).where(Tag.code == code))
     if tag is None:
-        tag = Tag(code=code, name=name.strip())
+        tag = Tag(code=code, name=name.strip(), category="manual", status="active")
         db.add(tag)
         db.flush()
+    elif tag.merged_into_tag_id:
+        tag = db.get(Tag, tag.merged_into_tag_id) or tag
     exists = db.scalar(
         select(UserTag.id).where(UserTag.user_id == user_id, UserTag.tag_id == tag.id)
     )
     if not exists:
         db.add(UserTag(user_id=user_id, tag_id=tag.id, source="manual_admin"))
+    db.commit()
+    return True
+
+
+TAG_CATEGORIES = {
+    "manual",
+    "subscription",
+    "content_action",
+    "mailing_funnel",
+    "source",
+    "purchase_signal",
+    "lottery",
+    "other",
+    "technical",
+}
+TAG_STATUSES = {"active", "ignored", "merged"}
+
+
+def list_tags(
+    db: Session, query: str = "", category: str = "", status: str = ""
+) -> list[dict]:
+    clauses = ["1 = 1"]
+    params: dict[str, object] = {}
+    if query.strip():
+        clauses.append("t.name ILIKE :query")
+        params["query"] = f"%{query.strip()}%"
+    if category:
+        clauses.append("t.category = :category")
+        params["category"] = category
+    if status:
+        clauses.append("t.status = :status")
+        params["status"] = status
+    rows = db.execute(
+        text(
+            f"""
+            SELECT
+                t.id,
+                t.name,
+                t.category,
+                t.status,
+                t.merged_into_tag_id,
+                target.name AS merged_into_name,
+                count(DISTINCT ut.user_id) AS user_count,
+                string_agg(DISTINCT ut.source, ', ' ORDER BY ut.source) AS sources
+            FROM tags t
+            LEFT JOIN tags target ON target.id = t.merged_into_tag_id
+            LEFT JOIN user_tags ut ON ut.tag_id = t.id
+            WHERE {' AND '.join(clauses)}
+            GROUP BY t.id, target.name
+            ORDER BY user_count DESC, lower(t.name)
+            LIMIT 600
+            """
+        ),
+        params,
+    ).mappings().all()
+    return [
+        {
+            "id": str(row["id"]),
+            "name": row["name"],
+            "category": row["category"],
+            "status": row["status"],
+            "merged_into_tag_id": str(row["merged_into_tag_id"]) if row["merged_into_tag_id"] else None,
+            "merged_into_name": row["merged_into_name"],
+            "user_count": row["user_count"] or 0,
+            "sources": row["sources"] or "",
+        }
+        for row in rows
+    ]
+
+
+def update_tag(
+    db: Session, tag_id: uuid.UUID, name: str, category: str, status: str
+) -> bool:
+    if category not in TAG_CATEGORIES or status not in {"active", "ignored"}:
+        return False
+    result = db.execute(
+        text(
+            """
+            UPDATE tags
+            SET name = :name, category = :category, status = :status,
+                merged_into_tag_id = CASE WHEN :status = 'active' THEN NULL ELSE merged_into_tag_id END,
+                updated_at = now()
+            WHERE id = :tag_id
+            """
+        ),
+        {"name": name.strip(), "category": category, "status": status, "tag_id": tag_id},
+    )
+    db.commit()
+    return bool(result.rowcount)
+
+
+def merge_tag(db: Session, source_tag_id: uuid.UUID, target_name: str) -> bool:
+    source = db.get(Tag, source_tag_id)
+    target = db.scalar(
+        select(Tag).where(func.lower(Tag.name) == target_name.strip().lower(), Tag.status == "active")
+    )
+    if source is None or target is None or source.id == target.id:
+        return False
+    source.status = "merged"
+    source.merged_into_tag_id = target.id
+    source.updated_at = func.now()
     db.commit()
     return True

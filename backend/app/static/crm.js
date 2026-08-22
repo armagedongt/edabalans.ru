@@ -2,7 +2,19 @@
   "use strict";
 
   const root = document.getElementById("crm-app");
-  const state = { view: "users", query: "", summary: null, users: [], payments: [] };
+  const state = { view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0 };
+  const pageSize = 250;
+  const tagCategories = {
+    manual: "Ручные",
+    subscription: "Подписка",
+    content_action: "Контент и действия",
+    mailing_funnel: "Рассылки и воронки",
+    source: "Источники",
+    purchase_signal: "Сигналы о покупке",
+    lottery: "Лотерея",
+    other: "Прочее",
+    technical: "Служебные"
+  };
 
   function esc(value) {
     return String(value ?? "")
@@ -50,6 +62,7 @@
           <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
           <button class="crm-tab ${active === "buyers" ? "active" : ""}" data-view="buyers">Покупатели</button>
           <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
+          <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
           <button class="crm-tab ${active === "structure" ? "active" : ""}" data-view="structure">Как устроено</button>
         </div>
       </div>`;
@@ -107,7 +120,7 @@
   async function renderUsers(buyersOnly) {
     root.innerHTML = top(buyersOnly ? "buyers" : "users") + '<div class="crm-loading">Загружаю клиентов…</div>';
     bindTop();
-    const params = new URLSearchParams({ q: state.query, buyers_only: String(buyersOnly), limit: "250" });
+    const params = new URLSearchParams({ q: state.query, buyers_only: String(buyersOnly), limit: String(pageSize), offset: String(state.offset) });
     state.users = await api(`/admin/api/users?${params}`);
     root.innerHTML = top(buyersOnly ? "buyers" : "users") + `
       <div class="crm-toolbar">
@@ -116,6 +129,11 @@
       </div>
       ${stats()}
       <div class="crm-list">${state.users.map(userCard).join("") || '<div class="crm-card crm-empty">Ничего не найдено</div>'}</div>
+      <div class="crm-pager">
+        <button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button>
+        <span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span>
+        <button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button>
+      </div>
       <div class="crm-foot">PostgreSQL — источник истины · Google Sheets не используется этой админкой</div>`;
     bindTop();
     bindUserCards();
@@ -124,9 +142,87 @@
     search.addEventListener("input", () => {
       clearTimeout(timer);
       state.query = search.value;
+      state.offset = 0;
       timer = setTimeout(() => renderUsers(buyersOnly).catch(showError), 300);
     });
     document.getElementById("crm-refresh").addEventListener("click", () => loadHome(buyersOnly ? "buyers" : "users"));
+    document.getElementById("crm-prev").addEventListener("click", () => {
+      state.offset = Math.max(0, state.offset - pageSize);
+      renderUsers(buyersOnly).catch(showError);
+    });
+    document.getElementById("crm-next").addEventListener("click", () => {
+      state.offset += pageSize;
+      renderUsers(buyersOnly).catch(showError);
+    });
+  }
+
+  async function renderTags() {
+    root.innerHTML = top("tags") + '<div class="crm-loading">Загружаю теги…</div>';
+    bindTop();
+    const q = state.tagQuery || "";
+    const category = state.tagCategory || "";
+    const status = state.tagStatus || "active";
+    const params = new URLSearchParams({ q, category, status });
+    state.tags = await api(`/admin/api/tags?${params}`);
+    const categoryOptions = Object.entries(tagCategories).map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    const cards = state.tags.map((tag) => `
+      <article class="crm-card crm-tag-card" data-tag-id="${esc(tag.id)}">
+        <div class="crm-tag-head"><div><strong>${esc(tag.name)}</strong><div class="crm-row-meta">${tag.user_count} человек · ${esc(tag.sources || "источник не указан")}</div></div>
+          <span class="crm-status ${tag.status === "merged" ? "st-processing" : tag.status === "ignored" ? "st-lead" : "st-paid"}">${tag.status === "merged" ? `объединён → ${esc(tag.merged_into_name)}` : tag.status === "ignored" ? "скрыт" : "активен"}</span></div>
+        ${tag.status === "merged" ? "" : `<div class="crm-tag-edit">
+          <input class="crm-input tag-name" value="${esc(tag.name)}">
+          <select class="crm-input tag-category">${categoryOptions.replace(`value="${esc(tag.category)}"`, `value="${esc(tag.category)}" selected`)}</select>
+          <select class="crm-input tag-status"><option value="active" ${tag.status === "active" ? "selected" : ""}>Активен</option><option value="ignored" ${tag.status === "ignored" ? "selected" : ""}>Скрыть</option></select>
+          <button class="crm-btn small tag-save">Сохранить</button>
+          <button class="crm-btn alt small tag-merge">Объединить</button>
+        </div>`}
+      </article>`).join("");
+    root.innerHTML = top("tags") + `
+      <div class="crm-toolbar crm-tag-toolbar">
+        <input class="crm-search" id="tag-search" placeholder="Поиск тега" value="${esc(q)}">
+        <select class="crm-input" id="tag-category-filter"><option value="">Все группы</option>${categoryOptions}</select>
+        <select class="crm-input" id="tag-status-filter"><option value="active">Активные</option><option value="ignored">Скрытые</option><option value="merged">Объединённые</option><option value="">Все</option></select>
+      </div>
+      <section class="crm-card"><div class="crm-card-title">Порядок в тегах <span class="crm-card-sub">${state.tags.length} вариантов</span></div>
+        <div class="crm-row-meta">Переименование сразу меняет название у всех людей. «Объединить» сохраняет исходные назначения и показывает основной тег — действие обратимо.</div></section>
+      <div class="crm-tag-list">${cards || '<div class="crm-card crm-empty">Теги не найдены</div>'}</div>
+      <div class="crm-foot">Исходные назначения LeadTeh сохраняются · покупки остаются отдельными фактами</div>`;
+    bindTop();
+    document.getElementById("tag-category-filter").value = category;
+    document.getElementById("tag-status-filter").value = status;
+    let timer;
+    document.getElementById("tag-search").addEventListener("input", (event) => {
+      clearTimeout(timer);
+      state.tagQuery = event.target.value;
+      timer = setTimeout(() => renderTags().catch(showError), 300);
+    });
+    document.getElementById("tag-category-filter").addEventListener("change", (event) => {
+      state.tagCategory = event.target.value;
+      renderTags().catch(showError);
+    });
+    document.getElementById("tag-status-filter").addEventListener("change", (event) => {
+      state.tagStatus = event.target.value;
+      renderTags().catch(showError);
+    });
+    root.querySelectorAll(".crm-tag-card").forEach((card) => {
+      const id = card.dataset.tagId;
+      const save = card.querySelector(".tag-save");
+      if (save) save.addEventListener("click", async () => {
+        await api(`/admin/api/tags/${id}`, { method: "PATCH", body: JSON.stringify({
+          name: card.querySelector(".tag-name").value,
+          category: card.querySelector(".tag-category").value,
+          status: card.querySelector(".tag-status").value
+        }) });
+        await renderTags();
+      });
+      const merge = card.querySelector(".tag-merge");
+      if (merge) merge.addEventListener("click", async () => {
+        const targetName = window.prompt("Введите точное название основного тега, в который объединяем:");
+        if (!targetName) return;
+        await api(`/admin/api/tags/${id}/merge`, { method: "POST", body: JSON.stringify({ target_name: targetName }) });
+        await renderTags();
+      });
+    });
   }
 
   async function renderPayments() {
@@ -214,6 +310,7 @@
             <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
               <button class="crm-btn small" type="submit">Сохранить имя</button></form>
             ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("")}
+            ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             ${user.messengers.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.platform)}</span><strong>${esc(item.username ? `@${item.username}` : item.platform_user_id || "без ID")}</strong></div></div>`).join("")}
           </section>
           <section class="crm-card"><div class="crm-card-title">История покупок</div>${user.payments.map(paymentRow).join("") || '<div class="crm-empty">Покупок пока нет</div>'}</section>
@@ -262,8 +359,10 @@
   }
 
   async function showView(view) {
+    if (view !== state.view && (view === "users" || view === "buyers")) state.offset = 0;
     state.view = view;
     if (view === "payments") return renderPayments();
+    if (view === "tags") return renderTags();
     if (view === "structure") return renderStructure();
     return renderUsers(view === "buyers");
   }

@@ -78,6 +78,25 @@ class UserEmail(Base):
     )
 
 
+class UserPhone(Base):
+    __tablename__ = "user_phones"
+    __table_args__ = (
+        UniqueConstraint("user_id", "phone_normalized", name="uq_user_phone"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    phone_original: Mapped[str] = mapped_column(String(64), nullable=False)
+    phone_normalized: Mapped[str] = mapped_column(String(32), index=True, nullable=False)
+    is_primary: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class MessengerAccount(Base):
     __tablename__ = "messenger_accounts"
     __table_args__ = (
@@ -272,7 +291,15 @@ class Tag(Base):
     id: Mapped[uuid.UUID] = uuid_pk()
     code: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
+    category: Mapped[str] = mapped_column(String(32), default="manual", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    merged_into_tag_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("tags.id", ondelete="SET NULL")
+    )
     created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
 
