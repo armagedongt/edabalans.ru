@@ -1,0 +1,93 @@
+{
+  "name": "Example Author Channel",
+  "type": "public_channel",
+  "id": 123456,
+  "messages": [
+    {
+      "id": 1,
+      "type": "service",
+      "date": "01.01.2026 10:00:00",
+      "date_unixtime": "1767250800",
+      "actor": "Example Author Channel",
+      "actor_id": "channel123456",
+      "action": "create_channel",
+      "title": "Example Author Channel",
+      "text": ""
+    },
+    {
+      "id": 10,
+      "type": "message",
+      "date": "01.02.2026 10:00:00",
+      "date_unixtime": "1769932800",
+      "edited": "01.02.2026 10:05:00",
+      "edited_unixtime": "1769933100",
+      "from": "Example Author Channel",
+      "from_id": "channel123456",
+      "photo": "(File not included. Change data exporting settings to download.)",
+      "photo_file_size": 12345,
+      "width": 800,
+      "height": 600,
+      "text": [
+        {"type": "bold", "text": "Album title"},
+        "\nRead ",
+        {"type": "text_link", "text": "the source", "href": "https://doi.org/10.1/example"}
+      ],
+      "text_entities": [
+        {"type": "bold", "text": "Album title"},
+        {"type": "plain", "text": "\nRead "},
+        {"type": "text_link", "text": "the source", "href": "https://doi.org/10.1/example"}
+      ],
+      "reactions": [{"type": "emoji", "count": 3, "emoji": "👍"}]
+    },
+    {
+      "id": 11,
+      "type": "message",
+      "date": "01.02.2026 10:00:00",
+      "date_unixtime": "1769932800",
+      "from": "Example Author Channel",
+      "from_id": "channel123456",
+      "photo": "(File not included. Change data exporting settings to download.)",
+      "photo_file_size": 23456,
+      "width": 800,
+      "height": 600,
+      "text": "",
+      "text_entities": []
+    },
+    {
+      "id": 12,
+      "type": "message",
+      "date": "01.03.2026 10:00:00",
+      "date_unixtime": "1772611200",
+      "from": "Example Author Channel",
+      "from_id": "channel123456",
+      "text": [
+        "Previous material: ",
+        {"type": "text_link", "text": "post", "href": "https://t.me/Example_Channel/10"}
+      ],
+      "text_entities": [
+        {"type": "plain", "text": "Previous material: "},
+        {"type": "text_link", "text": "post", "href": "https://t.me/Example_Channel/10"}
+      ],
+      "reactions": [{"type": "paid", "count": 1}]
+    },
+    {
+      "id": 13,
+      "type": "message",
+      "date": "01.04.2026 10:00:00",
+      "date_unixtime": "1775289600",
+      "from": "Example Author Channel",
+      "from_id": "channel123456",
+      "poll": {
+        "question": "Choose one",
+        "closed": false,
+        "total_voters": 7,
+        "answers": [
+          {"text": "A", "voters": 5, "chosen": false},
+          {"text": "B", "voters": 2, "chosen": true}
+        ]
+      },
+      "text": "",
+      "text_entities": []
+    }
+  ]
+}

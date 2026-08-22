@@ -123,6 +123,35 @@ docker compose exec backend python -m app.importers.pikabu_catalog \
 
 Реальный JSON после проверки не коммитится и удаляется из временного каталога.
 
+### Каталог Telegram-канала
+
+Используется штатный JSON-export конкретного публичного канала из Telegram Desktop.
+Файл остаётся вне Git. T1 читает тексты, entities, реакции, опросы и метаданные
+вложений, но не копирует фото/видео и не принимает export группы обсуждений.
+
+Локальный inspect без подключения к PostgreSQL:
+
+```powershell
+$env:PYTHONPATH = "backend"
+python -m app.importers.telegram_catalog `
+  "C:\private\telegram\result.json" `
+  --channel-username Fitness_Talks
+```
+
+Перед первым `--apply` выполняются ручной backup и настоящее test restore. Migration
+`20260822_0013` выпускается отдельно и не применяется обычным автодеплоем. После
+этого владелец подтверждает импорт:
+
+```bash
+docker compose exec backend python -m app.importers.telegram_catalog \
+  /tmp/telegram-channel/result.json \
+  --channel-username Fitness_Talks --apply --backup-confirmed
+```
+
+Повторный импорт не создаёт дубли публикаций или версий. Новая версия появляется
+только при изменении исходного контента; изменившиеся реакции и голоса создают
+отдельный metric snapshot.
+
 ## Автоматическая публикация
 
 Push в ветку `main` запускает `.github/workflows/production.yml`:

@@ -8,7 +8,12 @@ os.environ.setdefault(
     "postgresql+psycopg://test:test@127.0.0.1:5432/test",
 )
 
-from app.content_service import classify_link, decode_pikabu_redirect, normalized_payload
+from app.content_service import (
+    classify_link,
+    decode_pikabu_redirect,
+    normalized_payload,
+    telegram_app_deep_link,
+)
 from app.database import Base
 from app.main import app
 
@@ -67,6 +72,13 @@ def test_redirect_and_link_helpers() -> None:
     wrapped = "https://pikabu.ru/story/example_1?u=https%3A%2F%2Ft.me%2Fchannel%2F1"
     assert decode_pikabu_redirect(wrapped) == "https://t.me/channel/1"
     assert classify_link("https://doi.org/10.1/example") == ("reference", True)
+
+
+def test_telegram_app_deep_link_is_derived_from_public_post_url() -> None:
+    assert telegram_app_deep_link(
+        "https://t.me/Fitness_Talks/466", "telegram"
+    ) == "tg://resolve?domain=Fitness_Talks&post=466"
+    assert telegram_app_deep_link("https://pikabu.ru/story/example_1", "pikabu") is None
 
 
 def test_content_tables_are_registered() -> None:

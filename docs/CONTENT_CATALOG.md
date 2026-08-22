@@ -6,7 +6,7 @@
 
 ## Назначение
 
-Модуль хранит авторские публикации из Pikabu, а позже из Telegram и собственного
+Модуль хранит авторские публикации из Pikabu и Telegram, а позже из собственного
 блога. Первая версия text-first: исходный текст, структурные блоки, метрики, концовка,
 CTA, ссылки и метаданные медиа.
 
@@ -24,6 +24,7 @@ CTA, ссылки и метаданные медиа.
 |---|---|
 | `tools/pikabu_collect.py` | локальный браузерный обход профиля и постов без скачивания медиа |
 | `backend/app/importers/pikabu_catalog.py` | inspect/dry-run и подтверждённый импорт JSON |
+| `backend/app/importers/telegram_catalog.py` | inspect/dry-run и подтверждённый импорт Telegram Desktop JSON |
 | `backend/app/content_service.py` | нормализация, версии, импорт и чтение каталога |
 | `backend/app/content_routes.py` | защищённый read-only admin API |
 | `/admin/content` | список материалов и карточка исходника |
@@ -32,6 +33,29 @@ CTA, ссылки и метаданные медиа.
 Browser collector вынесен в отдельные зависимости
 `backend/requirements-collector.txt`; production backend не устанавливает Chromium.
 Реальная выгрузка должна находиться вне Git-репозитория.
+
+## Telegram Desktop JSON
+
+Реализованный этап T1 импортирует только историю публичного канала. Он не читает
+discussion export, не импортирует комментарии и не подключает бота/TDLib.
+
+Устойчивая внешняя идентичность имеет вид
+`telegram:<channel_id>:<first_message_id>`. Для каждой публикации сохраняются обычная
+ссылка `https://t.me/<username>/<message_id>` и вычисляемая API ссылка приложения
+`tg://resolve?domain=<username>&post=<message_id>`.
+
+Telegram Desktop не отдаёт `grouped_id`. Parser объединяет только последовательные
+медиа-сообщения одного автора с одинаковым временем. Неоднозначные пачки остаются
+отдельными публикациями и учитываются как `review_clusters`.
+
+В текущем контрольном экспорте `@Fitness_Talks` обнаружено 703 записи, 694 сообщения,
+509 консервативных публикаций и 73 альбома. Дублей и неизвестных полей нет. Views,
+forwards и число комментариев в файле отсутствуют и не подменяются нулями.
+
+Текст, entities, ссылки, опросы и метаданные вложений входят в неизменяемую версию.
+Счётчики реакций и голосов хранятся отдельными metric snapshots, поэтому их изменение
+не создаёт ложную новую версию публикации. Фото и видео из export package не читаются
+и не копируются.
 
 ## Таблицы
 
@@ -62,6 +86,7 @@ GET /admin/api/content/items/{id}
 - migration не применяется автоматически;
 - collector ничего не публикует и не редактирует на Pikabu;
 - export JSON и browser profile запрещено создавать внутри Git-репозитория;
+- Telegram discussion export не принимается T1-командой и остаётся будущим T2;
 - `--apply` требует явный `--backup-confirmed`;
 - до production migration выполняются backup и test restore;
 - PostgreSQL и collector не публикуются наружу.

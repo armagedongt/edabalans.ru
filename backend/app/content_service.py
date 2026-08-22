@@ -21,6 +21,7 @@ from app.models import (
 
 
 PARSER_VERSION = "pikabu-browser-v1"
+TELEGRAM_PARSER_VERSION = "telegram-desktop-json-v1"
 REFERENCE_DOMAINS = ("pubmed.ncbi.nlm.nih.gov", "doi.org", "jamanetwork.com")
 
 
@@ -156,6 +157,168 @@ def get_or_create_pikabu_source(db: Session) -> ContentSource:
     return source
 
 
+def get_or_create_telegram_source(
+    db: Session, *, channel_id: str, channel_username: str, display_name: str
+) -> ContentSource:
+    account_key = str(channel_id).strip()
+    username = channel_username.strip().lstrip("@")
+    source = db.scalar(
+        select(ContentSource).where(
+            ContentSource.platform == "telegram", ContentSource.account_key == account_key
+        )
+    )
+    canonical_url = f"https://t.me/{username}"
+    if source:
+        source.display_name = display_name
+        source.canonical_url = canonical_url
+        return source
+    source = ContentSource(
+        platform="telegram",
+        account_key=account_key,
+        display_name=display_name,
+        canonical_url=canonical_url,
+    )
+    db.add(source)
+    db.flush()
+    return source
+
+
+def import_telegram_items(
+    db: Session,
+    rows: list[dict],
+    *,
+    channel_id: str,
+    channel_username: str,
+    display_name: str,
+    mode: str = "desktop_json",
+) -> dict:
+    source = get_or_create_telegram_source(
+        db,
+        channel_id=channel_id,
+        channel_username=channel_username,
+        display_name=display_name,
+    )
+    run = ContentImportRun(
+        source_id=source.id,
+        mode=mode,
+        status="running",
+        parser_version=TELEGRAM_PARSER_VERSION,
+    )
+    db.add(run)
+    db.flush()
+    summary = {
+        "discovered": len(rows),
+        "created": 0,
+        "updated": 0,
+        "unchanged": 0,
+        "metric_snapshots": 0,
+        "failed": 0,
+    }
+    errors: list[dict] = []
+
+    for data in rows:
+        try:
+            item = db.scalar(
+                select(ContentItem).where(
+                    ContentItem.source_id == source.id,
+                    ContentItem.external_id == data["external_id"],
+                )
+            )
+            created = item is None
+            if item is None:
+                item = ContentItem(
+                    source_id=source.id,
+                    external_id=data["external_id"],
+                    canonical_url=data["canonical_url"],
+                    title=data["title"],
+                )
+                db.add(item)
+                db.flush()
+
+            item.canonical_url = data["canonical_url"]
+            item.title = data["title"]
+            item.author_name = data.get("author_name")
+            item.published_at = data["published_at"]
+            item.source_updated_at = data.get("source_updated_at")
+            item.status = "published"
+            item.source_tags = data.get("source_tags") or []
+            item.ending_text = data.get("ending_text")
+            item.ending_kind = data.get("ending_kind")
+            item.cta_text = data.get("cta_text")
+            item.cta_url = data.get("cta_url")
+            item.recommendations_status = data.get("recommendations_status") or "absent"
+
+            version = db.scalar(
+                select(ContentItemVersion).where(
+                    ContentItemVersion.item_id == item.id,
+                    ContentItemVersion.content_hash == data["content_hash"],
+                )
+            )
+            if version is None:
+                next_no = (
+                    db.scalar(
+                        select(func.max(ContentItemVersion.version_no)).where(
+                            ContentItemVersion.item_id == item.id
+                        )
+                    )
+                    or 0
+                ) + 1
+                version = ContentItemVersion(
+                    item_id=item.id,
+                    version_no=next_no,
+                    content_hash=data["content_hash"],
+                    text_content=data["text_content"],
+                    blocks=data["blocks"],
+                    parser_version=TELEGRAM_PARSER_VERSION,
+                    source_updated_at=data.get("source_updated_at"),
+                )
+                db.add(version)
+                db.flush()
+                for media in data.get("media") or []:
+                    db.add(ContentMedia(item_id=item.id, version_id=version.id, **media))
+                for link in data.get("links") or []:
+                    db.add(ContentLink(item_id=item.id, version_id=version.id, **link))
+                item.latest_version_id = version.id
+                summary["created" if created else "updated"] += 1
+            else:
+                item.latest_version_id = version.id
+                summary["unchanged"] += 1
+
+            metrics = data.get("metrics") or {}
+            if metrics:
+                emotions = metrics.get("emotions") or []
+                details_json = metrics.get("details_json") or {}
+                previous = db.scalar(
+                    select(ContentMetricSnapshot)
+                    .where(
+                        ContentMetricSnapshot.item_id == item.id,
+                        ContentMetricSnapshot.metric_source == "telegram_desktop_export",
+                    )
+                    .order_by(ContentMetricSnapshot.captured_at.desc())
+                    .limit(1)
+                )
+                if not previous or previous.emotions != emotions or previous.details_json != details_json:
+                    db.add(
+                        ContentMetricSnapshot(
+                            item_id=item.id,
+                            metric_source="telegram_desktop_export",
+                            emotions=emotions,
+                            details_json=details_json,
+                        )
+                    )
+                    summary["metric_snapshots"] += 1
+        except (KeyError, TypeError, ValueError) as exc:
+            summary["failed"] += 1
+            errors.append({"external_id": data.get("external_id"), "error": str(exc)})
+
+    source.last_synced_at = datetime.now(timezone.utc)
+    run.status = "partial" if summary["failed"] else "completed"
+    run.finished_at = datetime.now(timezone.utc)
+    run.summary = {**summary, "errors": errors}
+    db.commit()
+    return run.summary
+
+
 def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_json") -> dict:
     source = get_or_create_pikabu_source(db)
     run = ContentImportRun(
@@ -258,6 +421,18 @@ def content_summary(db: Session) -> dict:
     return {"items": items, "sources": sources}
 
 
+def telegram_app_deep_link(canonical_url: str, platform: str) -> str | None:
+    if platform != "telegram":
+        return None
+    parsed = urlparse(canonical_url)
+    parts = parsed.path.strip("/").split("/")
+    if (parsed.hostname or "").lower() not in {"t.me", "telegram.me"} or len(parts) < 2:
+        return None
+    if not parts[1].isdigit():
+        return None
+    return f"tg://resolve?domain={parts[0]}&post={parts[1]}"
+
+
 def list_content_items(db: Session, *, q: str = "", source: str = "", limit: int = 100, offset: int = 0) -> list[dict]:
     statement = select(ContentItem, ContentSource).join(ContentSource, ContentSource.id == ContentItem.source_id)
     if q:
@@ -277,6 +452,7 @@ def list_content_items(db: Session, *, q: str = "", source: str = "", limit: int
         result.append({
             "id": str(item.id), "source": src.platform, "external_id": item.external_id,
             "title": item.title, "canonical_url": item.canonical_url,
+            "app_deep_link": telegram_app_deep_link(item.canonical_url, src.platform),
             "published_at": item.published_at, "status": item.status,
             "ending_text": item.ending_text, "cta_url": item.cta_url,
             "recommendations_status": item.recommendations_status,
@@ -297,6 +473,9 @@ def get_content_item(db: Session, item_id: uuid.UUID) -> dict | None:
     return {
         "id": str(item.id), "source": source.platform if source else None,
         "external_id": item.external_id, "canonical_url": item.canonical_url,
+        "app_deep_link": telegram_app_deep_link(
+            item.canonical_url, source.platform if source else ""
+        ),
         "title": item.title, "published_at": item.published_at, "tags": item.source_tags,
         "text": version.text_content if version else None, "blocks": version.blocks if version else [],
         "ending_text": item.ending_text, "ending_kind": item.ending_kind,
