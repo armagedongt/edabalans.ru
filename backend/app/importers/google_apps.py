@@ -93,6 +93,27 @@ def user_for_email(db, email: str, display_name: str = "") -> User:
     return user
 
 
+def user_for_legacy_identity(db, legacy_id: str, display_name: str) -> User:
+    user = db.scalar(
+        select(User).where(
+            User.display_name == (display_name or legacy_id),
+            User.data_origin == "legacy_import",
+            User.merged_into_user_id.is_(None),
+        ).limit(1)
+    )
+    if user:
+        return user
+    user = User(
+        display_name=display_name or legacy_id,
+        status="active",
+        data_origin="legacy_import",
+        first_seen_at=datetime.now(timezone.utc),
+    )
+    db.add(user)
+    db.flush()
+    return user
+
+
 def grant(db, user_id: uuid.UUID, resource_code: str, source: str) -> None:
     resource = db.scalar(select(Resource).where(Resource.code == resource_code))
     if not resource:
@@ -146,11 +167,14 @@ def import_strength(db, payload: dict[str, Any], summary: dict[str, int]) -> Non
     user_ids: dict[str, User] = {}
     for row in users:
         email = normalize_email(row.get("email"))
-        if not email:
-            continue
-        user = user_for_email(db, email, str(row.get("display_name") or ""))
-        user_ids[str(row.get("user_id"))] = user
-        if as_bool(row.get("status"), True):
+        legacy_id = str(row.get("user_id") or "")
+        display_name = str(row.get("display_name") or "")
+        if email:
+            user = user_for_email(db, email, display_name)
+        else:
+            user = user_for_legacy_identity(db, legacy_id, display_name)
+        user_ids[legacy_id] = user
+        if email and as_bool(row.get("status"), True):
             grant(db, user.id, "strength", "google_strength_users")
         summary["strength_users"] += 1
 
