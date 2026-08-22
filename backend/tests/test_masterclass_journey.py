@@ -158,6 +158,75 @@ def test_checkout_rejects_token_from_another_offer_stage():
         assert db.scalar(select(func.count(OfferCheckout.id))) == 0
 
 
+def test_old_tilda_lecture_never_returns_an_earlier_discount_stage():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add_all([
+            UserOffer(
+                user_id=user.id,
+                stage_code="early",
+                started_at=now - timedelta(hours=12),
+                expires_at=now + timedelta(hours=84),
+                snapshot={},
+            ),
+            UserOffer(
+                user_id=user.id,
+                stage_code="review",
+                started_at=now - timedelta(hours=1),
+                expires_at=now + timedelta(hours=71),
+                snapshot={},
+            ),
+        ])
+        db.commit()
+
+    response = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-2-offer")
+    )
+    assert response.status_code == 200
+    assert response.json()["stage"] == "review"
+    assert response.json()["expires_at"] is not None
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "second")) == 0
+
+
+def test_expired_price_advances_but_next_timer_waits_for_real_checkpoint():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="early",
+            started_at=now - timedelta(days=5),
+            expires_at=now - timedelta(hours=1),
+            snapshot={},
+        ))
+        db.commit()
+
+    passive = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("offers-hub")
+    )
+    assert passive.status_code == 200
+    assert passive.json()["stage"] == "second"
+    assert passive.json()["expires_at"] is None
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "second")) == 0
+
+    checkpoint = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("recipes-part-2-gate")
+    )
+    assert checkpoint.status_code == 200
+    assert checkpoint.json()["stage"] == "second"
+    assert checkpoint.json()["expires_at"] is not None
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "second")) == 1
+
+
 def test_admin_can_generate_signed_tokens_for_tilda_placements():
     client, _ = setup()
     response = client.get("/api/masterclass/admin/embed-tokens")

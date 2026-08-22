@@ -227,63 +227,103 @@ def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:
 def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, UserOffer | None]:
     now = datetime.now(timezone.utc)
     order = ["early", "second", "review", "last_week", "standard"]
-    if placement == "offers-hub":
-        history = list(db.scalars(
-            select(UserOffer)
-            .where(UserOffer.user_id == user.id)
-            .order_by(UserOffer.started_at.desc())
-        ))
-        own = next(
-            (item for item in history if item.expires_at is None or aware_utc(item.expires_at) > now),
-            None,
-        )
+    history = list(db.scalars(
+        select(UserOffer)
+        .where(UserOffer.user_id == user.id, UserOffer.stage_code.in_(order[:-1]))
+        .order_by(UserOffer.started_at.desc())
+    ))
 
-        # The final one-week window follows the review offer automatically.  Its
-        # clock starts at the actual review expiry, not when an old page happens
-        # to be opened again.  This prevents both skipping and silently extending
-        # the agreed final discount.
-        if own is None:
-            review = next((item for item in history if item.stage_code == "review"), None)
-            last_week = next((item for item in history if item.stage_code == "last_week"), None)
-            review_expires = aware_utc(review.expires_at) if review else None
-            if review_expires and review_expires <= now and last_week is None:
+    # The final one-week window follows review automatically. Its clock starts
+    # at the actual review expiry, not when a page happens to be opened again.
+    review = next((item for item in history if item.stage_code == "review"), None)
+    last_week = next((item for item in history if item.stage_code == "last_week"), None)
+    review_expires = aware_utc(review.expires_at) if review else None
+    if review_expires and review_expires <= now and last_week is None:
+        final_stage = db.scalar(select(OfferStage).where(
+            OfferStage.code == "last_week", OfferStage.status == "active"
+        ))
+        if not final_stage:
+            raise HTTPException(503, "last-week offer stage is not configured")
+        final_expires = (
+            review_expires + timedelta(hours=final_stage.duration_hours)
+            if final_stage.duration_hours else None
+        )
+        if final_expires is None or final_expires > now:
+            last_week = UserOffer(
+                user_id=user.id,
+                stage_code="last_week",
+                started_at=review_expires,
+                expires_at=final_expires,
+                snapshot={"created_by": "review_expiry"},
+            )
+            db.add(last_week)
+            db.flush()
+            history.append(last_week)
+
+    # A participant can never move backwards by reopening an old Tilda lecture.
+    # An expired stage exposes the next price but does not start its timer. The
+    # timer starts only when that stage's real checkpoint is opened.
+    highest = max(history, key=lambda item: order.index(item.stage_code), default=None)
+    floor_code: str | None = None
+    floor_offer: UserOffer | None = None
+    if highest is not None:
+        highest_expires = aware_utc(highest.expires_at)
+        if highest_expires is None or highest_expires > now:
+            floor_code = highest.stage_code
+            floor_offer = highest
+        else:
+            floor_code = order[min(order.index(highest.stage_code) + 1, len(order) - 1)]
+            # Review is followed by one last discounted week.  If a participant
+            # returns after that whole window, go straight to the standard price
+            # even when no page was opened during the final week.
+            if highest.stage_code == "review":
                 final_stage = db.scalar(select(OfferStage).where(
                     OfferStage.code == "last_week", OfferStage.status == "active"
                 ))
                 if not final_stage:
                     raise HTTPException(503, "last-week offer stage is not configured")
-                final_expires = (
-                    review_expires + timedelta(hours=final_stage.duration_hours)
-                    if final_stage.duration_hours else None
-                )
-                if final_expires is None or final_expires > now:
-                    own = UserOffer(
-                        user_id=user.id,
-                        stage_code="last_week",
-                        started_at=review_expires,
-                        expires_at=final_expires,
-                        snapshot={"created_by": "review_expiry"},
-                    )
-                    db.add(own)
-                    db.flush()
+                if (
+                    highest_expires is not None
+                    and final_stage.duration_hours
+                    and highest_expires + timedelta(hours=final_stage.duration_hours) <= now
+                ):
+                    floor_code = "standard"
 
-        code = own.stage_code if own else "standard"
-        stage = db.scalar(select(OfferStage).where(OfferStage.code == code, OfferStage.status == "active"))
-        if not stage: raise HTTPException(503, "offer stage is not configured")
-        return stage, own
-    code = STAGE_BY_PLACEMENT.get(placement, "standard")
-    stage = db.scalar(select(OfferStage).where(OfferStage.code == code, OfferStage.status == "active"))
-    if not stage: raise HTTPException(503, "offer stage is not configured")
-    own = db.scalar(select(UserOffer).where(UserOffer.user_id == user.id, UserOffer.stage_code == code))
+    requested_code = None if placement == "offers-hub" else STAGE_BY_PLACEMENT.get(placement, "standard")
+    if requested_code is None:
+        code = floor_code or "standard"
+    elif floor_code is None:
+        code = requested_code
+    else:
+        code = order[max(order.index(requested_code), order.index(floor_code))]
+
+    stage = db.scalar(select(OfferStage).where(
+        OfferStage.code == code, OfferStage.status == "active"
+    ))
+    if not stage:
+        raise HTTPException(503, f"offer stage is not configured: {code}")
+
+    own = next((item for item in history if item.stage_code == code), None)
     if own and own.expires_at and aware_utc(own.expires_at) <= now:
-        next_code = order[min(order.index(code) + 1, len(order) - 1)]
-        next_stage = db.scalar(select(OfferStage).where(OfferStage.code == next_code, OfferStage.status == "active"))
-        if not next_stage: raise HTTPException(503, "next offer stage is not configured")
-        return next_stage, None
-    if not own:
-        if code == "standard": return stage, None
-        own = UserOffer(user_id=user.id, stage_code=code, started_at=now, expires_at=now + timedelta(hours=stage.duration_hours) if stage.duration_hours else None, snapshot={})
-        db.add(own); db.flush()
+        own = None
+    should_start = (
+        placement != "offers-hub"
+        and requested_code == code
+        and code != "standard"
+        and own is None
+    )
+    if should_start:
+        own = UserOffer(
+            user_id=user.id,
+            stage_code=code,
+            started_at=now,
+            expires_at=now + timedelta(hours=stage.duration_hours) if stage.duration_hours else None,
+            snapshot={"created_by": placement},
+        )
+        db.add(own)
+        db.flush()
+    elif floor_offer is not None and floor_offer.stage_code == code:
+        own = floor_offer
     return stage, own
 
 
