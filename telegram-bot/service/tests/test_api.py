@@ -38,6 +38,8 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     app.dependency_overrides[get_db] = db_override
     monkeypatch.setattr(main_module, "client", lambda: fake)
     monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
     client = TestClient(app)
     update = {"update_id": 100, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=update).json() == {"ok": True}
