@@ -16,7 +16,8 @@ alias, закрытый порт PostgreSQL, Telegram `getMe` через proxy �
 `knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md` и
 `knowledge-base/modules/telegram/LEAD_ENTRY_TECHNICAL_SPEC.md`. Остальная часть
 welcome, покупки, закрепа, подписки и интенсива остаётся в
-`plans/TELEGRAM_START_LINKS_SPEC.md` и реализуется следующим самостоятельным
+`knowledge-base/modules/telegram/START_WELCOME_ROUTING.md` и исходном полном
+`plans/TELEGRAM_START_LINKS_SPEC.md`; она реализуется следующим самостоятельным
 модулем.
 
 ## 1. Где находится источник истины
@@ -183,6 +184,18 @@ Telegram `user` и `chat` и создаёт либо обновляет `tg_cont
 
 Оглавление и хэштеги закреплены миграцией
 `backend/migrations/versions/20260822_0010_intensive_restart_guard.py`.
+
+Это пока **не полная согласованная развилка**. До ответа повторному пользователю
+код ещё не проверяет покупку мастер-класса. Он не использует отдельные
+редактируемые выходы для покупателя, незавершённого интенсива и завершённого
+интенсива и не показывает эти решения отдельными узлами карты. Целевая логика,
+точные тексты и границы следующего модуля находятся в
+`knowledge-base/modules/telegram/START_WELCOME_ROUTING.md`.
+
+Пять согласованных текстов следующего router заведены в `tg_content_items` с
+кодами `tpl_start_navigation_pin`, `tpl_start_welcome_offer`,
+`tpl_start_has_masterclass`, `tpl_start_intensive_waiting` и
+`tpl_start_intensive_complete`, но текущий `process_update()` их ещё не исполняет.
 
 ## 6. Текущая цепочка до покупки
 

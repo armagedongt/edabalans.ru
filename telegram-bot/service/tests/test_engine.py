@@ -32,7 +32,12 @@ def test_seed_contains_exactly_30_message_slots(tmp_path):
         version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == pre.id))
         message_count = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert message_count == 30
-        assert session.scalar(select(func.count(ContentItem.id))) == 30
+        assert session.scalar(select(func.count(ContentItem.id))) == 35
+        assert "Навигация!" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_navigation_pin"))
+        assert "Сделайте похудение проще" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
+        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_has_masterclass")).startswith("Привет! У вас уже есть мой Мастер-класс")
+        assert "{{next_message_at}}" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_waiting"))
+        assert "похудение-это-есть.рф/intensiv" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_complete"))
         assert session.scalar(select(func.count(SequenceEdge.id))) > 0
         assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == PREPURCHASE_CODE
 
