@@ -31,6 +31,8 @@ PLACEMENT_TOKEN_SECONDS = 10 * 365 * 24 * 60 * 60
 RESEND_SECONDS = 60
 _rate_lock = threading.Lock()
 _last_challenge: dict[str, float] = {}
+_challenge_attempts: dict[str, tuple[int, float]] = {}
+MAX_CODE_ATTEMPTS = 5
 
 
 class ChallengeIn(BaseModel):
@@ -124,6 +126,43 @@ def create_challenge(email: str, code: str, settings: Settings) -> str:
         },
         settings,
     )
+
+
+def _challenge_key(token: str) -> str:
+    return hashlib.sha256(token.encode("utf-8")).hexdigest()
+
+
+def register_challenge(token: str) -> None:
+    now = time.time()
+    with _rate_lock:
+        expired = [key for key, (_, expires) in _challenge_attempts.items() if expires < now]
+        for key in expired:
+            _challenge_attempts.pop(key, None)
+        _challenge_attempts[_challenge_key(token)] = (0, now + CHALLENGE_SECONDS)
+
+
+def check_challenge_attempts(token: str) -> None:
+    with _rate_lock:
+        attempts, _ = _challenge_attempts.get(
+            _challenge_key(token), (0, time.time() + CHALLENGE_SECONDS)
+        )
+    if attempts >= MAX_CODE_ATTEMPTS:
+        raise HTTPException(
+            status.HTTP_429_TOO_MANY_REQUESTS,
+            "too many code attempts; request a new code",
+        )
+
+
+def record_challenge_attempt(token: str, *, consumed: bool = False) -> None:
+    key = _challenge_key(token)
+    with _rate_lock:
+        attempts, expires = _challenge_attempts.get(
+            key, (0, time.time() + CHALLENGE_SECONDS)
+        )
+        _challenge_attempts[key] = (
+            MAX_CODE_ATTEMPTS if consumed else attempts + 1,
+            expires,
+        )
 
 
 def verify_challenge(token: str, code: str, settings: Settings) -> str:
@@ -227,6 +266,7 @@ def request_challenge(
         raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     code = f"{secrets.randbelow(1_000_000):06d}"
     challenge_token = create_challenge(email, code, settings)
+    register_challenge(challenge_token)
     send_login_code(email, code, settings)
     return {
         "ok": True,
@@ -242,7 +282,14 @@ def verify_code(
     settings: Settings = Depends(get_settings),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    email = verify_challenge(body.challenge_token, body.code, settings)
+    check_challenge_attempts(body.challenge_token)
+    try:
+        email = verify_challenge(body.challenge_token, body.code, settings)
+    except HTTPException as exc:
+        if exc.status_code == status.HTTP_401_UNAUTHORIZED:
+            record_challenge_attempt(body.challenge_token)
+        raise
+    record_challenge_attempt(body.challenge_token, consumed=True)
     try:
         resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
     except AppAccessError as exc:

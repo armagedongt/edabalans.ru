@@ -65,6 +65,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
         )
         db.commit()
     app_auth._last_challenge.clear()
+    app_auth._challenge_attempts.clear()
     return TestClient(app), factory
 
 
@@ -135,4 +136,41 @@ def test_malformed_bearer_token_is_rejected_without_server_error():
         headers={"Authorization": "Bearer !!!.not-a-signature"},
     )
     assert response.status_code == 401
+    app.dependency_overrides.clear()
+
+
+def test_email_code_allows_only_five_attempts_and_is_one_time(monkeypatch):
+    client, _ = setup()
+    delivered = {}
+    monkeypatch.setattr(
+        app_auth,
+        "send_login_code",
+        lambda email, code, settings: delivered.update(email=email, code=code),
+    )
+    challenge = client.post(
+        "/api/app-auth/challenge", json={"email": "member@example.test"}
+    ).json()["challenge_token"]
+    wrong_code = "000000" if delivered["code"] != "000000" else "111111"
+    for _ in range(5):
+        assert client.post(
+            "/api/app-auth/verify",
+            json={"challenge_token": challenge, "code": wrong_code},
+        ).status_code == 401
+    assert client.post(
+        "/api/app-auth/verify",
+        json={"challenge_token": challenge, "code": delivered["code"]},
+    ).status_code == 429
+
+    app_auth._last_challenge.clear()
+    fresh = client.post(
+        "/api/app-auth/challenge", json={"email": "member@example.test"}
+    ).json()["challenge_token"]
+    assert client.post(
+        "/api/app-auth/verify",
+        json={"challenge_token": fresh, "code": delivered["code"]},
+    ).status_code == 200
+    assert client.post(
+        "/api/app-auth/verify",
+        json={"challenge_token": fresh, "code": delivered["code"]},
+    ).status_code == 429
     app.dependency_overrides.clear()
