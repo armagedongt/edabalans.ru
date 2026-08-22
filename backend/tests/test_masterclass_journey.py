@@ -129,3 +129,37 @@ def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
     assert any(card["code"] == "single:consultation" for card in review_offer["offers"])
     assert review_offer["offers"][1]["code"] == "bundle:consultation"
     assert "consultation" in review_offer["offers"][1]["items"]
+
+
+def test_offers_hub_starts_final_week_from_review_expiry_without_extending_it():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        review = UserOffer(
+            user_id=user.id,
+            stage_code="review",
+            started_at=now - timedelta(hours=80),
+            expires_at=now - timedelta(hours=8),
+            snapshot={},
+        )
+        db.add(review)
+        db.commit()
+        expected_start = review.expires_at
+
+    first = client.get("/api/masterclass/offers?email=member@example.test&placement=offers-hub")
+    assert first.status_code == 200
+    assert first.json()["stage"] == "last_week"
+
+    with factory() as db:
+        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
+        assert final is not None
+        assert final.started_at.replace(tzinfo=timezone.utc) == expected_start
+        first_expiry = final.expires_at
+
+    second = client.get("/api/masterclass/offers?email=member@example.test&placement=offers-hub")
+    assert second.status_code == 200
+    assert second.json()["stage"] == "last_week"
+    with factory() as db:
+        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
+        assert final.expires_at == first_expiry

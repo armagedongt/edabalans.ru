@@ -198,8 +198,45 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
     now = datetime.now(timezone.utc)
     order = ["early", "second", "review", "last_week", "standard"]
     if placement == "offers-hub":
-        active = list(db.scalars(select(UserOffer).where(UserOffer.user_id == user.id).order_by(UserOffer.started_at.desc())))
-        own = next((item for item in active if item.expires_at is None or aware_utc(item.expires_at) > now), None)
+        history = list(db.scalars(
+            select(UserOffer)
+            .where(UserOffer.user_id == user.id)
+            .order_by(UserOffer.started_at.desc())
+        ))
+        own = next(
+            (item for item in history if item.expires_at is None or aware_utc(item.expires_at) > now),
+            None,
+        )
+
+        # The final one-week window follows the review offer automatically.  Its
+        # clock starts at the actual review expiry, not when an old page happens
+        # to be opened again.  This prevents both skipping and silently extending
+        # the agreed final discount.
+        if own is None:
+            review = next((item for item in history if item.stage_code == "review"), None)
+            last_week = next((item for item in history if item.stage_code == "last_week"), None)
+            review_expires = aware_utc(review.expires_at) if review else None
+            if review_expires and review_expires <= now and last_week is None:
+                final_stage = db.scalar(select(OfferStage).where(
+                    OfferStage.code == "last_week", OfferStage.status == "active"
+                ))
+                if not final_stage:
+                    raise HTTPException(503, "last-week offer stage is not configured")
+                final_expires = (
+                    review_expires + timedelta(hours=final_stage.duration_hours)
+                    if final_stage.duration_hours else None
+                )
+                if final_expires is None or final_expires > now:
+                    own = UserOffer(
+                        user_id=user.id,
+                        stage_code="last_week",
+                        started_at=review_expires,
+                        expires_at=final_expires,
+                        snapshot={"created_by": "review_expiry"},
+                    )
+                    db.add(own)
+                    db.flush()
+
         code = own.stage_code if own else "standard"
         stage = db.scalar(select(OfferStage).where(OfferStage.code == code, OfferStage.status == "active"))
         if not stage: raise HTTPException(503, "offer stage is not configured")
