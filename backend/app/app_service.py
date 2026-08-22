@@ -12,6 +12,7 @@ from app.models import Resource, User, UserAccess, UserEmail
 
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+EXTRA_ACCESS_SOURCE = "temporary_extra_all_apps"
 
 
 class AppAccessError(ValueError):
@@ -40,18 +41,32 @@ def resolve_user_for_resource(db: Session, email: str | None, resource_code: str
         raise AppAccessError("Этот email не найден в списке доступа")
 
     now = datetime.now(timezone.utc)
+    access_filters = (
+        UserAccess.user_id == user.id,
+        Resource.code == resource_code,
+        Resource.status == "active",
+        UserAccess.revoked_at.is_(None),
+        (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+    )
     access = db.scalar(
         select(UserAccess)
         .join(Resource, Resource.id == UserAccess.resource_id)
         .where(
-            UserAccess.user_id == user.id,
-            Resource.code == resource_code,
-            Resource.status == "active",
-            UserAccess.revoked_at.is_(None),
-            (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+            *access_filters,
+            UserAccess.source != EXTRA_ACCESS_SOURCE,
         )
         .limit(1)
     )
+    if not access:
+        access = db.scalar(
+            select(UserAccess)
+            .join(Resource, Resource.id == UserAccess.resource_id)
+            .where(
+                *access_filters,
+                UserAccess.source == EXTRA_ACCESS_SOURCE,
+            )
+            .limit(1)
+        )
     if not access:
         raise AppAccessError("Для этого email нет доступа к приложению")
     return user
