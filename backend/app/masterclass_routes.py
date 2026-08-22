@@ -410,6 +410,39 @@ def admin_masterclass_summary(_: str = Depends(require_admin), db: Session = Dep
     return {"ok": True, "events": db.scalar(select(func.count(MasterclassEvent.id))) or 0, "questionnaires": db.scalar(select(func.count(QuestionnaireRun.id))) or 0, "active_offers": db.scalar(select(func.count(UserOffer.id)).where(UserOffer.status == "active")) or 0, "pending_notifications": db.scalar(select(func.count(MasterclassNotification.id)).where(MasterclassNotification.status == "pending")) or 0}
 
 
+@router.get("/admin/user-offers")
+def admin_masterclass_user_offers(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    now = datetime.now(timezone.utc)
+    rows = db.execute(
+        select(UserOffer, User.display_name, UserEmail.email_normalized, OfferStage.name)
+        .join(User, User.id == UserOffer.user_id)
+        .join(UserEmail, (UserEmail.user_id == User.id) & UserEmail.is_primary.is_(True))
+        .join(OfferStage, OfferStage.code == UserOffer.stage_code)
+        .order_by(UserOffer.started_at.desc())
+        .limit(200)
+    ).all()
+    return {
+        "ok": True,
+        "offers": [
+            {
+                "id": str(offer.id),
+                "display_name": display_name or "",
+                "email": email,
+                "stage_code": offer.stage_code,
+                "stage_name": stage_name,
+                "started_at": aware_utc(offer.started_at).isoformat(),
+                "expires_at": aware_utc(offer.expires_at).isoformat() if offer.expires_at else None,
+                "status": (
+                    "expired"
+                    if offer.status == "active" and offer.expires_at and aware_utc(offer.expires_at) <= now
+                    else offer.status
+                ),
+            }
+            for offer, display_name, email, stage_name in rows
+        ],
+    }
+
+
 @router.get("/admin/notifications")
 def admin_masterclass_notifications(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     rows = list(db.scalars(select(MasterclassNotification).order_by(MasterclassNotification.created_at.desc()).limit(100)))

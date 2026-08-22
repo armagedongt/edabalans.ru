@@ -196,3 +196,25 @@ def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():
     assert response.json()["expires_at"] is None
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")) == 0
+
+
+def test_admin_lists_personal_offer_window_with_effective_expired_status():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="early",
+            started_at=now - timedelta(days=5),
+            expires_at=now - timedelta(days=1),
+            status="active",
+            snapshot={},
+        ))
+        db.commit()
+
+    response = client.get("/api/masterclass/admin/user-offers")
+    assert response.status_code == 200
+    assert response.json()["offers"][0]["email"] == "member@example.test"
+    assert response.json()["offers"][0]["stage_code"] == "early"
+    assert response.json()["offers"][0]["status"] == "expired"
