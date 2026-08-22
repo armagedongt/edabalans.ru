@@ -1,0 +1,326 @@
+from __future__ import annotations
+
+from datetime import datetime
+from decimal import Decimal, InvalidOperation
+from typing import Any
+from urllib.parse import parse_qs, urlparse
+from zoneinfo import ZoneInfo
+
+from sqlalchemy import and_, or_, select
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
+
+from app.models import (
+    AttributionEvent,
+    Payment,
+    Product,
+    ProductAccessRule,
+    ProductAlias,
+    User,
+    UserAccess,
+    UserEmail,
+    UserPhone,
+)
+
+MOSCOW = ZoneInfo("Europe/Moscow")
+SOURCE = "tilda_webhook"
+LEGACY_ALIAS_SOURCE = "google_payments_legacy"
+
+
+class TildaPayloadError(ValueError):
+    pass
+
+
+def clean(value: Any) -> str:
+    if isinstance(value, list):
+        value = value[0] if value else ""
+    return str(value or "").strip()
+
+
+def first(payload: dict[str, Any], *names: str) -> str:
+    for name in names:
+        value = clean(payload.get(name))
+        if value:
+            return value
+    return ""
+
+
+def normalize_email(value: str) -> str:
+    return value.strip().lower()
+
+
+def normalize_phone(value: str) -> str:
+    digits = "".join(character for character in value if character.isdigit())
+    if len(digits) == 11 and digits.startswith("8"):
+        digits = "7" + digits[1:]
+    return f"+{digits}" if digits else ""
+
+
+def parse_amount(value: str) -> Decimal:
+    raw = value.replace(" ", "").replace("\u00a0", "").replace(",", ".")
+    try:
+        amount = Decimal(raw)
+    except InvalidOperation as exc:
+        raise TildaPayloadError("price is missing or invalid") from exc
+    if amount < 0:
+        raise TildaPayloadError("price cannot be negative")
+    return amount
+
+
+def parse_datetime(value: str) -> datetime | None:
+    if not value:
+        return None
+    for pattern in (
+        "%Y-%m-%d %H:%M:%S",
+        "%Y-%m-%d %H:%M",
+        "%d.%m.%Y %H:%M:%S",
+        "%d.%m.%Y %H:%M",
+        "%d.%m.%Y",
+    ):
+        try:
+            return datetime.strptime(value, pattern).replace(tzinfo=MOSCOW)
+        except ValueError:
+            continue
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        return parsed if parsed.tzinfo else parsed.replace(tzinfo=MOSCOW)
+    except ValueError:
+        return None
+
+
+def normalize_status(value: str) -> str:
+    normalized = value.strip().lower()
+    if normalized in {"paid", "success", "succeeded", "оплачен", "оплачено"}:
+        return "paid"
+    if normalized in {"processing", "pending", "в процессе", "ожидает оплаты"}:
+        return "processing"
+    return normalized or "unknown"
+
+
+def normalize_currency(value: str) -> str:
+    normalized = value.strip().upper()
+    if normalized in {"", "RUR", "РУБ", "РУБ."}:
+        return "RUB"
+    if len(normalized) != 3:
+        raise TildaPayloadError("currency must contain a three-letter code")
+    return normalized
+
+
+def find_existing_payment(
+    db: Session, external_order_id: str | None, external_payment_id: str | None
+) -> Payment | None:
+    conditions = []
+    if external_order_id:
+        conditions.append(Payment.external_order_id == external_order_id)
+    if external_payment_id:
+        conditions.append(Payment.external_payment_id == external_payment_id)
+    if not conditions:
+        return None
+    return db.scalar(
+        select(Payment).where(Payment.source == SOURCE, or_(*conditions))
+    )
+
+
+def find_or_create_user(
+    db: Session,
+    email_original: str,
+    display_name: str,
+    phone_original: str,
+    occurred_at: datetime,
+) -> User | None:
+    email = normalize_email(email_original)
+    if not email:
+        return None
+    user = db.scalar(
+        select(User)
+        .join(UserEmail, UserEmail.user_id == User.id)
+        .where(UserEmail.email_normalized == email, User.merged_into_user_id.is_(None))
+    )
+    if user is None:
+        user = User(
+            display_name=display_name or None,
+            data_origin="native",
+            first_seen_at=occurred_at,
+        )
+        db.add(user)
+        db.flush()
+        db.add(
+            UserEmail(
+                user_id=user.id,
+                email_original=email_original,
+                email_normalized=email,
+                verification_status="tilda_unverified",
+                source=SOURCE,
+                first_seen_at=occurred_at,
+            )
+        )
+    elif display_name and not user.display_name:
+        user.display_name = display_name
+
+    normalized_phone = normalize_phone(phone_original)
+    if normalized_phone:
+        phone_exists = db.scalar(
+            select(UserPhone.id).where(
+                UserPhone.user_id == user.id,
+                UserPhone.phone_normalized == normalized_phone,
+            )
+        )
+        if phone_exists is None:
+            db.add(
+                UserPhone(
+                    user_id=user.id,
+                    phone_original=phone_original,
+                    phone_normalized=normalized_phone,
+                    source=SOURCE,
+                )
+            )
+    return user
+
+
+def find_product(db: Session, raw_name: str) -> Product | None:
+    for source in (SOURCE, LEGACY_ALIAS_SOURCE):
+        product = db.scalar(
+            select(Product)
+            .join(ProductAlias, ProductAlias.product_id == Product.id)
+            .where(
+                ProductAlias.source == source,
+                ProductAlias.raw_name_exact == raw_name,
+                Product.status == "active",
+            )
+        )
+        if product is not None:
+            return product
+    return None
+
+
+def active_access_rules(
+    db: Session, product_id: Any, occurred_at: datetime
+) -> list[ProductAccessRule]:
+    return list(
+        db.scalars(
+            select(ProductAccessRule).where(
+                ProductAccessRule.product_id == product_id,
+                or_(
+                    ProductAccessRule.effective_from.is_(None),
+                    ProductAccessRule.effective_from <= occurred_at,
+                ),
+                or_(
+                    ProductAccessRule.effective_to.is_(None),
+                    ProductAccessRule.effective_to > occurred_at,
+                ),
+            )
+        )
+    )
+
+
+def attribution_from_url(url: str) -> dict[str, str | None]:
+    query = parse_qs(urlparse(url).query)
+    return {
+        "utm_source": query.get("utm_source", [None])[0],
+        "utm_medium": query.get("utm_medium", [None])[0],
+        "utm_campaign": query.get("utm_campaign", [None])[0],
+        "utm_content": query.get("utm_content", [None])[0],
+        "utm_term": query.get("utm_term", [None])[0],
+        "ref_code": query.get("ref", query.get("invite", [None]))[0],
+    }
+
+
+def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str]:
+    external_order_id = first(payload, "orderid", "order_id") or None
+    external_payment_id = first(payload, "paymentid", "payment_id") or None
+    if not external_order_id and not external_payment_id:
+        raise TildaPayloadError("orderid or paymentid is required")
+
+    existing = find_existing_payment(db, external_order_id, external_payment_id)
+    if existing is not None:
+        return {"status": "duplicate", "payment_id": str(existing.id)}
+
+    raw_product = first(payload, "products", "Products", "product")
+    if not raw_product:
+        raise TildaPayloadError("products is required")
+    amount = parse_amount(first(payload, "price", "amount", "Amount"))
+    event_at = parse_datetime(first(payload, "sent", "Sent")) or datetime.now(MOSCOW)
+    payment_status = normalize_status(
+        first(payload, "Payment status", "Статус оплаты", "payment_status")
+    )
+    email = first(payload, "Email", "email", "ma_email")
+    display_name = first(payload, "Name", "name", "ma_name")
+    phone = first(payload, "Phone", "phone", "ma_phone")
+    user = find_or_create_user(db, email, display_name, phone, event_at)
+    product = find_product(db, raw_product)
+    referer = first(payload, "referer", "Referer")
+
+    payment = Payment(
+        user_id=user.id if user else None,
+        product_id=product.id if product else None,
+        source=SOURCE,
+        external_order_id=external_order_id,
+        external_payment_id=external_payment_id,
+        external_request_id=first(payload, "requestid", "tranid") or None,
+        email_at_purchase=email or None,
+        product_name_raw=raw_product,
+        amount=amount,
+        currency=normalize_currency(
+            first(payload, "Currency", "Валюта", "currency")
+        ),
+        payment_status=payment_status,
+        payment_system=first(payload, "paymentsystem", "payment_system") or None,
+        source_event_at=event_at,
+        paid_at=event_at if payment_status == "paid" else None,
+        paid_at_is_estimated=payment_status == "paid",
+        external_form_id=first(payload, "formid", "form_id") or None,
+        form_name_raw=first(
+            payload, "Form name", "Название формы", "formname"
+        )
+        or None,
+        referer_raw=referer or None,
+        landing_url=referer or None,
+        raw_payload=payload,
+    )
+    db.add(payment)
+    db.flush()
+
+    if user and referer:
+        db.add(
+            AttributionEvent(
+                user_id=user.id,
+                event_type="tilda_paid_order",
+                landing_url=referer,
+                occurred_at=event_at,
+                **attribution_from_url(referer),
+            )
+        )
+
+    access_granted = False
+    if user and product and payment_status == "paid":
+        for rule in active_access_rules(db, product.id, event_at):
+            db.add(
+                UserAccess(
+                    user_id=user.id,
+                    resource_id=rule.resource_id,
+                    source_payment_id=payment.id,
+                    source="paid_product_rule",
+                    granted_at=event_at,
+                )
+            )
+            access_granted = True
+
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        existing = find_existing_payment(db, external_order_id, external_payment_id)
+        if existing is None:
+            raise
+        return {"status": "duplicate", "payment_id": str(existing.id)}
+
+    result_status = "saved"
+    if product is None:
+        result_status = "saved_unmapped_product"
+    elif payment_status != "paid":
+        result_status = "saved_without_access"
+    return {
+        "status": result_status,
+        "payment_id": str(payment.id),
+        "access": "granted" if access_granted else "not_granted",
+    }
