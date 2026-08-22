@@ -113,6 +113,17 @@ def test_recipe_gate_uses_access_and_records_open_once():
     assert queue.json()["notifications"][0]["email"] == "member@example.test"
 
 
+def test_admin_preview_lists_only_masterclass_users_with_primary_email():
+    client, _ = setup()
+    response = client.get("/api/masterclass/admin/users")
+    assert response.status_code == 200
+    assert response.json()["users"] == [{
+        "id": response.json()["users"][0]["id"],
+        "display_name": "Участник",
+        "email": "member@example.test",
+    }]
+
+
 def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
     client, factory = setup()
     with factory() as db:

@@ -18,7 +18,7 @@
   <header>
     <a href="/admin/masterclass">← Модуль</a>
     <div class="controls">
-      <label>Тестовая почта<input id="email" type="email" value="preview@example.test"></label>
+      <label>Участник<input id="email" type="email" list="masterclass-users" placeholder="Начните вводить имя или email"><datalist id="masterclass-users"></datalist></label>
       <label>Экран<select id="app"><option value="onboarding-questionnaire">Анкета при старте</option><option value="masterclass-offers">Оффер</option><option value="recipes-part-1">Рецепты · часть 1</option><option value="recipes-part-2">Рецепты · часть 2</option><option value="closing-review">Саморевью</option></select></label>
       <label>Точка показа<select id="placement"><option value="day-2-offer">День 2</option><option value="recipes-part-1-gate">Рецепты 1</option><option value="recipes-part-2-gate">Рецепты 2</option><option value="closing-review">Саморевью</option><option value="offers-hub">Постоянная страница</option></select></label>
       <button id="show">Показать</button>
@@ -27,8 +27,23 @@
   <main class="stage"><p class="note">Показывается реальный интерфейс и реальные правила сервера. Для production-пользователя укажите его почту.</p><div id="preview-shell"></div></main>
   <script src="/embed.js"></script>
   <script>
+    fetch('/api/masterclass/admin/users').then(function(response){
+      if(!response.ok) throw new Error('Не удалось загрузить участников');
+      return response.json();
+    }).then(function(data){
+      var list=document.querySelector('#masterclass-users'),input=document.querySelector('#email');
+      list.innerHTML='';
+      data.users.forEach(function(user){
+        var option=document.createElement('option');
+        option.value=user.email;
+        option.label=user.display_name||'Без имени';
+        list.appendChild(option);
+      });
+      if(data.users.length&&!input.value) input.value=data.users[0].email;
+    }).catch(function(error){document.querySelector('.note').textContent=error.message;});
     document.querySelector('#show').onclick=function(){
       var email=document.querySelector('#email').value.trim().toLowerCase(),shell=document.querySelector('#preview-shell'),host=document.createElement('div');
+      if(!email){document.querySelector('.note').textContent='Сначала выберите участника';return;}
       localStorage.setItem('edabalans_identity_v1',JSON.stringify({email:email,confirmedAt:new Date().toISOString()}));
       window.EdabalansIdentity={email:email};shell.innerHTML='';shell.appendChild(host);
       host.setAttribute('data-edabalans-app',document.querySelector('#app').value);

@@ -15,7 +15,7 @@ from app.auth import require_admin
 from app.database import get_db
 from app.models import (
     MasterclassEvent, MasterclassNotification, OfferCheckout, OfferStage, QuestionnaireAnswer, QuestionnaireRun,
-    Resource, User, UserAccess, UserOffer,
+    Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
@@ -361,6 +361,35 @@ def recipe_gate(part: int, email: str, db: Session = Depends(get_db)) -> dict:
 def admin_offer_stages(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     rows = list(db.scalars(select(OfferStage).order_by(OfferStage.created_at)))
     return {"ok": True, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status} for row in rows]}
+
+
+@router.get("/admin/users")
+def admin_masterclass_users(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    now = datetime.now(timezone.utc)
+    rows = db.execute(
+        select(User.id, User.display_name, UserEmail.email_normalized)
+        .join(UserEmail, UserEmail.user_id == User.id)
+        .join(UserAccess, UserAccess.user_id == User.id)
+        .join(Resource, Resource.id == UserAccess.resource_id)
+        .where(
+            User.status == "active",
+            User.merged_into_user_id.is_(None),
+            UserEmail.is_primary.is_(True),
+            Resource.code == "ACCESS_MASTERCLASS",
+            UserAccess.revoked_at.is_(None),
+            (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+        )
+        .distinct()
+        .order_by(User.display_name, UserEmail.email_normalized)
+        .limit(500)
+    ).all()
+    return {
+        "ok": True,
+        "users": [
+            {"id": str(user_id), "display_name": display_name or "", "email": email}
+            for user_id, display_name, email in rows
+        ],
+    }
 
 
 @router.put("/admin/offer-stages/{stage_code}")
