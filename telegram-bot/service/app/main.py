@@ -21,6 +21,7 @@ from app.config import get_settings
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
+from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import PREPURCHASE_CODE, seed_defaults
@@ -148,6 +149,8 @@ async def scheduler_loop() -> None:
                     scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
                     for broadcast in scheduled:
                         _deliver_broadcast(session, broadcast, tg)
+                    if settings.postpurchase_dispatch_enabled:
+                        dispatch_due_masterclass_notifications(session, tg, settings.masterclass_offers_url)
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
             pass

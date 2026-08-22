@@ -44,6 +44,19 @@ def test_unknown_application_fragment_is_404() -> None:
     assert client.get("/apps/unknown.html").status_code == 404
 
 
+def test_masterclass_fragments_and_shared_assets_are_public() -> None:
+    for app_code in ("onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"):
+        response = client.get(f"/apps/{app_code}.html")
+        assert response.status_code == 200
+        assert f'id="{app_code}-app"' in response.text
+        assert "masterclass.js" in response.text
+    assert client.get("/assets/masterclass.js").status_code == 200
+    assert client.get("/assets/masterclass.css").status_code == 200
+    loader = client.get("/embed.js").text
+    assert "data-edabalans-placement" in loader
+    assert "onboarding-questionnaire" in loader
+
+
 def test_tilda_origin_is_allowed_for_api_preflight() -> None:
     response = client.options(
         "/api/apps/metabolism",

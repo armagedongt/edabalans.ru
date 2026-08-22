@@ -1,4 +1,6 @@
 import os
+from datetime import datetime, timedelta, timezone
+from decimal import Decimal
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -12,6 +14,7 @@ from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     Payment,
+    OfferCheckout,
     Product,
     ProductAccessRule,
     ProductAlias,
@@ -161,4 +164,42 @@ def test_unknown_product_is_saved_without_access() -> None:
         assert payment is not None
         assert payment.product_id is None
         assert db.scalar(select(func.count(UserAccess.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_dynamic_offer_checkout_grants_exact_resources() -> None:
+    client, session_factory = make_client()
+    with session_factory() as db:
+        user = User(display_name="Тестовый клиент", status="active")
+        db.add(user); db.flush()
+        db.add(UserEmail(user_id=user.id, email_original="Client@Example.Test", email_normalized="client@example.test", is_primary=True, source="test"))
+        db.add_all([
+            Resource(code="ACCESS_RECIPES", name="Рецепты"),
+            Resource(code="ACCESS_CALORIES", name="Калории"),
+        ])
+        checkout = OfferCheckout(
+            user_id=user.id,
+            offer_code="bundle:digital",
+            title="Комплект",
+            items=["recipes", "calories"],
+            amount=Decimal("3900"),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
+        db.add(checkout); db.commit()
+        checkout_code = checkout.id.hex
+
+    payload = paid_payload()
+    payload.update({
+        "orderid": "offer-order-1",
+        "paymentid": "offer-payment-1",
+        "products": f"EB-{checkout_code} Комплект",
+        "price": "3900",
+    })
+    response = client.post("/integrations/tilda/payments", data=payload, headers=HEADERS)
+    assert response.status_code == 200
+    assert response.json()["status"] == "saved"
+    assert response.json()["access"] == "granted"
+    with session_factory() as db:
+        assert db.scalar(select(func.count(UserAccess.id))) == 2
+        assert db.scalar(select(OfferCheckout.status)) == "paid"
     app.dependency_overrides.clear()

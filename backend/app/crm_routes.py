@@ -105,7 +105,7 @@ def admin_index(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
@@ -113,15 +113,27 @@ def admin_asset(
     return protected_file(asset_name)
 
 
+@router.get("/admin/masterclass-preview", include_in_schema=False)
+def masterclass_preview(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse:
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    return protected_file("masterclass-preview.html")
+
+
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
     request: Request,
     section: str = ApiPath(
-        pattern="^(users|crm|dqs|strength|metabolism|messaging|content)$"
+        pattern="^(users|crm|dqs|strength|metabolism|messaging|content|masterclass)$"
     ),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
-    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    return protected_file("masterclass-admin.html" if section == "masterclass" else "admin.html")
 
 
 @router.post("/admin/api/login")

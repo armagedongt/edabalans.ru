@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Просмотр экранов · edabalans</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#f5f5f7;color:#171719;font:16px Arial,sans-serif}
+    header{position:sticky;top:0;z-index:20;display:flex;gap:18px;align-items:end;padding:16px 24px;background:#fff;border-bottom:1px solid #ddd}
+    header a{color:#6b55e9;text-decoration:none;font-weight:700}.controls{display:flex;gap:10px;flex-wrap:wrap;flex:1}
+    label{font-size:12px;color:#666;display:grid;gap:4px}select,input,button{min-height:38px;border:1px solid #ccc;border-radius:10px;padding:8px 10px;background:#fff}
+    button{border:0;background:#6b55e9;color:#fff;font-weight:700;cursor:pointer;align-self:end}.stage{max-width:980px;margin:24px auto;padding:0 16px}
+    #preview-shell{min-height:500px}.note{font-size:13px;color:#666;margin:0 0 14px}
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/admin/masterclass">← Модуль</a>
+    <div class="controls">
+      <label>Тестовая почта<input id="email" type="email" value="preview@example.test"></label>
+      <label>Экран<select id="app"><option value="onboarding-questionnaire">Анкета при старте</option><option value="masterclass-offers">Оффер</option><option value="recipes-part-1">Рецепты · часть 1</option><option value="recipes-part-2">Рецепты · часть 2</option><option value="closing-review">Саморевью</option></select></label>
+      <label>Точка показа<select id="placement"><option value="day-2-offer">День 2</option><option value="recipes-part-1-gate">Рецепты 1</option><option value="recipes-part-2-gate">Рецепты 2</option><option value="closing-review">Саморевью</option><option value="offers-hub">Постоянная страница</option></select></label>
+      <button id="show">Показать</button>
+    </div>
+  </header>
+  <main class="stage"><p class="note">Показывается реальный интерфейс и реальные правила сервера. Для production-пользователя укажите его почту.</p><div id="preview-shell"></div></main>
+  <script src="/embed.js"></script>
+  <script>
+    document.querySelector('#show').onclick=function(){
+      var email=document.querySelector('#email').value.trim().toLowerCase(),shell=document.querySelector('#preview-shell'),host=document.createElement('div');
+      localStorage.setItem('edabalans_identity_v1',JSON.stringify({email:email,confirmedAt:new Date().toISOString()}));
+      window.EdabalansIdentity={email:email};shell.innerHTML='';shell.appendChild(host);
+      host.setAttribute('data-edabalans-app',document.querySelector('#app').value);
+      host.setAttribute('data-edabalans-placement',document.querySelector('#placement').value);
+      window.EdabalansEmbed.load(host);
+    };
+  </script>
+</body>
+</html>

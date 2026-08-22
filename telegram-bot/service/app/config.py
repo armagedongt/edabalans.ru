@@ -18,9 +18,11 @@ class Settings(BaseSettings):
     admin_username: str = ""
     admin_password: str = ""
     scheduler_enabled: bool = False
+    postpurchase_dispatch_enabled: bool = False
     auto_create_schema: bool = True
     scheduler_interval_seconds: float = 2.0
     media_root: str = "./telegram-bot/runtime/media"
+    masterclass_offers_url: str = ""
 
     model_config = SettingsConfigDict(
         env_file=("telegram-bot/.env", ".env"),

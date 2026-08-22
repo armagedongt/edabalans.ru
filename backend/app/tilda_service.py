@@ -1,7 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation
+import re
+import uuid
 from typing import Any
 from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
@@ -12,10 +14,12 @@ from sqlalchemy.orm import Session
 
 from app.models import (
     AttributionEvent,
+    OfferCheckout,
     Payment,
     Product,
     ProductAccessRule,
     ProductAlias,
+    Resource,
     User,
     UserAccess,
     UserEmail,
@@ -25,6 +29,14 @@ from app.models import (
 MOSCOW = ZoneInfo("Europe/Moscow")
 SOURCE = "tilda_webhook"
 LEGACY_ALIAS_SOURCE = "google_payments_legacy"
+OFFER_CODE = re.compile(r"^EB-([0-9a-fA-F]{32})(?:\s|$)")
+OFFER_RESOURCES = {
+    "recipes": "ACCESS_RECIPES",
+    "calories": "ACCESS_CALORIES",
+    "training": "ACCESS_STRENGTH",
+    "recordings": "ACCESS_CONSULTATION_RECORDINGS",
+    "consultation": "ACCESS_CONSULTATION",
+}
 
 
 class TildaPayloadError(ValueError):
@@ -248,6 +260,20 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     phone = first(payload, "Phone", "phone", "ma_phone")
     user = find_or_create_user(db, email, display_name, phone, event_at)
     product = find_product(db, raw_product)
+    checkout_match = OFFER_CODE.match(raw_product)
+    checkout = db.get(OfferCheckout, uuid.UUID(hex=checkout_match.group(1))) if checkout_match else None
+    if checkout_match:
+        if checkout is None:
+            raise TildaPayloadError("offer checkout is unknown")
+        checkout_expires = checkout.expires_at
+        if checkout_expires.tzinfo is None:
+            checkout_expires = checkout_expires.replace(tzinfo=timezone.utc)
+        if checkout.status != "pending" or checkout_expires < event_at.astimezone(timezone.utc):
+            raise TildaPayloadError("offer checkout is expired or already used")
+        if not user or str(user.id) != str(checkout.user_id):
+            raise TildaPayloadError("offer checkout belongs to another email")
+        if amount != checkout.amount:
+            raise TildaPayloadError("offer checkout price does not match")
     referer = first(payload, "referer", "Referer")
 
     payment = Payment(
@@ -279,6 +305,9 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     )
     db.add(payment)
     db.flush()
+    if checkout:
+        checkout.payment_id = payment.id
+        checkout.status = "paid" if payment_status == "paid" else payment_status
 
     if user and referer:
         db.add(
@@ -292,7 +321,15 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         )
 
     access_granted = False
-    if user and product and payment_status == "paid":
+    if user and checkout and payment_status == "paid":
+        resource_codes = [OFFER_RESOURCES[item] for item in checkout.items if item in OFFER_RESOURCES]
+        resources = {row.code: row for row in db.scalars(select(Resource).where(Resource.code.in_(resource_codes)))}
+        if set(resource_codes) - set(resources):
+            raise TildaPayloadError("offer resources are not configured")
+        for code in resource_codes:
+            db.add(UserAccess(user_id=user.id, resource_id=resources[code].id, source_payment_id=payment.id, source="paid_offer_checkout", granted_at=event_at))
+            access_granted = True
+    elif user and product and payment_status == "paid":
         for rule in active_access_rules(db, product.id, event_at):
             db.add(
                 UserAccess(
@@ -315,7 +352,7 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         return {"status": "duplicate", "payment_id": str(existing.id)}
 
     result_status = "saved"
-    if product is None:
+    if product is None and checkout is None:
         result_status = "saved_unmapped_product"
     elif payment_status != "paid":
         result_status = "saved_without_access"

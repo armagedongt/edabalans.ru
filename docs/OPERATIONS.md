@@ -226,3 +226,28 @@ downgrade базы не выполняется.
 docker compose ps telegram-bot
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
 ```
+
+## Выпуск модуля после покупки мастер-класса
+
+Migration `20260822_0015` добавляет только новые таблицы и индексы модуля; она не
+удаляет и не переписывает клиентские данные. Перед ручным выпуском обязательны
+обычный backup и настоящее тестовое восстановление. После выпуска проверить:
+
+```bash
+curl -fsS https://api.edabalans.ru/health
+curl -fsS https://api.edabalans.ru/ready
+docker compose exec backend alembic current
+docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
+```
+
+Сначала оставить в `/opt/edabalans/.env`:
+
+```dotenv
+POSTPURCHASE_DISPATCH_ENABLED=false
+MASTERCLASS_OFFERS_URL=
+```
+
+После проверки рабочих текстов, production-бота, общей Tilda-страницы предложений
+и хотя бы одного связанного тестового контакта записать настоящий URL и отдельно
+включить `POSTPURCHASE_DISPATCH_ENABLED=true`. Это операционный переключатель:
+изменение не требует новой migration, но требует перезапуска `telegram-bot`.

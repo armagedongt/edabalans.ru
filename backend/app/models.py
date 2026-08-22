@@ -424,6 +424,106 @@ class StrengthState(TimestampMixin, Base):
     source: Mapped[str] = mapped_column(String(64), default="app", nullable=False)
 
 
+class MasterclassEvent(Base):
+    __tablename__ = "masterclass_events"
+    __table_args__ = (
+        UniqueConstraint("user_id", "event_key", name="uq_masterclass_user_event_key"),
+        Index("ix_masterclass_event_user_type", "user_id", "event_type"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    event_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    placement: Mapped[str | None] = mapped_column(String(80))
+    details: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class QuestionnaireRun(TimestampMixin, Base):
+    __tablename__ = "questionnaire_runs"
+    __table_args__ = (UniqueConstraint("user_id", "kind", name="uq_questionnaire_user_kind"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    kind: Mapped[str] = mapped_column(String(40), nullable=False)
+    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="draft", nullable=False)
+    submitted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class QuestionnaireAnswer(Base):
+    __tablename__ = "questionnaire_answers"
+    __table_args__ = (UniqueConstraint("run_id", "question_code", name="uq_questionnaire_run_question"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    run_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("questionnaire_runs.id", ondelete="CASCADE"), index=True)
+    question_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    answer_text: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class OfferStage(TimestampMixin, Base):
+    __tablename__ = "offer_stages"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    code: Mapped[str] = mapped_column(String(40), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    duration_hours: Mapped[int | None] = mapped_column(Integer)
+    pricing: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+
+
+class UserOffer(Base):
+    __tablename__ = "user_offers"
+    __table_args__ = (UniqueConstraint("user_id", "stage_code", name="uq_user_offer_stage"),)
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    stage_code: Mapped[str] = mapped_column(String(40), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    trigger_event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("masterclass_events.id", ondelete="SET NULL"))
+    snapshot: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class OfferCheckout(Base):
+    __tablename__ = "offer_checkouts"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    offer_code: Mapped[str] = mapped_column(String(120), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    items: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    payment_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("payments.id", ondelete="SET NULL"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class MasterclassNotification(Base):
+    __tablename__ = "masterclass_notifications"
+    __table_args__ = (
+        UniqueConstraint("user_id", "deduplication_key", name="uq_masterclass_notification_dedup"),
+        Index("ix_masterclass_notification_due", "status", "due_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    event_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("masterclass_events.id", ondelete="SET NULL"))
+    notification_kind: Mapped[str] = mapped_column(String(80), nullable=False)
+    content_code: Mapped[str | None] = mapped_column(String(120))
+    deduplication_key: Mapped[str] = mapped_column(String(180), nullable=False)
+    due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    error_message: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
 class StrengthExercise(TimestampMixin, Base):
     __tablename__ = "strength_exercises"
 

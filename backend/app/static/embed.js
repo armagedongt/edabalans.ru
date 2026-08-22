@@ -8,7 +8,12 @@
   var roots = {
     dqs: 'dqs-app',
     strength: 'strength-app',
-    metabolism: 'metabolism-app'
+    metabolism: 'metabolism-app',
+    'onboarding-questionnaire': 'onboarding-questionnaire-app',
+    'masterclass-offers': 'masterclass-offers-app',
+    'recipes-part-1': 'recipes-part-1-app',
+    'recipes-part-2': 'recipes-part-2-app',
+    'closing-review': 'closing-review-app'
   };
 
   function normalizeEmail(value) {
@@ -89,15 +94,16 @@
       return promise.then(function () {
         return new Promise(function (resolve, reject) {
           var script = document.createElement('script');
-          if (source.src) {
-            script.src = source.src;
+          if (source.getAttribute('src')) {
+            var sourcePath = source.getAttribute('src');
+            script.src = sourcePath.charAt(0) === '/' ? APP_HOST + sourcePath : sourcePath;
             script.onload = resolve;
             script.onerror = reject;
           } else {
             script.text = source.textContent;
           }
           document.body.appendChild(script);
-          if (!source.src) resolve();
+          if (!source.getAttribute('src')) resolve();
         });
       });
     }, Promise.resolve());
@@ -106,6 +112,7 @@
   function load(mount) {
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
+    var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
@@ -118,8 +125,8 @@
       })
       .then(function (html) {
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app}
-          : {mode: 'user', app: app};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement}
+          : {mode: 'user', app: app, placement: placement};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];
