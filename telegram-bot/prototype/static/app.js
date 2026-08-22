@@ -1,4 +1,4 @@
-const state = { items: [], selected: null };
+const state = { items: [], scenarios: [], selected: null };
 
 const escapeHtml = value => String(value ?? '')
   .replaceAll('&', '&amp;')
@@ -18,9 +18,9 @@ function telegramMarkup(source) {
     .replace(/&lt;(?:s|del)&gt;([\s\S]*?)&lt;\/(?:s|del)&gt;/gi, '<s>$1</s>')
     .replace(/&lt;a\s+href=&quot;(https?:\/\/[^&]+?)&quot;&gt;([\s\S]*?)&lt;\/a&gt;/gi, '<a href="$1" target="_blank" rel="noreferrer">$2</a>')
     .replace(/\[([^\]]+)]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noreferrer">$1</a>')
-    .replace(/(^|[\s(])\*([^*\n]+)\*(?=$|[\s).,!?:;])/g, '$1<strong>$2</strong>')
-    .replace(/(^|[\s(])_([^_\n]+)_(?=$|[\s).,!?:;])/g, '$1<em>$2</em>')
-    .replace(/(^|[\s(])~([^~\n]+)~(?=$|[\s).,!?:;])/g, '$1<s>$2</s>');
+    .replace(/(^|[^\p{L}\p{N}_*])\*([^*\n]+)\*(?=$|[^\p{L}\p{N}_*])/gu, '$1<strong>$2</strong>')
+    .replace(/(^|[^\p{L}\p{N}_])_([^_\n]+)_(?=$|[^\p{L}\p{N}_])/gu, '$1<em>$2</em>')
+    .replace(/(^|[^\p{L}\p{N}_])~([^~\n]+)~(?=$|[^\p{L}\p{N}_])/gu, '$1<s>$2</s>');
   return value;
 }
 
@@ -44,9 +44,22 @@ async function loadSummary() {
 async function loadArchive() {
   const q = document.querySelector('#search').value.trim();
   const media = document.querySelector('#media-filter').value;
-  const params = new URLSearchParams({ q, media });
+  const scenario = document.querySelector('#scenario-filter').value;
+  const params = new URLSearchParams({ q, media, scenario });
   state.items = await getJson(`/api/archive?${params}`);
+  const selectedScenario = state.scenarios.find(item => String(item.id) === scenario);
+  document.querySelector('#scenario-path').textContent = selectedScenario
+    ? `${selectedScenario.name} · ${selectedScenario.post_count} постов в сценарии`
+    : `Все сценарии · ${state.scenarios.length}`;
   renderCatalog();
+}
+
+async function loadScenarios() {
+  state.scenarios = await getJson('/api/scenarios');
+  const select = document.querySelector('#scenario-filter');
+  select.innerHTML = '<option value="">Все сценарии</option>' + state.scenarios.map(scenario =>
+    `<option value="${escapeHtml(scenario.id)}">${escapeHtml(scenario.name)} · ${scenario.post_count}</option>`
+  ).join('');
 }
 
 function renderCatalog() {
@@ -61,7 +74,10 @@ function renderCatalog() {
       <div>
         <h3>${escapeHtml(item.title)}</h3>
         <p>${escapeHtml(item.plain_text || 'Без текстовой подписи')}</p>
-        <small>${escapeHtml(item.scenario_name || 'Сценарий без названия')} · блок ${escapeHtml(item.source_block_id)}</small>
+        <div class="source-tags">
+          <span class="scenario-tag">${escapeHtml(item.scenario_name || 'Сценарий без названия')}</span>
+          <span class="block-tag">блок ${escapeHtml(item.source_block_id)}</span>
+        </div>
       </div>
       <div>
         ${item.media_kind ? `<span class="media-tag">${mediaLabel(item.media_kind)}</span>` : ''}
@@ -78,11 +94,8 @@ function selectItem(id) {
   const bubble = document.querySelector('#message-bubble');
   bubble.classList.remove('empty');
   bubble.innerHTML = `${state.selected.media_kind ? `<div class="media-placeholder">[ ${mediaLabel(state.selected.media_kind)} ]</div>` : ''}${telegramMarkup(state.selected.source_text) || '<span class="empty">Без подписи</span>'}`;
-  document.querySelector('#preview-origin').textContent = state.selected.scenario_name || 'LeadTeh';
+  document.querySelector('#preview-origin').textContent = `${state.selected.scenario_name || 'Сценарий без названия'} · блок ${state.selected.source_block_id}`;
   document.querySelector('#copy-button').disabled = false;
-  document.querySelector('#copy-note').textContent = state.selected.copy_count
-    ? `Уже создано копий: ${state.selected.copy_count}. Можно создать ещё одну.`
-    : 'Оригинал останется неизменным.';
 }
 
 async function copySelected() {
@@ -138,9 +151,10 @@ document.querySelector('#search').addEventListener('input', () => {
   searchTimer = setTimeout(loadArchive, 250);
 });
 document.querySelector('#media-filter').addEventListener('change', loadArchive);
+document.querySelector('#scenario-filter').addEventListener('change', loadArchive);
 document.querySelector('#copy-button').addEventListener('click', copySelected);
 document.querySelectorAll('.nav-item[data-page]').forEach(button => button.addEventListener('click', () => activatePage(button.dataset.page)));
 
-Promise.all([loadSummary(), loadArchive(), loadSequence()]).catch(error => {
+Promise.all([loadSummary(), loadScenarios().then(loadArchive), loadSequence()]).catch(error => {
   document.querySelector('#catalog').innerHTML = `<div class="empty-list">Не удалось открыть базу: ${escapeHtml(error.message)}</div>`;
 });

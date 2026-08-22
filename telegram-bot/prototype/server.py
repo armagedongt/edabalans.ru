@@ -39,6 +39,8 @@ class PrototypeHandler(SimpleHTTPRequestHandler):
             return self._summary()
         if parsed.path == "/api/archive":
             return self._archive(parse_qs(parsed.query))
+        if parsed.path == "/api/scenarios":
+            return self._scenarios()
         if parsed.path == "/api/sequence":
             return self._sequence()
         return super().do_GET()
@@ -63,6 +65,7 @@ class PrototypeHandler(SimpleHTTPRequestHandler):
     def _archive(self, query: dict[str, list[str]]) -> None:
         search = query.get("q", [""])[0].strip()
         media = query.get("media", [""])[0].strip()
+        scenario_id = query.get("scenario", [""])[0].strip()
         sql = """
             SELECT a.*,
                    (SELECT count(*) FROM content_items c WHERE c.origin_archive_item_id = a.id) AS copy_count,
@@ -79,9 +82,26 @@ class PrototypeHandler(SimpleHTTPRequestHandler):
             sql += " AND a.media_kind IS NOT NULL"
         elif media == "without":
             sql += " AND a.media_kind IS NULL"
+        if scenario_id:
+            sql += " AND a.source_scenario_id = ?"
+            values.append(scenario_id)
         sql += " ORDER BY a.scenario_name, a.source_scenario_id, a.source_block_id LIMIT 250"
         with self._connection() as connection:
             rows = [dict(row) for row in connection.execute(sql, values)]
+        self._json(rows)
+
+    def _scenarios(self) -> None:
+        sql = """
+            SELECT source_scenario_id AS id,
+                   COALESCE(NULLIF(scenario_name, ''), 'Сценарий без названия') AS name,
+                   count(*) AS post_count,
+                   sum(CASE WHEN media_kind IS NOT NULL THEN 1 ELSE 0 END) AS media_count
+            FROM archive_content_items
+            GROUP BY source_scenario_id, scenario_name
+            ORDER BY name, source_scenario_id
+        """
+        with self._connection() as connection:
+            rows = [dict(row) for row in connection.execute(sql)]
         self._json(rows)
 
     def _sequence(self) -> None:

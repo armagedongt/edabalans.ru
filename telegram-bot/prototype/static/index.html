@@ -21,7 +21,6 @@
         <button class="nav-item" disabled><span>↗</span> Ссылки <em>позже</em></button>
         <button class="nav-item" disabled><span>◇</span> Микропроекты <em>позже</em></button>
       </nav>
-      <div class="module-note">Локальный прототип<br><span>не подключён к боту</span></div>
     </aside>
 
     <main>
@@ -30,33 +29,37 @@
           <p class="eyebrow">TELEGRAM</p>
           <h1 id="page-title">Библиотека сообщений</h1>
         </div>
-        <span class="safe-badge">Архив защищён</span>
       </header>
 
       <section id="library-page" class="page active">
-        <div class="stats" aria-label="Сводка">
-          <article><span>Архивных сообщений</span><strong id="stat-archive">—</strong></article>
-          <article><span>С медиа</span><strong id="stat-media">—</strong></article>
-          <article><span>Рабочих копий</span><strong id="stat-copies">—</strong></article>
-        </div>
-
         <div class="workspace">
-          <section class="catalog-panel">
-            <div class="controls">
-              <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Найти текст, сценарий или фразу"></label>
-              <select id="media-filter" aria-label="Фильтр медиа">
-                <option value="">Все сообщения</option>
-                <option value="with">С медиа</option>
-                <option value="without">Без медиа</option>
-              </select>
+          <div class="library-column">
+            <div class="stats" aria-label="Сводка">
+              <article><span>Посты</span><strong id="stat-archive">—</strong></article>
+              <article><span>С медиа</span><strong id="stat-media">—</strong></article>
+              <article><span>Копии</span><strong id="stat-copies">—</strong></article>
             </div>
-            <div class="catalog-meta"><strong id="result-count">0</strong> найдено <span>LeadTeh · только чтение</span></div>
-            <div id="catalog" class="catalog-list" aria-live="polite"></div>
-          </section>
+
+            <section class="catalog-panel">
+              <div class="controls">
+                <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Найти текст или фразу"></label>
+                <select id="scenario-filter" aria-label="Исходный сценарий">
+                  <option value="">Все сценарии</option>
+                </select>
+                <select id="media-filter" aria-label="Фильтр медиа">
+                  <option value="">Любой формат</option>
+                  <option value="with">С медиа</option>
+                  <option value="without">Только текст</option>
+                </select>
+              </div>
+              <div class="catalog-meta"><span id="scenario-path">Все сценарии</span><strong><span id="result-count">0</span> постов</strong></div>
+              <div id="catalog" class="catalog-list" aria-live="polite"></div>
+            </section>
+          </div>
 
           <aside class="preview-panel">
             <div class="preview-heading">
-              <div><span class="lock">●</span> Предпросмотр в Telegram</div>
+              <div>Предпросмотр в Telegram</div>
               <small id="preview-origin">Выберите сообщение</small>
             </div>
             <div class="phone">
@@ -66,7 +69,6 @@
               </div>
             </div>
             <button id="copy-button" class="primary-button" type="button" disabled>Создать рабочую копию</button>
-            <p id="copy-note" class="copy-note">Оригинал останется неизменным.</p>
           </aside>
         </div>
       </section>
