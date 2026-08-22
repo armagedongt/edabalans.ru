@@ -9,6 +9,10 @@ os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from app.config import get_settings  # noqa: E402
+
+get_settings.cache_clear()
+
 from app.main import app  # noqa: E402
 
 def make_client() -> TestClient:

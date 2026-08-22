@@ -148,7 +148,7 @@ def admin_logout(response: Response) -> dict[str, bool]:
 def crm_index(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
-) -> FileResponse | RedirectResponse:
+) -> Response:
     if not admin_identity(request, credentials):
         return RedirectResponse("/admin?next=/crm", status_code=303)
     return protected_file("crm.html")
