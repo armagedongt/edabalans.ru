@@ -65,6 +65,7 @@ def run(source: Path, media_dir: Path | None = None, container_media_root: str =
                 for key, value in values.items(): setattr(item, key, value)
             else:
                 session.add(ContentItem(code=code, **values)); imported += 1
+        session.flush()
         sequence = session.scalar(select(Sequence).where(Sequence.code == "prepurchase_masterclass"))
         if sequence:
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id).order_by(SequenceVersion.version_no.desc()))
