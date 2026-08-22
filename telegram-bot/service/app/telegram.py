@@ -11,13 +11,20 @@ class TelegramError(RuntimeError):
 
 
 class TelegramClient:
-    def __init__(self, token: str, transport: httpx.BaseTransport | None = None):
+    def __init__(self, token: str, transport: httpx.BaseTransport | None = None, proxy_url: str = ""):
         self.token = token
         self.base_url = f"https://api.telegram.org/bot{token}"
         self.transport = transport
+        self.proxy_url = proxy_url
 
-    def call(self, method: str, payload: dict[str, Any]) -> dict[str, Any]:
-        with httpx.Client(timeout=30, transport=self.transport) as client:
+    def _client(self, timeout: float) -> httpx.Client:
+        options: dict[str, Any] = {"timeout": timeout, "transport": self.transport}
+        if self.proxy_url and self.transport is None:
+            options["proxy"] = self.proxy_url
+        return httpx.Client(**options)
+
+    def call(self, method: str, payload: dict[str, Any], timeout: float = 30) -> Any:
+        with self._client(timeout) as client:
             response = client.post(f"{self.base_url}/{method}", json=payload)
         if not response.is_success:
             raise TelegramError(f"Telegram API HTTP {response.status_code}")
@@ -32,7 +39,7 @@ class TelegramClient:
         if reply_markup:
             import json
             form["reply_markup"] = json.dumps(reply_markup, ensure_ascii=False)
-        with path.open("rb") as stream, httpx.Client(timeout=120, transport=self.transport) as client:
+        with path.open("rb") as stream, self._client(120) as client:
             response = client.post(f"{self.base_url}/{method}", data=form, files={field: (path.name, stream)})
         if not response.is_success:
             raise TelegramError(f"Telegram API upload HTTP {response.status_code}")
@@ -76,3 +83,12 @@ class TelegramClient:
 
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:
         self.call("answerCallbackQuery", {"callback_query_id": callback_query_id, "text": text})
+
+    def delete_webhook(self) -> None:
+        self.call("deleteWebhook", {"drop_pending_updates": False})
+
+    def get_updates(self, offset: int | None = None, timeout: int = 25) -> list[dict[str, Any]]:
+        payload: dict[str, Any] = {"timeout": timeout, "allowed_updates": ["message", "callback_query"]}
+        if offset is not None:
+            payload["offset"] = offset
+        return self.call("getUpdates", payload, timeout=timeout + 10)

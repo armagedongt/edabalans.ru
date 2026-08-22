@@ -30,7 +30,7 @@ STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 def client() -> TelegramClient:
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Telegram token is not configured")
-    return TelegramClient(settings.telegram_test_bot_token)
+    return TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url)
 
 
 def require_admin(credentials: HTTPBasicCredentials | None = Depends(security)) -> str:
@@ -103,7 +103,7 @@ async def scheduler_loop() -> None:
     while True:
         try:
             with SessionLocal() as session:
-                tg = TelegramClient(settings.telegram_test_bot_token) if settings.telegram_test_bot_token else None
+                tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url) if settings.telegram_test_bot_token else None
                 if tg:
                     for run in due_runs(session):
                         advance_run(session, run, tg)
@@ -116,15 +116,44 @@ async def scheduler_loop() -> None:
         await asyncio.sleep(settings.scheduler_interval_seconds)
 
 
+async def polling_loop() -> None:
+    tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url)
+    offset: int | None = None
+    webhook_removed = False
+    while True:
+        try:
+            if not webhook_removed:
+                await asyncio.to_thread(tg.delete_webhook)
+                webhook_removed = True
+            updates = await asyncio.to_thread(
+                tg.get_updates,
+                offset,
+                settings.telegram_polling_timeout_seconds,
+            )
+            for update in updates:
+                with SessionLocal() as session:
+                    process_update(update, session)
+                offset = int(update["update_id"]) + 1
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            # Network and Telegram outages are retried without acknowledging the update.
+            await asyncio.sleep(2)
+
+
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     if settings.auto_create_schema:
         Base.metadata.create_all(engine)
     with SessionLocal() as session:
         seed_defaults(session, settings.telegram_test_bot_username)
-    task = asyncio.create_task(scheduler_loop()) if settings.scheduler_enabled else None
+    tasks = []
+    if settings.scheduler_enabled:
+        tasks.append(asyncio.create_task(scheduler_loop()))
+    if settings.telegram_polling_enabled and settings.telegram_test_bot_token:
+        tasks.append(asyncio.create_task(polling_loop()))
     yield
-    if task:
+    for task in tasks:
         task.cancel()
 
 
@@ -145,7 +174,12 @@ def bot_admin_asset(asset_name: str, _: str = Depends(require_admin)) -> FileRes
 
 @app.get("/health")
 def health() -> dict:
-    return {"status": "ok", "scheduler": settings.scheduler_enabled, "bot": settings.telegram_test_bot_username}
+    return {
+        "status": "ok",
+        "scheduler": settings.scheduler_enabled,
+        "polling": settings.telegram_polling_enabled,
+        "bot": settings.telegram_test_bot_username,
+    }
 
 
 @app.get("/r/{token}", include_in_schema=False)
@@ -159,10 +193,7 @@ def tracking_redirect(token: str, session: Session = Depends(get_db)) -> Redirec
     return RedirectResponse(f"https://t.me/{username}?start={token}", status_code=307)
 
 
-@app.post("/telegram/webhook")
-def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None = Header(default=None), session: Session = Depends(get_db)) -> dict:
-    if settings.telegram_webhook_secret and not secrets.compare_digest(x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret):
-        raise HTTPException(403, "Invalid webhook secret")
+def process_update(update: dict, session: Session) -> dict:
     bot = _bot(session)
     update_id = str(update.get("update_id", ""))
     if not update_id:
@@ -198,6 +229,13 @@ def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None =
             advance_run(session, run, client())
     session.commit()
     return {"ok": True}
+
+
+@app.post("/telegram/webhook")
+def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None = Header(default=None), session: Session = Depends(get_db)) -> dict:
+    if settings.telegram_webhook_secret and not secrets.compare_digest(x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret):
+        raise HTTPException(403, "Invalid webhook secret")
+    return process_update(update, session)
 
 
 @app.get("/bot-api/sequences", dependencies=[Depends(require_admin)])

@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     telegram_test_bot_token: str = ""
     telegram_webhook_secret: str = ""
     telegram_public_base_url: str = ""
+    telegram_proxy_url: str = ""
+    telegram_polling_enabled: bool = False
+    telegram_polling_timeout_seconds: int = 25
     admin_username: str = ""
     admin_password: str = ""
     scheduler_enabled: bool = False

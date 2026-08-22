@@ -29,3 +29,17 @@ def test_http_error_does_not_expose_bot_token():
     with pytest.raises(TelegramError) as exc:
         TelegramClient("very-secret-token", httpx.MockTransport(handler)).call("sendMessage", {"chat_id": "42", "text": "x"})
     assert "very-secret-token" not in str(exc.value)
+
+
+def test_long_polling_sends_offset_and_returns_updates():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": [{"update_id": 101}]})
+
+    updates = TelegramClient("secret", httpx.MockTransport(handler)).get_updates(offset=100, timeout=1)
+
+    assert updates == [{"update_id": 101}]
+    assert b'"offset":100' in seen[0].read()
+    assert b'"timeout":1' in seen[0].content
