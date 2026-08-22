@@ -163,3 +163,25 @@ def test_offers_hub_starts_final_week_from_review_expiry_without_extending_it():
     with factory() as db:
         final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
         assert final.expires_at == first_expiry
+
+
+def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="review",
+            started_at=now - timedelta(days=12),
+            expires_at=now - timedelta(days=9),
+            snapshot={},
+        ))
+        db.commit()
+
+    response = client.get("/api/masterclass/offers?email=member@example.test&placement=offers-hub")
+    assert response.status_code == 200
+    assert response.json()["stage"] == "standard"
+    assert response.json()["expires_at"] is None
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")) == 0
