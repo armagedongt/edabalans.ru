@@ -379,6 +379,8 @@
     const tilda = user.tilda_membership;
     const purchaseTags = user.tags.filter((item) => item.category === "purchase");
     const otherTags = user.tags.filter((item) => item.category !== "purchase");
+    const masterclass = user.masterclass || { questionnaires: [], events: [], offers: [] };
+    const questionnaireName = (kind) => kind === "onboarding" ? "Анкета перед началом" : kind === "closing-review" ? "Саморевью" : kind;
     root.innerHTML = `
       <div class="crm-profile-head">
         <div class="crm-profile-id">
@@ -424,6 +426,11 @@
           </section>
           <section class="crm-card"><div class="crm-card-title">Tilda Members Area <span class="crm-card-sub">${tilda ? esc(tilda.account_status || "импортировано") : "нет в выгрузке"}</span></div>
             ${tilda ? `<div class="crm-tags">${tilda.groups.map((group)=>`<span class="crm-tag">${esc(group)}</span>`).join("") || '<span class="crm-tag empty">групп нет</span>'}</div><div class="crm-row-meta" style="margin-top:10px">Регистрация: ${date(tilda.member_created_at, true)} · последняя активность: ${date(tilda.last_active_at, true)}</div>` : '<div class="crm-row-meta">Этот email не найден в последней каноничной выгрузке Tilda.</div>'}
+          </section>
+          <section class="crm-card"><div class="crm-card-title">Мастер-класс <span class="crm-card-sub">анкеты, события и предложения</span></div>
+            ${masterclass.questionnaires.map((run)=>`<details class="crm-row"><summary><strong>${esc(questionnaireName(run.kind))}</strong> · ${esc(run.status)}</summary><div style="margin-top:10px">${run.answers.filter((answer)=>answer.answer).map((answer)=>`<div class="crm-row"><div class="crm-k">${esc(answer.title)}</div><div style="white-space:pre-wrap;margin-top:4px">${esc(answer.answer)}</div></div>`).join("") || '<div class="crm-empty">Ответов пока нет</div>'}</div></details>`).join("") || '<div class="crm-empty">Анкеты ещё не открывались</div>'}
+            ${masterclass.offers.length ? `<div class="crm-card-sub" style="margin-top:12px">Окна предложений</div>${masterclass.offers.map((offer)=>`<div class="crm-row"><div class="crm-row-main"><span>${esc(offer.stage)}</span><strong>${esc(offer.status)}</strong></div><div class="crm-row-meta">${date(offer.started_at,true)} → ${date(offer.expires_at,true)}</div></div>`).join("")}` : ""}
+            ${masterclass.events.length ? `<div class="crm-card-sub" style="margin-top:12px">Последние события</div>${masterclass.events.slice(0,10).map((event)=>`<div class="crm-row"><div class="crm-row-main"><span>${esc(event.type)}</span><strong>${date(event.occurred_at,true)}</strong></div>${event.placement?`<div class="crm-row-meta">${esc(event.placement)}</div>`:""}</div>`).join("")}` : ""}
           </section>
         </div>
         <div>

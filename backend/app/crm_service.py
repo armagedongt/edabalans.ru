@@ -5,7 +5,7 @@ import uuid
 from datetime import date, datetime, time, timezone
 from decimal import Decimal
 
-from sqlalchemy import distinct, func, or_, select, text
+from sqlalchemy import Uuid, bindparam, distinct, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -23,7 +23,12 @@ from app.models import (
     UserPhone,
     UserTag,
     AdminAppEdit,
+    MasterclassEvent,
+    QuestionnaireAnswer,
+    QuestionnaireRun,
+    UserOffer,
 )
+from app.masterclass_routes import CLOSING_QUESTIONS, ONBOARDING_QUESTIONS
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 
@@ -349,7 +354,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
               AND COALESCE(target.status, source.status) = 'active'
             ORDER BY name
             """
-        ),
+        ).bindparams(bindparam("user_id", type_=Uuid(as_uuid=True))),
         {"user_id": user_id},
     ).mappings().all()
     notes = list(
@@ -369,6 +374,46 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         .order_by(LegacyImportRecord.created_at.desc())
         .limit(1)
     )
+    questionnaire_runs = list(
+        db.scalars(
+            select(QuestionnaireRun)
+            .where(QuestionnaireRun.user_id == user_id)
+            .order_by(QuestionnaireRun.created_at.asc())
+        )
+    )
+    answers_by_run: dict[uuid.UUID, list[QuestionnaireAnswer]] = {
+        run.id: [] for run in questionnaire_runs
+    }
+    if questionnaire_runs:
+        for answer in db.scalars(
+            select(QuestionnaireAnswer)
+            .where(QuestionnaireAnswer.run_id.in_(answers_by_run))
+            .order_by(QuestionnaireAnswer.updated_at.asc())
+        ):
+            answers_by_run[answer.run_id].append(answer)
+    masterclass_events = list(
+        db.scalars(
+            select(MasterclassEvent)
+            .where(MasterclassEvent.user_id == user_id)
+            .order_by(MasterclassEvent.occurred_at.desc())
+            .limit(50)
+        )
+    )
+    masterclass_offers = list(
+        db.scalars(
+            select(UserOffer)
+            .where(UserOffer.user_id == user_id)
+            .order_by(UserOffer.started_at.desc())
+            .limit(10)
+        )
+    )
+    question_titles = {
+        kind: {code: title for code, title, _ in rows}
+        for kind, rows in {
+            "onboarding": ONBOARDING_QUESTIONS,
+            "closing-review": CLOSING_QUESTIONS,
+        }.items()
+    }
     paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]
     actual_paid = [payment for payment in paid if not payment.amount_is_estimated]
     estimated_paid = [payment for payment in paid if payment.amount_is_estimated]
@@ -460,6 +505,42 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             {"id": str(note.id), "body": note.body, "author": note.author, "created_at": note.created_at}
             for note in notes
         ],
+        "masterclass": {
+            "questionnaires": [
+                {
+                    "kind": run.kind,
+                    "status": run.status,
+                    "submitted_at": run.submitted_at,
+                    "answers": [
+                        {
+                            "code": answer.question_code,
+                            "title": question_titles.get(run.kind, {}).get(answer.question_code, answer.question_code),
+                            "answer": answer.answer_text,
+                            "updated_at": answer.updated_at,
+                        }
+                        for answer in answers_by_run.get(run.id, [])
+                    ],
+                }
+                for run in questionnaire_runs
+            ],
+            "events": [
+                {
+                    "type": event.event_type,
+                    "placement": event.placement,
+                    "occurred_at": event.occurred_at,
+                }
+                for event in masterclass_events
+            ],
+            "offers": [
+                {
+                    "stage": offer.stage_code,
+                    "status": offer.status,
+                    "started_at": offer.started_at,
+                    "expires_at": offer.expires_at,
+                }
+                for offer in masterclass_offers
+            ],
+        },
     }
 
 

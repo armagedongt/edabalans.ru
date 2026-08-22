@@ -218,3 +218,24 @@ def test_admin_lists_personal_offer_window_with_effective_expired_status():
     assert response.json()["offers"][0]["email"] == "member@example.test"
     assert response.json()["offers"][0]["stage_code"] == "early"
     assert response.json()["offers"][0]["status"] == "expired"
+
+
+def test_crm_card_contains_masterclass_answers_events_and_offer_windows():
+    client, factory = setup()
+    payload = {
+        "email": "member@example.test",
+        "question_code": "main_request",
+        "answer_text": "Хочу выстроить питание",
+    }
+    assert client.put("/api/masterclass/questionnaires/onboarding/answer", json=payload).status_code == 200
+    assert client.get("/api/masterclass/gate/1?email=member@example.test").status_code == 200
+    with factory() as db:
+        user_id = db.scalar(select(User.id).where(User.display_name == "Участник"))
+
+    response = client.get(f"/admin/api/users/{user_id}")
+    assert response.status_code == 200
+    data = response.json()["masterclass"]
+    assert data["questionnaires"][0]["answers"][0]["title"] == "Главный запрос"
+    assert data["questionnaires"][0]["answers"][0]["answer"] == "Хочу выстроить питание"
+    assert data["events"][0]["type"] == "recipes_part_1_opened"
+    assert data["offers"][0]["stage"] == "early"
