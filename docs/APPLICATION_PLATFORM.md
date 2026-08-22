@@ -44,6 +44,12 @@
 Названия товаров связываются с ресурсами через `products`, `product_aliases` и
 `product_access_rules`, поэтому их можно менять без изменения клиентских приложений.
 
+Текущее соответствие:
+
+- `MASTERCLASS_BASIC`, `MASTERCLASS_CONSULT`, `MASTERCLASS_RECIPES` → `dqs`;
+- `TRAINING_COURSE` → `strength`;
+- `CALORIES_COURSE` → `metabolism`.
+
 ## Импорт Google
 
 Реальные строки читаются напрямую из Google Sheets и переносятся в PostgreSQL после
