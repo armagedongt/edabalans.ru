@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, make_engine
 from app.engine import advance_run, start_run
 from app.models import BotInstance, Contact, ManualMessage, SequenceRun, StepDelivery, TrackingEvent, UserVariable
-from app.seed import START_ENTRY_CODE, WELCOME_CODE, seed_defaults
+from app.seed import WELCOME_CODE, seed_defaults
 from app.start_router import StartDecision, StartFacts, decision_from_facts, execute_start_decision, inspect_start
 
 
@@ -77,7 +77,7 @@ def test_buyer_stops_presale_and_gets_editable_template(tmp_path):
         session.commit()
         _, decision, current = inspect_start(session, contact, False)
         sender = FakeSender()
-        execute_start_decision(session, contact, decision, current, sender, START_ENTRY_CODE, update_id="buyer-1")
+        execute_start_decision(session, contact, decision, current, sender, WELCOME_CODE, update_id="buyer-1")
         session.commit()
         assert decision.code == "masterclass_owned"
         assert run.status == "completed"
@@ -91,12 +91,12 @@ def test_buyer_stops_presale_and_gets_editable_template(tmp_path):
 def test_lost_welcome_state_is_logged_without_message(tmp_path):
     session, contact = prepared(tmp_path, "error")
     try:
-        run = start_run(session, contact.id, START_ENTRY_CODE)
+        run = start_run(session, contact.id, WELCOME_CODE)
         run.status = "completed"
         session.commit()
         _, decision, current = inspect_start(session, contact, False)
         sender = FakeSender()
-        execute_start_decision(session, contact, decision, current, sender, START_ENTRY_CODE, update_id="error-1")
+        execute_start_decision(session, contact, decision, current, sender, WELCOME_CODE, update_id="error-1")
         session.commit()
         assert decision.code == "welcome_state_error"
         assert sender.sent == []

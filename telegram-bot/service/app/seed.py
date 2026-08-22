@@ -13,6 +13,7 @@ WELCOME_CODE = "welcome_intensive"
 PREPURCHASE_CODE = "prepurchase_nurture"
 LEGACY_PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
+WELCOME_CIRCLE_MEDIA_PATH = "/app/media/welcome-intro-circle.mp4"
 
 
 def _ensure_edges(session: Session, version: SequenceVersion) -> None:
@@ -60,13 +61,13 @@ def _ensure_routes(session: Session) -> None:
             trigger_kind="telegram_command",
             trigger_value="/start",
             source_component="telegram.start",
-            target_sequence_code=START_ENTRY_CODE,
+            target_sequence_code=WELCOME_CODE,
             configuration={"pipeline": ["crm.identity.resolve", "attribution.resolve"]},
             priority=10,
             enabled=True,
         ))
-    elif route.target_sequence_code == LEGACY_PREPURCHASE_CODE:
-        route.target_sequence_code = START_ENTRY_CODE
+    elif route.target_sequence_code in {LEGACY_PREPURCHASE_CODE, START_ENTRY_CODE}:
+        route.target_sequence_code = WELCOME_CODE
         route.configuration = {"pipeline": ["crm.identity.resolve", "attribution.resolve"]}
 
 
@@ -159,13 +160,28 @@ def _start_system_messages() -> list[dict]:
         ),
         (
             "start_subscription_reminder",
-            "Первый Start — просьба подписаться на канал",
-            "Перед началом подпишитесь, пожалуйста, на мой Telegram-канал: "
+            "Welcome — подписка не найдена",
+            "Пока не вижу подписку на канал. Подпишитесь, пожалуйста: "
             "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a>\n\n"
-            "После подписки нажмите кнопку проверки ещё раз. Если подписка не "
-            "подтвердится, интенсив всё равно продолжится через пять минут.",
+            "Через пять минут я проверю ещё раз. Даже если подписка не "
+            "подтвердится, интенсив всё равно откроется.",
             None,
-            ["система", "start", "подписка", "напоминание"],
+            ["система", "welcome", "подписка", "не найдена"],
+        ),
+        (
+            "subscription_passed",
+            "Welcome — подписка подтверждена",
+            "Подписка подтверждена ✅\n\nОткрывайте бесплатный интенсив «Последнее похудение»:",
+            None,
+            ["система", "welcome", "подписка", "успех", "ссылка на интенсив"],
+        ),
+        (
+            "subscription_fail_open",
+            "Welcome — продолжить без подтверждения подписки",
+            "Не получилось подтвердить подписку, но задерживать интенсив не будем 👍\n\n"
+            "Открывайте бесплатный интенсив «Последнее похудение»:",
+            None,
+            ["система", "welcome", "подписка", "fail-open", "ссылка на интенсив"],
         ),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
@@ -284,6 +300,9 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="draft", origin_system="template")
             session.add(item)
             session.flush()
+        if row["code"] == "entry_circle" and not item.media_path:
+            item.media_kind = "video_note"
+            item.media_path = WELCOME_CIRCLE_MEDIA_PATH
         items[row["code"]] = item
 
     legacy = session.scalar(select(Sequence).where(Sequence.code == LEGACY_PREPURCHASE_CODE))
@@ -291,53 +310,66 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         legacy.status = "archived"
 
     start_entry = session.scalar(select(Sequence).where(Sequence.code == START_ENTRY_CODE))
-    if not start_entry:
-        start_entry = Sequence(
-            code=START_ENTRY_CODE,
-            name="Служебная часть Start",
-            description="Редактируемые сообщения первого входа после проверок Start-router.",
-            status="published",
-        )
-        session.add(start_entry); session.flush()
-        version = SequenceVersion(sequence_id=start_entry.id, version_no=1, status="published", published_at=datetime.now(UTC))
-        session.add(version); session.flush()
-        specs = [
-            ("start_navigation", "MESSAGE", "start_navigation_pin", None, {"pin_after_send": True}),
-            ("start_circle", "VIDEO_NOTE", "entry_circle", None, {}),
-            ("start_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}),
-            ("start_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}),
-            ("start_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_sequence": WELCOME_CODE, "false_step": "start_subscription_reminder"}),
-            ("start_subscription_reminder", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}),
-            ("start_subscription_delay", "DELAY", None, 300, {}),
-            ("start_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_sequence": WELCOME_CODE, "false_sequence": WELCOME_CODE, "fail_open": True}),
-        ]
-        for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
-            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
+    if start_entry:
+        start_entry.status = "archived"
 
     welcome = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
     if not welcome:
         welcome = Sequence(
             code=WELCOME_CODE,
-            name="2. Welcome — четыре дня интенсива",
-            description="Ровно 8 сообщений: День 1–4 и четыре промежуточных поста. Между ними — задержки и проверки покупки.",
+            name="2. Welcome — запуск и первые четыре дня",
+            description="Навигация, кружок, CTA, видимая проверка подписки и три следующих полезных поста. Продажа начинается уже в основной цепочке.",
             status="published",
         )
         session.add(welcome); session.flush()
-        version = SequenceVersion(sequence_id=welcome.id, version_no=1, status="published", published_at=datetime.now(UTC))
+    else:
+        welcome.name = "2. Welcome — запуск и первые четыре дня"
+        welcome.description = "Навигация, кружок, CTA, видимая проверка подписки и три следующих полезных поста. Продажа начинается уже в основной цепочке."
+        welcome.status = "published"
+    current_welcome_version = session.scalar(
+        select(SequenceVersion)
+        .where(SequenceVersion.sequence_id == welcome.id, SequenceVersion.status == "published")
+        .order_by(SequenceVersion.version_no.desc())
+    )
+    current_welcome_has_layout = bool(current_welcome_version and session.scalar(
+        select(SequenceStep.id).where(
+            SequenceStep.sequence_version_id == current_welcome_version.id,
+            SequenceStep.step_key == "welcome_navigation",
+        )
+    ))
+    if not current_welcome_has_layout:
+        last_version = session.scalar(
+            select(SequenceVersion.version_no)
+            .where(SequenceVersion.sequence_id == welcome.id)
+            .order_by(SequenceVersion.version_no.desc())
+            .limit(1)
+        ) or 0
+        version = SequenceVersion(sequence_id=welcome.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
-        welcome_posts = [
-            ("day1", 0), ("day1_mid", 43200), ("day2", 39600), ("day2_mid", 43200),
-            ("day3", 43200), ("day3_mid", 43200), ("day4", 43200), ("day4_mid", 43200),
+        specs = [
+            ("welcome_navigation", "MESSAGE", "start_navigation_pin", None, {"pin_after_send": True, "buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}, None),
+            ("welcome_circle", "VIDEO_NOTE", "entry_circle", None, {}, None),
+            ("welcome_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}, None),
+            ("welcome_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}, None),
+            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_step": "welcome_subscription_passed", "false_step": "welcome_subscription_failed"}, None),
+            ("welcome_subscription_passed", "MESSAGE", "subscription_passed", None, {"buttons": [{"text": "Открыть интенсив", "url": "https://похудение-это-есть.рф/intensiv"}]}, "welcome_delay_day2"),
+            ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}, None),
+            ("welcome_subscription_retry_delay", "DELAY", None, 300, {}, None),
+            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "true_step": "welcome_subscription_passed", "false_step": "welcome_subscription_fail_open"}, None),
+            ("welcome_subscription_fail_open", "MESSAGE", "subscription_fail_open", None, {"buttons": [{"text": "Открыть интенсив", "url": "https://похудение-это-есть.рф/intensiv"}]}, "welcome_delay_day2"),
+            ("welcome_delay_day2", "DELAY", None, 86400, {}, None),
+            ("welcome_paid_check_day2", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
+            ("welcome_day2", "MESSAGE", "day1_mid", None, {}, None),
+            ("welcome_delay_day3", "DELAY", None, 86400, {}, None),
+            ("welcome_paid_check_day3", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
+            ("welcome_day3", "MESSAGE", "day2_mid", None, {}, None),
+            ("welcome_delay_day4", "DELAY", None, 86400, {}, None),
+            ("welcome_paid_check_day4", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}, None),
+            ("welcome_day4", "MESSAGE", "day3_mid", None, {}, None),
+            ("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}, None),
         ]
-        specs = []
-        for content_code, delay in welcome_posts:
-            if delay:
-                specs.append((f"welcome_delay_{content_code}", "DELAY", None, delay, {}))
-            specs.append((f"welcome_paid_check_{content_code}", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}))
-            specs.append((f"welcome_{content_code}", "MESSAGE", content_code, None, {}))
-        specs.append(("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}))
-        for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
-            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
+        for position, (key, kind, content_code, delay, config, next_key) in enumerate(specs, 1):
+            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config, next_step_key=next_key))
 
     sequence = session.scalar(select(Sequence).where(Sequence.code == PREPURCHASE_CODE))
     if not sequence:
@@ -348,9 +380,31 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             status="published",
         )
         session.add(sequence); session.flush()
-        version = SequenceVersion(sequence_id=sequence.id, version_no=1, status="published", published_at=datetime.now(UTC))
+    else:
+        sequence.name = "3. Основная рассылка до покупки"
+        sequence.description = "Полезные и продающие сообщения после Welcome. Останавливается после покупки мастер-класса."
+        sequence.status = "published"
+    current_nurture_version = session.scalar(
+        select(SequenceVersion)
+        .where(SequenceVersion.sequence_id == sequence.id, SequenceVersion.status == "published")
+        .order_by(SequenceVersion.version_no.desc())
+    )
+    current_first_delay = session.scalar(
+        select(SequenceStep.delay_seconds).where(
+            SequenceStep.sequence_version_id == current_nurture_version.id,
+            SequenceStep.step_key == "nurture_delay_hard_sale_1",
+        )
+    ) if current_nurture_version else None
+    if current_first_delay != 86400:
+        last_version = session.scalar(
+            select(SequenceVersion.version_no)
+            .where(SequenceVersion.sequence_id == sequence.id)
+            .order_by(SequenceVersion.version_no.desc())
+            .limit(1)
+        ) or 0
+        version = SequenceVersion(sequence_id=sequence.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
-        nurture_posts = [("hard_sale_1", 43200), ("hard_sale_2", 86400)]
+        nurture_posts = [("hard_sale_1", 86400), ("hard_sale_2", 86400)]
         nurture_posts += [(f"nurture_{n:02d}", 86400 if n <= 20 else 302400) for n in range(13, 31)]
         specs = []
         for content_code, delay in nurture_posts:
@@ -419,4 +473,4 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         _ensure_edges(session, version)
     _ensure_routes(session)
     session.commit()
-    return {"messages": len(_messages()), "sequences": 4}
+    return {"messages": len(_messages()), "sequences": 3}

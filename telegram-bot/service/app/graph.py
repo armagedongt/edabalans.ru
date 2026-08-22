@@ -39,7 +39,7 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
 
 GLOBAL_MODULES: tuple[dict[str, str], ...] = (
     {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Исполняемый модуль · checkout-ссылка отложена"},
-    {"code": "welcome_intensive", "name": "Welcome: 8 сообщений интенсива", "status": "Исполняемая редактируемая цепочка"},
+    {"code": "welcome_intensive", "name": "Welcome: запуск и первые четыре дня", "status": "Исполняемая редактируемая цепочка"},
     {"code": "prepurchase_nurture", "name": "Основная рассылка до покупки", "status": "Исполняемый каркас · контент частичный"},
     {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
     {"code": "broadcasts", "name": "Разовые рассылки", "status": "Базовая механика"},
@@ -106,19 +106,12 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 11, Хранение="tg_step_deliveries"),
         node("send_complete", "message", "Отправить навигацию по интенсиву", "Нажмите, чтобы изменить текст", 12, "tpl_start_intensive_complete", Контент="tg_content_items"),
         node("exit_complete", "module_exit", "Стоп", "Интенсив не перезапускать", 13, Результат="Текущие другие цепочки не меняются"),
-        node("welcome_run_active", "condition", "Есть active/waiting Start или Welcome run?", "start_attribution_entry или welcome_intensive", 14, Хранение="tg_sequence_runs"),
+        node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 14, Хранение="tg_sequence_runs"),
         node("send_waiting", "message", "Сообщить время следующего материала", "Нажмите, чтобы изменить текст", 15, "tpl_start_intensive_waiting", Источник_времени="tg_sequence_runs.next_action_at"),
         node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 16, Запрещено="Не менять current_step_key и next_action_at"),
         node("welcome_ever_started", "condition", "Новый Welcome когда-либо запускался?", "Run текущей версии; старый LeadTeh не считается", 17, Хранение="tg_sequence_runs / tg_sequence_versions"),
-        node("send_navigation", "message", "Отправить и закрепить навигацию", "Нажмите, чтобы изменить текст", 18, "tpl_start_navigation_pin", Исполнение="start_attribution_entry.start_navigation"),
-        node("send_circle", "video_note", "Отправить видеокружок знакомства", "Нажмите, чтобы загрузить кружок", 19, "tpl_entry_circle", Исполнение="start_attribution_entry.start_circle"),
-        node("send_start_offer", "message", "Отправить «Сделайте похудение проще»", "Кнопка «Начать интенсив»", 20, "tpl_start_welcome_offer", Исполнение="start_attribution_entry.start_offer"),
-        node("wait_start_button", "wait_button", "Ждать кнопку «Начать интенсив»", "Повторный /start не перескакивает ожидание", 21, Хранение="tg_sequence_runs"),
-        node("subscription_check", "condition", "Подписан на канал?", "Проверка пока работает как заглушка", 22, Исполнение="start_attribution_entry.start_subscription"),
-        node("subscription_reminder", "message", "Попросить подписаться", "Нажмите, чтобы изменить текст", 23, "tpl_start_subscription_reminder", Исполнение="start_attribution_entry.start_subscription_reminder"),
-        node("subscription_delay", "delay", "Подождать 5 минут", "После этого продолжить даже без подписки", 24, Хранение="tg_sequence_steps.delay_seconds"),
-        node("exit_welcome", "module_exit", "Перейти в Welcome: 8 сообщений", "Первый шаг — День 1 интенсива", 25, Следующий_модуль="welcome_intensive"),
-        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 26, Причина="Welcome был, но run нет и День 4 не отправлен"),
+        node("exit_welcome", "module_exit", "Перейти в Welcome", "Навигация, кружок, кнопка, подписка и первые четыре дня", 18, Следующий_модуль="welcome_intensive"),
+        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 19, Причина="Welcome был, но run нет и День 4 не отправлен"),
     ]
     edges = [
         {"id": "e01", "source": "entry_rule", "target": "entry_link", "label": "Опубликовать", "branch": "default"},
@@ -130,7 +123,7 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e07", "source": "has_masterclass", "target": "send_buyer", "label": "Да", "branch": "true"},
         {"id": "e08", "source": "send_buyer", "target": "exit_buyer", "label": "Отправлено", "branch": "default"},
         {"id": "e09", "source": "has_masterclass", "target": "first_visit", "label": "Нет", "branch": "false"},
-        {"id": "e10", "source": "first_visit", "target": "send_navigation", "label": "Да", "branch": "true"},
+        {"id": "e10", "source": "first_visit", "target": "exit_welcome", "label": "Да", "branch": "true"},
         {"id": "e11", "source": "first_visit", "target": "day_four_sent", "label": "Нет", "branch": "false"},
         {"id": "e12", "source": "day_four_sent", "target": "send_complete", "label": "Да", "branch": "true"},
         {"id": "e13", "source": "send_complete", "target": "exit_complete", "label": "Отправлено", "branch": "default"},
@@ -138,18 +131,10 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e15", "source": "welcome_run_active", "target": "send_waiting", "label": "Да", "branch": "true"},
         {"id": "e16", "source": "send_waiting", "target": "exit_waiting", "label": "Отправлено", "branch": "default"},
         {"id": "e17", "source": "welcome_run_active", "target": "welcome_ever_started", "label": "Нет", "branch": "false"},
-        {"id": "e18", "source": "welcome_ever_started", "target": "send_navigation", "label": "Нет", "branch": "false"},
+        {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
         {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
-        {"id": "e20", "source": "send_navigation", "target": "send_circle", "label": "Отправлено и закреплено", "branch": "default"},
-        {"id": "e21", "source": "send_circle", "target": "send_start_offer", "label": "Далее", "branch": "default"},
-        {"id": "e22", "source": "send_start_offer", "target": "wait_start_button", "label": "Отправлено", "branch": "default"},
-        {"id": "e23", "source": "wait_start_button", "target": "subscription_check", "label": "Кнопка нажата", "branch": "default"},
-        {"id": "e24", "source": "subscription_check", "target": "exit_welcome", "label": "Да / заглушка", "branch": "true"},
-        {"id": "e25", "source": "subscription_check", "target": "subscription_reminder", "label": "Нет", "branch": "false"},
-        {"id": "e26", "source": "subscription_reminder", "target": "subscription_delay", "label": "Отправлено", "branch": "default"},
-        {"id": "e27", "source": "subscription_delay", "target": "exit_welcome", "label": "Fail-open", "branch": "default"},
     ]
-    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Исполняется · специальная ссылка покупателя ждёт интеграции сайта", "description": "Одна схема показывает входы, атрибуцию, проверки, ответы повторного Start и приветственную часть до Дня 1.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "buyer_link_pending", "message": "Генерация одноразовой ссылки покупателя ещё не подключена к сайту/checkout."}]}
+    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Исполняется · специальная ссылка покупателя ждёт интеграции сайта", "description": "Схема показывает входы, атрибуцию, проверки и ответы повторного Start. Новый пользователь передаётся в отдельный Welcome.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "buyer_link_pending", "message": "Генерация одноразовой ссылки покупателя ещё не подключена к сайту/checkout."}]}
 
 
 def module_graph(session: Session, module_code: str) -> dict[str, Any]:
@@ -272,7 +257,7 @@ def sequence_graph(session: Session, sequence_code: str, status: str = "publishe
     for step, content in rows:
         component_code = component_for_step(step)
         component = SYSTEM_COMPONENTS.get(component_code or "", {})
-        nodes.append({
+        graph_node = {
             "id": step.step_key,
             "kind": step.kind.lower(),
             "label": step.label,
@@ -286,7 +271,18 @@ def sequence_graph(session: Session, sequence_code: str, status: str = "publishe
                 "Контент": content.code if content else "—",
                 "Настройки": step.configuration or {},
             },
-        })
+        }
+        if content:
+            graph_node["content"] = {
+                "id": content.id,
+                "code": content.code,
+                "title": content.title,
+                "body_source": content.body_source,
+                "media_kind": content.media_kind,
+                "media_path": content.media_path,
+                "labels": content.labels,
+            }
+        nodes.append(graph_node)
     graph_edges = [{
         "id": edge.id,
         "source": edge.from_step_key,

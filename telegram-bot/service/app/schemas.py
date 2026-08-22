@@ -8,7 +8,7 @@ class ManualMessageIn(BaseModel):
 
 
 class AcceleratedRunIn(BaseModel):
-    sequence_code: str = "start_attribution_entry"
+    sequence_code: str = "welcome_intensive"
     time_scale: float = Field(default=1 / 720, gt=0, le=1)
     reset_technical_state: bool = True
 
@@ -17,14 +17,14 @@ class TrackingLinkIn(BaseModel):
     platform: str = Field(min_length=1, max_length=80)
     placement: str = Field(min_length=1, max_length=255)
     campaign: str | None = Field(default=None, max_length=255)
-    target_sequence_code: str = "start_attribution_entry"
+    target_sequence_code: str = "welcome_intensive"
 
 
 class LinkRuleIn(BaseModel):
     name: str = Field(min_length=1, max_length=255)
     target_kind: str = Field(default="bot_start", pattern="^(bot_start|channel_invite)$")
     route_kind: str = Field(default="root", pattern="^(root|published_step)$")
-    target_sequence_code: str = Field(default="start_attribution_entry", max_length=100)
+    target_sequence_code: str = Field(default="welcome_intensive", max_length=100)
     target_step_key: str | None = Field(default=None, max_length=120)
     tag_ids: list[str] = Field(default_factory=list)
     create_alias: bool = True

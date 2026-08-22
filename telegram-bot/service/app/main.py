@@ -324,7 +324,7 @@ def process_update(update: dict, session: Session) -> dict:
                 )
                 .order_by(BotRoute.priority)
             )
-            sequence_code = route.target_sequence_code if route else START_ENTRY_CODE
+            sequence_code = route.target_sequence_code if route else WELCOME_CODE
             link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, token)
             if not link:
                 pending_link, pending_alias, pending_query = resolve_pending_channel_touch(session, contact.telegram_user_id)
@@ -421,13 +421,13 @@ def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
 def _sequence_rule(code: str) -> dict:
     if code == WELCOME_CODE:
         return {
-            "start": "Начинается после завершения приветственной части Start и содержит 8 сообщений — День 1–4 и четыре промежуточных поста.",
-            "stop": "Останавливается при подтверждённой покупке мастер-класса или после передачи в основную рассылку.",
-            "next": "После восьмого сообщения пользователь переходит в основную рассылку до покупки.",
+            "start": "Начинается после проверок Start: навигация, кружок, CTA, подписка и четыре содержательных дня.",
+            "stop": "Останавливается при покупке мастер-класса либо после полезного поста четвёртого дня.",
+            "next": "Без покупки передаёт пользователя в основную рассылку; первый продающий пост приходит на пятый день.",
         }
     if code == PREPURCHASE_CODE:
         return {
-            "start": "Запускается после завершения восьми сообщений Welcome без покупки мастер-класса.",
+            "start": "Запускается после завершения четвёртого дня Welcome без покупки мастер-класса.",
             "stop": "Останавливается сразу после появления подтверждённой покупки мастер-класса.",
             "next": "После покупки пользователь переходит в цепочку «После покупки мастер-класса».",
         }
@@ -482,19 +482,7 @@ def update_step(step_id: str, body: StepUpdateIn, session: Session = Depends(get
     step = session.get(SequenceStep, step_id)
     if not step:
         raise HTTPException(404, "Step not found")
-    changes = body.model_dump(exclude_unset=True)
-    if "position" in changes and changes["position"] != step.position:
-        other = session.scalar(select(SequenceStep).where(SequenceStep.sequence_version_id == step.sequence_version_id, SequenceStep.position == changes["position"]))
-        if other:
-            old_position = step.position
-            step.position = -1
-            session.flush()
-            other.position = old_position
-            session.flush()
-    for field, value in changes.items():
-        setattr(step, field, value)
-    session.commit()
-    return {"id":step.id,"position":step.position,"delay_seconds":step.delay_seconds,"enabled":step.enabled,"configuration":step.configuration}
+    raise HTTPException(409, "Логика графа доступна только для чтения; изменяйте тексты и медиа контентных блоков")
 
 
 @app.get("/bot-api/contacts", dependencies=[Depends(require_admin)])
@@ -660,7 +648,7 @@ def resolve_link_preview(body: dict, session: Session = Depends(get_db)) -> dict
     if link:
         tag_ids = list(dict.fromkeys([*list(session.scalars(select(TrackingLinkTag.tag_id).where(TrackingLinkTag.tracking_link_id == link.id))), *tag_ids]))
     tags = list(session.scalars(select(CrmTag).where(CrmTag.id.in_(tag_ids)))) if tag_ids else []
-    return {"payload": token, "status": status, "route": {"kind": link.route_kind, "sequence_code": link.target_sequence_code, "step_key": link.target_step_key} if link else {"kind": "root", "sequence_code": START_ENTRY_CODE, "step_key": None}, "rule": _link_payload(session, link) if link else None, "alias_id": alias.id if alias else None, "tags": [{"id": tag.id, "name": tag.name} for tag in tags], "raw_query": raw_query}
+    return {"payload": token, "status": status, "route": {"kind": link.route_kind, "sequence_code": link.target_sequence_code, "step_key": link.target_step_key} if link else {"kind": "root", "sequence_code": WELCOME_CODE, "step_key": None}, "rule": _link_payload(session, link) if link else None, "alias_id": alias.id if alias else None, "tags": [{"id": tag.id, "name": tag.name} for tag in tags], "raw_query": raw_query}
 
 
 @app.get("/bot-api/link-rules/{link_id}", dependencies=[Depends(require_admin)])

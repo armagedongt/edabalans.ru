@@ -63,7 +63,7 @@ def _welcome_runs(session: Session, contact_id: str):
         select(SequenceRun)
         .join(SequenceVersion, SequenceVersion.id == SequenceRun.sequence_version_id)
         .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
-        .where(SequenceRun.contact_id == contact_id, Sequence.code.in_([START_ENTRY_CODE, WELCOME_CODE]))
+        .where(SequenceRun.contact_id == contact_id, Sequence.code == WELCOME_CODE)
     )
 
 

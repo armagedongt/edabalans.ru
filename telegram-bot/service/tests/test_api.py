@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, get_db, make_engine
 from app.main import app
 import app.main as main_module
-from app.models import Contact, SequenceRun, StepDelivery, UpdateReceipt
+from app.models import Contact, CrmMessengerAccount, SequenceRun, StepDelivery, UpdateReceipt
 from app.seed import seed_defaults
 
 
@@ -83,7 +83,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=callback).json() == {"ok": True}
     repeat = {"update_id": 102, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
-    assert len(fake.sent) == 4
+    assert len(fake.sent) == 5
     assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
     assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
@@ -96,26 +96,30 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert module["level"] == "module"
     assert any(node["id"] == "exit_welcome" and node["kind"] == "module_exit" for node in module["nodes"])
     assert any(node["id"] == "exit_error" and node["kind"] == "error" for node in module["nodes"])
-    assert next(node for node in module["nodes"] if node["id"] == "send_start_offer")["content"]["code"] == "tpl_start_welcome_offer"
     assert any(edge["source"] == "welcome_run_active" and edge["target"] == "welcome_ever_started" and edge["branch"] == "false" for edge in module["edges"])
-    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "send_navigation" and edge["branch"] == "false" for edge in module["edges"])
+    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_welcome" and edge["branch"] == "false" for edge in module["edges"])
     assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
     detail = client.get("/bot-api/map?sequence_code=welcome_intensive").json()
     assert detail["level"] == "sequence"
-    assert len([node for node in detail["nodes"] if node["kind"] == "message"]) == 8
+    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 9
+    assert next(node for node in detail["nodes"] if node["id"] == "welcome_offer")["content"]["code"] == "tpl_start_welcome_offer"
     assert any(edge["branch"] == "true" for edge in detail["edges"])
+    sequence_detail = client.get("/bot-api/sequences/welcome_intensive").json()
+    logic_step = next(step for step in sequence_detail["steps"] if step["kind"] == "DELAY")
+    assert client.patch(f"/bot-api/steps/{logic_step['id']}", json={"delay_seconds": 60}).status_code == 409
     crm_user_id = "11111111-1111-1111-1111-111111111111"
     with Session(engine) as session:
         contact = session.scalar(select(Contact))
         contact.user_id = crm_user_id
         session.commit()
         assert session.scalar(select(func.count(Contact.id))) == 1
-        assert session.scalar(select(func.count(SequenceRun.id))) == 2
-        assert session.scalar(select(func.count(StepDelivery.id))) == 3
+        assert session.scalar(select(CrmMessengerAccount.main_scenario_seen_at)) is not None
+        assert session.scalar(select(func.count(SequenceRun.id))) == 1
+        assert session.scalar(select(func.count(StepDelivery.id))) == 4
         assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 3
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
     assert state["run_status"] == "active"
-    assert state["sent"] in {0, 3}
+    assert state["sent"] in {0, 4}
     preview = client.get(f"/bot-api/contacts/{contacts[0]['id']}/start-preview").json()
     assert preview["decision"]["code"] == "intensive_waiting"
     simulated = client.post("/bot-api/start-router/simulate", json={"is_first_visit":False,"has_masterclass":True,"day_four_sent":False,"has_active_welcome_run":True,"welcome_ever_started":True}).json()
