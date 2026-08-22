@@ -62,13 +62,14 @@ def discover(page: "Page", profile_url: str, *, limit: int | None) -> list[str]:
 
 def extract_story(page: "Page", url: str) -> dict:
     page.goto(url, wait_until="domcontentloaded")
-    page.wait_for_selector("main article.story[data-page='true']")
+    story = page.locator("main article.story[data-page='true']")
+    story.wait_for()
     for _ in range(5):
-        label = page.locator("main article.story .story__views").get_attribute("aria-label")
+        label = story.locator(".story__views").get_attribute("aria-label")
         if label and re.search(r"\d", label):
             break
         page.wait_for_timeout(400)
-    return page.locator("main article.story").evaluate(
+    return story.evaluate(
         """
         article => {
           const number = value => {
