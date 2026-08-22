@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -73,6 +73,28 @@ def protected_file(name: str) -> FileResponse:
     response = FileResponse(STATIC_DIR / name)
     response.headers["Cache-Control"] = "no-store"
     return response
+
+
+@router.get("/admin", include_in_schema=False)
+@router.get("/admin/", include_in_schema=False)
+def admin_index(_: str = Depends(require_admin)) -> FileResponse:
+    return protected_file("admin.html")
+
+
+@router.get("/admin/static/{asset_name}", include_in_schema=False)
+def admin_asset(
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js)$"),
+    _: str = Depends(require_admin),
+) -> FileResponse:
+    return protected_file(asset_name)
+
+
+@router.get("/admin/{section}", include_in_schema=False)
+def admin_section(
+    section: str = ApiPath(pattern="^(users|crm|dqs|strength|metabolism|messaging)$"),
+    _: str = Depends(require_admin),
+) -> FileResponse:
+    return protected_file("admin.html")
 
 
 @router.get("/crm", include_in_schema=False)

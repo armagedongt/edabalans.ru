@@ -25,10 +25,13 @@ from app.database import get_db
 from app.models import (
     AdminAppEdit,
     DqsState,
+    MessengerAccount,
     MetabolismState,
+    Resource,
     StrengthExercise,
     StrengthState,
     User,
+    UserAccess,
 )
 
 
@@ -344,4 +347,124 @@ def admin_app_users(
 ) -> dict[str, Any]:
     model = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}[app_code]
     states = db.scalars(select(model).order_by(model.updated_at.desc())).all()
-    return {"ok": True, "users": [{"user_id": str(item.user_id), "email": primary_email(db, item.user_id), "version": item.version, "updated_at": utc_iso(item.updated_at)} for item in states]}
+    users = {item.id: item for item in db.scalars(select(User).where(User.id.in_([state.user_id for state in states]))).all()} if states else {}
+    return {
+        "ok": True,
+        "users": [
+            {
+                "user_id": str(item.user_id),
+                "display_name": (users.get(item.user_id).display_name if users.get(item.user_id) else None),
+                "email": primary_email(db, item.user_id),
+                "version": item.version,
+                "updated_at": utc_iso(item.updated_at),
+                "summary": admin_state_summary(app_code, item),
+            }
+            for item in states
+        ],
+    }
+
+
+def admin_state_summary(app_code: str, state: Any) -> dict[str, Any]:
+    if app_code == "dqs":
+        days = state.days if isinstance(state.days, dict) else {}
+        return {
+            "start_date": state.start_date,
+            "filled_days": sum(value not in (None, "", {}) for value in days.values()),
+            "total_days": 30,
+        }
+    if app_code == "strength":
+        workouts = state.workouts if isinstance(state.workouts, list) else []
+        dates = [str(item.get("date")) for item in workouts if isinstance(item, dict) and item.get("date")]
+        return {
+            "sessions": len(workouts),
+            "filled_sessions": sum(isinstance(item, dict) and item.get("status") == "filled" for item in workouts),
+            "last_date": max(dates, default=None),
+            "hidden_exercises": len(state.hidden_exercises if isinstance(state.hidden_exercises, list) else []),
+        }
+    variants = state.variants if isinstance(state.variants, dict) else {}
+    return {
+        "saved_variants": sum(value not in (None, "", {}) for value in variants.values()),
+        "active_variant": state.active_variant,
+        "formula_version": state.formula_version,
+    }
+
+
+def active_resource_codes(db: Session, user_id: uuid.UUID) -> set[str]:
+    now = datetime.now(timezone.utc)
+    return set(
+        db.scalars(
+            select(Resource.code)
+            .join(UserAccess, UserAccess.resource_id == Resource.id)
+            .where(
+                UserAccess.user_id == user_id,
+                UserAccess.revoked_at.is_(None),
+                (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+            )
+        ).all()
+    )
+
+
+@router.get("/admin/api/users/{user_id}/modules")
+def admin_user_modules(
+    user_id: uuid.UUID,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    access_codes = active_resource_codes(db, user_id)
+    result: dict[str, Any] = {}
+    for code, model in {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}.items():
+        state = db.scalar(select(model).where(model.user_id == user_id))
+        result[code] = {
+            "exists": state is not None,
+            "has_access": code in access_codes,
+            "updated_at": utc_iso(state.updated_at) if state else "",
+            "version": state.version if state else None,
+            "summary": admin_state_summary(code, state) if state else {},
+        }
+    telegram = db.scalar(
+        select(MessengerAccount).where(
+            MessengerAccount.user_id == user_id,
+            MessengerAccount.platform == "telegram",
+        ).limit(1)
+    )
+    result["telegram"] = {
+        "exists": telegram is not None,
+        "username": telegram.username if telegram else None,
+        "last_seen_at": utc_iso(telegram.last_seen_at) if telegram else "",
+    }
+    return {"ok": True, "user_id": str(user_id), "modules": result}
+
+
+@router.get("/admin/api/apps/{app_code}/users/{user_id}")
+def admin_app_user(
+    app_code: str,
+    user_id: uuid.UUID,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    models = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}
+    model = models.get(app_code)
+    if model is None:
+        raise HTTPException(status_code=404, detail="app not found")
+    user = db.get(User, user_id)
+    state = db.scalar(select(model).where(model.user_id == user_id))
+    if user is None or state is None:
+        raise HTTPException(status_code=404, detail="application state not found")
+    return {
+        "ok": True,
+        "app_code": app_code,
+        "user": {
+            "id": str(user.id),
+            "display_name": user.display_name,
+            "email": primary_email(db, user.id),
+        },
+        "state": {
+            "version": state.version,
+            "updated_at": utc_iso(state.updated_at),
+            "source": state.source,
+            "summary": admin_state_summary(app_code, state),
+        },
+    }

@@ -61,7 +61,7 @@
       <div class="crm-top">
         <div class="crm-head">
           <div><div class="crm-title">CRM клиентов</div><div class="crm-subtitle">Единая база Edabalans</div></div>
-          <div class="crm-live">● РАБОТАЕТ</div>
+          <div class="crm-head-actions"><a class="crm-admin-home" href="/admin">⌂ Главное</a><div class="crm-live">● РАБОТАЕТ</div></div>
         </div>
         <div class="crm-tabs">
           <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
@@ -335,6 +335,8 @@
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await api(`/admin/api/users/${id}`);
     const resources = await api("/admin/api/resources");
+    const moduleResult = await api(`/admin/api/users/${id}/modules`);
+    const modules = moduleResult.modules;
     let botState = null;
     try { botState = await api(`/bot-api/users/${id}`); } catch (_) { /* Telegram may not be connected yet. */ }
     const primaryEmail = user.emails[0] && user.emails[0].email;
@@ -358,6 +360,15 @@
         <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${user.accesses.filter((item) => !item.revoked_at).length}</div></div>
         <div class="crm-stat"><div class="crm-k">ПЕРВОЕ ПОЯВЛЕНИЕ</div><div class="crm-v" style="font-size:15px">${date(user.first_seen_at, false)}</div></div>
       </div>
+      <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе <span class="crm-card-sub">тот же user_id во всех разделах</span></div>
+        <div class="crm-app-links">
+          <a class="crm-app-link available" href="/crm?user=${user.id}"><strong>CRM</strong><span>текущая карточка</span></a>
+          <a class="crm-app-link ${modules.dqs.exists ? "available" : "disabled"}" href="${modules.dqs.exists ? `/admin/dqs?user=${user.id}` : "#"}"><strong>Diet Quality Score</strong><span>${modules.dqs.exists ? "открыть данные" : "данных пока нет"}</span></a>
+          <a class="crm-app-link ${modules.strength.exists ? "available" : "disabled"}" href="${modules.strength.exists ? `/admin/strength?user=${user.id}` : "#"}"><strong>Силовые</strong><span>${modules.strength.exists ? "открыть тренировки" : "данных пока нет"}</span></a>
+          <a class="crm-app-link ${modules.metabolism.exists ? "available" : "disabled"}" href="${modules.metabolism.exists ? `/admin/metabolism?user=${user.id}` : "#"}"><strong>Метаболизм</strong><span>${modules.metabolism.exists ? "открыть расчёт" : "данных пока нет"}</span></a>
+          <a class="crm-app-link ${modules.telegram.exists ? "available" : "disabled"}" href="${modules.telegram.exists ? `/bot?view=contacts&user=${user.id}` : "#"}"><strong>Telegram</strong><span>${modules.telegram.exists ? "открыть контакт" : "аккаунт не связан"}</span></a>
+        </div>
+      </section>
       <div class="crm-grid">
         <div>
           <section class="crm-card"><div class="crm-card-title">Контакты <span class="crm-card-sub">единый user_id</span></div>
@@ -457,5 +468,12 @@
     if (retry) retry.addEventListener("click", () => loadHome().catch(showError));
   }
 
-  loadHome("users").catch(showError);
+  async function initialise() {
+    state.summary = await api("/admin/api/summary");
+    const initialUser = new URLSearchParams(location.search).get("user");
+    if (initialUser) return openUser(initialUser);
+    return showView("users");
+  }
+
+  initialise().catch(showError);
 })();
