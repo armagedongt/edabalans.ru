@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.models import (
     AttributionEvent,
     ClientNote,
+    LegacyImportRecord,
     MessengerAccount,
     Payment,
     Product,
@@ -48,11 +49,26 @@ def summary(db: Session) -> dict:
             Payment.payment_status == "paid", Payment.currency == "RUB"
         )
     )
+    tilda_members = db.scalar(
+        select(func.count(distinct(LegacyImportRecord.user_id))).where(
+            LegacyImportRecord.source.like("tilda_members_%"),
+            LegacyImportRecord.status == "imported",
+            LegacyImportRecord.user_id.is_not(None),
+        )
+    ) or 0
+    access_reviews = db.scalar(
+        select(func.count(User.id)).where(
+            User.merged_into_user_id.is_(None),
+            User.access_review_status != "not_required",
+        )
+    ) or 0
     return {
         "users": users,
         "buyers": buyers,
         "paid_payments": paid_payments,
         "revenue_rub": money(revenue),
+        "tilda_members": tilda_members,
+        "access_reviews": access_reviews,
     }
 
 
@@ -276,6 +292,16 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             .order_by(ClientNote.created_at.desc())
         )
     )
+    tilda_snapshot = db.scalar(
+        select(LegacyImportRecord)
+        .where(
+            LegacyImportRecord.user_id == user_id,
+            LegacyImportRecord.source.like("tilda_members_%"),
+            LegacyImportRecord.status == "imported",
+        )
+        .order_by(LegacyImportRecord.created_at.desc())
+        .limit(1)
+    )
     paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]
     return {
         "id": str(user.id),
@@ -286,6 +312,13 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         "access_review_status": user.access_review_status,
         "access_review_note": user.access_review_note,
         "tilda_access_status": user.tilda_access_status,
+        "tilda_membership": {
+            "groups": list((tilda_snapshot.raw_payload or {}).get("groups", [])),
+            "account_status": (tilda_snapshot.raw_payload or {}).get("account_status"),
+            "member_created_at": (tilda_snapshot.raw_payload or {}).get("member_created_at"),
+            "last_active_at": (tilda_snapshot.raw_payload or {}).get("last_active_at"),
+            "source": tilda_snapshot.source,
+        } if tilda_snapshot else None,
         "emails": [
             {
                 "email": item.email_original,

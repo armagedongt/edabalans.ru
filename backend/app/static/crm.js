@@ -88,6 +88,8 @@
         <div class="crm-stat"><div class="crm-k">ПОКУПАТЕЛЕЙ</div><div class="crm-v">${data.buyers || 0}</div><div class="crm-s">есть подтверждённая оплата</div></div>
         <div class="crm-stat"><div class="crm-k">ПОКУПОК В ИСТОРИИ</div><div class="crm-v">${data.paid_payments || 0}</div><div class="crm-s">включая старые без известной суммы</div></div>
         <div class="crm-stat"><div class="crm-k">ВЫРУЧКА</div><div class="crm-v">${money(data.revenue_rub)}</div><div class="crm-s">подтверждённые RUB</div></div>
+        <div class="crm-stat"><div class="crm-k">АККАУНТОВ TILDA</div><div class="crm-v">${data.tilda_members || 0}</div><div class="crm-s">последняя каноничная сверка</div></div>
+        <div class="crm-stat"><div class="crm-k">ПРОВЕРИТЬ ДОСТУПЫ</div><div class="crm-v">${data.access_reviews || 0}</div><div class="crm-s">только реальные спорные случаи</div></div>
       </div>`;
   }
 
@@ -339,6 +341,7 @@
     const telegram = user.messengers.find((item) => item.platform === "telegram");
     const firstSource = user.attribution.find((item) => item.source || item.utm_source || item.utm_campaign);
     const origin = user.data_origin === "native" ? "Новая система" : "История";
+    const tilda = user.tilda_membership;
     root.innerHTML = `
       <div class="crm-profile-head">
         <div class="crm-profile-id">
@@ -369,6 +372,9 @@
             <div class="crm-tags">${user.accesses.filter((item)=>!item.revoked_at).map((item)=>`<button class="crm-tag revoke-access" data-code="${esc(item.code)}">${esc(item.name)} ×</button>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>
             <form class="crm-two" id="grant-form" style="margin-top:10px"><select class="crm-input" id="resource-code">${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
             <form class="crm-form" id="review-form" style="margin-top:10px"><select class="crm-input" id="review-status"><option value="waiting_registration">Ждём регистрацию</option><option value="pending">Проверить</option><option value="completed">Проверено</option><option value="conflict">Конфликт</option><option value="not_required">Не требуется</option></select><select class="crm-input" id="tilda-status"><option value="not_checked">Tilda не проверена</option><option value="pending">Tilda проверить</option><option value="granted">Tilda доступ открыт</option><option value="not_required">Tilda не требуется</option></select><textarea class="crm-textarea" id="review-note" placeholder="Что проверить">${esc(user.access_review_note || "")}</textarea><button class="crm-btn small">Сохранить проверку</button></form>
+          </section>
+          <section class="crm-card"><div class="crm-card-title">Tilda Members Area <span class="crm-card-sub">${tilda ? esc(tilda.account_status || "импортировано") : "нет в выгрузке"}</span></div>
+            ${tilda ? `<div class="crm-tags">${tilda.groups.map((group)=>`<span class="crm-tag">${esc(group)}</span>`).join("") || '<span class="crm-tag empty">групп нет</span>'}</div><div class="crm-row-meta" style="margin-top:10px">Регистрация: ${date(tilda.member_created_at, true)} · последняя активность: ${date(tilda.last_active_at, true)}</div>` : '<div class="crm-row-meta">Этот email не найден в последней каноничной выгрузке Tilda.</div>'}
           </section>
         </div>
         <div>
