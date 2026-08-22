@@ -255,8 +255,8 @@ def request_challenge(
     rate_key = f"{request.client.host if request.client else 'unknown'}|{email}"
     now = time.monotonic()
     with _rate_lock:
-        last = _last_challenge.get(rate_key, 0)
-        if now - last < RESEND_SECONDS:
+        last = _last_challenge.get(rate_key)
+        if last is not None and now - last < RESEND_SECONDS:
             raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "code was already sent; try again in a minute")
         _last_challenge[rate_key] = now
 

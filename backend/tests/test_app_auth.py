@@ -129,6 +129,19 @@ def test_challenge_is_rate_limited(monkeypatch):
     app.dependency_overrides.clear()
 
 
+def test_first_challenge_is_allowed_during_first_process_minute(monkeypatch):
+    client, _ = setup()
+    monkeypatch.setattr(app_auth.time, "monotonic", lambda: 10.0)
+    monkeypatch.setattr(app_auth, "send_login_code", lambda *_: None)
+
+    first = client.post(
+        "/api/app-auth/challenge", json={"email": "member@example.test"}
+    )
+
+    assert first.status_code == 200
+    app.dependency_overrides.clear()
+
+
 def test_malformed_bearer_token_is_rejected_without_server_error():
     client, _ = setup()
     response = client.get(
