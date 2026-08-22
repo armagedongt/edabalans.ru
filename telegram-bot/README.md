@@ -9,9 +9,10 @@ PostgreSQL, связывает Telegram-контакт с `users.id` и пров
 - проектная схема PostgreSQL в `schema/postgresql.sql`;
 - локальный импорт архивных сообщений LeadTeh в SQLite;
 - просмотр библиотеки сообщений и черновика цепочки;
-- контракт будущего соединения с CRM Core;
+- частично реализованный контракт соединения с CRM Core и список оставшихся работ;
 - тесты ключевых правил импорта;
-- реальный Telegram webhook и идемпотентная обработка update;
+- long polling Telegram Bot API, совместимый webhook endpoint и идемпотентная
+  обработка update;
 - исполняемый движок MESSAGE/DELAY/CONDITION/DB_READ/DB_WRITE/GOTO/STOP;
 - 30-постовый шаблон до покупки и отключённая ветка после покупки;
 - персональный ускоренный режим, ручные сообщения, ссылки и разовые рассылки;
@@ -53,10 +54,11 @@ PostgreSQL, связывает Telegram-контакт с `users.id` и пров
 ## Production
 
 1. Сделать и проверить backup PostgreSQL.
-2. Применить Alembic-миграцию `20260822_0006`.
+2. Применить все новые Alembic-миграции до `head` защищённым ручным выпуском.
 3. Заполнить три `TELEGRAM_*` переменные в серверном `.env`.
 4. Запустить контейнер `telegram-bot` и проверить `/health`.
-5. Установить webhook на `https://api.edabalans.ru/telegram/webhook` с secret token.
+5. При включённом `TELEGRAM_POLLING_ENABLED` сервис сам удаляет webhook и получает
+   updates через long polling. Одновременно включать polling и внешний webhook нельзя.
 
 Основной LeadTeh-бот этим контуром не переключается. Подключён только
 `@TetrisgfgfgfBot`.

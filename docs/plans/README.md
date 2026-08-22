@@ -21,6 +21,8 @@
 | Полная система документации файлов и таблиц | `PROJECT_DOCUMENTATION_SYSTEM.md` | `planned` |
 | Следующие версии Telegram-бота | `TELEGRAM_NEXT_VERSIONS.md` | `planned` |
 | Продукты и офферы | `PRODUCTS_AND_OFFERS.md` | `planned` |
+| Долгосрочное развитие платформы | `PLATFORM_LONG_TERM.md` | `planned` |
+| Аудит найденных планов по репозиторию | `PLAN_SOURCES_AUDIT.md` | `current` |
 
 ## Существующие очереди в других разделах
 
@@ -28,6 +30,13 @@
   доступов и общего клиентского интерфейса.
 - `../../legacy/google/dqs/PENDING_CLIENT_CHANGES.md` — замечания, которые относятся
   именно к текущему переносу legacy DQS и не должны потеряться в общем backlog.
+- `../../telegram-bot/docs/FLOW_MAP.md` — фактическая карта и локальное требование к
+  безопасной публикации версий; незавершённая часть перенесена в Telegram backlog.
+- `../../telegram-bot/docs/CRM_INTEGRATION_CONTRACT.md` — частично реализованный
+  целевой контракт Telegram ↔ CRM; оставшиеся пункты перенесены в Telegram backlog.
+
+Полный результат поиска и классификация исторических документов:
+`PLAN_SOURCES_AUDIT.md`.
 
 ## Правило для следующих ИИ-чатов
 
