@@ -36,6 +36,12 @@ def test_unified_admin_requires_authentication() -> None:
     assert 'id="login-form"' in response.text
 
 
+def test_content_catalog_uses_unified_admin_shell() -> None:
+    response = make_client().get("/admin/content")
+    assert response.status_code == 200
+    assert 'id="login-form"' in response.text
+
+
 def test_unified_admin_assets_require_authentication() -> None:
     response = make_client().get("/admin/static/admin.js")
     assert response.status_code == 401

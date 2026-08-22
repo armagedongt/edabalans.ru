@@ -116,7 +116,9 @@ def admin_asset(
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
     request: Request,
-    section: str = ApiPath(pattern="^(users|crm|dqs|strength|metabolism|messaging)$"),
+    section: str = ApiPath(
+        pattern="^(users|crm|dqs|strength|metabolism|messaging|content)$"
+    ),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
