@@ -7,6 +7,14 @@
   <title>Админка · edabalans</title>
   <link rel="stylesheet" href="/admin/static/admin.css">
   <link rel="stylesheet" href="/admin/static/admin-session.css">
+  <style>
+    .admin-empty.compact{margin-bottom:12px;padding:20px}.admin-help{margin:9px 0 0;color:var(--muted);font-size:11px}
+    .dqs-admin-periods{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-bottom:12px}.dqs-admin-periods button,.dqs-admin-periods input{height:34px;border:1px solid var(--line);border-radius:9px;padding:0 10px;background:#fff;color:var(--muted)}.dqs-admin-periods button{cursor:pointer}.dqs-admin-periods button.active{border-color:var(--green);background:var(--soft);color:var(--green)}
+    .dqs-admin-title{margin:18px 0 9px}.dqs-admin-chart{display:flex;align-items:end;gap:4px;min-height:128px;padding:12px;border-radius:12px;background:#f7f8f6;overflow-x:auto}.dqs-admin-bar{display:grid;align-items:end;justify-items:center;gap:4px;min-width:18px}.dqs-admin-bar i{display:block;width:10px;border-radius:5px 5px 2px 2px;background:var(--green)}.dqs-admin-bar small{color:var(--muted);font-size:8px}
+    .dqs-admin-categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}.dqs-admin-category{display:grid;grid-template-columns:minmax(0,1fr) auto 42px;gap:8px;padding:8px 10px;border-radius:9px;background:#f7f8f6}.dqs-admin-category b,.dqs-admin-category em{font-size:11px}.dqs-admin-category em{color:var(--green);font-style:normal;text-align:right}
+    .dqs-admin-matrix{margin-top:16px}.dqs-admin-matrix summary{color:var(--green);font-weight:700;cursor:pointer}.dqs-admin-matrix>div{margin-top:8px;overflow:auto}.dqs-admin-matrix table{border-collapse:collapse;font-size:9px}.dqs-admin-matrix th,.dqs-admin-matrix td{min-width:62px;padding:6px;border:1px solid var(--line);text-align:center}.dqs-admin-feed{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.dqs-admin-feed small{display:block;color:var(--muted)}.dqs-admin-feed p{margin:4px 0 0;color:var(--muted);font-size:10px}.dqs-admin-feed>strong{font-size:18px;color:var(--green)}
+    @media(max-width:760px){.dqs-admin-categories{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
   <aside class="admin-sidebar">
@@ -31,6 +39,7 @@
     </header>
     <section id="admin-content"><div class="admin-empty">Загружаю…</div></section>
   </main>
+  <script src="/embed.js" defer></script>
   <script src="/admin/static/admin.js" defer></script>
 </body>
 </html>

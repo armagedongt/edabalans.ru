@@ -2185,7 +2185,7 @@ function api(params){
 
             reject(
               new Error(
-                'Google не ответил'
+                'Сервис не ответил'
               )
             );
 
@@ -2229,7 +2229,7 @@ function api(params){
 
           reject(
             new Error(
-              'Ошибка связи с Google'
+              'Ошибка связи с сервисом'
             )
           );
         };
@@ -5076,7 +5076,7 @@ function markDayChanged(
     setTimeout(
       () => {
 
-        saveDayToGoogle(
+        saveDayToServer(
           dayNumber
         );
 
@@ -5086,7 +5086,7 @@ function markDayChanged(
 }
 
 
-async function saveDayToGoogle(
+async function saveDayToServer(
   dayNumber
 ){
 
@@ -5246,7 +5246,7 @@ async function saveDayToGoogle(
         setTimeout(
           () => {
 
-            saveDayToGoogle(
+            saveDayToServer(
               dayNumber
             );
 
@@ -5271,7 +5271,7 @@ function flushCurrentDay(){
     ]
   ){
 
-    saveDayToGoogle(
+    saveDayToServer(
       currentDay
     );
   }
@@ -5489,7 +5489,7 @@ function mergeLocalDays(){
           ]
         ){
 
-          saveDayToGoogle(
+          saveDayToServer(
             Number(day)
           );
         }

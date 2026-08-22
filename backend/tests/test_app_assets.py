@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 os.environ.setdefault(
     "DATABASE_URL",
@@ -26,6 +27,17 @@ def test_application_fragments_use_server_api() -> None:
         assert response.status_code == 200
         assert "api.edabalans.ru/api/apps/" in response.text
         assert "REDACTED_LEGACY_APPS_SCRIPT_URL" not in response.text
+        lowered = response.text.lower()
+        assert "google" not in lowered
+        assert "apps script" not in lowered
+
+
+def test_production_admin_assets_do_not_name_legacy_storage() -> None:
+    static_dir = Path(__file__).resolve().parents[1] / "app" / "static"
+    for asset in ("admin.js", "crm.js"):
+        lowered = (static_dir / asset).read_text(encoding="utf-8").lower()
+        assert "google" not in lowered
+        assert "apps script" not in lowered
 
 
 def test_unknown_application_fragment_is_404() -> None:

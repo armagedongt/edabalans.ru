@@ -1,18 +1,18 @@
 :root {
-  --bg: #f5f5f7;
+  --bg: #f3f5f1;
   --card: #fff;
-  --text: #17172b;
-  --muted: #7b8094;
-  --line: #e7e7ef;
-  --purple: #6f3de8;
-  --purple-dark: #5127bc;
-  --purple2: #f5f1ff;
+  --text: #20251f;
+  --muted: #737b71;
+  --line: #dfe4dc;
+  --purple: #2e6845;
+  --purple-dark: #203229;
+  --purple2: #edf3e9;
   --green: #e8f5de;
   --yellow: #f7eed1;
   --peach: #fae8dc;
   --blue: #e6eef9;
   --rose: #f9e4e4;
-  --shadow: 0 5px 18px rgba(20, 20, 40, .08);
+  --shadow: 0 10px 30px rgba(31, 48, 36, .08);
 }
 
 * { box-sizing: border-box; }
@@ -21,7 +21,7 @@ body { color: var(--text); font-family: Arial, sans-serif; }
 button, input, textarea { font: inherit; }
 button { cursor: pointer; }
 
-#crm-app { max-width: 980px; margin: 0 auto; padding: 14px; }
+#crm-app { width: 100%; max-width: 1120px; margin: 0 auto; padding: 14px; }
 .crm-loading, .crm-error { margin: 18vh auto 0; max-width: 520px; padding: 22px; text-align: center; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); }
 .crm-error { color: #8a2323; background: #fff0f0; border: 1px solid #f0caca; }
 

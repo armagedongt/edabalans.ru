@@ -149,7 +149,7 @@
         <span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span>
         <button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button>
       </div>
-      <div class="crm-foot">PostgreSQL — источник истины · Google Sheets не используется этой админкой</div>`;
+      <div class="crm-foot">PostgreSQL — единый источник данных этой админки</div>`;
     bindTop();
     bindUserCards();
     const search = document.getElementById("crm-search");
@@ -335,7 +335,7 @@
         <div class="crm-card-title">Главный принцип</div>
         <p>Один человек хранится один раз в таблице <strong>users</strong>. Email, Telegram, оплаты, доступы, теги и данные приложений присоединяются к нему по единому <strong>user_id</strong>.</p>
         <p class="crm-row-meta">Поэтому база не превращается в одну таблицу с сотнями колонок, а карточка клиента собирает связанные сведения в одном понятном экране.</p>
-        <p class="crm-row-meta"><strong>История</strong> — данные, перенесённые из старых Google-таблиц и потому потенциально неполные. <strong>Новая система</strong> — клиенты, созданные российским API после переключения интеграций.</p>
+        <p class="crm-row-meta"><strong>История</strong> — перенесённые данные, которые могут быть неполными. <strong>Новая система</strong> — клиенты, созданные текущим API после переключения интеграций.</p>
       </section>
       <div class="crm-flow">
         <div class="crm-flow-step"><strong>1. Человек</strong>users → основная карточка и постоянный user_id</div>
@@ -401,9 +401,9 @@
       <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе <span class="crm-card-sub">тот же user_id во всех разделах</span></div>
         <div class="crm-app-links">
           <a class="crm-app-link available" href="/crm?user=${user.id}"><strong>CRM</strong><span>текущая карточка</span></a>
-          <a class="crm-app-link ${modules.dqs.exists ? "available" : "disabled"}" href="${modules.dqs.exists ? `/admin/dqs?user=${user.id}` : "#"}"><strong>Diet Quality Score</strong><span>${modules.dqs.exists ? "открыть данные" : "данных пока нет"}</span></a>
-          <a class="crm-app-link ${modules.strength.exists ? "available" : "disabled"}" href="${modules.strength.exists ? `/admin/strength?user=${user.id}` : "#"}"><strong>Силовые</strong><span>${modules.strength.exists ? "открыть тренировки" : "данных пока нет"}</span></a>
-          <a class="crm-app-link ${modules.metabolism.exists ? "available" : "disabled"}" href="${modules.metabolism.exists ? `/admin/metabolism?user=${user.id}` : "#"}"><strong>Метаболизм</strong><span>${modules.metabolism.exists ? "открыть расчёт" : "данных пока нет"}</span></a>
+          <a class="crm-app-link ${modules.dqs.exists || modules.dqs.has_access ? "available" : "disabled"}" href="${modules.dqs.exists || modules.dqs.has_access ? `/admin/dqs?user=${user.id}` : "#"}"><strong>DQS</strong><span>${modules.dqs.exists ? "открыть аналитику" : modules.dqs.has_access ? "доступ есть, данных нет" : "нет доступа"}</span></a>
+          <a class="crm-app-link ${modules.strength.exists || modules.strength.has_access ? "available" : "disabled"}" href="${modules.strength.exists || modules.strength.has_access ? `/admin/strength?user=${user.id}` : "#"}"><strong>Силовые</strong><span>${modules.strength.exists ? "открыть тренировки" : modules.strength.has_access ? "открыть приложение" : "нет доступа"}</span></a>
+          <a class="crm-app-link ${modules.metabolism.exists || modules.metabolism.has_access ? "available" : "disabled"}" href="${modules.metabolism.exists || modules.metabolism.has_access ? `/admin/metabolism?user=${user.id}` : "#"}"><strong>Метаболизм</strong><span>${modules.metabolism.exists ? "открыть расчёт" : modules.metabolism.has_access ? "открыть приложение" : "нет доступа"}</span></a>
           <a class="crm-app-link ${modules.telegram.exists ? "available" : "disabled"}" href="${modules.telegram.exists ? `/bot?view=contacts&user=${user.id}` : "#"}"><strong>Telegram</strong><span>${modules.telegram.exists ? "открыть контакт" : "аккаунт не связан"}</span></a>
         </div>
       </section>

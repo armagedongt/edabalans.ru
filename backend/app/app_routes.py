@@ -20,7 +20,7 @@ from app.app_service import (
     resolve_user_for_resource,
     utc_iso,
 )
-from app.auth import require_admin
+from app.auth import require_admin, session_admin
 from app.database import get_db
 from app.models import (
     AdminAppEdit,
@@ -84,6 +84,25 @@ def empty_strength_state(user_id: uuid.UUID) -> StrengthState:
         workouts=[],
         source="app",
     )
+
+
+APP_STATE_MODELS = {
+    "dqs": DqsState,
+    "strength": StrengthState,
+    "metabolism": MetabolismState,
+}
+
+
+def empty_app_state(app_code: str, user_id: uuid.UUID) -> Any:
+    if app_code == "dqs":
+        return DqsState(user_id=user_id, days={}, source="admin_open")
+    if app_code == "strength":
+        state = empty_strength_state(user_id)
+        state.source = "admin_open"
+        return state
+    if app_code == "metabolism":
+        return MetabolismState(user_id=user_id, variants={}, source="admin_open")
+    raise HTTPException(status_code=404, detail="app not found")
 
 
 @router.get("/api/apps/dqs")
@@ -232,13 +251,25 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
         action = str(body.get("action") or "ping")
         if action == "ping":
             return JSONResponse({"ok": True, "service": "strength-training"})
-        user = resolve_user_for_resource(db, body.get("email"), "strength")
+        admin_username = None
+        target_user_id = body.get("target_user_id")
+        if target_user_id:
+            admin_username = session_admin(request)
+            if not admin_username:
+                raise HTTPException(status_code=401, detail="admin authentication required")
+            user = db.get(User, uuid.UUID(str(target_user_id)))
+            if user is None or user.merged_into_user_id is not None:
+                raise HTTPException(status_code=404, detail="user not found")
+        else:
+            user = resolve_user_for_resource(db, body.get("email"), "strength")
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
         if not state:
+            if admin_username:
+                raise HTTPException(status_code=404, detail="application state not found")
             state = empty_strength_state(user.id)
             db.add(state)
             db.flush()
-        user_payload = {"user_id": str(user.id), "email": normalize_email(body.get("email")), "display_name": user.display_name or "", "status": user.status}
+        user_payload = {"user_id": str(user.id), "email": primary_email(db, user.id) if admin_username else normalize_email(body.get("email")), "display_name": user.display_name or "", "status": user.status}
         if action == "openUser":
             payload = {"ok": True, "user": user_payload}
         elif action == "getWorkout":
@@ -290,6 +321,14 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             payload = {"ok": True, "user": user_payload, "stats": history}
         else:
             payload = error("Unknown action: " + action)
+        if admin_username and action in {"saveSession", "saveExerciseSettings"} and payload.get("ok"):
+            db.add(AdminAppEdit(
+                admin_username=admin_username,
+                target_user_id=user.id,
+                app_code="strength",
+                action=action,
+                details={"version_after": state.version},
+            ))
         db.commit()
         return JSONResponse(payload)
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
@@ -322,19 +361,75 @@ async def metabolism_put(request: Request, db: Session = Depends(get_db)) -> JSO
             state = MetabolismState(user_id=user.id, variants={}, source="app")
             db.add(state)
             db.flush()
-        expected = body.get("version")
-        if expected is not None and int(expected) != state.version:
-            return JSONResponse(error("STATE_VERSION_CONFLICT"), status_code=409)
-        variants = body.get("variants")
-        active = int(body.get("activeVariant") or 1)
-        if not isinstance(variants, dict) or active not in (1, 2):
-            raise ValueError("INVALID_STATE")
-        state.variants = variants
-        state.active_variant = active
-        state.version += 1
+        apply_metabolism_update(state, body)
         db.commit()
         return JSONResponse({"ok": True, "version": state.version})
     except (AppAccessError, ValueError, TypeError) as exc:
+        db.rollback()
+        return JSONResponse(error(str(exc)), status_code=400)
+
+
+def apply_metabolism_update(state: MetabolismState, body: dict[str, Any]) -> None:
+    expected = body.get("version")
+    if expected is not None and int(expected) != state.version:
+        raise HTTPException(status_code=409, detail="STATE_VERSION_CONFLICT")
+    variants = body.get("variants")
+    active = int(body.get("activeVariant") or 1)
+    if not isinstance(variants, dict) or active not in (1, 2):
+        raise ValueError("INVALID_STATE")
+    state.variants = variants
+    state.active_variant = active
+    state.version += 1
+
+
+@router.get("/admin/api/apps/metabolism/users/{user_id}/runtime")
+def admin_metabolism_get(
+    user_id: uuid.UUID,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user_id))
+    if state is None:
+        raise HTTPException(status_code=404, detail="application state not found")
+    return {
+        "ok": True,
+        "variants": state.variants,
+        "activeVariant": state.active_variant,
+        "version": state.version,
+    }
+
+
+@router.put("/admin/api/apps/metabolism/users/{user_id}/runtime")
+async def admin_metabolism_put(
+    user_id: uuid.UUID,
+    request: Request,
+    admin_username: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> JSONResponse:
+    state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user_id))
+    if state is None:
+        raise HTTPException(status_code=404, detail="application state not found")
+    body = await request.json()
+    version_before = state.version
+    try:
+        apply_metabolism_update(state, body)
+        db.add(AdminAppEdit(
+            admin_username=admin_username,
+            target_user_id=user_id,
+            app_code="metabolism",
+            action="save_state",
+            details={
+                "changed_fields": ["variants", "active_variant"],
+                "version_before": version_before,
+                "version_after": state.version,
+            },
+        ))
+        db.commit()
+        return JSONResponse({"ok": True, "version": state.version})
+    except HTTPException:
+        db.rollback()
+        raise
+    except (ValueError, TypeError) as exc:
         db.rollback()
         return JSONResponse(error(str(exc)), status_code=400)
 
@@ -345,21 +440,48 @@ def admin_app_users(
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    model = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}[app_code]
+    model = APP_STATE_MODELS[app_code]
     states = db.scalars(select(model).order_by(model.updated_at.desc())).all()
-    users = {item.id: item for item in db.scalars(select(User).where(User.id.in_([state.user_id for state in states]))).all()} if states else {}
+    state_by_user = {item.user_id: item for item in states}
+    now = datetime.now(timezone.utc)
+    access_user_ids = set(
+        db.scalars(
+            select(UserAccess.user_id)
+            .join(Resource, Resource.id == UserAccess.resource_id)
+            .join(User, User.id == UserAccess.user_id)
+            .where(
+                Resource.code == app_code,
+                Resource.status == "active",
+                User.status == "active",
+                User.merged_into_user_id.is_(None),
+                UserAccess.revoked_at.is_(None),
+                (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+            )
+        ).all()
+    )
+    user_ids = set(state_by_user) | access_user_ids
+    users = {
+        item.id: item
+        for item in db.scalars(
+            select(User)
+            .where(User.id.in_(user_ids), User.merged_into_user_id.is_(None))
+            .order_by(User.display_name, User.created_at)
+        ).all()
+    } if user_ids else {}
     return {
         "ok": True,
         "users": [
             {
-                "user_id": str(item.user_id),
-                "display_name": (users.get(item.user_id).display_name if users.get(item.user_id) else None),
-                "email": primary_email(db, item.user_id),
-                "version": item.version,
-                "updated_at": utc_iso(item.updated_at),
-                "summary": admin_state_summary(app_code, item),
+                "user_id": str(user_id),
+                "display_name": users[user_id].display_name,
+                "email": primary_email(db, user_id),
+                "has_access": user_id in access_user_ids,
+                "has_state": user_id in state_by_user,
+                "version": state_by_user[user_id].version if user_id in state_by_user else None,
+                "updated_at": utc_iso(state_by_user[user_id].updated_at) if user_id in state_by_user else "",
+                "summary": admin_state_summary(app_code, state_by_user[user_id]) if user_id in state_by_user else {},
             }
-            for item in states
+            for user_id in users
         ],
     }
 
@@ -445,14 +567,14 @@ def admin_app_user(
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
-    models = {"dqs": DqsState, "strength": StrengthState, "metabolism": MetabolismState}
-    model = models.get(app_code)
+    model = APP_STATE_MODELS.get(app_code)
     if model is None:
         raise HTTPException(status_code=404, detail="app not found")
     user = db.get(User, user_id)
     state = db.scalar(select(model).where(model.user_id == user_id))
-    if user is None or state is None:
-        raise HTTPException(status_code=404, detail="application state not found")
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    has_access = app_code in active_resource_codes(db, user_id)
     return {
         "ok": True,
         "app_code": app_code,
@@ -461,10 +583,70 @@ def admin_app_user(
             "display_name": user.display_name,
             "email": primary_email(db, user.id),
         },
+        "has_access": has_access,
+        "has_state": state is not None,
         "state": {
             "version": state.version,
             "updated_at": utc_iso(state.updated_at),
             "source": state.source,
             "summary": admin_state_summary(app_code, state),
-        },
+            "data": admin_state_data(app_code, state),
+        } if state else None,
+    }
+
+
+def admin_state_data(app_code: str, state: Any) -> dict[str, Any]:
+    if app_code == "dqs":
+        return {"start_date": state.start_date, "days": state.days}
+    if app_code == "strength":
+        return {
+            "workout_types": state.workout_types,
+            "hidden_exercises": state.hidden_exercises,
+            "workouts": state.workouts,
+        }
+    return {
+        "variants": state.variants,
+        "active_variant": state.active_variant,
+        "formula_version": state.formula_version,
+    }
+
+
+@router.post("/admin/api/apps/{app_code}/users/{user_id}/open")
+def admin_open_app_user(
+    app_code: str,
+    user_id: uuid.UUID,
+    admin_username: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict[str, Any]:
+    model = APP_STATE_MODELS.get(app_code)
+    if model is None:
+        raise HTTPException(status_code=404, detail="app not found")
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    if app_code not in active_resource_codes(db, user_id):
+        raise HTTPException(status_code=403, detail="user has no active access")
+    state = db.scalar(select(model).where(model.user_id == user_id))
+    created = state is None
+    if created:
+        state = empty_app_state(app_code, user_id)
+        db.add(state)
+        db.flush()
+        db.add(
+            AdminAppEdit(
+                admin_username=admin_username,
+                target_user_id=user_id,
+                app_code=app_code,
+                action="open_empty_state",
+                details={"created": True, "version": state.version},
+            )
+        )
+        db.commit()
+        db.refresh(state)
+    return {
+        "ok": True,
+        "created": created,
+        "app_code": app_code,
+        "user_id": str(user_id),
+        "version": state.version,
     }

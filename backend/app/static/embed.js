@@ -1,7 +1,9 @@
 (function () {
   'use strict';
 
-  var APP_HOST = 'https://app.edabalans.ru';
+  var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+    ? location.origin
+    : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var roots = {
     dqs: 'dqs-app',
@@ -103,6 +105,7 @@
 
   function load(mount) {
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
+    var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
@@ -114,6 +117,9 @@
         return response.text();
       })
       .then(function (html) {
+        window.EdabalansAppContext = adminUser
+          ? {mode: 'admin', targetUserId: adminUser, app: app}
+          : {mode: 'user', app: app};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];
@@ -150,6 +156,8 @@
     }
     askIdentity(mounts, detected || remembered);
   }
+
+  window.EdabalansEmbed = {load: load, boot: boot};
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

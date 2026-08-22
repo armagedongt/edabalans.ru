@@ -455,7 +455,11 @@ select{
 var root=document.getElementById('metabolism-app');
 
 var STORAGE_KEY='metabolism_calc_v3';
-var API_URL='https://api.edabalans.ru/api/apps/metabolism';
+var appContext=window.EdabalansAppContext||{};
+var adminMode=appContext.mode==='admin'&&appContext.targetUserId;
+var API_URL=adminMode
+  ? '/admin/api/apps/metabolism/users/'+encodeURIComponent(appContext.targetUserId)+'/runtime'
+  : 'https://api.edabalans.ru/api/apps/metabolism';
 var memberEmail=
   String(
     (window.EdabalansIdentity&&window.EdabalansIdentity.email) ||
@@ -476,14 +480,14 @@ var variants={
 /*
   Загружаем значения именно из ЭТОГО браузера.
 */
-loadStorage();
+if(!adminMode){loadStorage();}
 
 
 function loadServer(){
-  if(!memberEmail){
+  if(!adminMode&&!memberEmail){
     return Promise.reject(new Error('Не удалось определить email пользователя.'));
   }
-  return fetch(API_URL+'?email='+encodeURIComponent(memberEmail))
+  return fetch(API_URL+(adminMode?'':'?email='+encodeURIComponent(memberEmail)),{credentials:'same-origin'})
     .then(function(response){return response.json();})
     .then(function(data){
       if(!data.ok){throw new Error(data.error||'Нет доступа к калькулятору');}
@@ -499,12 +503,13 @@ function loadServer(){
 
 
 function scheduleServerSave(){
-  if(!memberEmail||serverVersion===null){return;}
+  if((!adminMode&&!memberEmail)||serverVersion===null){return;}
   clearTimeout(serverSaveTimer);
   serverSaveTimer=setTimeout(function(){
     fetch(API_URL,{
       method:'PUT',
       headers:{'Content-Type':'application/json'},
+      credentials:'same-origin',
       body:JSON.stringify({
         email:memberEmail,
         variants:variants,
@@ -1503,7 +1508,7 @@ function switchButton(n){
 
 function saveStorage(syncServer){
 
-  try{
+  if(!adminMode){try{
 
     localStorage.setItem(
       STORAGE_KEY,
@@ -1513,7 +1518,7 @@ function saveStorage(syncServer){
       })
     );
 
-  }catch(e){}
+  }catch(e){}}
 
   if(syncServer!==false){scheduleServerSave();}
 }

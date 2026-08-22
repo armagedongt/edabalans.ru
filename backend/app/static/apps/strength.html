@@ -1138,8 +1138,15 @@
 var API_URL =
   'https://api.edabalans.ru/api/apps/strength';
 
-var ADMIN_EMAIL =
-  'admin@example.invalid';
+var APP_CONTEXT = window.EdabalansAppContext || {};
+var MANAGED_TARGET =
+  APP_CONTEXT.mode === 'admin'
+  ? String(APP_CONTEXT.targetUserId || '')
+  : '';
+
+if(MANAGED_TARGET){
+  API_URL = '/api/apps/strength';
+}
 
 var root =
   document.getElementById('strength-app');
@@ -1233,6 +1240,10 @@ function getApi(params){
   var query = [];
   var key;
 
+  if(MANAGED_TARGET){
+    params.target_user_id = MANAGED_TARGET;
+  }
+
   for(key in params){
 
     if(params.hasOwnProperty(key)){
@@ -1255,6 +1266,7 @@ function getApi(params){
     query.join('&'),
     {
       method:'GET',
+      credentials:'include',
       redirect:'follow'
     }
   )
@@ -1283,16 +1295,15 @@ function getApi(params){
 
 function postApi(body){
 
+  if(MANAGED_TARGET){
+    body.target_user_id = MANAGED_TARGET;
+  }
+
   return fetch(
     API_URL,
     {
       method:'POST',
-
-      /*
-        text/plain специально,
-        чтобы браузер не делал
-        CORS preflight к Apps Script.
-      */
+      credentials:'include',
 
       headers:{
         'Content-Type':
@@ -5792,6 +5803,15 @@ function showFatal(error){
 
 function init(){
 
+  if(MANAGED_TARGET){
+    app.email = '';
+    app.isAdmin = false;
+    getApi({action:'openUser'})
+      .then(function(result){loadClient(result.user);})
+      .catch(showFatal);
+    return;
+  }
+
   app.email =
     detectEmail();
 
@@ -5812,18 +5832,7 @@ function init(){
       .trim()
       .toLowerCase();
 
-  app.isAdmin =
-    app.email ===
-    ADMIN_EMAIL
-      .toLowerCase();
-
-  if(app.isAdmin){
-
-    loadAdminUsers();
-
-    return;
-
-  }
+  app.isAdmin = false;
 
   getApi({
     action:'openUser',
