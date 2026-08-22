@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Вход · edabalans Telegram</title>
+  <link rel="stylesheet" href="/bot/styles.css">
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-intro">
+      <div class="login-brand"><b>е</b><span>edabalans<small>Telegram</small></span></div>
+      <div>
+        <span class="login-kicker">УПРАВЛЕНИЕ БОТОМ</span>
+        <h1>Сообщения, цепочки и люди — в одном месте.</h1>
+        <p>Редактируйте контент, проверяйте путь пользователя и запускайте рассылки.</p>
+      </div>
+      <small class="login-note">Защищённое соединение · edabalans.ru</small>
+    </section>
+    <section class="login-panel">
+      <form class="login-card" id="login-form">
+        <div class="login-mark">е</div>
+        <span class="login-kicker">ДОБРО ПОЖАЛОВАТЬ</span>
+        <h2>Вход в админку</h2>
+        <p>Используйте данные администратора edabalans.</p>
+        <label>Электронная почта
+          <input name="username" type="email" value="armagedongt@gmail.com" autocomplete="username" required>
+        </label>
+        <label>Пароль
+          <span class="password-field"><input name="password" type="password" autocomplete="current-password" required autofocus><button type="button" id="show-password" aria-label="Показать пароль">Показать</button></span>
+        </label>
+        <div class="login-error" id="login-error" role="alert"></div>
+        <button class="login-submit" type="submit">Войти</button>
+        <small class="login-help">Сессия сохранится на этом устройстве на 7 дней.</small>
+      </form>
+    </section>
+  </main>
+  <script src="/bot/login.js"></script>
+</body>
+</html>

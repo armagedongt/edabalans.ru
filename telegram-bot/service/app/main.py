@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import asyncio
+import base64
+import hashlib
+import hmac
 import secrets
+import time
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 
-from fastapi import Depends, FastAPI, Header, HTTPException
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import FileResponse, RedirectResponse
 from sqlalchemy import delete, func, select, text
@@ -25,6 +29,8 @@ from app.telegram import TelegramClient
 settings = get_settings()
 security = HTTPBasic(auto_error=False)
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
+ADMIN_COOKIE = "edabalans_bot_admin"
+ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 7
 
 
 def client() -> TelegramClient:
@@ -33,13 +39,43 @@ def client() -> TelegramClient:
     return TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url)
 
 
-def require_admin(credentials: HTTPBasicCredentials | None = Depends(security)) -> str:
+def _session_token(username: str, expires_at: int) -> str:
+    payload = base64.urlsafe_b64encode(f"{username}|{expires_at}".encode()).decode().rstrip("=")
+    signature = hmac.new(settings.admin_password.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    return f"{payload}.{signature}"
+
+
+def _session_username(request: Request) -> str | None:
+    token = request.cookies.get(ADMIN_COOKIE, "")
+    try:
+        payload, signature = token.rsplit(".", 1)
+        expected = hmac.new(settings.admin_password.encode(), payload.encode(), hashlib.sha256).hexdigest()
+        if not secrets.compare_digest(signature, expected):
+            return None
+        decoded = base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)).decode()
+        username, expires = decoded.rsplit("|", 1)
+        if username != settings.admin_username or int(expires) < int(time.time()):
+            return None
+        return username
+    except (ValueError, UnicodeDecodeError):
+        return None
+
+
+def _admin_identity(request: Request, credentials: HTTPBasicCredentials | None = None) -> str | None:
     if not settings.admin_username and not settings.admin_password:
         return "local-admin"
+    cookie_username = _session_username(request)
+    if cookie_username:
+        return cookie_username
     valid = credentials and secrets.compare_digest(credentials.username, settings.admin_username) and secrets.compare_digest(credentials.password, settings.admin_password)
-    if not valid:
-        raise HTTPException(401, "Authentication required", headers={"WWW-Authenticate": "Basic"})
-    return credentials.username
+    return credentials.username if valid else None
+
+
+def require_admin(request: Request, credentials: HTTPBasicCredentials | None = Depends(security)) -> str:
+    identity = _admin_identity(request, credentials)
+    if not identity:
+        raise HTTPException(401, "Authentication required")
+    return identity
 
 
 def _bot(session: Session) -> BotInstance:
@@ -161,15 +197,47 @@ app = FastAPI(title="edabalans Telegram service", version="0.1.0", lifespan=life
 
 
 @app.get("/bot", include_in_schema=False)
-def bot_admin(_: str = Depends(require_admin)) -> FileResponse:
-    return FileResponse(STATIC_ROOT / "index.html")
+def bot_admin(request: Request, credentials: HTTPBasicCredentials | None = Depends(security)) -> FileResponse:
+    page = "index.html" if _admin_identity(request, credentials) else "login.html"
+    return FileResponse(STATIC_ROOT / page)
 
 
 @app.get("/bot/{asset_name}", include_in_schema=False)
-def bot_admin_asset(asset_name: str, _: str = Depends(require_admin)) -> FileResponse:
-    if asset_name not in {"app.js", "styles.css"}:
+def bot_admin_asset(asset_name: str) -> FileResponse:
+    if asset_name not in {"app.js", "login.js", "styles.css"}:
         raise HTTPException(404)
     return FileResponse(STATIC_ROOT / asset_name)
+
+
+@app.post("/bot-api/login")
+def bot_login(body: dict, response: Response) -> dict:
+    username = str(body.get("username", "")).strip().lower()
+    password = str(body.get("password", ""))
+    valid = (
+        settings.admin_username
+        and settings.admin_password
+        and secrets.compare_digest(username, settings.admin_username.lower())
+        and secrets.compare_digest(password, settings.admin_password)
+    )
+    if not valid:
+        raise HTTPException(401, "Неверная почта или пароль")
+    expires_at = int(time.time()) + ADMIN_SESSION_SECONDS
+    response.set_cookie(
+        ADMIN_COOKIE,
+        _session_token(settings.admin_username, expires_at),
+        max_age=ADMIN_SESSION_SECONDS,
+        httponly=True,
+        secure=True,
+        samesite="strict",
+        path="/",
+    )
+    return {"ok": True}
+
+
+@app.post("/bot-api/logout")
+def bot_logout(response: Response) -> dict:
+    response.delete_cookie(ADMIN_COOKIE, path="/")
+    return {"ok": True}
 
 
 @app.get("/health")

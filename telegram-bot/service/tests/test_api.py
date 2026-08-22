@@ -24,6 +24,26 @@ class FakeTelegram:
         self.callbacks.append((callback_query_id, text))
 
 
+def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
+    monkeypatch.setattr(main_module.settings, "admin_username", "owner@example.com")
+    monkeypatch.setattr(main_module.settings, "admin_password", "correct-password")
+    client = TestClient(app, base_url="https://testserver")
+
+    login_page = client.get("/bot")
+    assert login_page.status_code == 200
+    assert "Вход в админку" in login_page.text
+
+    unauthorized = client.get("/bot-api/sequences")
+    assert unauthorized.status_code == 401
+    assert "www-authenticate" not in unauthorized.headers
+
+    assert client.post("/bot-api/login", json={"username": "owner@example.com", "password": "wrong"}).status_code == 401
+    logged_in = client.post("/bot-api/login", json={"username": "owner@example.com", "password": "correct-password"})
+    assert logged_in.status_code == 200
+    assert client.get("/bot").status_code == 200
+    assert "Цепочки" in client.get("/bot").text
+
+
 def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'api.sqlite'}")
     Base.metadata.create_all(engine)
