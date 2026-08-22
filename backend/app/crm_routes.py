@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 import time
+from datetime import date
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
@@ -25,6 +26,7 @@ from app.crm_service import (
     add_tag,
     list_tags,
     list_payments,
+    list_payment_products,
     list_users,
     summary,
     merge_tag,
@@ -289,10 +291,31 @@ def admin_revoke_access(user_id: uuid.UUID, resource_code: str,
 @router.get("/admin/api/payments")
 def admin_payments(
     limit: int = Query(default=200, ge=1, le=500),
+    q: str = Query(default="", max_length=255),
+    product_code: str = Query(default="", max_length=80),
+    date_from: date | None = Query(default=None),
+    date_to: date | None = Query(default=None),
+    amount_kind: str = Query(default="all", pattern="^(all|actual|estimated)$"),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> list[dict]:
-    return list_payments(db, limit=limit)
+    return list_payments(
+        db,
+        limit=limit,
+        query=q,
+        product_code=product_code,
+        date_from=date_from,
+        date_to=date_to,
+        amount_kind=amount_kind,
+    )
+
+
+@router.get("/admin/api/payment-products")
+def admin_payment_products(
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> list[dict]:
+    return list_payment_products(db)
 
 
 @router.get("/admin/api/tags")

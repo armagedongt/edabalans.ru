@@ -230,6 +230,9 @@ class Payment(Base):
     email_at_purchase: Mapped[str | None] = mapped_column(String(320))
     product_name_raw: Mapped[str] = mapped_column(Text, nullable=False)
     amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    amount_is_estimated: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
     payment_status: Mapped[str] = mapped_column(String(32), nullable=False)
     review_status: Mapped[str] = mapped_column(

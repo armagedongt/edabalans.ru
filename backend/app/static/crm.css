@@ -90,6 +90,8 @@ button { cursor: pointer; }
 .crm-pager { display: flex; justify-content: center; align-items: center; gap: 12px; padding: 14px 0 4px; color: var(--muted); font-size: 11px; }
 .crm-btn:disabled { cursor: default; opacity: .45; }
 .crm-tag-toolbar { grid-template-columns: 1fr 190px 150px; }
+.crm-payment-toolbar { display: grid; grid-template-columns: minmax(180px, 1.4fr) minmax(160px, 1fr) 150px 150px 160px auto; gap: 8px; align-items: end; margin: 11px 0; }
+.crm-payment-toolbar label { display: grid; gap: 4px; color: var(--muted); font-size: 10px; }
 .crm-tag-list { display: grid; gap: 9px; }
 .crm-tag-board { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; align-items:start; }
 .crm-tag-column { min-width:0; padding:12px; border-radius:16px; background:#fff; box-shadow:var(--shadow); }
@@ -149,4 +151,5 @@ button { cursor: pointer; }
   .crm-toolbar { grid-template-columns: 1fr; }
   .crm-head { align-items: flex-start; }
   .crm-tag-toolbar, .crm-tag-edit { grid-template-columns: 1fr; }
+  .crm-payment-toolbar { grid-template-columns: 1fr; }
 }

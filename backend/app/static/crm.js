@@ -2,7 +2,10 @@
   "use strict";
 
   const root = document.getElementById("crm-app");
-  const state = { view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0 };
+  const state = {
+    view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
+    paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }
+  };
   const pageSize = 250;
   const tagCategories = {
     manual: "Ручные",
@@ -91,7 +94,7 @@
         <div class="crm-stat"><div class="crm-k">ЛЮДЕЙ В CRM</div><div class="crm-v">${data.users || 0}</div><div class="crm-s">единый user_id</div></div>
         <div class="crm-stat"><div class="crm-k">ПОКУПАТЕЛЕЙ</div><div class="crm-v">${data.buyers || 0}</div><div class="crm-s">есть подтверждённая оплата</div></div>
         <div class="crm-stat"><div class="crm-k">ПОКУПОК В ИСТОРИИ</div><div class="crm-v">${data.paid_payments || 0}</div><div class="crm-s">включая старые без известной суммы</div></div>
-        <div class="crm-stat"><div class="crm-k">ВЫРУЧКА</div><div class="crm-v">${money(data.revenue_rub)}</div><div class="crm-s">подтверждённые RUB</div></div>
+        <div class="crm-stat"><div class="crm-k">ВЫРУЧКА ПО ФАКТУ</div><div class="crm-v">${money(data.revenue_rub)}</div><div class="crm-s">без расчётных сумм${data.estimated_revenue_rub ? ` · ещё ≈ ${money(data.estimated_revenue_rub)}` : ""}</div></div>
         <div class="crm-stat"><div class="crm-k">АККАУНТОВ TILDA</div><div class="crm-v">${data.tilda_members || 0}</div><div class="crm-s">последняя каноничная сверка</div></div>
         <div class="crm-stat"><div class="crm-k">ПРОВЕРИТЬ ДОСТУПЫ</div><div class="crm-v">${data.access_reviews || 0}</div><div class="crm-s">только реальные спорные случаи</div></div>
       </div>`;
@@ -114,7 +117,7 @@
             <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span></div>
           </div>
           <div class="crm-client-grid">
-            <div class="crm-mini"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div></div>
+            <div class="crm-mini"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div>${user.estimated_ltv_rub ? `<div class="crm-s">+ ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</div>
             <div class="crm-mini"><div class="crm-k">ПОКУПОК</div><div class="crm-v">${user.purchase_count}</div></div>
             <div class="crm-mini"><div class="crm-k">ПОСЛЕДНЯЯ</div><div class="crm-v">${date(user.last_purchase_at, false)}</div></div>
           </div>
@@ -283,22 +286,47 @@
   async function renderPayments() {
     root.innerHTML = top("payments") + '<div class="crm-loading">Загружаю оплаты…</div>';
     bindTop();
-    state.payments = await api("/admin/api/payments?limit=500");
+    const filters = state.paymentFilters;
+    const params = new URLSearchParams({ limit: "500", ...filters });
+    const [payments, products] = await Promise.all([
+      api(`/admin/api/payments?${params}`),
+      api("/admin/api/payment-products")
+    ]);
+    state.payments = payments;
     const rows = state.payments.map((payment) => `
       <tr ${payment.user_id ? `data-user-id="${esc(payment.user_id)}"` : ""}>
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
         <td><strong>${esc(payment.display_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || "")}</div></td>
         <td>${esc(payment.product_name || "Продукт не определён")}</td>
         <td><span class="crm-status ${["paid","confirmed"].includes(payment.status) ? "st-paid" : "st-processing"}">${esc(payment.status)}</span>${payment.review_status === "pending" ? '<div class="crm-row-meta">нужна проверка</div>' : ""}</td>
-        <td class="crm-money">${money(payment.amount)}</td>
+        <td class="crm-money">${payment.amount_is_estimated ? "≈ " : ""}${money(payment.amount)}<div class="crm-row-meta">${payment.amount_is_estimated ? "оценка" : "факт"}</div></td>
       </tr>`).join("");
     root.innerHTML = top("payments") + `${stats()}
+      <form class="crm-payment-toolbar" id="payment-filters">
+        <input class="crm-input" id="payment-q" placeholder="Человек, email или продукт" value="${esc(filters.q)}">
+        <select class="crm-input" id="payment-product"><option value="">Все продукты</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select>
+        <label><span>С</span><input class="crm-input" id="payment-from" type="date" value="${esc(filters.date_from)}"></label>
+        <label><span>По</span><input class="crm-input" id="payment-to" type="date" value="${esc(filters.date_to)}"></label>
+        <select class="crm-input" id="payment-kind"><option value="all">Факт и оценки</option><option value="actual" ${filters.amount_kind === "actual" ? "selected" : ""}>Только факт</option><option value="estimated" ${filters.amount_kind === "estimated" ? "selected" : ""}>Только оценки</option></select>
+        <button class="crm-btn" type="submit">Показать</button>
+      </form>
       <div class="crm-table-wrap"><table class="crm-table">
         <thead><tr><th>Дата</th><th>Человек</th><th>Продукт</th><th>Статус</th><th>Сумма</th></tr></thead>
         <tbody>${rows || '<tr><td colspan="5" class="crm-empty">Оплат пока нет</td></tr>'}</tbody>
       </table></div><div class="crm-foot">Лента оплат неизменяема · повторный webhook не создаёт дубль</div>`;
     bindTop();
     bindUserCards();
+    document.getElementById("payment-filters").addEventListener("submit", (event) => {
+      event.preventDefault();
+      state.paymentFilters = {
+        q: document.getElementById("payment-q").value,
+        product_code: document.getElementById("payment-product").value,
+        date_from: document.getElementById("payment-from").value,
+        date_to: document.getElementById("payment-to").value,
+        amount_kind: document.getElementById("payment-kind").value
+      };
+      renderPayments().catch(showError);
+    });
   }
 
   function renderStructure() {
@@ -332,7 +360,7 @@
   }
 
   function paymentRow(item) {
-    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name || "Продукт не определён")}</span><strong>${money(item.amount)}</strong></div>
+    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name || "Продукт не определён")}</span><strong>${item.amount_is_estimated ? "≈ " : ""}${money(item.amount)}</strong></div>
       <div class="crm-row-meta">${date(item.paid_at || item.source_event_at, true)} · ${esc(item.status)}${item.product_code ? ` · ${esc(item.product_code)}` : ""}</div></div>`;
   }
 
@@ -362,7 +390,7 @@
         <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${user.purchase_count ? "st-buyer" : "st-lead"}">${user.purchase_count ? "Покупатель" : "Лид"}</span></div>
       </div>
       <div class="crm-kpis">
-        <div class="crm-stat"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div></div>
+        <div class="crm-stat"><div class="crm-k">ОПЛАЧЕНО ПО ФАКТУ</div><div class="crm-v">${money(user.ltv_rub)}</div>${user.estimated_ltv_rub ? `<div class="crm-s">Оценка отдельно: ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</div>
         <div class="crm-stat"><div class="crm-k">ПОКУПОК</div><div class="crm-v">${user.purchase_count}</div></div>
         <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${user.accesses.filter((item) => !item.revoked_at).length}</div></div>
         <div class="crm-stat"><div class="crm-k">ПЕРВОЕ ПОЯВЛЕНИЕ</div><div class="crm-v" style="font-size:15px">${date(user.first_seen_at, false)}</div></div>

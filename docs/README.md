@@ -42,7 +42,7 @@
 | DQS | `backend/app/app_routes.py`, `app_service.py`, `static/apps/dqs.html`, legacy в `legacy/google/dqs/` | `dqs_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Силовые тренировки | `backend/app/app_routes.py`, `app_service.py`, `static/apps/strength.html`, legacy в `legacy/google/strength/` | `strength_states`, `strength_exercises`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Метаболизм | `backend/app/app_routes.py`, `app_service.py`, `static/apps/metabolism.html`, legacy в `legacy/google/metabolism/` | `metabolism_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
-| Импорт и аудит | `backend/app/importers/`, `tools/`, миграции | `import_batches`, `legacy_import_records`, `user_merge_events` | `CRM_DATA_MODEL.md`, `CRM_CORE_DESIGN.md` |
+| Импорт и аудит | `backend/app/importers/` (включая приватные ручные оплаты через `manual_payments.py`), `tools/`, миграции | `import_batches`, `legacy_import_records`, `user_merge_events` | `CRM_DATA_MODEL.md`, `CRM_CORE_DESIGN.md` |
 | Инфраструктура | `compose.yaml`, `infra/`, `.github/workflows/` | `alembic_version`; служебная БД NocoDB отдельно | `OPERATIONS.md` |
 
 ## Правила полноты документации

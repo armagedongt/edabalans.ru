@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 import uuid
-from datetime import datetime, timezone
+from datetime import date, datetime, time, timezone
 from decimal import Decimal
 
 from sqlalchemy import distinct, func, or_, select, text
@@ -46,7 +46,16 @@ def summary(db: Session) -> dict:
     ) or 0
     revenue = db.scalar(
         select(func.sum(Payment.amount)).where(
-            Payment.payment_status == "paid", Payment.currency == "RUB"
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
+            Payment.currency == "RUB",
+            Payment.amount_is_estimated.is_(False),
+        )
+    )
+    estimated_revenue = db.scalar(
+        select(func.sum(Payment.amount)).where(
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
+            Payment.currency == "RUB",
+            Payment.amount_is_estimated.is_(True),
         )
     )
     tilda_members = db.scalar(
@@ -67,6 +76,7 @@ def summary(db: Session) -> dict:
         "buyers": buyers,
         "paid_payments": paid_payments,
         "revenue_rub": money(revenue),
+        "estimated_revenue_rub": money(estimated_revenue),
         "tilda_members": tilda_members,
         "access_reviews": access_reviews,
     }
@@ -98,12 +108,24 @@ def _user_scalar_subqueries():
         .correlate(User)
         .scalar_subquery()
     )
-    ltv = (
+    actual_ltv = (
         select(func.coalesce(func.sum(Payment.amount), 0))
         .where(
             Payment.user_id == User.id,
-            Payment.payment_status == "paid",
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
             Payment.currency == "RUB",
+            Payment.amount_is_estimated.is_(False),
+        )
+        .correlate(User)
+        .scalar_subquery()
+    )
+    estimated_ltv = (
+        select(func.coalesce(func.sum(Payment.amount), 0))
+        .where(
+            Payment.user_id == User.id,
+            Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES),
+            Payment.currency == "RUB",
+            Payment.amount_is_estimated.is_(True),
         )
         .correlate(User)
         .scalar_subquery()
@@ -114,7 +136,7 @@ def _user_scalar_subqueries():
         .correlate(User)
         .scalar_subquery()
     )
-    return email, telegram, purchases, ltv, last_purchase
+    return email, telegram, purchases, actual_ltv, estimated_ltv, last_purchase
 
 
 def list_users(
@@ -124,7 +146,7 @@ def list_users(
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
-    email, telegram, purchases, ltv, last_purchase = _user_scalar_subqueries()
+    email, telegram, purchases, actual_ltv, estimated_ltv, last_purchase = _user_scalar_subqueries()
     stmt = (
         select(
             User.id,
@@ -137,7 +159,8 @@ def list_users(
             email.label("email"),
             telegram.label("telegram"),
             purchases.label("purchase_count"),
-            ltv.label("ltv_rub"),
+            actual_ltv.label("ltv_rub"),
+            estimated_ltv.label("estimated_ltv_rub"),
             last_purchase.label("last_purchase_at"),
         )
         .where(User.merged_into_user_id.is_(None))
@@ -183,6 +206,8 @@ def list_users(
             "telegram": row["telegram"],
             "purchase_count": row["purchase_count"] or 0,
             "ltv_rub": money(row["ltv_rub"]),
+            "estimated_ltv_rub": money(row["estimated_ltv_rub"]),
+            "total_ltv_rub": money(row["ltv_rub"]) + money(row["estimated_ltv_rub"]),
             "last_purchase_at": row["last_purchase_at"],
             "first_seen_at": row["first_seen_at"],
             "access_review_status": row["access_review_status"],
@@ -193,14 +218,53 @@ def list_users(
     ]
 
 
-def list_payments(db: Session, limit: int = 200) -> list[dict]:
+def list_payment_products(db: Session) -> list[dict]:
     rows = db.execute(
+        select(Product.code, Product.name)
+        .join(Payment, Payment.product_id == Product.id)
+        .distinct()
+        .order_by(Product.name)
+    ).all()
+    return [{"code": code, "name": name} for code, name in rows]
+
+
+def list_payments(
+    db: Session,
+    limit: int = 200,
+    query: str = "",
+    product_code: str = "",
+    date_from: date | None = None,
+    date_to: date | None = None,
+    amount_kind: str = "all",
+) -> list[dict]:
+    stmt = (
         select(Payment, User.display_name, Product.code, Product.name)
         .outerjoin(User, User.id == Payment.user_id)
         .outerjoin(Product, Product.id == Payment.product_id)
         .order_by(Payment.source_event_at.desc().nullslast(), Payment.created_at.desc())
         .limit(min(max(limit, 1), 500))
-    ).all()
+    )
+    if query.strip():
+        pattern = f"%{query.strip()}%"
+        stmt = stmt.where(
+            or_(
+                User.display_name.ilike(pattern),
+                Payment.email_at_purchase.ilike(pattern),
+                Payment.product_name_raw.ilike(pattern),
+            )
+        )
+    if product_code.strip():
+        stmt = stmt.where(Product.code == product_code.strip())
+    event_date = func.coalesce(Payment.paid_at, Payment.source_event_at, Payment.created_at)
+    if date_from:
+        stmt = stmt.where(event_date >= datetime.combine(date_from, time.min, tzinfo=timezone.utc))
+    if date_to:
+        stmt = stmt.where(event_date <= datetime.combine(date_to, time.max, tzinfo=timezone.utc))
+    if amount_kind == "actual":
+        stmt = stmt.where(Payment.amount_is_estimated.is_(False))
+    elif amount_kind == "estimated":
+        stmt = stmt.where(Payment.amount_is_estimated.is_(True))
+    rows = db.execute(stmt).all()
     return [
         {
             "id": str(payment.id),
@@ -211,6 +275,7 @@ def list_payments(db: Session, limit: int = 200) -> list[dict]:
             "product_name": product_name,
             "product_name_raw": payment.product_name_raw,
             "amount": money(payment.amount) if payment.amount is not None else None,
+            "amount_is_estimated": payment.amount_is_estimated,
             "currency": payment.currency,
             "status": payment.payment_status,
             "review_status": payment.review_status,
@@ -303,6 +368,8 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         .limit(1)
     )
     paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]
+    actual_paid = [payment for payment in paid if not payment.amount_is_estimated]
+    estimated_paid = [payment for payment in paid if payment.amount_is_estimated]
     return {
         "id": str(user.id),
         "display_name": user.display_name,
@@ -343,9 +410,9 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             for item in phones
         ],
         "purchase_count": len(paid),
-        "ltv_rub": money(
-            sum((payment.amount for payment in paid if payment.currency == "RUB" and payment.amount is not None), Decimal())
-        ),
+        "ltv_rub": money(sum((payment.amount for payment in actual_paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),
+        "estimated_ltv_rub": money(sum((payment.amount for payment in estimated_paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),
+        "total_ltv_rub": money(sum((payment.amount for payment in paid if payment.currency == "RUB" and payment.amount is not None), Decimal())),
         "payments": [
             {
                 "id": str(payment.id),
@@ -353,6 +420,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "product_name": product_name,
                 "product_name_raw": payment.product_name_raw,
                 "amount": money(payment.amount) if payment.amount is not None else None,
+                "amount_is_estimated": payment.amount_is_estimated,
                 "currency": payment.currency,
                 "status": payment.payment_status,
                 "review_status": payment.review_status,
