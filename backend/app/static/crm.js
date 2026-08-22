@@ -296,7 +296,7 @@
     const rows = state.payments.map((payment) => `
       <tr ${payment.user_id ? `data-user-id="${esc(payment.user_id)}"` : ""}>
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
-        <td><strong>${esc(payment.display_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || "")}</div></td>
+        <td><strong>${esc(payment.display_name || payment.payer_name || "Без имени")}</strong><div class="crm-email">${esc(payment.email || (payment.user_id ? "" : "ещё не привязан к карточке"))}</div></td>
         <td>${esc(payment.product_name || "Продукт не определён")}</td>
         <td><span class="crm-status ${["paid","confirmed"].includes(payment.status) ? "st-paid" : "st-processing"}">${esc(payment.status)}</span>${payment.review_status === "pending" ? '<div class="crm-row-meta">нужна проверка</div>' : ""}</td>
         <td class="crm-money">${payment.amount_is_estimated ? "≈ " : ""}${money(payment.amount)}<div class="crm-row-meta">${payment.amount_is_estimated ? "оценка" : "факт"}</div></td>

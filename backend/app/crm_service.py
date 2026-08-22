@@ -251,6 +251,7 @@ def list_payments(
                 User.display_name.ilike(pattern),
                 Payment.email_at_purchase.ilike(pattern),
                 Payment.product_name_raw.ilike(pattern),
+                Payment.raw_payload["payer_name"].as_string().ilike(pattern),
             )
         )
     if product_code.strip():
@@ -270,6 +271,7 @@ def list_payments(
             "id": str(payment.id),
             "user_id": str(payment.user_id) if payment.user_id else None,
             "display_name": display_name,
+            "payer_name": (payment.raw_payload or {}).get("payer_name"),
             "email": payment.email_at_purchase,
             "product_code": product_code,
             "product_name": product_name,
