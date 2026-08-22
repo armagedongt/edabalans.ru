@@ -462,6 +462,7 @@ TAG_CATEGORIES = {
     "access_hint",
     "review",
     "content_review",
+    "refund",
 }
 TAG_STATUSES = {"active", "archived", "review", "merged"}
 

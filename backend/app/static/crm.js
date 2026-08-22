@@ -11,10 +11,10 @@
     mailing_funnel: "Рассылки и воронки",
     source: "Источники",
     purchase_signal: "Сигналы о покупке",
-    lottery: "Лотерея",
     other: "Прочее",
     technical: "Служебные"
     ,content: "Материалы", funnel: "Старые воронки", intensive: "Старый интенсив",
+    refund: "Возвраты", lottery: "Лотерея",
     obsolete: "Устаревшее", purchase: "Покупки", routing: "Маршрутизация",
     tariff: "Тарифы", access_hint: "Проверка доступов", review: "На разбор",
     content_review: "Контент на разбор"
@@ -246,6 +246,7 @@
     const labels = {content:"Материалы",source:"Источники",tariff:"Тарифы и подсказки",
       purchase:"Подтверждения покупок",subscription:"Подписки",routing:"Маршрутизация",
       access_hint:"Проверка доступов",review:"На разбор",content_review:"Контент на разбор",
+      refund:"Возвраты",lottery:"Лотерея",
       funnel:"Архив — старые воронки",intensive:"Архив — старый интенсив",
       obsolete:"Архив — устаревшее",technical:"Архив — служебное"};
     const grouped = {};
@@ -348,6 +349,8 @@
     const firstSource = user.attribution.find((item) => item.source || item.utm_source || item.utm_campaign);
     const origin = user.data_origin === "native" ? "Новая система" : "История";
     const tilda = user.tilda_membership;
+    const purchaseTags = user.tags.filter((item) => item.category === "purchase");
+    const otherTags = user.tags.filter((item) => item.category !== "purchase");
     root.innerHTML = `
       <div class="crm-profile-head">
         <div class="crm-profile-id">
@@ -364,6 +367,9 @@
         <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${user.accesses.filter((item) => !item.revoked_at).length}</div></div>
         <div class="crm-stat"><div class="crm-k">ПЕРВОЕ ПОЯВЛЕНИЕ</div><div class="crm-v" style="font-size:15px">${date(user.first_seen_at, false)}</div></div>
       </div>
+      <section class="crm-card"><div class="crm-card-title">Покупки <span class="crm-card-sub">простые ярлыки для вас и бота</span></div>
+        <div class="crm-tags">${purchaseTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">покупки не определены</span>'}</div>
+      </section>
       <section class="crm-card crm-apps-card"><div class="crm-card-title">Человек в системе <span class="crm-card-sub">тот же user_id во всех разделах</span></div>
         <div class="crm-app-links">
           <a class="crm-app-link available" href="/crm?user=${user.id}"><strong>CRM</strong><span>текущая карточка</span></a>
@@ -403,7 +409,7 @@
             <div class="crm-source"><div class="crm-k">ПЕРВЫЙ ИЗВЕСТНЫЙ</div><strong>${esc((firstSource && (firstSource.source || firstSource.utm_source)) || "Не указан")}</strong>
             <div class="crm-row-meta">${esc((firstSource && firstSource.utm_campaign) || "")}</div></div>
           </section>
-          <section class="crm-card"><div class="crm-card-title">Теги</div><div class="crm-tags">${user.tags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">тегов нет</span>'}</div>
+          <section class="crm-card"><div class="crm-card-title">Теги</div><div class="crm-tags">${otherTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">тегов нет</span>'}</div>
             <form class="crm-two" id="tag-form" style="margin-top:10px"><input class="crm-input" id="tag-name" placeholder="Например: рассылка 100"><button class="crm-btn small" type="submit">Добавить</button></form>
           </section>
           <section class="crm-card"><div class="crm-card-title">Заметки</div>
