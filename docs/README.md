@@ -30,7 +30,7 @@
 | Каталог авторских материалов | `CONTENT_CATALOG.md` | Pikabu collector, text-first хранение, таблицы и admin API |
 | Платежи Tilda | `TILDA_PAYMENTS.md` | Приём webhook, нормализация и запись оплаты |
 | Получение и открытие доступов | `knowledge-base/ACCESS_RULES.md` | Исторические клиенты, review-gate, персональные ссылки и отложенное открытие |
-| Работа сотрудника с доступами | `knowledge-base/ACCESS_MANAGEMENT_GUIDE.md` | Пошаговая выдача старых и новых продуктов, персональные предложения и контроль ошибок |
+| Рабочие инструкции Сергею и персоналу | `knowledge-base/README.md` | Повседневные действия сотрудников; первая инструкция — управление доступами клиентов |
 | Tilda-страница персональной ссылки | `TILDA_PERSONAL_ACCESS_EMBED.md` | Единственный T123-код и production URL страницы |
 | Будущая синхронизация Tilda Members Area | `plans/TILDA_MEMBERS_SYNC.md` | Приоритет CRM, расхождения групп, ограничения API и вариант собственного кабинета |
 | Архив LeadTeh | `../leadteh-export/README.md` | Локальный экспорт и правила работы с архивом |
