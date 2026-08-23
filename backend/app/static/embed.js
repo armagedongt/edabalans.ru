@@ -16,6 +16,7 @@
   };
   var roots = {
     'masterclass-course': 'masterclass-course-app',
+    'masterclass-sales': 'masterclass-sales-app',
     dqs: 'dqs-app',
     strength: 'strength-app',
     metabolism: 'metabolism-app',

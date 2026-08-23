@@ -14,6 +14,7 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
+    MasterclassEvent,
     Payment,
     OfferCheckout,
     Product,
@@ -137,10 +138,16 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert db.scalar(select(UserEmail.email_normalized)) == "client@example.test"
         assert db.scalar(select(UserPhone.phone_normalized)) == "+79991234567"
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        event = db.scalar(select(MasterclassEvent))
+        assert event is not None
+        assert event.event_type == "masterclass_purchase_confirmed"
+        assert event.details["payment_id"] == str(payment.id)
 
     duplicate = client.post(
         "/integrations/tilda/payments", data=paid_payload(), headers=HEADERS
     )
+    with session_factory() as db:
+        assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
     assert duplicate.status_code == 200
     assert duplicate.json()["status"] == "duplicate"
     with session_factory() as db:

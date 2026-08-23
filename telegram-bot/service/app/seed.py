@@ -423,7 +423,18 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             SequenceStep.step_key == "nurture_hard_sale_1",
         )
     ) if current_nurture_version else None
-    current_nurture_has_layout = bool(current_nurture_version and current_first_sale and not current_first_delay_step)
+    current_purchase_check = session.scalar(
+        select(SequenceStep.id).where(
+            SequenceStep.sequence_version_id == current_nurture_version.id,
+            SequenceStep.step_key.like("nurture_paid_check_%"),
+        ).limit(1)
+    ) if current_nurture_version else None
+    current_nurture_has_layout = bool(
+        current_nurture_version
+        and current_first_sale
+        and not current_first_delay_step
+        and not current_purchase_check
+    )
     if not current_nurture_has_layout:
         last_version = session.scalar(
             select(SequenceVersion.version_no)
@@ -431,6 +442,8 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             .order_by(SequenceVersion.version_no.desc())
             .limit(1)
         ) or 0
+        if current_nurture_version:
+            current_nurture_version.status = "archived"
         version = SequenceVersion(sequence_id=sequence.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
         nurture_posts = [("hard_sale_1", None), ("hard_sale_2", 86400)]
@@ -439,7 +452,6 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         for content_code, delay in nurture_posts:
             if delay is not None:
                 specs.append((f"nurture_delay_{content_code}", "DELAY", None, delay, {}))
-            specs.append((f"nurture_paid_check_{content_code}", "CONDITION", None, None, {"condition": "has_product", "product_code": "masterclass", "product_codes": ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"], "true_sequence": POSTPURCHASE_CODE}))
             specs.append((f"nurture_{content_code}", "MESSAGE", content_code, None, {}))
         specs.append(("nurture_finish", "STOP", None, None, {}))
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):

@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
+from app.customer_lifecycle import stop_presale_runs_for_user
 from app.models import (
     Contact,
     CrmMessengerAccount,
@@ -115,6 +116,11 @@ def consume_masterclass_link(
             deduplication_key=f"messenger-link-confirmed:{token.id}",
             metadata_json={"platform": "telegram", "purpose": token.purpose},
         )
+    )
+    stop_presale_runs_for_user(
+        session,
+        token.user_id,
+        reason="messenger_link_confirmed",
     )
     _queue_link_messages(session, token.user_id, token.id)
     return True, "Telegram привязан. Сейчас пришлю ваши данные и стартовую анкету отдельными сообщениями."

@@ -4,7 +4,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
-from app.masterclass_dispatch import dispatch_due_masterclass_notifications
+from app.masterclass_dispatch import client_values, dispatch_due_masterclass_notifications
 from app.models import BotInstance, Contact, ContentItem, MasterclassNotification
 
 
@@ -45,6 +45,55 @@ def add_contact_and_content(session):
         session.add(ContentItem(code=code, title=code, body_source="Откройте {{offers_url}}", status="published"))
     session.flush()
     return contact
+
+
+def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_path):
+    with session_factory(tmp_path) as session:
+        contact = add_contact_and_content(session)
+        for ddl in (
+            "CREATE TABLE user_emails (user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
+            "CREATE TABLE resources (id TEXT PRIMARY KEY, code TEXT)",
+            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, expires_at DATETIME)",
+            "CREATE TABLE payments (id TEXT PRIMARY KEY, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
+            "CREATE TABLE questionnaire_runs (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT)",
+            "CREATE TABLE questionnaire_answers (run_id TEXT, question_code TEXT, answer_text TEXT, updated_at DATETIME)",
+        ):
+            session.execute(text(ddl))
+        user_id = contact.user_id
+        session.execute(text(
+            "INSERT INTO user_emails VALUES (:user_id, 'buyer@example.com', 1, CURRENT_TIMESTAMP)"
+        ), {"user_id": user_id})
+        session.execute(text("INSERT INTO resources VALUES ('mc', 'ACCESS_MASTERCLASS')"))
+        session.execute(text(
+            "INSERT INTO payments VALUES ('mc-payment', 'Мастер-класс · самостоятельный', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
+        ))
+        session.execute(text(
+            "INSERT INTO payments VALUES ('later-payment', 'Рецепты', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
+        ))
+        session.execute(text(
+            "INSERT INTO user_accesses VALUES (:user_id, 'mc', 'mc-payment', NULL, NULL)"
+        ), {"user_id": user_id})
+        session.execute(text(
+            "INSERT INTO questionnaire_runs VALUES ('run', :user_id, 'onboarding')"
+        ), {"user_id": user_id})
+        session.execute(text(
+            "INSERT INTO questionnaire_answers VALUES ('run', 'main_request', 'Хочу устойчиво похудеть', CURRENT_TIMESTAMP)"
+        ))
+        session.commit()
+
+        values = client_values(
+            session,
+            contact,
+            "https://example.test/offers",
+            "https://example.test/course",
+            "https://example.test/account",
+            "{{email}} {{masterclass_tariff}} {{questionnaire_formatted}}",
+        )
+
+        assert values["email"] == "buyer@example.com"
+        assert values["masterclass_tariff"] == "Мастер-класс · самостоятельный"
+        assert "Главный запрос" in values["questionnaire_formatted"]
+        assert "main_request" not in values["questionnaire_formatted"]
 
 
 def test_dispatch_chooses_message_from_current_access_and_is_idempotent(tmp_path):

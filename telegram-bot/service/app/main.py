@@ -18,6 +18,7 @@ from sqlalchemy import case, delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
+from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
@@ -145,6 +146,10 @@ async def scheduler_loop() -> None:
             with SessionLocal() as session:
                 tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url) if settings.telegram_test_bot_token else None
                 if tg:
+                    stopped_presale = stop_presale_runs_from_purchase_events(session)
+                    stopped_presale += reconcile_masterclass_presale_runs(session)
+                    if stopped_presale:
+                        session.commit()
                     for run in due_runs(session):
                         if run.status == "waiting":
                             resume_wait_timeout(session, run)

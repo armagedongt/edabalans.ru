@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from app.models import (
     AttributionEvent,
+    MasterclassEvent,
     OfferCheckout,
     Payment,
     PriceEntry,
@@ -44,6 +45,40 @@ OFFER_RESOURCES = {
 
 class TildaPayloadError(ValueError):
     pass
+
+
+def record_masterclass_purchase_event(
+    db: Session,
+    payment: Payment,
+    occurred_at: datetime,
+) -> None:
+    """Emit one domain event when this payment grants masterclass ownership."""
+    has_masterclass = db.scalar(
+        select(UserAccess.id)
+        .join(Resource, Resource.id == UserAccess.resource_id)
+        .where(
+            UserAccess.user_id == payment.user_id,
+            Resource.code == "ACCESS_MASTERCLASS",
+            UserAccess.revoked_at.is_(None),
+            or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > occurred_at),
+        )
+        .limit(1)
+    )
+    if not has_masterclass:
+        return
+    event_key = f"masterclass_purchase_confirmed:payment:{payment.id}"
+    if db.scalar(select(MasterclassEvent.id).where(MasterclassEvent.event_key == event_key)):
+        return
+    db.add(
+        MasterclassEvent(
+            user_id=payment.user_id,
+            event_key=event_key,
+            event_type="masterclass_purchase_confirmed",
+            placement="tilda-payment",
+            occurred_at=occurred_at,
+            details={"payment_id": str(payment.id)},
+        )
+    )
 
 
 def clean(value: Any) -> str:
@@ -303,6 +338,7 @@ def grant_payment_access(
             personal_link.status = "paid"
             personal_link.resolved_at = occurred_at
             complete_review(user, "Права подтверждены оплатой персонального предложения Сергея")
+            record_masterclass_purchase_event(db, payment, occurred_at)
             return True
         resources = {
             row.code: row
@@ -342,6 +378,8 @@ def grant_payment_access(
             )
         )
         access_granted = True
+    if access_granted:
+        record_masterclass_purchase_event(db, payment, occurred_at)
     return access_granted
 
 

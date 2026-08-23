@@ -24,6 +24,17 @@ PostgreSQL.
 публичный API цен и создание нового checkout отвечают `503`, а действующая схема
 оплаты продолжает работать без изменений.
 
+Короткая вставка будущего серверного блока продаж:
+
+```html
+<div data-edabalans-app="masterclass-sales"></div>
+<script src="https://app.edabalans.ru/embed.js"></script>
+```
+
+На той же странице остаётся один штатный блок корзины Tilda `ST100`. Стабильные
+коды трёх вариантов: `site.masterclass.basic`, `site.masterclass.recipes` и
+`site.masterclass.consult`. HTML не хранит суммы и не создаёт заказ самостоятельно.
+
 Tilda sends `application/x-www-form-urlencoded` and authenticates with the
 `X-Tilda-Webhook-Token` header. The secret exists only in the production `.env`
 and in the Tilda receiver settings.

@@ -19,6 +19,24 @@ DIGITAL_ACCESS_CODES = {
     "ACCESS_CONSULTATION_RECORDINGS",
 }
 
+ONBOARDING_QUESTION_TITLES = {
+    "parameters": "Параметры",
+    "main_request": "Главный запрос",
+    "work": "Работа и распорядок",
+    "training": "Тренировки",
+    "medical": "Медицинские ограничения",
+    "wellbeing": "Самочувствие",
+    "habits": "Вредные привычки",
+    "diet_strengths": "Питание сейчас",
+    "food_budget": "Расходы на питание",
+    "outside_food": "Еда вне дома",
+    "calorie_history": "Опыт подсчёта калорий",
+    "diet_history": "Диеты и подходы",
+    "courses_history": "Другие программы",
+    "mentoring": "Опыт наставничества",
+    "attribution": "Как вы узнали о Сергее",
+}
+
 
 def crm_access_codes(session: Session, user_id: str) -> set[str]:
     rows = session.execute(
@@ -134,10 +152,14 @@ def client_values(
     ).scalar()
     payment = session.execute(
         text(
-            "SELECT product_name_raw, COALESCE(paid_at, source_event_at, created_at) "
-            "FROM payments WHERE user_id=:user_id "
-            "AND payment_status IN ('paid','succeeded','completed') "
-            "ORDER BY COALESCE(paid_at, source_event_at, created_at) DESC LIMIT 1"
+            "SELECT p.product_name_raw, COALESCE(p.paid_at, p.source_event_at, p.created_at) "
+            "FROM user_accesses ua "
+            "JOIN resources r ON r.id=ua.resource_id "
+            "LEFT JOIN payments p ON p.id=ua.source_payment_id "
+            "WHERE ua.user_id=:user_id AND r.code='ACCESS_MASTERCLASS' "
+            "AND ua.revoked_at IS NULL "
+            "AND (ua.expires_at IS NULL OR ua.expires_at > CURRENT_TIMESTAMP) "
+            "ORDER BY COALESCE(p.paid_at, p.source_event_at, p.created_at) DESC LIMIT 1"
         ),
         {"user_id": contact.user_id},
     ).first()
@@ -150,10 +172,17 @@ def client_values(
         ),
         {"user_id": contact.user_id},
     ).all()
-    questionnaire = "\n".join(
-        f"{code}: {answer}" for code, answer in answers if str(answer or "").strip()
+    questionnaire = "\n\n".join(
+        f"{ONBOARDING_QUESTION_TITLES.get(str(code), str(code))}:\n{answer}"
+        for code, answer in answers
+        if str(answer or "").strip()
     ) or "Стартовая анкета пока не заполнена. Откройте её в первом дне Мастер-класса."
     paid_at = payment[1] if payment else None
+    if paid_at and not isinstance(paid_at, datetime):
+        try:
+            paid_at = datetime.fromisoformat(str(paid_at))
+        except ValueError:
+            paid_at = None
     return {
         **values,
         "email": escape(str(email or "не найден"), quote=True),

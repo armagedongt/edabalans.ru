@@ -13,6 +13,9 @@ from app.models import (
     CrmUser,
     MasterclassNotification,
     MessengerLinkToken,
+    Sequence,
+    SequenceRun,
+    SequenceVersion,
 )
 
 
@@ -32,6 +35,12 @@ def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages
         session.add_all([target, placeholder, bot]); session.flush()
         contact = Contact(bot_instance_id=bot.id, user_id=placeholder.id, telegram_user_id="42", chat_id="42", status="active")
         account = CrmMessengerAccount(user_id=placeholder.id, platform="telegram", platform_user_id="42", source="telegram_bot")
+        session.add_all([contact, account]); session.flush()
+        welcome = Sequence(code="welcome_intensive", name="Welcome", status="published")
+        session.add(welcome); session.flush()
+        version = SequenceVersion(sequence_id=welcome.id, version_no=1, status="published")
+        session.add(version); session.flush()
+        presale_run = SequenceRun(contact_id=contact.id, sequence_version_id=version.id, status="waiting")
         payload = "Mtest-token"
         token = MessengerLinkToken(
             user_id=target.id,
@@ -40,7 +49,7 @@ def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages
             token_hash=hashlib.sha256(payload.encode("ascii")).hexdigest(),
             expires_at=datetime.now(UTC) + timedelta(minutes=5),
         )
-        session.add_all([contact, account, token]); session.commit()
+        session.add_all([presale_run, token]); session.commit()
 
         handled, reply = consume_masterclass_link(
             session,
@@ -55,6 +64,8 @@ def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages
         assert contact.user_id == target.id
         assert account.user_id == target.id
         assert token.consumed_at is not None
+        assert presale_run.status == "completed"
+        assert presale_run.context["stopped_reason"] == "messenger_link_confirmed"
         queued = list(session.scalars(select(MasterclassNotification).where(MasterclassNotification.user_id == target.id)))
         assert [row.notification_kind for row in queued] == ["messenger_identity", "messenger_questionnaire"]
 

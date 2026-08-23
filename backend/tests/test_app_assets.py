@@ -72,6 +72,20 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "placement_token" in masterclass
 
 
+def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
+    response = client.get("/apps/masterclass-sales.html")
+    assert response.status_code == 200
+    assert 'id="masterclass-sales-app"' in response.text
+    assert "/api/pricing/site" in response.text
+    assert "/api/pricing/site/checkout" in response.text
+    assert "site.masterclass.basic" in response.text
+    assert "site.masterclass.recipes" in response.text
+    assert "site.masterclass.consult" in response.text
+    assert "location.hash=result.cart_command" in response.text
+    loader = client.get("/embed.js").text
+    assert "'masterclass-sales': 'masterclass-sales-app'" in loader
+
+
 def test_dqs_notifies_course_only_after_server_save() -> None:
     response = client.get("/apps/dqs.html")
 

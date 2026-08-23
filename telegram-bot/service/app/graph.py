@@ -30,10 +30,10 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
         "description": "Системная операция проверки текущего статуса подписки.",
         "source_ref": "telegram-bot/service/app/engine.py:advance_run",
     },
-    "purchase.check": {
-        "name": "Проверить покупку",
-        "description": "Проверяет подтверждённую покупку в центральной CRM.",
-        "source_ref": "telegram-bot/service/app/engine.py:_has_paid_product",
+    "purchase.lifecycle": {
+        "name": "Событие владения мастер-классом",
+        "description": "Привязка покупателя или активный ACCESS_MASTERCLASS один раз останавливают все сообщения до покупки.",
+        "source_ref": "telegram-bot/service/app/customer_lifecycle.py",
     },
 }
 
@@ -66,11 +66,17 @@ def module_overview_graph(_: Session) -> dict[str, Any]:
         "subtitle": module["status"], "module_code": module["code"],
         "details": {"Код": module["code"], "Статус": module["status"], "Канон": "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md"},
     } for module in GLOBAL_MODULES]
+    nodes.append({
+        "id": "event:masterclass_owned", "kind": "event", "label": "Покупатель определён",
+        "subtitle": "M-link или ACCESS_MASTERCLASS", "module_code": "postpurchase_masterclass",
+        "details": {"Действие": "Единоразово остановить presale-run и поставить post-purchase события"},
+    })
     edges = [
         {"id": "modules:start-welcome", "source": "module:start_attribution", "target": "module:welcome_intensive", "label": "Запустить Welcome", "branch": "default"},
         {"id": "modules:welcome-prepurchase", "source": "module:welcome_intensive", "target": "module:prepurchase_nurture", "label": "Завершён без покупки", "branch": "false"},
-        {"id": "modules:welcome-postpurchase", "source": "module:welcome_intensive", "target": "module:postpurchase_masterclass", "label": "Мастер-класс куплен", "branch": "true"},
-        {"id": "modules:prepurchase-postpurchase", "source": "module:prepurchase_nurture", "target": "module:postpurchase_masterclass", "label": "Мастер-класс куплен", "branch": "true"},
+        {"id": "modules:event-stop-welcome", "source": "event:masterclass_owned", "target": "module:welcome_intensive", "label": "Остановить активный run", "branch": "stop"},
+        {"id": "modules:event-stop-prepurchase", "source": "event:masterclass_owned", "target": "module:prepurchase_nurture", "label": "Остановить активный run", "branch": "stop"},
+        {"id": "modules:event-postpurchase", "source": "event:masterclass_owned", "target": "module:postpurchase_masterclass", "label": "Поставить нужные сообщения", "branch": "event"},
     ]
     return {"level": "overview", "title": "Глобальные модули Telegram-бота", "description": "Каждый модуль раскрывается в отдельную согласованную блок-схему входов, условий и выходов.", "nodes": nodes, "edges": edges, "issues": []}
 

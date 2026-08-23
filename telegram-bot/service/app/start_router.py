@@ -10,14 +10,14 @@ from sqlalchemy.orm import Session
 
 from app.engine import has_paid_product, start_run
 from app.graph import START_ROUTER_RULES
+from app.customer_lifecycle import stop_presale_runs_for_user
 from app.models import Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceVersion, StepDelivery, TrackingEvent
-from app.seed import PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE
+from app.seed import WELCOME_CODE
 
 
 MASTERCLASS_CODES = ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"]
 ACTIVE_RUN_STATUSES = ["active", "waiting"]
 DAY_FOUR_STEP_KEY = "welcome_day4"
-PRESALE_SEQUENCE_CODES = [START_ENTRY_CODE, WELCOME_CODE, PREPURCHASE_CODE]
 
 
 @dataclass(frozen=True)
@@ -122,25 +122,6 @@ def _render_content(item: ContentItem, values: dict[str, str]) -> SimpleNamespac
     return SimpleNamespace(code=item.code, title=item.title, body_source=body, media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id)
 
 
-def stop_presale_runs(session: Session, contact_id: str) -> None:
-    now = datetime.now(UTC)
-    query = (
-        select(SequenceRun)
-        .join(SequenceVersion, SequenceVersion.id == SequenceRun.sequence_version_id)
-        .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
-        .where(
-            SequenceRun.contact_id == contact_id,
-            Sequence.code.in_(PRESALE_SEQUENCE_CODES),
-            SequenceRun.status.in_(ACTIVE_RUN_STATUSES),
-        )
-    )
-    for run in session.scalars(query):
-        run.status = "completed"
-        run.finished_at = now
-        run.next_action_at = None
-        run.context = {**(run.context or {}), "stopped_reason": "masterclass_owned"}
-
-
 def send_system_content(session: Session, contact: Contact, content_code: str, sender, values: dict[str, str] | None = None) -> str:
     item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
     if not item:
@@ -168,7 +149,7 @@ def execute_start_decision(
     update_id: str | None = None,
 ) -> SequenceRun | None:
     if decision.code == "masterclass_owned":
-        stop_presale_runs(session, contact.id)
+        stop_presale_runs_for_user(session, contact.user_id, reason="masterclass_owned")
         send_system_content(session, contact, decision.content_code, sender)
         return None
     if decision.code == "launch_welcome":
