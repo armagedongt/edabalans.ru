@@ -226,7 +226,8 @@ def bot_admin(request: Request, credentials: HTTPBasicCredentials | None = Depen
 def bot_admin_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"app.js", "login.js", "styles.css", "module-map.css"}:
         raise HTTPException(404)
-    return FileResponse(STATIC_ROOT / asset_name)
+    headers = {"Cache-Control": "no-store"} if asset_name == "login.js" else None
+    return FileResponse(STATIC_ROOT / asset_name, headers=headers)
 
 
 @app.post("/bot-api/login")
