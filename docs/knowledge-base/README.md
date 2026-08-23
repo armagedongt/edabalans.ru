@@ -45,7 +45,7 @@
 | Модель CRM и назначение таблиц | `../CRM_DATA_MODEL.md` | `current` |
 | Правила CRM и переноса клиентов | `../CRM_CORE_DESIGN.md` | `current` |
 | Правила получения и открытия доступов | `ACCESS_RULES.md` | `current` |
-| Согласия перед запуском программ ЛК | `ACCOUNT_LEGAL_GATE.md` | `current_implemented_not_deployed` |
+| Согласия перед запуском программ ЛК | `ACCOUNT_LEGAL_GATE.md` | `current_deployed_owner_test` |
 | Платформа DQS, силовых и метаболизма | `../APPLICATION_PLATFORM.md` | `current` |
 | Продукты, тарифы и политика предложений | `PRODUCTS.md` | `draft`, согласована бизнес-логика |
 | Единый каталог цен и тарифов | `PRICING_CATALOG.md` | `current_implemented_disabled` |
