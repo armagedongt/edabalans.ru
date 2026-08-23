@@ -24,6 +24,10 @@ from app.access_service import (
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
+from app.legal_service import (
+    accept_current_legal_documents,
+    legal_status_payload,
+)
 from app.models import (
     AdminAppEdit,
     OfferCheckout,
@@ -40,6 +44,10 @@ router = APIRouter(tags=["access-links"])
 
 class LinkActionIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
+
+
+class LegalAcceptancesIn(LinkActionIn):
+    document_codes: list[str] = Field(min_length=2, max_length=2)
 
 
 class PersonalLinkCreateIn(BaseModel):
@@ -125,9 +133,7 @@ def access_status(email: str, db: Session = Depends(get_db)) -> dict:
     }
 
 
-@router.get("/api/account")
-def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
-    """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies rights."""
+def account_payload(email: str, db: Session) -> dict:
     user = user_for_email(db, email)
     if user is None:
         return {
@@ -135,6 +141,7 @@ def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
             "state": "review_required",
             "review_status": "unknown",
             "message": "Аккаунт пока не связан с CRM. Напишите Сергею и укажите email личного кабинета.",
+            "legal": None,
             "courses": [],
         }
     if review_blocks_access(user):
@@ -143,9 +150,11 @@ def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
             "state": "review_required",
             "review_status": user.access_review_status,
             "message": "Нужно решение Сергея по вашим прежним покупкам. Напишите ему и укажите email личного кабинета.",
+            "legal": legal_status_payload(db, user.id),
             "courses": [],
         }
 
+    legal = legal_status_payload(db, user.id)
     now = datetime.now(timezone.utc)
     owned = set(
         db.scalars(
@@ -160,11 +169,46 @@ def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
         )
     )
     definitions = [
-        ("masterclass", "Мастер-класс", "21 день: материалы, приложения и задания", "ACCESS_MASTERCLASS", "masterclass-course", True),
-        ("recipes", "Рецепты", "Система рецептов и практические подборки", "ACCESS_RECIPES", None, False),
-        ("calories", "Калорийный курс", "Работа с калориями после Мастер-класса", "ACCESS_CALORIES", None, False),
-        ("strength", "Тренировки", "Программа перехода к силовым тренировкам", "ACCESS_STRENGTH", None, False),
-        ("recordings", "Разборы", "Записи разборов питания и решений", "ACCESS_CONSULTATION_RECORDINGS", None, False),
+        (
+            "masterclass",
+            "Мастер-класс по изменению питания и пищевых привычек",
+            "Как простыми действиями изменить пищевые привычки и сбалансировать питание, чтобы сделать похудение проще.",
+            "ACCESS_MASTERCLASS",
+            "masterclass-course",
+            True,
+        ),
+        (
+            "recipes",
+            "Система рецептов",
+            "Как научиться собирать здоровые тарелки быстро, просто и вкусно.",
+            "ACCESS_RECIPES",
+            None,
+            False,
+        ),
+        (
+            "calories",
+            "Мини-курс «Калорийный»",
+            "Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории.",
+            "ACCESS_CALORIES",
+            None,
+            False,
+        ),
+        (
+            "strength",
+            "Мини-курс «С дивана до тренировок»",
+            "Как встать с дивана и начать получать от тренировок и удовольствие, и результат.",
+            "ACCESS_STRENGTH",
+            None,
+            False,
+        ),
+        (
+            "recordings",
+            "Записи консультаций других участников",
+            "Разборы питания, привычек и практических решений на реальных примерах.",
+            "ACCESS_CONSULTATION_RECORDINGS",
+            None,
+            False,
+        ),
     ]
     courses = []
     for code, title, summary, resource, app, app_ready in definitions:
@@ -177,7 +221,7 @@ def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
                 "resource": resource,
                 "owned": has_access,
                 "state": "available" if has_access and app_ready else "preparing" if has_access else "not_owned",
-                "app": app if has_access and app_ready else None,
+                "app": app if has_access and app_ready and not legal["required"] else None,
             }
         )
     return {
@@ -185,8 +229,37 @@ def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
         "state": "ready",
         "review_status": user.access_review_status,
         "email": email.strip().lower(),
+        "legal": legal,
         "courses": courses,
     }
+
+
+@router.get("/api/account")
+def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
+    """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies rights."""
+    return account_payload(email, db)
+
+
+@router.post("/api/account/legal-acceptances")
+def accept_account_legal_documents(
+    body: LegalAcceptancesIn,
+    db: Session = Depends(get_db),
+) -> dict:
+    user = user_for_email(db, body.email)
+    if user is None:
+        raise HTTPException(404, "Аккаунт пока не связан с CRM")
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    try:
+        accept_current_legal_documents(
+            db,
+            user.id,
+            body.document_codes,
+            source="tilda_members_area",
+        )
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    db.commit()
+    return account_payload(body.email, db)
 
 
 @router.post("/api/access/registration-seen")

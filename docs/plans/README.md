@@ -31,6 +31,7 @@
 | Точка возврата по сайту Мастер-класса | `MASTERCLASS_SITE_NEXT_STEPS.md` | `current_status_with_planned_followups` |
 | Упрощение доступов после финальной перестройки групп Tilda | `ACCESS_DATA_SIMPLIFICATION.md` | `planned` |
 | Одноразовый перенос Tilda Members Area | `TILDA_MEMBERS_SYNC.md` | `archived`; повторной синхронизации не будет |
+| Полный аудит дисклеймера и обработки данных | `LEGAL_COMPLIANCE_AUDIT.md` | `planned` |
 | Долгосрочное развитие платформы | `PLATFORM_LONG_TERM.md` | `planned` |
 | Аудит найденных планов по репозиторию | `PLAN_SOURCES_AUDIT.md` | `current` |
 

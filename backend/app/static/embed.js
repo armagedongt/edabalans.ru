@@ -144,6 +144,26 @@
     document.head.appendChild(style);
   }
 
+  function legalFooterHtml() {
+    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:12px/1.55 Inter,Arial,sans-serif;text-align:center">' +
+      '<div>© ' + new Date().getFullYear() + ' Воронцов Сергей · «Похудение — это есть!»</div>' +
+      '<div>Все права защищены. Копирование материалов, текстов и отдельных элементов без разрешения запрещено.</div>' +
+      '<div style="margin-top:7px"><a href="' + APP_HOST + '/legal/disclaimer.html" target="_blank" rel="noopener" style="color:inherit">Дисклеймер</a> · <a href="' + APP_HOST + '/legal/privacy.html" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div>' +
+      '</footer>';
+  }
+
+  function ensureLegalFooter(mount) {
+    if (mount.parentElement && mount.parentElement.closest('[data-edabalans-footer-owner]')) return;
+    mount.setAttribute('data-edabalans-footer-owner', 'true');
+    function append() {
+      if (!mount.querySelector(':scope > [data-edabalans-legal-footer]')) {
+        mount.insertAdjacentHTML('beforeend', legalFooterHtml());
+      }
+    }
+    append();
+    new MutationObserver(append).observe(mount, {childList: true});
+  }
+
   function askIdentity(mounts, candidate, requireConfirmation) {
     var host = mounts[0];
     host.innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
@@ -274,6 +294,7 @@
             document.head.appendChild(copy);
           }
         });
+        ensureLegalFooter(mount);
         return executeScripts(doc);
       })
       .catch(function (error) {

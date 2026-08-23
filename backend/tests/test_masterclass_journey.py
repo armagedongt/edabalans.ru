@@ -17,10 +17,12 @@ from app.auth import require_admin  # noqa: E402
 from app.app_auth import create_app_session, create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
+from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerLinkToken, OfferCheckout, OfferStage,
-    QuestionnaireAnswer, Resource, User, UserAccess, UserEmail, UserOffer,
+    QuestionnaireAnswer, Resource, User, UserAccess, UserEmail,
+    UserLegalAcceptance, UserOffer,
 )
 
 
@@ -81,6 +83,15 @@ def setup(authenticated=True):
             db.add(resources[code])
         db.flush()
         db.add(UserAccess(user_id=user.id, resource_id=resources["ACCESS_MASTERCLASS"].id, source="test", granted_at=datetime.now(timezone.utc)))
+        db.add_all([
+            UserLegalAcceptance(
+                user_id=user.id,
+                document_code=item["code"],
+                document_version=item["version"],
+                source="test",
+            )
+            for item in LEGAL_DOCUMENTS
+        ])
         stages = [
             ("early", 96, {"single": 2900, "bundle": {"4": 7900}}),
             ("second", 72, {"single": 3300, "bundle": {"4": 9900}}),

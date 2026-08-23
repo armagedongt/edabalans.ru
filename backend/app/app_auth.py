@@ -261,7 +261,12 @@ def request_challenge(
         _last_challenge[rate_key] = now
 
     try:
-        resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
+        resolve_user_for_resource(
+            db,
+            email,
+            "ACCESS_MASTERCLASS",
+            require_legal_acceptance=False,
+        )
     except AppAccessError as exc:
         raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     code = f"{secrets.randbelow(1_000_000):06d}"
@@ -291,7 +296,12 @@ def verify_code(
         raise
     record_challenge_attempt(body.challenge_token, consumed=True)
     try:
-        resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
+        resolve_user_for_resource(
+            db,
+            email,
+            "ACCESS_MASTERCLASS",
+            require_legal_acceptance=False,
+        )
     except AppAccessError as exc:
         raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     return {

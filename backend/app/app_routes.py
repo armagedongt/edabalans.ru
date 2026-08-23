@@ -71,6 +71,13 @@ def app_asset(asset_name: str) -> FileResponse:
     return public_asset(STATIC_DIR / asset_name)
 
 
+@router.get("/legal/{document_code}.html", include_in_schema=False)
+def legal_document(document_code: str) -> FileResponse:
+    if document_code not in {"disclaimer", "privacy"}:
+        raise HTTPException(status_code=404, detail="legal document not found")
+    return public_asset(STATIC_DIR / "legal" / f"{document_code}.html")
+
+
 def error(message: str) -> dict[str, Any]:
     return {"ok": False, "error": message}
 

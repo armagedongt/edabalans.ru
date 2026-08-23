@@ -14,7 +14,15 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import PersonalAccessLink, Resource, User, UserAccess, UserCoursePolicy, UserEmail  # noqa: E402
+from app.models import (  # noqa: E402
+    PersonalAccessLink,
+    Resource,
+    User,
+    UserAccess,
+    UserCoursePolicy,
+    UserEmail,
+    UserLegalAcceptance,
+)
 
 
 def setup():
@@ -148,10 +156,41 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert ready.status_code == 200
     data = ready.json()
     assert data["state"] == "ready"
+    assert data["legal"]["required"] is True
     masterclass_card = next(item for item in data["courses"] if item["code"] == "masterclass")
     assert masterclass_card["state"] == "available"
-    assert masterclass_card["app"] == "masterclass-course"
+    assert masterclass_card["app"] is None
     recipes_card = next(item for item in data["courses"] if item["code"] == "recipes")
     assert recipes_card["state"] == "not_owned"
     assert recipes_card["app"] is None
+
+    accepted = client.post(
+        "/api/account/legal-acceptances",
+        json={
+            "email": "client@example.test",
+            "document_codes": [
+                "educational_disclaimer",
+                "personal_data_policy",
+            ],
+        },
+    )
+    assert accepted.status_code == 200
+    assert accepted.json()["legal"]["required"] is False
+    masterclass_card = next(
+        item for item in accepted.json()["courses"] if item["code"] == "masterclass"
+    )
+    assert masterclass_card["app"] == "masterclass-course"
+    repeated = client.post(
+        "/api/account/legal-acceptances",
+        json={
+            "email": "client@example.test",
+            "document_codes": [
+                "educational_disclaimer",
+                "personal_data_policy",
+            ],
+        },
+    )
+    assert repeated.status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 2
     app.dependency_overrides.clear()

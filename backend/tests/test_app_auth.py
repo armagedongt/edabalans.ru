@@ -14,7 +14,14 @@ from app import app_auth  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import Resource, User, UserAccess, UserEmail  # noqa: E402
+from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
+from app.models import (  # noqa: E402
+    Resource,
+    User,
+    UserAccess,
+    UserEmail,
+    UserLegalAcceptance,
+)
 
 
 def setup() -> tuple[TestClient, sessionmaker[Session]]:
@@ -63,12 +70,50 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
                     source="test",
                     granted_at=datetime.now(timezone.utc),
                 ),
+                *[
+                    UserLegalAcceptance(
+                        user_id=user.id,
+                        document_code=item["code"],
+                        document_version=item["version"],
+                        source="test",
+                    )
+                    for item in LEGAL_DOCUMENTS
+                ],
             ]
         )
         db.commit()
     app_auth._last_challenge.clear()
     app_auth._challenge_attempts.clear()
     return TestClient(app), factory
+
+
+def test_course_api_rejects_direct_access_before_current_legal_acceptances():
+    client, factory = setup()
+    with factory() as db:
+        db.query(UserLegalAcceptance).delete()
+        db.commit()
+
+    response = client.get(
+        "/api/masterclass/questionnaires/onboarding?email=member@example.test"
+    )
+
+    assert response.status_code == 403
+    assert "личном кабинете" in response.json()["detail"]
+
+
+def test_missing_legal_acceptances_do_not_block_identity_challenge(monkeypatch):
+    client, factory = setup()
+    with factory() as db:
+        db.query(UserLegalAcceptance).delete()
+        db.commit()
+    monkeypatch.setattr(app_auth, "send_login_code", lambda *_: None)
+
+    response = client.post(
+        "/api/app-auth/challenge",
+        json={"email": "member@example.test"},
+    )
+
+    assert response.status_code == 200
 
 
 def test_email_code_session_no_longer_overrides_tilda_masterclass_identity(monkeypatch):

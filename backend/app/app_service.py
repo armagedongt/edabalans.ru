@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Resource, User, UserAccess, UserEmail
 from app.access_service import review_blocks_access
+from app.legal_service import legal_acceptances_complete
 
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
@@ -24,7 +25,13 @@ def normalize_email(value: str | None) -> str:
     return (value or "").strip().lower()
 
 
-def resolve_user_for_resource(db: Session, email: str | None, resource_code: str) -> User:
+def resolve_user_for_resource(
+    db: Session,
+    email: str | None,
+    resource_code: str,
+    *,
+    require_legal_acceptance: bool = True,
+) -> User:
     normalized = normalize_email(email)
     if not EMAIL_RE.match(normalized):
         raise AppAccessError("Введите корректный email")
@@ -44,6 +51,11 @@ def resolve_user_for_resource(db: Session, email: str | None, resource_code: str
     if review_blocks_access(user):
         raise AppAccessError(
             "Исторические покупки требуют подтверждения Сергея. Напишите Сергею, чтобы он проверил и открыл нужные программы."
+        )
+
+    if require_legal_acceptance and not legal_acceptances_complete(db, user.id):
+        raise AppAccessError(
+            "Сначала примите дисклеймер и политику обработки данных в личном кабинете"
         )
 
     now = datetime.now(timezone.utc)

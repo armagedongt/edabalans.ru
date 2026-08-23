@@ -78,6 +78,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "masterclass-course" in loader
     assert "'account': true" in loader
     assert "hideTildaUserbar" in loader
+    assert "data-edabalans-legal-footer" in loader
+    assert "Воронцов Сергей" in loader
     assert "data-edabalans-account-url" in loader
     assert "source: identitySource" in loader
     assert "identity.source==='tilda'" in course.text
@@ -85,6 +87,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "Похудение — это есть!" in course.text
     assert ".tlk-userbar{display:none!important}" in course.text
     assert "Темы видны заранее" not in course.text
+    assert client.get("/legal/disclaimer.html").status_code == 200
+    assert client.get("/legal/privacy.html").status_code == 200
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass

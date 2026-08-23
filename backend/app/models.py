@@ -674,6 +674,30 @@ class UserCoursePolicy(Base):
     )
 
 
+class UserLegalAcceptance(Base):
+    __tablename__ = "user_legal_acceptances"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "document_code",
+            "document_version",
+            name="uq_user_legal_acceptance_version",
+        ),
+        Index("ix_user_legal_acceptances_user", "user_id", "accepted_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    document_code: Mapped[str] = mapped_column(String(64), nullable=False)
+    document_version: Mapped[str] = mapped_column(String(64), nullable=False)
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    accepted_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class MasterclassNotification(Base):
     __tablename__ = "masterclass_notifications"
     __table_args__ = (
