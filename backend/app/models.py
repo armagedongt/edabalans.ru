@@ -588,6 +588,20 @@ class MasterclassNotification(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
+class MasterclassTestProfile(Base):
+    __tablename__ = "masterclass_test_profiles"
+
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    day_interval_seconds: Mapped[int] = mapped_column(Integer, default=20, nullable=False)
+    notification_delay_seconds: Mapped[int] = mapped_column(Integer, default=10, nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class StrengthExercise(TimestampMixin, Base):
     __tablename__ = "strength_exercises"
 

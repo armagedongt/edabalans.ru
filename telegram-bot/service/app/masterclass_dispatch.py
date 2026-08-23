@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from html import escape
+import re
 from types import SimpleNamespace
 from typing import Callable
 
@@ -106,13 +108,85 @@ def rendered(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
     )
 
 
+def client_values(
+    session: Session,
+    contact: Contact,
+    offers_url: str,
+    course_url: str,
+    account_url: str,
+    template_body: str,
+) -> dict[str, str]:
+    values = {
+        "offers_url": escape(offers_url, quote=True),
+        "course_url": escape(course_url or account_url, quote=True),
+        "account_url": escape(account_url or course_url, quote=True),
+        "offer_expires_at": "срок указан на странице предложения",
+    }
+    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}")
+    if not any(key in template_body for key in identity_keys):
+        return values
+    email = session.execute(
+        text(
+            "SELECT email_original FROM user_emails WHERE user_id=:user_id "
+            "ORDER BY is_primary DESC, created_at LIMIT 1"
+        ),
+        {"user_id": contact.user_id},
+    ).scalar()
+    payment = session.execute(
+        text(
+            "SELECT product_name_raw, COALESCE(paid_at, source_event_at, created_at) "
+            "FROM payments WHERE user_id=:user_id "
+            "AND payment_status IN ('paid','succeeded','completed') "
+            "ORDER BY COALESCE(paid_at, source_event_at, created_at) DESC LIMIT 1"
+        ),
+        {"user_id": contact.user_id},
+    ).first()
+    answers = session.execute(
+        text(
+            "SELECT qa.question_code, qa.answer_text FROM questionnaire_runs qr "
+            "JOIN questionnaire_answers qa ON qa.run_id=qr.id "
+            "WHERE qr.user_id=:user_id AND qr.kind='onboarding' "
+            "ORDER BY qa.updated_at, qa.question_code"
+        ),
+        {"user_id": contact.user_id},
+    ).all()
+    questionnaire = "\n".join(
+        f"{code}: {answer}" for code, answer in answers if str(answer or "").strip()
+    ) or "Стартовая анкета пока не заполнена. Откройте её в первом дне Мастер-класса."
+    paid_at = payment[1] if payment else None
+    return {
+        **values,
+        "email": escape(str(email or "не найден"), quote=True),
+        "telegram_username": escape(contact.username or "без username", quote=True),
+        "masterclass_tariff": escape(str(payment[0] if payment and payment[0] else "доступ к Мастер-классу"), quote=True),
+        "purchase_date": paid_at.strftime("%d.%m.%Y") if paid_at else "дата не указана",
+        "questionnaire_formatted": escape(questionnaire, quote=True),
+    }
+
+
+def content_is_sendable(item: ContentItem, body: str) -> tuple[bool, str | None]:
+    if item.status != "published":
+        return False, "content is not published"
+    if not body.strip():
+        return False, "content is empty"
+    if re.search(r"{{[^{}]+}}", body):
+        return False, "content has unresolved variables"
+    if body.lstrip().startswith("["):
+        return False, "content is an editorial placeholder"
+    return True, None
+
+
 def dispatch_due_masterclass_notifications(
     session: Session,
     sender,
     offers_url: str,
     access_resolver: Callable[[Session, str], set[str]] = crm_access_codes,
+    *,
+    course_url: str = "",
+    account_url: str = "",
+    test_only: bool = False,
 ) -> dict[str, int]:
-    counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "failed": 0}
+    counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "failed": 0}
     due = list(session.scalars(
         select(MasterclassNotification)
         .where(MasterclassNotification.status == "pending", MasterclassNotification.due_at <= datetime.now(UTC))
@@ -121,6 +195,17 @@ def dispatch_due_masterclass_notifications(
     for notification in due:
         if notification.notification_kind == "owner_closing_review":
             continue
+        if test_only:
+            enabled = session.execute(
+                text(
+                    "SELECT 1 FROM masterclass_test_profiles "
+                    "WHERE user_id=:user_id AND enabled=true LIMIT 1"
+                ),
+                {"user_id": notification.user_id},
+            ).first()
+            if not enabled:
+                counters["test_filtered"] += 1
+                continue
         contact = session.scalar(
             select(Contact)
             .where(Contact.user_id == notification.user_id, Contact.status == "active")
@@ -147,16 +232,19 @@ def dispatch_due_masterclass_notifications(
             counters["skipped"] += 1
             continue
         item = session.scalar(select(ContentItem).where(ContentItem.code == code))
-        if not item or item.status not in {"published", "draft"}:
+        if not item:
             notification.status = "failed"
             notification.error_message = f"content not found: {code}"
             counters["failed"] += 1
             continue
-        values = {
-            "offers_url": offers_url or "[ссылка на актуальные предложения]",
-            "offer_expires_at": "срок указан на странице предложения",
-        }
+        values = client_values(session, contact, offers_url, course_url, account_url, item.body_source)
         content = rendered(item, values)
+        safe, reason = content_is_sendable(item, content.body_source)
+        if not safe:
+            notification.status = "failed"
+            notification.error_message = reason
+            counters["failed"] += 1
+            continue
         log = ManualMessage(contact_id=contact.id, direction="out", body_source=content.body_source, status="pending", operator_email="system:masterclass")
         session.add(log)
         try:

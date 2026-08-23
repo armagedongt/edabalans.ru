@@ -62,8 +62,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
-    assert "/api/app-auth/challenge" in loader
-    assert "sessionToken" in loader
+    assert "tildaIdentityRequired" in loader
+    assert "remember(detected, '', 0, 'tilda')" in loader
+    assert "Откройте приложение из личного кабинета" in loader
     assert "masterclass-course" in loader
     assert "data-edabalans-account-url" in loader
     masterclass = client.get("/assets/masterclass.js").text

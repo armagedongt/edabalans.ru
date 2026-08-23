@@ -71,7 +71,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
     return TestClient(app), factory
 
 
-def test_email_code_creates_session_and_unlocks_only_matching_email(monkeypatch):
+def test_email_code_session_no_longer_overrides_tilda_masterclass_identity(monkeypatch):
     client, _ = setup()
     delivered = {}
 
@@ -113,7 +113,7 @@ def test_email_code_creates_session_and_unlocks_only_matching_email(monkeypatch)
         "/api/masterclass/questionnaires/onboarding?email=other@example.test",
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert mismatched.status_code == 401
+    assert mismatched.status_code == 403
     app.dependency_overrides.clear()
 
 
@@ -144,13 +144,13 @@ def test_first_challenge_is_allowed_during_first_process_minute(monkeypatch):
     app.dependency_overrides.clear()
 
 
-def test_malformed_bearer_token_is_rejected_without_server_error():
+def test_masterclass_transition_ignores_obsolete_bearer_token_and_uses_tilda_email():
     client, _ = setup()
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
         headers={"Authorization": "Bearer !!!.not-a-signature"},
     )
-    assert response.status_code == 401
+    assert response.status_code == 200
     app.dependency_overrides.clear()
 
 

@@ -59,24 +59,27 @@
       return {
         email: normalizeEmail(saved.email),
         sessionToken: String(saved.sessionToken || ''),
-        expiresAt: Number(saved.expiresAt || 0)
+        expiresAt: Number(saved.expiresAt || 0),
+        source: String(saved.source || '')
       };
     } catch (error) {
       return null;
     }
   }
 
-  function remember(email, sessionToken, expiresIn) {
+  function remember(email, sessionToken, expiresIn, source) {
     var current = rememberedIdentity() || {};
     var token = sessionToken === undefined ? String(current.sessionToken || '') : String(sessionToken || '');
     var expiresAt = expiresIn === undefined
       ? Number(current.expiresAt || 0)
       : Date.now() + Number(expiresIn || 0) * 1000;
+    var identitySource = source === undefined ? String(current.source || '') : String(source || '');
     try {
       localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
         email: email,
         sessionToken: token,
         expiresAt: expiresAt,
+        source: identitySource,
         confirmedAt: new Date().toISOString()
       }));
       localStorage.setItem('dqs_email', email);
@@ -91,6 +94,12 @@
       document.body.appendChild(marker);
     }
     marker.value = email;
+  }
+
+  function tildaIdentityRequired(mounts) {
+    mounts[0].innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
+      '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Откройте приложение из личного кабинета</div>' +
+      '<div style="line-height:1.5">На этой странице не найден email участника Tilda. Вернитесь в Members Area и откройте Мастер-класс оттуда.</div></div>';
   }
 
   function askIdentity(mounts, candidate, requireConfirmation) {
@@ -241,6 +250,20 @@
     });
     var detected = detectTildaEmail();
     var remembered = rememberedIdentity();
+    if (protectedApps) {
+      if (detected) {
+        remember(detected, '', 0, 'tilda');
+        start(mounts);
+        return;
+      }
+      if (remembered && remembered.source === 'tilda') {
+        remember(remembered.email);
+        start(mounts);
+        return;
+      }
+      tildaIdentityRequired(mounts);
+      return;
+    }
     if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {
       remember(remembered.email);
       start(mounts);

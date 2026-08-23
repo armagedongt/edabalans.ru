@@ -42,7 +42,7 @@ def add_contact_and_content(session):
         "tpl_postpurchase_tempo_late",
         "tpl_postpurchase_final_offer",
     ):
-        session.add(ContentItem(code=code, title=code, body_source="Откройте {{offers_url}}", status="draft"))
+        session.add(ContentItem(code=code, title=code, body_source="Откройте {{offers_url}}", status="published"))
     session.flush()
     return contact
 

@@ -23,6 +23,7 @@ from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeo
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.masterclass_link import consume_masterclass_link
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
@@ -152,7 +153,14 @@ async def scheduler_loop() -> None:
                     for broadcast in scheduled:
                         _deliver_broadcast(session, broadcast, tg)
                     if settings.postpurchase_dispatch_enabled:
-                        dispatch_due_masterclass_notifications(session, tg, settings.masterclass_offers_url)
+                        dispatch_due_masterclass_notifications(
+                            session,
+                            tg,
+                            settings.masterclass_offers_url,
+                            course_url=settings.masterclass_course_url,
+                            account_url=settings.masterclass_account_url,
+                            test_only=settings.postpurchase_test_only,
+                        )
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
             pass
@@ -317,6 +325,20 @@ def process_update(update: dict, session: Session) -> dict:
         text = message.get("text", "")
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
+            handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")
+            if handled:
+                session.commit()
+                client().send_content(
+                    contact.chat_id,
+                    SimpleNamespace(
+                        body_source=reply,
+                        media_kind=None,
+                        media_path=None,
+                        telegram_file_id=None,
+                    ),
+                    {},
+                )
+                return {"ok": True, "masterclass_link": True}
             route = session.scalar(
                 select(BotRoute)
                 .where(

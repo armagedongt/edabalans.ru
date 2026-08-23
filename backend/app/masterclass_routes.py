@@ -12,17 +12,17 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.orm import Session
 
-from app.app_service import primary_email
-from app.app_auth import create_placement_token, require_app_user, require_placement
+from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
+from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import (
-    MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
-    MasterclassStepProgress, MessengerLinkToken, OfferCheckout, OfferStage,
+    MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
+    MasterclassStepProgress, MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
@@ -205,13 +205,40 @@ class StageUpdateIn(BaseModel):
     bundle: dict[str, int]
 
 
+class TestProfileIn(BaseModel):
+    email: str
+    enabled: bool = True
+    day_interval_seconds: int = Field(default=20, ge=1, le=3600)
+    notification_delay_seconds: int = Field(default=10, ge=1, le=3600)
+
+
+def test_profile(db: Session, user_id: uuid.UUID) -> MasterclassTestProfile | None:
+    profile = db.get(MasterclassTestProfile, user_id)
+    return profile if profile and profile.enabled else None
+
+
+def day_interval(db: Session, user_id: uuid.UUID) -> timedelta:
+    profile = test_profile(db, user_id)
+    return timedelta(seconds=profile.day_interval_seconds) if profile else timedelta(hours=COURSE_DAY_HOURS)
+
+
+def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datetime:
+    profile = test_profile(db, user_id)
+    return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds) if profile else normal
+
+
 def resolve_masterclass_user(
     request: Request,
     db: Session,
     email: str,
     settings: Settings,
 ) -> User:
-    return require_app_user(request, email, db, "ACCESS_MASTERCLASS", settings)
+    # During the Tilda transition the closed Members Area page supplies the
+    # current email. Product rights still come only from PostgreSQL.
+    try:
+        return resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
+    except AppAccessError as exc:
+        raise HTTPException(403, str(exc)) from exc
 
 
 def course_step_kinds(day: int) -> list[str]:
@@ -251,7 +278,7 @@ def course_event(
                 user_id,
                 event,
                 "course_stalled_72h",
-                datetime.now(timezone.utc) + timedelta(hours=72),
+                notification_due(db, user_id, datetime.now(timezone.utc) + timedelta(hours=72)),
                 "tpl_postpurchase_tempo_late",
                 payload={
                     "day": (details or {}).get("day"),
@@ -280,7 +307,7 @@ def course_day_unlock_at(
     previous = day_progress(db, user_id, day - 1)
     if not previous:
         return None
-    return aware_utc(previous.first_opened_at) + timedelta(hours=COURSE_DAY_HOURS)
+    return aware_utc(previous.first_opened_at) + day_interval(db, user_id)
 
 
 def course_day_can_open(
@@ -291,7 +318,7 @@ def course_day_can_open(
     previous = day_progress(db, user_id, day - 1)
     if not previous:
         return False, "previous_day_not_opened", None
-    unlock_at = aware_utc(previous.first_opened_at) + timedelta(hours=COURSE_DAY_HOURS)
+    unlock_at = aware_utc(previous.first_opened_at) + day_interval(db, user_id)
     if not previous.completed_at:
         return False, "previous_day_not_completed", unlock_at
     if now < unlock_at:
@@ -392,7 +419,7 @@ def course_payload(
                 )
         first_opened = aware_utc(progress.first_opened_at) if progress else None
         next_unlock = (
-            first_opened + timedelta(hours=COURSE_DAY_HOURS) if first_opened else None
+            first_opened + day_interval(db, user.id) if first_opened else None
         )
         days.append(
             {
@@ -427,6 +454,7 @@ def course_payload(
         "course_version": COURSE_MANIFEST["courseVersion"],
         "server_now": now.isoformat(),
         "day_interval_hours": COURSE_DAY_HOURS,
+        "accelerated_test": bool(test_profile(db, user.id)),
         "current_day": max(progress_rows) if progress_rows else 1,
         "days": days,
     }
@@ -687,7 +715,7 @@ def queue_offer_last_chance(
         user.id,
         event,
         "sales_last_chance_due",
-        aware_utc(offer.expires_at) - timedelta(hours=12),
+        notification_due(db, user.id, aware_utc(offer.expires_at) - timedelta(hours=12)),
         payload={"stage": offer.stage_code, "placement": placement},
     )
 
@@ -1088,7 +1116,11 @@ def recipe_gate(
     allowed = "ACCESS_RECIPES" in access_codes(db, user.id)
     payload = {"ok": True, "part": part, "allowed": allowed}
     if allowed:
-        payload.update({"state": "technical_error", "message": "Доступ подтверждён, но материал не удалось открыть из-за технической ошибки.", "contact": "@FitnessSergey"})
+        payload.update({
+            "state": "content",
+            "title": f"Рецепты · часть {part}",
+            "message": "Доступ подтверждён. Подборка открыта и будет дополняться без изменения этой ссылки.",
+        })
     else:
         payload.update({"state": "offer", "message": "Этот раздел не входит в ваш текущий тариф.", "offer": build_offers(db, user, placement)})
     db.commit(); return payload
@@ -1141,6 +1173,103 @@ def admin_masterclass_users(_: str = Depends(require_admin), db: Session = Depen
             for user_id, display_name, email in rows
         ],
     }
+
+
+@router.put("/admin/test-profile")
+def admin_set_test_profile(
+    body: TestProfileIn,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    try:
+        user = resolve_user_for_resource(db, body.email, "ACCESS_MASTERCLASS")
+    except AppAccessError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    profile = db.get(MasterclassTestProfile, user.id)
+    if not profile:
+        profile = MasterclassTestProfile(user_id=user.id)
+        db.add(profile)
+    profile.enabled = body.enabled
+    profile.day_interval_seconds = body.day_interval_seconds
+    profile.notification_delay_seconds = body.notification_delay_seconds
+    profile.updated_at = datetime.now(timezone.utc)
+    db.commit()
+    return {
+        "ok": True,
+        "user_id": str(user.id),
+        "enabled": profile.enabled,
+        "day_interval_seconds": profile.day_interval_seconds,
+        "notification_delay_seconds": profile.notification_delay_seconds,
+    }
+
+
+@router.post("/admin/test-profile/reset")
+def admin_reset_test_profile(
+    body: TestProfileIn,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    try:
+        user = resolve_user_for_resource(db, body.email, "ACCESS_MASTERCLASS")
+    except AppAccessError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    run_ids = list(db.scalars(select(QuestionnaireRun.id).where(QuestionnaireRun.user_id == user.id)))
+    if run_ids:
+        db.execute(delete(QuestionnaireAnswer).where(QuestionnaireAnswer.run_id.in_(run_ids)))
+    for model in (
+        QuestionnaireRun,
+        MasterclassNotification,
+        OfferCheckout,
+        UserOffer,
+        MasterclassStepProgress,
+        MasterclassDayProgress,
+        MasterclassEvent,
+    ):
+        db.execute(delete(model).where(model.user_id == user.id))
+    db.commit()
+    return {"ok": True, "user_id": str(user.id), "reset": True}
+
+
+@router.get("/admin/client-progress")
+def admin_client_progress(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
+    now = datetime.now(timezone.utc)
+    users = db.execute(
+        select(User.id, User.display_name, UserEmail.email_normalized)
+        .join(UserEmail, (UserEmail.user_id == User.id) & UserEmail.is_primary.is_(True))
+        .join(UserAccess, UserAccess.user_id == User.id)
+        .join(Resource, Resource.id == UserAccess.resource_id)
+        .where(
+            Resource.code == "ACCESS_MASTERCLASS",
+            UserAccess.revoked_at.is_(None),
+            (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
+        )
+        .distinct()
+        .order_by(User.display_name, UserEmail.email_normalized)
+    ).all()
+    result = []
+    for user_id, display_name, email in users:
+        questionnaires = {
+            row.kind: row.status
+            for row in db.scalars(select(QuestionnaireRun).where(QuestionnaireRun.user_id == user_id))
+        }
+        messenger = db.scalar(
+            select(MessengerAccount).where(
+                MessengerAccount.user_id == user_id,
+                MessengerAccount.platform == "telegram",
+            )
+        )
+        profile = db.get(MasterclassTestProfile, user_id)
+        result.append({
+            "id": str(user_id),
+            "display_name": display_name or "",
+            "email": email,
+            "current_day": db.scalar(select(func.max(MasterclassDayProgress.day_number)).where(MasterclassDayProgress.user_id == user_id)) or 0,
+            "onboarding": questionnaires.get("onboarding", "not_started"),
+            "closing_review": questionnaires.get("closing-review", "not_started"),
+            "telegram": messenger.username if messenger else None,
+            "test_mode": bool(profile and profile.enabled),
+        })
+    return {"ok": True, "users": result}
 
 
 @router.put("/admin/offer-stages/{stage_code}")

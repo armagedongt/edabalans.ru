@@ -6,6 +6,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
+from app.masterclass_triggers import editorial_help
 
 
 START_ENTRY_CODE = "start_attribution_entry"
@@ -193,7 +194,7 @@ def _postpurchase_messages() -> list[dict]:
             "Telegram: @{{telegram_username}}\n"
             "Тариф: {{masterclass_tariff}}\n"
             "Дата покупки: {{purchase_date}}\n\n"
-            "Всё верно? Если нет — выберите «Поменять почту». Новую почту нужно будет подтвердить кодом из письма.",
+            "Личный кабинет: {{account_url}}\n\nЕсли в данных ошибка, напишите Сергею — самостоятельно менять привязанный email здесь не нужно.",
             None,
             ["после покупки", "онбординг", "данные клиента"],
         ),
@@ -224,14 +225,14 @@ def _postpurchase_messages() -> list[dict]:
         (
             "postpurchase_recipes_owned",
             "04Б · Через 60 минут после рецептов — доступ есть",
-            "[Добавьте короткое сообщение после открытия рецептов и, если остались подходящие продукты, ссылку {{offers_url}}. Рецепты повторно не предлагать.]",
+            "Рецепты у вас уже открыты — повторно их не предлагаем. Если хотите посмотреть остальные доступные дополнения, они собраны здесь: {{offers_url}}",
             None,
             ["после покупки", "рецепты", "допродажа", "доступ есть"],
         ),
         (
             "postpurchase_tempo_late",
             "05А · Контроль темпа — отстал больше чем на 2 дня",
-            "[Добавьте бережное напоминание вернуться к мастер-классу. Без давления и без повторного запуска уже пройденных этапов.]",
+            "Вы остановились в Мастер-классе несколько дней назад. Всё уже пройденное сохранено — вернуться можно сразу к следующему шагу: {{course_url}}",
             None,
             ["после покупки", "темп", "напоминание"],
         ),
@@ -268,7 +269,7 @@ def _postpurchase_messages() -> list[dict]:
         (
             "postpurchase_final_offer",
             "08 · Финальная неделя — последнее предложение",
-            "[Добавьте финальное сообщение: один комплект недостающих самостоятельных продуктов и не более двух отдельных продуктов. После срока автоматический дожим прекращается.]",
+            "Это последнее автоматическое напоминание о дополнениях к Мастер-классу. Страница сама покажет только то, чего у вас ещё нет: {{offers_url}}. После окончания предложения дополнительных сообщений не будет.",
             None,
             ["после покупки", "финальное предложение", "допродажа"],
         ),
@@ -283,13 +284,21 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         session.add(bot)
 
     items: dict[str, ContentItem] = {}
-    for row in [*_messages(), *_start_system_messages(), *_postpurchase_messages()]:
+    postpurchase_rows = _postpurchase_messages()
+    postpurchase_codes = {row["code"] for row in postpurchase_rows}
+    for row in [*_messages(), *_start_system_messages(), *postpurchase_rows]:
         code = f"tpl_{row['code']}"
         item = session.scalar(select(ContentItem).where(ContentItem.code == code))
         if not item:
-            item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="draft", origin_system="template")
+            item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="published" if row["code"] in postpurchase_codes else "draft", origin_system="template")
             session.add(item)
             session.flush()
+        elif row["code"] in postpurchase_codes:
+            # Publish only this approved test module. Replace known seed
+            # placeholders, but never overwrite text edited by the owner.
+            item.status = "published"
+            if (item.body_source or "").lstrip().startswith("[") or "Поменять почту" in (item.body_source or ""):
+                item.body_source = row["body"]
         elif row["code"] == "start_welcome_offer" and "похудение-это-есть.рф/intensiv" in (item.body_source or ""):
             # Upgrade only the known seeded preview; later owner edits remain untouched.
             item.body_source = row["body"]
@@ -474,6 +483,7 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             ("pp_finish", "STOP", None, None, {"reason": "postpurchase_automatic_messages_complete"}),
         ]
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
+            config = {**config, "editorial_help": editorial_help(key)}
             session.add(SequenceStep(
                 sequence_version_id=version.id,
                 step_key=key,
@@ -484,6 +494,14 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
                 delay_seconds=delay,
                 configuration=config,
             ))
+    for step in session.scalars(
+        select(SequenceStep)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .where(SequenceVersion.sequence_id == post.id)
+    ):
+        help_data = editorial_help(step.step_key)
+        if help_data:
+            step.configuration = {**(step.configuration or {}), "editorial_help": help_data}
     session.flush()
     for version in session.scalars(select(SequenceVersion)):
         _ensure_edges(session, version)

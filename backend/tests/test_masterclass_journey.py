@@ -96,12 +96,16 @@ def setup(authenticated=True):
     return TestClient(app, headers=headers), factory
 
 
-def test_masterclass_personal_data_requires_confirmed_email_session():
+def test_masterclass_personal_data_uses_tilda_email_and_server_access():
     client, _ = setup(authenticated=False)
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test"
     )
-    assert response.status_code == 401
+    assert response.status_code == 200
+    denied = client.get(
+        "/api/masterclass/questionnaires/onboarding?email=other@example.test"
+    )
+    assert denied.status_code == 403
 
 
 def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
@@ -409,18 +413,38 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         ) == 1
 
 
-def test_course_api_requires_the_existing_member_session_and_access():
+def test_course_api_uses_tilda_email_but_still_requires_server_access():
     client, _ = setup(authenticated=False)
-    unauthenticated = client.get(
+    opened = client.get(
         "/api/masterclass/course?email=member@example.test",
         headers={},
     )
-    assert unauthenticated.status_code == 401
-    authenticated, _ = setup()
-    mismatched = authenticated.get(
+    assert opened.status_code == 200
+    denied = client.get(
         "/api/masterclass/course?email=other@example.test"
     )
-    assert mismatched.status_code == 401
+    assert denied.status_code == 403
+
+
+def test_admin_can_enable_isolated_accelerated_course_profile():
+    client, _ = setup()
+    enabled = client.put(
+        "/api/masterclass/admin/test-profile",
+        json={
+            "email": "member@example.test",
+            "enabled": True,
+            "day_interval_seconds": 20,
+            "notification_delay_seconds": 10,
+        },
+    )
+    assert enabled.status_code == 200
+    state = client.get("/api/masterclass/course?email=member@example.test")
+    assert state.status_code == 200
+    payload = state.json()
+    opened = datetime.fromisoformat(payload["days"][0]["first_opened_at"])
+    unlock = datetime.fromisoformat(payload["days"][0]["next_day_unlock_at"])
+    assert payload["accelerated_test"] is True
+    assert (unlock - opened).total_seconds() == 20
 
 
 def test_course_content_uses_the_same_member_session():
@@ -455,8 +479,8 @@ def test_recipe_gate_uses_access_and_records_open_once():
         + placement_token("recipes-part-1-gate")
     ).json()
     assert allowed["allowed"] is True
-    assert allowed["state"] == "technical_error"
-    assert allowed["contact"] == "@FitnessSergey"
+    assert allowed["state"] == "content"
+    assert allowed["title"] == "Рецепты · часть 1"
     with factory() as db:
         assert db.scalar(select(func.count(MasterclassEvent.id)).where(
             MasterclassEvent.event_type == "recipes_part_1_opened"
