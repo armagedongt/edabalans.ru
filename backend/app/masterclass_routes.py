@@ -154,7 +154,7 @@ def course_content_files() -> dict[str, Path]:
         for step in day.get("steps", []):
             asset = step.get("contentAsset")
             if asset:
-                result[asset] = COURSE_CONTENT_ROOT / "source-current" / asset
+                result.setdefault(asset, COURSE_CONTENT_ROOT / "source-current" / asset)
     return result
 
 

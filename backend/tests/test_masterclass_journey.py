@@ -449,6 +449,12 @@ def test_admin_can_enable_isolated_accelerated_course_profile():
 
 def test_course_content_uses_the_same_member_session():
     client, _ = setup()
+    imported = client.get(
+        "/api/masterclass/course/content/extracted-2026-08-23.json"
+        "?email=member@example.test"
+    )
+    assert imported.status_code == 200
+    assert imported.json()["pages"]
     response = client.get(
         "/api/masterclass/course/content/40-introduction-to-satiety-habits.md"
         "?email=member@example.test"

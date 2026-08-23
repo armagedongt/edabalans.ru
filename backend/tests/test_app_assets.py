@@ -75,6 +75,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "source: identitySource" in loader
     assert "identity.source==='tilda'" in course.text
     assert "function authHeaders()" in course.text
+    assert "Похудение — это есть!" in course.text
+    assert ".tlk-userbar{display:none!important}" in course.text
+    assert "Темы видны заранее" not in course.text
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
