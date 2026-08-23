@@ -26,6 +26,7 @@ from app.models import (
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
     UserCoursePolicy,
 )
+from app.pricing_service import active_pricing_version, pricing_entry_map
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
 
@@ -970,19 +971,49 @@ def safe_order(name: str, price: int) -> str:
     return f"#order:{clean}={price}"
 
 
-def build_offers(db: Session, user: User, placement: str) -> dict:
+def build_offers(
+    db: Session, user: User, placement: str, *, use_pricing_catalog: bool = False
+) -> dict:
     stage, own = offer_stage(db, user, placement)
     owned = access_codes(db, user.id)
     missing = [(code, p) for code,p in PRODUCTS.items() if p["resource"] not in owned]
     if "ACCESS_CONSULTATION" in owned:
         missing = [(code,p) for code,p in missing if code != "recordings"]
     pricing = stage.pricing or {}
-    single_price = int(pricing.get("single", 3900))
-    bundle_table = pricing.get("bundle", {})
+    catalog = {}
+    pricing_version = None
+    if use_pricing_catalog:
+        pricing_version = active_pricing_version(db)
+        if pricing_version is None:
+            raise HTTPException(503, "active pricing version is not configured")
+        catalog = pricing_entry_map(db, pricing_version)
+
+    def catalog_amount(code: str, fallback: int) -> int:
+        if not use_pricing_catalog:
+            return fallback
+        entry = catalog.get(code)
+        if entry is None or not entry.enabled:
+            raise HTTPException(503, f"pricing entry is not configured: {code}")
+        return int(entry.sale_amount)
+
+    def standard_amount(code: str, fallback: int) -> int:
+        return catalog_amount(f"product.{code}", fallback) if use_pricing_catalog else fallback
+
+    single_price = catalog_amount(
+        f"upsell.{stage.code}.single", int(pricing.get("single", 3900))
+    )
+    legacy_bundle_table = pricing.get("bundle", {})
+    bundle_table = {
+        str(count): catalog_amount(
+            f"upsell.{stage.code}.bundle.{count}",
+            int(legacy_bundle_table.get(str(count), count * 3900)),
+        )
+        for count in range(1, 5)
+    }
     cards: list[dict] = []
 
     def single_card(code: str, product: dict, *, discounted: bool = True) -> dict:
-        standard = int(product["standard"])
+        standard = standard_amount(code, int(product["standard"]))
         return {
             "code": f"single:{code}",
             "title": product["name"],
@@ -991,12 +1022,13 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
             "items": [code],
             "standard_price": standard,
             "price": min(single_price, standard) if discounted else standard,
+            "price_code": f"upsell.{stage.code}.single",
         }
 
     def digital_bundle() -> dict | None:
         if len(missing) < 2:
             return None
-        standard = sum(int(product["standard"]) for _, product in missing)
+        standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
         return {
             "code": "bundle:digital",
             "title": "Вообще всё, что вам может понадобиться",
@@ -1005,6 +1037,7 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
             "items": [code for code, _ in missing],
             "standard_price": standard,
             "price": int(bundle_table.get(str(len(missing)), standard)),
+            "price_code": f"upsell.{stage.code}.bundle.{len(missing)}",
         }
 
     consultation_detail = {
@@ -1022,8 +1055,11 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
         "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
         "details": [consultation_detail],
         "items": ["consultation"],
-        "standard_price": 8900,
-        "price": int(pricing.get("consultation", 8900)),
+        "standard_price": standard_amount("consultation", 8900),
+        "price": catalog_amount(
+            f"upsell.{stage.code}.consultation", int(pricing.get("consultation", 8900))
+        ) if stage.code in {"review", "last_week", "standard"} else int(pricing.get("consultation", 8900)),
+        "price_code": f"upsell.{stage.code}.consultation",
     }
 
     if stage.code in {"early", "second"}:
@@ -1036,7 +1072,7 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
         if consultation_visible:
             cards.append(consultation_card)
             if missing:
-                digital_standard = sum(int(product["standard"]) for _, product in missing)
+                digital_standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
                 digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
                 cards.append({
                     "code": "bundle:consultation",
@@ -1046,6 +1082,10 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
                     "items": ["consultation", *[code for code, _ in missing]],
                     "standard_price": 8900 + digital_standard,
                     "price": consultation_card["price"] + digital_price,
+                    "price_code": f"upsell.{stage.code}.consultation+bundle.{len(missing)}",
+                    # This card combines several catalog rows, so there is no
+                    # single PriceEntry to resolve again in the webhook.
+                    "price_entry_code": None,
                 })
         if missing:
             cards.append(single_card(*missing[0]))
@@ -1063,7 +1103,7 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
     for card in cards:
         card["saving"] = card["standard_price"] - card["price"]
         card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": own.expires_at.isoformat() if own and own.expires_at else None, "owned_resources": sorted(owned), "offers": cards[:3]}
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": own.expires_at.isoformat() if own and own.expires_at else None, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
 @router.get("/offers")
@@ -1079,7 +1119,9 @@ def offers(
     if placement not in EMBED_PLACEMENTS:
         raise HTTPException(422, "unknown masterclass placement")
     require_placement(request, placement, placement_token, settings)
-    payload = build_offers(db, user, placement)
+    payload = build_offers(
+        db, user, placement, use_pricing_catalog=settings.pricing_catalog_enabled
+    )
     db.commit(); return payload
 
 
@@ -1094,7 +1136,9 @@ def checkout(
     if body.placement not in EMBED_PLACEMENTS:
         raise HTTPException(422, "unknown masterclass placement")
     require_placement(request, body.placement, body.placement_token, settings)
-    payload = build_offers(db, user, body.placement)
+    payload = build_offers(
+        db, user, body.placement, use_pricing_catalog=settings.pricing_catalog_enabled
+    )
     card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
     if not card: raise HTTPException(409, "offer is no longer available")
     now = datetime.now(timezone.utc)
@@ -1102,6 +1146,13 @@ def checkout(
     checkout_expires = min(stage_expires, now + timedelta(hours=2)) if stage_expires else now + timedelta(hours=2)
     checkout = OfferCheckout(
         user_id=user.id,
+        checkout_kind="member_offer",
+        pricing_version_id=uuid.UUID(payload["pricing_version_id"]) if payload.get("pricing_version_id") else None,
+        price_entry_code=(
+            card.get("price_entry_code", card.get("price_code"))
+            if payload.get("pricing_version_id")
+            else None
+        ),
         offer_code=card["code"],
         title=card["title"],
         items=card["items"],
@@ -1140,7 +1191,7 @@ def recipe_gate(
             "message": "Доступ подтверждён. Подборка открыта и будет дополняться без изменения этой ссылки.",
         })
     else:
-        payload.update({"state": "offer", "message": "Этот раздел не входит в ваш текущий тариф.", "offer": build_offers(db, user, placement)})
+        payload.update({"state": "offer", "message": "Этот раздел не входит в ваш текущий тариф.", "offer": build_offers(db, user, placement, use_pricing_catalog=settings.pricing_catalog_enabled)})
     db.commit(); return payload
 
 

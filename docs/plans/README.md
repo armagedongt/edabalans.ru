@@ -30,6 +30,7 @@
 | Серверное приложение мастер-класса в Tilda Members Area | `MASTERCLASS_WEB_APP_SPEC.md` | `approved_requirements / technical draft` |
 | Точка возврата по сайту Мастер-класса | `MASTERCLASS_SITE_NEXT_STEPS.md` | `current_status_with_planned_followups` |
 | Упрощение доступов после финальной перестройки групп Tilda | `ACCESS_DATA_SIMPLIFICATION.md` | `planned` |
+| Одноразовый перенос Tilda Members Area | `TILDA_MEMBERS_SYNC.md` | `archived`; повторной синхронизации не будет |
 | Долгосрочное развитие платформы | `PLATFORM_LONG_TERM.md` | `planned` |
 | Аудит найденных планов по репозиторию | `PLAN_SOURCES_AUDIT.md` | `current` |
 

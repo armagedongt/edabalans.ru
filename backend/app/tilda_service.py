@@ -16,6 +16,7 @@ from app.models import (
     AttributionEvent,
     OfferCheckout,
     Payment,
+    PriceEntry,
     Product,
     ProductAccessRule,
     ProductAlias,
@@ -258,7 +259,11 @@ def validate_checkout(
         or checkout_expires < event_at.astimezone(timezone.utc)
     ):
         raise TildaPayloadError("offer checkout is expired or already used")
-    if not user or str(user.id) != str(checkout.user_id):
+    if not user:
+        raise TildaPayloadError("offer checkout requires an email")
+    if checkout.user_id is None and checkout.checkout_kind == "public_site":
+        checkout.user_id = user.id
+    elif str(user.id) != str(checkout.user_id):
         raise TildaPayloadError("offer checkout belongs to another email")
     if amount != checkout.amount:
         raise TildaPayloadError("offer checkout price does not match")
@@ -364,6 +369,19 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     if checkout_match:
         if checkout is None:
             raise TildaPayloadError("offer checkout is unknown")
+        if checkout.pricing_version_id and checkout.price_entry_code:
+            price_entry = db.scalar(
+                select(PriceEntry).where(
+                    PriceEntry.version_id == checkout.pricing_version_id,
+                    PriceEntry.code == checkout.price_entry_code,
+                )
+            )
+            if price_entry is None:
+                raise TildaPayloadError("checkout pricing snapshot is missing")
+            if price_entry.product_code:
+                product = db.scalar(
+                    select(Product).where(Product.code == price_entry.product_code)
+                )
     referer = first(payload, "referer", "Referer")
 
     existing = find_existing_payment(db, external_order_id, external_payment_id)
@@ -408,6 +426,12 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
 
         existing.user_id = existing.user_id or (user.id if user else None)
         existing.product_id = existing.product_id or (product.id if product else None)
+        existing.pricing_version_id = existing.pricing_version_id or (
+            checkout.pricing_version_id if checkout else None
+        )
+        existing.price_entry_code = existing.price_entry_code or (
+            checkout.price_entry_code if checkout else None
+        )
         existing.external_order_id = existing.external_order_id or external_order_id
         existing.external_payment_id = (
             existing.external_payment_id or external_payment_id
@@ -450,6 +474,8 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     payment = Payment(
         user_id=user.id if user else None,
         product_id=product.id if product else None,
+        pricing_version_id=checkout.pricing_version_id if checkout else None,
+        price_entry_code=checkout.price_entry_code if checkout else None,
         source=SOURCE,
         external_order_id=external_order_id,
         external_payment_id=external_payment_id,

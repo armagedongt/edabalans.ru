@@ -29,10 +29,11 @@
 | Административные интерфейсы | `ADMIN_ARCHITECTURE.md` | Общая навигация и границы CRM/Telegram-админки |
 | Каталог авторских материалов | `CONTENT_CATALOG.md` | Pikabu collector, text-first хранение, таблицы и admin API |
 | Платежи Tilda | `TILDA_PAYMENTS.md` | Приём webhook, нормализация и запись оплаты |
+| Единый каталог цен | `knowledge-base/PRICING_CATALOG.md` | Версии цен, три тарифа сайта, допродажи и безопасное переключение |
 | Получение и открытие доступов | `knowledge-base/ACCESS_RULES.md` | Исторические клиенты, review-gate, персональные ссылки и отложенное открытие |
 | Рабочие инструкции Сергею и персоналу | `knowledge-base/README.md` | Повседневные действия сотрудников; первая инструкция — управление доступами клиентов |
 | Tilda-страница персональной ссылки | `TILDA_PERSONAL_ACCESS_EMBED.md` | Единственный T123-код и production URL страницы |
-| Будущая синхронизация Tilda Members Area | `plans/TILDA_MEMBERS_SYNC.md` | Приоритет CRM, расхождения групп, ограничения API и вариант собственного кабинета |
+| Одноразовый перенос Tilda Members Area | `plans/TILDA_MEMBERS_SYNC.md` | Архивное решение: выгрузка уже обработана, дальнейшей синхронизации не будет |
 | Архив LeadTeh | `../leadteh-export/README.md` | Локальный экспорт и правила работы с архивом |
 | Legacy Google | `../legacy/google/README.md` | Исходный код и правила переноса старых приложений |
 
@@ -44,7 +45,7 @@
 | Модуль | Основные каталоги/файлы | Основные таблицы | Подробности |
 |---|---|---|---|
 | CRM/Core | `backend/app/models.py`, `crm_service.py`, `crm_routes.py` | `users`, `user_emails`, `user_phones`, `messenger_accounts`, `tags`, `user_tags`, `client_notes` | `CRM_DATA_MODEL.md` |
-| Продукты, оплаты и доступы | `backend/app/models.py`, `access_service.py`, `access_routes.py`, `tilda_service.py`, `tilda_routes.py` | `products`, `product_aliases`, `payments`, `resources`, `product_access_rules`, `user_accesses`, `personal_access_links`, `user_course_policies`, `attribution_events` | `CRM_DATA_MODEL.md`, `TILDA_PAYMENTS.md`, `knowledge-base/ACCESS_RULES.md` |
+| Продукты, цены, оплаты и доступы | `backend/app/models.py`, `pricing_service.py`, `pricing_routes.py`, `access_service.py`, `access_routes.py`, `tilda_service.py`, `tilda_routes.py` | `products`, `pricing_versions`, `price_entries`, `product_aliases`, `payments`, `resources`, `product_access_rules`, `user_accesses`, `personal_access_links`, `user_course_policies`, `attribution_events` | `CRM_DATA_MODEL.md`, `TILDA_PAYMENTS.md`, `knowledge-base/PRICING_CATALOG.md`, `knowledge-base/ACCESS_RULES.md` |
 | Telegram | `telegram-bot/service/app/main.py`, `start_router.py`, `engine.py`, `graph.py`, `telegram.py` | все таблицы с префиксом `tg_`, плюс чтение `users`, `messenger_accounts`, `payments`, `products`, `user_accesses`, `resources` | `TELEGRAM_BOT_CURRENT_LOGIC.md`, `knowledge-base/modules/telegram/README.md`, `../telegram-bot/README.md` |
 | Мастер-класс после покупки | `backend/app/masterclass_routes.py`, `backend/app/static/masterclass.js`, `backend/app/static/masterclass-first-days-preview.html` | `masterclass_day_progress`, `masterclass_step_progress`, `masterclass_events`, `questionnaire_runs`, `questionnaire_answers`, `offer_stages`, `user_offers`, `offer_checkouts`, `masterclass_notifications`, `messenger_link_tokens` | `knowledge-base/modules/masterclass/README.md`, `knowledge-base/modules/masterclass/COURSE_RUNTIME.md`, `knowledge-base/modules/telegram/POST_PURCHASE_MASTERCLASS.md` |
 | DQS | `backend/app/app_routes.py`, `app_service.py`, `static/apps/dqs.html`, legacy в `legacy/google/dqs/` | `dqs_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |

@@ -6,6 +6,24 @@ Production endpoint:
 POST https://api.edabalans.ru/integrations/tilda/payments
 ```
 
+## Новый серверный checkout (подготовлен, но выключен)
+
+После будущей перепубликации главной страницы три тарифа будут получать цену и
+состав из единого каталога. Кнопка передаёт backend только стабильный код тарифа;
+backend создаёт короткоживущий `offer_checkouts` и помещает его ID в заказ Tilda.
+Webhook обязан вернуть этот ID и email покупателя. Затем сервер сверяет срок,
+версию цены, точную сумму и состав ресурсов, сохраняет снимок в `payments` и
+выдаёт права.
+
+Определять тариф только по сумме запрещено. Сумма является проверкой, но не
+идентификатором: у разных акций и пакетов она может совпасть. Все три новых
+тарифа ведут в одну общую группу Tilda; различие прав существует только в
+PostgreSQL.
+
+До команды Сергея используется `PRICING_CATALOG_ENABLED=false`. В таком состоянии
+публичный API цен и создание нового checkout отвечают `503`, а действующая схема
+оплаты продолжает работать без изменений.
+
 Tilda sends `application/x-www-form-urlencoded` and authenticates with the
 `X-Tilda-Webhook-Token` header. The secret exists only in the production `.env`
 and in the Tilda receiver settings.

@@ -212,6 +212,49 @@ class ProductAccessRule(Base):
     )
 
 
+class PricingVersion(TimestampMixin, Base):
+    __tablename__ = "pricing_versions"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    version_number: Mapped[int] = mapped_column(Integer, unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(160), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="draft", nullable=False)
+    effective_from: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    activated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    activated_by: Mapped[str | None] = mapped_column(String(255))
+    note: Mapped[str | None] = mapped_column(Text)
+
+
+class PriceEntry(Base):
+    __tablename__ = "price_entries"
+    __table_args__ = (
+        UniqueConstraint("version_id", "code", name="uq_price_entry_version_code"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    version_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("pricing_versions.id", ondelete="CASCADE"), index=True
+    )
+    code: Mapped[str] = mapped_column(String(120), nullable=False)
+    section: Mapped[str] = mapped_column(String(40), nullable=False)
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    product_code: Mapped[str | None] = mapped_column(String(80))
+    stage_code: Mapped[str | None] = mapped_column(String(40))
+    resource_codes: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    item_count: Mapped[int | None] = mapped_column(Integer)
+    regular_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    compare_at_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    sale_amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    sort_order: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class ImportBatch(Base):
     __tablename__ = "import_batches"
 
@@ -240,6 +283,10 @@ class Payment(Base):
     product_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("products.id", ondelete="SET NULL"), index=True
     )
+    pricing_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("pricing_versions.id", ondelete="SET NULL"), index=True
+    )
+    price_entry_code: Mapped[str | None] = mapped_column(String(120))
     import_batch_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("import_batches.id", ondelete="SET NULL")
     )
@@ -556,7 +603,12 @@ class OfferCheckout(Base):
     __tablename__ = "offer_checkouts"
 
     id: Mapped[uuid.UUID] = uuid_pk()
-    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True)
+    checkout_kind: Mapped[str] = mapped_column(String(32), default="member_offer", nullable=False)
+    pricing_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("pricing_versions.id", ondelete="SET NULL"), index=True
+    )
+    price_entry_code: Mapped[str | None] = mapped_column(String(120))
     offer_code: Mapped[str] = mapped_column(String(120), nullable=False)
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     items: Mapped[list] = mapped_column(JSON, default=list, nullable=False)

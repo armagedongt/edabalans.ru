@@ -383,12 +383,78 @@
     document.getElementById("content-filter").addEventListener("keydown", (event) => { if (event.key === "Enter") search(); });
   }
 
+  function pricingAmount(value) {
+    return value === null || value === undefined ? "" : String(value);
+  }
+
+  async function pricingCatalog() {
+    setHeading("Цены и тарифы", "ЕДИНЫЙ КАТАЛОГ");
+    loading();
+    const payload = await api("/admin/api/pricing");
+    const versions = payload.versions || [];
+    const selectedId = new URLSearchParams(location.search).get("version");
+    const selected = versions.find((item) => item.id === selectedId)
+      || versions.find((item) => item.status === "draft")
+      || versions.find((item) => item.status === "active")
+      || versions[0];
+    const live = payload.live_consumption_enabled;
+    if (!selected) {
+      root.innerHTML = `<div class="pricing-banner"><div><h3>Каталог ещё не создан</h3><p>Создайте первый черновик. Он не повлияет на сайт.</p></div><button class="admin-action" id="pricing-create">Создать черновик</button></div>`;
+      document.getElementById("pricing-create").onclick = async () => { await api("/admin/api/pricing/drafts", { method: "POST" }); await pricingCatalog(); };
+      return;
+    }
+    const editable = selected.status === "draft";
+    const sectionNames = { site_tariffs: "Три тарифа на главной странице", products: "Базовые цены продуктов", upsells: "Ступени допродаж после покупки" };
+    const grouped = (selected.entries || []).reduce((result, entry) => { (result[entry.section] ||= []).push(entry); return result; }, {});
+    const sections = Object.entries(grouped).map(([section, entries]) => `
+      <section class="pricing-section"><h3>${esc(sectionNames[section] || section)}</h3><div class="pricing-table">
+        ${entries.map((entry) => `<div class="pricing-row" data-price-code="${esc(entry.code)}">
+          <div class="pricing-name"><b>${esc(entry.name)}</b><small>${esc(entry.code)}${entry.stage_code ? ` · этап ${esc(entry.stage_code)}` : ""}${entry.resource_codes.length ? ` · ${entry.resource_codes.map(esc).join(", ")}` : ""}</small></div>
+          <div class="pricing-cell"><label>БАЗОВАЯ<input class="pricing-input" data-field="regular_amount" type="number" min="0" step="1" value="${esc(pricingAmount(entry.regular_amount))}"></label></div>
+          <div class="pricing-cell"><label>ЗАЧЁРКНУТАЯ<input class="pricing-input" data-field="compare_at_amount" type="number" min="0" step="1" value="${esc(pricingAmount(entry.compare_at_amount))}"></label></div>
+          <div class="pricing-cell"><label>ЦЕНА ПРОДАЖИ<input class="pricing-input" data-field="sale_amount" type="number" min="0" step="1" value="${esc(pricingAmount(entry.sale_amount))}"></label></div>
+          <label class="pricing-check"><input data-field="enabled" type="checkbox" ${entry.enabled ? "checked" : ""}> Показывать</label>
+        </div>`).join("")}
+      </div></section>`).join("");
+    root.innerHTML = `
+      <div class="pricing-banner ${live ? "live" : ""}"><div><h3>${live ? "Серверный каталог включён" : "Подготовительный режим — на покупки не влияет"}</h3><p>${live ? "Новые страницы и checkout читают активную версию." : "Текущий сайт и существующая логика цен продолжают работать как раньше."}</p></div><span class="admin-badge ${live ? "" : "warn"}">${live ? "LIVE" : "ВЫКЛЮЧЕНО"}</span></div>
+      <article class="admin-card ${editable ? "" : "pricing-readonly"}">
+        <div class="pricing-version-head"><div><h2>Версия ${selected.version_number} · ${esc(selected.name)}</h2><p>${esc(selected.status)} · создана ${date(selected.created_at)}${selected.activated_at ? ` · опубликована ${date(selected.activated_at)}` : ""}</p></div><span class="admin-badge ${editable ? "warn" : ""}">${editable ? "ЧЕРНОВИК" : "НЕИЗМЕНЯЕМАЯ"}</span></div>
+        <div class="pricing-meta"><label>НАЗВАНИЕ ВЕРСИИ<input class="pricing-input" id="pricing-name" value="${esc(selected.name)}"></label><label>КОММЕНТАРИЙ<textarea class="pricing-input" id="pricing-note">${esc(selected.note || "")}</textarea></label></div>
+        ${sections}
+        <div class="pricing-actions">${editable ? '<button class="admin-action" id="pricing-save">Сохранить черновик</button><button class="admin-action alt" id="pricing-publish">Опубликовать версию</button>' : '<button class="admin-action" id="pricing-create">Создать новый черновик из этой версии</button>'}</div>
+      </article>
+      <article class="admin-card pricing-history"><h3>История версий</h3>${versions.map((version) => `<button class="admin-row" data-pricing-version="${version.id}"><span>v${version.version_number} · ${esc(version.name)}</span><b>${esc(version.status)}</b></button>`).join("")}</article>`;
+    root.querySelectorAll("[data-pricing-version]").forEach((button) => button.onclick = () => { location.href = `/admin/pricing?version=${button.dataset.pricingVersion}`; });
+    if (!editable) {
+      document.getElementById("pricing-create").onclick = async () => { const result = await api("/admin/api/pricing/drafts", { method: "POST" }); location.href = `/admin/pricing?version=${result.version.id}`; };
+      return;
+    }
+    const collect = () => Array.from(root.querySelectorAll("[data-price-code]")).map((row) => ({
+      code: row.dataset.priceCode,
+      regular_amount: row.querySelector('[data-field="regular_amount"]').value === "" ? null : Number(row.querySelector('[data-field="regular_amount"]').value),
+      compare_at_amount: row.querySelector('[data-field="compare_at_amount"]').value === "" ? null : Number(row.querySelector('[data-field="compare_at_amount"]').value),
+      sale_amount: Number(row.querySelector('[data-field="sale_amount"]').value),
+      enabled: row.querySelector('[data-field="enabled"]').checked
+    }));
+    document.getElementById("pricing-save").onclick = async () => {
+      await api(`/admin/api/pricing/versions/${selected.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: document.getElementById("pricing-name").value, note: document.getElementById("pricing-note").value, entries: collect() }) });
+      await pricingCatalog();
+    };
+    document.getElementById("pricing-publish").onclick = async () => {
+      if (!confirm("Опубликовать эту неизменяемую версию? Пока переключатель выключен, текущие покупки не изменятся.")) return;
+      await api(`/admin/api/pricing/versions/${selected.id}/publish`, { method: "POST" });
+      await pricingCatalog();
+    };
+  }
+
   async function run() {
     const active = section();
     selectNavigation(active);
     if (["dqs", "strength", "metabolism"].includes(active)) return application(active);
     if (active === "users") return users();
     if (active === "content") return contentCatalog();
+    if (active === "pricing") return pricingCatalog();
     return dashboard();
   }
 
