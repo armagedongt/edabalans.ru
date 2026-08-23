@@ -55,6 +55,35 @@
     return '';
   }
 
+  function detectTildaMemberEmail() {
+    try {
+      if (typeof window.tma__getProfileObjFromLS !== 'function') return '';
+      var profile = window.tma__getProfileObjFromLS();
+      var email = normalizeEmail(profile && profile.login);
+      return validEmail(email) ? email : '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function waitForTildaEmail(onFound, onMissing) {
+    var attempts = 0;
+    var maxAttempts = 25;
+    var timer = setInterval(function () {
+      var email = detectTildaMemberEmail();
+      attempts += 1;
+      if (email) {
+        clearInterval(timer);
+        onFound(email);
+        return;
+      }
+      if (attempts >= maxAttempts) {
+        clearInterval(timer);
+        onMissing();
+      }
+    }, 200);
+  }
+
   function rememberedIdentity() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_IDENTITY) || 'null');
@@ -87,7 +116,7 @@
       }));
       localStorage.setItem('dqs_email', email);
     } catch (error) {}
-    window.EdabalansIdentity = {email: email, sessionToken: token};
+    window.EdabalansIdentity = {email: email, sessionToken: token, source: identitySource};
     var marker = document.getElementById('edabalans-member-email');
     if (!marker) {
       marker = document.createElement('input');
@@ -252,7 +281,7 @@
     var protectedApps = mounts.some(function (mount) {
       return Boolean(PROTECTED_APPS[String(mount.getAttribute('data-edabalans-app') || '').toLowerCase()]);
     });
-    var detected = detectTildaEmail();
+    var detected = protectedApps ? detectTildaMemberEmail() : detectTildaEmail();
     var remembered = rememberedIdentity();
     if (protectedApps) {
       if (detected) {
@@ -260,12 +289,13 @@
         start(mounts);
         return;
       }
-      if (remembered && remembered.source === 'tilda') {
-        remember(remembered.email);
+      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника Tilda…</div>';
+      waitForTildaEmail(function (email) {
+        remember(email, '', 0, 'tilda');
         start(mounts);
-        return;
-      }
-      tildaIdentityRequired(mounts);
+      }, function () {
+        tildaIdentityRequired(mounts);
+      });
       return;
     }
     if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {

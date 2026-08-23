@@ -63,10 +63,18 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
     assert "tildaIdentityRequired" in loader
+    assert "tma__getProfileObjFromLS" in loader
+    assert "detectTildaMemberEmail" in loader
+    assert "waitForTildaEmail" in loader
+    assert "protectedApps ? detectTildaMemberEmail() : detectTildaEmail()" in loader
+    assert "remembered.source === 'tilda'" not in loader
     assert "remember(detected, '', 0, 'tilda')" in loader
     assert "Откройте приложение из личного кабинета" in loader
     assert "masterclass-course" in loader
     assert "data-edabalans-account-url" in loader
+    assert "source: identitySource" in loader
+    assert "identity.source==='tilda'" in course.text
+    assert "function authHeaders()" in course.text
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
