@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, time, timedelta, timezone
 from decimal import Decimal
 import hashlib
 import json
@@ -8,6 +8,7 @@ from pathlib import Path
 import re
 import secrets
 import uuid
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
@@ -95,6 +96,8 @@ COURSE_ACTIVITY_EVENTS = {
 }
 COURSE_CONTENT_ROOT = Path(__file__).resolve().parents[2] / "content" / "masterclass"
 COURSE_MANIFEST_PATH = COURSE_CONTENT_ROOT / "course" / "course.json"
+DEFAULT_COURSE_TIMEZONE = "Europe/Moscow"
+NEXT_DAY_LOCAL_HOUR = 6
 
 
 def load_course_manifest() -> dict:
@@ -127,7 +130,6 @@ def load_course_manifest() -> dict:
 
 COURSE_MANIFEST = load_course_manifest()
 COURSE_DAYS = {day["number"]: day for day in COURSE_MANIFEST["days"]}
-COURSE_DAY_HOURS = int(COURSE_MANIFEST["dayIntervalHours"])
 COURSE_LAST_DAY = max(COURSE_DAYS)
 COURSE_CHECK_COUNTS = {day: len(data["checks"]) for day, data in COURSE_DAYS.items()}
 COURSE_APPS = {
@@ -174,6 +176,7 @@ class AnswerIn(BaseModel):
 
 class RunActionIn(BaseModel):
     email: str
+    timezone_name: str = Field(default=DEFAULT_COURSE_TIMEZONE, min_length=1, max_length=64)
 
 
 class CourseCheckIn(BaseModel):
@@ -219,9 +222,45 @@ def test_profile(db: Session, user_id: uuid.UUID) -> MasterclassTestProfile | No
     return profile if profile and profile.enabled else None
 
 
-def day_interval(db: Session, user_id: uuid.UUID) -> timedelta:
+def course_timezone(value: str | None) -> tuple[str, ZoneInfo]:
+    name = (value or DEFAULT_COURSE_TIMEZONE).strip()
+    if not name or len(name) > 64:
+        name = DEFAULT_COURSE_TIMEZONE
+    try:
+        return name, ZoneInfo(name)
+    except (ValueError, ZoneInfoNotFoundError):
+        return DEFAULT_COURSE_TIMEZONE, ZoneInfo(DEFAULT_COURSE_TIMEZONE)
+
+
+def next_local_unlock_at(
+    progress: MasterclassDayProgress,
+    now: datetime,
+) -> datetime:
+    _, local_timezone = course_timezone(progress.timezone_name)
+    opened_date = aware_utc(progress.first_opened_at).astimezone(local_timezone).date()
+    reference = aware_utc(progress.completed_at) if progress.completed_at else aware_utc(now)
+    reference_date = reference.astimezone(local_timezone).date()
+    study_date = max(opened_date, reference_date)
+    local_unlock = datetime.combine(
+        study_date + timedelta(days=1),
+        time(hour=NEXT_DAY_LOCAL_HOUR),
+        tzinfo=local_timezone,
+    )
+    return local_unlock.astimezone(timezone.utc)
+
+
+def scheduled_unlock_at(
+    db: Session,
+    user_id: uuid.UUID,
+    progress: MasterclassDayProgress,
+    now: datetime,
+) -> datetime:
     profile = test_profile(db, user_id)
-    return timedelta(seconds=profile.day_interval_seconds) if profile else timedelta(hours=COURSE_DAY_HOURS)
+    if profile:
+        return aware_utc(progress.first_opened_at) + timedelta(
+            seconds=profile.day_interval_seconds
+        )
+    return next_local_unlock_at(progress, now)
 
 
 def masterclass_fully_unlocked(db: Session, user_id: uuid.UUID) -> bool:
@@ -324,14 +363,14 @@ def day_progress(
 
 
 def course_day_unlock_at(
-    db: Session, user_id: uuid.UUID, day: int
+    db: Session, user_id: uuid.UUID, day: int, now: datetime
 ) -> datetime | None:
     if day == 1:
         return None
     previous = day_progress(db, user_id, day - 1)
     if not previous:
         return None
-    return aware_utc(previous.first_opened_at) + day_interval(db, user_id)
+    return scheduled_unlock_at(db, user_id, previous, now)
 
 
 def course_day_can_open(
@@ -344,7 +383,7 @@ def course_day_can_open(
     previous = day_progress(db, user_id, day - 1)
     if not previous:
         return False, "previous_day_not_opened", None
-    unlock_at = aware_utc(previous.first_opened_at) + day_interval(db, user_id)
+    unlock_at = scheduled_unlock_at(db, user_id, previous, now)
     if not previous.completed_at:
         return False, "previous_day_not_completed", unlock_at
     if now < unlock_at:
@@ -353,7 +392,11 @@ def course_day_can_open(
 
 
 def open_course_day(
-    db: Session, user: User, day: int, now: datetime
+    db: Session,
+    user: User,
+    day: int,
+    now: datetime,
+    timezone_name: str = DEFAULT_COURSE_TIMEZONE,
 ) -> MasterclassDayProgress:
     course_step_kinds(day)
     existing = day_progress(db, user.id, day)
@@ -365,10 +408,12 @@ def open_course_day(
         if unlock_at:
             detail["unlock_at"] = unlock_at.isoformat()
         raise HTTPException(409, detail=detail)
+    normalized_timezone, _ = course_timezone(timezone_name)
     progress = MasterclassDayProgress(
         user_id=user.id,
         day_number=day,
         first_opened_at=now,
+        timezone_name=normalized_timezone,
         checkmarks={},
     )
     db.add(progress)
@@ -444,9 +489,7 @@ def course_payload(
                     placement_token=create_placement_token("recipes-part-2-gate", settings),
                 )
         first_opened = aware_utc(progress.first_opened_at) if progress else None
-        next_unlock = (
-            first_opened + day_interval(db, user.id) if first_opened else None
-        )
+        next_unlock = scheduled_unlock_at(db, user.id, progress, now) if progress else None
         days.append(
             {
                 "number": day,
@@ -455,6 +498,7 @@ def course_payload(
                 "locked_reason": None if progress or can_open else reason,
                 "unlock_at": unlock_at.isoformat() if unlock_at else None,
                 "first_opened_at": first_opened.isoformat() if first_opened else None,
+                "timezone_name": progress.timezone_name if progress else None,
                 "next_day_unlock_at": next_unlock.isoformat() if next_unlock else None,
                 "steps_total": len(kinds),
                 "completed_steps": sorted(completed),
@@ -479,7 +523,7 @@ def course_payload(
         "ok": True,
         "course_version": COURSE_MANIFEST["courseVersion"],
         "server_now": now.isoformat(),
-        "day_interval_hours": COURSE_DAY_HOURS,
+        "unlock_schedule": "next_local_06_after_completion_day",
         "accelerated_test": bool(test_profile(db, user.id)),
         "fully_unlocked": masterclass_fully_unlocked(db, user.id),
         "current_day": max(progress_rows) if progress_rows else 1,
@@ -517,13 +561,14 @@ def course_step_event(day: int, index: int, kind: str) -> tuple[str, str | None]
 def course_state(
     email: str,
     request: Request,
+    timezone_name: str = DEFAULT_COURSE_TIMEZONE,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    open_course_day(db, user, 1, now)
+    open_course_day(db, user, 1, now, timezone_name)
     course_event(
         db,
         user.id,
@@ -564,7 +609,7 @@ def course_open_day(
     user = resolve_masterclass_user(request, db, body.email, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     now = datetime.now(timezone.utc)
-    open_course_day(db, user, day, now)
+    open_course_day(db, user, day, now, body.timezone_name)
     db.commit()
     return course_payload(db, user, settings, now)
 

@@ -386,7 +386,8 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
                 MasterclassDayProgress.day_number == 1
             )
         )
-        progress.first_opened_at = datetime.now(timezone.utc) - timedelta(hours=21)
+        progress.first_opened_at = datetime.now(timezone.utc) - timedelta(days=2)
+        progress.completed_at = datetime.now(timezone.utc) - timedelta(days=2)
         db.commit()
     opened = client.post(
         "/api/masterclass/course/days/2/open",
