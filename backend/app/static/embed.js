@@ -6,6 +6,7 @@
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PROTECTED_APPS = {
+    'account': true,
     'masterclass-course': true,
     'onboarding-questionnaire': true,
     'masterclass-offers': true,
@@ -15,6 +16,7 @@
     'personal-access': true
   };
   var roots = {
+    account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
     'masterclass-sales': 'masterclass-sales-app',
     dqs: 'dqs-app',
@@ -131,7 +133,15 @@
   function tildaIdentityRequired(mounts) {
     mounts[0].innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
       '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Откройте приложение из личного кабинета</div>' +
-      '<div style="line-height:1.5">На этой странице не найден email участника Tilda. Вернитесь в Members Area и откройте Мастер-класс оттуда.</div></div>';
+      '<div style="line-height:1.5">На этой странице не найден email участника Tilda. Вернитесь в Members Area и откройте личный кабинет оттуда.</div></div>';
+  }
+
+  function hideTildaUserbar() {
+    if (document.getElementById('edabalans-hide-tilda-userbar')) return;
+    var style = document.createElement('style');
+    style.id = 'edabalans-hide-tilda-userbar';
+    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}';
+    document.head.appendChild(style);
   }
 
   function askIdentity(mounts, candidate, requireConfirmation) {
@@ -284,6 +294,7 @@
     var detected = protectedApps ? detectTildaMemberEmail() : detectTildaEmail();
     var remembered = rememberedIdentity();
     if (protectedApps) {
+      hideTildaUserbar();
       if (detected) {
         remember(detected, '', 0, 'tilda');
         start(mounts);

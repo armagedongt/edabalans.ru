@@ -45,6 +45,11 @@ def test_unknown_application_fragment_is_404() -> None:
 
 
 def test_masterclass_fragments_and_shared_assets_are_public() -> None:
+    account = client.get("/apps/account.html")
+    assert account.status_code == 200
+    assert 'id="account-app"' in account.text
+    assert "/api/account" in account.text
+    assert 'data-edabalans-app="' in account.text
     for app_code in ("onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
@@ -71,6 +76,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "remember(detected, '', 0, 'tilda')" in loader
     assert "Откройте приложение из личного кабинета" in loader
     assert "masterclass-course" in loader
+    assert "'account': true" in loader
+    assert "hideTildaUserbar" in loader
     assert "data-edabalans-account-url" in loader
     assert "source: identitySource" in loader
     assert "identity.source==='tilda'" in course.text

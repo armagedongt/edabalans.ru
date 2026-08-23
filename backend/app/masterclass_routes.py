@@ -67,7 +67,7 @@ PRODUCTS = {
 }
 
 STAGE_BY_PLACEMENT = {
-    "day-2-offer": "early", "recipes-part-1-gate": "early",
+    "day-1-offer": "early", "day-2-offer": "early", "recipes-part-1-gate": "early",
     "recipes-part-2-gate": "second", "closing-review": "review",
     "post-review": "last_week",
     # Current 21-day web program. Legacy placement names above stay valid for

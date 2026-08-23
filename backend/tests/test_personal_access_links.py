@@ -1,4 +1,5 @@
 import os
+from datetime import datetime, timezone
 from urllib.parse import parse_qs, urlparse
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -117,4 +118,40 @@ def test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_ac
         assert user.access_review_status == "pending"
         assert user.tilda_access_status == "pending"
         assert db.scalar(select(func.count(UserAccess.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_universal_account_blocks_review_and_uses_server_resources_for_catalog():
+    client, factory, user_id = setup()
+    blocked = client.get("/api/account?email=client@example.test")
+    assert blocked.status_code == 200
+    assert blocked.json()["state"] == "review_required"
+    assert blocked.json()["courses"] == []
+
+    with factory() as db:
+        user = db.get(User, user_id)
+        user.access_review_status = "completed"
+        masterclass = db.scalar(
+            select(Resource).where(Resource.code == "ACCESS_MASTERCLASS")
+        )
+        db.add(
+            UserAccess(
+                user_id=user.id,
+                resource_id=masterclass.id,
+                source="test",
+                granted_at=datetime.now(timezone.utc),
+            )
+        )
+        db.commit()
+
+    ready = client.get("/api/account?email=client@example.test")
+    assert ready.status_code == 200
+    data = ready.json()
+    assert data["state"] == "ready"
+    masterclass_card = next(item for item in data["courses"] if item["code"] == "masterclass")
+    assert masterclass_card["state"] == "available"
+    assert masterclass_card["app"] == "masterclass-course"
+    recipes_card = next(item for item in data["courses"] if item["code"] == "recipes")
+    assert recipes_card["state"] == "not_owned"
+    assert recipes_card["app"] is None
     app.dependency_overrides.clear()

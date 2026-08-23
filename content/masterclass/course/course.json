@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "courseVersion": "2026-08-23.1",
+  "courseVersion": "2026-08-24.1",
   "courseCode": "masterclass-21",
   "title": "Мастер-класс",
   "status": "launch_draft",
@@ -34,6 +34,15 @@
       "recipeDay": false,
       "publicationStatus": "ready",
       "steps": [
+        {
+          "id": "day-01-article-tutorial",
+          "kind": "article",
+          "title": "Как пользоваться Мастер-классом",
+          "summary": "Оглавление, навигация, задания и правила открытия следующих дней.",
+          "status": "ready",
+          "contentKind": "markdown",
+          "contentAsset": "00-how-to-use-masterclass.md"
+        },
         {
           "id": "day-01-article-01",
           "kind": "article",
@@ -81,7 +90,7 @@
         {
           "id": "day-01-offer",
           "kind": "offer",
-          "placement": "offers-hub",
+          "placement": "day-1-offer",
           "event": "day_1_offer_opened",
           "label": "Что ещё можно добавить к Мастер-классу",
           "summary": "Посмотреть доступные программы и дополнения без повторного предложения уже купленного.",

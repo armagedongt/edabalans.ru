@@ -24,7 +24,15 @@ from app.access_service import (
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
-from app.models import AdminAppEdit, OfferCheckout, PersonalAccessLink, User, UserEmail
+from app.models import (
+    AdminAppEdit,
+    OfferCheckout,
+    PersonalAccessLink,
+    Resource,
+    User,
+    UserAccess,
+    UserEmail,
+)
 
 
 router = APIRouter(tags=["access-links"])
@@ -114,6 +122,70 @@ def access_status(email: str, db: Session = Depends(get_db)) -> dict:
             if review_blocks_access(user)
             else "Доступы проверены"
         ),
+    }
+
+
+@router.get("/api/account")
+def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
+    """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies rights."""
+    user = user_for_email(db, email)
+    if user is None:
+        return {
+            "ok": True,
+            "state": "review_required",
+            "review_status": "unknown",
+            "message": "Аккаунт пока не связан с CRM. Напишите Сергею и укажите email личного кабинета.",
+            "courses": [],
+        }
+    if review_blocks_access(user):
+        return {
+            "ok": True,
+            "state": "review_required",
+            "review_status": user.access_review_status,
+            "message": "Нужно решение Сергея по вашим прежним покупкам. Напишите ему и укажите email личного кабинета.",
+            "courses": [],
+        }
+
+    now = datetime.now(timezone.utc)
+    owned = set(
+        db.scalars(
+            select(Resource.code)
+            .join(UserAccess, UserAccess.resource_id == Resource.id)
+            .where(
+                UserAccess.user_id == user.id,
+                UserAccess.revoked_at.is_(None),
+                UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now),
+                Resource.status == "active",
+            )
+        )
+    )
+    definitions = [
+        ("masterclass", "Мастер-класс", "21 день: материалы, приложения и задания", "ACCESS_MASTERCLASS", "masterclass-course", True),
+        ("recipes", "Рецепты", "Система рецептов и практические подборки", "ACCESS_RECIPES", None, False),
+        ("calories", "Калорийный курс", "Работа с калориями после Мастер-класса", "ACCESS_CALORIES", None, False),
+        ("strength", "Тренировки", "Программа перехода к силовым тренировкам", "ACCESS_STRENGTH", None, False),
+        ("recordings", "Разборы", "Записи разборов питания и решений", "ACCESS_CONSULTATION_RECORDINGS", None, False),
+    ]
+    courses = []
+    for code, title, summary, resource, app, app_ready in definitions:
+        has_access = resource in owned
+        courses.append(
+            {
+                "code": code,
+                "title": title,
+                "summary": summary,
+                "resource": resource,
+                "owned": has_access,
+                "state": "available" if has_access and app_ready else "preparing" if has_access else "not_owned",
+                "app": app if has_access and app_ready else None,
+            }
+        )
+    return {
+        "ok": True,
+        "state": "ready",
+        "review_status": user.access_review_status,
+        "email": email.strip().lower(),
+        "courses": courses,
     }
 
 

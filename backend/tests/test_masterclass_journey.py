@@ -286,6 +286,7 @@ def test_admin_can_generate_signed_tokens_for_tilda_placements():
     assert response.status_code == 200
     placements = response.json()["placements"]
     assert set(placements) >= {
+        "day-1-offer",
         "day-2-offer",
         "day-15-offer",
         "day-17-offer",
@@ -301,6 +302,7 @@ def test_admin_can_generate_signed_tokens_for_tilda_placements():
 
 def test_current_21_day_offer_placements_select_expected_stages():
     expected = {
+        "day-1-offer": "early",
         "day-15-offer": "early",
         "day-17-offer": "second",
         "day-19-offer": "review",
@@ -323,13 +325,13 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     )
     assert manifest.status_code == 200
     assert len(manifest.json()["days"]) == 21
-    assert manifest.json()["days"][0]["steps"][5]["id"] == "day-01-offer"
+    assert manifest.json()["days"][0]["steps"][6]["id"] == "day-01-offer"
 
     state = client.get("/api/masterclass/course?email=member@example.test")
     assert state.status_code == 200
     day = state.json()["days"][0]
     assert day["opened"] is True
-    assert day["steps_total"] == 6
+    assert day["steps_total"] == 7
     assert day["completed_steps"] == []
     assert day["task_unlocked"] is False
     assert day["offer"] is None
@@ -341,19 +343,19 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     assert skipped.status_code == 409
     assert skipped.json()["detail"]["reason"] == "previous_step_not_completed"
 
-    for index in range(5):
+    for index in range(6):
         completed = client.post(
             f"/api/masterclass/course/days/1/steps/{index}/complete",
             json={"email": "member@example.test"},
         )
         assert completed.status_code == 200
     before_offer = completed.json()["days"][0]
-    assert before_offer["next_step"] == 5
-    assert before_offer["offer"]["placement"] == "offers-hub"
+    assert before_offer["next_step"] == 6
+    assert before_offer["offer"]["placement"] == "day-1-offer"
     assert len(before_offer["offer"]["placement_token"]) > 20
 
     offer = client.post(
-        "/api/masterclass/course/days/1/steps/5/complete",
+        "/api/masterclass/course/days/1/steps/6/complete",
         json={"email": "member@example.test"},
     )
     assert offer.status_code == 200
