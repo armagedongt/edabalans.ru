@@ -40,7 +40,7 @@ jobs:
               --volume "$PWD/backend/tests:/app/tests:ro" \
               --volume "$PWD/backend/requirements-dev.txt:/app/requirements-dev.txt:ro" \
               edabalans-backend-test \
-              sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q" \
+              sh -c "pip install --quiet -r /app/requirements-dev.txt && python -m pytest -q /app/tests" \
               2>&1 | tee "$test_log"; then
             exit 0
           fi

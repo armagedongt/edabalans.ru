@@ -11,6 +11,10 @@
 
 Каталог production: `/opt/edabalans`.
 
+Постоянный SSH-алиас на рабочем компьютере владельца: `edabalans-prod`. Он использует
+ключ `~/.ssh/edabalans_timeweb`; открытый пароль и приватный ключ в репозиторий не
+попадают. Проверка подключения: `ssh edabalans-prod "hostname"`.
+
 Секреты находятся только на сервере в `/opt/edabalans/.env` и
 `/root/.config/edabalans/s3.env`. Их нельзя выводить в логи, отправлять в GitHub или
 вставлять в документацию.
