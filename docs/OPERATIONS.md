@@ -231,6 +231,16 @@ docker compose ps telegram-bot
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
 ```
 
+Модуль после покупки Мастер-класса выпущен в безопасном тестовом режиме:
+
+- `POSTPURCHASE_DISPATCH_ENABLED=true` разрешает dispatcher читать outbox;
+- `POSTPURCHASE_TEST_ONLY=true` запрещает доставку всем, у кого нет явно
+  включённого `masterclass_test_profiles`;
+- ускорение конкретного владельца и сброс только его тестового прогресса доступны
+  в `/admin/masterclass`;
+- выключать `POSTPURCHASE_TEST_ONLY` можно только после сквозного ручного прогона
+  всех 21 дней и повторной проверки текстов в Telegram-админке.
+
 ## Выпуск модуля после покупки мастер-класса
 
 Migration `20260822_0015` добавляет только новые таблицы и индексы модуля; она не
