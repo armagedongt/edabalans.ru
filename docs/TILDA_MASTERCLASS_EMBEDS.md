@@ -19,7 +19,7 @@ Tilda. Единое приложение получает нужный марк�
 ```html
 <div
   data-edabalans-app="masterclass-course"
-  data-edabalans-account-url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/members/"
+  data-edabalans-account-url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk"
 ></div>
 <script src="https://app.edabalans.ru/embed.js"></script>
 ```
