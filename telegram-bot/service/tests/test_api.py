@@ -110,6 +110,11 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert edited_button.json()["configuration"]["buttons"][0]["text"] == "Поехали"
     assert edited_button.json()["configuration"]["buttons"][0]["callback_data"] == old_callback
     assert any(edge["branch"] == "true" for edge in detail["edges"])
+    postpurchase_map = client.get("/bot-api/map?module_code=postpurchase_masterclass").json()
+    assert postpurchase_map["level"] == "module"
+    assert any(node["id"] == "pp_review_week_day7" for node in postpurchase_map["nodes"])
+    review_condition = next(node for node in postpurchase_map["nodes"] if node["id"] == "condition:pp_review_week_day7")
+    assert "ACCESS_MASTERCLASS" in review_condition["details"]["Точный факт"]
     sequence_detail = client.get("/bot-api/sequences/welcome_intensive").json()
     logic_step = next(step for step in sequence_detail["steps"] if step["kind"] == "DELAY")
     assert client.patch(f"/bot-api/steps/{logic_step['id']}", json={"delay_seconds": 60}).status_code == 409

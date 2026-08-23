@@ -2,7 +2,7 @@
 
 Статус: `draft`  
 Владелец содержания: Сергей Воронцов  
-Проверено: 22.08.2026  
+Проверено: 24.08.2026  
 Источники: `../../../TELEGRAM_BOT_CURRENT_LOGIC.md`, `../../../plans/TELEGRAM_START_LINKS_SPEC.md`, `../../../plans/TELEGRAM_CHANNEL_ATTRIBUTION_SPEC.md`
 
 ## Назначение
@@ -24,14 +24,16 @@ Telegram-бот — канал общей messaging-системы edabalans.ru.
 
 | Подмодуль | Канонический документ | Состояние |
 |---|---|---|
-| Старт и атрибуция | `START_WELCOME_ROUTING.md` | реализован локально: источники, проверки, повторный Start и выход в Welcome; deploy ожидается |
+| Старт и атрибуция | `START_WELCOME_ROUTING.md` | развёрнут на production-сервере для тестового бота; live channel invite ещё не проверен |
 | Подмеханизм ссылок, источников и атрибуции | `LEAD_ENTRY_OWNER_REQUIREMENTS.md` + `LEAD_ENTRY_TECHNICAL_SPEC.md` | развёрнут на тестовом боте |
-| Welcome и первые дни | `WELCOME_INTENSIVE.md` | навигация, кружок, CTA, подписка и четыре содержательных дня; deploy ожидается |
+| Welcome и первые дни | `WELCOME_INTENSIVE.md` | каркас развёрнут на тестовом боте; контент частичный, настоящая проверка подписки ожидает чистового бота |
+| Основная 25-дневная рассылка до покупки | `PREPURCHASE_NURTURE.md` | требования утверждены; исполняемый каркас готовится к тестовому deploy |
 | Фактическая логика работающего бота | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | current после каждого deploy |
 | Исходный полный материал welcome и первой версии интенсива | `../../../plans/TELEGRAM_START_LINKS_SPEC.md` | approved source |
 | Цепочки и карта переходов | `../../../TELEGRAM_BOT_CURRENT_LOGIC.md` | частично реализовано |
-| После покупки и во время мастер-класса | `POST_PURCHASE_MASTERCLASS.md` | согласован общий каркас, тексты и точные интервалы ещё не заданы |
-| Системное правило «покупатель → остановить рекламу» | `CUSTOMER_LIFECYCLE_TECHNICAL_SPEC.md` | реализовано локально; deploy ожидается |
+| После покупки и во время мастер-класса | `POST_PURCHASE_MASTERCLASS.md` | развёрнут в test-only; авторские тексты и сквозной тест 21 дня не завершены |
+| После полного завершения masterclass + 7 дней | `POSTMASTERCLASS_NURTURE.md` | planned; только отключённый пустой каркас |
+| Системное правило «покупатель → остановить рекламу» | `CUSTOMER_LIFECYCLE_TECHNICAL_SPEC.md` | развёрнуто на тестовом боте |
 | Атрибуция «канал → бот» | раздел в `LEAD_ENTRY_TECHNICAL_SPEC.md` | механизм и mocked test готовы; live invite test проводится последним |
 
 Ссылки и атрибуция не являются отдельным глобальным модулем: это начальная часть

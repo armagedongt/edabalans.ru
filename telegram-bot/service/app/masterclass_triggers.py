@@ -74,6 +74,33 @@ TRIGGERS = [
         "recipient": "Клиент с недостающими продуктами",
         "purpose": "Один раз показать итоговый комплект; после срока больше не отправлять.",
     },
+    {
+        "step_key": "pp_review_week_day2",
+        "content_code": "tpl_postpurchase_review_week_1",
+        "title": "09 · После саморевью — день 2",
+        "trigger": "closing_review_opened + 2 days",
+        "condition": "Есть действующий ACCESS_MASTERCLASS; событие первого открытия саморевью сохранено",
+        "recipient": "Клиент на второй день после первого открытия саморевью",
+        "purpose": "Первое сообщение недели закрепления результатов.",
+    },
+    {
+        "step_key": "pp_review_week_day4",
+        "content_code": "tpl_postpurchase_review_week_2",
+        "title": "10 · После саморевью — день 4",
+        "trigger": "closing_review_opened + 4 days",
+        "condition": "Есть действующий ACCESS_MASTERCLASS; событие первого открытия саморевью сохранено",
+        "recipient": "Клиент на четвёртый день после первого открытия саморевью",
+        "purpose": "Второе сообщение недели закрепления результатов.",
+    },
+    {
+        "step_key": "pp_review_week_day7",
+        "content_code": "tpl_postpurchase_review_week_3",
+        "title": "11 · После саморевью — день 7",
+        "trigger": "closing_review_opened + 7 days",
+        "condition": "Есть действующий ACCESS_MASTERCLASS; событие первого открытия саморевью сохранено",
+        "recipient": "Клиент на седьмой день после первого открытия саморевью",
+        "purpose": "Завершить postpurchase_masterclass; следующий модуль пока отключён.",
+    },
 ]
 
 TRIGGER_BY_STEP = {item["step_key"]: item for item in TRIGGERS}

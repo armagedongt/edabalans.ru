@@ -52,7 +52,7 @@ class LegacyImportTest(unittest.TestCase):
         )
         connection.execute(
             "INSERT INTO blocks VALUES (10, '30', 'chain', NULL, 'main_flow', ?)",
-            ('{"answer":{"chain":[{"type":"text","text":"Пост из цепочки"},{"type":"image","image":{"type":"image","name":"fat.jpg","mime_type":"image/jpeg","size":321,"url":"https://example.com/fat.jpg","caption":"Про висцеральный жир"}}]}}',),
+            ('{"raw":{"answer":{"chain":[{"type":"text","text":"Пост из цепочки"},{"type":"image","image":{"type":"image","name":"fat.jpg","mime_type":"image/jpeg","size":321,"url":"https://example.com/fat.jpg","caption":"Про висцеральный жир"}}]}}}',),
         )
         connection.commit()
         connection.close()

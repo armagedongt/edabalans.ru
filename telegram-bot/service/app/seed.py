@@ -14,6 +14,7 @@ WELCOME_CODE = "welcome_intensive"
 PREPURCHASE_CODE = "prepurchase_nurture"
 LEGACY_PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
+POSTMASTERCLASS_CODE = "postmasterclass_nurture"
 WELCOME_CIRCLE_MEDIA_PATH = "/app/media/welcome-intro-circle.mp4"
 
 
@@ -84,20 +85,20 @@ def _messages() -> list[dict]:
     rows = [
         ("entry_circle", "Видеокружок: знакомство", "", "video_note", ["вход", "медиа"]),
         ("entry_welcome", "Приветствие и что внутри", "<b>Привет!</b> Здесь будет четырёхдневный интенсив и полезные материалы о питании. Нажмите кнопку, когда будете готовы начать 👇", None, ["вход", "приветствие"]),
-        ("day1", "Интенсив — день 1", "#интенсив_день_1\n\n<b>День 1 интенсива</b>\n\n[Добавьте основной материал первого дня]", None, ["интенсив", "день-1"]),
-        ("day1_mid", "Полезный пост между днями 1 и 2", "[Полезный материал в тему первого дня]", None, ["польза", "промежуточный"]),
-        ("day2", "Интенсив — день 2", "#интенсив_день_2\n\n<b>День 2 интенсива</b>\n\n[Добавьте основной материал второго дня]", None, ["интенсив", "день-2"]),
-        ("day2_mid", "Полезный пост между днями 2 и 3", "[Полезный материал или мягкий переход в Telegram-канал]", None, ["польза", "промежуточный", "подписка-опционально"]),
-        ("day3", "Интенсив — день 3", "#интенсив_день_3\n\n<b>День 3 интенсива</b>\n\n[Добавьте основной материал третьего дня]", None, ["интенсив", "день-3"]),
-        ("day3_mid", "Полезный пост между днями 3 и 4", "[Полезный материал в тему третьего дня]", None, ["польза", "промежуточный"]),
-        ("day4", "Интенсив — день 4", "#интенсив_день_4\n\n<b>День 4 интенсива</b>\n\n[Добавьте финальный материал интенсива и представление мастер-класса]", None, ["интенсив", "день-4"]),
+        ("day1", "Интенсив — день 1", "#интенсив_день_1\n\n<b>День 1 интенсива</b>\n\nЗдесь будет основной авторский материал первого дня.", None, ["интенсив", "день-1"]),
+        ("day1_mid", "Полезный пост между днями 1 и 2", "Небольшой полезный материал между первым и вторым днём интенсива.", None, ["польза", "промежуточный"]),
+        ("day2", "Интенсив — день 2", "#интенсив_день_2\n\n<b>День 2 интенсива</b>\n\nЗдесь будет основной авторский материал второго дня.", None, ["интенсив", "день-2"]),
+        ("day2_mid", "Полезный пост между днями 2 и 3", "Небольшой полезный материал и мягкий переход к следующему дню.", None, ["польза", "промежуточный", "подписка-опционально"]),
+        ("day3", "Интенсив — день 3", "#интенсив_день_3\n\n<b>День 3 интенсива</b>\n\nЗдесь будет основной авторский материал третьего дня.", None, ["интенсив", "день-3"]),
+        ("day3_mid", "Полезный пост между днями 3 и 4", "Небольшой полезный материал между третьим и четвёртым днём.", None, ["польза", "промежуточный"]),
+        ("day4", "Интенсив — день 4", "#интенсив_день_4\n\n<b>День 4 интенсива</b>\n\nЗдесь будет финальный авторский материал интенсива.", None, ["интенсив", "день-4"]),
         ("day4_mid", "Оглавление четырёхдневного интенсива", "<b>Оглавление четырёхдневного интенсива</b>\n\nНажмите на нужный хэштег — Telegram покажет сообщения этого дня:\n\n1️⃣ #интенсив_день_1\n2️⃣ #интенсив_день_2\n3️⃣ #интенсив_день_3\n4️⃣ #интенсив_день_4", None, ["интенсив", "оглавление"]),
-        ("hard_sale_1", "Мотивационная продажа 1", "[Сильный мотивационный пост с предложением мастер-класса]", None, ["продажа", "жёсткая"]),
-        ("hard_sale_2", "Мотивационная продажа 2", "[Второй продающий пост: возражения и следующий шаг]", None, ["продажа", "жёсткая"]),
+        ("hard_sale_1", "Мотивационная продажа 1", "Здесь будет первый авторский пост основной рассылки с предложением мастер-класса.", None, ["продажа", "жёсткая"]),
+        ("hard_sale_2", "Мотивационная продажа 2", "Здесь будет второй авторский пост: работа с возражениями и следующий шаг.", None, ["продажа", "жёсткая"]),
     ]
     for n in range(13, 31):
         kind = "польза" if n % 2 else "мягкая продажа"
-        rows.append((f"nurture_{n:02d}", f"Пост {n}: {kind}", f"[Пост {n}. Добавьте материал: {kind}]", None, [kind, "дожим"] ))
+        rows.append((f"nurture_{n:02d}", f"Пост {n}: {kind}", f"Здесь будет авторский пост {n}: {kind}.", None, [kind, "дожим"] ))
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
 
 
@@ -273,6 +274,27 @@ def _postpurchase_messages() -> list[dict]:
             None,
             ["после покупки", "финальное предложение", "допродажа"],
         ),
+        (
+            "postpurchase_review_week_1",
+            "09 · После саморевью — день 2",
+            "Вы начали итоговое саморевью. Здесь будет первый авторский пост недели закрепления результатов.",
+            None,
+            ["после покупки", "саморевью", "день-2"],
+        ),
+        (
+            "postpurchase_review_week_2",
+            "10 · После саморевью — день 4",
+            "Прошло несколько дней после саморевью. Здесь будет второй авторский пост недели закрепления результатов.",
+            None,
+            ["после покупки", "саморевью", "день-4"],
+        ),
+        (
+            "postpurchase_review_week_3",
+            "11 · После саморевью — день 7",
+            "Неделя после саморевью завершена. Здесь будет итоговый авторский пост и переход к дальнейшему сопровождению.",
+            None,
+            ["после покупки", "саморевью", "день-7"],
+        ),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
 
@@ -297,8 +319,14 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             # Publish only this approved test module. Replace known seed
             # placeholders, but never overwrite text edited by the owner.
             item.status = "published"
-            if (item.body_source or "").lstrip().startswith("[") or "Поменять почту" in (item.body_source or ""):
+            if (item.body_source or "").lstrip().startswith("[Добавьте ") or "Поменять почту" in (item.body_source or ""):
                 item.body_source = row["body"]
+        elif (item.body_source or "").lstrip().startswith((
+            "[Добавьте ", "[Полезный ", "[Сильный ", "[Второй ", "[Пост ",
+        )):
+            # Replace only the exact families used by old seed placeholders;
+            # an owner-authored post may legitimately start with a Markdown link.
+            item.body_source = row["body"]
         elif row["code"] == "start_welcome_offer" and "похудение-это-есть.рф/intensiv" in (item.body_source or ""):
             # Upgrade only the known seeded preview; later owner edits remain untouched.
             item.body_source = row["body"]
@@ -411,16 +439,10 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         .where(SequenceVersion.sequence_id == sequence.id, SequenceVersion.status == "published")
         .order_by(SequenceVersion.version_no.desc())
     )
-    current_first_delay_step = session.scalar(
-        select(SequenceStep).where(
-            SequenceStep.sequence_version_id == current_nurture_version.id,
-            SequenceStep.step_key == "nurture_delay_hard_sale_1",
-        )
-    ) if current_nurture_version else None
-    current_first_sale = session.scalar(
+    current_day25_finish = session.scalar(
         select(SequenceStep.id).where(
             SequenceStep.sequence_version_id == current_nurture_version.id,
-            SequenceStep.step_key == "nurture_hard_sale_1",
+            SequenceStep.step_key == "nurture_finish_day25",
         )
     ) if current_nurture_version else None
     current_purchase_check = session.scalar(
@@ -431,8 +453,7 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
     ) if current_nurture_version else None
     current_nurture_has_layout = bool(
         current_nurture_version
-        and current_first_sale
-        and not current_first_delay_step
+        and current_day25_finish
         and not current_purchase_check
     )
     if not current_nurture_has_layout:
@@ -446,16 +467,24 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             current_nurture_version.status = "archived"
         version = SequenceVersion(sequence_id=sequence.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
-        nurture_posts = [("hard_sale_1", None), ("hard_sale_2", 86400)]
-        nurture_posts += [(f"nurture_{n:02d}", 86400 if n <= 20 else 302400) for n in range(13, 31)]
+        content_codes = ["hard_sale_1", "hard_sale_2", *[f"nurture_{n:02d}" for n in range(13, 28)]]
+        days = [*range(1, 11), 12, 14, 16, 18, 20, 22, 24]
+        nurture_posts = list(zip(content_codes, days, strict=True))
         specs = []
-        for content_code, delay in nurture_posts:
-            if delay is not None:
+        previous_day = 1
+        for index, (content_code, day) in enumerate(nurture_posts):
+            delay = None if index == 0 else (day - previous_day) * 86400
+            if delay:
                 specs.append((f"nurture_delay_{content_code}", "DELAY", None, delay, {}))
-            specs.append((f"nurture_{content_code}", "MESSAGE", content_code, None, {}))
-        specs.append(("nurture_finish", "STOP", None, None, {}))
+            specs.append((f"nurture_{content_code}", "MESSAGE", content_code, None, {"campaign_day": day}))
+            previous_day = day
+        specs.append(("nurture_delay_finish_day25", "DELAY", None, 86400, {}))
+        specs.append(("nurture_finish_day25", "STOP", None, None, {"reason": "prepurchase_day_25_complete"}))
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
-            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=items[content_code].title if content_code else key, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
+            label = items[content_code].title if content_code else key
+            if content_code and config.get("campaign_day"):
+                label = f"День {config['campaign_day']} · {label}"
+            session.add(SequenceStep(sequence_version_id=version.id, step_key=key, position=position, kind=kind, label=label, content_item_id=items[content_code].id if content_code else None, delay_seconds=delay, configuration=config))
 
     post = session.scalar(select(Sequence).where(Sequence.code == POSTPURCHASE_CODE))
     if not post:
@@ -471,7 +500,7 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
     current_postpurchase = session.scalar(
         select(SequenceStep.id)
         .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
-        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_course_stalled_72h")
+        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_review_week_day7")
         .limit(1)
     )
     if not current_postpurchase:
@@ -492,6 +521,9 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             ("pp_review_consultation", "MESSAGE", "postpurchase_review_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=true", "state": "editorial_slot"}),
             ("pp_review_no_consultation", "MESSAGE", "postpurchase_review_no_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=false", "state": "editorial_slot"}),
             ("pp_final_offer", "MESSAGE", "postpurchase_final_offer", None, {"trigger": "sales_last_chance_due", "condition": "stage=last_week AND has_missing_products", "state": "editorial_slot"}),
+            ("pp_review_week_day2", "MESSAGE", "postpurchase_review_week_1", None, {"trigger": "closing_review_opened + 2 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
+            ("pp_review_week_day4", "MESSAGE", "postpurchase_review_week_2", None, {"trigger": "closing_review_opened + 4 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
+            ("pp_review_week_day7", "MESSAGE", "postpurchase_review_week_3", None, {"trigger": "closing_review_opened + 7 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
             ("pp_finish", "STOP", None, None, {"reason": "postpurchase_automatic_messages_complete"}),
         ]
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):
@@ -514,9 +546,30 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         help_data = editorial_help(step.step_key)
         if help_data:
             step.configuration = {**(step.configuration or {}), "editorial_help": help_data}
+
+    postmasterclass = session.scalar(select(Sequence).where(Sequence.code == POSTMASTERCLASS_CODE))
+    if not postmasterclass:
+        postmasterclass = Sequence(
+            code=POSTMASTERCLASS_CODE,
+            name="5. После завершения мастер-класса",
+            description="Будущий отдельный модуль. Содержание и расписание ещё не утверждены; отправка отключена.",
+            status="disabled",
+        )
+        session.add(postmasterclass); session.flush()
+        empty_version = SequenceVersion(sequence_id=postmasterclass.id, version_no=1, status="draft")
+        session.add(empty_version); session.flush()
+        session.add(SequenceStep(
+            sequence_version_id=empty_version.id,
+            step_key="postmasterclass_not_configured",
+            position=1,
+            kind="STOP",
+            label="Модуль пока не настроен и ничего не отправляет",
+            configuration={"reason": "requirements_not_approved"},
+            enabled=True,
+        ))
     session.flush()
     for version in session.scalars(select(SequenceVersion)):
         _ensure_edges(session, version)
     _ensure_routes(session)
     session.commit()
-    return {"messages": len(_messages()), "sequences": 3}
+    return {"messages": len(_messages()), "sequences": 4}

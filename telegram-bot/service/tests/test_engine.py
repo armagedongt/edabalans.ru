@@ -37,14 +37,14 @@ def session_factory(tmp_path):
 def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
     with session_factory(tmp_path) as session:
         result = seed_defaults(session, "TetrisgfgfgfBot")
-        assert result == {"messages": 30, "sequences": 3}
+        assert result == {"messages": 30, "sequences": 4}
         counts = {}
         for code in (WELCOME_CODE, PREPURCHASE_CODE):
             sequence = session.scalar(select(Sequence).where(Sequence.code == code))
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
-        assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 20}
-        assert session.scalar(select(func.count(ContentItem.id))) == 47
+        assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 17}
+        assert session.scalar(select(func.count(ContentItem.id))) == 50
         assert "Навигация!" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_navigation_pin"))
         assert "Сделайте похудение проще" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
         assert "похудение-это-есть.рф/intensiv" not in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
@@ -99,10 +99,11 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
             .where(SequenceStep.sequence_version_id == version.id)
             .order_by(SequenceStep.position)
         ))
-        assert len(steps) == 9
+        assert len(steps) == 12
         assert steps[0].step_key == "pp_identity"
         assert steps[-1].kind == "STOP"
         assert any(step.step_key == "pp_course_stalled_72h" for step in steps)
+        assert any(step.step_key == "pp_review_week_day7" for step in steps)
         assert any(
             (step.configuration or {}).get("trigger") == "sales_last_chance_due"
             for step in steps

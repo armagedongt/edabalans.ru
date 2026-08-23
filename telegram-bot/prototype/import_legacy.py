@@ -170,7 +170,10 @@ def load_items(source: sqlite3.Connection) -> dict[tuple[str, str], dict[str, An
     """
     for row in source.execute(chain_query):
         payload = json.loads(row["raw_json"] or "{}")
-        answer = payload.get("answer") if isinstance(payload.get("answer"), dict) else {}
+        # The verified archive stores the original LeadTeh block below `raw`.
+        # Older fixtures and early exports stored `answer` at the top level.
+        raw_payload = payload.get("raw") if isinstance(payload.get("raw"), dict) else payload
+        answer = raw_payload.get("answer") if isinstance(raw_payload.get("answer"), dict) else {}
         chain = answer.get("chain") if isinstance(answer.get("chain"), list) else []
         for index, raw_part in enumerate(chain):
             if not isinstance(raw_part, dict):

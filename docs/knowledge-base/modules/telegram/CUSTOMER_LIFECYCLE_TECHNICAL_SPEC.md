@@ -1,6 +1,6 @@
 # Системное правило жизненного цикла: покупатель мастер-класса
 
-Статус: `implemented locally / awaiting deploy`  
+Статус: `deployed_test_bot / postpurchase_test_only`
 Владелец содержания: Сергей Воронцов  
 Проверено: 23.08.2026
 

@@ -7,6 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
+from app.masterclass_triggers import TRIGGERS
 
 
 SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
@@ -42,6 +43,7 @@ GLOBAL_MODULES: tuple[dict[str, str], ...] = (
     {"code": "welcome_intensive", "name": "Welcome: запуск и первые четыре дня", "status": "Исполняемая редактируемая цепочка"},
     {"code": "prepurchase_nurture", "name": "Основная рассылка до покупки", "status": "Исполняемый каркас · контент частичный"},
     {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
+    {"code": "postmasterclass_nurture", "name": "После завершения мастер-класса", "status": "Отключённый пустой каркас"},
     {"code": "broadcasts", "name": "Разовые рассылки", "status": "Базовая механика"},
     {"code": "direct_support", "name": "Личные сообщения клиентам", "status": "Базовая механика"},
     {"code": "lottery", "name": "Лотерея", "status": "Запланировано"},
@@ -77,6 +79,7 @@ def module_overview_graph(_: Session) -> dict[str, Any]:
         {"id": "modules:event-stop-welcome", "source": "event:masterclass_owned", "target": "module:welcome_intensive", "label": "Остановить активный run", "branch": "stop"},
         {"id": "modules:event-stop-prepurchase", "source": "event:masterclass_owned", "target": "module:prepurchase_nurture", "label": "Остановить активный run", "branch": "stop"},
         {"id": "modules:event-postpurchase", "source": "event:masterclass_owned", "target": "module:postpurchase_masterclass", "label": "Поставить нужные сообщения", "branch": "event"},
+        {"id": "modules:postpurchase-postmasterclass", "source": "module:postpurchase_masterclass", "target": "module:postmasterclass_nurture", "label": "После 7-го дня; пока отключено", "branch": "default"},
     ]
     return {"level": "overview", "title": "Глобальные модули Telegram-бота", "description": "Каждый модуль раскрывается в отдельную согласованную блок-схему входов, условий и выходов.", "nodes": nodes, "edges": edges, "issues": []}
 
@@ -101,7 +104,7 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
     nodes = [
         node("entry_rule", "entry", "Создать/импортировать правило", "Админка ссылок", 1, Канон="LEAD_ENTRY_OWNER_REQUIREMENTS.md"),
         node("entry_link", "entry", "Открыта bot/go/legacy/invite ссылка", "Обычный вход", 2, Источники="t.me, go., LeadTeh UUID, channel invite"),
-        node("entry_buyer", "entry", "Специальная ссылка покупателя", "Одноразовый CRM token", 3, Статус="Ещё не реализовано"),
+        node("entry_buyer", "entry", "Специальная ссылка покупателя", "Одноразовый CRM token", 3, Статус="M-link реализован; test-only"),
         node("telegram_start", "entry", "Нажата кнопка Start", "Telegram /start", 4, Исполнение="app/main.py:process_update"),
         node("identity", "technical", "Найти contact и CRM user", "Идентификация", 5, Хранение="tg_contacts / messenger_accounts"),
         node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 6, Хранение="tg_tracking_* / attribution_events / user_tags"),
@@ -140,13 +143,40 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
         {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
     ]
-    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Исполняется · специальная ссылка покупателя ждёт интеграции сайта", "description": "Схема показывает входы, атрибуцию, проверки и ответы повторного Start. Новый пользователь передаётся в отдельный Welcome.", "nodes": nodes, "edges": edges, "issues": [{"severity": "warning", "code": "buyer_link_pending", "message": "Генерация одноразовой ссылки покупателя ещё не подключена к сайту/checkout."}]}
+    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Исполняется на тестовом боте", "description": "Схема показывает входы, атрибуцию, проверки и ответы повторного Start. Новый пользователь передаётся в отдельный Welcome.", "nodes": nodes, "edges": edges, "issues": []}
+
+
+def postpurchase_graph(session: Session) -> dict[str, Any]:
+    nodes: list[dict[str, Any]] = []
+    edges: list[dict[str, Any]] = []
+    for index, trigger in enumerate(TRIGGERS, 1):
+        event_id = f"event:{trigger['step_key']}"
+        condition_id = f"condition:{trigger['step_key']}"
+        message_id = trigger["step_key"]
+        item = session.scalar(select(ContentItem).where(ContentItem.code == trigger["content_code"]))
+        nodes.extend((
+            {"id": event_id, "kind": "event", "label": trigger["trigger"], "subtitle": "Доменное событие или due-сигнал", "position": index * 3 - 2, "details": {"Источник": "backend/app/masterclass_routes.py", "Очередь": "masterclass_notifications", "Триггер": trigger["trigger"]}},
+            {"id": condition_id, "kind": "condition", "label": "Проверить перед отправкой", "subtitle": trigger["condition"], "position": index * 3 - 1, "details": {"Точный факт": trigger["condition"], "Права": "user_accesses + resources", "Исполнение": "telegram-bot/service/app/masterclass_dispatch.py"}},
+        ))
+        message = {"id": message_id, "kind": "message", "label": trigger["title"], "subtitle": trigger["purpose"], "position": index * 3, "details": {"Получатель": trigger["recipient"], "Контент": trigger["content_code"], "Хранение": "tg_content_items", "Доставка": "masterclass_notifications → tg_manual_messages"}}
+        if item:
+            message["content"] = {"id": item.id, "code": item.code, "title": item.title, "body_source": item.body_source, "media_kind": item.media_kind, "media_path": item.media_path, "labels": item.labels}
+        nodes.append(message)
+        edges.extend((
+            {"id": f"{message_id}:event", "source": event_id, "target": condition_id, "label": "Наступил срок", "branch": "event"},
+            {"id": f"{message_id}:yes", "source": condition_id, "target": message_id, "label": "Да", "branch": "true"},
+        ))
+    nodes.append({"id": "postpurchase_exit", "kind": "module_exit", "label": "7 дней после саморевью завершены", "subtitle": "Следующий модуль пока отключён", "position": len(TRIGGERS) * 3 + 1, "details": {"Следующий модуль": "postmasterclass_nurture", "Статус": "disabled"}})
+    edges.append({"id": "postpurchase:exit", "source": "pp_review_week_day7", "target": "postpurchase_exit", "label": "Отправлено", "branch": "default"})
+    return {"level": "module", "module_code": "postpurchase_masterclass", "title": "4. После покупки мастер-класса", "status": "Событийный модуль · test-only", "description": "Каждая строка читается слева направо: событие → точная проверка → редактируемое сообщение. Ветка «нет» означает безопасный пропуск без отправки.", "nodes": nodes, "edges": edges, "issues": []}
 
 
 def module_graph(session: Session, module_code: str) -> dict[str, Any]:
     if module_code == "start_attribution":
         return start_attribution_graph(session)
-    if module_code in {"welcome_intensive", "prepurchase_nurture", "postpurchase_masterclass"}:
+    if module_code == "postpurchase_masterclass":
+        return postpurchase_graph(session)
+    if module_code in {"welcome_intensive", "prepurchase_nurture", "postmasterclass_nurture"}:
         return sequence_graph(session, module_code, "")
     module = next((item for item in GLOBAL_MODULES if item["code"] == module_code), None)
     if not module:

@@ -1,6 +1,6 @@
 # Глобальный модуль «Welcome и четырёхдневный интенсив»
 
-Статус: `implemented locally / awaiting deploy and live test`
+Статус: `deployed_test_bot / content_partial / awaiting live subscription test`
 Владелец содержания: Сергей Воронцов
 Проверено: 23.08.2026
 

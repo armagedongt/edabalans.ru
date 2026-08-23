@@ -243,6 +243,14 @@ def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datet
     return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds) if profile else normal
 
 
+def review_week_due(db: Session, user_id: uuid.UUID, opened_at: datetime, day: int, ordinal: int) -> datetime:
+    """Keep real calendar days while making the owner's isolated test observable."""
+    profile = test_profile(db, user_id)
+    if profile:
+        return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds * ordinal)
+    return aware_utc(opened_at) + timedelta(days=day)
+
+
 def resolve_masterclass_user(
     request: Request,
     db: Session,
@@ -755,6 +763,20 @@ def questionnaire(
             event = MasterclassEvent(user_id=user.id, event_key="closing_review_opened", event_type="closing_review_opened", placement="closing-review", details={})
             db.add(event); db.flush()
             queue_notification(db, user.id, event, "review_followup", datetime.now(timezone.utc), payload={})
+            for ordinal, (day, notification_kind, content_code) in enumerate((
+                (2, "post_review_day_2", "tpl_postpurchase_review_week_1"),
+                (4, "post_review_day_4", "tpl_postpurchase_review_week_2"),
+                (7, "post_review_day_7", "tpl_postpurchase_review_week_3"),
+            ), start=1):
+                queue_notification(
+                    db,
+                    user.id,
+                    event,
+                    notification_kind,
+                    review_week_due(db, user.id, event.occurred_at, day, ordinal),
+                    content_code=content_code,
+                    payload={"anchor": "closing_review_opened", "day": day},
+                )
     answers = {row.question_code: row.answer_text for row in db.scalars(select(QuestionnaireAnswer).where(QuestionnaireAnswer.run_id == run.id))}
     db.commit()
     return {"ok": True, "kind": kind, "status": run.status, "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind)]}
