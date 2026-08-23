@@ -27,6 +27,8 @@ from app.models import (
 MOSCOW = ZoneInfo("Europe/Moscow")
 DEFAULT_SOURCE = "tilda_members_20260822T065650"
 ACCESS_SOURCE = "tilda_members_legacy"
+WELCOME_GROUP = "Добро пожаловать"
+REVIEW_NOTE = "Историческая покупка требует решения Сергея"
 
 GROUP_RESOURCES = {
     "Мастер-класс": ("ACCESS_MASTERCLASS",),
@@ -97,20 +99,6 @@ def ensure_access(db, user_id, resource: Resource, granted_at: datetime) -> bool
 
 def reconcile_access_queue(db) -> tuple[int, int]:
     now = datetime.now(timezone.utc)
-    reset = db.execute(
-        update(User)
-        .where(
-            User.access_review_status.in_(("waiting_registration", "pending", "completed")),
-            User.access_review_note.is_(None),
-            User.access_reviewed_at.is_(None),
-        )
-        .values(
-            access_review_status="not_required",
-            access_review_note=None,
-            access_reviewed_at=None,
-            updated_at=now,
-        )
-    ).rowcount or 0
     processing_users = select(Payment.user_id).where(
         Payment.payment_status == "processing", Payment.user_id.is_not(None)
     )
@@ -123,7 +111,7 @@ def reconcile_access_queue(db) -> tuple[int, int]:
             updated_at=now,
         )
     ).rowcount or 0
-    return reset, queued
+    return 0, queued
 
 
 def import_members(path: Path, source: str = DEFAULT_SOURCE, dry_run: bool = False) -> dict[str, int]:
@@ -235,11 +223,18 @@ def import_members(path: Path, source: str = DEFAULT_SOURCE, dry_run: bool = Fal
             counters["legacy_calories"] += int("ACCESS_CALORIES_LEGACY" in resource_codes)
             counters["without_core_access"] += int(not resource_codes)
 
-            user.tilda_access_status = "granted" if groups else "not_required"
+            product_groups = [group for group in groups if group != WELCOME_GROUP]
             if user.access_review_status != "conflict":
-                user.access_review_status = "not_required"
-                user.access_review_note = None
-                user.access_reviewed_at = None
+                if product_groups:
+                    user.tilda_access_status = "granted"
+                    user.access_review_status = "not_required"
+                    user.access_review_note = None
+                    user.access_reviewed_at = None
+                else:
+                    user.tilda_access_status = "pending"
+                    user.access_review_status = "pending"
+                    user.access_review_note = REVIEW_NOTE
+                    user.access_reviewed_at = None
 
             db.add(LegacyImportRecord(
                 import_batch_id=batch.id,

@@ -11,7 +11,8 @@
     'masterclass-offers': true,
     'recipes-part-1': true,
     'recipes-part-2': true,
-    'closing-review': true
+    'closing-review': true,
+    'personal-access': true
   };
   var roots = {
     'masterclass-course': 'masterclass-course-app',
@@ -22,7 +23,8 @@
     'masterclass-offers': 'masterclass-offers-app',
     'recipes-part-1': 'recipes-part-1-app',
     'recipes-part-2': 'recipes-part-2-app',
-    'closing-review': 'closing-review-app'
+    'closing-review': 'closing-review-app',
+    'personal-access': 'personal-access-app'
   };
 
   function normalizeEmail(value) {
@@ -203,6 +205,7 @@
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
     var accountUrl = String(mount.getAttribute('data-edabalans-account-url') || '');
+    var linkToken = String(mount.getAttribute('data-edabalans-link-token') || new URLSearchParams(location.search).get('access_token') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
@@ -216,8 +219,8 @@
       .then(function (html) {
         window.EdabalansAppHost = APP_HOST;
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl}
-          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken}
+          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];

@@ -11,6 +11,7 @@ from app.app_routes import router as app_router
 from app.tilda_routes import router as tilda_router
 from app.masterclass_routes import router as masterclass_router
 from app.app_auth import router as app_auth_router
+from app.access_routes import router as access_router
 from app.database import get_db
 
 settings = get_settings()
@@ -28,6 +29,7 @@ app.include_router(app_router)
 app.include_router(tilda_router)
 app.include_router(masterclass_router)
 app.include_router(app_auth_router)
+app.include_router(access_router)
 
 
 @app.get("/health", tags=["system"])

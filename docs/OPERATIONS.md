@@ -98,6 +98,22 @@ docker compose exec backend python -m app.importers.tilda_members \
 После импорта проверяются число аккаунтов, созданных доступов, `needs_review`, две
 необновляемые группы, очередь `processing` и карточки Tilda в CRM.
 
+После изменения правил ручной проверки сначала запускается отчёт без записи:
+
+```bash
+docker compose exec backend python -m app.importers.apply_access_review_policy
+```
+
+Перед первым применением обязательны свежий backup и настоящее test restore:
+
+```bash
+docker compose exec backend python -m app.importers.apply_access_review_policy \
+  --apply --backup-confirmed
+```
+
+Команда идемпотентна, не удаляет покупки и доступы, сохраняет `conflict` и меняет
+только статусы ручной проверки по последнему снимку Tilda.
+
 ### Каталог Pikabu
 
 Collector запускается локально и сохраняет JSON и browser profile только вне Git:

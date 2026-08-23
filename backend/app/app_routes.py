@@ -57,7 +57,7 @@ def embed_loader() -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> FileResponse:
-    if app_code not in {"dqs", "strength", "metabolism", "masterclass-course", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"}:
+    if app_code not in {"dqs", "strength", "metabolism", "masterclass-course", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access"}:
         raise HTTPException(status_code=404, detail="app not found")
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")

@@ -1,4 +1,5 @@
 import os
+import hashlib
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
@@ -23,6 +24,8 @@ from app.models import (  # noqa: E402
     UserAccess,
     UserEmail,
     UserPhone,
+    PersonalAccessLink,
+    UserCoursePolicy,
 )
 
 TOKEN = "test-tilda-token"
@@ -322,4 +325,63 @@ def test_processing_catalog_product_is_promoted_to_paid_once() -> None:
     assert duplicate.json()["status"] == "duplicate"
     with session_factory() as db:
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_paid_personal_link_grants_direct_resources_and_completes_review() -> None:
+    client, session_factory = make_client()
+    with session_factory() as db:
+        user = User(
+            display_name="Исторический клиент",
+            status="active",
+            access_review_status="pending",
+        )
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(user_id=user.id, email_original="Client@Example.Test", email_normalized="client@example.test", is_primary=True, source="test"))
+        db.add(Resource(code="ACCESS_MASTERCLASS", name="Новый Мастер-класс"))
+        checkout = OfferCheckout(
+            user_id=user.id,
+            offer_code="personal:test",
+            title="Персональное предложение",
+            items=["ACCESS_MASTERCLASS"],
+            amount=Decimal("1500"),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
+        db.add(checkout)
+        db.flush()
+        link = PersonalAccessLink(
+            user_id=user.id,
+            token_hash=hashlib.sha256(b"test-personal-token").hexdigest(),
+            mode="paid",
+            resource_codes=["ACCESS_MASTERCLASS"],
+            unlock_modes={"ACCESS_MASTERCLASS": "fully_unlocked"},
+            standard_amount=Decimal("6900"),
+            final_amount=Decimal("1500"),
+            status="active",
+            checkout_id=checkout.id,
+            created_by="owner",
+            telegram_text="test",
+            expires_at=datetime.now(timezone.utc) + timedelta(days=7),
+        )
+        db.add(link)
+        db.commit()
+        checkout_code = checkout.id.hex
+        user_id = user.id
+
+    payload = paid_payload()
+    payload.update({
+        "orderid": "personal-order-1",
+        "paymentid": "personal-payment-1",
+        "products": f"EB-{checkout_code} Персональное предложение",
+        "price": "1500",
+    })
+    response = client.post("/integrations/tilda/payments", data=payload, headers=HEADERS)
+    assert response.status_code == 200
+    assert response.json()["access"] == "granted"
+    with session_factory() as db:
+        assert db.scalar(select(PersonalAccessLink.status)) == "paid"
+        assert db.get(User, user_id).access_review_status == "completed"
+        assert db.scalar(select(func.count(UserAccess.id))) == 1
+        assert db.scalar(select(UserCoursePolicy.unlock_mode)) == "fully_unlocked"
     app.dependency_overrides.clear()

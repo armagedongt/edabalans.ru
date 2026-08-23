@@ -1,0 +1,23 @@
+# Персональная ссылка доступа в Tilda
+
+Статус: `current_implemented_not_deployed`  
+Владелец содержания: Сергей Воронцов  
+Проверено: 23.08.2026  
+Источник: `backend/app/access_routes.py`, `backend/app/static/embed.js`
+
+Создать одну закрытую страницу Tilda с адресом `/personal-access`, доступную общей
+группе личного кабинета. В T123 разместить один неизменяемый код:
+
+```html
+<div data-edabalans-app="personal-access"></div>
+<script src="https://app.edabalans.ru/embed.js" defer></script>
+```
+
+CRM добавляет к адресу параметр `access_token`. Загрузчик автоматически берёт
+email текущего участника Tilda и передаёт приложению только внутри страницы. Если
+email не совпадает с получателем персональной ссылки, бесплатная выдача и checkout
+не выполняются.
+
+В production-переменной `PERSONAL_ACCESS_PAGE_URL` должен находиться публичный URL
+этой Tilda-страницы. В коде страницы нельзя размещать цену, email, права или
+персональный токен заранее.

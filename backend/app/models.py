@@ -567,6 +567,55 @@ class OfferCheckout(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
+class PersonalAccessLink(Base):
+    __tablename__ = "personal_access_links"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
+    mode: Mapped[str] = mapped_column(String(16), nullable=False)
+    resource_codes: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    unlock_modes: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    standard_amount: Mapped[Decimal | None] = mapped_column(Numeric(14, 2))
+    final_amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    checkout_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("offer_checkouts.id", ondelete="SET NULL"), unique=True
+    )
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    telegram_text: Mapped[str] = mapped_column(Text, nullable=False)
+    resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class UserCoursePolicy(Base):
+    __tablename__ = "user_course_policies"
+    __table_args__ = (
+        UniqueConstraint("user_id", "resource_id", name="uq_user_course_policy"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    resource_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("resources.id", ondelete="CASCADE"), index=True
+    )
+    unlock_mode: Mapped[str] = mapped_column(
+        String(32), default="paced", server_default=text("'paced'"), nullable=False
+    )
+    source: Mapped[str] = mapped_column(String(64), nullable=False)
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
 class MasterclassNotification(Base):
     __tablename__ = "masterclass_notifications"
     __table_args__ = (

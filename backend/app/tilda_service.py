@@ -24,7 +24,9 @@ from app.models import (
     UserAccess,
     UserEmail,
     UserPhone,
+    PersonalAccessLink,
 )
+from app.access_service import complete_review, grant_resources
 
 MOSCOW = ZoneInfo("Europe/Moscow")
 SOURCE = "tilda_webhook"
@@ -273,11 +275,30 @@ def grant_payment_access(
 
     resource_sources: list[tuple[Any, str]] = []
     if checkout is not None:
-        resource_codes = [
-            OFFER_RESOURCES[item]
+        resource_codes = list(dict.fromkeys(
+            OFFER_RESOURCES.get(item, item)
             for item in checkout.items
-            if item in OFFER_RESOURCES
-        ]
+            if item in OFFER_RESOURCES or str(item).startswith("ACCESS_")
+        ))
+        personal_link = db.scalar(
+            select(PersonalAccessLink).where(PersonalAccessLink.checkout_id == checkout.id)
+        )
+        if personal_link is not None:
+            user = db.get(User, payment.user_id)
+            if user is None:
+                raise TildaPayloadError("personal offer user is missing")
+            grant_resources(
+                db,
+                user,
+                resource_codes,
+                source="paid_personal_link",
+                source_payment_id=payment.id,
+                unlock_modes=dict(personal_link.unlock_modes or {}),
+            )
+            personal_link.status = "paid"
+            personal_link.resolved_at = occurred_at
+            complete_review(user, "Права подтверждены оплатой персонального предложения Сергея")
+            return True
         resources = {
             row.code: row
             for row in db.scalars(

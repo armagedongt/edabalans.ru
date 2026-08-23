@@ -75,7 +75,7 @@ def test_tilda_groups_map_to_current_and_non_updating_access(tmp_path, monkeypat
         assert db.scalar(select(func.count(UserAccess.id))) == 4
 
 
-def test_import_replaces_broad_queue_with_processing_only(tmp_path, monkeypatch) -> None:
+def test_import_preserves_historical_review_queue_and_adds_processing(tmp_path, monkeypatch) -> None:
     factory, path = prepare(tmp_path, monkeypatch)
     write_rows(path, [[
         "member@example.test", "", r"\N", "Active", "2026-01-01 10:00:00",
@@ -99,6 +99,24 @@ def test_import_replaces_broad_queue_with_processing_only(tmp_path, monkeypatch)
     with factory() as db:
         statuses = {str(user.id): (user.access_review_status, user.access_review_note)
                     for user in db.scalars(select(User))}
-        assert statuses[str(old_id)] == ("not_required", None)
+        assert statuses[str(old_id)] == ("waiting_registration", None)
         assert statuses[str(processing_id)][0] == "pending"
         assert "processing" in statuses[str(processing_id)][1]
+
+
+def test_welcome_only_requires_review_but_welcome_plus_product_is_processed(tmp_path, monkeypatch) -> None:
+    factory, path = prepare(tmp_path, monkeypatch)
+    write_rows(path, [
+        ["welcome@example.test", "", r"\N", "Active", "2026-01-01 10:00:00", "2026-08-21 12:00:00", "Добро пожаловать"],
+        ["processed@example.test", "", r"\N", "Active", "2026-01-01 10:00:00", "2026-08-21 12:00:00", "Добро пожаловать,Мастер-класс"],
+    ])
+    tilda_members.import_members(path, source="tilda_members_welcome_test")
+    with factory() as db:
+        rows = {
+            email.email_normalized: db.get(User, email.user_id)
+            for email in db.scalars(select(UserEmail))
+        }
+        assert rows["welcome@example.test"].access_review_status == "pending"
+        assert "решения Сергея" in rows["welcome@example.test"].access_review_note
+        assert rows["processed@example.test"].access_review_status == "not_required"
+        assert access_codes(db, "processed@example.test") == {"ACCESS_MASTERCLASS"}

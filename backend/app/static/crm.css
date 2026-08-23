@@ -124,6 +124,9 @@ button { cursor: pointer; }
 .crm-row-meta { margin-top: 4px; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
 .crm-two { display: grid; grid-template-columns: 1fr auto; gap: 7px; }
 .crm-form { display: grid; gap: 8px; }
+.crm-resource-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; }
+.crm-resource-grid label,.crm-check { display:flex; align-items:flex-start; gap:7px; padding:9px; border:1px solid var(--line); border-radius:10px; background:#fafafd; font-size:11px; }
+.crm-two-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
 .crm-source { padding: 10px; border-radius: 11px; background: #f7f7f9; }
 .crm-source + .crm-source { margin-top: 7px; }
 .crm-empty { padding: 22px; color: var(--muted); text-align: center; }
@@ -152,4 +155,5 @@ button { cursor: pointer; }
   .crm-head { align-items: flex-start; }
   .crm-tag-toolbar, .crm-tag-edit { grid-template-columns: 1fr; }
   .crm-payment-toolbar { grid-template-columns: 1fr; }
+  .crm-resource-grid,.crm-two-fields { grid-template-columns: 1fr; }
 }

@@ -9,6 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Resource, User, UserAccess, UserEmail
+from app.access_service import review_blocks_access
 
 
 EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
@@ -39,6 +40,11 @@ def resolve_user_for_resource(db: Session, email: str | None, resource_code: str
     )
     if not user:
         raise AppAccessError("Этот email не найден в списке доступа")
+
+    if review_blocks_access(user):
+        raise AppAccessError(
+            "Исторические покупки требуют подтверждения Сергея. Напишите Сергею, чтобы он проверил и открыл нужные программы."
+        )
 
     now = datetime.now(timezone.utc)
     access_filters = (

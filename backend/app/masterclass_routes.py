@@ -24,6 +24,7 @@ from app.models import (
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
     MasterclassStepProgress, MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
+    UserCoursePolicy,
 )
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
@@ -222,6 +223,20 @@ def day_interval(db: Session, user_id: uuid.UUID) -> timedelta:
     return timedelta(seconds=profile.day_interval_seconds) if profile else timedelta(hours=COURSE_DAY_HOURS)
 
 
+def masterclass_fully_unlocked(db: Session, user_id: uuid.UUID) -> bool:
+    return bool(
+        db.scalar(
+            select(UserCoursePolicy.id)
+            .join(Resource, Resource.id == UserCoursePolicy.resource_id)
+            .where(
+                UserCoursePolicy.user_id == user_id,
+                Resource.code == "ACCESS_MASTERCLASS",
+                UserCoursePolicy.unlock_mode == "fully_unlocked",
+            )
+        )
+    )
+
+
 def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datetime:
     profile = test_profile(db, user_id)
     return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds) if profile else normal
@@ -313,6 +328,8 @@ def course_day_unlock_at(
 def course_day_can_open(
     db: Session, user_id: uuid.UUID, day: int, now: datetime
 ) -> tuple[bool, str | None, datetime | None]:
+    if masterclass_fully_unlocked(db, user_id):
+        return True, None, None
     if day == 1:
         return True, None, None
     previous = day_progress(db, user_id, day - 1)
@@ -455,6 +472,7 @@ def course_payload(
         "server_now": now.isoformat(),
         "day_interval_hours": COURSE_DAY_HOURS,
         "accelerated_test": bool(test_profile(db, user.id)),
+        "fully_unlocked": masterclass_fully_unlocked(db, user.id),
         "current_day": max(progress_rows) if progress_rows else 1,
         "days": days,
     }

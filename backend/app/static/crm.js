@@ -368,8 +368,12 @@
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await api(`/admin/api/users/${id}`);
     const resources = await api("/admin/api/resources");
-    const moduleResult = await api(`/admin/api/users/${id}/modules`);
+    const [moduleResult, personalLinkResult] = await Promise.all([
+      api(`/admin/api/users/${id}/modules`),
+      api(`/admin/api/users/${id}/personal-access-links`)
+    ]);
     const modules = moduleResult.modules;
+    const personalLinks = personalLinkResult.links || [];
     let botState = null;
     try { botState = await api(`/bot-api/users/${id}`); } catch (_) { /* Telegram may not be connected yet. */ }
     const primaryEmail = user.emails[0] && user.emails[0].email;
@@ -424,6 +428,16 @@
             <form class="crm-two" id="grant-form" style="margin-top:10px"><select class="crm-input" id="resource-code">${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
             <form class="crm-form" id="review-form" style="margin-top:10px"><select class="crm-input" id="review-status"><option value="waiting_registration">Ждём регистрацию</option><option value="pending">Проверить</option><option value="completed">Проверено</option><option value="conflict">Конфликт</option><option value="not_required">Не требуется</option></select><select class="crm-input" id="tilda-status"><option value="not_checked">Tilda не проверена</option><option value="pending">Tilda проверить</option><option value="granted">Tilda доступ открыт</option><option value="not_required">Tilda не требуется</option></select><textarea class="crm-textarea" id="review-note" placeholder="Что проверить">${esc(user.access_review_note || "")}</textarea><button class="crm-btn small">Сохранить проверку</button></form>
           </section>
+          <section class="crm-card"><div class="crm-card-title">Персональная ссылка <span class="crm-card-sub">бесплатно или с оплатой</span></div>
+            <form class="crm-form" id="personal-link-form">
+              <div class="crm-resource-grid">${resources.map((r)=>`<label><input type="checkbox" name="personal-resource" value="${esc(r.code)}"> <span>${esc(r.name)}</span></label>`).join("")}</div>
+              <div class="crm-two-fields"><label><div class="crm-k">ОБЫЧНАЯ СТОИМОСТЬ</div><input class="crm-input" id="personal-standard" type="number" min="0" step="1" placeholder="например 10800"></label><label><div class="crm-k">ИТОГО</div><input class="crm-input" id="personal-final" type="number" min="0" step="1" value="0"></label></div>
+              <div class="crm-two-fields"><label><div class="crm-k">ССЫЛКА ДЕЙСТВУЕТ, ДНЕЙ</div><input class="crm-input" id="personal-days" type="number" min="1" max="365" value="14"></label><label class="crm-check"><input id="personal-unlock" type="checkbox"><span>Открыть все дни выбранных курсов сразу</span></label></div>
+              <button class="crm-btn small">Сформировать ссылку и сообщение</button>
+            </form>
+            <div id="personal-link-result"></div>
+            ${personalLinks.length ? `<div class="crm-card-sub" style="margin-top:14px">Последние ссылки</div>${personalLinks.slice(0,5).map((item)=>`<div class="crm-row"><div class="crm-row-main"><span>${item.mode==='free'?'Бесплатно':money(item.final_amount)}</span><strong>${esc(item.status)}</strong></div><div class="crm-row-meta">${esc(item.resources.join(', '))} · до ${date(item.expires_at,true)}</div></div>`).join("")}` : ""}
+          </section>
           <section class="crm-card"><div class="crm-card-title">Tilda Members Area <span class="crm-card-sub">${tilda ? esc(tilda.account_status || "импортировано") : "нет в выгрузке"}</span></div>
             ${tilda ? `<div class="crm-tags">${tilda.groups.map((group)=>`<span class="crm-tag">${esc(group)}</span>`).join("") || '<span class="crm-tag empty">групп нет</span>'}</div><div class="crm-row-meta" style="margin-top:10px">Регистрация: ${date(tilda.member_created_at, true)} · последняя активность: ${date(tilda.last_active_at, true)}</div>` : '<div class="crm-row-meta">Этот email не найден в последней каноничной выгрузке Tilda.</div>'}
           </section>
@@ -466,6 +480,15 @@
     document.getElementById("tilda-status").value = user.tilda_access_status;
     document.getElementById("review-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/access-review`, {method:"PATCH", body:JSON.stringify({status:document.getElementById("review-status").value,tilda_status:document.getElementById("tilda-status").value,note:document.getElementById("review-note").value})}); await openUser(id); });
     document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await openUser(id); });
+    document.getElementById("personal-link-form").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const resourceCodes = Array.from(root.querySelectorAll('input[name="personal-resource"]:checked')).map((input) => input.value);
+      if (!resourceCodes.length) { document.getElementById("personal-link-result").innerHTML = '<div class="crm-review-banner">Выберите хотя бы один продукт.</div>'; return; }
+      const standardValue = document.getElementById("personal-standard").value;
+      const result = await api(`/admin/api/users/${id}/personal-access-links`, {method:"POST",body:JSON.stringify({resource_codes:resourceCodes,standard_amount:standardValue===""?null:Number(standardValue),final_amount:Number(document.getElementById("personal-final").value||0),expires_days:Number(document.getElementById("personal-days").value||14),fully_unlocked:document.getElementById("personal-unlock").checked})});
+      document.getElementById("personal-link-result").innerHTML = `<textarea class="crm-textarea" id="personal-ready-text" readonly>${esc(result.telegram_text)}</textarea><button class="crm-btn small" id="copy-personal-text" type="button">Скопировать сообщение</button>`;
+      document.getElementById("copy-personal-text").onclick = async () => { await navigator.clipboard.writeText(result.telegram_text); document.getElementById("copy-personal-text").textContent = "Скопировано"; };
+    });
     root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await openUser(id); }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();

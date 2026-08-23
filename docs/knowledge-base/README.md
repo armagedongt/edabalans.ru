@@ -27,6 +27,7 @@
 | Общая архитектура платформы | `../../ARCHITECTURE.md` | `current` |
 | Модель CRM и назначение таблиц | `../CRM_DATA_MODEL.md` | `current` |
 | Правила CRM и переноса клиентов | `../CRM_CORE_DESIGN.md` | `current` |
+| Правила получения и открытия доступов | `ACCESS_RULES.md` | `current_implemented_not_deployed` |
 | Платформа DQS, силовых и метаболизма | `../APPLICATION_PLATFORM.md` | `current` |
 | Продукты, тарифы и политика предложений | `PRODUCTS.md` | `draft`, согласована бизнес-логика |
 | Исполняемый контур 21-дневного Мастер-класса | `modules/masterclass/COURSE_RUNTIME.md` | `current_implemented_not_deployed` |

@@ -6,7 +6,7 @@ os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
 os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, select  # noqa: E402
 from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
@@ -188,4 +188,17 @@ def test_email_code_allows_only_five_attempts_and_is_one_time(monkeypatch):
         "/api/app-auth/verify",
         json={"challenge_token": fresh, "code": delivered["code"]},
     ).status_code == 429
+    app.dependency_overrides.clear()
+
+
+def test_pending_owner_review_blocks_existing_resource_access():
+    client, factory = setup()
+    with factory() as db:
+        user = db.scalar(select(User).join(UserEmail).where(UserEmail.email_normalized == "member@example.test"))
+        user.access_review_status = "pending"
+        user.access_review_note = "Историческая покупка требует решения Сергея"
+        db.commit()
+    response = client.get("/api/masterclass/course?email=member@example.test")
+    assert response.status_code == 403
+    assert "подтверждения Сергея" in response.json()["detail"]
     app.dependency_overrides.clear()
