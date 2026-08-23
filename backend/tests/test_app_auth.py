@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
+os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine  # noqa: E402
@@ -33,6 +34,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
         return Settings(
             database_url="sqlite+pysqlite:///:memory:",
             admin_password="test-app-secret",
+            app_auth_secret="test-client-session-secret",
             smtp_host="smtp.example.test",
             smtp_from_email="owner@example.test",
         )

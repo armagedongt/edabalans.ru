@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from typing import Callable
 
@@ -42,7 +42,54 @@ def content_code_for(notification: MasterclassNotification, access: set[str]) ->
         return None
     if notification.notification_kind == "review_followup":
         return "tpl_postpurchase_review_consultation" if "ACCESS_CONSULTATION" in access else "tpl_postpurchase_review_no_consultation"
+    if notification.notification_kind == "course_stalled_72h":
+        return notification.content_code or "tpl_postpurchase_tempo_late"
+    if notification.notification_kind == "sales_last_chance_due":
+        stage = str((notification.payload or {}).get("stage") or "")
+        if stage in {"early", "second"}:
+            if "ACCESS_RECIPES" not in access:
+                return "tpl_postpurchase_recipes_missing"
+            if DIGITAL_ACCESS_CODES - access:
+                return "tpl_postpurchase_recipes_owned"
+            return None
+        if stage == "review":
+            return (
+                "tpl_postpurchase_review_consultation"
+                if "ACCESS_CONSULTATION" in access
+                else "tpl_postpurchase_review_no_consultation"
+            )
+        if stage == "last_week" and (
+            DIGITAL_ACCESS_CODES - access or "ACCESS_CONSULTATION" not in access
+        ):
+            return "tpl_postpurchase_final_offer"
+        return None
     return notification.content_code
+
+
+def course_stall_is_current(session: Session, notification: MasterclassNotification) -> bool:
+    if notification.notification_kind != "course_stalled_72h":
+        return True
+    threshold = notification.due_at - timedelta(hours=72)
+    later_activity = session.execute(
+        text(
+            "SELECT 1 FROM masterclass_events "
+            "WHERE user_id = :user_id AND occurred_at > :threshold "
+            "AND id <> :event_id LIMIT 1"
+        ),
+        {
+            "user_id": notification.user_id,
+            "threshold": threshold,
+            "event_id": notification.event_id,
+        },
+    ).first()
+    completed = session.execute(
+        text(
+            "SELECT 1 FROM masterclass_events "
+            "WHERE user_id = :user_id AND event_type = 'masterclass_completed' LIMIT 1"
+        ),
+        {"user_id": notification.user_id},
+    ).first()
+    return later_activity is None and completed is None
 
 
 def rendered(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
@@ -83,6 +130,16 @@ def dispatch_due_masterclass_notifications(
             counters["waiting_contact"] += 1
             continue
         access = access_resolver(session, notification.user_id)
+        if "ACCESS_MASTERCLASS" not in access:
+            notification.status = "skipped"
+            notification.error_message = "masterclass access is no longer active"
+            counters["skipped"] += 1
+            continue
+        if not course_stall_is_current(session, notification):
+            notification.status = "skipped"
+            notification.error_message = "course activity resumed or course completed"
+            counters["skipped"] += 1
+            continue
         code = content_code_for(notification, access)
         if not code:
             notification.status = "skipped"

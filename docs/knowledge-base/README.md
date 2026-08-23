@@ -29,6 +29,7 @@
 | Правила CRM и переноса клиентов | `../CRM_CORE_DESIGN.md` | `current` |
 | Платформа DQS, силовых и метаболизма | `../APPLICATION_PLATFORM.md` | `current` |
 | Продукты, тарифы и политика предложений | `PRODUCTS.md` | `draft`, согласована бизнес-логика |
+| Исполняемый контур 21-дневного Мастер-класса | `modules/masterclass/COURSE_RUNTIME.md` | `current_implemented_not_deployed` |
 
 ## Разделы, которые предстоит наполнить
 

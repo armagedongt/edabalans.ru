@@ -99,11 +99,15 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
             .where(SequenceStep.sequence_version_id == version.id)
             .order_by(SequenceStep.position)
         ))
-        assert len(steps) == 14
+        assert len(steps) == 9
         assert steps[0].step_key == "pp_identity"
         assert steps[-1].kind == "STOP"
-        assert any(step.delay_seconds == 21600 for step in steps)
-        assert any(step.delay_seconds == 3600 for step in steps)
+        assert any(step.step_key == "pp_course_stalled_72h" for step in steps)
+        assert any(
+            (step.configuration or {}).get("trigger") == "sales_last_chance_due"
+            for step in steps
+        )
+        assert all(step.delay_seconds is None for step in steps)
         assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_questionnaire")).find("{{questionnaire_formatted}}") >= 0
 
         # Re-running seed must not create another draft version or duplicate slots.

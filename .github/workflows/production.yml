@@ -26,7 +26,7 @@ jobs:
         run: docker compose --env-file .env.example config --quiet
 
       - name: Build backend
-        run: docker build --tag edabalans-backend-test ./backend
+        run: docker build --file ./backend/Dockerfile --tag edabalans-backend-test .
 
       - name: Run backend tests
         shell: bash

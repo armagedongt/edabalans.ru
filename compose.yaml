@@ -30,12 +30,14 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: .
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
     environment:
       DATABASE_URL: "${DATABASE_URL}"
       ADMIN_USERNAME: "${ADMIN_USERNAME}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      APP_AUTH_SECRET: "${APP_AUTH_SECRET}"
       TILDA_WEBHOOK_TOKEN: "${TILDA_WEBHOOK_TOKEN}"
       ALLOWED_ORIGINS: "${ALLOWED_ORIGINS:-https://похудение-это-есть.рф}"
       SMTP_HOST: "${SMTP_HOST:-}"

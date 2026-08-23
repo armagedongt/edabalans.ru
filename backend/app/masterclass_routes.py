@@ -3,11 +3,14 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import hashlib
+import json
+from pathlib import Path
 import re
 import secrets
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
@@ -18,7 +21,8 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import (
-    MasterclassEvent, MasterclassNotification, MessengerLinkToken, OfferCheckout, OfferStage,
+    MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
+    MasterclassStepProgress, MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
@@ -64,8 +68,95 @@ STAGE_BY_PLACEMENT = {
     "day-2-offer": "early", "recipes-part-1-gate": "early",
     "recipes-part-2-gate": "second", "closing-review": "review",
     "post-review": "last_week",
+    # Current 21-day web program. Legacy placement names above stay valid for
+    # already published Tilda embeds and old signed links.
+    "day-15-offer": "early", "day-17-offer": "second",
+    "day-19-offer": "review", "day-21-offer": "last_week",
 }
 EMBED_PLACEMENTS = tuple(STAGE_BY_PLACEMENT) + ("offers-hub",)
+COURSE_APP_EVENTS = {
+    "dqs": "dqs_opened",
+    "recipes-part-1": "recipes_part_1_opened",
+    "recipes-part-2": "recipes_part_2_opened",
+    "closing-review": "closing_review_opened",
+}
+COURSE_ACTIVITY_EVENTS = {
+    "masterclass_day_opened",
+    "masterclass_article_completed",
+    "task_opened",
+    "task_acknowledged",
+    "masterclass_day_completed",
+    "dqs_opened",
+    "recipes_part_1_opened",
+    "recipes_part_2_opened",
+    "closing_review_opened",
+}
+COURSE_CONTENT_ROOT = Path(__file__).resolve().parents[2] / "content" / "masterclass"
+COURSE_MANIFEST_PATH = COURSE_CONTENT_ROOT / "course" / "course.json"
+
+
+def load_course_manifest() -> dict:
+    manifest = json.loads(COURSE_MANIFEST_PATH.read_text(encoding="utf-8"))
+    days = manifest.get("days")
+    if not isinstance(days, list) or not days:
+        raise RuntimeError("masterclass course manifest has no days")
+    numbers = [item.get("number") for item in days]
+    if numbers != list(range(1, len(days) + 1)):
+        raise RuntimeError("masterclass course days must be sequential from 1")
+    step_ids: set[str] = set()
+    for day in days:
+        if not isinstance(day.get("checks"), list) or not day["checks"]:
+            raise RuntimeError(f"masterclass day {day['number']} has no checks")
+        seen_non_article = False
+        for step in day.get("steps", []):
+            step_id = step.get("id")
+            if not step_id or step_id in step_ids:
+                raise RuntimeError(f"invalid or duplicate masterclass step id: {step_id}")
+            step_ids.add(step_id)
+            if not step.get("kind"):
+                raise RuntimeError(f"masterclass step has no kind: {step_id}")
+            if step["kind"] == "article" and seen_non_article:
+                raise RuntimeError(
+                    f"masterclass articles must precede app steps: {step_id}"
+                )
+            seen_non_article = seen_non_article or step["kind"] != "article"
+    return manifest
+
+
+COURSE_MANIFEST = load_course_manifest()
+COURSE_DAYS = {day["number"]: day for day in COURSE_MANIFEST["days"]}
+COURSE_DAY_HOURS = int(COURSE_MANIFEST["dayIntervalHours"])
+COURSE_LAST_DAY = max(COURSE_DAYS)
+COURSE_CHECK_COUNTS = {day: len(data["checks"]) for day, data in COURSE_DAYS.items()}
+COURSE_APPS = {
+    day: step["kind"]
+    for day, data in COURSE_DAYS.items()
+    for step in data.get("steps", [])
+    if step["kind"] in COURSE_APP_EVENTS
+}
+COURSE_OFFERS = {
+    day: (step["placement"], step["event"])
+    for day, data in COURSE_DAYS.items()
+    for step in data.get("steps", [])
+    if step["kind"] == "offer"
+}
+
+
+def course_content_files() -> dict[str, Path]:
+    result = {
+        "extracted-2026-08-23.json": (
+            COURSE_CONTENT_ROOT / "imported-draft" / "extracted-2026-08-23.json"
+        )
+    }
+    for day in COURSE_MANIFEST["days"]:
+        for step in day.get("steps", []):
+            asset = step.get("contentAsset")
+            if asset:
+                result[asset] = COURSE_CONTENT_ROOT / "source-current" / asset
+    return result
+
+
+COURSE_CONTENT_FILES = course_content_files()
 
 
 def aware_utc(value: datetime | None) -> datetime | None:
@@ -81,6 +172,11 @@ class AnswerIn(BaseModel):
 
 class RunActionIn(BaseModel):
     email: str
+
+
+class CourseCheckIn(BaseModel):
+    email: str
+    checked: bool
 
 
 class EventIn(BaseModel):
@@ -118,6 +214,434 @@ def resolve_masterclass_user(
     return require_app_user(request, email, db, "ACCESS_MASTERCLASS", settings)
 
 
+def course_step_kinds(day: int) -> list[str]:
+    if day not in COURSE_DAYS:
+        raise HTTPException(404, "masterclass day not found")
+    return [step["kind"] for step in COURSE_DAYS[day].get("steps", [])]
+
+
+def course_event(
+    db: Session,
+    user_id: uuid.UUID,
+    event_key: str,
+    event_type: str,
+    *,
+    placement: str | None = None,
+    details: dict | None = None,
+) -> MasterclassEvent:
+    event = db.scalar(
+        select(MasterclassEvent).where(
+            MasterclassEvent.user_id == user_id,
+            MasterclassEvent.event_key == event_key,
+        )
+    )
+    if not event:
+        event = MasterclassEvent(
+            user_id=user_id,
+            event_key=event_key,
+            event_type=event_type,
+            placement=placement,
+            details=details or {},
+        )
+        db.add(event)
+        db.flush()
+        if event_type in COURSE_ACTIVITY_EVENTS:
+            queue_notification(
+                db,
+                user_id,
+                event,
+                "course_stalled_72h",
+                datetime.now(timezone.utc) + timedelta(hours=72),
+                "tpl_postpurchase_tempo_late",
+                payload={
+                    "day": (details or {}).get("day"),
+                    "step_index": (details or {}).get("step_index"),
+                },
+            )
+    return event
+
+
+def day_progress(
+    db: Session, user_id: uuid.UUID, day: int
+) -> MasterclassDayProgress | None:
+    return db.scalar(
+        select(MasterclassDayProgress).where(
+            MasterclassDayProgress.user_id == user_id,
+            MasterclassDayProgress.day_number == day,
+        )
+    )
+
+
+def course_day_unlock_at(
+    db: Session, user_id: uuid.UUID, day: int
+) -> datetime | None:
+    if day == 1:
+        return None
+    previous = day_progress(db, user_id, day - 1)
+    if not previous:
+        return None
+    return aware_utc(previous.first_opened_at) + timedelta(hours=COURSE_DAY_HOURS)
+
+
+def course_day_can_open(
+    db: Session, user_id: uuid.UUID, day: int, now: datetime
+) -> tuple[bool, str | None, datetime | None]:
+    if day == 1:
+        return True, None, None
+    previous = day_progress(db, user_id, day - 1)
+    if not previous:
+        return False, "previous_day_not_opened", None
+    unlock_at = aware_utc(previous.first_opened_at) + timedelta(hours=COURSE_DAY_HOURS)
+    if not previous.completed_at:
+        return False, "previous_day_not_completed", unlock_at
+    if now < unlock_at:
+        return False, "timer", unlock_at
+    return True, None, unlock_at
+
+
+def open_course_day(
+    db: Session, user: User, day: int, now: datetime
+) -> MasterclassDayProgress:
+    course_step_kinds(day)
+    existing = day_progress(db, user.id, day)
+    if existing:
+        return existing
+    allowed, reason, unlock_at = course_day_can_open(db, user.id, day, now)
+    if not allowed:
+        detail = {"reason": reason}
+        if unlock_at:
+            detail["unlock_at"] = unlock_at.isoformat()
+        raise HTTPException(409, detail=detail)
+    progress = MasterclassDayProgress(
+        user_id=user.id,
+        day_number=day,
+        first_opened_at=now,
+        checkmarks={},
+    )
+    db.add(progress)
+    db.flush()
+    course_event(
+        db,
+        user.id,
+        f"course:day:{day}:opened",
+        "masterclass_day_opened",
+        details={"day": day},
+    )
+    return progress
+
+
+def completed_step_indexes(db: Session, user_id: uuid.UUID, day: int) -> set[int]:
+    return set(
+        db.scalars(
+            select(MasterclassStepProgress.step_index).where(
+                MasterclassStepProgress.user_id == user_id,
+                MasterclassStepProgress.day_number == day,
+            )
+        )
+    )
+
+
+def course_payload(
+    db: Session, user: User, settings: Settings, now: datetime
+) -> dict:
+    progress_rows = {
+        row.day_number: row
+        for row in db.scalars(
+            select(MasterclassDayProgress).where(
+                MasterclassDayProgress.user_id == user.id
+            )
+        )
+    }
+    step_rows: dict[int, set[int]] = {day: set() for day in range(1, COURSE_LAST_DAY + 1)}
+    for row in db.scalars(
+        select(MasterclassStepProgress).where(
+            MasterclassStepProgress.user_id == user.id
+        )
+    ):
+        step_rows[row.day_number].add(row.step_index)
+
+    days = []
+    for day in range(1, COURSE_LAST_DAY + 1):
+        progress = progress_rows.get(day)
+        can_open, reason, unlock_at = course_day_can_open(db, user.id, day, now)
+        kinds = course_step_kinds(day)
+        completed = step_rows[day]
+        task_unlocked = len(completed) == len(kinds)
+        placement = COURSE_OFFERS.get(day)
+        placement_payload = None
+        if progress and placement:
+            offer_index = len(kinds) - 1
+            if all(index in completed for index in range(offer_index)):
+                placement_payload = {
+                    "placement": placement[0],
+                    "placement_token": create_placement_token(placement[0], settings),
+                }
+        app_payload = None
+        if progress and day in COURSE_APPS:
+            app_code = COURSE_APPS[day]
+            app_payload = {"code": app_code}
+            if app_code == "recipes-part-1":
+                app_payload.update(
+                    placement="recipes-part-1-gate",
+                    placement_token=create_placement_token("recipes-part-1-gate", settings),
+                )
+            elif app_code == "recipes-part-2":
+                app_payload.update(
+                    placement="recipes-part-2-gate",
+                    placement_token=create_placement_token("recipes-part-2-gate", settings),
+                )
+        first_opened = aware_utc(progress.first_opened_at) if progress else None
+        next_unlock = (
+            first_opened + timedelta(hours=COURSE_DAY_HOURS) if first_opened else None
+        )
+        days.append(
+            {
+                "number": day,
+                "opened": progress is not None,
+                "can_open": progress is not None or can_open,
+                "locked_reason": None if progress or can_open else reason,
+                "unlock_at": unlock_at.isoformat() if unlock_at else None,
+                "first_opened_at": first_opened.isoformat() if first_opened else None,
+                "next_day_unlock_at": next_unlock.isoformat() if next_unlock else None,
+                "steps_total": len(kinds),
+                "completed_steps": sorted(completed),
+                "next_step": next(
+                    (index for index in range(len(kinds)) if index not in completed), None
+                ),
+                "task_unlocked": task_unlocked,
+                "task_opened": bool(progress and progress.task_opened_at),
+                "checkmarks": progress.checkmarks if progress else {},
+                "check_count": COURSE_CHECK_COUNTS[day],
+                "completed": bool(progress and progress.completed_at),
+                "completed_at": (
+                    aware_utc(progress.completed_at).isoformat()
+                    if progress and progress.completed_at
+                    else None
+                ),
+                "offer": placement_payload,
+                "app": app_payload,
+            }
+        )
+    return {
+        "ok": True,
+        "course_version": COURSE_MANIFEST["courseVersion"],
+        "server_now": now.isoformat(),
+        "day_interval_hours": COURSE_DAY_HOURS,
+        "current_day": max(progress_rows) if progress_rows else 1,
+        "days": days,
+    }
+
+
+@router.get("/course/manifest")
+def course_manifest(
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    resolve_masterclass_user(request, db, email, settings)
+    return COURSE_MANIFEST
+
+
+def course_step_event(day: int, index: int, kind: str) -> tuple[str, str | None]:
+    if kind == "article":
+        return "masterclass_article_completed", None
+    if kind == "questionnaire":
+        return "onboarding_questionnaire_completed", None
+    if kind == "messenger":
+        return "masterclass_messenger_step_opened", None
+    if kind in COURSE_APP_EVENTS:
+        return COURSE_APP_EVENTS[kind], kind
+    if kind == "offer":
+        placement, event_type = COURSE_OFFERS[day]
+        return event_type, placement
+    return "masterclass_step_completed", None
+
+
+@router.get("/course")
+def course_state(
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
+    open_course_day(db, user, 1, now)
+    course_event(
+        db,
+        user.id,
+        "course:opened",
+        "masterclass_course_opened",
+        details={"program_days": COURSE_LAST_DAY},
+    )
+    db.commit()
+    return course_payload(db, user, settings, now)
+
+
+@router.get("/course/content/{asset_name}")
+def course_content(
+    asset_name: str,
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> FileResponse:
+    resolve_masterclass_user(request, db, email, settings)
+    path = COURSE_CONTENT_FILES.get(asset_name)
+    if not path or not path.is_file():
+        raise HTTPException(404, "masterclass content not found")
+    media_type = "application/json" if path.suffix == ".json" else "text/plain"
+    response = FileResponse(path, media_type=media_type)
+    response.headers["Cache-Control"] = "private, max-age=300"
+    return response
+
+
+@router.post("/course/days/{day}/open")
+def course_open_day(
+    day: int,
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
+    open_course_day(db, user, day, now)
+    db.commit()
+    return course_payload(db, user, settings, now)
+
+
+@router.post("/course/days/{day}/steps/{index}/complete")
+def course_complete_step(
+    day: int,
+    index: int,
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
+    progress = day_progress(db, user.id, day)
+    if not progress:
+        raise HTTPException(409, detail={"reason": "day_not_opened"})
+    kinds = course_step_kinds(day)
+    if index < 0 or index >= len(kinds):
+        raise HTTPException(404, "masterclass step not found")
+    completed = completed_step_indexes(db, user.id, day)
+    if index in completed:
+        return course_payload(db, user, settings, now)
+    if any(previous not in completed for previous in range(index)):
+        raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
+    kind = kinds[index]
+    db.add(
+        MasterclassStepProgress(
+            user_id=user.id,
+            day_number=day,
+            step_index=index,
+            step_kind=kind,
+            completed_at=now,
+        )
+    )
+    event_type, placement = course_step_event(day, index, kind)
+    course_event(
+        db,
+        user.id,
+        f"course:day:{day}:step:{index}:completed",
+        event_type,
+        placement=placement,
+        details={"day": day, "step_index": index, "step_kind": kind},
+    )
+    db.commit()
+    return course_payload(db, user, settings, now)
+
+
+@router.post("/course/days/{day}/task/open")
+def course_open_task(
+    day: int,
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
+    progress = day_progress(db, user.id, day)
+    if not progress:
+        raise HTTPException(409, detail={"reason": "day_not_opened"})
+    if len(completed_step_indexes(db, user.id, day)) != len(course_step_kinds(day)):
+        raise HTTPException(409, detail={"reason": "materials_not_completed"})
+    if not progress.task_opened_at:
+        progress.task_opened_at = now
+        course_event(
+            db,
+            user.id,
+            f"course:day:{day}:task:opened",
+            "task_opened",
+            details={"day": day},
+        )
+    db.commit()
+    return course_payload(db, user, settings, now)
+
+
+@router.put("/course/days/{day}/checks/{index}")
+def course_update_check(
+    day: int,
+    index: int,
+    body: CourseCheckIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    now = datetime.now(timezone.utc)
+    progress = day_progress(db, user.id, day)
+    if not progress or not progress.task_opened_at:
+        raise HTTPException(409, detail={"reason": "task_not_opened"})
+    if index < 0 or index >= COURSE_CHECK_COUNTS.get(day, 0):
+        raise HTTPException(404, "masterclass check not found")
+    if progress.completed_at and not body.checked:
+        raise HTTPException(409, detail={"reason": "day_already_completed"})
+    checkmarks = dict(progress.checkmarks or {})
+    checkmarks[str(index)] = body.checked
+    progress.checkmarks = checkmarks
+    all_checked = all(
+        checkmarks.get(str(item)) is True for item in range(COURSE_CHECK_COUNTS[day])
+    )
+    if all_checked and not progress.completed_at:
+        progress.completed_at = now
+        course_event(
+            db,
+            user.id,
+            f"course:day:{day}:task:acknowledged",
+            "task_acknowledged",
+            details={"day": day},
+        )
+        course_event(
+            db,
+            user.id,
+            f"course:day:{day}:completed",
+            "masterclass_day_completed",
+            details={"day": day},
+        )
+        if day == COURSE_LAST_DAY:
+            course_event(
+                db,
+                user.id,
+                "course:completed",
+                "masterclass_completed",
+                details={"day": day},
+            )
+    db.commit()
+    return course_payload(db, user, settings, now)
+
+
 def questions(kind: str) -> list[tuple[str, str, str]]:
     if kind == "onboarding": return ONBOARDING_QUESTIONS
     if kind == "closing-review": return CLOSING_QUESTIONS
@@ -136,6 +660,36 @@ def queue_notification(db: Session, user_id: uuid.UUID, event: MasterclassEvent,
     key = f"{event.event_key}:{kind}"
     if not db.scalar(select(MasterclassNotification.id).where(MasterclassNotification.user_id == user_id, MasterclassNotification.deduplication_key == key)):
         db.add(MasterclassNotification(user_id=user_id, event_id=event.id, notification_kind=kind, content_code=content_code, deduplication_key=key, due_at=due_at, payload=payload or {}))
+
+
+def queue_offer_last_chance(
+    db: Session,
+    user: User,
+    offer: UserOffer,
+    placement: str,
+) -> None:
+    if not offer.expires_at:
+        return
+    event = course_event(
+        db,
+        user.id,
+        f"offer:{offer.stage_code}:started",
+        "offer_window_started",
+        placement=placement,
+        details={
+            "stage": offer.stage_code,
+            "expires_at": aware_utc(offer.expires_at).isoformat(),
+        },
+    )
+    offer.trigger_event_id = event.id
+    queue_notification(
+        db,
+        user.id,
+        event,
+        "sales_last_chance_due",
+        aware_utc(offer.expires_at) - timedelta(hours=12),
+        payload={"stage": offer.stage_code, "placement": placement},
+    )
 
 
 @router.get("/questionnaires/{kind}")
@@ -220,8 +774,6 @@ def record_event(
     if created:
         event = MasterclassEvent(user_id=user.id, event_key=body.event_key, event_type=body.event_type, placement=body.placement, details={})
         db.add(event); db.flush()
-        if body.event_type == "dqs_opened":
-            queue_notification(db, user.id, event, "dqs_support", datetime.now(timezone.utc) + timedelta(hours=6), "tpl_postpurchase_dqs_support")
     db.commit()
     return {"ok": True, "created": created, "event_id": str(event.id)}
 
@@ -286,32 +838,10 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
         .order_by(UserOffer.started_at.desc())
     ))
 
-    # The final one-week window follows review automatically. Its clock starts
-    # at the actual review expiry, not when a page happens to be opened again.
+    # The final one-week clock starts only from the day-21 checkpoint. Until that
+    # checkpoint the next price can be visible without an invented countdown.
     review = next((item for item in history if item.stage_code == "review"), None)
-    last_week = next((item for item in history if item.stage_code == "last_week"), None)
     review_expires = aware_utc(review.expires_at) if review else None
-    if review_expires and review_expires <= now and last_week is None:
-        final_stage = db.scalar(select(OfferStage).where(
-            OfferStage.code == "last_week", OfferStage.status == "active"
-        ))
-        if not final_stage:
-            raise HTTPException(503, "last-week offer stage is not configured")
-        final_expires = (
-            review_expires + timedelta(hours=final_stage.duration_hours)
-            if final_stage.duration_hours else None
-        )
-        if final_expires is None or final_expires > now:
-            last_week = UserOffer(
-                user_id=user.id,
-                stage_code="last_week",
-                started_at=review_expires,
-                expires_at=final_expires,
-                snapshot={"created_by": "review_expiry"},
-            )
-            db.add(last_week)
-            db.flush()
-            history.append(last_week)
 
     # A participant can never move backwards by reopening an old Tilda lecture.
     # An expired stage exposes the next price but does not start its timer. The
@@ -366,15 +896,24 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
         and own is None
     )
     if should_start:
+        started_at = (
+            review_expires
+            if code == "last_week" and review_expires and review_expires > now
+            else now
+        )
         own = UserOffer(
             user_id=user.id,
             stage_code=code,
-            started_at=now,
-            expires_at=now + timedelta(hours=stage.duration_hours) if stage.duration_hours else None,
+            started_at=started_at,
+            expires_at=(
+                started_at + timedelta(hours=stage.duration_hours)
+                if stage.duration_hours else None
+            ),
             snapshot={"created_by": placement},
         )
         db.add(own)
         db.flush()
+        queue_offer_last_chance(db, user, own, placement)
     elif floor_offer is not None and floor_offer.stage_code == code:
         own = floor_offer
     return stage, own
@@ -428,7 +967,8 @@ def build_offers(db: Session, user: User, placement: str) -> dict:
     }
     consultation_missing = "ACCESS_CONSULTATION" not in owned
     consultation_visible = consultation_missing and placement in {
-        "closing-review", "post-review", "offers-hub"
+        "closing-review", "post-review", "day-19-offer",
+        "day-21-offer", "offers-hub",
     }
     consultation_card = {
         "code": "single:consultation",
@@ -545,10 +1085,6 @@ def recipe_gate(
     if not event:
         event = MasterclassEvent(user_id=user.id, event_key=key, event_type=key, placement=placement, details={})
         db.add(event); db.flush()
-        if part == 1:
-            queue_notification(db, user.id, event, "recipes_followup", datetime.now(timezone.utc) + timedelta(minutes=60), payload={"part": 1})
-        else:
-            queue_notification(db, user.id, event, "recipes_second", datetime.now(timezone.utc), "tpl_postpurchase_recipes_second", payload={"part": 2})
     allowed = "ACCESS_RECIPES" in access_codes(db, user.id)
     payload = {"ok": True, "part": part, "allowed": allowed}
     if allowed:

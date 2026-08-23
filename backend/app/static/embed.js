@@ -6,6 +6,7 @@
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PROTECTED_APPS = {
+    'masterclass-course': true,
     'onboarding-questionnaire': true,
     'masterclass-offers': true,
     'recipes-part-1': true,
@@ -13,6 +14,7 @@
     'closing-review': true
   };
   var roots = {
+    'masterclass-course': 'masterclass-course-app',
     dqs: 'dqs-app',
     strength: 'strength-app',
     metabolism: 'metabolism-app',
@@ -191,6 +193,7 @@
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
+    var accountUrl = String(mount.getAttribute('data-edabalans-account-url') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
@@ -202,9 +205,10 @@
         return response.text();
       })
       .then(function (html) {
+        window.EdabalansAppHost = APP_HOST;
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken}
-          : {mode: 'user', app: app, placement: placement, placementToken: placementToken};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl}
+          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];

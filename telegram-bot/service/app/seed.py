@@ -297,7 +297,13 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH
         items[row["code"]] = item
-    for obsolete_code in ("tpl_subscription_passed", "tpl_subscription_fail_open"):
+    for obsolete_code in (
+        "tpl_subscription_passed",
+        "tpl_subscription_fail_open",
+        "tpl_postpurchase_dqs_support",
+        "tpl_postpurchase_tempo_ok",
+        "tpl_postpurchase_recipes_second",
+    ):
         obsolete = session.scalar(select(ContentItem).where(ContentItem.code == obsolete_code))
         if obsolete:
             obsolete.status = "archived"
@@ -432,22 +438,22 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
 
     post = session.scalar(select(Sequence).where(Sequence.code == POSTPURCHASE_CODE))
     if not post:
-        post = Sequence(code=POSTPURCHASE_CODE, name="После покупки мастер-класса", description="Редактируемые сообщения онбординга, DQS, рецептов, темпа и саморевью. Отправка отключена до подключения CRM-событий.", status="disabled")
+        post = Sequence(code=POSTPURCHASE_CODE, name="После покупки мастер-класса", description="Редактируемые сообщения онбординга, возврата в курс, персональных предложений и саморевью. Отправка отключена до отдельного production-решения.", status="disabled")
         session.add(post); session.flush()
         version = SequenceVersion(sequence_id=post.id, version_no=1, status="draft")
         session.add(version); session.flush()
         session.add(SequenceStep(sequence_version_id=version.id, step_key="placeholder", position=1, kind="STOP", label="Наполнение будет добавлено позже", configuration={"upsells":["recipes","calories","consultation"]}, enabled=False))
     else:
-        post.description = "Редактируемые сообщения онбординга, DQS, рецептов, темпа и саморевью. Отправка отключена до подключения CRM-событий."
+        post.description = "Редактируемые сообщения онбординга, возврата в курс, персональных предложений и саморевью. Отправка отключена до отдельного production-решения."
         post.status = "disabled"
 
-    existing_postpurchase = session.scalar(
+    current_postpurchase = session.scalar(
         select(SequenceStep.id)
         .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
-        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_identity")
+        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_course_stalled_72h")
         .limit(1)
     )
-    if not existing_postpurchase:
+    if not current_postpurchase:
         last_version = session.scalar(
             select(SequenceVersion.version_no)
             .where(SequenceVersion.sequence_id == post.id)
@@ -459,17 +465,12 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
         specs = [
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
-            ("pp_wait_dqs", "DELAY", None, 21600, {"starts_after": "dqs_opened", "note": "Срок не переносится повторным открытием"}),
-            ("pp_dqs_support", "VIDEO_NOTE", "postpurchase_dqs_support", None, {"trigger": "dqs_opened+6h", "state": "editorial_slot"}),
-            ("pp_wait_recipes", "DELAY", None, 3600, {"starts_after": "recipes_part_1_opened", "note": "Перед отправкой повторно проверить покупки"}),
-            ("pp_recipes_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "recipes_part_1_opened+60m", "condition": "recipes_access=false", "state": "editorial_slot"}),
-            ("pp_recipes_owned", "MESSAGE", "postpurchase_recipes_owned", None, {"trigger": "recipes_part_1_opened+60m", "condition": "recipes_access=true AND has_missing_products", "state": "editorial_slot"}),
-            ("pp_tempo_late", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "progress_checkpoint", "condition": "delay_days>2", "state": "editorial_slot"}),
-            ("pp_tempo_ok", "VIDEO_NOTE", "postpurchase_tempo_ok", None, {"trigger": "progress_checkpoint", "condition": "delay_days<=2", "state": "editorial_slot"}),
-            ("pp_recipes_second", "MESSAGE", "postpurchase_recipes_second", None, {"trigger": "recipes_part_2_opened", "condition": "has_missing_products", "state": "editorial_slot"}),
+            ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
+            ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
+            ("pp_sales_early_owned", "MESSAGE", "postpurchase_recipes_owned", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=true AND has_missing_products", "state": "editorial_slot"}),
             ("pp_review_consultation", "MESSAGE", "postpurchase_review_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=true", "state": "editorial_slot"}),
             ("pp_review_no_consultation", "MESSAGE", "postpurchase_review_no_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=false", "state": "editorial_slot"}),
-            ("pp_final_offer", "MESSAGE", "postpurchase_final_offer", None, {"trigger": "closing_offer_expired", "condition": "has_missing_products", "state": "editorial_slot"}),
+            ("pp_final_offer", "MESSAGE", "postpurchase_final_offer", None, {"trigger": "sales_last_chance_due", "condition": "stage=last_week AND has_missing_products", "state": "editorial_slot"}),
             ("pp_finish", "STOP", None, None, {"reason": "postpurchase_automatic_messages_complete"}),
         ]
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):

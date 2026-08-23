@@ -123,6 +123,26 @@ def masterclass_preview(
     return protected_file("masterclass-preview.html")
 
 
+@router.get("/admin/masterclass-course-preview", include_in_schema=False)
+def masterclass_course_preview(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse:
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    return protected_file("masterclass-course-preview.html")
+
+
+@router.get("/admin/masterclass-designs", include_in_schema=False)
+def masterclass_designs(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse:
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    return protected_file("masterclass-designs.html")
+
+
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
     request: Request,

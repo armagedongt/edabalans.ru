@@ -4,16 +4,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 
-WORKDIR /app
+WORKDIR /app/backend
 
 RUN addgroup --system app && adduser --system --ingroup app app
 
-COPY requirements.txt ./
+COPY backend/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY alembic.ini ./
-COPY migrations ./migrations
-COPY app ./app
+COPY backend/alembic.ini ./
+COPY backend/migrations ./migrations
+COPY backend/app ./app
+COPY content/masterclass/imported-draft/extracted-2026-08-23.json /app/content/masterclass/imported-draft/extracted-2026-08-23.json
+COPY content/masterclass/course/course.json /app/content/masterclass/course/course.json
+COPY content/masterclass/source-current /app/content/masterclass/source-current
 
 RUN chmod -R a+rX /app
 

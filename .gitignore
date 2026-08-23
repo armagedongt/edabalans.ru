@@ -234,3 +234,6 @@ leadteh-export/*.har
 
 # Telegram runtime media is private operational data, copied to production separately.
 telegram-bot/runtime/media/
+
+# Raw browser saves from Tilda stay local. Runtime uses extracted text and CDN URLs.
+content/masterclass/source-tilda/

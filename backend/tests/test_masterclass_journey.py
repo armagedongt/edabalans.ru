@@ -5,6 +5,7 @@ from pathlib import Path
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
+os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, func, select  # noqa: E402
@@ -17,7 +18,8 @@ from app.app_auth import create_app_session, create_placement_token  # noqa: E40
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
-    MasterclassEvent, MasterclassNotification, MessengerLinkToken, OfferCheckout, OfferStage,
+    MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
+    MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, Resource, User, UserAccess, UserEmail, UserOffer,
 )
 
@@ -25,6 +27,7 @@ from app.models import (  # noqa: E402
 TEST_SETTINGS = Settings(
     database_url="sqlite+pysqlite:///:memory:",
     admin_password="test-app-secret",
+    app_auth_secret="test-client-session-secret",
     telegram_test_bot_username="EdabalansTestBot",
 )
 
@@ -280,12 +283,158 @@ def test_admin_can_generate_signed_tokens_for_tilda_placements():
     placements = response.json()["placements"]
     assert set(placements) >= {
         "day-2-offer",
+        "day-15-offer",
+        "day-17-offer",
+        "day-19-offer",
+        "day-21-offer",
         "recipes-part-1-gate",
         "recipes-part-2-gate",
         "closing-review",
         "offers-hub",
     }
     assert all(len(token) > 20 for token in placements.values())
+
+
+def test_current_21_day_offer_placements_select_expected_stages():
+    expected = {
+        "day-15-offer": "early",
+        "day-17-offer": "second",
+        "day-19-offer": "review",
+        "day-21-offer": "last_week",
+    }
+    for placement, stage in expected.items():
+        client, _ = setup()
+        response = client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query(placement)
+        )
+        assert response.status_code == 200
+        assert response.json()["stage"] == stage
+
+
+def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
+    client, factory = setup()
+    manifest = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    )
+    assert manifest.status_code == 200
+    assert len(manifest.json()["days"]) == 21
+    assert manifest.json()["days"][0]["steps"][5]["id"] == "day-01-offer"
+
+    state = client.get("/api/masterclass/course?email=member@example.test")
+    assert state.status_code == 200
+    day = state.json()["days"][0]
+    assert day["opened"] is True
+    assert day["steps_total"] == 6
+    assert day["completed_steps"] == []
+    assert day["task_unlocked"] is False
+    assert day["offer"] is None
+
+    skipped = client.post(
+        "/api/masterclass/course/days/1/steps/1/complete",
+        json={"email": "member@example.test"},
+    )
+    assert skipped.status_code == 409
+    assert skipped.json()["detail"]["reason"] == "previous_step_not_completed"
+
+    for index in range(5):
+        completed = client.post(
+            f"/api/masterclass/course/days/1/steps/{index}/complete",
+            json={"email": "member@example.test"},
+        )
+        assert completed.status_code == 200
+    before_offer = completed.json()["days"][0]
+    assert before_offer["next_step"] == 5
+    assert before_offer["offer"]["placement"] == "offers-hub"
+    assert len(before_offer["offer"]["placement_token"]) > 20
+
+    offer = client.post(
+        "/api/masterclass/course/days/1/steps/5/complete",
+        json={"email": "member@example.test"},
+    )
+    assert offer.status_code == 200
+    assert offer.json()["days"][0]["task_unlocked"] is True
+    assert client.post(
+        "/api/masterclass/course/days/1/task/open",
+        json={"email": "member@example.test"},
+    ).status_code == 200
+
+    for index in range(4):
+        checked = client.put(
+            f"/api/masterclass/course/days/1/checks/{index}",
+            json={"email": "member@example.test", "checked": True},
+        )
+        assert checked.status_code == 200
+    assert checked.json()["days"][0]["completed"] is True
+
+    too_early = client.post(
+        "/api/masterclass/course/days/2/open",
+        json={"email": "member@example.test"},
+    )
+    assert too_early.status_code == 409
+    assert too_early.json()["detail"]["reason"] == "timer"
+
+    with factory() as db:
+        progress = db.scalar(
+            select(MasterclassDayProgress).where(
+                MasterclassDayProgress.day_number == 1
+            )
+        )
+        progress.first_opened_at = datetime.now(timezone.utc) - timedelta(hours=21)
+        db.commit()
+    opened = client.post(
+        "/api/masterclass/course/days/2/open",
+        json={"email": "member@example.test"},
+    )
+    assert opened.status_code == 200
+    assert opened.json()["days"][1]["opened"] is True
+
+    repeated = client.post(
+        "/api/masterclass/course/days/2/open",
+        json={"email": "member@example.test"},
+    )
+    assert repeated.status_code == 200
+    with factory() as db:
+        stalled = list(db.scalars(
+            select(MasterclassNotification).where(
+                MasterclassNotification.notification_kind == "course_stalled_72h"
+            )
+        ))
+        assert stalled
+        assert all(row.content_code == "tpl_postpurchase_tempo_late" for row in stalled)
+        assert db.scalar(
+            select(func.count(MasterclassEvent.id)).where(
+                MasterclassEvent.event_key == "course:day:2:opened"
+            )
+        ) == 1
+
+
+def test_course_api_requires_the_existing_member_session_and_access():
+    client, _ = setup(authenticated=False)
+    unauthenticated = client.get(
+        "/api/masterclass/course?email=member@example.test",
+        headers={},
+    )
+    assert unauthenticated.status_code == 401
+    authenticated, _ = setup()
+    mismatched = authenticated.get(
+        "/api/masterclass/course?email=other@example.test"
+    )
+    assert mismatched.status_code == 401
+
+
+def test_course_content_uses_the_same_member_session():
+    client, _ = setup()
+    response = client.get(
+        "/api/masterclass/course/content/40-introduction-to-satiety-habits.md"
+        "?email=member@example.test"
+    )
+    assert response.status_code == 200
+    assert "пищев" in response.text.lower()
+    assert response.headers["cache-control"] == "private, max-age=300"
+    assert client.get(
+        "/api/masterclass/course/content/not-allowed.txt?email=member@example.test"
+    ).status_code == 404
 
 
 def test_recipe_gate_uses_access_and_records_open_once():
@@ -309,11 +458,18 @@ def test_recipe_gate_uses_access_and_records_open_once():
     assert allowed["state"] == "technical_error"
     assert allowed["contact"] == "@FitnessSergey"
     with factory() as db:
-        assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
-        assert db.scalar(select(func.count(MasterclassNotification.id))) == 1
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "recipes_part_1_opened"
+        )) == 1
+        assert db.scalar(select(func.count(MasterclassNotification.id)).where(
+            MasterclassNotification.notification_kind == "recipes_followup"
+        )) == 0
+        assert db.scalar(select(func.count(MasterclassNotification.id)).where(
+            MasterclassNotification.notification_kind == "sales_last_chance_due"
+        )) == 1
     queue = client.get("/api/masterclass/admin/notifications")
     assert queue.status_code == 200
-    assert queue.json()["notifications"][0]["email"] == "member@example.test"
+    assert queue.json()["notifications"][0]["kind"] == "sales_last_chance_due"
 
 
 def test_admin_preview_lists_only_masterclass_users_with_primary_email():
@@ -351,7 +507,7 @@ def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
     assert "consultation" in review_offer["offers"][1]["items"]
 
 
-def test_offers_hub_starts_final_week_from_review_expiry_without_extending_it():
+def test_offers_hub_shows_next_price_without_starting_final_week_timer():
     client, factory = setup()
     now = datetime.now(timezone.utc)
     with factory() as db:
@@ -365,35 +521,39 @@ def test_offers_hub_starts_final_week_from_review_expiry_without_extending_it():
         )
         db.add(review)
         db.commit()
-        expected_start = review.expires_at
-
-    first = client.get(
+    passive = client.get(
         "/api/masterclass/offers?email=member@example.test&"
         + placement_query("offers-hub")
     )
-    assert first.status_code == 200
-    assert first.json()["stage"] == "last_week"
-    assert [card["code"] for card in first.json()["offers"]] == [
+    assert passive.status_code == 200
+    assert passive.json()["stage"] == "last_week"
+    assert passive.json()["expires_at"] is None
+    assert [card["code"] for card in passive.json()["offers"]] == [
         "single:consultation",
         "bundle:digital",
         "single:recipes",
     ]
+    with factory() as db:
+        assert db.scalar(
+            select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")
+        ) == 0
 
+    checkpoint = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-21-offer")
+    )
+    assert checkpoint.status_code == 200
+    assert checkpoint.json()["stage"] == "last_week"
+    assert checkpoint.json()["expires_at"] is not None
     with factory() as db:
         final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
         assert final is not None
-        assert final.started_at.replace(tzinfo=timezone.utc) == expected_start
-        first_expiry = final.expires_at
-
-    second = client.get(
-        "/api/masterclass/offers?email=member@example.test&"
-        + placement_query("offers-hub")
-    )
-    assert second.status_code == 200
-    assert second.json()["stage"] == "last_week"
-    with factory() as db:
-        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
-        assert final.expires_at == first_expiry
+        assert final.started_at.replace(tzinfo=timezone.utc) > now - timedelta(minutes=1)
+        due = db.scalar(select(MasterclassNotification).where(
+            MasterclassNotification.notification_kind == "sales_last_chance_due"
+        ))
+        assert due is not None
+        assert due.payload["stage"] == "last_week"
 
 
 def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():
@@ -401,13 +561,22 @@ def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():
     now = datetime.now(timezone.utc)
     with factory() as db:
         user = db.scalar(select(User).where(User.display_name == "Участник"))
-        db.add(UserOffer(
-            user_id=user.id,
-            stage_code="review",
-            started_at=now - timedelta(days=12),
-            expires_at=now - timedelta(days=9),
-            snapshot={},
-        ))
+        db.add_all([
+            UserOffer(
+                user_id=user.id,
+                stage_code="review",
+                started_at=now - timedelta(days=12),
+                expires_at=now - timedelta(days=9),
+                snapshot={},
+            ),
+            UserOffer(
+                user_id=user.id,
+                stage_code="last_week",
+                started_at=now - timedelta(days=9),
+                expires_at=now - timedelta(days=2),
+                snapshot={},
+            ),
+        ])
         db.commit()
 
     response = client.get(
@@ -421,7 +590,7 @@ def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():
     assert all(card["code"].startswith("single:") for card in response.json()["offers"])
     assert all(card["price"] == card["standard_price"] for card in response.json()["offers"])
     with factory() as db:
-        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")) == 0
+        assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")) == 1
 
 
 def test_admin_lists_personal_offer_window_with_effective_expired_status():

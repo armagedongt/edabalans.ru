@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Дополнительные материалы · предпросмотр</title>
+  <style>
+    :root{--ink:#29251f;--muted:#766e63;--paper:#f5efe6;--card:#fffdfa;--line:#dfd4c5;--accent:#d85f3e;--soft:#f8dfd6;--green:#e6f0e8}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 Inter,Arial,sans-serif}.wrap{max-width:920px;margin:auto;padding:42px 22px 80px}.eyebrow{margin:0 0 10px;color:var(--accent);font-size:12px;font-weight:900;letter-spacing:.1em;text-transform:uppercase}h1{max-width:760px;margin:0;font-size:clamp(36px,7vw,64px);line-height:.98;letter-spacing:-.04em}.lead{max-width:720px;color:var(--muted);font-size:18px}.owned{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:28px 0;padding:14px 16px;border-radius:16px;background:var(--green)}.owned b{font-size:13px}.owned span{font-weight:800}.note{margin:24px 0;padding:17px 19px;border:1px solid #edb29f;border-radius:17px;background:var(--soft);color:#733821}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}.card{display:flex;flex-direction:column;padding:22px;border:1px solid var(--line);border-radius:22px;background:var(--card);box-shadow:0 12px 35px #50351b0a}.kind{color:var(--accent);font-size:11px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}.card h2{margin:7px 0 8px;font-size:25px;line-height:1.05}.card p{margin:0 0 20px;color:var(--muted)}.price{margin-top:auto;font-size:14px;font-weight:850}.card button{width:100%;margin-top:12px;padding:13px;border:0;border-radius:14px;background:var(--ink);color:#fff;font-weight:850}.fine{margin-top:24px;color:var(--muted);font-size:13px}@media(max-width:520px){.wrap{padding:28px 14px 60px}.grid{grid-template-columns:1fr}.card{padding:19px}h1{font-size:40px}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <p class="eyebrow" id="stage">Персональные дополнения</p>
+    <h1>Только то, чего у вас ещё нет</h1>
+    <p class="lead">Рабочая страница сначала проверит тариф, покупки и текущую ступень предложения. Уже купленные продукты здесь повторно не появятся.</p>
+    <div class="owned"><b>У вас уже есть</b><span>Мастер-класс</span></div>
+    <div class="note">Это локальный предпросмотр компоновки. В рабочей версии состав, срок и цена приходят с сервера и повторно проверяются перед оплатой.</div>
+    <section class="grid" id="cards"></section>
+    <p class="fine">Закрытие этого экрана не удаляет материал из дня. После просмотра карточка отмечается завершённой, а следующие шаги открываются по общей очереди.</p>
+  </main>
+  <script>
+    (function(){
+      var placement=new URLSearchParams(location.search).get('placement')||'offers-hub';
+      var stages={'day-15-offer':'Перед первой частью рецептов','day-17-offer':'Перед второй частью рецептов','day-19-offer':'После саморевью','day-21-offer':'После завершения программы','offers-hub':'Начало Мастер-класса'};
+      document.querySelector('#stage').textContent=stages[placement]||'Персональные дополнения';
+      var items=[['Система рецептов','Собирайте здоровые тарелки быстро и без ежедневного изобретения меню.'],['Мини-курс «Калорийный»','Научитесь использовать калории как временный инструмент, а не пожизненную обязанность.'],['С дивана до тренировок','Спокойный путь от нулевой активности к регулярным силовым тренировкам.']];
+      if(placement==='day-19-offer'||placement==='day-21-offer')items.unshift(['Индивидуальная консультация','Разбор вашего дневника и обсуждение выводов голосовыми сообщениями или звонком.']);
+      document.querySelector('#cards').innerHTML=items.map(function(item){return'<article class="card"><span class="kind">Доступ проверяет сервер</span><h2>'+item[0]+'</h2><p>'+item[1]+'</p><div class="price">Персональная цена появится здесь</div><button type="button">Посмотреть условия</button></article>'}).join('');
+    }());
+  </script>
+</body>
+</html>

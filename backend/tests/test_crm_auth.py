@@ -42,6 +42,37 @@ def test_content_catalog_uses_unified_admin_shell() -> None:
     assert 'id="login-form"' in response.text
 
 
+def test_masterclass_course_preview_requires_authentication() -> None:
+    response = make_client().get("/admin/masterclass-course-preview")
+    assert response.status_code == 200
+    assert 'id="login-form"' in response.text
+
+
+def test_masterclass_course_preview_is_available_after_login() -> None:
+    client = make_client()
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    response = client.get("/admin/masterclass-course-preview")
+    assert response.status_code == 200
+    assert "Не считать идеально, а видеть главное" in response.text
+
+
+def test_masterclass_designs_are_available_after_login() -> None:
+    client = make_client()
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    response = client.get("/admin/masterclass-designs")
+    assert response.status_code == 200
+    assert "Один интерфейс" in response.text
+    assert response.text.count("Открыть прототип") == 3
+
+
 def test_unified_admin_assets_require_authentication() -> None:
     response = make_client().get("/admin/static/admin.js")
     assert response.status_code == 401

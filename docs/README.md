@@ -17,6 +17,8 @@
 | Тема | Канонический документ | Что в нём находится |
 |---|---|---|
 | Общая архитектура | `../ARCHITECTURE.md` | Компоненты платформы, границы модулей, общие принципы |
+| Разработка с ИИ | `AI_DEVELOPMENT_WORKFLOW.md` | Пропорциональное планирование, источники истины, проверки и доказательное ревью |
+| Рабочие чаты и параллельные потоки | `CHAT_WORKSTREAMS.md` | Границы чатов, субагентов и точки передачи результата |
 | Production и эксплуатация | `OPERATIONS.md` | Сервер, домены, Docker, backup, deploy и команды проверки |
 | CRM и общая база клиентов | `CRM_CORE_DESIGN.md` | Правила идентификации, импорта, оплат, доступов и объединения людей |
 | Таблицы CRM | `CRM_DATA_MODEL.md` | Назначение и связи таблиц общей БД |
@@ -41,12 +43,13 @@
 | CRM/Core | `backend/app/models.py`, `crm_service.py`, `crm_routes.py` | `users`, `user_emails`, `user_phones`, `messenger_accounts`, `tags`, `user_tags`, `client_notes` | `CRM_DATA_MODEL.md` |
 | Продукты, оплаты и доступы | `backend/app/models.py`, `tilda_service.py`, `tilda_routes.py` | `products`, `product_aliases`, `payments`, `resources`, `product_access_rules`, `user_accesses`, `attribution_events` | `CRM_DATA_MODEL.md`, `TILDA_PAYMENTS.md` |
 | Telegram | `telegram-bot/service/app/main.py`, `start_router.py`, `engine.py`, `graph.py`, `telegram.py` | все таблицы с префиксом `tg_`, плюс чтение `users`, `messenger_accounts`, `payments`, `products`, `user_accesses`, `resources` | `TELEGRAM_BOT_CURRENT_LOGIC.md`, `knowledge-base/modules/telegram/README.md`, `../telegram-bot/README.md` |
-| Мастер-класс после покупки | `backend/app/masterclass_routes.py`, `backend/app/static/masterclass.js` | `masterclass_events`, `questionnaire_runs`, `questionnaire_answers`, `offer_stages`, `user_offers`, `offer_checkouts`, `masterclass_notifications`, `messenger_link_tokens` | `knowledge-base/modules/masterclass/README.md`, `knowledge-base/modules/telegram/POST_PURCHASE_MASTERCLASS.md` |
+| Мастер-класс после покупки | `backend/app/masterclass_routes.py`, `backend/app/static/masterclass.js`, `backend/app/static/masterclass-first-days-preview.html` | `masterclass_day_progress`, `masterclass_step_progress`, `masterclass_events`, `questionnaire_runs`, `questionnaire_answers`, `offer_stages`, `user_offers`, `offer_checkouts`, `masterclass_notifications`, `messenger_link_tokens` | `knowledge-base/modules/masterclass/README.md`, `knowledge-base/modules/masterclass/COURSE_RUNTIME.md`, `knowledge-base/modules/telegram/POST_PURCHASE_MASTERCLASS.md` |
 | DQS | `backend/app/app_routes.py`, `app_service.py`, `static/apps/dqs.html`, legacy в `legacy/google/dqs/` | `dqs_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Силовые тренировки | `backend/app/app_routes.py`, `app_service.py`, `static/apps/strength.html`, legacy в `legacy/google/strength/` | `strength_states`, `strength_exercises`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Метаболизм | `backend/app/app_routes.py`, `app_service.py`, `static/apps/metabolism.html`, legacy в `legacy/google/metabolism/` | `metabolism_states`; административные изменения — `admin_app_edits` | `APPLICATION_PLATFORM.md` |
 | Импорт и аудит | `backend/app/importers/` (включая приватные ручные оплаты через `manual_payments.py`), `tools/`, миграции | `import_batches`, `legacy_import_records`, `user_merge_events` | `CRM_DATA_MODEL.md`, `CRM_CORE_DESIGN.md` |
 | Каталог материалов | `backend/app/content_*.py`, `backend/app/importers/pikabu_catalog.py`, `backend/app/importers/telegram_*.py`, `tools/pikabu_collect.py`, `tools/telegram_public_metrics_collect.py` | `content_sources`, `content_items`, `content_item_versions`, `content_media`, `content_links`, `content_metric_snapshots`, `content_comments`, `content_import_runs` | `CONTENT_CATALOG.md` |
+| Тексты мастер-класса | `content/masterclass/` | персональные ответы и прогресс участников здесь не хранятся | `knowledge-base/modules/masterclass/README.md` |
 | Инфраструктура | `compose.yaml`, `infra/`, `.github/workflows/` | `alembic_version`; служебная БД NocoDB отдельно | `OPERATIONS.md` |
 
 ## Правила полноты документации

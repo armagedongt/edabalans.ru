@@ -27,6 +27,8 @@
 | Атрибуция пути «ссылка → канал → бот» | `TELEGRAM_CHANNEL_ATTRIBUTION_SPEC.md` | `approved_draft` |
 | Переходы с канала на сайт и связь с покупкой | `WEBSITE_CLICK_PURCHASE_ATTRIBUTION.md` | `planned` |
 | Продукты и офферы | `PRODUCTS_AND_OFFERS.md` | `planned` |
+| Серверное приложение мастер-класса в Tilda Members Area | `MASTERCLASS_WEB_APP_SPEC.md` | `approved_requirements / technical draft` |
+| Точка возврата по сайту Мастер-класса | `MASTERCLASS_SITE_NEXT_STEPS.md` | `current_status_with_planned_followups` |
 | Долгосрочное развитие платформы | `PLATFORM_LONG_TERM.md` | `planned` |
 | Аудит найденных планов по репозиторию | `PLAN_SOURCES_AUDIT.md` | `current` |
 

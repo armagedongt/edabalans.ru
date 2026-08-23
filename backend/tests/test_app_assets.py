@@ -52,15 +52,31 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
         assert "masterclass.js" in response.text
     assert client.get("/assets/masterclass.js").status_code == 200
     assert client.get("/assets/masterclass.css").status_code == 200
+    assert client.get("/assets/max-logo.png").status_code == 200
+    course = client.get("/apps/masterclass-course.html")
+    assert course.status_code == 200
+    assert 'id="masterclass-course-app"' in course.text
+    assert "api/masterclass/course" in course.text
+    assert "code==='dqs'||code==='closing-review'" in course.text
     loader = client.get("/embed.js").text
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
     assert "/api/app-auth/challenge" in loader
     assert "sessionToken" in loader
+    assert "masterclass-course" in loader
+    assert "data-edabalans-account-url" in loader
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
+
+
+def test_dqs_notifies_course_only_after_server_save() -> None:
+    response = client.get("/apps/dqs.html")
+
+    assert response.status_code == 200
+    assert "'edabalans:app-completed'" in response.text
+    assert "app:'dqs'" in response.text
 
 
 def test_tilda_origin_is_allowed_for_api_preflight() -> None:

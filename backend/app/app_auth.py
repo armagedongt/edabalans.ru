@@ -45,9 +45,9 @@ class VerifyIn(BaseModel):
 
 
 def _secret(settings: Settings) -> bytes:
-    if not settings.admin_password:
+    if not settings.app_auth_secret:
         raise HTTPException(status.HTTP_503_SERVICE_UNAVAILABLE, "application login is not configured")
-    return settings.admin_password.encode("utf-8")
+    return settings.app_auth_secret.encode("utf-8")
 
 
 def _encode(payload: dict[str, Any], settings: Settings) -> str:

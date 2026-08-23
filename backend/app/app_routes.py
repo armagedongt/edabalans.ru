@@ -4,7 +4,7 @@ import json
 import math
 import re
 import uuid
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +34,6 @@ from app.models import (
     UserAccess,
     MasterclassEvent,
 )
-from app.masterclass_routes import queue_notification
 
 
 router = APIRouter()
@@ -58,14 +57,16 @@ def embed_loader() -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> FileResponse:
-    if app_code not in {"dqs", "strength", "metabolism", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"}:
+    if app_code not in {"dqs", "strength", "metabolism", "masterclass-course", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"}:
         raise HTTPException(status_code=404, detail="app not found")
+    if app_code == "masterclass-course":
+        return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
     return public_asset(STATIC_DIR / "apps" / f"{app_code}.html")
 
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"masterclass.js", "masterclass.css"}:
+    if asset_name not in {"masterclass.js", "masterclass.css", "max-logo.png"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)
 
@@ -139,7 +140,6 @@ def dqs_legacy_get(
             if not event:
                 event = MasterclassEvent(user_id=user.id, event_key="dqs_opened", event_type="dqs_opened", placement="dqs", details={})
                 db.add(event); db.flush()
-                queue_notification(db, user.id, event, "dqs_support", datetime.now(timezone.utc) + timedelta(hours=6), "tpl_postpurchase_dqs_support")
             days = [state.days.get(str(index)) for index in range(1, DAY_COUNT + 1)]
             payload = {
                 "ok": True,

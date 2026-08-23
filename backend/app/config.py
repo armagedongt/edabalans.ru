@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     database_url: str
     admin_username: str = ""
     admin_password: str = ""
+    app_auth_secret: str = ""
     tilda_webhook_token: str = ""
     allowed_origins: str = "https://похудение-это-есть.рф"
     smtp_host: str = ""

@@ -460,6 +460,50 @@ class MasterclassEvent(Base):
     occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
+class MasterclassDayProgress(Base):
+    __tablename__ = "masterclass_day_progress"
+    __table_args__ = (
+        UniqueConstraint("user_id", "day_number", name="uq_masterclass_day_progress"),
+        Index("ix_masterclass_day_user_number", "user_id", "day_number"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    day_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    first_opened_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    task_opened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    checkmarks: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class MasterclassStepProgress(Base):
+    __tablename__ = "masterclass_step_progress"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "day_number", "step_index", name="uq_masterclass_step_progress"
+        ),
+        Index("ix_masterclass_step_user_day", "user_id", "day_number"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    day_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    step_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    step_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class QuestionnaireRun(TimestampMixin, Base):
     __tablename__ = "questionnaire_runs"
     __table_args__ = (UniqueConstraint("user_id", "kind", name="uq_questionnaire_user_kind"),)
