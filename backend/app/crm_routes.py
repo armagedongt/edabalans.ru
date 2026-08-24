@@ -147,7 +147,7 @@ def masterclass_designs(
 def admin_section(
     request: Request,
     section: str = ApiPath(
-        pattern="^(users|crm|dqs|strength|metabolism|messaging|content|masterclass)$"
+        pattern="^(users|crm|dqs|strength|metabolism|messaging|content|masterclass|pricing)$"
     ),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
@@ -170,13 +170,14 @@ def admin_login(body: AdminLogin, response: Response) -> dict[str, bool]:
         secure=True,
         samesite="strict",
         path="/",
+        domain=".edabalans.ru",
     )
     return {"ok": True}
 
 
 @router.post("/admin/api/logout")
 def admin_logout(response: Response) -> dict[str, bool]:
-    response.delete_cookie(ADMIN_COOKIE, path="/")
+    response.delete_cookie(ADMIN_COOKIE, path="/", domain=".edabalans.ru")
     return {"ok": True}
 
 
