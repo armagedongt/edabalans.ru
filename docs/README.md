@@ -27,6 +27,7 @@
 | Telegram-бот — модульная база знаний | `knowledge-base/modules/telegram/README.md` | Подмодули, канонические правила и состояние реализации |
 | Telegram-бот — устройство модуля | `../telegram-bot/README.md` | Запуск сервиса, каталоги и техническая структура |
 | Административные интерфейсы | `ADMIN_ARCHITECTURE.md` | Общая навигация и границы CRM/Telegram-админки |
+| Wiki базы знаний | `ADMIN_ARCHITECTURE.md` | Защищённая страница `/admin/knowledge-base`, дерево документов и поиск |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` | Четыре временные публичные страницы и локальный режим правки |
 | Каталог авторских материалов | `CONTENT_CATALOG.md` | Pikabu collector, text-first хранение, таблицы и admin API |
 | Платежи Tilda | `TILDA_PAYMENTS.md` | Приём webhook, нормализация и запись оплаты |

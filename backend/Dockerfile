@@ -14,6 +14,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY backend/alembic.ini ./
 COPY backend/migrations ./migrations
 COPY backend/app ./app
+COPY docs /app/docs
+COPY PROJECT_CONTEXT.md ARCHITECTURE.md /app/
 COPY content/masterclass/imported-draft/extracted-2026-08-23.json /app/content/masterclass/imported-draft/extracted-2026-08-23.json
 COPY content/masterclass/course/course.json /app/content/masterclass/course/course.json
 COPY content/masterclass/source-current /app/content/masterclass/source-current

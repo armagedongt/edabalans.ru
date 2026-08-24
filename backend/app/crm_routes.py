@@ -116,7 +116,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js|knowledge-base\\.css|knowledge-base\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
@@ -152,6 +152,16 @@ def masterclass_designs(
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
     return protected_file("masterclass-designs.html")
+
+
+@router.get("/admin/knowledge-base", include_in_schema=False)
+def knowledge_base_page(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> FileResponse:
+    if not admin_identity(request, credentials):
+        return protected_file("admin-login.html")
+    return protected_file("knowledge-base.html")
 
 
 @router.get("/admin/{section}", include_in_schema=False)

@@ -1,6 +1,10 @@
 *
 !backend/
 !backend/**
+!docs/
+!docs/**
+!PROJECT_CONTEXT.md
+!ARCHITECTURE.md
 !content/
 !content/masterclass/
 !content/masterclass/imported-draft/

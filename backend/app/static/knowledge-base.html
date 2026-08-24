@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>База знаний · edabalans</title>
+  <link rel="stylesheet" href="/admin/static/knowledge-base.css">
+</head>
+<body>
+  <header class="wiki-topbar">
+    <a href="/admin" class="wiki-back">← Админка</a>
+    <strong>База знаний</strong>
+    <button id="wiki-menu" type="button" aria-controls="wiki-sidebar" aria-expanded="false">Разделы</button>
+  </header>
+  <div class="wiki-layout">
+    <aside class="wiki-sidebar" id="wiki-sidebar">
+      <label class="wiki-search">
+        <span>Поиск</span>
+        <input id="wiki-search" type="search" placeholder="Название или текст" autocomplete="off">
+      </label>
+      <p class="wiki-count" id="wiki-count">Загружаю каталог…</p>
+      <nav id="wiki-tree" aria-label="Разделы базы знаний"></nav>
+    </aside>
+    <main class="wiki-main">
+      <div class="wiki-loading" id="wiki-loading">Открываю документ…</div>
+      <article class="wiki-article" id="wiki-article" hidden></article>
+    </main>
+  </div>
+  <div class="wiki-overlay" id="wiki-overlay" hidden></div>
+  <script src="/admin/static/knowledge-base.js" defer></script>
+</body>
+</html>
