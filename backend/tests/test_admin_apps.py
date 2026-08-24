@@ -41,7 +41,7 @@ def make_client():
             yield db
 
     app.dependency_overrides[get_db] = override_db
-    client = TestClient(app, base_url="https://testserver")
+    client = TestClient(app, base_url="https://app.edabalans.ru")
     return client, factory
 
 

@@ -31,7 +31,7 @@ def make_client() -> TestClient:
             yield db
 
     app.dependency_overrides[get_db] = override_db
-    return TestClient(app, base_url="https://testserver")
+    return TestClient(app, base_url="https://app.edabalans.ru")
 
 
 def login(client: TestClient) -> None:

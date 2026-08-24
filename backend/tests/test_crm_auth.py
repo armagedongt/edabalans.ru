@@ -16,7 +16,7 @@ get_settings.cache_clear()
 from app.main import app  # noqa: E402
 
 def make_client() -> TestClient:
-    return TestClient(app, base_url="https://testserver")
+    return TestClient(app, base_url="https://app.edabalans.ru")
 
 
 def test_crm_requires_authentication() -> None:
