@@ -43,3 +43,31 @@ def test_long_polling_sends_offset_and_returns_updates():
     assert updates == [{"update_id": 101}]
     assert b'"offset":100' in seen[0].read()
     assert b'"timeout":1' in seen[0].content
+
+
+@pytest.mark.parametrize(
+    ("result", "expected"),
+    [
+        ({"status": "member"}, True),
+        ({"status": "administrator"}, True),
+        ({"status": "restricted", "is_member": True}, True),
+        ({"status": "restricted", "is_member": False}, False),
+        ({"status": "left"}, False),
+    ],
+)
+def test_subscription_status_uses_real_channel_membership(result, expected):
+    def handler(request):
+        assert b'"chat_id":"-1001"' in request.read()
+        return httpx.Response(200, json={"ok": True, "result": result})
+
+    client = TelegramClient(
+        "secret",
+        httpx.MockTransport(handler),
+        channel_id="-1001",
+    )
+
+    assert client.subscription_status("42") is expected
+
+
+def test_subscription_status_is_unknown_without_channel():
+    assert TelegramClient("secret").subscription_status("42") is None

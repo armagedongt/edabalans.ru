@@ -135,6 +135,36 @@ def test_dispatch_skips_recipe_upsell_when_everything_is_owned(tmp_path):
         assert sender.sent == []
 
 
+def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        row = MasterclassNotification(
+            id="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="dqs_support",
+            content_code="tpl_postpurchase_dqs_support",
+            deduplication_key="dqs:legacy",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        )
+        session.add(row)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+        )
+
+        assert result["skipped"] == 1
+        assert row.status == "skipped"
+        assert row.error_message == "nothing relevant to send"
+        assert sender.sent == []
+
+
 def test_dispatch_leaves_outsider_pending_during_maintenance(tmp_path):
     with session_factory(tmp_path) as session:
         add_contact_and_content(session)

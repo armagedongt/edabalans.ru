@@ -1,8 +1,8 @@
 # Глобальный модуль «Welcome и четырёхдневный интенсив»
 
-Статус: `deployed_test_bot / content_partial / awaiting live subscription test`
+Статус: `deployed_production_maintenance / live subscription enabled / content_partial`
 Владелец содержания: Сергей Воронцов
-Проверено: 23.08.2026
+Проверено: 24.08.2026
 
 ## 1. Назначение и граница
 
@@ -47,7 +47,7 @@ run сразу после определения `ACCESS_MASTERCLASS`.
 
 ## 3. Аналитика подписки
 
-Новые теги и таблицы не создаются. Каждая проверка пишет `subscription_check` в
+Новые таблицы и новые виды тегов не создаются. Каждая проверка пишет `subscription_check` в
 `tg_tracking_events`: `run_id`, `step_key`, `stage`, `subscribed` (`true`, `false`
 или `null` для заглушки) и `outcome`:
 
@@ -60,15 +60,17 @@ run сразу после определения `ACCESS_MASTERCLASS`.
 
 Пятиминутный обход пишет `subscription_fail_open` с
 `outcome=remained_unsubscribed_after_prompt`. Актуальный известный результат также
-обновляет существующие `messenger_accounts.subscription_status` и
-`subscription_checked_at`. Эти события являются источником будущего timeline.
+обновляет существующие `messenger_accounts.subscription_status`,
+`subscription_checked_at` и приводит существующие канонические теги `Подписан`,
+`Не подписан`, `Отписался` к одному актуальному состоянию. Эти события являются
+источником будущего timeline.
 
 Стадии: `before_day1`, `after_prompt`, `after_day1`, `after_mid1`, `after_day2`,
 `after_mid2`, `after_day3`, `after_mid3`, `after_day4`.
 
-На тестовом боте реальный `getChatMember` пока не подключён: проверка проходит как
-заглушка и сохраняет `subscribed=null`, а не выдумывает подписку. Настоящая ветка
-включается после добавления бота администратором канала и отдельного живого теста.
+Основной бот является администратором `@Fitness_Talks`; живой `getChatMember` и
+право `can_invite_users` проверены 24.08.2026. Ошибка Telegram/API сохраняется как
+`subscribed=null` и работает fail-open, а не выдаётся за реальную подписку.
 
 ## 4. Исполняемая блок-схема
 
@@ -107,6 +109,7 @@ flowchart TD
 | отправки | `tg_step_deliveries` |
 | история подписки | `tg_tracking_events` |
 | актуальный статус | `messenger_accounts.subscription_status`, `subscription_checked_at` |
+| видимый канонический статус | `user_tags` → `Подписан` / `Не подписан` / `Отписался` |
 | создание версии графа | `telegram-bot/service/app/seed.py` |
 | выполнение, callback и timeout | `telegram-bot/service/app/engine.py` |
 | карта и редактор | `telegram-bot/service/app/graph.py`, `telegram-bot/service/static/app.js` |

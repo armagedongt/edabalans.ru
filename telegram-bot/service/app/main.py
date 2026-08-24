@@ -4,6 +4,7 @@ import asyncio
 import base64
 import hashlib
 import hmac
+import logging
 import secrets
 import time
 from contextlib import asynccontextmanager
@@ -34,6 +35,7 @@ from app.tracking import active_link, assign_first_touch, create_tracking_sessio
 
 
 settings = get_settings()
+logger = logging.getLogger(__name__)
 security = HTTPBasic(auto_error=False)
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 ADMIN_COOKIE = "edabalans_admin"
@@ -49,7 +51,11 @@ MEDIA_TYPES = {
 def client() -> TelegramClient:
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Telegram token is not configured")
-    return TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url)
+    return TelegramClient(
+        settings.telegram_test_bot_token,
+        proxy_url=settings.telegram_proxy_url,
+        channel_id=settings.telegram_channel_id,
+    )
 
 
 def _session_token(username: str, expires_at: int) -> str:
@@ -178,7 +184,11 @@ async def scheduler_loop() -> None:
     while True:
         try:
             with SessionLocal() as session:
-                tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url) if settings.telegram_test_bot_token else None
+                tg = TelegramClient(
+                    settings.telegram_test_bot_token,
+                    proxy_url=settings.telegram_proxy_url,
+                    channel_id=settings.telegram_channel_id,
+                ) if settings.telegram_test_bot_token else None
                 if tg:
                     stopped_presale = stop_presale_runs_from_purchase_events(session)
                     stopped_presale += reconcile_masterclass_presale_runs(session)
@@ -210,12 +220,16 @@ async def scheduler_loop() -> None:
                         )
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
-            pass
+            logger.exception("Telegram scheduler iteration failed")
         await asyncio.sleep(settings.scheduler_interval_seconds)
 
 
 async def polling_loop() -> None:
-    tg = TelegramClient(settings.telegram_test_bot_token, proxy_url=settings.telegram_proxy_url)
+    tg = TelegramClient(
+        settings.telegram_test_bot_token,
+        proxy_url=settings.telegram_proxy_url,
+        channel_id=settings.telegram_channel_id,
+    )
     offset: int | None = None
     webhook_removed = False
     while True:
@@ -236,6 +250,7 @@ async def polling_loop() -> None:
             raise
         except Exception:
             # Network and Telegram outages are retried without acknowledging the update.
+            logger.exception("Telegram polling iteration failed")
             await asyncio.sleep(2)
 
 
@@ -244,7 +259,11 @@ async def lifespan(_: FastAPI):
     if settings.auto_create_schema:
         Base.metadata.create_all(engine)
     with SessionLocal() as session:
-        seed_defaults(session, settings.telegram_test_bot_username)
+        seed_defaults(
+            session,
+            settings.telegram_test_bot_username,
+            enable_subscription_checks=bool(settings.telegram_channel_id),
+        )
     tasks = []
     if settings.scheduler_enabled:
         tasks.append(asyncio.create_task(scheduler_loop()))
@@ -377,6 +396,8 @@ def process_update(update: dict, session: Session) -> dict:
             session.commit()
             return {"ok": True, "maintenance": True}
         text = message.get("text", "")
+        if text.strip().casefold() in {"start", "старт"}:
+            text = "/start"
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
             handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")

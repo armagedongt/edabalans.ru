@@ -188,6 +188,14 @@ def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypa
         ("42", "tpl_entry_circle"),
         ("42", "tpl_start_welcome_offer"),
     ]
+
+    plain_start = {"update_id": 203, "message": {"from": {"id": 84, "first_name": "Work owner"}, "chat": {"id": 84}, "text": "старт"}}
+    assert client.post("/telegram/webhook", json=plain_start).json() == {"ok": True}
+    assert fake.sent[-3:] == [
+        ("84", "tpl_start_navigation_pin"),
+        ("84", "tpl_entry_circle"),
+        ("84", "tpl_start_welcome_offer"),
+    ]
     outsider_callback = {"update_id": 202, "callback_query": {"id": "repair-cb", "from": {"id": 99, "first_name": "Visitor"}, "message": {"chat": {"id": 99}}, "data": "start_intensive"}}
     assert client.post("/telegram/webhook", json=outsider_callback).json() == {"ok": True, "maintenance": True}
     assert fake.callbacks[-1] == ("repair-cb", "Бот временно на ремонте")

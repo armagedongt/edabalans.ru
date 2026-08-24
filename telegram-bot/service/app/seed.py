@@ -307,7 +307,12 @@ def _postpurchase_messages() -> list[dict]:
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
 
 
-def seed_defaults(session: Session, username: str) -> dict[str, int]:
+def seed_defaults(
+    session: Session,
+    username: str,
+    *,
+    enable_subscription_checks: bool = False,
+) -> dict[str, int]:
     resolved_username = (username or "TetrisgfgfgfBot").lstrip("@")
     is_main_bot = resolved_username.casefold() == "fitness_talks_bot"
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
@@ -398,13 +403,27 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             SequenceStep.step_key == "welcome_subscription_retry_wait",
         )
     ))
-    if not current_welcome_has_layout:
+    current_subscription_step = session.scalar(
+        select(SequenceStep).where(
+            SequenceStep.sequence_version_id == current_welcome_version.id,
+            SequenceStep.step_key == "welcome_subscription",
+        )
+    ) if current_welcome_version else None
+    current_welcome_has_live_subscription = bool(
+        current_subscription_step
+        and (current_subscription_step.configuration or {}).get("enabled")
+    )
+    if not current_welcome_has_layout or (
+        enable_subscription_checks and not current_welcome_has_live_subscription
+    ):
         last_version = session.scalar(
             select(SequenceVersion.version_no)
             .where(SequenceVersion.sequence_id == welcome.id)
             .order_by(SequenceVersion.version_no.desc())
             .limit(1)
         ) or 0
+        if current_welcome_version:
+            current_welcome_version.status = "archived"
         version = SequenceVersion(sequence_id=welcome.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
         specs = [
@@ -412,30 +431,30 @@ def seed_defaults(session: Session, username: str) -> dict[str, int]:
             ("welcome_circle", "VIDEO_NOTE", "entry_circle", None, {}, None),
             ("welcome_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}, None),
             ("welcome_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}, None),
-            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "before_day1", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed"}, None),
+            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_day1", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed"}, None),
             ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
             ("welcome_subscription_retry_wait", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, None),
-            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed", "allow_false_cycle": True}, None),
+            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed", "allow_false_cycle": True}, None),
             ("welcome_day1", "MESSAGE", "day1", None, {}, None),
-            ("welcome_subscription_after_day1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day1"}, None),
+            ("welcome_subscription_after_day1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day1"}, None),
             ("welcome_delay_mid1", "DELAY", None, 39600, {}, None),
             ("welcome_mid1", "MESSAGE", "day1_mid", None, {}, None),
-            ("welcome_subscription_after_mid1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid1"}, None),
+            ("welcome_subscription_after_mid1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid1"}, None),
             ("welcome_delay_day2", "DELAY", None, 43200, {}, None),
             ("welcome_day2", "MESSAGE", "day2", None, {}, None),
-            ("welcome_subscription_after_day2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day2"}, None),
+            ("welcome_subscription_after_day2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day2"}, None),
             ("welcome_delay_mid2", "DELAY", None, 43200, {}, None),
             ("welcome_mid2", "MESSAGE", "day2_mid", None, {}, None),
-            ("welcome_subscription_after_mid2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid2"}, None),
+            ("welcome_subscription_after_mid2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid2"}, None),
             ("welcome_delay_day3", "DELAY", None, 43200, {}, None),
             ("welcome_day3", "MESSAGE", "day3", None, {}, None),
-            ("welcome_subscription_after_day3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day3"}, None),
+            ("welcome_subscription_after_day3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day3"}, None),
             ("welcome_delay_mid3", "DELAY", None, 43200, {}, None),
             ("welcome_mid3", "MESSAGE", "day3_mid", None, {}, None),
-            ("welcome_subscription_after_mid3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_mid3"}, None),
+            ("welcome_subscription_after_mid3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid3"}, None),
             ("welcome_delay_day4", "DELAY", None, 43200, {}, None),
             ("welcome_day4", "MESSAGE", "day4", None, {}, None),
-            ("welcome_subscription_after_day4", "CONDITION", None, None, {"condition": "subscription_check", "enabled": False, "stage": "after_day4"}, None),
+            ("welcome_subscription_after_day4", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day4"}, None),
             ("welcome_delay_exit", "DELAY", None, 43200, {}, None),
             ("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}, None),
         ]

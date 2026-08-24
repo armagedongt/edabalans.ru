@@ -11,11 +11,18 @@ class TelegramError(RuntimeError):
 
 
 class TelegramClient:
-    def __init__(self, token: str, transport: httpx.BaseTransport | None = None, proxy_url: str = ""):
+    def __init__(
+        self,
+        token: str,
+        transport: httpx.BaseTransport | None = None,
+        proxy_url: str = "",
+        channel_id: str = "",
+    ):
         self.token = token
         self.base_url = f"https://api.telegram.org/bot{token}"
         self.transport = transport
         self.proxy_url = proxy_url
+        self.channel_id = channel_id
 
     def _client(self, timeout: float) -> httpx.Client:
         options: dict[str, Any] = {"timeout": timeout, "transport": self.transport}
@@ -101,6 +108,19 @@ class TelegramClient:
 
     def get_chat(self, chat_id: str) -> dict[str, Any]:
         return self.call("getChat", {"chat_id": chat_id})
+
+    def subscription_status(self, user_id: str) -> bool | None:
+        if not self.channel_id:
+            return None
+        member = self.call("getChatMember", {"chat_id": self.channel_id, "user_id": user_id})
+        status = member.get("status")
+        if status in {"creator", "administrator", "member"}:
+            return True
+        if status == "restricted":
+            return bool(member.get("is_member"))
+        if status in {"left", "kicked"}:
+            return False
+        return None
 
     def create_chat_invite_link(self, chat_id: str, name: str, creates_join_request: bool = False) -> dict[str, Any]:
         return self.call("createChatInviteLink", {"chat_id": chat_id, "name": name[:32], "creates_join_request": creates_join_request})

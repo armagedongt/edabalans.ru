@@ -53,7 +53,7 @@ def crm_access_codes(session: Session, user_id: str) -> set[str]:
 
 
 def content_code_for(notification: MasterclassNotification, access: set[str]) -> str | None:
-    if notification.notification_kind == "owner_closing_review":
+    if notification.notification_kind in {"owner_closing_review", "dqs_support"}:
         return None
     if notification.notification_kind == "recipes_followup":
         if "ACCESS_RECIPES" not in access:

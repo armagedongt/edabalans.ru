@@ -8,15 +8,16 @@ from sqlalchemy.orm import Session
 from app.database import Base, make_engine
 from app.engine import advance_run, resume_callback, resume_wait_timeout, start_run
 from app.graph import graph_issues
-from app.models import BotInstance, BotRoute, Contact, ContentItem, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.models import BotInstance, BotRoute, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUser, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, WELCOME_CODE, seed_defaults
 
 
 class FakeSender:
-    def __init__(self, fail_pin=False):
+    def __init__(self, fail_pin=False, subscription=None):
         self.sent = []
         self.pinned = []
         self.fail_pin = fail_pin
+        self.subscription = subscription
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code, configuration))
@@ -26,6 +27,9 @@ class FakeSender:
         if self.fail_pin:
             raise RuntimeError("pin is unavailable")
         self.pinned.append((chat_id, message_id))
+
+    def subscription_status(self, user_id):
+        return self.subscription
 
 
 def session_factory(tmp_path):
@@ -84,6 +88,47 @@ def test_seed_upgrades_intermediate_combined_layout_with_new_versions(tmp_path):
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_welcome.id, SequenceStep.step_key == "welcome_navigation"))
         assert latest_nurture.version_no == 2
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_nurture.id, SequenceStep.step_key == "nurture_delay_hard_sale_1")) is None
+
+
+def test_seed_publishes_new_welcome_version_when_channel_check_is_enabled(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        welcome = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+        first = session.scalar(
+            select(SequenceVersion)
+            .where(SequenceVersion.sequence_id == welcome.id, SequenceVersion.status == "published")
+        )
+
+        seed_defaults(
+            session,
+            "Fitness_Talks_bot",
+            enable_subscription_checks=True,
+        )
+
+        latest = session.scalar(
+            select(SequenceVersion)
+            .where(SequenceVersion.sequence_id == welcome.id, SequenceVersion.status == "published")
+            .order_by(SequenceVersion.version_no.desc())
+        )
+        assert latest.version_no == first.version_no + 1
+        assert first.status == "archived"
+        checks = session.scalars(
+            select(SequenceStep).where(
+                SequenceStep.sequence_version_id == latest.id,
+                SequenceStep.kind == "CONDITION",
+            )
+        ).all()
+        assert checks
+        assert all(step.configuration["enabled"] is True for step in checks)
+
+        seed_defaults(
+            session,
+            "Fitness_Talks_bot",
+            enable_subscription_checks=True,
+        )
+        assert session.scalar(
+            select(func.count(SequenceVersion.id)).where(SequenceVersion.sequence_id == welcome.id)
+        ) == 2
 
 
 def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
@@ -160,7 +205,7 @@ def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
         contact = Contact(bot_instance_id=bot.id, telegram_user_id="sub", chat_id="sub")
         session.add(contact); session.commit()
         run = start_run(session, contact.id, WELCOME_CODE)
-        sender = FakeSender()
+        sender = FakeSender(subscription=False)
         advance_run(session, run, sender)
         resume_callback(session, contact.id, "start_intensive")
         advance_run(session, run, sender)
@@ -183,6 +228,53 @@ def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
         outcomes = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id)))
         assert outcomes.count("subscription_check") >= 2
         assert "subscription_fail_open" in outcomes
+
+
+def test_real_subscription_check_updates_account_and_canonical_tag(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(
+            session,
+            "Fitness_Talks_bot",
+            enable_subscription_checks=True,
+        )
+        bot = session.scalar(select(BotInstance))
+        user_id = "11111111-1111-1111-1111-111111111111"
+        user = CrmUser(id=user_id, display_name="Owner")
+        tags = [
+            CrmTag(code="subscription_yes", name="Подписан", category="subscription"),
+            CrmTag(code="subscription_no", name="Не подписан", category="subscription"),
+            CrmTag(code="subscription_left", name="Отписался", category="subscription"),
+        ]
+        session.add_all([user, *tags]); session.flush()
+        account = CrmMessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="subscribed-before",
+            subscription_status="subscribed",
+        )
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=user_id,
+            telegram_user_id="subscribed-before",
+            chat_id="subscribed-before",
+        )
+        session.add_all([account, contact]); session.flush()
+        session.add(CrmUserTag(user_id=user_id, tag_id=tags[0].id, source="test"))
+        session.commit()
+
+        run = start_run(session, contact.id, WELCOME_CODE)
+        sender = FakeSender(subscription=False)
+        advance_run(session, run, sender)
+        resume_callback(session, contact.id, "start_intensive")
+        advance_run(session, run, sender)
+
+        assert account.subscription_status == "not_subscribed"
+        names = list(session.scalars(
+            select(CrmTag.name)
+            .join(CrmUserTag, CrmUserTag.tag_id == CrmTag.id)
+            .where(CrmUserTag.user_id == user_id)
+        ))
+        assert names == ["Отписался"]
 
 
 def test_welcome_does_not_check_purchase(tmp_path):

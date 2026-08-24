@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime, timedelta
 from typing import Any, Protocol
 
-from sqlalchemy import or_, select, text
+from sqlalchemy import delete, or_, select, text
 from sqlalchemy.orm import Session
 
-from app.models import ContentItem, Contact, CrmMessengerAccount, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.models import ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+
+
+logger = logging.getLogger(__name__)
 
 
 class Sender(Protocol):
     def send_content(self, chat_id: str, content: Any, configuration: dict[str, Any]) -> str: ...
+    def subscription_status(self, user_id: str) -> bool | None: ...
 
 
 def utcnow() -> datetime:
@@ -162,8 +167,37 @@ def _record_subscription_check(
             CrmMessengerAccount.platform == "telegram",
         ))
         if account:
+            previous_status = account.subscription_status
             account.subscription_status = "unknown" if subscribed is None else ("subscribed" if subscribed else "not_subscribed")
             account.subscription_checked_at = utcnow()
+            if subscribed is not None:
+                target_name = (
+                    "Подписан"
+                    if subscribed
+                    else ("Отписался" if previous_status == "subscribed" else "Не подписан")
+                )
+                subscription_tags = list(session.scalars(select(CrmTag).where(
+                    CrmTag.name.in_(["Подписан", "Не подписан", "Отписался"]),
+                    CrmTag.status == "active",
+                )))
+                target = next((tag for tag in subscription_tags if tag.name == target_name), None)
+                if target:
+                    other_ids = [tag.id for tag in subscription_tags if tag.id != target.id]
+                    if other_ids:
+                        session.execute(delete(CrmUserTag).where(
+                            CrmUserTag.user_id == contact.user_id,
+                            CrmUserTag.tag_id.in_(other_ids),
+                        ))
+                    exists = session.scalar(select(CrmUserTag.id).where(
+                        CrmUserTag.user_id == contact.user_id,
+                        CrmUserTag.tag_id == target.id,
+                    ))
+                    if not exists:
+                        session.add(CrmUserTag(
+                            user_id=contact.user_id,
+                            tag_id=target.id,
+                            source="telegram_subscription_check",
+                        ))
 
 
 def has_paid_product(session: Session, contact: Contact, product_codes: list[str], variable_key: str) -> bool:
@@ -250,8 +284,18 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 result = True
                 _record_subscription_check(session, run, contact, step, None)
             elif condition == "subscription_check":
-                result = bool(_variable(session, run.contact_id, condition))
-                _record_subscription_check(session, run, contact, step, result)
+                try:
+                    subscribed = sender.subscription_status(contact.telegram_user_id)
+                except Exception:
+                    logger.exception(
+                        "Telegram subscription check failed for contact %s",
+                        run.contact_id,
+                    )
+                    subscribed = None
+                # A temporary Telegram/API failure must not lock a person out of
+                # the intensive. A confirmed non-membership follows the prompt branch.
+                result = subscribed is not False
+                _record_subscription_check(session, run, contact, step, subscribed)
             elif condition == "has_product":
                 variable_key = config.get("product_code", "masterclass")
                 product_codes = config.get("product_codes") or [variable_key]
