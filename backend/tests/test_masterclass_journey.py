@@ -192,6 +192,32 @@ def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
         assert db.scalar(select(func.count(OfferCheckout.id))) == 1
 
 
+def test_day_one_offer_shows_early_price_without_starting_countdown():
+    client, factory = setup()
+    response = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-1-offer")
+    )
+    assert response.status_code == 200
+    assert response.json()["stage"] == "early"
+    assert response.json()["expires_at"] is None
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id))) == 0
+
+    triggered = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-2-offer")
+    )
+    reopened = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-1-offer")
+    )
+    assert triggered.json()["expires_at"] is not None
+    assert reopened.json()["expires_at"] == triggered.json()["expires_at"]
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id))) == 1
+
+
 def test_offer_placement_cannot_be_forged_by_tilda_client():
     client, factory = setup()
     forged = client.get(

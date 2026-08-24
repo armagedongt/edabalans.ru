@@ -1005,6 +1005,7 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
         own = None
     should_start = (
         placement != "offers-hub"
+        and placement != "day-1-offer"
         and requested_code == code
         and code != "standard"
         and own is None
@@ -1170,7 +1171,7 @@ def build_offers(
     for card in cards:
         card["saving"] = card["standard_price"] - card["price"]
         card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": own.expires_at.isoformat() if own and own.expires_at else None, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": aware_utc(own.expires_at).isoformat() if own and own.expires_at else None, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
 @router.get("/offers")
