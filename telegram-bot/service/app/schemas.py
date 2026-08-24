@@ -88,3 +88,16 @@ class BroadcastIn(BaseModel):
     scheduled_at: str | None = None
     media_kind: str | None = Field(default=None, max_length=32)
     media_path: str | None = Field(default=None, max_length=2000)
+    buttons: list[dict] = Field(default_factory=list, max_length=4)
+
+
+class BroadcastConfirmIn(BaseModel):
+    confirmed_recipient_count: int = Field(ge=0)
+
+
+class BroadcastTestIn(BaseModel):
+    contact_id: str
+
+
+class BroadcastScheduleIn(BroadcastConfirmIn):
+    scheduled_at: str

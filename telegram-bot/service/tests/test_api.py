@@ -15,9 +15,11 @@ class FakeTelegram:
     def __init__(self):
         self.sent = []
         self.callbacks = []
+        self.configurations = []
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code if hasattr(content, "code") else content.body_source))
+        self.configurations.append(configuration)
         return str(len(self.sent))
 
     def answer_callback(self, callback_query_id, text=""):
@@ -209,4 +211,69 @@ def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypa
         assert session.scalar(select(Contact).where(Contact.telegram_user_id == "42")).status == "active"
 
     assert client.post(f"/bot-api/contacts/{waiting.id}/messages", json={"text": "Нельзя отправлять"}).status_code == 409
+    app.dependency_overrides.clear()
+
+
+def test_inbox_timeline_and_safe_broadcast_workflow(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'messaging.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    fake = FakeTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", True)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_allowed_user_ids", "42")
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
+    client = TestClient(app)
+
+    start = {"update_id": 300, "message": {"message_id": 1, "from": {"id": 42, "first_name": "Owner"}, "chat": {"id": 42}, "text": "/start"}}
+    assert client.post("/telegram/webhook", json=start).status_code == 200
+    incoming = {"update_id": 301, "message": {"message_id": 2, "from": {"id": 42, "first_name": "Owner"}, "chat": {"id": 42}, "text": "Входящий текст"}}
+    assert client.post("/telegram/webhook", json=incoming).status_code == 200
+    contact = next(row for row in client.get("/bot-api/contacts").json() if row["telegram_user_id"] == "42")
+    timeline = client.get(f"/bot-api/contacts/{contact['id']}/timeline").json()
+    assert any(item["direction"] == "incoming" and item["body"] == "Входящий текст" for item in timeline)
+    assert client.post(f"/bot-api/contacts/{contact['id']}/messages", json={"text": "Ответ"}).json()["status"] == "sent"
+    timeline = client.get(f"/bot-api/contacts/{contact['id']}/timeline").json()
+    assert any(item["direction"] == "outgoing" and item["body"] == "Ответ" for item in timeline)
+
+    outsider = {"update_id": 302, "message": {"message_id": 3, "from": {"id": 99, "first_name": "Visitor"}, "chat": {"id": 99}, "text": "Когда откроетесь?"}}
+    assert client.post("/telegram/webhook", json=outsider).json() == {"ok": True, "maintenance": True}
+    outsider_contact = next(row for row in client.get("/bot-api/contacts").json() if row["telegram_user_id"] == "99")
+    outsider_timeline = client.get(f"/bot-api/contacts/{outsider_contact['id']}/timeline").json()
+    assert any(item["direction"] == "incoming" and item["body"] == "Когда откроетесь?" for item in outsider_timeline)
+
+    unsafe_media = client.post("/bot-api/broadcasts", json={
+        "title": "Нельзя читать файл сервера",
+        "text": "Проверка",
+        "media_kind": "document",
+        "media_path": "../../server-secret",
+    })
+    assert unsafe_media.status_code == 422
+
+    draft = client.post("/bot-api/broadcasts", json={
+        "title": "Проверка рассылки",
+        "text": "Тестовый текст",
+        "segment": {"status": "active", "telegram_user_ids": ["42"]},
+        "buttons": [{"text": "Открыть", "url": "https://example.com"}],
+    }).json()
+    preview = client.get(f"/bot-api/broadcasts/{draft['id']}/preview").json()
+    assert preview["recipient_count"] == 1
+    assert preview["maintenance_limited"] is True
+    assert client.post(f"/bot-api/broadcasts/{draft['id']}/test", json={"contact_id": contact["id"]}).json()["status"] == "sent"
+    assert client.post(f"/bot-api/broadcasts/{draft['id']}/launch", json={"confirmed_recipient_count": 0}).status_code == 409
+    launched = client.post(f"/bot-api/broadcasts/{draft['id']}/launch", json={"confirmed_recipient_count": 1}).json()
+    assert launched == {"id": draft["id"], "status": "completed", "sent": 1, "failed": 0}
+    assert fake.configurations[-1]["buttons"][0]["text"] == "Открыть"
+    assert client.post(f"/bot-api/broadcasts/{draft['id']}/retry").status_code == 409
+    assert client.get("/bot-api/map?module_code=inbox").json()["issues"] == []
+    assert client.get("/bot-api/map?module_code=broadcasts").json()["issues"] == []
     app.dependency_overrides.clear()

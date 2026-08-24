@@ -49,8 +49,8 @@ GLOBAL_MODULES: tuple[dict[str, str], ...] = (
     {"code": "prepurchase_nurture", "name": "Основная рассылка до покупки", "status": "Исполняемый каркас · контент частичный"},
     {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
     {"code": "postmasterclass_nurture", "name": "После завершения мастер-класса", "status": "Отключённый пустой каркас"},
-    {"code": "broadcasts", "name": "Разовые рассылки", "status": "Базовая механика"},
-    {"code": "direct_support", "name": "Личные сообщения клиентам", "status": "Базовая механика"},
+    {"code": "broadcasts", "name": "Разовые рассылки", "status": "Draft → preview → test → send/schedule → retry"},
+    {"code": "inbox", "name": "Входящие сообщения и ответы", "status": "Единая Telegram-лента в карточке пользователя"},
     {"code": "lottery", "name": "Лотерея", "status": "Запланировано"},
     {"code": "quiz", "name": "Тесты и опросы", "status": "Запланировано"},
 )
@@ -182,11 +182,46 @@ def postpurchase_graph(session: Session) -> dict[str, Any]:
     return {"level": "module", "module_code": "postpurchase_masterclass", "title": "4. После покупки мастер-класса", "status": "Событийный модуль · test-only", "description": "Каждая строка читается слева направо: событие → точная проверка → редактируемое сообщение. Ветка «нет» означает безопасный пропуск без отправки.", "nodes": nodes, "edges": edges, "issues": []}
 
 
+def service_module_graph(module_code: str) -> dict[str, Any]:
+    if module_code == "inbox":
+        nodes = [
+            {"id": "message", "kind": "entry", "label": "Получено обычное сообщение", "subtitle": "Telegram update", "details": {"Исполнение": "main.py:process_update"}},
+            {"id": "store", "kind": "technical", "label": "Сохранить incoming", "subtitle": "Текст, caption или тип вложения", "details": {"Хранение": "tg_manual_messages"}},
+            {"id": "timeline", "kind": "module_exit", "label": "Показать в ленте человека", "subtitle": "Вместе с автоматическими и ручными исходящими", "details": {"API": "/contacts/{id}/timeline"}},
+            {"id": "reply", "kind": "entry", "label": "Ответ владельца", "subtitle": "Из карточки пользователя", "details": {"Доставка": "Telegram Bot API"}},
+            {"id": "log_reply", "kind": "module_exit", "label": "Сохранить outgoing", "subtitle": "Статус и Telegram message ID", "details": {"Хранение": "tg_manual_messages"}},
+        ]
+        edges = [
+            {"id": "inbox:1", "source": "message", "target": "store", "label": "Не Start", "branch": "default"},
+            {"id": "inbox:2", "source": "store", "target": "timeline", "label": "Сохранено", "branch": "default"},
+            {"id": "inbox:3", "source": "reply", "target": "log_reply", "label": "Отправлено/ошибка", "branch": "default"},
+        ]
+    else:
+        nodes = [
+            {"id": "draft", "kind": "entry", "label": "Создать draft", "subtitle": "Текст, медиа, кнопки и сегмент", "details": {"Хранение": "tg_broadcasts / tg_content_items"}},
+            {"id": "preview", "kind": "technical", "label": "Посчитать аудиторию", "subtitle": "Точное число и sample", "details": {"Предохранитель": "maintenance allowlist"}},
+            {"id": "confirm", "kind": "condition", "label": "Число получателей подтверждено?", "subtitle": "При изменении аудитории запуск отклоняется", "details": {"API": "launch / schedule"}},
+            {"id": "deliver", "kind": "technical", "label": "Зафиксировать recipients и отправить", "subtitle": "Идемпотентно по broadcast + contact", "details": {"Хранение": "tg_broadcast_recipients"}},
+            {"id": "result", "kind": "module_exit", "label": "Результаты и retry failed", "subtitle": "Sent/failed по каждому человеку", "details": {"Повтор": "только failed"}},
+        ]
+        edges = [
+            {"id": "broadcast:1", "source": "draft", "target": "preview", "label": "Предпросмотр", "branch": "default"},
+            {"id": "broadcast:2", "source": "preview", "target": "confirm", "label": "Показано владельцу", "branch": "default"},
+            {"id": "broadcast:3", "source": "confirm", "target": "deliver", "label": "Да", "branch": "true"},
+            {"id": "broadcast:4", "source": "confirm", "target": "preview", "label": "Нет/изменилось", "branch": "false"},
+            {"id": "broadcast:5", "source": "deliver", "target": "result", "label": "Завершено", "branch": "default"},
+        ]
+    module = next(item for item in GLOBAL_MODULES if item["code"] == module_code)
+    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Автоматическая текстовая проекция исполняемой служебной логики.", "nodes": nodes, "edges": edges, "issues": []}
+
+
 def module_graph(session: Session, module_code: str) -> dict[str, Any]:
     if module_code == "start_attribution":
         return start_attribution_graph(session)
     if module_code == "postpurchase_masterclass":
         return postpurchase_graph(session)
+    if module_code in {"inbox", "broadcasts"}:
+        return service_module_graph(module_code)
     if module_code in {"welcome_intensive", "prepurchase_nurture", "postmasterclass_nurture"}:
         return sequence_graph(session, module_code, "")
     module = next((item for item in GLOBAL_MODULES if item["code"] == module_code), None)

@@ -23,11 +23,11 @@ from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_pres
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
-from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, maintenance_allows, record_maintenance_contact
+from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
-from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
-from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
@@ -154,21 +154,105 @@ def _handle_maintenance_contact(
     client().send_content(contact.chat_id, _maintenance_notice(session), {})
 
 
-def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient) -> tuple[int, int]:
-    contacts = session.scalars(select(Contact).where(Contact.status == row.segment.get("status", "active"))).all()
-    contacts = [contact for contact in contacts if _maintenance_allows_contact(contact)]
+def _record_incoming_message(session: Session, contact: Contact, message: dict) -> None:
+    text_value = (message.get("text") or message.get("caption") or "").strip()
+    media_kind = next((kind for kind in ("photo", "video", "video_note", "voice", "audio", "document", "sticker") if message.get(kind)), None)
+    body = text_value
+    if media_kind:
+        label = {
+            "photo": "Фото",
+            "video": "Видео",
+            "video_note": "Видеокружок",
+            "voice": "Голосовое",
+            "audio": "Аудио",
+            "document": "Файл",
+            "sticker": "Стикер",
+        }[media_kind]
+        body = f"[{label}]" + (f" {text_value}" if text_value else "")
+    if not body:
+        body = "[Неподдерживаемый тип сообщения]"
+    session.add(ManualMessage(
+        contact_id=contact.id,
+        direction="in",
+        body_source=body,
+        status="received",
+        platform_message_id=str(message.get("message_id", "")) or None,
+    ))
+
+
+def _validate_media_reference(media_path: str | None) -> None:
+    if not media_path or media_path.startswith(("https://", "http://")):
+        return
+    candidate = Path(media_path)
+    if not candidate.is_absolute():
+        if "/" not in media_path and "\\" not in media_path:
+            return  # Telegram file_id
+        raise HTTPException(422, "Локальное медиа должно быть загружено через админку")
+    root = Path(settings.media_root).resolve()
+    try:
+        candidate.resolve().relative_to(root)
+    except ValueError:
+        raise HTTPException(422, "Локальное медиа находится вне разрешённого каталога") from None
+
+
+def _broadcast_contacts(session: Session, row: Broadcast) -> list[Contact]:
+    segment = row.segment or {}
+    query = select(Contact).where(Contact.status == segment.get("status", "active"))
+    telegram_ids = [str(value) for value in segment.get("telegram_user_ids", []) if str(value).strip()]
+    if telegram_ids:
+        query = query.where(Contact.telegram_user_id.in_(telegram_ids))
+    for tag_id in dict.fromkeys(segment.get("tag_ids", [])):
+        query = query.where(Contact.user_id.in_(select(CrmUserTag.user_id).where(CrmUserTag.tag_id == tag_id)))
+    product_codes = list(dict.fromkeys(segment.get("product_codes", [])))
+    if product_codes:
+        query = query.where(text("""
+            EXISTS (
+                SELECT 1 FROM payments p
+                JOIN products pr ON pr.id = p.product_id
+                WHERE p.user_id = tg_contacts.user_id
+                  AND p.payment_status = 'paid'
+                  AND pr.code = ANY(:broadcast_product_codes)
+            )
+        """)).params(broadcast_product_codes=product_codes)
+    access_codes = list(dict.fromkeys(segment.get("access_codes", [])))
+    if access_codes:
+        query = query.where(text("""
+            EXISTS (
+                SELECT 1 FROM user_accesses ua
+                JOIN resources r ON r.id = ua.resource_id
+                WHERE ua.user_id = tg_contacts.user_id
+                  AND ua.revoked_at IS NULL
+                  AND (ua.expires_at IS NULL OR ua.expires_at > now())
+                  AND r.code = ANY(:broadcast_access_codes)
+            )
+        """)).params(broadcast_access_codes=access_codes)
+    return [contact for contact in session.scalars(query.order_by(Contact.created_at)) if _maintenance_allows_contact(contact)]
+
+
+def _snapshot_broadcast_recipients(session: Session, row: Broadcast) -> list[Contact]:
+    contacts = _broadcast_contacts(session, row)
     existing = set(session.scalars(select(BroadcastRecipient.contact_id).where(BroadcastRecipient.broadcast_id == row.id)))
     for contact in contacts:
         if contact.id not in existing:
             session.add(BroadcastRecipient(broadcast_id=row.id, contact_id=contact.id))
+    session.flush()
+    return contacts
+
+
+def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, snapshot: bool = False) -> tuple[int, int]:
+    if snapshot:
+        _snapshot_broadcast_recipients(session, row)
     row.status = "sending"; row.started_at = row.started_at or datetime.now(UTC)
     content = session.get(ContentItem, row.content_item_id)
+    configuration = {"buttons": (row.segment or {}).get("_buttons", [])}
     sent = failed = 0
-    session.flush()
     for recipient in session.scalars(select(BroadcastRecipient).where(BroadcastRecipient.broadcast_id == row.id, BroadcastRecipient.status == "pending")):
         contact = session.get(Contact, recipient.contact_id)
+        if not contact or not _maintenance_allows_contact(contact):
+            recipient.status = "skipped_maintenance"
+            continue
         try:
-            recipient.platform_message_id = tg.send_content(contact.chat_id, content, {})
+            recipient.platform_message_id = tg.send_content(contact.chat_id, content, configuration)
             recipient.status = "sent"; recipient.sent_at = datetime.now(UTC); sent += 1
         except Exception as exc:
             message = str(exc)
@@ -391,12 +475,16 @@ def process_update(update: dict, session: Session) -> dict:
             session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
     elif message:
         contact = _upsert_contact(session, bot, message["from"], message["chat"])
+        text = message.get("text", "")
+        normalized_start = text.strip().casefold() in {"start", "старт"}
+        is_start = normalized_start or text.startswith("/start")
+        if not is_start:
+            _record_incoming_message(session, contact, message)
         if not _maintenance_allows_contact(contact):
             _handle_maintenance_contact(session, contact, receipt_id, "message")
             session.commit()
             return {"ok": True, "maintenance": True}
-        text = message.get("text", "")
-        if text.strip().casefold() in {"start", "старт"}:
+        if normalized_start:
             text = "/start"
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
@@ -559,7 +647,9 @@ def update_content(content_id: str, body: ContentUpdateIn, session: Session = De
     item = session.get(ContentItem, content_id)
     if not item:
         raise HTTPException(404, "Content not found")
-    for field, value in body.model_dump(exclude_unset=True).items():
+    values = body.model_dump(exclude_unset=True)
+    _validate_media_reference(values.get("media_path"))
+    for field, value in values.items():
         setattr(item, field, value)
     session.commit()
     return {"id":item.id,"title":item.title,"body_source":item.body_source,"labels":item.labels,"media_kind":item.media_kind,"media_path":item.media_path}
@@ -616,6 +706,72 @@ def list_contacts(session: Session = Depends(get_db)) -> list[dict]:
         total = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == run.sequence_version_id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE", "VIDEO", "VOICE", "PHOTO"]))) if run else 0
         result.append({"id":contact.id,"telegram_user_id":contact.telegram_user_id,"username":contact.username,"name":" ".join(filter(None,[contact.first_name,contact.last_name])),"status":contact.status,"run_status":run.status if run else None,"current_step":run.current_step_key if run else None,"next_action_at":run.next_action_at if run else None,"sent":sent,"total":total,"time_scale":run.time_scale if run else None,"error":run.last_error if run else None,"last_seen_at":contact.last_seen_at,"created_at":contact.created_at})
     return result
+
+
+@app.get("/bot-api/contacts/{contact_id}/timeline", dependencies=[Depends(require_admin)])
+def contact_timeline(contact_id: str, session: Session = Depends(get_db)) -> list[dict]:
+    contact = session.get(Contact, contact_id)
+    if not contact:
+        raise HTTPException(404, "Contact not found")
+    events: list[dict] = []
+    for message in session.scalars(
+        select(ManualMessage)
+        .where(ManualMessage.contact_id == contact_id)
+        .order_by(ManualMessage.created_at.desc())
+        .limit(200)
+    ):
+        events.append({
+            "id": message.id,
+            "kind": "manual",
+            "direction": "incoming" if message.direction in {"in", "incoming"} else "outgoing",
+            "body": message.body_source,
+            "status": message.status,
+            "occurred_at": message.created_at,
+            "platform_message_id": message.platform_message_id,
+        })
+    automated = session.execute(
+        select(StepDelivery, ContentItem)
+        .join(SequenceRun, SequenceRun.id == StepDelivery.run_id)
+        .outerjoin(
+            SequenceStep,
+            (SequenceStep.sequence_version_id == SequenceRun.sequence_version_id)
+            & (SequenceStep.step_key == StepDelivery.step_key),
+        )
+        .outerjoin(ContentItem, ContentItem.id == SequenceStep.content_item_id)
+        .where(SequenceRun.contact_id == contact_id, StepDelivery.status.in_(["sent", "failed"]))
+        .order_by(StepDelivery.created_at.desc())
+        .limit(200)
+    ).all()
+    for delivery, content in automated:
+        events.append({
+            "id": delivery.id,
+            "kind": "sequence",
+            "direction": "outgoing",
+            "body": content.body_source if content else f"[{delivery.step_key}]",
+            "status": delivery.status,
+            "occurred_at": delivery.sent_at or delivery.created_at,
+            "platform_message_id": delivery.platform_message_id,
+        })
+    broadcast_rows = session.execute(
+        select(BroadcastRecipient, Broadcast, ContentItem)
+        .join(Broadcast, Broadcast.id == BroadcastRecipient.broadcast_id)
+        .join(ContentItem, ContentItem.id == Broadcast.content_item_id)
+        .where(BroadcastRecipient.contact_id == contact_id)
+        .order_by(BroadcastRecipient.sent_at.desc())
+        .limit(200)
+    ).all()
+    for recipient, broadcast, content in broadcast_rows:
+        events.append({
+            "id": recipient.id,
+            "kind": "broadcast",
+            "direction": "outgoing",
+            "body": content.body_source,
+            "title": broadcast.title,
+            "status": recipient.status,
+            "occurred_at": recipient.sent_at or broadcast.started_at or broadcast.created_at,
+            "platform_message_id": recipient.platform_message_id,
+        })
+    return sorted(events, key=lambda event: event["occurred_at"].isoformat() if event["occurred_at"] else "")[-200:]
 
 
 def _user_bot_state(session: Session, user_id: str) -> dict | None:
@@ -984,28 +1140,121 @@ def tracking_platforms(session: Session = Depends(get_db)) -> list[str]:
 
 @app.post("/bot-api/broadcasts", dependencies=[Depends(require_admin)])
 def create_broadcast(body: BroadcastIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
-    scheduled_at = datetime.fromisoformat(body.scheduled_at.replace("Z", "+00:00")) if body.scheduled_at else None
-    if scheduled_at and scheduled_at.tzinfo is None:
-        scheduled_at = scheduled_at.replace(tzinfo=UTC)
+    allowed_segment_keys = {"status", "telegram_user_ids", "tag_ids", "product_codes", "access_codes"}
+    unknown = set(body.segment) - allowed_segment_keys
+    if unknown:
+        raise HTTPException(422, f"Неизвестные поля сегмента: {', '.join(sorted(unknown))}")
+    segment = dict(body.segment)
+    segment.setdefault("status", "active")
+    if segment["status"] not in {"active", "maintenance_waitlist"}:
+        raise HTTPException(422, "Рассылка разрешена только active или maintenance_waitlist")
+    buttons = []
+    for button in body.buttons:
+        label = str(button.get("text", "")).strip()
+        url = str(button.get("url", "")).strip()
+        if not label or len(label) > 64 or not url.startswith(("https://", "http://")):
+            raise HTTPException(422, "У кнопки нужны текст до 64 символов и http(s)-ссылка")
+        buttons.append({"text": label, "url": url})
+    segment["_buttons"] = buttons
+    _validate_media_reference(body.media_path)
     content = ContentItem(code=f"broadcast_{secrets.token_hex(6)}", title=body.title, body_source=body.text, media_kind=body.media_kind, media_path=body.media_path, labels=["разовая рассылка"], status="ready", origin_system="admin")
     session.add(content); session.flush()
-    row = Broadcast(title=body.title, content_item_id=content.id, segment=body.segment, scheduled_at=scheduled_at, status="scheduled" if scheduled_at else "draft", created_by=admin)
+    row = Broadcast(title=body.title, content_item_id=content.id, segment=segment, status="draft", created_by=admin)
     session.add(row); session.commit()
     return {"id":row.id,"status":row.status,"scheduled_at":row.scheduled_at}
 
 
-@app.post("/bot-api/broadcasts/{broadcast_id}/launch", dependencies=[Depends(require_admin)])
-def launch_broadcast(broadcast_id: str, session: Session = Depends(get_db)) -> dict:
+@app.get("/bot-api/broadcasts/{broadcast_id}/preview", dependencies=[Depends(require_admin)])
+def preview_broadcast(broadcast_id: str, session: Session = Depends(get_db)) -> dict:
     row = session.get(Broadcast, broadcast_id)
     if not row:
         raise HTTPException(404, "Broadcast not found")
-    if row.status not in {"draft", "scheduled"}:
+    contacts = _broadcast_contacts(session, row)
+    return {
+        "id": row.id,
+        "recipient_count": len(contacts),
+        "sample": [
+            {"id": contact.id, "telegram_user_id": contact.telegram_user_id, "username": contact.username}
+            for contact in contacts[:10]
+        ],
+        "maintenance_limited": settings.telegram_maintenance_mode,
+    }
+
+
+def _confirm_broadcast_audience(session: Session, row: Broadcast, expected: int) -> int:
+    actual = len(_broadcast_contacts(session, row))
+    if actual != expected:
+        raise HTTPException(409, f"Аудитория изменилась: было подтверждено {expected}, сейчас {actual}. Обновите preview.")
+    return actual
+
+
+@app.post("/bot-api/broadcasts/{broadcast_id}/launch", dependencies=[Depends(require_admin)])
+def launch_broadcast(broadcast_id: str, body: BroadcastConfirmIn, session: Session = Depends(get_db)) -> dict:
+    row = session.get(Broadcast, broadcast_id)
+    if not row:
+        raise HTTPException(404, "Broadcast not found")
+    if row.status != "draft":
         raise HTTPException(409, "Broadcast already launched")
-    sent, failed = _deliver_broadcast(session, row, client())
+    _confirm_broadcast_audience(session, row, body.confirmed_recipient_count)
+    sent, failed = _deliver_broadcast(session, row, client(), snapshot=True)
     return {"id":row.id,"status":row.status,"sent":sent,"failed":failed}
+
+
+@app.post("/bot-api/broadcasts/{broadcast_id}/schedule", dependencies=[Depends(require_admin)])
+def schedule_broadcast(broadcast_id: str, body: BroadcastScheduleIn, session: Session = Depends(get_db)) -> dict:
+    row = session.get(Broadcast, broadcast_id)
+    if not row:
+        raise HTTPException(404, "Broadcast not found")
+    if row.status != "draft":
+        raise HTTPException(409, "Планировать можно только draft")
+    try:
+        scheduled_at = datetime.fromisoformat(body.scheduled_at.replace("Z", "+00:00"))
+    except ValueError:
+        raise HTTPException(422, "Некорректная дата отправки") from None
+    if scheduled_at.tzinfo is None:
+        scheduled_at = scheduled_at.replace(tzinfo=UTC)
+    if scheduled_at <= datetime.now(UTC):
+        raise HTTPException(422, "Время отправки должно быть в будущем")
+    _confirm_broadcast_audience(session, row, body.confirmed_recipient_count)
+    _snapshot_broadcast_recipients(session, row)
+    row.scheduled_at = scheduled_at
+    row.status = "scheduled"
+    session.commit()
+    return {"id": row.id, "status": row.status, "scheduled_at": row.scheduled_at, "recipients": body.confirmed_recipient_count}
+
+
+@app.post("/bot-api/broadcasts/{broadcast_id}/test", dependencies=[Depends(require_admin)])
+def test_broadcast(broadcast_id: str, body: BroadcastTestIn, admin: str = Depends(require_admin), session: Session = Depends(get_db)) -> dict:
+    row = session.get(Broadcast, broadcast_id)
+    contact = session.get(Contact, body.contact_id)
+    if not row or not contact:
+        raise HTTPException(404, "Broadcast or contact not found")
+    if contact.telegram_user_id not in allowed_telegram_ids(settings.telegram_maintenance_allowed_user_ids):
+        raise HTTPException(409, "Тест рассылки разрешён только owner-аккаунтам")
+    content = session.get(ContentItem, row.content_item_id)
+    message_id = client().send_content(contact.chat_id, content, {"buttons": (row.segment or {}).get("_buttons", [])})
+    session.add(ManualMessage(contact_id=contact.id, direction="out", body_source=f"[Тест рассылки: {row.title}]\n{content.body_source}", status="sent", operator_email=admin, platform_message_id=message_id))
+    session.commit()
+    return {"status": "sent", "platform_message_id": message_id}
+
+
+@app.post("/bot-api/broadcasts/{broadcast_id}/retry", dependencies=[Depends(require_admin)])
+def retry_broadcast(broadcast_id: str, session: Session = Depends(get_db)) -> dict:
+    row = session.get(Broadcast, broadcast_id)
+    if not row:
+        raise HTTPException(404, "Broadcast not found")
+    failed_rows = list(session.scalars(select(BroadcastRecipient).where(BroadcastRecipient.broadcast_id == row.id, BroadcastRecipient.status == "failed")))
+    if not failed_rows:
+        raise HTTPException(409, "Нет неудачных доставок для повтора")
+    for recipient in failed_rows:
+        recipient.status = "pending"
+        recipient.error_message = None
+    session.flush()
+    sent, failed = _deliver_broadcast(session, row, client())
+    return {"id": row.id, "status": row.status, "sent": sent, "failed": failed}
 
 
 @app.get("/bot-api/broadcasts", dependencies=[Depends(require_admin)])
 def list_broadcasts(session: Session = Depends(get_db)) -> list[dict]:
     rows = session.execute(select(Broadcast, ContentItem, func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "sent"), func.count(BroadcastRecipient.id).filter(BroadcastRecipient.status == "failed")).join(ContentItem, ContentItem.id == Broadcast.content_item_id).outerjoin(BroadcastRecipient, BroadcastRecipient.broadcast_id == Broadcast.id).group_by(Broadcast.id, ContentItem.id).order_by(Broadcast.created_at.desc())).all()
-    return [{"id":row.id,"title":row.title,"status":row.status,"scheduled_at":row.scheduled_at,"sent":sent,"failed":failed,"text":content.body_source,"media_kind":content.media_kind,"media_path":content.media_path} for row,content,sent,failed in rows]
+    return [{"id":row.id,"title":row.title,"status":row.status,"scheduled_at":row.scheduled_at,"sent":sent,"failed":failed,"text":content.body_source,"body_source":content.body_source,"media_kind":content.media_kind,"media_path":content.media_path,"segment":{key:value for key,value in (row.segment or {}).items() if key != "_buttons"},"buttons":(row.segment or {}).get("_buttons",[])} for row,content,sent,failed in rows]

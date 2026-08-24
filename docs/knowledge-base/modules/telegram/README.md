@@ -35,6 +35,7 @@ Telegram-бот — канал общей messaging-системы edabalans.ru.
 | После полного завершения masterclass + 7 дней | `POSTMASTERCLASS_NURTURE.md` | planned; только отключённый пустой каркас |
 | Системное правило «покупатель → остановить рекламу» | `CUSTOMER_LIFECYCLE_TECHNICAL_SPEC.md` | развёрнуто на основном боте; post-purchase доставка пока test-only |
 | Атрибуция «канал → бот» | раздел в `LEAD_ENTRY_TECHNICAL_SPEC.md` | механизм готов; создание и отзыв live invite проверены основным ботом |
+| Входящая переписка и разовые рассылки | `INBOX_AND_BROADCASTS.md` | current; timeline, preview, owner-test, подтверждённый запуск и retry |
 
 Ссылки и атрибуция не являются отдельным глобальным модулем: это начальная часть
 единого модуля «Старт и атрибуция». Его зелёный выход передаёт управление в
