@@ -59,13 +59,13 @@ def test_shared_page_requires_admin_to_save_and_is_public_after_save() -> None:
     saved = client.put(
         "/admin/api/intensive/day-1",
         json={
-            "html": '<h1 onclick="bad()">Новый текст</h1><script>alert(1)</script><p><a href="javascript:bad()">Ссылка</a></p>',
+            "html": '<h1 onclick="bad()">Новый текст</h1><script>alert(1)</script><p><a href="javascript:bad()">Ссылка</a></p><blockquote>Важно</blockquote><aside class="bad">Акцент</aside><img src="https://cdn.example.com/photo.jpg" alt="Тарелка&amp;ложка&quot; onerror=&quot;bad()" onerror="bad()"><img src="javascript:bad()"><img src="http://cdn.example.com/bad.jpg"><img src="https:///missing-host.jpg">',
             "version": 0,
         },
     )
     assert saved.status_code == 200
     assert saved.json()["version"] == 1
-    assert saved.json()["html"] == "<h1>Новый текст</h1><p><a>Ссылка</a></p>"
+    assert saved.json()["html"] == '<h1>Новый текст</h1><p><a>Ссылка</a></p><blockquote>Важно</blockquote><aside>Акцент</aside><img src="https://cdn.example.com/photo.jpg" alt="Тарелка&amp;ложка&quot; onerror=&quot;bad()">'
 
     public = client.get("/api/intensive/day-1")
     assert public.status_code == 200
@@ -87,4 +87,26 @@ def test_shared_page_rejects_stale_save_and_unknown_day() -> None:
         json={"html": "<h1>Устаревшая версия</h1>", "version": 0},
     )
     assert stale.status_code == 409
+    assert client.get("/api/intensive/day-2").json()["html"] == "<h1>Первая версия</h1>"
     assert client.get("/api/intensive/day-5").status_code == 404
+
+
+def test_shared_page_can_publish_text_from_an_earlier_version_again() -> None:
+    client = make_client()
+    login(client)
+    first = client.put(
+        "/admin/api/intensive/day-3",
+        json={"html": "<h1>Версия А</h1>", "version": 0},
+    )
+    second = client.put(
+        "/admin/api/intensive/day-3",
+        json={"html": "<h1>Версия Б</h1>", "version": first.json()["version"]},
+    )
+    restored = client.put(
+        "/admin/api/intensive/day-3",
+        json={"html": "<h1>Версия А</h1>", "version": second.json()["version"]},
+    )
+
+    assert restored.status_code == 200
+    assert restored.json()["version"] == 3
+    assert client.get("/api/intensive/day-3").json()["html"] == "<h1>Версия А</h1>"

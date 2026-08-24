@@ -10,16 +10,25 @@ p { margin: 0 0 20px; }
 ul, ol { margin: 0 0 24px; padding-left: 28px; }
 li { margin: 0 0 8px; }
 blockquote { margin: 28px 0; padding-left: 20px; border-left: 3px solid #222; }
+aside { margin: 28px 0; padding: 18px 20px; background: #f4f4f4; }
+img { display: block; max-width: 100%; height: auto; margin: 28px auto; }
 hr { margin: 54px 0 28px; border: 0; border-top: 1px solid #ddd; }
 .edit-button { position: fixed; top: 18px; right: 18px; z-index: 2; padding: 8px 14px; border: 1px solid #d8d8d8; border-radius: 4px; background: #fff; color: #555; font: 14px Arial, sans-serif; cursor: pointer; }
 .edit-button:hover, .edit-button:focus-visible { border-color: #777; color: #111; }
 .edit-button:disabled { opacity: .55; cursor: wait; }
 .intensive-page[contenteditable="true"] { min-height: 70vh; }
 .intensive-page[contenteditable="true"]:focus { outline: none; }
+.editor-toolbar { position: sticky; top: 0; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; padding: 10px max(16px, calc((100% - 700px) / 2)); border-bottom: 1px solid #e5e5e5; background: rgba(255,255,255,.97); }
+.editor-toolbar button { padding: 6px 9px; border: 1px solid #ddd; border-radius: 3px; background: #fff; color: #333; font: 13px Arial, sans-serif; cursor: pointer; }
+.editor-toolbar button:hover, .editor-toolbar button:focus-visible { border-color: #777; color: #000; }
+.editor-toolbar .edit-button { position: static; margin: 0 0 0 auto; }
+body:has(.editor-toolbar) .intensive-page { margin-top: 42px; }
 
 @media (max-width: 700px) {
   body { font-size: 17px; }
   .intensive-page { width: min(100% - 32px, 700px); margin-top: 64px; }
   h1 { font-size: 38px; }
   h2 { margin-top: 42px; font-size: 25px; }
+  .editor-toolbar { clear: both; position: sticky; padding: 8px 16px; }
+  body:has(.editor-toolbar) .intensive-page { margin-top: 30px; }
 }

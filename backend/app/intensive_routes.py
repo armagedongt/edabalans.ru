@@ -20,9 +20,9 @@ router = APIRouter()
 DAY_CODES = {"day-1", "day-2", "day-3", "day-4"}
 ALLOWED_TAGS = {
     "h1", "h2", "h3", "p", "div", "ul", "ol", "li", "strong", "em",
-    "a", "blockquote", "br", "hr",
+    "a", "blockquote", "aside", "img", "br", "hr",
 }
-VOID_TAGS = {"br", "hr"}
+VOID_TAGS = {"img", "br", "hr"}
 BLOCKED_TAGS = {"script", "style", "iframe", "object", "svg", "math"}
 SOURCE_PLATFORM = "internal"
 SOURCE_ACCOUNT_KEY = "free-intensive"
@@ -57,6 +57,15 @@ class ArticleSanitizer(HTMLParser):
             href = next((value for name, value in attrs if name.lower() == "href"), None)
             if href and safe_href(href):
                 rendered_attrs = f' href="{escape(href, quote=True)}"'
+        elif tag == "img":
+            src = next((value for name, value in attrs if name.lower() == "src"), None)
+            if not src or not safe_image_src(src):
+                return
+            alt = next((value for name, value in attrs if name.lower() == "alt"), "") or ""
+            rendered_attrs = (
+                f' src="{escape(src.strip(), quote=True)}"'
+                f' alt="{escape(alt[:500], quote=True)}"'
+            )
         self.parts.append(f"<{tag}{rendered_attrs}>")
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -85,6 +94,14 @@ def safe_href(value: str) -> bool:
     return urlparse(cleaned).scheme in {"", "http", "https", "mailto"}
 
 
+def safe_image_src(value: str) -> bool:
+    cleaned = value.strip()
+    if any(ord(character) < 32 for character in cleaned):
+        return False
+    parsed = urlparse(cleaned)
+    return parsed.scheme == "https" and bool(parsed.netloc)
+
+
 def sanitize_article_html(value: str) -> str:
     parser = ArticleSanitizer()
     parser.feed(value)
@@ -93,6 +110,11 @@ def sanitize_article_html(value: str) -> str:
     if not result:
         raise HTTPException(status_code=422, detail="Текст страницы не может быть пустым")
     return result
+
+
+def intensive_version_hash(day_code: str, version_no: int, html: str) -> str:
+    payload = f"{day_code}\0{version_no}\0{html}"
+    return hashlib.sha256(payload.encode()).hexdigest()
 
 
 def checked_day(day_code: str) -> str:
@@ -197,10 +219,10 @@ def save_intensive_page(
         version = ContentItemVersion(
             item_id=item.id,
             version_no=current_version + 1,
-            content_hash=hashlib.sha256(clean_html.encode()).hexdigest(),
+            content_hash=intensive_version_hash(day_code, current_version + 1, clean_html),
             text_content=clean_html,
             blocks=[],
-            parser_version="intensive-editor-v1",
+            parser_version="intensive-editor-v2",
         )
         db.add(version)
         db.flush()
