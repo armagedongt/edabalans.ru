@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Управление · edabalans</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;background:#fff;color:#111;font:16px/1.45 Arial,sans-serif}main{width:min(720px,100%);margin:0 auto;padding:24px 18px 48px}h1{margin:0 0 8px;font-size:26px}h2{margin:32px 0 8px;font-size:19px}p{margin:0 0 14px;color:#444}.item{padding:14px 0;border-bottom:1px solid #ddd}.item b{display:block;margin-bottom:3px}.item span{display:block;margin-bottom:7px;color:#555;font-size:14px}a{color:#0645ad;overflow-wrap:anywhere}.note{font-size:14px;color:#666}.logout{margin-top:34px;border:0;background:none;padding:0;color:#0645ad;text-decoration:underline;font:inherit;cursor:pointer}@media(max-width:480px){main{padding:20px 16px 40px}h1{font-size:23px}h2{font-size:18px}.item{padding:13px 0}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Управление edabalans.ru</h1>
+  <p>Стартовая страница владельца проекта. Здесь собраны ссылки на административные инструменты. Авторизация выполняется один раз; связанные сервисы используют ту же admin-сессию.</p>
+
+  <h2>Основное управление</h2>
+  <div class="item"><b>Люди</b><span>Клиенты и переходы ко всем связанным данным.</span><a href="/admin/users">Открыть</a></div>
+  <div class="item"><b>CRM</b><span>Люди, покупки, доступы, теги и заметки.</span><a href="/crm">Открыть</a></div>
+  <div class="item"><b>DQS</b><span>Дни, баллы и аналитика дневника качества рациона.</span><a href="/admin/dqs">Открыть</a></div>
+  <div class="item"><b>Силовые тренировки</b><span>Тренировки и данные клиентов.</span><a href="/admin/strength">Открыть</a></div>
+  <div class="item"><b>Метаболизм / Калории</b><span>Расчёты пользователей.</span><a href="/admin/metabolism">Открыть</a></div>
+  <div class="item"><b>Мастер-класс</b><span>Анкеты, офферы, сроки, тестовые профили и сообщения.</span><a href="/admin/masterclass">Открыть</a></div>
+  <div class="item"><b>Цены и тарифы</b><span>Цены продуктов, тарифы и допродажи.</span><a href="/admin/pricing">Открыть</a></div>
+  <div class="item"><b>Каталог материалов</b><span>Материалы Telegram/Pikabu и общий контент-каталог.</span><a href="/admin/content">Открыть</a></div>
+  <div class="item"><b>Telegram-бот</b><span>Цепочки, сообщения, контакты, рассылки и ссылки.</span><a href="/bot">Открыть</a></div>
+  <div class="item"><b>Техническая база данных</b><span>NocoDB: прямой технический просмотр PostgreSQL. Отдельный вход.</span><a href="https://data.edabalans.ru">Открыть</a></div>
+
+  <h2>Бесплатный интенсив «Последнее похудение»</h2>
+  <p class="note">Для редактирования открыть нужную страницу и нажать Edit.</p>
+  <div class="item"><b>День 1</b><a href="https://app.edabalans.ru/intensive/day-1">Открыть страницу</a></div>
+  <div class="item"><b>День 2</b><a href="https://app.edabalans.ru/intensive/day-2">Открыть страницу</a></div>
+  <div class="item"><b>День 3</b><a href="https://app.edabalans.ru/intensive/day-3">Открыть страницу</a></div>
+  <div class="item"><b>День 4</b><a href="https://app.edabalans.ru/intensive/day-4">Открыть страницу</a></div>
+
+  <h2>Мастер-класс — служебные страницы</h2>
+  <div class="item"><b>Предпросмотр мастер-класса</b><a href="/admin/masterclass-preview">Открыть</a></div>
+  <div class="item"><b>Предпросмотр курса</b><a href="/admin/masterclass-course-preview">Открыть</a></div>
+  <div class="item"><b>Варианты дизайна</b><a href="/admin/masterclass-designs">Открыть</a></div>
+
+  <button class="logout" id="logout" type="button">Выйти из admin-сессии</button>
+</main>
+<script>
+document.getElementById('logout').addEventListener('click',async()=>{await fetch('/admin/api/logout',{method:'POST',credentials:'same-origin'});location.replace('/admin')});
+</script>
+</body>
+</html>
