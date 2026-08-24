@@ -50,8 +50,8 @@ GLOBAL_MODULES: tuple[dict[str, str], ...] = (
     {"code": "quiz", "name": "Тесты и опросы", "status": "Запланировано"},
 )
 
-# Исполнитель start_router проходит правила строго сверху вниз. Карта ниже обязана
-# показывать те же условия и выходы; тесты проверяют соответствие кодов решений.
+# Исполнитель start_router проходит правила строго сверху вниз. Текстовая проекция
+# админки обязана показывать те же условия и выходы; тесты проверяют соответствие.
 START_ROUTER_RULES: tuple[tuple[str, bool, str], ...] = (
     ("has_masterclass", True, "masterclass_owned"),
     ("is_first_visit", True, "launch_welcome"),
@@ -81,7 +81,7 @@ def module_overview_graph(_: Session) -> dict[str, Any]:
         {"id": "modules:event-postpurchase", "source": "event:masterclass_owned", "target": "module:postpurchase_masterclass", "label": "Поставить нужные сообщения", "branch": "event"},
         {"id": "modules:postpurchase-postmasterclass", "source": "module:postpurchase_masterclass", "target": "module:postmasterclass_nurture", "label": "После 7-го дня; пока отключено", "branch": "default"},
     ]
-    return {"level": "overview", "title": "Глобальные модули Telegram-бота", "description": "Каждый модуль раскрывается в отдельную согласованную блок-схему входов, условий и выходов.", "nodes": nodes, "edges": edges, "issues": []}
+    return {"level": "overview", "title": "Глобальные модули Telegram-бота", "description": "Каждый модуль раскрывается в автоматически построенную текстовую последовательность входов, условий и выходов.", "nodes": nodes, "edges": edges, "issues": []}
 
 
 def start_attribution_graph(session: Session) -> dict[str, Any]:
@@ -181,7 +181,7 @@ def module_graph(session: Session, module_code: str) -> dict[str, Any]:
     module = next((item for item in GLOBAL_MODULES if item["code"] == module_code), None)
     if not module:
         raise LookupError(module_code)
-    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Подробная схема появится после фиксации и утверждения требований.", "nodes": [{"id": "module_draft", "kind": "module", "label": module["name"], "subtitle": module["status"], "details": {"Статус": module["status"], "Канон": "MODULE_REGISTRY.md"}}], "edges": [], "issues": [{"severity": "warning", "code": "module_not_designed", "message": "Подробная схема этого модуля ещё не утверждена."}]}
+    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Подробная последовательность появится после фиксации и утверждения требований.", "nodes": [{"id": "module_draft", "kind": "module", "label": module["name"], "subtitle": module["status"], "details": {"Статус": module["status"], "Канон": "MODULE_REGISTRY.md"}}], "edges": [], "issues": [{"severity": "warning", "code": "module_not_designed", "message": "Подробная логика этого модуля ещё не утверждена."}]}
 
 
 def component_for_step(step: SequenceStep) -> str | None:

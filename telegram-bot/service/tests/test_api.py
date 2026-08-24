@@ -40,8 +40,14 @@ def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
     assert client.post("/bot-api/login", json={"username": "owner@example.com", "password": "wrong"}).status_code == 401
     logged_in = client.post("/bot-api/login", json={"username": "owner@example.com", "password": "correct-password"})
     assert logged_in.status_code == 200
-    assert client.get("/bot").status_code == 200
-    assert "Цепочки" in client.get("/bot").text
+    admin_page = client.get("/bot")
+    assert admin_page.status_code == 200
+    assert 'data-view="modules"' in admin_page.text
+    assert "Карта бота" not in admin_page.text
+    admin_script = client.get("/bot/app.js")
+    assert admin_script.status_code == 200
+    assert "Один источник логики" in admin_script.text
+    assert '<svg id="flow-map"' not in admin_script.text
 
 
 def test_admin_can_upload_media(tmp_path, monkeypatch):
