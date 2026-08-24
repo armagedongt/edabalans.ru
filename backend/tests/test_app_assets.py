@@ -184,8 +184,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "waitForTildaEmail" in loader
     assert "protectedApps ? detectTildaMemberEmail() : detectTildaEmail()" in loader
     assert "remembered.source === 'tilda'" not in loader
-    assert "askIdentity(mounts, detected, true)" in loader
-    assert "remember(detected, '', 0, 'tilda')" not in loader
+    assert "askIdentity(mounts, detected, true)" not in loader
+    assert "remember(detected, '', 0, 'tilda')" in loader
     assert "Откройте приложение из личного кабинета" in loader
     assert "masterclass-course" in loader
     assert "'account': true" in loader

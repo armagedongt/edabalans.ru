@@ -15,14 +15,13 @@ from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from pydantic import BaseModel, Field
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, normalize_email, resolve_user_for_resource
 from app.auth import session_admin
 from app.config import Settings, get_settings
 from app.database import get_db
-from app.models import User, UserEmail
+from app.models import User
 
 
 router = APIRouter(prefix="/api/app-auth", tags=["application-auth"])
@@ -243,22 +242,6 @@ def require_app_user(
         raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
 
 
-def resolve_account_login_user(db: Session, email: str) -> User:
-    user = db.scalar(
-        select(User)
-        .join(UserEmail, UserEmail.user_id == User.id)
-        .where(
-            UserEmail.email_normalized == normalize_email(email),
-            User.status == "active",
-            User.merged_into_user_id.is_(None),
-        )
-        .limit(1)
-    )
-    if user is None:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, "account is not available")
-    return user
-
-
 @router.post("/challenge")
 def request_challenge(
     body: ChallengeIn,
@@ -277,7 +260,15 @@ def request_challenge(
             raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "code was already sent; try again in a minute")
         _last_challenge[rate_key] = now
 
-    resolve_account_login_user(db, email)
+    try:
+        resolve_user_for_resource(
+            db,
+            email,
+            "ACCESS_MASTERCLASS",
+            require_legal_acceptance=False,
+        )
+    except AppAccessError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     code = f"{secrets.randbelow(1_000_000):06d}"
     challenge_token = create_challenge(email, code, settings)
     register_challenge(challenge_token)
@@ -304,7 +295,15 @@ def verify_code(
             record_challenge_attempt(body.challenge_token)
         raise
     record_challenge_attempt(body.challenge_token, consumed=True)
-    resolve_account_login_user(db, email)
+    try:
+        resolve_user_for_resource(
+            db,
+            email,
+            "ACCESS_MASTERCLASS",
+            require_legal_acceptance=False,
+        )
+    except AppAccessError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     return {
         "ok": True,
         "email": email,

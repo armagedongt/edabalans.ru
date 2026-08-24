@@ -14,7 +14,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.database import Base, get_db  # noqa: E402
 from app.auth import require_admin  # noqa: E402
-from app.app_auth import create_app_session, create_placement_token  # noqa: E402
+from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
@@ -64,7 +64,7 @@ def test_messenger_link_migration_stores_only_token_hash():
     assert "token varchar" not in migration
 
 
-def setup(authenticated=True):
+def setup():
     engine = create_engine("sqlite+pysqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
     factory = sessionmaker(engine, expire_on_commit=False)
@@ -114,22 +114,19 @@ def setup(authenticated=True):
         ]
         for code, hours, pricing in stages: db.add(OfferStage(code=code, name=code, duration_hours=hours, pricing=pricing, status="active"))
         db.commit()
-    headers = {}
-    if authenticated:
-        headers["Authorization"] = f"Bearer {create_app_session('member@example.test', TEST_SETTINGS)}"
-    return TestClient(app, headers=headers), factory
+    return TestClient(app), factory
 
 
-def test_masterclass_personal_data_requires_confirmed_app_session():
-    client, _ = setup(authenticated=False)
+def test_masterclass_personal_data_uses_tilda_email_and_server_access():
+    client, _ = setup()
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test"
     )
-    assert response.status_code == 401
+    assert response.status_code == 200
     denied = client.get(
         "/api/masterclass/questionnaires/onboarding?email=other@example.test"
     )
-    assert denied.status_code == 401
+    assert denied.status_code == 403
 
 
 def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
@@ -201,19 +198,6 @@ def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
     assert linked.status_code == 200
     assert linked.json()["linked"] is True
     assert "username" not in linked.json()
-
-
-def test_messenger_link_cannot_be_created_or_probed_by_email_alone():
-    client, _ = setup(authenticated=False)
-    created = client.post(
-        "/api/masterclass/messenger-links",
-        json={"email": "member@example.test", "platform": "telegram"},
-    )
-    status = client.get(
-        "/api/masterclass/messenger-links/status?email=member@example.test&platform=telegram"
-    )
-    assert created.status_code == 401
-    assert status.status_code == 401
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
@@ -620,17 +604,38 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         ) == 1
 
 
-def test_course_api_requires_confirmed_app_session():
-    client, _ = setup(authenticated=False)
+def test_course_api_uses_tilda_email_but_still_requires_server_access():
+    client, factory = setup()
     opened = client.get(
         "/api/masterclass/course?email=member@example.test",
         headers={},
     )
-    assert opened.status_code == 401
+    assert opened.status_code == 200
+    with factory() as db:
+        without_access = User(display_name="Участник без покупки", status="active")
+        db.add(without_access)
+        db.flush()
+        db.add(UserEmail(
+            user_id=without_access.id,
+            email_original="known-without-access@example.test",
+            email_normalized="known-without-access@example.test",
+            is_primary=True,
+            source="test",
+        ))
+        db.add_all([
+            UserLegalAcceptance(
+                user_id=without_access.id,
+                document_code=item["code"],
+                document_version=item["version"],
+                source="test",
+            )
+            for item in LEGAL_DOCUMENTS
+        ])
+        db.commit()
     denied = client.get(
-        "/api/masterclass/course?email=other@example.test"
+        "/api/masterclass/course?email=known-without-access@example.test"
     )
-    assert denied.status_code == 401
+    assert denied.status_code == 403
 
 
 def test_admin_can_enable_isolated_accelerated_course_profile():

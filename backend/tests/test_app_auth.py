@@ -95,7 +95,6 @@ def test_course_api_rejects_direct_access_before_current_legal_acceptances():
 
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
-        headers={"Authorization": f"Bearer {app_auth.create_app_session('member@example.test', Settings())}"},
     )
 
     assert response.status_code == 403
@@ -159,7 +158,7 @@ def test_email_code_session_no_longer_overrides_tilda_masterclass_identity(monke
         "/api/masterclass/questionnaires/onboarding?email=other@example.test",
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert mismatched.status_code == 401
+    assert mismatched.status_code == 403
     app.dependency_overrides.clear()
 
 
@@ -190,13 +189,13 @@ def test_first_challenge_is_allowed_during_first_process_minute(monkeypatch):
     app.dependency_overrides.clear()
 
 
-def test_masterclass_rejects_obsolete_bearer_token():
+def test_masterclass_transition_ignores_obsolete_bearer_token_and_uses_tilda_email():
     client, _ = setup()
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
         headers={"Authorization": "Bearer !!!.not-a-signature"},
     )
-    assert response.status_code == 401
+    assert response.status_code == 200
     app.dependency_overrides.clear()
 
 
@@ -246,7 +245,6 @@ def test_pending_owner_review_blocks_existing_resource_access():
         db.commit()
     response = client.get(
         "/api/masterclass/course?email=member@example.test",
-        headers={"Authorization": f"Bearer {app_auth.create_app_session('member@example.test', Settings())}"},
     )
     assert response.status_code == 403
     assert "подтверждения Сергея" in response.json()["detail"]

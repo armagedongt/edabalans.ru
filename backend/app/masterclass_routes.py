@@ -17,7 +17,7 @@ from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
-from app.app_auth import create_placement_token, require_app_user, require_placement
+from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
@@ -328,7 +328,13 @@ def resolve_masterclass_user(
     email: str,
     settings: Settings,
 ) -> User:
-    return require_app_user(request, email, db, "ACCESS_MASTERCLASS", settings)
+    # Tilda Members Area is the only interactive login during the transition.
+    # The closed page supplies its current email; PostgreSQL only resolves the
+    # matching user and product right without asking for a second login.
+    try:
+        return resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
+    except AppAccessError as exc:
+        raise HTTPException(403, str(exc)) from exc
 
 
 def course_step_kinds(day: int) -> list[str]:

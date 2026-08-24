@@ -4,15 +4,13 @@ from urllib.parse import parse_qs, urlparse
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
-os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
-os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
+os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, func, select  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
-from app.app_auth import create_app_session  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
@@ -41,6 +39,11 @@ def setup():
             yield db
 
     app.dependency_overrides[get_db] = override_db
+    app.dependency_overrides[get_settings] = lambda: Settings(
+        database_url="sqlite+pysqlite:///:memory:",
+        admin_username="admin@example.com",
+        admin_password="test-admin-password",
+    )
     client = TestClient(app, base_url="https://testserver")
     with factory() as db:
         user = User(
@@ -69,10 +72,6 @@ def login(client):
         "password": "test-admin-password",
     })
     assert response.status_code == 200
-
-
-def account_headers(email="client@example.test"):
-    return {"Authorization": f"Bearer {create_app_session(email, Settings())}"}
 
 
 def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
@@ -127,7 +126,6 @@ def test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_ac
     response = client.post(
         "/api/access/registration-seen",
         json={"email": "client@example.test"},
-        headers=account_headers(),
     )
     assert response.status_code == 200
     assert response.json()["state"] == "review_required"
@@ -141,7 +139,7 @@ def test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_ac
 
 def test_universal_account_blocks_review_and_uses_server_resources_for_catalog():
     client, factory, user_id = setup()
-    blocked = client.get("/api/account?email=client@example.test", headers=account_headers())
+    blocked = client.get("/api/account?email=client@example.test")
     assert blocked.status_code == 200
     assert blocked.json()["state"] == "review_required"
     assert blocked.json()["courses"] == []
@@ -162,7 +160,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
         )
         db.commit()
 
-    ready = client.get("/api/account?email=client@example.test", headers=account_headers())
+    ready = client.get("/api/account?email=client@example.test")
     assert ready.status_code == 200
     data = ready.json()
     assert data["state"] == "ready"
@@ -176,7 +174,6 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
 
     accepted = client.post(
         "/api/account/legal-acceptances",
-        headers=account_headers(),
         json={
             "email": "client@example.test",
             "document_codes": [
@@ -193,7 +190,6 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert masterclass_card["app"] == "masterclass-course"
     repeated = client.post(
         "/api/account/legal-acceptances",
-        headers=account_headers(),
         json={
             "email": "client@example.test",
             "document_codes": [
@@ -205,17 +201,4 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert repeated.status_code == 200
     with factory() as db:
         assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 2
-    app.dependency_overrides.clear()
-
-
-def test_account_data_and_legal_acceptance_require_confirmed_session():
-    client, _, _ = setup()
-    assert client.get("/api/account?email=client@example.test").status_code == 401
-    assert client.post(
-        "/api/account/legal-acceptances",
-        json={
-            "email": "client@example.test",
-            "document_codes": ["educational_disclaimer", "personal_data_consent"],
-        },
-    ).status_code == 401
     app.dependency_overrides.clear()

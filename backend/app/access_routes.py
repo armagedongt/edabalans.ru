@@ -3,10 +3,9 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import re
-import secrets
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -22,8 +21,7 @@ from app.access_service import (
     review_blocks_access,
     user_for_email,
 )
-from app.app_auth import session_email
-from app.auth import require_admin, session_admin
+from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.legal_service import (
@@ -244,37 +242,20 @@ def account_payload(email: str, db: Session) -> dict:
     }
 
 
-def require_account_user(request: Request, email: str, db: Session, settings: Settings) -> User:
-    normalized = email.strip().lower()
-    authenticated = normalized if session_admin(request) else session_email(request, settings)
-    if not authenticated or not secrets.compare_digest(authenticated, normalized):
-        raise HTTPException(401, "email confirmation is required")
-    user = user_for_email(db, normalized)
-    if user is None:
-        raise HTTPException(404, "Аккаунт пока не связан с CRM")
-    return user
-
-
 @router.get("/api/account")
-def account_catalog(
-    email: str,
-    request: Request,
-    db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
-) -> dict:
-    """Universal LK home protected by the confirmed application session."""
-    require_account_user(request, email, db, settings)
+def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
+    """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies data."""
     return account_payload(email, db)
 
 
 @router.post("/api/account/legal-acceptances")
 def accept_account_legal_documents(
     body: LegalAcceptancesIn,
-    request: Request,
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = require_account_user(request, body.email, db, settings)
+    user = user_for_email(db, body.email)
+    if user is None:
+        raise HTTPException(404, "Аккаунт пока не связан с CRM")
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     try:
         accept_current_legal_documents(
@@ -292,11 +273,11 @@ def accept_account_legal_documents(
 @router.post("/api/access/registration-seen")
 def registration_seen(
     body: LinkActionIn,
-    request: Request,
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = require_account_user(request, body.email, db, settings)
+    user = user_for_email(db, body.email)
+    if user is None:
+        return {"ok": True, "state": "unknown"}
     if user.access_review_status == "waiting_registration":
         user.access_review_status = "pending"
         user.tilda_access_status = "pending"

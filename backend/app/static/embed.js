@@ -317,20 +317,17 @@
     var remembered = rememberedIdentity();
     if (protectedApps) {
       hideTildaUserbar();
-      if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {
-        remember(remembered.email);
+      if (detected) {
+        remember(detected, '', 0, 'tilda');
         start(mounts);
         return;
       }
-      if (detected) {
-        askIdentity(mounts, detected, true);
-        return;
-      }
-      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника…</div>';
+      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника Tilda…</div>';
       waitForTildaEmail(function (email) {
-        askIdentity(mounts, email, true);
+        remember(email, '', 0, 'tilda');
+        start(mounts);
       }, function () {
-        askIdentity(mounts, '', true);
+        tildaIdentityRequired(mounts);
       });
       return;
     }
