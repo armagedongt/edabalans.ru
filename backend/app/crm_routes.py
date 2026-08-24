@@ -99,7 +99,18 @@ def admin_index(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
-    return protected_file("admin-portal.html" if admin_identity(request, credentials) else "admin-login.html")
+    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
+
+
+@router.get("/control", include_in_schema=False)
+@router.get("/control/", include_in_schema=False)
+def control_portal(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/control", status_code=303)
+    return protected_file("admin-portal.html")
 
 
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
