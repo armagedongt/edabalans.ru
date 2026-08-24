@@ -118,8 +118,8 @@ def _start_system_messages() -> list[dict]:
             "📌 <b>Навигация!</b>\n\n"
             "1️⃣ Для связи по любым вопросам — @FitnessSergey\n\n"
             "2️⃣ Начните с <a href=\"https://telegram.me/Fitness_Talks_bot?start=527c52b9-6c37-4fd8-95f5-eb213cd4dd14\">бесплатного интенсива «Последнее похудение»</a>\n\n"
-            "3️⃣ Если понравится мой подход — присоединяйтесь к Мастер-классу по изменению питания и пищевых привычек: похудение-это-есть.рф\n\n"
-            "4️⃣ Не забудьте подписаться на <a href=\"https://telegram.me/Fitness_Talks\">основной Telegram-канал</a> 👇",
+            "3️⃣ Если понравится мой подход — присоединяйтесь к <a href=\"https://похудение-это-есть.рф\">Мастер-классу по изменению питания и пищевых привычек</a>\n\n"
+            "4️⃣ Не забудьте подписаться на <a href=\"https://t.me/Fitness_Talks\">основной Telegram-канал</a> 👇",
             None,
             ["система", "start", "первый вход", "навигация", "закреп"],
         ),
@@ -156,18 +156,22 @@ def _start_system_messages() -> list[dict]:
         (
             "start_intensive_waiting",
             "Повторный Start — интенсив ещё идёт",
-            "Интенсив уже идёт 👍\n\n"
+            "Посты интенсива приходят вам по расписанию 👍\n\n"
+            "Выше в этом чате уже находятся закреплённая навигация, видеокружок, описание интенсива и все открытые на данный момент материалы.\n\n"
             "Следующий материал придёт {{next_message_at}} — осталось примерно {{wait_interval}}.\n"
-            "А пока можете почитать мой Telegram-канал: {{channel_link}}.",
+            "Пока ждёте, можете почитать мой Telegram-канал: {{channel_link}}.",
             None,
             ["система", "start", "интенсив", "ожидание", "шаблон"],
         ),
         (
             "start_intensive_complete",
-            "Повторный Start — интенсив завершён",
-            "💥 <b>Похудение состоит не из силы воли, а из десятков маленьких навыков.</b>\n\n"
-            "Освойте как можно больше навыков, чтобы вам понадобилось как можно меньше силы воли!\n\n"
-            "Читайте <a href=\"https://похудение-это-есть.рф/intensiv\">бесплатный интенсив «Последнее похудение»</a>. Теперь все материалы собраны на одной странице на моём сайте!\n\n"
+            "Повторный Start — оглавление завершённого интенсива",
+            "<b>Сделайте похудение проще</b> 💅\n\n"
+            "Вы уже получили все четыре части интенсива. Теперь к ним можно возвращаться в удобном порядке:\n\n"
+            "1️⃣ <a href=\"https://похудение-это-есть.рф/intensiv#rec2044592871\">Часть #1</a> — план успешного похудения и главные ошибки в самом начале.\n\n"
+            "2️⃣ <a href=\"https://похудение-это-есть.рф/intensiv#rec2044598581\">Часть #2</a> — дневник питания без калорий и здоровое пищевое поведение.\n\n"
+            "3️⃣ <a href=\"https://похудение-это-есть.рф/intensiv#rec2044741621\">Часть #3</a> — что такое «вредная еда» на самом деле.\n\n"
+            "4️⃣ <a href=\"https://похудение-это-есть.рф/intensiv#rec2044744291\">Часть #4</a> — калории, тренировки и сохранение результата.\n\n"
             "А если вам близок мой подход к похудению и вы готовы перейти от теории к практике — читайте программу моего <a href=\"https://похудение-это-есть.рф\">Мастер-класса по изменению питания и пищевых привычек</a>.\n\n"
             "Любые вопросы — просто напишите мне в личные сообщения @FitnessSergey",
             None,
@@ -371,6 +375,14 @@ def seed_defaults(
         elif row["code"] == "start_welcome_offer" and "похудение-это-есть.рф/intensiv" in (item.body_source or ""):
             # Upgrade only the known seeded preview; later owner edits remain untouched.
             item.body_source = row["body"]
+        elif row["code"] == "start_navigation_pin" and "Мастер-классу по изменению питания и пищевых привычек: похудение-это-есть.рф" in (item.body_source or ""):
+            item.body_source = row["body"]
+        elif row["code"] == "start_intensive_waiting" and (item.body_source or "").startswith("Интенсив уже идёт"):
+            item.body_source = row["body"]
+        elif row["code"] == "start_intensive_complete" and (item.body_source or "").startswith("💥 <b>Похудение состоит"):
+            item.body_source = row["body"]
+        if row["code"] in {"start_navigation_pin", "start_welcome_offer", "start_intensive_waiting", "start_intensive_complete"}:
+            item.title = row["title"]
         if row["code"] == "entry_circle" and not item.media_path:
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH

@@ -149,8 +149,9 @@ def _handle_maintenance_contact(
     contact: Contact,
     update_id: str,
     interaction_type: str,
+    metadata: dict | None = None,
 ) -> None:
-    record_maintenance_contact(session, contact, update_id, interaction_type)
+    record_maintenance_contact(session, contact, update_id, interaction_type, metadata)
     client().send_content(contact.chat_id, _maintenance_notice(session), {})
 
 
@@ -480,16 +481,26 @@ def process_update(update: dict, session: Session) -> dict:
         is_start = normalized_start or text.startswith("/start")
         if not is_start:
             _record_incoming_message(session, contact, message)
-        if not _maintenance_allows_contact(contact):
-            _handle_maintenance_contact(session, contact, receipt_id, "message")
-            session.commit()
-            return {"ok": True, "maintenance": True}
+            if not _maintenance_allows_contact(contact):
+                _handle_maintenance_contact(session, contact, receipt_id, "message")
+                session.commit()
+                return {"ok": True, "maintenance": True}
         if normalized_start:
             text = "/start"
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
             handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")
             if handled:
+                if not _maintenance_allows_contact(contact):
+                    _handle_maintenance_contact(
+                        session,
+                        contact,
+                        receipt_id,
+                        "start",
+                        {"masterclass_link": True, "has_masterclass": True},
+                    )
+                    session.commit()
+                    return {"ok": True, "maintenance": True, "masterclass_link": True}
                 session.commit()
                 client().send_content(
                     contact.chat_id,
@@ -518,10 +529,35 @@ def process_update(update: dict, session: Session) -> dict:
                 if pending_link:
                     link, alias, raw_query, payload_status = pending_link, pending_alias, pending_query, "known_channel_touch"
             account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform == "telegram", CrmMessengerAccount.platform_user_id == contact.telegram_user_id))
-            is_first, _ = assign_first_touch(session, account, contact, link, alias, session_tag_ids, raw_query, payload_status)
+            maintenance_allowed = _maintenance_allows_contact(contact)
+            is_first, _ = assign_first_touch(
+                session,
+                account,
+                contact,
+                link,
+                alias,
+                session_tag_ids,
+                raw_query,
+                payload_status,
+                mark_scenario_seen=maintenance_allowed,
+            )
             if link and link.route_kind == "published_step":
                 sequence_code = link.target_sequence_code
             facts, decision, welcome_run = inspect_start(session, contact, is_first)
+            if not maintenance_allowed:
+                _handle_maintenance_contact(
+                    session,
+                    contact,
+                    receipt_id,
+                    "start",
+                    {
+                        "has_masterclass": facts.has_masterclass,
+                        "payload_status": payload_status,
+                        "tracking_link_id": link.id if link else None,
+                    },
+                )
+                session.commit()
+                return {"ok": True, "maintenance": True}
             tg = client()
             run = execute_start_decision(
                 session,

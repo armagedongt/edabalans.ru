@@ -30,6 +30,7 @@ def record_maintenance_contact(
     contact: Contact,
     update_id: str,
     interaction_type: str,
+    metadata: dict | None = None,
 ) -> None:
     contact.status = MAINTENANCE_WAITLIST_STATUS
     session.add(TrackingEvent(
@@ -38,5 +39,5 @@ def record_maintenance_contact(
         telegram_user_id=contact.telegram_user_id,
         event_type="maintenance_contact",
         deduplication_key=f"maintenance:{update_id}",
-        metadata_json={"interaction_type": interaction_type},
+        metadata_json={"interaction_type": interaction_type, **(metadata or {})},
     ))

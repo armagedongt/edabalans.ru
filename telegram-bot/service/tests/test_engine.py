@@ -66,8 +66,12 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
         assert navigation_step.configuration["pin_after_send"] is True
         assert navigation_step.configuration["buttons"][0]["url"] == "https://t.me/Fitness_Talks"
         assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_has_masterclass")).startswith("Привет! У вас уже есть мой Мастер-класс")
-        assert "{{next_message_at}}" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_waiting"))
-        assert "похудение-это-есть.рф/intensiv" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_complete"))
+        waiting = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_waiting"))
+        assert waiting.startswith("Посты интенсива приходят вам по расписанию")
+        assert "{{next_message_at}}" in waiting
+        complete = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_complete"))
+        assert complete.startswith("<b>Сделайте похудение проще</b>")
+        assert complete.count("похудение-это-есть.рф/intensiv#rec") == 4
         assert session.scalar(select(func.count(SequenceEdge.id))) > 0
         assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == WELCOME_CODE
 

@@ -207,14 +207,18 @@ def assign_first_touch(
     session_tag_ids: list[str],
     raw_query: dict[str, str],
     payload_status: str,
+    *,
+    mark_scenario_seen: bool = True,
 ) -> tuple[bool, list[str]]:
     now = datetime.now(UTC)
     is_first = account.main_scenario_seen_at is None
-    if is_first:
+    if is_first and mark_scenario_seen:
         account.main_scenario_seen_at = now
     assigned: list[str] = []
     event_type = "start_first" if is_first else "start_repeat"
-    if payload_status == "unknown":
+    if not mark_scenario_seen:
+        event_type = "start_maintenance"
+    elif payload_status == "unknown":
         event_type = "start_unknown"
     elif payload_status == "expired_session":
         event_type = "start_expired_session"
@@ -229,7 +233,7 @@ def assign_first_touch(
             metadata_json={"payload_status": payload_status, "raw_query": raw_query},
         )
     )
-    if not is_first or not link:
+    if not is_first or not link or contact.first_source_token:
         return is_first, assigned
 
     candidate_ids = [*link_tag_ids(session, link.id), *session_tag_ids]

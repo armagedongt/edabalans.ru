@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 import app.main as main_module
 from app.database import Base, get_db, make_engine
 from app.main import app
-from app.models import CrmMessengerAccount, CrmTag, CrmUserTag, TrackingEvent, TrackingLinkAlias
+from app.models import Contact, CrmMessengerAccount, CrmTag, CrmUserTag, SequenceRun, TrackingEvent, TrackingLinkAlias
 from app.seed import seed_defaults
 
 
@@ -68,6 +68,45 @@ def test_first_touch_assigns_tags_once_and_unknown_code_is_safe(tmp_path, monkey
         event_types = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "501").order_by(TrackingEvent.occurred_at)))
         assert event_types == ["start_first", "start_repeat"]
         assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "502")) == "start_unknown"
+    app.dependency_overrides.clear()
+
+
+def test_maintenance_preserves_first_touch_without_marking_welcome_seen(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", True)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_allowed_user_ids", "42")
+    pikabu = next(tag for tag in client.get("/bot-api/tags").json() if tag["name"] == "Пикабу")
+    created = client.post("/bot-api/link-rules", json={"name": "Пикабу во время ремонта", "tag_ids": [pikabu["id"]]}).json()
+    token = created["aliases"][0]["token"]
+
+    assert client.post("/telegram/webhook", json=start_update(4, 503, token)).json() == {"ok": True, "maintenance": True}
+
+    with Session(engine) as session:
+        account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "503"))
+        contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "503"))
+        assert account.main_scenario_seen_at is None
+        assert contact.first_source_token == token
+        assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == account.user_id)) == 1
+        assert session.scalar(select(func.count(SequenceRun.id)).where(SequenceRun.contact_id == contact.id)) == 0
+        maintenance = session.scalar(select(TrackingEvent).where(TrackingEvent.contact_id == contact.id, TrackingEvent.event_type == "maintenance_contact"))
+        assert maintenance.metadata_json["has_masterclass"] is False
+        assert maintenance.metadata_json["tracking_link_id"] == created["id"]
+        assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id, TrackingEvent.event_type == "start_maintenance")) == "start_maintenance"
+
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", False)
+    assert client.post("/telegram/webhook", json=start_update(5, 503)).json() == {"ok": True}
+    with Session(engine) as session:
+        account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "503"))
+        contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "503"))
+        assert account.main_scenario_seen_at is not None
+        assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == account.user_id)) == 1
+        assert session.scalar(select(func.count(SequenceRun.id)).where(SequenceRun.contact_id == contact.id)) == 1
+
+    graph = client.get("/bot-api/map?module_code=start_attribution").json()
+    positions = {node["id"]: node["position"] for node in graph["nodes"]}
+    assert positions["attribution"] < positions["purchase_fact"] < positions["maintenance_gate"] < positions["has_masterclass"]
+    complete = next(node for node in graph["nodes"] if node["id"] == "send_complete")
+    assert complete["label"] == "Отправить оглавление завершённого интенсива"
     app.dependency_overrides.clear()
 
 
