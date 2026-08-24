@@ -776,18 +776,6 @@ class AdminAppEdit(Base):
     )
 
 
-class IntensivePage(Base):
-    __tablename__ = "intensive_pages"
-
-    day_code: Mapped[str] = mapped_column(String(16), primary_key=True)
-    body_html: Mapped[str] = mapped_column(Text, nullable=False)
-    version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
-    updated_by: Mapped[str] = mapped_column(String(255), nullable=False)
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
-    )
-
-
 class ContentSource(TimestampMixin, Base):
     __tablename__ = "content_sources"
     __table_args__ = (
