@@ -1,4 +1,3 @@
-import json
 import os
 from datetime import datetime, timezone
 
@@ -18,7 +17,7 @@ from app.models import (
 from test_masterclass_journey import setup
 
 
-def test_day_four_dqs_step_waits_for_two_saved_rows():
+def test_day_four_dqs_step_waits_for_completed_tutorial():
     client, factory = setup()
     email = "member@example.test"
 
@@ -62,18 +61,6 @@ def test_day_four_dqs_step_waits_for_two_saved_rows():
     assert opened.status_code == 200
     assert opened.json()["ok"] is True
 
-    one_row = {"v": 2, "p": [1] + [0] * 16, "d": [None] * 17}
-    saved_one = client.get(
-        "/api/apps/dqs",
-        params={
-            "action": "saveDay",
-            "email": email,
-            "day": "1",
-            "data": json.dumps(one_row),
-        },
-    )
-    assert saved_one.status_code == 200
-    assert saved_one.json()["ok"] is True
     not_completed = client.post(
         "/api/masterclass/course/days/4/steps/1/complete",
         json={"email": email},
@@ -81,18 +68,16 @@ def test_day_four_dqs_step_waits_for_two_saved_rows():
     assert not_completed.status_code == 200
     assert 1 not in not_completed.json()["days"][3]["completed_steps"]
 
-    two_rows = {"v": 2, "p": [1, 0.5] + [0] * 15, "d": [None] * 17}
-    saved_two = client.get(
+    tutorial = client.get(
         "/api/apps/dqs",
         params={
-            "action": "saveDay",
+            "action": "completeTutorial",
             "email": email,
-            "day": "1",
-            "data": json.dumps(two_rows),
         },
     )
-    assert saved_two.status_code == 200
-    assert saved_two.json()["ok"] is True
+    assert tutorial.status_code == 200
+    assert tutorial.json() == {"ok": True, "completed": True}
+
     completed = client.post(
         "/api/masterclass/course/days/4/steps/1/complete",
         json={"email": email},

@@ -3218,6 +3218,44 @@ function markTutorialSeen(){
 }
 
 
+async function completeTutorial(){
+
+  if(
+    !currentUser ||
+    !currentUser.email
+  ){
+    throw new Error(
+      'Не удалось определить пользователя'
+    );
+  }
+
+  const result =
+    await api({
+      action:'completeTutorial',
+      email:currentUser.email
+    });
+
+  if(!result.ok){
+    throw new Error(
+      result.error ||
+      'Не удалось сохранить прохождение инструкции'
+    );
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(
+      'edabalans:app-completed',
+      {
+        detail:{
+          app:'dqs',
+          completion:'tutorial'
+        }
+      }
+    )
+  );
+}
+
+
 function maybeShowTutorial(){
 
   if(
@@ -3276,13 +3314,25 @@ function closeTutorial(
 }
 
 
-function tutorialNext(){
+async function tutorialNext(){
 
   if(
     tutorialStep >= 4
   ){
 
-    closeTutorial(true);
+    try{
+
+      await completeTutorial();
+
+      closeTutorial(true);
+
+    }catch(error){
+
+      alert(
+        error.message ||
+        'Не удалось сохранить прохождение инструкции'
+      );
+    }
 
     return;
   }

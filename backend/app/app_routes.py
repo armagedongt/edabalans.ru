@@ -205,6 +205,22 @@ def dqs_legacy_get(
                 "days": days,
                 "version": state.version,
             }
+        elif action == "completeTutorial":
+            event = db.scalar(select(MasterclassEvent).where(
+                MasterclassEvent.user_id == user.id,
+                MasterclassEvent.event_key == "dqs_tutorial_completed",
+            ))
+            if not event:
+                event = MasterclassEvent(
+                    user_id=user.id,
+                    event_key="dqs_tutorial_completed",
+                    event_type="dqs_tutorial_completed",
+                    placement="dqs",
+                    details={},
+                )
+                db.add(event)
+                db.flush()
+            payload = {"ok": True, "completed": True}
         elif action == "setStartDate":
             date.fromisoformat(startDate)
             already = bool(state.start_date)
