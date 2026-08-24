@@ -61,10 +61,26 @@ CLOSING_QUESTIONS = [
 ]
 
 PRODUCTS = {
-    "recipes": {"name": "Система рецептов", "resource": "ACCESS_RECIPES", "standard": 3900, "description": "Как научиться собирать здоровые тарелки быстро, просто и вкусно — от выбора продуктов до собственных блюд."},
-    "calories": {"name": "Мини-курс «Калорийный»", "resource": "ACCESS_CALORIES", "standard": 3900, "description": "Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории."},
-    "training": {"name": "Мини-курс «С дивана до тренировок»", "resource": "ACCESS_STRENGTH", "standard": 3900, "description": "Как встать с дивана и начать получать от тренировок и удовольствие, и результат."},
-    "recordings": {"name": "Записи консультаций других участников", "resource": "ACCESS_CONSULTATION_RECORDINGS", "standard": 3900, "description": "Практические записи разборов питания и решений других участников."},
+    "recipes": {"name": "Система рецептов", "resource": "ACCESS_RECIPES", "standard": 3900, "description": "Как научиться собирать здоровые тарелки быстро, просто и вкусно — от выбора продуктов до собственных блюд.", "features": [
+        {"name": "Рецепты и конструктор блюд", "description": "Готовые сочетания и понятный способ собирать собственные блюда."},
+        {"name": "Выбор продуктов и готовой еды", "description": "Ориентиры для магазина, доставки и еды вне дома."},
+        {"name": "Вкус и организация готовки", "description": "Как сделать полезную еду удобной и действительно приятной."},
+    ]},
+    "calories": {"name": "Мини-курс «Калорийный»", "resource": "ACCESS_CALORIES", "standard": 3900, "description": "Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории.", "features": [
+        {"name": "Энергетический баланс без лишней математики", "description": "Понятная связь между питанием, расходом энергии и изменением веса."},
+        {"name": "Порции, калории и БЖУ", "description": "Практические примеры без попытки превратить питание в бухгалтерию."},
+        {"name": "Подсчёт как временный инструмент", "description": "Как получить навык и постепенно отказаться от постоянных расчётов."},
+    ]},
+    "training": {"name": "Мини-курс «С дивана до тренировок»", "resource": "ACCESS_STRENGTH", "standard": 3900, "description": "Как встать с дивана и начать получать от тренировок и удовольствие, и результат.", "features": [
+        {"name": "Выбор цели и подходящего уровня", "description": "Стартовая точка с учётом опыта, самочувствия и возможностей."},
+        {"name": "Минимальный рабочий объём", "description": "Сколько нагрузки действительно нужно для первых результатов."},
+        {"name": "Начало без перегруза", "description": "Как встроить тренировки в жизнь и не бросить после первой недели."},
+    ]},
+    "recordings": {"name": "Записи консультаций других участников", "resource": "ACCESS_CONSULTATION_RECORDINGS", "standard": 3900, "description": "Практические записи разборов питания и решений других участников.", "features": [
+        {"name": "Реальные ситуации участников", "description": "Примеры, в которых легко узнать собственные сложности."},
+        {"name": "Разбор причин", "description": "Не только отдельные ошибки, но и логика, которая за ними стоит."},
+        {"name": "Решения для своей ситуации", "description": "Подходы, которые можно перенести в собственное питание."},
+    ]},
 }
 
 STAGE_BY_PLACEMENT = {
@@ -1086,7 +1102,7 @@ def build_offers(
             "code": f"single:{code}",
             "title": product["name"],
             "description": product["description"],
-            "details": [{"name": product["name"], "description": product["description"]}],
+            "details": product["features"],
             "items": [code],
             "standard_price": standard,
             "price": min(single_price, standard) if discounted else standard,
@@ -1108,10 +1124,12 @@ def build_offers(
             "price_code": f"upsell.{stage.code}.bundle.{len(missing)}",
         }
 
-    consultation_detail = {
-        "name": "Индивидуальная консультация",
-        "description": "Сначала Сергей разбирает дневник питания, затем вы обсуждаете выводы звонком или голосовыми сообщениями.",
-    }
+    consultation_details = [
+        {"name": "Предварительный разбор дневника", "description": "Сергей заранее изучит записи и подготовит основные выводы."},
+        {"name": "Обсуждение удобным способом", "description": "Звонок или голосовые сообщения — в зависимости от вашей ситуации."},
+        {"name": "Ответы на личные вопросы", "description": "Рекомендации с учётом именно вашего питания и образа жизни."},
+    ]
+    consultation_detail = {"name": "Индивидуальная консультация", "description": "Персональный разбор дневника питания и обсуждение выводов."}
     consultation_missing = "ACCESS_CONSULTATION" not in owned
     consultation_visible = consultation_missing and placement in {
         "closing-review", "post-review", "day-19-offer",
@@ -1121,7 +1139,7 @@ def build_offers(
         "code": "single:consultation",
         "title": "Индивидуальная консультация",
         "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
-        "details": [consultation_detail],
+        "details": consultation_details,
         "items": ["consultation"],
         "standard_price": standard_amount("consultation", 8900),
         "price": catalog_amount(
@@ -1171,7 +1189,10 @@ def build_offers(
     for card in cards:
         card["saving"] = card["standard_price"] - card["price"]
         card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": aware_utc(own.expires_at).isoformat() if own and own.expires_at else None, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
+    visible_expiry = None if placement == "day-1-offer" else (
+        aware_utc(own.expires_at).isoformat() if own and own.expires_at else None
+    )
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": visible_expiry, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
 @router.get("/offers")

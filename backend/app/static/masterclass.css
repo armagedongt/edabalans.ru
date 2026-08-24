@@ -34,13 +34,15 @@
 .mc-offers{max-width:820px}
 .mc.mc-offer-page{max-width:860px;margin-top:0;padding-top:32px}
 .mc.mc-offer-page h1{max-width:720px;font-size:clamp(34px,5vw,50px);font-weight:800;letter-spacing:-.03em}
-.mc-offer-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:14px;margin:24px 0 16px}
+.mc-offer-summary{display:grid;grid-template-columns:1fr;align-items:stretch;gap:14px;margin:24px 0 16px}
+.mc-offer-summary.has-timer{grid-template-columns:repeat(2,minmax(0,1fr))}
 .mc-offers .mc-owned{display:grid;gap:8px;margin:0;padding:14px 16px;border:1px solid #d6e4da;border-radius:16px;background:#edf5ef;font-size:13px}
+.mc-offers .mc-owned,.mc-offers .mc-countdown{min-height:121px}
 .mc-owned-title{color:#456b55;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .mc-owned ul,.mc-offer-includes ul{display:grid;gap:7px;margin:0;padding:0;list-style:none}
 .mc-owned li,.mc-offer-includes li{display:flex;align-items:flex-start;gap:8px}
 .mc-owned li>span,.mc-offer-includes li>span{color:#287747;font-weight:800}
-.mc-offers .mc-countdown{display:grid;gap:2px;max-width:290px;padding:11px 14px;border:1px solid #e5a996;border-radius:14px;background:#fff3ee;color:#873d28;font-size:12px;font-weight:400;line-height:1.35}
+.mc-offers .mc-countdown{display:grid;align-content:center;gap:2px;min-height:100%;padding:14px 16px;border:1px solid #e5a996;border-radius:16px;background:#fff3ee;color:#873d28;font-size:12px;font-weight:400;line-height:1.35}
 .mc-offers .mc-countdown strong{font-size:13px;font-weight:600}
 .mc-offers .mc-countdown .mc-refresh-offers{width:auto;margin-top:5px;padding:6px 9px;border:1px solid #d58b75;border-radius:8px;background:transparent;color:inherit;font-size:12px;font-weight:600}
 .mc-offer-terms>[data-offer]:disabled{opacity:.45;cursor:not-allowed}
@@ -72,6 +74,7 @@
   .mc.mc-offer-page{padding:24px 14px 44px}
   .mc.mc-offer-page h1{font-size:36px}
   .mc-offer-summary{grid-template-columns:1fr;align-items:stretch;margin-top:20px}
+  .mc-offer-summary.has-timer{grid-template-columns:1fr}
   .mc-offers .mc-countdown{max-width:none}
   .mc-offer-card{grid-template-columns:1fr;gap:15px;padding:17px 16px}
   .mc-offer-terms{grid-template-columns:minmax(0,1fr) auto;align-items:end;column-gap:12px;padding:14px 0 0;border-top:1px solid var(--line)}

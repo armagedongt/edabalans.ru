@@ -213,9 +213,68 @@ def test_day_one_offer_shows_early_price_without_starting_countdown():
         + placement_query("day-1-offer")
     )
     assert triggered.json()["expires_at"] is not None
-    assert reopened.json()["expires_at"] == triggered.json()["expires_at"]
+    assert reopened.json()["expires_at"] is None
+    assert reopened.json()["offers"][0]["details"][0]["name"] != reopened.json()["offers"][0]["title"]
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id))) == 1
+
+    for later_placement in ("day-17-offer", "day-19-offer", "day-21-offer"):
+        later_client, _ = setup()
+        later = later_client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query(later_placement)
+        )
+        day_one = later_client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query("day-1-offer")
+        )
+        assert later.json()["expires_at"] is not None
+        assert day_one.json()["expires_at"] is None
+
+
+def test_every_single_offer_lists_features_instead_of_repeating_its_title():
+    def assert_composition(payload):
+        single_cards = [
+            card for card in payload["offers"] if card["code"].startswith("single:")
+        ]
+        assert single_cards
+        for card in single_cards:
+            assert card["details"]
+            assert all(detail["name"] != card["title"] for detail in card["details"])
+
+    client, _ = setup()
+    standard = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("offers-hub")
+    )
+    assert standard.status_code == 200
+    assert_composition(standard.json())
+
+    remaining_client, factory = setup()
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        for code in ("ACCESS_RECIPES", "ACCESS_CALORIES"):
+            resource = db.scalar(select(Resource).where(Resource.code == code))
+            if resource is None:
+                resource = Resource(code=code, name=code, status="active")
+                db.add(resource)
+                db.flush()
+            db.add(UserAccess(
+                user_id=user.id,
+                resource_id=resource.id,
+                source="test",
+                granted_at=datetime.now(timezone.utc),
+            ))
+        db.commit()
+    remaining = remaining_client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("offers-hub")
+    )
+    assert remaining.status_code == 200
+    assert {card["code"] for card in remaining.json()["offers"]} >= {
+        "single:training", "single:recordings"
+    }
+    assert_composition(remaining.json())
 
 
 def test_offer_placement_cannot_be_forged_by_tilda_client():
