@@ -9,8 +9,9 @@
     telegramChannel: 'https://t.me/Fitness_Talks',
     telegram: 'https://t.me/FitnessSergey',
     max: 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw',
-    offer: 'https://похудение-это-есть.рф/oferta',
+    offer: 'https://go.похудение-это-есть.рф/legal/offer',
     privacy: 'https://go.похудение-это-есть.рф/legal/privacy',
+    consent: 'https://go.похудение-это-есть.рф/legal/consent',
     disclaimer: 'https://go.похудение-это-есть.рф/legal/disclaimer'
   };
 
@@ -93,6 +94,7 @@
         '<nav class="eb-site-footer__documents" aria-label="Юридические документы">' +
           link(LINKS.offer, 'Оферта') +
           link(LINKS.privacy, 'Политика обработки данных') +
+          link(LINKS.consent, 'Согласие на обработку данных') +
           link(LINKS.disclaimer, 'Образовательный дисклеймер') +
         '</nav>' +
       '</div>' +

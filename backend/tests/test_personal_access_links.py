@@ -170,7 +170,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
             "email": "client@example.test",
             "document_codes": [
                 "educational_disclaimer",
-                "personal_data_policy",
+                "personal_data_consent",
             ],
         },
     )
@@ -186,7 +186,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
             "email": "client@example.test",
             "document_codes": [
                 "educational_disclaimer",
-                "personal_data_policy",
+                "personal_data_consent",
             ],
         },
     )

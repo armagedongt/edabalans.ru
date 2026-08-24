@@ -94,11 +94,13 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "optionLink(LINKS.max, 'Написать в MAX')" in response.text
     assert "MAX-канал" in response.text
     assert "В разработке" in response.text
-    assert "https://похудение-это-есть.рф/oferta" in response.text
+    assert "https://go.похудение-это-есть.рф/legal/offer" in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
+    assert "https://go.похудение-это-есть.рф/legal/consent" in response.text
     assert "https://go.похудение-это-есть.рф/legal/disclaimer" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
     assert "link(LINKS.privacy, 'Политика обработки данных')" in response.text
+    assert "link(LINKS.consent, 'Согласие на обработку данных')" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
 
 
@@ -172,9 +174,29 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert legal_index.status_code == 200
     assert "/legal/disclaimer" in legal_index.text
     assert "/legal/privacy" in legal_index.text
+    assert "/legal/consent" in legal_index.text
+    assert "/legal/offer" in legal_index.text
     assert client.get("/legal/disclaimer.html").status_code == 200
     assert client.get("/legal/privacy.html").status_code == 200
+    assert client.get("/legal/consent.html").status_code == 200
+    assert client.get("/legal/offer.html").status_code == 200
+    assert client.get("/legal/legal.css").status_code == 200
     assert client.get("/legal/unknown.html").status_code == 404
+    privacy = client.get("/legal/privacy.html").text
+    assert privacy.index("Связанные документы") < privacy.index("Коротко:")
+    assert "Учебные и рекламно-информационные сообщения" in privacy
+    assert "Нажатие START сохраняется как согласие" in privacy
+    assert "/stop прекращает все сообщения" in privacy
+    assert "Редакция от" not in privacy
+    consent = client.get("/legal/consent.html").text
+    assert "отдельное согласие" in consent.lower()
+    assert "не разрешает публично размещать отзыв" in consent
+    offer = client.get("/legal/offer.html").text
+    assert "не менее 90 календарных дней" in offer
+    assert "не менее 50% предусмотренных заданий" in offer
+    disclaimer = client.get("/legal/disclaimer.html").text
+    assert "не является врачом или иным медицинским работником" in disclaimer
+    assert "нутрициолог" not in disclaimer.lower()
     assert "https://go.похудение-это-есть.рф/legal/disclaimer" in loader
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
