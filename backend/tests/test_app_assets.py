@@ -195,11 +195,15 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "отдельное согласие" in consent.lower()
     assert "не разрешает публично размещать отзыв" in consent
     offer = client.get("/legal/offer.html").text
-    assert "не менее 90 календарных дней" in offer
+    assert "не менее 90 календарных дней с даты оплаты" in offer
+    assert "проходит программу медленнее" not in offer
     assert "не менее 50% предусмотренных заданий" in offer
     disclaimer = client.get("/legal/disclaimer.html").text
     assert "не является врачом или иным медицинским работником" in disclaimer
     assert "нутрициолог" not in disclaimer.lower()
+    assert "консультированию всех возрастных групп" in disclaimer
+    assert "инструкторской и методической работе" in disclaimer
+    assert "Пользователь отвечает за достоверность" not in disclaimer
     assert "https://go.похудение-это-есть.рф/legal/disclaimer" in loader
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
