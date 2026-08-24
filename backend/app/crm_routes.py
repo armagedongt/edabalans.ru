@@ -99,7 +99,7 @@ def admin_index(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
-    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
+    return protected_file("admin-portal.html" if admin_identity(request, credentials) else "admin-login.html")
 
 
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
