@@ -314,43 +314,28 @@ def test_intensive_concept_pages_are_public() -> None:
         assert html.status_code == 200
         assert html.text == friendly.text
         assert title in friendly.text
-        assert "Концептуальный каркас" in friendly.text
-        assert 'class="video-script"' in friendly.text
-        assert "video-placeholder" not in friendly.text
-        video_script = re.search(
-            r'<section class="video-script".*?</section>', friendly.text, re.DOTALL
-        )
-        assert video_script is not None
-        assert len(re.findall(r"<p(?: [^>]*)?>.*?</p>", video_script.group(), re.DOTALL)) >= 4
-        video_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", video_script.group()))
-        assert len(video_text) >= 700
-        assert "Нужно дописать Сергею" in friendly.text
+        assert 'id="intensive-content"' in friendly.text
+        assert 'id="intensive-edit"' in friendly.text
+        assert ">Edit</button>" in friendly.text
+        assert "Текст для видео" in friendly.text
+        assert "Что нужно дописать" in friendly.text or "Что нужно дописать и обновить" in friendly.text
         assert "Короткий текст под видео" in friendly.text
-        bot_copy = re.search(
-            r'<div class="bot-copy">(.*?)</div>', friendly.text, re.DOTALL
-        )
-        assert bot_copy is not None
-        assert len(re.findall(r"<p>.*?</p>", bot_copy.group(), re.DOTALL)) >= 3
-        bot_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", bot_copy.group()))
-        assert len(bot_text) >= 180
         assert "/intensiv/tpost/" in friendly.text
-        assert "Как подвести к Мастер-классу" in friendly.text
-        cta = re.search(r'<section class="cta">(.*?)</section>', friendly.text, re.DOTALL)
-        assert cta is not None
-        assert re.search(
-            r'<a href="[^"]*utm_source=free_intensive[^"]*">(?=[^<]*\S)[^<]+</a>',
-            cta.group(),
-        )
+        assert "Переход к Мастер-классу" in friendly.text
+        assert "utm_source=free_intensive" in friendly.text
         assert "/legal/disclaimer" in friendly.text
+        assert "video-script" not in friendly.text
+        assert "cards" not in friendly.text
+        assert "callout" not in friendly.text
     stylesheet = client.get("/intensive/intensive.css")
     assert stylesheet.status_code == 200
-    assert ".video-script" in stylesheet.text
-    assert ".video-placeholder" not in stylesheet.text
+    assert ".edit-button" in stylesheet.text
+    assert ".cards" not in stylesheet.text
     script = client.get("/intensive/intensive.js")
     assert script.status_code == 200
     assert "contentEditable" in script.text
-    assert "localStorage.setItem" in script.text
-    assert "fetch(" not in script.text
+    assert "localStorage" not in script.text
+    assert "/admin/api/intensive/" in script.text
     assert client.get("/intensive/day-5").status_code == 404
     assert client.get("/intensive/day-5.html").status_code == 404
 

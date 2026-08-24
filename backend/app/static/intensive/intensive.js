@@ -1,45 +1,76 @@
 (function () {
   "use strict";
 
-  const main = document.querySelector("main.intensive-page");
-  const day = location.pathname.match(/\/(day-[1-4])(?:\.html)?\/?$/)?.[1];
-  const editMode = new URLSearchParams(location.search).get("edit") === "1";
-  if (!main || !day || !editMode) return;
+  const article = document.getElementById("intensive-content");
+  const editButton = document.getElementById("intensive-edit");
+  const day = article?.dataset.day;
+  const editing = new URLSearchParams(location.search).get("edit") === "1";
+  let version = 0;
 
-  const storageKey = `edabalans-intensive-${day}`;
-  const saved = localStorage.getItem(storageKey);
-  if (saved) main.innerHTML = saved;
+  if (!article || !editButton || !/^day-[1-4]$/.test(day || "")) return;
+  editButton.disabled = true;
 
-  document.documentElement.classList.add("intensive-editor-preview");
-  main.contentEditable = "true";
-  main.spellcheck = true;
-  main.querySelectorAll("h1, h2, h3, p, li, a, span, strong").forEach((element) => {
-    element.contentEditable = "true";
-    element.spellcheck = true;
-  });
-  main.addEventListener("click", (event) => {
-    if (event.target.closest("a")) event.preventDefault();
+  function loginUrl() {
+    return `/admin?next=${encodeURIComponent(location.pathname + "?edit=1")}`;
+  }
+
+  async function getContent(admin) {
+    const prefix = admin ? "/admin/api" : "/api";
+    const response = await fetch(`${prefix}/intensive/${day}`, { credentials: "same-origin" });
+    if (admin && response.status === 401) {
+      location.replace(loginUrl());
+      return null;
+    }
+    if (!response.ok) throw new Error("Не удалось загрузить страницу");
+    return response.json();
+  }
+
+  async function start() {
+    try {
+      const content = await getContent(editing);
+      if (!content) return;
+      version = content.version;
+      if (content.html) article.innerHTML = content.html;
+      if (editing) {
+        article.contentEditable = "true";
+        article.spellcheck = true;
+        editButton.textContent = "Save";
+        article.focus();
+      }
+      editButton.disabled = false;
+    } catch (error) {
+      editButton.disabled = false;
+      if (editing) alert(error.message);
+    }
+  }
+
+  editButton.addEventListener("click", async () => {
+    if (!editing) {
+      location.assign(`${location.pathname}?edit=1`);
+      return;
+    }
+    editButton.disabled = true;
+    editButton.textContent = "Saving…";
+    try {
+      const response = await fetch(`/admin/api/intensive/${day}`, {
+        method: "PUT",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ html: article.innerHTML, version })
+      });
+      if (response.status === 401) {
+        location.replace(loginUrl());
+        return;
+      }
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.detail || "Не удалось сохранить страницу");
+      location.replace(location.pathname);
+    } catch (error) {
+      alert(error.message);
+      editButton.disabled = false;
+      editButton.textContent = "Save";
+    }
   });
 
-  const toolbar = document.createElement("div");
-  toolbar.className = "intensive-local-toolbar";
-  toolbar.contentEditable = "false";
-  toolbar.innerHTML = `
-    <strong>Редактирование дня</strong>
-    <span id="intensive-save-status">Правьте текст прямо на странице</span>
-    <button id="intensive-save" type="button">Сохранить черновик</button>
-    <button id="intensive-reset" type="button">Сбросить</button>
-    <a href="/intensive/${day}">Открыть без редактора</a>`;
-  document.body.append(toolbar);
-
-  const status = toolbar.querySelector("#intensive-save-status");
-  toolbar.querySelector("#intensive-save").addEventListener("click", () => {
-    localStorage.setItem(storageKey, main.innerHTML);
-    status.textContent = "Сохранено в этом браузере";
-  });
-  toolbar.querySelector("#intensive-reset").addEventListener("click", () => {
-    if (!confirm("Удалить локальный черновик этого дня?")) return;
-    localStorage.removeItem(storageKey);
-    location.reload();
-  });
+  start();
 }());
