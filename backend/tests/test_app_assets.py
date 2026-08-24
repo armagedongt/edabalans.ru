@@ -175,16 +175,18 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "/legal/disclaimer" in legal_index.text
     assert "/legal/privacy" in legal_index.text
     assert "/legal/consent" in legal_index.text
+    assert "/legal/messages" in legal_index.text
     assert "/legal/offer" in legal_index.text
     assert client.get("/legal/disclaimer.html").status_code == 200
     assert client.get("/legal/privacy.html").status_code == 200
     assert client.get("/legal/consent.html").status_code == 200
+    assert client.get("/legal/messages.html").status_code == 200
     assert client.get("/legal/offer.html").status_code == 200
     assert client.get("/legal/legal.css").status_code == 200
     assert client.get("/legal/unknown.html").status_code == 404
     privacy = client.get("/legal/privacy.html").text
     assert privacy.index("Связанные документы") < privacy.index("Коротко:")
-    assert "Условия получения учебных и рекламных сообщений" in privacy
+    assert "Согласие на получение информационных и рекламных сообщений" in privacy
     assert "«Старт» или «START»" in privacy
     assert "/stop прекращает все сообщения" in privacy
     assert "https://похудение-это-есть.рф/lk" in privacy
@@ -200,14 +202,30 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "не менее 50% предусмотренных заданий" in offer
     disclaimer = client.get("/legal/disclaimer.html").text
     assert "не является врачом или иным медицинским работником" in disclaimer
-    assert "нутрициолог" not in disclaimer.lower()
-    assert "консультированию всех возрастных групп" in disclaimer
+    assert "Сергей Воронцов — нутрициолог" not in disclaimer
+    assert "населения различных возрастных групп" in disclaimer
     assert "инструкторской и методической работе" in disclaimer
+    assert "342419695163" in disclaimer
+    assert "регистрационный номер 1092" in disclaimer
+    assert "№ 237н" in disclaimer
+    assert "№ 273-ФЗ" in disclaimer
     assert "Пользователь отвечает за достоверность" not in disclaimer
     assert "https://go.похудение-это-есть.рф/legal/disclaimer" in loader
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
+
+
+def test_legal_friendly_routes_are_public() -> None:
+    assert client.get("/legal").status_code == 200
+    assert client.get("/legal/").status_code == 200
+    assert client.get("/legal/disclaimer").status_code == 200
+    assert client.get("/legal/privacy").status_code == 200
+    assert client.get("/legal/consent").status_code == 200
+    assert client.get("/legal/messages").status_code == 200
+    assert client.get("/legal/offer").status_code == 200
+    assert client.get("/legal/legal.css").status_code == 200
+    assert client.get("/legal/unknown").status_code == 404
 
 
 def test_masterclass_sales_fragment_uses_server_price_codes() -> None:

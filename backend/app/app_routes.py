@@ -78,14 +78,27 @@ def app_asset(asset_name: str) -> FileResponse:
 
 @router.get("/legal/{document_code}.html", include_in_schema=False)
 def legal_document(document_code: str) -> FileResponse:
-    if document_code not in {"index", "disclaimer", "privacy", "consent", "offer"}:
+    if document_code not in {"index", "disclaimer", "privacy", "consent", "messages", "offer"}:
         raise HTTPException(status_code=404, detail="legal document not found")
     return public_asset(STATIC_DIR / "legal" / f"{document_code}.html")
+
+
+@router.get("/legal", include_in_schema=False)
+@router.get("/legal/", include_in_schema=False)
+def legal_index() -> FileResponse:
+    return public_asset(STATIC_DIR / "legal" / "index.html")
 
 
 @router.get("/legal/legal.css", include_in_schema=False)
 def legal_stylesheet() -> FileResponse:
     return public_asset(STATIC_DIR / "legal" / "legal.css")
+
+
+@router.get("/legal/{document_code}", include_in_schema=False)
+def legal_document_friendly(document_code: str) -> FileResponse:
+    if document_code not in {"disclaimer", "privacy", "consent", "messages", "offer"}:
+        raise HTTPException(status_code=404, detail="legal document not found")
+    return public_asset(STATIC_DIR / "legal" / f"{document_code}.html")
 
 
 def error(message: str) -> dict[str, Any]:
