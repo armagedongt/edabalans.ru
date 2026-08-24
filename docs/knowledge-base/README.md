@@ -50,6 +50,7 @@
 | Продукты, тарифы и политика предложений | `PRODUCTS.md` | `draft`, согласована бизнес-логика |
 | Единый каталог цен и тарифов | `PRICING_CATALOG.md` | `current_implemented_disabled` |
 | Исполняемый контур 21-дневного Мастер-класса | `modules/masterclass/COURSE_RUNTIME.md` | `current_implemented_not_deployed` |
+| Канонический формат всех курсов | `modules/masterclass/COURSE_DESIGN_SYSTEM.md` | `current` |
 
 ## Разделы, которые предстоит наполнить
 

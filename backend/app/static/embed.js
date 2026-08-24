@@ -146,9 +146,10 @@
 
   function legalFooterHtml() {
     return '<footer data-edabalans-legal-footer style="box-sizing:border-box;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:12px/1.55 Inter,Arial,sans-serif;text-align:center">' +
-      '<div>© ' + new Date().getFullYear() + ' Воронцов Сергей · «Похудение — это есть!»</div>' +
+      '<div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
       '<div>Все права защищены. Полное или частичное копирование запрещено.</div>' +
-      '<div style="margin-top:7px"><a href="https://go.похудение-это-есть.рф/legal/offer" target="_blank" rel="noopener" style="color:inherit">Оферта</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a> · <a href="https://go.похудение-это-есть.рф/legal/consent" target="_blank" rel="noopener" style="color:inherit">Согласие</a> · <a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Дисклеймер</a></div>' +
+      '<div style="margin-top:7px">Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
+      '<div style="margin-top:7px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div>' +
       '</footer>';
   }
 

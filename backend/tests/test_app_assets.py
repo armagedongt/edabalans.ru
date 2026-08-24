@@ -1,3 +1,4 @@
+import json
 import os
 import re
 from pathlib import Path
@@ -20,6 +21,25 @@ def test_stable_embed_loader_is_public() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "data-edabalans-app" in response.text
+
+
+def test_course_footer_contract_is_shared_and_minimal() -> None:
+    loader = client.get("/embed.js").text
+    assert "data-edabalans-legal-footer" in loader
+    assert "data-edabalans-footer-owner" in loader
+    assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
+    assert "ensureLegalFooter(mount);" in loader
+    footer = loader[loader.index("function legalFooterHtml"):loader.index("function ensureLegalFooter")]
+    assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in footer
+    assert "Полное или частичное копирование запрещено" in footer
+    assert "Контакты:" in footer
+    assert 'href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a>' in footer
+    assert 'href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a>' in footer
+    assert 'href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a>' in footer
+    assert 'href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a>' in footer
+    assert "Похудение — это есть!" not in footer
+    assert "/legal/offer" not in footer
+    assert "/legal/consent" not in footer
 
 
 def test_stable_site_footer_loader_is_public() -> None:
@@ -161,13 +181,11 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "masterclass-course" in loader
     assert "'account': true" in loader
     assert "hideTildaUserbar" in loader
-    assert "data-edabalans-legal-footer" in loader
-    assert "Воронцов Сергей" in loader
     assert "data-edabalans-account-url" in loader
     assert "source: identitySource" in loader
     assert "identity.source==='tilda'" in course.text
     assert "function authHeaders()" in course.text
-    assert "Похудение — это есть!" in course.text
+    assert "Мастер-класс по изменению питания и пищевых привычек" in course.text
     assert ".tlk-userbar{display:none!important}" in course.text
     assert "Темы видны заранее" not in course.text
     legal_index = client.get("/legal/index.html")
@@ -214,6 +232,48 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
+
+
+def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    first_day = manifest["days"][0]
+    first_steps = first_day["steps"]
+
+    assert first_steps[0]["id"] == "day-01-article-tutorial"
+    assert first_steps[0]["contentKind"] == "tutorial"
+    assert all(step.get("title") != "Программа Мастер-класса" for step in first_steps)
+    assert [
+        step["title"] for step in first_steps if step.get("kind") == "article"
+    ] == [
+        "Как пользоваться Мастер-классом",
+        "Как вести дневник питания",
+        "Как необходимо взвешиваться",
+    ]
+    assert next(
+        index for index, step in enumerate(first_steps)
+        if step["id"] == "day-01-messenger-link"
+    ) > next(
+        index for index, step in enumerate(first_steps)
+        if step["id"] == "day-01-questionnaire"
+    )
+
+    gallery_steps = [
+        (day["number"], step["id"])
+        for day in manifest["days"]
+        for step in day.get("steps", [])
+        if step.get("imagePresentation") == "gallery"
+    ]
+    assert gallery_steps == [(4, "day-04-article-01")]
+
+    course = client.get("/apps/masterclass-course.html").text
+    assert 'id="course-tutorial"' in course
+    assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
+    assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
 
 
 def test_legal_friendly_routes_are_public() -> None:

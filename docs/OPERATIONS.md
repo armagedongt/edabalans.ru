@@ -31,6 +31,8 @@ curl -fsS https://api.edabalans.ru/bot
 curl -fsS https://go.похудение-это-есть.рф/legal
 curl -fsS https://go.похудение-это-есть.рф/legal/disclaimer
 curl -fsS https://go.похудение-это-есть.рф/legal/privacy
+curl -fsS https://go.похудение-это-есть.рф/legal/consent
+curl -fsS https://go.похудение-это-есть.рф/legal/offer
 ufw status
 systemctl status edabalans-backup.timer
 ```
