@@ -5,7 +5,7 @@
 | Компонент | Назначение | Публичный доступ |
 | --- | --- | --- |
 | Caddy | HTTPS и маршрутизация | 80/443 |
-| FastAPI | API приложений | только через `api.edabalans.ru` |
+| FastAPI | API приложений и публичные документы | `api.edabalans.ru`, приложения через `app.edabalans.ru`, документы через `go.похудение-это-есть.рф/legal` |
 | PostgreSQL 17 | источник структурированных данных | нет |
 | NocoDB 2026.08.0 | человекочитаемый просмотр таблиц | `data.edabalans.ru`, вход обязателен |
 
@@ -28,6 +28,9 @@ curl -fsS https://api.edabalans.ru/health
 curl -fsS https://api.edabalans.ru/ready
 curl -fsS https://data.edabalans.ru/api/v1/health
 curl -fsS https://api.edabalans.ru/bot
+curl -fsS https://go.похудение-это-есть.рф/legal
+curl -fsS https://go.похудение-это-есть.рф/legal/disclaimer
+curl -fsS https://go.похудение-это-есть.рф/legal/privacy
 ufw status
 systemctl status edabalans-backup.timer
 ```

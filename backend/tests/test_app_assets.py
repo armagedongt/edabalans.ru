@@ -87,8 +87,14 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "Похудение — это есть!" in course.text
     assert ".tlk-userbar{display:none!important}" in course.text
     assert "Темы видны заранее" not in course.text
+    legal_index = client.get("/legal/index.html")
+    assert legal_index.status_code == 200
+    assert "/legal/disclaimer" in legal_index.text
+    assert "/legal/privacy" in legal_index.text
     assert client.get("/legal/disclaimer.html").status_code == 200
     assert client.get("/legal/privacy.html").status_code == 200
+    assert client.get("/legal/unknown.html").status_code == 404
+    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in loader
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass

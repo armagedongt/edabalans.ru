@@ -147,8 +147,8 @@
   function legalFooterHtml() {
     return '<footer data-edabalans-legal-footer style="box-sizing:border-box;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:12px/1.55 Inter,Arial,sans-serif;text-align:center">' +
       '<div>© ' + new Date().getFullYear() + ' Воронцов Сергей · «Похудение — это есть!»</div>' +
-      '<div>Все права защищены. Копирование материалов, текстов и отдельных элементов без разрешения запрещено.</div>' +
-      '<div style="margin-top:7px"><a href="' + APP_HOST + '/legal/disclaimer.html" target="_blank" rel="noopener" style="color:inherit">Дисклеймер</a> · <a href="' + APP_HOST + '/legal/privacy.html" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div>' +
+      '<div>Все права защищены. Полное или частичное копирование запрещено.</div>' +
+      '<div style="margin-top:7px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div>' +
       '</footer>';
   }
 

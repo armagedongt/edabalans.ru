@@ -85,6 +85,22 @@
 		-Server
 	}
 
+	@legal_index path /legal /legal/
+	handle @legal_index {
+		rewrite * /legal/index.html
+		reverse_proxy backend:8000
+	}
+
+	@legal_friendly path_regexp legal_friendly ^/legal/(privacy|disclaimer)/?$
+	handle @legal_friendly {
+		rewrite * /legal/{re.legal_friendly.1}.html
+		reverse_proxy backend:8000
+	}
+
+	handle /legal/*.html {
+		reverse_proxy backend:8000
+	}
+
 	@short path_regexp short ^/([^/]+)$
 	handle @short {
 		rewrite * /go/{re.short.1}
