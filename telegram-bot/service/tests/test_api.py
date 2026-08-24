@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, get_db, make_engine
 from app.main import app
 import app.main as main_module
-from app.models import Contact, CrmMessengerAccount, SequenceRun, StepDelivery, UpdateReceipt
+from app.models import BotInstance, Contact, CrmMessengerAccount, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
 from app.seed import seed_defaults
 
 
@@ -151,4 +151,54 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert stats[0]["clicks"] == 1
     assert stats[0]["starts"] == 0
     assert "YouTube" in client.get("/bot-api/tracking-platforms").json()
+    app.dependency_overrides.clear()
+
+
+def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'maintenance.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        bot = session.scalar(select(BotInstance))
+        assert bot.username == "Fitness_Talks_bot"
+        assert bot.is_production is True
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    fake = FakeTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", True)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_allowed_user_ids", "42,84")
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
+    client = TestClient(app)
+
+    outsider = {"update_id": 200, "message": {"from": {"id": 99, "first_name": "Visitor"}, "chat": {"id": 99}, "text": "/start legacy-code"}}
+    assert client.post("/telegram/webhook", json=outsider).json() == {"ok": True, "maintenance": True}
+    assert fake.sent[-1][1] == "tpl_maintenance_notice"
+
+    owner = {"update_id": 201, "message": {"from": {"id": 42, "first_name": "Owner"}, "chat": {"id": 42}, "text": "/start"}}
+    assert client.post("/telegram/webhook", json=owner).json() == {"ok": True}
+    assert fake.sent[-3:] == [
+        ("42", "tpl_start_navigation_pin"),
+        ("42", "tpl_entry_circle"),
+        ("42", "tpl_start_welcome_offer"),
+    ]
+    outsider_callback = {"update_id": 202, "callback_query": {"id": "repair-cb", "from": {"id": 99, "first_name": "Visitor"}, "message": {"chat": {"id": 99}}, "data": "start_intensive"}}
+    assert client.post("/telegram/webhook", json=outsider_callback).json() == {"ok": True, "maintenance": True}
+    assert fake.callbacks[-1] == ("repair-cb", "Бот временно на ремонте")
+    assert fake.sent[-1][1] == "tpl_maintenance_notice"
+
+    with Session(engine) as session:
+        waiting = session.scalar(select(Contact).where(Contact.telegram_user_id == "99"))
+        assert waiting.status == "maintenance_waitlist"
+        assert session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.contact_id == waiting.id, TrackingEvent.event_type == "maintenance_contact")) == 2
+        assert session.scalar(select(func.count(SequenceRun.id)).where(SequenceRun.contact_id == waiting.id)) == 0
+        assert session.scalar(select(Contact).where(Contact.telegram_user_id == "42")).status == "active"
+
+    assert client.post(f"/bot-api/contacts/{waiting.id}/messages", json={"text": "Нельзя отправлять"}).status_code == 409
     app.dependency_overrides.clear()

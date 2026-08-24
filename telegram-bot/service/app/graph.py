@@ -26,6 +26,11 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
         "description": "Разбирает токен ссылки и при первом посещении сохраняет источник и назначает связанные теги. Повторный /start источник не перезаписывает.",
         "source_ref": "telegram-bot/service/app/main.py:process_update",
     },
+    "maintenance.gate": {
+        "name": "Ограничить работу на время ремонта",
+        "description": "Разрешает полную логику только двум аккаунтам владельца; остальных сохраняет в лист ожидания и останавливает до запуска цепочек.",
+        "source_ref": "telegram-bot/service/app/maintenance.py",
+    },
     "subscription.check": {
         "name": "Проверить подписку",
         "description": "Системная операция проверки текущего статуса подписки.",
@@ -39,7 +44,7 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
 }
 
 GLOBAL_MODULES: tuple[dict[str, str], ...] = (
-    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Исполняемый модуль · checkout-ссылка отложена"},
+    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Исполняемый модуль · временно включён режим ремонта"},
     {"code": "welcome_intensive", "name": "Welcome: запуск и первые четыре дня", "status": "Исполняемая редактируемая цепочка"},
     {"code": "prepurchase_nurture", "name": "Основная рассылка до покупки", "status": "Исполняемый каркас · контент частичный"},
     {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
@@ -107,27 +112,33 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         node("entry_buyer", "entry", "Специальная ссылка покупателя", "Одноразовый CRM token", 3, Статус="M-link реализован; test-only"),
         node("telegram_start", "entry", "Нажата кнопка Start", "Telegram /start", 4, Исполнение="app/main.py:process_update"),
         node("identity", "technical", "Найти contact и CRM user", "Идентификация", 5, Хранение="tg_contacts / messenger_accounts"),
-        node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 6, Хранение="tg_tracking_* / attribution_events / user_tags"),
-        node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Платёж или активное право ACCESS_MASTERCLASS", 7, Исполнение="app/start_router.py"),
-        node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "Нажмите, чтобы изменить текст", 8, "tpl_start_has_masterclass", Контент="tg_content_items"),
-        node("exit_buyer", "module_exit", "Стоп", "Остановить Welcome/pre-purchase; нового не запускать", 9, Результат="Существующие post-purchase процессы не меняются"),
-        node("first_visit", "condition", "Первое посещение бота?", "main_scenario_seen_at", 10, Хранение="messenger_accounts"),
-        node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 11, Хранение="tg_step_deliveries"),
-        node("send_complete", "message", "Отправить навигацию по интенсиву", "Нажмите, чтобы изменить текст", 12, "tpl_start_intensive_complete", Контент="tg_content_items"),
-        node("exit_complete", "module_exit", "Стоп", "Интенсив не перезапускать", 13, Результат="Текущие другие цепочки не меняются"),
-        node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 14, Хранение="tg_sequence_runs"),
-        node("send_waiting", "message", "Сообщить время следующего материала", "Нажмите, чтобы изменить текст", 15, "tpl_start_intensive_waiting", Источник_времени="tg_sequence_runs.next_action_at"),
-        node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 16, Запрещено="Не менять current_step_key и next_action_at"),
-        node("welcome_ever_started", "condition", "Новый Welcome когда-либо запускался?", "Run текущей версии; старый LeadTeh не считается", 17, Хранение="tg_sequence_runs / tg_sequence_versions"),
-        node("exit_welcome", "module_exit", "Перейти в Welcome", "Навигация, кружок, кнопка, подписка и первые четыре дня", 18, Следующий_модуль="welcome_intensive"),
-        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 19, Причина="Welcome был, но run нет и День 4 не отправлен"),
+        node("maintenance_gate", "condition", "Разрешён полный доступ во время ремонта?", "Только два Telegram ID владельца", 6, Исполнение="app/maintenance.py"),
+        node("maintenance_notice", "message", "Сообщить о ремонте и сохранить в лист ожидания", "Нажмите, чтобы изменить текст", 7, "tpl_maintenance_notice", Хранение="tg_contacts.status / tg_tracking_events"),
+        node("exit_maintenance", "module_exit", "Стоп до окончания ремонта", "Ни одна цепочка и отправка не запускается", 8, Результат="maintenance_waitlist"),
+        node("attribution", "technical", "Распознать источник и first-touch", "Не перезаписывать повторным Start", 9, Хранение="tg_tracking_* / attribution_events / user_tags"),
+        node("has_masterclass", "condition", "Куплен именно мастер-класс?", "Платёж или активное право ACCESS_MASTERCLASS", 10, Исполнение="app/start_router.py"),
+        node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "Нажмите, чтобы изменить текст", 11, "tpl_start_has_masterclass", Контент="tg_content_items"),
+        node("exit_buyer", "module_exit", "Стоп", "Остановить Welcome/pre-purchase; нового не запускать", 12, Результат="Существующие post-purchase процессы не меняются"),
+        node("first_visit", "condition", "Первое посещение бота?", "main_scenario_seen_at", 13, Хранение="messenger_accounts"),
+        node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 14, Хранение="tg_step_deliveries"),
+        node("send_complete", "message", "Отправить навигацию по интенсиву", "Нажмите, чтобы изменить текст", 15, "tpl_start_intensive_complete", Контент="tg_content_items"),
+        node("exit_complete", "module_exit", "Стоп", "Интенсив не перезапускать", 16, Результат="Текущие другие цепочки не меняются"),
+        node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 17, Хранение="tg_sequence_runs"),
+        node("send_waiting", "message", "Сообщить время следующего материала", "Нажмите, чтобы изменить текст", 18, "tpl_start_intensive_waiting", Источник_времени="tg_sequence_runs.next_action_at"),
+        node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 19, Запрещено="Не менять current_step_key и next_action_at"),
+        node("welcome_ever_started", "condition", "Новый Welcome когда-либо запускался?", "Run текущей версии; старый LeadTeh не считается", 20, Хранение="tg_sequence_runs / tg_sequence_versions"),
+        node("exit_welcome", "module_exit", "Перейти в Welcome", "Навигация, кружок, кнопка, подписка и первые четыре дня", 21, Следующий_модуль="welcome_intensive"),
+        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 22, Причина="Welcome был, но run нет и День 4 не отправлен"),
     ]
     edges = [
         {"id": "e01", "source": "entry_rule", "target": "entry_link", "label": "Опубликовать", "branch": "default"},
         {"id": "e02", "source": "entry_link", "target": "telegram_start", "label": "Открыть бот", "branch": "default"},
         {"id": "e03", "source": "telegram_start", "target": "identity", "label": "Update", "branch": "default"},
         {"id": "e04", "source": "entry_buyer", "target": "identity", "label": "Связать с CRM", "branch": "default"},
-        {"id": "e05", "source": "identity", "target": "attribution", "label": "Далее", "branch": "default"},
+        {"id": "e05", "source": "identity", "target": "maintenance_gate", "label": "Далее", "branch": "default"},
+        {"id": "e05a", "source": "maintenance_gate", "target": "attribution", "label": "Да", "branch": "true"},
+        {"id": "e05b", "source": "maintenance_gate", "target": "maintenance_notice", "label": "Нет", "branch": "false"},
+        {"id": "e05c", "source": "maintenance_notice", "target": "exit_maintenance", "label": "Сохранено и отправлено", "branch": "default"},
         {"id": "e06", "source": "attribution", "target": "has_masterclass", "label": "Далее", "branch": "default"},
         {"id": "e07", "source": "has_masterclass", "target": "send_buyer", "label": "Да", "branch": "true"},
         {"id": "e08", "source": "send_buyer", "target": "exit_buyer", "label": "Отправлено", "branch": "default"},
@@ -143,7 +154,7 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
         {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
     ]
-    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Исполняется на тестовом боте", "description": "Схема показывает входы, атрибуцию, проверки и ответы повторного Start. Новый пользователь передаётся в отдельный Welcome.", "nodes": nodes, "edges": edges, "issues": []}
+    return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Основной бот · временный режим ремонта", "description": "Сначала действует глобальный предохранитель ремонта. Полная атрибуция и сценарии доступны только двум аккаунтам владельца; остальные сохраняются в лист ожидания.", "nodes": nodes, "edges": edges, "issues": []}
 
 
 def postpurchase_graph(session: Session) -> dict[str, Any]:

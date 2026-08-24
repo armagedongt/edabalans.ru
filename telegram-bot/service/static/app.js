@@ -143,13 +143,15 @@ async function library() {
 
 async function contacts() {
   busy(); const rows = await api('/admin/contacts'); let pinned = localStorage.getItem('telegramPinnedContact');
-  root.innerHTML = `<div class="library-tools"><input id="contact-q" placeholder="Найти по имени, username или Telegram ID"><span class="meta">${rows.length} пользователей</span></div><div class="contact-list" id="contacts"></div>`;
+  root.innerHTML = `<div class="library-tools"><input id="contact-q" placeholder="Найти по имени, username, Telegram ID или статусу"><select id="contact-status"><option value="">Все пользователи</option><option value="maintenance_waitlist">Ждут окончания ремонта</option><option value="active">Активные</option></select><span class="meta">${rows.length} пользователей</span></div><div class="contact-list" id="contacts"></div>`;
   const draw = () => {
     const query = document.querySelector('#contact-q').value.toLowerCase();
-    const filtered = rows.filter(row => `${row.name} ${row.username} ${row.telegram_user_id}`.toLowerCase().includes(query)).sort((a,b) => Number(b.id === pinned) - Number(a.id === pinned));
+    const selectedStatus = document.querySelector('#contact-status').value;
+    const filtered = rows.filter(row => (!selectedStatus || row.status === selectedStatus) && `${row.name} ${row.username} ${row.telegram_user_id} ${row.status}`.toLowerCase().includes(query)).sort((a,b) => Number(b.id === pinned) - Number(a.id === pinned));
     document.querySelector('#contacts').innerHTML = filtered.map(contact => {
       const progress = contact.total ? Math.min(100, Math.round(contact.sent / contact.total * 100)) : 0;
-      return `<article class="contact-row ${contact.id === pinned ? 'pinned' : ''}"><button class="pin" data-pin="${contact.id}" title="Закрепить">${contact.id === pinned ? '★' : '☆'}</button><div><h3>${esc(contact.name || contact.username || contact.telegram_user_id)}</h3><span class="meta">@${esc(contact.username || 'без username')} · ${esc(contact.run_status || 'цепочка не запущена')}</span><div class="progress"><i style="width:${progress}%"></i></div><small>${contact.sent || 0} из ${contact.total || 0} сообщений · шаг ${esc(contact.current_step || '—')}</small></div><div class="contact-actions"><button class="action speed" data-id="${contact.id}">Тест цепочки</button><button class="action alt message" data-id="${contact.id}">Написать</button></div></article>`;
+      const contactStatus = contact.status === 'maintenance_waitlist' ? 'ждёт окончания ремонта' : contact.status;
+      return `<article class="contact-row ${contact.id === pinned ? 'pinned' : ''}"><button class="pin" data-pin="${contact.id}" title="Закрепить">${contact.id === pinned ? '★' : '☆'}</button><div><h3>${esc(contact.name || contact.username || contact.telegram_user_id)}</h3><span class="meta">@${esc(contact.username || 'без username')} · ${esc(contactStatus)} · ${esc(contact.run_status || 'цепочка не запущена')}</span><div class="progress"><i style="width:${progress}%"></i></div><small>${contact.sent || 0} из ${contact.total || 0} сообщений · шаг ${esc(contact.current_step || '—')}</small></div><div class="contact-actions"><button class="action speed" data-id="${contact.id}">Тест цепочки</button><button class="action alt message" data-id="${contact.id}">Написать</button></div></article>`;
     }).join('') || '<div class="empty">Ничего не найдено</div>';
     document.querySelectorAll('[data-pin]').forEach(button => button.onclick = () => { pinned = button.dataset.pin; localStorage.setItem('telegramPinnedContact', pinned); draw(); });
     document.querySelectorAll('.speed').forEach(button => button.onclick = () => openAcceleratedTest(button.dataset.id));
@@ -157,7 +159,7 @@ async function contacts() {
   };
   const addStartPreviewButtons = () => document.querySelectorAll('.contact-row').forEach(row => { const actions=row.querySelector('.contact-actions'), id=row.querySelector('.speed')?.dataset.id; if(!actions||!id||actions.querySelector('.start-preview'))return; const button=document.createElement('button'); button.className='action alt start-preview'; button.textContent='Что ответит Start'; button.onclick=()=>openStartPreview(id); actions.append(button); });
   const listObserver = new MutationObserver(addStartPreviewButtons); listObserver.observe(document.querySelector('#contacts'), {childList:true});
-  document.querySelector('#contact-q').oninput = () => { draw(); addStartPreviewButtons(); }; draw(); addStartPreviewButtons();
+  document.querySelector('#contact-q').oninput = () => { draw(); addStartPreviewButtons(); }; document.querySelector('#contact-status').onchange = () => { draw(); addStartPreviewButtons(); }; draw(); addStartPreviewButtons();
 }
 function openAcceleratedTest(contactId) {
   const modal=document.createElement('div');modal.className='modal-backdrop';
@@ -223,5 +225,8 @@ const views = {modules:()=>modulesView(), sequences, library, contacts, broadcas
 async function show(view) { document.querySelectorAll('nav button').forEach(button => button.classList.toggle('active', button.dataset.view === view)); title.textContent = {modules:'Модули',sequences:'Цепочки',library:'Библиотека сообщений',contacts:'Пользователи и тестирование',broadcasts:'Разовые рассылки',links:'Ссылки и источники'}[view]; try { await views[view](); } catch (error) { fail(error); } }
 document.querySelectorAll('nav button').forEach(button => button.onclick = () => show(button.dataset.view));
 document.querySelector('#logout').onclick = async () => { await fetch('/bot-api/logout', {method:'POST'}); location.replace('/bot'); };
-api('/health').then(value => document.querySelector('#health').textContent = value.status === 'ok' ? '● работает' : 'ошибка');
+api('/health').then(value => {
+  document.querySelector('#health').textContent = value.status !== 'ok' ? 'ошибка' : (value.maintenance ? '● ремонт' : '● работает');
+  document.querySelector('#bot-name').textContent = `TELEGRAM · @${String(value.bot || 'не настроен').replace(/^@/, '')}`;
+});
 show('modules');

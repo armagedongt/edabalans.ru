@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     telegram_channel_id: str = ""
     telegram_polling_enabled: bool = False
     telegram_polling_timeout_seconds: int = 25
+    telegram_maintenance_mode: bool = False
+    telegram_maintenance_allowed_user_ids: str = ""
     admin_username: str = ""
     admin_password: str = ""
     scheduler_enabled: bool = False

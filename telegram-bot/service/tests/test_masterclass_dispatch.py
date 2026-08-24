@@ -135,6 +135,35 @@ def test_dispatch_skips_recipe_upsell_when_everything_is_owned(tmp_path):
         assert sender.sent == []
 
 
+def test_dispatch_leaves_outsider_pending_during_maintenance(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        row = MasterclassNotification(
+            id="99999999-9999-9999-9999-999999999999",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="recipes_followup",
+            deduplication_key="recipes:maintenance",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        )
+        session.add(row)
+        session.commit()
+        sender = FakeSender()
+
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "https://example.test/offers",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            allowed_telegram_ids="446056103,5677281049",
+        )
+
+        assert result["maintenance_filtered"] == 1
+        assert row.status == "pending"
+        assert sender.sent == []
+
+
 def test_course_stall_sends_only_for_latest_unfinished_activity(tmp_path):
     with session_factory(tmp_path) as session:
         add_contact_and_content(session)

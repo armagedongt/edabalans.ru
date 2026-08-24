@@ -10,6 +10,7 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.models import Contact, ContentItem, ManualMessage, MasterclassNotification
+from app.maintenance import allowed_telegram_ids as parse_allowed_telegram_ids
 
 
 DIGITAL_ACCESS_CODES = {
@@ -214,8 +215,10 @@ def dispatch_due_masterclass_notifications(
     course_url: str = "",
     account_url: str = "",
     test_only: bool = False,
+    allowed_telegram_ids: str | None = None,
 ) -> dict[str, int]:
-    counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "failed": 0}
+    counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "maintenance_filtered": 0, "failed": 0}
+    allowed_ids = parse_allowed_telegram_ids(allowed_telegram_ids) if allowed_telegram_ids is not None else None
     due = list(session.scalars(
         select(MasterclassNotification)
         .where(MasterclassNotification.status == "pending", MasterclassNotification.due_at <= datetime.now(UTC))
@@ -242,6 +245,9 @@ def dispatch_due_masterclass_notifications(
         )
         if not contact:
             counters["waiting_contact"] += 1
+            continue
+        if allowed_ids is not None and contact.telegram_user_id not in allowed_ids:
+            counters["maintenance_filtered"] += 1
             continue
         access = access_resolver(session, notification.user_id)
         if "ACCESS_MASTERCLASS" not in access:

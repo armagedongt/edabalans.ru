@@ -22,6 +22,7 @@ from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_pres
 from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
+from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, maintenance_allows, record_maintenance_contact
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
@@ -115,8 +116,41 @@ def _upsert_contact(session: Session, bot: BotInstance, user: dict, chat: dict) 
     return contact
 
 
+def _maintenance_allows_contact(contact: Contact) -> bool:
+    return maintenance_allows(
+        settings.telegram_maintenance_mode,
+        settings.telegram_maintenance_allowed_user_ids,
+        contact.telegram_user_id,
+    )
+
+
+def _maintenance_notice(session: Session) -> ContentItem | SimpleNamespace:
+    item = session.scalar(select(ContentItem).where(ContentItem.code == MAINTENANCE_CONTENT_CODE))
+    if item:
+        return item
+    return SimpleNamespace(
+        code=MAINTENANCE_CONTENT_CODE,
+        title="Режим ремонта",
+        body_source=DEFAULT_MAINTENANCE_MESSAGE,
+        media_kind=None,
+        media_path=None,
+        telegram_file_id=None,
+    )
+
+
+def _handle_maintenance_contact(
+    session: Session,
+    contact: Contact,
+    update_id: str,
+    interaction_type: str,
+) -> None:
+    record_maintenance_contact(session, contact, update_id, interaction_type)
+    client().send_content(contact.chat_id, _maintenance_notice(session), {})
+
+
 def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient) -> tuple[int, int]:
     contacts = session.scalars(select(Contact).where(Contact.status == row.segment.get("status", "active"))).all()
+    contacts = [contact for contact in contacts if _maintenance_allows_contact(contact)]
     existing = set(session.scalars(select(BroadcastRecipient.contact_id).where(BroadcastRecipient.broadcast_id == row.id)))
     for contact in contacts:
         if contact.id not in existing:
@@ -151,6 +185,9 @@ async def scheduler_loop() -> None:
                     if stopped_presale:
                         session.commit()
                     for run in due_runs(session):
+                        contact = session.get(Contact, run.contact_id)
+                        if not contact or not _maintenance_allows_contact(contact):
+                            continue
                         if run.status == "waiting":
                             resume_wait_timeout(session, run)
                         advance_run(session, run, tg)
@@ -165,6 +202,11 @@ async def scheduler_loop() -> None:
                             course_url=settings.masterclass_course_url,
                             account_url=settings.masterclass_account_url,
                             test_only=settings.postpurchase_test_only,
+                            allowed_telegram_ids=(
+                                settings.telegram_maintenance_allowed_user_ids
+                                if settings.telegram_maintenance_mode
+                                else None
+                            ),
                         )
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
@@ -268,6 +310,7 @@ def health() -> dict:
         "scheduler": settings.scheduler_enabled,
         "polling": settings.telegram_polling_enabled,
         "bot": settings.telegram_test_bot_username,
+        "maintenance": settings.telegram_maintenance_mode,
     }
 
 
@@ -306,7 +349,8 @@ def process_update(update: dict, session: Session) -> dict:
     update_id = str(update.get("update_id", ""))
     if not update_id:
         raise HTTPException(400, "update_id is required")
-    if session.get(UpdateReceipt, update_id):
+    receipt_id = f"{bot.id}:{update_id}"
+    if session.get(UpdateReceipt, receipt_id):
         return {"ok": True, "duplicate": True}
 
     message = update.get("message")
@@ -314,7 +358,7 @@ def process_update(update: dict, session: Session) -> dict:
     member = update.get("chat_member")
     join_request = update.get("chat_join_request")
     update_type = "chat_member" if member else ("chat_join_request" if join_request else ("callback_query" if callback else "message"))
-    session.add(UpdateReceipt(update_id=update_id, bot_instance_id=bot.id, update_type=update_type))
+    session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type=update_type))
 
     if member or join_request:
         payload = member or join_request
@@ -328,6 +372,10 @@ def process_update(update: dict, session: Session) -> dict:
             session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, telegram_user_id=str(person["id"]), event_type=event_kind, deduplication_key=f"telegram:{update_id}:{event_kind}", metadata_json={"invite_url": invite_url}))
     elif message:
         contact = _upsert_contact(session, bot, message["from"], message["chat"])
+        if not _maintenance_allows_contact(contact):
+            _handle_maintenance_contact(session, contact, receipt_id, "message")
+            session.commit()
+            return {"ok": True, "maintenance": True}
         text = message.get("text", "")
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
@@ -382,6 +430,11 @@ def process_update(update: dict, session: Session) -> dict:
     elif callback:
         msg = callback.get("message") or {}
         contact = _upsert_contact(session, bot, callback["from"], msg.get("chat") or {"id": callback["from"]["id"]})
+        if not _maintenance_allows_contact(contact):
+            client().answer_callback(str(callback["id"]), "Бот временно на ремонте")
+            _handle_maintenance_contact(session, contact, receipt_id, "callback_query")
+            session.commit()
+            return {"ok": True, "maintenance": True}
         run = resume_callback(session, contact.id, callback.get("data", ""))
         client().answer_callback(str(callback["id"]), "Интенсив запускается")
         if run:
@@ -584,8 +637,11 @@ def simulate_start_router(body: dict) -> dict:
 
 @app.post("/bot-api/contacts/{contact_id}/accelerated-run", dependencies=[Depends(require_admin)])
 def accelerated_run(contact_id: str, body: AcceleratedRunIn, session: Session = Depends(get_db)) -> dict:
-    if not session.get(Contact, contact_id):
+    contact = session.get(Contact, contact_id)
+    if not contact:
         raise HTTPException(404, "Contact not found")
+    if not _maintenance_allows_contact(contact):
+        raise HTTPException(409, "Пользователь находится в листе ожидания режима ремонта")
     runs = list(session.scalars(select(SequenceRun).where(SequenceRun.contact_id == contact_id)))
     if body.reset_technical_state and runs:
         session.execute(delete(StepDelivery).where(StepDelivery.run_id.in_([r.id for r in runs])))
@@ -601,6 +657,8 @@ def manual_message(contact_id: str, body: ManualMessageIn, admin: str = Depends(
     contact = session.get(Contact, contact_id)
     if not contact:
         raise HTTPException(404, "Contact not found")
+    if not _maintenance_allows_contact(contact):
+        raise HTTPException(409, "Во время ремонта сообщения разрешены только тестовым аккаунтам")
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=body.text, status="pending", operator_email=admin)
     session.add(log); session.flush()
     content = SimpleNamespace(body_source=body.text, title="Ручное сообщение", media_kind=None, media_path=None, telegram_file_id=None)

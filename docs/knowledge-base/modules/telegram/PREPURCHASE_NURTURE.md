@@ -1,6 +1,7 @@
 # Telegram: основная рассылка до покупки
 
-Статус: `implemented_not_deployed`  
+Статус: `deployed_maintenance_only` — граф и 17 редакционных окон находятся в
+production, но массовая доставка закрыта глобальным maintenance allowlist.
 Владелец содержания: Сергей Воронцов  
 Проверено: 24.08.2026
 

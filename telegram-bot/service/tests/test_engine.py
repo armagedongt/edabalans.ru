@@ -44,7 +44,10 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 50
+        assert session.scalar(select(func.count(ContentItem.id))) == 51
+        maintenance = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_maintenance_notice"))
+        assert maintenance.status == "published"
+        assert "@FitnessSergey" in maintenance.body_source
         assert "Навигация!" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_navigation_pin"))
         assert "Сделайте похудение проще" in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))
         assert "похудение-это-есть.рф/intensiv" not in session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_welcome_offer"))

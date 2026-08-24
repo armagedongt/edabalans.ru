@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
 from app.masterclass_triggers import editorial_help
+from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE
 
 
 START_ENTRY_CODE = "start_attribution_entry"
@@ -104,6 +105,13 @@ def _messages() -> list[dict]:
 
 def _start_system_messages() -> list[dict]:
     rows = [
+        (
+            "maintenance_notice",
+            "Режим ремонта — сообщение посетителю",
+            DEFAULT_MAINTENANCE_MESSAGE,
+            None,
+            ["система", "ремонт", "лист ожидания"],
+        ),
         (
             "start_navigation_pin",
             "Первый Start — навигационный закреп",
@@ -300,24 +308,37 @@ def _postpurchase_messages() -> list[dict]:
 
 
 def seed_defaults(session: Session, username: str) -> dict[str, int]:
+    resolved_username = (username or "TetrisgfgfgfBot").lstrip("@")
+    is_main_bot = resolved_username.casefold() == "fitness_talks_bot"
     bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
     if not bot:
-        bot = BotInstance(code="test", username=username or "TetrisgfgfgfBot", display_name="Тестовый бот", token_env_name="TELEGRAM_TEST_BOT_TOKEN", is_active=True)
+        bot = BotInstance(
+            code="test",
+            username=resolved_username,
+            display_name="Основной бот" if is_main_bot else "Тестовый бот",
+            token_env_name="TELEGRAM_TEST_BOT_TOKEN",
+            is_production=is_main_bot,
+            is_active=True,
+        )
         session.add(bot)
+    elif username:
+        bot.username = resolved_username
+        bot.is_production = is_main_bot
+        bot.display_name = "Основной бот" if bot.is_production else "Тестовый бот"
 
     items: dict[str, ContentItem] = {}
     postpurchase_rows = _postpurchase_messages()
-    postpurchase_codes = {row["code"] for row in postpurchase_rows}
+    published_codes = {row["code"] for row in postpurchase_rows} | {"maintenance_notice"}
     for row in [*_messages(), *_start_system_messages(), *postpurchase_rows]:
         code = f"tpl_{row['code']}"
         item = session.scalar(select(ContentItem).where(ContentItem.code == code))
         if not item:
-            item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="published" if row["code"] in postpurchase_codes else "draft", origin_system="template")
+            item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="published" if row["code"] in published_codes else "draft", origin_system="template")
             session.add(item)
             session.flush()
-        elif row["code"] in postpurchase_codes:
-            # Publish only this approved test module. Replace known seed
-            # placeholders, but never overwrite text edited by the owner.
+        elif row["code"] in published_codes:
+            # System and test-only messages must remain sendable. Replace known
+            # seed placeholders, but never overwrite text edited by the owner.
             item.status = "published"
             if (item.body_source or "").lstrip().startswith("[Добавьте ") or "Поменять почту" in (item.body_source or ""):
                 item.body_source = row["body"]
