@@ -364,6 +364,10 @@
       <div class="crm-row-meta">${date(item.paid_at || item.source_event_at, true)} · ${esc(item.status)}${item.product_code ? ` · ${esc(item.product_code)}` : ""}</div></div>`;
   }
 
+  function purchasedProductRow(item) {
+    return `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.product_name)}</span>${item.tariff ? `<strong>${esc(item.tariff)}</strong>` : ""}</div></div>`;
+  }
+
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await api(`/admin/api/users/${id}`);
@@ -422,6 +426,7 @@
             ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             ${user.messengers.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.platform)}</span><strong>${esc(item.username ? `@${item.username}` : item.platform_user_id || "без ID")}</strong></div></div>`).join("")}
           </section>
+          <section class="crm-card"><div class="crm-card-title">Купленные продукты и тарифы</div>${(user.purchased_products || []).map(purchasedProductRow).join("") || '<div class="crm-empty">Подтверждённых продуктов пока нет</div>'}</section>
           <section class="crm-card"><div class="crm-card-title">История покупок</div>${user.payments.map(paymentRow).join("") || '<div class="crm-empty">Покупок пока нет</div>'}</section>
           <section class="crm-card"><div class="crm-card-title">Ручная проверка доступов <span class="crm-card-sub">${esc(user.access_review_status)}</span></div>
             <div class="crm-tags">${user.accesses.filter((item)=>!item.revoked_at).map((item)=>`<button class="crm-tag revoke-access" data-code="${esc(item.code)}">${esc(item.name)} ×</button>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>

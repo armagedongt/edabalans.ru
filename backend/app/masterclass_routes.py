@@ -13,11 +13,11 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
-from app.app_auth import create_placement_token, require_placement
+from app.app_auth import create_placement_token, require_app_user, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
@@ -28,6 +28,7 @@ from app.models import (
     UserCoursePolicy,
 )
 from app.pricing_service import active_pricing_version, pricing_entry_map
+from app.product_identity import purchased_products
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
 
@@ -306,18 +307,28 @@ def review_week_due(db: Session, user_id: uuid.UUID, opened_at: datetime, day: i
     return aware_utc(opened_at) + timedelta(days=day)
 
 
+def unopened_day_reminder_due(
+    db: Session,
+    user_id: uuid.UUID,
+    progress: MasterclassDayProgress,
+    now: datetime,
+) -> datetime:
+    profile = test_profile(db, user_id)
+    if profile:
+        return now + timedelta(seconds=profile.notification_delay_seconds)
+    unlock_at = scheduled_unlock_at(db, user_id, progress, now)
+    _, local_timezone = course_timezone(progress.timezone_name)
+    local_day = unlock_at.astimezone(local_timezone).date()
+    return datetime.combine(local_day, time(hour=18), tzinfo=local_timezone).astimezone(timezone.utc)
+
+
 def resolve_masterclass_user(
     request: Request,
     db: Session,
     email: str,
     settings: Settings,
 ) -> User:
-    # During the Tilda transition the closed Members Area page supplies the
-    # current email. Product rights still come only from PostgreSQL.
-    try:
-        return resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
-    except AppAccessError as exc:
-        raise HTTPException(403, str(exc)) from exc
+    return require_app_user(request, email, db, "ACCESS_MASTERCLASS", settings)
 
 
 def course_step_kinds(day: int) -> list[str]:
@@ -335,6 +346,10 @@ def course_event(
     placement: str | None = None,
     details: dict | None = None,
 ) -> MasterclassEvent:
+    details = dict(details or {})
+    detail_day = details.get("day")
+    if detail_day in COURSE_DAYS and "day_title" not in details:
+        details["day_title"] = COURSE_DAYS[detail_day]["title"]
     event = db.scalar(
         select(MasterclassEvent).where(
             MasterclassEvent.user_id == user_id,
@@ -347,11 +362,20 @@ def course_event(
             event_key=event_key,
             event_type=event_type,
             placement=placement,
-            details=details or {},
+            details=details,
         )
         db.add(event)
         db.flush()
         if event_type in COURSE_ACTIVITY_EVENTS:
+            db.execute(
+                update(MasterclassNotification)
+                .where(
+                    MasterclassNotification.user_id == user_id,
+                    MasterclassNotification.notification_kind == "course_stalled_72h",
+                    MasterclassNotification.status == "pending",
+                )
+                .values(status="skipped", error_message="newer course activity recorded")
+            )
             queue_notification(
                 db,
                 user_id,
@@ -360,8 +384,9 @@ def course_event(
                 notification_due(db, user_id, datetime.now(timezone.utc) + timedelta(hours=72)),
                 "tpl_postpurchase_tempo_late",
                 payload={
-                    "day": (details or {}).get("day"),
-                    "step_index": (details or {}).get("step_index"),
+                    "day": details.get("day"),
+                    "day_title": details.get("day_title"),
+                    "step_index": details.get("step_index"),
                 },
             )
     return event
@@ -535,6 +560,11 @@ def course_payload(
                 "app": app_payload,
             }
         )
+    purchases = purchased_products(db, user.id)
+    masterclass_purchase = next(
+        (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
+        None,
+    )
     return {
         "ok": True,
         "course_version": COURSE_MANIFEST["courseVersion"],
@@ -543,6 +573,7 @@ def course_payload(
         "accelerated_test": bool(test_profile(db, user.id)),
         "fully_unlocked": masterclass_fully_unlocked(db, user.id),
         "current_day": max(progress_rows) if progress_rows else 1,
+        "masterclass_tariff": masterclass_purchase["tariff"] if masterclass_purchase else None,
         "days": days,
     }
 
@@ -588,8 +619,8 @@ def course_state(
     course_event(
         db,
         user.id,
-        "course:opened",
-        "masterclass_course_opened",
+        f"course:visit:{uuid.uuid4().hex}",
+        "masterclass_day_opened",
         details={"program_days": COURSE_LAST_DAY},
     )
     db.commit()
@@ -739,13 +770,28 @@ def course_update_check(
             "task_acknowledged",
             details={"day": day},
         )
-        course_event(
+        completed_event = course_event(
             db,
             user.id,
             f"course:day:{day}:completed",
             "masterclass_day_completed",
             details={"day": day},
         )
+        if day < COURSE_LAST_DAY:
+            unlock_at = scheduled_unlock_at(db, user.id, progress, now)
+            queue_notification(
+                db,
+                user.id,
+                completed_event,
+                "course_day_unopened_18h",
+                unopened_day_reminder_due(db, user.id, progress, now),
+                "tpl_postpurchase_day_unopened",
+                payload={
+                    "day": day + 1,
+                    "day_title": COURSE_DAYS[day + 1]["title"],
+                    "unlock_at": unlock_at.isoformat(),
+                },
+            )
         if day == COURSE_LAST_DAY:
             course_event(
                 db,
@@ -954,6 +1000,33 @@ def create_messenger_link(
     }
 
 
+@router.get("/messenger-links/status")
+def messenger_link_status(
+    request: Request,
+    email: str,
+    platform: str = "telegram",
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    if platform not in {"telegram", "max"}:
+        raise HTTPException(422, "unsupported messenger platform")
+    user = resolve_masterclass_user(request, db, email, settings)
+    account = db.scalar(
+        select(MessengerAccount)
+        .where(
+            MessengerAccount.user_id == user.id,
+            MessengerAccount.platform == platform,
+            MessengerAccount.linked_at.is_not(None),
+        )
+        .order_by(MessengerAccount.linked_at.desc())
+    )
+    return {
+        "ok": True,
+        "platform": platform,
+        "linked": account is not None,
+    }
+
+
 def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:
     now = datetime.now(timezone.utc)
     return set(db.scalars(select(Resource.code).join(UserAccess, UserAccess.resource_id == Resource.id).where(UserAccess.user_id == user_id, UserAccess.revoked_at.is_(None), (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)))).all())
@@ -1100,9 +1173,11 @@ def build_offers(
         standard = standard_amount(code, int(product["standard"]))
         return {
             "code": f"single:{code}",
+            "composition": "single",
             "title": product["name"],
             "description": product["description"],
-            "details": product["features"],
+            "long_description": product.get("long_description", ""),
+            "details": [],
             "items": [code],
             "standard_price": standard,
             "price": min(single_price, standard) if discounted else standard,
@@ -1115,6 +1190,7 @@ def build_offers(
         standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
         return {
             "code": "bundle:digital",
+            "composition": "bundle",
             "title": "Вообще всё, что вам может понадобиться",
             "description": "Все недостающие самостоятельные материалы одним комплектом.",
             "details": [{"name": product["name"], "description": product["description"]} for _, product in missing],
@@ -1137,9 +1213,11 @@ def build_offers(
     }
     consultation_card = {
         "code": "single:consultation",
+        "composition": "single",
         "title": "Индивидуальная консультация",
         "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
-        "details": consultation_details,
+        "long_description": "",
+        "details": [],
         "items": ["consultation"],
         "standard_price": standard_amount("consultation", 8900),
         "price": catalog_amount(
@@ -1162,6 +1240,7 @@ def build_offers(
                 digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
                 cards.append({
                     "code": "bundle:consultation",
+                    "composition": "bundle",
                     "title": "Максимальный комплект с консультацией",
                     "description": "Индивидуальная консультация и все недостающие самостоятельные материалы одним комплектом.",
                     "details": [consultation_detail, *[{"name": p["name"], "description": p["description"]} for _, p in missing]],
@@ -1192,7 +1271,27 @@ def build_offers(
     visible_expiry = None if placement == "day-1-offer" else (
         aware_utc(own.expires_at).isoformat() if own and own.expires_at else None
     )
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": visible_expiry, "owned_resources": sorted(owned), "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
+    masterclass_purchase = next(
+        (
+            item
+            for item in purchased_products(db, user.id)
+            if str(item.get("product_code") or "").startswith("MASTERCLASS_")
+        ),
+        None,
+    )
+    owned_products = [{
+        "code": "masterclass",
+        "name": "Мастер-класс по изменению питания и пищевых привычек",
+        "tariff": masterclass_purchase["tariff"] if masterclass_purchase else "",
+    }]
+    owned_products.extend(
+        {"code": code, "name": product["name"]}
+        for code, product in PRODUCTS.items()
+        if product["resource"] in owned
+    )
+    if "ACCESS_CONSULTATION" in owned:
+        owned_products.append({"code": "consultation", "name": "Индивидуальная консультация"})
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
 @router.get("/offers")

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import hashlib
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -31,10 +31,10 @@ def _is_disposable_identity(session: Session, user_id: str) -> bool:
 
 def _queue_link_messages(session: Session, user_id: str, token_id: str) -> None:
     now = datetime.now(UTC)
-    for kind, code in (
+    for position, (kind, code) in enumerate((
         ("messenger_identity", "tpl_postpurchase_identity"),
         ("messenger_questionnaire", "tpl_postpurchase_questionnaire"),
-    ):
+    )):
         key = f"messenger-link:{token_id}:{kind}"
         exists = session.scalar(
             select(MasterclassNotification.id).where(
@@ -49,7 +49,7 @@ def _queue_link_messages(session: Session, user_id: str, token_id: str) -> None:
                     notification_kind=kind,
                     content_code=code,
                     deduplication_key=key,
-                    due_at=now,
+                    due_at=now + timedelta(seconds=position),
                     payload={"messenger_link_token_id": token_id},
                 )
             )
@@ -123,4 +123,4 @@ def consume_masterclass_link(
         reason="messenger_link_confirmed",
     )
     _queue_link_messages(session, token.user_id, token.id)
-    return True, "Telegram привязан. Сейчас пришлю ваши данные и стартовую анкету отдельными сообщениями."
+    return True, "Telegram привязан. Сейчас пришлю ваши данные и анкету, а затем коротко напишу, что сделать дальше."

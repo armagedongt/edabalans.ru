@@ -25,9 +25,9 @@ class Settings(BaseSettings):
     auto_create_schema: bool = True
     scheduler_interval_seconds: float = 2.0
     media_root: str = "./telegram-bot/runtime/media"
-    masterclass_offers_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/members/courses/master-klass"
-    masterclass_course_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/members/courses/master-klass"
-    masterclass_account_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/members/courses/master-klass"
+    masterclass_offers_url: str = "https://похудение-это-есть.рф/lk"
+    masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
+    masterclass_account_url: str = "https://похудение-это-есть.рф/lk"
 
     model_config = SettingsConfigDict(
         env_file=("telegram-bot/.env", ".env"),

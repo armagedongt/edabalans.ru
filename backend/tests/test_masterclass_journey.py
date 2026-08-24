@@ -20,7 +20,7 @@ from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
-    MessengerLinkToken, OfferCheckout, OfferStage,
+    MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, Resource, User, UserAccess, UserEmail,
     UserLegalAcceptance, UserOffer,
 )
@@ -77,6 +77,19 @@ def setup(authenticated=True):
         user = User(display_name="Участник", status="active")
         db.add(user); db.flush()
         db.add(UserEmail(user_id=user.id, email_original="member@example.test", email_normalized="member@example.test", is_primary=True, source="test"))
+        product = Product(code="MASTERCLASS_RECIPES", name="Мастер-класс · Стандартный", status="active")
+        db.add(product); db.flush()
+        db.add(Payment(
+            user_id=user.id,
+            product_id=product.id,
+            source="test",
+            external_order_id="test-masterclass-order",
+            email_at_purchase="member@example.test",
+            product_name_raw="Сырой параметр оплаты",
+            currency="RUB",
+            payment_status="paid",
+            paid_at=datetime.now(timezone.utc),
+        ))
         resources = {}
         for code in ("ACCESS_MASTERCLASS", "ACCESS_RECIPES", "ACCESS_CONSULTATION"):
             resources[code] = Resource(code=code, name=code, status="active")
@@ -107,16 +120,16 @@ def setup(authenticated=True):
     return TestClient(app, headers=headers), factory
 
 
-def test_masterclass_personal_data_uses_tilda_email_and_server_access():
+def test_masterclass_personal_data_requires_confirmed_app_session():
     client, _ = setup(authenticated=False)
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test"
     )
-    assert response.status_code == 200
+    assert response.status_code == 401
     denied = client.get(
         "/api/masterclass/questionnaires/onboarding?email=other@example.test"
     )
-    assert denied.status_code == 403
+    assert denied.status_code == 401
 
 
 def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
@@ -137,6 +150,11 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
 
 def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
     client, factory = setup()
+    status = client.get(
+        "/api/masterclass/messenger-links/status?email=member@example.test&platform=telegram"
+    )
+    assert status.status_code == 200
+    assert status.json()["linked"] is False
     first = client.post("/api/masterclass/messenger-links", json={
         "email": "member@example.test",
         "platform": "telegram",
@@ -166,6 +184,36 @@ def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
         second_expiry = rows[1].expires_at.replace(tzinfo=timezone.utc) if rows[1].expires_at.tzinfo is None else rows[1].expires_at
         assert first_expiry <= now
         assert second_expiry > now
+        user_id = db.scalar(select(User.id))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="42",
+            username="member",
+            linked_at=now,
+            source="test",
+        ))
+        db.commit()
+
+    linked = client.get(
+        "/api/masterclass/messenger-links/status?email=member@example.test&platform=telegram"
+    )
+    assert linked.status_code == 200
+    assert linked.json()["linked"] is True
+    assert "username" not in linked.json()
+
+
+def test_messenger_link_cannot_be_created_or_probed_by_email_alone():
+    client, _ = setup(authenticated=False)
+    created = client.post(
+        "/api/masterclass/messenger-links",
+        json={"email": "member@example.test", "platform": "telegram"},
+    )
+    status = client.get(
+        "/api/masterclass/messenger-links/status?email=member@example.test&platform=telegram"
+    )
+    assert created.status_code == 401
+    assert status.status_code == 401
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
@@ -214,7 +262,8 @@ def test_day_one_offer_shows_early_price_without_starting_countdown():
     )
     assert triggered.json()["expires_at"] is not None
     assert reopened.json()["expires_at"] is None
-    assert reopened.json()["offers"][0]["details"][0]["name"] != reopened.json()["offers"][0]["title"]
+    assert reopened.json()["offers"][0]["composition"] == "single"
+    assert reopened.json()["offers"][0]["details"] == []
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id))) == 1
 
@@ -232,15 +281,20 @@ def test_day_one_offer_shows_early_price_without_starting_countdown():
         assert day_one.json()["expires_at"] is None
 
 
-def test_every_single_offer_lists_features_instead_of_repeating_its_title():
+def test_single_offers_stay_concise_and_bundles_list_their_products():
     def assert_composition(payload):
         single_cards = [
             card for card in payload["offers"] if card["code"].startswith("single:")
         ]
         assert single_cards
         for card in single_cards:
-            assert card["details"]
-            assert all(detail["name"] != card["title"] for detail in card["details"])
+            assert card["composition"] == "single"
+            assert card["details"] == []
+
+        for card in payload["offers"]:
+            if card["code"].startswith("bundle:"):
+                assert card["composition"] == "bundle"
+                assert card["details"]
 
     client, _ = setup()
     standard = client.get(
@@ -249,6 +303,17 @@ def test_every_single_offer_lists_features_instead_of_repeating_its_title():
     )
     assert standard.status_code == 200
     assert_composition(standard.json())
+
+    early = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-1-offer")
+    )
+    bundle = next(
+        card for card in early.json()["offers"]
+        if card["code"] == "bundle:digital"
+    )
+    assert bundle["composition"] == "bundle"
+    assert bundle["details"]
 
     remaining_client, factory = setup()
     with factory() as db:
@@ -275,6 +340,12 @@ def test_every_single_offer_lists_features_instead_of_repeating_its_title():
         "single:training", "single:recordings"
     }
     assert_composition(remaining.json())
+    owned_names = {
+        product["name"] for product in remaining.json()["owned_products"]
+    }
+    assert "Мастер-класс по изменению питания и пищевых привычек" in owned_names
+    assert "Система рецептов" in owned_names
+    assert "Мини-курс «Калорийный»" in owned_names
 
 
 def test_offer_placement_cannot_be_forged_by_tilda_client():
@@ -436,8 +507,14 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     )
     assert offer_index == len(day_steps) - 1
 
+    account = client.get("/api/account?email=member@example.test")
+    assert account.status_code == 200
+    assert account.json()["courses"][0]["tariff"] == "Стандартный"
+    assert account.json()["purchased_products"][0]["product_code"] == "MASTERCLASS_RECIPES"
+
     state = client.get("/api/masterclass/course?email=member@example.test")
     assert state.status_code == 200
+    assert state.json()["masterclass_tariff"] == "Стандартный"
     day = state.json()["days"][0]
     assert day["opened"] is True
     assert day["steps_total"] == len(day_steps)
@@ -489,6 +566,14 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         assert checked.status_code == 200
     assert checked.json()["days"][0]["completed"] is True
 
+    with factory() as db:
+        reminder = db.scalar(select(MasterclassNotification).where(
+            MasterclassNotification.notification_kind == "course_day_unopened_18h"
+        ))
+        assert reminder is not None
+        assert reminder.payload["day"] == 2
+        assert reminder.payload["day_title"]
+
     too_early = client.post(
         "/api/masterclass/course/days/2/open",
         json={"email": "member@example.test"},
@@ -525,6 +610,9 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         ))
         assert stalled
         assert all(row.content_code == "tpl_postpurchase_tempo_late" for row in stalled)
+        pending_stall = next(row for row in stalled if row.status == "pending")
+        due = pending_stall.due_at.replace(tzinfo=timezone.utc) if pending_stall.due_at.tzinfo is None else pending_stall.due_at
+        assert timedelta(hours=71, minutes=59) < due - datetime.now(timezone.utc) <= timedelta(hours=72)
         assert db.scalar(
             select(func.count(MasterclassEvent.id)).where(
                 MasterclassEvent.event_key == "course:day:2:opened"
@@ -532,17 +620,17 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         ) == 1
 
 
-def test_course_api_uses_tilda_email_but_still_requires_server_access():
+def test_course_api_requires_confirmed_app_session():
     client, _ = setup(authenticated=False)
     opened = client.get(
         "/api/masterclass/course?email=member@example.test",
         headers={},
     )
-    assert opened.status_code == 200
+    assert opened.status_code == 401
     denied = client.get(
         "/api/masterclass/course?email=other@example.test"
     )
-    assert denied.status_code == 403
+    assert denied.status_code == 401
 
 
 def test_admin_can_enable_isolated_accelerated_course_profile():

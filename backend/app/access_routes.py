@@ -3,9 +3,10 @@ from __future__ import annotations
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import re
+import secrets
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -21,7 +22,8 @@ from app.access_service import (
     review_blocks_access,
     user_for_email,
 )
-from app.auth import require_admin
+from app.app_auth import session_email
+from app.auth import require_admin, session_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.legal_service import (
@@ -37,6 +39,7 @@ from app.models import (
     UserAccess,
     UserEmail,
 )
+from app.product_identity import purchased_products
 
 
 router = APIRouter(tags=["access-links"])
@@ -210,11 +213,15 @@ def account_payload(email: str, db: Session) -> dict:
             False,
         ),
     ]
+    purchases = purchased_products(db, user.id)
+    masterclass_purchase = next(
+        (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
+        None,
+    )
     courses = []
     for code, title, summary, resource, app, app_ready in definitions:
         has_access = resource in owned
-        courses.append(
-            {
+        item = {
                 "code": code,
                 "title": title,
                 "summary": summary,
@@ -223,31 +230,51 @@ def account_payload(email: str, db: Session) -> dict:
                 "state": "available" if has_access and app_ready else "preparing" if has_access else "not_owned",
                 "app": app if has_access and app_ready and not legal["required"] else None,
             }
-        )
+        if code == "masterclass" and masterclass_purchase:
+            item["tariff"] = masterclass_purchase["tariff"]
+        courses.append(item)
     return {
         "ok": True,
         "state": "ready",
         "review_status": user.access_review_status,
         "email": email.strip().lower(),
         "legal": legal,
+        "purchased_products": purchases,
         "courses": courses,
     }
 
 
+def require_account_user(request: Request, email: str, db: Session, settings: Settings) -> User:
+    normalized = email.strip().lower()
+    authenticated = normalized if session_admin(request) else session_email(request, settings)
+    if not authenticated or not secrets.compare_digest(authenticated, normalized):
+        raise HTTPException(401, "email confirmation is required")
+    user = user_for_email(db, normalized)
+    if user is None:
+        raise HTTPException(404, "Аккаунт пока не связан с CRM")
+    return user
+
+
 @router.get("/api/account")
-def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
-    """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies rights."""
+def account_catalog(
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    """Universal LK home protected by the confirmed application session."""
+    require_account_user(request, email, db, settings)
     return account_payload(email, db)
 
 
 @router.post("/api/account/legal-acceptances")
 def accept_account_legal_documents(
     body: LegalAcceptancesIn,
+    request: Request,
     db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = user_for_email(db, body.email)
-    if user is None:
-        raise HTTPException(404, "Аккаунт пока не связан с CRM")
+    user = require_account_user(request, body.email, db, settings)
     db.execute(select(User.id).where(User.id == user.id).with_for_update())
     try:
         accept_current_legal_documents(
@@ -263,10 +290,13 @@ def accept_account_legal_documents(
 
 
 @router.post("/api/access/registration-seen")
-def registration_seen(body: LinkActionIn, db: Session = Depends(get_db)) -> dict:
-    user = user_for_email(db, body.email)
-    if user is None:
-        return {"ok": True, "state": "unknown"}
+def registration_seen(
+    body: LinkActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = require_account_user(request, body.email, db, settings)
     if user.access_review_status == "waiting_registration":
         user.access_review_status = "pending"
         user.tilda_access_status = "pending"

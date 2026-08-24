@@ -5,6 +5,7 @@ from html import escape
 import re
 from types import SimpleNamespace
 from typing import Callable
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
@@ -37,6 +38,12 @@ ONBOARDING_QUESTION_TITLES = {
     "mentoring": "Опыт наставничества",
     "attribution": "Как вы узнали о Сергее",
 }
+ONBOARDING_QUESTION_ORDER = {code: index for index, code in enumerate(ONBOARDING_QUESTION_TITLES)}
+MASTERCLASS_TARIFFS = {
+    "MASTERCLASS_BASIC": "Минимальный",
+    "MASTERCLASS_RECIPES": "Стандартный",
+    "MASTERCLASS_CONSULT": "С консультацией",
+}
 
 
 def crm_access_codes(session: Session, user_id: str) -> set[str]:
@@ -65,6 +72,8 @@ def content_code_for(notification: MasterclassNotification, access: set[str]) ->
         return "tpl_postpurchase_review_consultation" if "ACCESS_CONSULTATION" in access else "tpl_postpurchase_review_no_consultation"
     if notification.notification_kind == "course_stalled_72h":
         return notification.content_code or "tpl_postpurchase_tempo_late"
+    if notification.notification_kind == "course_day_unopened_18h":
+        return notification.content_code or "tpl_postpurchase_day_unopened"
     if notification.notification_kind == "sales_last_chance_due":
         stage = str((notification.payload or {}).get("stage") or "")
         if stage in {"early", "second"}:
@@ -113,6 +122,71 @@ def course_stall_is_current(session: Session, notification: MasterclassNotificat
     return later_activity is None and completed is None
 
 
+def unopened_day_is_current(session: Session, notification: MasterclassNotification) -> bool:
+    if notification.notification_kind != "course_day_unopened_18h":
+        return True
+    day = int((notification.payload or {}).get("day") or 0)
+    if day < 2:
+        return False
+    opened = session.execute(
+        text(
+            "SELECT 1 FROM masterclass_day_progress "
+            "WHERE user_id=:user_id AND day_number=:day LIMIT 1"
+        ),
+        {"user_id": notification.user_id, "day": day},
+    ).first()
+    previous_completed = session.execute(
+        text(
+            "SELECT 1 FROM masterclass_day_progress "
+            "WHERE user_id=:user_id AND day_number=:previous_day "
+            "AND completed_at IS NOT NULL LIMIT 1"
+        ),
+        {"user_id": notification.user_id, "previous_day": day - 1},
+    ).first()
+    unlock_at = (notification.payload or {}).get("unlock_at")
+    try:
+        unlock_due = datetime.fromisoformat(str(unlock_at)) if unlock_at else None
+        if unlock_due and unlock_due.tzinfo is None:
+            unlock_due = unlock_due.replace(tzinfo=UTC)
+    except ValueError:
+        return False
+    return opened is None and previous_completed is not None and (unlock_due is None or unlock_due <= datetime.now(UTC))
+
+
+def day_url(base_url: str, day: int) -> str:
+    parts = urlsplit(base_url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["course_day"] = str(day)
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
+def telegram_text_parts(body: str, limit: int = 3900) -> list[str]:
+    if len(body) <= limit:
+        return [body]
+    parts: list[str] = []
+    current = ""
+    for paragraph in body.split("\n\n"):
+        candidate = paragraph if not current else current + "\n\n" + paragraph
+        if len(candidate) <= limit:
+            current = candidate
+            continue
+        if current:
+            parts.append(current)
+            current = ""
+        while len(paragraph) > limit:
+            cut = paragraph.rfind("\n", 0, limit)
+            if cut < limit // 2:
+                cut = paragraph.rfind(" ", 0, limit)
+            if cut < limit // 2:
+                cut = limit
+            parts.append(paragraph[:cut].rstrip())
+            paragraph = paragraph[cut:].lstrip()
+        current = paragraph
+    if current:
+        parts.append(current)
+    return parts
+
+
 def rendered(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
     body = item.body_source
     for key, value in values.items():
@@ -153,10 +227,11 @@ def client_values(
     ).scalar()
     payment = session.execute(
         text(
-            "SELECT p.product_name_raw, COALESCE(p.paid_at, p.source_event_at, p.created_at) "
+            "SELECT pr.code, COALESCE(p.paid_at, p.source_event_at, p.created_at) "
             "FROM user_accesses ua "
             "JOIN resources r ON r.id=ua.resource_id "
             "LEFT JOIN payments p ON p.id=ua.source_payment_id "
+            "LEFT JOIN products pr ON pr.id=p.product_id "
             "WHERE ua.user_id=:user_id AND r.code='ACCESS_MASTERCLASS' "
             "AND ua.revoked_at IS NULL "
             "AND (ua.expires_at IS NULL OR ua.expires_at > CURRENT_TIMESTAMP) "
@@ -174,8 +249,8 @@ def client_values(
         {"user_id": contact.user_id},
     ).all()
     questionnaire = "\n\n".join(
-        f"{ONBOARDING_QUESTION_TITLES.get(str(code), str(code))}:\n{answer}"
-        for code, answer in answers
+        f"<b>{escape(ONBOARDING_QUESTION_TITLES.get(str(code), str(code)), quote=True)}:</b>\n{escape(str(answer), quote=True)}"
+        for code, answer in sorted(answers, key=lambda row: ONBOARDING_QUESTION_ORDER.get(str(row[0]), 999))
         if str(answer or "").strip()
     ) or "Стартовая анкета пока не заполнена. Откройте её в первом дне Мастер-класса."
     paid_at = payment[1] if payment else None
@@ -188,9 +263,9 @@ def client_values(
         **values,
         "email": escape(str(email or "не найден"), quote=True),
         "telegram_username": escape(contact.username or "без username", quote=True),
-        "masterclass_tariff": escape(str(payment[0] if payment and payment[0] else "доступ к Мастер-классу"), quote=True),
+        "masterclass_tariff": escape(MASTERCLASS_TARIFFS.get(str(payment[0]) if payment else "", "Тариф уточняется"), quote=True),
         "purchase_date": paid_at.strftime("%d.%m.%Y") if paid_at else "дата не указана",
-        "questionnaire_formatted": escape(questionnaire, quote=True),
+        "questionnaire_formatted": questionnaire,
     }
 
 
@@ -260,6 +335,11 @@ def dispatch_due_masterclass_notifications(
             notification.error_message = "course activity resumed or course completed"
             counters["skipped"] += 1
             continue
+        if not unopened_day_is_current(session, notification):
+            notification.status = "skipped"
+            notification.error_message = "day was opened or is not available"
+            counters["skipped"] += 1
+            continue
         code = content_code_for(notification, access)
         if not code:
             notification.status = "skipped"
@@ -273,6 +353,28 @@ def dispatch_due_masterclass_notifications(
             counters["failed"] += 1
             continue
         values = client_values(session, contact, offers_url, course_url, account_url, item.body_source)
+        payload = notification.payload or {}
+        target_day = int(payload.get("day") or 0)
+        if notification.notification_kind == "course_stalled_72h":
+            current = session.execute(
+                text(
+                    "SELECT day_number, completed_at FROM masterclass_day_progress "
+                    "WHERE user_id=:user_id ORDER BY day_number DESC LIMIT 1"
+                ),
+                {"user_id": notification.user_id},
+            ).first()
+            target_day = int(current.day_number if current else 1)
+            if current and current.completed_at is not None:
+                target_day = min(target_day + 1, 21)
+            payload = {**payload, "day_title": None}
+        if target_day > 0:
+            title = str(payload.get("day_title") or f"День {target_day}")
+            base_course_url = course_url or account_url
+            values.update({
+                "day_number": str(target_day),
+                "day_title": escape(title, quote=True),
+                "day_url": escape(day_url(base_course_url, target_day), quote=True),
+            })
         content = rendered(item, values)
         safe, reason = content_is_sendable(item, content.body_source)
         if not safe:
@@ -280,17 +382,22 @@ def dispatch_due_masterclass_notifications(
             notification.error_message = reason
             counters["failed"] += 1
             continue
-        log = ManualMessage(contact_id=contact.id, direction="out", body_source=content.body_source, status="pending", operator_email="system:masterclass")
-        session.add(log)
         try:
-            log.platform_message_id = sender.send_content(contact.chat_id, content, {})
-            log.status = "sent"
+            parts = telegram_text_parts(content.body_source) if not content.media_kind else [content.body_source]
+            for part in parts:
+                part_content = SimpleNamespace(**content.__dict__)
+                part_content.body_source = part
+                log = ManualMessage(contact_id=contact.id, direction="out", body_source=part, status="pending", operator_email="system:masterclass")
+                session.add(log)
+                log.platform_message_id = sender.send_content(contact.chat_id, part_content, {})
+                log.status = "sent"
             notification.status = "sent"
             notification.sent_at = datetime.now(UTC)
             notification.error_message = None
             counters["sent"] += 1
         except Exception as exc:
-            log.status = "failed"
+            if "log" in locals():
+                log.status = "failed"
             notification.error_message = str(exc)[:2000]
             counters["failed"] += 1
     session.commit()

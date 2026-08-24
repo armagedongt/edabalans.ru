@@ -29,6 +29,7 @@ from app.models import (
     UserOffer,
 )
 from app.masterclass_routes import CLOSING_QUESTIONS, ONBOARDING_QUESTIONS
+from app.product_identity import purchased_products, tariff_name
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 
@@ -466,6 +467,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "product_code": product_code,
                 "product_name": product_name,
                 "product_name_raw": payment.product_name_raw,
+                "tariff": tariff_name(product_code),
                 "amount": money(payment.amount) if payment.amount is not None else None,
                 "amount_is_estimated": payment.amount_is_estimated,
                 "currency": payment.currency,
@@ -476,6 +478,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             }
             for payment, product_code, product_name in payments
         ],
+        "purchased_products": purchased_products(db, user.id),
         "accesses": [
             {
                 "code": code,

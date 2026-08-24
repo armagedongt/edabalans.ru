@@ -197,22 +197,23 @@ def _postpurchase_messages() -> list[dict]:
     rows = [
         (
             "postpurchase_identity",
-            "01 · После привязки — данные клиента",
-            "<b>Проверьте ваши данные</b>\n\n"
-            "Почта: {{email}}\n"
-            "Telegram: @{{telegram_username}}\n"
-            "Тариф: {{masterclass_tariff}}\n"
-            "Дата покупки: {{purchase_date}}\n\n"
-            "Личный кабинет: {{account_url}}\n\nЕсли в данных ошибка, напишите Сергею — самостоятельно менять привязанный email здесь не нужно.",
+            "01 · После привязки — данные и анкета участника",
+            "👉 <b>Данные участника мастер-класса</b>\n\n"
+            "<b>Почта:</b> {{email}}\n"
+            "<b>Telegram:</b> @{{telegram_username}}\n"
+            "<b>Тариф:</b> {{masterclass_tariff}}\n"
+            "<b>Дата покупки:</b> {{purchase_date}}\n"
+            "<b>Личный кабинет:</b> <a href=\"{{account_url}}\">открыть ЛК</a>\n\n"
+            "👉 <b>Анкета участника</b>\n\n{{questionnaire_formatted}}",
             None,
             ["после покупки", "онбординг", "данные клиента"],
         ),
         (
             "postpurchase_questionnaire",
-            "02 · После привязки — анкета для пересылки",
-            "<b>Ваша анкета</b>\n\n"
-            "{{questionnaire_formatted}}\n\n"
-            "Перешлите это сообщение Сергею: @FitnessSergey. Даже если у вас самостоятельный тариф — пожалуйста, отправьте анкету, чтобы начать личный диалог.",
+            "02 · После привязки — что сделать дальше",
+            "Telegram привязан.\n\n"
+            "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
+            "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если Telegram разделил длинную анкету на несколько сообщений, перешлите все части.",
             None,
             ["после покупки", "онбординг", "анкета"],
         ),
@@ -239,9 +240,16 @@ def _postpurchase_messages() -> list[dict]:
             ["после покупки", "рецепты", "допродажа", "доступ есть"],
         ),
         (
+            "postpurchase_day_unopened",
+            "03 · Новый день не открыт к 18:00",
+            "Привет! Вам уже доступен день {{day_number}} — «{{day_title}}». Он открылся сегодня в 06:00 по вашему времени, но вы его ещё не открыли. Просто напоминаю: <a href=\"{{day_url}}\">перейти к дню</a>.",
+            None,
+            ["после покупки", "курс", "день", "18:00"],
+        ),
+        (
             "postpurchase_tempo_late",
-            "05А · Контроль темпа — отстал больше чем на 2 дня",
-            "Вы остановились в Мастер-классе несколько дней назад. Всё уже пройденное сохранено — вернуться можно сразу к следующему шагу: {{course_url}}",
+            "04 · Контроль темпа — три дня без активности",
+            "Вы давно не заходили в Мастер-класс. Сейчас у вас открыт день {{day_number}} — «{{day_title}}». День-два пропустить — нормально, но не откладывайте надолго, чтобы не выпадать из ритма. <a href=\"{{day_url}}\">Продолжить Мастер-класс</a>.",
             None,
             ["после покупки", "темп", "напоминание"],
         ),
@@ -345,7 +353,14 @@ def seed_defaults(
             # System and test-only messages must remain sendable. Replace known
             # seed placeholders, but never overwrite text edited by the owner.
             item.status = "published"
-            if (item.body_source or "").lstrip().startswith("[Добавьте ") or "Поменять почту" in (item.body_source or ""):
+            known_old_postpurchase = (
+                row["code"] == "postpurchase_identity" and "Проверьте ваши данные" in (item.body_source or "")
+            ) or (
+                row["code"] == "postpurchase_questionnaire" and "Ваша анкета" in (item.body_source or "")
+            ) or (
+                row["code"] == "postpurchase_tempo_late" and "Вы остановились в Мастер-классе" in (item.body_source or "")
+            )
+            if (item.body_source or "").lstrip().startswith("[Добавьте ") or "Поменять почту" in (item.body_source or "") or known_old_postpurchase:
                 item.body_source = row["body"]
         elif (item.body_source or "").lstrip().startswith((
             "[Добавьте ", "[Полезный ", "[Сильный ", "[Второй ", "[Пост ",
@@ -543,7 +558,13 @@ def seed_defaults(
         .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_review_week_day7")
         .limit(1)
     )
-    if not current_postpurchase:
+    current_day_unopened = session.scalar(
+        select(SequenceStep.id)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_day_unopened_18h")
+        .limit(1)
+    )
+    if not current_postpurchase or not current_day_unopened:
         last_version = session.scalar(
             select(SequenceVersion.version_no)
             .where(SequenceVersion.sequence_id == post.id)
@@ -555,6 +576,7 @@ def seed_defaults(
         specs = [
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
+            ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
             ("pp_sales_early_owned", "MESSAGE", "postpurchase_recipes_owned", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=true AND has_missing_products", "state": "editorial_slot"}),

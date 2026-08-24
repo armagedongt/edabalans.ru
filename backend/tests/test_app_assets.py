@@ -165,7 +165,15 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert course.status_code == 200
     assert 'id="masterclass-course-app"' in course.text
     assert "api/masterclass/course" in course.text
-    assert "code==='dqs'||code==='closing-review'" in course.text
+    assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
+    assert "function openCourseStep" in course.text
+    assert "function advanceCourseStep" in course.text
+    assert "advanceCourseStep(d,currentStep,true)" in course.text
+    assert "advanceCourseStep(days[state.day-1],currentStep,false)" in course.text
+    assert "saveQuestionnaire('submit')" in course.text
+    assert "openEmbeddedApp('onboarding-questionnaire'" not in course.text
+    assert "disposeInlineMaterial();advanceCourseStep" in course.text
+    assert "К заданиям ↓" in course.text
     loader = client.get("/embed.js").text
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
@@ -176,7 +184,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "waitForTildaEmail" in loader
     assert "protectedApps ? detectTildaMemberEmail() : detectTildaEmail()" in loader
     assert "remembered.source === 'tilda'" not in loader
-    assert "remember(detected, '', 0, 'tilda')" in loader
+    assert "askIdentity(mounts, detected, true)" in loader
+    assert "remember(detected, '', 0, 'tilda')" not in loader
     assert "Откройте приложение из личного кабинета" in loader
     assert "masterclass-course" in loader
     assert "'account': true" in loader
@@ -269,10 +278,12 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
-    assert "напоминания по Мастер-классу и другим вашим программам" in course_html
-    assert "Старая рассылка с предложением купить Мастер-класс отключится" in course_html
-    assert "отправьте боту <code>/stop</code>" in course_html
-    assert "Персональная ссылка для подключения действует 15 минут" in course_html
+    assert "обязательный технический шаг" in course_html
+    assert "После успешной привязки появится кнопка «Продолжить»" in course_html
+    assert "messenger-links/status" in course_html
+    assert "if(messengerConfirmed)advanceCourseStep" in course_html
+    assert "Персональная ссылка для подключения действует 15 минут" not in course_html
+    assert "if(step<d.steps.length-1)openCourseStep(d,step+1)" in course_html
 
     gallery_steps = [
         (day["number"], step["id"])

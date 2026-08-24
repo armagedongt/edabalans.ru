@@ -4,7 +4,11 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
-from app.masterclass_dispatch import client_values, dispatch_due_masterclass_notifications
+from app.masterclass_dispatch import (
+    client_values,
+    dispatch_due_masterclass_notifications,
+    telegram_text_parts,
+)
 from app.models import BotInstance, Contact, ContentItem, MasterclassNotification
 
 
@@ -26,6 +30,10 @@ def session_factory(tmp_path):
         "id TEXT PRIMARY KEY, user_id TEXT NOT NULL, event_type TEXT NOT NULL, "
         "occurred_at DATETIME NOT NULL)"
     ))
+    session.execute(text(
+        "CREATE TABLE IF NOT EXISTS masterclass_day_progress ("
+        "user_id TEXT NOT NULL, day_number INTEGER NOT NULL, completed_at DATETIME)"
+    ))
     session.commit()
     return session
 
@@ -40,9 +48,11 @@ def add_contact_and_content(session):
         "tpl_postpurchase_recipes_owned",
         "tpl_postpurchase_review_consultation",
         "tpl_postpurchase_tempo_late",
+        "tpl_postpurchase_day_unopened",
         "tpl_postpurchase_final_offer",
     ):
-        session.add(ContentItem(code=code, title=code, body_source="Откройте {{offers_url}}", status="published"))
+        body = "Откройте {{day_url}}" if code == "tpl_postpurchase_day_unopened" else "Откройте {{offers_url}}"
+        session.add(ContentItem(code=code, title=code, body_source=body, status="published"))
     session.flush()
     return contact
 
@@ -54,7 +64,8 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
             "CREATE TABLE user_emails (user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
             "CREATE TABLE resources (id TEXT PRIMARY KEY, code TEXT)",
             "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, expires_at DATETIME)",
-            "CREATE TABLE payments (id TEXT PRIMARY KEY, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
+            "CREATE TABLE products (id TEXT PRIMARY KEY, code TEXT, name TEXT)",
+            "CREATE TABLE payments (id TEXT PRIMARY KEY, product_id TEXT, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
             "CREATE TABLE questionnaire_runs (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT)",
             "CREATE TABLE questionnaire_answers (run_id TEXT, question_code TEXT, answer_text TEXT, updated_at DATETIME)",
         ):
@@ -64,11 +75,12 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
             "INSERT INTO user_emails VALUES (:user_id, 'buyer@example.com', 1, CURRENT_TIMESTAMP)"
         ), {"user_id": user_id})
         session.execute(text("INSERT INTO resources VALUES ('mc', 'ACCESS_MASTERCLASS')"))
+        session.execute(text("INSERT INTO products VALUES ('mc-product', 'MASTERCLASS_RECIPES', 'Мастер-класс · Стандартный')"))
         session.execute(text(
-            "INSERT INTO payments VALUES ('mc-payment', 'Мастер-класс · самостоятельный', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
+            "INSERT INTO payments VALUES ('mc-payment', 'mc-product', 'Сырой параметр из платежа', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
         ))
         session.execute(text(
-            "INSERT INTO payments VALUES ('later-payment', 'Рецепты', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
+            "INSERT INTO payments VALUES ('later-payment', NULL, 'Рецепты', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
         ))
         session.execute(text(
             "INSERT INTO user_accesses VALUES (:user_id, 'mc', 'mc-payment', NULL, NULL)"
@@ -91,9 +103,18 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         )
 
         assert values["email"] == "buyer@example.com"
-        assert values["masterclass_tariff"] == "Мастер-класс · самостоятельный"
+        assert values["masterclass_tariff"] == "Стандартный"
         assert "Главный запрос" in values["questionnaire_formatted"]
+        assert "<b>Главный запрос:</b>" in values["questionnaire_formatted"]
         assert "main_request" not in values["questionnaire_formatted"]
+
+
+def test_long_telegram_summary_splits_on_paragraphs():
+    body = "Заголовок\n\n" + ("ответ " * 900) + "\n\nКонец"
+    parts = telegram_text_parts(body)
+    assert len(parts) > 1
+    assert all(len(part) <= 3900 for part in parts)
+    assert "".join("".join(parts).split()) == "".join(body.split())
 
 
 def test_dispatch_chooses_message_from_current_access_and_is_idempotent(tmp_path):
@@ -162,6 +183,72 @@ def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
         assert result["skipped"] == 1
         assert row.status == "skipped"
         assert row.error_message == "nothing relevant to send"
+        assert sender.sent == []
+
+
+def test_unopened_day_reminder_sends_once_only_while_target_is_unopened(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        session.execute(
+            text("INSERT INTO masterclass_day_progress VALUES (:user_id, 1, CURRENT_TIMESTAMP)"),
+            {"user_id": user_id},
+        )
+        notification = MasterclassNotification(
+            id="abababab-abab-abab-abab-abababababab",
+            user_id=user_id,
+            notification_kind="course_day_unopened_18h",
+            content_code="tpl_postpurchase_day_unopened",
+            deduplication_key="day:2:18h",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={"day": 2, "day_title": "Диеты — разные инструменты", "unlock_at": (datetime.now(UTC) - timedelta(hours=12)).isoformat()},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            course_url="https://example.test/lk",
+        )
+        assert result["sent"] == 1
+        assert "course_day=2" in sender.sent[0][2]
+        assert dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )["sent"] == 0
+
+
+def test_unopened_day_reminder_is_skipped_after_target_day_was_opened(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        session.execute(
+            text("INSERT INTO masterclass_day_progress VALUES (:user_id, 1, CURRENT_TIMESTAMP)"),
+            {"user_id": user_id},
+        )
+        session.execute(
+            text("INSERT INTO masterclass_day_progress VALUES (:user_id, 2, NULL)"),
+            {"user_id": user_id},
+        )
+        session.add(MasterclassNotification(
+            user_id=user_id,
+            notification_kind="course_day_unopened_18h",
+            content_code="tpl_postpurchase_day_unopened",
+            deduplication_key="day:2:opened",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={"day": 2, "day_title": "День 2"},
+        ))
+        session.commit()
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+        assert result["skipped"] == 1
         assert sender.sent == []
 
 

@@ -140,16 +140,16 @@
     if (document.getElementById('edabalans-hide-tilda-userbar')) return;
     var style = document.createElement('style');
     style.id = 'edabalans-hide-tilda-userbar';
-    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}';
+    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}[data-edabalans-legal-footer] .edabalans-legal-links{text-align:right}@media(max-width:640px){[data-edabalans-legal-footer]{text-align:center}[data-edabalans-legal-footer] .edabalans-legal-links{text-align:center}}';
     document.head.appendChild(style);
   }
 
   function legalFooterHtml() {
-    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:12px/1.55 Inter,Arial,sans-serif;text-align:center">' +
-      '<div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
-      '<div>Все права защищены. Полное или частичное копирование запрещено.</div>' +
-      '<div style="margin-top:7px">Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
-      '<div style="margin-top:7px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div>' +
+    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 34px;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:13px/1.55 Inter,Arial,sans-serif">' +
+      '<div><div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
+      '<div>Все права защищены. Полное или частичное копирование запрещено.</div></div>' +
+      '<div class="edabalans-legal-links"><div>Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
+      '<div style="margin-top:4px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div></div>' +
       '</footer>';
   }
 
@@ -317,17 +317,20 @@
     var remembered = rememberedIdentity();
     if (protectedApps) {
       hideTildaUserbar();
-      if (detected) {
-        remember(detected, '', 0, 'tilda');
+      if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {
+        remember(remembered.email);
         start(mounts);
         return;
       }
-      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника Tilda…</div>';
+      if (detected) {
+        askIdentity(mounts, detected, true);
+        return;
+      }
+      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника…</div>';
       waitForTildaEmail(function (email) {
-        remember(email, '', 0, 'tilda');
-        start(mounts);
+        askIdentity(mounts, email, true);
       }, function () {
-        tildaIdentityRequired(mounts);
+        askIdentity(mounts, '', true);
       });
       return;
     }
