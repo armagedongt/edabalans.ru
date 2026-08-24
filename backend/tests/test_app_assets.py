@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 os.environ.setdefault(
@@ -19,6 +20,86 @@ def test_stable_embed_loader_is_public() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "data-edabalans-app" in response.text
+
+
+def test_stable_site_footer_loader_is_public() -> None:
+    response = client.get("/site-footer.js")
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-cache"
+    assert "data-edabalans-site-footer" in response.text
+    assert "new Date().getFullYear()" in response.text
+    assert "ИП Воронцов Сергей Сергеевич" in response.text
+    assert "ИНН 230409966750" in response.text
+    assert "Все права защищены" in response.text
+    assert "Копирование материалов запрещено" in response.text
+    assert "root.innerHTML = markup(index)" in response.text
+    assert "roots.forEach(mount)" in response.text
+    assert "document.addEventListener('DOMContentLoaded', boot)" in response.text
+    close_all = re.search(
+        r"    function closeAll\(\) \{\n(?P<body>.*?)\n    \}\n\n    buttons\.forEach",
+        response.text,
+        re.DOTALL,
+    )
+    assert close_all is not None
+    assert "item.setAttribute('aria-expanded', 'false')" in close_all.group("body")
+    assert "item.hidden = false" in close_all.group("body")
+    assert "item.hidden = true" in close_all.group("body")
+    assert "panel.hidden = false" in response.text
+    click_handler = re.search(
+        r"button\.addEventListener\('click', function \(\) \{(?P<body>.*?)\n\s*\}\);",
+        response.text,
+        re.DOTALL,
+    )
+    assert click_handler is not None
+    click_body = click_handler.group("body")
+    assert click_body.index("closeAll();") < click_body.index("panel.hidden = false;")
+    assert click_body.index("button.hidden = true;") < click_body.index("panel.hidden = false;")
+    close_handler = re.search(
+        r"closeButton\.addEventListener\('click', function \(\) \{(?P<body>.*?)\n\s*\}\);",
+        response.text,
+        re.DOTALL,
+    )
+    assert close_handler is not None
+    assert "closeAll();" in close_handler.group("body")
+    assert "button.focus();" in close_handler.group("body")
+    assert "data-close-panel>Бесплатный интенсив" in response.text
+    assert "data-close-panel>Контакты" in response.text
+    assert re.search(
+        r"'<div class=\"eb-site-footer__action-group\">' \+\s*"
+        r"'<button.*?data-panel=\"' \+ intensiveId .*?</button>' \+\s*"
+        r"'<section.*?id=\"' \+ intensiveId .*?</section>' \+\s*"
+        r"'</div>' \+",
+        response.text,
+        re.DOTALL,
+    )
+    assert re.search(
+        r"'<div class=\"eb-site-footer__action-group\">' \+\s*"
+        r"'<button.*?data-panel=\"' \+ contactsId .*?</button>' \+\s*"
+        r"'<section.*?id=\"' \+ contactsId .*?</section>' \+\s*"
+        r"'</div>' \+",
+        response.text,
+        re.DOTALL,
+    )
+    assert ".eb-site-footer{box-sizing:border-box;width:100%;background:transparent" in response.text
+    assert "https://t.me/Fitness_Talks_bot?start=" in response.text
+    assert "https://t.me/Fitness_Talks" in response.text
+    assert "https://t.me/FitnessSergey" in response.text
+    assert "https://max.ru/u/" in response.text
+    assert "LINKS.intensiveTelegram" in response.text
+    assert "Понадобится VPN" in response.text
+    assert "Пока недоступно" in response.text
+    assert "optionLink(LINKS.telegramChannel, 'Telegram-канал')" in response.text
+    assert "optionLink(LINKS.telegram, 'Написать в Telegram')" in response.text
+    assert "optionLink(LINKS.max, 'Написать в MAX')" in response.text
+    assert "MAX-канал" in response.text
+    assert "В разработке" in response.text
+    assert "https://похудение-это-есть.рф/oferta" in response.text
+    assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
+    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in response.text
+    assert "link(LINKS.offer, 'Оферта')" in response.text
+    assert "link(LINKS.privacy, 'Политика обработки данных')" in response.text
+    assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
 
 
 def test_application_fragments_use_server_api() -> None:

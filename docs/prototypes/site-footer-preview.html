@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Подвал сайта — локальный preview</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #f4f1ea;
+      color: #252522;
+      font: 16px/1.5 Arial, sans-serif;
+    }
+    main {
+      width: min(1200px, 100%);
+      min-height: 58vh;
+      margin: 0 auto;
+      padding: 56px 24px;
+      display: flex;
+      align-items: flex-end;
+    }
+    main p { max-width: 620px; margin: 0; opacity: .68; }
+  </style>
+</head>
+<body>
+  <main>
+    <p>Фон принадлежит странице. У подвала нет собственной заливки — здесь он показан на тёплом фоне только для проверки прозрачности.</p>
+  </main>
+  <div data-edabalans-site-footer></div>
+  <script src="../../backend/app/static/site-footer.js"></script>
+  <script>
+    var previewPanel = new URLSearchParams(location.search).get('panel');
+    function openPreviewPanel() {
+      if (!previewPanel) return;
+      var previewButton = document.querySelector('[data-panel*="' + previewPanel + '"]');
+      if (previewButton) previewButton.click();
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', openPreviewPanel);
+    else openPreviewPanel();
+  </script>
+</body>
+</html>
