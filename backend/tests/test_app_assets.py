@@ -261,6 +261,18 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
         index for index, step in enumerate(first_steps)
         if step["id"] == "day-01-questionnaire"
     )
+    messenger_step = next(
+        step for step in first_steps if step["id"] == "day-01-messenger-link"
+    )
+    assert "уведомления об обновлениях" in messenger_step["summary"]
+
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+    assert "напоминания по Мастер-классу и другим вашим программам" in course_html
+    assert "Старая рассылка с предложением купить Мастер-класс отключится" in course_html
+    assert "отправьте боту <code>/stop</code>" in course_html
+    assert "Персональная ссылка для подключения действует 15 минут" in course_html
 
     gallery_steps = [
         (day["number"], step["id"])

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "courseVersion": "2026-08-24.4",
+  "courseVersion": "2026-08-24.5",
   "courseCode": "masterclass-21",
   "title": "Мастер-класс по изменению питания и пищевых привычек",
   "status": "launch_draft",
@@ -73,7 +73,7 @@
           "kind": "messenger",
           "completion": "link_requested",
           "label": "Привязать мессенджер",
-          "summary": "Telegram или MAX для уведомлений о ходе программы.",
+          "summary": "Напоминания, дополнительные материалы и уведомления об обновлениях.",
           "durationMinutes": 3
         },
         {
