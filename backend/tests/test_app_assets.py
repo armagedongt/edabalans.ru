@@ -300,6 +300,61 @@ def test_legal_friendly_routes_are_public() -> None:
     assert client.get("/legal/unknown").status_code == 404
 
 
+def test_intensive_concept_pages_are_public() -> None:
+    expected_titles = {
+        "day-1": "Сначала увидьте своё питание",
+        "day-2": "Сделайте дефицит легче",
+        "day-3": "Калории и реальность похудения",
+        "day-4": "Полная карта похудения",
+    }
+    for day_code, title in expected_titles.items():
+        friendly = client.get(f"/intensive/{day_code}")
+        html = client.get(f"/intensive/{day_code}.html")
+        assert friendly.status_code == 200
+        assert html.status_code == 200
+        assert html.text == friendly.text
+        assert title in friendly.text
+        assert "Концептуальный каркас" in friendly.text
+        assert 'class="video-script"' in friendly.text
+        assert "video-placeholder" not in friendly.text
+        video_script = re.search(
+            r'<section class="video-script".*?</section>', friendly.text, re.DOTALL
+        )
+        assert video_script is not None
+        assert len(re.findall(r"<p(?: [^>]*)?>.*?</p>", video_script.group(), re.DOTALL)) >= 4
+        video_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", video_script.group()))
+        assert len(video_text) >= 700
+        assert "Нужно дописать Сергею" in friendly.text
+        assert "Короткий текст под видео" in friendly.text
+        bot_copy = re.search(
+            r'<div class="bot-copy">(.*?)</div>', friendly.text, re.DOTALL
+        )
+        assert bot_copy is not None
+        assert len(re.findall(r"<p>.*?</p>", bot_copy.group(), re.DOTALL)) >= 3
+        bot_text = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", bot_copy.group()))
+        assert len(bot_text) >= 180
+        assert "/intensiv/tpost/" in friendly.text
+        assert "Как подвести к Мастер-классу" in friendly.text
+        cta = re.search(r'<section class="cta">(.*?)</section>', friendly.text, re.DOTALL)
+        assert cta is not None
+        assert re.search(
+            r'<a href="[^"]*utm_source=free_intensive[^"]*">(?=[^<]*\S)[^<]+</a>',
+            cta.group(),
+        )
+        assert "/legal/disclaimer" in friendly.text
+    stylesheet = client.get("/intensive/intensive.css")
+    assert stylesheet.status_code == 200
+    assert ".video-script" in stylesheet.text
+    assert ".video-placeholder" not in stylesheet.text
+    script = client.get("/intensive/intensive.js")
+    assert script.status_code == 200
+    assert "contentEditable" in script.text
+    assert "localStorage.setItem" in script.text
+    assert "fetch(" not in script.text
+    assert client.get("/intensive/day-5").status_code == 404
+    assert client.get("/intensive/day-5.html").status_code == 404
+
+
 def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
     response = client.get("/apps/masterclass-sales.html")
     assert response.status_code == 200

@@ -33,6 +33,7 @@ curl -fsS https://go.похудение-это-есть.рф/legal/disclaimer
 curl -fsS https://go.похудение-это-есть.рф/legal/privacy
 curl -fsS https://go.похудение-это-есть.рф/legal/consent
 curl -fsS https://go.похудение-это-есть.рф/legal/offer
+curl -fsS https://app.edabalans.ru/intensive/day-1
 ufw status
 systemctl status edabalans-backup.timer
 ```

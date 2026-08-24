@@ -101,6 +101,32 @@ def legal_document_friendly(document_code: str) -> FileResponse:
     return public_asset(STATIC_DIR / "legal" / f"{document_code}.html")
 
 
+@router.get("/intensive/intensive.css", include_in_schema=False)
+def intensive_stylesheet() -> FileResponse:
+    return public_asset(STATIC_DIR / "intensive" / "intensive.css")
+
+
+@router.get("/intensive/intensive.js", include_in_schema=False)
+def intensive_script() -> FileResponse:
+    return public_asset(STATIC_DIR / "intensive" / "intensive.js")
+
+
+def intensive_day_asset(day_code: str) -> FileResponse:
+    if day_code not in {"day-1", "day-2", "day-3", "day-4"}:
+        raise HTTPException(status_code=404, detail="intensive day not found")
+    return public_asset(STATIC_DIR / "intensive" / f"{day_code}.html")
+
+
+@router.get("/intensive/{day_code}.html", include_in_schema=False)
+def intensive_day_html(day_code: str) -> FileResponse:
+    return intensive_day_asset(day_code)
+
+
+@router.get("/intensive/{day_code}", include_in_schema=False)
+def intensive_day_friendly(day_code: str) -> FileResponse:
+    return intensive_day_asset(day_code)
+
+
 def error(message: str) -> dict[str, Any]:
     return {"ok": False, "error": message}
 
