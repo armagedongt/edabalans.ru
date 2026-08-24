@@ -288,16 +288,20 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")
     assert dqs_step["completion"] == "tutorial_completed"
-    assert "пройдите туториал до конца" in fourth_day["assignmentLead"]
+    assert "пройдите <a" in fourth_day["assignmentLead"]
     assert "самостоятельно вернитесь в день 4" in fourth_day["assignmentText"]
+    assert "data-dqs-tutorial-link" in fourth_day["assignmentLead"]
     assert "event.detail.completion!=='tutorial'" in course_html
     assert "markStep(d,currentStep).catch(showActionError)" in course_html
+    assert "document.querySelectorAll('[data-dqs-tutorial-link]')" in course_html
+    assert "openRequestedDqsTutorial(window)" in course_html
 
     dqs_html = (
         root / "backend" / "app" / "static" / "apps" / "dqs.html"
     ).read_text(encoding="utf-8")
     assert "action:'completeTutorial'" in dqs_html
     assert "completion:'tutorial'" in dqs_html
+    assert "window.EdabalansDqsOpenTutorial" in dqs_html
 
     gallery_steps = [
         (day["number"], step["id"])
