@@ -48,7 +48,11 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 51
+        assert session.scalar(select(func.count(ContentItem.id))) == 52
+        day_unopened_content = session.scalar(
+            select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
+        )
+        assert day_unopened_content is not None
         maintenance = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_maintenance_notice"))
         assert maintenance.status == "published"
         assert "@FitnessSergey" in maintenance.body_source
@@ -147,7 +151,14 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
             .where(SequenceStep.sequence_version_id == version.id)
             .order_by(SequenceStep.position)
         ))
-        assert len(steps) == 12
+        assert len(steps) == 13
+        day_unopened_content = session.scalar(
+            select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
+        )
+        assert day_unopened_content is not None
+        day_unopened_step = next(step for step in steps if step.step_key == "pp_day_unopened_18h")
+        assert day_unopened_step.content_item_id == day_unopened_content.id
+        assert day_unopened_step.configuration["trigger"] == "course_day_unopened_18h"
         assert steps[0].step_key == "pp_identity"
         assert steps[-1].kind == "STOP"
         assert any(step.step_key == "pp_course_stalled_72h" for step in steps)
@@ -157,7 +168,10 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
             for step in steps
         )
         assert all(step.delay_seconds is None for step in steps)
-        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_questionnaire")).find("{{questionnaire_formatted}}") >= 0
+        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_identity")).find("{{questionnaire_formatted}}") >= 0
+        assert "{{questionnaire_formatted}}" not in session.scalar(
+            select(ContentItem.body_source).where(ContentItem.code == "tpl_postpurchase_questionnaire")
+        )
 
         # Re-running seed must not create another draft version or duplicate slots.
         seed_defaults(session, "TetrisgfgfgfBot")
