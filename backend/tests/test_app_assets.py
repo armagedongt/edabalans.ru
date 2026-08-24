@@ -184,9 +184,12 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert client.get("/legal/unknown.html").status_code == 404
     privacy = client.get("/legal/privacy.html").text
     assert privacy.index("Связанные документы") < privacy.index("Коротко:")
-    assert "Учебные и рекламно-информационные сообщения" in privacy
-    assert "Нажатие START сохраняется как согласие" in privacy
+    assert "Условия получения учебных и рекламных сообщений" in privacy
+    assert "«Старт» или «START»" in privacy
     assert "/stop прекращает все сообщения" in privacy
+    assert "https://похудение-это-есть.рф/lk" in privacy
+    assert "платёжная система «Робокасса»" in privacy
+    assert "Telegram, MAX, сервис электронной почты" not in privacy
     assert "Редакция от" not in privacy
     consent = client.get("/legal/consent.html").text
     assert "отдельное согласие" in consent.lower()
