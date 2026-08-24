@@ -285,6 +285,13 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
     assert "if(step<d.steps.length-1)openCourseStep(d,step+1)" in course_html
 
+    fourth_day = manifest["days"][3]
+    dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")
+    assert dqs_step["completion"] == "opened_and_two_rows_saved"
+    assert "минимум в двух строках" in fourth_day["assignmentLead"]
+    assert "вернитесь в день 4" in fourth_day["assignmentText"]
+    assert "if(!stepDone(d,currentStep))return" in course_html
+
     gallery_steps = [
         (day["number"], step["id"])
         for day in manifest["days"]

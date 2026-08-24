@@ -22,7 +22,7 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.models import (
-    MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
+    DqsState, MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
     MasterclassStepProgress, MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
     UserCoursePolicy,
@@ -691,6 +691,29 @@ def course_complete_step(
     if any(previous not in completed for previous in range(index)):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     kind = kinds[index]
+    if kind == "dqs":
+        dqs_opened = db.scalar(
+            select(MasterclassEvent.id).where(
+                MasterclassEvent.user_id == user.id,
+                MasterclassEvent.event_key == "dqs_opened",
+            )
+        )
+        dqs_state = db.scalar(select(DqsState).where(DqsState.user_id == user.id))
+        has_two_filled_rows = bool(
+            dqs_state
+            and any(
+                sum(
+                    1
+                    for value in (saved_day or {}).get("p", [])
+                    if isinstance(value, (int, float)) and value > 0
+                )
+                >= 2
+                for saved_day in (dqs_state.days or {}).values()
+                if isinstance(saved_day, dict)
+            )
+        )
+        if not dqs_opened or not has_two_filled_rows:
+            return course_payload(db, user, settings, now)
     db.add(
         MasterclassStepProgress(
             user_id=user.id,
