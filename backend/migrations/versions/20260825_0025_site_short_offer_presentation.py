@@ -24,13 +24,13 @@ def upgrade() -> None:
         op.execute(
             "UPDATE offer_stages "
             "SET pricing = jsonb_set("
-            "COALESCE(pricing, '{}'::jsonb), "
+            "COALESCE(pricing::jsonb, '{}'::jsonb), "
             "'{site_short}', "
             f"'{{\"consultation_addon\": {consultation_addon}}}'::jsonb, true"
-            ") "
+            ")::json "
             f"WHERE code = '{stage_code}'"
         )
 
 
 def downgrade() -> None:
-    op.execute("UPDATE offer_stages SET pricing = pricing - 'site_short'")
+    op.execute("UPDATE offer_stages SET pricing = (pricing::jsonb - 'site_short')::json")
