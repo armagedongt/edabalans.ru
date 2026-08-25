@@ -51,14 +51,14 @@
 .mc-offer-copy{min-width:0}
 .mc-offer-kind{color:var(--accent);font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .mc-offer-card h2{margin:5px 0 6px;font-size:23px;line-height:1.18}
-.mc-product-link{display:flex;align-items:center;gap:4px;width:max-content;margin:6px 0 0;padding:1px 0!important;border:0!important;background:transparent!important;color:#1d66d8!important;font-size:13px!important;font-weight:600!important;text-align:left}
+.mc-product-link{display:flex;align-items:center;gap:4px;width:max-content;margin:8px 0 0;padding:1px 0!important;border:0!important;background:transparent!important;color:#1d66d8!important;font-size:13px!important;font-weight:600!important;text-align:left}
 .mc-product-link span{font-size:15px;line-height:1}
 .mc-offer-card p{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
 .mc-offer-card .mc-offer-long{margin-top:9px}
 .mc-offer-includes{margin-top:15px;padding-top:13px;border-top:1px solid var(--line)}
 .mc-offer-includes-title{display:block;margin-bottom:8px;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.035em}
 .mc-offer-includes li strong{display:block;font-size:15px;font-weight:600;line-height:1.35}
-.mc-offer-includes li .mc-product-link{margin:2px 0 0;font-size:12px!important}
+.mc-offer-includes li .mc-product-link{margin:4px 0 0;font-size:12px!important}
 .mc-offer-includes li p{margin-top:2px;font-size:14px;line-height:1.45}
 .mc-offer-terms{align-self:end;display:grid;justify-items:start;min-width:0;padding-left:4px}
 .mc-offer-prices{display:flex;align-items:baseline;flex-wrap:wrap;gap:5px 8px}

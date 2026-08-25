@@ -12781,7 +12781,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 136,
+          "line": 137,
           "module_id": "platform.auth",
           "name": "test_unified_admin_assets_require_authentication",
           "qualname": "test_unified_admin_assets_require_authentication"
@@ -12789,7 +12789,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 141,
+          "line": 142,
           "module_id": "platform.auth",
           "name": "test_cross_module_user_summary_requires_authentication",
           "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -12797,7 +12797,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 146,
+          "line": 147,
           "module_id": "platform.auth",
           "name": "test_login_creates_shared_admin_session",
           "qualname": "test_login_creates_shared_admin_session"
@@ -12805,7 +12805,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 163,
+          "line": 164,
           "module_id": "platform.auth",
           "name": "test_login_rejects_wrong_password",
           "qualname": "test_login_rejects_wrong_password"
@@ -12813,7 +12813,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 171,
+          "line": 172,
           "module_id": "platform.auth",
           "name": "test_login_assets_are_public",
           "qualname": "test_login_assets_are_public"
@@ -29042,7 +29042,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 136,
+      "line": 137,
       "module_id": "platform.auth",
       "name": "test_unified_admin_assets_require_authentication",
       "qualname": "test_unified_admin_assets_require_authentication"
@@ -29050,7 +29050,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 141,
+      "line": 142,
       "module_id": "platform.auth",
       "name": "test_cross_module_user_summary_requires_authentication",
       "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -29058,7 +29058,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 146,
+      "line": 147,
       "module_id": "platform.auth",
       "name": "test_login_creates_shared_admin_session",
       "qualname": "test_login_creates_shared_admin_session"
@@ -29066,7 +29066,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 163,
+      "line": 164,
       "module_id": "platform.auth",
       "name": "test_login_rejects_wrong_password",
       "qualname": "test_login_rejects_wrong_password"
@@ -29074,7 +29074,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 171,
+      "line": 172,
       "module_id": "platform.auth",
       "name": "test_login_assets_are_public",
       "qualname": "test_login_assets_are_public"

@@ -131,6 +131,7 @@ def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
     assert "function showClient(id)" in client_mode.text
     assert "clientInput.oninput=null" in client_mode.text
     assert "То, что увидит клиент" not in client_mode.text
+    assert "Можно добавить к мастер-классу" in client_mode.text
 
 
 def test_unified_admin_assets_require_authentication() -> None:
