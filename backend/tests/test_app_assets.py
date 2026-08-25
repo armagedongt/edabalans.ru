@@ -320,9 +320,9 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")
     assert dqs_step["completion"] == "tutorial_completed"
-    assert "пройдите <a" in fourth_day["afterLead"]
+    assert "пройдите <a" in fourth_day["afterText"]
     assert "самостоятельно вернитесь в день 4" in fourth_day["afterText"]
-    assert "data-dqs-tutorial-link" in fourth_day["afterLead"]
+    assert "data-dqs-tutorial-link" in fourth_day["afterText"]
     assert "event.detail.completion!=='tutorial'" in course_html
     assert "markStep(d,currentStep).catch(showActionError)" in course_html
     assert "document.querySelectorAll('[data-dqs-tutorial-link]')" in course_html
@@ -363,7 +363,7 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
 
     required_day_fields = {
         "title", "tocSummary", "lead", "media", "videoId", "image", "intro",
-        "afterLead", "afterTitle", "afterText", "checks", "steps",
+        "afterTitle", "afterText", "checks", "steps",
         "implementation", "publicationStatus",
     }
     step_ids: list[str] = []
@@ -378,7 +378,9 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
             step_ids.append(step["id"])
     assert len(step_ids) == len(set(step_ids))
 
-    assert [step["title"] for step in manifest["days"][5]["steps"]] == [
+    assert [
+        step["title"] for step in manifest["days"][5]["steps"] if step["kind"] == "article"
+    ] == [
         "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
         "Пять вкусов еды", "Топпинги",
     ]
