@@ -1,0 +1,44 @@
+interview_metadata:
+  started: "2026-08-25 12:00:00"
+  last_updated: "2026-08-25 15:00:00"
+  status: "ready_for_draft_validation"
+  can_resume: true
+
+conversation_history:
+  - asked_at: "2026-08-25 12:00:00"
+    topic_keys: ["feature_description", "success_criteria", "technical_decisions", "ui_ux_requirements"]
+    agent_questions: |
+      Итоговое уточнение владельца после обсуждения архитектуры документации, модулей, Wiki, новых чатов и административных инструментов.
+    user_answer: |
+      Итогом разговора владелец просит сначала составить полный список дел, затем полное ТЗ и после этого реализовать его. Нужно навести порядок во всех файлах, создать автоматически формируемое дерево модулей с элементами базы знаний в конечных карточках, переработать AGENTS.md и сделать так, чтобы каждый новый чат понимал маршрутизацию, терминологию, правила общения и источники истины. Модуль является функциональной возможностью, но каждый файл, скрипт и функция должен принадлежать какому-либо модулю и быть доступен через дерево. Ручного редактора карты не должно быть: карта формируется из проектных файлов и обновляется вместе с изменениями. Wiki не должна содержать отдельную устаревающую копию. NocoDB пока не используется и его единый вход отложен.
+
+general_understanding:
+  feature_name: {score: 100, value: "Модульная карта и единая память проекта", gaps: [], required: true}
+  feature_description: {score: 95, value: "Канонический реестр модулей, автоматический технический инвентарь, человекочитаемые карточки, обновлённые AGENTS/README/Wiki и визуализация в /control.", gaps: [], required: true}
+  work_type: {score: 100, value: "Межмодульный refactoring документации и admin-интерфейса с новой автоматической проверкой.", gaps: [], required: true}
+  user_problem: {score: 100, value: "Проектная память раздроблена, новые чаты могут не найти существующие возможности, а ручная Wiki и карты рискуют устареть и дублировать код.", gaps: [], required: true}
+  target_users: {score: 95, value: "Сергей, будущий сотрудник и каждый новый Codex-чат проекта.", gaps: [], required: false}
+  success_criteria: {score: 100, value: "Через /control и Wiki видны модули, их смысл, связи и автоматически найденные технические компоненты; аудит не допускает бесхозные production-объекты; новые чаты получают правильный маршрут автоматически.", gaps: [], required: true}
+  constraints: {score: 95, value: "Один источник факта; без ручного редактора карты; без монолитной админки; планы только по явной команде; NocoDB вне scope; не мешать активным чатам.", gaps: [], required: true}
+  testing_strategy: {score: 95, value: "Unit-тесты TOML/AST/ownership, fixtures orphan/overlap, deterministic generation, integration-тесты project-map API и DOM-ссылок; один browser smoke только для изменённого admin UI.", gaps: [], required: true}
+
+user_experience:
+  user_stories: {score: 90, value: "Владелец открывает /control, находит инструмент или модуль, раскрывает карточку, видит назначение, канон, связи, планы и технический состав.", gaps: [], required: true}
+  acceptance_criteria: {score: 100, value: "TOML валиден; каждый tracked file имеет owner; production orphan/overlap и route/table без owner блокируются; generation детерминирована; Wiki показывает tree/card и не ломает документы при ошибке карты; /control даёт правильные входы; AGENTS маршрутизирует по module id; plans только явные; CI и production smoke проходят без изменения данных. Полный проверяемый перечень находится в user-spec.md §11.", gaps: [], required: true}
+  edge_cases: {score: 95, value: "Multi-module files, shared ORM mappings, seed против runtime truth, planned-only модули, route/symbol overrides, отсутствующие generated artifacts и старые документы.", gaps: [], required: true}
+  error_scenarios: {score: 95, value: "Невалидный реестр, битая ссылка, неизвестный статус, orphan/overlap, незарегистрированные route/table и stale generated files дают понятную CI-ошибку; runtime читает только проверенный checked-in JSON.", gaps: [], required: true}
+  verification_strategy: {score: 95, value: "Локальные unit/integration suites, `module_inventory.py --check`, повторная генерация без diff, CI и точечный production smoke /control и Wiki.", gaps: [], required: true}
+  ui_ux_requirements: {score: 85, value: "Простой каталог маленьких инструментов; дерево модулей, поиск и понятные карточки; технические детали не мешают владельцу.", gaps: [], required: false}
+  risks: {score: 95, value: "Ручная детализация протухнет; широкие globs скроют orphan; multi-module files дадут ложного владельца; generated JSON устареет; три Telegram-реестра и seed/runtime course structure продолжат расходиться; параллельные чаты столкнутся.", gaps: [], required: true}
+  technical_decisions: {score: 90, value: "Структурированный реестр + автоматически извлечённый инвентарь; Wiki как представление, не отдельное хранилище.", gaps: [], required: false}
+  deploy_approach: {score: 95, value: "Изолированный worktree из-за активного соседнего чата, rebase на завершённый main, tests/review, push в main, CI и production deploy без migration или изменения пользовательских данных.", gaps: [], required: false}
+  manual_user_actions: {score: 100, value: "Не требуются; ручной редактор карты отсутствует.", gaps: [], required: false}
+
+integration:
+  integration_points: {score: 100, value: "AGENTS.md, docs/modules.toml, generated JSON/Markdown, docs/README.md, docs/knowledge-base, docs/plans, /control, knowledge_routes project-map API, Wiki UI, production workflow и deploy scripts.", gaps: [], required: true}
+  dependencies: {score: 95, value: "Python stdlib tomllib/ast/pathlib/json/fnmatch, FastAPI, существующая admin-сессия, Markdown renderer, pytest и GitHub Actions; новая библиотека не нужна.", gaps: [], required: false}
+  technical_constraints: {score: 85, value: "Без новой внешней базы или SaaS; PostgreSQL не нужен для карты; секреты и персональные данные исключены.", gaps: [], required: false}
+  data_requirements: {score: 100, value: "Канонический TOML-реестр в Git, детерминированные generated JSON/Markdown, AST-инвентарь исходного дерева и ссылки на канонические документы без копирования фактов.", gaps: [], required: false}
+  migration_needs: {score: 95, value: "Существующая Wiki остаётся reader; старые documentation plans получают финальный статус/ссылку; дубли Telegram и неверное описание course.json устраняются без DB migration.", gaps: [], required: false}
+
+notes: "Папка инициализирована вручную по шаблонам skill: Bash/WSL в текущей Windows-среде недоступны. Полный список работ сохранён до drafting user-spec, как потребовал владелец."
