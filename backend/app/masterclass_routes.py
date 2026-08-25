@@ -1189,13 +1189,14 @@ def timeline_stage(
     return order[min(order.index(highest.stage_code) + 1, len(order) - 1)], None
 
 
-def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, UserOffer | None]:
+def offer_stage(db: Session, user: User, placement: str, *, readonly: bool = False) -> tuple[OfferStage, UserOffer | None]:
     now = datetime.now(timezone.utc)
     order = ["early", "second", "review", "last_week", "standard"]
     # Serialize the first opening of a checkpoint. UserOffer has an additional
     # unique constraint, but the user row lock keeps concurrent requests from
     # racing into two window creations.
-    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    if not readonly:
+        db.execute(select(User.id).where(User.id == user.id).with_for_update())
     history = list(
         db.scalars(
             select(UserOffer).where(
@@ -1206,7 +1207,15 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
     )
     review = next((item for item in history if item.stage_code == "review"), None)
     if review and not any(item.stage_code == "last_week" for item in history):
-        history.append(schedule_last_week_from_review(db, user, review))
+        if readonly:
+            history.append(UserOffer(
+                user_id=user.id, stage_code="last_week",
+                started_at=aware_utc(review.expires_at),
+                expires_at=aware_utc(review.expires_at) + timedelta(hours=OFFER_STAGE_DURATIONS["last_week"]),
+                snapshot={"created_by": "readonly-preview"},
+            ))
+        else:
+            history.append(schedule_last_week_from_review(db, user, review))
     current_code, current_offer = timeline_stage(history, now)
     requested_code = STAGE_BY_PLACEMENT.get(placement)
     if placement in PASSIVE_OFFER_PLACEMENTS:
@@ -1237,17 +1246,14 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
                 if checkpoint is not None
                 else now
             )
-            created = create_offer_window(
-                db,
-                user,
-                configured_offer_stage(db, requested_code),
-                placement,
-                started_at,
-            )
-            history.append(created)
-            if requested_code == "review":
-                history.append(schedule_last_week_from_review(db, user, created))
-            current_code, current_offer = timeline_stage(history, now)
+            if not readonly:
+                created = create_offer_window(
+                    db, user, configured_offer_stage(db, requested_code), placement, started_at,
+                )
+                history.append(created)
+                if requested_code == "review":
+                    history.append(schedule_last_week_from_review(db, user, created))
+                current_code, current_offer = timeline_stage(history, now)
 
     if review_not_started and not (
         requested_code == "review"
@@ -1275,12 +1281,13 @@ def build_offers(
     stage_override: str | None = None,
     owned_resources_override: set[str] | None = None,
     tariff_override: str | None = None,
+    readonly: bool = False,
 ) -> dict:
     products = offer_products(db)
     if stage_override is None:
         if user is None:
             raise ValueError("user is required without a preview stage")
-        stage, own = offer_stage(db, user, placement)
+        stage, own = offer_stage(db, user, placement, readonly=readonly)
     else:
         stage, own = configured_offer_stage(db, stage_override), None
     owned = (
@@ -1727,6 +1734,63 @@ def admin_offer_preview(
         else None
     )
     return payload
+
+
+@router.get("/admin/offer-preview/clients")
+def admin_offer_preview_clients(
+    q: str = "",
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    query = q.strip().lower()
+    if len(query) < 3:
+        return {"ok": True, "clients": []}
+    rows = db.execute(
+        select(User.id, User.display_name, UserEmail.email_normalized)
+        .join(UserEmail, UserEmail.user_id == User.id)
+        .where(UserEmail.email_normalized.ilike(f"%{query}%"))
+        .order_by(UserEmail.email_normalized).limit(12)
+    ).all()
+    return {"ok": True, "clients": [
+        {"user_id": str(user_id), "name": name or "", "email": email}
+        for user_id, name, email in rows
+    ]}
+
+
+@router.get("/admin/offer-preview/clients/{user_id}")
+def admin_offer_preview_client_context(
+    user_id: uuid.UUID,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = db.get(User, user_id)
+    if user is None:
+        raise HTTPException(404, "client not found")
+    email = db.scalar(select(UserEmail.email_normalized).where(
+        UserEmail.user_id == user.id, UserEmail.is_primary.is_(True)
+    )) or db.scalar(select(UserEmail.email_normalized).where(UserEmail.user_id == user.id))
+    accesses = sorted(access_codes(db, user.id))
+    progress = list(db.scalars(select(MasterclassDayProgress).where(
+        MasterclassDayProgress.user_id == user.id
+    )))
+    current_day = max((row.day_number for row in progress), default=0)
+    opened = db.scalar(select(MasterclassEvent).where(
+        MasterclassEvent.user_id == user.id,
+        MasterclassEvent.placement.in_(EMBED_PLACEMENTS),
+    ).order_by(MasterclassEvent.occurred_at.desc()))
+    base = {
+        "ok": True, "client": {"user_id": str(user.id), "name": user.display_name or "", "email": email},
+        "accesses": accesses, "progress": {"current_day": current_day, "opened_days": sorted(row.day_number for row in progress)},
+    }
+    if "ACCESS_MASTERCLASS" not in accesses:
+        return {**base, "state": "no_masterclass_access", "reason": "У человека нет действующего доступа к Мастер-классу.", "offer": None}
+    if current_day == 0:
+        return {**base, "state": "no_progress", "reason": "Прогресс Мастер-класса ещё не начат, поэтому текущей точки предложения нет.", "offer": None}
+    if opened is None:
+        return {**base, "state": "no_offer_opened", "reason": "Участник ещё не открывал блок с дополнительным предложением. Просмотр не запускает его вместо участника.", "offer": None}
+    offer = build_offers(db, user, opened.placement, use_pricing_catalog=settings.pricing_catalog_enabled, readonly=True)
+    return {**base, "state": "offer", "reason": "Показана текущая серверная витрина без изменения данных участника.", "placement": opened.placement, "offer": offer}
 
 
 @router.get("/admin/embed-tokens")

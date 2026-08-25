@@ -81,6 +81,7 @@
 .mc-product-features strong,.mc-product-program strong{font-size:16px;line-height:1.35}
 .mc-product-features span,.mc-product-program span{color:var(--muted);font-size:15px;line-height:1.5}
 .mc-product-program li{display:grid;gap:3px;position:relative;padding-left:18px}
+.mc-offer-terms button,.mc-product-buy{background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}.mc-offer-terms button:hover,.mc-product-buy:hover{filter:brightness(.92)}
 .mc-product-countdown{max-width:420px;margin-top:30px;padding:0!important;border:0!important;background:transparent!important;color:var(--muted)!important;font-size:13px!important;line-height:1.4}
 .mc-product-countdown strong,.mc-product-countdown .mc-refresh-offers{display:none!important}
 .mc-product-actions{display:grid;gap:9px;max-width:500px;margin-top:18px}

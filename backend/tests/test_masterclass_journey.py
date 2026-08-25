@@ -424,6 +424,25 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
         assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
 
 
+def test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes():
+    client, factory = setup()
+    search = client.get("/api/masterclass/admin/offer-preview/clients?q=member")
+    assert search.status_code == 200
+    selected = search.json()["clients"]
+    assert len(selected) == 1
+    assert selected[0]["email"] == "member@example.test"
+    with factory() as db:
+        before = db.scalar(select(func.count(UserOffer.id)))
+    context = client.get(
+        f"/api/masterclass/admin/offer-preview/clients/{selected[0]['user_id']}"
+    )
+    assert context.status_code == 200
+    assert context.json()["state"] == "no_progress"
+    assert context.json()["client"]["user_id"] == selected[0]["user_id"]
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id))) == before
+
+
 def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
     client, factory = setup()
     status = client.get(
