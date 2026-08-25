@@ -30,12 +30,25 @@ readonly PREVIOUS_SHA="$(git rev-parse HEAD)"
 deployment_started=false
 deployment_succeeded=false
 migration_deploy=false
+startup_data_deploy=false
 
 if git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -q '^backend/migrations/versions/'; then
     migration_deploy=true
     if [[ "${ALLOW_DATABASE_MIGRATIONS:-0}" != "1" ]]; then
         echo "Deployment includes database migrations and requires ALLOW_DATABASE_MIGRATIONS=1 after manual verification" >&2
         exit 5
+    fi
+fi
+
+if git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -Eq '^telegram-bot/service/app/seed\.py$'; then
+    startup_data_deploy=true
+elif git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -Eq '^telegram-bot/service/app/main\.py$'; then
+    previous_startup_seed_call="$(git show "${PREVIOUS_SHA}:telegram-bot/service/app/main.py" \
+        | sed -n '/^        seed_defaults(/,/^        )/p')"
+    target_startup_seed_call="$(git show "${TARGET_SHA}:telegram-bot/service/app/main.py" \
+        | sed -n '/^        seed_defaults(/,/^        )/p')"
+    if [[ "${previous_startup_seed_call}" != "${target_startup_seed_call}" ]]; then
+        startup_data_deploy=true
     fi
 fi
 
@@ -59,7 +72,9 @@ rollback() {
 }
 trap rollback EXIT
 
-"${APP_DIR}/infra/scripts/backup-postgres.sh"
+if [[ "${migration_deploy}" == "true" || "${startup_data_deploy}" == "true" ]]; then
+    "${APP_DIR}/infra/scripts/backup-postgres.sh"
+fi
 
 deployment_started=true
 git checkout --quiet --force "${TARGET_SHA}"
