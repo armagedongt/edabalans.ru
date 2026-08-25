@@ -29,9 +29,9 @@ from app.masterclass_offer_catalog import (
     ACTIVE_OFFER_PRESENTATION,
     DIGITAL_OFFER_PRODUCT_CODES,
     OFFER_CARD_COPY,
-    OFFER_PRODUCTS,
     SITE_SHORT_OFFER_PRESENTATION,
     bundle_detail,
+    offer_products,
 )
 from app.masterclass_offer_rules import (
     EMBED_PLACEMENTS,
@@ -44,6 +44,7 @@ from app.masterclass_offer_rules import (
 )
 from app.pricing_service import active_pricing_version, pricing_entry_map
 from app.product_identity import purchased_products
+from app.product_catalog_service import product_public
 from app.course_structure_service import (
     CourseContext,
     course_context,
@@ -1274,6 +1275,7 @@ def build_offers(
     owned_resources_override: set[str] | None = None,
     tariff_override: str | None = None,
 ) -> dict:
+    products = offer_products(db)
     if stage_override is None:
         if user is None:
             raise ValueError("user is required without a preview stage")
@@ -1295,9 +1297,9 @@ def build_offers(
         if presentation else DIGITAL_OFFER_PRODUCT_CODES
     )
     missing = [
-        (code, OFFER_PRODUCTS[code])
+        (code, products[code])
         for code in digital_product_codes
-        if OFFER_PRODUCTS[code]["resource"] not in owned
+        if products[code]["resource"] not in owned
     ]
     if "ACCESS_CONSULTATION" in owned:
         missing = [(code,p) for code,p in missing if code != "recordings"]
@@ -1359,15 +1361,15 @@ def build_offers(
             "composition": "bundle",
             "title": copy["title"],
             "description": copy["description"],
-            "details": [bundle_detail(code) for code, _ in missing],
+            "details": [bundle_detail(code, products) for code, _ in missing],
             "items": [code for code, _ in missing],
             "standard_price": standard,
             "price": int(bundle_table.get(str(len(missing)), standard)),
             "price_code": f"upsell.{stage.code}.bundle.{len(missing)}",
         }
 
-    consultation = OFFER_PRODUCTS["consultation"]
-    consultation_detail = bundle_detail("consultation")
+    consultation = products["consultation"]
+    consultation_detail = bundle_detail("consultation", products)
     consultation_missing = "ACCESS_CONSULTATION" not in owned
     consultation_visible = consultation_missing and placement in {
         "closing-review", "post-review", "day-19-offer",
@@ -1419,7 +1421,7 @@ def build_offers(
                 if len(missing) > 1
                 else single_card(*missing[0])["price"]
             )
-            details = [*[bundle_detail(code) for code, _ in missing], consultation_detail]
+            details = [*[bundle_detail(code, products) for code, _ in missing], consultation_detail]
             title = (
                 "Рецепты, калорийный план и индивидуальная консультация"
                 if len(missing) == 2
@@ -1495,7 +1497,7 @@ def build_offers(
                     "description": copy["description"],
                     "details": [
                         consultation_detail,
-                        *[bundle_detail(code) for code, _ in missing],
+                        *[bundle_detail(code, products) for code, _ in missing],
                     ],
                     "items": ["consultation", *[code for code, _ in missing]],
                     "standard_price": consultation_card["standard_price"] + digital_standard,
@@ -1534,7 +1536,7 @@ def build_offers(
     ) if user is not None and tariff_override is None else None
     owned_products = [{
         "code": "masterclass",
-        "name": "Мастер-класс по изменению питания и пищевых привычек",
+        "name": product_public(db, "masterclass")["name"],
         "tariff": tariff_override or (
             masterclass_purchase["tariff"] if masterclass_purchase else ""
         ),
@@ -1542,13 +1544,13 @@ def build_offers(
     owned_products.extend(
         {"code": code, "name": product["name"]}
         for code in digital_product_codes
-        for product in (OFFER_PRODUCTS[code],)
+        for product in (products[code],)
         if product["resource"] in owned
     )
     if "ACCESS_CONSULTATION" in owned:
         owned_products.append({
             "code": "consultation",
-            "name": OFFER_PRODUCTS["consultation"]["name"],
+            "name": products["consultation"]["name"],
         })
     return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
@@ -1657,11 +1659,12 @@ def admin_offer_preview(
 ) -> dict:
     if body.placement not in EMBED_PLACEMENTS:
         raise HTTPException(422, "unknown masterclass placement")
-    unknown = set(body.owned_product_codes) - set(OFFER_PRODUCTS)
+    products = offer_products(db)
+    unknown = set(body.owned_product_codes) - set(products)
     if unknown:
         raise HTTPException(422, "unknown preview product")
     owned_resources = {
-        OFFER_PRODUCTS[code]["resource"] for code in body.owned_product_codes
+        products[code]["resource"] for code in body.owned_product_codes
     }
     payload = build_offers(
         db,

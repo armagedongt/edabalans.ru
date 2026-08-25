@@ -8,19 +8,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Payment, Product
+from app.product_catalog_service import tariff_public
 
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 
-MASTERCLASS_TARIFFS = {
-    "MASTERCLASS_BASIC": "Минимальный",
-    "MASTERCLASS_RECIPES": "Стандартный",
-    "MASTERCLASS_CONSULT": "С консультацией",
-}
-
-
-def tariff_name(product_code: str | None) -> str | None:
-    return MASTERCLASS_TARIFFS.get(product_code or "")
+def tariff_name(db: Session, product_code: str | None) -> str | None:
+    tariff = tariff_public(db, product_code or "")
+    return tariff["name"] if tariff else None
 
 
 def purchased_products(db: Session, user_id: uuid.UUID) -> list[dict]:
@@ -52,7 +47,7 @@ def purchased_products(db: Session, user_id: uuid.UUID) -> list[dict]:
             {
                 "product_code": code,
                 "product_name": name or payment.product_name_raw,
-                "tariff": tariff_name(code) or "Основной",
+                "tariff": tariff_name(db, code) or "Основной",
                 "purchased_at": purchased_at.isoformat() if purchased_at else None,
             }
         )

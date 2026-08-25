@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.managed_documents import ensure_seed_document, publish_document
 from app.models import ManagedDocumentVersion, MasterclassDayProgress
+from app.product_catalog_service import product_public
 
 
 DOCUMENT_TYPE = "course-structure"
@@ -156,6 +157,7 @@ def runtime_manifest(payload: dict) -> dict:
 def course_context(db: Session) -> CourseContext:
     revision = active_course_version(db)
     manifest = runtime_manifest(revision.payload)
+    manifest["title"] = product_public(db, "masterclass")["name"]
     days = {int(day["number"]): day for day in manifest["days"]}
     content_files = {
         "extracted-2026-08-23.json": (

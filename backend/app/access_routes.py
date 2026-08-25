@@ -38,6 +38,7 @@ from app.models import (
     UserEmail,
 )
 from app.product_identity import purchased_products
+from app.product_catalog_service import product_public
 
 
 router = APIRouter(tags=["access-links"])
@@ -169,64 +170,32 @@ def account_payload(email: str, db: Session) -> dict:
             )
         )
     )
-    definitions = [
-        (
-            "masterclass",
-            "Мастер-класс по изменению питания и пищевых привычек",
-            "Как простыми действиями изменить пищевые привычки и сбалансировать питание, чтобы сделать похудение проще.",
-            "ACCESS_MASTERCLASS",
-            "masterclass-course",
-            True,
-        ),
-        (
-            "recipes",
-            "Система рецептов",
-            "Как научиться собирать здоровые тарелки быстро, просто и вкусно.",
-            "ACCESS_RECIPES",
-            None,
-            False,
-        ),
-        (
-            "calories",
-            "Мини-курс «Калорийный»",
-            "Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории.",
-            "ACCESS_CALORIES",
-            None,
-            False,
-        ),
-        (
-            "strength",
-            "Мини-курс «С дивана до тренировок»",
-            "Как встать с дивана и начать получать от тренировок и удовольствие, и результат.",
-            "ACCESS_STRENGTH",
-            None,
-            False,
-        ),
-        (
-            "recordings",
-            "Записи консультаций других участников",
-            "Разборы питания, привычек и практических решений на реальных примерах.",
-            "ACCESS_CONSULTATION_RECORDINGS",
-            None,
-            False,
-        ),
-    ]
+    definitions = []
+    for account_code, catalog_code in (
+        ("masterclass", "masterclass"), ("recipes", "recipes"),
+        ("calories", "calories"), ("strength", "training"),
+        ("recordings", "recordings"),
+    ):
+        definition = product_public(db, catalog_code)
+        definition["account_code"] = account_code
+        definitions.append(definition)
     purchases = purchased_products(db, user.id)
     masterclass_purchase = next(
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,
     )
     courses = []
-    for code, title, summary, resource, app, app_ready in definitions:
-        has_access = resource in owned
+    for definition in definitions:
+        code = definition["account_code"]
+        has_access = definition["resource"] in owned
         item = {
                 "code": code,
-                "title": title,
-                "summary": summary,
-                "resource": resource,
+                "title": definition["name"],
+                "summary": definition["description"],
+                "resource": definition["resource"],
                 "owned": has_access,
-                "state": "available" if has_access and app_ready else "preparing" if has_access else "not_owned",
-                "app": app if has_access and app_ready and not legal["required"] else None,
+                "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
+                "app": definition["app"] if has_access and definition["ready"] and not legal["required"] else None,
             }
         if code == "masterclass" and masterclass_purchase:
             item["tariff"] = masterclass_purchase["tariff"]

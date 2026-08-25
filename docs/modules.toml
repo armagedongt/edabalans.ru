@@ -114,6 +114,17 @@ owns_files = [
 owns_routes = ["*/apps/*", "*/assets/*"]
 
 [[modules]]
+id = "products.catalog"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.catalog.md"
+depends_on = ["platform.auth", "platform.commerce"]
+owns_files = [
+  "backend/app/product_catalog_service.py", "backend/app/product_catalog_routes.py",
+  "backend/app/static/product-catalog-editor.*", "docs/knowledge-base/PRODUCT_CATALOG.md",
+]
+owns_routes = ["*/admin/products", "*/admin/api/product-catalog*"]
+
+[[modules]]
 id = "products.dqs"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"

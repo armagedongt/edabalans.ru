@@ -52,6 +52,7 @@ commit/push/deploy Wiki показывает эту версию. Поэтому
 | Мастер-класс | `modules/masterclass/README.md` |
 | Telegram | `modules/telegram/README.md` |
 | Продукты и тарифы | `PRODUCTS.md`, `PRICING_CATALOG.md` |
+| Канонические названия продуктов и тарифов | `PRODUCT_CATALOG.md` |
 | Доступы | `ACCESS_RULES.md`, `ACCOUNT_LEGAL_GATE.md` |
 | Юридические документы | `LEGAL_DOCUMENTS.md` |
 | Платформа приложений | `../APPLICATION_PLATFORM.md` |

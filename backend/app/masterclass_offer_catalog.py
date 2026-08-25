@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from typing import TypedDict
 
+from sqlalchemy.orm import Session
+
+from app.product_catalog_service import product_public
+
 
 class ProductFeature(TypedDict):
     name: str
@@ -126,6 +130,32 @@ OFFER_CARD_COPY: dict[str, OfferCardCopy] = {
 }
 
 
-def bundle_detail(product_code: str) -> ProductFeature:
-    product = OFFER_PRODUCTS[product_code]
+OFFER_PRODUCT_LINKS = {
+    "recipes": ("recipes", 3900),
+    "calories": ("calories", 3900),
+    "training": ("training", 3900),
+    "recordings": ("recordings", 3900),
+    "consultation": ("consultation", 8900),
+}
+
+
+def offer_products(db: Session) -> dict[str, OfferProduct]:
+    """Merge editable public catalog copy with fixed offer/runtime connections."""
+    result: dict[str, OfferProduct] = {}
+    for offer_code, (catalog_code, standard) in OFFER_PRODUCT_LINKS.items():
+        public = product_public(db, catalog_code)
+        result[offer_code] = {
+            "name": public["name"],
+            "description": public["description"],
+            "long_description": "",
+            "resource": public["resource"],
+            "standard": standard,
+            "status": public["status"],
+            "features": [],
+        }
+    return result
+
+
+def bundle_detail(product_code: str, products: dict[str, OfferProduct] = OFFER_PRODUCTS) -> ProductFeature:
+    product = products[product_code]
     return {"name": product["name"], "description": product["description"]}

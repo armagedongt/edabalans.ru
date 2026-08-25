@@ -117,7 +117,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js|knowledge-base\\.css|knowledge-base\\.js|course-structure-editor\\.css|course-structure-editor\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js|knowledge-base\\.css|knowledge-base\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
@@ -207,6 +207,16 @@ def course_structure_editor_page(
     if course_code != "masterclass-21":
         raise HTTPException(404, "Курс не найден")
     return protected_file("course-structure-editor.html")
+
+
+@router.get("/admin/products", include_in_schema=False)
+def product_catalog_page(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/admin/products", status_code=303)
+    return protected_file("product-catalog-editor.html")
 
 
 @router.get("/admin/{section}", include_in_schema=False)

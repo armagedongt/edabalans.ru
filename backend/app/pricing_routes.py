@@ -22,6 +22,7 @@ from app.pricing_service import (
     serialize_entry,
     serialize_version,
 )
+from app.product_catalog_service import tariff_public
 
 
 router = APIRouter(tags=["pricing"])
@@ -145,11 +146,19 @@ def public_site_pricing(
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
-    entries = [
-        serialize_entry(entry)
-        for entry in pricing_entry_map(db, version).values()
-        if entry.section == "site_tariffs" and entry.enabled
-    ]
+    entries = []
+    for entry in pricing_entry_map(db, version).values():
+        if entry.section != "site_tariffs" or not entry.enabled:
+            continue
+        catalog_tariff = tariff_public(db, entry.product_code or "")
+        entries.append(
+            {
+                **serialize_entry(entry),
+                "name": catalog_tariff["name"] if catalog_tariff else entry.name,
+                "descriptor": catalog_tariff["description"] if catalog_tariff else "",
+                "products": catalog_tariff["products"] if catalog_tariff else [],
+            }
+        )
     entries.sort(key=lambda item: item["sort_order"])
     return {
         "ok": True,

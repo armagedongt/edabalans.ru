@@ -1,4 +1,5 @@
 import os
+from copy import deepcopy
 from datetime import datetime, timezone
 from decimal import Decimal
 
@@ -119,6 +120,35 @@ def test_draft_is_editable_but_does_not_change_public_prices() -> None:
     assert update.status_code == 200
     assert update.json()["version"]["entries"][0]["sale_amount"] == 14900
     assert client.get("/api/pricing/site").status_code == 503
+    app.dependency_overrides.clear()
+
+
+def test_product_catalog_keeps_technical_connections_out_of_editor() -> None:
+    client, _ = make_client(enabled=False)
+    initial = client.get("/admin/api/product-catalog")
+    assert initial.status_code == 200
+    body = initial.json()
+    product = body["active"]["manifest"]["products"][0]
+    assert product["code"] == "masterclass"
+    assert "resource" not in product
+    assert "app" not in product
+
+    edited = deepcopy(body["active"]["manifest"])
+    edited["products"][0]["descriptor"] = "Как проверить единый текст в карточках"
+    saved = client.put(
+        "/admin/api/product-catalog",
+        json={"expected_version": body["active"]["version"], "payload": edited},
+    )
+    assert saved.status_code == 200
+    assert saved.json()["active"]["manifest"]["products"][0]["descriptor"] == edited["products"][0]["descriptor"]
+
+    invalid = deepcopy(saved.json()["active"]["manifest"])
+    invalid["products"][0]["code"] = "other"
+    rejected = client.put(
+        "/admin/api/product-catalog",
+        json={"expected_version": saved.json()["active"]["version"], "payload": invalid},
+    )
+    assert rejected.status_code == 422
     app.dependency_overrides.clear()
 
 

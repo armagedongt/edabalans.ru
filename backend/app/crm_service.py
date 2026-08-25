@@ -467,7 +467,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "product_code": product_code,
                 "product_name": product_name,
                 "product_name_raw": payment.product_name_raw,
-                "tariff": tariff_name(product_code),
+                "tariff": tariff_name(db, product_code),
                 "amount": money(payment.amount) if payment.amount is not None else None,
                 "amount_is_estimated": payment.amount_is_estimated,
                 "currency": payment.currency,
