@@ -1884,6 +1884,10 @@
       "path": "tools/tests/test_module_inventory.py"
     },
     {
+      "module_id": "operations.project-work",
+      "path": "work/content-authoring-system/decisions.md"
+    },
+    {
       "module_id": "products.masterclass.course",
       "path": "work/course-structure-editor/code-research.md"
     },
@@ -11960,6 +11964,10 @@
         {
           "module_id": "operations.project-work",
           "path": "docs/prototypes/site-footer-preview.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/content-authoring-system/decisions.md"
         }
       ],
       "id": "operations.project-work",
