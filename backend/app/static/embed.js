@@ -265,6 +265,8 @@
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
+    var accountOffer = mount.getAttribute('data-edabalans-account-offer') === 'true';
+    var focusProductCode = String(mount.getAttribute('data-edabalans-focus-product') || '');
     var accountUrl = String(mount.getAttribute('data-edabalans-account-url') || '');
     var linkToken = String(mount.getAttribute('data-edabalans-link-token') || new URLSearchParams(location.search).get('access_token') || '');
     if (!roots[app]) {
@@ -280,8 +282,8 @@
       .then(function (html) {
         window.EdabalansAppHost = APP_HOST;
         window.EdabalansAppContext = adminUser
-          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken}
-          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken};
+          ? {mode: 'admin', targetUserId: adminUser, app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken, accountOffer: accountOffer, focusProductCode: focusProductCode}
+          : {mode: 'user', app: app, placement: placement, placementToken: placementToken, accountUrl: accountUrl, linkToken: linkToken, accountOffer: accountOffer, focusProductCode: focusProductCode};
         var doc = new DOMParser().parseFromString(html, 'text/html');
         var sourceRoot = doc.getElementById(roots[app]);
         mount.id = roots[app];

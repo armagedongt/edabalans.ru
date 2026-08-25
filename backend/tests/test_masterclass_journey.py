@@ -837,6 +837,64 @@ def test_offer_payload_links_product_presentations_to_current_checkout_cards():
     assert {action["composition"] for action in actions} == {"single", "bundle"}
 
 
+def test_account_offer_entry_prioritises_selected_product_without_resetting_window():
+    client, factory = setup()
+    triggered = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("recipes-part-1-gate")
+    )
+    assert triggered.status_code == 200
+    with factory() as db:
+        offer_before = db.scalar(select(UserOffer))
+        assert offer_before is not None
+        started_before = offer_before.started_at
+        expires_before = offer_before.expires_at
+
+    response = client.get(
+        "/api/masterclass/account-offers?email=member@example.test&"
+        "focus_product_code=calories"
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["focus_product_code"] == "calories"
+    assert [card["code"] for card in payload["offers"]][:2] == [
+        "single:calories", "bundle:digital"
+    ]
+    consultation = client.get(
+        "/api/masterclass/account-offers?email=member@example.test&"
+        "focus_product_code=consultation"
+    )
+    assert consultation.status_code == 200
+    assert consultation.json()["offers"][0]["code"] == "single:consultation"
+    assert consultation.json()["offers"][0]["price"] >= 7000
+    with factory() as db:
+        offer_after = db.scalar(select(UserOffer))
+        assert offer_after.started_at == started_before
+        assert offer_after.expires_at == expires_before
+
+    checkout = client.post("/api/masterclass/account-offers/checkout", json={
+        "email": "member@example.test",
+        "focus_product_code": "calories",
+        "offer_code": "single:calories",
+    })
+    assert checkout.status_code == 200
+    assert checkout.json()["cart_command"].startswith("#order:EB-")
+    repeated_checkout = client.post("/api/masterclass/account-offers/checkout", json={
+        "email": "member@example.test",
+        "focus_product_code": "calories",
+        "offer_code": "single:calories",
+    })
+    assert repeated_checkout.status_code == 200
+    assert repeated_checkout.json()["cart_command"] == checkout.json()["cart_command"]
+    with factory() as db:
+        assert db.scalar(select(func.count(OfferCheckout.id))) == 1
+    rejected = client.get(
+        "/api/masterclass/account-offers?email=member@example.test&"
+        "focus_product_code=training"
+    )
+    assert rejected.status_code == 409
+
+
 def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     rendered = render_simulator()
     runtime_css = (
@@ -850,7 +908,8 @@ def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     assert "class=\"mc-offer-card\"" in rendered
     assert "productPresentationMarkup" in rendered
     assert "headerMarkup:offerPageHeaderMarkup" in rendered
-    assert "layout(offerPageTitle(heading),offerPageLead(),offerMarkup(data))" in rendered
+    assert "var back=ctx.accountOffer?" in rendered
+    assert "account-offers/checkout" in rendered
     assert "${window.EdabalansMasterclassOfferView.headerMarkup()}${window.EdabalansMasterclassOfferView.markup(data)}" in rendered
     assert "data-product-info" in rendered
     assert "__COURSE_CSS__" not in rendered
