@@ -123,7 +123,7 @@ OFFER_PRODUCTS: dict[str, OfferProduct] = {
         "status": "active",
         "features": [
             {"code": "consultation", "name": "Предварительный разбор дневника", "description": "Сергей заранее изучит записи и подготовит основные выводы."},
-            {"code": "consultation", "name": "Обсуждение удобным способом", "description": "Звонок или голосовые сообщения — в зависимости от вашей ситуации."},
+            {"code": "consultation", "name": "Обсуждение удобным способом", "description": "После оплаты напишите мне: согласуем удобные дату и формат — звонок, голосовые или текст."},
             {"code": "consultation", "name": "Ответы на личные вопросы", "description": "Рекомендации с учётом именно вашего питания и образа жизни."},
         ],
         "presentation_intro": "Сначала я спокойно разбираю ваш дневник и вопросы, а потом мы обсуждаем выводы удобным способом: звонком, голосовыми или текстом. Цель — не выдать универсальный список запретов, а понять, какие изменения дадут вам самый заметный результат.",
@@ -147,6 +147,7 @@ DIGITAL_OFFER_PRODUCT_CODES = (
 # a second set of product copy. Revert to ``canonical`` when the full catalog
 # should be shown again.
 ACTIVE_OFFER_PRESENTATION = "site_short_v1"
+MIN_CONSULTATION_PRICE = 7000
 
 SITE_SHORT_OFFER_PRESENTATION = {
     "code": "site_short_v1",

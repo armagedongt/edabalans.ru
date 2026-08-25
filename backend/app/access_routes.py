@@ -174,7 +174,7 @@ def account_payload(email: str, db: Session) -> dict:
     for account_code, catalog_code in (
         ("masterclass", "masterclass"), ("recipes", "recipes"),
         ("calories", "calories"), ("strength", "training"),
-        ("recordings", "recordings"),
+        ("recordings", "recordings"), ("consultation", "consultation"),
     ):
         definition = product_public(db, catalog_code)
         definition["account_code"] = account_code
@@ -190,10 +190,13 @@ def account_payload(email: str, db: Session) -> dict:
         has_access = definition["resource"] in owned
         item = {
                 "code": code,
+                "product_code": definition["code"],
                 "title": definition["name"],
                 "summary": definition["description"],
                 "resource": definition["resource"],
+                "catalog_status": definition["status"],
                 "owned": has_access,
+                "ready": definition["ready"],
                 "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
                 "app": definition["app"] if has_access and definition["ready"] and not legal["required"] else None,
             }

@@ -28,6 +28,7 @@ from app.models import (
 from app.masterclass_offer_catalog import (
     ACTIVE_OFFER_PRESENTATION,
     DIGITAL_OFFER_PRODUCT_CODES,
+    MIN_CONSULTATION_PRICE,
     OFFER_CARD_COPY,
     SITE_SHORT_OFFER_PRESENTATION,
     bundle_detail,
@@ -143,6 +144,12 @@ class CheckoutIn(BaseModel):
     placement: str
     placement_token: str = Field(min_length=20, max_length=4096)
     offer_code: str
+
+
+class AccountOfferCheckoutIn(BaseModel):
+    email: str
+    offer_code: str
+    focus_product_code: str = Field(min_length=1, max_length=40)
 
 
 class StageUpdateIn(BaseModel):
@@ -1281,6 +1288,7 @@ def build_offers(
     stage_override: str | None = None,
     owned_resources_override: set[str] | None = None,
     tariff_override: str | None = None,
+    focus_product_code: str | None = None,
     readonly: bool = False,
 ) -> dict:
     products = offer_products(db)
@@ -1307,7 +1315,7 @@ def build_offers(
     missing = [
         (code, products[code])
         for code in digital_product_codes
-        if products[code]["resource"] not in owned
+        if products[code]["status"] == "active" and products[code]["resource"] not in owned
     ]
     if "ACCESS_CONSULTATION" in owned:
         missing = [(code,p) for code,p in missing if code != "recordings"]
@@ -1388,6 +1396,14 @@ def build_offers(
         "closing-review", "post-review", "day-19-offer",
         "day-21-offer", "offers-hub",
     }
+    consultation_price = catalog_amount(
+        f"upsell.{stage.code}.consultation",
+        int(pricing.get("consultation", consultation["standard"])),
+    ) if stage.code in {"review", "last_week", "standard"} else int(
+        pricing.get("consultation", consultation["standard"])
+    )
+    if consultation_price < MIN_CONSULTATION_PRICE:
+        raise HTTPException(503, "consultation price is below the approved minimum")
     consultation_card = {
         "code": "single:consultation",
         "composition": "single",
@@ -1397,20 +1413,15 @@ def build_offers(
         "details": [],
         "items": ["consultation"],
         "standard_price": standard_amount("consultation", consultation["standard"]),
-        "price": catalog_amount(
-            f"upsell.{stage.code}.consultation",
-            int(pricing.get("consultation", consultation["standard"])),
-        ) if stage.code in {"review", "last_week", "standard"} else int(
-            pricing.get("consultation", consultation["standard"])
-        ),
+        "price": consultation_price,
         "price_code": f"upsell.{stage.code}.consultation",
     }
 
     if presentation:
         site_short_prices = pricing.get(presentation["consultation_addon_key"], {})
         consultation_addon = int(site_short_prices.get("consultation_addon", 0))
-        if stage.code != "standard" and consultation_missing and consultation_addon <= 0:
-            raise HTTPException(503, "site short consultation price is not configured")
+        if stage.code != "standard" and consultation_missing and consultation_addon < MIN_CONSULTATION_PRICE:
+            raise HTTPException(503, "site short consultation price is below the approved minimum")
 
         def site_short_consultation_card(*, standalone: bool = False) -> dict:
             if standalone or not missing:
@@ -1543,9 +1554,6 @@ def build_offers(
         if consultation_visible:
             cards.append(consultation_card)
         cards.extend(single_card(*item, discounted=False) for item in missing[: 3 - len(cards)])
-    for card in cards:
-        card["saving"] = card["standard_price"] - card["price"]
-        card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
     visible_expiry = None if placement == "day-1-offer" else (
         aware_utc(own.expires_at).isoformat() if own and own.expires_at else None
     )
@@ -1575,6 +1583,27 @@ def build_offers(
             "code": "consultation",
             "name": products["consultation"]["name"],
         })
+    focusable_product_codes = [code for code, _ in missing]
+    if consultation_missing:
+        focusable_product_codes.append("consultation")
+    if focus_product_code is not None:
+        if focus_product_code not in focusable_product_codes:
+            raise HTTPException(409, "Этот продукт сейчас недоступен для покупки")
+        if focus_product_code == "consultation":
+            focused_single = consultation_card
+        else:
+            focused_product = next(
+                product for code, product in missing if code == focus_product_code
+            )
+            focused_single = single_card(focus_product_code, focused_product)
+        focused_bundles = [
+            card for card in cards
+            if card["composition"] == "bundle" and focus_product_code in card["items"]
+        ]
+        cards = [focused_single, *focused_bundles[:2]]
+    for card in cards:
+        card["saving"] = card["standard_price"] - card["price"]
+        card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
     visible_cards = cards[:3]
     visible_product_codes = {
         product_code
@@ -1605,7 +1634,7 @@ def build_offers(
                 "saving_percent": card["saving_percent"],
                 "items": card["items"],
             })
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": visible_cards, "product_presentations": product_presentations, "product_offer_actions": product_offer_actions}
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": visible_cards, "focus_product_code": focus_product_code, "focusable_product_codes": focusable_product_codes, "product_presentations": product_presentations, "product_offer_actions": product_offer_actions}
 
 
 @router.get("/offers")
@@ -1622,9 +1651,29 @@ def offers(
         raise HTTPException(422, "unknown masterclass placement")
     require_placement(request, placement, placement_token, settings)
     payload = build_offers(
-        db, user, placement, use_pricing_catalog=settings.pricing_catalog_enabled
+        db, user, placement, use_pricing_catalog=settings.pricing_catalog_enabled,
     )
     db.commit(); return payload
+
+
+@router.get("/account-offers")
+def account_offers(
+    request: Request,
+    email: str,
+    focus_product_code: str | None = None,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    """Read-only offers entry from the Tilda Members Area course dashboard."""
+    user = resolve_masterclass_user(request, db, email, settings)
+    return build_offers(
+        db,
+        user,
+        "offers-hub",
+        use_pricing_catalog=settings.pricing_catalog_enabled,
+        focus_product_code=focus_product_code,
+        readonly=True,
+    )
 
 
 @router.post("/checkout")
@@ -1643,9 +1692,61 @@ def checkout(
     )
     card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
     if not card: raise HTTPException(409, "offer is no longer available")
+    command, checkout_expires = create_offer_checkout(db, user, payload, card)
+    db.commit(); return {"ok": True, "cart_command": command, "expires_at": checkout_expires.isoformat()}
+
+
+@router.post("/account-offers/checkout")
+def account_offer_checkout(
+    body: AccountOfferCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    payload = build_offers(
+        db,
+        user,
+        "offers-hub",
+        use_pricing_catalog=settings.pricing_catalog_enabled,
+        focus_product_code=body.focus_product_code,
+        readonly=True,
+    )
+    card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
+    if not card:
+        raise HTTPException(409, "offer is no longer available")
+    command, checkout_expires = create_offer_checkout(db, user, payload, card)
+    db.commit()
+    return {"ok": True, "cart_command": command, "expires_at": checkout_expires.isoformat()}
+
+
+def create_offer_checkout(
+    db: Session, user: User, payload: dict, card: dict
+) -> tuple[str, datetime]:
+    """Persist one recomputed checkout for an offer card already authorised by build_offers."""
     now = datetime.now(timezone.utc)
+    # Serialise pending checkout creation for one member without introducing a
+    # second checkout table or a database migration.
+    db.scalar(select(User).where(User.id == user.id).with_for_update())
     stage_expires = aware_utc(datetime.fromisoformat(payload["expires_at"])) if payload["expires_at"] else None
     checkout_expires = min(stage_expires, now + timedelta(hours=2)) if stage_expires else now + timedelta(hours=2)
+    existing = db.scalar(
+        select(OfferCheckout)
+        .where(
+            OfferCheckout.user_id == user.id,
+            OfferCheckout.checkout_kind == "member_offer",
+            OfferCheckout.offer_code == card["code"],
+            OfferCheckout.status == "pending",
+            OfferCheckout.expires_at > now,
+        )
+        .order_by(OfferCheckout.created_at.desc())
+    )
+    if existing is not None and list(existing.items or []) == list(card["items"]):
+        if Decimal(existing.amount) == Decimal(card["price"]):
+            return (
+                safe_order(f"EB-{existing.id.hex} {existing.title}", card["price"]),
+                aware_utc(existing.expires_at),
+            )
     checkout = OfferCheckout(
         user_id=user.id,
         checkout_kind="member_offer",
@@ -1661,9 +1762,9 @@ def checkout(
         amount=Decimal(card["price"]),
         expires_at=checkout_expires,
     )
-    db.add(checkout); db.flush()
-    command = safe_order(f"EB-{checkout.id.hex} {card['title']}", card["price"])
-    db.commit(); return {"ok": True, "cart_command": command, "expires_at": checkout_expires.isoformat()}
+    db.add(checkout)
+    db.flush()
+    return safe_order(f"EB-{checkout.id.hex} {card['title']}", card["price"]), checkout_expires
 
 
 @router.get("/gate/{part}")
