@@ -126,30 +126,6 @@ def admin_asset(
     return protected_file(asset_name)
 
 
-@router.get("/admin/masterclass-course-preview", include_in_schema=False)
-def masterclass_course_preview(
-    request: Request,
-    credentials: HTTPBasicCredentials | None = Depends(security),
-) -> Response:
-    if not admin_identity(request, credentials):
-        return protected_file("admin-login.html")
-    return RedirectResponse(
-        "/admin/courses/masterclass-21/structure", status_code=303
-    )
-
-
-@router.get("/admin/masterclass-designs", include_in_schema=False)
-def masterclass_designs(
-    request: Request,
-    credentials: HTTPBasicCredentials | None = Depends(security),
-) -> Response:
-    if not admin_identity(request, credentials):
-        return protected_file("admin-login.html")
-    return RedirectResponse(
-        "/admin/courses/masterclass-21/structure", status_code=303
-    )
-
-
 @router.get("/admin/masterclass-offers-preview", include_in_schema=False)
 def masterclass_offers_preview(
     request: Request,

@@ -77,38 +77,21 @@ def test_content_catalog_uses_unified_admin_shell() -> None:
 
 def test_retired_masterclass_admin_surfaces_are_not_available() -> None:
     client = make_client()
-    assert client.get("/admin/masterclass").status_code == 404
-    assert client.get("/admin/masterclass-preview").status_code == 404
+    retired_paths = (
+        "/admin/masterclass",
+        "/admin/masterclass-preview",
+        "/admin/masterclass-course-preview",
+        "/admin/masterclass-designs",
+    )
+    for path in retired_paths:
+        assert client.get(path).status_code == 404
 
-
-def test_masterclass_course_preview_requires_authentication() -> None:
-    response = make_client().get("/admin/masterclass-course-preview")
-    assert response.status_code == 200
-    assert 'id="login-form"' in response.text
-
-
-def test_masterclass_course_preview_is_available_after_login() -> None:
-    client = make_client()
-    login = client.post(
+    assert client.post(
         "/admin/api/login",
         json={"username": "admin@example.com", "password": "test-admin-password"},
-    )
-    assert login.status_code == 200
-    response = client.get("/admin/masterclass-course-preview")
-    assert response.status_code == 200
-    assert "Структура Мастер-класса" in response.text
-
-
-def test_masterclass_designs_are_available_after_login() -> None:
-    client = make_client()
-    login = client.post(
-        "/admin/api/login",
-        json={"username": "admin@example.com", "password": "test-admin-password"},
-    )
-    assert login.status_code == 200
-    response = client.get("/admin/masterclass-designs")
-    assert response.status_code == 200
-    assert "Структура Мастер-класса" in response.text
+    ).status_code == 200
+    for path in retired_paths:
+        assert client.get(path).status_code == 404
 
 
 def test_masterclass_offers_preview_requires_authentication() -> None:
