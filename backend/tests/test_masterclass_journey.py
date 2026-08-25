@@ -770,7 +770,7 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
         assert card["long_description"] == OFFER_PRODUCTS[code]["long_description"]
 
 
-def test_partial_bundle_uses_its_actual_product_names_not_a_new_marketing_title():
+def test_partial_bundle_keeps_the_temporary_full_program_name():
     client, _ = setup()
     response = client.post(
         "/api/masterclass/admin/offer-preview",
@@ -787,10 +787,7 @@ def test_partial_bundle_uses_its_actual_product_names_not_a_new_marketing_title(
         item for item in response.json()["offers"]
         if item["code"] == "bundle:site-short-consultation"
     )
-    calories_name = response.json()["product_presentations"]["calories"]["name"]
-    consultation_name = response.json()["product_presentations"]["consultation"]["name"]
-    assert card["title"] == f"{calories_name} и {consultation_name}"
-    assert card["title"] != OFFER_CARD_COPY["consultation_bundle"]["title"]
+    assert card["title"] == OFFER_CARD_COPY["consultation_bundle"]["title"]
 
 
 def test_offer_product_catalog_has_one_complete_card_contract():

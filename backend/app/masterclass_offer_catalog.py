@@ -207,16 +207,14 @@ def partial_bundle_copy(
     *,
     includes_consultation: bool = False,
 ) -> OfferCardCopy:
-    """Name a non-full bundle by its actual composition, never by a new slogan."""
-    names = [products[code]["name"] for code in product_codes]
-    if includes_consultation:
-        names.append(products["consultation"]["name"])
-    title = " и ".join(names)
+    """Keep the temporary public bundle names until an owner-approved alternative exists."""
     return {
-        "title": title,
+        "title": OFFER_CARD_COPY[
+            "consultation_bundle" if includes_consultation else "digital_bundle"
+        ]["title"],
         "description": (
-            "Самостоятельные программы и индивидуальная консультация одним комплектом."
+            "Все самостоятельные программы и индивидуальная консультация одним комплектом."
             if includes_consultation
-            else "Самостоятельные программы одним комплектом."
+            else "Все самостоятельные программы одним комплектом."
         ),
     }
