@@ -45,31 +45,32 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
 
 def test_stable_site_footer_loader_is_public() -> None:
     response = client.get("/site-footer.js")
+    text = response.text.replace("\r\n", "\n")
 
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
-    assert "data-edabalans-site-footer" in response.text
-    assert "new Date().getFullYear()" in response.text
-    assert "ИП Воронцов Сергей Сергеевич" in response.text
-    assert "ИНН 230409966750" in response.text
-    assert "Все права защищены" in response.text
-    assert "Копирование материалов запрещено" in response.text
-    assert "root.innerHTML = markup(index)" in response.text
-    assert "roots.forEach(mount)" in response.text
-    assert "document.addEventListener('DOMContentLoaded', boot)" in response.text
+    assert "data-edabalans-site-footer" in text
+    assert "new Date().getFullYear()" in text
+    assert "ИП Воронцов Сергей Сергеевич" in text
+    assert "ИНН 230409966750" in text
+    assert "Все права защищены" in text
+    assert "Копирование материалов запрещено" in text
+    assert "root.innerHTML = markup(index)" in text
+    assert "roots.forEach(mount)" in text
+    assert "document.addEventListener('DOMContentLoaded', boot)" in text
     close_all = re.search(
         r"    function closeAll\(\) \{\n(?P<body>.*?)\n    \}\n\n    buttons\.forEach",
-        response.text,
+        text,
         re.DOTALL,
     )
     assert close_all is not None
     assert "item.setAttribute('aria-expanded', 'false')" in close_all.group("body")
     assert "item.hidden = false" in close_all.group("body")
     assert "item.hidden = true" in close_all.group("body")
-    assert "panel.hidden = false" in response.text
+    assert "panel.hidden = false" in text
     click_handler = re.search(
         r"button\.addEventListener\('click', function \(\) \{(?P<body>.*?)\n\s*\}\);",
-        response.text,
+        text,
         re.DOTALL,
     )
     assert click_handler is not None
@@ -494,8 +495,9 @@ def test_tilda_origin_is_allowed_for_api_preflight() -> None:
 
 def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     response = client.get("/apps/strength.html")
+    text = response.text.replace("\r\n", "\n")
 
     assert response.status_code == 200
-    assert "Создать первую тренировку" in response.text
-    assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in response.text
-    assert "body.email =\n      app.email;" in response.text
+    assert "Создать первую тренировку" in text
+    assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in text
+    assert "body.email =\n      app.email;" in text
