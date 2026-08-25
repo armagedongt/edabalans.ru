@@ -162,6 +162,7 @@ def masterclass_designs(
 @router.get("/admin/masterclass-offers-preview", include_in_schema=False)
 def masterclass_offers_preview(
     request: Request,
+    mode: str = "scenario",
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> Response:
     if not admin_identity(request, credentials):
@@ -169,7 +170,7 @@ def masterclass_offers_preview(
             "/admin?next=/admin/masterclass-offers-preview", status_code=303
         )
     return HTMLResponse(
-        render_simulator_page(),
+        render_simulator_page(mode=mode),
         headers={"Cache-Control": "no-store"},
     )
 

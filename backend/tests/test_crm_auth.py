@@ -111,6 +111,11 @@ def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
     assert "Система рецептов" in response.text
     assert "EdabalansMasterclassOfferView.markup(data)" in response.text
     assert response.headers["cache-control"] == "no-store"
+    client_mode = client.get("/admin/masterclass-offers-preview?mode=client")
+    assert client_mode.status_code == 200
+    assert 'href="/admin/masterclass-offers-preview?mode=client" aria-selected="true"' in client_mode.text
+    assert 'id="scenario-mode" hidden' in client_mode.text
+    assert 'id="client-mode" class="client-mode is-active"' in client_mode.text
 
 
 def test_unified_admin_assets_require_authentication() -> None:
