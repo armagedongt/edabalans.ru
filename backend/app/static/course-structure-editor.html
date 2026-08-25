@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Структура Мастер-класса</title>
+  <link rel="stylesheet" href="/admin/static/course-structure-editor.css">
+</head>
+<body>
+  <main class="shell wide">
+    <header class="page-head">
+      <div>
+        <p><a href="/admin/courses">← Курсы</a></p>
+        <h1>Структура Мастер-класса</h1>
+        <p class="muted">Все дни одной лентой. Порядок материалов здесь не меняется.</p>
+      </div>
+      <div class="save-box">
+        <button id="save" class="button" disabled>Сохранить и применить</button>
+        <small id="status">Загрузка…</small>
+      </div>
+    </header>
+    <div id="error" class="error" hidden></div>
+    <section id="days"></section>
+    <details class="history">
+      <summary>Предыдущие редакции</summary>
+      <div id="history"></div>
+    </details>
+  </main>
+  <script src="/admin/static/course-structure-editor.js"></script>
+</body>
+</html>

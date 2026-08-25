@@ -30,6 +30,20 @@ def test_admin_api_requires_authentication() -> None:
     assert response.status_code == 401
 
 
+def test_course_structure_api_requires_authentication() -> None:
+    client = make_client()
+    assert client.get("/admin/api/courses").status_code == 401
+    assert client.get("/admin/api/courses/masterclass-21/structure").status_code == 401
+    assert client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": 1, "manifest": {}},
+    ).status_code == 401
+    assert client.post(
+        "/admin/api/courses/masterclass-21/structure/versions/1/restore",
+        json={"expected_version": 1},
+    ).status_code == 401
+
+
 def test_unified_admin_requires_authentication() -> None:
     response = make_client().get("/admin")
     assert response.status_code == 200
@@ -57,7 +71,7 @@ def test_masterclass_course_preview_is_available_after_login() -> None:
     assert login.status_code == 200
     response = client.get("/admin/masterclass-course-preview")
     assert response.status_code == 200
-    assert "Не считать идеально, а видеть главное" in response.text
+    assert "Структура Мастер-класса" in response.text
 
 
 def test_masterclass_designs_are_available_after_login() -> None:
@@ -69,8 +83,7 @@ def test_masterclass_designs_are_available_after_login() -> None:
     assert login.status_code == 200
     response = client.get("/admin/masterclass-designs")
     assert response.status_code == 200
-    assert "Один интерфейс" in response.text
-    assert response.text.count("Открыть прототип") == 3
+    assert "Структура Мастер-класса" in response.text
 
 
 def test_masterclass_offers_preview_requires_authentication() -> None:

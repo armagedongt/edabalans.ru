@@ -21,7 +21,10 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.masterclass_offer_catalog import OFFER_PRODUCTS  # noqa: E402
-from app.masterclass_routes import course_required_step_indexes  # noqa: E402
+from app.course_structure_service import (  # noqa: E402
+    course_context,
+    effective_required_check_ids,
+)
 from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
@@ -47,10 +50,235 @@ def aware(value: datetime) -> datetime:
 
 
 def test_optional_course_steps_do_not_block_required_progression():
-    assert course_required_step_indexes(7) == [0, 1]
-    assert course_required_step_indexes(8) == [0]
-    assert course_required_step_indexes(15) == [0, 1, 3]
-    assert course_required_step_indexes(16) == [0]
+    _, factory = setup()
+    with factory() as db:
+        context = course_context(db)
+        required = {
+            day: [
+                index for index, step in enumerate(context.days[day]["steps"])
+                if step.get("required", True) and not step.get("hidden", False)
+            ]
+            for day in (7, 8, 15, 16)
+        }
+    assert required[7] == [0, 1]
+    assert required[8] == [0]
+    assert required[15] == [0, 1, 3]
+    assert required[16] == [0]
+
+
+def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
+    client, _ = setup()
+    response = client.get("/admin/api/courses/masterclass-21/structure")
+    assert response.status_code == 200
+    payload = response.json()
+    manifest = payload["active"]["manifest"]
+    original_title = manifest["days"][0]["title"]
+    manifest["days"][0]["title"] = "Новое название первого дня"
+
+    saved = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": payload["active"]["version"], "manifest": manifest},
+    )
+    assert saved.status_code == 200
+    assert saved.json()["active"]["version"] == payload["active"]["version"] + 1
+    assert saved.json()["active"]["manifest"]["days"][0]["steps"][1][
+        "contentPageTitle"
+    ] == "Как вести дневник питания"
+
+    runtime = client.get(
+        "/api/masterclass/course/manifest?email=member@example.test"
+    )
+    assert runtime.status_code == 200
+    assert runtime.json()["days"][0]["title"] == "Новое название первого дня"
+
+    conflict_manifest = payload["active"]["manifest"]
+    conflict_manifest["days"][0]["title"] = original_title
+    conflict = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": payload["active"]["version"], "manifest": conflict_manifest},
+    )
+    assert conflict.status_code == 409
+
+
+def test_course_structure_history_restore_keeps_new_check_hidden_and_stable():
+    client, _ = setup()
+    initial = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = initial["active"]["manifest"]
+    original_title = manifest["days"][0]["title"]
+    manifest["days"][0]["title"] = "Временная редакция"
+    manifest["days"][0]["checks"].append({
+        "id": None,
+        "text": "Новый пункт",
+        "required": True,
+        "hidden": False,
+    })
+    published = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": initial["active"]["version"], "manifest": manifest},
+    )
+    assert published.status_code == 200
+    new_check_id = published.json()["active"]["manifest"]["days"][0]["checks"][-1]["id"]
+
+    restored = client.post(
+        "/admin/api/courses/masterclass-21/structure/versions/1/restore",
+        json={"expected_version": published.json()["active"]["version"]},
+    )
+    assert restored.status_code == 200
+    body = restored.json()
+    assert body["active"]["manifest"]["days"][0]["title"] == original_title
+    restored_check = next(
+        item for item in body["active"]["manifest"]["days"][0]["checks"]
+        if item["id"] == new_check_id
+    )
+    assert restored_check["hidden"] is True
+    assert [item["version"] for item in body["history"]][:3] == [3, 2, 1]
+    assert sum(1 for item in body["history"] if item["active"]) == 1
+
+
+def test_assignment_check_ids_survive_reorder_hide_and_reactivation():
+    client, factory = setup()
+    before = client.get("/api/masterclass/course?email=member@example.test").json()
+    assert before["days"][0]["opened"] is True
+    editor = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = editor["active"]["manifest"]
+    checks = manifest["days"][0]["checks"]
+    first_id = checks[0]["id"]
+    checks.append({"id": None, "text": "Новый пункт", "required": True, "hidden": False})
+    checks[0]["hidden"] = True
+    checks[0], checks[1] = checks[1], checks[0]
+    changed = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert changed.status_code == 200
+    changed_body = changed.json()
+    changed_checks = changed_body["active"]["manifest"]["days"][0]["checks"]
+    assert next(item for item in changed_checks if item["id"] == first_id)["hidden"] is True
+    new_id = next(item["id"] for item in changed_checks if item["text"] == "Новый пункт")
+    assert new_id.startswith("day-1-check-")
+
+    old_participant = client.get(
+        "/api/masterclass/course?email=member@example.test"
+    ).json()["days"][0]
+    assert old_participant["check_count"] == len(changed_checks)
+    with factory() as db:
+        progress = db.scalar(select(MasterclassDayProgress).where(
+            MasterclassDayProgress.day_number == 1
+        ))
+        required = effective_required_check_ids(course_context(db), progress, 1)
+        assert first_id not in required
+        assert new_id not in required
+
+    next(item for item in changed_checks if item["id"] == first_id)["hidden"] = False
+    reactivated = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={
+            "expected_version": changed_body["active"]["version"],
+            "manifest": changed_body["active"]["manifest"],
+        },
+    )
+    assert reactivated.status_code == 200
+    visible_first = next(
+        item for item in reactivated.json()["active"]["manifest"]["days"][0]["checks"]
+        if item["id"] == first_id
+    )
+    assert visible_first["requiredForAllAfterRevision"] == reactivated.json()["active"]["version"]
+    with factory() as db:
+        progress = db.scalar(select(MasterclassDayProgress).where(
+            MasterclassDayProgress.day_number == 1
+        ))
+        assert first_id in effective_required_check_ids(course_context(db), progress, 1)
+
+
+def test_editor_sanitizes_allowed_html_fragments():
+    client, _ = setup()
+    editor = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = editor["active"]["manifest"]
+    manifest["days"][0]["intro"] = (
+        '<strong onclick="alert(1)">Важно</strong>'
+        '<script>alert(2)</script>'
+        '<a href="javascript:alert(3)">ссылка</a>'
+    )
+    saved = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert saved.status_code == 200
+    sanitized = saved.json()["active"]["manifest"]["days"][0]["intro"]
+    assert sanitized == "<strong>Важно</strong><a>ссылка</a>"
+
+
+def test_editor_hides_material_without_reindexing_and_rejects_addition():
+    client, _ = setup()
+    before = client.get(
+        "/api/masterclass/course?email=member@example.test"
+    ).json()["days"][0]
+    editor = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = editor["active"]["manifest"]
+    first_id = manifest["days"][0]["steps"][0]["id"]
+    second_id = manifest["days"][0]["steps"][1]["id"]
+    manifest["days"][0]["steps"][0]["hidden"] = True
+    hidden = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert hidden.status_code == 200
+    active_steps = hidden.json()["active"]["manifest"]["days"][0]["steps"]
+    assert active_steps[0]["id"] == first_id
+    assert active_steps[1]["id"] == second_id
+
+    after = client.get(
+        "/api/masterclass/course?email=member@example.test"
+    ).json()["days"][0]
+    assert after["required_steps_total"] == before["required_steps_total"] - 1
+    hidden_complete = client.post(
+        "/api/masterclass/course/days/1/steps/0/complete",
+        json={"email": "member@example.test"},
+    )
+    assert hidden_complete.status_code == 404
+
+    current = hidden.json()
+    invalid = current["active"]["manifest"]
+    invalid["days"][0]["steps"].append(dict(invalid["days"][0]["steps"][1]))
+    invalid["days"][0]["steps"][-1]["id"] = "day-01-new-material"
+    rejected = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": current["active"]["version"], "manifest": invalid},
+    )
+    assert rejected.status_code == 422
+
+    reordered = current["active"]["manifest"]
+    reordered["days"][0]["steps"][0], reordered["days"][0]["steps"][1] = (
+        reordered["days"][0]["steps"][1],
+        reordered["days"][0]["steps"][0],
+    )
+    rejected = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": current["active"]["version"], "manifest": reordered},
+    )
+    assert rejected.status_code == 422
+
+
+def test_editor_rejects_broken_content_asset_and_unsafe_media_url():
+    client, _ = setup()
+    editor = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = editor["active"]["manifest"]
+    manifest["days"][0]["steps"][1]["contentAsset"] = "missing-material.txt"
+    broken = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert broken.status_code == 422
+    assert "не найден" in broken.json()["detail"]
+
+    manifest = editor["active"]["manifest"]
+    manifest["days"][0]["image"] = 'https://example.test/a.jpg" onerror="alert(1)'
+    unsafe = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert unsafe.status_code == 422
+    assert "Недопустимые символы" in unsafe.json()["detail"]
 
 
 def placement_token(placement: str) -> str:
@@ -829,6 +1057,14 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         )
         assert checked.status_code == 200
     assert checked.json()["days"][0]["completed"] is True
+
+    unchecked = client.put(
+        "/api/masterclass/course/days/1/checks/0",
+        json={"email": "member@example.test", "checked": False},
+    )
+    assert unchecked.status_code == 200
+    assert unchecked.json()["days"][0]["checkmarks"]["0"] is False
+    assert unchecked.json()["days"][0]["completed"] is True
 
     with factory() as db:
         reminder = db.scalar(select(MasterclassNotification).where(

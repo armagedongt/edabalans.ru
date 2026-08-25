@@ -529,6 +529,11 @@ class MasterclassDayProgress(Base):
         nullable=False,
     )
     task_opened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    structure_revision_no: Mapped[int] = mapped_column(
+        Integer, default=1, server_default=text("1"), nullable=False
+    )
+    required_step_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    required_check_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
     checkmarks: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(
@@ -771,6 +776,42 @@ class AdminAppEdit(Base):
     app_code: Mapped[str] = mapped_column(String(32), nullable=False)
     action: Mapped[str] = mapped_column(String(64), nullable=False)
     details: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class ManagedDocumentVersion(Base):
+    __tablename__ = "managed_document_versions"
+    __table_args__ = (
+        UniqueConstraint(
+            "document_type", "document_key", "version_no",
+            name="uq_managed_document_version",
+        ),
+        Index(
+            "uq_managed_document_active",
+            "document_type", "document_key",
+            unique=True,
+            postgresql_where=text("is_active"),
+            sqlite_where=text("is_active = 1"),
+        ),
+        Index(
+            "ix_managed_document_lookup",
+            "document_type", "document_key", "version_no",
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    document_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    document_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    schema_version: Mapped[int] = mapped_column(Integer, nullable=False)
+    version_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    payload: Mapped[dict] = mapped_column(JSON, nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    is_active: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

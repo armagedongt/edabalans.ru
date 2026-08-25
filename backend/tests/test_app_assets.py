@@ -286,7 +286,25 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "messenger-links/status" in course_html
     assert "if(messengerConfirmed)advanceCourseStep" in course_html
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
-    assert "if(step<d.steps.length-1)openCourseStep(d,step+1)" in course_html
+    assert "var next=nextVisibleStep(d,step)" in course_html
+    assert "if(next>=0)openCourseStep(d,next)" in course_html
+    assert "if(!step.hidden&&step.kind==='article'" in course_html
+    assert "return!step.hidden&&['messenger','offer']" in course_html
+    assert "day.shortTitle||day.title" in course_html
+    assert "return day.tocSummary||generated" in course_html
+    assert "esc(d.nextTitle||nextDay.title)" in course_html
+    assert "esc(t.title)" in course_html
+    assert "esc(t.summary)" in course_html
+    assert "pages[step.contentPageTitle||step.title]" in course_html
+    assert "videoId:step.videoId,image:step.image" in course_html
+    assert "materialMedia(t)+parts.body" in course_html
+
+    static_dir = root / "backend" / "app" / "static"
+    editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")
+    editor_js = (static_dir / "course-structure-editor.js").read_text(encoding="utf-8")
+    assert "Сохранить и применить" in editor_html
+    assert "Добавить материал" not in editor_html + editor_js
+    assert "Добавление, удаление и перестановка материалов выполняются через чат" in editor_js
 
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")

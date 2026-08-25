@@ -117,7 +117,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js|knowledge-base\\.css|knowledge-base\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|masterclass-admin\\.css|masterclass-admin\\.js|knowledge-base\\.css|knowledge-base\\.js|course-structure-editor\\.css|course-structure-editor\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
@@ -139,20 +139,24 @@ def masterclass_preview(
 def masterclass_course_preview(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
-) -> FileResponse:
+) -> Response:
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
-    return protected_file("masterclass-course-preview.html")
+    return RedirectResponse(
+        "/admin/courses/masterclass-21/structure", status_code=303
+    )
 
 
 @router.get("/admin/masterclass-designs", include_in_schema=False)
 def masterclass_designs(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
-) -> FileResponse:
+) -> Response:
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
-    return protected_file("masterclass-designs.html")
+    return RedirectResponse(
+        "/admin/courses/masterclass-21/structure", status_code=303
+    )
 
 
 @router.get("/admin/masterclass-offers-preview", include_in_schema=False)
@@ -178,6 +182,31 @@ def knowledge_base_page(
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
     return protected_file("knowledge-base.html")
+
+
+@router.get("/admin/courses", include_in_schema=False)
+def course_editors_page(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/admin/courses", status_code=303)
+    return protected_file("course-editors.html")
+
+
+@router.get("/admin/courses/{course_code}/structure", include_in_schema=False)
+def course_structure_editor_page(
+    request: Request,
+    course_code: str,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse(
+            f"/admin?next=/admin/courses/{course_code}/structure", status_code=303
+        )
+    if course_code != "masterclass-21":
+        raise HTTPException(404, "Курс не найден")
+    return protected_file("course-structure-editor.html")
 
 
 @router.get("/admin/{section}", include_in_schema=False)

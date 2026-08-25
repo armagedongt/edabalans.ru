@@ -15,6 +15,7 @@ from app.access_routes import router as access_router
 from app.pricing_routes import router as pricing_router
 from app.intensive_routes import router as intensive_router
 from app.knowledge_routes import router as knowledge_router
+from app.course_structure_routes import router as course_structure_router
 from app.database import get_db
 
 settings = get_settings()
@@ -36,6 +37,7 @@ app.include_router(access_router)
 app.include_router(pricing_router)
 app.include_router(intensive_router)
 app.include_router(knowledge_router)
+app.include_router(course_structure_router)
 
 
 @app.get("/health", tags=["system"])
