@@ -20,7 +20,7 @@ from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
-from app.masterclass_offer_catalog import OFFER_PRODUCTS  # noqa: E402
+from app.masterclass_offer_catalog import OFFER_CARD_COPY, OFFER_PRODUCTS  # noqa: E402
 from app.course_structure_service import (  # noqa: E402
     course_context,
     effective_required_check_ids,
@@ -620,6 +620,7 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
     digital_bundle = next(
         card for card in early["offers"] if card["code"] == "bundle:digital"
     )
+    assert digital_bundle["title"] == OFFER_CARD_COPY["digital_bundle"]["title"]
     assert digital_bundle["details"] == [
         {
             "code": code,
@@ -660,6 +661,29 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
         assert card["long_description"] == OFFER_PRODUCTS[code]["long_description"]
 
 
+def test_partial_bundle_uses_its_actual_product_names_not_a_new_marketing_title():
+    client, _ = setup()
+    response = client.post(
+        "/api/masterclass/admin/offer-preview",
+        json={
+            "stage_code": "review",
+            "placement": "day-19-offer",
+            "owned_product_codes": ["recipes"],
+            "tariff_name": "Минимальный",
+            "remaining_hours": 48,
+        },
+    )
+    assert response.status_code == 200
+    card = next(
+        item for item in response.json()["offers"]
+        if item["code"] == "bundle:site-short-consultation"
+    )
+    calories_name = response.json()["product_presentations"]["calories"]["name"]
+    consultation_name = response.json()["product_presentations"]["consultation"]["name"]
+    assert card["title"] == f"{calories_name} и {consultation_name}"
+    assert card["title"] != OFFER_CARD_COPY["consultation_bundle"]["title"]
+
+
 def test_offer_product_catalog_has_one_complete_card_contract():
     required_fields = {
         "name",
@@ -680,6 +704,10 @@ def test_offer_product_catalog_has_one_complete_card_contract():
     assert all(product["standard"] > 0 for product in OFFER_PRODUCTS.values())
     assert all(product["presentation_intro"] for product in OFFER_PRODUCTS.values())
     assert all(product["presentation_program"] for product in OFFER_PRODUCTS.values())
+    assert all(
+        all(item["title"] and item["description"] for item in product["presentation_program"])
+        for product in OFFER_PRODUCTS.values()
+    )
 
 
 def test_offer_payload_links_product_presentations_to_current_checkout_cards():
@@ -695,6 +723,7 @@ def test_offer_payload_links_product_presentations_to_current_checkout_cards():
     assert recipes["description"].startswith("Как")
     assert recipes["intro"]
     assert recipes["program"]
+    assert all(set(item) == {"title", "description"} for item in recipes["program"])
     actions = payload["product_offer_actions"]["recipes"]
     assert {action["offer_code"] for action in actions} == {
         "single:recipes", "bundle:digital"

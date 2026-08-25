@@ -32,6 +32,7 @@ from app.masterclass_offer_catalog import (
     SITE_SHORT_OFFER_PRESENTATION,
     bundle_detail,
     offer_products,
+    partial_bundle_copy,
 )
 from app.masterclass_offer_rules import (
     EMBED_PLACEMENTS,
@@ -1355,7 +1356,12 @@ def build_offers(
         if len(missing) < 2:
             return None
         standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
-        copy = OFFER_CARD_COPY["digital_bundle"]
+        missing_codes = [code for code, _ in missing]
+        copy = (
+            OFFER_CARD_COPY["digital_bundle"]
+            if set(missing_codes) == set(digital_product_codes)
+            else partial_bundle_copy(missing_codes, products)
+        )
         return {
             "code": "bundle:digital",
             "composition": "bundle",
@@ -1422,16 +1428,19 @@ def build_offers(
                 else single_card(*missing[0])["price"]
             )
             details = [*[bundle_detail(code, products) for code, _ in missing], consultation_detail]
-            title = (
-                "Рецепты, калорийный план и индивидуальная консультация"
-                if len(missing) == 2
-                else f"{missing[0][1]['name']} и индивидуальная консультация"
+            missing_codes = [code for code, _ in missing]
+            copy = (
+                OFFER_CARD_COPY["consultation_bundle"]
+                if set(missing_codes) == set(digital_product_codes)
+                else partial_bundle_copy(
+                    missing_codes, products, includes_consultation=True,
+                )
             )
             return {
                 "code": "bundle:site-short-consultation",
                 "composition": "bundle",
-                "title": title,
-                "description": "Материал и индивидуальная консультация одним тарифом.",
+                "title": copy["title"],
+                "description": copy["description"],
                 "long_description": "",
                 "details": details,
                 "items": [*[code for code, _ in missing], "consultation"],
@@ -1489,7 +1498,14 @@ def build_offers(
             if missing:
                 digital_standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
                 digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
-                copy = OFFER_CARD_COPY["consultation_bundle"]
+                missing_codes = [code for code, _ in missing]
+                copy = (
+                    OFFER_CARD_COPY["consultation_bundle"]
+                    if set(missing_codes) == set(digital_product_codes)
+                    else partial_bundle_copy(
+                        missing_codes, products, includes_consultation=True,
+                    )
+                )
                 cards.append({
                     "code": "bundle:consultation",
                     "composition": "bundle",
