@@ -29,27 +29,14 @@ fi
 readonly PREVIOUS_SHA="$(git rev-parse HEAD)"
 deployment_started=false
 deployment_succeeded=false
-migration_deploy=false
-startup_data_deploy=false
+read -r migration_deploy startup_data_deploy < <(
+    git show "${TARGET_SHA}:infra/deploy/classify-deploy-impact" \
+        | bash -s -- "${APP_DIR}" "${PREVIOUS_SHA}" "${TARGET_SHA}"
+)
 
-if git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -q '^backend/migrations/versions/'; then
-    migration_deploy=true
-    if [[ "${ALLOW_DATABASE_MIGRATIONS:-0}" != "1" ]]; then
-        echo "Deployment includes database migrations and requires ALLOW_DATABASE_MIGRATIONS=1 after manual verification" >&2
-        exit 5
-    fi
-fi
-
-if git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -Eq '^telegram-bot/service/app/seed\.py$'; then
-    startup_data_deploy=true
-elif git diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}" | grep -Eq '^telegram-bot/service/app/main\.py$'; then
-    previous_startup_seed_call="$(git show "${PREVIOUS_SHA}:telegram-bot/service/app/main.py" \
-        | sed -n '/^        seed_defaults(/,/^        )/p')"
-    target_startup_seed_call="$(git show "${TARGET_SHA}:telegram-bot/service/app/main.py" \
-        | sed -n '/^        seed_defaults(/,/^        )/p')"
-    if [[ "${previous_startup_seed_call}" != "${target_startup_seed_call}" ]]; then
-        startup_data_deploy=true
-    fi
+if [[ "${migration_deploy}" == "true" && "${ALLOW_DATABASE_MIGRATIONS:-0}" != "1" ]]; then
+    echo "Deployment includes database migrations and requires ALLOW_DATABASE_MIGRATIONS=1 after manual verification" >&2
+    exit 5
 fi
 
 rollback() {
@@ -88,6 +75,13 @@ curl --fail --silent --show-error --max-time 15 \
     https://api.edabalans.ru/ready >/dev/null
 curl --fail --silent --show-error --max-time 20 \
     https://data.edabalans.ru/api/v1/health >/dev/null
+
+# The timer launches installed control-plane copies. Refresh them only after the
+# target revision is healthy so the next deployment uses the reviewed scripts.
+install -m 0755 "${APP_DIR}/infra/deploy/edabalans-deploy" \
+    /usr/local/sbin/edabalans-deploy
+install -m 0755 "${APP_DIR}/infra/deploy/edabalans-deploy-poll" \
+    /usr/local/sbin/edabalans-deploy-poll
 
 deployment_succeeded=true
 echo "Production deployed successfully: ${TARGET_SHA}"

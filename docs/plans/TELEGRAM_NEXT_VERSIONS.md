@@ -1,6 +1,15 @@
+---
+document_status: archived
+date: 2026-08-24
+module_id: messaging.telegram
+---
+
 # Telegram-бот: изменения следующих версий
 
-Статус: `planned`  
+Статус: `archived`
+Причина архивации: смешанная устаревшая roadmap. Факты перенесены в
+`../TELEGRAM_BOT_CURRENT_LOGIC.md` и module cards; подтверждённое будущее —
+`TELEGRAM_DEFERRED_MODULES.md` и отдельные owner-explicit plans.
 Фактическое текущее поведение: `../TELEGRAM_BOT_CURRENT_LOGIC.md`.
 
 ## Актуальная карта работ на 24.08.2026

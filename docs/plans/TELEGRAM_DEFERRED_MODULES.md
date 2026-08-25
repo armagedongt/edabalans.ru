@@ -1,3 +1,10 @@
+---
+document_status: planned
+date: 2026-08-24
+module_id: messaging.telegram
+origin: owner-explicit
+---
+
 # Отложенные модули Telegram после первого запуска
 
 Статус: `planned`  

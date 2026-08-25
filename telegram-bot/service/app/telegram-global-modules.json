@@ -1,0 +1,77 @@
+{
+  "modules": [
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md",
+      "code": "start_attribution",
+      "module_id": "messaging.telegram.attribution",
+      "name": "Старт и атрибуция",
+      "order": 10,
+      "status": "Исполняемый модуль · временно включён режим ремонта"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.intensive.md",
+      "code": "welcome_intensive",
+      "module_id": "messaging.telegram.intensive",
+      "name": "Welcome: запуск и первые четыре дня",
+      "order": 20,
+      "status": "Исполняемая редактируемая цепочка"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.prepurchase.md",
+      "code": "prepurchase_nurture",
+      "module_id": "messaging.telegram.prepurchase",
+      "name": "Основная рассылка до покупки",
+      "order": 30,
+      "status": "Исполняемый каркас · контент частичный"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.postpurchase.md",
+      "code": "postpurchase_masterclass",
+      "module_id": "messaging.telegram.postpurchase",
+      "name": "После покупки мастер-класса",
+      "order": 40,
+      "status": "Требования частичные"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.postmasterclass.md",
+      "code": "postmasterclass_nurture",
+      "module_id": "messaging.telegram.postmasterclass",
+      "name": "После завершения мастер-класса",
+      "order": 50,
+      "status": "Отключённый пустой каркас"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.broadcasts.md",
+      "code": "broadcasts",
+      "module_id": "messaging.telegram.broadcasts",
+      "name": "Разовые рассылки",
+      "order": 60,
+      "status": "Draft → preview → test → send/schedule → retry"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/messaging.telegram.direct-support.md",
+      "code": "inbox",
+      "module_id": "messaging.telegram.direct-support",
+      "name": "Входящие сообщения и ответы",
+      "order": 70,
+      "status": "Единая Telegram-лента в карточке пользователя"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/planned.telegram-lottery.md",
+      "code": "lottery",
+      "module_id": "planned.telegram-lottery",
+      "name": "Лотерея",
+      "order": 80,
+      "status": "Запланировано"
+    },
+    {
+      "card": "docs/knowledge-base/modules/catalog/planned.telegram-quiz.md",
+      "code": "quiz",
+      "module_id": "planned.telegram-quiz",
+      "name": "Тесты и опросы",
+      "order": 90,
+      "status": "Запланировано"
+    }
+  ],
+  "schema_version": 1
+}

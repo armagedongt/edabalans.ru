@@ -1,5 +1,7 @@
 # Tilda / Robokassa → PostgreSQL
 
+Статус: `current`
+
 Production endpoint:
 
 ```text

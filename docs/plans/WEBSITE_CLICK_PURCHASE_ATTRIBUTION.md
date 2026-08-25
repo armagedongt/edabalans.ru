@@ -1,3 +1,10 @@
+---
+document_status: planned
+date: 2026-08-22
+module_id: messaging.telegram.attribution
+origin: owner-explicit
+---
+
 # ТЗ: переходы с канала на сайт и связывание с покупкой
 
 Статус: `planned`  

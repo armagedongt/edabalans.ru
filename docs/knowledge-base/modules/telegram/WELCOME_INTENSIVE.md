@@ -1,6 +1,8 @@
 # Глобальный модуль «Welcome и четырёхдневный интенсив»
 
-Статус: `deployed_production_maintenance / live subscription enabled / content_partial`
+Статус: `current`
+Состояние внедрения: production maintenance; live-проверка подписки включена;
+контент заполнен частично.
 Владелец содержания: Сергей Воронцов
 Проверено: 25.08.2026
 

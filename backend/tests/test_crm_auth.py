@@ -133,6 +133,8 @@ def test_login_creates_shared_admin_session() -> None:
     assert "edabalans_admin=" in response.headers["set-cookie"]
     assert "HttpOnly" in response.headers["set-cookie"]
     assert "Secure" in response.headers["set-cookie"]
+    assert "Domain=.edabalans.ru" in response.headers["set-cookie"]
+    assert "SameSite=strict" in response.headers["set-cookie"]
     page = client.get("/admin")
     assert page.status_code == 200
     assert 'id="admin-content"' in page.text

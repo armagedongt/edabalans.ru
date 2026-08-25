@@ -4,7 +4,8 @@
 `../knowledge-base/modules/telegram/LINKS_AND_ATTRIBUTION.md`. Этот файл сохранён
 как исходное подробное ТЗ.
 
-Статус: `approved_draft`, **ещё не реализовано**  
+Статус: `draft`
+Состояние внедрения: требования согласованы, ещё не реализовано.
 Дата фиксации: 22.08.2026  
 Связанный модуль: `TELEGRAM_START_LINKS_SPEC.md`
 

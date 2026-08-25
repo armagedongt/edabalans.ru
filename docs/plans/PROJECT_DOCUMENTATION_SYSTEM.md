@@ -1,6 +1,15 @@
+---
+document_status: archived
+date: 2026-08-22
+cross_project: true
+---
+
 # ТЗ: карта файлов, модулей и таблиц проекта
 
-Статус: `planned`  
+Статус: `archived`
+Причина архивации: реализовано системой `docs/modules.toml`,
+`tools/module_inventory.py` и `docs/generated/*`; текущие правила находятся в
+`../README.md` и `../knowledge-base/OWNER_PROJECT_GUIDE.md`.
 Источник требований: владелец проекта, 22.08.2026.
 
 ## Оценка требования

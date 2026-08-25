@@ -1,0 +1,544 @@
+schema_version = 1
+derived_outputs = [
+  { path = "docs/generated/module-inventory.json", module_id = "admin.project-knowledge" },
+  { path = "docs/generated/module-map.md", module_id = "admin.project-knowledge" },
+  { path = "telegram-bot/service/app/telegram-global-modules.json", module_id = "messaging.telegram" },
+]
+
+# The registry owns routing and technical ownership only. Human names, summaries,
+# statuses and capabilities live in the referenced Markdown cards.
+
+[[modules]]
+id = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.md"
+owns_files = ["README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md"]
+owns_routes = ["*/embed.js", "*/site-footer.js"]
+
+[[modules]]
+id = "platform.crm"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.crm.md"
+owns_files = [
+  "backend/app/crm_service.py",
+  "backend/tests/test_crm_cleanup_catalogs.py",
+  "docs/CRM_CORE_DESIGN.md",
+  "docs/CRM_DATA_MODEL.md",
+  "backend/migrations/versions/20260822_0002_crm_core.py",
+  "backend/migrations/versions/20260822_0003_data_origin_cleanup.py",
+  "backend/migrations/versions/20260822_0005_leadteh_tags.py",
+  "backend/migrations/versions/20260822_0007_crm_cleanup.py",
+]
+owns_tables = [
+  "users", "user_emails", "user_phones", "messenger_accounts", "tags",
+  "user_tags", "client_notes", "user_merge_events",
+]
+
+[[modules]]
+id = "platform.commerce"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
+depends_on = ["platform.crm"]
+events_out = ["messaging.telegram.postpurchase"]
+owns_files = [
+  "backend/app/access_routes.py", "backend/app/access_service.py",
+  "backend/app/legal_service.py", "backend/app/pricing_routes.py",
+  "backend/app/pricing_service.py", "backend/app/product_identity.py",
+  "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
+  "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
+  "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
+  "backend/tests/test_pricing_catalog.py", "backend/tests/test_tilda_payments.py",
+  "docs/TILDA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
+  "docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md",
+  "docs/knowledge-base/ACCESS_RULES.md", "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md",
+  "docs/knowledge-base/LEGAL_DOCUMENTS.md", "docs/knowledge-base/PRICING_CATALOG.md",
+  "docs/knowledge-base/PRICING_MANAGEMENT_GUIDE.md", "docs/knowledge-base/PRODUCTS.md",
+  "docs/knowledge-base/TILDA_GROUP_CLEANUP_GUIDE.md",
+  "backend/migrations/versions/20260822_0008_tilda_legacy_access.py",
+  "backend/migrations/versions/20260822_0011_payment_amount_provenance.py",
+  "backend/migrations/versions/20260823_0019_personal_access_links.py",
+  "backend/migrations/versions/20260823_0020_pricing_catalog.py",
+  "backend/migrations/versions/20260824_0022_user_legal_acceptances.py",
+]
+owns_tables = [
+  "products", "product_aliases", "resources", "product_access_rules",
+  "pricing_versions", "price_entries", "payments", "user_accesses",
+  "personal_access_links", "user_course_policies", "user_legal_acceptances",
+]
+owns_routes = [
+  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/tilda/*", "*/personal-access*",
+  "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
+]
+
+[[modules]]
+id = "platform.auth"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.auth.md"
+owns_files = [
+  "backend/app/app_auth.py", "backend/app/auth.py", "backend/app/static/admin-login.*",
+  "backend/app/static/admin-session.css", "backend/tests/test_app_auth.py",
+  "backend/tests/test_crm_auth.py",
+]
+owns_routes = ["*/app-auth/*", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
+depends_on = ["platform.crm"]
+
+[[modules]]
+id = "platform.content"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.content.md"
+owns_files = [
+  "backend/app/content_routes.py", "backend/app/content_service.py",
+  "backend/tests/test_content_catalog.py", "backend/tests/test_telegram_catalog.py",
+  "backend/tests/fixtures/telegram_channel_export.json",
+  "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
+  "tools/telegram_public_metrics_collect.py",
+  "backend/migrations/versions/20260822_0013_content_catalog.py",
+  "backend/migrations/versions/20260822_0014_content_comments.py",
+]
+owns_tables = [
+  "content_sources", "content_items", "content_item_versions", "content_media",
+  "content_links", "content_metric_snapshots", "content_comments", "content_import_runs",
+]
+owns_routes = ["*/admin/api/content*"]
+
+[[modules]]
+id = "products"
+card = "docs/knowledge-base/modules/catalog/products.md"
+depends_on = ["platform.auth", "platform.commerce"]
+owns_files = [
+  "docs/APPLICATION_PLATFORM.md", "docs/APPLICATION_BACKLOG.md",
+  "backend/app/app_routes.py", "backend/app/app_service.py",
+  "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
+  "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
+  "backend/app/static/embed.js", "backend/app/static/site-footer.js",
+]
+owns_routes = ["*/apps/*", "*/assets/*"]
+
+[[modules]]
+id = "products.dqs"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.dqs.md"
+depends_on = ["platform.auth", "platform.commerce"]
+owns_files = [
+  "backend/app/static/apps/dqs.html", "legacy/google/dqs/**",
+  "legacy/google/sheets/DQS_SCHEMA.md", "backend/tests/test_masterclass_dqs_gate.py",
+  "backend/migrations/versions/20260822_0004_application_states.py",
+]
+owns_tables = ["dqs_states"]
+owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*"]
+
+[[modules]]
+id = "products.strength"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.strength.md"
+depends_on = ["platform.auth", "platform.commerce"]
+owns_files = [
+  "backend/app/static/apps/strength.html", "legacy/google/strength/**",
+  "legacy/google/sheets/STRENGTH_SCHEMA.md",
+]
+owns_tables = ["strength_states", "strength_exercises"]
+owns_routes = ["*/apps/strength*", "*/api/apps/strength*"]
+
+[[modules]]
+id = "products.metabolism"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
+depends_on = ["platform.auth", "platform.commerce"]
+owns_files = ["backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**"]
+owns_tables = ["metabolism_states"]
+owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
+
+[[modules]]
+id = "products.intensive"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.intensive.md"
+owns_files = [
+  "backend/app/intensive_routes.py", "backend/app/static/intensive/**",
+  "backend/tests/test_intensive_editor.py", "docs/INTENSIVE_PAGES.md",
+  "backend/migrations/versions/20260822_0010_intensive_restart_guard.py",
+]
+owns_routes = ["*/intensive*", "*/admin/api/intensive*"]
+depends_on = ["platform.content"]
+
+[[modules]]
+id = "products.masterclass"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
+depends_on = ["platform.commerce"]
+owns_files = [
+  "docs/TILDA_MASTERCLASS_EMBEDS.md", "docs/knowledge-base/modules/masterclass/README.md",
+]
+
+[[modules]]
+id = "products.masterclass.course"
+parent = "products.masterclass"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
+owns_files = [
+  "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
+  "backend/app/managed_documents.py", "backend/app/static/course-editors.html",
+  "backend/app/static/course-structure-editor.*", "backend/app/static/masterclass-preview.html",
+  "backend/scripts/seed_masterclass_preview.py",
+  "content/masterclass/**", "docs/knowledge-base/modules/masterclass/COURSE_DESIGN_SYSTEM.md",
+  "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
+  "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
+  "backend/migrations/versions/20260825_0024_course_structure_editor.py",
+  "work/course-structure-editor/**",
+]
+owns_tables = ["managed_document_versions"]
+owns_routes = [
+  "*/admin/api/course-structure*", "*/admin/api/courses*", "*/admin/courses*",
+  "*/admin/course-editors*", "*/admin/course-structure-editor*",
+]
+sources = [
+  { path = "content/masterclass/course/course.json", role = "seed", shared = true, consumers = ["products.masterclass.runtime"] },
+  { path = "content/masterclass/source-current", role = "copy", shared = true, consumers = ["products.masterclass.runtime"] },
+]
+
+[[modules]]
+id = "products.masterclass.runtime"
+parent = "products.masterclass"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md"
+depends_on = ["platform.auth", "platform.commerce"]
+events_out = ["messaging.telegram.postpurchase"]
+owns_files = [
+  "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
+  "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
+  "backend/app/static/masterclass-admin.*", "backend/tests/test_masterclass_journey.py",
+  "backend/tests/test_masterclass_unlock_schedule.py",
+  "backend/migrations/versions/20260822_0015_masterclass_journey.py",
+  "backend/migrations/versions/20260823_0017_masterclass_course_progress.py",
+  "backend/migrations/versions/20260823_0018_masterclass_test_profiles.py",
+  "backend/migrations/versions/20260824_0021_masterclass_local_timezone.py",
+  "docs/knowledge-base/modules/masterclass/COURSE_RUNTIME.md",
+]
+owns_tables = [
+  "masterclass_events", "masterclass_day_progress", "masterclass_step_progress",
+  "masterclass_notifications", "masterclass_test_profiles",
+]
+owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*"]
+reads_from = ["products.masterclass.course"]
+
+[[modules]]
+id = "products.masterclass.questionnaires"
+parent = "products.masterclass"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.questionnaires.md"
+owns_files = ["backend/app/static/apps/onboarding-questionnaire.html"]
+owns_tables = ["questionnaire_runs", "questionnaire_answers"]
+owns_routes = ["*/api/masterclass/*questionnaire*", "*/api/masterclass/*closing-review*"]
+depends_on = ["products.masterclass.runtime"]
+events_out = ["messaging.telegram.postpurchase"]
+
+[[modules]]
+id = "products.masterclass.offers"
+parent = "products.masterclass"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.offers.md"
+owns_files = [
+  "backend/app/masterclass_offer_catalog.py", "backend/app/masterclass_offer_rules.py",
+  "backend/app/static/apps/masterclass-offers*.html", "backend/app/static/apps/masterclass-sales.html",
+  "backend/app/static/masterclass-first-days-preview.html",
+  "backend/scripts/generate_masterclass_offer_simulator.py",
+  "docs/knowledge-base/modules/masterclass/OFFERS_MODULE.md",
+  "docs/prototypes/masterclass-offer-simulator.fragment.html",
+  "backend/migrations/versions/20260825_0023_masterclass_offer_windows.py",
+]
+owns_tables = ["offer_stages", "user_offers", "offer_checkouts"]
+owns_routes = ["*/api/masterclass/*offer*", "*/admin/api/masterclass/*offer*"]
+depends_on = ["platform.commerce", "products.masterclass.runtime"]
+sources = [
+  { path = "backend/app/masterclass_offer_rules.py", role = "rule", shared = true, consumers = ["messaging.telegram.postpurchase"] },
+  { path = "backend/app/masterclass_offer_catalog.py", role = "copy", shared = false, consumers = [] },
+]
+
+[[modules]]
+id = "products.masterclass.messenger-links"
+parent = "products.masterclass"
+card = "docs/knowledge-base/modules/catalog/products.masterclass.messenger-links.md"
+owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py"]
+owns_tables = ["messenger_link_tokens"]
+owns_routes = ["*/api/masterclass/*messenger*", "*/api/masterclass/*telegram*"]
+depends_on = ["messaging.telegram.engine"]
+
+[[modules]]
+id = "messaging"
+card = "docs/knowledge-base/modules/catalog/messaging.md"
+
+[[modules]]
+id = "messaging.telegram"
+parent = "messaging"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.md"
+depends_on = ["platform.crm", "platform.commerce"]
+owns_files = [
+  "telegram-bot/README.md", "telegram-bot/docs/**", "docs/TELEGRAM_BOT_CURRENT_LOGIC.md",
+  "docs/knowledge-base/modules/telegram/README.md",
+  "docs/knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md",
+  "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md",
+]
+
+[[modules]]
+id = "messaging.telegram.attribution"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
+depends_on = ["platform.crm", "messaging.telegram.engine"]
+telegram_code = "start_attribution"
+telegram_name = "Старт и атрибуция"
+telegram_status = "Исполняемый модуль · временно включён режим ремонта"
+telegram_order = 10
+owns_files = [
+  "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
+  "telegram-bot/service/tests/test_start_router.py", "telegram-bot/service/tests/test_tracking.py",
+  "docs/knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md",
+  "docs/knowledge-base/modules/telegram/LEAD_ENTRY_TECHNICAL_SPEC.md",
+  "docs/knowledge-base/modules/telegram/LINKS_AND_ATTRIBUTION.md",
+  "docs/knowledge-base/modules/telegram/START_WELCOME_ROUTING.md",
+  "backend/migrations/versions/20260822_0012_lead_entry_attribution.py",
+]
+owns_tables = [
+  "attribution_events", "tg_tracking_links", "tg_tracking_link_aliases",
+  "tg_tracking_link_tags", "tg_utm_tag_rules", "tg_tracking_sessions", "tg_tracking_events",
+]
+owns_routes = [
+  "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
+  "*/go/*", "*/r/*",
+]
+
+[[modules]]
+id = "messaging.telegram.intensive"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.intensive.md"
+depends_on = ["messaging.telegram.engine"]
+telegram_code = "welcome_intensive"
+telegram_name = "Welcome: запуск и первые четыре дня"
+telegram_status = "Исполняемая редактируемая цепочка"
+telegram_order = 20
+owns_files = ["docs/knowledge-base/modules/telegram/WELCOME_INTENSIVE.md"]
+
+[[modules]]
+id = "messaging.telegram.prepurchase"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.prepurchase.md"
+depends_on = ["messaging.telegram.engine"]
+telegram_code = "prepurchase_nurture"
+telegram_name = "Основная рассылка до покупки"
+telegram_status = "Исполняемый каркас · контент частичный"
+telegram_order = 30
+owns_files = ["docs/knowledge-base/modules/telegram/PREPURCHASE_NURTURE.md"]
+
+[[modules]]
+id = "messaging.telegram.postpurchase"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.postpurchase.md"
+depends_on = ["messaging.telegram.engine", "platform.crm", "platform.commerce"]
+events_in = ["platform.commerce", "products.masterclass.runtime", "products.masterclass.questionnaires"]
+events_out = ["messaging.telegram.postmasterclass"]
+telegram_code = "postpurchase_masterclass"
+telegram_name = "После покупки мастер-класса"
+telegram_status = "Требования частичные"
+telegram_order = 40
+owns_files = ["docs/knowledge-base/modules/telegram/POST_PURCHASE_MASTERCLASS.md"]
+reads_from = ["products.masterclass.offers", "products.masterclass.course"]
+
+[[modules]]
+id = "messaging.telegram.postmasterclass"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.postmasterclass.md"
+depends_on = ["messaging.telegram.engine"]
+events_in = ["messaging.telegram.postpurchase"]
+telegram_code = "postmasterclass_nurture"
+telegram_name = "После завершения мастер-класса"
+telegram_status = "Отключённый пустой каркас"
+telegram_order = 50
+owns_files = ["docs/knowledge-base/modules/telegram/POSTMASTERCLASS_NURTURE.md"]
+
+[[modules]]
+id = "messaging.telegram.direct-support"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.direct-support.md"
+depends_on = ["messaging.telegram.engine"]
+telegram_code = "inbox"
+telegram_name = "Входящие сообщения и ответы"
+telegram_status = "Единая Telegram-лента в карточке пользователя"
+telegram_order = 70
+
+[[modules]]
+id = "messaging.telegram.broadcasts"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.broadcasts.md"
+depends_on = ["messaging.telegram.engine"]
+telegram_code = "broadcasts"
+telegram_name = "Разовые рассылки"
+telegram_status = "Draft → preview → test → send/schedule → retry"
+telegram_order = 60
+owns_files = ["docs/knowledge-base/modules/telegram/INBOX_AND_BROADCASTS.md"]
+owns_tables = ["tg_manual_messages", "tg_broadcasts", "tg_broadcast_recipients"]
+owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
+
+[[modules]]
+id = "messaging.telegram.engine"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
+owns_files = [
+  "telegram-bot/.env.example", "telegram-bot/.gitignore", "telegram-bot/schema/**",
+  "telegram-bot/prototype/**", "telegram-bot/service/Dockerfile",
+  "telegram-bot/service/import_catalog.py", "telegram-bot/service/requirements-dev.txt",
+  "telegram-bot/service/requirements.txt", "telegram-bot/service/set_webhook.py",
+  "telegram-bot/service/app/__init__.py", "telegram-bot/service/app/config.py",
+  "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
+  "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
+  "telegram-bot/service/app/graph.py", "telegram-bot/service/app/main.py",
+  "telegram-bot/service/app/maintenance.py", "telegram-bot/service/app/masterclass_dispatch.py",
+  "telegram-bot/service/app/masterclass_link.py", "telegram-bot/service/app/masterclass_triggers.py",
+  "telegram-bot/service/app/models.py", "telegram-bot/service/app/schemas.py",
+  "telegram-bot/service/app/seed.py", "telegram-bot/service/app/telegram.py",
+  "telegram-bot/service/static/**", "telegram-bot/service/tests/**",
+  "telegram-bot/tests/**", "backend/migrations/versions/20260822_0006_telegram_messaging.py",
+  "backend/migrations/versions/20260822_0009_telegram_flow_graph.py",
+  "docs/knowledge-base/modules/telegram/CUSTOMER_LIFECYCLE_TECHNICAL_SPEC.md",
+]
+owns_tables = [
+  "tg_bot_instances", "tg_contacts", "tg_content_items", "tg_sequences",
+  "tg_sequence_versions", "tg_sequence_steps", "tg_sequence_edges", "tg_bot_routes",
+  "tg_sequence_runs", "tg_step_deliveries", "tg_update_receipts", "tg_user_variables",
+]
+owns_routes = ["*/bot", "*/bot/*", "*/bot-api/*"]
+depends_on = ["platform.crm", "platform.commerce"]
+
+[[modules]]
+id = "admin"
+card = "docs/knowledge-base/modules/catalog/admin.md"
+owns_files = ["docs/ADMIN_ARCHITECTURE.md"]
+
+[[modules]]
+id = "admin.control"
+parent = "admin"
+card = "docs/knowledge-base/modules/catalog/admin.control.md"
+owns_files = [
+  "backend/app/crm_routes.py", "backend/app/static/admin-portal.html",
+  "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js",
+  "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
+  "backend/app/static/max-logo.png",
+]
+owns_routes = [
+  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/admin/api/crm*", "*/admin/api/users*",
+  "*/admin/api/summary", "*/admin/api/tags*", "*/admin/api/audit/*",
+]
+depends_on = ["platform.auth", "platform.crm"]
+
+[[modules]]
+id = "admin.project-knowledge"
+parent = "admin"
+card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
+depends_on = ["platform.auth"]
+owns_files = [
+  "AGENTS.md", "docs/README.md", "docs/AI_DEVELOPMENT_WORKFLOW.md",
+  "docs/CHAT_WORKSTREAMS.md", "docs/knowledge-base/README.md", "docs/modules.toml",
+  "backend/app/knowledge_routes.py", "backend/app/static/knowledge-base.*",
+  "backend/tests/test_knowledge_base.py", "tools/module_inventory.py",
+  "tools/tests/test_module_inventory.py", "work/module-knowledge-system/**",
+  "docs/knowledge-base/OWNER_PROJECT_GUIDE.md",
+]
+owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin/api/project-map"]
+
+[[modules]]
+id = "admin.nocodb"
+parent = "admin"
+card = "docs/knowledge-base/modules/catalog/admin.nocodb.md"
+depends_on = ["operations.database", "operations.proxy"]
+implementation_note = "Existing technical tool; development is outside this feature."
+
+[[modules]]
+id = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.md"
+owns_files = [".dockerignore", ".env.example", ".gitignore", "compose.yaml"]
+
+[[modules]]
+id = "operations.database"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.database.md"
+owns_files = [
+  "backend/alembic.ini", "backend/app/database.py", "backend/app/models.py",
+  "backend/migrations/env.py", "backend/migrations/script.py.mako",
+  "backend/migrations/versions/20260821_0001_baseline.py",
+]
+owns_tables = ["alembic_version"]
+
+[[modules]]
+id = "operations.delivery"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.delivery.md"
+depends_on = ["operations.database", "operations.backup", "operations.proxy"]
+owns_files = [
+  ".github/workflows/production.yml", "backend/.dockerignore", "backend/Dockerfile",
+  "backend/requirements*.txt", "infra/deploy/**", "infra/docker/**",
+  "infra/systemd/edabalans-deploy-poll.*", "docs/OPERATIONS.md",
+  "backend/app/__init__.py", "backend/app/config.py", "backend/app/main.py",
+  "backend/tests/test_health.py", "tools/tests/test_deploy_policy.py",
+  "infra/fail2ban/**", "infra/scripts/install-docker.sh",
+]
+owns_routes = ["*/health", "*/ready"]
+
+[[modules]]
+id = "operations.proxy"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.proxy.md"
+owns_files = ["infra/caddy/**", "infra/telegram-proxy/**"]
+
+[[modules]]
+id = "operations.backup"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.backup.md"
+owns_files = ["infra/scripts/backup-postgres.sh", "infra/scripts/test-restore-postgres.sh", "infra/systemd/edabalans-backup.*"]
+
+[[modules]]
+id = "operations.imports"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.imports.md"
+depends_on = ["operations.database", "operations.backup", "platform.crm"]
+owns_files = [
+  "backend/app/importers/**", "backend/requirements-collector.txt", "leadteh-export/**",
+  "tools/analyze_leadteh_for_crm.py", "tools/audit_leadteh_export.py",
+  "tools/build_leadteh_tag_plan.py", "tools/build_leadteh_variable_catalog.py",
+  "tools/masterclass_export_runtime.mjs", "tools/masterclass_extract_tilda.py",
+  "tools/profile_leadteh_export.py", "docs/TAG_RULES.md",
+  "backend/app/static/leadteh_tag_plan.json", "backend/app/static/leadteh_variables.json",
+  "backend/tests/test_legacy_import.py", "backend/tests/test_manual_payments.py",
+  "backend/tests/test_tag_rules_v2.py", "backend/tests/test_tilda_members_import.py",
+]
+owns_tables = ["import_batches", "legacy_import_records", "admin_app_edits"]
+
+[[modules]]
+id = "operations.legacy"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.legacy.md"
+owns_files = ["legacy/**"]
+
+[[modules]]
+id = "operations.project-work"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.project-work.md"
+owns_files = ["docs/plans/**", "docs/prototypes/**", "work/**"]
+
+[[modules]]
+id = "planned"
+card = "docs/knowledge-base/modules/catalog/planned.md"
+
+[[modules]]
+id = "planned.telegram-lottery"
+parent = "planned"
+card = "docs/knowledge-base/modules/catalog/planned.telegram-lottery.md"
+telegram_code = "lottery"
+telegram_name = "Лотерея"
+telegram_status = "Запланировано"
+telegram_order = 80
+
+[[modules]]
+id = "planned.marketing-catalog"
+parent = "planned"
+card = "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md"
+
+[[modules]]
+id = "planned.telegram-quiz"
+parent = "planned"
+card = "docs/knowledge-base/modules/catalog/planned.telegram-quiz.md"
+telegram_code = "quiz"
+telegram_name = "Тесты и опросы"
+telegram_status = "Запланировано"
+telegram_order = 90

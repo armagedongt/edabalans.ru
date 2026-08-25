@@ -1,6 +1,7 @@
 # Каталог авторских материалов
 
-Статус: `current`; migration `0014` применена в production
+Статус: `current`
+Состояние внедрения: migration `0014` применена в production.
 Проверено: 22.08.2026
 План и полный будущий scope: `plans/CONTENT_CATALOG_SPEC.md`
 

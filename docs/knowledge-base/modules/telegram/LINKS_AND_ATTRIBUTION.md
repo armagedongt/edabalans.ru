@@ -1,6 +1,8 @@
 # Модуль 1. Первичный вход и атрибуция лида
 
-Статус: `current` для Telegram-start, legacy/коротких ссылок, UTM-справочника и channel invite; browser cookie → checkout остаётся `planned`
+Статус: `current`
+Состояние внедрения: Telegram-start, legacy/короткие ссылки, UTM-справочник и
+channel invite реализованы; browser cookie → checkout ещё не реализован.
 Владелец содержания: Сергей Воронцов  
 Проверено: 22.08.2026  
 Источники: `../../../plans/TELEGRAM_START_LINKS_SPEC.md`, `../../../plans/TELEGRAM_CHANNEL_ATTRIBUTION_SPEC.md`, `../../../TAG_RULES.md`

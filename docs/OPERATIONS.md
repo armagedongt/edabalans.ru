@@ -1,5 +1,7 @@
 # Production operations
 
+Статус: `current`
+
 ## Развёрнутые компоненты
 
 | Компонент | Назначение | Публичный доступ |
@@ -208,9 +210,9 @@ docker compose exec backend python -m app.importers.telegram_public_metrics \
 
 Push в ветку `main` запускает `.github/workflows/production.yml`:
 
-1. проверяется Docker Compose;
-2. собирается backend;
-3. запускаются автоматические тесты;
+1. проверяется module registry, его тесты и deploy/backup classifier;
+2. проверяется Docker Compose;
+3. собирается backend и запускаются автоматические тесты;
 4. VM видит успешный тест через публичный GitHub API;
 5. сервер получает конкретный проверенный Git-коммит;
 6. Docker-контейнеры обновляются;
@@ -223,6 +225,12 @@ Push в ветку `main` запускает `.github/workflows/production.yml`:
 сохраняется для migration, импортов, изменений Telegram `seed_defaults()` или его
 вызова при старте и других операций, которые могут изменить или удалить постоянные
 данные.
+
+Классификацию выполняет один исполняемый источник
+`infra/deploy/classify-deploy-impact`; server deploy читает его прямо из целевого
+Git-коммита до checkout, а CI
+прогоняет на временных Git-историях случаи code-only, migration, `seed.py` и
+изменения точного вызова `seed_defaults()`.
 
 GitHub не получает SSH-ключ или иной доступ к VM. Сервер сам проверяет `main` раз в
 две минуты и разворачивает только коммит с успешно завершённой проверкой `Test`.
@@ -241,6 +249,12 @@ GitHub не получает SSH-ключ или иной доступ к VM. С
 ALLOW_DATABASE_MIGRATIONS=1 /usr/local/sbin/edabalans-deploy <full-commit-sha>
 ```
 
+После успешных health-checks deploy автоматически обновляет установленные
+`/usr/local/sbin/edabalans-deploy` и `edabalans-deploy-poll` из проверенного коммита.
+Для первого выпуска этой схемы старая серверная копия штатно публикует code-only commit,
+после чего обе копии устанавливаются один раз вручную из уже проверенного
+`/opt/edabalans/infra/deploy/`; дальнейшие выпуски синхронизируют их сами.
+
 Если такой выпуск упал уже после возможного изменения схемы, скрипт не запускает
 старый контейнер, который не знает новую Alembic revision. На сервере остаётся
 целевой commit с matching migration files для ручного восстановления; автоматический
@@ -250,7 +264,8 @@ downgrade базы не выполняется.
 
 Контейнер `telegram-bot` доступен снаружи только через Caddy. Публичны маршруты
 `/telegram/webhook`, `/bot` и `/bot-api/*`; PostgreSQL по-прежнему не публикуется.
-Админка использует тот же Basic Auth, что CRM.
+Админка использует ту же подписанную admin-сессию и пароль, что `/control` и CRM;
+повторный вход на `api.edabalans.ru/bot` после общего логина не требуется.
 
 Проверка webhook без вывода токена:
 

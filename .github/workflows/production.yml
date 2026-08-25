@@ -20,7 +20,21 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v7.0.1
         with:
-          fetch-depth: 2
+          # Impact analysis compares the complete pushed range, which can contain
+          # more than one commit.
+          fetch-depth: 0
+
+      - name: Test module inventory
+        run: python3 -m unittest discover -s tools/tests -v
+
+      - name: Validate module inventory
+        shell: bash
+        run: |
+          before="${{ github.event.before }}"
+          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
+            before="HEAD^"
+          fi
+          python3 tools/module_inventory.py --check --base "$before" --head "$GITHUB_SHA"
 
       - name: Validate Docker Compose
         run: docker compose --env-file .env.example config --quiet

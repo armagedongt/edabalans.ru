@@ -4,13 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>База знаний · edabalans</title>
+  <title>Карта проекта · edabalans</title>
   <link rel="stylesheet" href="/admin/static/knowledge-base.css">
 </head>
 <body>
   <header class="wiki-topbar">
-    <a href="/admin" class="wiki-back">← Админка</a>
-    <strong>База знаний</strong>
+    <a href="/control" class="wiki-back">← Управление</a>
+    <strong>Проект</strong>
+    <nav class="wiki-modes" aria-label="Представление проекта">
+      <button type="button" data-view="map">Карта системы</button>
+      <button type="button" data-view="documents">Документы</button>
+      <button type="button" data-view="guide">Как работать</button>
+      <button type="button" data-view="plans">Планы</button>
+      <button type="button" data-view="technical">Техническое</button>
+    </nav>
     <button id="wiki-menu" type="button" aria-controls="wiki-sidebar" aria-expanded="false">Разделы</button>
   </header>
   <div class="wiki-layout">
@@ -19,10 +26,15 @@
         <span>Поиск</span>
         <input id="wiki-search" type="search" placeholder="Название или текст" autocomplete="off">
       </label>
+      <div class="wiki-filters" id="wiki-filters">
+        <label><span>Документ</span><select id="document-status"><option value="">Любой статус</option><option value="current">current</option><option value="draft">draft</option><option value="planned">planned</option><option value="archived">archived</option></select></label>
+        <label><span>Реализация</span><select id="implementation-status"><option value="">Любой статус</option><option value="implemented">implemented</option><option value="in_development">in development</option><option value="planned">planned</option><option value="archived">archived</option></select></label>
+      </div>
       <p class="wiki-count" id="wiki-count">Загружаю каталог…</p>
       <nav id="wiki-tree" aria-label="Разделы базы знаний"></nav>
     </aside>
     <main class="wiki-main">
+      <div class="wiki-notice" id="wiki-notice" hidden></div>
       <div class="wiki-loading" id="wiki-loading">Открываю документ…</div>
       <article class="wiki-article" id="wiki-article" hidden></article>
     </main>

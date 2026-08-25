@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from collections import defaultdict, deque
+import json
+from pathlib import Path
 from typing import Any
 
 from sqlalchemy import select
@@ -43,17 +45,37 @@ SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
     },
 }
 
-GLOBAL_MODULES: tuple[dict[str, str], ...] = (
-    {"code": "start_attribution", "name": "Старт и атрибуция", "status": "Исполняемый модуль · временно включён режим ремонта"},
-    {"code": "welcome_intensive", "name": "Welcome: запуск и первые четыре дня", "status": "Исполняемая редактируемая цепочка"},
-    {"code": "prepurchase_nurture", "name": "Основная рассылка до покупки", "status": "Исполняемый каркас · контент частичный"},
-    {"code": "postpurchase_masterclass", "name": "После покупки мастер-класса", "status": "Требования частичные"},
-    {"code": "postmasterclass_nurture", "name": "После завершения мастер-класса", "status": "Отключённый пустой каркас"},
-    {"code": "broadcasts", "name": "Разовые рассылки", "status": "Draft → preview → test → send/schedule → retry"},
-    {"code": "inbox", "name": "Входящие сообщения и ответы", "status": "Единая Telegram-лента в карточке пользователя"},
-    {"code": "lottery", "name": "Лотерея", "status": "Запланировано"},
-    {"code": "quiz", "name": "Тесты и опросы", "status": "Запланировано"},
-)
+TELEGRAM_MODULES_PATH = Path(__file__).with_name("telegram-global-modules.json")
+
+
+def load_global_modules(path: Path = TELEGRAM_MODULES_PATH) -> tuple[dict[str, Any], ...]:
+    """Load the generated Telegram projection; the TOML registry remains canonical."""
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Cannot read generated Telegram modules from {path}") from exc
+    if payload.get("schema_version") != 1 or not isinstance(payload.get("modules"), list):
+        raise RuntimeError(f"Generated Telegram modules have an unsupported schema: {path}")
+    required = {"code", "name", "status", "module_id", "card", "order"}
+    modules = payload["modules"]
+    if any(not isinstance(module, dict) or set(module) != required for module in modules):
+        raise RuntimeError(f"Generated Telegram modules have an invalid entry: {path}")
+    if any(
+        not all(isinstance(module[key], str) and module[key] for key in required - {"order"})
+        or not isinstance(module["order"], int)
+        for module in modules
+    ):
+        raise RuntimeError(f"Generated Telegram modules have invalid values: {path}")
+    codes = [module["code"] for module in modules]
+    orders = [module["order"] for module in modules]
+    if len(codes) != len(set(codes)) or len(orders) != len(set(orders)):
+        raise RuntimeError(f"Generated Telegram modules contain duplicates: {path}")
+    if modules != sorted(modules, key=lambda item: (item["order"], item["code"])):
+        raise RuntimeError(f"Generated Telegram modules are not deterministic: {path}")
+    return tuple(modules)
+
+
+TELEGRAM_MODULES = load_global_modules()
 
 # Исполнитель start_router проходит правила строго сверху вниз. Текстовая проекция
 # админки обязана показывать те же условия и выходы; тесты проверяют соответствие.
@@ -71,8 +93,8 @@ def module_overview_graph(_: Session) -> dict[str, Any]:
     nodes = [{
         "id": f"module:{module['code']}", "kind": "module", "label": module["name"],
         "subtitle": module["status"], "module_code": module["code"],
-        "details": {"Код": module["code"], "Статус": module["status"], "Канон": "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md"},
-    } for module in GLOBAL_MODULES]
+        "details": {"Код": module["code"], "Статус": module["status"], "Канон": module["card"]},
+    } for module in TELEGRAM_MODULES]
     nodes.append({
         "id": "event:masterclass_owned", "kind": "event", "label": "Покупатель определён",
         "subtitle": "M-link или ACCESS_MASTERCLASS", "module_code": "postpurchase_masterclass",
@@ -213,7 +235,7 @@ def service_module_graph(module_code: str) -> dict[str, Any]:
             {"id": "broadcast:4", "source": "confirm", "target": "preview", "label": "Нет/изменилось", "branch": "false"},
             {"id": "broadcast:5", "source": "deliver", "target": "result", "label": "Завершено", "branch": "default"},
         ]
-    module = next(item for item in GLOBAL_MODULES if item["code"] == module_code)
+    module = next(item for item in TELEGRAM_MODULES if item["code"] == module_code)
     return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Автоматическая текстовая проекция исполняемой служебной логики.", "nodes": nodes, "edges": edges, "issues": []}
 
 
@@ -226,10 +248,10 @@ def module_graph(session: Session, module_code: str) -> dict[str, Any]:
         return service_module_graph(module_code)
     if module_code in {"welcome_intensive", "prepurchase_nurture", "postmasterclass_nurture"}:
         return sequence_graph(session, module_code, "")
-    module = next((item for item in GLOBAL_MODULES if item["code"] == module_code), None)
+    module = next((item for item in TELEGRAM_MODULES if item["code"] == module_code), None)
     if not module:
         raise LookupError(module_code)
-    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Подробная последовательность появится после фиксации и утверждения требований.", "nodes": [{"id": "module_draft", "kind": "module", "label": module["name"], "subtitle": module["status"], "details": {"Статус": module["status"], "Канон": "MODULE_REGISTRY.md"}}], "edges": [], "issues": [{"severity": "warning", "code": "module_not_designed", "message": "Подробная логика этого модуля ещё не утверждена."}]}
+    return {"level": "module", "module_code": module_code, "title": module["name"], "status": module["status"], "description": "Подробная последовательность появится после фиксации и утверждения требований.", "nodes": [{"id": "module_draft", "kind": "module", "label": module["name"], "subtitle": module["status"], "details": {"Статус": module["status"], "Канон": module["card"]}}], "edges": [], "issues": [{"severity": "warning", "code": "module_not_designed", "message": "Подробная логика этого модуля ещё не утверждена."}]}
 
 
 def component_for_step(step: SequenceStep) -> str | None:

@@ -49,3 +49,15 @@ skill routing и не загружается новым чатом.
 - не чистить служебную папку старой визуализации как часть проекта: это не активный дубль и
   её удаление не влияет на routing.
 
+## Выполненная очистка
+
+- `user-spec-planning` получил нативный PowerShell initializer для Windows и Python-вариант для
+  сред с Python; повторный запуск не перезаписывает существующие файлы.
+- `documentation-writing` теперь сначала следует project `AGENTS.md` и существующему docs-router;
+  он не создаёт параллельную `.claude`-базу рядом с каноническим `docs/`.
+- `skill-master`, `infrastructure-setup` и `methodology` больше не считают отсутствие
+  `~/.claude`/Bash ошибкой Codex-native установки; `methodology` и
+  `documentation-writing` используют проектный `AGENTS.md` и уже выбранный docs-router,
+  а не навязывают `CLAUDE.md`/`.claude` вторым источником.
+- PowerShell initializer проверен созданием и повторным открытием тестовой feature-папки;
+  placeholders даты и slug были заменены.

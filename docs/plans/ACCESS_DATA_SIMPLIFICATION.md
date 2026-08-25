@@ -1,3 +1,10 @@
+---
+document_status: planned
+date: 2026-08-23
+module_id: platform.commerce
+origin: owner-explicit
+---
+
 # Упрощение данных о доступах после перестройки Tilda
 
 Статус: `planned`  

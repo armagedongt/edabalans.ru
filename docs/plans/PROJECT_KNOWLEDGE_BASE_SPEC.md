@@ -1,6 +1,15 @@
+---
+document_status: archived
+date: 2026-08-22
+cross_project: true
+---
+
 # ТЗ: полноценная база знаний edabalans.ru
 
-Статус: `planned`  
+Статус: `archived`
+Причина архивации: заменено Git-backed module cards, каноническими Markdown и
+Wiki-view без отдельной редактируемой базы. Текущий вход —
+`../knowledge-base/README.md`.
 Источник требований: владелец проекта, 22.08.2026.
 
 ## Цель

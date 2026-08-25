@@ -1,6 +1,16 @@
+---
+document_status: archived
+date: 2026-08-22
+module_id: platform.commerce
+---
+
 # Продукты и офферы
 
-Статус: `planned`  
+Статус: `archived`
+Причина архивации: смешанный ранний документ superseded каноническими
+`../knowledge-base/PRODUCTS.md`, `../knowledge-base/PRICING_CATALOG.md` и
+`../knowledge-base/modules/masterclass/OFFERS_MODULE.md`. Новые остаточные задачи
+фиксируются отдельно только по явной команде владельца.
 Назначение: отдельный микропроект общей продуктовой системы, ещё не реализованный.
 
 > Актуальные публичные названия, стандартные цены и этапы предложений перенесены в

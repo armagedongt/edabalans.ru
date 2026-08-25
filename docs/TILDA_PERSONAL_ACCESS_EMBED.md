@@ -1,6 +1,7 @@
 # Персональная ссылка доступа в Tilda
 
-Статус: `current_implemented_not_deployed`  
+Статус: `current`
+Состояние внедрения: реализовано, но ещё не опубликовано в Tilda.
 Владелец содержания: Сергей Воронцов  
 Проверено: 23.08.2026  
 Источник: `backend/app/access_routes.py`, `backend/app/static/embed.js`

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+if (($# != 3)); then
+    echo "Usage: classify-deploy-impact REPOSITORY PREVIOUS_SHA TARGET_SHA" >&2
+    exit 2
+fi
+
+readonly REPOSITORY="$1"
+readonly PREVIOUS_SHA="$2"
+readonly TARGET_SHA="$3"
+
+migration_deploy=false
+startup_data_deploy=false
+changed_files="$(git -C "${REPOSITORY}" diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}")"
+
+if grep -q '^backend/migrations/versions/' <<<"${changed_files}"; then
+    migration_deploy=true
+fi
+
+if grep -Eq '^telegram-bot/service/app/seed\.py$' <<<"${changed_files}"; then
+    startup_data_deploy=true
+elif grep -Eq '^telegram-bot/service/app/main\.py$' <<<"${changed_files}"; then
+    previous_startup_seed_call="$(git -C "${REPOSITORY}" show "${PREVIOUS_SHA}:telegram-bot/service/app/main.py" \
+        | sed -n '/^        seed_defaults(/,/^        )/p')"
+    target_startup_seed_call="$(git -C "${REPOSITORY}" show "${TARGET_SHA}:telegram-bot/service/app/main.py" \
+        | sed -n '/^        seed_defaults(/,/^        )/p')"
+    if [[ "${previous_startup_seed_call}" != "${target_startup_seed_call}" ]]; then
+        startup_data_deploy=true
+    fi
+fi
+
+printf '%s %s\n' "${migration_deploy}" "${startup_data_deploy}"
