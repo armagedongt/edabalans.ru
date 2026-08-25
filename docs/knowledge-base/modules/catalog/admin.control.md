@@ -22,7 +22,7 @@ implementation_status: implemented
 ## Источники истины
 
 `docs/modules.toml` (`admin_catalog`) — единственный источник состава каталога.
-Project map показывает производную карту, а admin session только защищает доступ.
+Project map только показывает производную карту, а admin session только защищает доступ.
 `/control` — совместимый redirect на `/admin`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не

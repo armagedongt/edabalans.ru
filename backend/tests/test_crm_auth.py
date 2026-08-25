@@ -75,6 +75,12 @@ def test_content_catalog_uses_unified_admin_shell() -> None:
     assert 'id="login-form"' in response.text
 
 
+def test_retired_masterclass_admin_surfaces_are_not_available() -> None:
+    client = make_client()
+    assert client.get("/admin/masterclass").status_code == 404
+    assert client.get("/admin/masterclass-preview").status_code == 404
+
+
 def test_masterclass_course_preview_requires_authentication() -> None:
     response = make_client().get("/admin/masterclass-course-preview")
     assert response.status_code == 200

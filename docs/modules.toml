@@ -180,7 +180,7 @@ depends_on = ["platform.content"]
 
 [[modules]]
 id = "products.masterclass"
-admin_catalog = [{ category = "tools", order = 10, url = "/admin/masterclass", label = "Мастер-класс", description = "Рабочая сводка Мастер-класса." }, { category = "tools", order = 50, url = "/admin/masterclass-preview", label = "Предпросмотр Мастер-класса", description = "Проверка клиентского отображения." }, { category = "tools", order = 60, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." }]
+admin_catalog = [{ category = "tools", order = 60, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
 depends_on = ["platform.commerce"]
@@ -195,8 +195,7 @@ card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/managed_documents.py", "backend/app/static/course-editors.html",
-  "backend/app/static/course-structure-editor.*", "backend/app/static/masterclass-preview.html",
-  "backend/scripts/seed_masterclass_preview.py",
+  "backend/app/static/course-structure-editor.*",
   "content/masterclass/**", "docs/knowledge-base/modules/masterclass/COURSE_DESIGN_SYSTEM.md",
   "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
   "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
@@ -222,7 +221,7 @@ events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
-  "backend/app/static/masterclass-admin.*", "backend/tests/test_masterclass_journey.py",
+  "backend/tests/test_masterclass_journey.py",
   "backend/tests/test_masterclass_unlock_schedule.py",
   "backend/migrations/versions/20260822_0015_masterclass_journey.py",
   "backend/migrations/versions/20260823_0017_masterclass_course_progress.py",
@@ -434,7 +433,7 @@ id = "admin.control"
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.control.md"
 owns_files = [
-  "backend/app/crm_routes.py", "backend/app/static/admin-portal.html",
+  "backend/app/crm_routes.py",
   "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js",
   "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
   "backend/app/static/max-logo.png",

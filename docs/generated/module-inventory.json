@@ -244,10 +244,6 @@
       "path": "backend/app/static/admin-login.js"
     },
     {
-      "module_id": "admin.control",
-      "path": "backend/app/static/admin-portal.html"
-    },
-    {
       "module_id": "platform.auth",
       "path": "backend/app/static/admin-session.css"
     },
@@ -416,24 +412,8 @@
       "path": "backend/app/static/legal/privacy.html"
     },
     {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/masterclass-admin.css"
-    },
-    {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/masterclass-admin.html"
-    },
-    {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/masterclass-admin.js"
-    },
-    {
       "module_id": "products.masterclass.offers",
       "path": "backend/app/static/masterclass-first-days-preview.html"
-    },
-    {
-      "module_id": "products.masterclass.course",
-      "path": "backend/app/static/masterclass-preview.html"
     },
     {
       "module_id": "products.masterclass.runtime",
@@ -590,10 +570,6 @@
     {
       "module_id": "products.masterclass.offers",
       "path": "backend/scripts/generate_masterclass_offer_simulator.py"
-    },
-    {
-      "module_id": "products.masterclass.course",
-      "path": "backend/scripts/seed_masterclass_preview.py"
     },
     {
       "module_id": "platform.content",
@@ -1991,10 +1967,6 @@
         },
         {
           "module_id": "admin.control",
-          "path": "backend/app/static/admin-portal.html"
-        },
-        {
-          "module_id": "admin.control",
           "path": "backend/app/static/admin.css"
         },
         {
@@ -2108,7 +2080,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 375,
+          "line": 365,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/access-reviews",
@@ -2116,7 +2088,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 291,
+          "line": 281,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/tags",
@@ -2124,7 +2096,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 296,
+          "line": 286,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/variables",
@@ -2132,7 +2104,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 301,
+          "line": 291,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/summary",
@@ -2140,7 +2112,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 449,
+          "line": 439,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/tags",
@@ -2148,7 +2120,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 460,
+          "line": 450,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}",
@@ -2156,7 +2128,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 472,
+          "line": 462,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}/merge",
@@ -2164,7 +2136,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 308,
+          "line": 298,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users",
@@ -2172,7 +2144,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 326,
+          "line": 316,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -2180,7 +2152,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 338,
+          "line": 328,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -2188,7 +2160,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 395,
+          "line": 385,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/access-review",
@@ -2196,7 +2168,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 403,
+          "line": 393,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses",
@@ -2204,7 +2176,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 411,
+          "line": 401,
           "method": "DELETE",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -2212,7 +2184,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 386,
+          "line": 376,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/email",
@@ -2220,7 +2192,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 350,
+          "line": 340,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/notes",
@@ -2228,7 +2200,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 363,
+          "line": 353,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/tags",
@@ -2244,7 +2216,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 224,
+          "line": 214,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/users",
@@ -2252,7 +2224,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 233,
+          "line": 223,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/{section}",
@@ -2276,7 +2248,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 271,
+          "line": 261,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm",
@@ -2284,7 +2256,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 281,
+          "line": 271,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.css",
@@ -2292,7 +2264,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 286,
+          "line": 276,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.js",
@@ -2458,7 +2430,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 224,
+          "line": 214,
           "module_id": "admin.control",
           "name": "legacy_admin_users",
           "qualname": "legacy_admin_users"
@@ -2466,7 +2438,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 233,
+          "line": 223,
           "module_id": "admin.control",
           "name": "admin_section",
           "qualname": "admin_section"
@@ -2474,7 +2446,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 271,
+          "line": 261,
           "module_id": "admin.control",
           "name": "crm_index",
           "qualname": "crm_index"
@@ -2482,7 +2454,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 281,
+          "line": 271,
           "module_id": "admin.control",
           "name": "crm_css",
           "qualname": "crm_css"
@@ -2490,7 +2462,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 286,
+          "line": 276,
           "module_id": "admin.control",
           "name": "crm_js",
           "qualname": "crm_js"
@@ -2498,7 +2470,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 291,
+          "line": 281,
           "module_id": "admin.control",
           "name": "admin_tag_audit",
           "qualname": "admin_tag_audit"
@@ -2506,7 +2478,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 296,
+          "line": 286,
           "module_id": "admin.control",
           "name": "admin_variable_audit",
           "qualname": "admin_variable_audit"
@@ -2514,7 +2486,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 301,
+          "line": 291,
           "module_id": "admin.control",
           "name": "admin_summary",
           "qualname": "admin_summary"
@@ -2522,7 +2494,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 308,
+          "line": 298,
           "module_id": "admin.control",
           "name": "admin_users",
           "qualname": "admin_users"
@@ -2530,7 +2502,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 326,
+          "line": 316,
           "module_id": "admin.control",
           "name": "admin_user",
           "qualname": "admin_user"
@@ -2538,7 +2510,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 338,
+          "line": 328,
           "module_id": "admin.control",
           "name": "admin_update_user",
           "qualname": "admin_update_user"
@@ -2546,7 +2518,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 350,
+          "line": 340,
           "module_id": "admin.control",
           "name": "admin_add_note",
           "qualname": "admin_add_note"
@@ -2554,7 +2526,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 363,
+          "line": 353,
           "module_id": "admin.control",
           "name": "admin_add_tag",
           "qualname": "admin_add_tag"
@@ -2562,7 +2534,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 375,
+          "line": 365,
           "module_id": "admin.control",
           "name": "admin_access_reviews",
           "qualname": "admin_access_reviews"
@@ -2570,7 +2542,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 386,
+          "line": 376,
           "module_id": "admin.control",
           "name": "admin_link_email",
           "qualname": "admin_link_email"
@@ -2578,7 +2550,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 395,
+          "line": 385,
           "module_id": "admin.control",
           "name": "admin_set_access_review",
           "qualname": "admin_set_access_review"
@@ -2586,7 +2558,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 403,
+          "line": 393,
           "module_id": "admin.control",
           "name": "admin_grant_access",
           "qualname": "admin_grant_access"
@@ -2594,7 +2566,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 411,
+          "line": 401,
           "module_id": "admin.control",
           "name": "admin_revoke_access",
           "qualname": "admin_revoke_access"
@@ -2602,7 +2574,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 449,
+          "line": 439,
           "module_id": "admin.control",
           "name": "admin_tags",
           "qualname": "admin_tags"
@@ -2610,7 +2582,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 460,
+          "line": 450,
           "module_id": "admin.control",
           "name": "admin_update_tag",
           "qualname": "admin_update_tag"
@@ -2618,7 +2590,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 472,
+          "line": 462,
           "module_id": "admin.control",
           "name": "admin_merge_tag",
           "qualname": "admin_merge_tag"
@@ -3148,7 +3120,7 @@
       "telegram": null,
       "title": "Каталог административных инструментов",
       "truths": [
-        "`docs/modules.toml` (`admin_catalog`) — единственный источник состава каталога.\nProject map показывает производную карту, а admin session только защищает доступ.\n`/control` — совместимый redirect на `/admin`."
+        "`docs/modules.toml` (`admin_catalog`) — единственный источник состава каталога.\nProject map только показывает производную карту, а admin session только защищает доступ.\n`/control` — совместимый redirect на `/admin`."
       ]
     },
     {
@@ -3344,7 +3316,7 @@
       "routes": [
         {
           "file": "backend/app/crm_routes.py",
-          "line": 180,
+          "line": 170,
           "method": "GET",
           "module_id": "admin.project-knowledge",
           "path": "/admin/knowledge-base",
@@ -3382,7 +3354,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 180,
+          "line": 170,
           "module_id": "admin.project-knowledge",
           "name": "knowledge_base_page",
           "qualname": "knowledge_base_page"
@@ -12492,7 +12464,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 246,
+          "line": 236,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/login",
@@ -12500,7 +12472,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 265,
+          "line": 255,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/logout",
@@ -12706,7 +12678,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 246,
+          "line": 236,
           "module_id": "platform.auth",
           "name": "admin_login",
           "qualname": "admin_login"
@@ -12714,7 +12686,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 265,
+          "line": 255,
           "module_id": "platform.auth",
           "name": "admin_logout",
           "qualname": "admin_logout"
@@ -12884,13 +12856,21 @@
           "kind": "function",
           "line": 78,
           "module_id": "platform.auth",
+          "name": "test_retired_masterclass_admin_surfaces_are_not_available",
+          "qualname": "test_retired_masterclass_admin_surfaces_are_not_available"
+        },
+        {
+          "file": "backend/tests/test_crm_auth.py",
+          "kind": "function",
+          "line": 84,
+          "module_id": "platform.auth",
           "name": "test_masterclass_course_preview_requires_authentication",
           "qualname": "test_masterclass_course_preview_requires_authentication"
         },
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 84,
+          "line": 90,
           "module_id": "platform.auth",
           "name": "test_masterclass_course_preview_is_available_after_login",
           "qualname": "test_masterclass_course_preview_is_available_after_login"
@@ -12898,7 +12878,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 96,
+          "line": 102,
           "module_id": "platform.auth",
           "name": "test_masterclass_designs_are_available_after_login",
           "qualname": "test_masterclass_designs_are_available_after_login"
@@ -12906,7 +12886,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 108,
+          "line": 114,
           "module_id": "platform.auth",
           "name": "test_masterclass_offers_preview_requires_authentication",
           "qualname": "test_masterclass_offers_preview_requires_authentication"
@@ -12914,7 +12894,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 118,
+          "line": 124,
           "module_id": "platform.auth",
           "name": "test_masterclass_offers_preview_uses_canonical_course_sources",
           "qualname": "test_masterclass_offers_preview_uses_canonical_course_sources"
@@ -12922,7 +12902,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 148,
+          "line": 154,
           "module_id": "platform.auth",
           "name": "test_unified_admin_assets_require_authentication",
           "qualname": "test_unified_admin_assets_require_authentication"
@@ -12930,7 +12910,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 153,
+          "line": 159,
           "module_id": "platform.auth",
           "name": "test_cross_module_user_summary_requires_authentication",
           "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -12938,7 +12918,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 158,
+          "line": 164,
           "module_id": "platform.auth",
           "name": "test_login_creates_shared_admin_session",
           "qualname": "test_login_creates_shared_admin_session"
@@ -12946,7 +12926,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 175,
+          "line": 181,
           "module_id": "platform.auth",
           "name": "test_login_rejects_wrong_password",
           "qualname": "test_login_rejects_wrong_password"
@@ -12954,7 +12934,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 183,
+          "line": 189,
           "module_id": "platform.auth",
           "name": "test_login_assets_are_public",
           "qualname": "test_login_assets_are_public"
@@ -13255,7 +13235,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 441,
+          "line": 431,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payment-products",
@@ -13263,7 +13243,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 419,
+          "line": 409,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payments",
@@ -13271,7 +13251,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 381,
+          "line": 371,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/resources",
@@ -13573,7 +13553,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 381,
+          "line": 371,
           "module_id": "platform.commerce",
           "name": "admin_resources",
           "qualname": "admin_resources"
@@ -13581,7 +13561,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 419,
+          "line": 409,
           "module_id": "platform.commerce",
           "name": "admin_payments",
           "qualname": "admin_payments"
@@ -13589,7 +13569,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 441,
+          "line": 431,
           "module_id": "platform.commerce",
           "name": "admin_payment_products",
           "qualname": "admin_payment_products"
@@ -15990,7 +15970,7 @@
       "routes": [
         {
           "file": "backend/app/crm_routes.py",
-          "line": 215,
+          "line": 205,
           "method": "GET",
           "module_id": "products.catalog",
           "path": "/admin/products",
@@ -16028,7 +16008,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 215,
+          "line": 205,
           "module_id": "products.catalog",
           "name": "product_catalog_page",
           "qualname": "product_catalog_page"
@@ -17104,20 +17084,6 @@
       "admin_catalog": [
         {
           "category": "tools",
-          "description": "Рабочая сводка Мастер-класса.",
-          "label": "Мастер-класс",
-          "order": 10,
-          "url": "/admin/masterclass"
-        },
-        {
-          "category": "tools",
-          "description": "Проверка клиентского отображения.",
-          "label": "Предпросмотр Мастер-класса",
-          "order": 50,
-          "url": "/admin/masterclass-preview"
-        },
-        {
-          "category": "tools",
           "description": "Структура и материалы Мастер-класса.",
           "label": "Редактор структуры курсов",
           "order": 60,
@@ -17213,15 +17179,7 @@
         },
         {
           "module_id": "products.masterclass.course",
-          "path": "backend/app/static/masterclass-preview.html"
-        },
-        {
-          "module_id": "products.masterclass.course",
           "path": "backend/migrations/versions/20260825_0024_course_structure_editor.py"
-        },
-        {
-          "module_id": "products.masterclass.course",
-          "path": "backend/scripts/seed_masterclass_preview.py"
         },
         {
           "module_id": "products.masterclass.course",
@@ -17568,7 +17526,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 190,
+          "line": 180,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/courses",
@@ -17576,7 +17534,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 200,
+          "line": 190,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/courses/{course_code}/structure",
@@ -17839,7 +17797,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 190,
+          "line": 180,
           "module_id": "products.masterclass.course",
           "name": "course_editors_page",
           "qualname": "course_editors_page"
@@ -17847,7 +17805,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 200,
+          "line": 190,
           "module_id": "products.masterclass.course",
           "name": "course_structure_editor_page",
           "qualname": "course_structure_editor_page"
@@ -18035,14 +17993,6 @@
           "module_id": "products.masterclass.course",
           "name": "downgrade",
           "qualname": "downgrade"
-        },
-        {
-          "file": "backend/scripts/seed_masterclass_preview.py",
-          "kind": "function",
-          "line": 26,
-          "module_id": "products.masterclass.course",
-          "name": "main",
-          "qualname": "main"
         }
       ],
       "tables": [
@@ -18687,18 +18637,6 @@
         },
         {
           "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/masterclass-admin.css"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/masterclass-admin.html"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/masterclass-admin.js"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
           "path": "backend/app/static/masterclass.css"
         },
         {
@@ -18771,7 +18709,7 @@
       "routes": [
         {
           "file": "backend/app/crm_routes.py",
-          "line": 140,
+          "line": 130,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/admin/masterclass-course-preview",
@@ -18779,7 +18717,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 152,
+          "line": 142,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/admin/masterclass-designs",
@@ -18787,19 +18725,11 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 164,
+          "line": 154,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/admin/masterclass-offers-preview",
           "symbol": "masterclass_offers_preview"
-        },
-        {
-          "file": "backend/app/crm_routes.py",
-          "line": 130,
-          "method": "GET",
-          "module_id": "products.masterclass.runtime",
-          "path": "/admin/masterclass-preview",
-          "symbol": "masterclass_preview"
         },
         {
           "file": "backend/app/masterclass_routes.py",
@@ -18947,21 +18877,13 @@
           "kind": "function",
           "line": 130,
           "module_id": "products.masterclass.runtime",
-          "name": "masterclass_preview",
-          "qualname": "masterclass_preview"
-        },
-        {
-          "file": "backend/app/crm_routes.py",
-          "kind": "function",
-          "line": 140,
-          "module_id": "products.masterclass.runtime",
           "name": "masterclass_course_preview",
           "qualname": "masterclass_course_preview"
         },
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 152,
+          "line": 142,
           "module_id": "products.masterclass.runtime",
           "name": "masterclass_designs",
           "qualname": "masterclass_designs"
@@ -18969,7 +18891,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 164,
+          "line": 154,
           "module_id": "products.masterclass.runtime",
           "name": "masterclass_offers_preview",
           "qualname": "masterclass_offers_preview"
@@ -19501,30 +19423,6 @@
           "module_id": "products.masterclass.runtime",
           "name": "admin_masterclass_notifications",
           "qualname": "admin_masterclass_notifications"
-        },
-        {
-          "file": "backend/app/static/masterclass-admin.js",
-          "kind": "function",
-          "line": 2,
-          "module_id": "products.masterclass.runtime",
-          "name": "esc",
-          "qualname": "esc"
-        },
-        {
-          "file": "backend/app/static/masterclass-admin.js",
-          "kind": "function",
-          "line": 3,
-          "module_id": "products.masterclass.runtime",
-          "name": "api",
-          "qualname": "api"
-        },
-        {
-          "file": "backend/app/static/masterclass-admin.js",
-          "kind": "function",
-          "line": 6,
-          "module_id": "products.masterclass.runtime",
-          "name": "loadClients",
-          "qualname": "loadClients"
         },
         {
           "file": "backend/app/static/masterclass.js",
@@ -21196,7 +21094,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 375,
+      "line": 365,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/access-reviews",
@@ -21244,7 +21142,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 291,
+      "line": 281,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/tags",
@@ -21252,7 +21150,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 296,
+      "line": 286,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/variables",
@@ -21356,7 +21254,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 246,
+      "line": 236,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/login",
@@ -21364,7 +21262,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 265,
+      "line": 255,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/logout",
@@ -21372,7 +21270,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 441,
+      "line": 431,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payment-products",
@@ -21380,7 +21278,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 419,
+      "line": 409,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payments",
@@ -21452,7 +21350,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 381,
+      "line": 371,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/resources",
@@ -21460,7 +21358,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 301,
+      "line": 291,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/summary",
@@ -21468,7 +21366,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 449,
+      "line": 439,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/tags",
@@ -21476,7 +21374,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 460,
+      "line": 450,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}",
@@ -21484,7 +21382,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 472,
+      "line": 462,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}/merge",
@@ -21492,7 +21390,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 308,
+      "line": 298,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users",
@@ -21500,7 +21398,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 326,
+      "line": 316,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -21508,7 +21406,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 338,
+      "line": 328,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -21516,7 +21414,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 395,
+      "line": 385,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/access-review",
@@ -21524,7 +21422,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 403,
+      "line": 393,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses",
@@ -21532,7 +21430,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 411,
+      "line": 401,
       "method": "DELETE",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -21540,7 +21438,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 386,
+      "line": 376,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/email",
@@ -21556,7 +21454,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 350,
+      "line": 340,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/notes",
@@ -21580,7 +21478,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 363,
+      "line": 353,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/tags",
@@ -21588,7 +21486,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 190,
+      "line": 180,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/courses",
@@ -21596,7 +21494,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 200,
+      "line": 190,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/courses/{course_code}/structure",
@@ -21604,7 +21502,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 180,
+      "line": 170,
       "method": "GET",
       "module_id": "admin.project-knowledge",
       "path": "/admin/knowledge-base",
@@ -21612,7 +21510,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 140,
+      "line": 130,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/admin/masterclass-course-preview",
@@ -21620,7 +21518,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 152,
+      "line": 142,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/admin/masterclass-designs",
@@ -21628,7 +21526,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 164,
+      "line": 154,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/admin/masterclass-offers-preview",
@@ -21636,15 +21534,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 130,
-      "method": "GET",
-      "module_id": "products.masterclass.runtime",
-      "path": "/admin/masterclass-preview",
-      "symbol": "masterclass_preview"
-    },
-    {
-      "file": "backend/app/crm_routes.py",
-      "line": 215,
+      "line": 205,
       "method": "GET",
       "module_id": "products.catalog",
       "path": "/admin/products",
@@ -21660,7 +21550,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 224,
+      "line": 214,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/users",
@@ -21668,7 +21558,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 233,
+      "line": 223,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/{section}",
@@ -22476,7 +22366,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 271,
+      "line": 261,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm",
@@ -22484,7 +22374,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 281,
+      "line": 271,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.css",
@@ -22492,7 +22382,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 286,
+      "line": 276,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.js",
@@ -23858,21 +23748,13 @@
       "kind": "function",
       "line": 130,
       "module_id": "products.masterclass.runtime",
-      "name": "masterclass_preview",
-      "qualname": "masterclass_preview"
-    },
-    {
-      "file": "backend/app/crm_routes.py",
-      "kind": "function",
-      "line": 140,
-      "module_id": "products.masterclass.runtime",
       "name": "masterclass_course_preview",
       "qualname": "masterclass_course_preview"
     },
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 152,
+      "line": 142,
       "module_id": "products.masterclass.runtime",
       "name": "masterclass_designs",
       "qualname": "masterclass_designs"
@@ -23880,7 +23762,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 164,
+      "line": 154,
       "module_id": "products.masterclass.runtime",
       "name": "masterclass_offers_preview",
       "qualname": "masterclass_offers_preview"
@@ -23888,7 +23770,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 180,
+      "line": 170,
       "module_id": "admin.project-knowledge",
       "name": "knowledge_base_page",
       "qualname": "knowledge_base_page"
@@ -23896,7 +23778,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 190,
+      "line": 180,
       "module_id": "products.masterclass.course",
       "name": "course_editors_page",
       "qualname": "course_editors_page"
@@ -23904,7 +23786,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 200,
+      "line": 190,
       "module_id": "products.masterclass.course",
       "name": "course_structure_editor_page",
       "qualname": "course_structure_editor_page"
@@ -23912,7 +23794,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 215,
+      "line": 205,
       "module_id": "products.catalog",
       "name": "product_catalog_page",
       "qualname": "product_catalog_page"
@@ -23920,7 +23802,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 224,
+      "line": 214,
       "module_id": "admin.control",
       "name": "legacy_admin_users",
       "qualname": "legacy_admin_users"
@@ -23928,7 +23810,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 233,
+      "line": 223,
       "module_id": "admin.control",
       "name": "admin_section",
       "qualname": "admin_section"
@@ -23936,7 +23818,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 246,
+      "line": 236,
       "module_id": "platform.auth",
       "name": "admin_login",
       "qualname": "admin_login"
@@ -23944,7 +23826,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 265,
+      "line": 255,
       "module_id": "platform.auth",
       "name": "admin_logout",
       "qualname": "admin_logout"
@@ -23952,7 +23834,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 271,
+      "line": 261,
       "module_id": "admin.control",
       "name": "crm_index",
       "qualname": "crm_index"
@@ -23960,7 +23842,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 281,
+      "line": 271,
       "module_id": "admin.control",
       "name": "crm_css",
       "qualname": "crm_css"
@@ -23968,7 +23850,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 286,
+      "line": 276,
       "module_id": "admin.control",
       "name": "crm_js",
       "qualname": "crm_js"
@@ -23976,7 +23858,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 291,
+      "line": 281,
       "module_id": "admin.control",
       "name": "admin_tag_audit",
       "qualname": "admin_tag_audit"
@@ -23984,7 +23866,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 296,
+      "line": 286,
       "module_id": "admin.control",
       "name": "admin_variable_audit",
       "qualname": "admin_variable_audit"
@@ -23992,7 +23874,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 301,
+      "line": 291,
       "module_id": "admin.control",
       "name": "admin_summary",
       "qualname": "admin_summary"
@@ -24000,7 +23882,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 308,
+      "line": 298,
       "module_id": "admin.control",
       "name": "admin_users",
       "qualname": "admin_users"
@@ -24008,7 +23890,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 326,
+      "line": 316,
       "module_id": "admin.control",
       "name": "admin_user",
       "qualname": "admin_user"
@@ -24016,7 +23898,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 338,
+      "line": 328,
       "module_id": "admin.control",
       "name": "admin_update_user",
       "qualname": "admin_update_user"
@@ -24024,7 +23906,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 350,
+      "line": 340,
       "module_id": "admin.control",
       "name": "admin_add_note",
       "qualname": "admin_add_note"
@@ -24032,7 +23914,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 363,
+      "line": 353,
       "module_id": "admin.control",
       "name": "admin_add_tag",
       "qualname": "admin_add_tag"
@@ -24040,7 +23922,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 375,
+      "line": 365,
       "module_id": "admin.control",
       "name": "admin_access_reviews",
       "qualname": "admin_access_reviews"
@@ -24048,7 +23930,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 381,
+      "line": 371,
       "module_id": "platform.commerce",
       "name": "admin_resources",
       "qualname": "admin_resources"
@@ -24056,7 +23938,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 386,
+      "line": 376,
       "module_id": "admin.control",
       "name": "admin_link_email",
       "qualname": "admin_link_email"
@@ -24064,7 +23946,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 395,
+      "line": 385,
       "module_id": "admin.control",
       "name": "admin_set_access_review",
       "qualname": "admin_set_access_review"
@@ -24072,7 +23954,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 403,
+      "line": 393,
       "module_id": "admin.control",
       "name": "admin_grant_access",
       "qualname": "admin_grant_access"
@@ -24080,7 +23962,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 411,
+      "line": 401,
       "module_id": "admin.control",
       "name": "admin_revoke_access",
       "qualname": "admin_revoke_access"
@@ -24088,7 +23970,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 419,
+      "line": 409,
       "module_id": "platform.commerce",
       "name": "admin_payments",
       "qualname": "admin_payments"
@@ -24096,7 +23978,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 441,
+      "line": 431,
       "module_id": "platform.commerce",
       "name": "admin_payment_products",
       "qualname": "admin_payment_products"
@@ -24104,7 +23986,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 449,
+      "line": 439,
       "module_id": "admin.control",
       "name": "admin_tags",
       "qualname": "admin_tags"
@@ -24112,7 +23994,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 460,
+      "line": 450,
       "module_id": "admin.control",
       "name": "admin_update_tag",
       "qualname": "admin_update_tag"
@@ -24120,7 +24002,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 472,
+      "line": 462,
       "module_id": "admin.control",
       "name": "admin_merge_tag",
       "qualname": "admin_merge_tag"
@@ -27966,30 +27848,6 @@
       "qualname": "renderView"
     },
     {
-      "file": "backend/app/static/masterclass-admin.js",
-      "kind": "function",
-      "line": 2,
-      "module_id": "products.masterclass.runtime",
-      "name": "esc",
-      "qualname": "esc"
-    },
-    {
-      "file": "backend/app/static/masterclass-admin.js",
-      "kind": "function",
-      "line": 3,
-      "module_id": "products.masterclass.runtime",
-      "name": "api",
-      "qualname": "api"
-    },
-    {
-      "file": "backend/app/static/masterclass-admin.js",
-      "kind": "function",
-      "line": 6,
-      "module_id": "products.masterclass.runtime",
-      "name": "loadClients",
-      "qualname": "loadClients"
-    },
-    {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
       "line": 6,
@@ -28934,14 +28792,6 @@
       "qualname": "main"
     },
     {
-      "file": "backend/scripts/seed_masterclass_preview.py",
-      "kind": "function",
-      "line": 26,
-      "module_id": "products.masterclass.course",
-      "name": "main",
-      "qualname": "main"
-    },
-    {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
       "line": 30,
@@ -29362,13 +29212,21 @@
       "kind": "function",
       "line": 78,
       "module_id": "platform.auth",
+      "name": "test_retired_masterclass_admin_surfaces_are_not_available",
+      "qualname": "test_retired_masterclass_admin_surfaces_are_not_available"
+    },
+    {
+      "file": "backend/tests/test_crm_auth.py",
+      "kind": "function",
+      "line": 84,
+      "module_id": "platform.auth",
       "name": "test_masterclass_course_preview_requires_authentication",
       "qualname": "test_masterclass_course_preview_requires_authentication"
     },
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 84,
+      "line": 90,
       "module_id": "platform.auth",
       "name": "test_masterclass_course_preview_is_available_after_login",
       "qualname": "test_masterclass_course_preview_is_available_after_login"
@@ -29376,7 +29234,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 96,
+      "line": 102,
       "module_id": "platform.auth",
       "name": "test_masterclass_designs_are_available_after_login",
       "qualname": "test_masterclass_designs_are_available_after_login"
@@ -29384,7 +29242,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 108,
+      "line": 114,
       "module_id": "platform.auth",
       "name": "test_masterclass_offers_preview_requires_authentication",
       "qualname": "test_masterclass_offers_preview_requires_authentication"
@@ -29392,7 +29250,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 118,
+      "line": 124,
       "module_id": "platform.auth",
       "name": "test_masterclass_offers_preview_uses_canonical_course_sources",
       "qualname": "test_masterclass_offers_preview_uses_canonical_course_sources"
@@ -29400,7 +29258,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 148,
+      "line": 154,
       "module_id": "platform.auth",
       "name": "test_unified_admin_assets_require_authentication",
       "qualname": "test_unified_admin_assets_require_authentication"
@@ -29408,7 +29266,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 153,
+      "line": 159,
       "module_id": "platform.auth",
       "name": "test_cross_module_user_summary_requires_authentication",
       "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -29416,7 +29274,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 158,
+      "line": 164,
       "module_id": "platform.auth",
       "name": "test_login_creates_shared_admin_session",
       "qualname": "test_login_creates_shared_admin_session"
@@ -29424,7 +29282,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 175,
+      "line": 181,
       "module_id": "platform.auth",
       "name": "test_login_rejects_wrong_password",
       "qualname": "test_login_rejects_wrong_password"
@@ -29432,7 +29290,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 183,
+      "line": 189,
       "module_id": "platform.auth",
       "name": "test_login_assets_are_public",
       "qualname": "test_login_assets_are_public"
