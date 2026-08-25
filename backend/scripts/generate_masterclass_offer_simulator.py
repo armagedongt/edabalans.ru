@@ -188,6 +188,7 @@ submit.onclick=search;input.onkeydown=function(event){if(event.key==='Enter'){ev
         .replace('autocomplete="off"><div id="client-results"', 'autocomplete="off"><button type="button" class="client-search-submit" id="client-search-submit">Найти</button><div id="client-results"')
         .replace('</section><script>(()=>', f'</section>{client_search_script}<script>(()=>')
         .replace('</script></main></body>', '</script><script>var clientInput=document.getElementById("client-email");if(clientInput)clientInput.oninput=null;</script></main></body>')
+        .replace('<h1>То, что увидит клиент</h1>', '')
     )
 
 
