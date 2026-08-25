@@ -241,16 +241,11 @@ def test_project_map_reports_missing_invalid_and_unknown_artifacts(
     assert client.get("/admin/api/project-map").status_code == 503
 
 
-def test_control_portal_links_independent_tools_and_project_views() -> None:
+def test_control_portal_redirects_to_the_single_admin_catalog() -> None:
     client = make_client()
     login(client)
 
-    response = client.get("/control")
+    response = client.get("/control", follow_redirects=False)
 
-    assert response.status_code == 200
-    assert 'href="/admin/knowledge-base?view=map"' in response.text
-    assert 'href="/admin/knowledge-base?view=guide"' in response.text
-    assert 'href="/admin/knowledge-base?view=plans"' in response.text
-    assert 'href="/admin/knowledge-base?view=technical"' in response.text
-    assert 'href="https://api.edabalans.ru/bot"' in response.text
-    assert 'href="/bot"' not in response.text
+    assert response.status_code == 303
+    assert response.headers["location"] == "/admin"

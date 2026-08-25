@@ -3816,8 +3816,8 @@
           "kind": "function",
           "line": 244,
           "module_id": "admin.project-knowledge",
-          "name": "test_control_portal_links_independent_tools_and_project_views",
-          "qualname": "test_control_portal_links_independent_tools_and_project_views"
+          "name": "test_control_portal_redirects_to_the_single_admin_catalog",
+          "qualname": "test_control_portal_redirects_to_the_single_admin_catalog"
         },
         {
           "file": "tools/module_inventory.py",
@@ -29594,8 +29594,8 @@
       "kind": "function",
       "line": 244,
       "module_id": "admin.project-knowledge",
-      "name": "test_control_portal_links_independent_tools_and_project_views",
-      "qualname": "test_control_portal_links_independent_tools_and_project_views"
+      "name": "test_control_portal_redirects_to_the_single_admin_catalog",
+      "qualname": "test_control_portal_redirects_to_the_single_admin_catalog"
     },
     {
       "file": "backend/tests/test_legacy_import.py",
