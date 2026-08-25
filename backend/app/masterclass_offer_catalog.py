@@ -160,11 +160,11 @@ SITE_SHORT_OFFER_PRESENTATION = {
 OFFER_CARD_COPY: dict[str, OfferCardCopy] = {
     "digital_bundle": {
         "title": "Все самостоятельные программы",
-        "description": "Все самостоятельные программы, доступные в этом предложении, одним комплектом.",
+        "description": "",
     },
     "consultation_bundle": {
         "title": "Все самостоятельные программы с консультацией",
-        "description": "Все самостоятельные программы и индивидуальная консультация одним комплектом.",
+        "description": "",
     },
 }
 
@@ -213,9 +213,5 @@ def partial_bundle_copy(
         "title": OFFER_CARD_COPY[
             "consultation_bundle" if includes_consultation else "digital_bundle"
         ]["title"],
-        "description": (
-            "Все самостоятельные программы и индивидуальная консультация одним комплектом."
-            if includes_consultation
-            else "Все самостоятельные программы одним комплектом."
-        ),
+        "description": "",
     }
