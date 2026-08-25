@@ -51,7 +51,7 @@
 .mc-offer-copy{min-width:0}
 .mc-offer-kind{color:var(--accent);font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .mc-offer-card h2{margin:5px 0 6px;font-size:23px;line-height:1.18}
-.mc-product-link{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:1px 0!important;border:0!important;background:transparent!important;color:#4069b1!important;font-size:13px!important;font-weight:600!important;vertical-align:baseline}
+.mc-product-link{display:flex;align-items:center;gap:4px;width:max-content;margin:6px 0 0;padding:1px 0!important;border:0!important;background:transparent!important;color:#1d66d8!important;font-size:13px!important;font-weight:600!important;text-align:left}
 .mc-product-link span{font-size:15px;line-height:1}
 .mc-offer-card p{max-width:560px;margin:0;color:var(--muted);font-size:15px;line-height:1.5}
 .mc-offer-card .mc-offer-long{margin-top:9px}

@@ -15,6 +15,7 @@ get_settings.cache_clear()
 
 from app.main import app  # noqa: E402
 
+
 def make_client() -> TestClient:
     return TestClient(app, base_url="https://app.edabalans.ru")
 
@@ -28,6 +29,14 @@ def test_crm_requires_authentication() -> None:
 def test_admin_api_requires_authentication() -> None:
     response = make_client().get("/admin/api/summary")
     assert response.status_code == 401
+
+
+def test_masterclass_offer_client_context_api_requires_authentication() -> None:
+    client = make_client()
+    assert client.get("/api/masterclass/admin/offer-preview/clients?q=test").status_code == 401
+    assert client.get(
+        "/api/masterclass/admin/offer-preview/clients/00000000-0000-0000-0000-000000000000"
+    ).status_code == 401
 
 
 def test_course_structure_api_requires_authentication() -> None:
@@ -116,6 +125,11 @@ def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
     assert 'href="/admin/masterclass-offers-preview?mode=client" aria-selected="true"' in client_mode.text
     assert 'id="scenario-mode" hidden' in client_mode.text
     assert 'id="client-mode" class="client-mode is-active"' in client_mode.text
+    assert 'id="client-search-submit">Найти</button>' in client_mode.text
+    assert "Клиент с таким email не найден." in client_mode.text
+    assert "submit.onclick=search" in client_mode.text
+    assert "function showClient(id)" in client_mode.text
+    assert "clientInput.oninput=null" in client_mode.text
 
 
 def test_unified_admin_assets_require_authentication() -> None:
