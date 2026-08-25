@@ -26,16 +26,16 @@ SYSTEM_KINDS = {
     "questionnaire", "messenger", "offer", "dqs", "recipes-part-1",
     "recipes-part-2", "closing-review",
 }
-STEP_EDITABLE = {
-    "title", "label", "shortTitle", "summary", "durationMinutes",
-    "contentAsset", "videoId", "image", "hidden",
-}
+STEP_EDITABLE = {"title", "label", "summary", "hidden"}
 DAY_EDITABLE = {
-    "kicker", "title", "shortTitle", "tocSummary", "lead", "media", "video",
-    "videoId", "image", "intro", "afterTitle", "afterText", "assignmentTitle",
-    "assignmentLead", "assignmentText", "nextTitle", "nextTeaser",
+    "title", "tocSummary", "lead", "media", "videoId", "image", "intro",
+    "afterLead", "afterTitle", "afterText",
 }
-HTML_FIELDS = {"intro", "afterText", "assignmentLead", "assignmentText"}
+HTML_FIELDS = {"intro", "afterLead", "afterText"}
+REMOVED_DAY_FIELDS = {
+    "kicker", "shortTitle", "assignmentTitle", "assignmentLead",
+    "assignmentText", "nextTitle", "nextTeaser",
+}
 SAFE_ASSET = re.compile(r"^[A-Za-z0-9А-Яа-яЁё._ -]+\.(md|txt|json)$")
 SAFE_VIDEO_ID = re.compile(r"^[A-Za-z0-9_-]{4,120}$")
 
@@ -99,6 +99,13 @@ def check_id(day: int, index: int) -> str:
 def normalize_seed(manifest: dict) -> dict:
     result = deepcopy(manifest)
     for day in result.get("days", []):
+        if not day.get("afterLead") and day.get("assignmentLead"):
+            day["afterLead"] = day["assignmentLead"]
+        if not day.get("afterText") and day.get("assignmentText"):
+            day["afterText"] = day["assignmentText"]
+        for key in REMOVED_DAY_FIELDS:
+            day.pop(key, None)
+        day.setdefault("afterLead", "")
         day_number = int(day["number"])
         day["checks"] = [
             item if isinstance(item, dict) else {
@@ -111,6 +118,7 @@ def normalize_seed(manifest: dict) -> dict:
         ]
         for step in day.get("steps", []):
             step.setdefault("hidden", False)
+            step.pop("shortTitle", None)
             if step.get("contentKind") == "imported":
                 step.setdefault("contentPageTitle", step.get("title"))
     return result
@@ -142,7 +150,7 @@ def runtime_manifest(payload: dict) -> dict:
     # Hidden entries stay in their original positions so legacy positional progress
     # keeps its meaning. The client omits them visually and the server excludes them
     # from required checks.
-    return deepcopy(payload)
+    return normalize_seed(payload)
 
 
 def course_context(db: Session) -> CourseContext:
@@ -215,7 +223,8 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
         raise HTTPException(422, "Структура должна быть объектом")
     if len(json.dumps(proposed, ensure_ascii=False).encode("utf-8")) > 2_000_000:
         raise HTTPException(413, "Структура превышает допустимый размер")
-    result = deepcopy(proposed)
+    result = normalize_seed(proposed)
+    current = normalize_seed(current)
     if result.get("courseCode") != current.get("courseCode"):
         raise HTTPException(422, "Технический код курса нельзя менять")
     days = result.get("days")
@@ -313,7 +322,7 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
                 previous = old.get("requiredForAllAfterRevision")
                 if previous is not None:
                     step["requiredForAllAfterRevision"] = previous
-            for key in ("title", "label", "shortTitle", "summary"):
+            for key in ("title", "label", "summary"):
                 if key in step and isinstance(step[key], str):
                     if len(step[key]) > 5_000:
                         raise HTTPException(422, f"Материал {step['id']}: текст слишком длинный")

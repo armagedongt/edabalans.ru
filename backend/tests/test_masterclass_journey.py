@@ -259,7 +259,7 @@ def test_editor_hides_material_without_reindexing_and_rejects_addition():
     assert rejected.status_code == 422
 
 
-def test_editor_rejects_broken_content_asset_and_unsafe_media_url():
+def test_editor_rejects_material_asset_edit_and_unsafe_media_url():
     client, _ = setup()
     editor = client.get("/admin/api/courses/masterclass-21/structure").json()
     manifest = editor["active"]["manifest"]
@@ -269,9 +269,11 @@ def test_editor_rejects_broken_content_asset_and_unsafe_media_url():
         json={"expected_version": editor["active"]["version"], "manifest": manifest},
     )
     assert broken.status_code == 422
-    assert "не найден" in broken.json()["detail"]
+    assert "нельзя менять" in broken.json()["detail"]
 
-    manifest = editor["active"]["manifest"]
+    manifest = client.get(
+        "/admin/api/courses/masterclass-21/structure"
+    ).json()["active"]["manifest"]
     manifest["days"][0]["image"] = 'https://example.test/a.jpg" onerror="alert(1)'
     unsafe = client.put(
         "/admin/api/courses/masterclass-21/structure",

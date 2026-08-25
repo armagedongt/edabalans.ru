@@ -11,6 +11,7 @@ os.environ.setdefault(
 from fastapi.testclient import TestClient  # noqa: E402
 
 from app.main import app  # noqa: E402
+from app.course_structure_service import normalize_seed  # noqa: E402
 
 
 client = TestClient(app)
@@ -290,9 +291,14 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "if(next>=0)openCourseStep(d,next)" in course_html
     assert "if(!step.hidden&&step.kind==='article'" in course_html
     assert "return!step.hidden&&['messenger','offer']" in course_html
-    assert "day.shortTitle||day.title" in course_html
+    assert "day.shortTitle||day.title" not in course_html
     assert "return day.tocSummary||generated" in course_html
-    assert "esc(d.nextTitle||nextDay.title)" in course_html
+    assert "esc(nextDay.title)" in course_html
+    assert "d.nextTeaser" not in course_html
+    assert "d.assignmentLead" not in course_html
+    assert "d.assignmentText" not in course_html
+    assert "d.kicker" not in course_html
+    assert "afterLead" in course_html
     assert "esc(t.title)" in course_html
     assert "esc(t.summary)" in course_html
     assert "pages[step.contentPageTitle||step.title]" in course_html
@@ -304,14 +310,19 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     editor_js = (static_dir / "course-structure-editor.js").read_text(encoding="utf-8")
     assert "Сохранить и применить" in editor_html
     assert "Добавить материал" not in editor_html + editor_js
-    assert "Добавление, удаление и перестановка материалов выполняются через чат" in editor_js
+    assert "Лозунг дня" not in editor_js
+    assert "Короткое название" not in editor_js
+    assert "Файл материала" not in editor_js
+    assert "Системный шаг" not in editor_js
+    assert "Добавление, удаление и перестановка" not in editor_js
+    assert "ID: " in editor_js
 
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")
     assert dqs_step["completion"] == "tutorial_completed"
-    assert "пройдите <a" in fourth_day["assignmentLead"]
-    assert "самостоятельно вернитесь в день 4" in fourth_day["assignmentText"]
-    assert "data-dqs-tutorial-link" in fourth_day["assignmentLead"]
+    assert "пройдите <a" in fourth_day["afterLead"]
+    assert "самостоятельно вернитесь в день 4" in fourth_day["afterText"]
+    assert "data-dqs-tutorial-link" in fourth_day["afterLead"]
     assert "event.detail.completion!=='tutorial'" in course_html
     assert "markStep(d,currentStep).catch(showActionError)" in course_html
     assert "document.querySelectorAll('[data-dqs-tutorial-link]')" in course_html
@@ -340,21 +351,20 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
 
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
     root = Path(__file__).resolve().parents[2]
-    manifest = json.loads(
+    manifest = normalize_seed(json.loads(
         (root / "content" / "masterclass" / "course" / "course.json").read_text(
             encoding="utf-8"
         )
-    )
+    ))
 
     assert manifest["schemaVersion"] == 2
     assert manifest["status"] == "current_runtime_manifest"
     assert [day["number"] for day in manifest["days"]] == list(range(1, 22))
 
     required_day_fields = {
-        "kicker", "title", "shortTitle", "tocSummary", "lead", "media",
-        "videoId", "image", "intro", "afterTitle", "afterText",
-        "assignmentTitle", "assignmentLead", "checks", "nextTitle",
-        "nextTeaser", "steps", "implementation", "publicationStatus",
+        "title", "tocSummary", "lead", "media", "videoId", "image", "intro",
+        "afterLead", "afterTitle", "afterText", "checks", "steps",
+        "implementation", "publicationStatus",
     }
     step_ids: list[str] = []
     for day in manifest["days"]:
@@ -364,14 +374,13 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         for step in day["steps"]:
             assert step.get("id")
             assert step.get("kind")
-            assert step.get("shortTitle")
             assert step.get("summary")
             step_ids.append(step["id"])
     assert len(step_ids) == len(set(step_ids))
 
-    assert [step["shortTitle"] for step in manifest["days"][5]["steps"]] == [
-        "Опорные точки", "Эволюция овсянки", "Пять вкусов", "Топпинги",
-        "Система рецептов",
+    assert [step["title"] for step in manifest["days"][5]["steps"]] == [
+        "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
+        "Пять вкусов еды", "Топпинги",
     ]
     assert manifest["days"][6]["steps"][2]["items"] == [
         "Как устроена база рецептов и как пользоваться каталогом",
@@ -379,8 +388,8 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         "Разбор БЖУ",
         "Первая партия рецептов",
     ]
-    assert [step["shortTitle"] for step in manifest["days"][17]["steps"]] == [
-        "Фазы похудения", "Примеры чужих дневников",
+    assert [step["title"] for step in manifest["days"][17]["steps"]] == [
+        "Фазы и периодизация похудения", "Для тех, кто любит подглядывать",
     ]
 
     course_html = (

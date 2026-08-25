@@ -11,6 +11,7 @@ from app.course_structure_service import (
     active_course_version,
     prepare_restore_payload,
     publish_course_structure,
+    runtime_manifest,
     serialize_version,
 )
 from app.database import get_db
@@ -37,6 +38,8 @@ def checked_course(course_code: str) -> str:
 
 def editor_payload(db: Session) -> dict:
     active = active_course_version(db)
+    active_data = serialize_version(active)
+    active_data["manifest"] = runtime_manifest(active.payload)
     return {
         "ok": True,
         "course": {
@@ -44,7 +47,7 @@ def editor_payload(db: Session) -> dict:
             "name": "Мастер-класс",
             "days": len(active.payload.get("days", [])),
         },
-        "active": serialize_version(active),
+        "active": active_data,
         "history": [
             serialize_version(version, include_payload=False)
             for version in version_history(db, DOCUMENT_TYPE, DOCUMENT_KEY)
