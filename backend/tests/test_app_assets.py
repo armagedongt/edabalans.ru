@@ -317,6 +317,58 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
 
 
+def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+
+    assert manifest["schemaVersion"] == 2
+    assert manifest["status"] == "current_runtime_manifest"
+    assert [day["number"] for day in manifest["days"]] == list(range(1, 22))
+
+    required_day_fields = {
+        "kicker", "title", "shortTitle", "tocSummary", "lead", "media",
+        "videoId", "image", "intro", "afterTitle", "afterText",
+        "assignmentTitle", "assignmentLead", "checks", "nextTitle",
+        "nextTeaser", "steps", "implementation", "publicationStatus",
+    }
+    step_ids: list[str] = []
+    for day in manifest["days"]:
+        assert required_day_fields <= day.keys(), day["number"]
+        assert day["media"] in {"video", "image", "none"}
+        assert day["checks"]
+        for step in day["steps"]:
+            assert step.get("id")
+            assert step.get("kind")
+            assert step.get("shortTitle")
+            assert step.get("summary")
+            step_ids.append(step["id"])
+    assert len(step_ids) == len(set(step_ids))
+
+    assert [step["shortTitle"] for step in manifest["days"][5]["steps"]] == [
+        "Опорные точки", "Эволюция овсянки", "Пять вкусов", "Топпинги",
+        "Система рецептов",
+    ]
+    assert manifest["days"][6]["steps"][2]["items"] == [
+        "Как устроена база рецептов и как пользоваться каталогом",
+        "Разбор отдельных продуктов: готовых и не очень",
+        "Разбор БЖУ",
+        "Первая партия рецептов",
+    ]
+    assert [step["shortTitle"] for step in manifest["days"][17]["steps"]] == [
+        "Фазы похудения", "Примеры чужих дневников",
+    ]
+
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+    assert "d.steps[i].required!==false" in course_html
+    assert "if(d.media==='none')return''" in course_html
+
+
 def test_legal_friendly_routes_are_public() -> None:
     assert client.get("/legal").status_code == 200
     assert client.get("/legal/").status_code == 200

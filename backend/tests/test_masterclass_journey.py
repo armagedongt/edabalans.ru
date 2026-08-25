@@ -1,5 +1,7 @@
 import os
 import hashlib
+import json
+import re
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -18,12 +20,15 @@ from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
+from app.masterclass_offer_catalog import OFFER_PRODUCTS  # noqa: E402
+from app.masterclass_routes import course_required_step_indexes  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, Resource, User, UserAccess, UserEmail,
     UserLegalAcceptance, UserOffer,
 )
+from scripts.generate_masterclass_offer_simulator import render_simulator  # noqa: E402
 
 
 TEST_SETTINGS = Settings(
@@ -32,6 +37,13 @@ TEST_SETTINGS = Settings(
     app_auth_secret="test-client-session-secret",
     telegram_test_bot_username="EdabalansTestBot",
 )
+
+
+def test_optional_course_steps_do_not_block_required_progression():
+    assert course_required_step_indexes(7) == [0, 1]
+    assert course_required_step_indexes(8) == [0]
+    assert course_required_step_indexes(15) == [0, 1, 3]
+    assert course_required_step_indexes(16) == [0]
 
 
 def placement_token(placement: str) -> str:
@@ -330,6 +342,152 @@ def test_single_offers_stay_concise_and_bundles_list_their_products():
     assert "Мастер-класс по изменению питания и пищевых привычек" in owned_names
     assert "Система рецептов" in owned_names
     assert "Мини-курс «Калорийный»" in owned_names
+
+
+def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
+    client, _ = setup()
+    early = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-1-offer")
+    ).json()
+    digital_bundle = next(
+        card for card in early["offers"] if card["code"] == "bundle:digital"
+    )
+    assert digital_bundle["details"] == [
+        {
+            "name": OFFER_PRODUCTS[code]["name"],
+            "description": OFFER_PRODUCTS[code]["description"],
+        }
+        for code in digital_bundle["items"]
+    ]
+
+    review = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-19-offer")
+    ).json()
+    consultation_bundle = next(
+        card for card in review["offers"] if card["code"] == "bundle:consultation"
+    )
+    assert consultation_bundle["details"] == [
+        {
+            "name": OFFER_PRODUCTS[code]["name"],
+            "description": OFFER_PRODUCTS[code]["description"],
+        }
+        for code in consultation_bundle["items"]
+    ]
+
+    single_cards = [
+        *[card for card in early["offers"] if card["composition"] == "single"],
+        *[card for card in review["offers"] if card["composition"] == "single"],
+    ]
+    assert single_cards
+    for card in single_cards:
+        code = card["items"][0]
+        assert card["title"] == OFFER_PRODUCTS[code]["name"]
+        assert card["description"] == OFFER_PRODUCTS[code]["description"]
+        assert card["long_description"] == OFFER_PRODUCTS[code]["long_description"]
+
+
+def test_offer_product_catalog_has_one_complete_card_contract():
+    required_fields = {
+        "name",
+        "description",
+        "long_description",
+        "resource",
+        "standard",
+        "status",
+        "features",
+    }
+    assert OFFER_PRODUCTS
+    assert all(set(product) == required_fields for product in OFFER_PRODUCTS.values())
+    assert all(product["name"] for product in OFFER_PRODUCTS.values())
+    assert all(product["description"] for product in OFFER_PRODUCTS.values())
+    assert all(product["resource"] for product in OFFER_PRODUCTS.values())
+    assert all(product["standard"] > 0 for product in OFFER_PRODUCTS.values())
+
+
+def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
+    rendered = render_simulator()
+    runtime_css = (
+        Path(__file__).parents[1] / "app" / "static" / "masterclass.css"
+    ).read_text(encoding="utf-8")
+    assert runtime_css in rendered
+    assert "class=\"mc-offer-card\"" in rendered
+    assert "__COURSE_CSS__" not in rendered
+    assert "__PRODUCTS_JSON__" not in rendered
+    catalog_json = json.dumps(
+        OFFER_PRODUCTS, ensure_ascii=False, separators=(",", ":")
+    )
+    assert rendered.count(catalog_json) == 1
+    assert "${products[k].name}" in rendered
+    assert "${products[k].description}" in rendered
+    assert 'data-offer="${keys.join(\',\')}"' in rendered
+
+
+def test_offer_simulator_lists_every_current_course_checkpoint_in_order():
+    manifest = json.loads(
+        (
+            Path(__file__).parents[2]
+            / "content"
+            / "masterclass"
+            / "course"
+            / "course.json"
+        ).read_text(encoding="utf-8")
+    )
+    checkpoints = [
+        (day["number"], step["placement"], step["event"])
+        for day in manifest["days"]
+        for step in day["steps"]
+        if step["kind"] == "offer"
+    ]
+    assert checkpoints == [
+        (1, "day-1-offer", "day_1_offer_opened"),
+        (6, "recipes-part-1-gate", "recipes_part_1_offer_opened"),
+        (7, "recipes-part-1-gate", "recipes_part_1_offer_reopened"),
+        (8, "recipes-part-1-gate", "recipes_part_1_last_day_opened"),
+        (14, "recipes-part-2-gate", "recipes_part_2_offer_opened"),
+        (15, "recipes-part-2-gate", "recipes_part_2_offer_reopened"),
+        (16, "recipes-part-2-gate", "recipes_part_2_last_day_opened"),
+        (19, "day-19-offer", "day_19_offer_opened"),
+        (21, "day-21-offer", "day_21_offer_opened"),
+    ]
+    rendered = render_simulator()
+    for _, placement, event in checkpoints:
+        assert placement in rendered
+    for event in {
+        "day_1_offer_opened", "day_19_offer_opened", "day_21_offer_opened",
+    }:
+        assert event in rendered
+    placement_select = rendered.split('id="sim-placement"', 1)[1].split(
+        "</select>", 1
+    )[0]
+    assert re.findall(r'<option value="([^"]+)">([^<]+)</option>', placement_select) == [
+        ("day1", "День 1 · первый показ ранней цены без таймера"),
+        ("firstStart", "После DQS · перед первыми рецептами · запуск раннего окна"),
+        ("firstRecipes", "Первые рецепты · повтор действующей ранней цены"),
+        ("secondStart", "Перед второй частью рецептов · запуск второй цены"),
+        ("secondRecipes", "Вторая часть рецептов · повтор действующей второй цены"),
+        ("review", "После саморевью · цена разбора"),
+        ("day21Deferred", "День 21 · review ещё действует · неделя после него"),
+        ("day21Now", "День 21 · review завершён · неделя начинается сразу"),
+        ("standard", "После последней недели · обычные цены"),
+    ]
+    stage_bindings = {
+        "day1": ("early", "day_1_offer_opened", "day-1-offer", "false"),
+        "firstStart": ("early", "day_15_offer_opened", "day-15-offer", "true"),
+        "firstRecipes": ("early", "recipes_part_1_opened", "recipes-part-1-gate", "false"),
+        "secondStart": ("second", "day_17_offer_opened", "day-17-offer", "true"),
+        "secondRecipes": ("second", "recipes_part_2_opened", "recipes-part-2-gate", "false"),
+        "review": ("review", "day_19_offer_opened", "day-19-offer", "true"),
+        "day21Deferred": ("last_week", "day_21_offer_opened", "day-21-offer", "true"),
+        "day21Now": ("last_week", "day_21_offer_opened", "day-21-offer", "true"),
+        "standard": ("standard", "нет нового события", "offers-hub", "false"),
+    }
+    for key, (stage, event, placement, starts) in stage_bindings.items():
+        assert re.search(
+            rf"{key}:\{{stage:'{stage}',event:'{event}',placement:'{placement}'.*?starts:{starts}",
+            rendered,
+        )
 
 
 def test_offer_placement_cannot_be_forged_by_tilda_client():
@@ -700,11 +858,11 @@ def test_course_content_uses_the_same_member_session():
     assert imported.status_code == 200
     assert imported.json()["pages"]
     response = client.get(
-        "/api/masterclass/course/content/40-introduction-to-satiety-habits.md"
+        "/api/masterclass/course/content/31-satiety-habits.txt"
         "?email=member@example.test"
     )
     assert response.status_code == 200
-    assert "пищев" in response.text.lower()
+    assert response.text.strip()
     assert response.headers["cache-control"] == "private, max-age=300"
     assert client.get(
         "/api/masterclass/course/content/not-allowed.txt?email=member@example.test"

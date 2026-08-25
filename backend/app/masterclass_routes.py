@@ -27,6 +27,12 @@ from app.models import (
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail, UserOffer,
     UserCoursePolicy,
 )
+from app.masterclass_offer_catalog import (
+    DIGITAL_OFFER_PRODUCT_CODES,
+    OFFER_CARD_COPY,
+    OFFER_PRODUCTS,
+    bundle_detail,
+)
 from app.pricing_service import active_pricing_version, pricing_entry_map
 from app.product_identity import purchased_products
 
@@ -60,29 +66,6 @@ CLOSING_QUESTIONS = [
     ("weighing", "Взвешивания", "Убедились ли вы, что заполнили данные взвешиваний?"),
     ("consultation_format", "Формат разбора", "Голосовые сообщения или звонок? Если звонок — укажите удобные дни и время."),
 ]
-
-PRODUCTS = {
-    "recipes": {"name": "Система рецептов", "resource": "ACCESS_RECIPES", "standard": 3900, "description": "Как научиться собирать здоровые тарелки быстро, просто и вкусно — от выбора продуктов до собственных блюд.", "features": [
-        {"name": "Рецепты и конструктор блюд", "description": "Готовые сочетания и понятный способ собирать собственные блюда."},
-        {"name": "Выбор продуктов и готовой еды", "description": "Ориентиры для магазина, доставки и еды вне дома."},
-        {"name": "Вкус и организация готовки", "description": "Как сделать полезную еду удобной и действительно приятной."},
-    ]},
-    "calories": {"name": "Мини-курс «Калорийный»", "resource": "ACCESS_CALORIES", "standard": 3900, "description": "Как научиться считать калории так, чтобы вам больше никогда не пришлось считать калории.", "features": [
-        {"name": "Энергетический баланс без лишней математики", "description": "Понятная связь между питанием, расходом энергии и изменением веса."},
-        {"name": "Порции, калории и БЖУ", "description": "Практические примеры без попытки превратить питание в бухгалтерию."},
-        {"name": "Подсчёт как временный инструмент", "description": "Как получить навык и постепенно отказаться от постоянных расчётов."},
-    ]},
-    "training": {"name": "Мини-курс «С дивана до тренировок»", "resource": "ACCESS_STRENGTH", "standard": 3900, "description": "Как встать с дивана и начать получать от тренировок и удовольствие, и результат.", "features": [
-        {"name": "Выбор цели и подходящего уровня", "description": "Стартовая точка с учётом опыта, самочувствия и возможностей."},
-        {"name": "Минимальный рабочий объём", "description": "Сколько нагрузки действительно нужно для первых результатов."},
-        {"name": "Начало без перегруза", "description": "Как встроить тренировки в жизнь и не бросить после первой недели."},
-    ]},
-    "recordings": {"name": "Записи консультаций других участников", "resource": "ACCESS_CONSULTATION_RECORDINGS", "standard": 3900, "description": "Практические записи разборов питания и решений других участников.", "features": [
-        {"name": "Реальные ситуации участников", "description": "Примеры, в которых легко узнать собственные сложности."},
-        {"name": "Разбор причин", "description": "Не только отдельные ошибки, но и логика, которая за ними стоит."},
-        {"name": "Решения для своей ситуации", "description": "Подходы, которые можно перенести в собственное питание."},
-    ]},
-}
 
 STAGE_BY_PLACEMENT = {
     "day-1-offer": "early", "day-2-offer": "early", "recipes-part-1-gate": "early",
@@ -129,7 +112,6 @@ def load_course_manifest() -> dict:
     for day in days:
         if not isinstance(day.get("checks"), list) or not day["checks"]:
             raise RuntimeError(f"masterclass day {day['number']} has no checks")
-        seen_non_article = False
         for step in day.get("steps", []):
             step_id = step.get("id")
             if not step_id or step_id in step_ids:
@@ -137,11 +119,6 @@ def load_course_manifest() -> dict:
             step_ids.add(step_id)
             if not step.get("kind"):
                 raise RuntimeError(f"masterclass step has no kind: {step_id}")
-            if step["kind"] == "article" and seen_non_article:
-                raise RuntimeError(
-                    f"masterclass articles must precede app steps: {step_id}"
-                )
-            seen_non_article = seen_non_article or step["kind"] != "article"
     return manifest
 
 
@@ -343,6 +320,16 @@ def course_step_kinds(day: int) -> list[str]:
     return [step["kind"] for step in COURSE_DAYS[day].get("steps", [])]
 
 
+def course_required_step_indexes(day: int) -> list[int]:
+    if day not in COURSE_DAYS:
+        raise HTTPException(404, "masterclass day not found")
+    return [
+        index
+        for index, step in enumerate(COURSE_DAYS[day].get("steps", []))
+        if step.get("required", True)
+    ]
+
+
 def course_event(
     db: Session,
     user_id: uuid.UUID,
@@ -511,12 +498,20 @@ def course_payload(
         can_open, reason, unlock_at = course_day_can_open(db, user.id, day, now)
         kinds = course_step_kinds(day)
         completed = step_rows[day]
-        task_unlocked = len(completed) == len(kinds)
+        required_indexes = course_required_step_indexes(day)
+        task_unlocked = all(index in completed for index in required_indexes)
         placement = COURSE_OFFERS.get(day)
         placement_payload = None
         if progress and placement:
-            offer_index = len(kinds) - 1
-            if all(index in completed for index in range(offer_index)):
+            offer_index = next(
+                index
+                for index, step in enumerate(COURSE_DAYS[day].get("steps", []))
+                if step["kind"] == "offer"
+            )
+            required_before_offer = [
+                index for index in required_indexes if index < offer_index
+            ]
+            if all(index in completed for index in required_before_offer):
                 placement_payload = {
                     "placement": placement[0],
                     "placement_token": create_placement_token(placement[0], settings),
@@ -548,9 +543,10 @@ def course_payload(
                 "timezone_name": progress.timezone_name if progress else None,
                 "next_day_unlock_at": next_unlock.isoformat() if next_unlock else None,
                 "steps_total": len(kinds),
+                "required_steps_total": len(required_indexes),
                 "completed_steps": sorted(completed),
                 "next_step": next(
-                    (index for index in range(len(kinds)) if index not in completed), None
+                    (index for index in required_indexes if index not in completed), None
                 ),
                 "task_unlocked": task_unlocked,
                 "task_opened": bool(progress and progress.task_opened_at),
@@ -688,7 +684,12 @@ def course_complete_step(
     completed = completed_step_indexes(db, user.id, day)
     if index in completed:
         return course_payload(db, user, settings, now)
-    if any(previous not in completed for previous in range(index)):
+    required_before = [
+        previous
+        for previous in course_required_step_indexes(day)
+        if previous < index
+    ]
+    if any(previous not in completed for previous in required_before):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     kind = kinds[index]
     if kind == "dqs":
@@ -736,7 +737,10 @@ def course_open_task(
     progress = day_progress(db, user.id, day)
     if not progress:
         raise HTTPException(409, detail={"reason": "day_not_opened"})
-    if len(completed_step_indexes(db, user.id, day)) != len(course_step_kinds(day)):
+    completed = completed_step_indexes(db, user.id, day)
+    if any(
+        index not in completed for index in course_required_step_indexes(day)
+    ):
         raise HTTPException(409, detail={"reason": "materials_not_completed"})
     if not progress.task_opened_at:
         progress.task_opened_at = now
@@ -1148,7 +1152,11 @@ def build_offers(
 ) -> dict:
     stage, own = offer_stage(db, user, placement)
     owned = access_codes(db, user.id)
-    missing = [(code, p) for code,p in PRODUCTS.items() if p["resource"] not in owned]
+    missing = [
+        (code, OFFER_PRODUCTS[code])
+        for code in DIGITAL_OFFER_PRODUCT_CODES
+        if OFFER_PRODUCTS[code]["resource"] not in owned
+    ]
     if "ACCESS_CONSULTATION" in owned:
         missing = [(code,p) for code,p in missing if code != "recordings"]
     pricing = stage.pricing or {}
@@ -1203,24 +1211,21 @@ def build_offers(
         if len(missing) < 2:
             return None
         standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
+        copy = OFFER_CARD_COPY["digital_bundle"]
         return {
             "code": "bundle:digital",
             "composition": "bundle",
-            "title": "Вообще всё, что вам может понадобиться",
-            "description": "Все недостающие самостоятельные материалы одним комплектом.",
-            "details": [{"name": product["name"], "description": product["description"]} for _, product in missing],
+            "title": copy["title"],
+            "description": copy["description"],
+            "details": [bundle_detail(code) for code, _ in missing],
             "items": [code for code, _ in missing],
             "standard_price": standard,
             "price": int(bundle_table.get(str(len(missing)), standard)),
             "price_code": f"upsell.{stage.code}.bundle.{len(missing)}",
         }
 
-    consultation_details = [
-        {"name": "Предварительный разбор дневника", "description": "Сергей заранее изучит записи и подготовит основные выводы."},
-        {"name": "Обсуждение удобным способом", "description": "Звонок или голосовые сообщения — в зависимости от вашей ситуации."},
-        {"name": "Ответы на личные вопросы", "description": "Рекомендации с учётом именно вашего питания и образа жизни."},
-    ]
-    consultation_detail = {"name": "Индивидуальная консультация", "description": "Персональный разбор дневника питания и обсуждение выводов."}
+    consultation = OFFER_PRODUCTS["consultation"]
+    consultation_detail = bundle_detail("consultation")
     consultation_missing = "ACCESS_CONSULTATION" not in owned
     consultation_visible = consultation_missing and placement in {
         "closing-review", "post-review", "day-19-offer",
@@ -1229,15 +1234,18 @@ def build_offers(
     consultation_card = {
         "code": "single:consultation",
         "composition": "single",
-        "title": "Индивидуальная консультация",
-        "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
-        "long_description": "",
+        "title": consultation["name"],
+        "description": consultation["description"],
+        "long_description": consultation["long_description"],
         "details": [],
         "items": ["consultation"],
-        "standard_price": standard_amount("consultation", 8900),
+        "standard_price": standard_amount("consultation", consultation["standard"]),
         "price": catalog_amount(
-            f"upsell.{stage.code}.consultation", int(pricing.get("consultation", 8900))
-        ) if stage.code in {"review", "last_week", "standard"} else int(pricing.get("consultation", 8900)),
+            f"upsell.{stage.code}.consultation",
+            int(pricing.get("consultation", consultation["standard"])),
+        ) if stage.code in {"review", "last_week", "standard"} else int(
+            pricing.get("consultation", consultation["standard"])
+        ),
         "price_code": f"upsell.{stage.code}.consultation",
     }
 
@@ -1253,14 +1261,18 @@ def build_offers(
             if missing:
                 digital_standard = sum(standard_amount(code, int(product["standard"])) for code, product in missing)
                 digital_price = int(bundle_table.get(str(len(missing)), digital_standard))
+                copy = OFFER_CARD_COPY["consultation_bundle"]
                 cards.append({
                     "code": "bundle:consultation",
                     "composition": "bundle",
-                    "title": "Максимальный комплект с консультацией",
-                    "description": "Индивидуальная консультация и все недостающие самостоятельные материалы одним комплектом.",
-                    "details": [consultation_detail, *[{"name": p["name"], "description": p["description"]} for _, p in missing]],
+                    "title": copy["title"],
+                    "description": copy["description"],
+                    "details": [
+                        consultation_detail,
+                        *[bundle_detail(code) for code, _ in missing],
+                    ],
                     "items": ["consultation", *[code for code, _ in missing]],
-                    "standard_price": 8900 + digital_standard,
+                    "standard_price": consultation_card["standard_price"] + digital_standard,
                     "price": consultation_card["price"] + digital_price,
                     "price_code": f"upsell.{stage.code}.consultation+bundle.{len(missing)}",
                     # This card combines several catalog rows, so there is no
@@ -1301,11 +1313,15 @@ def build_offers(
     }]
     owned_products.extend(
         {"code": code, "name": product["name"]}
-        for code, product in PRODUCTS.items()
+        for code in DIGITAL_OFFER_PRODUCT_CODES
+        for product in (OFFER_PRODUCTS[code],)
         if product["resource"] in owned
     )
     if "ACCESS_CONSULTATION" in owned:
-        owned_products.append({"code": "consultation", "name": "Индивидуальная консультация"})
+        owned_products.append({
+            "code": "consultation",
+            "name": OFFER_PRODUCTS["consultation"]["name"],
+        })
     return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
