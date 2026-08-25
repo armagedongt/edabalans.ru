@@ -2,6 +2,7 @@ import os
 import hashlib
 import json
 import re
+import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -432,15 +433,104 @@ def test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_with
     assert len(selected) == 1
     assert selected[0]["email"] == "member@example.test"
     with factory() as db:
+        user = db.get(User, uuid.UUID(selected[0]["user_id"]))
+        db.add(MasterclassDayProgress(user_id=user.id, day_number=6))
+        db.add(MasterclassEvent(
+            user_id=user.id,
+            event_key="course:day:6:offer-opened",
+            event_type="recipes_part_1_offer_opened",
+            placement="recipes-part-1-gate",
+            details={"day": 6},
+        ))
+        now = datetime.now(timezone.utc)
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="early",
+            started_at=now - timedelta(hours=1),
+            expires_at=now + timedelta(hours=71),
+            snapshot={"created_by": "recipes-part-1-gate"},
+        ))
+        db.commit()
         before = db.scalar(select(func.count(UserOffer.id)))
     context = client.get(
         f"/api/masterclass/admin/offer-preview/clients/{selected[0]['user_id']}"
     )
     assert context.status_code == 200
-    assert context.json()["state"] == "no_progress"
+    assert context.json()["state"] == "offer"
     assert context.json()["client"]["user_id"] == selected[0]["user_id"]
+    assert context.json()["placement"] == "recipes-part-1-gate"
+    assert context.json()["offer"]["stage"] == "early"
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id))) == before
+
+
+def test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly():
+    client, factory = setup()
+    search = client.get("/api/masterclass/admin/offer-preview/clients?q=member")
+    user_id = uuid.UUID(search.json()["clients"][0]["user_id"])
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.get(User, user_id)
+        db.add(MasterclassDayProgress(user_id=user.id, day_number=19))
+        db.add(MasterclassEvent(
+            user_id=user.id,
+            event_key="course:day:19:offer-opened",
+            event_type="closing_review_offer_opened",
+            placement="day-19-offer",
+            details={"day": 19},
+        ))
+        review = UserOffer(
+            user_id=user.id,
+            stage_code="review",
+            started_at=now - timedelta(hours=73),
+            expires_at=now - timedelta(hours=1),
+            snapshot={"created_by": "day-19-offer"},
+        )
+        db.add(review)
+        notification = MasterclassNotification(
+            user_id=user.id,
+            notification_kind="offer_last_chance",
+            content_code="review",
+            deduplication_key="test-review-last-chance",
+            due_at=now - timedelta(hours=25),
+            status="cancelled",
+            payload={"stage": "review", "note": "keep"},
+        )
+        db.add(notification)
+        db.commit()
+        before_offers = db.scalar(select(func.count(UserOffer.id)))
+        before_notifications = db.scalar(select(func.count(MasterclassNotification.id)))
+        before_review = (review.started_at, review.expires_at, review.status, review.snapshot.copy())
+        before_notification = (
+            notification.due_at, notification.status, notification.payload.copy(),
+            notification.content_code, notification.sent_at,
+        )
+    response = client.get(f"/api/masterclass/admin/offer-preview/clients/{user_id}")
+    assert response.status_code == 200
+    assert response.json()["state"] == "offer"
+    assert response.json()["offer"]["stage"] == "last_week"
+    with factory() as db:
+        assert db.scalar(select(func.count(UserOffer.id))) == before_offers
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == before_notifications
+        review_after = db.scalar(select(UserOffer).where(UserOffer.user_id == user_id, UserOffer.stage_code == "review"))
+        notification_after = db.scalar(select(MasterclassNotification).where(
+            MasterclassNotification.user_id == user_id,
+            MasterclassNotification.deduplication_key == "test-review-last-chance",
+        ))
+        assert (
+            aware(review_after.started_at), aware(review_after.expires_at),
+            review_after.status, review_after.snapshot,
+        ) == (
+            aware(before_review[0]), aware(before_review[1]),
+            before_review[2], before_review[3],
+        )
+        assert (
+            aware(notification_after.due_at), notification_after.status, notification_after.payload,
+            notification_after.content_code, notification_after.sent_at,
+        ) == (
+            aware(before_notification[0]), before_notification[1], before_notification[2],
+            before_notification[3], before_notification[4],
+        )
 
 
 def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
@@ -762,6 +852,9 @@ def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     assert runtime_js in rendered
     assert "class=\"mc-offer-card\"" in rendered
     assert "productPresentationMarkup" in rendered
+    assert "headerMarkup:offerPageHeaderMarkup" in rendered
+    assert "layout(offerPageTitle(heading),offerPageLead(),offerMarkup(data))" in rendered
+    assert "${window.EdabalansMasterclassOfferView.headerMarkup()}${window.EdabalansMasterclassOfferView.markup(data)}" in rendered
     assert "data-product-info" in rendered
     assert "__COURSE_CSS__" not in rendered
     assert "__COURSE_JS__" not in rendered
