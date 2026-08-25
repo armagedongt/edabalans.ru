@@ -71,12 +71,14 @@
   async function dashboard() {
     setHeading("Главное", "ЕДИНАЯ АДМИНКА");
     loading();
-    const [summary, dqs, strength, metabolism] = await Promise.all([
+    const [summary, projectMap] = await Promise.all([
       api("/admin/api/summary"),
-      api("/admin/api/apps/users?app_code=dqs"),
-      api("/admin/api/apps/users?app_code=strength"),
-      api("/admin/api/apps/users?app_code=metabolism")
+      api("/admin/api/project-map")
     ]);
+    const names = { clients: "Клиенты", applications: "Приложения", tools: "Инструменты", project: "Проект", services: "Сервисы" };
+    const items = (projectMap.modules || []).flatMap((module) => (module.admin_catalog || []).map((item) => ({ ...item, module_id: module.id })));
+    const catalog = ["clients", "applications", "tools", "project", "services"].map((category) => ({ category, items: items.filter((item) => item.category === category).sort((a, b) => a.order - b.order) })).filter((group) => group.items.length);
+    const cards = (group) => `<div class="admin-section-head"><div><h2>${names[group.category]}</h2></div></div><div class="admin-module-grid">${group.items.map((item) => `<article class="admin-module"><h3>${esc(item.label)}</h3><p>${esc(item.description)}</p><footer><span class="admin-badge off">${esc(item.module_id)}</span><a class="admin-action alt" href="${esc(item.url)}"${item.url.startsWith("https://") ? ' target="_blank" rel="noopener"' : ""}>Открыть${item.url.startsWith("https://") ? " ↗" : ""}</a></footer></article>`).join("")}</div>`;
     root.innerHTML = `
       <div class="admin-grid">
         <article class="admin-stat"><small>ЛЮДЕЙ В CRM</small><b>${summary.users}</b><span>единый user_id</span></article>
@@ -84,16 +86,7 @@
         <article class="admin-stat"><small>ОПЛАТ В ИСТОРИИ</small><b>${summary.paid_payments}</b><span>${money(summary.revenue_rub)}</span></article>
         <article class="admin-stat"><small>ПРОВЕРИТЬ ДОСТУПЫ</small><b>${summary.access_reviews}</b><span>очередь CRM</span></article>
       </div>
-      <div class="admin-section-head"><div><h2>Приложения</h2><p>Каждый модуль использует ту же карточку человека.</p></div></div>
-      <div class="admin-module-grid">
-        ${appCard("dqs", dqs.users.length)}${appCard("strength", strength.users.length)}${appCard("metabolism", metabolism.users.length)}
-      </div>
-      <div class="admin-section-head"><div><h2>Рабочие разделы</h2><p>Один вход и переходы между связанными данными.</p></div></div>
-      <div class="admin-module-grid">
-        <article class="admin-module"><h3>CRM</h3><p>Люди, покупки, доступы, теги и заметки.</p><footer><span class="admin-badge">работает</span><a class="admin-action alt" href="/crm">Открыть</a></footer></article>
-        <article class="admin-module"><h3>Telegram-бот</h3><p>Цепочки, сообщения, контакты, рассылки и ссылки.</p><footer><span class="admin-badge">работает</span><a class="admin-action alt" href="/bot">Открыть</a></footer></article>
-        <article class="admin-module"><h3>База данных</h3><p>Технический просмотр PostgreSQL через NocoDB.</p><footer><span class="admin-badge warn">технический раздел</span><a class="admin-action alt" href="https://data.edabalans.ru" target="_blank" rel="noopener">Открыть ↗</a></footer></article>
-      </div>`;
+      ${catalog.map(cards).join("")}`;
   }
 
   function appCard(code, count) {

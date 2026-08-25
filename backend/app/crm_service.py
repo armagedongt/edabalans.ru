@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import re
 import uuid
-from datetime import date, datetime, time, timezone
+from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
+from zoneinfo import ZoneInfo
 
-from sqlalchemy import Uuid, bindparam, distinct, func, or_, select, text
+from sqlalchemy import Uuid, bindparam, distinct, exists, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -32,6 +33,7 @@ from app.masterclass_routes import CLOSING_QUESTIONS, ONBOARDING_QUESTIONS
 from app.product_identity import purchased_products, tariff_name
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
+MOSCOW_TZ = ZoneInfo("Europe/Moscow")
 
 
 def money(value: Decimal | None) -> float:
@@ -149,6 +151,8 @@ def list_users(
     db: Session,
     query: str = "",
     buyers_only: bool = False,
+    buyer_kind: str = "all", product_code: str = "", first_seen_from: date | None = None,
+    first_seen_to: date | None = None, masterclass_access: bool | None = None, tag_id: uuid.UUID | None = None,
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
@@ -174,8 +178,16 @@ def list_users(
         .limit(min(max(limit, 1), 250))
         .offset(max(offset, 0))
     )
-    if buyers_only:
+    if buyers_only or buyer_kind == "buyers":
         stmt = stmt.where(purchases > 0)
+    elif buyer_kind == "non_buyers": stmt = stmt.where(purchases == 0)
+    if product_code: stmt = stmt.where(exists(select(Payment.id).join(Product, Product.id == Payment.product_id).where(Payment.user_id == User.id, Payment.payment_status.in_(CONFIRMED_PAYMENT_STATUSES), Product.code == product_code)))
+    if first_seen_from: stmt = stmt.where(User.first_seen_at >= datetime.combine(first_seen_from, time.min, tzinfo=MOSCOW_TZ).astimezone(timezone.utc))
+    if first_seen_to: stmt = stmt.where(User.first_seen_at < datetime.combine(first_seen_to + timedelta(days=1), time.min, tzinfo=MOSCOW_TZ).astimezone(timezone.utc))
+    if masterclass_access is not None:
+        access_exists = exists(select(UserAccess.id).join(Resource, Resource.id == UserAccess.resource_id).where(UserAccess.user_id == User.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None), or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > func.now())))
+        stmt = stmt.where(access_exists if masterclass_access else ~access_exists)
+    if tag_id: stmt = stmt.where(exists(select(UserTag.user_id).where(UserTag.user_id == User.id, UserTag.tag_id == tag_id)))
     if query.strip():
         pattern = f"%{query.strip()}%"
         stmt = stmt.where(

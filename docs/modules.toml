@@ -5,7 +5,7 @@ derived_outputs = [
   { path = "telegram-bot/service/app/telegram-global-modules.json", module_id = "messaging.telegram" },
 ]
 
-# The registry owns routing and technical ownership only. Human names, summaries,
+# The registry owns routing, technical ownership and explicit admin catalog entries. Human names, summaries,
 # statuses and capabilities live in the referenced Markdown cards.
 
 [[modules]]
@@ -16,6 +16,7 @@ owns_routes = ["*/embed.js", "*/site-footer.js"]
 
 [[modules]]
 id = "platform.crm"
+admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", description = "Люди, покупки, доступы, теги и заметки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.crm.md"
 owns_files = [
@@ -35,6 +36,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
+admin_catalog = [{ category = "tools", order = 20, url = "/admin/pricing", label = "Цены и тарифы", description = "Цены продуктов, тарифы и дополнительные предложения." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
 depends_on = ["platform.crm"]
@@ -83,6 +85,7 @@ depends_on = ["platform.crm"]
 
 [[modules]]
 id = "platform.content"
+admin_catalog = [{ category = "tools", order = 40, url = "/admin/content", label = "Каталог материалов", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
@@ -115,6 +118,7 @@ owns_routes = ["*/apps/*", "*/assets/*"]
 
 [[modules]]
 id = "products.catalog"
+admin_catalog = [{ category = "tools", order = 30, url = "/admin/products", label = "Продукты и тарифы", description = "Названия продуктов, краткие описания и рабочий контекст." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -126,6 +130,7 @@ owns_routes = ["*/admin/products", "*/admin/api/product-catalog*"]
 
 [[modules]]
 id = "products.dqs"
+admin_catalog = [{ category = "applications", order = 10, url = "/admin/dqs", label = "DQS", description = "Дневник качества рациона и аналитика клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -139,6 +144,7 @@ owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*"]
 
 [[modules]]
 id = "products.strength"
+admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -151,6 +157,7 @@ owns_routes = ["*/apps/strength*", "*/api/apps/strength*"]
 
 [[modules]]
 id = "products.metabolism"
+admin_catalog = [{ category = "applications", order = 30, url = "/admin/metabolism", label = "Метаболизм", description = "Расчёты калорий и метаболизма клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -160,6 +167,7 @@ owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
 
 [[modules]]
 id = "products.intensive"
+admin_catalog = [{ category = "tools", order = 70, url = "https://app.edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", description = "Страницы и редактура четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
@@ -172,6 +180,7 @@ depends_on = ["platform.content"]
 
 [[modules]]
 id = "products.masterclass"
+admin_catalog = [{ category = "tools", order = 10, url = "/admin/masterclass", label = "Мастер-класс", description = "Рабочая сводка Мастер-класса." }, { category = "tools", order = 50, url = "/admin/masterclass-preview", label = "Предпросмотр Мастер-класса", description = "Проверка клиентского отображения." }, { category = "tools", order = 60, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
 depends_on = ["platform.commerce"]
@@ -240,6 +249,7 @@ events_out = ["messaging.telegram.postpurchase"]
 
 [[modules]]
 id = "products.masterclass.offers"
+admin_catalog = [{ category = "applications", order = 40, url = "/admin/masterclass-offers-preview", label = "Определитель допродаж", description = "Сценарий и персональный просмотр дополнительных предложений." }]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.offers.md"
 owns_files = [
@@ -385,6 +395,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 
 [[modules]]
 id = "messaging.telegram.engine"
+admin_catalog = [{ category = "services", order = 10, url = "https://api.edabalans.ru/bot", label = "Telegram-бот", description = "Цепочки, контакты, рассылки и связанные данные." }]
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
@@ -436,6 +447,7 @@ depends_on = ["platform.auth", "platform.crm"]
 
 [[modules]]
 id = "admin.project-knowledge"
+admin_catalog = [{ category = "project", order = 10, url = "/admin/knowledge-base?view=map", label = "Карта системы", description = "Дерево продуктов, модулей и связей." }, { category = "project", order = 20, url = "/admin/knowledge-base?view=guide", label = "Как работать с проектом", description = "Короткая памятка для владельца." }, { category = "project", order = 30, url = "/admin/knowledge-base?view=plans", label = "Планы", description = "Только явно отложенные идеи." }, { category = "project", order = 40, url = "/admin/knowledge-base?view=documents", label = "Документы проекта", description = "Человекочитаемая база знаний." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
 depends_on = ["platform.auth"]
@@ -451,6 +463,7 @@ owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin
 
 [[modules]]
 id = "admin.nocodb"
+admin_catalog = [{ category = "services", order = 20, url = "https://data.edabalans.ru", label = "Таблицы PostgreSQL", description = "Технический просмотр данных в NocoDB." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.nocodb.md"
 depends_on = ["operations.database", "operations.proxy"]

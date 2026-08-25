@@ -4,6 +4,7 @@ import uuid
 import time
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
@@ -110,8 +111,8 @@ def control_portal(
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> Response:
     if not admin_identity(request, credentials):
-        return RedirectResponse("/admin?next=/control", status_code=303)
-    return protected_file("admin-portal.html")
+        return RedirectResponse("/admin?next=/admin", status_code=303)
+    return RedirectResponse("/admin", status_code=303)
 
 
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
@@ -219,12 +220,20 @@ def product_catalog_page(
         return RedirectResponse("/admin?next=/admin/products", status_code=303)
     return protected_file("product-catalog-editor.html")
 
+@router.get("/admin/users", include_in_schema=False)
+def legacy_admin_users(request: Request, credentials: HTTPBasicCredentials | None = Depends(security)) -> Response:
+    allowed = {key: value for key, value in request.query_params.items() if key in {"user", "q"} and value}
+    suffix = f"?{urlencode(allowed)}" if allowed else ""
+    if not admin_identity(request, credentials):
+        return RedirectResponse(f"/admin?{urlencode({'next': f'/crm{suffix}'})}", status_code=303)
+    return RedirectResponse(f"/crm{suffix}", status_code=303)
+
 
 @router.get("/admin/{section}", include_in_schema=False)
 def admin_section(
     request: Request,
     section: str = ApiPath(
-        pattern="^(users|crm|dqs|strength|metabolism|messaging|content|masterclass|pricing)$"
+        pattern="^(dqs|strength|metabolism|messaging|content|masterclass|pricing)$"
     ),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
@@ -299,12 +308,18 @@ def admin_summary(
 def admin_users(
     q: str = Query(default="", max_length=255),
     buyers_only: bool = False,
+    buyer_kind: str = Query(default="all", pattern="^(all|buyers|non_buyers)$"),
+    product_code: str = Query(default="", max_length=80),
+    first_seen_from: date | None = Query(default=None),
+    first_seen_to: date | None = Query(default=None),
+    masterclass_access: bool | None = Query(default=None),
+    tag_id: uuid.UUID | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=250),
     offset: int = Query(default=0, ge=0),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> list[dict]:
-    return list_users(db, query=q, buyers_only=buyers_only, limit=limit, offset=offset)
+    return list_users(db, query=q, buyers_only=buyers_only, buyer_kind=buyer_kind, product_code=product_code, first_seen_from=first_seen_from, first_seen_to=first_seen_to, masterclass_access=masterclass_access, tag_id=tag_id, limit=limit, offset=offset)
 
 
 @router.get("/admin/api/users/{user_id}")

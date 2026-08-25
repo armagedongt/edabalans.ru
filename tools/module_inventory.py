@@ -20,6 +20,7 @@ SCHEMA_VERSION = 1
 DOCUMENT_STATUSES = {"current", "draft", "planned", "archived"}
 IMPLEMENTATION_STATUSES = {"implemented", "in_development", "planned", "archived"}
 SOURCE_ROLES = {"runtime", "seed", "rule", "copy", "config", "consumer"}
+ADMIN_CATALOG_CATEGORIES = {"clients", "applications", "tools", "project", "services"}
 RELATION_TYPES = ("reads_from", "writes_to", "depends_on", "events_in", "events_out")
 HTTP_METHODS = {"get", "post", "put", "patch", "delete", "options", "head", "api_route"}
 JS_FUNCTION_RE = re.compile(
@@ -543,6 +544,16 @@ def validate_registry(repo: Path, registry: dict[str, Any]) -> tuple[list[dict[s
             sources.append(
                 {"path": source_path, "role": role, "shared": source.get("shared") is True, "consumers": sorted(consumers)}
             )
+        admin_catalog: list[dict[str, Any]] = []
+        for item in module.get("admin_catalog", []):
+            if not isinstance(item, dict):
+                errors.append(f"{module_id}: admin_catalog entries must be tables")
+                continue
+            category, url, label, description, order = str(item.get("category", "")), str(item.get("url", "")), str(item.get("label", "")), str(item.get("description", "")), item.get("order")
+            if category not in ADMIN_CATALOG_CATEGORIES: errors.append(f"{module_id}: admin_catalog has invalid category {category!r}")
+            if not url.startswith(("/", "https://")): errors.append(f"{module_id}: admin_catalog url must be an absolute path or https URL")
+            if not label or not description or not isinstance(order, int): errors.append(f"{module_id}: admin_catalog needs label, description and integer order")
+            admin_catalog.append({"category": category, "url": url, "label": label, "description": description, "order": order})
         telegram_fields = (
             module.get("telegram_code"),
             module.get("telegram_name"),
@@ -580,6 +591,7 @@ def validate_registry(repo: Path, registry: dict[str, Any]) -> tuple[list[dict[s
                 **card_meta,
                 "runtime_services": sorted(module.get("runtime_services", [])),
                 "admin_urls": sorted(module.get("admin_urls", [])),
+                "admin_catalog": sorted(admin_catalog, key=lambda item: (item["category"], item["order"], item["url"])),
                 "public_urls": sorted(module.get("public_urls", [])),
                 "sources": sorted(sources, key=lambda item: (item["path"], item["role"] or "")),
                 "relations": {key: sorted(module.get(key, [])) for key in RELATION_TYPES},

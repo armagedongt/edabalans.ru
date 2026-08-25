@@ -26,6 +26,16 @@ def test_crm_requires_authentication() -> None:
     assert response.headers["location"] == "/admin?next=/crm"
 
 
+def test_legacy_control_and_people_redirect_to_single_admin_surfaces() -> None:
+    client = make_client()
+    login = client.post("/admin/api/login", json={"username": "admin@example.com", "password": "test-admin-password"})
+    assert login.status_code == 200
+    assert client.get("/control", follow_redirects=False).headers["location"] == "/admin"
+    people = client.get("/admin/users?user=client-id&q=ivan", follow_redirects=False)
+    assert people.status_code == 303
+    assert people.headers["location"] == "/crm?user=client-id&q=ivan"
+
+
 def test_admin_api_requires_authentication() -> None:
     response = make_client().get("/admin/api/summary")
     assert response.status_code == 401

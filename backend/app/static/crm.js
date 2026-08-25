@@ -4,7 +4,7 @@
   const root = document.getElementById("crm-app");
   const state = {
     view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
-    paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }
+    paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", tag_id: "" }
   };
   const pageSize = 250;
   const tagCategories = {
@@ -135,13 +135,17 @@
   async function renderUsers(buyersOnly) {
     root.innerHTML = top(buyersOnly ? "buyers" : "users") + '<div class="crm-loading">Загружаю клиентов…</div>';
     bindTop();
+    const [products, tags] = await Promise.all([api("/admin/api/payment-products"), api("/admin/api/tags?status=active")]);
+    const filters = { ...state.userFilters, buyer_kind: buyersOnly ? "buyers" : state.userFilters.buyer_kind };
     const params = new URLSearchParams({ q: state.query, buyers_only: String(buyersOnly), limit: String(pageSize), offset: String(state.offset) });
+    Object.entries(filters).forEach(([key, value]) => { if (value !== "") params.set(key, value); });
     state.users = await api(`/admin/api/users?${params}`);
     root.innerHTML = top(buyersOnly ? "buyers" : "users") + `
       <div class="crm-toolbar">
         <input class="crm-search" id="crm-search" placeholder="Поиск по имени, email или Telegram" value="${esc(state.query)}">
         <button class="crm-btn alt" id="crm-refresh">Обновить</button>
       </div>
+      <details class="crm-card crm-filters"><summary>Фильтры</summary><form class="crm-payment-toolbar" id="crm-user-filters"><label><span>Первое появление с</span><input class="crm-input" name="first_seen_from" type="date" value="${esc(filters.first_seen_from)}"></label><label><span>по</span><input class="crm-input" name="first_seen_to" type="date" value="${esc(filters.first_seen_to)}"></label><select class="crm-input" name="buyer_kind"><option value="all">Все</option><option value="buyers" ${filters.buyer_kind === "buyers" ? "selected" : ""}>Покупатели</option><option value="non_buyers" ${filters.buyer_kind === "non_buyers" ? "selected" : ""}>Без покупок</option></select><select class="crm-input" name="product_code"><option value="">Любой продукт</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><select class="crm-input" name="masterclass_access"><option value="">Доступ к МК: любой</option><option value="true" ${filters.masterclass_access === "true" ? "selected" : ""}>Доступ к МК есть</option><option value="false" ${filters.masterclass_access === "false" ? "selected" : ""}>Нет доступа к МК</option></select><select class="crm-input" name="tag_id"><option value="">Любой тег</option>${tags.map((item) => `<option value="${esc(item.id)}" ${filters.tag_id === item.id ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><button class="crm-btn small">Применить</button><button class="crm-btn alt small" type="button" id="crm-reset-filters">Сбросить</button></form></details>
       ${stats()}
       <div class="crm-list">${state.users.map(userCard).join("") || '<div class="crm-card crm-empty">Ничего не найдено</div>'}</div>
       <div class="crm-pager">
@@ -160,6 +164,8 @@
       state.offset = 0;
       timer = setTimeout(() => renderUsers(buyersOnly).catch(showError), 300);
     });
+    document.getElementById("crm-user-filters").addEventListener("submit", (event) => { event.preventDefault(); state.userFilters = Object.fromEntries(new FormData(event.currentTarget).entries()); state.offset = 0; renderUsers(buyersOnly).catch(showError); });
+    document.getElementById("crm-reset-filters").addEventListener("click", () => { state.userFilters = { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", tag_id: "" }; state.offset = 0; renderUsers(buyersOnly).catch(showError); });
     document.getElementById("crm-refresh").addEventListener("click", () => loadHome(buyersOnly ? "buyers" : "users"));
     document.getElementById("crm-prev").addEventListener("click", () => {
       state.offset = Math.max(0, state.offset - pageSize);
@@ -543,7 +549,8 @@
 
   async function initialise() {
     state.summary = await api("/admin/api/summary");
-    const initialUser = new URLSearchParams(location.search).get("user");
+    const params = new URLSearchParams(location.search); state.query = params.get("q") || "";
+    const initialUser = params.get("user");
     if (initialUser) return openUser(initialUser);
     return showView("users");
   }
