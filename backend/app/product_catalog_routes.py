@@ -9,7 +9,7 @@ from app.database import get_db
 from app.managed_documents import restore_document, version_history
 from app.product_catalog_service import (
     DOCUMENT_KEY, DOCUMENT_TYPE, active_product_catalog, catalog_payload,
-    publish_product_catalog,
+    normalize_product_catalog, publish_product_catalog,
 )
 from app.course_structure_service import serialize_version
 
@@ -46,5 +46,5 @@ def save_catalog(body: CatalogUpdate, admin: str = Depends(require_admin), db: S
 
 @router.post("/admin/api/product-catalog/versions/{version_no}/restore")
 def restore_catalog(version_no: int, body: RestoreUpdate, admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
-    restore_document(db, document_type=DOCUMENT_TYPE, document_key=DOCUMENT_KEY, version_no=version_no, expected_version=body.expected_version, admin=admin, prepare_payload=lambda source, current, _: source)
+    restore_document(db, document_type=DOCUMENT_TYPE, document_key=DOCUMENT_KEY, version_no=version_no, expected_version=body.expected_version, admin=admin, prepare_payload=lambda source, current, _: normalize_product_catalog(source))
     return editor_payload(db)

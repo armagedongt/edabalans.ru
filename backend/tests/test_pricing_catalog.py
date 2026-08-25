@@ -130,6 +130,9 @@ def test_product_catalog_keeps_technical_connections_out_of_editor() -> None:
     body = initial.json()
     product = body["active"]["manifest"]["products"][0]
     assert product["code"] == "masterclass"
+    assert "marketing" in product
+    assert "Главное зерно" in product["marketing"]
+    assert "ai" not in product
     assert "resource" not in product
     assert "app" not in product
 
