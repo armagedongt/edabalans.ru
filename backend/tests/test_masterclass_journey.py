@@ -622,8 +622,9 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
     )
     assert digital_bundle["details"] == [
         {
-            "name": OFFER_PRODUCTS[code]["name"],
-            "description": OFFER_PRODUCTS[code]["description"],
+            "code": code,
+            "name": early["product_presentations"][code]["name"],
+            "description": early["product_presentations"][code]["description"],
         }
         for code in digital_bundle["items"]
     ]
@@ -638,8 +639,9 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
     )
     assert consultation_bundle["details"] == [
         {
-            "name": OFFER_PRODUCTS[code]["name"],
-            "description": OFFER_PRODUCTS[code]["description"],
+            "code": code,
+            "name": review["product_presentations"][code]["name"],
+            "description": review["product_presentations"][code]["description"],
         }
         for code in consultation_bundle["items"]
     ]
@@ -651,8 +653,10 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
     assert single_cards
     for card in single_cards:
         code = card["items"][0]
-        assert card["title"] == OFFER_PRODUCTS[code]["name"]
-        assert card["description"] == OFFER_PRODUCTS[code]["description"]
+        payload = early if card in early["offers"] else review
+        presentation = payload["product_presentations"][code]
+        assert card["title"] == presentation["name"]
+        assert card["description"] == presentation["description"]
         assert card["long_description"] == OFFER_PRODUCTS[code]["long_description"]
 
 
@@ -665,6 +669,8 @@ def test_offer_product_catalog_has_one_complete_card_contract():
         "standard",
         "status",
         "features",
+        "presentation_intro",
+        "presentation_program",
     }
     assert OFFER_PRODUCTS
     assert all(set(product) == required_fields for product in OFFER_PRODUCTS.values())
@@ -672,6 +678,28 @@ def test_offer_product_catalog_has_one_complete_card_contract():
     assert all(product["description"] for product in OFFER_PRODUCTS.values())
     assert all(product["resource"] for product in OFFER_PRODUCTS.values())
     assert all(product["standard"] > 0 for product in OFFER_PRODUCTS.values())
+    assert all(product["presentation_intro"] for product in OFFER_PRODUCTS.values())
+    assert all(product["presentation_program"] for product in OFFER_PRODUCTS.values())
+
+
+def test_offer_payload_links_product_presentations_to_current_checkout_cards():
+    client, _ = setup()
+    response = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-1-offer")
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    recipes = payload["product_presentations"]["recipes"]
+    assert recipes["name"]
+    assert recipes["description"].startswith("Как")
+    assert recipes["intro"]
+    assert recipes["program"]
+    actions = payload["product_offer_actions"]["recipes"]
+    assert {action["offer_code"] for action in actions} == {
+        "single:recipes", "bundle:digital"
+    }
+    assert {action["composition"] for action in actions} == {"single", "bundle"}
 
 
 def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
@@ -685,6 +713,8 @@ def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     assert runtime_css in rendered
     assert runtime_js in rendered
     assert "class=\"mc-offer-card\"" in rendered
+    assert "productPresentationMarkup" in rendered
+    assert "data-product-info" in rendered
     assert "__COURSE_CSS__" not in rendered
     assert "__COURSE_JS__" not in rendered
     assert "__PRODUCTS_JSON__" not in rendered

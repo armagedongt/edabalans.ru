@@ -1552,7 +1552,37 @@ def build_offers(
             "code": "consultation",
             "name": products["consultation"]["name"],
         })
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
+    visible_cards = cards[:3]
+    visible_product_codes = {
+        product_code
+        for card in visible_cards
+        for product_code in card["items"]
+    }
+    product_presentations = {
+        product_code: {
+            "code": product_code,
+            "name": products[product_code]["name"],
+            "description": products[product_code]["description"],
+            "intro": products[product_code]["presentation_intro"],
+            "features": products[product_code]["features"],
+            "program": products[product_code]["presentation_program"],
+        }
+        for product_code in visible_product_codes
+    }
+    product_offer_actions: dict[str, list[dict]] = {code: [] for code in visible_product_codes}
+    for card in visible_cards:
+        for product_code in card["items"]:
+            product_offer_actions[product_code].append({
+                "offer_code": card["code"],
+                "composition": card["composition"],
+                "title": card["title"],
+                "price": card["price"],
+                "standard_price": card["standard_price"],
+                "saving": card["saving"],
+                "saving_percent": card["saving_percent"],
+                "items": card["items"],
+            })
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": visible_cards, "product_presentations": product_presentations, "product_offer_actions": product_offer_actions}
 
 
 @router.get("/offers")
