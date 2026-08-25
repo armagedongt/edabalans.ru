@@ -33,6 +33,15 @@ from app.masterclass_offer_catalog import (
     OFFER_PRODUCTS,
     bundle_detail,
 )
+from app.masterclass_offer_rules import (
+    EMBED_PLACEMENTS,
+    OFFER_STAGE_ADMIN_RULES,
+    OFFER_STAGE_DURATIONS,
+    PASSIVE_OFFER_PLACEMENTS,
+    STAGE_BY_PLACEMENT,
+    WINDOW_START_EVENTS,
+    WINDOW_START_PLACEMENTS,
+)
 from app.pricing_service import active_pricing_version, pricing_entry_map
 from app.product_identity import purchased_products
 
@@ -67,16 +76,6 @@ CLOSING_QUESTIONS = [
     ("consultation_format", "Формат разбора", "Голосовые сообщения или звонок? Если звонок — укажите удобные дни и время."),
 ]
 
-STAGE_BY_PLACEMENT = {
-    "day-1-offer": "early", "day-2-offer": "early", "recipes-part-1-gate": "early",
-    "recipes-part-2-gate": "second", "closing-review": "review",
-    "post-review": "last_week",
-    # Current 21-day web program. Legacy placement names above stay valid for
-    # already published Tilda embeds and old signed links.
-    "day-15-offer": "early", "day-17-offer": "second",
-    "day-19-offer": "review", "day-21-offer": "last_week",
-}
-EMBED_PLACEMENTS = tuple(STAGE_BY_PLACEMENT) + ("offers-hub",)
 COURSE_APP_EVENTS = {
     "dqs": "dqs_opened",
     "recipes-part-1": "recipes_part_1_opened",
@@ -202,6 +201,14 @@ class StageUpdateIn(BaseModel):
     single: int = Field(ge=0, le=1_000_000)
     consultation: int | None = Field(default=None, ge=0, le=1_000_000)
     bundle: dict[str, int]
+
+
+class AdminOfferPreviewIn(BaseModel):
+    stage_code: str = Field(pattern="^(early|second|review|last_week|standard)$")
+    placement: str = Field(min_length=1, max_length=80)
+    owned_product_codes: list[str] = Field(default_factory=list, max_length=5)
+    tariff_name: str = Field(default="Базовый", max_length=120)
+    remaining_hours: int | None = Field(default=None, ge=0, le=168)
 
 
 class TestProfileIn(BaseModel):
@@ -868,7 +875,7 @@ def queue_offer_last_chance(
         user.id,
         event,
         "sales_last_chance_due",
-        notification_due(db, user.id, aware_utc(offer.expires_at) - timedelta(hours=12)),
+        notification_due(db, user.id, aware_utc(offer.expires_at) - timedelta(hours=24)),
         payload={"stage": offer.stage_code, "placement": placement},
     )
 
@@ -1051,95 +1058,140 @@ def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:
     return set(db.scalars(select(Resource.code).join(UserAccess, UserAccess.resource_id == Resource.id).where(UserAccess.user_id == user_id, UserAccess.revoked_at.is_(None), (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)))).all())
 
 
+def configured_offer_stage(db: Session, code: str) -> OfferStage:
+    stage = db.scalar(
+        select(OfferStage).where(OfferStage.code == code, OfferStage.status == "active")
+    )
+    if not stage:
+        raise HTTPException(503, f"offer stage is not configured: {code}")
+    return stage
+
+
+def create_offer_window(
+    db: Session,
+    user: User,
+    stage: OfferStage,
+    placement: str,
+    started_at: datetime,
+) -> UserOffer:
+    existing = db.scalar(
+        select(UserOffer).where(
+            UserOffer.user_id == user.id,
+            UserOffer.stage_code == stage.code,
+        )
+    )
+    if existing:
+        return existing
+    offer = UserOffer(
+        user_id=user.id,
+        stage_code=stage.code,
+        started_at=started_at,
+        expires_at=(
+            started_at + timedelta(hours=OFFER_STAGE_DURATIONS[stage.code])
+            if OFFER_STAGE_DURATIONS[stage.code]
+            else None
+        ),
+        snapshot={"created_by": placement},
+    )
+    db.add(offer)
+    db.flush()
+    queue_offer_last_chance(db, user, offer, placement)
+    return offer
+
+
+def schedule_last_week_from_review(
+    db: Session,
+    user: User,
+    review: UserOffer,
+) -> UserOffer:
+    if not review.expires_at:
+        raise HTTPException(503, "review offer has no expires_at")
+    return create_offer_window(
+        db,
+        user,
+        configured_offer_stage(db, "last_week"),
+        "automatic-review-expiry",
+        aware_utc(review.expires_at),
+    )
+
+
+def timeline_stage(
+    history: list[UserOffer], now: datetime
+) -> tuple[str | None, UserOffer | None]:
+    order = ["early", "second", "review", "last_week", "standard"]
+    started = [item for item in history if aware_utc(item.started_at) <= now]
+    active = [
+        item
+        for item in started
+        if item.expires_at is None or aware_utc(item.expires_at) > now
+    ]
+    if active:
+        current = max(active, key=lambda item: order.index(item.stage_code))
+        return current.stage_code, current
+    if not started:
+        return None, None
+    highest = max(started, key=lambda item: order.index(item.stage_code))
+    return order[min(order.index(highest.stage_code) + 1, len(order) - 1)], None
+
+
 def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, UserOffer | None]:
     now = datetime.now(timezone.utc)
     order = ["early", "second", "review", "last_week", "standard"]
-    history = list(db.scalars(
-        select(UserOffer)
-        .where(UserOffer.user_id == user.id, UserOffer.stage_code.in_(order[:-1]))
-        .order_by(UserOffer.started_at.desc())
-    ))
-
-    # The final one-week clock starts only from the day-21 checkpoint. Until that
-    # checkpoint the next price can be visible without an invented countdown.
-    review = next((item for item in history if item.stage_code == "review"), None)
-    review_expires = aware_utc(review.expires_at) if review else None
-
-    # A participant can never move backwards by reopening an old Tilda lecture.
-    # An expired stage exposes the next price but does not start its timer. The
-    # timer starts only when that stage's real checkpoint is opened.
-    highest = max(history, key=lambda item: order.index(item.stage_code), default=None)
-    floor_code: str | None = None
-    floor_offer: UserOffer | None = None
-    if highest is not None:
-        highest_expires = aware_utc(highest.expires_at)
-        if highest_expires is None or highest_expires > now:
-            floor_code = highest.stage_code
-            floor_offer = highest
-        else:
-            floor_code = order[min(order.index(highest.stage_code) + 1, len(order) - 1)]
-            # Review is followed by one last discounted week.  If a participant
-            # returns after that whole window, go straight to the standard price
-            # even when no page was opened during the final week.
-            if highest.stage_code == "review":
-                final_stage = db.scalar(select(OfferStage).where(
-                    OfferStage.code == "last_week", OfferStage.status == "active"
-                ))
-                if not final_stage:
-                    raise HTTPException(503, "last-week offer stage is not configured")
-                if (
-                    highest_expires is not None
-                    and final_stage.duration_hours
-                    and highest_expires + timedelta(hours=final_stage.duration_hours) <= now
-                ):
-                    floor_code = "standard"
-
-    requested_code = None if placement == "offers-hub" else STAGE_BY_PLACEMENT.get(placement, "standard")
-    if requested_code is None:
-        code = floor_code or "standard"
-    elif floor_code is None:
-        code = requested_code
-    else:
-        code = order[max(order.index(requested_code), order.index(floor_code))]
-
-    stage = db.scalar(select(OfferStage).where(
-        OfferStage.code == code, OfferStage.status == "active"
-    ))
-    if not stage:
-        raise HTTPException(503, f"offer stage is not configured: {code}")
-
-    own = next((item for item in history if item.stage_code == code), None)
-    if own and own.expires_at and aware_utc(own.expires_at) <= now:
-        own = None
-    should_start = (
-        placement != "offers-hub"
-        and placement != "day-1-offer"
-        and requested_code == code
-        and code != "standard"
-        and own is None
+    # Serialize the first opening of a checkpoint. UserOffer has an additional
+    # unique constraint, but the user row lock keeps concurrent requests from
+    # racing into two window creations.
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    history = list(
+        db.scalars(
+            select(UserOffer).where(
+                UserOffer.user_id == user.id,
+                UserOffer.stage_code.in_(order[:-1]),
+            )
+        )
     )
-    if should_start:
-        started_at = (
-            review_expires
-            if code == "last_week" and review_expires and review_expires > now
-            else now
+    review = next((item for item in history if item.stage_code == "review"), None)
+    if review and not any(item.stage_code == "last_week" for item in history):
+        history.append(schedule_last_week_from_review(db, user, review))
+    current_code, current_offer = timeline_stage(history, now)
+    requested_code = STAGE_BY_PLACEMENT.get(placement)
+    if placement in PASSIVE_OFFER_PLACEMENTS:
+        requested_code = None
+
+    if requested_code and placement in WINDOW_START_PLACEMENTS.get(requested_code, set()):
+        target_code = requested_code if current_code is None else order[
+            max(order.index(requested_code), order.index(current_code))
+        ]
+        existing = next(
+            (item for item in history if item.stage_code == requested_code), None
         )
-        own = UserOffer(
-            user_id=user.id,
-            stage_code=code,
-            started_at=started_at,
-            expires_at=(
-                started_at + timedelta(hours=stage.duration_hours)
-                if stage.duration_hours else None
-            ),
-            snapshot={"created_by": placement},
-        )
-        db.add(own)
-        db.flush()
-        queue_offer_last_chance(db, user, own, placement)
-    elif floor_offer is not None and floor_offer.stage_code == code:
-        own = floor_offer
-    return stage, own
+        if target_code == requested_code and existing is None:
+            checkpoint = db.scalar(
+                select(MasterclassEvent).where(
+                    MasterclassEvent.user_id == user.id,
+                    MasterclassEvent.event_type == WINDOW_START_EVENTS[requested_code],
+                )
+            )
+            started_at = (
+                aware_utc(checkpoint.occurred_at)
+                if checkpoint is not None
+                else now
+            )
+            created = create_offer_window(
+                db,
+                user,
+                configured_offer_stage(db, requested_code),
+                placement,
+                started_at,
+            )
+            history.append(created)
+            if requested_code == "review":
+                history.append(schedule_last_week_from_review(db, user, created))
+            current_code, current_offer = timeline_stage(history, now)
+
+    code = current_code or (
+        "early" if placement in {"day-1-offer", "day-2-offer"} else "standard"
+    )
+    return configured_offer_stage(db, code), current_offer
 
 
 def safe_order(name: str, price: int) -> str:
@@ -1148,10 +1200,26 @@ def safe_order(name: str, price: int) -> str:
 
 
 def build_offers(
-    db: Session, user: User, placement: str, *, use_pricing_catalog: bool = False
+    db: Session,
+    user: User | None,
+    placement: str,
+    *,
+    use_pricing_catalog: bool = False,
+    stage_override: str | None = None,
+    owned_resources_override: set[str] | None = None,
+    tariff_override: str | None = None,
 ) -> dict:
-    stage, own = offer_stage(db, user, placement)
-    owned = access_codes(db, user.id)
+    if stage_override is None:
+        if user is None:
+            raise ValueError("user is required without a preview stage")
+        stage, own = offer_stage(db, user, placement)
+    else:
+        stage, own = configured_offer_stage(db, stage_override), None
+    owned = (
+        set(owned_resources_override)
+        if owned_resources_override is not None
+        else access_codes(db, user.id)
+    )
     missing = [
         (code, OFFER_PRODUCTS[code])
         for code in DIGITAL_OFFER_PRODUCT_CODES
@@ -1305,11 +1373,13 @@ def build_offers(
             if str(item.get("product_code") or "").startswith("MASTERCLASS_")
         ),
         None,
-    )
+    ) if user is not None and tariff_override is None else None
     owned_products = [{
         "code": "masterclass",
         "name": "Мастер-класс по изменению питания и пищевых привычек",
-        "tariff": masterclass_purchase["tariff"] if masterclass_purchase else "",
+        "tariff": tariff_override or (
+            masterclass_purchase["tariff"] if masterclass_purchase else ""
+        ),
     }]
     owned_products.extend(
         {"code": code, "name": product["name"]}
@@ -1417,7 +1487,39 @@ def recipe_gate(
 @router.get("/admin/offer-stages")
 def admin_offer_stages(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     rows = list(db.scalars(select(OfferStage).order_by(OfferStage.created_at)))
-    return {"ok": True, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status} for row in rows]}
+    return {"ok": True, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status, "runtime_rule": OFFER_STAGE_ADMIN_RULES.get(row.code, "")} for row in rows]}
+
+
+@router.post("/admin/offer-preview")
+def admin_offer_preview(
+    body: AdminOfferPreviewIn,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    if body.placement not in EMBED_PLACEMENTS:
+        raise HTTPException(422, "unknown masterclass placement")
+    unknown = set(body.owned_product_codes) - set(OFFER_PRODUCTS)
+    if unknown:
+        raise HTTPException(422, "unknown preview product")
+    owned_resources = {
+        OFFER_PRODUCTS[code]["resource"] for code in body.owned_product_codes
+    }
+    payload = build_offers(
+        db,
+        None,
+        body.placement,
+        use_pricing_catalog=settings.pricing_catalog_enabled,
+        stage_override=body.stage_code,
+        owned_resources_override=owned_resources,
+        tariff_override=body.tariff_name,
+    )
+    payload["expires_at"] = (
+        (datetime.now(timezone.utc) + timedelta(hours=body.remaining_hours)).isoformat()
+        if body.remaining_hours is not None
+        else None
+    )
+    return payload
 
 
 @router.get("/admin/embed-tokens")
@@ -1567,7 +1669,10 @@ def admin_update_offer_stage(stage_code: str, body: StageUpdateIn, _: str = Depe
     allowed_counts = {"1", "2", "3", "4"}
     if set(body.bundle) - allowed_counts or any(value < 0 or value > 1_000_000 for value in body.bundle.values()):
         raise HTTPException(422, "bundle prices must use counts 1..4")
-    stage.duration_hours = body.duration_hours
+    canonical_duration = OFFER_STAGE_DURATIONS.get(stage_code)
+    if stage_code not in OFFER_STAGE_DURATIONS or body.duration_hours != canonical_duration:
+        raise HTTPException(422, "offer duration is fixed by OFFERS_MODULE.md")
+    stage.duration_hours = canonical_duration
     stage.pricing = {"single": body.single, "consultation": body.consultation, "bundle": body.bundle}
     db.commit()
     return {"ok": True, "code": stage.code}

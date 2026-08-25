@@ -34,6 +34,12 @@ def session_factory(tmp_path):
         "CREATE TABLE IF NOT EXISTS masterclass_day_progress ("
         "user_id TEXT NOT NULL, day_number INTEGER NOT NULL, completed_at DATETIME)"
     ))
+    session.execute(text(
+        "CREATE TABLE IF NOT EXISTS user_offers ("
+        "id TEXT PRIMARY KEY, user_id TEXT NOT NULL, stage_code TEXT NOT NULL, "
+        "started_at DATETIME NOT NULL, expires_at DATETIME, status TEXT NOT NULL, "
+        "trigger_event_id TEXT)"
+    ))
     session.commit()
     return session
 
@@ -183,6 +189,191 @@ def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
         assert result["skipped"] == 1
         assert row.status == "skipped"
         assert row.error_message == "nothing relevant to send"
+        assert sender.sent == []
+
+
+def test_sales_reminder_is_sent_once_for_its_current_window(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        event_id = "10101010-1010-1010-1010-101010101010"
+        now = datetime.now(UTC)
+        session.execute(
+            text(
+                "INSERT INTO user_offers VALUES "
+                "('window-1', :user_id, 'early', :started_at, :expires_at, "
+                "'active', :event_id)"
+            ),
+            {
+                "user_id": user_id,
+                "started_at": now - timedelta(hours=48, seconds=1),
+                "expires_at": now + timedelta(hours=24),
+                "event_id": event_id,
+            },
+        )
+        session.add(MasterclassNotification(
+            user_id=user_id,
+            event_id=event_id,
+            notification_kind="sales_last_chance_due",
+            content_code="tpl_postpurchase_recipes_missing",
+            deduplication_key="offer:early:window-1:last-chance",
+            due_at=now - timedelta(seconds=1),
+            status="pending",
+            payload={"stage": "early"},
+        ))
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "https://example.test/offers", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+
+        assert result["sent"] == 1
+        assert len(sender.sent) == 1
+        assert dispatch_due_masterclass_notifications(
+            session, sender, "https://example.test/offers", lambda *_: {"ACCESS_MASTERCLASS"}
+        )["sent"] == 0
+
+
+def test_sales_reminder_is_revalidated_and_skipped_after_window_purchase(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        event_id = "20202020-2020-2020-2020-202020202020"
+        now = datetime.now(UTC)
+        started_at = now - timedelta(hours=48, seconds=1)
+        session.execute(
+            text(
+                "INSERT INTO user_offers VALUES "
+                "('window-2', :user_id, 'second', :started_at, :expires_at, "
+                "'active', :event_id)"
+            ),
+            {
+                "user_id": user_id,
+                "started_at": started_at,
+                "expires_at": now + timedelta(hours=24),
+                "event_id": event_id,
+            },
+        )
+        session.execute(
+            text(
+                "INSERT INTO masterclass_events (id, user_id, event_type, occurred_at) "
+                "VALUES ('purchase-1', :user_id, 'offer_purchase_confirmed', :occurred_at)"
+            ),
+            {"user_id": user_id, "occurred_at": started_at + timedelta(hours=1)},
+        )
+        notification = MasterclassNotification(
+            user_id=user_id,
+            event_id=event_id,
+            notification_kind="sales_last_chance_due",
+            content_code="tpl_postpurchase_recipes_missing",
+            deduplication_key="offer:second:window-2:last-chance",
+            due_at=now - timedelta(seconds=1),
+            status="pending",
+            payload={"stage": "second"},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "https://example.test/offers", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+
+        assert result["skipped"] == 1
+        assert notification.status == "skipped"
+        assert notification.error_message == "offer window expired, changed, or was purchased"
+        assert sender.sent == []
+
+
+def test_sales_reminder_is_skipped_when_masterclass_access_was_revoked(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        event_id = "30303030-3030-3030-3030-303030303030"
+        now = datetime.now(UTC)
+        session.execute(
+            text(
+                "INSERT INTO user_offers VALUES "
+                "('window-3', :user_id, 'review', :started_at, :expires_at, "
+                "'active', :event_id)"
+            ),
+            {
+                "user_id": user_id,
+                "started_at": now - timedelta(hours=48, seconds=1),
+                "expires_at": now + timedelta(hours=24),
+                "event_id": event_id,
+            },
+        )
+        notification = MasterclassNotification(
+            user_id=user_id,
+            event_id=event_id,
+            notification_kind="sales_last_chance_due",
+            content_code="tpl_postpurchase_review_no_consultation",
+            deduplication_key="offer:review:window-3:last-chance",
+            due_at=now - timedelta(seconds=1),
+            status="pending",
+            payload={"stage": "review"},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "https://example.test/offers", lambda *_: set()
+        )
+
+        assert result["skipped"] == 1
+        assert notification.status == "skipped"
+        assert notification.error_message == "masterclass access is no longer active"
+        assert sender.sent == []
+
+
+def test_review_sales_due_is_skipped_when_storefront_has_no_offer(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        user_id = "11111111-1111-1111-1111-111111111111"
+        event_id = "40404040-4040-4040-4040-404040404040"
+        now = datetime.now(UTC)
+        session.execute(
+            text(
+                "INSERT INTO user_offers VALUES "
+                "('window-4', :user_id, 'review', :started_at, :expires_at, "
+                "'active', :event_id)"
+            ),
+            {
+                "user_id": user_id,
+                "started_at": now - timedelta(hours=48, seconds=1),
+                "expires_at": now + timedelta(hours=24),
+                "event_id": event_id,
+            },
+        )
+        notification = MasterclassNotification(
+            user_id=user_id,
+            event_id=event_id,
+            notification_kind="sales_last_chance_due",
+            deduplication_key="offer:review:window-4:last-chance",
+            due_at=now - timedelta(seconds=1),
+            status="pending",
+            payload={"stage": "review"},
+        )
+        session.add(notification)
+        session.commit()
+
+        access = {
+            "ACCESS_MASTERCLASS",
+            "ACCESS_RECIPES",
+            "ACCESS_CALORIES",
+            "ACCESS_STRENGTH",
+            "ACCESS_CONSULTATION",
+        }
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "https://example.test/offers", lambda *_: access
+        )
+
+        assert result["skipped"] == 1
+        assert notification.error_message == "nothing relevant to send"
         assert sender.sent == []
 
 

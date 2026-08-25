@@ -241,6 +241,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
+    assert "function watchPurchase" in masterclass
+    assert "setInterval(check,5000)" in masterclass
+    assert "if(!still)" in masterclass
 
 
 def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:

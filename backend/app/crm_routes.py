@@ -6,7 +6,7 @@ from datetime import date
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from fastapi.security import HTTPBasicCredentials
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -41,6 +41,7 @@ from app.crm_service import (
     list_resources,
 )
 from app.database import get_db
+from scripts.generate_masterclass_offer_simulator import render_simulator_page
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 router = APIRouter()
@@ -152,6 +153,21 @@ def masterclass_designs(
     if not admin_identity(request, credentials):
         return protected_file("admin-login.html")
     return protected_file("masterclass-designs.html")
+
+
+@router.get("/admin/masterclass-offers-preview", include_in_schema=False)
+def masterclass_offers_preview(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse(
+            "/admin?next=/admin/masterclass-offers-preview", status_code=303
+        )
+    return HTMLResponse(
+        render_simulator_page(),
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @router.get("/admin/knowledge-base", include_in_schema=False)

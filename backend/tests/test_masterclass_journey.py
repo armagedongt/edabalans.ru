@@ -28,7 +28,10 @@ from app.models import (  # noqa: E402
     QuestionnaireAnswer, Resource, User, UserAccess, UserEmail,
     UserLegalAcceptance, UserOffer,
 )
-from scripts.generate_masterclass_offer_simulator import render_simulator  # noqa: E402
+from scripts.generate_masterclass_offer_simulator import (  # noqa: E402
+    course_offer_scenarios,
+    render_simulator,
+)
 
 
 TEST_SETTINGS = Settings(
@@ -37,6 +40,10 @@ TEST_SETTINGS = Settings(
     app_auth_secret="test-client-session-secret",
     telegram_test_bot_username="EdabalansTestBot",
 )
+
+
+def aware(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
 
 
 def test_optional_course_steps_do_not_block_required_progression():
@@ -74,6 +81,18 @@ def test_messenger_link_migration_stores_only_token_hash():
     ).read_text(encoding="utf-8")
     assert "token_hash varchar(64) NOT NULL UNIQUE" in migration
     assert "token varchar" not in migration
+
+
+def test_offer_window_migration_changes_only_future_early_duration():
+    migration = (
+        Path(__file__).parents[1]
+        / "migrations"
+        / "versions"
+        / "20260825_0023_masterclass_offer_windows.py"
+    ).read_text(encoding="utf-8")
+    assert "SET duration_hours = 72" in migration
+    assert "duration_hours = 96" in migration
+    assert "UPDATE user_offers" not in migration
 
 
 def setup():
@@ -118,7 +137,7 @@ def setup():
             for item in LEGAL_DOCUMENTS
         ])
         stages = [
-            ("early", 96, {"single": 2900, "bundle": {"4": 7900}}),
+            ("early", 72, {"single": 2900, "bundle": {"4": 7900}}),
             ("second", 72, {"single": 3300, "bundle": {"4": 9900}}),
             ("review", 72, {"single": 3500, "consultation": 7500, "bundle": {"4": 11300}}),
             ("last_week", 168, {"single": 3800, "consultation": 8400, "bundle": {"4": 13800}}),
@@ -216,7 +235,7 @@ def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
     client, factory = setup()
     offer = client.get(
         "/api/masterclass/offers?email=member@example.test&"
-        + placement_query("day-2-offer")
+        + placement_query("recipes-part-1-gate")
     )
     assert offer.status_code == 200
     data = offer.json()
@@ -225,8 +244,8 @@ def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
     assert data["offers"][0]["price"] == 2900
     checkout = client.post("/api/masterclass/checkout", json={
         "email": "member@example.test",
-        "placement": "day-2-offer",
-        "placement_token": placement_token("day-2-offer"),
+        "placement": "recipes-part-1-gate",
+        "placement_token": placement_token("recipes-part-1-gate"),
         "offer_code": data["offers"][0]["code"],
     })
     assert checkout.status_code == 200
@@ -250,7 +269,7 @@ def test_day_one_offer_shows_early_price_without_starting_countdown():
 
     triggered = client.get(
         "/api/masterclass/offers?email=member@example.test&"
-        + placement_query("day-2-offer")
+        + placement_query("recipes-part-1-gate")
     )
     reopened = client.get(
         "/api/masterclass/offers?email=member@example.test&"
@@ -263,7 +282,7 @@ def test_day_one_offer_shows_early_price_without_starting_countdown():
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id))) == 1
 
-    for later_placement in ("day-17-offer", "day-19-offer", "day-21-offer"):
+    for later_placement in ("recipes-part-2-gate", "day-19-offer"):
         later_client, _ = setup()
         later = later_client.get(
             "/api/masterclass/offers?email=member@example.test&"
@@ -411,17 +430,21 @@ def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     runtime_css = (
         Path(__file__).parents[1] / "app" / "static" / "masterclass.css"
     ).read_text(encoding="utf-8")
+    runtime_js = (
+        Path(__file__).parents[1] / "app" / "static" / "masterclass.js"
+    ).read_text(encoding="utf-8")
     assert runtime_css in rendered
+    assert runtime_js in rendered
     assert "class=\"mc-offer-card\"" in rendered
     assert "__COURSE_CSS__" not in rendered
+    assert "__COURSE_JS__" not in rendered
     assert "__PRODUCTS_JSON__" not in rendered
     catalog_json = json.dumps(
         OFFER_PRODUCTS, ensure_ascii=False, separators=(",", ":")
     )
     assert rendered.count(catalog_json) == 1
-    assert "${products[k].name}" in rendered
-    assert "${products[k].description}" in rendered
-    assert 'data-offer="${keys.join(\',\')}"' in rendered
+    assert "/api/masterclass/admin/offer-preview" in rendered
+    assert "EdabalansMasterclassOfferView.markup(data)" in rendered
 
 
 def test_offer_simulator_lists_every_current_course_checkpoint_in_order():
@@ -458,36 +481,40 @@ def test_offer_simulator_lists_every_current_course_checkpoint_in_order():
         "day_1_offer_opened", "day_19_offer_opened", "day_21_offer_opened",
     }:
         assert event in rendered
-    placement_select = rendered.split('id="sim-placement"', 1)[1].split(
-        "</select>", 1
-    )[0]
-    assert re.findall(r'<option value="([^"]+)">([^<]+)</option>', placement_select) == [
-        ("day1", "День 1 · первый показ ранней цены без таймера"),
-        ("firstStart", "После DQS · перед первыми рецептами · запуск раннего окна"),
-        ("firstRecipes", "Первые рецепты · повтор действующей ранней цены"),
-        ("secondStart", "Перед второй частью рецептов · запуск второй цены"),
-        ("secondRecipes", "Вторая часть рецептов · повтор действующей второй цены"),
-        ("review", "После саморевью · цена разбора"),
-        ("day21Deferred", "День 21 · review ещё действует · неделя после него"),
-        ("day21Now", "День 21 · review завершён · неделя начинается сразу"),
-        ("standard", "После последней недели · обычные цены"),
+    scenarios = course_offer_scenarios()
+    assert list(scenarios) == [
+        "day1", "day6", "day7", "day8", "day14", "day15", "day16",
+        "day19", "day21Review", "day21LastWeek", "standard",
     ]
-    stage_bindings = {
-        "day1": ("early", "day_1_offer_opened", "day-1-offer", "false"),
-        "firstStart": ("early", "day_15_offer_opened", "day-15-offer", "true"),
-        "firstRecipes": ("early", "recipes_part_1_opened", "recipes-part-1-gate", "false"),
-        "secondStart": ("second", "day_17_offer_opened", "day-17-offer", "true"),
-        "secondRecipes": ("second", "recipes_part_2_opened", "recipes-part-2-gate", "false"),
-        "review": ("review", "day_19_offer_opened", "day-19-offer", "true"),
-        "day21Deferred": ("last_week", "day_21_offer_opened", "day-21-offer", "true"),
-        "day21Now": ("last_week", "day_21_offer_opened", "day-21-offer", "true"),
-        "standard": ("standard", "нет нового события", "offers-hub", "false"),
-    }
-    for key, (stage, event, placement, starts) in stage_bindings.items():
-        assert re.search(
-            rf"{key}:\{{stage:'{stage}',event:'{event}',placement:'{placement}'.*?starts:{starts}",
-            rendered,
-        )
+    for day_number, placement, event in checkpoints:
+        matching = [
+            item for item in scenarios.values()
+            if item["placement"] == placement and item["event"] == event
+        ]
+        assert matching, f"day {day_number} is absent from simulator scenarios"
+    assert 'const stages={"day1"' in rendered
+
+
+def test_admin_offer_preview_uses_production_offer_builder() -> None:
+    client, _ = setup()
+    response = client.post(
+        "/api/masterclass/admin/offer-preview",
+        json={
+            "stage_code": "early",
+            "placement": "recipes-part-1-gate",
+            "owned_product_codes": ["recipes"],
+            "tariff_name": "С рецептами",
+            "remaining_hours": 48,
+        },
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["stage"] == "early"
+    assert payload["owned_products"][0]["tariff"] == "С рецептами"
+    assert payload["owned_products"][1]["code"] == "recipes"
+    assert payload["offers"][0]["code"] == "single:calories"
+    assert payload["offers"][1]["code"] == "bundle:digital"
+    assert payload["expires_at"] is not None
 
 
 def test_offer_placement_cannot_be_forged_by_tilda_client():
@@ -589,6 +616,82 @@ def test_expired_price_advances_but_next_timer_waits_for_real_checkpoint():
         assert db.scalar(select(func.count(UserOffer.id)).where(UserOffer.stage_code == "second")) == 1
 
 
+def test_recipe_windows_start_once_and_repeat_without_moving_due_time():
+    client, factory = setup()
+    for placement, stage_code in (
+        ("recipes-part-1-gate", "early"),
+        ("recipes-part-2-gate", "second"),
+    ):
+        first = client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query(placement)
+        )
+        assert first.status_code == 200
+        with factory() as db:
+            window = db.scalar(
+                select(UserOffer).where(UserOffer.stage_code == stage_code)
+            )
+            due = db.scalar(
+                select(MasterclassNotification)
+                .join(MasterclassEvent, MasterclassEvent.id == MasterclassNotification.event_id)
+                .where(
+                    MasterclassNotification.notification_kind == "sales_last_chance_due",
+                    MasterclassEvent.event_key == f"offer:{stage_code}:started",
+                )
+            )
+            original = (aware(window.started_at), aware(window.expires_at), aware(due.due_at))
+            assert original[1] - original[0] == timedelta(hours=72)
+            assert original[1] - original[2] == timedelta(hours=24)
+
+        repeated = client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query(placement)
+        )
+        assert repeated.status_code == 200
+        with factory() as db:
+            window = db.scalar(
+                select(UserOffer).where(UserOffer.stage_code == stage_code)
+            )
+            due = db.scalar(
+                select(MasterclassNotification)
+                .join(MasterclassEvent, MasterclassEvent.id == MasterclassNotification.event_id)
+                .where(
+                    MasterclassNotification.notification_kind == "sales_last_chance_due",
+                    MasterclassEvent.event_key == f"offer:{stage_code}:started",
+                )
+            )
+            assert (aware(window.started_at), aware(window.expires_at), aware(due.due_at)) == original
+            assert db.scalar(
+                select(func.count(UserOffer.id)).where(UserOffer.stage_code == stage_code)
+            ) == 1
+
+
+def test_late_repeat_uses_the_original_course_checkpoint_time():
+    client, factory = setup()
+    opened_at = datetime.now(timezone.utc) - timedelta(hours=24)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add(MasterclassEvent(
+            user_id=user.id,
+            event_key="course:day:6:step:2:completed",
+            event_type="recipes_part_1_offer_opened",
+            placement="recipes-part-1-gate",
+            occurred_at=opened_at,
+            details={"day": 6, "step_index": 2},
+        ))
+        db.commit()
+
+    response = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("recipes-part-1-gate")
+    )
+    assert response.status_code == 200
+    with factory() as db:
+        window = db.scalar(select(UserOffer).where(UserOffer.stage_code == "early"))
+        assert abs((aware(window.started_at) - opened_at).total_seconds()) < 1
+        assert aware(window.expires_at) == aware(window.started_at) + timedelta(hours=72)
+
+
 def test_admin_can_generate_signed_tokens_for_tilda_placements():
     client, _ = setup()
     response = client.get("/api/masterclass/admin/embed-tokens")
@@ -609,13 +712,32 @@ def test_admin_can_generate_signed_tokens_for_tilda_placements():
     assert all(len(token) > 20 for token in placements.values())
 
 
+def test_admin_offer_stages_explain_the_runtime_window_rules():
+    client, _ = setup()
+    response = client.get("/api/masterclass/admin/offer-stages")
+    assert response.status_code == 200
+    rules = {row["code"]: row["runtime_rule"] for row in response.json()["stages"]}
+    assert "День 6" in rules["early"] and "дни 7–8" in rules["early"]
+    assert "День 14" in rules["second"] and "дни 15–16" in rules["second"]
+    assert "review.expires_at" in rules["last_week"]
+    assert "день 21" in rules["last_week"]
+
+    rejected = client.put("/api/masterclass/admin/offer-stages/early", json={
+        "duration_hours": 96,
+        "single": 2900,
+        "consultation": None,
+        "bundle": {"1": 1900, "2": 3900, "3": 5900, "4": 7900},
+    })
+    assert rejected.status_code == 422
+
+
 def test_current_21_day_offer_placements_select_expected_stages():
     expected = {
         "day-1-offer": "early",
-        "day-15-offer": "early",
-        "day-17-offer": "second",
+        "recipes-part-1-gate": "early",
+        "recipes-part-2-gate": "second",
         "day-19-offer": "review",
-        "day-21-offer": "last_week",
+        "day-21-offer": "standard",
     }
     for placement, stage in expected.items():
         client, _ = setup()
@@ -939,7 +1061,7 @@ def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
     assert "consultation" in review_offer["offers"][1]["items"]
 
 
-def test_offers_hub_shows_next_price_without_starting_final_week_timer():
+def test_review_expiry_automatically_starts_final_week_before_day_21():
     client, factory = setup()
     now = datetime.now(timezone.utc)
     with factory() as db:
@@ -959,16 +1081,20 @@ def test_offers_hub_shows_next_price_without_starting_final_week_timer():
     )
     assert passive.status_code == 200
     assert passive.json()["stage"] == "last_week"
-    assert passive.json()["expires_at"] is None
+    assert passive.json()["expires_at"] is not None
     assert [card["code"] for card in passive.json()["offers"]] == [
         "single:consultation",
         "bundle:digital",
         "single:recipes",
     ]
     with factory() as db:
-        assert db.scalar(
-            select(func.count(UserOffer.id)).where(UserOffer.stage_code == "last_week")
-        ) == 0
+        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
+        assert final is not None
+        final_started = aware(final.started_at)
+        final_expires = aware(final.expires_at)
+        assert final_started == aware(review.expires_at)
+        assert final_expires - final_started == timedelta(hours=168)
+        original_times = (final_started, final_expires)
 
     checkpoint = client.get(
         "/api/masterclass/offers?email=member@example.test&"
@@ -979,13 +1105,63 @@ def test_offers_hub_shows_next_price_without_starting_final_week_timer():
     assert checkpoint.json()["expires_at"] is not None
     with factory() as db:
         final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
-        assert final is not None
-        assert final.started_at.replace(tzinfo=timezone.utc) > now - timedelta(minutes=1)
+        assert (aware(final.started_at), aware(final.expires_at)) == original_times
         due = db.scalar(select(MasterclassNotification).where(
             MasterclassNotification.notification_kind == "sales_last_chance_due"
         ))
         assert due is not None
         assert due.payload["stage"] == "last_week"
+
+
+def test_day_19_fixes_review_and_last_week_timeline_once():
+    client, factory = setup()
+    first = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-19-offer")
+    )
+    repeated = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-19-offer")
+    )
+    assert first.status_code == repeated.status_code == 200
+    with factory() as db:
+        review = db.scalar(select(UserOffer).where(UserOffer.stage_code == "review"))
+        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
+        assert aware(review.expires_at) - aware(review.started_at) == timedelta(hours=72)
+        assert aware(final.started_at) == aware(review.expires_at)
+        assert aware(final.expires_at) - aware(final.started_at) == timedelta(days=7)
+        assert db.scalar(select(func.count(UserOffer.id))) == 2
+        assert db.scalar(
+            select(func.count(MasterclassNotification.id)).where(
+                MasterclassNotification.notification_kind == "sales_last_chance_due"
+            )
+        ) == 2
+
+
+def test_day_21_during_review_only_shows_its_existing_remainder():
+    client, factory = setup()
+    started = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-19-offer")
+    )
+    assert started.status_code == 200
+    with factory() as db:
+        review = db.scalar(select(UserOffer).where(UserOffer.stage_code == "review"))
+        original = (aware(review.started_at), aware(review.expires_at))
+
+    day_21 = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-21-offer")
+    )
+    assert day_21.status_code == 200
+    assert day_21.json()["stage"] == "review"
+    assert datetime.fromisoformat(day_21.json()["expires_at"]) == original[1]
+    with factory() as db:
+        review = db.scalar(select(UserOffer).where(UserOffer.stage_code == "review"))
+        final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
+        assert (aware(review.started_at), aware(review.expires_at)) == original
+        assert aware(final.started_at) == original[1]
+        assert db.scalar(select(func.count(UserOffer.id))) == 2
 
 
 def test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed():

@@ -8,13 +8,14 @@ from typing import Any
 from urllib.parse import parse_qs, urlparse
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.models import (
     AttributionEvent,
     MasterclassEvent,
+    MasterclassNotification,
     OfferCheckout,
     Payment,
     PriceEntry,
@@ -25,6 +26,7 @@ from app.models import (
     User,
     UserAccess,
     UserEmail,
+    UserOffer,
     UserPhone,
     PersonalAccessLink,
 )
@@ -79,6 +81,61 @@ def record_masterclass_purchase_event(
             details={"payment_id": str(payment.id)},
         )
     )
+
+
+def record_offer_purchase_event_and_cancel_reminder(
+    db: Session,
+    payment: Payment,
+    checkout: OfferCheckout | None,
+    occurred_at: datetime,
+) -> None:
+    """Record one paid upsell and permanently close this window's sales due."""
+    current_window = db.scalar(
+        select(UserOffer)
+        .where(
+            UserOffer.user_id == payment.user_id,
+            UserOffer.status == "active",
+            UserOffer.started_at <= occurred_at,
+            UserOffer.expires_at.is_not(None),
+            UserOffer.expires_at > occurred_at,
+        )
+        .order_by(UserOffer.started_at.desc())
+        .limit(1)
+    )
+    if current_window is None:
+        return
+    event_key = f"offer_purchase_confirmed:payment:{payment.id}"
+    if not db.scalar(
+        select(MasterclassEvent.id).where(MasterclassEvent.event_key == event_key)
+    ):
+        db.add(
+            MasterclassEvent(
+                user_id=payment.user_id,
+                event_key=event_key,
+                event_type="offer_purchase_confirmed",
+                placement="tilda-payment",
+                occurred_at=occurred_at,
+                details={
+                    "payment_id": str(payment.id),
+                    "checkout_id": str(checkout.id) if checkout else None,
+                    "items": list(checkout.items or []) if checkout else [],
+                },
+            )
+        )
+    if current_window.trigger_event_id:
+        db.execute(
+            update(MasterclassNotification)
+            .where(
+                MasterclassNotification.user_id == payment.user_id,
+                MasterclassNotification.event_id == current_window.trigger_event_id,
+                MasterclassNotification.notification_kind == "sales_last_chance_due",
+                MasterclassNotification.status == "pending",
+            )
+            .values(
+                status="skipped",
+                error_message="offer purchase confirmed during this window",
+            )
+        )
 
 
 def clean(value: Any) -> str:
@@ -378,6 +435,10 @@ def grant_payment_access(
             )
         )
         access_granted = True
+    if checkout is not None or access_granted:
+        record_offer_purchase_event_and_cancel_reminder(
+            db, payment, checkout, occurred_at
+        )
     if access_granted:
         record_masterclass_purchase_event(db, payment, occurred_at)
     return access_granted

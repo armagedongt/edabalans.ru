@@ -73,6 +73,33 @@ def test_masterclass_designs_are_available_after_login() -> None:
     assert response.text.count("Открыть прототип") == 3
 
 
+def test_masterclass_offers_preview_requires_authentication() -> None:
+    response = make_client().get(
+        "/admin/masterclass-offers-preview", follow_redirects=False
+    )
+    assert response.status_code == 303
+    assert response.headers["location"] == (
+        "/admin?next=/admin/masterclass-offers-preview"
+    )
+
+
+def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
+    client = make_client()
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    response = client.get("/admin/masterclass-offers-preview")
+    assert response.status_code == 200
+    assert "Сценарный предпросмотр" in response.text
+    assert "/api/masterclass/admin/offer-stages" in response.text
+    assert "/api/masterclass/admin/offer-preview" in response.text
+    assert "Система рецептов" in response.text
+    assert "EdabalansMasterclassOfferView.markup(data)" in response.text
+    assert response.headers["cache-control"] == "no-store"
+
+
 def test_unified_admin_assets_require_authentication() -> None:
     response = make_client().get("/admin/static/admin.js")
     assert response.status_code == 401

@@ -15,6 +15,7 @@ from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassEvent,
+    MasterclassNotification,
     Payment,
     OfferCheckout,
     Product,
@@ -25,6 +26,7 @@ from app.models import (  # noqa: E402
     UserAccess,
     UserEmail,
     UserPhone,
+    UserOffer,
     PersonalAccessLink,
     UserCoursePolicy,
 )
@@ -187,8 +189,37 @@ def test_dynamic_offer_checkout_grants_exact_resources() -> None:
             Resource(code="ACCESS_RECIPES", name="Рецепты"),
             Resource(code="ACCESS_CALORIES", name="Калории"),
         ])
+        window_event = MasterclassEvent(
+            user_id=user.id,
+            event_key="offer:early:started",
+            event_type="offer_window_started",
+            placement="recipes-part-1-gate",
+            occurred_at=datetime(2026, 8, 22, 8, tzinfo=timezone.utc),
+            details={"stage": "early"},
+        )
+        db.add(window_event)
+        db.flush()
+        window = UserOffer(
+            user_id=user.id,
+            stage_code="early",
+            started_at=datetime(2026, 8, 22, 8, tzinfo=timezone.utc),
+            expires_at=datetime(2026, 8, 25, 8, tzinfo=timezone.utc),
+            trigger_event_id=window_event.id,
+            snapshot={},
+        )
+        db.add(window)
+        db.flush()
+        db.add(MasterclassNotification(
+            user_id=user.id,
+            event_id=window_event.id,
+            notification_kind="sales_last_chance_due",
+            deduplication_key="offer:early:started:sales_last_chance_due",
+            due_at=datetime(2026, 8, 24, 8, tzinfo=timezone.utc),
+            payload={"stage": "early"},
+        ))
         checkout = OfferCheckout(
             user_id=user.id,
+            checkout_kind="public_site",
             offer_code="bundle:digital",
             title="Комплект",
             items=["recipes", "calories"],
@@ -212,6 +243,18 @@ def test_dynamic_offer_checkout_grants_exact_resources() -> None:
     with session_factory() as db:
         assert db.scalar(select(func.count(UserAccess.id))) == 2
         assert db.scalar(select(OfferCheckout.status)) == "paid"
+        notification = db.scalar(select(MasterclassNotification))
+        assert notification.status == "skipped"
+        assert notification.error_message == "offer purchase confirmed during this window"
+        window = db.scalar(select(UserOffer))
+        assert window.started_at.replace(tzinfo=timezone.utc) == datetime(2026, 8, 22, 8, tzinfo=timezone.utc)
+        assert window.expires_at.replace(tzinfo=timezone.utc) == datetime(2026, 8, 25, 8, tzinfo=timezone.utc)
+        offer_event = db.scalar(
+            select(MasterclassEvent).where(
+                MasterclassEvent.event_type == "offer_purchase_confirmed"
+            )
+        )
+        assert offer_event is not None
     app.dependency_overrides.clear()
 
 

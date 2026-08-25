@@ -76,20 +76,25 @@ def content_code_for(notification: MasterclassNotification, access: set[str]) ->
         return notification.content_code or "tpl_postpurchase_day_unopened"
     if notification.notification_kind == "sales_last_chance_due":
         stage = str((notification.payload or {}).get("stage") or "")
+        missing_digital = DIGITAL_ACCESS_CODES - access
+        if "ACCESS_CONSULTATION" in access:
+            missing_digital.discard("ACCESS_CONSULTATION_RECORDINGS")
         if stage in {"early", "second"}:
             if "ACCESS_RECIPES" not in access:
                 return "tpl_postpurchase_recipes_missing"
-            if DIGITAL_ACCESS_CODES - access:
+            if missing_digital:
                 return "tpl_postpurchase_recipes_owned"
             return None
         if stage == "review":
+            if "ACCESS_CONSULTATION" in access and not missing_digital:
+                return None
             return (
                 "tpl_postpurchase_review_consultation"
                 if "ACCESS_CONSULTATION" in access
                 else "tpl_postpurchase_review_no_consultation"
             )
         if stage == "last_week" and (
-            DIGITAL_ACCESS_CODES - access or "ACCESS_CONSULTATION" not in access
+            missing_digital or "ACCESS_CONSULTATION" not in access
         ):
             return "tpl_postpurchase_final_offer"
         return None
@@ -151,6 +156,44 @@ def unopened_day_is_current(session: Session, notification: MasterclassNotificat
     except ValueError:
         return False
     return opened is None and previous_completed is not None and (unlock_due is None or unlock_due <= datetime.now(UTC))
+
+
+def sales_window_is_current(
+    session: Session, notification: MasterclassNotification
+) -> bool:
+    if notification.notification_kind != "sales_last_chance_due":
+        return True
+    stage = str((notification.payload or {}).get("stage") or "")
+    if stage not in {"early", "second", "review", "last_week"}:
+        return False
+    current = session.execute(
+        text(
+            "SELECT stage_code, started_at, expires_at, trigger_event_id "
+            "FROM user_offers WHERE user_id=:user_id AND status='active' "
+            "AND started_at <= CURRENT_TIMESTAMP AND expires_at > CURRENT_TIMESTAMP "
+            "ORDER BY CASE stage_code "
+            "WHEN 'last_week' THEN 4 WHEN 'review' THEN 3 "
+            "WHEN 'second' THEN 2 WHEN 'early' THEN 1 ELSE 0 END DESC LIMIT 1"
+        ),
+        {"user_id": notification.user_id},
+    ).first()
+    if current is None or str(current.stage_code) != stage:
+        return False
+    if current.trigger_event_id and str(current.trigger_event_id) != str(notification.event_id):
+        return False
+    purchase = session.execute(
+        text(
+            "SELECT 1 FROM masterclass_events WHERE user_id=:user_id "
+            "AND event_type='offer_purchase_confirmed' "
+            "AND occurred_at >= :started_at AND occurred_at < :expires_at LIMIT 1"
+        ),
+        {
+            "user_id": notification.user_id,
+            "started_at": current.started_at,
+            "expires_at": current.expires_at,
+        },
+    ).first()
+    return purchase is None
 
 
 def day_url(base_url: str, day: int) -> str:
@@ -338,6 +381,11 @@ def dispatch_due_masterclass_notifications(
         if not unopened_day_is_current(session, notification):
             notification.status = "skipped"
             notification.error_message = "day was opened or is not available"
+            counters["skipped"] += 1
+            continue
+        if not sales_window_is_current(session, notification):
+            notification.status = "skipped"
+            notification.error_message = "offer window expired, changed, or was purchased"
             counters["skipped"] += 1
             continue
         code = content_code_for(notification, access)
