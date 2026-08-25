@@ -28,7 +28,8 @@
 - `OFFERS_MODULE.md` — скидочные окна, таймеры, переходы, покупки и уведомления;
 - `../../PRICING_CATALOG.md` и PostgreSQL `offer_stages` — действующие цены;
 - `../../../../backend/app/masterclass_offer_catalog.py` — единые названия,
-  описания и состав продуктов для карточек;
+  описания и состав продуктов для карточек, а также активная обратимая версия
+  показа `site_short_v1`;
 - `COURSE_VISUAL_SYSTEM.md` — оформление блока внутри курса;
 - `../telegram/POST_PURCHASE_MASTERCLASS.md` — получение Telegram готового
   due-события без самостоятельного расчёта условий;

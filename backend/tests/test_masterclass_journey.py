@@ -325,6 +325,24 @@ def test_offer_window_migration_changes_only_future_early_duration():
     assert "UPDATE user_offers" not in migration
 
 
+def test_site_short_migration_sets_each_approved_consultation_addon():
+    migration = (
+        Path(__file__).parents[1]
+        / "migrations"
+        / "versions"
+        / "20260825_0025_site_short_offer_presentation.py"
+    ).read_text(encoding="utf-8")
+    for stage_code, amount in {
+        "early": 7000,
+        "second": 7000,
+        "review": 7200,
+        "last_week": 7900,
+    }.items():
+        assert f'"{stage_code}": {amount}' in migration
+    assert "jsonb_set" in migration
+    assert 'down_revision = "20260825_0024"' in migration
+
+
 def setup():
     engine = create_engine("sqlite+pysqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     Base.metadata.create_all(engine)
@@ -367,11 +385,11 @@ def setup():
             for item in LEGAL_DOCUMENTS
         ])
         stages = [
-            ("early", 72, {"single": 2900, "bundle": {"4": 7900}}),
-            ("second", 72, {"single": 3300, "bundle": {"4": 9900}}),
-            ("review", 72, {"single": 3500, "consultation": 7500, "bundle": {"4": 11300}}),
-            ("last_week", 168, {"single": 3800, "consultation": 8400, "bundle": {"4": 13800}}),
-            ("standard", None, {"single": 3900, "consultation": 8900, "bundle": {"4": 15600}}),
+            ("early", 72, {"single": 2900, "bundle": {"2": 3900, "4": 7900}, "site_short": {"consultation_addon": 7000}}),
+            ("second", 72, {"single": 3300, "bundle": {"2": 4900, "4": 9900}, "site_short": {"consultation_addon": 7000}}),
+            ("review", 72, {"single": 3500, "consultation": 7500, "bundle": {"2": 5700, "4": 11300}, "site_short": {"consultation_addon": 7200}}),
+            ("last_week", 168, {"single": 3800, "consultation": 8400, "bundle": {"2": 7000, "4": 13800}, "site_short": {"consultation_addon": 7900}}),
+            ("standard", None, {"single": 3900, "consultation": 8900, "bundle": {"2": 7800, "4": 15600}, "site_short": {}}),
         ]
         for code, hours, pricing in stages: db.add(OfferStage(code=code, name=code, duration_hours=hours, pricing=pricing, status="active"))
         db.commit()
@@ -581,8 +599,8 @@ def test_single_offers_stay_concise_and_bundles_list_their_products():
         + placement_query("offers-hub")
     )
     assert remaining.status_code == 200
-    assert {card["code"] for card in remaining.json()["offers"]} >= {
-        "single:training", "single:recordings"
+    assert {card["code"] for card in remaining.json()["offers"]} == {
+        "single:consultation"
     }
     assert_composition(remaining.json())
     owned_names = {
@@ -615,7 +633,8 @@ def test_bundle_rows_use_the_same_catalog_fields_as_single_cards():
         + placement_query("day-19-offer")
     ).json()
     consultation_bundle = next(
-        card for card in review["offers"] if card["code"] == "bundle:consultation"
+        card for card in review["offers"]
+        if card["code"] == "bundle:site-short-consultation"
     )
     assert consultation_bundle["details"] == [
         {
@@ -743,8 +762,130 @@ def test_admin_offer_preview_uses_production_offer_builder() -> None:
     assert payload["owned_products"][0]["tariff"] == "С рецептами"
     assert payload["owned_products"][1]["code"] == "recipes"
     assert payload["offers"][0]["code"] == "single:calories"
-    assert payload["offers"][1]["code"] == "bundle:digital"
+    assert payload["offers"][1]["code"] == "bundle:site-short-consultation"
     assert payload["expires_at"] is not None
+
+
+def test_site_short_offer_presentation_has_the_approved_six_stage_grid():
+    expected = {
+        "day-1-offer": (["single:recipes", "bundle:digital"], [2900, 3900]),
+        "recipes-part-1-gate": (
+            ["single:recipes", "bundle:digital", "bundle:site-short-consultation"],
+            [2900, 3900, 10900],
+        ),
+        "recipes-part-2-gate": (
+            ["single:recipes", "bundle:digital", "bundle:site-short-consultation"],
+            [3300, 4900, 11900],
+        ),
+        "day-19-offer": (
+            ["bundle:digital", "bundle:site-short-consultation", "single:consultation"],
+            [5700, 12900, 7500],
+        ),
+        "day-21-offer": (
+            ["single:recipes", "bundle:digital", "bundle:site-short-consultation"],
+            [3800, 7000, 14900],
+        ),
+        "offers-hub": (
+            ["single:recipes", "single:calories", "single:consultation"],
+            [3900, 3900, 8900],
+        ),
+    }
+    for placement, (codes, prices) in expected.items():
+        client, factory = setup()
+        if placement == "day-21-offer":
+            now = datetime.now(timezone.utc)
+            with factory() as db:
+                user = db.scalar(select(User).where(User.display_name == "Участник"))
+                db.add(UserOffer(
+                    user_id=user.id,
+                    stage_code="review",
+                    started_at=now - timedelta(hours=80),
+                    expires_at=now - timedelta(hours=8),
+                    snapshot={},
+                ))
+                db.commit()
+        response = client.get(
+            "/api/masterclass/offers?email=member@example.test&"
+            + placement_query(placement)
+        )
+        assert response.status_code == 200
+        payload = response.json()
+        assert payload["presentation"] == "site_short_v1"
+        assert [card["code"] for card in payload["offers"]] == codes
+        assert [card["price"] for card in payload["offers"]] == prices
+        assert all(
+            item not in {"training", "recordings"}
+            for card in payload["offers"]
+            for item in card["items"]
+        )
+
+
+def test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner():
+    client, _ = setup()
+    response = client.post(
+        "/api/masterclass/admin/offer-preview",
+        json={
+            "stage_code": "review",
+            "placement": "day-19-offer",
+            "owned_product_codes": ["recipes"],
+            "tariff_name": "С рецептами",
+            "remaining_hours": 48,
+        },
+    )
+    assert response.status_code == 200
+    assert [(card["code"], card["price"], card["items"]) for card in response.json()["offers"]] == [
+        ("single:calories", 3500, ["calories"]),
+        ("bundle:site-short-consultation", 10700, ["calories", "consultation"]),
+        ("single:consultation", 7500, ["consultation"]),
+    ]
+
+
+def test_site_short_recipes_tariff_has_the_approved_six_stage_grid():
+    client, _ = setup()
+    expected = [
+        ("early", "day-1-offer", [2900]),
+        ("early", "recipes-part-1-gate", [2900, 9900]),
+        ("second", "recipes-part-2-gate", [3300, 10300]),
+        ("review", "day-19-offer", [3500, 10700, 7500]),
+        ("last_week", "day-21-offer", [3800, 11700]),
+        ("standard", "offers-hub", [3900, 8900]),
+    ]
+    for stage, placement, prices in expected:
+        response = client.post(
+            "/api/masterclass/admin/offer-preview",
+            json={
+                "stage_code": stage,
+                "placement": placement,
+                "owned_product_codes": ["recipes"],
+                "tariff_name": "С рецептами",
+                "remaining_hours": 48 if stage != "standard" else None,
+            },
+        )
+        assert response.status_code == 200
+        assert [card["price"] for card in response.json()["offers"]] == prices
+
+
+def test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout():
+    client, factory = setup()
+    offer = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("recipes-part-1-gate")
+    ).json()
+    combined = next(
+        card for card in offer["offers"]
+        if card["code"] == "bundle:site-short-consultation"
+    )
+    checkout = client.post("/api/masterclass/checkout", json={
+        "email": "member@example.test",
+        "placement": "recipes-part-1-gate",
+        "placement_token": placement_token("recipes-part-1-gate"),
+        "offer_code": combined["code"],
+    })
+    assert checkout.status_code == 200
+    with factory() as db:
+        saved = db.scalar(select(OfferCheckout))
+        assert saved.amount == 10900
+        assert saved.items == ["recipes", "calories", "consultation"]
 
 
 def test_offer_placement_cannot_be_forged_by_tilda_client():
@@ -959,6 +1100,19 @@ def test_admin_offer_stages_explain_the_runtime_window_rules():
         "bundle": {"1": 1900, "2": 3900, "3": 5900, "4": 7900},
     })
     assert rejected.status_code == 422
+
+    updated = client.put("/api/masterclass/admin/offer-stages/early", json={
+        "duration_hours": 72,
+        "single": 2950,
+        "consultation": None,
+        "bundle": {"1": 1900, "2": 3950, "3": 5900, "4": 7900},
+    })
+    assert updated.status_code == 200
+    stage = next(
+        item for item in client.get("/api/masterclass/admin/offer-stages").json()["stages"]
+        if item["code"] == "early"
+    )
+    assert stage["pricing"]["site_short"]["consultation_addon"] == 7000
 
 
 def test_current_21_day_offer_placements_select_expected_stages():
@@ -1275,7 +1429,7 @@ def test_admin_preview_lists_only_masterclass_users_with_primary_email():
     }]
 
 
-def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
+def test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices():
     client, factory = setup()
     with factory() as db:
         user = db.scalar(select(User).where(User.display_name == "Участник"))
@@ -1287,15 +1441,16 @@ def test_consultation_is_only_shown_in_review_or_permanent_offer_placements():
         "/api/masterclass/offers?email=member@example.test&"
         + placement_query("recipes-part-2-gate")
     ).json()
-    assert recipe_offer["stage"] == "review"
+    assert recipe_offer["stage"] == "standard"
     assert all(card["code"] != "single:consultation" for card in recipe_offer["offers"])
 
     review_offer = client.get(
         "/api/masterclass/offers?email=member@example.test&"
-        + placement_query("closing-review")
+        + placement_query("day-19-offer")
     ).json()
+    assert review_offer["stage"] == "review"
     assert any(card["code"] == "single:consultation" for card in review_offer["offers"])
-    assert review_offer["offers"][1]["code"] == "bundle:consultation"
+    assert review_offer["offers"][1]["code"] == "bundle:site-short-consultation"
     assert "consultation" in review_offer["offers"][1]["items"]
 
 
@@ -1321,9 +1476,9 @@ def test_review_expiry_automatically_starts_final_week_before_day_21():
     assert passive.json()["stage"] == "last_week"
     assert passive.json()["expires_at"] is not None
     assert [card["code"] for card in passive.json()["offers"]] == [
-        "single:consultation",
-        "bundle:digital",
         "single:recipes",
+        "bundle:digital",
+        "bundle:site-short-consultation",
     ]
     with factory() as db:
         final = db.scalar(select(UserOffer).where(UserOffer.stage_code == "last_week"))
@@ -1350,6 +1505,36 @@ def test_review_expiry_automatically_starts_final_week_before_day_21():
         assert due is not None
         assert due.payload["stage"] == "last_week"
 
+
+def test_site_short_day_21_shows_standard_consultation_after_final_week():
+    client, factory = setup()
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = db.scalar(select(User).where(User.display_name == "Участник"))
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="review",
+            started_at=now - timedelta(days=12),
+            expires_at=now - timedelta(days=12) + timedelta(hours=72),
+            snapshot={},
+        ))
+        db.add(UserOffer(
+            user_id=user.id,
+            stage_code="last_week",
+            started_at=now - timedelta(days=9),
+            expires_at=now - timedelta(hours=1),
+            snapshot={},
+        ))
+        db.commit()
+    response = client.get(
+        "/api/masterclass/offers?email=member@example.test&"
+        + placement_query("day-21-offer")
+    )
+    assert response.status_code == 200
+    assert response.json()["stage"] == "standard"
+    assert [card["code"] for card in response.json()["offers"]] == [
+        "single:recipes", "single:calories", "single:consultation"
+    ]
 
 def test_day_19_fixes_review_and_last_week_timeline_once():
     client, factory = setup()

@@ -100,6 +100,20 @@ DIGITAL_OFFER_PRODUCT_CODES = (
     "recordings",
 )
 
+# One module keeps one complete product catalog. The active presentation is a
+# reversible instruction for the published site, not a second offers module or
+# a second set of product copy. Revert to ``canonical`` when the full catalog
+# should be shown again.
+ACTIVE_OFFER_PRESENTATION = "site_short_v1"
+
+SITE_SHORT_OFFER_PRESENTATION = {
+    "code": "site_short_v1",
+    "name": "Временная короткая витрина сайта",
+    "digital_product_codes": ("recipes", "calories"),
+    "consultation_addon_key": "site_short",
+    "standalone_consultation_stages": ("review", "standard"),
+}
+
 OFFER_CARD_COPY: dict[str, OfferCardCopy] = {
     "digital_bundle": {
         "title": "Вообще всё, что вам может понадобиться",

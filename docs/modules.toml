@@ -239,6 +239,7 @@ owns_files = [
   "docs/knowledge-base/modules/masterclass/OFFERS_MODULE.md",
   "docs/prototypes/masterclass-offer-simulator.fragment.html",
   "backend/migrations/versions/20260825_0023_masterclass_offer_windows.py",
+  "backend/migrations/versions/20260825_0025_site_short_offer_presentation.py",
 ]
 owns_tables = ["offer_stages", "user_offers", "offer_checkouts"]
 owns_routes = ["*/api/masterclass/*offer*", "*/admin/api/masterclass/*offer*"]

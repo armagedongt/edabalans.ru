@@ -26,9 +26,11 @@ from app.models import (
     UserCoursePolicy,
 )
 from app.masterclass_offer_catalog import (
+    ACTIVE_OFFER_PRESENTATION,
     DIGITAL_OFFER_PRODUCT_CODES,
     OFFER_CARD_COPY,
     OFFER_PRODUCTS,
+    SITE_SHORT_OFFER_PRESENTATION,
     bundle_detail,
 )
 from app.masterclass_offer_rules import (
@@ -1208,7 +1210,13 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
     if placement in PASSIVE_OFFER_PLACEMENTS:
         requested_code = None
 
+    # An expired second window does not itself create the review window. Until
+    # day 19 starts review, old recipe placements fall back to standard prices.
+    review_not_started = current_code == "review" and review is None
+
     if requested_code and placement in WINDOW_START_PLACEMENTS.get(requested_code, set()):
+        if review_not_started and requested_code == "review":
+            current_code, current_offer = None, None
         target_code = requested_code if current_code is None else order[
             max(order.index(requested_code), order.index(current_code))
         ]
@@ -1238,6 +1246,12 @@ def offer_stage(db: Session, user: User, placement: str) -> tuple[OfferStage, Us
             if requested_code == "review":
                 history.append(schedule_last_week_from_review(db, user, created))
             current_code, current_offer = timeline_stage(history, now)
+
+    if review_not_started and not (
+        requested_code == "review"
+        and placement in WINDOW_START_PLACEMENTS.get("review", set())
+    ):
+        current_code, current_offer = "standard", None
 
     code = current_code or (
         "early" if placement in {"day-1-offer", "day-2-offer"} else "standard"
@@ -1271,9 +1285,18 @@ def build_offers(
         if owned_resources_override is not None
         else access_codes(db, user.id)
     )
+    presentation = (
+        SITE_SHORT_OFFER_PRESENTATION
+        if ACTIVE_OFFER_PRESENTATION == SITE_SHORT_OFFER_PRESENTATION["code"]
+        else None
+    )
+    digital_product_codes = (
+        presentation["digital_product_codes"]
+        if presentation else DIGITAL_OFFER_PRODUCT_CODES
+    )
     missing = [
         (code, OFFER_PRODUCTS[code])
-        for code in DIGITAL_OFFER_PRODUCT_CODES
+        for code in digital_product_codes
         if OFFER_PRODUCTS[code]["resource"] not in owned
     ]
     if "ACCESS_CONSULTATION" in owned:
@@ -1368,7 +1391,91 @@ def build_offers(
         "price_code": f"upsell.{stage.code}.consultation",
     }
 
-    if stage.code in {"early", "second"}:
+    if presentation:
+        site_short_prices = pricing.get(presentation["consultation_addon_key"], {})
+        consultation_addon = int(site_short_prices.get("consultation_addon", 0))
+        if stage.code != "standard" and consultation_missing and consultation_addon <= 0:
+            raise HTTPException(503, "site short consultation price is not configured")
+
+        def site_short_consultation_card(*, standalone: bool = False) -> dict:
+            if standalone or not missing:
+                price = (
+                    int(pricing.get("consultation", consultation["standard"]))
+                    if stage.code in presentation["standalone_consultation_stages"]
+                    else consultation_addon
+                )
+                return {
+                    **consultation_card,
+                    "price": price,
+                    "price_code": f"upsell.site-short.{stage.code}.consultation",
+                    "price_entry_code": None,
+                }
+            digital_standard = sum(
+                standard_amount(code, int(product["standard"]))
+                for code, product in missing
+            )
+            digital_price = (
+                int(bundle_table[str(len(missing))])
+                if len(missing) > 1
+                else single_card(*missing[0])["price"]
+            )
+            details = [*[bundle_detail(code) for code, _ in missing], consultation_detail]
+            title = (
+                "Рецепты, калорийный план и индивидуальная консультация"
+                if len(missing) == 2
+                else f"{missing[0][1]['name']} и индивидуальная консультация"
+            )
+            return {
+                "code": "bundle:site-short-consultation",
+                "composition": "bundle",
+                "title": title,
+                "description": "Материал и индивидуальная консультация одним тарифом.",
+                "long_description": "",
+                "details": details,
+                "items": [*[code for code, _ in missing], "consultation"],
+                "standard_price": digital_standard + consultation_card["standard_price"],
+                "price": digital_price + consultation_addon,
+                "price_code": f"upsell.site-short.{stage.code}.bundle-consultation",
+                "price_entry_code": None,
+            }
+
+        if stage.code == "early" and placement == "day-1-offer":
+            if missing:
+                cards.append(single_card(*missing[0]))
+                bundle = digital_bundle()
+                if bundle:
+                    cards.append(bundle)
+        elif stage.code in {"early", "second"}:
+            if missing:
+                cards.append(single_card(*missing[0]))
+                bundle = digital_bundle()
+                if bundle:
+                    cards.append(bundle)
+            if consultation_missing and missing:
+                cards.append(site_short_consultation_card())
+        elif stage.code == "review":
+            bundle = digital_bundle()
+            if bundle:
+                cards.append(bundle)
+            elif missing:
+                cards.append(single_card(*missing[0]))
+            if consultation_missing and missing:
+                cards.append(site_short_consultation_card())
+            if consultation_missing and placement in {"day-19-offer", "closing-review"}:
+                cards.append(site_short_consultation_card(standalone=True))
+        elif stage.code == "last_week":
+            if missing:
+                cards.append(single_card(*missing[0]))
+                bundle = digital_bundle()
+                if bundle:
+                    cards.append(bundle)
+            if consultation_missing and missing:
+                cards.append(site_short_consultation_card())
+        else:
+            cards.extend(single_card(*item, discounted=False) for item in missing)
+            if consultation_missing and placement in {"day-21-offer", "offers-hub"}:
+                cards.append(site_short_consultation_card(standalone=True))
+    elif stage.code in {"early", "second"}:
         if missing:
             cards.append(single_card(*missing[0]))
             bundle = digital_bundle()
@@ -1434,7 +1541,7 @@ def build_offers(
     }]
     owned_products.extend(
         {"code": code, "name": product["name"]}
-        for code in DIGITAL_OFFER_PRODUCT_CODES
+        for code in digital_product_codes
         for product in (OFFER_PRODUCTS[code],)
         if product["resource"] in owned
     )
@@ -1443,7 +1550,7 @@ def build_offers(
             "code": "consultation",
             "name": OFFER_PRODUCTS["consultation"]["name"],
         })
-    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
+    return {"ok": True, "stage": stage.code, "stage_name": stage.name, "presentation": presentation["code"] if presentation else "canonical", "presentation_name": presentation["name"] if presentation else "Полный канонический каталог", "expires_at": visible_expiry, "owned_resources": sorted(owned), "owned_products": owned_products, "pricing_version_id": str(pricing_version.id) if pricing_version else None, "offers": cards[:3]}
 
 
 @router.get("/offers")
@@ -1538,7 +1645,7 @@ def recipe_gate(
 @router.get("/admin/offer-stages")
 def admin_offer_stages(_: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict:
     rows = list(db.scalars(select(OfferStage).order_by(OfferStage.created_at)))
-    return {"ok": True, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status, "runtime_rule": OFFER_STAGE_ADMIN_RULES.get(row.code, "")} for row in rows]}
+    return {"ok": True, "presentation": ACTIVE_OFFER_PRESENTATION, "stages": [{"code": row.code, "name": row.name, "duration_hours": row.duration_hours, "pricing": row.pricing, "status": row.status, "runtime_rule": OFFER_STAGE_ADMIN_RULES.get(row.code, "")} for row in rows]}
 
 
 @router.post("/admin/offer-preview")
@@ -1724,7 +1831,12 @@ def admin_update_offer_stage(stage_code: str, body: StageUpdateIn, _: str = Depe
     if stage_code not in OFFER_STAGE_DURATIONS or body.duration_hours != canonical_duration:
         raise HTTPException(422, "offer duration is fixed by OFFERS_MODULE.md")
     stage.duration_hours = canonical_duration
-    stage.pricing = {"single": body.single, "consultation": body.consultation, "bundle": body.bundle}
+    stage.pricing = {
+        **(stage.pricing or {}),
+        "single": body.single,
+        "consultation": body.consultation,
+        "bundle": body.bundle,
+    }
     db.commit()
     return {"ok": True, "code": stage.code}
 
