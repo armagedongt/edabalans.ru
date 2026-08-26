@@ -423,8 +423,10 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     )
 
     course = client.get("/apps/masterclass-course.html").text
+    assert course.count("<style>") == 1
     assert 'src="/assets/content-gallery.js?v=source-slider"' in course
     assert "renderContentEmbeds" in course
+    assert ".dqs-matrix-grid{display:grid" in course
     assert 'id="course-tutorial"' in course
     tutorial = course[course.index("function tutorialPreview"):course.index("function openTutorial")]
     slides = tutorial[tutorial.index("function tutorialSlides"):tutorial.index("function renderTutorial")]
