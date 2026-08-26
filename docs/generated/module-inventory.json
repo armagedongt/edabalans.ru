@@ -269,6 +269,10 @@
     },
     {
       "module_id": "products.dqs",
+      "path": "backend/app/static/apps/dqs-category-rules.js"
+    },
+    {
+      "module_id": "products.dqs",
       "path": "backend/app/static/apps/dqs.html"
     },
     {
@@ -2048,7 +2052,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 529,
+          "line": 534,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -2056,7 +2060,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 655,
+          "line": 660,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -2064,7 +2068,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 706,
+          "line": 711,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -2072,7 +2076,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 621,
+          "line": 626,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -2310,7 +2314,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 529,
+          "line": 534,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -2318,7 +2322,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 621,
+          "line": 626,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -2326,7 +2330,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 655,
+          "line": 660,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -2334,7 +2338,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 706,
+          "line": 711,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -13187,15 +13191,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 88,
-          "method": "GET",
-          "module_id": "platform.commerce",
-          "path": "/legal",
-          "symbol": "legal_index"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 88,
+          "line": 93,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal",
@@ -13206,12 +13202,20 @@
           "line": 93,
           "method": "GET",
           "module_id": "platform.commerce",
+          "path": "/legal",
+          "symbol": "legal_index"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 98,
+          "method": "GET",
+          "module_id": "platform.commerce",
           "path": "/legal/legal.css",
           "symbol": "legal_stylesheet"
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 98,
+          "line": 103,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}",
@@ -13219,7 +13223,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 80,
+          "line": 85,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}.html",
@@ -13513,7 +13517,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 80,
+          "line": 85,
           "module_id": "platform.commerce",
           "name": "legal_document",
           "qualname": "legal_document"
@@ -13521,7 +13525,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 88,
+          "line": 93,
           "module_id": "platform.commerce",
           "name": "legal_index",
           "qualname": "legal_index"
@@ -13529,7 +13533,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 93,
+          "line": 98,
           "module_id": "platform.commerce",
           "name": "legal_stylesheet",
           "qualname": "legal_stylesheet"
@@ -13537,7 +13541,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 98,
+          "line": 103,
           "module_id": "platform.commerce",
           "name": "legal_document_friendly",
           "qualname": "legal_document_friendly"
@@ -15388,7 +15392,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 73,
+          "line": 78,
           "method": "GET",
           "module_id": "products",
           "path": "/assets/{asset_name}",
@@ -15418,7 +15422,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 73,
+          "line": 78,
           "module_id": "products",
           "name": "app_asset",
           "qualname": "app_asset"
@@ -15426,7 +15430,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 119,
+          "line": 124,
           "module_id": "products",
           "name": "intensive_day_asset",
           "qualname": "intensive_day_asset"
@@ -15434,7 +15438,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 135,
+          "line": 140,
           "module_id": "products",
           "name": "error",
           "qualname": "error"
@@ -15442,7 +15446,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 139,
+          "line": 144,
           "module_id": "products",
           "name": "jsonp",
           "qualname": "jsonp"
@@ -15450,7 +15454,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 146,
+          "line": 151,
           "module_id": "products",
           "name": "empty_strength_state",
           "qualname": "empty_strength_state"
@@ -15458,7 +15462,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 167,
+          "line": 172,
           "module_id": "products",
           "name": "empty_app_state",
           "qualname": "empty_app_state"
@@ -15466,7 +15470,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 275,
+          "line": 280,
           "module_id": "products",
           "name": "strength_payload",
           "qualname": "strength_payload"
@@ -15474,7 +15478,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 463,
+          "line": 468,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -15482,7 +15486,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 580,
+          "line": 585,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -15490,7 +15494,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 605,
+          "line": 610,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -15498,7 +15502,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 689,
+          "line": 694,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -15858,7 +15862,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 377,
+          "line": 389,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -15866,7 +15870,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 429,
+          "line": 441,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -15874,7 +15878,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 441,
+          "line": 453,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -15882,7 +15886,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 481,
+          "line": 493,
           "module_id": "products",
           "name": "test_video_player_outline_preview_is_public",
           "qualname": "test_video_player_outline_preview_is_public"
@@ -15890,7 +15894,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 498,
+          "line": 510,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -15898,7 +15902,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 511,
+          "line": 523,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -15906,7 +15910,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 519,
+          "line": 534,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -15914,7 +15918,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 533,
+          "line": 548,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -16264,6 +16268,10 @@
       "files": [
         {
           "module_id": "products.dqs",
+          "path": "backend/app/static/apps/dqs-category-rules.js"
+        },
+        {
+          "module_id": "products.dqs",
           "path": "backend/app/static/apps/dqs.html"
         },
         {
@@ -16329,11 +16337,19 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 180,
+          "line": 185,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/api/apps/dqs",
           "symbol": "dqs_legacy_get"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 73,
+          "method": "GET",
+          "module_id": "products.dqs",
+          "path": "/apps/dqs-category-rules.js",
+          "symbol": "dqs_category_rules"
         }
       ],
       "runtime_services": [],
@@ -16343,7 +16359,15 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 180,
+          "line": 73,
+          "module_id": "products.dqs",
+          "name": "dqs_category_rules",
+          "qualname": "dqs_category_rules"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 185,
           "module_id": "products.dqs",
           "name": "dqs_legacy_get",
           "qualname": "dqs_legacy_get"
@@ -16633,7 +16657,8 @@
       "telegram": null,
       "title": "Баланс продуктовых категорий (DQS)",
       "truths": [
-        "`docs/APPLICATION_PLATFORM.md`, фактический backend и `legacy/google/dqs/` при переносе."
+        "`docs/APPLICATION_PLATFORM.md`, фактический backend и `legacy/google/dqs/` при переносе.",
+        "Единые данные визуальных таблиц категорий для статьи Мастер-класса хранятся в\n`backend/app/static/apps/dqs-category-rules.js`.\nТекст статьи содержит только маркеры мест вставки `[[DQS_MATRIX:*]]`; не заменять\nих обратно картинками и не дублировать числовые правила в самом тексте."
       ]
     },
     {
@@ -16717,7 +16742,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 105,
+          "line": 110,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.css",
@@ -16725,7 +16750,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 110,
+          "line": 115,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.js",
@@ -16733,7 +16758,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 131,
+          "line": 136,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}",
@@ -16741,7 +16766,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 126,
+          "line": 131,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}.html",
@@ -16779,7 +16804,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 105,
+          "line": 110,
           "module_id": "products.intensive",
           "name": "intensive_stylesheet",
           "qualname": "intensive_stylesheet"
@@ -16787,7 +16812,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 110,
+          "line": 115,
           "module_id": "products.intensive",
           "name": "intensive_script",
           "qualname": "intensive_script"
@@ -16795,7 +16820,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 126,
+          "line": 131,
           "module_id": "products.intensive",
           "name": "intensive_day_html",
           "qualname": "intensive_day_html"
@@ -16803,7 +16828,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 131,
+          "line": 136,
           "module_id": "products.intensive",
           "name": "intensive_day_friendly",
           "qualname": "intensive_day_friendly"
@@ -18763,6 +18788,16 @@
           "row_id": "Q-013",
           "source": "Решение владельца; требуется migration после финального CSV Tilda",
           "title": "Старым владельцам Мастер-класса назначить `fully_unlocked`, а недавно зарегистрированным вычислить стартовый день без ложного выполнения материалов"
+        },
+        {
+          "cross_project": false,
+          "date": "2026-08-26",
+          "module_id": "products.masterclass.runtime",
+          "origin": "owner-explicit",
+          "path": "docs/plans/QUICK_NOTES.md",
+          "row_id": "Q-017",
+          "source": "Решение владельца отложить доработку туториала",
+          "title": "Дополнить туториал первого дня пояснением, как открыть оглавление внутри видеоплеера"
         }
       ],
       "public_urls": [],
@@ -18783,7 +18818,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 115,
+          "line": 120,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/video-player-preview",
@@ -18941,7 +18976,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 115,
+          "line": 120,
           "module_id": "products.masterclass.runtime",
           "name": "video_player_preview",
           "qualname": "video_player_preview"
@@ -20475,7 +20510,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 477,
+          "line": 482,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -20483,7 +20518,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 494,
+          "line": 499,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -20491,7 +20526,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 431,
+          "line": 436,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -20499,7 +20534,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 446,
+          "line": 451,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -20513,7 +20548,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 431,
+          "line": 436,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -20521,7 +20556,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 446,
+          "line": 451,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -20529,7 +20564,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 477,
+          "line": 482,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -20537,7 +20572,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 494,
+          "line": 499,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -20620,7 +20655,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 336,
+          "line": 341,
           "method": "GET",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -20628,7 +20663,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 336,
+          "line": 341,
           "method": "POST",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -20642,7 +20677,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 336,
+          "line": 341,
           "module_id": "products.strength",
           "name": "strength_legacy",
           "qualname": "strength_legacy"
@@ -20945,6 +20980,16 @@
       "row_id": "Q-016",
       "source": "`MASTERCLASS_POSTPURCHASE_COPYWRITER_BRIEF.md`",
       "title": "Подготовить и утвердить авторские тексты существующей Telegram-цепочки после покупки Мастер-класса по готовым триггерам и фактуре; не менять граф без отдельного решения"
+    },
+    {
+      "cross_project": false,
+      "date": "2026-08-26",
+      "module_id": "products.masterclass.runtime",
+      "origin": "owner-explicit",
+      "path": "docs/plans/QUICK_NOTES.md",
+      "row_id": "Q-017",
+      "source": "Решение владельца отложить доработку туториала",
+      "title": "Дополнить туториал первого дня пояснением, как открыть оглавление внутри видеоплеера"
     }
   ],
   "relations": [
@@ -21256,7 +21301,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 477,
+      "line": 482,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -21264,7 +21309,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 494,
+      "line": 499,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -21272,7 +21317,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 529,
+      "line": 534,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -21280,7 +21325,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 655,
+      "line": 660,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -21288,7 +21333,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 706,
+      "line": 711,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -21600,7 +21645,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 621,
+      "line": 626,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -21776,7 +21821,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 180,
+      "line": 185,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/api/apps/dqs",
@@ -21784,7 +21829,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 431,
+      "line": 436,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -21792,7 +21837,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 446,
+      "line": 451,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -21800,7 +21845,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 336,
+      "line": 341,
       "method": "GET",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -21808,7 +21853,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 336,
+      "line": 341,
       "method": "POST",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -22088,6 +22133,14 @@
     },
     {
       "file": "backend/app/app_routes.py",
+      "line": 73,
+      "method": "GET",
+      "module_id": "products.dqs",
+      "path": "/apps/dqs-category-rules.js",
+      "symbol": "dqs_category_rules"
+    },
+    {
+      "file": "backend/app/app_routes.py",
       "line": 64,
       "method": "GET",
       "module_id": "products",
@@ -22096,7 +22149,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 73,
+      "line": 78,
       "method": "GET",
       "module_id": "products",
       "path": "/assets/{asset_name}",
@@ -22584,7 +22637,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 105,
+      "line": 110,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.css",
@@ -22592,7 +22645,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 110,
+      "line": 115,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.js",
@@ -22600,7 +22653,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 131,
+      "line": 136,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}",
@@ -22608,7 +22661,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 126,
+      "line": 131,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}.html",
@@ -22616,15 +22669,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 88,
-      "method": "GET",
-      "module_id": "platform.commerce",
-      "path": "/legal",
-      "symbol": "legal_index"
-    },
-    {
-      "file": "backend/app/app_routes.py",
-      "line": 88,
+      "line": 93,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal",
@@ -22635,12 +22680,20 @@
       "line": 93,
       "method": "GET",
       "module_id": "platform.commerce",
+      "path": "/legal",
+      "symbol": "legal_index"
+    },
+    {
+      "file": "backend/app/app_routes.py",
+      "line": 98,
+      "method": "GET",
+      "module_id": "platform.commerce",
       "path": "/legal/legal.css",
       "symbol": "legal_stylesheet"
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 98,
+      "line": 103,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}",
@@ -22648,7 +22701,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 80,
+      "line": 85,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}.html",
@@ -22688,7 +22741,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 115,
+      "line": 120,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/video-player-preview",
@@ -23101,6 +23154,14 @@
       "file": "backend/app/app_routes.py",
       "kind": "function",
       "line": 73,
+      "module_id": "products.dqs",
+      "name": "dqs_category_rules",
+      "qualname": "dqs_category_rules"
+    },
+    {
+      "file": "backend/app/app_routes.py",
+      "kind": "function",
+      "line": 78,
       "module_id": "products",
       "name": "app_asset",
       "qualname": "app_asset"
@@ -23108,7 +23169,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 80,
+      "line": 85,
       "module_id": "platform.commerce",
       "name": "legal_document",
       "qualname": "legal_document"
@@ -23116,7 +23177,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 88,
+      "line": 93,
       "module_id": "platform.commerce",
       "name": "legal_index",
       "qualname": "legal_index"
@@ -23124,7 +23185,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 93,
+      "line": 98,
       "module_id": "platform.commerce",
       "name": "legal_stylesheet",
       "qualname": "legal_stylesheet"
@@ -23132,7 +23193,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 98,
+      "line": 103,
       "module_id": "platform.commerce",
       "name": "legal_document_friendly",
       "qualname": "legal_document_friendly"
@@ -23140,7 +23201,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 105,
+      "line": 110,
       "module_id": "products.intensive",
       "name": "intensive_stylesheet",
       "qualname": "intensive_stylesheet"
@@ -23148,7 +23209,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 110,
+      "line": 115,
       "module_id": "products.intensive",
       "name": "intensive_script",
       "qualname": "intensive_script"
@@ -23156,7 +23217,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 115,
+      "line": 120,
       "module_id": "products.masterclass.runtime",
       "name": "video_player_preview",
       "qualname": "video_player_preview"
@@ -23164,7 +23225,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 119,
+      "line": 124,
       "module_id": "products",
       "name": "intensive_day_asset",
       "qualname": "intensive_day_asset"
@@ -23172,7 +23233,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 126,
+      "line": 131,
       "module_id": "products.intensive",
       "name": "intensive_day_html",
       "qualname": "intensive_day_html"
@@ -23180,7 +23241,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 131,
+      "line": 136,
       "module_id": "products.intensive",
       "name": "intensive_day_friendly",
       "qualname": "intensive_day_friendly"
@@ -23188,7 +23249,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 135,
+      "line": 140,
       "module_id": "products",
       "name": "error",
       "qualname": "error"
@@ -23196,7 +23257,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 139,
+      "line": 144,
       "module_id": "products",
       "name": "jsonp",
       "qualname": "jsonp"
@@ -23204,7 +23265,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 146,
+      "line": 151,
       "module_id": "products",
       "name": "empty_strength_state",
       "qualname": "empty_strength_state"
@@ -23212,7 +23273,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 167,
+      "line": 172,
       "module_id": "products",
       "name": "empty_app_state",
       "qualname": "empty_app_state"
@@ -23220,7 +23281,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 180,
+      "line": 185,
       "module_id": "products.dqs",
       "name": "dqs_legacy_get",
       "qualname": "dqs_legacy_get"
@@ -23228,7 +23289,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 275,
+      "line": 280,
       "module_id": "products",
       "name": "strength_payload",
       "qualname": "strength_payload"
@@ -23236,7 +23297,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 336,
+      "line": 341,
       "module_id": "products.strength",
       "name": "strength_legacy",
       "qualname": "strength_legacy"
@@ -23244,7 +23305,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 431,
+      "line": 436,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -23252,7 +23313,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 446,
+      "line": 451,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -23260,7 +23321,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 463,
+      "line": 468,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -23268,7 +23329,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 477,
+      "line": 482,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -23276,7 +23337,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 494,
+      "line": 499,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -23284,7 +23345,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 529,
+      "line": 534,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -23292,7 +23353,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 580,
+      "line": 585,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -23300,7 +23361,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 605,
+      "line": 610,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -23308,7 +23369,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 621,
+      "line": 626,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -23316,7 +23377,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 655,
+      "line": 660,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -23324,7 +23385,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 689,
+      "line": 694,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -23332,7 +23393,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 706,
+      "line": 711,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -29172,7 +29233,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 377,
+      "line": 389,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -29180,7 +29241,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 429,
+      "line": 441,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -29188,7 +29249,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 441,
+      "line": 453,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -29196,7 +29257,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 481,
+      "line": 493,
       "module_id": "products",
       "name": "test_video_player_outline_preview_is_public",
       "qualname": "test_video_player_outline_preview_is_public"
@@ -29204,7 +29265,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 498,
+      "line": 510,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -29212,7 +29273,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 511,
+      "line": 523,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -29220,7 +29281,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 519,
+      "line": 534,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -29228,7 +29289,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 533,
+      "line": 548,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
