@@ -196,6 +196,7 @@ card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
+  "backend/scripts/publish_course_structure_seed.py",
   "backend/app/managed_documents.py", "backend/app/static/course-editors.html",
   "backend/app/static/course-structure-editor.*",
   "backend/tests/test_course_structure_multiline.py",
