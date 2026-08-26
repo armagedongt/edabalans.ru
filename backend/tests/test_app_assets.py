@@ -153,6 +153,11 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     account = client.get("/apps/account.html")
     assert account.status_code == 200
     assert 'id="account-app"' in account.text
+    assert "function openRequestedCourse" in account.text
+    assert "params.has('course_day')||params.has('course_material')" in account.text
+    assert "url.searchParams.delete('course_day')" in account.text
+    assert "url.searchParams.delete('course_material')" in account.text
+    assert "if(openRequestedCourse(data))return" in account.text
     assert "/api/account" in account.text
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
@@ -172,6 +177,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
     assert "function openCourseStep" in course.text
     assert "function advanceCourseStep" in course.text
+    assert "function renderCourseRoute" in course.text
+    assert "remote.can_open&&!remote.opened" in course.text
+    assert "Direct course day open failed" in course.text
     assert "advanceCourseStep(d,currentStep,true)" in course.text
     assert "advanceCourseStep(days[state.day-1],currentStep,false)" in course.text
     assert "saveQuestionnaire('submit')" in course.text
