@@ -22,6 +22,11 @@ implementation_status: implemented
 
 `docs/APPLICATION_PLATFORM.md`, фактический backend и `legacy/google/dqs/` при переносе.
 
+Единые данные визуальных таблиц категорий для статьи Мастер-класса хранятся в
+`backend/app/static/apps/dqs-category-rules.js`.
+Текст статьи содержит только маркеры мест вставки `[[DQS_MATRIX:*]]`; не заменять
+их обратно картинками и не дублировать числовые правила в самом тексте.
+
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
 

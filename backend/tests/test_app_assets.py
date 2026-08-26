@@ -316,7 +316,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "esc(t.summary)" in course_html
     assert "pages[step.contentPageTitle||step.title]" in course_html
     assert "videoId:step.videoId,image:step.image" in course_html
-    assert "materialMedia(t)+parts.body" in course_html
+    assert "materialMedia(t)+body" in course_html
 
     static_dir = root / "backend" / "app" / "static"
     editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")
@@ -354,7 +354,16 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
         for step in day.get("steps", [])
         if step.get("imagePresentation") == "gallery"
     ]
-    assert gallery_steps == [(4, "day-04-article-01")]
+    assert gallery_steps == []
+
+    dqs_source = (root / "content" / "masterclass" / "source-current" / "13-dqs-system.txt").read_text(encoding="utf-8")
+    assert [f"[[DQS_MATRIX:{kind}]]" for kind in ["all", "plants", "proteins", "fats", "garnishes", "harmful"]] == [
+        marker for marker in dqs_source.splitlines() if marker.startswith("[[DQS_MATRIX:")
+    ]
+    assert "[[DQS_GALLERY:home]]" in dqs_source
+    assert "[[DQS_GALLERY:takeout]]" in dqs_source
+    assert "Код будет выполнен на опубликованной странице" not in dqs_source
+    assert "XXXXXXXXXXXXXXXXXXXX" not in dqs_source
 
     course = client.get("/apps/masterclass-course.html").text
     assert 'id="course-tutorial"' in course
@@ -372,6 +381,9 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "tutorialStep--;renderTutorial()" in course
     assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
+    assert "DQS_CATEGORY_ROWS" in course
+    assert "renderDqsEmbeds(parts.body)" in course
+    assert "bindDqsExampleGalleries(document.querySelector('#article'))" in course
 
 
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
@@ -510,8 +522,11 @@ def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
 
 def test_dqs_notifies_course_only_after_server_save() -> None:
     response = client.get("/apps/dqs.html")
+    rules = client.get("/apps/dqs-category-rules.js")
 
     assert response.status_code == 200
+    assert rules.status_code == 200
+    assert "EdabalansDqsCategoryRows" in rules.text
     assert "'edabalans:app-completed'" in response.text
     assert "app:'dqs'" in response.text
 
