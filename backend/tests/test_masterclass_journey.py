@@ -1895,7 +1895,7 @@ def test_crm_card_contains_masterclass_answers_events_and_offer_windows():
     response = client.get(f"/admin/api/users/{user_id}")
     assert response.status_code == 200
     data = response.json()["masterclass"]
-    assert data["questionnaires"][0]["answers"][0]["title"] == "Главный запрос"
+    assert data["questionnaires"][0]["answers"][0]["title"] == "Главный запрос, с которым вы пришли"
     assert data["questionnaires"][0]["answers"][0]["answer"] == "Хочу выстроить питание"
     assert "recipes_part_1_opened" in {event["type"] for event in data["events"]}
     assert data["offers"][0]["stage"] == "early"
