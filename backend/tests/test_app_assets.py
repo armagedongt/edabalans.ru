@@ -469,7 +469,9 @@ def test_intensive_concept_pages_are_public() -> None:
 def test_video_player_outline_preview_is_public() -> None:
     preview = client.get("/video-player-preview")
     assert preview.status_code == 200
+    assert preview.headers["cache-control"] == "no-cache"
     assert "data-video-player" in preview.text
+    assert "data-video-src" in preview.text
     assert "data-chapters" in preview.text
 
     stylesheet = client.get("/assets/video-player.css")
@@ -477,6 +479,7 @@ def test_video_player_outline_preview_is_public() -> None:
     assert stylesheet.status_code == 200
     assert ".vp-outline" in stylesheet.text
     assert script.status_code == 200
+    assert "mountVideo" in script.text
     assert "edabalans:video-chapter-selected" in script.text
 
 

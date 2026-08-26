@@ -113,7 +113,7 @@ def intensive_script() -> FileResponse:
 
 @router.get("/video-player-preview", include_in_schema=False)
 def video_player_preview() -> FileResponse:
-    return public_asset(STATIC_DIR / "video-player-preview.html")
+    return public_asset(STATIC_DIR / "video-player-preview.html", stable_loader=True)
 
 
 def intensive_day_asset(day_code: str) -> FileResponse:

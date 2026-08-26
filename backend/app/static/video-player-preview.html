@@ -4,45 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Предпросмотр плеера</title>
-  <link rel="stylesheet" href="/assets/video-player.css">
+  <link rel="stylesheet" href="/assets/video-player.css?v=3">
 </head>
 <body style="margin:0;padding:24px;background:#f6f7f2">
   <main style="max-width:1000px;margin:auto">
-    <div data-video-player data-title="Как начать менять питание без запретов" data-chapters='[{"at":0,"title":"Введение"},{"at":42,"title":"Главная мысль"},{"at":118,"title":"Практический пример"},{"at":197,"title":"Что сделать дальше"}]'></div>
+    <div data-video-player data-video-src="https://cdn-g.boomstream.com/balancer/0yg1KSuI-x2DYoI1x.mp4" data-title="Как начать менять питание без запретов" data-chapters='[{"at":0,"title":"Введение"},{"at":42,"title":"Главная мысль"},{"at":118,"title":"Практический пример"},{"at":197,"title":"Что сделать дальше"}]'></div>
   </main>
-  <script src="/assets/video-player.js"></script>
-  <script>
-    (function () {
-      var root = document.querySelector('[data-video-player]');
-      var video = document.createElement('video');
-      var play = document.createElement('button');
-
-      video.src = 'https://cdn-g.boomstream.com/balancer/0yg1KSuI-x2DYoI1x.mp4';
-      video.className = 'vp-video';
-      video.playsInline = true;
-      video.preload = 'metadata';
-      play.className = 'vp-start';
-      play.type = 'button';
-      play.setAttribute('aria-label', 'Воспроизвести видео');
-      play.textContent = '▶';
-
-      function togglePlayback() {
-        if (video.paused) { video.play().catch(function () {}); }
-        else { video.pause(); }
-      }
-
-      play.addEventListener('click', togglePlayback);
-      video.addEventListener('click', togglePlayback);
-      video.addEventListener('play', function () { play.hidden = true; });
-      video.addEventListener('pause', function () { play.hidden = video.ended; });
-      root.prepend(video);
-      root.append(play);
-      root.querySelector('.vp-placeholder').hidden = true;
-      root.addEventListener('edabalans:video-chapter-selected', function (event) {
-        video.currentTime = event.detail.at;
-        video.play().catch(function () {});
-      });
-    }());
-  </script>
+  <script src="/assets/video-player.js?v=3"></script>
 </body>
 </html>
