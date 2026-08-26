@@ -221,6 +221,8 @@ events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
+  "backend/app/static/video-player-preview.html", "backend/app/static/video-player.css",
+  "backend/app/static/video-player.js",
   "backend/tests/test_masterclass_journey.py",
   "backend/tests/test_masterclass_unlock_schedule.py",
   "backend/migrations/versions/20260822_0015_masterclass_journey.py",
@@ -233,7 +235,7 @@ owns_tables = [
   "masterclass_events", "masterclass_day_progress", "masterclass_step_progress",
   "masterclass_notifications", "masterclass_test_profiles",
 ]
-owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*"]
+owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*", "*/video-player-preview"]
 reads_from = ["products.masterclass.course"]
 
 [[modules]]
