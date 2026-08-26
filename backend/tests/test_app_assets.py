@@ -471,6 +471,28 @@ def test_masterclass_second_day_contains_current_diet_questionnaire() -> None:
     )
 
 
+def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert [step["id"] for step in manifest["days"][2]["steps"]] == [
+        "day-03-article-03",
+        "day-03-video-01",
+        "day-03-article-02",
+    ]
+
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+    assert "Нужна редактура" not in course_html
+    assert "Черновик · требуется редактура" not in course_html
+    assert "draft-badge" not in course_html
+    assert ".topic.draft" not in course_html
+
+
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
     root = Path(__file__).resolve().parents[2]
     manifest = normalize_seed(json.loads(

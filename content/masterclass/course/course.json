@@ -73,9 +73,9 @@
       "assignmentTitle": "Задание на сегодня", "assignmentLead": "Проверьте этикетки нескольких привычных продуктов.", "checks": ["Посмотреть составы привычных продуктов.", "Записать, какие ограничения относятся ко мне."],
       "nextTitle": "Diet Cultist Score", "nextTeaser": "Соберём систему оценки структуры питания.", "recipeDay": false, "publicationStatus": "draft",
       "steps": [
+        {"id":"day-03-article-03","kind":"article","title":"Какие ограничения действительно необходимы?","shortTitle":"Необходимые ограничения","summary":"Ограничения, у которых есть понятная причина.","status":"ready","contentKind":"text","contentAsset":"06-necessary-restrictions.txt"},
         {"id":"day-03-video-01","kind":"article","title":"Что такое вредная еда на самом деле?","shortTitle":"Что такое вредная еда","summary":"Вводное видео о вреде, пользе и любимой еде.","status":"draft","contentKind":"video","videoId":null},
-        {"id":"day-03-article-02","kind":"article","title":"Как читать этикетки и составы продуктов","shortTitle":"Этикетки и составы","summary":"Как находить важную информацию на упаковке.","status":"ready","contentKind":"text","contentAsset":"07-reading-labels.txt"},
-        {"id":"day-03-article-03","kind":"article","title":"Какие ограничения действительно необходимы?","shortTitle":"Необходимые ограничения","summary":"Ограничения, у которых есть понятная причина.","status":"ready","contentKind":"text","contentAsset":"06-necessary-restrictions.txt"}
+        {"id":"day-03-article-02","kind":"article","title":"Как читать этикетки и составы продуктов","shortTitle":"Этикетки и составы","summary":"Как находить важную информацию на упаковке.","status":"ready","contentKind":"text","contentAsset":"07-reading-labels.txt"}
       ], "implementation": {"notes":["Видео — отдельный материал; ссылка ещё не передана.","Дополнительные примеры вшиваются в статьи."],"triggers":[]}
     },
     {
