@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 import tempfile
@@ -27,6 +28,17 @@ class DeployPolicyTests(unittest.TestCase):
         )
         self.assertIn("/usr/local/sbin/edabalans-deploy\n", source)
         self.assertIn("/usr/local/sbin/edabalans-deploy-poll\n", source)
+
+    def test_routine_deploy_reuses_cached_base_images(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
+        pull_pattern = r"docker compose build(?:[ \t]|\\\r?\n)*--pull"
+
+        self.assertIn("docker compose build\n", source)
+        self.assertIsNone(
+            re.search(pull_pattern, source),
+            "routine deploy must not force a Docker base-image pull",
+        )
+        self.assertIsNotNone(re.search(pull_pattern, "docker compose build \\\n  --pull"))
 
     @unittest.skipUnless(shutil.which("bash"), "deploy classifier requires bash")
     def test_backup_impact_classification_uses_real_git_diffs(self) -> None:

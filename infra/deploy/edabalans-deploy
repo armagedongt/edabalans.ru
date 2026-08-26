@@ -73,7 +73,10 @@ git checkout --quiet --force "${TARGET_SHA}"
 # intentionally not a separate release gate or a reason for a follow-up commit.
 python3 tools/module_inventory.py --tracked-only
 docker compose config --quiet
-docker compose build --pull
+# Routine releases reuse the server's cached base images. Pulling Python on every
+# code-only release makes production availability depend on Docker Hub's anonymous
+# rate limit; explicit image refreshes remain an operational action.
+docker compose build
 docker compose up -d --remove-orphans --wait --wait-timeout 180
 
 curl --fail --silent --show-error --max-time 15 \
