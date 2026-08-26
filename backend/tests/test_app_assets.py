@@ -458,6 +458,20 @@ def test_intensive_concept_pages_are_public() -> None:
     assert client.get("/intensive/day-5.html").status_code == 404
 
 
+def test_video_player_outline_preview_is_public() -> None:
+    preview = client.get("/video-player-preview")
+    assert preview.status_code == 200
+    assert "data-video-player" in preview.text
+    assert "data-chapters" in preview.text
+
+    stylesheet = client.get("/assets/video-player.css")
+    script = client.get("/assets/video-player.js")
+    assert stylesheet.status_code == 200
+    assert ".vp-outline" in stylesheet.text
+    assert script.status_code == 200
+    assert "edabalans:video-chapter-selected" in script.text
+
+
 def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
     response = client.get("/apps/masterclass-sales.html")
     assert response.status_code == 200
