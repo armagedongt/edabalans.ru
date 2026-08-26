@@ -83,7 +83,7 @@
       "assignmentTitle": "Задание на сегодня", "assignmentLead": "Если задание пока закрыто, пройдите <a href=\"#\" data-dqs-tutorial-link>туториал</a> в DQS до конца. После этого самостоятельно вернитесь в день 4.", "assignmentText": "Откройте приложение DQS, пройдите туториал и немного потыкайтесь в приложении, чтобы освоиться. Затем самостоятельно вернитесь в день 4. После этого заполните прошлые дни Мастер-класса по фотографиям из дневника и продолжайте вести DQS как минимум первые три недели.", "checks": ["Открыть приложение DQS и заполнить прошлые дни по фотографиям.", "Продолжать вести DQS минимум первые три недели."],
       "nextTitle": "Основа сбалансированного питания", "nextTeaser": "КБЖУК, витамины и правило тарелки.", "recipeDay": false, "publicationStatus": "ready",
       "steps": [
-        {"id":"day-04-article-01","kind":"article","title":"Продуктовые категории и правила заполнения","shortTitle":"Категории и правила DQS","summary":"Категории, порции и правила заполнения.","status":"ready","contentKind":"text","contentAsset":"13-dqs-system.txt","imagePresentation":"gallery"},
+        {"id":"day-04-article-01","kind":"article","title":"Продуктовые категории и правила заполнения","shortTitle":"Категории и правила DQS","summary":"Категории, порции и правила заполнения.","status":"ready","contentKind":"text","contentAsset":"13-dqs-system.txt"},
         {"id":"day-04-dqs","kind":"dqs","code":"dqs","label":"Открыть Diet Cultist Score","shortTitle":"Приложение DQS","summary":"Пройти короткий туториал и немного освоиться в приложении.","completion":"tutorial_completed"}
       ], "implementation": {"notes":["Видео с принципами находится в шапке.","Отдельного шага «Первое заполнение» нет."],"triggers":["dqs_opened"]}
     },

@@ -69,6 +69,11 @@ def app_fragment(app_code: str) -> FileResponse:
     return public_asset(STATIC_DIR / "apps" / f"{app_code}.html")
 
 
+@router.get("/apps/dqs-category-rules.js", include_in_schema=False)
+def dqs_category_rules() -> FileResponse:
+    return public_asset(STATIC_DIR / "apps" / "dqs-category-rules.js")
+
+
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"masterclass.js", "masterclass.css", "max-logo.png", "video-player.js", "video-player.css"}:
