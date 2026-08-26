@@ -93,6 +93,7 @@ owns_files = [
   "backend/tests/test_content_catalog.py", "backend/tests/test_telegram_catalog.py",
   "backend/tests/fixtures/telegram_channel_export.json",
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
+  "docs/knowledge-base/ARTICLE_STANDARD.md",
   "tools/telegram_public_metrics_collect.py",
   "backend/migrations/versions/20260822_0013_content_catalog.py",
   "backend/migrations/versions/20260822_0014_content_comments.py",
@@ -192,6 +193,7 @@ owns_files = [
 id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
+depends_on = ["platform.content"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/managed_documents.py", "backend/app/static/course-editors.html",

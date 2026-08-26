@@ -1012,6 +1012,10 @@
       "path": "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md"
     },
     {
+      "module_id": "platform.content",
+      "path": "docs/knowledge-base/ARTICLE_STANDARD.md"
+    },
+    {
       "module_id": "platform.commerce",
       "path": "docs/knowledge-base/LEGAL_DOCUMENTS.md"
     },
@@ -14366,7 +14370,8 @@
       "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.",
       "capabilities": [
         "собирать материалы из поддерживаемых источников;",
-        "вести версии текста, связи, метрики и редакционные комментарии;"
+        "вести версии текста, связи, метрики и редакционные комментарии;",
+        "задавать единый стандарт структуры и визуальных выделений для статей сайта;"
       ],
       "card": "docs/knowledge-base/modules/catalog/platform.content.md",
       "document_status": "current",
@@ -14402,6 +14407,10 @@
         {
           "module_id": "platform.content",
           "path": "docs/CONTENT_CATALOG.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "docs/knowledge-base/ARTICLE_STANDARD.md"
         },
         {
           "module_id": "platform.content",
@@ -14899,7 +14908,7 @@
       "telegram": null,
       "title": "Каталог материалов",
       "truths": [
-        "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`, importers и `content/`."
+        "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,\n`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и `content/`."
       ]
     },
     {
@@ -15862,7 +15871,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 389,
+          "line": 390,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -15870,7 +15879,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 441,
+          "line": 442,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -15878,7 +15887,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 453,
+          "line": 454,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -15886,7 +15895,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 493,
+          "line": 494,
           "module_id": "products",
           "name": "test_video_player_outline_preview_is_public",
           "qualname": "test_video_player_outline_preview_is_public"
@@ -15894,7 +15903,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 510,
+          "line": 511,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -15902,7 +15911,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 523,
+          "line": 524,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -15910,7 +15919,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 534,
+          "line": 535,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -15918,7 +15927,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 548,
+          "line": 549,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -17532,7 +17541,9 @@
       ],
       "public_urls": [],
       "relations": {
-        "depends_on": [],
+        "depends_on": [
+          "platform.content"
+        ],
         "events_in": [],
         "events_out": [],
         "reads_from": [],
@@ -21167,6 +21178,11 @@
     {
       "source": "products.masterclass",
       "target": "platform.commerce",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.masterclass.course",
+      "target": "platform.content",
       "type": "depends_on"
     },
     {
@@ -29234,7 +29250,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 389,
+      "line": 390,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -29242,7 +29258,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 441,
+      "line": 442,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -29250,7 +29266,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 453,
+      "line": 454,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -29258,7 +29274,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 493,
+      "line": 494,
       "module_id": "products",
       "name": "test_video_player_outline_preview_is_public",
       "qualname": "test_video_player_outline_preview_is_public"
@@ -29266,7 +29282,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 510,
+      "line": 511,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -29274,7 +29290,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 523,
+      "line": 524,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -29282,7 +29298,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 534,
+      "line": 535,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -29290,7 +29306,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 548,
+      "line": 549,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"

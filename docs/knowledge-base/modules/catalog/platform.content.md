@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - собирать материалы из поддерживаемых источников;
 - вести версии текста, связи, метрики и редакционные комментарии;
+- задавать единый стандарт структуры и визуальных выделений для статей сайта;
 
 ## Граница
 
@@ -20,7 +21,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-PostgreSQL content tables, `docs/CONTENT_CATALOG.md`, importers и `content/`.
+PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,
+`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и `content/`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
