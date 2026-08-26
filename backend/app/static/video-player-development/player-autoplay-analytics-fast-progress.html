@@ -1,0 +1,816 @@
+<div id="modular-video-player" class="mvp">
+  <video class="mvp__video" src="https://storage.yandexcloud.net/workcloud1/%D0%90%D1%8E%D1%80%D0%B8%D0%BA%D0%BE%D1%81%2023%20%D0%B8%D1%8E%D0%BB%D1%8F%20%D0%91%D0%90%D0%9C.mp4" playsinline preload="metadata"></video>
+
+  <div class="mvp__shade"></div>
+  <div class="mvp__loader" hidden aria-label="Загрузка"></div>
+
+  <button class="mvp__big-play" type="button" aria-label="Воспроизвести">
+    <span class="mvp__play-triangle"></span>
+  </button>
+
+  <button class="mvp__sound-card" type="button" aria-label="Включить звук" hidden>
+    <div class="mvp__sound-icon">🔊</div>
+    <div class="mvp__sound-text">Рассказываю<br>интересное =)<br>Включайте звук!</div>
+  </button>
+
+  <button class="mvp__contents-btn" type="button" aria-expanded="false">
+    <span>☰</span>
+    <span>Содержание</span>
+  </button>
+
+  <aside class="mvp__drawer" aria-label="Содержание видео">
+    <div class="mvp__drawer-head">
+      <div>
+        <div class="mvp__drawer-title">Содержание</div>
+      </div>
+      <button class="mvp__close" type="button" aria-label="Закрыть">×</button>
+    </div>
+    <div class="mvp__chapters"></div>
+  </aside>
+
+  <div class="mvp__settings" hidden>
+    <button class="mvp__settings-row mvp__speed-row" type="button">
+      <span>Скорость</span>
+      <span class="mvp__settings-value mvp__speed-value">Нормальная ›</span>
+    </button>
+    <button class="mvp__settings-row mvp__quality-row" type="button">
+      <span>Качество</span>
+      <span class="mvp__settings-value mvp__quality-value">Исходное ›</span>
+    </button>
+  </div>
+
+  <div class="mvp__speed-panel" hidden>
+    <div class="mvp__panel-title">Скорость</div>
+    <div class="mvp__speed-list"></div>
+  </div>
+
+  <div class="mvp__quality-panel" hidden>
+    <div class="mvp__panel-title">Качество</div>
+    <div class="mvp__quality-list">
+      <button class="mvp__quality-option is-active" type="button">
+        <span>Исходное</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mvp__controls">
+    <div class="mvp__progress">
+      <div class="mvp__progress-fill"></div>
+    </div>
+
+    <div class="mvp__controls-row">
+      <div class="mvp__left">
+        <button class="mvp__icon-btn mvp__play" type="button" aria-label="Воспроизвести">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8c0-1.2 1.3-1.9 2.3-1.2l10.2 7.2c.9.6.9 1.9 0 2.5L9.3 20.5C8.3 21.2 7 20.5 7 19.3V4.8z"/></svg>
+        </button>
+        <button class="mvp__speed-inline" type="button" aria-label="Скорость">x 1</button>
+        <button class="mvp__icon-btn mvp__mute" type="button" aria-label="Звук">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4zm11.5-.8v7.6a5 5 0 0 0 0-7.6zm0-4v2.1a7.5 7.5 0 0 1 0 11.4v2.1a9.5 9.5 0 0 0 0-15.6z"/></svg>
+        </button>
+        <input class="mvp__volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Громкость">
+        <span class="mvp__time">
+          <span class="mvp__current">0:00</span>
+          <span class="mvp__sep">/</span>
+          <span class="mvp__duration">0:00</span>
+        </span>
+      </div>
+      <div class="mvp__right">
+        <button class="mvp__icon-btn mvp__captions" type="button" aria-label="Субтитры"><span>CC</span></button>
+        <button class="mvp__settings-btn" type="button" aria-label="Настройки">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.1 13a7.2 7.2 0 0 0 0-2l2.1-1.6-2-3.4-2.5 1a8 8 0 0 0-1.7-1L14.6 3h-4L10 6a8 8 0 0 0-1.7 1L5.8 6l-2 3.4L5.9 11a7.2 7.2 0 0 0 0 2l-2.1 1.6 2 3.4 2.5-1a8 8 0 0 0 1.7 1l.6 3h4l.5-3a8 8 0 0 0 1.7-1l2.5 1 2-3.4L19.1 13zM12.6 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z"/></svg>
+        </button>
+        <button class="mvp__icon-btn mvp__pip" type="button" aria-label="Картинка в картинке">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M3 5.5A2.5 2.5 0 0 1 5.5 3h13A2.5 2.5 0 0 1 21 5.5v13a2.5 2.5 0 0 1-2.5 2.5h-13A2.5 2.5 0 0 1 3 18.5v-13zm3 1A1.5 1.5 0 0 0 4.5 8v8A1.5 1.5 0 0 0 6 17.5h12a1.5 1.5 0 0 0 1.5-1.5V8A1.5 1.5 0 0 0 18 6.5H6zm7 6h5v4h-5v-4z"/></svg>
+        </button>
+        <button class="mvp__icon-btn mvp__fullscreen" type="button" aria-label="На весь экран">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5v2H6v3H4zm11-5h5v5h-2V6h-3V4zM6 15v3h3v2H4v-5h2zm12 0h2v5h-5v-2h3v-3z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#modular-video-player {
+  --accent:#615CF5;
+  --accent-soft:rgba(97,92,245,.82);
+  --white:#fff;
+  position:relative;
+  width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:22px;
+  background:#000;
+  font-family:Inter,Arial,sans-serif;
+  box-shadow:0 16px 40px rgba(20,16,38,.16);
+}
+#modular-video-player *{box-sizing:border-box}
+#modular-video-player .mvp__video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000;cursor:pointer;
+}
+#modular-video-player .mvp__shade{
+  position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to bottom,rgba(0,0,0,.02) 45%,rgba(0,0,0,.58) 100%);
+}
+#modular-video-player .mvp__big-play{
+  position:absolute;z-index:4;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:136px;height:136px;border:0;border-radius:50%;background:var(--accent);
+  color:#fff;cursor:pointer;box-shadow:0 18px 42px rgba(0,0,0,.24);transition:.18s ease;
+}
+#modular-video-player .mvp__big-play:hover{transform:translate(-50%,-50%) scale(1.04)}
+#modular-video-player .mvp__play-triangle{
+  display:block;width:0;height:0;margin:auto;
+  border-top:20px solid transparent;border-bottom:20px solid transparent;border-left:34px solid #fff;
+  transform:translateX(5px);
+}
+#modular-video-player.mvp--playing .mvp__big-play{opacity:0;pointer-events:none}
+
+#modular-video-player .mvp__sound-card{
+  position:absolute;z-index:5;left:50%;top:54%;transform:translate(-50%,-50%);
+  width:min(282px,70%);min-height:248px;padding:34px 24px 28px;
+  border:2px solid rgba(255,255,255,.9);border-radius:10px;
+  background:var(--accent-soft);color:#fff;text-align:center;cursor:pointer;
+  box-shadow:0 18px 42px rgba(0,0,0,.18);backdrop-filter:blur(2px);
+}
+#modular-video-player .mvp__sound-icon{font-size:34px;margin-bottom:24px}
+#modular-video-player .mvp__sound-text{font-size:25px;line-height:1.28;font-weight:800}
+#modular-video-player .mvp__contents-btn{
+  position:absolute;z-index:7;top:14px;right:14px;display:flex;align-items:center;gap:8px;
+  min-height:42px;padding:0 14px;border:0;border-radius:999px;background:rgba(17,17,17,.82);
+  color:#fff;font-size:13px;font-weight:700;cursor:pointer;backdrop-filter:blur(10px);
+}
+#modular-video-player .mvp__drawer{
+  position:absolute;z-index:10;top:0;right:0;bottom:0;width:min(360px,88%);
+  display:flex;flex-direction:column;background:rgba(255,255,255,.985);color:#241e29;
+  box-shadow:-18px 0 42px rgba(0,0,0,.22);transform:translateX(102%);transition:transform .22s ease;
+}
+#modular-video-player.mvp--drawer-open .mvp__drawer{transform:translateX(0)}
+#modular-video-player .mvp__drawer-head{
+  display:flex;align-items:center;justify-content:space-between;padding:17px 16px;border-bottom:1px solid #ece8f3;
+}
+#modular-video-player .mvp__eyebrow{color:var(--accent);font-size:10px;font-weight:800;letter-spacing:.12em}
+#modular-video-player .mvp__drawer-title{margin-top:3px;font-size:18px;font-weight:800}
+#modular-video-player .mvp__close{
+  width:38px;height:38px;border:0;border-radius:50%;background:#eeecff;color:var(--accent);font-size:24px;cursor:pointer;
+}
+#modular-video-player .mvp__chapters{overflow:auto;padding:8px}
+#modular-video-player .mvp__chapter{
+  width:100%;display:grid;grid-template-columns:52px 1fr;gap:8px;padding:13px 10px;border:0;border-radius:12px;
+  background:transparent;text-align:left;color:#28222d;cursor:pointer;
+}
+#modular-video-player .mvp__chapter:hover,
+#modular-video-player .mvp__chapter.is-active{background:#eeecff}
+#modular-video-player .mvp__chapter.is-active{box-shadow:inset 3px 0 0 var(--accent)}
+#modular-video-player .mvp__chapter-time{color:var(--accent);font-size:12px;font-weight:800}
+#modular-video-player .mvp__chapter-title{font-size:14px;font-weight:650;line-height:1.25}
+
+#modular-video-player .mvp__controls{
+  position:absolute;z-index:6;left:0;right:0;bottom:0;padding:0 16px 12px;color:#fff;
+}
+#modular-video-player .mvp__progress{
+  position:relative;width:100%;height:4px;margin:0 0 8px;border-radius:99px;overflow:hidden;
+  background:rgba(255,255,255,.34);pointer-events:none;
+}
+#modular-video-player .mvp__progress-fill{
+  position:absolute;inset:0 auto 0 0;width:0%;border-radius:inherit;background:var(--accent);transition:width .16s linear;
+}
+#modular-video-player .mvp__controls-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+#modular-video-player .mvp__left,#modular-video-player .mvp__right{display:flex;align-items:center;gap:5px}
+#modular-video-player .mvp__icon-btn,#modular-video-player .mvp__speed{
+  height:38px;min-width:38px;padding:0 8px;border:0;border-radius:8px;background:transparent;color:#fff;
+  font-size:18px;font-weight:700;cursor:pointer;
+}
+#modular-video-player .mvp__speed{font-size:14px}
+#modular-video-player .mvp__icon-btn:hover,#modular-video-player .mvp__speed:hover{background:rgba(255,255,255,.14)}
+#modular-video-player .mvp__time{font-size:12px;font-weight:650;font-variant-numeric:tabular-nums;white-space:nowrap}
+#modular-video-player .mvp__sep{opacity:.55;padding:0 3px}
+#modular-video-player .mvp__speed-inline,
+#modular-video-player .mvp__settings-btn{
+  height:38px;min-width:38px;padding:0 8px;border:0;border-radius:8px;background:transparent;color:#fff;
+  font-size:14px;font-weight:700;cursor:pointer;
+}
+#modular-video-player .mvp__settings-btn{font-size:20px}
+#modular-video-player .mvp__speed-inline:hover,
+#modular-video-player .mvp__settings-btn:hover{background:rgba(255,255,255,.14)}
+#modular-video-player .mvp__settings,
+#modular-video-player .mvp__speed-panel,
+#modular-video-player .mvp__quality-panel{
+  position:absolute;z-index:12;right:14px;bottom:62px;width:min(270px,calc(100% - 28px));
+  overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:14px;
+  background:rgba(24,22,31,.96);color:#fff;box-shadow:0 16px 42px rgba(0,0,0,.32);
+  backdrop-filter:blur(14px);
+}
+#modular-video-player .mvp__settings[hidden],
+#modular-video-player .mvp__speed-panel[hidden],
+#modular-video-player .mvp__quality-panel[hidden]{display:none}
+#modular-video-player .mvp__settings-row,
+#modular-video-player .mvp__speed-option,
+#modular-video-player .mvp__quality-option{
+  width:100%;min-height:46px;display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:10px 14px;border:0;border-bottom:1px solid rgba(255,255,255,.09);
+  background:transparent;color:#fff;text-align:left;font:600 13px/1.25 Inter,Arial,sans-serif;cursor:pointer;
+}
+#modular-video-player .mvp__settings-row:last-child,
+#modular-video-player .mvp__speed-option:last-child,
+#modular-video-player .mvp__quality-option:last-child{border-bottom:0}
+#modular-video-player .mvp__settings-row:hover,
+#modular-video-player .mvp__speed-option:hover,
+#modular-video-player .mvp__quality-option:hover{background:rgba(255,255,255,.09)}
+#modular-video-player .mvp__settings-value{opacity:.72;font-weight:500}
+#modular-video-player .mvp__panel-title{
+  padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.12);font-size:14px;font-weight:800;
+}
+#modular-video-player .mvp__speed-option.is-active,
+#modular-video-player .mvp__quality-option.is-active{color:#c8c6ff;background:rgba(97,92,245,.19)}
+#modular-video-player .mvp__speed-option.is-active::after,
+#modular-video-player .mvp__quality-option.is-active::after{content:'✓';color:var(--accent);font-size:16px;font-weight:900}
+
+@media(max-width:600px){
+  #modular-video-player{border-radius:16px}
+  #modular-video-player .mvp__big-play{width:96px;height:96px}
+  #modular-video-player .mvp__play-triangle{border-top-width:15px;border-bottom-width:15px;border-left-width:26px}
+  #modular-video-player .mvp__sound-card{width:min(260px,72%);min-height:210px;padding:28px 18px 22px}
+  #modular-video-player .mvp__sound-text{font-size:20px}
+  #modular-video-player .mvp__contents-btn{top:9px;right:9px;min-height:38px;padding:0 11px}
+  #modular-video-player .mvp__drawer{width:100%}
+  #modular-video-player .mvp__controls{padding:0 8px 7px}
+  #modular-video-player .mvp__mute{display:none}
+  #modular-video-player .mvp__time{font-size:11px}
+  #modular-video-player .mvp__settings,
+  #modular-video-player .mvp__speed-panel,
+  #modular-video-player .mvp__quality-panel{right:8px;bottom:52px;width:min(250px,calc(100% - 16px))}
+}
+</style>
+
+<style>
+/* Визуальная тема по референсу */
+#modular-video-player{border-radius:18px;box-shadow:none;background:#000}
+#modular-video-player .mvp__shade{background:linear-gradient(to bottom,transparent 48%,rgba(0,0,0,.76) 100%)}
+#modular-video-player .mvp__controls{padding:0 27px 13px;z-index:8}
+#modular-video-player .mvp__progress{height:5px;margin-bottom:10px;border-radius:0;background:rgba(207,215,215,.52);overflow:visible;pointer-events:auto;cursor:pointer}
+#modular-video-player .mvp__progress-fill{border-radius:0;background:#615cf5;transition:none}
+#modular-video-player .mvp__controls-row{min-height:30px}
+#modular-video-player .mvp__left,#modular-video-player .mvp__right{gap:7px}
+#modular-video-player .mvp__icon-btn,#modular-video-player .mvp__speed-inline,#modular-video-player .mvp__settings-btn{height:29px;min-width:26px;padding:3px;border-radius:5px;color:#fff}
+#modular-video-player .mvp__icon-btn svg,#modular-video-player .mvp__settings-btn svg{display:block;width:23px;height:23px;fill:currentColor}
+#modular-video-player .mvp__play svg{width:26px;height:26px}
+#modular-video-player .mvp__speed-inline{min-width:30px;font-size:16px;font-weight:800}
+#modular-video-player .mvp__time{margin-left:6px;font-size:16px;font-weight:650}
+#modular-video-player .mvp__mute{padding:2px}
+#modular-video-player .mvp__volume{width:72px;height:4px;margin:0 6px 0 -2px;accent-color:#fff;cursor:pointer}
+#modular-video-player .mvp__captions span{display:block;padding:1px 3px;border-radius:4px;background:#fff;color:#222;font-size:17px;font-weight:900;line-height:20px}
+#modular-video-player .mvp__captions.is-active span{background:#615cf5;color:#fff}
+#modular-video-player .mvp__settings,#modular-video-player .mvp__speed-panel,#modular-video-player .mvp__quality-panel{left:36px;right:auto;bottom:86px;width:420px;max-height:calc(100% - 112px);overflow:auto;border:0;border-radius:9px;background:#111;box-shadow:0 10px 32px rgba(0,0,0,.28);backdrop-filter:none}
+#modular-video-player .mvp__settings-row,#modular-video-player .mvp__speed-option,#modular-video-player .mvp__quality-option{min-height:54px;padding:11px 24px;border:0;font-size:21px;font-weight:500}
+#modular-video-player .mvp__panel-title{padding:25px 24px 13px;border:0;font-size:21px;font-weight:800}
+#modular-video-player .mvp__speed-option.is-active,#modular-video-player .mvp__quality-option.is-active{color:#fff;background:transparent}
+#modular-video-player .mvp__speed-option.is-active::after,#modular-video-player .mvp__quality-option.is-active::after{color:#fff;font-size:24px}
+#modular-video-player .mvp__settings-value{opacity:1}
+#modular-video-player .mvp__loader{position:absolute;z-index:7;left:50%;top:50%;width:58px;height:58px;margin:-29px;border:10px solid rgba(255,255,255,.38);border-top-color:#fff;border-radius:50%;animation:mvp-spin .85s linear infinite}
+#modular-video-player .mvp__loader[hidden]{display:none}
+@keyframes mvp-spin{to{transform:rotate(360deg)}}
+
+/* Точечные настройки интерфейса */
+#modular-video-player .mvp__sound-card{
+  left:50%;top:50%;width:min(226px,64%);min-height:198px;padding:27px 19px 22px;
+  transform:translate(-50%,-50%);overflow:visible;isolation:isolate;
+  animation:none;
+}
+#modular-video-player .mvp__sound-card::before,
+#modular-video-player .mvp__sound-card::after{
+  content:'';position:absolute;z-index:-1;inset:-3px;border:3px solid rgba(148,145,255,.72);border-radius:13px;
+  pointer-events:none;animation:mvp-sound-wave 2s ease-out infinite;
+}
+#modular-video-player .mvp__sound-card::after{animation-delay:1s}
+@keyframes mvp-sound-wave{
+  0%{transform:scale(1);opacity:.9}
+  75%,100%{transform:scale(1.24,1.30);opacity:0}
+}
+#modular-video-player .mvp__sound-card .mvp__sound-icon{font-size:27px;margin-bottom:19px}
+#modular-video-player .mvp__sound-card .mvp__sound-text{font-size:20px}
+#modular-video-player .mvp__captions,
+#modular-video-player .mvp__settings-btn,
+#modular-video-player .mvp__pip{display:none}
+#modular-video-player .mvp__speed-panel{
+  left:54px;right:auto;bottom:58px;width:max-content;min-width:76px;max-width:100px;
+  padding:5px 0;overflow:hidden;border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  background:rgba(12,12,14,.82);box-shadow:0 12px 30px rgba(0,0,0,.28);backdrop-filter:blur(12px);
+}
+#modular-video-player .mvp__speed-panel .mvp__panel-title{display:none}
+#modular-video-player .mvp__speed-option{
+  min-height:30px;padding:5px 11px;border:0;font-size:12px;font-weight:650;white-space:nowrap;
+}
+#modular-video-player .mvp__speed-option.is-active{background:rgba(255,255,255,.10)}
+#modular-video-player .mvp__speed-option.is-active::after{margin-left:9px;font-size:13px}
+#modular-video-player .mvp__drawer{
+  background:rgba(12,12,14,.86);color:#fff;box-shadow:-18px 0 42px rgba(0,0,0,.34);backdrop-filter:blur(14px);
+}
+#modular-video-player .mvp__drawer-head{border-bottom-color:rgba(255,255,255,.14)}
+#modular-video-player .mvp__drawer-title,
+#modular-video-player .mvp__chapter{color:#fff}
+#modular-video-player .mvp__close{background:rgba(255,255,255,.12);color:#fff}
+#modular-video-player .mvp__chapter:hover,
+#modular-video-player .mvp__chapter.is-active{background:rgba(255,255,255,.11)}
+#modular-video-player .mvp__chapter.is-active{box-shadow:inset 3px 0 0 var(--accent)}
+#modular-video-player .mvp__chapter-time{color:#fff}
+#modular-video-player .mvp__chapter.is-active .mvp__chapter-time{
+  display:inline-flex;align-items:center;justify-content:center;width:max-content;min-width:42px;
+  margin:-4px 0;padding:4px 7px;border-radius:7px;background:var(--accent);color:#fff;
+}
+@media(max-width:700px){
+  #modular-video-player .mvp__controls{padding:0 9px 7px}
+  #modular-video-player .mvp__progress{height:3px;margin-bottom:5px}
+  #modular-video-player .mvp__left,#modular-video-player .mvp__right{gap:2px}
+  #modular-video-player .mvp__icon-btn,#modular-video-player .mvp__settings-btn{min-width:22px;height:24px;padding:2px}
+  #modular-video-player .mvp__mute{display:inline-flex;align-items:center;justify-content:center}
+  #modular-video-player .mvp__icon-btn svg,#modular-video-player .mvp__settings-btn svg{width:19px;height:19px}
+  #modular-video-player .mvp__speed-inline{min-width:24px;height:24px;font-size:12px;padding:1px}
+  #modular-video-player .mvp__time{margin-left:2px;font-size:10px}
+  #modular-video-player .mvp__volume{width:36px;margin:0 1px}
+  #modular-video-player .mvp__captions span{font-size:11px;line-height:15px}
+  #modular-video-player .mvp__settings,#modular-video-player .mvp__speed-panel,#modular-video-player .mvp__quality-panel{left:12px;bottom:51px;width:min(285px,calc(100% - 24px));max-height:calc(100% - 65px)}
+  #modular-video-player .mvp__settings-row,#modular-video-player .mvp__speed-option,#modular-video-player .mvp__quality-option{min-height:38px;padding:7px 16px;font-size:14px}
+  #modular-video-player .mvp__panel-title{padding:15px 16px 8px;font-size:14px}
+  #modular-video-player .mvp__speed-panel{left:35px;bottom:39px;width:max-content;min-width:68px;max-width:88px;padding:4px 0}
+  #modular-video-player .mvp__speed-option{min-height:26px;padding:4px 9px;font-size:11px}
+  #modular-video-player .mvp__sound-card{width:min(226px,64%);min-height:158px;padding:21px 15px 17px}
+  #modular-video-player .mvp__sound-card .mvp__sound-icon{font-size:22px;margin-bottom:12px}
+  #modular-video-player .mvp__sound-card .mvp__sound-text{font-size:16px}
+}
+</style>
+
+<script>
+(function(){
+  const root = document.getElementById('modular-video-player');
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = '1';
+
+  /* РЕЖИМ ПЛЕЕРА — меняется одной строкой:
+     'engagement' = автостарт без звука + аналитика + ускоренная шкала + только текущее время
+     'standard'   = обычный запуск + обычная шкала + полное время + без аналитики */
+  const PLAYER_MODE = 'engagement';
+
+  /* Содержание независимо от режима. */
+  const CONTENTS_ENABLED = false;
+
+  const MODE_PRESETS = {
+    engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
+    standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
+  };
+  const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard), contents:CONTENTS_ENABLED };
+
+  /*
+    Настройки опережающего прогресса.
+    speedMultiplier = визуальная скорость заполнения шкалы.
+    1 = обычная шкала; 1.5 = умеренное ускорение; 2 = заметное ускорение.
+  */
+  const PROGRESS_CONFIG = {
+    speedMultiplier: 1.8
+  };
+
+  /* Варианты качества. Для каждого дополнительного качества укажи прямую ссылку.
+     Строки без url автоматически не показываются. */
+  const QUALITY_OPTIONS = [
+    { id:'original', label:'Исходное', url:null }
+    // { id:'1080', label:'1080p', url:'https://site.ru/video-1080.mp4' },
+    // { id:'720',  label:'720p',  url:'https://site.ru/video-720.mp4' }
+  ];
+
+  /*
+    Настройки аналитики.
+    Для реальной отправки на сервер укажи endpoint.
+  */
+  const ANALYTICS_CONFIG = {
+    endpoint: '',
+    videoId: 'main-video-001',
+    bucketSizeSec: 5,
+    completionThreshold: 0.95,
+    heartbeatSec: 15
+  };
+
+  const chapters = [
+    { at: 0, title: 'Введение' },
+    { at: 42, title: 'Главная мысль' },
+    { at: 118, title: 'Практический пример' },
+    { at: 197, title: 'Что сделать дальше' }
+  ];
+
+  const video = root.querySelector('.mvp__video');
+  const bigPlay = root.querySelector('.mvp__big-play');
+  const soundCard = root.querySelector('.mvp__sound-card');
+  const playBtn = root.querySelector('.mvp__play');
+  const muteBtn = root.querySelector('.mvp__mute');
+  const volumeSlider = root.querySelector('.mvp__volume');
+  const captionsBtn = root.querySelector('.mvp__captions');
+  const pipBtn = root.querySelector('.mvp__pip');
+  const loader = root.querySelector('.mvp__loader');
+  const speedInline = root.querySelector('.mvp__speed-inline');
+  const settingsBtn = root.querySelector('.mvp__settings-btn');
+  const settingsPanel = root.querySelector('.mvp__settings');
+  const speedRow = root.querySelector('.mvp__speed-row');
+  const qualityRow = root.querySelector('.mvp__quality-row');
+  const speedValue = root.querySelector('.mvp__speed-value');
+  const qualityValue = root.querySelector('.mvp__quality-value');
+  const speedPanel = root.querySelector('.mvp__speed-panel');
+  const qualityPanel = root.querySelector('.mvp__quality-panel');
+  const qualityList = root.querySelector('.mvp__quality-list');
+  const speedList = root.querySelector('.mvp__speed-list');
+  const fullscreenBtn = root.querySelector('.mvp__fullscreen');
+  const progress = root.querySelector('.mvp__progress');
+  const progressFill = root.querySelector('.mvp__progress-fill');
+  const current = root.querySelector('.mvp__current');
+  const duration = root.querySelector('.mvp__duration');
+  const timeBox = root.querySelector('.mvp__time');
+  const contentsBtn = root.querySelector('.mvp__contents-btn');
+  const drawer = root.querySelector('.mvp__drawer');
+  const closeBtn = root.querySelector('.mvp__close');
+  const chaptersBox = root.querySelector('.mvp__chapters');
+
+  function formatTime(value){
+    const s = Math.max(0, Math.floor(Number(value) || 0));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const sec = String(s % 60).padStart(2,'0');
+    return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
+  }
+
+  chaptersBox.innerHTML = chapters.map((ch,i)=>`
+    <button class="mvp__chapter" type="button" data-index="${i}">
+      <span class="mvp__chapter-time">${formatTime(ch.at)}</span>
+      <span class="mvp__chapter-title">${ch.title}</span>
+    </button>
+  `).join('');
+
+  const chapterButtons = [...root.querySelectorAll('.mvp__chapter')];
+
+  function applyModules(){
+    if (!MODULES.contents) {
+      contentsBtn.hidden = true;
+      drawer.hidden = true;
+    }
+
+    timeBox.hidden = false;
+    if (MODULES.acceleratedProgress) {
+      root.querySelector('.mvp__sep').hidden = true;
+      root.querySelector('.mvp__duration').hidden = true;
+    } else {
+      root.querySelector('.mvp__sep').hidden = false;
+      root.querySelector('.mvp__duration').hidden = false;
+    }
+
+    if (MODULES.autoplay) {
+      video.muted = true;
+      soundCard.hidden = false;
+      bigPlay.hidden = true;
+
+      const start = () => {
+        video.play().catch(()=>{});
+      };
+
+      if (video.readyState >= 2) start();
+      else video.addEventListener('canplay', start, {once:true});
+    } else {
+      soundCard.hidden = true;
+      bigPlay.hidden = false;
+    }
+
+    if (MODULES.analytics) {
+      initAnalytics();
+    }
+  }
+
+  function visualProgress(realRatio){
+    const x = Math.max(0, Math.min(1, realRatio));
+
+    if (!MODULES.acceleratedProgress) return x;
+
+    const multiplier = Math.max(1, Number(PROGRESS_CONFIG.speedMultiplier) || 1);
+    return 1 - Math.pow(1 - x, multiplier);
+  }
+
+  function updatePlayUI(){
+    const playing = !video.paused && !video.ended;
+    root.classList.toggle('mvp--playing', playing);
+    playBtn.innerHTML = playing
+      ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>'
+      : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8c0-1.2 1.3-1.9 2.3-1.2l10.2 7.2c.9.6.9 1.9 0 2.5L9.3 20.5C8.3 21.2 7 20.5 7 19.3V4.8z"/></svg>';
+
+    if (!MODULES.autoplay) {
+      bigPlay.hidden = playing;
+    }
+  }
+
+  function togglePlay(){
+    if(video.paused) video.play().catch(()=>{});
+    else video.pause();
+  }
+
+  function updateProgress(){
+    const d = video.duration;
+    const t = video.currentTime || 0;
+
+    current.textContent = formatTime(t);
+    duration.textContent = Number.isFinite(d) ? formatTime(d) : '0:00';
+
+    if(Number.isFinite(d) && d > 0){
+      const realRatio = Math.max(0, Math.min(1, t / d));
+      const shownRatio = visualProgress(realRatio);
+      progressFill.style.width = `${shownRatio * 100}%`;
+    }
+
+    let active = -1;
+    chapters.forEach((ch,i)=>{ if(t >= ch.at) active = i; });
+    chapterButtons.forEach((btn,i)=>btn.classList.toggle('is-active', i===active));
+  }
+
+  function enableSoundAndWatch(){
+    if (MODULES.autoplay) {
+      video.currentTime = 0;
+    }
+    video.muted = false;
+    soundCard.hidden = true;
+    video.play().catch(()=>{});
+  }
+
+  bigPlay.addEventListener('click', togglePlay);
+  playBtn.addEventListener('click', togglePlay);
+  video.addEventListener('click', ()=>{
+    if (MODULES.autoplay && !soundCard.hidden) {
+      enableSoundAndWatch();
+    } else {
+      togglePlay();
+    }
+  });
+  soundCard.addEventListener('click', enableSoundAndWatch);
+
+  video.addEventListener('play', updatePlayUI);
+  video.addEventListener('pause', updatePlayUI);
+  video.addEventListener('ended', updatePlayUI);
+  video.addEventListener('timeupdate', updateProgress);
+  video.addEventListener('loadedmetadata', updateProgress);
+
+  muteBtn.addEventListener('click', ()=>{
+    video.muted = !video.muted;
+    volumeSlider.value = video.muted ? 0 : video.volume;
+  });
+
+  volumeSlider.addEventListener('input', ()=>{
+    video.volume = Number(volumeSlider.value);
+    video.muted = video.volume === 0;
+  });
+
+  progress.addEventListener('click', event=>{
+    if (!Number.isFinite(video.duration) || video.duration <= 0) return;
+    const box = progress.getBoundingClientRect();
+    video.currentTime = Math.max(0, Math.min(1, (event.clientX-box.left)/box.width)) * video.duration;
+  });
+
+  captionsBtn.addEventListener('click', ()=>{
+    const tracks = [...video.textTracks];
+    const enable = !tracks.some(track=>track.mode === 'showing');
+    tracks.forEach((track,index)=>{ track.mode = enable && index === 0 ? 'showing' : 'disabled'; });
+    captionsBtn.classList.toggle('is-active', enable && tracks.length > 0);
+  });
+
+  pipBtn.addEventListener('click', async()=>{
+    try {
+      if (document.pictureInPictureElement) await document.exitPictureInPicture();
+      else if (document.pictureInPictureEnabled) await video.requestPictureInPicture();
+    } catch(e) {}
+  });
+
+  video.addEventListener('waiting', ()=>{ loader.hidden = false; });
+  video.addEventListener('seeking', ()=>{ loader.hidden = false; });
+  ['playing','canplay','seeked','error'].forEach(eventName=>{
+    video.addEventListener(eventName, ()=>{ loader.hidden = true; });
+  });
+
+  const speedOptions = [
+    {v:1,l:'x 1'},
+    {v:1.25,l:'x 1.25'},
+    {v:1.5,l:'x 1.5'},
+    {v:1.75,l:'x 1.75'},
+    {v:2,l:'x 2'}
+  ];
+
+  speedList.innerHTML = speedOptions.map(s=>`
+    <button class="mvp__speed-option ${s.v===1?'is-active':''}" type="button" data-speed="${s.v}">
+      <span>${s.l}</span>
+    </button>
+  `).join('');
+
+  const speedButtons = [...root.querySelectorAll('.mvp__speed-option')];
+
+  const initialSource = video.currentSrc || video.getAttribute('src');
+  const qualityOptions = QUALITY_OPTIONS
+    .map(item=>({ ...item, url:item.url || (item.id === 'original' ? initialSource : '') }))
+    .filter(item=>item.url);
+
+  qualityList.innerHTML = qualityOptions.map((item,index)=>`
+    <button class="mvp__quality-option ${index===0?'is-active':''}" type="button" data-quality="${item.id}">
+      <span>${item.label}</span>
+    </button>
+  `).join('');
+  const qualityButtons = [...root.querySelectorAll('.mvp__quality-option')];
+
+  function closeSettingsPanels(){
+    settingsPanel.hidden = true;
+    speedPanel.hidden = true;
+    qualityPanel.hidden = true;
+  }
+
+  function setSpeed(value){
+    video.playbackRate = value;
+    const item = speedOptions.find(s=>s.v===value) || speedOptions[0];
+    speedValue.textContent = item.l + ' ›';
+    speedInline.textContent = `x ${value}`;
+    speedButtons.forEach(btn=>btn.classList.toggle('is-active', Number(btn.dataset.speed)===value));
+    speedPanel.hidden = true;
+  }
+
+  function setQuality(id){
+    const item = qualityOptions.find(option=>option.id===id);
+    if (!item || item.url === (video.currentSrc || video.src)) {
+      qualityPanel.hidden = true;
+      return;
+    }
+
+    const savedTime = video.currentTime || 0;
+    const wasPlaying = !video.paused;
+    const wasMuted = video.muted;
+    const savedRate = video.playbackRate;
+    video.src = item.url;
+    video.load();
+    video.addEventListener('loadedmetadata', ()=>{
+      video.currentTime = Math.min(savedTime, Number.isFinite(video.duration) ? video.duration : savedTime);
+      video.muted = wasMuted;
+      video.playbackRate = savedRate;
+      if (wasPlaying) video.play().catch(()=>{});
+    }, {once:true});
+    qualityValue.textContent = item.label + ' ›';
+    qualityButtons.forEach(btn=>btn.classList.toggle('is-active', btn.dataset.quality===id));
+    qualityPanel.hidden = true;
+  }
+
+  speedInline.addEventListener('click', ()=>{
+    settingsPanel.hidden = true;
+    qualityPanel.hidden = true;
+    speedPanel.hidden = !speedPanel.hidden;
+  });
+
+  settingsBtn.addEventListener('click', ()=>{
+    speedPanel.hidden = true;
+    qualityPanel.hidden = true;
+    settingsPanel.hidden = !settingsPanel.hidden;
+  });
+
+  speedRow.addEventListener('click', ()=>{
+    settingsPanel.hidden = true;
+    qualityPanel.hidden = true;
+    speedPanel.hidden = false;
+  });
+
+  qualityRow.addEventListener('click', ()=>{
+    settingsPanel.hidden = true;
+    speedPanel.hidden = true;
+    qualityPanel.hidden = false;
+  });
+
+  speedButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>setSpeed(Number(btn.dataset.speed)));
+  });
+
+  qualityButtons.forEach(btn=>{
+    btn.addEventListener('click', ()=>setQuality(btn.dataset.quality));
+  });
+
+  fullscreenBtn.addEventListener('click', ()=>{
+    if(document.fullscreenElement) document.exitFullscreen?.();
+    else root.requestFullscreen?.();
+  });
+
+  contentsBtn.addEventListener('click', ()=>{
+    if (!MODULES.contents) return;
+    closeSettingsPanels();
+    root.classList.toggle('mvp--drawer-open');
+  });
+  closeBtn.addEventListener('click', ()=>root.classList.remove('mvp--drawer-open'));
+
+  document.addEventListener('click', event=>{
+    if (!root.contains(event.target)) closeSettingsPanels();
+  });
+  document.addEventListener('keydown', event=>{
+    if (event.key === 'Escape') {
+      closeSettingsPanels();
+      root.classList.remove('mvp--drawer-open');
+    }
+  });
+
+  chapterButtons.forEach((btn,i)=>{
+    btn.addEventListener('click', ()=>{
+      video.currentTime = chapters[i].at;
+      video.play().catch(()=>{});
+      root.classList.remove('mvp--drawer-open');
+    });
+  });
+
+  function initAnalytics(){
+    const STORAGE_PREFIX = 'mvp_analytics_v1';
+    const viewerKey = `${STORAGE_PREFIX}:viewer_id`;
+    const stateKey = `${STORAGE_PREFIX}:${ANALYTICS_CONFIG.videoId}`;
+
+    let viewerId = localStorage.getItem(viewerKey);
+    if (!viewerId) {
+      viewerId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
+      localStorage.setItem(viewerKey, viewerId);
+    }
+
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(stateKey) || '{}'); } catch(e) {}
+
+    const watched = new Set(Array.isArray(state.watchedBuckets) ? state.watchedBuckets : []);
+    let engaged = false;
+    let lastT = null;
+    let heartbeat = 0;
+
+    function persist(){
+      state.lastPosition = Math.floor((video.currentTime || 0)/5)*5;
+      state.maxPosition = Math.max(state.maxPosition || 0, state.lastPosition);
+      state.watchedBuckets = [...watched].sort((a,b)=>a-b);
+      localStorage.setItem(stateKey, JSON.stringify(state));
+    }
+
+    function send(event, extra={}){
+      persist();
+      const payload = {
+        event,
+        viewer_id: viewerId,
+        video_id: ANALYTICS_CONFIG.videoId,
+        ts: new Date().toISOString(),
+        last_position_sec: state.lastPosition || 0,
+        max_position_sec: state.maxPosition || 0,
+        watched_buckets_5s: state.watchedBuckets || [],
+        ...extra
+      };
+
+      root.dispatchEvent(new CustomEvent('mvp:analytics', {detail:payload}));
+      if (ANALYTICS_CONFIG.endpoint) {
+        fetch(ANALYTICS_CONFIG.endpoint, {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify(payload),
+          keepalive:true
+        }).catch(()=>{});
+      }
+    }
+
+    root.addEventListener('click', e=>{
+      if (!engaged && (
+        e.target === video ||
+        e.target.closest('.mvp__big-play') ||
+        e.target.closest('.mvp__play') ||
+        e.target.closest('.mvp__sound-card')
+      )) {
+        engaged = true;
+        send('video_engaged');
+      }
+    }, true);
+
+    video.addEventListener('timeupdate', ()=>{
+      const t = video.currentTime || 0;
+
+      if (!video.paused && lastT !== null) {
+        const delta = t - lastT;
+        if (delta > 0 && delta <= 2) {
+          const from = Math.floor(lastT / ANALYTICS_CONFIG.bucketSizeSec);
+          const to = Math.floor(t / ANALYTICS_CONFIG.bucketSizeSec);
+          for(let b=from;b<=to;b++) watched.add(b*ANALYTICS_CONFIG.bucketSizeSec);
+        }
+      }
+
+      lastT = t;
+      persist();
+
+      if (engaged && Date.now() - heartbeat >= ANALYTICS_CONFIG.heartbeatSec * 1000) {
+        heartbeat = Date.now();
+        send('video_progress');
+      }
+
+      if (Number.isFinite(video.duration) && video.duration > 0) {
+        if (!state.completed && t / video.duration >= ANALYTICS_CONFIG.completionThreshold) {
+          state.completed = true;
+          send('video_complete');
+        }
+      }
+    });
+
+    window.addEventListener('pagehide', ()=>{
+      send('video_exit');
+    });
+  }
+
+  applyModules();
+  updatePlayUI();
+  updateProgress();
+})();
+</script>

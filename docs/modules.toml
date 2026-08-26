@@ -228,6 +228,7 @@ owns_files = [
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
   "backend/app/static/video-player-preview.html", "backend/app/static/video-player.css",
   "backend/app/static/video-player.js",
+  "backend/app/static/video-player-development/**",
   "backend/tests/test_masterclass_journey.py",
   "backend/tests/test_masterclass_unlock_schedule.py",
   "backend/migrations/versions/20260822_0015_masterclass_journey.py",
