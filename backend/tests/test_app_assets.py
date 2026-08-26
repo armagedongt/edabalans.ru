@@ -382,6 +382,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
     assert "DQS_CATEGORY_ROWS" in course
+    assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-tables'" in course
     assert "renderDqsEmbeds(parts.body)" in course
     assert "bindDqsExampleGalleries(document.querySelector('#article'))" in course
 

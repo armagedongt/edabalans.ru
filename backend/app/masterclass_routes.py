@@ -735,7 +735,7 @@ def course_content(
         raise HTTPException(404, "masterclass content not found")
     media_type = "application/json" if path.suffix == ".json" else "text/plain"
     response = FileResponse(path, media_type=media_type)
-    response.headers["Cache-Control"] = "private, max-age=300"
+    response.headers["Cache-Control"] = "private, no-cache"
     return response
 
 
