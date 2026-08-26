@@ -155,6 +155,12 @@ def test_shared_content_gallery_asset_is_public_without_captions() -> None:
     assert response.status_code == 200
     assert "window.EdabalansContentGallery" in response.text
     assert "eb-content-gallery__lightbox" in response.text
+    assert "flex:0 0 85%" in response.text
+    assert "max-height:90vh" in response.text
+    assert "max-width:85vw" in response.text
+    assert "overflow-x:auto" in response.text
+    assert "Листайте → " in response.text
+    assert "scrollToImage" in response.text
     assert "figcaption" not in response.text
 
 
@@ -398,7 +404,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "XXXXXXXXXXXXXXXXXXXX" not in dqs_source
 
     course = client.get("/apps/masterclass-course.html").text
-    assert 'src="/assets/content-gallery.js"' in course
+    assert 'src="/assets/content-gallery.js?v=source-slider"' in course
     assert "renderContentEmbeds" in course
     assert 'id="course-tutorial"' in course
     tutorial = course[course.index("function tutorialPreview"):course.index("function openTutorial")]
