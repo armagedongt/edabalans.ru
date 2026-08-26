@@ -444,7 +444,6 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "card.scrollTop=0" in tutorial
     assert "tutorialStep++;renderTutorial()" in course
     assert "tutorialStep--;renderTutorial()" in course
-    assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
     assert "DQS_CATEGORY_ROWS" in course
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
@@ -491,6 +490,20 @@ def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> No
     assert "Черновик · требуется редактура" not in course_html
     assert "draft-badge" not in course_html
     assert ".topic.draft" not in course_html
+
+
+def test_masterclass_plain_images_have_no_caption_or_decorative_container() -> None:
+    root = Path(__file__).resolve().parents[2]
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+
+    assert '<img class="day-media-image"' in course_html
+    assert '<div class="media image"' not in course_html
+    assert 'class="caption"' not in course_html
+    assert ".media.image" not in course_html
+    assert "box.querySelectorAll('figcaption')" in course_html
+    assert "img.classList.add('article-inline-image')" in course_html
 
 
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
