@@ -337,6 +337,18 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "target.focus({preventScroll:true})" in course_html
     assert "event.target.closest('#mobile-article-toc-popover')" in course_html
     assert "atPageEnd=window.innerHeight+window.scrollY" in course_html
+    assert (
+        "articleTocHeadings[0].textContent.trim().toLocaleLowerCase('ru-RU')===titleText)"
+        "articleTocHeadings.shift()"
+    ) in course_html
+    assert (
+        '.article-toc-popover a::before,.mobile-article-toc-popover a::before'
+        '{content:"•"'
+    ) in course_html
+    assert (
+        ".article-toc-popover a:hover,.mobile-article-toc-popover a:hover"
+        "{background:#f0ebe2;color:var(--ink)}"
+    ) in course_html
 
     static_dir = root / "backend" / "app" / "static"
     editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")
