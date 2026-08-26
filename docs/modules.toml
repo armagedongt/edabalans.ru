@@ -196,6 +196,7 @@ owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/managed_documents.py", "backend/app/static/course-editors.html",
   "backend/app/static/course-structure-editor.*",
+  "backend/tests/test_course_structure_multiline.py",
   "content/masterclass/**", "docs/knowledge-base/modules/masterclass/COURSE_DESIGN_SYSTEM.md",
   "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
   "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
