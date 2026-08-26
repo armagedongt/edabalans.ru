@@ -27,14 +27,17 @@ jobs:
       - name: Test module inventory
         run: python3 -m unittest discover -s tools/tests -v
 
-      - name: Validate module inventory
+      - name: Build module inventory for tests
         shell: bash
         run: |
           before="${{ github.event.before }}"
           if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
             before="HEAD^"
           fi
-          python3 tools/module_inventory.py --check --base "$before" --head "$GITHUB_SHA"
+          # The map is a build output, not a second source of truth. Recreate it from
+          # this exact commit before tests and the Docker build instead of rejecting a
+          # normal feature only because a parallel commit changed generated files.
+          python3 tools/module_inventory.py --tracked-only --base "$before" --head "$GITHUB_SHA"
 
       - name: Validate Docker Compose
         run: docker compose --env-file .env.example config --quiet

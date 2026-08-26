@@ -62,10 +62,20 @@ def _run_git(repo: Path, *args: str) -> list[str]:
     return [line for line in result.stdout.splitlines() if line]
 
 
-def tracked_inputs(repo: Path, derived_outputs: Iterable[str]) -> list[str]:
-    """Return tracked plus local untracked inputs, excluding generated outputs."""
+def tracked_inputs(
+    repo: Path,
+    derived_outputs: Iterable[str],
+    *,
+    include_untracked: bool = True,
+) -> list[str]:
+    """Return tracked inputs, optionally with local untracked files, excluding outputs."""
     derived = {posix_path(path) for path in derived_outputs}
-    files = _run_git(repo, "ls-files", "--cached", "--others", "--exclude-standard")
+    args = (
+        ("ls-files", "--cached", "--others", "--exclude-standard")
+        if include_untracked
+        else ("ls-files", "--cached")
+    )
+    files = _run_git(repo, *args)
     return sorted({posix_path(path) for path in files if posix_path(path) not in derived})
 
 
@@ -613,7 +623,12 @@ def validate_registry(repo: Path, registry: dict[str, Any]) -> tuple[list[dict[s
     return normalized, errors
 
 
-def build_inventory(repo: Path, registry: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
+def build_inventory(
+    repo: Path,
+    registry: dict[str, Any],
+    *,
+    include_untracked: bool = True,
+) -> tuple[dict[str, Any], list[str]]:
     modules, errors = validate_registry(repo, registry)
     raw_modules = registry["modules"]
     module_ids = {module["id"] for module in raw_modules}
@@ -621,7 +636,11 @@ def build_inventory(repo: Path, registry: dict[str, Any]) -> tuple[dict[str, Any
     file_rules = _module_rules(raw_modules, "owns_files")
     files: list[dict[str, Any]] = []
     file_owner: dict[str, str] = {}
-    inputs = tracked_inputs(repo, registry["derived_outputs"])
+    inputs = tracked_inputs(
+        repo,
+        registry["derived_outputs"],
+        include_untracked=include_untracked,
+    )
     for relative_path in inputs:
         try:
             owner = card_owner.get(relative_path) or resolve_owner(relative_path, file_rules, object_kind="file")
@@ -901,6 +920,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--base", help="Explicit Git base for the impact report")
     parser.add_argument("--head", help="Explicit Git head for the impact report")
     parser.add_argument("--working-tree", action="store_true", help="Compare base with index/worktree/untracked files")
+    parser.add_argument(
+        "--tracked-only",
+        action="store_true",
+        help="Build from the checked-out Git commit, ignoring host-local untracked files",
+    )
     return parser.parse_args(argv)
 
 
@@ -913,7 +937,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.head and args.working_tree:
             raise InventoryError("Use either --head or --working-tree, not both")
         registry = load_registry(repo)
-        inventory, errors = build_inventory(repo, registry)
+        inventory, errors = build_inventory(
+            repo,
+            registry,
+            include_untracked=not args.tracked_only,
+        )
         if not errors:
             errors.extend(write_or_check(repo, registry, inventory, args.check))
         report: list[str] = []

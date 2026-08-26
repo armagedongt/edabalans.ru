@@ -20,6 +20,11 @@ class DeployPolicyTests(unittest.TestCase):
             source,
         )
         self.assertIn("| bash -s --", source)
+        self.assertIn("python3 tools/module_inventory.py --tracked-only", source)
+        self.assertIn("if ! python3 tools/module_inventory.py --tracked-only; then", source)
+        self.assertGreaterEqual(
+            source.count('git checkout --quiet --force "${PREVIOUS_SHA}"'), 2
+        )
         self.assertIn("/usr/local/sbin/edabalans-deploy\n", source)
         self.assertIn("/usr/local/sbin/edabalans-deploy-poll\n", source)
 

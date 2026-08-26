@@ -50,6 +50,10 @@ rollback() {
             echo "Keeping ${TARGET_SHA} checked out for manual recovery with the matching migration files" >&2
         else
             git checkout --quiet --force "${PREVIOUS_SHA}"
+            if ! python3 tools/module_inventory.py --tracked-only; then
+                echo "Inventory refresh failed during rollback; restoring the previous containers with its checked-in map" >&2
+                git checkout --quiet --force "${PREVIOUS_SHA}"
+            fi
             docker compose build
             docker compose up -d --remove-orphans --wait --wait-timeout 180
         fi
@@ -65,6 +69,9 @@ fi
 
 deployment_started=true
 git checkout --quiet --force "${TARGET_SHA}"
+# Generated module views are rebuilt from this exact checked-out commit. They are
+# intentionally not a separate release gate or a reason for a follow-up commit.
+python3 tools/module_inventory.py --tracked-only
 docker compose config --quiet
 docker compose build --pull
 docker compose up -d --remove-orphans --wait --wait-timeout 180

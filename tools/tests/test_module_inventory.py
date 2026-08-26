@@ -419,6 +419,25 @@ owns_tables = ["users", "events"]
             )
             self.assertTrue(parsed["symbols"])
             self.assertEqual({"root"}, {item["module_id"] for item in parsed["symbols"]})
+
+            (repo / "scratch.py").write_text("x = 1\n", encoding="utf-8")
+            _, untracked_errors = inventory.build_inventory(repo, registry)
+            self.assertIn("file has no owner: scratch.py", untracked_errors)
+            tracked_only, errors = inventory.build_inventory(
+                repo, registry, include_untracked=False
+            )
+            self.assertEqual([], errors)
+            self.assertNotIn("scratch.py", {item["path"] for item in tracked_only["files"]})
+            self.assertEqual(0, inventory.main(["--repo", str(repo), "--tracked-only"]))
+
+            (repo / "orphan.py").write_text("x = 1\n", encoding="utf-8")
+            self._git(repo, "add", "orphan.py")
+            stderr = io.StringIO()
+            with contextlib.redirect_stderr(stderr):
+                exit_code = inventory.main(["--repo", str(repo), "--tracked-only"])
+            self.assertEqual(1, exit_code)
+            self.assertIn("file has no owner: orphan.py", stderr.getvalue())
+
             artifact.write_text("{}\n", encoding="utf-8")
             self.assertIn("stale", inventory.write_or_check(repo, registry, first, check=True)[0])
 
