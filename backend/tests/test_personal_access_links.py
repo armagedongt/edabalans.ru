@@ -4,7 +4,7 @@ from urllib.parse import parse_qs, urlparse
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
-os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
+os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, func, select  # noqa: E402
@@ -44,7 +44,7 @@ def setup():
         admin_username="admin@example.com",
         admin_password="test-admin-password",
     )
-    client = TestClient(app, base_url="https://testserver")
+    client = TestClient(app, base_url="https://edabalans.ru")
     with factory() as db:
         user = User(
             display_name="Исторический клиент",
