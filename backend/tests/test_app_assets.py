@@ -190,6 +190,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert 'id="masterclass-course-app"' in course.text
     assert "api/masterclass/course" in course.text
     assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
+    assert "step.questionnaireKind||'onboarding'" in course.text
+    assert "А какая у вас сейчас «диета»?" in course.text
+    assert "После отправки бот пришлёт заполненный список" in course.text
     assert "function openCourseStep" in course.text
     assert "function advanceCourseStep" in course.text
     assert "function renderCourseRoute" in course.text
@@ -407,16 +410,15 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert (
         dqs_source.count("> **Стандартная порция:")
         + dqs_source.count("> **Стандартные порции:")
-    ) == 16
+    ) == 12
     assert all(
         heading in dqs_source
         for heading in (
-            "## Что такое порция?",
-            "## Растения",
-            "## Источники белка",
-            "## Источники жиров",
-            "## Гарниры",
-            "## Вредные категории",
+            "## → Фрукты и Овощи",
+            "## → Мясо, птица, рыба, яйца и морепродукты",
+            "## → Масло и другие добавленные жиры",
+            "## → Цельные злаки",
+            "## Переходим к вредным категориям!",
             "## Шпаргалка по порциям",
             "## Примеры",
         )
@@ -449,6 +451,24 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "overflow-wrap:anywhere" in course
     assert "renderContentEmbeds(parts.body)" in course
     assert "window.EdabalansContentGallery.bind(document.querySelector('#article'))" in course
+
+
+def test_masterclass_second_day_contains_current_diet_questionnaire() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    step = manifest["days"][1]["steps"][2]
+    assert step["id"] == "day-02-current-diet"
+    assert step["kind"] == "questionnaire"
+    assert step["questionnaireKind"] == "current-diet"
+    assert step["label"] == "А какая у вас сейчас «диета»?"
+    assert step["summary"] == (
+        "Заполните небольшой опросник о ваших отношениях с разными "
+        "продуктовыми категориями."
+    )
 
 
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:

@@ -21,6 +21,15 @@ TRIGGERS = [
         "purpose": "Прислать заполненную стартовую анкету и попросить переслать её Сергею.",
     },
     {
+        "step_key": "pp_current_diet_questionnaire",
+        "content_code": "tpl_postpurchase_current_diet",
+        "title": "03 · День 2 — ответы по продуктовым категориям",
+        "trigger": "current_diet_questionnaire_completed",
+        "condition": "Опросник дня 2 отправлен; Telegram связан с клиентом",
+        "recipient": "Клиент, который заполнил опросник дня 2",
+        "purpose": "Прислать в Telegram структурированный список ответов по 16 продуктовым категориям.",
+    },
+    {
         "step_key": "pp_day_unopened_18h",
         "content_code": "tpl_postpurchase_day_unopened",
         "title": "03 · Новый день не открыт к 18:00",

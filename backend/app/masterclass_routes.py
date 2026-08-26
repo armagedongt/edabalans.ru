@@ -85,6 +85,25 @@ CLOSING_QUESTIONS = [
     ("consultation_format", "Формат разбора", "Голосовые сообщения или звонок? Если звонок — укажите удобные дни и время."),
 ]
 
+CURRENT_DIET_QUESTIONS = [
+    ("whole_grains", "Цельнозерновые крупы и хлеб", ""),
+    ("vegetables", "Овощи", ""),
+    ("fruits_berries", "Фрукты и ягоды", ""),
+    ("greens", "Зелень", ""),
+    ("legumes", "Бобовые", ""),
+    ("nuts_seeds", "Орехи и семена", ""),
+    ("animal_proteins", "Мясо, птица, рыба, яйца", ""),
+    ("dairy", "Молочные продукты", ""),
+    ("plant_oils", "Растительные масла", ""),
+    ("animal_fats", "Сливочное масло и животные жиры", ""),
+    ("sweets", "Сладости и десерты", ""),
+    ("snacks_fast_food", "Снеки и фастфуд", ""),
+    ("convenience_foods", "Полуфабрикаты", ""),
+    ("sugary_drinks", "Сладкие напитки", ""),
+    ("alcohol", "Алкоголь", ""),
+    ("water_unsweetened", "Вода и несладкие напитки", ""),
+]
+
 COURSE_APP_EVENTS = {
     "dqs": "dqs_opened",
     "recipes-part-1": "recipes_part_1_opened",
@@ -680,11 +699,14 @@ def course_manifest(
 
 
 def course_step_event(
-    context: CourseContext, day: int, index: int, kind: str
+    context: CourseContext, day: int, index: int, step: dict
 ) -> tuple[str, str | None]:
+    kind = step["kind"]
     if kind == "article":
         return "masterclass_article_completed", None
     if kind == "questionnaire":
+        if step.get("questionnaireKind") == "current-diet":
+            return "current_diet_questionnaire_completed", None
         return "onboarding_questionnaire_completed", None
     if kind == "messenger":
         return "masterclass_messenger_step_opened", None
@@ -808,7 +830,7 @@ def course_complete_step(
             completed_at=now,
         )
     )
-    event_type, placement = course_step_event(context, day, index, kind)
+    event_type, placement = course_step_event(context, day, index, step)
     course_event(
         db,
         user.id,
@@ -894,6 +916,7 @@ def course_update_check(
 
 def questions(kind: str) -> list[tuple[str, str, str]]:
     if kind == "onboarding": return ONBOARDING_QUESTIONS
+    if kind == "current-diet": return CURRENT_DIET_QUESTIONS
     if kind == "closing-review": return CLOSING_QUESTIONS
     raise HTTPException(404, "questionnaire not found")
 
@@ -1009,11 +1032,16 @@ def finish_questionnaire(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     if action not in {"submit", "skip"}: raise HTTPException(404, "action not found")
+    questions(kind)
     user = resolve_masterclass_user(request, db, body.email, settings)
     run = get_run(db, user.id, kind)
     run.status = "submitted" if action == "submit" else "skipped"
     run.submitted_at = datetime.now(timezone.utc)
-    event_type = "onboarding_questionnaire_completed" if kind == "onboarding" else "closing_review_submitted"
+    event_type = {
+        "onboarding": "onboarding_questionnaire_completed",
+        "current-diet": "current_diet_questionnaire_completed",
+        "closing-review": "closing_review_submitted",
+    }[kind]
     event_key = f"{event_type}:v{run.version}"
     event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == event_key))
     if not event:
@@ -1021,6 +1049,16 @@ def finish_questionnaire(
         db.add(event); db.flush()
     if kind == "closing-review" and action == "submit":
         queue_notification(db, user.id, event, "owner_closing_review", datetime.now(timezone.utc), payload={"run_id": str(run.id)})
+    if kind == "current-diet" and action == "submit":
+        queue_notification(
+            db,
+            user.id,
+            event,
+            "current_diet_questionnaire",
+            datetime.now(timezone.utc),
+            content_code="tpl_postpurchase_current_diet",
+            payload={"questionnaire_kind": kind, "run_id": str(run.id)},
+        )
     db.commit()
     return {"ok": True, "status": run.status, "messenger_link_status": "planned"}
 

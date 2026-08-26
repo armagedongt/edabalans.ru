@@ -29,7 +29,11 @@ from app.models import (
     QuestionnaireRun,
     UserOffer,
 )
-from app.masterclass_routes import CLOSING_QUESTIONS, ONBOARDING_QUESTIONS
+from app.masterclass_routes import (
+    CLOSING_QUESTIONS,
+    CURRENT_DIET_QUESTIONS,
+    ONBOARDING_QUESTIONS,
+)
 from app.product_identity import purchased_products, tariff_name
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
@@ -424,6 +428,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         kind: {code: title for code, title, _ in rows}
         for kind, rows in {
             "onboarding": ONBOARDING_QUESTIONS,
+            "current-diet": CURRENT_DIET_QUESTIONS,
             "closing-review": CLOSING_QUESTIONS,
         }.items()
     }

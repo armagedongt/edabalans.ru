@@ -97,6 +97,12 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         session.execute(text(
             "INSERT INTO questionnaire_answers VALUES ('run', 'main_request', 'Хочу устойчиво похудеть', CURRENT_TIMESTAMP)"
         ))
+        session.execute(text(
+            "INSERT INTO questionnaire_runs VALUES ('diet-run', :user_id, 'current-diet')"
+        ), {"user_id": user_id})
+        session.execute(text(
+            "INSERT INTO questionnaire_answers VALUES ('diet-run', 'vegetables', 'Овощи каждый день', CURRENT_TIMESTAMP)"
+        ))
         session.commit()
 
         values = client_values(
@@ -105,7 +111,7 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
             "https://example.test/offers",
             "https://example.test/course",
             "https://example.test/account",
-            "{{email}} {{masterclass_tariff}} {{questionnaire_formatted}}",
+            "{{email}} {{masterclass_tariff}} {{questionnaire_formatted}} {{current_diet_formatted}}",
         )
 
         assert values["email"] == "buyer@example.com"
@@ -113,6 +119,9 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         assert "Главный запрос" in values["questionnaire_formatted"]
         assert "<b>Главный запрос:</b>" in values["questionnaire_formatted"]
         assert "main_request" not in values["questionnaire_formatted"]
+        assert "<b>2. Овощи:</b>" in values["current_diet_formatted"]
+        assert "Овощи каждый день" in values["current_diet_formatted"]
+        assert "vegetables" not in values["current_diet_formatted"]
 
 
 def test_long_telegram_summary_splits_on_paragraphs():

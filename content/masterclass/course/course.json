@@ -63,8 +63,9 @@
       "nextTitle": "Что такое вредная еда", "nextTeaser": "Перейдём к ограничениям, этикеткам и составам.", "recipeDay": false, "publicationStatus": "ready",
       "steps": [
         {"id":"day-02-article-01","kind":"article","title":"Четыре категории \"диет\" и чем они принципиально отличаются","shortTitle":"Четыре категории диет","summary":"Четыре типа диет и их задачи.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
-        {"id":"day-02-article-02","kind":"article","title":"Как на самом деле выглядит средиземноморская диета и почему она нам тоже не подходит","shortTitle":"Средиземноморская диета","summary":"Почему полезный шаблон подходит не всем.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"}
-      ], "implementation": {"notes":["Два самостоятельных материала."],"triggers":[]}
+        {"id":"day-02-article-02","kind":"article","title":"Как на самом деле выглядит средиземноморская диета и почему она нам тоже не подходит","shortTitle":"Средиземноморская диета","summary":"Почему полезный шаблон подходит не всем.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
+        {"id":"day-02-current-diet","kind":"questionnaire","questionnaireKind":"current-diet","completion":"submitted","label":"А какая у вас сейчас «диета»?","shortTitle":"А какая у вас сейчас «диета»?","summary":"Заполните небольшой опросник о ваших отношениях с разными продуктовыми категориями.","durationMinutes":12,"required":true}
+      ], "implementation": {"notes":["Две статьи и отдельный опросник по продуктовым категориям.","После отправки опросника заполненный список ставится в очередь для отправки в привязанный Telegram."],"triggers":["current_diet_questionnaire_completed"]}
     },
     {
       "number": 3, "slug": "day-03", "kicker": "Без чёрных списков", "title": "Что такое вредная еда на самом деле", "shortTitle": "Что такое вредная еда", "tocSummary": "Вредная еда, этикетки и необходимые ограничения.",

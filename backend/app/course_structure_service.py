@@ -421,6 +421,61 @@ def publish_course_structure(
     )
 
 
+def merge_seed_additions(current: dict, seed: dict, next_version: int) -> dict:
+    """Add chat-managed seed steps without overwriting editor-owned course copy."""
+    result = normalize_seed(current)
+    seed_days = {int(day["number"]): day for day in normalize_seed(seed)["days"]}
+    for day in result["days"]:
+        seed_day = seed_days[int(day["number"])]
+        merged_steps = list(day.get("steps", []))
+        seed_steps = list(seed_day.get("steps", []))
+        for seed_index, seed_step in enumerate(seed_steps):
+            existing_ids = [step["id"] for step in merged_steps]
+            if seed_step["id"] in existing_ids:
+                continue
+            added = deepcopy(seed_step)
+            added["requiredForAllAfterRevision"] = next_version
+            following = next(
+                (
+                    item["id"] for item in seed_steps[seed_index + 1:]
+                    if item["id"] in existing_ids
+                ),
+                None,
+            )
+            if following is not None:
+                merged_steps.insert(existing_ids.index(following), added)
+                continue
+            preceding = next(
+                (
+                    item["id"] for item in reversed(seed_steps[:seed_index])
+                    if item["id"] in existing_ids
+                ),
+                None,
+            )
+            insert_at = existing_ids.index(preceding) + 1 if preceding else len(merged_steps)
+            merged_steps.insert(insert_at, added)
+        day["steps"] = merged_steps
+    return result
+
+
+def publish_course_seed_additions(db: Session, *, admin: str) -> ManagedDocumentVersion:
+    current = active_course_version(db)
+    payload = merge_seed_additions(
+        current.payload,
+        seed_manifest(),
+        current.version_no + 1,
+    )
+    return publish_document(
+        db,
+        document_type=DOCUMENT_TYPE,
+        document_key=DOCUMENT_KEY,
+        schema_version=MANAGED_SCHEMA_VERSION,
+        payload=payload,
+        expected_version=current.version_no,
+        admin=admin,
+    )
+
+
 def prepare_restore_payload(source: dict, current: dict, next_version: int) -> dict:
     restored = deepcopy(source)
     restored_days = {int(day["number"]): day for day in restored["days"]}

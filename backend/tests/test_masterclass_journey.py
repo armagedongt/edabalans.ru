@@ -29,7 +29,7 @@ from app.course_structure_service import (  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
-    QuestionnaireAnswer, Resource, User, UserAccess, UserEmail,
+    QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail,
     UserLegalAcceptance, UserOffer,
 )
 from scripts.generate_masterclass_offer_simulator import (  # noqa: E402
@@ -423,6 +423,54 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
         assert db.scalar(select(func.count(QuestionnaireAnswer.id))) == 1
         assert db.scalar(select(QuestionnaireAnswer.answer_text)) == "Обновлённый ответ"
         assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
+
+
+def test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result():
+    client, factory = setup()
+    opened = client.get(
+        "/api/masterclass/questionnaires/current-diet?email=member@example.test"
+    )
+    assert opened.status_code == 200
+    questions = opened.json()["questions"]
+    assert len(questions) == 16
+    assert questions[0]["title"] == "Цельнозерновые крупы и хлеб"
+    assert questions[-1]["title"] == "Вода и несладкие напитки"
+
+    payload = {
+        "email": "member@example.test",
+        "question_code": "vegetables",
+        "answer_text": "Огурцы и помидоры почти каждый день",
+    }
+    assert client.put(
+        "/api/masterclass/questionnaires/current-diet/answer", json=payload
+    ).status_code == 200
+    for _ in range(2):
+        assert client.post(
+            "/api/masterclass/questionnaires/current-diet/submit",
+            json={"email": "member@example.test"},
+        ).status_code == 200
+
+    with factory() as db:
+        run = db.scalar(
+            select(QuestionnaireRun).where(QuestionnaireRun.kind == "current-diet")
+        )
+        assert run is not None
+        assert run.status == "submitted"
+        assert db.scalar(
+            select(QuestionnaireAnswer.answer_text).where(
+                QuestionnaireAnswer.run_id == run.id,
+                QuestionnaireAnswer.question_code == "vegetables",
+            )
+        ) == "Огурцы и помидоры почти каждый день"
+        notifications = list(db.scalars(select(MasterclassNotification)))
+        assert len(notifications) == 1
+        assert notifications[0].notification_kind == "current_diet_questionnaire"
+        assert notifications[0].content_code == "tpl_postpurchase_current_diet"
+        assert db.scalar(
+            select(func.count(MasterclassEvent.id)).where(
+                MasterclassEvent.event_type == "current_diet_questionnaire_completed"
+            )
+        ) == 1
 
 
 def test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes():

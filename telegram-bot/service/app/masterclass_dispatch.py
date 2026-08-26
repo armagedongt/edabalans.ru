@@ -39,6 +39,27 @@ ONBOARDING_QUESTION_TITLES = {
     "attribution": "Как вы узнали о Сергее",
 }
 ONBOARDING_QUESTION_ORDER = {code: index for index, code in enumerate(ONBOARDING_QUESTION_TITLES)}
+CURRENT_DIET_QUESTION_TITLES = {
+    "whole_grains": "Цельнозерновые крупы и хлеб",
+    "vegetables": "Овощи",
+    "fruits_berries": "Фрукты и ягоды",
+    "greens": "Зелень",
+    "legumes": "Бобовые",
+    "nuts_seeds": "Орехи и семена",
+    "animal_proteins": "Мясо, птица, рыба, яйца",
+    "dairy": "Молочные продукты",
+    "plant_oils": "Растительные масла",
+    "animal_fats": "Сливочное масло и животные жиры",
+    "sweets": "Сладости и десерты",
+    "snacks_fast_food": "Снеки и фастфуд",
+    "convenience_foods": "Полуфабрикаты",
+    "sugary_drinks": "Сладкие напитки",
+    "alcohol": "Алкоголь",
+    "water_unsweetened": "Вода и несладкие напитки",
+}
+CURRENT_DIET_QUESTION_ORDER = {
+    code: index for index, code in enumerate(CURRENT_DIET_QUESTION_TITLES)
+}
 MASTERCLASS_TARIFFS = {
     "MASTERCLASS_BASIC": "Минимальный",
     "MASTERCLASS_RECIPES": "Стандартный",
@@ -244,6 +265,34 @@ def rendered(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
     )
 
 
+def questionnaire_formatted(
+    session: Session,
+    user_id: str,
+    kind: str,
+    titles: dict[str, str],
+    order: dict[str, int],
+    empty_text: str,
+    *,
+    numbered: bool = False,
+) -> str:
+    answers = session.execute(
+        text(
+            "SELECT qa.question_code, qa.answer_text FROM questionnaire_runs qr "
+            "JOIN questionnaire_answers qa ON qa.run_id=qr.id "
+            "WHERE qr.user_id=:user_id AND qr.kind=:kind "
+            "ORDER BY qa.updated_at, qa.question_code"
+        ),
+        {"user_id": user_id, "kind": kind},
+    ).all()
+    return "\n\n".join(
+        f"<b>{str(order.get(str(code), 999) + 1) + '. ' if numbered else ''}{escape(titles.get(str(code), str(code)), quote=True)}:</b>\n{escape(str(answer), quote=True)}"
+        for code, answer in sorted(
+            answers, key=lambda row: order.get(str(row[0]), 999)
+        )
+        if str(answer or "").strip()
+    ) or empty_text
+
+
 def client_values(
     session: Session,
     contact: Contact,
@@ -258,7 +307,7 @@ def client_values(
         "account_url": escape(account_url or course_url, quote=True),
         "offer_expires_at": "срок указан на странице предложения",
     }
-    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}")
+    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}", "{{current_diet_formatted}}")
     if not any(key in template_body for key in identity_keys):
         return values
     email = session.execute(
@@ -282,20 +331,23 @@ def client_values(
         ),
         {"user_id": contact.user_id},
     ).first()
-    answers = session.execute(
-        text(
-            "SELECT qa.question_code, qa.answer_text FROM questionnaire_runs qr "
-            "JOIN questionnaire_answers qa ON qa.run_id=qr.id "
-            "WHERE qr.user_id=:user_id AND qr.kind='onboarding' "
-            "ORDER BY qa.updated_at, qa.question_code"
-        ),
-        {"user_id": contact.user_id},
-    ).all()
-    questionnaire = "\n\n".join(
-        f"<b>{escape(ONBOARDING_QUESTION_TITLES.get(str(code), str(code)), quote=True)}:</b>\n{escape(str(answer), quote=True)}"
-        for code, answer in sorted(answers, key=lambda row: ONBOARDING_QUESTION_ORDER.get(str(row[0]), 999))
-        if str(answer or "").strip()
-    ) or "Стартовая анкета пока не заполнена. Откройте её в первом дне Мастер-класса."
+    questionnaire = questionnaire_formatted(
+        session,
+        contact.user_id,
+        "onboarding",
+        ONBOARDING_QUESTION_TITLES,
+        ONBOARDING_QUESTION_ORDER,
+        "Стартовая анкета пока не заполнена. Откройте её в первом дне Мастер-класса.",
+    )
+    current_diet = questionnaire_formatted(
+        session,
+        contact.user_id,
+        "current-diet",
+        CURRENT_DIET_QUESTION_TITLES,
+        CURRENT_DIET_QUESTION_ORDER,
+        "Опросник по продуктовым категориям пока не заполнен.",
+        numbered=True,
+    )
     paid_at = payment[1] if payment else None
     if paid_at and not isinstance(paid_at, datetime):
         try:
@@ -309,6 +361,7 @@ def client_values(
         "masterclass_tariff": escape(MASTERCLASS_TARIFFS.get(str(payment[0]) if payment else "", "Тариф уточняется"), quote=True),
         "purchase_date": paid_at.strftime("%d.%m.%Y") if paid_at else "дата не указана",
         "questionnaire_formatted": questionnaire,
+        "current_diet_formatted": current_diet,
     }
 
 
