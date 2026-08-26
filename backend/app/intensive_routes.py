@@ -1,9 +1,6 @@
 from __future__ import annotations
 
 import hashlib
-from html import escape
-from html.parser import HTMLParser
-from urllib.parse import urlparse
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
@@ -12,18 +9,13 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.auth import require_admin
+from app.article_markup import sanitize_article_html
 from app.database import get_db
 from app.models import ContentItem, ContentItemVersion, ContentSource
 
 
 router = APIRouter()
 DAY_CODES = {"day-1", "day-2", "day-3", "day-4"}
-ALLOWED_TAGS = {
-    "h1", "h2", "h3", "p", "div", "ul", "ol", "li", "strong", "em",
-    "a", "blockquote", "aside", "img", "br", "hr",
-}
-VOID_TAGS = {"img", "br", "hr"}
-BLOCKED_TAGS = {"script", "style", "iframe", "object", "svg", "math"}
 SOURCE_PLATFORM = "internal"
 SOURCE_ACCOUNT_KEY = "free-intensive"
 DAY_TITLES = {
@@ -37,79 +29,6 @@ DAY_TITLES = {
 class IntensivePageUpdate(BaseModel):
     html: str = Field(min_length=1, max_length=250_000)
     version: int = Field(ge=0)
-
-
-class ArticleSanitizer(HTMLParser):
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.parts: list[str] = []
-        self.blocked_depth = 0
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        tag = tag.lower()
-        if tag in BLOCKED_TAGS:
-            self.blocked_depth += 1
-            return
-        if self.blocked_depth or tag not in ALLOWED_TAGS:
-            return
-        rendered_attrs = ""
-        if tag == "a":
-            href = next((value for name, value in attrs if name.lower() == "href"), None)
-            if href and safe_href(href):
-                rendered_attrs = f' href="{escape(href, quote=True)}"'
-        elif tag == "img":
-            src = next((value for name, value in attrs if name.lower() == "src"), None)
-            if not src or not safe_image_src(src):
-                return
-            alt = next((value for name, value in attrs if name.lower() == "alt"), "") or ""
-            rendered_attrs = (
-                f' src="{escape(src.strip(), quote=True)}"'
-                f' alt="{escape(alt[:500], quote=True)}"'
-            )
-        self.parts.append(f"<{tag}{rendered_attrs}>")
-
-    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        tag = tag.lower()
-        if tag in BLOCKED_TAGS or self.blocked_depth:
-            return
-        self.handle_starttag(tag, attrs)
-
-    def handle_endtag(self, tag: str) -> None:
-        tag = tag.lower()
-        if tag in BLOCKED_TAGS:
-            self.blocked_depth = max(0, self.blocked_depth - 1)
-            return
-        if not self.blocked_depth and tag in ALLOWED_TAGS and tag not in VOID_TAGS:
-            self.parts.append(f"</{tag}>")
-
-    def handle_data(self, data: str) -> None:
-        if not self.blocked_depth:
-            self.parts.append(escape(data))
-
-
-def safe_href(value: str) -> bool:
-    cleaned = value.strip()
-    if cleaned.startswith("//") or any(ord(character) < 32 for character in cleaned):
-        return False
-    return urlparse(cleaned).scheme in {"", "http", "https", "mailto"}
-
-
-def safe_image_src(value: str) -> bool:
-    cleaned = value.strip()
-    if any(ord(character) < 32 for character in cleaned):
-        return False
-    parsed = urlparse(cleaned)
-    return parsed.scheme == "https" and bool(parsed.netloc)
-
-
-def sanitize_article_html(value: str) -> str:
-    parser = ArticleSanitizer()
-    parser.feed(value)
-    parser.close()
-    result = "".join(parser.parts).strip()
-    if not result:
-        raise HTTPException(status_code=422, detail="Текст страницы не может быть пустым")
-    return result
 
 
 def intensive_version_hash(day_code: str, version_no: int, html: str) -> str:

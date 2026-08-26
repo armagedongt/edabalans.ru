@@ -5,8 +5,8 @@ derived_outputs = [
   { path = "telegram-bot/service/app/telegram-global-modules.json", module_id = "messaging.telegram" },
 ]
 
-# The registry owns routing and technical ownership only. Human names, summaries,
-# statuses and capabilities live in the referenced Markdown cards.
+# The registry owns routing, technical ownership and explicit admin catalog entries.
+# Human module names, summaries, statuses and capabilities live in the referenced Markdown cards.
 
 [[modules]]
 id = "platform"
@@ -16,6 +16,7 @@ owns_routes = ["*/embed.js", "*/site-footer.js"]
 
 [[modules]]
 id = "platform.crm"
+admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", description = "Люди, покупки, доступы, теги и заметки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.crm.md"
 owns_files = [
@@ -35,6 +36,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
+admin_catalog = [{ category = "tools", order = 20, url = "/admin/pricing", label = "Цены и тарифы", description = "Цены продуктов, тарифы и дополнительные предложения." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
 depends_on = ["platform.crm"]
@@ -83,14 +85,55 @@ depends_on = ["platform.crm"]
 
 [[modules]]
 id = "platform.content"
+admin_catalog = [{ category = "tools", order = 40, url = "/admin/content", label = "Каталог материалов", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
   "backend/app/content_routes.py", "backend/app/content_service.py",
+  "backend/app/article_markup.py",
   "backend/tests/test_content_catalog.py", "backend/tests/test_telegram_catalog.py",
   "backend/tests/fixtures/telegram_channel_export.json",
-  "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
+  "docs/CONTENT_CATALOG.md", "docs/knowledge-base/ARTICLE_STANDARD.md",
+  "tools/pikabu_collect.py",
   "tools/telegram_public_metrics_collect.py",
+  "tools/build_author_catalog.py", "tools/tag_author_catalog.py",
+  "tools/enrich_author_catalog.py", "tools/build_author_search_index.py",
+  "tools/build_author_voice.py", "tools/materialize_author_voice.py",
+  "tools/search_author_voice.py", "tools/record_author_correction.py",
+  "tools/record_author_correction_from_codex.py",
+  "tools/prepare_author_post.py", "tools/validate_author_draft.py",
+  "tools/install_edabalans_writer_skill.py",
+  "tools/tests/test_author_voice.py", "content/author-voice/README.md",
+  "content/author-voice/skill/edabalans-writer/SKILL.md",
+  "content/author-voice/writer-contract-v1.md",
+  "content/author-voice/editing-modes-v1.md",
+  "content/author-voice/product-fact-router.md",
+  "content/author-voice/editorial-linking-v1.md",
+  "content/author-voice/rhetorical-library-contract-v1.md",
+  "content/author-voice/rhetorical-review-hook-001.json",
+  "content/author-voice/rhetorical-review-reframe-001.json",
+  "content/author-voice/correction-nutritionists-law-v1.json",
+  "content/author-voice/cases/cutlets.md",
+  "content/author-voice/cases/nutritionists-law.md",
+  "content/author-voice/voice-rules-v1.json",
+  "content/author-voice/semantic-exemplars-v1.json",
+  "content/author-voice/CALIBRATION_V1.md",
+  "content/author-voice/telegram-linkout-review-v1.json",
+  "content/author-voice/semantic-review-log-v1.json",
+  "tools/analyze_saved_telegram_notes.py", "tools/build_author_working_corpus.py",
+  "tools/build_voice_core.py", "tools/build_rhetorical_library.py",
+  "tools/catalog_saved_notes_editorially.py",
+  "tools/collect_public_site.py", "tools/collect_telegraph.py",
+  "tools/export_author_corpus.py", "tools/extract_author_rhetoric.py",
+  "tools/extract_author_style_examples.py", "tools/get_author_catalog_item.py",
+  "tools/prepare_post_planning_handoff.py", "tools/refresh_author_workspace.py",
+  "tools/report_author_corpus_health.py", "tools/report_bot_processing.py",
+  "tools/report_voice_core.py", "tools/search_author_catalog.py",
+  "tools/select_voice_review_sample.py", "tools/verify_author_corpus.py",
+  "tests/test_author_content_tools.py",
+  "tools/tests/test_catalog_saved_notes_editorially.py",
+  "tools/tests/test_prepare_post_planning_handoff.py",
+  "tools/tests/test_saved_telegram_notes.py",
   "backend/migrations/versions/20260822_0013_content_catalog.py",
   "backend/migrations/versions/20260822_0014_content_comments.py",
 ]
@@ -110,11 +153,13 @@ owns_files = [
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js",
+  "backend/app/static/video-player*",
 ]
-owns_routes = ["*/apps/*", "*/assets/*"]
+owns_routes = ["*/apps/*", "*/assets/*", "*/video-player-preview"]
 
 [[modules]]
 id = "products.catalog"
+admin_catalog = [{ category = "tools", order = 30, url = "/admin/products", label = "Продукты и тарифы", description = "Названия продуктов, краткие описания и рабочий контекст." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -126,6 +171,7 @@ owns_routes = ["*/admin/products", "*/admin/api/product-catalog*"]
 
 [[modules]]
 id = "products.dqs"
+admin_catalog = [{ category = "applications", order = 10, url = "/admin/dqs", label = "DQS", description = "Дневник качества рациона и аналитика клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -139,6 +185,7 @@ owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*"]
 
 [[modules]]
 id = "products.strength"
+admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -151,6 +198,7 @@ owns_routes = ["*/apps/strength*", "*/api/apps/strength*"]
 
 [[modules]]
 id = "products.metabolism"
+admin_catalog = [{ category = "applications", order = 30, url = "/admin/metabolism", label = "Метаболизм", description = "Расчёты калорий и метаболизма клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -160,6 +208,7 @@ owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
 
 [[modules]]
 id = "products.intensive"
+admin_catalog = [{ category = "tools", order = 70, url = "https://app.edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", description = "Страницы и редактура четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
@@ -172,6 +221,11 @@ depends_on = ["platform.content"]
 
 [[modules]]
 id = "products.masterclass"
+admin_catalog = [
+  { category = "tools", order = 10, url = "/admin/masterclass", label = "Мастер-класс", description = "Рабочая сводка Мастер-класса." },
+  { category = "tools", order = 50, url = "/admin/masterclass-preview", label = "Предпросмотр Мастер-класса", description = "Проверка клиентского отображения." },
+  { category = "tools", order = 60, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." },
+]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
 depends_on = ["platform.commerce"]
@@ -183,8 +237,10 @@ owns_files = [
 id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
+depends_on = ["platform.content"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
+  "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
   "backend/app/managed_documents.py", "backend/app/static/course-editors.html",
   "backend/app/static/course-structure-editor.*", "backend/app/static/masterclass-preview.html",
   "backend/scripts/seed_masterclass_preview.py",
@@ -192,6 +248,7 @@ owns_files = [
   "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
   "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
   "backend/migrations/versions/20260825_0024_course_structure_editor.py",
+  "tools/publish_course_material.py", "tools/tests/test_publish_course_material.py",
   "work/course-structure-editor/**",
 ]
 owns_tables = ["managed_document_versions"]
@@ -240,6 +297,7 @@ events_out = ["messaging.telegram.postpurchase"]
 
 [[modules]]
 id = "products.masterclass.offers"
+admin_catalog = [{ category = "applications", order = 40, url = "/admin/masterclass-offers-preview", label = "Определитель допродаж", description = "Сценарий и персональный просмотр дополнительных предложений." }]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.offers.md"
 owns_files = [
@@ -385,6 +443,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 
 [[modules]]
 id = "messaging.telegram.engine"
+admin_catalog = [{ category = "services", order = 10, url = "https://api.edabalans.ru/bot", label = "Telegram-бот", description = "Цепочки, контакты, рассылки и связанные данные." }]
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
@@ -436,6 +495,12 @@ depends_on = ["platform.auth", "platform.crm"]
 
 [[modules]]
 id = "admin.project-knowledge"
+admin_catalog = [
+  { category = "project", order = 10, url = "/admin/knowledge-base?view=map", label = "Карта системы", description = "Дерево продуктов, модулей и связей." },
+  { category = "project", order = 20, url = "/admin/knowledge-base?view=guide", label = "Как работать с проектом", description = "Короткая памятка для владельца." },
+  { category = "project", order = 30, url = "/admin/knowledge-base?view=plans", label = "Планы", description = "Только явно отложенные идеи." },
+  { category = "project", order = 40, url = "/admin/knowledge-base?view=documents", label = "Документы проекта", description = "Человекочитаемая база знаний." },
+]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
 depends_on = ["platform.auth"]
@@ -451,6 +516,7 @@ owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin
 
 [[modules]]
 id = "admin.nocodb"
+admin_catalog = [{ category = "services", order = 20, url = "https://data.edabalans.ru", label = "Таблицы PostgreSQL", description = "Технический просмотр данных в NocoDB." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.nocodb.md"
 depends_on = ["operations.database", "operations.proxy"]

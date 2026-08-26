@@ -13,14 +13,24 @@ implementation_status: implemented
 
 - публиковать и восстанавливать версию структуры курса;
 - показывать единый порядок дней и материалов во всех представлениях;
+- публиковать обычный текстовый материал отдельной версией по стабильному
+  `step.id`, не меняя структуру и не выполняя code deploy;
+- восстанавливать предыдущую редакцию одного материала без отката курса;
 
 ## Граница
 
-`course.json` не является active runtime после появления DB revision.
+`course.json` не является active runtime после появления DB revision. Анкеты,
+messenger, DQS, офферы, рецептурные приложения и визуальный tutorial не являются
+текстовыми статьями и не принимаются content-only API.
 
 ## Источники истины
 
-Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; контракт — `COURSE_STRUCTURE_CONTRACT.md`.
+Active `managed_document_versions` — runtime truth структуры;
+`content_items`/`content_item_versions` источника
+`masterclass-course-materials` — runtime truth опубликованных обычных статей;
+`content/masterclass/course/course.json` и старые файлы статей — seed/fallback до
+первой публикации конкретного материала. Контракт —
+`COURSE_STRUCTURE_CONTRACT.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

@@ -1,0 +1,23 @@
+{
+  "correction_id": "correction:nutritionists-law-20260826",
+  "case_id": "case:nutritionists-law",
+  "title": "Нутрициологи: от юридической справки к авторскому конфликту",
+  "passport_version": "voice-v1",
+  "status": "owner_final",
+  "context": {
+    "catalog_id": "case:nutritionists-law",
+    "surface_context": "telegram_channel",
+    "scope": ["education", "positioning", "sales_bridge", "targeted_edit"]
+  },
+  "functional_explanation": "Удачный текст появился после проектирования эмоционально-аргументативного маршрута: псевдомедицинская причинная цепочка и коммерческая надежда, затем закон, самоповорот автора, доказательство границ и компетенции, методический контраст и только потом продукт. Разговорность работает через ход мысли, наращивание абсурда и смену роли, а не через отдельные частицы. Точечная редактура обязана сохранять неупомянутые принятые блоки. Опечатки owner final не являются правилами голоса.",
+  "candidate_rules": [
+    "emotion_and_argument_route_before_sentences",
+    "show_criticism_as_reproducible_mechanism",
+    "factcheck_after_tension_when_safe",
+    "self_reveal_changes_author_role",
+    "authority_through_work_and_boundaries",
+    "product_bridge_continues_method_contrast",
+    "targeted_edit_preserves_accepted_blocks",
+    "owner_final_typos_are_not_voice"
+  ]
+}

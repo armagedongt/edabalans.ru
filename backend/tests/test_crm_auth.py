@@ -16,6 +16,13 @@ get_settings.cache_clear()
 from app.main import app  # noqa: E402
 
 
+def setup_function() -> None:
+    os.environ["ADMIN_USERNAME"] = "admin@example.com"
+    os.environ["ADMIN_PASSWORD"] = "test-admin-password"
+    get_settings.cache_clear()
+    app.dependency_overrides.clear()
+
+
 def make_client() -> TestClient:
     return TestClient(app, base_url="https://app.edabalans.ru")
 
@@ -24,6 +31,21 @@ def test_crm_requires_authentication() -> None:
     response = make_client().get("/crm", follow_redirects=False)
     assert response.status_code == 303
     assert response.headers["location"] == "/admin?next=/crm"
+
+
+def test_legacy_control_and_people_redirect_to_single_admin_surfaces() -> None:
+    client = make_client()
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    control = client.get("/control", follow_redirects=False)
+    assert control.status_code == 303
+    assert control.headers["location"] == "/admin"
+    people = client.get("/admin/users?user=client-id&q=ivan", follow_redirects=False)
+    assert people.status_code == 303
+    assert people.headers["location"] == "/crm?user=client-id&q=ivan"
 
 
 def test_admin_api_requires_authentication() -> None:
@@ -51,6 +73,29 @@ def test_course_structure_api_requires_authentication() -> None:
         "/admin/api/courses/masterclass-21/structure/versions/1/restore",
         json={"expected_version": 1},
     ).status_code == 401
+    assert client.get(
+        "/admin/api/courses/masterclass-21/materials"
+    ).status_code == 401
+    assert client.get(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02"
+    ).status_code == 401
+    assert client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        json={"expected_version": 0, "content": "Текст", "format": "markdown"},
+    ).status_code == 401
+    assert client.post(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02/versions/1/restore",
+        json={"expected_version": 1},
+    ).status_code == 401
+
+
+def test_course_material_api_accepts_basic_admin_authentication() -> None:
+    response = make_client().get(
+        "/admin/api/courses/unknown-course/materials",
+        auth=("admin@example.com", "test-admin-password"),
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Курс не найден"
 
 
 def test_unified_admin_requires_authentication() -> None:

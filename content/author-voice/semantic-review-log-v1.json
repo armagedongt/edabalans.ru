@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "reviewed_at": "2026-08-26",
+  "model_class": "strong",
+  "reviewed_core_exemplars": 82,
+  "coverage": {
+    "sources": {"pikabu": 39, "telegram_channel": 34, "tilda_site": 6, "bot_constructor": 3},
+    "jobs": {"education": 53, "personal": 11, "engagement": 8, "sales": 10}
+  },
+  "derived_rules": 36,
+  "telegram_pikabu_linkouts_reviewed": 36,
+  "core_status": "expanded_and_ready_for_calibration",
+  "stop_reason": "strong_full_text_coverage_reached_across_sources_jobs_and_owner_named_posts",
+  "remaining_gate": "fresh owner calibration tasks from CALIBRATION_V1.md",
+  "eligibility_overrides": 8,
+  "searchable_corpus": 917,
+  "searchable_only_outside_core": 843,
+  "note": "The full-text core is complete for calibration. Seven false service exclusions and one canonical exact-cluster representative are explicitly overridden. The remaining corpus is searchable evidence and does not dilute the core by default."
+}

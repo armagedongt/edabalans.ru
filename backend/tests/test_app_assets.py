@@ -152,6 +152,11 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     account = client.get("/apps/account.html")
     assert account.status_code == 200
     assert 'id="account-app"' in account.text
+    assert "function openRequestedCourse" in account.text
+    assert "params.has('course_day')||params.has('course_material')" in account.text
+    assert "url.searchParams.delete('course_day')" in account.text
+    assert "url.searchParams.delete('course_material')" in account.text
+    assert "if(openRequestedCourse(data))return" in account.text
     assert "/api/account" in account.text
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
@@ -171,6 +176,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
     assert "function openCourseStep" in course.text
     assert "function advanceCourseStep" in course.text
+    assert "function renderCourseRoute" in course.text
+    assert "remote.can_open&&!remote.opened" in course.text
+    assert "Direct course day open failed" in course.text
     assert "advanceCourseStep(d,currentStep,true)" in course.text
     assert "advanceCourseStep(days[state.day-1],currentStep,false)" in course.text
     assert "saveQuestionnaire('submit')" in course.text
@@ -306,6 +314,9 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "esc(t.title)" in course_html
     assert "esc(t.summary)" in course_html
     assert "pages[step.contentPageTitle||step.title]" in course_html
+    assert "pages['step:'+step.id]" in course_html
+    assert "/api/masterclass/course/materials?email=" in course_html
+    assert "Course material overrides unavailable; using bundled content" in course_html
     assert "videoId:step.videoId,image:step.image" in course_html
     assert "materialMedia(t)+parts.body" in course_html
 
@@ -349,6 +360,12 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
 
     course = client.get("/apps/masterclass-course.html").text
     assert 'id="course-tutorial"' in course
+    assert "grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr)" in course
+    assert "min-height:100dvh" in course
+    assert "tutorialPreview('contacts')" not in course
+    assert "Контакты Сергея" not in course
+    assert "card.scrollTop=0" in course
+    assert "прогресс сохранится автоматически" in course
     assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
 
