@@ -306,7 +306,7 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         }
     assert listed_ids == expected_ids
     assert "day-01-article-02" in listed_ids
-    assert "day-01-article-tutorial" not in listed_ids
+    assert "day-01-article-tutorial" in listed_ids
     assert "day-01-questionnaire" not in listed_ids
 
     current = client.get(
@@ -434,13 +434,19 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     )
     assert empty.status_code == 422
 
-    for step_id in ("day-01-questionnaire", "day-01-article-tutorial"):
-        rejected = client.put(
-            f"/admin/api/courses/masterclass-21/materials/{step_id}",
-            json={"expected_version": 0, "format": "markdown", "content": "Текст"},
-        )
-        assert rejected.status_code == 422
-        assert "специальным модулем" in rejected.json()["detail"]
+    rejected = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-questionnaire",
+        json={"expected_version": 0, "format": "markdown", "content": "Текст"},
+    )
+    assert rejected.status_code == 422
+    assert "специальным модулем" in rejected.json()["detail"]
+
+    first_article = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-tutorial",
+        json={"expected_version": 0, "format": "markdown", "content": "## Текст"},
+    )
+    assert first_article.status_code == 200
+    assert first_article.json()["published"] is True
 
 
 def placement_token(placement: str) -> str:

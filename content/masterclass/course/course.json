@@ -47,7 +47,7 @@
       "checks": ["Начать вести дневник питания по инструкции.", "Разобраться, как и когда взвешиваться.", "Заполнить стартовую анкету.", "Привязать Telegram или MAX для уведомлений."],
       "nextTitle": "Не все диеты делают одно и то же", "nextTeaser": "Разложим разные виды диет по их реальным задачам.", "recipeDay": false, "publicationStatus": "ready",
       "steps": [
-        {"id":"day-01-article-tutorial","kind":"article","title":"Как пользоваться Мастер-классом","shortTitle":"Как пользоваться Мастер-классом","summary":"Оглавление, навигация, задания и открытие следующих дней.","durationMinutes":4,"status":"ready","contentKind":"tutorial"},
+        {"id":"day-01-article-tutorial","kind":"article","title":"Как пользоваться Мастер-классом","shortTitle":"Как пользоваться Мастер-классом","summary":"Личный кабинет, программа, открытие дней, консультации и связь.","durationMinutes":8,"status":"ready","contentKind":"text"},
         {"id":"day-01-article-02","kind":"article","title":"Как вести дневник питания","shortTitle":"Дневник питания","summary":"Где вести дневник и что фиксировать.","durationMinutes":7,"status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
         {"id":"day-01-article-03","kind":"article","title":"Как необходимо взвешиваться","shortTitle":"Правила взвешивания","summary":"Когда взвешиваться и как читать колебания веса.","durationMinutes":5,"status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
         {"id":"day-01-questionnaire","kind":"questionnaire","app":"onboarding-questionnaire","completion":"submitted","label":"Заполнить стартовую анкету","shortTitle":"Стартовая анкета","summary":"Цели, образ жизни, опыт похудения и ограничения.","durationMinutes":10},
