@@ -14,6 +14,8 @@ implementation_status: implemented
 - публиковать и восстанавливать версию структуры курса;
 - показывать единый порядок дней и материалов во всех представлениях;
 - сохранять введённые через Enter переносы строк без HTML-кода в редакторе;
+- задавать каноническую структуру страницы статьи и её компактного оглавления без
+  второго набора заголовков;
 
 ## Граница
 
@@ -21,7 +23,7 @@ implementation_status: implemented
 
 ## Источники истины
 
-Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; контракт — `COURSE_STRUCTURE_CONTRACT.md`.
+Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; смысловой контракт — `COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета — `COURSE_VISUAL_SYSTEM.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
