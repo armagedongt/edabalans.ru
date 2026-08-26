@@ -317,6 +317,17 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "pages[step.contentPageTitle||step.title]" in course_html
     assert "videoId:step.videoId,image:step.image" in course_html
     assert "materialMedia(t)+body" in course_html
+    assert "mobile-article-toc-button" in course_html
+    assert "article-toc-button" in course_html
+    assert "Содержание" in course_html
+    assert "querySelectorAll('#article h2')" in course_html
+    assert "articleTocHeadings.length<3" in course_html
+    assert "event.key==='Escape'" in course_html
+    assert "aria-current','location'" in course_html
+    assert "configureArticleToc();document.querySelector('#prev')" in course_html
+    assert "target.focus({preventScroll:true})" in course_html
+    assert "event.target.closest('#mobile-article-toc-popover')" in course_html
+    assert "atPageEnd=window.innerHeight+window.scrollY" in course_html
 
     static_dir = root / "backend" / "app" / "static"
     editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")
