@@ -282,7 +282,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "if(!still)" in masterclass
 
 
-def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
+def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     root = Path(__file__).resolve().parents[2]
     manifest = json.loads(
         (root / "content" / "masterclass" / "course" / "course.json").read_text(
@@ -293,7 +293,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     first_steps = first_day["steps"]
 
     assert first_steps[0]["id"] == "day-01-article-tutorial"
-    assert first_steps[0]["contentKind"] == "tutorial"
+    assert first_steps[0]["contentKind"] == "text"
     assert all(step.get("title") != "Программа Мастер-класса" for step in first_steps)
     assert [
         step["title"] for step in first_steps if step.get("kind") == "article"
@@ -317,6 +317,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
+    assert ".article p:not(.eyebrow):not(.hero-lead):not(.eyebrow-time){margin:0 0 18px}" in course_html
     assert "обязательный технический шаг" in course_html
     assert "После успешной привязки появится кнопка «Продолжить»" in course_html
     assert "messenger-links/status" in course_html
