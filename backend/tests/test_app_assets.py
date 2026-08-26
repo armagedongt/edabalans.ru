@@ -402,6 +402,25 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "[[GALLERY:dqs-takeout]]" in dqs_source
     assert "Код будет выполнен на опубликованной странице" not in dqs_source
     assert "XXXXXXXXXXXXXXXXXXXX" not in dqs_source
+    assert dqs_source.count("[[DQS_MATRIX:") == 6
+    assert dqs_source.count("[[GALLERY:") == 2
+    assert (
+        dqs_source.count("> **Стандартная порция:")
+        + dqs_source.count("> **Стандартные порции:")
+    ) == 16
+    assert all(
+        heading in dqs_source
+        for heading in (
+            "## Что такое порция?",
+            "## Растения",
+            "## Источники белка",
+            "## Источники жиров",
+            "## Гарниры",
+            "## Вредные категории",
+            "## Шпаргалка по порциям",
+            "## Примеры",
+        )
+    )
 
     course = client.get("/apps/masterclass-course.html").text
     assert 'src="/assets/content-gallery.js?v=source-slider"' in course
@@ -422,7 +441,8 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
     assert "DQS_CATEGORY_ROWS" in course
-    assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-tables'" in course
+    assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
+    assert "overflow-wrap:anywhere" in course
     assert "renderContentEmbeds(parts.body)" in course
     assert "window.EdabalansContentGallery.bind(document.querySelector('#article'))" in course
 
