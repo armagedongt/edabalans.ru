@@ -1608,7 +1608,7 @@ def test_course_content_uses_the_same_member_session():
     )
     assert response.status_code == 200
     assert response.text.strip()
-    assert response.headers["cache-control"] == "private, max-age=300"
+    assert response.headers["cache-control"] == "private, no-cache"
     assert client.get(
         "/api/masterclass/course/content/not-allowed.txt?email=member@example.test"
     ).status_code == 404
