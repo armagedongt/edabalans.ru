@@ -606,7 +606,9 @@ def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
         "offer_code": data["offers"][0]["code"],
     })
     assert checkout.status_code == 200
-    assert checkout.json()["cart_command"].startswith("#order:EB-")
+    assert checkout.json()["cart_command"].startswith("#order:")
+    assert " · №" in checkout.json()["cart_command"]
+    assert "EB-" not in checkout.json()["cart_command"]
     with factory() as db:
         assert db.scalar(select(func.count(UserOffer.id))) == 1
         assert db.scalar(select(func.count(OfferCheckout.id))) == 1
@@ -878,7 +880,9 @@ def test_account_offer_entry_prioritises_selected_product_without_resetting_wind
         "offer_code": "single:calories",
     })
     assert checkout.status_code == 200
-    assert checkout.json()["cart_command"].startswith("#order:EB-")
+    assert checkout.json()["cart_command"].startswith("#order:")
+    assert " · №" in checkout.json()["cart_command"]
+    assert "EB-" not in checkout.json()["cart_command"]
     repeated_checkout = client.post("/api/masterclass/account-offers/checkout", json={
         "email": "member@example.test",
         "focus_product_code": "calories",

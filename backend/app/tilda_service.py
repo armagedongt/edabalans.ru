@@ -36,6 +36,7 @@ MOSCOW = ZoneInfo("Europe/Moscow")
 SOURCE = "tilda_webhook"
 LEGACY_ALIAS_SOURCE = "google_payments_legacy"
 OFFER_CODE = re.compile(r"^EB-([0-9a-fA-F]{32})(?:\s|$)")
+SHORT_OFFER_CODE = re.compile(r"(?:^|\s)№([0-9a-fA-F]{8})(?:\s|$)")
 OFFER_RESOURCES = {
     "recipes": "ACCESS_RECIPES",
     "calories": "ACCESS_CALORIES",
@@ -47,6 +48,30 @@ OFFER_RESOURCES = {
 
 class TildaPayloadError(ValueError):
     pass
+
+
+def find_offer_checkout(
+    db: Session, raw_product: str, user: User | None
+) -> tuple[OfferCheckout | None, bool]:
+    legacy_match = OFFER_CODE.match(raw_product)
+    if legacy_match:
+        return db.get(OfferCheckout, uuid.UUID(hex=legacy_match.group(1))), True
+
+    short_match = SHORT_OFFER_CODE.search(raw_product)
+    if not short_match:
+        return None, False
+    if user is None:
+        return None, True
+
+    prefix = short_match.group(1).lower()
+    matches = [
+        checkout
+        for checkout in db.scalars(
+            select(OfferCheckout).where(OfferCheckout.user_id == user.id)
+        ).all()
+        if checkout.id.hex.startswith(prefix)
+    ]
+    return (matches[0] if len(matches) == 1 else None), True
 
 
 def record_masterclass_purchase_event(
@@ -463,9 +488,8 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     phone = first(payload, "Phone", "phone", "ma_phone")
     user = find_or_create_user(db, email, display_name, phone, event_at)
     product = find_product(db, raw_product)
-    checkout_match = OFFER_CODE.match(raw_product)
-    checkout = db.get(OfferCheckout, uuid.UUID(hex=checkout_match.group(1))) if checkout_match else None
-    if checkout_match:
+    checkout, has_checkout_reference = find_offer_checkout(db, raw_product, user)
+    if has_checkout_reference:
         if checkout is None:
             raise TildaPayloadError("offer checkout is unknown")
         if checkout.pricing_version_id and checkout.price_entry_code:

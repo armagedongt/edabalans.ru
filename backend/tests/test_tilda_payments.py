@@ -1,5 +1,6 @@
 import os
 import hashlib
+import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
@@ -13,6 +14,8 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
+from app.masterclass_routes import offer_checkout_order  # noqa: E402
+from app.tilda_service import find_offer_checkout  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassEvent,
     MasterclassNotification,
@@ -226,16 +229,32 @@ def test_dynamic_offer_checkout_grants_exact_resources() -> None:
             amount=Decimal("3900"),
             expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
         )
-        db.add(checkout); db.commit()
-        checkout_code = checkout.id.hex
+        db.add(checkout)
+        db.flush()
+        cart_command = offer_checkout_order(checkout, 3900)
+        raw_product = cart_command.removeprefix("#order:").rsplit("=", 1)[0]
+        db.commit()
 
     payload = paid_payload()
     payload.update({
         "orderid": "offer-order-1",
         "paymentid": "offer-payment-1",
-        "products": f"EB-{checkout_code} Комплект",
+        "products": raw_product,
         "price": "3900",
     })
+    wrong_user_payload = dict(payload)
+    wrong_user_payload.update({
+        "orderid": "offer-order-wrong-user",
+        "paymentid": "offer-payment-wrong-user",
+        "Email": "other@example.test",
+    })
+    wrong_user = client.post(
+        "/integrations/tilda/payments", data=wrong_user_payload, headers=HEADERS
+    )
+    assert wrong_user.status_code == 422
+    with session_factory() as db:
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
+
     response = client.post("/integrations/tilda/payments", data=payload, headers=HEADERS)
     assert response.status_code == 200
     assert response.json()["status"] == "saved"
@@ -255,6 +274,45 @@ def test_dynamic_offer_checkout_grants_exact_resources() -> None:
             )
         )
         assert offer_event is not None
+    app.dependency_overrides.clear()
+
+
+def test_short_offer_reference_rejects_ambiguous_user_checkouts() -> None:
+    _, session_factory = make_client()
+    with session_factory() as db:
+        user = User(display_name="Тестовый клиент", status="active")
+        db.add(user)
+        db.flush()
+        db.add_all(
+            [
+                OfferCheckout(
+                    id=uuid.UUID("12345678-0000-0000-0000-000000000001"),
+                    user_id=user.id,
+                    offer_code="single:recipes",
+                    title="Система рецептов",
+                    items=["recipes"],
+                    amount=Decimal("2900"),
+                    expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+                ),
+                OfferCheckout(
+                    id=uuid.UUID("12345678-0000-0000-0000-000000000002"),
+                    user_id=user.id,
+                    offer_code="single:calories",
+                    title="Калорийность рациона",
+                    items=["calories"],
+                    amount=Decimal("2900"),
+                    expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+                ),
+            ]
+        )
+        db.flush()
+
+        checkout, has_reference = find_offer_checkout(
+            db, "Система рецептов · №12345678", user
+        )
+
+        assert has_reference is True
+        assert checkout is None
     app.dependency_overrides.clear()
 
 

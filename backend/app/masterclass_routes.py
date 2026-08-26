@@ -1279,6 +1279,11 @@ def safe_order(name: str, price: int) -> str:
     return f"#order:{clean}={price}"
 
 
+def offer_checkout_order(checkout: OfferCheckout, price: int) -> str:
+    reference = checkout.id.hex[:8].upper()
+    return safe_order(f"{checkout.title} · №{reference}", price)
+
+
 def build_offers(
     db: Session,
     user: User | None,
@@ -1744,7 +1749,7 @@ def create_offer_checkout(
     if existing is not None and list(existing.items or []) == list(card["items"]):
         if Decimal(existing.amount) == Decimal(card["price"]):
             return (
-                safe_order(f"EB-{existing.id.hex} {existing.title}", card["price"]),
+                offer_checkout_order(existing, card["price"]),
                 aware_utc(existing.expires_at),
             )
     checkout = OfferCheckout(
@@ -1764,7 +1769,7 @@ def create_offer_checkout(
     )
     db.add(checkout)
     db.flush()
-    return safe_order(f"EB-{checkout.id.hex} {card['title']}", card["price"]), checkout_expires
+    return offer_checkout_order(checkout, card["price"]), checkout_expires
 
 
 @router.get("/gate/{part}")
