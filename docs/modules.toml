@@ -135,7 +135,7 @@ parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
-  "backend/app/static/apps/dqs.html", "legacy/google/dqs/**",
+  "backend/app/static/apps/dqs.html", "backend/app/static/apps/dqs-category-rules.js", "legacy/google/dqs/**",
   "legacy/google/sheets/DQS_SCHEMA.md", "backend/tests/test_masterclass_dqs_gate.py",
   "backend/migrations/versions/20260822_0004_application_states.py",
 ]
