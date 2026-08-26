@@ -192,7 +192,10 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
     assert "step.questionnaireKind||'onboarding'" in course.text
     assert "А какая у вас сейчас «диета»?" in course.text
-    assert "После отправки бот пришлёт заполненный список" in course.text
+    assert "После заполнения обязательно нажмите «Отправить в Telegram и продолжить»" in course.text
+    assert "id=\"q-later\"" not in course.text
+    assert "Как отвечать" not in course.text
+    assert "materialMetaHtml" in course.text
     assert "function openCourseStep" in course.text
     assert "function advanceCourseStep" in course.text
     assert "function renderCourseRoute" in course.text
@@ -204,6 +207,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "openEmbeddedApp('onboarding-questionnaire'" not in course.text
     assert "disposeInlineMaterial();advanceCourseStep" in course.text
     assert "К заданиям ↓" in course.text
+    assert 'id="mc-skip"' not in client.get("/assets/masterclass.js").text
     loader = client.get("/embed.js").text
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
