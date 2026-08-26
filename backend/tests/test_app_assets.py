@@ -149,6 +149,15 @@ def test_unknown_application_fragment_is_404() -> None:
     assert client.get("/apps/unknown.html").status_code == 404
 
 
+def test_shared_content_gallery_asset_is_public_without_captions() -> None:
+    response = client.get("/assets/content-gallery.js")
+
+    assert response.status_code == 200
+    assert "window.EdabalansContentGallery" in response.text
+    assert "eb-content-gallery__lightbox" in response.text
+    assert "figcaption" not in response.text
+
+
 def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     account = client.get("/apps/account.html")
     assert account.status_code == 200
@@ -371,12 +380,14 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert [f"[[DQS_MATRIX:{kind}]]" for kind in ["all", "plants", "proteins", "fats", "garnishes", "harmful"]] == [
         marker for marker in dqs_source.splitlines() if marker.startswith("[[DQS_MATRIX:")
     ]
-    assert "[[DQS_GALLERY:home]]" in dqs_source
-    assert "[[DQS_GALLERY:takeout]]" in dqs_source
+    assert "[[GALLERY:dqs-home]]" in dqs_source
+    assert "[[GALLERY:dqs-takeout]]" in dqs_source
     assert "Код будет выполнен на опубликованной странице" not in dqs_source
     assert "XXXXXXXXXXXXXXXXXXXX" not in dqs_source
 
     course = client.get("/apps/masterclass-course.html").text
+    assert 'src="/assets/content-gallery.js"' in course
+    assert "renderContentEmbeds" in course
     assert 'id="course-tutorial"' in course
     tutorial = course[course.index("function tutorialPreview"):course.index("function openTutorial")]
     slides = tutorial[tutorial.index("function tutorialSlides"):tutorial.index("function renderTutorial")]
@@ -394,8 +405,8 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
     assert "DQS_CATEGORY_ROWS" in course
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-tables'" in course
-    assert "renderDqsEmbeds(parts.body)" in course
-    assert "bindDqsExampleGalleries(document.querySelector('#article'))" in course
+    assert "renderContentEmbeds(parts.body)" in course
+    assert "window.EdabalansContentGallery.bind(document.querySelector('#article'))" in course
 
 
 def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
