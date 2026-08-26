@@ -112,6 +112,8 @@ Popup дней 15 и 17 только предупреждает о рецепт�
   завершение дня;
 - `masterclass_step_progress`: завершённые обязательные пункты по индексу;
 - `managed_document_versions`: активная и предыдущие ревизии структуры курса;
+- `content_items` и `content_item_versions` внутреннего источника
+  `masterclass-course-materials`: независимо публикуемые версии обычных статей;
 - `masterclass_events`: идемпотентные исходящие события для CRM/messaging;
 - существующие `user_offers`, `offer_stages`, `user_accesses` остаются
   единственными источниками предложений и прав.
@@ -129,7 +131,11 @@ Popup дней 15 и 17 только предупреждает о рецепт�
   исполняемый порядок шагов;
 - `GET /api/masterclass/course?email=...` — программа доступности и прогресс;
 - `GET /api/masterclass/course/content/{asset_name}?email=...` — разрешённый
-  текстовый материал из whitelist манифеста;
+  исходный текстовый fallback из whitelist манифеста;
+- `GET /api/masterclass/course/materials?email=...` — опубликованные в БД версии
+  обычных видимых статей уже открытых или доступных к открытию дней по `step.id`;
+  frontend отдаёт им приоритет над fallback-файлами, но при временной ошибке этого
+  запроса продолжает открывать встроенные материалы;
 - `POST /api/masterclass/course/days/{day}/open` — первое/повторное открытие;
 - `POST /api/masterclass/course/days/{day}/steps/{index}/complete` — завершение
   следующего обязательного пункта;
@@ -141,6 +147,13 @@ Popup дней 15 и 17 только предупреждает о рецепт�
 `ACCESS_MASTERCLASS`. Email выбирает человека, но не выдаёт право на продукт.
 Повторный пользовательский вход, почтовый код и отдельная `app_session` в этом
 контуре запрещены без новой явно согласованной задачи владельца.
+
+Редакторский API `GET/PUT /admin/api/courses/masterclass-21/materials/{step_id}`
+создаёт версию только одного обычного материала. Он не публикует манифест курса и
+не меняет прогресс. История доступна через суффикс `/versions`, восстановление —
+через `/versions/{version}/restore`. Локальный клиент для ИИ-писателя —
+`tools/publish_course_material.py`; после первоначального выпуска механизма его
+обычные вызовы не требуют Git, tests или deploy.
 
 ## Исходящие стрелки в messaging backend
 

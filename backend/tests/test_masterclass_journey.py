@@ -27,6 +27,7 @@ from app.course_structure_service import (  # noqa: E402
     effective_required_check_ids,
 )
 from app.models import (  # noqa: E402
+    ContentItem, ContentItemVersion, ContentSource,
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail,
@@ -44,6 +45,11 @@ TEST_SETTINGS = Settings(
     app_auth_secret="test-client-session-secret",
     telegram_test_bot_username="EdabalansTestBot",
 )
+
+
+def teardown_function() -> None:
+    app.dependency_overrides.clear()
+    get_settings.cache_clear()
 
 
 def aware(value: datetime) -> datetime:
@@ -282,6 +288,159 @@ def test_editor_rejects_material_asset_edit_and_unsafe_media_url():
     )
     assert unsafe.status_code == 422
     assert "Недопустимые символы" in unsafe.json()["detail"]
+
+
+def test_course_material_publisher_preserves_article_semantics_and_runtime_override():
+    client, factory = setup()
+    listed = client.get("/admin/api/courses/masterclass-21/materials")
+    assert listed.status_code == 200
+    listed_ids = {item["step_id"] for item in listed.json()["materials"]}
+    with factory() as db:
+        context = course_context(db)
+        expected_ids = {
+            step["id"]
+            for day in context.days.values()
+            for step in day.get("steps", [])
+            if step.get("kind") == "article"
+            and step.get("contentKind") != "tutorial"
+        }
+    assert listed_ids == expected_ids
+    assert "day-01-article-02" in listed_ids
+    assert "day-01-article-tutorial" not in listed_ids
+    assert "day-01-questionnaire" not in listed_ids
+
+    current = client.get(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02"
+    )
+    assert current.status_code == 200
+    assert current.json()["version"] == 0
+    assert current.json()["published"] is False
+    assert current.json()["html"]
+
+    source = (
+        '<h2>Что важно</h2><p>Абзац <strong>с акцентом</strong> и '
+        '<a href="https://example.test/read" onclick="bad()">ссылкой</a>.</p>'
+        '<ul><li>Первый пункт.</li><li>Второй пункт.</li></ul>'
+        '<blockquote>Сильная самостоятельная мысль.</blockquote>'
+        '<aside class="made-up"><strong>Важно</strong><p>Один тип плашки.</p></aside>'
+        '<figure><img src="https://cdn.example.test/plate.jpg" alt="Тарелка" '
+        'onerror="bad()"><figcaption>Пример тарелки</figcaption></figure>'
+        '<script>alert(1)</script>'
+    )
+    published = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        json={"expected_version": 0, "content": source, "format": "html"},
+    )
+    assert published.status_code == 200
+    body = published.json()
+    assert body["version"] == 1
+    assert body["published"] is True
+    assert '<aside class="editorial-note">' in body["html"]
+    assert 'target="_blank" rel="noopener"' in body["html"]
+    assert 'loading="lazy"' in body["html"]
+    assert "onclick" not in body["html"]
+    assert "onerror" not in body["html"]
+    assert "script" not in body["html"]
+
+    denied = client.get(
+        "/api/masterclass/course/materials?email=other@example.test"
+    )
+    assert denied.status_code == 403
+    runtime = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+    )
+    assert runtime.status_code == 200
+    assert runtime.json()["materials"]["day-01-article-02"]["html"] == body["html"]
+    with factory() as db:
+        source_row = db.scalar(select(ContentSource).where(
+            ContentSource.account_key == "masterclass-course-materials"
+        ))
+        item = db.scalar(select(ContentItem).where(
+            ContentItem.source_id == source_row.id,
+            ContentItem.external_id == "day-01-article-02",
+        ))
+        version = db.get(ContentItemVersion, item.latest_version_id)
+        assert version.blocks == [{"type": "article_html", "html": body["html"]}]
+
+    stale = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        json={"expected_version": 0, "content": "Новая версия", "format": "markdown"},
+    )
+    assert stale.status_code == 409
+
+
+def test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps():
+    client, _ = setup()
+    endpoint = "/admin/api/courses/masterclass-21/materials/day-03-article-02"
+    first = client.put(
+        endpoint,
+        json={
+            "expected_version": 0,
+            "format": "markdown",
+            "content": (
+                "# Заголовок карточки\n\n## Раздел\n\n### Подраздел\n\n"
+                "Абзац с **жирным** и *курсивом*.\n\n"
+                "Источник: систематический обзор.\n\n"
+                "- Первый пункт.\n- Второй пункт.\n\n1. Сначала.\n2. Затем.\n\n"
+                "> Цитата.\n\n[Смежный материал](/apps/recipes-part-1.html)\n\n"
+                "![Схема](https://cdn.example.test/schema.png \"Подпись\")\n\n"
+                "![Локальная схема](/assets/course/schema.png)"
+            ),
+        },
+    )
+    assert first.status_code == 200
+    assert "<h1>" not in first.json()["html"]
+    assert "<h2>Раздел</h2>" in first.json()["html"]
+    assert "<h3>Подраздел</h3>" in first.json()["html"]
+    assert "<strong>жирным</strong>" in first.json()["html"]
+    assert "<em>курсивом</em>" in first.json()["html"]
+    assert "<p>Источник: систематический обзор.</p>" in first.json()["html"]
+    assert "<ul><li>Первый пункт.</li><li>Второй пункт.</li></ul>" in first.json()["html"]
+    assert "<ol><li>Сначала.</li><li>Затем.</li></ol>" in first.json()["html"]
+    assert "<blockquote>Цитата.</blockquote>" in first.json()["html"]
+    assert 'href="/apps/recipes-part-1.html"' in first.json()["html"]
+    assert "<figcaption>Подпись</figcaption>" in first.json()["html"]
+    assert 'src="/assets/course/schema.png"' in first.json()["html"]
+    locked_runtime = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+    )
+    assert locked_runtime.status_code == 200
+    assert "day-03-article-02" not in locked_runtime.json()["materials"]
+
+    second = client.put(
+        endpoint,
+        json={"expected_version": 1, "format": "markdown", "content": "## Второй текст"},
+    )
+    assert second.status_code == 200
+    versions = client.get(endpoint + "/versions")
+    assert [row["version"] for row in versions.json()["versions"]] == [2, 1]
+
+    restored = client.post(
+        endpoint + "/versions/1/restore",
+        json={"expected_version": 2},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["version"] == 3
+    assert restored.json()["html"] == first.json()["html"]
+    stale_restore = client.post(
+        endpoint + "/versions/2/restore",
+        json={"expected_version": 2},
+    )
+    assert stale_restore.status_code == 409
+
+    empty = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-03-article-03",
+        json={"expected_version": 0, "format": "html", "content": "<p></p><br>"},
+    )
+    assert empty.status_code == 422
+
+    for step_id in ("day-01-questionnaire", "day-01-article-tutorial"):
+        rejected = client.put(
+            f"/admin/api/courses/masterclass-21/materials/{step_id}",
+            json={"expected_version": 0, "format": "markdown", "content": "Текст"},
+        )
+        assert rejected.status_code == 422
+        assert "специальным модулем" in rejected.json()["detail"]
 
 
 def placement_token(placement: str) -> str:

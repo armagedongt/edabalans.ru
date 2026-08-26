@@ -12,9 +12,11 @@
 `../../../plans/PRODUCTS_AND_OFFERS.md`,
 `../../PRODUCTS.md`, `../telegram/POST_PURCHASE_MASTERCLASS.md`
 
-Исходные тексты текущего мастер-класса постепенно собираются в
-`../../../../content/masterclass/source-current/`. Порядок этой папки до получения
-отдельного оглавления отражает только порядок поступления материалов.
+Старые исходные тексты текущего Мастер-класса находятся в
+`../../../../content/masterclass/source-current/` и `imported-draft/`. Они служат
+fallback до первой content-only публикации конкретного `step.id`. После неё
+runtime использует последнюю версию внутреннего источника
+`masterclass-course-materials` в PostgreSQL; файл не нужно менять и выкатывать.
 
 ## Куда обращаться по дополнительным предложениям
 
@@ -25,6 +27,9 @@
   `managed_document_versions` — runtime-структура дней, место блока, порядок и
   обязательность открытия; `../../../../content/masterclass/course/course.json`
   служит только seed до появления первой ревизии;
+- `content_items`/`content_item_versions` источника
+  `masterclass-course-materials` — опубликованное тело обычных статей; локальная
+  команда `tools/publish_course_material.py` меняет одну статью без code deploy;
 - `OFFERS_MODULE.md` — скидочные окна, таймеры, переходы, покупки и уведомления;
 - `../../PRICING_CATALOG.md` и PostgreSQL `offer_stages` — действующие цены;
 - `../../../../backend/app/masterclass_offer_catalog.py` — единые названия,

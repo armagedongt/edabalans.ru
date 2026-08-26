@@ -19,6 +19,7 @@ from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.database import get_db
+from app.course_material_service import published_materials
 from app.models import (
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
     MasterclassStepProgress, MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage,
@@ -696,6 +697,23 @@ def course_manifest(
 ) -> dict:
     resolve_masterclass_user(request, db, email, settings)
     return course_context(db).manifest
+
+
+@router.get("/course/materials")
+def course_materials(
+    email: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, email, settings)
+    state = course_payload(db, user, settings, datetime.now(timezone.utc))
+    allowed_days = {
+        int(day["number"])
+        for day in state["days"]
+        if day["opened"] or day["can_open"]
+    }
+    return published_materials(db, allowed_days=allowed_days)
 
 
 def course_step_event(
