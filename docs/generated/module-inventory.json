@@ -15886,7 +15886,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 483,
+          "line": 486,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -15894,7 +15894,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 496,
+          "line": 499,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -15902,7 +15902,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 504,
+          "line": 507,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -15910,7 +15910,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 518,
+          "line": 521,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -19671,6 +19671,62 @@
           "module_id": "products.masterclass.runtime",
           "name": "gate",
           "qualname": "gate"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 3,
+          "module_id": "products.masterclass.runtime",
+          "name": "label",
+          "qualname": "label"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 8,
+          "module_id": "products.masterclass.runtime",
+          "name": "chapters",
+          "qualname": "chapters"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 19,
+          "module_id": "products.masterclass.runtime",
+          "name": "mountVideo",
+          "qualname": "mountVideo"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 34,
+          "module_id": "products.masterclass.runtime",
+          "name": "togglePlayback",
+          "qualname": "togglePlayback"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 52,
+          "module_id": "products.masterclass.runtime",
+          "name": "mount",
+          "qualname": "mount"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 65,
+          "module_id": "products.masterclass.runtime",
+          "name": "setOpen",
+          "qualname": "setOpen"
+        },
+        {
+          "file": "backend/app/static/video-player.js",
+          "kind": "function",
+          "line": 85,
+          "module_id": "products.masterclass.runtime",
+          "name": "boot",
+          "qualname": "boot"
         },
         {
           "file": "backend/migrations/versions/20260822_0015_masterclass_journey.py",
@@ -28288,6 +28344,62 @@
       "qualname": "boot"
     },
     {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 3,
+      "module_id": "products.masterclass.runtime",
+      "name": "label",
+      "qualname": "label"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 8,
+      "module_id": "products.masterclass.runtime",
+      "name": "chapters",
+      "qualname": "chapters"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 19,
+      "module_id": "products.masterclass.runtime",
+      "name": "mountVideo",
+      "qualname": "mountVideo"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 34,
+      "module_id": "products.masterclass.runtime",
+      "name": "togglePlayback",
+      "qualname": "togglePlayback"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 52,
+      "module_id": "products.masterclass.runtime",
+      "name": "mount",
+      "qualname": "mount"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 65,
+      "module_id": "products.masterclass.runtime",
+      "name": "setOpen",
+      "qualname": "setOpen"
+    },
+    {
+      "file": "backend/app/static/video-player.js",
+      "kind": "function",
+      "line": 85,
+      "module_id": "products.masterclass.runtime",
+      "name": "boot",
+      "qualname": "boot"
+    },
+    {
       "file": "backend/app/tilda_routes.py",
       "kind": "function",
       "line": 18,
@@ -29074,7 +29186,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 483,
+      "line": 486,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -29082,7 +29194,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 496,
+      "line": 499,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -29090,7 +29202,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 504,
+      "line": 507,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -29098,7 +29210,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 518,
+      "line": 521,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
