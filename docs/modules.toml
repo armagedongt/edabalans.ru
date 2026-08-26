@@ -200,6 +200,7 @@ owns_files = [
   "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
   "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
   "backend/migrations/versions/20260825_0024_course_structure_editor.py",
+  "backend/tests/test_course_structure_multiline.py",
   "work/course-structure-editor/**",
 ]
 owns_tables = ["managed_document_versions"]

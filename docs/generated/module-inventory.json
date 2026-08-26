@@ -604,6 +604,10 @@
       "path": "backend/tests/test_content_catalog.py"
     },
     {
+      "module_id": "products.masterclass.course",
+      "path": "backend/tests/test_course_structure_multiline.py"
+    },
+    {
       "module_id": "platform.auth",
       "path": "backend/tests/test_crm_auth.py"
     },
@@ -17156,7 +17160,8 @@
       "boundary": "`course.json` не является active runtime после появления DB revision.",
       "capabilities": [
         "публиковать и восстанавливать версию структуры курса;",
-        "показывать единый порядок дней и материалов во всех представлениях;"
+        "показывать единый порядок дней и материалов во всех представлениях;",
+        "сохранять введённые через Enter переносы строк без HTML-кода в редакторе;"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.masterclass.course.md",
       "document_status": "current",
@@ -17192,6 +17197,10 @@
         {
           "module_id": "products.masterclass.course",
           "path": "backend/migrations/versions/20260825_0024_course_structure_editor.py"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/tests/test_course_structure_multiline.py"
         },
         {
           "module_id": "products.masterclass.course",
@@ -18005,6 +18014,14 @@
           "module_id": "products.masterclass.course",
           "name": "downgrade",
           "qualname": "downgrade"
+        },
+        {
+          "file": "backend/tests/test_course_structure_multiline.py",
+          "kind": "function",
+          "line": 15,
+          "module_id": "products.masterclass.course",
+          "name": "test_course_structure_keeps_plain_newlines_and_renders_them",
+          "qualname": "test_course_structure_keeps_plain_newlines_and_renders_them"
         }
       ],
       "tables": [
@@ -18666,7 +18683,8 @@
       "boundary": "Не рассчитывает Telegram-рассылку и коммерческие правила офферов.",
       "capabilities": [
         "рассчитывать доступность и прогресс дней/шагов;",
-        "принимать идемпотентные события прохождения;"
+        "принимать идемпотентные события прохождения;",
+        "отображать редакторские переносы строк в текстах курса;"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md",
       "document_status": "current",
@@ -29398,6 +29416,14 @@
       "module_id": "platform.content",
       "name": "test_content_admin_asset_exposes_requested_catalog_controls",
       "qualname": "test_content_admin_asset_exposes_requested_catalog_controls"
+    },
+    {
+      "file": "backend/tests/test_course_structure_multiline.py",
+      "kind": "function",
+      "line": 15,
+      "module_id": "products.masterclass.course",
+      "name": "test_course_structure_keeps_plain_newlines_and_renders_them",
+      "qualname": "test_course_structure_keeps_plain_newlines_and_renders_them"
     },
     {
       "file": "backend/tests/test_crm_auth.py",
