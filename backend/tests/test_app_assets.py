@@ -358,6 +358,18 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
 
     course = client.get("/apps/masterclass-course.html").text
     assert 'id="course-tutorial"' in course
+    tutorial = course[course.index("function tutorialPreview"):course.index("function openTutorial")]
+    slides = tutorial[tutorial.index("function tutorialSlides"):tutorial.index("function renderTutorial")]
+    assert "grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr)" in course
+    assert "height:100dvh" in course
+    assert slides.count("{title:") == 5
+    assert all(label in slides for label in ("Галочка", "стрелка", "замок"))
+    assert "прогресс сохранится автоматически" in slides
+    assert "contacts" not in tutorial.lower()
+    assert "серге" not in tutorial.lower()
+    assert "card.scrollTop=0" in tutorial
+    assert "tutorialStep++;renderTutorial()" in course
+    assert "tutorialStep--;renderTutorial()" in course
     assert "if(!useGallery)return{body:box.innerHTML,images:images}" in course
     assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
 
