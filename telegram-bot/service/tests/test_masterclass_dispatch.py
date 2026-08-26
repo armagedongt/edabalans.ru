@@ -1,6 +1,7 @@
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
@@ -56,8 +57,15 @@ def add_contact_and_content(session):
         "tpl_postpurchase_tempo_late",
         "tpl_postpurchase_day_unopened",
         "tpl_postpurchase_final_offer",
+        "tpl_postpurchase_dqs_app_link",
     ):
-        body = "Откройте {{day_url}}" if code == "tpl_postpurchase_day_unopened" else "Откройте {{offers_url}}"
+        if code == "tpl_postpurchase_day_unopened":
+            body = "Откройте {{day_url}}"
+        elif code == "tpl_postpurchase_dqs_app_link":
+            body = ('Ваша система оценки качества питания — '
+                    '<a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.')
+        else:
+            body = "Откройте {{offers_url}}"
         session.add(ContentItem(code=code, title=code, body_source=body, status="published"))
     session.flush()
     return contact
@@ -199,6 +207,60 @@ def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
         assert row.status == "skipped"
         assert row.error_message == "nothing relevant to send"
         assert sender.sent == []
+
+
+def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        session.add(MasterclassNotification(
+            id="abababab-abab-abab-abab-abababababab",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:app-link:1",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        ))
+        session.add(MasterclassNotification(
+            id="bcbcbcbc-bcbc-bcbc-bcbc-bcbcbcbcbcbc",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="recipes_followup",
+            content_code="tpl_postpurchase_recipes_missing",
+            deduplication_key="recipes:deferred",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        ))
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            notification_kinds={"dqs_app_link"},
+        )
+
+        assert result["sent"] == 1
+        assert sender.sent == [(
+            "42",
+            "tpl_postpurchase_dqs_app_link",
+            'Ваша система оценки качества питания — <a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.',
+        )]
+
+
+def test_disabled_postpurchase_scheduler_keeps_the_maintenance_gate_for_dqs_link():
+    source = (Path(__file__).resolve().parents[1] / "app" / "main.py").read_text(
+        encoding="utf-8"
+    )
+    disabled_branch = source.split("else:\n                        dispatch_due_masterclass_notifications(", 1)[1]
+    disabled_branch = disabled_branch.split("\n        except Exception:", 1)[0]
+
+    assert 'notification_kinds={"dqs_app_link"}' in disabled_branch
+    assert "settings.telegram_maintenance_allowed_user_ids" in disabled_branch
+    assert "settings.telegram_maintenance_mode" in disabled_branch
 
 
 def test_sales_reminder_is_sent_once_for_its_current_window(tmp_path):

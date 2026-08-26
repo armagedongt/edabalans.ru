@@ -303,6 +303,20 @@ async def scheduler_loop() -> None:
                                 else None
                             ),
                         )
+                    else:
+                        dispatch_due_masterclass_notifications(
+                            session,
+                            tg,
+                            settings.masterclass_offers_url,
+                            course_url=settings.masterclass_course_url,
+                            account_url=settings.masterclass_account_url,
+                            allowed_telegram_ids=(
+                                settings.telegram_maintenance_allowed_user_ids
+                                if settings.telegram_maintenance_mode
+                                else None
+                            ),
+                            notification_kinds={"dqs_app_link"},
+                        )
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
             logger.exception("Telegram scheduler iteration failed")

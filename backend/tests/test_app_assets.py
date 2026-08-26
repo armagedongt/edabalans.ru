@@ -324,7 +324,7 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
     assert "var next=nextVisibleStep(d,step)" in course_html
     assert "if(next>=0)openCourseStep(d,next)" in course_html
-    assert "if(!step.hidden&&step.kind==='article'" in course_html
+    assert "if(!step.hidden&&step.contentAsset)" in course_html
     assert "return!step.hidden&&['messenger','offer']" in course_html
     assert "day.shortTitle||day.title" not in course_html
     assert "return day.tocSummary||generated" in course_html
@@ -339,6 +339,17 @@ def test_masterclass_first_day_tutorial_and_image_layout_contract() -> None:
     assert "pages[step.contentPageTitle||step.title]" in course_html
     assert "videoId:step.videoId,image:step.image" in course_html
     assert "materialMedia(t)+body" in course_html
+    day_four_dqs = manifest["days"][3]["steps"][1]
+    assert day_four_dqs["id"] == "day-04-dqs"
+    assert day_four_dqs["kind"] == "dqs"
+    assert day_four_dqs["contentAsset"] == "19-dqs-access-and-print-options.md"
+    assert "openDqsMaterial" in course_html
+    assert "if(step.kind==='dqs'&&step.contentAsset){openDqsMaterial(d,stepIndex);return}" in course_html
+    assert "else if(d.steps[stepIndex].kind==='dqs'&&d.steps[stepIndex].contentAsset){openDqsMaterial(d,stepIndex)}" in course_html
+    assert "dqsTutorialRequested=true;openDqsApplication(d,stepIndex);return" in course_html
+    assert "dqs/link-to-telegram" in course_html
+    assert "dqs-material-actions" in course_html
+    assert "DQS_for_print.png" in course_html
     assert "mobile-article-toc-button" in course_html
     assert "article-toc-button" in course_html
     assert "Содержание" in course_html

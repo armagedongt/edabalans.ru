@@ -11,7 +11,7 @@ os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
 os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine, func, select  # noqa: E402
+from sqlalchemy import create_engine, func, select, text  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
@@ -634,6 +634,52 @@ def test_onboarding_can_generate_only_one_active_short_lived_telegram_link():
     assert linked.status_code == 200
     assert linked.json()["linked"] is True
     assert "username" not in linked.json()
+
+
+def test_dqs_material_queues_a_link_only_for_linked_telegram():
+    client, factory = setup()
+    with factory() as db:
+        db.execute(text(
+            "CREATE TABLE tg_contacts (user_id VARCHAR(36), status VARCHAR(32))"
+        ))
+        db.commit()
+    missing = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert missing.status_code == 409
+    assert missing.json()["detail"]["reason"] == "telegram_not_linked"
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="42",
+            username="member",
+            linked_at=datetime.now(timezone.utc),
+            source="test",
+        ))
+        db.execute(text(
+            "INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"
+        ), {"user_id": str(user_id)})
+        db.commit()
+
+    queued = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert queued.status_code == 200
+    assert queued.json() == {"ok": True, "status": "queued"}
+    with factory() as db:
+        notification = db.scalar(select(MasterclassNotification).where(
+            MasterclassNotification.notification_kind == "dqs_app_link"
+        ))
+        assert notification is not None
+        assert notification.content_code == "tpl_postpurchase_dqs_app_link"
+        assert db.scalar(select(MasterclassEvent).where(
+            MasterclassEvent.event_type == "dqs_app_link_requested"
+        )) is not None
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():

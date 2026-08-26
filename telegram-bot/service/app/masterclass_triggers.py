@@ -30,6 +30,15 @@ TRIGGERS = [
         "purpose": "Прислать в Telegram структурированный список ответов по 16 продуктовым категориям.",
     },
     {
+        "step_key": "pp_dqs_app_link",
+        "content_code": "tpl_postpurchase_dqs_app_link",
+        "title": "DQS — ссылка на приложение",
+        "trigger": "dqs_app_link_requested",
+        "condition": "Участник сам нажал кнопку в материале DQS; Telegram привязан и доступ к мастер-классу действует",
+        "recipient": "Тот же участник",
+        "purpose": "Отправить только ссылку на приложение DQS в Telegram; MAX и автоматическая рассылка не используются.",
+    },
+    {
         "step_key": "pp_day_unopened_18h",
         "content_code": "tpl_postpurchase_day_unopened",
         "title": "03 · Новый день не открыт к 18:00",

@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, func, select, update
+from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
@@ -1151,6 +1151,54 @@ def messenger_link_status(
         "platform": platform,
         "linked": account is not None,
     }
+
+
+@router.post("/dqs/link-to-telegram")
+def send_dqs_link_to_telegram(
+    body: RunActionIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    account = db.scalar(
+        select(MessengerAccount.id)
+        .where(
+            MessengerAccount.user_id == user.id,
+            MessengerAccount.platform == "telegram",
+            MessengerAccount.linked_at.is_not(None),
+        )
+        .order_by(MessengerAccount.linked_at.desc())
+    )
+    contact = db.execute(
+        text(
+            "SELECT 1 FROM tg_contacts "
+            "WHERE user_id = :user_id AND status = 'active' LIMIT 1"
+        ),
+        {"user_id": str(user.id)},
+    ).first()
+    if not account or not contact:
+        raise HTTPException(409, detail={"reason": "telegram_not_linked"})
+    now = datetime.now(timezone.utc)
+    event = course_event(
+        db,
+        user.id,
+        f"dqs:app-link:{uuid.uuid4().hex}",
+        "dqs_app_link_requested",
+        placement="dqs-material",
+        details={},
+    )
+    queue_notification(
+        db,
+        user.id,
+        event,
+        "dqs_app_link",
+        now,
+        content_code="tpl_postpurchase_dqs_app_link",
+        payload={},
+    )
+    db.commit()
+    return {"ok": True, "status": "queued"}
 
 
 def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:

@@ -231,6 +231,13 @@ def _postpurchase_messages() -> list[dict]:
             ["после покупки", "день-2", "опросник", "продуктовые категории"],
         ),
         (
+            "postpurchase_dqs_app_link",
+            "DQS — ссылка на приложение",
+            "Ваша система оценки качества питания — <a href=\"https://похудение-это-есть.рф/dqs\">открыть приложение</a>.",
+            None,
+            ["после покупки", "DQS", "ссылка на приложение"],
+        ),
+        (
             "postpurchase_dqs_support",
             "03 · Через 6 часов после открытия DQS — поддержка",
             "[Добавьте короткое сообщение поддержки после знакомства с DQS. Можно прикрепить видеокружок.]",
@@ -594,7 +601,16 @@ def seed_defaults(
         )
         .limit(1)
     )
-    if not current_postpurchase or not current_day_unopened or not current_diet_questionnaire:
+    current_dqs_app_link = session.scalar(
+        select(SequenceStep.id)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .where(
+            SequenceVersion.sequence_id == post.id,
+            SequenceStep.step_key == "pp_dqs_app_link",
+        )
+        .limit(1)
+    )
+    if not current_postpurchase or not current_day_unopened or not current_diet_questionnaire or not current_dqs_app_link:
         last_version = session.scalar(
             select(SequenceVersion.version_no)
             .where(SequenceVersion.sequence_id == post.id)
@@ -607,6 +623,7 @@ def seed_defaults(
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_current_diet_questionnaire", "MESSAGE", "postpurchase_current_diet", None, {"trigger": "current_diet_questionnaire_completed", "condition": "telegram_linked=true", "state": "editorial_slot"}),
+            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "dqs_app_link_requested", "condition": "telegram_linked=true AND masterclass_access=true", "state": "manual_request"}),
             ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),

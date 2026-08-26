@@ -387,14 +387,18 @@ def dispatch_due_masterclass_notifications(
     account_url: str = "",
     test_only: bool = False,
     allowed_telegram_ids: str | None = None,
+    notification_kinds: set[str] | None = None,
 ) -> dict[str, int]:
     counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "maintenance_filtered": 0, "failed": 0}
     allowed_ids = parse_allowed_telegram_ids(allowed_telegram_ids) if allowed_telegram_ids is not None else None
-    due = list(session.scalars(
+    due_query = (
         select(MasterclassNotification)
         .where(MasterclassNotification.status == "pending", MasterclassNotification.due_at <= datetime.now(UTC))
         .order_by(MasterclassNotification.due_at, MasterclassNotification.created_at)
-    ))
+    )
+    if notification_kinds is not None:
+        due_query = due_query.where(MasterclassNotification.notification_kind.in_(notification_kinds))
+    due = list(session.scalars(due_query))
     for notification in due:
         if notification.notification_kind == "owner_closing_review":
             continue

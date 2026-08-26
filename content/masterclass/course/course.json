@@ -85,7 +85,7 @@
       "nextTitle": "Основа сбалансированного питания", "nextTeaser": "КБЖУК, витамины и правило тарелки.", "recipeDay": false, "publicationStatus": "ready",
       "steps": [
         {"id":"day-04-article-01","kind":"article","title":"Продуктовые категории и правила заполнения","shortTitle":"Категории и правила DQS","summary":"Категории, порции и правила заполнения.","status":"ready","contentKind":"text","contentAsset":"13-dqs-system.txt"},
-        {"id":"day-04-dqs","kind":"dqs","code":"dqs","label":"Открыть Diet Cultist Score","shortTitle":"Приложение DQS","summary":"Пройти короткий туториал и немного освоиться в приложении.","completion":"tutorial_completed"}
+        {"id":"day-04-dqs","kind":"dqs","code":"dqs","title":"Ваш DQS","label":"Ваш DQS","shortTitle":"Ваш DQS","summary":"Откройте приложение, сохраните ссылку и начните туториал.","contentKind":"text","contentAsset":"19-dqs-access-and-print-options.md","completion":"tutorial_completed"}
       ], "implementation": {"notes":["Видео с принципами находится в шапке.","Отдельного шага «Первое заполнение» нет."],"triggers":["dqs_opened"]}
     },
     {
