@@ -19541,13 +19541,21 @@
           "kind": "function",
           "line": 28,
           "module_id": "products.masterclass.runtime",
+          "name": "openTildaCart",
+          "qualname": "openTildaCart"
+        },
+        {
+          "file": "backend/app/static/masterclass.js",
+          "kind": "function",
+          "line": 29,
+          "module_id": "products.masterclass.runtime",
           "name": "watchPurchase",
           "qualname": "watchPurchase"
         },
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 30,
+          "line": 31,
           "module_id": "products.masterclass.runtime",
           "name": "offerMarkup",
           "qualname": "offerMarkup"
@@ -19555,7 +19563,7 @@
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 31,
+          "line": 32,
           "module_id": "products.masterclass.runtime",
           "name": "productPresentationMarkup",
           "qualname": "productPresentationMarkup"
@@ -19563,7 +19571,7 @@
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "module_id": "products.masterclass.runtime",
           "name": "checkoutOffer",
           "qualname": "checkoutOffer"
@@ -19571,7 +19579,7 @@
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 34,
+          "line": 35,
           "module_id": "products.masterclass.runtime",
           "name": "offerCards",
           "qualname": "offerCards"
@@ -19579,7 +19587,7 @@
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 35,
+          "line": 36,
           "module_id": "products.masterclass.runtime",
           "name": "offers",
           "qualname": "offers"
@@ -19587,7 +19595,7 @@
         {
           "file": "backend/app/static/masterclass.js",
           "kind": "function",
-          "line": 36,
+          "line": 37,
           "module_id": "products.masterclass.runtime",
           "name": "gate",
           "qualname": "gate"
@@ -27988,13 +27996,21 @@
       "kind": "function",
       "line": 28,
       "module_id": "products.masterclass.runtime",
+      "name": "openTildaCart",
+      "qualname": "openTildaCart"
+    },
+    {
+      "file": "backend/app/static/masterclass.js",
+      "kind": "function",
+      "line": 29,
+      "module_id": "products.masterclass.runtime",
       "name": "watchPurchase",
       "qualname": "watchPurchase"
     },
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 30,
+      "line": 31,
       "module_id": "products.masterclass.runtime",
       "name": "offerMarkup",
       "qualname": "offerMarkup"
@@ -28002,7 +28018,7 @@
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 31,
+      "line": 32,
       "module_id": "products.masterclass.runtime",
       "name": "productPresentationMarkup",
       "qualname": "productPresentationMarkup"
@@ -28010,7 +28026,7 @@
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 33,
+      "line": 34,
       "module_id": "products.masterclass.runtime",
       "name": "checkoutOffer",
       "qualname": "checkoutOffer"
@@ -28018,7 +28034,7 @@
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 34,
+      "line": 35,
       "module_id": "products.masterclass.runtime",
       "name": "offerCards",
       "qualname": "offerCards"
@@ -28026,7 +28042,7 @@
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 35,
+      "line": 36,
       "module_id": "products.masterclass.runtime",
       "name": "offers",
       "qualname": "offers"
@@ -28034,7 +28050,7 @@
     {
       "file": "backend/app/static/masterclass.js",
       "kind": "function",
-      "line": 36,
+      "line": 37,
       "module_id": "products.masterclass.runtime",
       "name": "gate",
       "qualname": "gate"
