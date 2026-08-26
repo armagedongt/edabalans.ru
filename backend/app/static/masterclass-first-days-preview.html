@@ -31,6 +31,9 @@
     .article-head{gap:12px;margin-bottom:28px}.back{min-height:36px;padding:7px 10px;border-radius:10px;font-size:var(--text-sm);font-weight:var(--weight-medium)}.article-nav{grid-template-columns:minmax(140px,1fr) minmax(120px,auto) minmax(140px,1fr);justify-content:center;gap:10px;max-width:680px;margin-top:44px}.article-nav button{min-height:46px;padding:11px 18px;border-radius:12px;font-size:var(--text-base);font-weight:var(--weight-medium);line-height:1.2}@media(max-width:620px){.article-nav{grid-template-columns:auto minmax(96px,1fr) auto;gap:8px;margin-top:36px}.article-nav .outline{grid-column:auto;grid-row:auto}.article-nav button{min-height:38px;padding:8px 10px;border-radius:10px;font-size:var(--text-sm)}}
     /* Краткое описание в карточке материала — пояснение, не второй заголовок. */
     .topic-copy>span:not(.topic-meta):not(.draft-badge){font-weight:var(--weight-regular)}
+    /* Экран привязки не зависит от внешних сбросов отступов Tilda. */
+    .messenger-popup-card h2{margin:0 0 16px}
+    .messenger-popup-card>p:not(.messenger-note):not(.messenger-link-note){margin:0 0 12px}
   </style>
 </head>
 <body>
