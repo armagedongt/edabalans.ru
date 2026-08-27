@@ -190,7 +190,9 @@ def markdown_to_article_html(
             continue
         if line.startswith("> "):
             end_list()
-            output.append(f"<blockquote>{inline_markdown(line[2:])}</blockquote>")
+            output.append(
+                f'<aside class="callout-red"><p>{inline_markdown(line[2:])}</p></aside>'
+            )
             continue
         image = re.fullmatch(
             r'!\[([^\]]*)\]\((https://[^\s)]+|/(?!/)[^\s)]+)(?:\s+"([^"]*)")?\)',

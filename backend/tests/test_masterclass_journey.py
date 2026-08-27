@@ -400,7 +400,7 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     assert "<p>Источник: систематический обзор.</p>" in first.json()["html"]
     assert "<ul><li>Первый пункт.</li><li>Второй пункт.</li></ul>" in first.json()["html"]
     assert "<ol><li>Сначала.</li><li>Затем.</li></ol>" in first.json()["html"]
-    assert "<blockquote>Цитата.</blockquote>" in first.json()["html"]
+    assert '<aside class="callout-red"><p>Цитата.</p></aside>' in first.json()["html"]
     assert '<aside class="callout-blue"><p><strong>Спокойный акцент.</strong></p></aside>' in first.json()["html"]
     assert 'href="/apps/recipes-part-1.html"' in first.json()["html"]
     assert "<figcaption>Подпись</figcaption>" in first.json()["html"]
