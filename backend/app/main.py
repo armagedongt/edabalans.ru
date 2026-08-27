@@ -18,6 +18,7 @@ from app.knowledge_routes import router as knowledge_router
 from app.course_structure_routes import router as course_structure_router
 from app.course_material_routes import router as course_material_router
 from app.product_catalog_routes import router as product_catalog_router
+from app.recipe_routes import router as recipe_router
 from app.database import get_db
 
 settings = get_settings()
@@ -26,7 +27,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
     allow_credentials=False,
-    allow_methods=["GET", "POST", "PUT", "OPTIONS"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
 app.include_router(crm_router)
@@ -42,6 +43,7 @@ app.include_router(knowledge_router)
 app.include_router(course_structure_router)
 app.include_router(course_material_router)
 app.include_router(product_catalog_router)
+app.include_router(recipe_router)
 
 
 @app.get("/health", tags=["system"])

@@ -62,7 +62,7 @@ def site_footer_loader() -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> FileResponse:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "masterclass-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access"}:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access"}:
         raise HTTPException(status_code=404, detail="app not found")
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
@@ -71,7 +71,7 @@ def app_fragment(app_code: str) -> FileResponse:
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"masterclass.js", "masterclass.css", "max-logo.png", "video-player.js", "video-player.css"}:
+    if asset_name not in {"masterclass.js", "masterclass.css", "max-logo.png"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)
 
@@ -109,11 +109,6 @@ def intensive_stylesheet() -> FileResponse:
 @router.get("/intensive/intensive.js", include_in_schema=False)
 def intensive_script() -> FileResponse:
     return public_asset(STATIC_DIR / "intensive" / "intensive.js")
-
-
-@router.get("/video-player-preview", include_in_schema=False)
-def video_player_preview() -> FileResponse:
-    return public_asset(STATIC_DIR / "video-player-preview.html")
 
 
 def intensive_day_asset(day_code: str) -> FileResponse:

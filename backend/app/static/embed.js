@@ -12,6 +12,7 @@
     'masterclass-offers': true,
     'recipes-part-1': true,
     'recipes-part-2': true,
+    'recipes': true,
     'closing-review': true,
     'personal-access': true
   };
@@ -26,6 +27,7 @@
     'masterclass-offers': 'masterclass-offers-app',
     'recipes-part-1': 'recipes-part-1-app',
     'recipes-part-2': 'recipes-part-2-app',
+    'recipes': 'recipes-app',
     'closing-review': 'closing-review-app',
     'personal-access': 'personal-access-app'
   };
