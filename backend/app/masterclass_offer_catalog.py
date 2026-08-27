@@ -187,7 +187,13 @@ def offer_products(db: Session) -> dict[str, OfferProduct]:
             "name": public["name"],
             "description": public["description"],
             "long_description": "",
-            "resource": public["resource"],
+            # The editable product catalog owns public copy and its app link.
+            # The offer catalog owns the sellable entitlement: the recipes app
+            # itself uses the separate ``recipes`` calculator resource, while
+            # owning the paid product is still recorded as ``ACCESS_RECIPES``.
+            # Never use the app resource here or an existing buyer is offered
+            # the same product again.
+            "resource": OFFER_PRODUCTS[offer_code]["resource"],
             "standard": standard,
             "status": public["status"],
             "features": OFFER_PRODUCTS[offer_code]["features"],
