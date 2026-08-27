@@ -323,6 +323,7 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         '<ul><li>Первый пункт.</li><li>Второй пункт.</li></ul>'
         '<blockquote>Сильная самостоятельная мысль.</blockquote>'
         '<aside class="made-up"><strong>Важно</strong><p>Один тип плашки.</p></aside>'
+        '<aside class="callout-green"><strong>Запасной тип.</strong></aside>'
         '<figure><img src="https://cdn.example.test/plate.jpg" alt="Тарелка" '
         'onerror="bad()"><figcaption>Пример тарелки</figcaption></figure>'
         '<script>alert(1)</script>'
@@ -335,7 +336,8 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
     body = published.json()
     assert body["version"] == 1
     assert body["published"] is True
-    assert '<aside class="editorial-note">' in body["html"]
+    assert '<aside class="callout-red">' in body["html"]
+    assert '<aside class="callout-green">' in body["html"]
     assert 'target="_blank" rel="noopener"' in body["html"]
     assert 'loading="lazy"' in body["html"]
     assert "onclick" not in body["html"]
@@ -383,6 +385,7 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
                 "Источник: систематический обзор.\n\n"
                 "- Первый пункт.\n- Второй пункт.\n\n1. Сначала.\n2. Затем.\n\n"
                 "> Цитата.\n\n[Смежный материал](/apps/recipes-part-1.html)\n\n"
+                "::: callout-blue\n\n**Спокойный акцент.**\n\n:::\n\n"
                 "![Схема](https://cdn.example.test/schema.png \"Подпись\")\n\n"
                 "![Локальная схема](/assets/course/schema.png)"
             ),
@@ -398,6 +401,7 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     assert "<ul><li>Первый пункт.</li><li>Второй пункт.</li></ul>" in first.json()["html"]
     assert "<ol><li>Сначала.</li><li>Затем.</li></ol>" in first.json()["html"]
     assert "<blockquote>Цитата.</blockquote>" in first.json()["html"]
+    assert '<aside class="callout-blue"><p><strong>Спокойный акцент.</strong></p></aside>' in first.json()["html"]
     assert 'href="/apps/recipes-part-1.html"' in first.json()["html"]
     assert "<figcaption>Подпись</figcaption>" in first.json()["html"]
     assert 'src="/assets/course/schema.png"' in first.json()["html"]

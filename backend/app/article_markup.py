@@ -15,6 +15,7 @@ ALLOWED_TAGS = {
 COURSE_TAGS = ALLOWED_TAGS | {"figure", "figcaption"}
 VOID_TAGS = {"img", "br", "hr"}
 BLOCKED_TAGS = {"script", "style", "iframe", "object", "svg", "math"}
+CALLOUT_CLASSES = {"callout-red", "callout-green", "callout-blue"}
 
 
 def safe_href(value: str) -> bool:
@@ -75,7 +76,14 @@ class ArticleSanitizer(HTMLParser):
             if self.course_semantics:
                 rendered_attrs += ' loading="lazy"'
         elif tag == "aside" and self.course_semantics:
-            rendered_attrs = ' class="editorial-note"'
+            callout_class = next(
+                (value for name, value in attrs if name.lower() == "class"), ""
+            )
+            rendered_attrs = (
+                f' class="{callout_class}"'
+                if callout_class in CALLOUT_CLASSES
+                else ' class="callout-red"'
+            )
         self.parts.append(f"<{tag}{rendered_attrs}>")
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -137,6 +145,7 @@ def markdown_to_article_html(
     lines = str(source or "").replace("\r", "").split("\n")
     output: list[str] = []
     active_list = ""
+    active_callout = False
 
     def end_list() -> None:
         nonlocal active_list
@@ -144,8 +153,25 @@ def markdown_to_article_html(
             output.append(f"</{active_list}>")
             active_list = ""
 
+    def end_callout() -> None:
+        nonlocal active_callout
+        if active_callout:
+            end_list()
+            output.append("</aside>")
+            active_callout = False
+
     for raw in lines:
         line = raw.strip()
+        if line == ":::":
+            end_callout()
+            continue
+        callout = re.fullmatch(r":::\s+(callout-(?:red|green|blue))", line)
+        if callout:
+            end_callout()
+            end_list()
+            output.append(f'<aside class="{callout.group(1)}">')
+            active_callout = True
+            continue
         if not line or (
             strip_source_metadata
             and (line.startswith("Статус:") or line.startswith("Источник:"))
@@ -193,6 +219,7 @@ def markdown_to_article_html(
             continue
         end_list()
         output.append(f"<p>{inline_markdown(line)}</p>")
+    end_callout()
     end_list()
     return sanitize_article_html(
         "".join(output), allow_h1=False, course_semantics=True
