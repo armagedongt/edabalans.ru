@@ -1,14 +1,14 @@
 """Add recipe calculator data, access and future checkout grants.
 
-Revision ID: 20260827_0026
-Revises: 20260825_0025
+Revision ID: 20260827_0027
+Revises: 20260827_0026
 """
 
 from alembic import op
 
 
-revision = "20260827_0026"
-down_revision = "20260825_0025"
+revision = "20260827_0027"
+down_revision = "20260827_0026"
 branch_labels = None
 depends_on = None
 

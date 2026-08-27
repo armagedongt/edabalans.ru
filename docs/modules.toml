@@ -212,7 +212,7 @@ card = "docs/knowledge-base/modules/catalog/products.recipes.md"
 owns_files = [
   "backend/app/recipe_models.py", "backend/app/recipe_service.py", "backend/app/recipe_routes.py",
   "backend/app/static/apps/recipes.html", "backend/scripts/import_recipe_catalog.py",
-  "backend/tests/test_recipe_calculator.py", "backend/migrations/versions/20260827_0026_recipe_calculator.py",
+  "backend/tests/test_recipe_calculator.py", "backend/migrations/versions/20260827_0027_recipe_calculator.py",
 ]
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
 owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*"]
