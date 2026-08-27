@@ -30,6 +30,11 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     assert "data-edabalans-footer-owner" in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
     assert "ensureLegalFooter(mount);" in loader
+    assert "function legalFooterHost(mount)" in loader
+    assert "courseMount.querySelector(':scope > .main')" in loader
+    assert "footer.parentElement !== host" in loader
+    assert "host.appendChild(footer)" in loader
+    assert "{childList: true, subtree: true}" in loader
     footer = loader[loader.index("function legalFooterHtml"):loader.index("function ensureLegalFooter")]
     assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in footer
     assert "Полное или частичное копирование запрещено" in footer

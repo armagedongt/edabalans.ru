@@ -19054,7 +19054,8 @@
       "boundary": "Не является отдельным экраном или монолитной админкой.",
       "capabilities": [
         "объединять продуктовые модули на общем backend и user_id;",
-        "сохранять отдельный UX каждого продукта;"
+        "сохранять отдельный UX каждого продукта;",
+        "показывать общий юридический подвал внутри доступной контентной области приложения;"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.md",
       "document_status": "current",
@@ -19454,13 +19455,21 @@
           "kind": "function",
           "line": 157,
           "module_id": "products",
+          "name": "legalFooterHost",
+          "qualname": "legalFooterHost"
+        },
+        {
+          "file": "backend/app/static/embed.js",
+          "kind": "function",
+          "line": 165,
+          "module_id": "products",
           "name": "ensureLegalFooter",
           "qualname": "ensureLegalFooter"
         },
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 161,
+          "line": 169,
           "module_id": "products",
           "name": "append",
           "qualname": "append"
@@ -19468,7 +19477,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 169,
+          "line": 178,
           "module_id": "products",
           "name": "askIdentity",
           "qualname": "askIdentity"
@@ -19476,7 +19485,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 243,
+          "line": 252,
           "module_id": "products",
           "name": "executeScripts",
           "qualname": "executeScripts"
@@ -19484,7 +19493,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 264,
+          "line": 273,
           "module_id": "products",
           "name": "load",
           "qualname": "load"
@@ -19492,7 +19501,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 309,
+          "line": 318,
           "module_id": "products",
           "name": "start",
           "qualname": "start"
@@ -19500,7 +19509,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 313,
+          "line": 322,
           "module_id": "products",
           "name": "boot",
           "qualname": "boot"
@@ -19628,7 +19637,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 46,
+          "line": 51,
           "module_id": "products",
           "name": "test_stable_site_footer_loader_is_public",
           "qualname": "test_stable_site_footer_loader_is_public"
@@ -19636,7 +19645,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 129,
+          "line": 134,
           "module_id": "products",
           "name": "test_application_fragments_use_server_api",
           "qualname": "test_application_fragments_use_server_api"
@@ -19644,7 +19653,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 140,
+          "line": 145,
           "module_id": "products",
           "name": "test_production_admin_assets_do_not_name_legacy_storage",
           "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -19652,7 +19661,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 148,
+          "line": 153,
           "module_id": "products",
           "name": "test_unknown_application_fragment_is_404",
           "qualname": "test_unknown_application_fragment_is_404"
@@ -19660,7 +19669,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 152,
+          "line": 157,
           "module_id": "products",
           "name": "test_shared_content_gallery_asset_is_public_without_captions",
           "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -19668,7 +19677,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 167,
+          "line": 172,
           "module_id": "products",
           "name": "test_masterclass_fragments_and_shared_assets_are_public",
           "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -19676,7 +19685,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 285,
+          "line": 290,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -19684,7 +19693,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 471,
+          "line": 476,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -19692,7 +19701,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 489,
+          "line": 494,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -19700,7 +19709,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 516,
+          "line": 521,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -19708,7 +19717,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 530,
+          "line": 535,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -19716,7 +19725,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 582,
+          "line": 587,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -19724,7 +19733,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 594,
+          "line": 599,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -19732,7 +19741,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 634,
+          "line": 639,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -19740,7 +19749,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 640,
+          "line": 645,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -19748,7 +19757,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 653,
+          "line": 658,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -19756,7 +19765,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 664,
+          "line": 669,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -19764,7 +19773,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 678,
+          "line": 683,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -33223,13 +33232,21 @@
       "kind": "function",
       "line": 157,
       "module_id": "products",
+      "name": "legalFooterHost",
+      "qualname": "legalFooterHost"
+    },
+    {
+      "file": "backend/app/static/embed.js",
+      "kind": "function",
+      "line": 165,
+      "module_id": "products",
       "name": "ensureLegalFooter",
       "qualname": "ensureLegalFooter"
     },
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 161,
+      "line": 169,
       "module_id": "products",
       "name": "append",
       "qualname": "append"
@@ -33237,7 +33254,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 169,
+      "line": 178,
       "module_id": "products",
       "name": "askIdentity",
       "qualname": "askIdentity"
@@ -33245,7 +33262,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 243,
+      "line": 252,
       "module_id": "products",
       "name": "executeScripts",
       "qualname": "executeScripts"
@@ -33253,7 +33270,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 264,
+      "line": 273,
       "module_id": "products",
       "name": "load",
       "qualname": "load"
@@ -33261,7 +33278,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 309,
+      "line": 318,
       "module_id": "products",
       "name": "start",
       "qualname": "start"
@@ -33269,7 +33286,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 313,
+      "line": 322,
       "module_id": "products",
       "name": "boot",
       "qualname": "boot"
@@ -34725,7 +34742,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 46,
+      "line": 51,
       "module_id": "products",
       "name": "test_stable_site_footer_loader_is_public",
       "qualname": "test_stable_site_footer_loader_is_public"
@@ -34733,7 +34750,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 129,
+      "line": 134,
       "module_id": "products",
       "name": "test_application_fragments_use_server_api",
       "qualname": "test_application_fragments_use_server_api"
@@ -34741,7 +34758,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 140,
+      "line": 145,
       "module_id": "products",
       "name": "test_production_admin_assets_do_not_name_legacy_storage",
       "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -34749,7 +34766,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 148,
+      "line": 153,
       "module_id": "products",
       "name": "test_unknown_application_fragment_is_404",
       "qualname": "test_unknown_application_fragment_is_404"
@@ -34757,7 +34774,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 152,
+      "line": 157,
       "module_id": "products",
       "name": "test_shared_content_gallery_asset_is_public_without_captions",
       "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -34765,7 +34782,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 167,
+      "line": 172,
       "module_id": "products",
       "name": "test_masterclass_fragments_and_shared_assets_are_public",
       "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -34773,7 +34790,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 285,
+      "line": 290,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -34781,7 +34798,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 471,
+      "line": 476,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -34789,7 +34806,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 489,
+      "line": 494,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -34797,7 +34814,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 516,
+      "line": 521,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -34805,7 +34822,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 530,
+      "line": 535,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -34813,7 +34830,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 582,
+      "line": 587,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -34821,7 +34838,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 594,
+      "line": 599,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -34829,7 +34846,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 634,
+      "line": 639,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -34837,7 +34854,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 640,
+      "line": 645,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -34845,7 +34862,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 653,
+      "line": 658,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -34853,7 +34870,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 664,
+      "line": 669,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -34861,7 +34878,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 678,
+      "line": 683,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"

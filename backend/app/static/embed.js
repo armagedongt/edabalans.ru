@@ -155,16 +155,25 @@
       '</footer>';
   }
 
+  function legalFooterHost(mount) {
+    var courseMount = mount.getAttribute('data-edabalans-app') === 'masterclass-course'
+      ? mount
+      : mount.querySelector('[data-edabalans-app="masterclass-course"]');
+    var courseMain = courseMount && courseMount.querySelector(':scope > .main');
+    return courseMain || mount;
+  }
+
   function ensureLegalFooter(mount) {
     if (mount.parentElement && mount.parentElement.closest('[data-edabalans-footer-owner]')) return;
     mount.setAttribute('data-edabalans-footer-owner', 'true');
     function append() {
-      if (!mount.querySelector(':scope > [data-edabalans-legal-footer]')) {
-        mount.insertAdjacentHTML('beforeend', legalFooterHtml());
-      }
+      var host = legalFooterHost(mount);
+      var footer = mount.querySelector('[data-edabalans-legal-footer]');
+      if (!footer) host.insertAdjacentHTML('beforeend', legalFooterHtml());
+      else if (footer.parentElement !== host) host.appendChild(footer);
     }
     append();
-    new MutationObserver(append).observe(mount, {childList: true});
+    new MutationObserver(append).observe(mount, {childList: true, subtree: true});
   }
 
   function askIdentity(mounts, candidate, requireConfirmation) {
