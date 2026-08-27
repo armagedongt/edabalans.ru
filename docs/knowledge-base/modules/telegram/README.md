@@ -15,10 +15,12 @@ Telegram-бот — канал общей messaging-системы edabalans.ru.
 
 1. `MODULE_DEVELOPMENT_STANDARD.md` — обязательный процесс разработки каждого
    глобального модуля.
-2. `MODULE_REGISTRY.md` — правило чтения единого общего registry без ручной копии списка.
-3. Карточка `../catalog/messaging.telegram*.md`, затем документ конкретного модуля —
+2. `MESSAGE_CONTENT_AUTHORING.md` — обязательный контракт цели, ТЗ писателю и
+   безопасной Telegram HTML-публикации каждого сообщения.
+3. `MODULE_REGISTRY.md` — правило чтения единого общего registry без ручной копии списка.
+4. Карточка `../catalog/messaging.telegram*.md`, затем документ конкретного модуля —
    назначение, подробный текст, границы и Mermaid-схема.
-4. Техническое ТЗ и `TELEGRAM_BOT_CURRENT_LOGIC.md` — реализация и фактическое
+5. Техническое ТЗ и `TELEGRAM_BOT_CURRENT_LOGIC.md` — реализация и фактическое
    production-поведение.
 
 ## Глобальные модули и поддерживающие документы

@@ -1,12 +1,15 @@
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+import re
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
+from app.content_formatting import validate_telegram_html
 from app.masterclass_dispatch import (
     client_values,
+    content_is_sendable,
     dispatch_due_masterclass_notifications,
     telegram_text_parts,
 )
@@ -20,6 +23,28 @@ class FakeSender:
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code, content.body_source))
         return str(len(self.sent))
+
+
+def test_postpurchase_rejects_unapproved_content():
+    item = ContentItem(
+        code="draft",
+        title="Draft",
+        body_source="Текст",
+        status="published",
+        editorial_status="draft",
+    )
+    assert content_is_sendable(item, item.body_source) == (False, "content is not owner-approved")
+
+
+def test_long_telegram_html_splits_without_breaking_tags_or_entities():
+    body = "<b>" + ("а" * 3889) + "&amp;" + ("б" * 40) + "</b>"
+    parts = telegram_text_parts(body)
+    assert len(parts) == 2
+    assert all(len(part) <= 3900 for part in parts)
+    for part in parts:
+        validate_telegram_html(part)
+    visible = "".join(re.sub(r"<[^>]+>", "", part) for part in parts)
+    assert visible == ("а" * 3889) + "&amp;" + ("б" * 40)
 
 
 def session_factory(tmp_path):
@@ -66,7 +91,15 @@ def add_contact_and_content(session):
                     '<a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.')
         else:
             body = "Откройте {{offers_url}}"
-        session.add(ContentItem(code=code, title=code, body_source=body, status="published"))
+        session.add(ContentItem(
+            code=code,
+            title=code,
+            body_source=body,
+            status="published",
+            editorial_status="approved",
+            purpose="Тестовая цель",
+            writer_brief="Тестовое ТЗ",
+        ))
     session.flush()
     return contact
 

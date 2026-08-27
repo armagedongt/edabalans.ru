@@ -222,6 +222,8 @@ def test_pin_error_does_not_stop_welcome(tmp_path):
 def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
+        day1 = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_day1"))
+        day1.status = "published"; day1.editorial_status = "approved"
         for step in session.scalars(select(SequenceStep).where(SequenceStep.step_key.in_(["welcome_subscription", "welcome_subscription_recheck"]))):
             step.configuration = {**step.configuration, "enabled": True}
         bot = session.scalar(select(BotInstance))
@@ -303,6 +305,8 @@ def test_real_subscription_check_updates_account_and_canonical_tag(tmp_path):
 def test_welcome_does_not_check_purchase(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
+        day1 = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_day1"))
+        day1.status = "published"; day1.editorial_status = "approved"
         bot = session.scalar(select(BotInstance))
         contact = Contact(bot_instance_id=bot.id, telegram_user_id="77", chat_id="77")
         session.add(contact); session.flush()
@@ -317,6 +321,23 @@ def test_welcome_does_not_check_purchase(tmp_path):
         version = session.get(SequenceVersion, run.sequence_version_id)
         welcome_steps = session.scalars(select(SequenceStep).where(SequenceStep.sequence_version_id == version.id)).all()
         assert not any(step.configuration.get("condition") == "has_product" for step in welcome_steps)
+
+
+def test_sequence_stops_before_unapproved_message(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        contact = Contact(bot_instance_id=bot.id, telegram_user_id="draft", chat_id="draft")
+        session.add(contact); session.commit()
+        run = start_run(session, contact.id, WELCOME_CODE)
+        sender = FakeSender()
+        advance_run(session, run, sender)
+        resume_callback(session, contact.id, "start_intensive")
+        advance_run(session, run, sender)
+
+        assert run.status == "error"
+        assert run.last_error == "Content is not owner-approved: tpl_day1"
+        assert "tpl_day1" not in [item[1] for item in sender.sent]
 
 
 def test_welcome_timing_and_subscription_observation_steps(tmp_path):

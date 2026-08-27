@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 
 from app.models import BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
 from app.masterclass_triggers import TRIGGERS
+from app.content_formatting import is_placeholder_text
+from app.content_authoring import authoring_payload, content_usages
 
 
 SYSTEM_COMPONENTS: dict[str, dict[str, str]] = {
@@ -112,20 +114,14 @@ def module_overview_graph(_: Session) -> dict[str, Any]:
 
 
 def start_attribution_graph(session: Session) -> dict[str, Any]:
+    usage_map = content_usages(session)
+
     def node(node_id: str, kind: str, label: str, subtitle: str, position: int, content_code: str | None = None, **details: Any) -> dict[str, Any]:
         result = {"id": node_id, "kind": kind, "label": label, "subtitle": subtitle, "position": position, "details": details}
         if content_code:
             item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
             if item:
-                result["content"] = {
-                    "id": item.id,
-                    "code": item.code,
-                    "title": item.title,
-                    "body_source": item.body_source,
-                    "media_kind": item.media_kind,
-                    "media_path": item.media_path,
-                    "labels": item.labels,
-                }
+                result["content"] = authoring_payload(item, usage_map.get(item.code, []))
         return result
 
     nodes = [
@@ -184,6 +180,7 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
 def postpurchase_graph(session: Session) -> dict[str, Any]:
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, Any]] = []
+    usage_map = content_usages(session)
     for index, trigger in enumerate(TRIGGERS, 1):
         event_id = f"event:{trigger['step_key']}"
         condition_id = f"condition:{trigger['step_key']}"
@@ -195,7 +192,7 @@ def postpurchase_graph(session: Session) -> dict[str, Any]:
         ))
         message = {"id": message_id, "kind": "message", "label": trigger["title"], "subtitle": trigger["purpose"], "position": index * 3, "details": {"Получатель": trigger["recipient"], "Контент": trigger["content_code"], "Хранение": "tg_content_items", "Доставка": "masterclass_notifications → tg_manual_messages"}}
         if item:
-            message["content"] = {"id": item.id, "code": item.code, "title": item.title, "body_source": item.body_source, "media_kind": item.media_kind, "media_path": item.media_path, "labels": item.labels}
+            message["content"] = authoring_payload(item, usage_map.get(item.code, []))
         nodes.append(message)
         edges.extend((
             {"id": f"{message_id}:event", "source": event_id, "target": condition_id, "label": "Наступил срок", "branch": "event"},
@@ -300,6 +297,12 @@ def graph_issues(session: Session, version: SequenceVersion) -> list[dict[str, s
     for step in steps:
         if step.kind in {"MESSAGE", "PHOTO", "VIDEO", "VIDEO_NOTE", "VOICE"} and not step.content_item_id:
             issues.append({"severity": "error", "code": "missing_content", "message": f"В блоке «{step.label}» не выбрано сообщение."})
+        elif step.content_item_id:
+            content = session.get(ContentItem, step.content_item_id)
+            if content and (not (content.purpose or "").strip() or not (content.writer_brief or "").strip()):
+                issues.append({"severity": "warning", "code": "missing_content_brief", "message": f"Для сообщения «{step.label}» не заполнены цель и ТЗ писателю."})
+            if content and is_placeholder_text(content.body_source) and not (content.media_kind == "video_note" and (content.media_path or content.telegram_file_id)):
+                issues.append({"severity": "warning", "code": "content_placeholder", "message": f"В сообщении «{step.label}» пока стоит текстовая заглушка."})
         if step.kind == "DELAY" and step.delay_seconds is None:
             issues.append({"severity": "error", "code": "missing_delay", "message": f"В блоке «{step.label}» не указана задержка."})
         if step.kind == "CONDITION":
@@ -359,6 +362,7 @@ def sequence_graph(session: Session, sequence_code: str, status: str = "publishe
         .order_by(SequenceStep.position)
     ).all()
     edges = list(session.scalars(select(SequenceEdge).where(SequenceEdge.sequence_version_id == version.id, SequenceEdge.enabled.is_(True)).order_by(SequenceEdge.priority)))
+    usage_map = content_usages(session)
     nodes = []
     for step, content in rows:
         component_code = component_for_step(step)
@@ -381,15 +385,7 @@ def sequence_graph(session: Session, sequence_code: str, status: str = "publishe
             },
         }
         if content:
-            graph_node["content"] = {
-                "id": content.id,
-                "code": content.code,
-                "title": content.title,
-                "body_source": content.body_source,
-                "media_kind": content.media_kind,
-                "media_path": content.media_path,
-                "labels": content.labels,
-            }
+            graph_node["content"] = authoring_payload(content, usage_map.get(content.code, []))
         nodes.append(graph_node)
     graph_edges = [{
         "id": edge.id,

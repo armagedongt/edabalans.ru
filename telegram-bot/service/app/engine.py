@@ -8,6 +8,7 @@ from sqlalchemy import delete, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.models import ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.content_formatting import content_is_runtime_ready
 
 
 logger = logging.getLogger(__name__)
@@ -246,6 +247,13 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
             if not delivery:
                 delivery = StepDelivery(run_id=run.id, step_key=step.step_key, idempotency_key=key, status="pending", scheduled_at=utcnow(), payload_snapshot={"content_code": content.code if content else None})
                 session.add(delivery); session.flush()
+            if not content or not content_is_runtime_ready(content):
+                message = f"Content is not owner-approved: {content.code if content else step.step_key}"
+                delivery.status = "failed"
+                delivery.error_message = message
+                run.status = "error"
+                run.last_error = message
+                break
             try:
                 delivery.attempt_count += 1
                 delivery.platform_message_id = sender.send_content(contact.chat_id, content, config)

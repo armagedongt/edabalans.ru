@@ -6,8 +6,9 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdge, SequenceStep, SequenceVersion
-from app.masterclass_triggers import editorial_help
+from app.masterclass_triggers import TRIGGERS, editorial_help
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE
+from app.content_formatting import is_placeholder_text
 
 
 START_ENTRY_CODE = "start_attribution_entry"
@@ -17,6 +18,140 @@ LEGACY_PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
 POSTMASTERCLASS_CODE = "postmasterclass_nurture"
 WELCOME_CIRCLE_MEDIA_PATH = "/app/media/welcome-intro-circle.mp4"
+
+
+POSTPURCHASE_TRIGGER_BY_CONTENT = {item["content_code"].removeprefix("tpl_"): item for item in TRIGGERS}
+OWNER_APPROVED_SEED_CODES = {
+    "maintenance_notice",
+    "start_navigation_pin",
+    "entry_circle",
+    "start_welcome_offer",
+    "start_subscription_reminder",
+    "start_has_masterclass",
+    "start_intensive_waiting",
+    "start_intensive_complete",
+}
+
+
+def _editorial_metadata(code: str, title: str, body: str, media: str | None) -> tuple[str, str, str]:
+    specialized = {
+        "maintenance_notice": (
+            "Сообщить внешнему посетителю, что бот временно закрыт, и сохранить его для последующего контакта.",
+            "Контекст: человек нажал Start во время ремонта после фиксации первого источника.\n\n"
+            "Главная задача: спокойно объяснить временную недоступность и дать рабочий контакт Сергея.\n\n"
+            "Призыв: дождаться возобновления или написать @FitnessSergey.\n\n"
+            "Ограничения: не обещать точную дату, если она не задана; не запускать Welcome.",
+        ),
+        "start_navigation_pin": (
+            "Дать новому пользователю постоянную общую навигацию и закрепить её в чате.",
+            "Контекст: первое посещение определено, мастер-класс не куплен, Welcome ещё не запускался.\n\n"
+            "Главная задача: показать контакт Сергея, интенсив, мастер-класс и основной канал.\n\n"
+            "Призыв: кнопка ведёт в канал.\n\nОграничения: сообщение должно оставаться полезным после закрепления и не заменяет превью интенсива.",
+        ),
+        "entry_circle": (
+            "Лично познакомить нового пользователя с Сергеем перед описанием интенсива.",
+            "Контекст: навигационный пост уже отправлен и закреплён.\n\n"
+            "Главная задача: отправить утверждённый видеокружок без отдельного текста.\n\n"
+            "Ограничения: не добавлять подпись автоматически; следующим приходит превью интенсива.",
+        ),
+        "start_welcome_offer": (
+            "Объяснить ценность четырёхдневного интенсива и довести до кнопки его запуска.",
+            "Контекст: новый пользователь получил закреп и видеокружок.\n\n"
+            "Главная задача: коротко показать подход и содержание четырёх дней.\n\n"
+            "Призыв: одна кнопка «Начать интенсив».\n\n"
+            "Ограничения: не давать материалы дней в этом превью и не менять callback кнопки.",
+        ),
+        "start_subscription_reminder": (
+            "Попросить подписаться на основной канал перед первым днём, не блокируя интенсив навсегда.",
+            "Контекст: пользователь нажал кнопку начала, но проверка не увидела подписку.\n\n"
+            "Главная задача: дать ссылку на канал и объяснить повторную проверку.\n\n"
+            "Призыв: подписаться и нажать «Проверить ещё раз».\n\n"
+            "Ограничения: честно сказать, что через пять минут День 1 всё равно будет отправлен.",
+        ),
+        "start_has_masterclass": (
+            "На повторном Start направить покупателя в уже приобретённый мастер-класс вместо интенсивa.",
+            "Контекст: человек знаком с ботом, а CRM подтверждает доступ к мастер-классу.\n\n"
+            "Главная задача: объяснить, что интенсив ему не нужен, и напомнить путь по программе.\n\n"
+            "Призыв: при вопросах написать @FitnessSergey.\n\nОграничения: не запускать Welcome и не продавать мастер-класс повторно.",
+        ),
+        "start_intensive_waiting": (
+            "На повторном Start объяснить, что интенсив уже идёт и когда придёт следующий материал.",
+            "Контекст: мастер-класс не куплен, День 4 ещё не отправлен, активный Welcome существует.\n\n"
+            "Главная задача: не ускорять расписание и показать {{next_message_at}} и {{wait_interval}}.\n\n"
+            "Призыв: читать уже полученные материалы или канал.\n\nОграничения: повторный Start не двигает run на следующий шаг.",
+        ),
+        "start_intensive_complete": (
+            "Вернуть знакомого пользователя к четырём завершённым частям интенсива.",
+            "Контекст: мастер-класс не куплен, все четыре дня уже отправлены.\n\n"
+            "Главная задача: дать краткое оглавление и четыре устойчивые ссылки на материалы.\n\n"
+            "Призыв: при готовности перейти к мастер-классу или написать Сергею.\n\n"
+            "Ограничения: не перезапускать Welcome.",
+        ),
+    }
+    if code in specialized:
+        purpose, brief = specialized[code]
+    elif code.startswith("day") and code[-1:].isdigit():
+        day = code[-1]
+        purpose = f"Выдать основной авторский материал Дня {day} четырёхдневного интенсива."
+        brief = (
+            f"Контекст: пользователь дошёл по расписанию до Дня {day}.\n\n"
+            f"Главная задача: раскрыть утверждённую тему Дня {day} как самостоятельный полезный материал.\n\n"
+            "Что обязательно раскрыть: брать факты только из утверждённого материала соответствующего дня; сохранить хэштег дня.\n\n"
+            "Призыв: только тот, который предусмотрен материалом дня.\n\n"
+            "Ограничения: не придумывать программу и не продавать вместо обучения."
+        )
+    elif code.endswith("_mid"):
+        purpose = "Поддержать интерес между днями интенсива самостоятельным полезным постом."
+        brief = (
+            "Самостоятельный полезный пост между двумя днями интенсива. Дать одну законченную мысль, "
+            "которую можно применить без покупки. Продажа не обязательна; допустим один мягкий призыв "
+            "в конце. Не повторять соседние дни и не обещать досрочную отправку следующего материала."
+        )
+    elif code.startswith("hard_sale_"):
+        purpose = "Сделать прямое предложение мастер-класса после полезной части рассылки."
+        brief = (
+            "Продажный пост основной рассылки. Выбрать одну потребность или возражение, связать её с "
+            "фактической программой мастер-класса и дать один понятный призыв в конце. Не обещать "
+            "гарантированный результат и не придумывать цену, срок или состав продукта."
+        )
+    elif code.startswith("nurture_"):
+        number = int(code.rsplit("_", 1)[1])
+        if number % 2:
+            purpose = "Дать самостоятельную полезную мысль в основной рассылке до покупки."
+            brief = (
+                "Самостоятельный полезный пост основной рассылки. Дать одну законченную мысль, которую "
+                "можно применить без покупки. Продажа не обязательна; допустим один мягкий призыв в конце. "
+                "Не повторять соседние сообщения."
+            )
+        else:
+            purpose = "Дать пользу и мягко связать её с возможностью пройти мастер-класс."
+            brief = (
+                "Пост основной рассылки с одной полезной мыслью и естественным переходом к мастер-классу. "
+                "Один призыв в конце. Не обещать гарантированный результат и не придумывать условия продукта."
+            )
+    elif code in POSTPURCHASE_TRIGGER_BY_CONTENT:
+        trigger = POSTPURCHASE_TRIGGER_BY_CONTENT[code]
+        purpose = trigger["purpose"]
+        brief = (
+            f"Контекст/триггер: {trigger['trigger']}.\n\nУсловие: {trigger['condition']}.\n\n"
+            f"Получатель: {trigger['recipient']}.\n\nГлавная задача: {trigger['purpose']}\n\n"
+            "Что обязательно раскрыть: использовать только переданные шаблонные переменные и актуальные продуктовые факты.\n\n"
+            "Ограничения: не менять условие отправки текстом и не предлагать уже купленный продукт."
+        )
+    else:
+        purpose = f"Содержимое служебного слота «{title}» в предусмотренной точке Telegram-сценария."
+        brief = (
+            "Контекст и получатель определяются единственным использующим этот слот графом. "
+            "Сформулировать одно сообщение, выполняющее название слота; не добавлять новые условия, "
+            "сущности или переходы текстом."
+        )
+    media_only = media == "video_note" and not (body or "").strip()
+    editorial_status = (
+        "approved"
+        if code in OWNER_APPROVED_SEED_CODES or (code in POSTPURCHASE_TRIGGER_BY_CONTENT and not is_placeholder_text(body))
+        else ("draft" if media_only or not is_placeholder_text(body) else "placeholder")
+    )
+    return purpose, brief, editorial_status
 
 
 def _ensure_edges(session: Session, version: SequenceVersion) -> None:
@@ -101,6 +236,25 @@ def _messages() -> list[dict]:
         kind = "польза" if n % 2 else "мягкая продажа"
         rows.append((f"nurture_{n:02d}", f"Пост {n}: {kind}", f"Здесь будет авторский пост {n}: {kind}.", None, [kind, "дожим"] ))
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
+
+
+def _add_missing_trigger_slots(rows: list[dict], triggers: list[dict] = TRIGGERS) -> list[dict]:
+    """Every text-producing Telegram trigger owns an editable writer slot by default."""
+    result = list(rows)
+    existing = {row["code"] for row in result}
+    for trigger in triggers:
+        code = trigger["content_code"].removeprefix("tpl_")
+        if code in existing:
+            continue
+        result.append({
+            "code": code,
+            "title": trigger["title"],
+            "body": "",
+            "media": None,
+            "labels": ["автослот", "требуется текст", "после покупки"],
+        })
+        existing.add(code)
+    return result
 
 
 def _start_system_messages() -> list[dict]:
@@ -332,7 +486,9 @@ def _postpurchase_messages() -> list[dict]:
             ["после покупки", "саморевью", "день-7"],
         ),
     ]
-    return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
+    return _add_missing_trigger_slots(
+        [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
+    )
 
 
 def seed_defaults(
@@ -364,9 +520,27 @@ def seed_defaults(
     published_codes = {row["code"] for row in postpurchase_rows} | {"maintenance_notice"}
     for row in [*_messages(), *_start_system_messages(), *postpurchase_rows]:
         code = f"tpl_{row['code']}"
+        purpose, writer_brief, editorial_status = _editorial_metadata(
+            row["code"], row["title"], row["body"], row["media"]
+        )
         item = session.scalar(select(ContentItem).where(ContentItem.code == code))
+        authoring_before = (
+            (item.body_source, item.purpose, item.writer_brief, item.source_format)
+            if item else None
+        )
         if not item:
-            item = ContentItem(code=code, title=row["title"], body_source=row["body"], media_kind=row["media"], labels=row["labels"], status="published" if row["code"] in published_codes else "draft", origin_system="template")
+            item = ContentItem(
+                code=code,
+                title=row["title"],
+                body_source=row["body"],
+                media_kind=row["media"],
+                labels=row["labels"],
+                status="published" if row["code"] in published_codes or editorial_status == "approved" else "draft",
+                purpose=purpose,
+                writer_brief=writer_brief,
+                editorial_status=editorial_status,
+                origin_system="template",
+            )
             session.add(item)
             session.flush()
         elif row["code"] in published_codes:
@@ -386,7 +560,7 @@ def seed_defaults(
             "[Добавьте ", "[Полезный ", "[Сильный ", "[Второй ", "[Пост ",
         )):
             # Replace only the exact families used by old seed placeholders;
-            # an owner-authored post may legitimately start with a Markdown link.
+            # an owner-authored post may legitimately start with an HTML link.
             item.body_source = row["body"]
         elif row["code"] == "start_welcome_offer" and "похудение-это-есть.рф/intensiv" in (item.body_source or ""):
             # Upgrade only the known seeded preview; later owner edits remain untouched.
@@ -402,6 +576,21 @@ def seed_defaults(
         if row["code"] == "entry_circle" and not item.media_path:
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH
+        if not (item.purpose or "").strip():
+            item.purpose = purpose
+        if not (item.writer_brief or "").strip():
+            item.writer_brief = writer_brief
+        if (item.editorial_status or "") in {"", "needs_writing"}:
+            item.editorial_status = editorial_status
+        if item.editorial_status == "approved":
+            item.status = "published"
+        if authoring_before is not None and authoring_before != (
+            item.body_source,
+            item.purpose,
+            item.writer_brief,
+            item.source_format,
+        ):
+            item.content_version += 1
         items[row["code"]] = item
     for obsolete_code in (
         "tpl_subscription_passed",

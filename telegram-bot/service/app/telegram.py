@@ -5,6 +5,8 @@ from typing import Any
 
 import httpx
 
+from app.content_formatting import content_body_for_telegram
+
 
 class TelegramError(RuntimeError):
     pass
@@ -56,6 +58,7 @@ class TelegramClient:
         return data["result"]
 
     def send_content(self, chat_id: str, content: Any, configuration: dict[str, Any]) -> str:
+        rendered_body = content_body_for_telegram(content)
         buttons = configuration.get("buttons") or []
         reply_markup = None
         if buttons:
@@ -78,8 +81,8 @@ class TelegramClient:
                 "photo": ("sendPhoto", "photo"),
             }[content.media_kind]
             payload = {**common, field: media_ref}
-            if content.body_source and content.media_kind != "video_note":
-                payload["caption"] = content.body_source
+            if rendered_body and content.media_kind != "video_note":
+                payload["caption"] = rendered_body
                 payload["parse_mode"] = "HTML"
             local_path = Path(media_ref)
             result = self.upload(method, common | ({"caption": payload["caption"], "parse_mode": "HTML"} if "caption" in payload else {}), field, local_path) if local_path.is_file() else self.call(method, payload)
@@ -87,7 +90,7 @@ class TelegramClient:
             if isinstance(telegram_media, dict) and telegram_media.get("file_id"):
                 content.telegram_file_id = telegram_media["file_id"]
         else:
-            text = content.body_source or f"📎 Медиа будет добавлено позже: {content.title}"
+            text = rendered_body or f"📎 Медиа будет добавлено позже: {content.title}"
             result = self.call("sendMessage", {**common, "text": text, "parse_mode": "HTML", "disable_web_page_preview": False})
         return str(result["message_id"])
 

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel, Field
 
 
@@ -68,6 +70,26 @@ class ContentUpdateIn(BaseModel):
     labels: list[str] | None = None
     media_kind: str | None = Field(default=None, max_length=32)
     media_path: str | None = Field(default=None, max_length=2000)
+    purpose: str | None = Field(default=None, max_length=2000)
+    writer_brief: str | None = Field(default=None, max_length=10000)
+    editorial_status: str | None = None
+    source_format: str | None = None
+    expected_version: int | None = Field(default=None, ge=1)
+
+
+class ContentPublishIn(BaseModel):
+    expected_version: int = Field(ge=1)
+    body_source: str = Field(max_length=20000)
+    purpose: str = Field(min_length=1, max_length=2000)
+    writer_brief: str = Field(min_length=1, max_length=10000)
+    confirm: Literal[True]
+
+
+class ContentValidateIn(BaseModel):
+    expected_version: int = Field(ge=1)
+    body_source: str = Field(max_length=20000)
+    purpose: str = Field(min_length=1, max_length=2000)
+    writer_brief: str = Field(min_length=1, max_length=10000)
 
 
 class StepUpdateIn(BaseModel):

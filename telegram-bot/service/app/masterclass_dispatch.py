@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Contact, ContentItem, ManualMessage, MasterclassNotification
 from app.maintenance import allowed_telegram_ids as parse_allowed_telegram_ids
+from app.content_formatting import is_placeholder_text, replace_template_values, validate_telegram_html
 
 
 DIGITAL_ACCESS_CODES = {
@@ -227,38 +228,77 @@ def day_url(base_url: str, day: int) -> str:
 def telegram_text_parts(body: str, limit: int = 3900) -> list[str]:
     if len(body) <= limit:
         return [body]
+    validate_telegram_html(body)
+    tokens = re.split(r"(<[^>]+>|&(?:#[0-9]+|#x[0-9a-fA-F]+|[a-zA-Z]+);)", body)
     parts: list[str] = []
+    open_tags: list[tuple[str, str]] = []
     current = ""
-    for paragraph in body.split("\n\n"):
-        candidate = paragraph if not current else current + "\n\n" + paragraph
-        if len(candidate) <= limit:
-            current = candidate
+
+    def closing_tags() -> str:
+        return "".join(f"</{name}>" for name, _ in reversed(open_tags))
+
+    def reopened_tags() -> str:
+        return "".join(raw for _, raw in open_tags)
+
+    def flush() -> None:
+        nonlocal current
+        if current and current != reopened_tags():
+            parts.append(current + closing_tags())
+        current = reopened_tags()
+
+    for token in filter(None, tokens):
+        if re.fullmatch(r"&(?:#[0-9]+|#x[0-9a-fA-F]+|[a-zA-Z]+);", token):
+            if len(current) + len(token) + len(closing_tags()) > limit:
+                flush()
+            current += token
             continue
-        if current:
-            parts.append(current)
-            current = ""
-        while len(paragraph) > limit:
-            cut = paragraph.rfind("\n", 0, limit)
-            if cut < limit // 2:
-                cut = paragraph.rfind(" ", 0, limit)
-            if cut < limit // 2:
-                cut = limit
-            parts.append(paragraph[:cut].rstrip())
-            paragraph = paragraph[cut:].lstrip()
-        current = paragraph
-    if current:
-        parts.append(current)
+
+        tag = re.fullmatch(r"<\s*(/?)\s*([a-zA-Z0-9-]+)(?:\s[^>]*)?>", token)
+        if tag:
+            name = tag.group(2).lower()
+            if tag.group(1):
+                if len(current) + len(token) + len(closing_tags()) > limit:
+                    flush()
+                current += token
+                if open_tags and open_tags[-1][0] == name:
+                    open_tags.pop()
+            else:
+                future_closings = len(closing_tags()) + len(f"</{name}>")
+                if len(current) + len(token) + future_closings > limit:
+                    flush()
+                current += token
+                open_tags.append((name, token))
+            continue
+
+        remainder = token
+        while remainder:
+            available = limit - len(current) - len(closing_tags())
+            if available <= 0:
+                flush()
+                available = limit - len(current) - len(closing_tags())
+            if len(remainder) <= available:
+                current += remainder
+                break
+            cut = remainder.rfind("\n", 0, available + 1)
+            if cut < max(1, available // 2):
+                cut = remainder.rfind(" ", 0, available + 1)
+            if cut < max(1, available // 2):
+                cut = available
+            current += remainder[:cut]
+            remainder = remainder[cut:]
+            flush()
+    if current and current != reopened_tags():
+        parts.append(current + closing_tags())
     return parts
 
 
 def rendered(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
-    body = item.body_source
-    for key, value in values.items():
-        body = body.replace("{{" + key + "}}", value)
+    body = replace_template_values(item.body_source, values)
     return SimpleNamespace(
         code=item.code,
         title=item.title,
         body_source=body,
+        source_format=item.source_format,
         media_kind=item.media_kind,
         media_path=item.media_path,
         telegram_file_id=item.telegram_file_id,
@@ -368,12 +408,18 @@ def client_values(
 def content_is_sendable(item: ContentItem, body: str) -> tuple[bool, str | None]:
     if item.status != "published":
         return False, "content is not published"
+    if item.editorial_status != "approved":
+        return False, "content is not owner-approved"
     if not body.strip():
         return False, "content is empty"
     if re.search(r"{{[^{}]+}}", body):
         return False, "content has unresolved variables"
-    if body.lstrip().startswith("["):
+    if is_placeholder_text(body):
         return False, "content is an editorial placeholder"
+    try:
+        validate_telegram_html(body)
+    except ValueError:
+        return False, "content has invalid Telegram HTML"
     return True, None
 
 

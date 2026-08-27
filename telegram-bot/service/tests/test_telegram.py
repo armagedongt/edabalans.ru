@@ -31,6 +31,29 @@ def test_http_error_does_not_expose_bot_token():
     assert "very-secret-token" not in str(exc.value)
 
 
+def test_send_content_passes_validated_html_to_telegram_boundary():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"message_id": 8}})
+
+    content = SimpleNamespace(
+        source_format="telegram_html",
+        media_kind=None,
+        media_path=None,
+        telegram_file_id=None,
+        body_source="<b>Готово</b>",
+        title="HTML",
+    )
+    message_id = TelegramClient("secret", httpx.MockTransport(handler)).send_content("42", content, {})
+
+    assert message_id == "8"
+    payload = seen[0].read()
+    assert '"text":"<b>Готово</b>"'.encode() in payload
+    assert b'"parse_mode":"HTML"' in payload
+
+
 def test_long_polling_sends_offset_and_returns_updates():
     seen = []
 

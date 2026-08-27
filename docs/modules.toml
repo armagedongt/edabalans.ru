@@ -449,6 +449,7 @@ owns_files = [
   "telegram-bot/service/import_catalog.py", "telegram-bot/service/requirements-dev.txt",
   "telegram-bot/service/requirements.txt", "telegram-bot/service/set_webhook.py",
   "telegram-bot/service/app/__init__.py", "telegram-bot/service/app/config.py",
+  "telegram-bot/service/app/content_authoring.py", "telegram-bot/service/app/content_formatting.py",
   "telegram-bot/service/app/customer_lifecycle.py", "telegram-bot/service/app/database.py",
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
   "telegram-bot/service/app/graph.py", "telegram-bot/service/app/main.py",
@@ -459,7 +460,10 @@ owns_files = [
   "telegram-bot/service/static/**", "telegram-bot/service/tests/**",
   "telegram-bot/tests/**", "backend/migrations/versions/20260822_0006_telegram_messaging.py",
   "backend/migrations/versions/20260822_0009_telegram_flow_graph.py",
+  "backend/migrations/versions/20260827_0026_telegram_content_authoring.py",
   "docs/knowledge-base/modules/telegram/CUSTOMER_LIFECYCLE_TECHNICAL_SPEC.md",
+  "docs/knowledge-base/modules/telegram/MESSAGE_CONTENT_AUTHORING.md",
+  "tools/publish_telegram_message.py",
 ]
 owns_tables = [
   "tg_bot_instances", "tg_contacts", "tg_content_items", "tg_sequences",

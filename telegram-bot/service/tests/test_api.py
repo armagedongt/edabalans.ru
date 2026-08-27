@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, get_db, make_engine
 from app.main import app
 import app.main as main_module
-from app.models import BotInstance, Contact, CrmMessengerAccount, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
+from app.models import BotInstance, Contact, ContentItem, CrmMessengerAccount, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
 from app.seed import seed_defaults
 
 
@@ -68,6 +68,9 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     Base.metadata.create_all(engine)
     with Session(engine) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
+        day1 = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_day1"))
+        day1.status = "published"; day1.editorial_status = "approved"
+        session.commit()
 
     def db_override():
         with Session(engine) as session:

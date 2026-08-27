@@ -27,7 +27,9 @@ from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_COD
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
-from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentUpdateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables
+from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
@@ -657,7 +659,81 @@ def list_content(q: str = "", session: Session = Depends(get_db)) -> list[dict]:
     query = select(ContentItem).where(ContentItem.status != "archived").order_by(ContentItem.title)
     if q:
         query = query.where(ContentItem.title.ilike(f"%{q}%") | ContentItem.body_source.ilike(f"%{q}%"))
-    return [{"id":i.id,"code":i.code,"title":i.title,"body_source":i.body_source,"media_kind":i.media_kind,"media_path":i.media_path,"labels":i.labels,"origin_system":i.origin_system,"origin_scenario_name":i.origin_scenario_name} for i in session.scalars(query.limit(2000))]
+    usage_map = content_usages(session)
+    return [
+        {
+            **authoring_payload(item, usage_map.get(item.code, [])),
+            "origin_system": item.origin_system,
+            "origin_scenario_name": item.origin_scenario_name,
+        }
+        for item in session.scalars(query.limit(2000))
+    ]
+
+
+@app.get("/bot-api/content-audit", dependencies=[Depends(require_admin)])
+def content_audit(session: Session = Depends(get_db)) -> dict:
+    return audit_content(session)
+
+
+@app.get("/bot-api/content/{content_code}/authoring", dependencies=[Depends(require_admin)])
+def get_content_authoring(content_code: str, session: Session = Depends(get_db)) -> dict:
+    item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
+    if not item:
+        raise HTTPException(404, "Content not found")
+    return authoring_payload(item, content_usages(session).get(item.code, []))
+
+
+def _validate_content_publication(item: ContentItem, body: ContentValidateIn) -> tuple[str, str, str]:
+    if item.content_version != body.expected_version:
+        raise HTTPException(409, {"message": "Content version conflict", "current_version": item.content_version})
+    purpose = body.purpose.strip()
+    writer_brief = body.writer_brief.strip()
+    if not purpose or not writer_brief:
+        raise HTTPException(422, "Для подтверждения обязательны непустые цель и ТЗ писателю")
+    media_only = item.media_kind == "video_note" and bool(item.media_path or item.telegram_file_id)
+    if is_placeholder_text(body.body_source) and not media_only:
+        raise HTTPException(422, "Нельзя опубликовать пустой текст или техническую заглушку")
+    unknown_variables = sorted(set(template_variables(body.body_source)) - set(allowed_variables(item.code)))
+    if unknown_variables:
+        raise HTTPException(422, f"Неизвестные переменные: {', '.join(unknown_variables)}")
+    try:
+        validate_telegram_html(body.body_source)
+    except ValueError as exc:
+        raise HTTPException(422, f"Некорректный Telegram HTML: {exc}") from exc
+    if item.media_kind == "video_note" and body.body_source:
+        raise HTTPException(422, "Telegram-видеокружок не поддерживает подпись; оставьте текст пустым или отправляйте отдельным шагом")
+    telegram_limit = 1024 if item.media_kind in {"photo", "video", "voice"} else 4096
+    if len(body.body_source) > telegram_limit:
+        raise HTTPException(422, f"Сообщение длиннее лимита Telegram ({telegram_limit} символов)")
+    return purpose, writer_brief, body.body_source
+
+
+@app.post("/bot-api/content/{content_code}/validate", dependencies=[Depends(require_admin)])
+def validate_content(content_code: str, body: ContentValidateIn, session: Session = Depends(get_db)) -> dict:
+    item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
+    if not item:
+        raise HTTPException(404, "Content not found")
+    _validate_content_publication(item, body)
+    return {"ok": True, "code": item.code, "content_version": item.content_version, "editorial_status": item.editorial_status}
+
+
+@app.put("/bot-api/content/{content_code}/publish", dependencies=[Depends(require_admin)])
+def publish_content(content_code: str, body: ContentPublishIn, session: Session = Depends(get_db)) -> dict:
+    item = session.scalar(select(ContentItem).where(ContentItem.code == content_code).with_for_update())
+    if not item:
+        raise HTTPException(404, "Content not found")
+    if not body.confirm:
+        raise HTTPException(422, "Рабочий файл сохраняется локально; в БД публикуется только подтверждённый текст")
+    purpose, writer_brief, _ = _validate_content_publication(item, body)
+    item.body_source = body.body_source
+    item.source_format = "telegram_html"
+    item.purpose = purpose
+    item.writer_brief = writer_brief
+    item.editorial_status = "approved"
+    item.status = "published"
+    item.content_version += 1
+    session.commit()
+    return authoring_payload(item, content_usages(session).get(item.code, []))
 
 
 def _sequence_rule(code: str) -> dict:
@@ -689,20 +765,69 @@ def sequence_detail(sequence_code: str, session: Session = Depends(get_db)) -> d
         raise HTTPException(404, "Sequence not found")
     version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == seq.id).order_by(SequenceVersion.version_no.desc()))
     rows = session.execute(select(SequenceStep, ContentItem).outerjoin(ContentItem, ContentItem.id == SequenceStep.content_item_id).where(SequenceStep.sequence_version_id == version.id).order_by(SequenceStep.position)).all()
-    return {"code":seq.code,"name":seq.name,"description":seq.description,"status":seq.status,"version":version.version_no,"rule":_sequence_rule(seq.code),"steps":[{"id":step.id,"key":step.step_key,"position":step.position,"kind":step.kind,"label":step.label,"delay_seconds":step.delay_seconds,"enabled":step.enabled,"configuration":step.configuration,"content":{"id":content.id,"code":content.code,"title":content.title,"body_source":content.body_source,"media_kind":content.media_kind,"media_path":content.media_path,"labels":content.labels} if content else None} for step,content in rows]}
+    usage_map = content_usages(session)
+    return {"code":seq.code,"name":seq.name,"description":seq.description,"status":seq.status,"version":version.version_no,"rule":_sequence_rule(seq.code),"steps":[{"id":step.id,"key":step.step_key,"position":step.position,"kind":step.kind,"label":step.label,"delay_seconds":step.delay_seconds,"enabled":step.enabled,"configuration":step.configuration,"content":authoring_payload(content, usage_map.get(content.code, [])) if content else None} for step,content in rows]}
 
 
 @app.patch("/bot-api/content/{content_id}", dependencies=[Depends(require_admin)])
 def update_content(content_id: str, body: ContentUpdateIn, session: Session = Depends(get_db)) -> dict:
-    item = session.get(ContentItem, content_id)
+    item = session.scalar(select(ContentItem).where(ContentItem.id == content_id).with_for_update())
     if not item:
         raise HTTPException(404, "Content not found")
     values = body.model_dump(exclude_unset=True)
+    expected_version = values.pop("expected_version", None)
+    if expected_version is not None and expected_version != item.content_version:
+        raise HTTPException(409, {"message": "Content version conflict", "current_version": item.content_version})
+    if values.get("editorial_status") not in {None, "placeholder", "needs_writing", "draft", "approved"}:
+        raise HTTPException(422, "Unknown editorial_status")
+    if values.get("source_format") not in {None, *SUPPORTED_SOURCE_FORMATS}:
+        raise HTTPException(422, "Unknown source_format")
     _validate_media_reference(values.get("media_path"))
+    content_changed = bool({"body_source", "purpose", "writer_brief", "source_format"} & values.keys())
+    if content_changed and expected_version is None:
+        raise HTTPException(409, "Для сохранения нужна актуальная content_version")
+    if content_changed and "editorial_status" not in values:
+        values["editorial_status"] = "draft"
+    candidate_status = values.get("editorial_status", item.editorial_status)
+    candidate_body = values.get("body_source", item.body_source)
+    candidate_purpose = values.get("purpose", item.purpose)
+    candidate_brief = values.get("writer_brief", item.writer_brief)
+    media_only = bool(
+        values.get("media_kind", item.media_kind) == "video_note"
+        and (values.get("media_path", item.media_path) or item.telegram_file_id)
+    )
+    if candidate_status == "approved" and (
+        not (candidate_purpose or "").strip()
+        or not (candidate_brief or "").strip()
+        or (is_placeholder_text(candidate_body) and not media_only)
+    ):
+        raise HTTPException(422, "Подтвердить можно только готовое сообщение с целью и ТЗ")
+    if "body_source" in values and candidate_status != "approved":
+        raise HTTPException(422, "Черновик хранится в рабочем Telegram HTML-файле; в живой слот сохраняется только подтверждённый текст")
+    if "body_source" in values or candidate_status == "approved":
+        unknown_variables = sorted(set(template_variables(candidate_body)) - set(allowed_variables(item.code)))
+        if unknown_variables:
+            raise HTTPException(422, f"Неизвестные переменные: {', '.join(unknown_variables)}")
+        candidate_format = values.get("source_format", item.source_format)
+        try:
+            validate_telegram_html(candidate_body)
+        except ValueError as exc:
+            raise HTTPException(422, f"Некорректный Telegram HTML: {exc}") from exc
+        rendered_body = candidate_body
+        candidate_media = values.get("media_kind", item.media_kind)
+        if candidate_media == "video_note" and rendered_body:
+            raise HTTPException(422, "Telegram-видеокружок не поддерживает подпись")
+        telegram_limit = 1024 if candidate_media in {"photo", "video", "voice"} else 4096
+        if len(rendered_body) > telegram_limit:
+            raise HTTPException(422, f"Сообщение длиннее лимита Telegram ({telegram_limit} символов)")
     for field, value in values.items():
         setattr(item, field, value)
+    if content_changed:
+        item.content_version += 1
+        if item.editorial_status == "approved":
+            item.status = "published"
     session.commit()
-    return {"id":item.id,"title":item.title,"body_source":item.body_source,"labels":item.labels,"media_kind":item.media_kind,"media_path":item.media_path}
+    return authoring_payload(item, content_usages(session).get(item.code, []))
 
 
 @app.post("/bot-api/media", dependencies=[Depends(require_admin)])

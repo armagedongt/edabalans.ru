@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.engine import has_paid_product, start_run
 from app.graph import START_ROUTER_RULES
 from app.customer_lifecycle import stop_presale_runs_for_user
+from app.content_formatting import content_is_runtime_ready, replace_template_values
 from app.models import Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceVersion, StepDelivery, TrackingEvent
 from app.seed import WELCOME_CODE
 
@@ -115,17 +116,17 @@ def _wait_values(run: SequenceRun | None) -> dict[str, str]:
 
 
 def _render_content(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
-    body = item.body_source
-    for key, value in values.items():
-        body = body.replace("{{" + key + "}}", value)
-    body = body.replace("{{channel_link}}", '<a href="https://t.me/Fitness_Talks">основной Telegram-канал</a>')
-    return SimpleNamespace(code=item.code, title=item.title, body_source=body, media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id)
+    channel_link = '<a href="https://t.me/Fitness_Talks">основной Telegram-канал</a>'
+    body = replace_template_values(item.body_source, {**values, "channel_link": channel_link})
+    return SimpleNamespace(code=item.code, title=item.title, body_source=body, source_format=item.source_format, media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id)
 
 
 def send_system_content(session: Session, contact: Contact, content_code: str, sender, values: dict[str, str] | None = None) -> str:
     item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
     if not item:
         raise RuntimeError(f"Missing start content: {content_code}")
+    if not content_is_runtime_ready(item):
+        raise RuntimeError(f"Start content is not owner-approved: {content_code}")
     rendered = _render_content(item, values or {})
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=rendered.body_source, status="pending", operator_email="system:start_router")
     session.add(log)
