@@ -1,5 +1,5 @@
 <div id="modular-video-player" class="mvp">
-  <video class="mvp__video" src="https://storage.yandexcloud.net/workcloud1/%D0%90%D1%8E%D1%80%D0%B8%D0%BA%D0%BE%D1%81%2023%20%D0%B8%D1%8E%D0%BB%D1%8F%20%D0%91%D0%90%D0%9C.mp4" playsinline preload="metadata"></video>
+  <video class="mvp__video" playsinline preload="metadata"></video>
 
   <div class="mvp__shade"></div>
   <div class="mvp__loader" hidden aria-label="Загрузка"></div>
@@ -344,6 +344,16 @@
   const root = document.getElementById('modular-video-player');
   if (!root || root.dataset.ready) return;
   root.dataset.ready = '1';
+  const runtimeParams = new URL(location.href).searchParams;
+  let runtimeChapters = [];
+  try {
+    runtimeChapters = JSON.parse(runtimeParams.get('chapters') || '[]').filter(function(item){
+      return Array.isArray(item) && item.length === 2 && /^\d{1,2}:\d{2}(?::\d{2})?$/.test(item[0]) && String(item[1]).trim();
+    }).map(function(item){
+      var parts = item[0].split(':').map(Number);
+      return {at: parts.length === 3 ? parts[0] * 3600 + parts[1] * 60 + parts[2] : parts[0] * 60 + parts[1], title:String(item[1]).trim()};
+    });
+  } catch (error) {}
 
   /* РЕЖИМ ПЛЕЕРА — меняется одной строкой:
      'engagement' = автостарт без звука + аналитика + ускоренная шкала + только текущее время
@@ -351,7 +361,7 @@
   const PLAYER_MODE = 'standard';
 
   /* Содержание независимо от режима. */
-  const CONTENTS_ENABLED = true;
+  const CONTENTS_ENABLED = !runtimeParams.has('src') || runtimeChapters.length > 0;
 
   const MODE_PRESETS = {
     engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
@@ -388,7 +398,7 @@
     heartbeatSec: 15
   };
 
-  const chapters = [
+  const chapters = runtimeChapters.length ? runtimeChapters : [
     { at: 0, title: 'Введение' },
     { at: 42, title: 'Главная мысль' },
     { at: 118, title: 'Практический пример' },
@@ -396,6 +406,14 @@
   ];
 
   const video = root.querySelector('.mvp__video');
+  const source = runtimeParams.get('src');
+  const poster = runtimeParams.get('poster');
+  if (!source || !/^https:\/\//.test(source)) {
+    root.hidden = true;
+    return;
+  }
+  video.src = source;
+  if (poster && /^https:\/\//.test(poster)) video.poster = poster;
   const bigPlay = root.querySelector('.mvp__big-play');
   const soundCard = root.querySelector('.mvp__sound-card');
   const playBtn = root.querySelector('.mvp__play');

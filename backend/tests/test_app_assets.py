@@ -581,7 +581,23 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
     assert "d.steps[i].required!==false" in course_html
-    assert "if(d.media==='none')return''" in course_html
+    assert "var video=String(d.videoId||'').trim()" in course_html
+
+
+def test_masterclass_media_uses_present_links_and_player_route() -> None:
+    course_html = client.get("/apps/masterclass-course.html").text
+    assert "function directMp4(value)" in course_html
+    assert "'/apps/video-player.html?src='" in course_html
+    assert "'&chapters='+encodeURIComponent(JSON.stringify(d.timings))" in course_html
+    assert "directMp4(String(d.videoId||''))?'':timingBlock(d)" in course_html
+    assert "TBbi2ibz" not in course_html
+
+    player = client.get("/apps/video-player.html")
+    assert player.status_code == 200
+    assert "runtimeParams.get('src')" in player.text
+    assert "CONTENTS_ENABLED = !runtimeParams.has('src') || runtimeChapters.length > 0" in player.text
+    assert "runtimeParams.get('chapters')" in player.text
+    assert "video.poster = poster" in player.text
 
 
 def test_legal_friendly_routes_are_public() -> None:
