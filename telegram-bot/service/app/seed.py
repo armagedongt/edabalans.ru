@@ -352,11 +352,9 @@ def _start_system_messages() -> list[dict]:
         (
             "start_subscription_retry_reminder",
             "Welcome — повторно не подписан",
-            "¯\\*(ツ)*/¯\n\n"
-            "Вы всё ещё не подписались?\n\n"
-            "Подпишитесь на мой Telegram-канал: "
-            "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a> — "
-            "и я сразу же отправлю вам первый день интенсива.",
+            "Кажется, вы ещё не подписались.\n\n"
+            "Сначала подпишитесь на <a href=\"https://t.me/Fitness_Talks\">канал</a>, "
+            "и я сразу же отправлю первый день интенсива.",
             None,
             ["система", "welcome", "подписка", "повторная проверка"],
         ),
@@ -591,6 +589,8 @@ def seed_defaults(
         elif row["code"] == "start_intensive_complete" and (item.body_source or "").startswith("💥 <b>Похудение состоит"):
             item.body_source = row["body"]
         elif row["code"] == "start_subscription_reminder" and (item.body_source or "").startswith("Пока не вижу подписку"):
+            item.body_source = row["body"]
+        elif row["code"] == "start_subscription_retry_reminder" and (item.body_source or "").startswith("¯\\*(ツ)*/¯"):
             item.body_source = row["body"]
         if row["code"] in {"start_navigation_pin", "start_welcome_offer", "start_intensive_waiting", "start_intensive_complete"}:
             item.title = row["title"]
