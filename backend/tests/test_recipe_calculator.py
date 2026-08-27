@@ -84,6 +84,21 @@ def test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage():
     assert bad_loss.status_code == 400
 
 
+def test_catalog_search_prioritizes_names_starting_with_query():
+    client, factory = make_client()
+    with factory() as db:
+        grant_user(db, "search@example.test")
+        db.add_all([
+            NutritionProduct(name="Блины с молоком", name_normalized="блины с молоком", protein_g=1, fat_g=1, carbohydrate_g=1, calories_kcal=10, is_active=True),
+            NutritionProduct(name="Молоко 1%", name_normalized="молоко 1%", protein_g=1, fat_g=1, carbohydrate_g=1, calories_kcal=10, is_active=True),
+            NutritionProduct(name="Кофе с молоком", name_normalized="кофе с молоком", protein_g=1, fat_g=1, carbohydrate_g=1, calories_kcal=10, is_active=True),
+        ])
+        db.commit()
+
+    items = client.get("/api/apps/recipes/catalog", params={"email": "search@example.test", "q": "молоко"}).json()["items"]
+    assert [item["name"] for item in items] == ["Молоко 1%", "Блины с молоком", "Кофе с молоком"]
+
+
 def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is_owner_scoped():
     client, factory = make_client()
     with factory() as db:
