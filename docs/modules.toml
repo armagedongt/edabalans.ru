@@ -198,9 +198,25 @@ admin_catalog = [{ category = "applications", order = 30, url = "/admin/metaboli
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
-owns_files = ["backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**"]
+owns_files = [
+  "backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**",
+  "tools/import_calorizator_products.py", "tools/tests/test_import_calorizator_products.py",
+]
 owns_tables = ["metabolism_states"]
 owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
+
+[[modules]]
+id = "products.recipes"
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.recipes.md"
+owns_files = [
+  "backend/app/recipe_models.py", "backend/app/recipe_service.py", "backend/app/recipe_routes.py",
+  "backend/app/static/apps/recipes.html", "backend/scripts/import_recipe_catalog.py",
+  "backend/tests/test_recipe_calculator.py", "backend/migrations/versions/20260827_0026_recipe_calculator.py",
+]
+owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
+owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*"]
+depends_on = ["platform.auth", "platform.commerce", "operations.imports"]
 
 [[modules]]
 id = "products.intensive"
@@ -577,6 +593,8 @@ owns_files = [
   "backend/app/static/leadteh_tag_plan.json", "backend/app/static/leadteh_variables.json",
   "backend/tests/test_legacy_import.py", "backend/tests/test_manual_payments.py",
   "backend/tests/test_tag_rules_v2.py", "backend/tests/test_tilda_members_import.py",
+  "backend/tests/test_telegram_consultations.py", "docs/telegram-consultation-import.md",
+  ".codex/skills/telegram-consultation-transcription/**",
 ]
 owns_tables = ["import_batches", "legacy_import_records", "admin_app_edits"]
 
