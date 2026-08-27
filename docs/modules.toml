@@ -498,6 +498,7 @@ card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
 depends_on = ["platform.auth"]
 owns_files = [
   "AGENTS.md", "docs/README.md", "docs/AI_DEVELOPMENT_WORKFLOW.md",
+  "docs/knowledge-base/MODULE_DEVELOPMENT_STANDARD.md",
   "docs/CHAT_WORKSTREAMS.md", "docs/knowledge-base/README.md", "docs/modules.toml",
   "backend/app/knowledge_routes.py", "backend/app/static/knowledge-base.*",
   "backend/tests/test_knowledge_base.py", "tools/module_inventory.py",

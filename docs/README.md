@@ -1,7 +1,7 @@
 # Навигатор по документации edabalans.ru
 
 Статус: `current`  
-Проверено: 25.08.2026
+Проверено: 27.08.2026
 Назначение: единая точка входа для владельца, сотрудника и нового ИИ-чата.
 
 ## Базовый минимум
@@ -28,6 +28,7 @@
 | Что сейчас исследуется/реализуется | `../work/` | временные feature artifacts |
 | Production, backup, restore, deploy | `OPERATIONS.md` | операционный документ и infra config |
 | Как выбирать глубину разработки и tests | `AI_DEVELOPMENT_WORKFLOW.md` | рабочий процесс |
+| Как создавать, менять и удалять модули | `knowledge-base/MODULE_DEVELOPMENT_STANDARD.md` | общий стандарт модулей |
 | Как разводить параллельные чаты | `CHAT_WORKSTREAMS.md` | правила потоков |
 | Полный технический состав | `generated/module-inventory.json` | автоматически извлечённый artifact |
 
@@ -41,7 +42,7 @@
 | Цены | `knowledge-base/PRICING_CATALOG.md` |
 | Мастер-класс | `knowledge-base/modules/masterclass/README.md` |
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
-| Telegram — правила разработки модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
+| Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` |
 | Административные инструменты | `ADMIN_ARCHITECTURE.md` |

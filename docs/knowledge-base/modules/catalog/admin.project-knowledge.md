@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - искать модуль или документ и показывать человеческое описание;
 - раскрывать автоматически собранные файлы, routes, таблицы и symbols;
+- задавать единый короткий жизненный цикл создания, изменения и удаления модулей;
 
 ## Граница
 
@@ -20,7 +21,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-`docs/modules.toml`, canonical Markdown, checked-in `docs/generated/*` и project-map API.
+`docs/modules.toml`, `docs/knowledge-base/MODULE_DEVELOPMENT_STANDARD.md`, canonical
+Markdown, checked-in `docs/generated/*` и project-map API.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
