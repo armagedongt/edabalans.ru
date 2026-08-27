@@ -79,7 +79,7 @@ def upgrade() -> None:
           AND (old_access.expires_at IS NULL OR old_access.expires_at > now());
 
         INSERT INTO product_access_rules(product_id, resource_id, effective_from)
-        SELECT DISTINCT rule.product_id, calculator.id, NULL
+        SELECT DISTINCT rule.product_id, calculator.id, NULL::timestamptz
         FROM product_access_rules rule
         JOIN resources old_resource ON old_resource.id = rule.resource_id
         JOIN resources calculator ON calculator.code = 'recipes'
