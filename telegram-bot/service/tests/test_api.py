@@ -112,7 +112,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
     detail = client.get("/bot-api/map?sequence_code=welcome_intensive").json()
     assert detail["level"] == "sequence"
-    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 11
+    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 12
     offer_node = next(node for node in detail["nodes"] if node["id"] == "welcome_offer")
     assert offer_node["content"]["code"] == "tpl_start_welcome_offer"
     old_callback = offer_node["configuration"]["buttons"][0]["callback_data"]

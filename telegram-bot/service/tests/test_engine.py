@@ -47,8 +47,8 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
             sequence = session.scalar(select(Sequence).where(Sequence.code == code))
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
-        assert counts == {WELCOME_CODE: 11, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 54
+        assert counts == {WELCOME_CODE: 12, PREPURCHASE_CODE: 17}
+        assert session.scalar(select(func.count(ContentItem.id))) == 55
         day_unopened_content = session.scalar(
             select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
         )
