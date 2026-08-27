@@ -1,14 +1,13 @@
 from __future__ import annotations
 
-import importlib.util
 import httpx
 import json
 import pytest
 from fastapi.testclient import TestClient
-from pathlib import Path
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app import content_authoring_cli
 from app.content_authoring import audit_content
 from app.content_formatting import template_value_for_source, validate_telegram_html
 from app.database import Base, get_db, make_engine
@@ -376,11 +375,7 @@ def test_start_router_rejects_unapproved_system_content(tmp_path):
 
 
 def test_chat_working_file_preserves_metadata_and_publishes_confirmed(tmp_path, monkeypatch):
-    tool_path = Path(__file__).parents[3] / "tools" / "publish_telegram_message.py"
-    spec = importlib.util.spec_from_file_location("publish_telegram_message", tool_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec and spec.loader
-    spec.loader.exec_module(module)
+    module = content_authoring_cli
     item = {
         "code": "tpl_start_navigation_pin",
         "content_version": 4,
@@ -415,11 +410,7 @@ def test_chat_working_file_preserves_metadata_and_publishes_confirmed(tmp_path, 
 
 
 def test_media_only_video_note_working_file_can_be_parsed(tmp_path):
-    tool_path = Path(__file__).parents[3] / "tools" / "publish_telegram_message.py"
-    spec = importlib.util.spec_from_file_location("publish_telegram_message_media", tool_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec and spec.loader
-    spec.loader.exec_module(module)
+    module = content_authoring_cli
     item = {
         "code": "tpl_entry_circle",
         "content_version": 1,
