@@ -488,18 +488,6 @@
       "path": "backend/app/static/video-player-development/player-standard-with-contents.html"
     },
     {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/video-player-preview.html"
-    },
-    {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/video-player.css"
-    },
-    {
-      "module_id": "products.masterclass.runtime",
-      "path": "backend/app/static/video-player.js"
-    },
-    {
       "module_id": "platform.commerce",
       "path": "backend/app/tilda_routes.py"
     },
@@ -2396,7 +2384,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 534,
+          "line": 529,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -2404,7 +2392,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 660,
+          "line": 655,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -2412,7 +2400,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 711,
+          "line": 706,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -2420,7 +2408,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 626,
+          "line": 621,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -2658,7 +2646,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 534,
+          "line": 529,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -2666,7 +2654,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 626,
+          "line": 621,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -2674,7 +2662,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 660,
+          "line": 655,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -2682,7 +2670,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 711,
+          "line": 706,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -19184,7 +19172,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 124,
+          "line": 119,
           "module_id": "products",
           "name": "intensive_day_asset",
           "qualname": "intensive_day_asset"
@@ -19192,7 +19180,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 140,
+          "line": 135,
           "module_id": "products",
           "name": "error",
           "qualname": "error"
@@ -19200,7 +19188,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 144,
+          "line": 139,
           "module_id": "products",
           "name": "jsonp",
           "qualname": "jsonp"
@@ -19208,7 +19196,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 151,
+          "line": 146,
           "module_id": "products",
           "name": "empty_strength_state",
           "qualname": "empty_strength_state"
@@ -19216,7 +19204,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 172,
+          "line": 167,
           "module_id": "products",
           "name": "empty_app_state",
           "qualname": "empty_app_state"
@@ -19224,7 +19212,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 280,
+          "line": 275,
           "module_id": "products",
           "name": "strength_payload",
           "qualname": "strength_payload"
@@ -19232,7 +19220,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 468,
+          "line": 463,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -19240,7 +19228,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 585,
+          "line": 580,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -19248,7 +19236,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 610,
+          "line": 605,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -19256,7 +19244,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 694,
+          "line": 689,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -19746,13 +19734,13 @@
           "kind": "function",
           "line": 634,
           "module_id": "products",
-          "name": "test_video_player_outline_preview_is_public",
-          "qualname": "test_video_player_outline_preview_is_public"
+          "name": "test_removed_video_player_preview_routes_are_unavailable",
+          "qualname": "test_removed_video_player_preview_routes_are_unavailable"
         },
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 651,
+          "line": 640,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -19760,7 +19748,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 664,
+          "line": 653,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -19768,7 +19756,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 675,
+          "line": 664,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -19776,7 +19764,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 689,
+          "line": 678,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -20195,7 +20183,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 185,
+          "line": 180,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/api/apps/dqs",
@@ -20225,7 +20213,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 185,
+          "line": 180,
           "module_id": "products.dqs",
           "name": "dqs_legacy_get",
           "qualname": "dqs_legacy_get"
@@ -20620,7 +20608,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 136,
+          "line": 131,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}",
@@ -20628,7 +20616,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 131,
+          "line": 126,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}.html",
@@ -20682,7 +20670,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 131,
+          "line": 126,
           "module_id": "products.intensive",
           "name": "intensive_day_html",
           "qualname": "intensive_day_html"
@@ -20690,7 +20678,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 136,
+          "line": 131,
           "module_id": "products.intensive",
           "name": "intensive_day_friendly",
           "qualname": "intensive_day_friendly"
@@ -22953,18 +22941,6 @@
         },
         {
           "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/video-player-preview.html"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/video-player.css"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
-          "path": "backend/app/static/video-player.js"
-        },
-        {
-          "module_id": "products.masterclass.runtime",
           "path": "backend/migrations/versions/20260822_0015_masterclass_journey.py"
         },
         {
@@ -23045,14 +23021,6 @@
         "writes_to": []
       },
       "routes": [
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 120,
-          "method": "GET",
-          "module_id": "products.masterclass.runtime",
-          "path": "/video-player-preview",
-          "symbol": "video_player_preview"
-        },
         {
           "file": "backend/app/crm_routes.py",
           "line": 130,
@@ -23210,14 +23178,6 @@
       "sources": [],
       "summary": "Открывает доступные дни и материалы и хранит персональный прогресс участника.",
       "symbols": [
-        {
-          "file": "backend/app/app_routes.py",
-          "kind": "function",
-          "line": 120,
-          "module_id": "products.masterclass.runtime",
-          "name": "video_player_preview",
-          "qualname": "video_player_preview"
-        },
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
@@ -23969,62 +23929,6 @@
           "module_id": "products.masterclass.runtime",
           "name": "gate",
           "qualname": "gate"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 3,
-          "module_id": "products.masterclass.runtime",
-          "name": "label",
-          "qualname": "label"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 8,
-          "module_id": "products.masterclass.runtime",
-          "name": "chapters",
-          "qualname": "chapters"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 19,
-          "module_id": "products.masterclass.runtime",
-          "name": "mountVideo",
-          "qualname": "mountVideo"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 34,
-          "module_id": "products.masterclass.runtime",
-          "name": "togglePlayback",
-          "qualname": "togglePlayback"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 52,
-          "module_id": "products.masterclass.runtime",
-          "name": "mount",
-          "qualname": "mount"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 65,
-          "module_id": "products.masterclass.runtime",
-          "name": "setOpen",
-          "qualname": "setOpen"
-        },
-        {
-          "file": "backend/app/static/video-player.js",
-          "kind": "function",
-          "line": 85,
-          "module_id": "products.masterclass.runtime",
-          "name": "boot",
-          "qualname": "boot"
         },
         {
           "file": "backend/migrations/versions/20260822_0015_masterclass_journey.py",
@@ -24795,7 +24699,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 482,
+          "line": 477,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -24803,7 +24707,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 499,
+          "line": 494,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -24811,7 +24715,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 436,
+          "line": 431,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -24819,7 +24723,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 451,
+          "line": 446,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -24833,7 +24737,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 436,
+          "line": 431,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -24841,7 +24745,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 451,
+          "line": 446,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -24849,7 +24753,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 482,
+          "line": 477,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -24857,7 +24761,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 499,
+          "line": 494,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -25473,7 +25377,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 341,
+          "line": 336,
           "method": "GET",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -25481,7 +25385,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 341,
+          "line": 336,
           "method": "POST",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -25495,7 +25399,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 341,
+          "line": 336,
           "module_id": "products.strength",
           "name": "strength_legacy",
           "qualname": "strength_legacy"
@@ -26177,7 +26081,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 482,
+      "line": 477,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -26185,7 +26089,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 499,
+      "line": 494,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -26193,7 +26097,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 534,
+      "line": 529,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -26201,7 +26105,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 660,
+      "line": 655,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -26209,7 +26113,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 711,
+      "line": 706,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -26561,7 +26465,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 626,
+      "line": 621,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -26737,7 +26641,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 185,
+      "line": 180,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/api/apps/dqs",
@@ -26745,7 +26649,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 436,
+      "line": 431,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -26753,7 +26657,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 451,
+      "line": 446,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -26841,7 +26745,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 341,
+      "line": 336,
       "method": "GET",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -26849,7 +26753,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 341,
+      "line": 336,
       "method": "POST",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -27705,7 +27609,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 136,
+      "line": 131,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}",
@@ -27713,7 +27617,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 131,
+      "line": 126,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}.html",
@@ -27790,14 +27694,6 @@
       "module_id": "messaging.telegram.attribution",
       "path": "/telegram/webhook",
       "symbol": "telegram_webhook"
-    },
-    {
-      "file": "backend/app/app_routes.py",
-      "line": 120,
-      "method": "GET",
-      "module_id": "products.masterclass.runtime",
-      "path": "/video-player-preview",
-      "symbol": "video_player_preview"
     }
   ],
   "schema_version": 1,
@@ -28269,15 +28165,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 120,
-      "module_id": "products.masterclass.runtime",
-      "name": "video_player_preview",
-      "qualname": "video_player_preview"
-    },
-    {
-      "file": "backend/app/app_routes.py",
-      "kind": "function",
-      "line": 124,
+      "line": 119,
       "module_id": "products",
       "name": "intensive_day_asset",
       "qualname": "intensive_day_asset"
@@ -28285,7 +28173,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 131,
+      "line": 126,
       "module_id": "products.intensive",
       "name": "intensive_day_html",
       "qualname": "intensive_day_html"
@@ -28293,7 +28181,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 136,
+      "line": 131,
       "module_id": "products.intensive",
       "name": "intensive_day_friendly",
       "qualname": "intensive_day_friendly"
@@ -28301,7 +28189,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 140,
+      "line": 135,
       "module_id": "products",
       "name": "error",
       "qualname": "error"
@@ -28309,7 +28197,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 144,
+      "line": 139,
       "module_id": "products",
       "name": "jsonp",
       "qualname": "jsonp"
@@ -28317,7 +28205,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 151,
+      "line": 146,
       "module_id": "products",
       "name": "empty_strength_state",
       "qualname": "empty_strength_state"
@@ -28325,7 +28213,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 172,
+      "line": 167,
       "module_id": "products",
       "name": "empty_app_state",
       "qualname": "empty_app_state"
@@ -28333,7 +28221,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 185,
+      "line": 180,
       "module_id": "products.dqs",
       "name": "dqs_legacy_get",
       "qualname": "dqs_legacy_get"
@@ -28341,7 +28229,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 280,
+      "line": 275,
       "module_id": "products",
       "name": "strength_payload",
       "qualname": "strength_payload"
@@ -28349,7 +28237,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 341,
+      "line": 336,
       "module_id": "products.strength",
       "name": "strength_legacy",
       "qualname": "strength_legacy"
@@ -28357,7 +28245,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 436,
+      "line": 431,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -28365,7 +28253,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 451,
+      "line": 446,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -28373,7 +28261,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 468,
+      "line": 463,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -28381,7 +28269,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 482,
+      "line": 477,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -28389,7 +28277,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 499,
+      "line": 494,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -28397,7 +28285,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 534,
+      "line": 529,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -28405,7 +28293,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 585,
+      "line": 580,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -28413,7 +28301,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 610,
+      "line": 605,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -28421,7 +28309,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 626,
+      "line": 621,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -28429,7 +28317,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 660,
+      "line": 655,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -28437,7 +28325,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 694,
+      "line": 689,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -28445,7 +28333,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 711,
+      "line": 706,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -34051,62 +33939,6 @@
       "qualname": "boot"
     },
     {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 3,
-      "module_id": "products.masterclass.runtime",
-      "name": "label",
-      "qualname": "label"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 8,
-      "module_id": "products.masterclass.runtime",
-      "name": "chapters",
-      "qualname": "chapters"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 19,
-      "module_id": "products.masterclass.runtime",
-      "name": "mountVideo",
-      "qualname": "mountVideo"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 34,
-      "module_id": "products.masterclass.runtime",
-      "name": "togglePlayback",
-      "qualname": "togglePlayback"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 52,
-      "module_id": "products.masterclass.runtime",
-      "name": "mount",
-      "qualname": "mount"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 65,
-      "module_id": "products.masterclass.runtime",
-      "name": "setOpen",
-      "qualname": "setOpen"
-    },
-    {
-      "file": "backend/app/static/video-player.js",
-      "kind": "function",
-      "line": 85,
-      "module_id": "products.masterclass.runtime",
-      "name": "boot",
-      "qualname": "boot"
-    },
-    {
       "file": "backend/app/tilda_routes.py",
       "kind": "function",
       "line": 18,
@@ -34999,13 +34831,13 @@
       "kind": "function",
       "line": 634,
       "module_id": "products",
-      "name": "test_video_player_outline_preview_is_public",
-      "qualname": "test_video_player_outline_preview_is_public"
+      "name": "test_removed_video_player_preview_routes_are_unavailable",
+      "qualname": "test_removed_video_player_preview_routes_are_unavailable"
     },
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 651,
+      "line": 640,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -35013,7 +34845,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 664,
+      "line": 653,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -35021,7 +34853,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 675,
+      "line": 664,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -35029,7 +34861,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 689,
+      "line": 678,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"

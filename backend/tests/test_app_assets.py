@@ -631,21 +631,10 @@ def test_intensive_concept_pages_are_public() -> None:
     assert client.get("/intensive/day-5.html").status_code == 404
 
 
-def test_video_player_outline_preview_is_public() -> None:
-    preview = client.get("/video-player-preview")
-    assert preview.status_code == 200
-    assert preview.headers["cache-control"] == "no-cache"
-    assert "data-video-player" in preview.text
-    assert "data-video-src" in preview.text
-    assert "data-chapters" in preview.text
-
-    stylesheet = client.get("/assets/video-player.css")
-    script = client.get("/assets/video-player.js")
-    assert stylesheet.status_code == 200
-    assert ".vp-outline" in stylesheet.text
-    assert script.status_code == 200
-    assert "mountVideo" in script.text
-    assert "edabalans:video-chapter-selected" in script.text
+def test_removed_video_player_preview_routes_are_unavailable() -> None:
+    assert client.get("/video-player-preview").status_code == 404
+    assert client.get("/assets/video-player.css").status_code == 404
+    assert client.get("/assets/video-player.js").status_code == 404
 
 
 def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
