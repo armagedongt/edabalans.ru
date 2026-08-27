@@ -44,6 +44,23 @@ def recipes_catalog(email: str, q: str = Query(min_length=1, max_length=255), db
         return {"ok": False, "error": str(exc)}
 
 
+@router.get("/api/apps/recipes/products")
+def recipes_personal_products(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+    try:
+        user = _user(db, email)
+        products = db.scalars(
+            select(NutritionProduct)
+            .where(
+                NutritionProduct.owner_user_id == user.id,
+                NutritionProduct.is_active.is_(True),
+            )
+            .order_by(NutritionProduct.name)
+        ).all()
+        return {"ok": True, "products": [product_payload(product) for product in products]}
+    except AppAccessError as exc:
+        return {"ok": False, "error": str(exc)}
+
+
 @router.get("/api/apps/recipes/{recipe_id}")
 def recipe_get(recipe_id: uuid.UUID, email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     try:

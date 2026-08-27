@@ -13,6 +13,7 @@ from app.main import app  # noqa: E402
 from app.models import Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
+from app.product_catalog_service import PRODUCT_CONNECTIONS  # noqa: E402
 
 
 def make_client():
@@ -92,12 +93,23 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
     product_response = client.post("/api/apps/recipes/products", json={"email":"owner@example.test","name":"Мой творог","protein":"16","fat":"5","carbohydrate":"3","calories":"120"})
     assert product_response.status_code == 200, product_response.text
     product = product_response.json()["product"]
+    personal = client.get("/api/apps/recipes/products", params={"email": "owner@example.test"}).json()
+    assert personal["ok"] is True
+    assert [item["id"] for item in personal["products"]] == [product["id"]]
     created = client.post("/api/apps/recipes", json={"email":"owner@example.test","title":"Завтрак","shrinkage":"0","ingredients":[{"kind":"product","sourceId":product["id"],"weight":"150"}]}).json()["recipe"]
     assert client.delete(f"/api/apps/recipes/products/{product['id']}", params={"email":"owner@example.test"}).status_code == 200
     assert client.get("/api/apps/recipes/catalog", params={"email":"owner@example.test", "q":"творог"}).json()["items"] == []
     assert client.get(f"/api/apps/recipes/{created['id']}", params={"email":"owner@example.test"}).json()["recipe"]["ingredients"][0]["source"]["name"] == "Мой творог"
     assert client.get(f"/api/apps/recipes/{created['id']}", params={"email":"other@example.test"}).status_code == 404
     assert client.delete(f"/api/apps/recipes/{created['id']}", params={"email":"other@example.test"}).status_code == 404
+
+
+def test_recipe_product_is_ready_in_account_catalog():
+    assert PRODUCT_CONNECTIONS["recipes"] == {
+        "resource": "recipes",
+        "app": "recipes",
+        "ready": True,
+    }
 
 
 def test_nested_recipe_cannot_be_deleted_or_cycled():
