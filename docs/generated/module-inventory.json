@@ -1204,6 +1204,10 @@
       "path": "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
     },
     {
+      "module_id": "messaging.max",
+      "path": "docs/knowledge-base/modules/catalog/messaging.max.md"
+    },
+    {
       "module_id": "messaging",
       "path": "docs/knowledge-base/modules/catalog/messaging.md"
     },
@@ -1386,6 +1390,10 @@
     {
       "module_id": "products.masterclass",
       "path": "docs/knowledge-base/modules/masterclass/README.md"
+    },
+    {
+      "module_id": "messaging.max",
+      "path": "docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md"
     },
     {
       "module_id": "messaging.telegram.engine",
@@ -1888,6 +1896,10 @@
       "path": "telegram-bot/service/app/masterclass_triggers.py"
     },
     {
+      "module_id": "messaging.max",
+      "path": "telegram-bot/service/app/max.py"
+    },
+    {
       "module_id": "messaging.telegram.engine",
       "path": "telegram-bot/service/app/models.py"
     },
@@ -1978,6 +1990,10 @@
     {
       "module_id": "messaging.telegram.engine",
       "path": "telegram-bot/service/tests/test_masterclass_link.py"
+    },
+    {
+      "module_id": "messaging.max",
+      "path": "telegram-bot/service/tests/test_max.py"
     },
     {
       "module_id": "messaging.telegram.engine",
@@ -4579,7 +4595,7 @@
     {
       "admin_catalog": [],
       "admin_urls": [],
-      "boundary": "MAX и новый messaging channel не реализуются без отдельной задачи.",
+      "boundary": "MAX реализуется отдельным дочерним модулем и не дублирует CRM, теги и каталог\nссылок. Канальные цепочки MAX добавляются только отдельными этапами.",
       "capabilities": [
         "передавать доменные события в канальные модули;",
         "отделять продуктовые факты от текстов и доставки;"
@@ -4615,6 +4631,215 @@
       "truths": [
         "Дочерние карточки и PostgreSQL/Backend messaging contracts."
       ]
+    },
+    {
+      "admin_catalog": [],
+      "admin_urls": [],
+      "boundary": "",
+      "capabilities": [],
+      "card": "docs/knowledge-base/modules/catalog/messaging.max.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "messaging.max",
+          "path": "docs/knowledge-base/modules/catalog/messaging.max.md"
+        },
+        {
+          "module_id": "messaging.max",
+          "path": "docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md"
+        },
+        {
+          "module_id": "messaging.max",
+          "path": "telegram-bot/service/app/max.py"
+        },
+        {
+          "module_id": "messaging.max",
+          "path": "telegram-bot/service/tests/test_max.py"
+        }
+      ],
+      "id": "messaging.max",
+      "implementation_status": "in_development",
+      "parent": "messaging",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "messaging.telegram.attribution",
+          "messaging.telegram.engine",
+          "platform.crm"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [
+          "messaging.telegram.attribution",
+          "messaging.telegram.engine",
+          "platform.crm"
+        ],
+        "writes_to": []
+      },
+      "routes": [
+        {
+          "file": "telegram-bot/service/app/main.py",
+          "line": 622,
+          "method": "POST",
+          "module_id": "messaging.max",
+          "path": "/bot/max/webhook",
+          "symbol": "max_webhook"
+        }
+      ],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Первый вход MAX-пользователя: CRM-идентификация, источник и заглушка ремонта.",
+      "symbols": [
+        {
+          "file": "telegram-bot/service/app/main.py",
+          "kind": "function",
+          "line": 622,
+          "module_id": "messaging.max",
+          "name": "max_webhook",
+          "qualname": "max_webhook"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "class",
+          "line": 42,
+          "module_id": "messaging.max",
+          "name": "MaxClient",
+          "qualname": "MaxClient"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "method",
+          "line": 43,
+          "module_id": "messaging.max",
+          "name": "__init__",
+          "qualname": "MaxClient.__init__"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "method",
+          "line": 47,
+          "module_id": "messaging.max",
+          "name": "send_html",
+          "qualname": "MaxClient.send_html"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "function",
+          "line": 60,
+          "module_id": "messaging.max",
+          "name": "_max_bot",
+          "qualname": "_max_bot"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "function",
+          "line": 79,
+          "module_id": "messaging.max",
+          "name": "_receipt_id",
+          "qualname": "_receipt_id"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "function",
+          "line": 90,
+          "module_id": "messaging.max",
+          "name": "_ensure_identity",
+          "qualname": "_ensure_identity"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "function",
+          "line": 127,
+          "module_id": "messaging.max",
+          "name": "_assign_first_touch",
+          "qualname": "_assign_first_touch"
+        },
+        {
+          "file": "telegram-bot/service/app/max.py",
+          "kind": "function",
+          "line": 172,
+          "module_id": "messaging.max",
+          "name": "process_max_update",
+          "qualname": "process_max_update"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "class",
+          "line": 12,
+          "module_id": "messaging.max",
+          "name": "FakeMax",
+          "qualname": "FakeMax"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "method",
+          "line": 13,
+          "module_id": "messaging.max",
+          "name": "__init__",
+          "qualname": "FakeMax.__init__"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "method",
+          "line": 16,
+          "module_id": "messaging.max",
+          "name": "send_html",
+          "qualname": "FakeMax.send_html"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 21,
+          "module_id": "messaging.max",
+          "name": "max_start",
+          "qualname": "max_start"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 30,
+          "module_id": "messaging.max",
+          "name": "make_client",
+          "qualname": "make_client"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 38,
+          "module_id": "messaging.max",
+          "name": "db_override",
+          "qualname": "make_client.db_override"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 50,
+          "module_id": "messaging.max",
+          "name": "test_max_start_saves_identity_and_stops_at_maintenance",
+          "qualname": "test_max_start_saves_identity_and_stops_at_maintenance"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 73,
+          "module_id": "messaging.max",
+          "name": "test_max_start_uses_existing_link_catalog_once",
+          "qualname": "test_max_start_uses_existing_link_catalog_once"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 94,
+          "module_id": "messaging.max",
+          "name": "test_max_webhook_rejects_missing_or_bad_secret",
+          "qualname": "test_max_webhook_rejects_missing_or_bad_secret"
+        }
+      ],
+      "tables": [],
+      "telegram": null,
+      "title": "MAX: старт и атрибуция",
+      "truths": []
     },
     {
       "admin_catalog": [],
@@ -4783,7 +5008,7 @@
       "routes": [
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1159,
+          "line": 1184,
           "method": "PATCH",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-aliases/{alias_id}",
@@ -4791,7 +5016,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1170,
+          "line": 1195,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-aliases/{alias_id}/channel-invite",
@@ -4799,7 +5024,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1187,
+          "line": 1212,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-aliases/{alias_id}/revoke-channel-invite",
@@ -4807,7 +5032,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1220,
+          "line": 1245,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-analytics",
@@ -4815,7 +5040,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1097,
+          "line": 1122,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules",
@@ -4823,7 +5048,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1090,
+          "line": 1115,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules",
@@ -4831,7 +5056,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1102,
+          "line": 1127,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules/resolve-preview",
@@ -4839,7 +5064,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1112,
+          "line": 1137,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules/{link_id}",
@@ -4847,7 +5072,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1120,
+          "line": 1145,
           "method": "PATCH",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules/{link_id}",
@@ -4855,7 +5080,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1146,
+          "line": 1171,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules/{link_id}/aliases",
@@ -4863,7 +5088,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1213,
+          "line": 1238,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/link-rules/{link_id}/events",
@@ -4871,7 +5096,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1203,
+          "line": 1228,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/tracking-events",
@@ -4879,7 +5104,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1198,
+          "line": 1223,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/tracking-links",
@@ -4887,7 +5112,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1035,
+          "line": 1060,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/tracking-links",
@@ -4895,7 +5120,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1310,
+          "line": 1335,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/tracking-platforms",
@@ -4903,7 +5128,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1282,
+          "line": 1307,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/utm/apply",
@@ -4911,7 +5136,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1305,
+          "line": 1330,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/utm/apply-preview",
@@ -4919,7 +5144,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1249,
+          "line": 1274,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/utm/parse",
@@ -4927,7 +5152,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1264,
+          "line": 1289,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/utm/rules",
@@ -4935,7 +5160,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1259,
+          "line": 1284,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/bot-api/utm/unresolved",
@@ -4943,7 +5168,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 458,
+          "line": 465,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/go/{token}",
@@ -4951,7 +5176,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 463,
+          "line": 470,
           "method": "GET",
           "module_id": "messaging.telegram.attribution",
           "path": "/r/{token}",
@@ -4959,7 +5184,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 608,
+          "line": 615,
           "method": "POST",
           "module_id": "messaging.telegram.attribution",
           "path": "/telegram/webhook",
@@ -4989,7 +5214,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 458,
+          "line": 465,
           "module_id": "messaging.telegram.attribution",
           "name": "go_redirect",
           "qualname": "go_redirect"
@@ -4997,7 +5222,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 463,
+          "line": 470,
           "module_id": "messaging.telegram.attribution",
           "name": "tracking_redirect",
           "qualname": "tracking_redirect"
@@ -5005,7 +5230,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 608,
+          "line": 615,
           "module_id": "messaging.telegram.attribution",
           "name": "telegram_webhook",
           "qualname": "telegram_webhook"
@@ -5013,7 +5238,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1035,
+          "line": 1060,
           "module_id": "messaging.telegram.attribution",
           "name": "create_tracking_link",
           "qualname": "create_tracking_link"
@@ -5021,7 +5246,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1090,
+          "line": 1115,
           "module_id": "messaging.telegram.attribution",
           "name": "create_link_rule",
           "qualname": "create_link_rule"
@@ -5029,7 +5254,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1097,
+          "line": 1122,
           "module_id": "messaging.telegram.attribution",
           "name": "list_link_rules",
           "qualname": "list_link_rules"
@@ -5037,7 +5262,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1102,
+          "line": 1127,
           "module_id": "messaging.telegram.attribution",
           "name": "resolve_link_preview",
           "qualname": "resolve_link_preview"
@@ -5045,7 +5270,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1112,
+          "line": 1137,
           "module_id": "messaging.telegram.attribution",
           "name": "get_link_rule",
           "qualname": "get_link_rule"
@@ -5053,7 +5278,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1120,
+          "line": 1145,
           "module_id": "messaging.telegram.attribution",
           "name": "update_link_rule",
           "qualname": "update_link_rule"
@@ -5061,7 +5286,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1146,
+          "line": 1171,
           "module_id": "messaging.telegram.attribution",
           "name": "add_link_alias",
           "qualname": "add_link_alias"
@@ -5069,7 +5294,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1159,
+          "line": 1184,
           "module_id": "messaging.telegram.attribution",
           "name": "set_link_alias_status",
           "qualname": "set_link_alias_status"
@@ -5077,7 +5302,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1170,
+          "line": 1195,
           "module_id": "messaging.telegram.attribution",
           "name": "create_channel_invite",
           "qualname": "create_channel_invite"
@@ -5085,7 +5310,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1187,
+          "line": 1212,
           "module_id": "messaging.telegram.attribution",
           "name": "revoke_channel_invite",
           "qualname": "revoke_channel_invite"
@@ -5093,7 +5318,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1198,
+          "line": 1223,
           "module_id": "messaging.telegram.attribution",
           "name": "tracking_stats",
           "qualname": "tracking_stats"
@@ -5101,7 +5326,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1203,
+          "line": 1228,
           "module_id": "messaging.telegram.attribution",
           "name": "tracking_events",
           "qualname": "tracking_events"
@@ -5109,7 +5334,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1213,
+          "line": 1238,
           "module_id": "messaging.telegram.attribution",
           "name": "link_rule_events",
           "qualname": "link_rule_events"
@@ -5117,7 +5342,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1220,
+          "line": 1245,
           "module_id": "messaging.telegram.attribution",
           "name": "link_analytics",
           "qualname": "link_analytics"
@@ -5125,7 +5350,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1249,
+          "line": 1274,
           "module_id": "messaging.telegram.attribution",
           "name": "parse_utm",
           "qualname": "parse_utm"
@@ -5133,7 +5358,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1259,
+          "line": 1284,
           "module_id": "messaging.telegram.attribution",
           "name": "unresolved_utm",
           "qualname": "unresolved_utm"
@@ -5141,7 +5366,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1264,
+          "line": 1289,
           "module_id": "messaging.telegram.attribution",
           "name": "save_utm_rule",
           "qualname": "save_utm_rule"
@@ -5149,7 +5374,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1282,
+          "line": 1307,
           "module_id": "messaging.telegram.attribution",
           "name": "apply_utm_rules",
           "qualname": "apply_utm_rules"
@@ -5157,7 +5382,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1305,
+          "line": 1330,
           "module_id": "messaging.telegram.attribution",
           "name": "preview_utm_rules",
           "qualname": "preview_utm_rules"
@@ -5165,7 +5390,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1310,
+          "line": 1335,
           "module_id": "messaging.telegram.attribution",
           "name": "tracking_platforms",
           "qualname": "tracking_platforms"
@@ -5645,7 +5870,7 @@
       "routes": [
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1433,
+          "line": 1458,
           "method": "GET",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts",
@@ -5653,7 +5878,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1317,
+          "line": 1342,
           "method": "POST",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts",
@@ -5661,7 +5886,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1367,
+          "line": 1392,
           "method": "POST",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts/{broadcast_id}/launch",
@@ -5669,7 +5894,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1343,
+          "line": 1368,
           "method": "GET",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts/{broadcast_id}/preview",
@@ -5677,7 +5902,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1417,
+          "line": 1442,
           "method": "POST",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts/{broadcast_id}/retry",
@@ -5685,7 +5910,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1379,
+          "line": 1404,
           "method": "POST",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts/{broadcast_id}/schedule",
@@ -5693,7 +5918,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1402,
+          "line": 1427,
           "method": "POST",
           "module_id": "messaging.telegram.broadcasts",
           "path": "/bot-api/broadcasts/{broadcast_id}/test",
@@ -5707,7 +5932,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1317,
+          "line": 1342,
           "module_id": "messaging.telegram.broadcasts",
           "name": "create_broadcast",
           "qualname": "create_broadcast"
@@ -5715,7 +5940,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1343,
+          "line": 1368,
           "module_id": "messaging.telegram.broadcasts",
           "name": "preview_broadcast",
           "qualname": "preview_broadcast"
@@ -5723,7 +5948,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1367,
+          "line": 1392,
           "module_id": "messaging.telegram.broadcasts",
           "name": "launch_broadcast",
           "qualname": "launch_broadcast"
@@ -5731,7 +5956,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1379,
+          "line": 1404,
           "module_id": "messaging.telegram.broadcasts",
           "name": "schedule_broadcast",
           "qualname": "schedule_broadcast"
@@ -5739,7 +5964,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1402,
+          "line": 1427,
           "module_id": "messaging.telegram.broadcasts",
           "name": "test_broadcast",
           "qualname": "test_broadcast"
@@ -5747,7 +5972,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1417,
+          "line": 1442,
           "module_id": "messaging.telegram.broadcasts",
           "name": "retry_broadcast",
           "qualname": "retry_broadcast"
@@ -5755,7 +5980,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1433,
+          "line": 1458,
           "module_id": "messaging.telegram.broadcasts",
           "name": "list_broadcasts",
           "qualname": "list_broadcasts"
@@ -6108,7 +6333,7 @@
       "routes": [
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 382,
+          "line": 389,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot",
@@ -6116,7 +6341,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 875,
+          "line": 900,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/contacts",
@@ -6124,7 +6349,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 991,
+          "line": 1016,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/contacts/{contact_id}/accelerated-run",
@@ -6132,7 +6357,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1008,
+          "line": 1033,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/contacts/{contact_id}/messages",
@@ -6140,7 +6365,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 973,
+          "line": 998,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/contacts/{contact_id}/start-preview",
@@ -6148,7 +6373,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 887,
+          "line": 912,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/contacts/{contact_id}/timeline",
@@ -6156,7 +6381,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 658,
+          "line": 683,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content",
@@ -6164,7 +6389,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 674,
+          "line": 699,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content-audit",
@@ -6172,7 +6397,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 679,
+          "line": 704,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content/{content_code}/authoring",
@@ -6180,7 +6405,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 721,
+          "line": 746,
           "method": "PUT",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content/{content_code}/publish",
@@ -6188,7 +6413,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 712,
+          "line": 737,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content/{content_code}/validate",
@@ -6196,7 +6421,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 773,
+          "line": 798,
           "method": "PATCH",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/content/{content_id}",
@@ -6204,7 +6429,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 396,
+          "line": 403,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/login",
@@ -6212,7 +6437,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 421,
+          "line": 428,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/logout",
@@ -6220,7 +6445,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 642,
+          "line": 667,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/map",
@@ -6228,7 +6453,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 834,
+          "line": 859,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/media",
@@ -6236,7 +6461,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 615,
+          "line": 640,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/sequences",
@@ -6244,7 +6469,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 762,
+          "line": 787,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/sequences/{sequence_code}",
@@ -6252,7 +6477,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 982,
+          "line": 1007,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/start-router/simulate",
@@ -6260,7 +6485,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 850,
+          "line": 875,
           "method": "PATCH",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/steps/{step_id}",
@@ -6268,7 +6493,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 858,
+          "line": 883,
           "method": "PATCH",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/steps/{step_id}/presentation",
@@ -6276,7 +6501,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1226,
+          "line": 1251,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/tags",
@@ -6284,7 +6509,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1239,
+          "line": 1264,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/tags",
@@ -6292,7 +6517,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1234,
+          "line": 1259,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/tags/search",
@@ -6300,7 +6525,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 965,
+          "line": 990,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/users/{user_id}",
@@ -6308,7 +6533,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 1027,
+          "line": 1052,
           "method": "POST",
           "module_id": "messaging.telegram.engine",
           "path": "/bot-api/users/{user_id}/messages",
@@ -6316,7 +6541,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 388,
+          "line": 395,
           "method": "GET",
           "module_id": "messaging.telegram.engine",
           "path": "/bot/{asset_name}",
@@ -6324,7 +6549,24 @@
         }
       ],
       "runtime_services": [],
-      "sources": [],
+      "sources": [
+        {
+          "consumers": [
+            "messaging.max"
+          ],
+          "path": "telegram-bot/service/app/config.py",
+          "role": "config",
+          "shared": true
+        },
+        {
+          "consumers": [
+            "messaging.max"
+          ],
+          "path": "telegram-bot/service/app/main.py",
+          "role": "runtime",
+          "shared": true
+        }
+      ],
       "summary": "Исполняет версии графов, планирует шаги, доставляет Telegram media и журналирует события.",
       "symbols": [
         {
@@ -6642,7 +6884,7 @@
         {
           "file": "telegram-bot/service/app/config.py",
           "kind": "function",
-          "line": 41,
+          "line": 44,
           "module_id": "messaging.telegram.engine",
           "name": "get_settings",
           "qualname": "get_settings"
@@ -7154,7 +7396,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 53,
+          "line": 54,
           "module_id": "messaging.telegram.engine",
           "name": "client",
           "qualname": "client"
@@ -7162,7 +7404,15 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 63,
+          "line": 64,
+          "module_id": "messaging.telegram.engine",
+          "name": "max_client",
+          "qualname": "max_client"
+        },
+        {
+          "file": "telegram-bot/service/app/main.py",
+          "kind": "function",
+          "line": 70,
           "module_id": "messaging.telegram.engine",
           "name": "_session_token",
           "qualname": "_session_token"
@@ -7170,7 +7420,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 69,
+          "line": 76,
           "module_id": "messaging.telegram.engine",
           "name": "_session_username",
           "qualname": "_session_username"
@@ -7178,7 +7428,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 85,
+          "line": 92,
           "module_id": "messaging.telegram.engine",
           "name": "_admin_identity",
           "qualname": "_admin_identity"
@@ -7186,7 +7436,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 95,
+          "line": 102,
           "module_id": "messaging.telegram.engine",
           "name": "require_admin",
           "qualname": "require_admin"
@@ -7194,7 +7444,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 102,
+          "line": 109,
           "module_id": "messaging.telegram.engine",
           "name": "_bot",
           "qualname": "_bot"
@@ -7202,7 +7452,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 109,
+          "line": 116,
           "module_id": "messaging.telegram.engine",
           "name": "_upsert_contact",
           "qualname": "_upsert_contact"
@@ -7210,7 +7460,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 127,
+          "line": 134,
           "module_id": "messaging.telegram.engine",
           "name": "_maintenance_allows_contact",
           "qualname": "_maintenance_allows_contact"
@@ -7218,7 +7468,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 135,
+          "line": 142,
           "module_id": "messaging.telegram.engine",
           "name": "_maintenance_notice",
           "qualname": "_maintenance_notice"
@@ -7226,7 +7476,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 149,
+          "line": 156,
           "module_id": "messaging.telegram.engine",
           "name": "_handle_maintenance_contact",
           "qualname": "_handle_maintenance_contact"
@@ -7234,7 +7484,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 160,
+          "line": 167,
           "module_id": "messaging.telegram.engine",
           "name": "_record_incoming_message",
           "qualname": "_record_incoming_message"
@@ -7242,7 +7492,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 186,
+          "line": 193,
           "module_id": "messaging.telegram.engine",
           "name": "_validate_media_reference",
           "qualname": "_validate_media_reference"
@@ -7250,7 +7500,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 201,
+          "line": 208,
           "module_id": "messaging.telegram.engine",
           "name": "_broadcast_contacts",
           "qualname": "_broadcast_contacts"
@@ -7258,7 +7508,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 235,
+          "line": 242,
           "module_id": "messaging.telegram.engine",
           "name": "_snapshot_broadcast_recipients",
           "qualname": "_snapshot_broadcast_recipients"
@@ -7266,7 +7516,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 245,
+          "line": 252,
           "module_id": "messaging.telegram.engine",
           "name": "_deliver_broadcast",
           "qualname": "_deliver_broadcast"
@@ -7274,7 +7524,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 270,
+          "line": 277,
           "module_id": "messaging.telegram.engine",
           "name": "scheduler_loop",
           "qualname": "scheduler_loop"
@@ -7282,7 +7532,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 328,
+          "line": 335,
           "module_id": "messaging.telegram.engine",
           "name": "polling_loop",
           "qualname": "polling_loop"
@@ -7290,7 +7540,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 359,
+          "line": 366,
           "module_id": "messaging.telegram.engine",
           "name": "lifespan",
           "qualname": "lifespan"
@@ -7298,7 +7548,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 382,
+          "line": 389,
           "module_id": "messaging.telegram.engine",
           "name": "bot_admin",
           "qualname": "bot_admin"
@@ -7306,7 +7556,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 388,
+          "line": 395,
           "module_id": "messaging.telegram.engine",
           "name": "bot_admin_asset",
           "qualname": "bot_admin_asset"
@@ -7314,7 +7564,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 396,
+          "line": 403,
           "module_id": "messaging.telegram.engine",
           "name": "bot_login",
           "qualname": "bot_login"
@@ -7322,7 +7572,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 421,
+          "line": 428,
           "module_id": "messaging.telegram.engine",
           "name": "bot_logout",
           "qualname": "bot_logout"
@@ -7330,7 +7580,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 437,
+          "line": 444,
           "module_id": "messaging.telegram.engine",
           "name": "_go_response",
           "qualname": "_go_response"
@@ -7338,7 +7588,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 467,
+          "line": 474,
           "module_id": "messaging.telegram.engine",
           "name": "process_update",
           "qualname": "process_update"
@@ -7346,7 +7596,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 615,
+          "line": 640,
           "module_id": "messaging.telegram.engine",
           "name": "list_sequences",
           "qualname": "list_sequences"
@@ -7354,7 +7604,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 642,
+          "line": 667,
           "module_id": "messaging.telegram.engine",
           "name": "bot_map",
           "qualname": "bot_map"
@@ -7362,7 +7612,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 658,
+          "line": 683,
           "module_id": "messaging.telegram.engine",
           "name": "list_content",
           "qualname": "list_content"
@@ -7370,7 +7620,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 674,
+          "line": 699,
           "module_id": "messaging.telegram.engine",
           "name": "content_audit",
           "qualname": "content_audit"
@@ -7378,7 +7628,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 679,
+          "line": 704,
           "module_id": "messaging.telegram.engine",
           "name": "get_content_authoring",
           "qualname": "get_content_authoring"
@@ -7386,7 +7636,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 686,
+          "line": 711,
           "module_id": "messaging.telegram.engine",
           "name": "_validate_content_publication",
           "qualname": "_validate_content_publication"
@@ -7394,7 +7644,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 712,
+          "line": 737,
           "module_id": "messaging.telegram.engine",
           "name": "validate_content",
           "qualname": "validate_content"
@@ -7402,7 +7652,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 721,
+          "line": 746,
           "module_id": "messaging.telegram.engine",
           "name": "publish_content",
           "qualname": "publish_content"
@@ -7410,7 +7660,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 739,
+          "line": 764,
           "module_id": "messaging.telegram.engine",
           "name": "_sequence_rule",
           "qualname": "_sequence_rule"
@@ -7418,7 +7668,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 762,
+          "line": 787,
           "module_id": "messaging.telegram.engine",
           "name": "sequence_detail",
           "qualname": "sequence_detail"
@@ -7426,7 +7676,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 773,
+          "line": 798,
           "module_id": "messaging.telegram.engine",
           "name": "update_content",
           "qualname": "update_content"
@@ -7434,7 +7684,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 834,
+          "line": 859,
           "module_id": "messaging.telegram.engine",
           "name": "upload_media",
           "qualname": "upload_media"
@@ -7442,7 +7692,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 850,
+          "line": 875,
           "module_id": "messaging.telegram.engine",
           "name": "update_step",
           "qualname": "update_step"
@@ -7450,7 +7700,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 858,
+          "line": 883,
           "module_id": "messaging.telegram.engine",
           "name": "update_step_presentation",
           "qualname": "update_step_presentation"
@@ -7458,7 +7708,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 875,
+          "line": 900,
           "module_id": "messaging.telegram.engine",
           "name": "list_contacts",
           "qualname": "list_contacts"
@@ -7466,7 +7716,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 887,
+          "line": 912,
           "module_id": "messaging.telegram.engine",
           "name": "contact_timeline",
           "qualname": "contact_timeline"
@@ -7474,7 +7724,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 952,
+          "line": 977,
           "module_id": "messaging.telegram.engine",
           "name": "_user_bot_state",
           "qualname": "_user_bot_state"
@@ -7482,7 +7732,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 965,
+          "line": 990,
           "module_id": "messaging.telegram.engine",
           "name": "user_bot_state",
           "qualname": "user_bot_state"
@@ -7490,7 +7740,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 973,
+          "line": 998,
           "module_id": "messaging.telegram.engine",
           "name": "start_preview",
           "qualname": "start_preview"
@@ -7498,7 +7748,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 982,
+          "line": 1007,
           "module_id": "messaging.telegram.engine",
           "name": "simulate_start_router",
           "qualname": "simulate_start_router"
@@ -7506,7 +7756,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 991,
+          "line": 1016,
           "module_id": "messaging.telegram.engine",
           "name": "accelerated_run",
           "qualname": "accelerated_run"
@@ -7514,7 +7764,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1008,
+          "line": 1033,
           "module_id": "messaging.telegram.engine",
           "name": "manual_message",
           "qualname": "manual_message"
@@ -7522,7 +7772,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1027,
+          "line": 1052,
           "module_id": "messaging.telegram.engine",
           "name": "manual_message_by_user",
           "qualname": "manual_message_by_user"
@@ -7530,7 +7780,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1042,
+          "line": 1067,
           "module_id": "messaging.telegram.engine",
           "name": "_create_link_rule",
           "qualname": "_create_link_rule"
@@ -7538,7 +7788,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1056,
+          "line": 1081,
           "module_id": "messaging.telegram.engine",
           "name": "_validate_link_route",
           "qualname": "_validate_link_route"
@@ -7546,7 +7796,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1071,
+          "line": 1096,
           "module_id": "messaging.telegram.engine",
           "name": "_link_payload",
           "qualname": "_link_payload"
@@ -7554,7 +7804,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1226,
+          "line": 1251,
           "module_id": "messaging.telegram.engine",
           "name": "search_tags",
           "qualname": "search_tags"
@@ -7562,7 +7812,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1234,
+          "line": 1259,
           "module_id": "messaging.telegram.engine",
           "name": "search_tags_alias",
           "qualname": "search_tags_alias"
@@ -7570,7 +7820,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1239,
+          "line": 1264,
           "module_id": "messaging.telegram.engine",
           "name": "create_tag",
           "qualname": "create_tag"
@@ -7578,7 +7828,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 1359,
+          "line": 1384,
           "module_id": "messaging.telegram.engine",
           "name": "_confirm_broadcast_audience",
           "qualname": "_confirm_broadcast_audience"
@@ -10682,7 +10932,7 @@
         },
         {
           "file": "telegram-bot/service/app/main.py",
-          "line": 427,
+          "line": 434,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -10744,7 +10994,7 @@
         {
           "file": "telegram-bot/service/app/main.py",
           "kind": "function",
-          "line": 427,
+          "line": 434,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -24696,7 +24946,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 112,
+          "line": 129,
           "method": "POST",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes",
@@ -24712,7 +24962,15 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 56,
+          "line": 48,
+          "method": "GET",
+          "module_id": "products.recipes",
+          "path": "/api/apps/recipes/products",
+          "symbol": "recipes_personal_products"
+        },
+        {
+          "file": "backend/app/recipe_routes.py",
+          "line": 73,
           "method": "POST",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/products",
@@ -24720,7 +24978,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 70,
+          "line": 87,
           "method": "DELETE",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/products/{product_id}",
@@ -24728,7 +24986,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 81,
+          "line": 98,
           "method": "PUT",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/products/{product_id}",
@@ -24736,7 +24994,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 128,
+          "line": 145,
           "method": "DELETE",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/{recipe_id}",
@@ -24744,7 +25002,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 48,
+          "line": 65,
           "method": "GET",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/{recipe_id}",
@@ -24752,7 +25010,7 @@
         },
         {
           "file": "backend/app/recipe_routes.py",
-          "line": 120,
+          "line": 137,
           "method": "PUT",
           "module_id": "products.recipes",
           "path": "/api/apps/recipes/{recipe_id}",
@@ -24824,13 +25082,21 @@
           "kind": "function",
           "line": 48,
           "module_id": "products.recipes",
+          "name": "recipes_personal_products",
+          "qualname": "recipes_personal_products"
+        },
+        {
+          "file": "backend/app/recipe_routes.py",
+          "kind": "function",
+          "line": 65,
+          "module_id": "products.recipes",
           "name": "recipe_get",
           "qualname": "recipe_get"
         },
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 56,
+          "line": 73,
           "module_id": "products.recipes",
           "name": "product_create",
           "qualname": "product_create"
@@ -24838,7 +25104,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 70,
+          "line": 87,
           "module_id": "products.recipes",
           "name": "product_hide",
           "qualname": "product_hide"
@@ -24846,7 +25112,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 81,
+          "line": 98,
           "module_id": "products.recipes",
           "name": "product_update",
           "qualname": "product_update"
@@ -24854,7 +25120,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 93,
+          "line": 110,
           "module_id": "products.recipes",
           "name": "_save_recipe",
           "qualname": "_save_recipe"
@@ -24862,7 +25128,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 112,
+          "line": 129,
           "module_id": "products.recipes",
           "name": "recipe_create",
           "qualname": "recipe_create"
@@ -24870,7 +25136,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 120,
+          "line": 137,
           "module_id": "products.recipes",
           "name": "recipe_update",
           "qualname": "recipe_update"
@@ -24878,7 +25144,7 @@
         {
           "file": "backend/app/recipe_routes.py",
           "kind": "function",
-          "line": 128,
+          "line": 145,
           "module_id": "products.recipes",
           "name": "recipe_delete",
           "qualname": "recipe_delete"
@@ -25046,7 +25312,7 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 17,
+          "line": 19,
           "module_id": "products.recipes",
           "name": "make_client",
           "qualname": "make_client"
@@ -25054,7 +25320,7 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 22,
+          "line": 24,
           "module_id": "products.recipes",
           "name": "override_db",
           "qualname": "make_client.override_db"
@@ -25062,7 +25328,7 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 30,
+          "line": 32,
           "module_id": "products.recipes",
           "name": "grant_user",
           "qualname": "grant_user"
@@ -25070,7 +25336,7 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 42,
+          "line": 53,
           "module_id": "products.recipes",
           "name": "test_recipe_api_keeps_personal_products_private_and_calculates_yield",
           "qualname": "test_recipe_api_keeps_personal_products_private_and_calculates_yield"
@@ -25078,7 +25344,7 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 63,
+          "line": 74,
           "module_id": "products.recipes",
           "name": "test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage",
           "qualname": "test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage"
@@ -25086,7 +25352,15 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 76,
+          "line": 87,
+          "module_id": "products.recipes",
+          "name": "test_catalog_search_prioritizes_names_starting_with_query",
+          "qualname": "test_catalog_search_prioritizes_names_starting_with_query"
+        },
+        {
+          "file": "backend/tests/test_recipe_calculator.py",
+          "kind": "function",
+          "line": 102,
           "module_id": "products.recipes",
           "name": "test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is_owner_scoped",
           "qualname": "test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is_owner_scoped"
@@ -25094,7 +25368,15 @@
         {
           "file": "backend/tests/test_recipe_calculator.py",
           "kind": "function",
-          "line": 90,
+          "line": 122,
+          "module_id": "products.recipes",
+          "name": "test_recipe_product_is_ready_in_account_catalog",
+          "qualname": "test_recipe_product_is_ready_in_account_catalog"
+        },
+        {
+          "file": "backend/tests/test_recipe_calculator.py",
+          "kind": "function",
+          "line": 130,
           "module_id": "products.recipes",
           "name": "test_nested_recipe_cannot_be_deleted_or_cycled",
           "qualname": "test_nested_recipe_cannot_be_deleted_or_cycled"
@@ -25563,6 +25845,21 @@
       "type": "depends_on"
     },
     {
+      "source": "messaging.max",
+      "target": "messaging.telegram.attribution",
+      "type": "depends_on"
+    },
+    {
+      "source": "messaging.max",
+      "target": "messaging.telegram.engine",
+      "type": "depends_on"
+    },
+    {
+      "source": "messaging.max",
+      "target": "platform.crm",
+      "type": "depends_on"
+    },
+    {
       "source": "messaging.telegram",
       "target": "platform.commerce",
       "type": "depends_on"
@@ -25821,6 +26118,21 @@
       "source": "products.masterclass.runtime",
       "target": "messaging.telegram.postpurchase",
       "type": "events_out"
+    },
+    {
+      "source": "messaging.max",
+      "target": "messaging.telegram.attribution",
+      "type": "reads_from"
+    },
+    {
+      "source": "messaging.max",
+      "target": "messaging.telegram.engine",
+      "type": "reads_from"
+    },
+    {
+      "source": "messaging.max",
+      "target": "platform.crm",
+      "type": "reads_from"
     },
     {
       "source": "messaging.telegram.postpurchase",
@@ -26457,7 +26769,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 112,
+      "line": 129,
       "method": "POST",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes",
@@ -26473,7 +26785,15 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 56,
+      "line": 48,
+      "method": "GET",
+      "module_id": "products.recipes",
+      "path": "/api/apps/recipes/products",
+      "symbol": "recipes_personal_products"
+    },
+    {
+      "file": "backend/app/recipe_routes.py",
+      "line": 73,
       "method": "POST",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/products",
@@ -26481,7 +26801,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 70,
+      "line": 87,
       "method": "DELETE",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/products/{product_id}",
@@ -26489,7 +26809,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 81,
+      "line": 98,
       "method": "PUT",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/products/{product_id}",
@@ -26497,7 +26817,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 128,
+      "line": 145,
       "method": "DELETE",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/{recipe_id}",
@@ -26505,7 +26825,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 48,
+      "line": 65,
       "method": "GET",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/{recipe_id}",
@@ -26513,7 +26833,7 @@
     },
     {
       "file": "backend/app/recipe_routes.py",
-      "line": 120,
+      "line": 137,
       "method": "PUT",
       "module_id": "products.recipes",
       "path": "/api/apps/recipes/{recipe_id}",
@@ -26849,7 +27169,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 382,
+      "line": 389,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot",
@@ -26857,7 +27177,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1433,
+      "line": 1458,
       "method": "GET",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts",
@@ -26865,7 +27185,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1317,
+      "line": 1342,
       "method": "POST",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts",
@@ -26873,7 +27193,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1367,
+      "line": 1392,
       "method": "POST",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts/{broadcast_id}/launch",
@@ -26881,7 +27201,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1343,
+      "line": 1368,
       "method": "GET",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts/{broadcast_id}/preview",
@@ -26889,7 +27209,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1417,
+      "line": 1442,
       "method": "POST",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts/{broadcast_id}/retry",
@@ -26897,7 +27217,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1379,
+      "line": 1404,
       "method": "POST",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts/{broadcast_id}/schedule",
@@ -26905,7 +27225,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1402,
+      "line": 1427,
       "method": "POST",
       "module_id": "messaging.telegram.broadcasts",
       "path": "/bot-api/broadcasts/{broadcast_id}/test",
@@ -26913,7 +27233,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 875,
+      "line": 900,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/contacts",
@@ -26921,7 +27241,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 991,
+      "line": 1016,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/contacts/{contact_id}/accelerated-run",
@@ -26929,7 +27249,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1008,
+      "line": 1033,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/contacts/{contact_id}/messages",
@@ -26937,7 +27257,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 973,
+      "line": 998,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/contacts/{contact_id}/start-preview",
@@ -26945,7 +27265,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 887,
+      "line": 912,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/contacts/{contact_id}/timeline",
@@ -26953,7 +27273,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 658,
+      "line": 683,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content",
@@ -26961,7 +27281,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 674,
+      "line": 699,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content-audit",
@@ -26969,7 +27289,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 679,
+      "line": 704,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content/{content_code}/authoring",
@@ -26977,7 +27297,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 721,
+      "line": 746,
       "method": "PUT",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content/{content_code}/publish",
@@ -26985,7 +27305,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 712,
+      "line": 737,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content/{content_code}/validate",
@@ -26993,7 +27313,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 773,
+      "line": 798,
       "method": "PATCH",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/content/{content_id}",
@@ -27001,7 +27321,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1159,
+      "line": 1184,
       "method": "PATCH",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-aliases/{alias_id}",
@@ -27009,7 +27329,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1170,
+      "line": 1195,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-aliases/{alias_id}/channel-invite",
@@ -27017,7 +27337,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1187,
+      "line": 1212,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-aliases/{alias_id}/revoke-channel-invite",
@@ -27025,7 +27345,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1220,
+      "line": 1245,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-analytics",
@@ -27033,7 +27353,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1097,
+      "line": 1122,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules",
@@ -27041,7 +27361,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1090,
+      "line": 1115,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules",
@@ -27049,7 +27369,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1102,
+      "line": 1127,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules/resolve-preview",
@@ -27057,7 +27377,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1112,
+      "line": 1137,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules/{link_id}",
@@ -27065,7 +27385,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1120,
+      "line": 1145,
       "method": "PATCH",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules/{link_id}",
@@ -27073,7 +27393,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1146,
+      "line": 1171,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules/{link_id}/aliases",
@@ -27081,7 +27401,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1213,
+      "line": 1238,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/link-rules/{link_id}/events",
@@ -27089,7 +27409,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 396,
+      "line": 403,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/login",
@@ -27097,7 +27417,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 421,
+      "line": 428,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/logout",
@@ -27105,7 +27425,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 642,
+      "line": 667,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/map",
@@ -27113,7 +27433,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 834,
+      "line": 859,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/media",
@@ -27121,7 +27441,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 615,
+      "line": 640,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/sequences",
@@ -27129,7 +27449,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 762,
+      "line": 787,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/sequences/{sequence_code}",
@@ -27137,7 +27457,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 982,
+      "line": 1007,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/start-router/simulate",
@@ -27145,7 +27465,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 850,
+      "line": 875,
       "method": "PATCH",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/steps/{step_id}",
@@ -27153,7 +27473,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 858,
+      "line": 883,
       "method": "PATCH",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/steps/{step_id}/presentation",
@@ -27161,7 +27481,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1226,
+      "line": 1251,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/tags",
@@ -27169,7 +27489,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1239,
+      "line": 1264,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/tags",
@@ -27177,7 +27497,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1234,
+      "line": 1259,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/tags/search",
@@ -27185,7 +27505,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1203,
+      "line": 1228,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/tracking-events",
@@ -27193,7 +27513,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1198,
+      "line": 1223,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/tracking-links",
@@ -27201,7 +27521,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1035,
+      "line": 1060,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/tracking-links",
@@ -27209,7 +27529,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1310,
+      "line": 1335,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/tracking-platforms",
@@ -27217,7 +27537,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 965,
+      "line": 990,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/users/{user_id}",
@@ -27225,7 +27545,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1027,
+      "line": 1052,
       "method": "POST",
       "module_id": "messaging.telegram.engine",
       "path": "/bot-api/users/{user_id}/messages",
@@ -27233,7 +27553,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1282,
+      "line": 1307,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/utm/apply",
@@ -27241,7 +27561,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1305,
+      "line": 1330,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/utm/apply-preview",
@@ -27249,7 +27569,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1249,
+      "line": 1274,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/utm/parse",
@@ -27257,7 +27577,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1264,
+      "line": 1289,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/utm/rules",
@@ -27265,7 +27585,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 1259,
+      "line": 1284,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/bot-api/utm/unresolved",
@@ -27273,7 +27593,15 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 388,
+      "line": 622,
+      "method": "POST",
+      "module_id": "messaging.max",
+      "path": "/bot/max/webhook",
+      "symbol": "max_webhook"
+    },
+    {
+      "file": "telegram-bot/service/app/main.py",
+      "line": 395,
       "method": "GET",
       "module_id": "messaging.telegram.engine",
       "path": "/bot/{asset_name}",
@@ -27329,7 +27657,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 458,
+      "line": 465,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/go/{token}",
@@ -27345,7 +27673,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 427,
+      "line": 434,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -27433,7 +27761,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 463,
+      "line": 470,
       "method": "GET",
       "module_id": "messaging.telegram.attribution",
       "path": "/r/{token}",
@@ -27457,7 +27785,7 @@
     },
     {
       "file": "telegram-bot/service/app/main.py",
-      "line": 608,
+      "line": 615,
       "method": "POST",
       "module_id": "messaging.telegram.attribution",
       "path": "/telegram/webhook",
@@ -32055,13 +32383,21 @@
       "kind": "function",
       "line": 48,
       "module_id": "products.recipes",
+      "name": "recipes_personal_products",
+      "qualname": "recipes_personal_products"
+    },
+    {
+      "file": "backend/app/recipe_routes.py",
+      "kind": "function",
+      "line": 65,
+      "module_id": "products.recipes",
       "name": "recipe_get",
       "qualname": "recipe_get"
     },
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 56,
+      "line": 73,
       "module_id": "products.recipes",
       "name": "product_create",
       "qualname": "product_create"
@@ -32069,7 +32405,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 70,
+      "line": 87,
       "module_id": "products.recipes",
       "name": "product_hide",
       "qualname": "product_hide"
@@ -32077,7 +32413,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 81,
+      "line": 98,
       "module_id": "products.recipes",
       "name": "product_update",
       "qualname": "product_update"
@@ -32085,7 +32421,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 93,
+      "line": 110,
       "module_id": "products.recipes",
       "name": "_save_recipe",
       "qualname": "_save_recipe"
@@ -32093,7 +32429,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 112,
+      "line": 129,
       "module_id": "products.recipes",
       "name": "recipe_create",
       "qualname": "recipe_create"
@@ -32101,7 +32437,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 120,
+      "line": 137,
       "module_id": "products.recipes",
       "name": "recipe_update",
       "qualname": "recipe_update"
@@ -32109,7 +32445,7 @@
     {
       "file": "backend/app/recipe_routes.py",
       "kind": "function",
-      "line": 128,
+      "line": 145,
       "module_id": "products.recipes",
       "name": "recipe_delete",
       "qualname": "recipe_delete"
@@ -35965,7 +36301,7 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 17,
+      "line": 19,
       "module_id": "products.recipes",
       "name": "make_client",
       "qualname": "make_client"
@@ -35973,7 +36309,7 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 22,
+      "line": 24,
       "module_id": "products.recipes",
       "name": "override_db",
       "qualname": "make_client.override_db"
@@ -35981,7 +36317,7 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 30,
+      "line": 32,
       "module_id": "products.recipes",
       "name": "grant_user",
       "qualname": "grant_user"
@@ -35989,7 +36325,7 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 42,
+      "line": 53,
       "module_id": "products.recipes",
       "name": "test_recipe_api_keeps_personal_products_private_and_calculates_yield",
       "qualname": "test_recipe_api_keeps_personal_products_private_and_calculates_yield"
@@ -35997,7 +36333,7 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 63,
+      "line": 74,
       "module_id": "products.recipes",
       "name": "test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage",
       "qualname": "test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage"
@@ -36005,7 +36341,15 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 76,
+      "line": 87,
+      "module_id": "products.recipes",
+      "name": "test_catalog_search_prioritizes_names_starting_with_query",
+      "qualname": "test_catalog_search_prioritizes_names_starting_with_query"
+    },
+    {
+      "file": "backend/tests/test_recipe_calculator.py",
+      "kind": "function",
+      "line": 102,
       "module_id": "products.recipes",
       "name": "test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is_owner_scoped",
       "qualname": "test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is_owner_scoped"
@@ -36013,7 +36357,15 @@
     {
       "file": "backend/tests/test_recipe_calculator.py",
       "kind": "function",
-      "line": 90,
+      "line": 122,
+      "module_id": "products.recipes",
+      "name": "test_recipe_product_is_ready_in_account_catalog",
+      "qualname": "test_recipe_product_is_ready_in_account_catalog"
+    },
+    {
+      "file": "backend/tests/test_recipe_calculator.py",
+      "kind": "function",
+      "line": 130,
       "module_id": "products.recipes",
       "name": "test_nested_recipe_cannot_be_deleted_or_cycled",
       "qualname": "test_nested_recipe_cannot_be_deleted_or_cycled"
@@ -37525,7 +37877,7 @@
     {
       "file": "telegram-bot/service/app/config.py",
       "kind": "function",
-      "line": 41,
+      "line": 44,
       "module_id": "messaging.telegram.engine",
       "name": "get_settings",
       "qualname": "get_settings"
@@ -38037,7 +38389,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 53,
+      "line": 54,
       "module_id": "messaging.telegram.engine",
       "name": "client",
       "qualname": "client"
@@ -38045,7 +38397,15 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 63,
+      "line": 64,
+      "module_id": "messaging.telegram.engine",
+      "name": "max_client",
+      "qualname": "max_client"
+    },
+    {
+      "file": "telegram-bot/service/app/main.py",
+      "kind": "function",
+      "line": 70,
       "module_id": "messaging.telegram.engine",
       "name": "_session_token",
       "qualname": "_session_token"
@@ -38053,7 +38413,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 69,
+      "line": 76,
       "module_id": "messaging.telegram.engine",
       "name": "_session_username",
       "qualname": "_session_username"
@@ -38061,7 +38421,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 85,
+      "line": 92,
       "module_id": "messaging.telegram.engine",
       "name": "_admin_identity",
       "qualname": "_admin_identity"
@@ -38069,7 +38429,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 95,
+      "line": 102,
       "module_id": "messaging.telegram.engine",
       "name": "require_admin",
       "qualname": "require_admin"
@@ -38077,7 +38437,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 102,
+      "line": 109,
       "module_id": "messaging.telegram.engine",
       "name": "_bot",
       "qualname": "_bot"
@@ -38085,7 +38445,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 109,
+      "line": 116,
       "module_id": "messaging.telegram.engine",
       "name": "_upsert_contact",
       "qualname": "_upsert_contact"
@@ -38093,7 +38453,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 127,
+      "line": 134,
       "module_id": "messaging.telegram.engine",
       "name": "_maintenance_allows_contact",
       "qualname": "_maintenance_allows_contact"
@@ -38101,7 +38461,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 135,
+      "line": 142,
       "module_id": "messaging.telegram.engine",
       "name": "_maintenance_notice",
       "qualname": "_maintenance_notice"
@@ -38109,7 +38469,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 149,
+      "line": 156,
       "module_id": "messaging.telegram.engine",
       "name": "_handle_maintenance_contact",
       "qualname": "_handle_maintenance_contact"
@@ -38117,7 +38477,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 160,
+      "line": 167,
       "module_id": "messaging.telegram.engine",
       "name": "_record_incoming_message",
       "qualname": "_record_incoming_message"
@@ -38125,7 +38485,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 186,
+      "line": 193,
       "module_id": "messaging.telegram.engine",
       "name": "_validate_media_reference",
       "qualname": "_validate_media_reference"
@@ -38133,7 +38493,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 201,
+      "line": 208,
       "module_id": "messaging.telegram.engine",
       "name": "_broadcast_contacts",
       "qualname": "_broadcast_contacts"
@@ -38141,7 +38501,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 235,
+      "line": 242,
       "module_id": "messaging.telegram.engine",
       "name": "_snapshot_broadcast_recipients",
       "qualname": "_snapshot_broadcast_recipients"
@@ -38149,7 +38509,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 245,
+      "line": 252,
       "module_id": "messaging.telegram.engine",
       "name": "_deliver_broadcast",
       "qualname": "_deliver_broadcast"
@@ -38157,7 +38517,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 270,
+      "line": 277,
       "module_id": "messaging.telegram.engine",
       "name": "scheduler_loop",
       "qualname": "scheduler_loop"
@@ -38165,7 +38525,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 328,
+      "line": 335,
       "module_id": "messaging.telegram.engine",
       "name": "polling_loop",
       "qualname": "polling_loop"
@@ -38173,7 +38533,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 359,
+      "line": 366,
       "module_id": "messaging.telegram.engine",
       "name": "lifespan",
       "qualname": "lifespan"
@@ -38181,7 +38541,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 382,
+      "line": 389,
       "module_id": "messaging.telegram.engine",
       "name": "bot_admin",
       "qualname": "bot_admin"
@@ -38189,7 +38549,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 388,
+      "line": 395,
       "module_id": "messaging.telegram.engine",
       "name": "bot_admin_asset",
       "qualname": "bot_admin_asset"
@@ -38197,7 +38557,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 396,
+      "line": 403,
       "module_id": "messaging.telegram.engine",
       "name": "bot_login",
       "qualname": "bot_login"
@@ -38205,7 +38565,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 421,
+      "line": 428,
       "module_id": "messaging.telegram.engine",
       "name": "bot_logout",
       "qualname": "bot_logout"
@@ -38213,7 +38573,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 427,
+      "line": 434,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -38221,7 +38581,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 437,
+      "line": 444,
       "module_id": "messaging.telegram.engine",
       "name": "_go_response",
       "qualname": "_go_response"
@@ -38229,7 +38589,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 458,
+      "line": 465,
       "module_id": "messaging.telegram.attribution",
       "name": "go_redirect",
       "qualname": "go_redirect"
@@ -38237,7 +38597,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 463,
+      "line": 470,
       "module_id": "messaging.telegram.attribution",
       "name": "tracking_redirect",
       "qualname": "tracking_redirect"
@@ -38245,7 +38605,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 467,
+      "line": 474,
       "module_id": "messaging.telegram.engine",
       "name": "process_update",
       "qualname": "process_update"
@@ -38253,7 +38613,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 608,
+      "line": 615,
       "module_id": "messaging.telegram.attribution",
       "name": "telegram_webhook",
       "qualname": "telegram_webhook"
@@ -38261,7 +38621,15 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 615,
+      "line": 622,
+      "module_id": "messaging.max",
+      "name": "max_webhook",
+      "qualname": "max_webhook"
+    },
+    {
+      "file": "telegram-bot/service/app/main.py",
+      "kind": "function",
+      "line": 640,
       "module_id": "messaging.telegram.engine",
       "name": "list_sequences",
       "qualname": "list_sequences"
@@ -38269,7 +38637,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 642,
+      "line": 667,
       "module_id": "messaging.telegram.engine",
       "name": "bot_map",
       "qualname": "bot_map"
@@ -38277,7 +38645,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 658,
+      "line": 683,
       "module_id": "messaging.telegram.engine",
       "name": "list_content",
       "qualname": "list_content"
@@ -38285,7 +38653,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 674,
+      "line": 699,
       "module_id": "messaging.telegram.engine",
       "name": "content_audit",
       "qualname": "content_audit"
@@ -38293,7 +38661,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 679,
+      "line": 704,
       "module_id": "messaging.telegram.engine",
       "name": "get_content_authoring",
       "qualname": "get_content_authoring"
@@ -38301,7 +38669,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 686,
+      "line": 711,
       "module_id": "messaging.telegram.engine",
       "name": "_validate_content_publication",
       "qualname": "_validate_content_publication"
@@ -38309,7 +38677,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 712,
+      "line": 737,
       "module_id": "messaging.telegram.engine",
       "name": "validate_content",
       "qualname": "validate_content"
@@ -38317,7 +38685,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 721,
+      "line": 746,
       "module_id": "messaging.telegram.engine",
       "name": "publish_content",
       "qualname": "publish_content"
@@ -38325,7 +38693,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 739,
+      "line": 764,
       "module_id": "messaging.telegram.engine",
       "name": "_sequence_rule",
       "qualname": "_sequence_rule"
@@ -38333,7 +38701,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 762,
+      "line": 787,
       "module_id": "messaging.telegram.engine",
       "name": "sequence_detail",
       "qualname": "sequence_detail"
@@ -38341,7 +38709,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 773,
+      "line": 798,
       "module_id": "messaging.telegram.engine",
       "name": "update_content",
       "qualname": "update_content"
@@ -38349,7 +38717,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 834,
+      "line": 859,
       "module_id": "messaging.telegram.engine",
       "name": "upload_media",
       "qualname": "upload_media"
@@ -38357,7 +38725,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 850,
+      "line": 875,
       "module_id": "messaging.telegram.engine",
       "name": "update_step",
       "qualname": "update_step"
@@ -38365,7 +38733,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 858,
+      "line": 883,
       "module_id": "messaging.telegram.engine",
       "name": "update_step_presentation",
       "qualname": "update_step_presentation"
@@ -38373,7 +38741,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 875,
+      "line": 900,
       "module_id": "messaging.telegram.engine",
       "name": "list_contacts",
       "qualname": "list_contacts"
@@ -38381,7 +38749,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 887,
+      "line": 912,
       "module_id": "messaging.telegram.engine",
       "name": "contact_timeline",
       "qualname": "contact_timeline"
@@ -38389,7 +38757,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 952,
+      "line": 977,
       "module_id": "messaging.telegram.engine",
       "name": "_user_bot_state",
       "qualname": "_user_bot_state"
@@ -38397,7 +38765,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 965,
+      "line": 990,
       "module_id": "messaging.telegram.engine",
       "name": "user_bot_state",
       "qualname": "user_bot_state"
@@ -38405,7 +38773,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 973,
+      "line": 998,
       "module_id": "messaging.telegram.engine",
       "name": "start_preview",
       "qualname": "start_preview"
@@ -38413,7 +38781,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 982,
+      "line": 1007,
       "module_id": "messaging.telegram.engine",
       "name": "simulate_start_router",
       "qualname": "simulate_start_router"
@@ -38421,7 +38789,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 991,
+      "line": 1016,
       "module_id": "messaging.telegram.engine",
       "name": "accelerated_run",
       "qualname": "accelerated_run"
@@ -38429,7 +38797,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1008,
+      "line": 1033,
       "module_id": "messaging.telegram.engine",
       "name": "manual_message",
       "qualname": "manual_message"
@@ -38437,7 +38805,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1027,
+      "line": 1052,
       "module_id": "messaging.telegram.engine",
       "name": "manual_message_by_user",
       "qualname": "manual_message_by_user"
@@ -38445,7 +38813,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1035,
+      "line": 1060,
       "module_id": "messaging.telegram.attribution",
       "name": "create_tracking_link",
       "qualname": "create_tracking_link"
@@ -38453,7 +38821,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1042,
+      "line": 1067,
       "module_id": "messaging.telegram.engine",
       "name": "_create_link_rule",
       "qualname": "_create_link_rule"
@@ -38461,7 +38829,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1056,
+      "line": 1081,
       "module_id": "messaging.telegram.engine",
       "name": "_validate_link_route",
       "qualname": "_validate_link_route"
@@ -38469,7 +38837,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1071,
+      "line": 1096,
       "module_id": "messaging.telegram.engine",
       "name": "_link_payload",
       "qualname": "_link_payload"
@@ -38477,7 +38845,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1090,
+      "line": 1115,
       "module_id": "messaging.telegram.attribution",
       "name": "create_link_rule",
       "qualname": "create_link_rule"
@@ -38485,7 +38853,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1097,
+      "line": 1122,
       "module_id": "messaging.telegram.attribution",
       "name": "list_link_rules",
       "qualname": "list_link_rules"
@@ -38493,7 +38861,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1102,
+      "line": 1127,
       "module_id": "messaging.telegram.attribution",
       "name": "resolve_link_preview",
       "qualname": "resolve_link_preview"
@@ -38501,7 +38869,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1112,
+      "line": 1137,
       "module_id": "messaging.telegram.attribution",
       "name": "get_link_rule",
       "qualname": "get_link_rule"
@@ -38509,7 +38877,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1120,
+      "line": 1145,
       "module_id": "messaging.telegram.attribution",
       "name": "update_link_rule",
       "qualname": "update_link_rule"
@@ -38517,7 +38885,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1146,
+      "line": 1171,
       "module_id": "messaging.telegram.attribution",
       "name": "add_link_alias",
       "qualname": "add_link_alias"
@@ -38525,7 +38893,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1159,
+      "line": 1184,
       "module_id": "messaging.telegram.attribution",
       "name": "set_link_alias_status",
       "qualname": "set_link_alias_status"
@@ -38533,7 +38901,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1170,
+      "line": 1195,
       "module_id": "messaging.telegram.attribution",
       "name": "create_channel_invite",
       "qualname": "create_channel_invite"
@@ -38541,7 +38909,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1187,
+      "line": 1212,
       "module_id": "messaging.telegram.attribution",
       "name": "revoke_channel_invite",
       "qualname": "revoke_channel_invite"
@@ -38549,7 +38917,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1198,
+      "line": 1223,
       "module_id": "messaging.telegram.attribution",
       "name": "tracking_stats",
       "qualname": "tracking_stats"
@@ -38557,7 +38925,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1203,
+      "line": 1228,
       "module_id": "messaging.telegram.attribution",
       "name": "tracking_events",
       "qualname": "tracking_events"
@@ -38565,7 +38933,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1213,
+      "line": 1238,
       "module_id": "messaging.telegram.attribution",
       "name": "link_rule_events",
       "qualname": "link_rule_events"
@@ -38573,7 +38941,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1220,
+      "line": 1245,
       "module_id": "messaging.telegram.attribution",
       "name": "link_analytics",
       "qualname": "link_analytics"
@@ -38581,7 +38949,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1226,
+      "line": 1251,
       "module_id": "messaging.telegram.engine",
       "name": "search_tags",
       "qualname": "search_tags"
@@ -38589,7 +38957,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1234,
+      "line": 1259,
       "module_id": "messaging.telegram.engine",
       "name": "search_tags_alias",
       "qualname": "search_tags_alias"
@@ -38597,7 +38965,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1239,
+      "line": 1264,
       "module_id": "messaging.telegram.engine",
       "name": "create_tag",
       "qualname": "create_tag"
@@ -38605,7 +38973,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1249,
+      "line": 1274,
       "module_id": "messaging.telegram.attribution",
       "name": "parse_utm",
       "qualname": "parse_utm"
@@ -38613,7 +38981,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1259,
+      "line": 1284,
       "module_id": "messaging.telegram.attribution",
       "name": "unresolved_utm",
       "qualname": "unresolved_utm"
@@ -38621,7 +38989,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1264,
+      "line": 1289,
       "module_id": "messaging.telegram.attribution",
       "name": "save_utm_rule",
       "qualname": "save_utm_rule"
@@ -38629,7 +38997,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1282,
+      "line": 1307,
       "module_id": "messaging.telegram.attribution",
       "name": "apply_utm_rules",
       "qualname": "apply_utm_rules"
@@ -38637,7 +39005,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1305,
+      "line": 1330,
       "module_id": "messaging.telegram.attribution",
       "name": "preview_utm_rules",
       "qualname": "preview_utm_rules"
@@ -38645,7 +39013,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1310,
+      "line": 1335,
       "module_id": "messaging.telegram.attribution",
       "name": "tracking_platforms",
       "qualname": "tracking_platforms"
@@ -38653,7 +39021,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1317,
+      "line": 1342,
       "module_id": "messaging.telegram.broadcasts",
       "name": "create_broadcast",
       "qualname": "create_broadcast"
@@ -38661,7 +39029,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1343,
+      "line": 1368,
       "module_id": "messaging.telegram.broadcasts",
       "name": "preview_broadcast",
       "qualname": "preview_broadcast"
@@ -38669,7 +39037,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1359,
+      "line": 1384,
       "module_id": "messaging.telegram.engine",
       "name": "_confirm_broadcast_audience",
       "qualname": "_confirm_broadcast_audience"
@@ -38677,7 +39045,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1367,
+      "line": 1392,
       "module_id": "messaging.telegram.broadcasts",
       "name": "launch_broadcast",
       "qualname": "launch_broadcast"
@@ -38685,7 +39053,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1379,
+      "line": 1404,
       "module_id": "messaging.telegram.broadcasts",
       "name": "schedule_broadcast",
       "qualname": "schedule_broadcast"
@@ -38693,7 +39061,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1402,
+      "line": 1427,
       "module_id": "messaging.telegram.broadcasts",
       "name": "test_broadcast",
       "qualname": "test_broadcast"
@@ -38701,7 +39069,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1417,
+      "line": 1442,
       "module_id": "messaging.telegram.broadcasts",
       "name": "retry_broadcast",
       "qualname": "retry_broadcast"
@@ -38709,7 +39077,7 @@
     {
       "file": "telegram-bot/service/app/main.py",
       "kind": "function",
-      "line": 1433,
+      "line": 1458,
       "module_id": "messaging.telegram.broadcasts",
       "name": "list_broadcasts",
       "qualname": "list_broadcasts"
@@ -38889,6 +39257,70 @@
       "module_id": "messaging.telegram.engine",
       "name": "editorial_help",
       "qualname": "editorial_help"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "class",
+      "line": 42,
+      "module_id": "messaging.max",
+      "name": "MaxClient",
+      "qualname": "MaxClient"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "method",
+      "line": 43,
+      "module_id": "messaging.max",
+      "name": "__init__",
+      "qualname": "MaxClient.__init__"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "method",
+      "line": 47,
+      "module_id": "messaging.max",
+      "name": "send_html",
+      "qualname": "MaxClient.send_html"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "function",
+      "line": 60,
+      "module_id": "messaging.max",
+      "name": "_max_bot",
+      "qualname": "_max_bot"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "function",
+      "line": 79,
+      "module_id": "messaging.max",
+      "name": "_receipt_id",
+      "qualname": "_receipt_id"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "function",
+      "line": 90,
+      "module_id": "messaging.max",
+      "name": "_ensure_identity",
+      "qualname": "_ensure_identity"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "function",
+      "line": 127,
+      "module_id": "messaging.max",
+      "name": "_assign_first_touch",
+      "qualname": "_assign_first_touch"
+    },
+    {
+      "file": "telegram-bot/service/app/max.py",
+      "kind": "function",
+      "line": 172,
+      "module_id": "messaging.max",
+      "name": "process_max_update",
+      "qualname": "process_max_update"
     },
     {
       "file": "telegram-bot/service/app/models.py",
@@ -40769,6 +41201,78 @@
       "module_id": "messaging.telegram.engine",
       "name": "test_used_link_is_not_consumed_twice",
       "qualname": "test_used_link_is_not_consumed_twice"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "class",
+      "line": 12,
+      "module_id": "messaging.max",
+      "name": "FakeMax",
+      "qualname": "FakeMax"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "method",
+      "line": 13,
+      "module_id": "messaging.max",
+      "name": "__init__",
+      "qualname": "FakeMax.__init__"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "method",
+      "line": 16,
+      "module_id": "messaging.max",
+      "name": "send_html",
+      "qualname": "FakeMax.send_html"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 21,
+      "module_id": "messaging.max",
+      "name": "max_start",
+      "qualname": "max_start"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 30,
+      "module_id": "messaging.max",
+      "name": "make_client",
+      "qualname": "make_client"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 38,
+      "module_id": "messaging.max",
+      "name": "db_override",
+      "qualname": "make_client.db_override"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 50,
+      "module_id": "messaging.max",
+      "name": "test_max_start_saves_identity_and_stops_at_maintenance",
+      "qualname": "test_max_start_saves_identity_and_stops_at_maintenance"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 73,
+      "module_id": "messaging.max",
+      "name": "test_max_start_uses_existing_link_catalog_once",
+      "qualname": "test_max_start_uses_existing_link_catalog_once"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 94,
+      "module_id": "messaging.max",
+      "name": "test_max_webhook_rejects_missing_or_bad_secret",
+      "qualname": "test_max_webhook_rejects_missing_or_bad_secret"
     },
     {
       "file": "telegram-bot/service/tests/test_module_registry_projection.py",

@@ -27,6 +27,7 @@ from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_COD
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
+from app.max import MaxClient, process_max_update
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, validate_telegram_html
@@ -58,6 +59,12 @@ def client() -> TelegramClient:
         proxy_url=settings.telegram_proxy_url,
         channel_id=settings.telegram_channel_id,
     )
+
+
+def max_client() -> MaxClient:
+    if not settings.max_bot_token:
+        raise HTTPException(503, "MAX token is not configured")
+    return MaxClient(settings.max_bot_token)
 
 
 def _session_token(username: str, expires_at: int) -> str:
@@ -609,6 +616,24 @@ def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None =
     if settings.telegram_webhook_secret and not secrets.compare_digest(x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret):
         raise HTTPException(403, "Invalid webhook secret")
     return process_update(update, session)
+
+
+@app.post("/bot/max/webhook")
+def max_webhook(
+    update: dict,
+    x_max_bot_api_secret: str | None = Header(default=None),
+    session: Session = Depends(get_db),
+) -> dict:
+    if not settings.max_webhook_secret:
+        raise HTTPException(503, "MAX webhook secret is not configured")
+    if not secrets.compare_digest(x_max_bot_api_secret or "", settings.max_webhook_secret):
+        raise HTTPException(403, "Invalid MAX webhook secret")
+    return process_max_update(
+        session,
+        update,
+        bot_username=settings.max_bot_username,
+        sender=max_client(),
+    )
 
 
 @app.get("/bot-api/sequences", dependencies=[Depends(require_admin)])

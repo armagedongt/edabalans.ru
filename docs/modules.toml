@@ -354,7 +354,19 @@ owns_files = [
   "docs/knowledge-base/modules/telegram/README.md",
   "docs/knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md",
   "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md",
+  ]
+
+[[modules]]
+id = "messaging.max"
+parent = "messaging"
+card = "docs/knowledge-base/modules/catalog/messaging.max.md"
+depends_on = ["platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine"]
+owns_files = [
+  "telegram-bot/service/app/max.py", "telegram-bot/service/tests/test_max.py",
+  "docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md",
 ]
+owns_routes = ["*/bot/max/webhook"]
+reads_from = ["platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine"]
 
 [[modules]]
 id = "messaging.telegram.attribution"
@@ -489,6 +501,10 @@ owns_tables = [
 ]
 owns_routes = ["*/bot", "*/bot/*", "*/bot-api/*"]
 depends_on = ["platform.crm", "platform.commerce"]
+sources = [
+  { path = "telegram-bot/service/app/main.py", role = "runtime", shared = true, consumers = ["messaging.max"] },
+  { path = "telegram-bot/service/app/config.py", role = "config", shared = true, consumers = ["messaging.max"] },
+]
 
 [[modules]]
 id = "admin"

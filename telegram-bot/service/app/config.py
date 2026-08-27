@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     telegram_polling_timeout_seconds: int = 25
     telegram_maintenance_mode: bool = False
     telegram_maintenance_allowed_user_ids: str = ""
+    max_bot_username: str = ""
+    max_bot_token: str = ""
+    max_webhook_secret: str = ""
     admin_username: str = ""
     admin_password: str = ""
     scheduler_enabled: bool = False
