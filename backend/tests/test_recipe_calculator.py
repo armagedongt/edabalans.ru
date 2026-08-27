@@ -88,6 +88,7 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
     with factory() as db:
         grant_user(db, "owner@example.test")
         grant_user(db, "other@example.test")
+        db.commit()
     product_response = client.post("/api/apps/recipes/products", json={"email":"owner@example.test","name":"Мой творог","protein":"16","fat":"5","carbohydrate":"3","calories":"120"})
     assert product_response.status_code == 200, product_response.text
     product = product_response.json()["product"]
