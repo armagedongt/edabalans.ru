@@ -10,7 +10,8 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import Resource, User, UserAccess, UserEmail  # noqa: E402
+from app.models import Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
+from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
 
 
@@ -36,6 +37,15 @@ def grant_user(db, email: str) -> User:
     db.add(user); db.flush()
     db.add(UserEmail(user_id=user.id, email_original=email, email_normalized=email, source="test"))
     db.add(UserAccess(user_id=user.id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc)))
+    db.add_all([
+        UserLegalAcceptance(
+            user_id=user.id,
+            document_code=document["code"],
+            document_version=document["version"],
+            source="test",
+        )
+        for document in LEGAL_DOCUMENTS
+    ])
     return user
 
 
