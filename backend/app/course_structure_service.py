@@ -29,7 +29,7 @@ SYSTEM_KINDS = {
 }
 STEP_EDITABLE = {"title", "label", "summary", "hidden"}
 DAY_EDITABLE = {
-    "title", "tocSummary", "lead", "media", "videoId", "image", "intro",
+    "title", "tocSummary", "lead", "media", "videoId", "image", "timings", "intro",
     "afterLead", "afterTitle", "afterText",
 }
 HTML_FIELDS = {"intro", "afterLead", "afterText"}
@@ -277,6 +277,22 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
             raise HTTPException(422, f"День {day_number}: неверная длительность видео")
         validate_url(day.get("image"), image=True)
         validate_url(day.get("videoId"))
+        timings = day.get("timings", [])
+        if not isinstance(timings, list) or len(timings) > 100:
+            raise HTTPException(422, f"День {day_number}: неверное содержание видео")
+        normalized_timings: list[list[str]] = []
+        for timing in timings:
+            if (
+                not isinstance(timing, (list, tuple))
+                or len(timing) != 2
+                or not all(isinstance(value, str) for value in timing)
+            ):
+                raise HTTPException(422, f"День {day_number}: неверный пункт содержания")
+            timestamp, title = (value.strip() for value in timing)
+            if not re.fullmatch(r"\d{1,2}:\d{2}(?::\d{2})?", timestamp) or not title or len(title) > 500:
+                raise HTTPException(422, f"День {day_number}: неверный пункт содержания")
+            normalized_timings.append([timestamp, title])
+        day["timings"] = normalized_timings
 
         old_steps = list(old_day.get("steps", []))
         raw_steps = day.get("steps")

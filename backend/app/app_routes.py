@@ -62,10 +62,14 @@ def site_footer_loader() -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> FileResponse:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access"}:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
         raise HTTPException(status_code=404, detail="app not found")
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
+    if app_code == "video-player":
+        return public_asset(
+            STATIC_DIR / "video-player-development" / "player-standard-with-contents.html"
+        )
     return public_asset(STATIC_DIR / "apps" / f"{app_code}.html")
 
 

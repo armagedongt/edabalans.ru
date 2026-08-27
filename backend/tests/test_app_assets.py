@@ -30,6 +30,11 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     assert "data-edabalans-footer-owner" in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
     assert "ensureLegalFooter(mount);" in loader
+    assert "function legalFooterHost(mount)" in loader
+    assert "courseMount.querySelector(':scope > .main')" in loader
+    assert "footer.parentElement !== host" in loader
+    assert "host.appendChild(footer)" in loader
+    assert "{childList: true, subtree: true}" in loader
     footer = loader[loader.index("function legalFooterHtml"):loader.index("function ensureLegalFooter")]
     assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in footer
     assert "Полное или частичное копирование запрещено" in footer
@@ -419,7 +424,23 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
     assert "d.steps[i].required!==false" in course_html
-    assert "if(d.media==='none')return''" in course_html
+    assert "var video=String(d.videoId||'').trim()" in course_html
+
+
+def test_masterclass_media_uses_present_links_and_player_route() -> None:
+    course_html = client.get("/apps/masterclass-course.html").text
+    assert "function directMp4(value)" in course_html
+    assert "'/apps/video-player.html?src='" in course_html
+    assert "'&chapters='+encodeURIComponent(JSON.stringify(d.timings))" in course_html
+    assert "directMp4(String(d.videoId||''))?'':timingBlock(d)" in course_html
+    assert "TBbi2ibz" not in course_html
+
+    player = client.get("/apps/video-player.html")
+    assert player.status_code == 200
+    assert "runtimeParams.get('src')" in player.text
+    assert "CONTENTS_ENABLED = !runtimeParams.has('src') || runtimeChapters.length > 0" in player.text
+    assert "runtimeParams.get('chapters')" in player.text
+    assert "video.poster = poster" in player.text
 
 
 def test_legal_friendly_routes_are_public() -> None:
@@ -474,18 +495,10 @@ def test_intensive_concept_pages_are_public() -> None:
     assert client.get("/intensive/day-5.html").status_code == 404
 
 
-def test_video_player_outline_preview_is_public() -> None:
-    preview = client.get("/video-player-preview")
-    assert preview.status_code == 200
-    assert "data-video-player" in preview.text
-    assert "data-chapters" in preview.text
-
-    stylesheet = client.get("/assets/video-player.css")
-    script = client.get("/assets/video-player.js")
-    assert stylesheet.status_code == 200
-    assert ".vp-outline" in stylesheet.text
-    assert script.status_code == 200
-    assert "edabalans:video-chapter-selected" in script.text
+def test_removed_video_player_preview_routes_are_unavailable() -> None:
+    assert client.get("/video-player-preview").status_code == 404
+    assert client.get("/assets/video-player.css").status_code == 404
+    assert client.get("/assets/video-player.js").status_code == 404
 
 
 def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
