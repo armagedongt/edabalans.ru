@@ -27,6 +27,7 @@ OWNER_APPROVED_SEED_CODES = {
     "entry_circle",
     "start_welcome_offer",
     "start_subscription_reminder",
+    "start_subscription_retry_reminder",
     "start_has_masterclass",
     "start_intensive_waiting",
     "start_intensive_complete",
@@ -62,11 +63,18 @@ def _editorial_metadata(code: str, title: str, body: str, media: str | None) -> 
             "Ограничения: не давать материалы дней в этом превью и не менять callback кнопки.",
         ),
         "start_subscription_reminder": (
-            "Попросить подписаться на основной канал перед первым днём, не блокируя интенсив навсегда.",
+            "Попросить подписаться на основной канал перед первым днём.",
             "Контекст: пользователь нажал кнопку начала, но проверка не увидела подписку.\n\n"
             "Главная задача: дать ссылку на канал и объяснить повторную проверку.\n\n"
             "Призыв: подписаться и нажать «Проверить ещё раз».\n\n"
-            "Ограничения: честно сказать, что через пять минут День 1 всё равно будет отправлен.",
+            "Ограничения: не объяснять пользователю внутренний таймер, fail-open и обходные ветки.",
+        ),
+        "start_subscription_retry_reminder": (
+            "Мягко напомнить о подписке после неуспешной повторной проверки.",
+            "Контекст: пользователь уже увидел первую просьбу, нажал «Проверить ещё раз», но Telegram по-прежнему не видит подписку.\n\n"
+            "Главная задача: коротко показать, что действие ещё не выполнено, дать ссылку на канал и вернуть к той же кнопке.\n\n"
+            "Призыв: подписаться и нажать «Проверить ещё раз».\n\n"
+            "Ограничения: не стыдить человека, не объяснять внутренний таймер, fail-open и обходные ветки.",
         ),
         "start_has_masterclass": (
             "На повторном Start направить покупателя в уже приобретённый мастер-класс вместо интенсивa.",
@@ -334,12 +342,23 @@ def _start_system_messages() -> list[dict]:
         (
             "start_subscription_reminder",
             "Welcome — подписка не найдена",
-            "Пока не вижу подписку на канал. Подпишитесь, пожалуйста: "
+            "Чтобы вам начали приходить материалы бесплатного интенсива, пожалуйста, "
+            "сначала подпишитесь на мой Telegram-канал: "
             "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a>\n\n"
-            "После подписки нажмите кнопку «Проверить ещё раз». Если подписка "
-            "не подтвердится, через пять минут первый день всё равно придёт.",
+            "После подписки нажмите кнопку «Проверить ещё раз».",
             None,
             ["система", "welcome", "подписка", "не найдена"],
+        ),
+        (
+            "start_subscription_retry_reminder",
+            "Welcome — повторно не подписан",
+            "¯\\*(ツ)*/¯\n\n"
+            "Вы всё ещё не подписались?\n\n"
+            "Подпишитесь на мой Telegram-канал: "
+            "<a href=\"https://t.me/Fitness_Talks\">Похудение — это есть!</a> — "
+            "и я сразу же отправлю вам первый день интенсива.",
+            None,
+            ["система", "welcome", "подписка", "повторная проверка"],
         ),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
@@ -571,6 +590,8 @@ def seed_defaults(
             item.body_source = row["body"]
         elif row["code"] == "start_intensive_complete" and (item.body_source or "").startswith("💥 <b>Похудение состоит"):
             item.body_source = row["body"]
+        elif row["code"] == "start_subscription_reminder" and (item.body_source or "").startswith("Пока не вижу подписку"):
+            item.body_source = row["body"]
         if row["code"] in {"start_navigation_pin", "start_welcome_offer", "start_intensive_waiting", "start_intensive_complete"}:
             item.title = row["title"]
         if row["code"] == "entry_circle" and not item.media_path:
@@ -629,12 +650,19 @@ def seed_defaults(
         .where(SequenceVersion.sequence_id == welcome.id, SequenceVersion.status == "published")
         .order_by(SequenceVersion.version_no.desc())
     )
-    current_welcome_has_layout = bool(current_welcome_version and session.scalar(
-        select(SequenceStep.id).where(
-            SequenceStep.sequence_version_id == current_welcome_version.id,
-            SequenceStep.step_key == "welcome_subscription_retry_wait",
+    current_welcome_has_layout = bool(current_welcome_version) and all(
+        session.scalar(
+            select(SequenceStep.id).where(
+                SequenceStep.sequence_version_id == current_welcome_version.id,
+                SequenceStep.step_key == step_key,
+            )
         )
-    ))
+        for step_key in (
+            "welcome_subscription_retry_wait",
+            "welcome_subscription_retry_failed",
+            "welcome_subscription_retry_wait_again",
+        )
+    )
     current_subscription_step = session.scalar(
         select(SequenceStep).where(
             SequenceStep.sequence_version_id == current_welcome_version.id,
@@ -666,7 +694,9 @@ def seed_defaults(
             ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_day1", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed"}, None),
             ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
             ("welcome_subscription_retry_wait", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, None),
-            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed", "allow_false_cycle": True}, None),
+            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_retry_failed", "allow_false_cycle": True}, None),
+            ("welcome_subscription_retry_failed", "MESSAGE", "start_subscription_retry_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
+            ("welcome_subscription_retry_wait_again", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, "welcome_subscription_recheck"),
             ("welcome_day1", "MESSAGE", "day1", None, {}, None),
             ("welcome_subscription_after_day1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day1"}, None),
             ("welcome_delay_mid1", "DELAY", None, 39600, {}, None),

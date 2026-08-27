@@ -238,10 +238,17 @@ def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
         assert run.status == "waiting"
         assert run.context["waiting_callback"] == "check_subscription"
 
-        # A retry loops through the same check and remains on the visible prompt.
+        # A retry has its own visible prompt, then waits on the same callback.
         resume_callback(session, contact.id, "check_subscription")
         advance_run(session, run, sender)
         assert run.status == "waiting"
+        assert sender.sent[-1][1] == "tpl_start_subscription_retry_reminder"
+
+        # The repeated prompt still rechecks the channel; it cannot skip to Day 1.
+        resume_callback(session, contact.id, "check_subscription")
+        advance_run(session, run, sender)
+        assert run.status == "waiting"
+        assert sender.sent[-1][1] == "tpl_start_subscription_retry_reminder"
 
         # Five minutes from the first prompt is fail-open: Day 1 arrives directly.
         run.next_action_at = datetime.now(UTC) - timedelta(seconds=1)
@@ -251,7 +258,7 @@ def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
         assert "tpl_subscription_passed" not in [item[1] for item in sender.sent]
         assert "tpl_subscription_fail_open" not in [item[1] for item in sender.sent]
         outcomes = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id)))
-        assert outcomes.count("subscription_check") >= 2
+        assert outcomes.count("subscription_check") >= 3
         assert "subscription_fail_open" in outcomes
 
 
