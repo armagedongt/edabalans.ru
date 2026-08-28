@@ -27,7 +27,7 @@ SYSTEM_KINDS = {
     "questionnaire", "messenger", "offer", "dqs", "recipes-part-1",
     "recipes-part-2", "closing-review",
 }
-STEP_EDITABLE = {"title", "label", "summary", "hidden"}
+STEP_EDITABLE = {"title", "label", "summary", "hidden", "locked", "badge"}
 DAY_EDITABLE = {
     "title", "tocSummary", "lead", "media", "videoId", "image", "timings", "intro",
     "afterLead", "afterTitle", "afterText",
@@ -334,7 +334,11 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
                         raise HTTPException(
                             422, f"Материал {step['id']}: поле {key} нельзя менять"
                         )
-            if old.get("hidden", False) and not step.get("hidden", False):
+            if (
+                (old.get("hidden", False) or old.get("locked", False))
+                and not step.get("hidden", False)
+                and not step.get("locked", False)
+            ):
                 step["requiredForAllAfterRevision"] = next_version
             else:
                 previous = old.get("requiredForAllAfterRevision")
@@ -345,6 +349,13 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
                     if len(step[key]) > 5_000:
                         raise HTTPException(422, f"Материал {step['id']}: текст слишком длинный")
                     step[key] = step[key].strip()
+            if not isinstance(step.get("locked", False), bool):
+                raise HTTPException(422, f"Материал {step['id']}: неверное состояние блокировки")
+            badge = step.get("badge")
+            if badge is not None:
+                if not isinstance(badge, str) or len(badge) > 40:
+                    raise HTTPException(422, f"Материал {step['id']}: неверная плашка")
+                step["badge"] = badge.strip()
             if not (step.get("title") or step.get("label")):
                 raise HTTPException(422, f"Материал {step['id']}: укажите название")
             duration = step.get("durationMinutes")
@@ -527,7 +538,7 @@ def effective_required_step_ids(
     result: list[str] = []
     baseline = set(progress.required_step_ids or [])
     for step in context.days[day_number].get("steps", []):
-        if step.get("hidden", False) or not step.get("required", True):
+        if step.get("hidden", False) or step.get("locked", False) or not step.get("required", True):
             continue
         reactivated = int(step.get("requiredForAllAfterRevision") or 0)
         if step["id"] in baseline or reactivated > progress.structure_revision_no:

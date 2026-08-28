@@ -531,6 +531,31 @@ def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> No
     assert ".topic.draft" not in course_html
 
 
+def test_emotional_hunger_guide_is_visible_but_temporarily_locked() -> None:
+    root = Path(__file__).resolve().parents[2]
+    manifest = json.loads(
+        (root / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    guide = next(
+        step
+        for step in manifest["days"][8]["steps"]
+        if step["id"] == "day-09-article-01"
+    )
+    assert guide["hidden"] is False
+    assert guide["locked"] is True
+    assert guide["badge"] == "Скоро"
+
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+    assert "function stepNavigable(d,i)" in course_html
+    assert "!d.steps[i].locked" in course_html
+    assert "step&&step.locked?(step.badge||'Скоро')" in course_html
+    assert "topic-badge" in course_html
+
+
 def test_masterclass_plain_images_have_no_caption_or_decorative_container() -> None:
     root = Path(__file__).resolve().parents[2]
     course_html = (

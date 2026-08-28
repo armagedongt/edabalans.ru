@@ -349,6 +349,7 @@ def published_materials(db: Session, *, allowed_days: set[int]) -> dict:
         for step in day.get("steps", [])
         if day_number in allowed_days
         and not step.get("hidden", False)
+        and not step.get("locked", False)
         and step.get("kind") == "article"
         and step.get("contentKind") != "tutorial"
     }

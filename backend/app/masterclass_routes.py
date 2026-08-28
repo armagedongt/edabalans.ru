@@ -313,7 +313,9 @@ def current_required_step_ids(context: CourseContext, day: int) -> list[str]:
     return [
         step["id"]
         for step in context.days[day].get("steps", [])
-        if not step.get("hidden", False) and step.get("required", True)
+        if not step.get("hidden", False)
+        and not step.get("locked", False)
+        and step.get("required", True)
     ]
 
 
@@ -818,6 +820,8 @@ def course_complete_step(
     step = steps[index]
     if step.get("hidden", False):
         raise HTTPException(404, "masterclass step not found")
+    if step.get("locked", False):
+        raise HTTPException(409, detail={"reason": "step_locked"})
     kind = step["kind"]
     completed = completed_step_indexes(db, user.id, day)
     if index in completed:

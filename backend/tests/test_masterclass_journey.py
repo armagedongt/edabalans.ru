@@ -21,6 +21,7 @@ from app.auth import require_admin  # noqa: E402
 from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
+from app.masterclass_routes import current_required_step_ids  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.masterclass_offer_catalog import OFFER_CARD_COPY, OFFER_PRODUCTS  # noqa: E402
 from app.course_structure_service import (  # noqa: E402
@@ -65,14 +66,27 @@ def test_optional_course_steps_do_not_block_required_progression():
         required = {
             day: [
                 index for index, step in enumerate(context.days[day]["steps"])
-                if step.get("required", True) and not step.get("hidden", False)
+                if step.get("required", True)
+                and not step.get("hidden", False)
+                and not step.get("locked", False)
             ]
-            for day in (7, 8, 15, 16)
+            for day in (7, 8, 9, 15, 16)
         }
     assert required[7] == [0, 1]
     assert required[8] == [0]
+    assert required[9] == []
     assert required[15] == [0, 1, 3]
     assert required[16] == [0]
+    assert current_required_step_ids(context, 9) == []
+
+    old_progress = MasterclassDayProgress(
+        day_number=9,
+        structure_revision_no=1,
+        required_step_ids=["day-09-article-01"],
+        required_check_ids=[],
+        checkmarks={},
+    )
+    assert effective_required_step_ids(context, old_progress, 9) == []
 
 
 def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
@@ -83,6 +97,8 @@ def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
     manifest = payload["active"]["manifest"]
     original_title = manifest["days"][0]["title"]
     manifest["days"][0]["title"] = "Новое название первого дня"
+    manifest["days"][8]["steps"][0]["locked"] = True
+    manifest["days"][8]["steps"][0]["badge"] = "Скоро"
 
     saved = client.put(
         "/admin/api/courses/masterclass-21/structure",
@@ -93,6 +109,8 @@ def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
     assert saved.json()["active"]["manifest"]["days"][0]["steps"][1][
         "contentPageTitle"
     ] == "Как вести дневник питания"
+    assert saved.json()["active"]["manifest"]["days"][8]["steps"][0]["locked"] is True
+    assert saved.json()["active"]["manifest"]["days"][8]["steps"][0]["badge"] == "Скоро"
 
     runtime = client.get(
         "/api/masterclass/course/manifest?email=member@example.test"
@@ -107,6 +125,67 @@ def test_course_structure_editor_publishes_one_version_and_runtime_uses_it():
         json={"expected_version": payload["active"]["version"], "manifest": conflict_manifest},
     )
     assert conflict.status_code == 409
+
+
+def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_unlock():
+    client, _ = setup()
+    editor = client.get("/admin/api/courses/masterclass-21/structure").json()
+    manifest = editor["active"]["manifest"]
+    step = manifest["days"][0]["steps"][1]
+    step_id = step["id"]
+
+    published = client.put(
+        f"/admin/api/courses/masterclass-21/materials/{step_id}",
+        json={"expected_version": 0, "content": "Тестовый материал", "format": "markdown"},
+    )
+    assert published.status_code == 200
+
+    step["locked"] = True
+    step["badge"] = "Скоро"
+    locked = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={"expected_version": editor["active"]["version"], "manifest": manifest},
+    )
+    assert locked.status_code == 200
+    assert locked.json()["active"]["manifest"]["days"][0]["steps"][1]["locked"] is True
+
+    materials = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+    )
+    assert materials.status_code == 200
+    assert step_id not in materials.json()["materials"]
+
+    first = client.post(
+        "/api/masterclass/course/days/1/steps/0/complete",
+        json={"email": "member@example.test"},
+    )
+    assert first.status_code == 200
+    rejected = client.post(
+        "/api/masterclass/course/days/1/steps/1/complete",
+        json={"email": "member@example.test"},
+    )
+    assert rejected.status_code == 409
+    assert rejected.json()["detail"]["reason"] == "step_locked"
+
+    current = locked.json()
+    unlocked_manifest = current["active"]["manifest"]
+    unlocked_step = unlocked_manifest["days"][0]["steps"][1]
+    unlocked_step["locked"] = False
+    unlocked = client.put(
+        "/admin/api/courses/masterclass-21/structure",
+        json={
+            "expected_version": current["active"]["version"],
+            "manifest": unlocked_manifest,
+        },
+    )
+    assert unlocked.status_code == 200
+    active = unlocked.json()["active"]
+    reopened_step = active["manifest"]["days"][0]["steps"][1]
+    assert reopened_step["requiredForAllAfterRevision"] == active["version"]
+    after_unlock = client.get(
+        "/api/masterclass/course?email=member@example.test"
+    ).json()["days"][0]
+    assert after_unlock["required_steps_total"] >= 2
 
 
 def test_course_structure_history_restore_keeps_new_check_hidden_and_stable():

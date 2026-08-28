@@ -744,6 +744,8 @@
           "status": "ready",
           "contentKind": "text",
           "hidden": false,
+          "locked": true,
+          "badge": "Скоро",
           "requiredForAllAfterRevision": 38
         }
       ],
