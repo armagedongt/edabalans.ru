@@ -40,231 +40,1512 @@
   ],
   "days": [
     {
-      "number": 1, "slug": "day-01", "kicker": "Стартуем спокойно", "title": "Начинаем с наблюдения", "shortTitle": "Начинаем с наблюдения", "tocSummary": "Интерфейс, дневник, взвешивание и стартовые настройки.",
-      "lead": "Сегодня ничего не исправляем и не оцениваем. Собираем стартовую точку: как вы едите, как меняется вес и что происходит на самом деле.", "media": "video", "video": 18, "videoId": null, "image": null,
-      "intro": "<strong>Сегодня без резких движений.</strong> Сначала разберитесь, как устроен Мастер-класс, затем начните дневник и настройте взвешивание.", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Настройте наблюдение, заполните анкету и подключите удобный канал для уведомлений.",
-      "checks": ["Начать вести дневник питания по инструкции.", "Разобраться, как и когда взвешиваться.", "Заполнить стартовую анкету.", "Привязать Telegram или MAX для уведомлений."],
-      "nextTitle": "Не все диеты делают одно и то же", "nextTeaser": "Разложим разные виды диет по их реальным задачам.", "recipeDay": false, "publicationStatus": "ready",
-      "steps": [
-        {"id":"day-01-article-tutorial","kind":"article","title":"Как пользоваться Мастер-классом","shortTitle":"Как пользоваться Мастер-классом","summary":"Личный кабинет, программа, открытие дней, консультации и связь.","durationMinutes":8,"status":"ready","contentKind":"text"},
-        {"id":"day-01-article-02","kind":"article","title":"Как вести дневник питания","shortTitle":"Дневник питания","summary":"Где вести дневник и что фиксировать.","durationMinutes":7,"status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
-        {"id":"day-01-article-03","kind":"article","title":"Как необходимо взвешиваться","shortTitle":"Правила взвешивания","summary":"Когда взвешиваться и как читать колебания веса.","durationMinutes":5,"status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
-        {"id":"day-01-questionnaire","kind":"questionnaire","app":"onboarding-questionnaire","completion":"submitted","label":"Заполнить стартовую анкету","shortTitle":"Стартовая анкета","summary":"Цели, образ жизни, опыт похудения и ограничения.","durationMinutes":10},
-        {"id":"day-01-messenger-link","kind":"messenger","completion":"link_requested","label":"Привязать мессенджер","shortTitle":"Привязать мессенджер","summary":"Напоминания, дополнительные материалы, уведомления об обновлениях и предложения. Прежняя рассылка с повторным предложением уже купленного Мастер-класса отключится.","durationMinutes":3},
-        {"id":"day-01-offer","kind":"offer","placement":"day-1-offer","event":"day_1_offer_opened","label":"Что ещё можно добавить к Мастер-классу","shortTitle":"Дополнительные возможности","summary":"Дополнительные инструменты для следующих этапов.","durationMinutes":2,"completion":"opened","required":true}
+      "number": 1,
+      "slug": "day-01",
+      "title": "Добро пожаловать!",
+      "tocSummary": "Программа Мастер-класса, формат дневника, анкета и вообще, здравствуйте =)",
+      "lead": "Давайте знакомиться поближе! Сегодня займемся организационными вопросами. В видео я расскажу как устроен Мастер-класс и что вас ждет в ближайшие несколько недель.",
+      "media": "none",
+      "video": 18,
+      "videoId": "",
+      "image": "",
+      "intro": "<strong>И сразу признаюсь на берегу... </strong>Когда раздавали навыки правописания, я был на пробежке. Прилагаю все усилия, чтобы это скрыть этот свой недуг, но в текстах все равно могут проскакивать ошибки и опечатки.\n\nПриношу свои извинения, прошу понять, простить и отнестись с пониманием, все-таки я специалист по питанию, а не по правописанию. На этом всё, если готовы → погнали вперед!",
+      "afterTitle": "Главное как-нибудь уже начать, а дальше оно само пойдет",
+      "afterText": "В конце каждого дня будет небольшой набор заданий. Это не обязательный список который я потом буду у вас проверять. Но это то, на что я хотел бы потратить ваше внимание в первую очередь после прочтения материалов.",
+      "checks": [
+        {
+          "id": "day-1-check-1",
+          "text": "Начать вести дневник питания по инструкции.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-1-check-2",
+          "text": "Разобраться, как и когда взвешиваться.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-1-check-3",
+          "text": "Заполнить стартовую анкету.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-1-check-4",
+          "text": "Привязать Telegram или MAX для уведомлений.",
+          "required": true,
+          "hidden": false
+        }
       ],
-      "implementation": {"notes":["Опубликованная последовательность первого дня сохранена.","Программа объясняется во вступительном видео, отдельной статьи нет."],"triggers":["day_1_offer_opened"]}
-    },
-    {
-      "number": 2, "slug": "day-02", "kicker": "Понимаем основу", "title": "Не все диеты делают одно и то же", "shortTitle": "Четыре типа диет", "tocSummary": "Типы диет и средиземноморский подход.",
-      "lead": "Слово «диета» скрывает несколько совершенно разных инструментов.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "<strong>Главный вопрос — какую задачу решает система питания.</strong>", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Сформулируйте различия своими словами.", "checks": ["Разобраться, чем отличаются четыре категории диет.", "Описать привычные продуктовые категории в дневнике."],
-      "nextTitle": "Что такое вредная еда", "nextTeaser": "Перейдём к ограничениям, этикеткам и составам.", "recipeDay": false, "publicationStatus": "ready",
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-02-article-01","kind":"article","title":"Четыре категории \"диет\" и чем они принципиально отличаются","shortTitle":"Четыре категории диет","summary":"Четыре типа диет и их задачи.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
-        {"id":"day-02-article-02","kind":"article","title":"Как на самом деле выглядит средиземноморская диета и почему она нам тоже не подходит","shortTitle":"Средиземноморская диета","summary":"Почему полезный шаблон подходит не всем.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"},
-        {"id":"day-02-current-diet","kind":"questionnaire","questionnaireKind":"current-diet","completion":"submitted","label":"А какая у вас сейчас «диета»?","shortTitle":"А какая у вас сейчас «диета»?","summary":"Заполните небольшой опросник о ваших отношениях с разными продуктовыми категориями.","durationMinutes":12,"required":true}
-      ], "implementation": {"notes":["Две статьи и отдельный опросник по продуктовым категориям.","После отправки опросника заполненный список ставится в очередь для отправки в привязанный Telegram."],"triggers":["current_diet_questionnaire_completed"]}
+        {
+          "id": "day-01-article-tutorial",
+          "kind": "article",
+          "title": "Как пользоваться Мастер-классом",
+          "summary": "Личный кабинет, программа, открытие дней, консультации и связь.",
+          "durationMinutes": 8,
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-01-article-02",
+          "kind": "article",
+          "title": "Как вести дневник питания",
+          "summary": "Зачем это на самом деле нужно и почему это не учет калорий",
+          "durationMinutes": 7,
+          "status": "ready",
+          "contentKind": "imported",
+          "contentAsset": "extracted-2026-08-23.json",
+          "hidden": false,
+          "contentPageTitle": "Как вести дневник питания"
+        },
+        {
+          "id": "day-01-article-03",
+          "kind": "article",
+          "title": "Как надо взвешиваться",
+          "summary": "Убираем тревогу от колебаний цифр на весах",
+          "durationMinutes": 5,
+          "status": "ready",
+          "contentKind": "imported",
+          "contentAsset": "extracted-2026-08-23.json",
+          "hidden": false,
+          "contentPageTitle": "Как необходимо взвешиваться"
+        },
+        {
+          "id": "day-01-questionnaire",
+          "kind": "questionnaire",
+          "app": "onboarding-questionnaire",
+          "completion": "submitted",
+          "label": "Заполните анкету",
+          "summary": "Немного познакомимся и сделаем слепок вашей начальной точки",
+          "durationMinutes": 10,
+          "hidden": false
+        },
+        {
+          "id": "day-01-messenger-link",
+          "kind": "messenger",
+          "completion": "link_requested",
+          "label": "Привязать мессенджер",
+          "summary": "Подключите уведомления о новых материалах в Мастер-классе",
+          "durationMinutes": 3,
+          "hidden": false
+        },
+        {
+          "id": "day-01-offer",
+          "kind": "offer",
+          "placement": "day-1-offer",
+          "event": "day_1_offer_opened",
+          "label": "Что еще вам может понадобиться",
+          "summary": "Краткий список того, чем я еще могу быть вам полезен",
+          "durationMinutes": 2,
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Опубликованная последовательность первого дня сохранена.",
+          "Программа объясняется во вступительном видео, отдельной статьи нет."
+        ],
+        "triggers": [
+          "day_1_offer_opened"
+        ]
+      },
+      "afterLead": "",
+      "timings": []
     },
     {
-      "number": 3, "slug": "day-03", "kicker": "Без чёрных списков", "title": "Что такое вредная еда на самом деле", "shortTitle": "Что такое вредная еда", "tocSummary": "Вредная еда, этикетки и необходимые ограничения.",
-      "lead": "Разбираемся без демонизации продуктов.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "Посмотрите на привычные продукты", "afterText": "Не ищите повод всё выбросить — заметьте важное.",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Проверьте этикетки нескольких привычных продуктов.", "checks": ["Посмотреть составы привычных продуктов.", "Записать, какие ограничения относятся ко мне."],
-      "nextTitle": "Diet Cultist Score", "nextTeaser": "Соберём систему оценки структуры питания.", "recipeDay": false, "publicationStatus": "draft",
+      "number": 2,
+      "slug": "day-02",
+      "title": "Что такое \"Диеты\" на самом деле",
+      "tocSummary": "Первый и последний раз в мастер-классе обсуждаем это слово",
+      "lead": "Само по себе слово \"Диета\" весьма безобидное. Оно означает лишь образ жизни. Вот так...",
+      "media": "image",
+      "video": 0,
+      "videoId": null,
+      "image": "https://static.life.ru/publications/2023/1/9/1184330595992.7573.jpeg",
+      "intro": "Но вот то какой смысл в это слово пытаются некоторые вложить — вот тут уже бывает беда. Сегодня разберем четыре категории диет, познакомимся с ними, отделим одно от другого и двинемся дальше в счастливое сбалансированное будущее уже БЕЗ диет.\n\nКогда будете читать, обратите внимание на главную проблему большинства диет: они диктуют только как есть &quot;полезные&quot; продукты, а вредные либо запрещают полностью, либо игнорируют их существование в вашей жизни. А ведь в жизни большинства из нас что-то такое есть. Как понять и оценить их место в вашем питании? Ведь вредное — это всегда часть баланса!\n\nНаша задача не в том, чтобы создать стерильный рацион, а в том, чтобы управлять всем спектром пищи — и полезным, и тем, что просто приносит удовольствие. В общем сегодня разберем мои основные претензии к диетам и на примере этого покажу вам несколько интересных штуковин. \n\nА уже в следующие пару дней мы будем разбираться как именно стоит балансировать этими категориями, чтобы похудение шло как по маслу!",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-2-check-1",
+          "text": "Разобраться, чем отличаются четыре категории диет.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-2-check-2",
+          "text": "Описать привычные продуктовые категории в дневнике.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-03-video-01","kind":"article","title":"Какие ограничения действительно необходимы?","shortTitle":"Необходимые ограничения","summary":"Ограничения, у которых есть понятная причина.","status":"ready","contentKind":"text","contentAsset":"06-necessary-restrictions.txt"},
-        {"id":"day-03-article-02","kind":"article","title":"Цельная, переработанная и ультрапереработанная еда","shortTitle":"Степень переработки","summary":"Как выбирать менее обработанную еду без лишних запретов.","status":"ready","contentKind":"text","contentAsset":"08-whole-processed-ultraprocessed-food.txt"},
-        {"id":"day-03-article-03","kind":"article","title":"Как читать этикетки и составы продуктов","shortTitle":"Этикетки и составы","summary":"Как находить важную информацию на упаковке.","status":"ready","contentKind":"text","contentAsset":"07-reading-labels.txt"}
-      ], "implementation": {"notes":["Видео — отдельный материал; ссылка ещё не передана.","Дополнительные примеры вшиваются в статьи."],"triggers":[]}
+        {
+          "id": "day-02-article-01",
+          "kind": "article",
+          "title": "Четыре категории \"диет\" и чем они принципиально отличаются",
+          "summary": "Сбалансированные, эллиминационные, бесовщина и не диеты, а форматы",
+          "status": "ready",
+          "contentKind": "imported",
+          "contentAsset": "extracted-2026-08-23.json",
+          "hidden": false,
+          "contentPageTitle": "Четыре категории \"диет\" и чем они принципиально отличаются"
+        },
+        {
+          "id": "day-02-article-02",
+          "kind": "article",
+          "title": "Как на самом деле выглядит средиземноморская диета",
+          "summary": "И почему она как бы не плоха, но совсем на мне подходит как система",
+          "status": "ready",
+          "contentKind": "imported",
+          "contentAsset": "extracted-2026-08-23.json",
+          "hidden": false,
+          "contentPageTitle": "Как на самом деле выглядит средиземноморская диета и почему она нам тоже не подходит"
+        },
+        {
+          "id": "day-02-current-diet",
+          "kind": "questionnaire",
+          "questionnaireKind": "current-diet",
+          "completion": "submitted",
+          "label": "А какая у вас сейчас «диета»?",
+          "summary": "Заполните небольшой опросник о ваших отношениях с разными продуктовыми категориями.",
+          "durationMinutes": 12,
+          "required": true,
+          "hidden": false,
+          "requiredForAllAfterRevision": 17
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Два самостоятельных материала."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Не забудьте переслать себе в дневник ответы по продуктовым категориям из последнего материала.",
+      "timings": []
     },
     {
-      "number": 4, "slug": "day-04", "kicker": "Смотрим на структуру", "title": "Собираем свою картину питания", "shortTitle": "Система Diet Cultist Score", "tocSummary": "Принципы DQS, категории и приложение.",
-      "lead": "Разберём логику DQS и сразу применим её к дневнику.", "media": "video", "video": 18.3, "videoId": null, "image": null, "intro": "<strong>DQS показывает структуру питания, а не ставит вам оценку.</strong>", "afterTitle": "Не пытайтесь выучить справочник", "afterText": "Чтобы перейти к заданию, пройдите <a href=\"#\" data-dqs-tutorial-link>туториал</a> в DQS и немного потыкайтесь в приложении. Затем самостоятельно вернитесь в день 4 — материал уже будет отмечен пройденным.",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Если задание пока закрыто, пройдите <a href=\"#\" data-dqs-tutorial-link>туториал</a> в DQS до конца. После этого самостоятельно вернитесь в день 4.", "assignmentText": "Откройте приложение DQS, пройдите туториал и немного потыкайтесь в приложении, чтобы освоиться. Затем самостоятельно вернитесь в день 4. После этого заполните прошлые дни Мастер-класса по фотографиям из дневника и продолжайте вести DQS как минимум первые три недели.", "checks": ["Открыть приложение DQS и заполнить прошлые дни по фотографиям.", "Продолжать вести DQS минимум первые три недели."],
-      "nextTitle": "Основа сбалансированного питания", "nextTeaser": "КБЖУК, витамины и правило тарелки.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 3,
+      "slug": "day-03",
+      "title": "Что такое вредная еда на самом деле",
+      "tocSummary": "Какие есть реальные ограничения в здоровом питании, а на что можно не обращать внимание",
+      "lead": "Сегодня и завтра, пока у вас достаточно мотивации в первые дни, я решил использовать это на полную катушку и выкатить самые объемные материалы, дальше будет посвободнее.  \n\nВ видео — общие принципы того, как стоит смотреть на вопросы \"вредности еды\", если мы хотим эффективно управлять своим питанием, а не просто шарахаться от этикеток.",
+      "media": "video",
+      "video": 0,
+      "videoId": "https://cdn-g.boomstream.com/balancer/hyvhZs6y-9WmCBBoU.mp4",
+      "image": null,
+      "intro": "Это выжимка из прямого эфира, который когда-то давно был в открытом канале. Если вы его уже смотрели, то переходите сразу к статьям. но советую хотя немного освежить его в памяти — дальше я опираюсь на выводы из этого видео.",
+      "afterTitle": "Главное на сегодня:",
+      "afterText": "Напишите в дневнике два списка вредных продуктов.\n\nВ одном списке те, которые вы готовы серьезно сократить или даже полностью отказаться.\n\nА в другом списке те, которые вы не можете (не хотите) убрать из своей жизни и даже хоть как-то сократить будет проблема. Если второй список окажется короче первого, я возражать не буду. Постарайтесь держать в уме, что вредная еда должна быть в питании лишь с целью приносить удовольствие, а не с целью забить желудок пустыми калориями. \n\nНу и просто поделитесь мыслями, на какие продукты вы посмотрели иначе, после сегодняшнего дня (например на ультраперераотанные) или узнали что-то новое о продуктах в своем холодильнике, прочитав их состав чуть внимательнее.",
+      "checks": [
+        {
+          "id": "day-3-check-1",
+          "text": "Посмотреть составы привычных продуктов.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-3-check-2",
+          "text": "Записать, какие ограничения относятся к вам.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "draft",
       "steps": [
-        {"id":"day-04-article-01","kind":"article","title":"Продуктовые категории и правила заполнения","shortTitle":"Категории и правила DQS","summary":"Категории, порции и правила заполнения.","status":"ready","contentKind":"text","contentAsset":"13-dqs-system.txt"},
-        {"id":"day-04-dqs","kind":"dqs","code":"dqs","title":"Ваш DQS","label":"Ваш DQS","shortTitle":"Ваш DQS","summary":"Откройте приложение, сохраните ссылку и начните туториал.","contentKind":"text","contentAsset":"19-dqs-access-and-print-options.md","completion":"tutorial_completed"}
-      ], "implementation": {"notes":["Видео с принципами находится в шапке.","Отдельного шага «Первое заполнение» нет."],"triggers":["dqs_opened"]}
+        {
+          "id": "day-03-video-01",
+          "kind": "article",
+          "title": "Какие ограничения действительно необходимы?",
+          "summary": "Ограничения, у которых есть понятная причина.",
+          "status": "ready",
+          "contentKind": "text",
+          "videoId": null,
+          "hidden": false,
+          "contentAsset": "06-necessary-restrictions.txt"
+        },
+        {
+          "id": "day-03-article-02",
+          "kind": "article",
+          "title": "Цельная, переработанная и ультрапереработанная еда",
+          "summary": "Как выбирать менее обработанную еду без лишних запретов.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "08-whole-processed-ultraprocessed-food.txt",
+          "hidden": false,
+          "videoId": null
+        },
+        {
+          "id": "day-03-article-03",
+          "kind": "article",
+          "title": "Как читать этикетки и составы продуктов",
+          "summary": "Как находить важную информацию на упаковке.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "07-reading-labels.txt",
+          "hidden": false,
+          "videoId": null
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Видео — отдельный материал; ссылка ещё не передана.",
+          "Дополнительные примеры вшиваются в статьи."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Иногда, как сегодня, будут ссылки на дополнительные посты по теме. Кто-то мог уже читать их в открытом доступе в моем канале, а кто-то мог пропустить. Это не обязательная часть к изучению, но кому-то может быть полезно познакомиться с дополнительным контекстом.\n\n→ Пост про мёд в тему\n→ Гематоген против сникерса",
+      "timings": [
+        [
+          "00:00",
+          "Вступление"
+        ],
+        [
+          "04:01",
+          "Проблема не во вредной еде, а в бесполезной"
+        ],
+        [
+          "07:42",
+          "Определение «вредной» еды"
+        ],
+        [
+          "16:06",
+          "Список вредного и «вредного»"
+        ],
+        [
+          "22:40",
+          "Красители, подсластители и прочая химия"
+        ]
+      ]
     },
     {
-      "number": 5, "slug": "day-05", "kicker": "Без культа цифр", "title": "Из чего складывается сбалансированное питание", "shortTitle": "КБЖУК и правило тарелки", "tocSummary": "КБЖУК, витамины и анализы, правило тарелки.",
-      "lead": "Собираем базовые ориентиры без подсчёта каждого грамма.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Посмотрите на один приём пищи через КБЖУК и правило тарелки.", "checks": ["Разобраться с КБЖУК.", "Применить правило тарелки."],
-      "nextTitle": "Опорные точки", "nextTeaser": "Соберём повторяемые блюда и познакомимся с рецептами.", "recipeDay": false, "publicationStatus": "draft",
+      "number": 4,
+      "slug": "day-04",
+      "title": "DQS — Система оценки качества питания",
+      "tocSummary": "Разделим абсолютно всю еду на 17 продуктовых категорий и будем искать в них баланс",
+      "lead": "Чтобы что-то изменить, это сначала надо измерить!\n\nЭтим мы сейчас и займемся. В видео общая логика моей системы и главные её принципы, а детали, описание категорий, порций и примеры заполнения таблице — в текстовых материалах ниже.",
+      "media": "video",
+      "video": 18.3,
+      "videoId": "https://cdn-g.boomstream.com/balancer/F98b4R9n-9WmCBBoU.mp4",
+      "image": null,
+      "intro": "<strong>Качественное питание </strong>— это способ чтобы достигнуть: \n\n1. Разнообразия в питании (считай удовольствие от еды);\n2. Получение максимум насыщение за выбранное количество калорий\n3. Правильный баланс продуктовых категорий чтобы набирать сбалансированные БЖУ\n4. Получение необходимых витаминов и минералов из обычной еды без нужды прибегать к БАДам\n5. Наполнять питание ПОЛЕЗНЫМ, чтобы потом в нем оставалось место для ЛЮБИМОГО.",
+      "afterTitle": "Главное на сегодня",
+      "afterText": "Не так важно будете ли вы соблюдать размеры порций точно-точно, не случится беды, если вы определите какой-то фаст-фуд не совсем туда куда надо. Пока вы будете придерживаться главных правил этой системы — вы просто обречены на успешное похудение. Вот эти принципы:\n\n1. Четкое разделение продуктов на категории, потому что каждая выполняет свои функции в питании.\n2. Придерживаться разнообразия. Как по категориям продуктов, так и внутри каждой отдельной категории.\n3. Стабильность порций. Неважно будут они чуть больше моих примеров или чуть меньше, главное чтобы они были всегда одинаковые. \n\nЭто сильно добавит стабильности в ваше питание.",
+      "checks": [
+        {
+          "id": "day-4-check-1",
+          "text": "Открыть приложение DQS и заполнить прошлые дни по фотографиям.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-4-check-2",
+          "text": "Продолжать вести DQS минимум первые три недели.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-05-article-01","kind":"article","title":"КБЖУК","shortTitle":"КБЖУК","summary":"Белки, жиры, углеводы и клетчатка.","status":"ready","contentKind":"text","contentAsset":"14-protein-fat-carbohydrates.txt"},
-        {"id":"day-05-article-02","kind":"article","title":"Детоксы, витамины, минералы и анализы","shortTitle":"Витамины, минералы и анализы","summary":"Один материал о добавках, анализах и детоксе.","status":"ready","contentKind":"text","contentAsset":"17-detox-vitamins-minerals-tests.txt"},
-        {"id":"day-05-article-03","kind":"article","title":"Правило Гарвардской тарелки","shortTitle":"Правило тарелки","summary":"Визуальный ориентир для приёма пищи.","status":"ready","contentKind":"text","contentAsset":"15-plate-rule.txt"}
-      ], "implementation": {"notes":["Детокс, витамины, минералы и анализы — одна статья.","Продажи рецептов нет."],"triggers":[]}
+        {
+          "id": "day-04-article-01",
+          "kind": "article",
+          "title": "Правила определения продуктовых категорий и порций",
+          "summary": "Категории, порции и правила заполнения и примеры разбора сложных блюд",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "13-dqs-system.txt",
+          "imagePresentation": "gallery",
+          "hidden": false
+        },
+        {
+          "id": "day-04-dqs",
+          "kind": "dqs",
+          "code": "dqs",
+          "title": "Ваш DQS",
+          "label": "Ваш DQS",
+          "summary": "Откройте приложение, сохраните ссылку и начните туториал.",
+          "contentKind": "text",
+          "contentAsset": "19-dqs-access-and-print-options.md",
+          "completion": "tutorial_completed",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Видео с принципами находится в шапке.",
+          "Отдельного шага «Первое заполнение» нет."
+        ],
+        "triggers": [
+          "dqs_opened"
+        ]
+      },
+      "afterLead": "",
+      "timings": [
+        [
+          "00:00",
+          "Вступление"
+        ],
+        [
+          "01:56",
+          "Важные вопросы"
+        ],
+        [
+          "05:22",
+          "Что за DQS"
+        ],
+        [
+          "10:30",
+          "Общие принципы"
+        ],
+        [
+          "13:38",
+          "Разнообразие вместо ограничений"
+        ],
+        [
+          "14:50",
+          "Порции"
+        ]
+      ]
     },
     {
-      "number": 6, "slug": "day-06", "kicker": "Меньше решений", "title": "Опорные точки и эволюция рецепта", "shortTitle": "Опорные точки", "tocSummary": "Овсянка, пять вкусов, топпинги и знакомство с рецептами.",
-      "lead": "Собираем повторяемые блюда, которые можно менять под задачу и вкус.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Найдите одну опорную точку в своём рационе.", "checks": ["Выбрать опорную точку.", "Открыть материал о Системе рецептов."],
-      "nextTitle": "Система рецептов", "nextTeaser": "Каталог, продукты и первая партия рецептов.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 5,
+      "slug": "day-05",
+      "title": "Баланс продуктовых категорий",
+      "tocSummary": "КБЖУК и правило тарелки.",
+      "lead": "Собираем базовые ориентиры без подсчёта каждого грамма.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-5-check-1",
+          "text": "Разобраться с КБЖУК.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-5-check-2",
+          "text": "Применить правило тарелки.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "draft",
       "steps": [
-        {"id":"day-06-article-01","kind":"article","title":"Опорные точки в питании","shortTitle":"Опорные точки","summary":"Удобная повторяемая основа рациона.","status":"ready","contentKind":"text","contentAsset":"44-anchor-points-in-nutrition.txt"},
-        {"id":"day-06-article-02","kind":"article","title":"Эволюция рецепта на примере овсянки","shortTitle":"Эволюция овсянки","summary":"Как один рецепт меняется под разные задачи.","status":"ready","contentKind":"text","contentAsset":"45-my-anchor-point-oatmeal.txt"},
-        {"id":"day-06-article-03","kind":"article","title":"Пять вкусов еды","shortTitle":"Пять вкусов","summary":"Как вкус помогает собирать блюда.","status":"ready","contentKind":"text","contentAsset":"34-five-tastes.txt"},
-        {"id":"day-06-article-04","kind":"article","title":"Топпинги","shortTitle":"Топпинги","summary":"Дополнения, меняющие вкус и структуру блюда.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-06-offer","kind":"offer","placement":"recipes-part-1-gate","event":"recipes_part_1_offer_opened","label":"Система рецептов: что откроется завтра","shortTitle":"Система рецептов","summary":"Состав и доступ к Системе рецептов.","completion":"opened","required":true}
-      ], "implementation": {"notes":["В «Опорных точках» тизер конструктора.","Блок предложения обязателен для завершения дня."]}
+        {
+          "id": "day-05-article-01",
+          "kind": "article",
+          "title": "КБЖУК",
+          "summary": "Калории белки, жиры, углеводы, клетчатка и кое что еще",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "14-protein-fat-carbohydrates.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-05-article-03",
+          "kind": "article",
+          "title": "Правило Гарвардской тарелки",
+          "summary": "Визуальный ориентир для приёма пищи.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "15-plate-rule.txt",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Детокс, витамины, минералы и анализы — одна статья.",
+          "Продажи рецептов нет."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Посмотрите на один приём пищи через КБЖУК и правило тарелки.",
+      "timings": []
     },
     {
-      "number": 7, "slug": "day-07", "kicker": "Едим то, что любим", "title": "Система рецептов", "shortTitle": "Система рецептов: часть 1", "tocSummary": "Каталог, продукты, БЖУ и первая партия рецептов.",
-      "lead": "Общий принцип доступен всем; рецептурная часть открывается по праву.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите одну идею для практики.", "checks": ["Посмотреть открытое видео.", "Открыть предложение или доступную мне Систему рецептов."],
-      "nextTitle": "Начинаем менять питание", "nextTeaser": "Пауза от теории и первые изменения.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 6,
+      "slug": "day-06",
+      "title": "Опорные точки и эволюция рецепта",
+      "tocSummary": "Овсянка, пять вкусов, топпинги и знакомство с рецептами.",
+      "lead": "Собираем повторяемые блюда, которые можно менять под задачу и вкус.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сегодня не нужно искать идеальный рецепт. Выберите одну ситуацию, которая повторяется изо дня в день, и начните собирать для неё удобную опорную точку.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-6-check-1",
+          "text": "Выбрать одну опорную точку и записать, что в ней уже удобно и что хочется улучшить.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-6-check-2",
+          "text": "Открыть материал о Системе рецептов.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-07-video-01","kind":"article","title":"Мы едим то, что любим","shortTitle":"Мы едим то, что любим","summary":"Открытое видео о вкусе и привычках.","status":"draft","contentKind":"video","videoId":null},
-        {"id":"day-07-offer","kind":"offer","placement":"recipes-part-1-gate","event":"recipes_part_1_offer_reopened","label":"Открыть Систему рецептов","shortTitle":"Доступ к рецептам","summary":"Повторное предложение без перезапуска срока.","completion":"opened","required":true},
-        {"id":"day-07-recipes-part-1","kind":"recipes-part-1","code":"recipes-part-1","label":"Система рецептов: первая часть","shortTitle":"Первая часть рецептов","summary":"Каталог, продукты, БЖУ и рецепты.","completion":"opened","required":false,"accessResource":"ACCESS_RECIPES","items":["Как устроена база рецептов и как пользоваться каталогом","Разбор отдельных продуктов: готовых и не очень","Разбор БЖУ","Первая партия рецептов"]}
-      ], "implementation": {"notes":["Видео и блок предложения видны всем.","Вложенные материалы закрыты ACCESS_RECIPES и не блокируют остальных."]}
+        {
+          "id": "day-06-article-01",
+          "kind": "article",
+          "title": "Опорные точки в питании",
+          "summary": "Удобная повторяемая основа рациона.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "44-anchor-points-in-nutrition.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-06-article-02",
+          "kind": "article",
+          "title": "Эволюция рецепта на примере овсянки",
+          "summary": "Как один рецепт меняется под разные задачи.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "45-my-anchor-point-oatmeal.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-06-article-03",
+          "kind": "article",
+          "title": "Как сделать еду вкусной",
+          "summary": "Как вкус, запах, текстура, специи и соусы помогают собирать повторяемые блюда.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "34-five-tastes.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-06-article-04",
+          "kind": "article",
+          "title": "Почему рецепт с первого раза может быть не вашим",
+          "summary": "Как понять, что именно не устраивает, и постепенно довести рецепт под себя.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-06-offer",
+          "kind": "offer",
+          "placement": "recipes-part-1-gate",
+          "event": "recipes_part_1_offer_opened",
+          "label": "Система рецептов: что откроется завтра",
+          "summary": "Состав и доступ к Системе рецептов.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "В «Опорных точках» тизер конструктора.",
+          "Блок предложения обязателен для завершения дня."
+        ]
+      },
+      "afterLead": "Выберите один повторяющийся приём пищи и опишите его первую выполнимую версию.",
+      "timings": []
     },
     {
-      "number": 8, "slug": "day-08", "kicker": "Практика", "title": "Начинаем менять питание", "shortTitle": "Пауза и первые изменения", "tocSummary": "План следующих дней и последнее напоминание о рецептах.",
-      "lead": "Выберите одно изменение, которое сможете повторять.", "media": "video", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите одно изменение и продолжайте дневник.", "checks": ["Выбрать одно изменение.", "Продолжить вести дневник."],
-      "nextTitle": "50 оттенков голода", "nextTeaser": "Голод, аппетит и эмоциональный голод.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 7,
+      "slug": "day-07",
+      "title": "Система рецептов",
+      "tocSummary": "Каталог, продукты, БЖУ и первая партия рецептов.",
+      "lead": "Общий принцип доступен всем; рецептурная часть открывается по праву.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Конструктор не заменяет DQS и не создаёт ещё одну систему правил. Он помогает перевести уже знакомые категории и пропорции в конкретный приём пищи.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-7-check-1",
+          "text": "Пройти материал о конструкторе и собрать один приём пищи из желаемой формы или доступных продуктов.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-7-check-2",
+          "text": "Открыть предложение или доступную мне Систему рецептов.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-08-article-01","kind":"article","title":"Что будет дальше","shortTitle":"План следующих дней","summary":"На чём сосредоточиться после первой части.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-08-offer","kind":"offer","placement":"recipes-part-1-gate","event":"recipes_part_1_last_day_opened","label":"Система рецептов: последний день текущих условий","shortTitle":"Последний день условий","summary":"Необязательное напоминание.","completion":"opened","required":false}
-      ], "implementation": {"notes":["Блок предложения необязателен и не блокирует следующий день."]}
+        {
+          "id": "day-07-video-01",
+          "kind": "article",
+          "title": "Конструктор полноценного приёма пищи",
+          "summary": "Как собрать приём пищи из желаемой формы или из продуктов, которые уже есть дома.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-07-offer",
+          "kind": "offer",
+          "placement": "recipes-part-1-gate",
+          "event": "recipes_part_1_offer_reopened",
+          "label": "Открыть Систему рецептов",
+          "summary": "Повторное предложение без перезапуска срока.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-07-recipes-part-1",
+          "kind": "recipes-part-1",
+          "code": "recipes-part-1",
+          "label": "Система рецептов: первая часть",
+          "summary": "Каталог, продукты, БЖУ и рецепты.",
+          "completion": "opened",
+          "required": false,
+          "accessResource": "ACCESS_RECIPES",
+          "items": [
+            "Как устроена база рецептов и как пользоваться каталогом",
+            "Разбор отдельных продуктов: готовых и не очень",
+            "Разбор БЖУ",
+            "Первая партия рецептов"
+          ],
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Видео и блок предложения видны всем.",
+          "Вложенные материалы закрыты ACCESS_RECIPES и не блокируют остальных."
+        ]
+      },
+      "afterLead": "Возьмите один будущий приём пищи и пройдите по конструктору от начала до финальной проверки.",
+      "timings": []
     },
     {
-      "number": 9, "slug": "day-09", "kicker": "Разбираем чувство", "title": "50 оттенков голода", "shortTitle": "50 оттенков голода", "tocSummary": "Голод, аппетит, насыщение и эмоциональный голод.",
-      "lead": "Вопрос не в том, как выключить голод, а в том, как с ним работать.", "media": "video", "video": 31, "videoId": "iVcj2W37", "image": null, "intro": "Для голода и аппетита могут быть нужны разные продукты и действия.", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Понаблюдайте за голодом и аппетитом.", "checks": ["Посмотреть видео.", "Отметить эпизод голода или аппетита."],
-      "nextTitle": "План сокращения сладкого", "nextTeaser": "Оценим исходную точку без запрета.", "recipeDay": false, "publicationStatus": "draft",
-      "steps": [{"id":"day-09-article-01","kind":"article","title":"Гайд по эмоциональному голоду","shortTitle":"Эмоциональный голод","summary":"Как распознавать эмоциональный голод.","status":"draft","contentKind":"placeholder"}],
-      "implementation": {"notes":["Темы внутри видео не дробить."],"triggers":[]}
-    },
-    {
-      "number": 10, "slug": "day-10", "kicker": "Сначала оцениваем", "title": "Сколько сладкого уже есть в вашем рационе", "shortTitle": "План сокращения сладкого", "tocSummary": "План, нормы и гайд по добавленному сахару.",
-      "lead": "До изменений нужна приблизительная, но честная исходная точка.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Оцените потребление и выберите первый шаг.", "checks": ["Оценить потребление сладкого.", "Записать первый шаг."],
-      "nextTitle": "Вред и тяга к сладкому", "nextTeaser": "Практические способы без полного запрета.", "recipeDay": false, "publicationStatus": "draft",
+      "number": 8,
+      "slug": "day-08",
+      "title": "Начинаем менять питание",
+      "tocSummary": "План следующих дней и последнее напоминание о рецептах.",
+      "lead": "Выберите одно изменение, которое сможете повторять.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Теории на сегодня достаточно. Возьмите один рецепт из подборки, приготовьте его и оценивайте не только результат, но и то, насколько удобно будет повторить его в обычный день.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-8-check-1",
+          "text": "Приготовить один рецепт и записать одну удачную деталь и одну точку для следующей попытки.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-8-check-2",
+          "text": "Продолжить вести дневник.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-10-article-01","kind":"article","title":"План сокращения сладкого","shortTitle":"План сокращения","summary":"Реалистичный план без полного запрета.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-10-article-02","kind":"article","title":"Нормы потребления сладкого","shortTitle":"Нормы сладкого","summary":"Ориентиры для разных задач.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-10-article-03","kind":"article","title":"Гайд по сахару: как оценить своё потребление и найти добавленный сахар в продуктах","shortTitle":"Гайд по сахару","summary":"Примеры продуктов и быстрая оценка.","status":"ready","contentKind":"text","contentAsset":"27-added-sugar-guide.txt"}
-      ], "implementation": {"notes":[],"triggers":[]}
+        {
+          "id": "day-08-article-01",
+          "kind": "article",
+          "title": "Первая практика с рецептами",
+          "summary": "Небольшая подборка рецептов для первой самостоятельной попытки.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-08-offer",
+          "kind": "offer",
+          "placement": "recipes-part-1-gate",
+          "event": "recipes_part_1_last_day_opened",
+          "label": "Система рецептов: последний день текущих условий",
+          "summary": "Необязательное напоминание.",
+          "completion": "opened",
+          "required": false,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Блок предложения необязателен и не блокирует следующий день."
+        ]
+      },
+      "afterLead": "Приготовьте одно блюдо и запишите, что в нём нужно изменить под ваш вкус, быт и текущий рацион.",
+      "timings": []
     },
     {
-      "number": 11, "slug": "day-11", "kicker": "Не запрещаем", "title": "Как есть меньше сладкого и не страдать", "shortTitle": "Вред и тяга к сладкому", "tocSummary": "11 способов уменьшить вред и 17 способов уменьшить тягу.",
-      "lead": "Выберите несколько способов, которые готовы проверить.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите по одному способу из каждого материала.", "checks": ["Выбрать способ уменьшить вред.", "Выбрать способ уменьшить тягу."],
-      "nextTitle": "Срывы, зажоры и чит-милы", "nextTeaser": "План действий для сложного дня.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 9,
+      "slug": "day-09",
+      "title": "50 оттенков голода",
+      "tocSummary": "Голод, аппетит, насыщение и эмоциональный голод.",
+      "lead": "Вопрос не в том, как выключить голод, а в том, как с ним работать.",
+      "media": "video",
+      "video": 31,
+      "videoId": "https://cdn-g.boomstream.com/balancer/x7QergiK-9WmCBBoU.mp4",
+      "image": null,
+      "intro": "Для голода и аппетита могут быть нужны разные продукты и действия.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-9-check-1",
+          "text": "Посмотреть видео.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-9-check-2",
+          "text": "Отметить эпизод голода или аппетита.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-11-article-01","kind":"article","title":"11 способов уменьшить вред от сладкого","shortTitle":"11 способов уменьшить вред","summary":"Как снизить последствия без отказа.","status":"ready","contentKind":"text","contentAsset":"28-reduce-harm-from-sweets.txt"},
-        {"id":"day-11-article-02","kind":"article","title":"17 способов уменьшить тягу к сладкому","shortTitle":"17 способов уменьшить тягу","summary":"Как уменьшить количество без запрета.","status":"ready","contentKind":"text","contentAsset":"29-reduce-amount-of-sweets.txt"}
-      ], "implementation": {"notes":[],"triggers":[]}
+        {
+          "id": "day-09-article-01",
+          "kind": "article",
+          "title": "Гайд по эмоциональному голоду",
+          "summary": "Практический гайд о том, как справляться с эмоциональным голодом.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false,
+          "requiredForAllAfterRevision": 38
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Темы внутри видео не дробить."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Понаблюдайте за голодом и аппетитом.",
+      "timings": [
+        [
+          "01:14",
+          "Что такое голод: физиологический и эмоциональный"
+        ],
+        [
+          "10:20",
+          "Шкала сытости и голода"
+        ],
+        [
+          "13:34",
+          "Что влияет на насыщение"
+        ],
+        [
+          "18:24",
+          "Что влияет на аппетит"
+        ],
+        [
+          "22:41",
+          "Адекватное чувство голода"
+        ],
+        [
+          "26:00",
+          "Голод — это просто чувство"
+        ],
+        [
+          "30:46",
+          "Несколько слов о моём опыте с голодом"
+        ]
+      ]
     },
     {
-      "number": 12, "slug": "day-12", "kicker": "План на сложный день", "title": "Срывы, зажоры и чит-милы", "shortTitle": "Срывы и чит-милы", "tocSummary": "Чем отличаются, что делать и как предотвращать.",
-      "lead": "Разные эпизоды переедания требуют разных решений.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Составьте план для знакомого сценария.", "checks": ["Определить знакомый сценарий.", "Записать план действий."],
-      "nextTitle": "Насыщение и удовольствие", "nextTeaser": "Привычки, которые помогают есть иначе.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 10,
+      "slug": "day-10",
+      "title": "Сколько сладкого уже есть в вашем рационе",
+      "tocSummary": "План, нормы и гайд по добавленному сахару.",
+      "lead": "До изменений нужна приблизительная, но честная исходная точка.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сладкое пока не запрещаем и не пытаемся героически убрать за один день. Сначала считаем, где оно появляется, сколько его получается и какую задачу оно решает.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-10-check-1",
+          "text": "Оценить сладкое за обычный день или неделю и найти основные источники добавленного сахара.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-10-check-2",
+          "text": "Записать один первый шаг без полного запрета.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-12-article-01","kind":"article","title":"Срывы и зажоры: чем отличаются, что делать и как предотвращать","shortTitle":"Срывы и зажоры","summary":"Причины, различия и профилактика.","status":"ready","contentKind":"text","contentAsset":"30-breakdowns-overeating-cheat-meals.txt"},
-        {"id":"day-12-article-02","kind":"article","title":"Чит-милы и пытки","shortTitle":"Чит-милы и пытки","summary":"Когда послабление помогает, а когда мешает.","status":"ready","contentKind":"text","contentAsset":"38-cheat-meals-audio.md"}
-      ], "implementation": {"notes":["Первую статью не дробить."],"triggers":[]}
+        {
+          "id": "day-10-article-01",
+          "kind": "article",
+          "title": "План сокращения сладкого",
+          "summary": "Реалистичный план без полного запрета.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-10-article-02",
+          "kind": "article",
+          "title": "Нормы потребления сладкого",
+          "summary": "Ориентиры для разных задач.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-10-article-03",
+          "kind": "article",
+          "title": "Гайд по сахару: как оценить своё потребление и найти добавленный сахар в продуктах",
+          "summary": "Примеры продуктов и быстрая оценка.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "27-added-sugar-guide.txt",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [],
+        "triggers": []
+      },
+      "afterLead": "Оцените обычное потребление сладкого и выберите первый шаг, который реально сможете повторять.",
+      "timings": []
     },
     {
-      "number": 13, "slug": "day-13", "kicker": "Добавляем, а не только убираем", "title": "Насыщение и удовольствие", "shortTitle": "Насыщение и удовольствие", "tocSummary": "Привычки для насыщения и удовольствия.",
-      "lead": "Настраиваем два разных результата еды.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите по одной привычке.", "checks": ["Выбрать привычку насыщения.", "Выбрать привычку удовольствия."],
-      "nextTitle": "Питание вне дома", "nextTeaser": "Фастфуд, отпуск, праздники и поездки.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 11,
+      "slug": "day-11",
+      "title": "Как есть меньше сладкого и не страдать",
+      "tocSummary": "11 способов уменьшить вред и 17 способов уменьшить тягу.",
+      "lead": "Выберите несколько способов, которые готовы проверить.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сегодня не будет одного правильного способа. В двух материалах собраны разные инструменты: одни уменьшают последствия сладкого, другие помогают сократить количество без ощущения, что у вас что-то отняли.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-11-check-1",
+          "text": "Выбрать способ уменьшить вред.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-11-check-2",
+          "text": "Выбрать способ уменьшить тягу.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-13-article-01","kind":"article","title":"Привычки для увеличения насыщения","shortTitle":"Привычки насыщения","summary":"Что помогает лучше насыщаться.","status":"ready","contentKind":"text","contentAsset":"31-satiety-habits.txt"},
-        {"id":"day-13-article-02","kind":"article","title":"Привычки для увеличения удовольствия","shortTitle":"Привычки удовольствия","summary":"Как получать больше удовольствия от еды.","status":"ready","contentKind":"text","contentAsset":"32-pleasure-habits.txt"}
-      ], "implementation": {"notes":[],"triggers":[]}
+        {
+          "id": "day-11-article-01",
+          "kind": "article",
+          "title": "11 способов уменьшить вред от сладкого",
+          "summary": "Как снизить последствия без отказа.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "28-reduce-harm-from-sweets.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-11-article-02",
+          "kind": "article",
+          "title": "17 способов уменьшить тягу к сладкому",
+          "summary": "Как уменьшить количество без запрета.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "29-reduce-amount-of-sweets.txt",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [],
+        "triggers": []
+      },
+      "afterLead": "Выберите по одному способу из каждого материала.",
+      "timings": []
     },
     {
-      "number": 14, "slug": "day-14", "kicker": "Еда остаётся частью жизни", "title": "Питание вне дома", "shortTitle": "Питание вне дома", "tocSummary": "Фастфуд, отпуск, праздники и поездки.",
-      "lead": "Разные ситуации вне дома требуют разных решений.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите стратегию для частой ситуации.", "checks": ["Выбрать стратегию вне дома.", "Открыть материал о второй части рецептов."],
-      "nextTitle": "Конструктор питания", "nextTeaser": "Завтра откроется вторая часть рецептов.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 12,
+      "slug": "day-12",
+      "title": "Срывы, зажоры и чит-милы",
+      "tocSummary": "Чем отличаются, что делать и как предотвращать.",
+      "lead": "Разные эпизоды переедания требуют разных решений.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Срыв, обычное переедание и заранее назначенный чит-мил могут выглядеть похоже только со стороны. Внутри у них разные причины, а значит и план действий нужен разный.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-12-check-1",
+          "text": "Определить знакомый сценарий.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-12-check-2",
+          "text": "Записать план действий.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-14-article-01","kind":"article","title":"Питание вне дома: как наслаждаться едой и минимизировать ущерб во время фастфуда, отпуска, праздников и поездок","shortTitle":"Питание вне дома","summary":"Один материал о разных сценариях.","status":"ready","contentKind":"text","contentAsset":"46-eating-outside-home.txt"},
-        {"id":"day-14-offer","kind":"offer","placement":"recipes-part-2-gate","event":"recipes_part_2_offer_opened","label":"Завтра откроется вторая часть рецептов","shortTitle":"Вторая часть рецептов","summary":"Состав и условия второй части.","completion":"opened","required":true}
-      ], "implementation": {"notes":["Статью не дробить.","Блок предложения обязателен для завершения дня."]}
+        {
+          "id": "day-12-article-01",
+          "kind": "article",
+          "title": "Срывы и зажоры: чем отличаются, что делать и как предотвращать",
+          "summary": "Причины, различия и профилактика.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "30-breakdowns-overeating-cheat-meals.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-12-article-02",
+          "kind": "article",
+          "title": "Чит-милы и пытки",
+          "summary": "Когда послабление помогает, а когда мешает.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "38-cheat-meals-audio.md",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Первую статью не дробить."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Составьте план для знакомого сценария.",
+      "timings": []
     },
     {
-      "number": 15, "slug": "day-15", "kicker": "Система вместо случайной готовки", "title": "Конструктор питания", "shortTitle": "Конструктор и рецепты", "tocSummary": "Техники, кухонные запасы и вторая часть рецептов.",
-      "lead": "Меняем вкус и форму блюда, сохраняя понятную основу.", "media": "video", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Соберите блюдо или выберите рецепт.", "checks": ["Посмотреть вводное видео.", "Выбрать действие для практики."],
-      "nextTitle": "Пауза для практики", "nextTeaser": "Закрепим вторую часть рецептов.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 13,
+      "slug": "day-13",
+      "title": "Насыщение и удовольствие",
+      "tocSummary": "Привычки для насыщения и удовольствия.",
+      "lead": "Настраиваем два разных результата еды.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Можно набить желудок и не получить удовольствия. Можно получить яркое впечатление и через час снова искать еду. Сегодня отдельно настраиваем насыщение и удовольствие.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-13-check-1",
+          "text": "Выбрать привычку насыщения.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-13-check-2",
+          "text": "Выбрать привычку удовольствия.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-15-article-01","kind":"article","title":"Техники приготовления","shortTitle":"Техники приготовления","summary":"Приёмы для вариативной готовки.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-15-article-02","kind":"article","title":"Кухонные приборы и продуктовые запасы","shortTitle":"Приборы и запасы","summary":"Что упрощает регулярную готовку.","status":"ready","contentKind":"text","contentAsset":"33-kitchen-matters.txt"},
-        {"id":"day-15-recipes-part-2","kind":"recipes-part-2","code":"recipes-part-2","label":"Вторая часть Системы рецептов","shortTitle":"Вторая часть рецептов","summary":"Рецепты и ссылки второй части.","completion":"opened","required":false,"accessResource":"ACCESS_RECIPES","items":["Рецепты и ссылки"]},
-        {"id":"day-15-offer","kind":"offer","placement":"recipes-part-2-gate","event":"recipes_part_2_offer_reopened","label":"Открыть вторую часть Системы рецептов","shortTitle":"Доступ ко второй части","summary":"Актуальное предложение без нового срока.","completion":"opened","required":true}
-      ], "implementation": {"notes":["Видео находится в шапке.","Рецепты закрыты ACCESS_RECIPES и не блокируют остальных."]}
+        {
+          "id": "day-13-article-01",
+          "kind": "article",
+          "title": "Привычки для увеличения насыщения",
+          "summary": "Что помогает лучше насыщаться.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "31-satiety-habits.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-13-article-02",
+          "kind": "article",
+          "title": "Привычки для увеличения удовольствия",
+          "summary": "Как получать больше удовольствия от еды.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "32-pleasure-habits.txt",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [],
+        "triggers": []
+      },
+      "afterLead": "Выберите по одной привычке.",
+      "timings": []
     },
     {
-      "number": 16, "slug": "day-16", "kicker": "Закрепляем", "title": "Пауза для второй части рецептов", "shortTitle": "Пауза для практики", "tocSummary": "Практика и последний день текущих условий.",
-      "lead": "Доводим до конца одно выбранное действие.", "media": "none", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выполните одно практическое действие.", "checks": ["Выполнить одно практическое действие."],
-      "nextTitle": "50 оттенков ЗОЖ", "nextTeaser": "Вода, соль и разумные ориентиры.", "recipeDay": true, "publicationStatus": "draft",
+      "number": 14,
+      "slug": "day-14",
+      "title": "Питание вне дома",
+      "tocSummary": "Фастфуд, отпуск, праздники и поездки.",
+      "lead": "Разные ситуации вне дома требуют разных решений.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Фастфуд по дороге, отпуск, праздник и ресторан — не одна проблема под названием «я ем не дома». Разберём каждую ситуацию по её реальным условиям.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-14-check-1",
+          "text": "Выбрать стратегию вне дома.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-14-check-2",
+          "text": "Открыть материал о второй части рецептов.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-16-article-01","kind":"article","title":"Пауза и практика","shortTitle":"Пауза и практика","summary":"Короткий план практического дня.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-16-offer","kind":"offer","placement":"recipes-part-2-gate","event":"recipes_part_2_last_day_opened","label":"Система рецептов: последний день текущих условий","shortTitle":"Последний день условий","summary":"Необязательное напоминание.","completion":"opened","required":false}
-      ], "implementation": {"notes":["Блок предложения необязателен и не блокирует следующий день."]}
+        {
+          "id": "day-14-article-01",
+          "kind": "article",
+          "title": "Питание вне дома: как наслаждаться едой и минимизировать ущерб во время фастфуда, отпуска, праздников и поездок",
+          "summary": "Один материал о разных сценариях.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "46-eating-outside-home.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-14-offer",
+          "kind": "offer",
+          "placement": "recipes-part-2-gate",
+          "event": "recipes_part_2_offer_opened",
+          "label": "Завтра откроется вторая часть рецептов",
+          "summary": "Состав и условия второй части.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Статью не дробить.",
+          "Блок предложения обязателен для завершения дня."
+        ]
+      },
+      "afterLead": "Выберите стратегию для частой ситуации.",
+      "timings": []
     },
     {
-      "number": 17, "slug": "day-17", "kicker": "Здоровье без культа", "title": "50 оттенков ЗОЖ", "shortTitle": "50 оттенков ЗОЖ", "tocSummary": "ЗОЖ, вода и водно-солевой баланс.",
-      "lead": "Отделяем полезные ориентиры от лишних ритуалов.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Выберите один полезный ориентир.", "checks": ["Выбрать полезный для себя ориентир."],
-      "nextTitle": "Фазы похудения", "nextTeaser": "Этапы похудения и примеры дневников.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 15,
+      "slug": "day-15",
+      "title": "Конструктор питания",
+      "tocSummary": "Техники, кухонные запасы и вторая часть рецептов.",
+      "lead": "Меняем вкус и форму блюда, сохраняя понятную основу.",
+      "media": "video",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сегодня смотрим не на отдельный рецепт, а на всё, что делает готовку проще или сложнее: техники, инвентарь, организация пространства и регулярные эксперименты.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-15-check-1",
+          "text": "Выбрать один навык, инструмент или организационное изменение для практики.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-15-check-2",
+          "text": "Открыть доступную мне вторую часть Системы рецептов.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-17-article-01","kind":"article","title":"50 оттенков ЗОЖ","shortTitle":"50 оттенков ЗОЖ","summary":"Что действительно важно в ЗОЖ.","status":"ready","contentKind":"text","contentAsset":"16-health-block-closing.txt"},
-        {"id":"day-17-article-02","kind":"article","title":"Вода и водно-солевой баланс","shortTitle":"Вода и соль","summary":"Практические ориентиры без магических норм.","status":"ready","contentKind":"text","contentAsset":"18-water.txt"}
-      ], "implementation": {"notes":["Продажи рецептов нет."],"triggers":[]}
+        {
+          "id": "day-15-article-01",
+          "kind": "article",
+          "title": "Техники приготовления",
+          "summary": "Приёмы, навыки и эксперименты, которые делают домашнюю еду разнообразнее.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-15-article-02",
+          "kind": "article",
+          "title": "Кухонный инвентарь и организация",
+          "summary": "Что в кухонном пространстве упрощает регулярную готовку.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "33-kitchen-matters.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-15-recipes-part-2",
+          "kind": "recipes-part-2",
+          "code": "recipes-part-2",
+          "label": "Вторая часть Системы рецептов",
+          "summary": "Рецепты и ссылки второй части.",
+          "completion": "opened",
+          "required": false,
+          "accessResource": "ACCESS_RECIPES",
+          "items": [
+            "Рецепты и ссылки"
+          ],
+          "hidden": false
+        },
+        {
+          "id": "day-15-offer",
+          "kind": "offer",
+          "placement": "recipes-part-2-gate",
+          "event": "recipes_part_2_offer_reopened",
+          "label": "Открыть вторую часть Системы рецептов",
+          "summary": "Актуальное предложение без нового срока.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Видео находится в шапке.",
+          "Рецепты закрыты ACCESS_RECIPES и не блокируют остальных."
+        ]
+      },
+      "afterLead": "Найдите одно кухонное ограничение и выберите действие, которое его уменьшит.",
+      "timings": []
     },
     {
-      "number": 18, "slug": "day-18", "kicker": "Учимся видеть систему", "title": "Для тех, кто любит подглядывать", "shortTitle": "Примеры чужих дневников", "tocSummary": "Примеры чужих дневников для анализа собственной системы.",
-      "lead": "Чужие дневники помогают заметить то, что сложно увидеть в своём.", "media": "none", "video": 0, "videoId": null, "image": null, "intro": "Смотрите не на то, хорошо или плохо питается другой человек. Ищите повторяющиеся решения, слабые категории, удобные опорные точки и ситуации, которые узнаёте у себя.", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Разберите примеры и отметьте, что узнаёте в своём питании.", "checks": ["Изучить примеры дневников."],
-      "nextTitle": "Саморевью и консультация", "nextTeaser": "Соберём наблюдения и варианты дальнейшей работы.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 16,
+      "slug": "day-16",
+      "title": "Пауза для второй части рецептов",
+      "tocSummary": "Практика и последний день текущих условий.",
+      "lead": "Доводим до конца одно выбранное действие.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Новой большой теории не будет. Подбейте хвосты, попробуйте один рецепт или кухонное изменение и отдельно потренируйте паузу во время еды.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-16-check-1",
+          "text": "Закончить одно действие из рецептурного блока, попробовать паузу во время еды и записать наблюдения.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": true,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-18-video-01","kind":"article","title":"Фазы и периодизация похудения","shortTitle":"Фазы похудения","summary":"Историческая позиция материала; актуальная статья перенесена в день 21.","status":"draft","contentKind":"video","videoId":null,"contentAsset":"50-final-stream-and-periodization.md","hidden":true},
-        {"id":"day-18-article-02","kind":"article","title":"Для тех, кто любит подглядывать","shortTitle":"Примеры чужих дневников","summary":"Примеры дневников для анализа собственной системы.","status":"ready","contentKind":"imported","contentAsset":"extracted-2026-08-23.json"}
-      ], "implementation": {"notes":["Периодизация перенесена в день 21 по прямому решению владельца."],"triggers":[]}
+        {
+          "id": "day-16-article-01",
+          "kind": "article",
+          "title": "Давайте сделаем паузу?",
+          "summary": "День без новой теории и практическое упражнение с паузой во время еды.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-16-offer",
+          "kind": "offer",
+          "placement": "recipes-part-2-gate",
+          "event": "recipes_part_2_last_day_opened",
+          "label": "Система рецептов: последний день текущих условий",
+          "summary": "Необязательное напоминание.",
+          "completion": "opened",
+          "required": false,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Блок предложения необязателен и не блокирует следующий день."
+        ]
+      },
+      "afterLead": "Выполните одно практическое действие и попробуйте упражнение «Пауза» хотя бы в одном приёме пищи.",
+      "timings": []
     },
     {
-      "number": 19, "slug": "day-19", "kicker": "Собираем выводы", "title": "Саморевью и подготовка к консультации", "shortTitle": "Саморевью и консультация", "tocSummary": "Подготовка, саморевью, консультация и варианты работы.",
-      "lead": "Собираем изменения, трудности и вопросы.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Заполните саморевью и подготовьте вопросы.", "checks": ["Отправить итоговое саморевью.", "Определить, нужна ли мне консультация."],
-      "nextTitle": "Зависимости и цель", "nextTeaser": "Границы программы и цель на длинную дистанцию.", "recipeDay": false, "publicationStatus": "draft",
+      "number": 17,
+      "slug": "day-17",
+      "title": "50 оттенков ЗОЖ",
+      "tocSummary": "ЗОЖ, детоксы, витамины, анализы, вода и водно-солевой баланс.",
+      "lead": "Отделяем полезные ориентиры от лишних ритуалов.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сегодня разбираем всё, что часто пытаются поставить выше обычного питания: детоксы, добавки, анализы, воду и отдельные элементы ЗОЖ. Сначала база, потом всё остальное.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-17-check-1",
+          "text": "Выбрать полезный для себя ориентир.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-19-article-01","kind":"article","title":"Подготовка к консультации","shortTitle":"Подготовка к консультации","summary":"Что собрать до консультации.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-19-closing-review","kind":"closing-review","code":"closing-review","label":"Заполнить итоговое саморевью","shortTitle":"Итоговое саморевью","summary":"Изменения, трудности и вопросы.","completion":"submitted","required":true},
-        {"id":"day-19-article-02","kind":"article","title":"Как проходит консультация","shortTitle":"Как проходит консультация","summary":"Формат и дальнейшие действия.","status":"draft","contentKind":"placeholder","required":true},
-        {"id":"day-19-offer","kind":"offer","placement":"day-19-offer","event":"day_19_offer_opened","label":"Варианты консультации и дальнейшей работы","shortTitle":"Дальнейшая работа","summary":"Доступные варианты после саморевью.","completion":"opened","required":true}
-      ], "implementation": {"notes":["Блок предложения расположен после итогового саморевью и текста о консультации."]}
+        {
+          "id": "day-17-article-01",
+          "kind": "article",
+          "title": "50 оттенков ЗОЖ",
+          "summary": "Что действительно важно в ЗОЖ.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "16-health-block-closing.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-17-article-02",
+          "kind": "article",
+          "title": "Детоксы, витамины, минералы и анализы",
+          "summary": "Детоксы, добавки, витамины, минералы и анализы без лишних ритуалов.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "17-detox-vitamins-minerals-tests.txt",
+          "hidden": false
+        },
+        {
+          "id": "day-17-article-03",
+          "kind": "article",
+          "title": "Вода и водно-солевой баланс",
+          "summary": "Практические ориентиры без магических норм.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "18-water.txt",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Продажи рецептов нет."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Выберите один полезный ориентир.",
+      "timings": []
     },
     {
-      "number": 20, "slug": "day-20", "kicker": "Смотрим дальше", "title": "Зависимости и постановка цели", "shortTitle": "Зависимости и цель", "tocSummary": "Путеводитель по зависимостям и цель на пять лет.",
-      "lead": "Разбираем границы программы и длинную цель.", "media": "image", "video": 0, "videoId": null, "image": null, "intro": "", "afterTitle": "", "afterText": "",
-      "assignmentTitle": "Задание на сегодня", "assignmentLead": "Сформулируйте цель шире цифры на весах.", "checks": ["Изучить путеводитель.", "Сформулировать цель на пять лет."],
-      "nextTitle": "Дальнейший путь", "nextTeaser": "Что оставить после программы и чем Сергей может помочь.", "recipeDay": false, "publicationStatus": "draft",
+      "number": 18,
+      "slug": "day-18",
+      "title": "Для тех, кто любит подглядывать",
+      "tocSummary": "Примеры чужих дневников для анализа собственной системы.",
+      "lead": "Чужие дневники помогают заметить то, что сложно увидеть в своём.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Смотрите не на то, хорошо или плохо питается другой человек. Ищите повторяющиеся решения, слабые категории, удобные опорные точки и ситуации, которые узнаёте у себя.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-18-check-1",
+          "text": "Посмотреть видео.",
+          "required": true,
+          "hidden": true
+        },
+        {
+          "id": "day-18-check-2",
+          "text": "Изучить примеры дневников.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-20-article-01","kind":"article","title":"Путеводитель по зависимостям","shortTitle":"Путеводитель по зависимостям","summary":"Границы самостоятельной работы и дальнейшая помощь.","status":"draft","contentKind":"placeholder"},
-        {"id":"day-20-article-02","kind":"article","title":"Кем вы видите себя через пять лет: постановка цели","shortTitle":"Постановка цели","summary":"Цель на длинную дистанцию.","status":"draft","contentKind":"placeholder"}
-      ], "implementation": {"notes":["Два самостоятельных материала."],"triggers":[]}
+        {
+          "id": "day-18-video-01",
+          "kind": "article",
+          "title": "Фазы и периодизация похудения",
+          "summary": "Историческая позиция материала; актуальная статья перенесена в день 21.",
+          "status": "draft",
+          "contentKind": "video",
+          "videoId": null,
+          "contentAsset": "50-final-stream-and-periodization.md",
+          "hidden": true
+        },
+        {
+          "id": "day-18-article-02",
+          "kind": "article",
+          "title": "Для тех, кто любит подглядывать",
+          "summary": "Примеры дневников для анализа собственной системы.",
+          "status": "ready",
+          "contentKind": "text",
+          "contentAsset": "extracted-2026-08-23.json",
+          "hidden": false,
+          "contentPageTitle": "Для тех, кто любит подглядывать"
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Ровно два материала; видео не дробить."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Разберите примеры и отметьте, что узнаёте в своём питании.",
+      "timings": []
     },
     {
-      "number": 21, "slug": "day-21", "kicker": "Смотрим дальше рывка", "title": "Фазы и периодизация похудения", "shortTitle": "Фазы похудения", "tocSummary": "Подготовка, активная фаза, поддержание и следующий цикл.",
-      "lead": "Похудение — не один бесконечный дефицит.", "media": "none", "video": 0, "videoId": null, "image": null, "intro": "Сегодня собираем всё в долгосрочный план: подготовка, активное похудение, опорное поддержание, следующий цикл и обычная жизнь между ними.", "afterTitle": "Мораль всей программы", "afterText": "Не нужно делать всё одновременно. Нужно понимать, на какой фазе вы находитесь, какая задача стоит сейчас и по какому признаку пора переходить дальше.",
-      "assignmentTitle": "Финальное задание", "assignmentLead": "Определите свой текущий этап и условие перехода к следующей фазе.", "checks": ["Определить свой текущий этап.", "Записать условие перехода к следующей фазе."],
-      "nextTitle": "Материалы остаются с вами", "nextTeaser": "Возвращайтесь к конкретному материалу тогда, когда его задача становится вашей текущей задачей.", "recipeDay": false, "publicationStatus": "ready",
+      "number": 19,
+      "slug": "day-19",
+      "title": "Саморевью и подготовка к консультации",
+      "tocSummary": "Подготовка, саморевью, консультация и варианты работы.",
+      "lead": "Собираем изменения, трудности и вопросы.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Саморевью — не экзамен и не отчёт о хорошем поведении. Оно нужно, чтобы собрать изменения, сопротивление, неудачные попытки и вопросы в одну понятную картину перед консультацией.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-19-check-1",
+          "text": "Отправить итоговое саморевью.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-19-check-2",
+          "text": "Определить, нужна ли мне консультация.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
       "steps": [
-        {"id":"day-21-article-01","kind":"article","title":"Фазы и периодизация похудения","shortTitle":"Фазы похудения","summary":"Подготовительный этап, активное снижение веса, поддержание и следующий цикл.","status":"ready","contentKind":"text","contentAsset":"50-final-stream-and-periodization.md"},
-        {"id":"day-21-offer","kind":"offer","placement":"day-21-offer","event":"day_21_offer_opened","label":"Последний этап специальных условий","shortTitle":"Последний этап условий","summary":"Затем остаются стандартные цены.","completion":"opened","required":true}
-      ], "implementation": {"notes":["Периодизация перенесена из дня 18; старый шаг остаётся скрытым для совместимости прогресса."]}
+        {
+          "id": "day-19-article-01",
+          "kind": "article",
+          "title": "Подготовка к консультации",
+          "summary": "Дублирующий технический шаг; подготовка реализована штатным саморевью.",
+          "status": "draft",
+          "contentKind": "placeholder",
+          "hidden": true
+        },
+        {
+          "id": "day-19-closing-review",
+          "kind": "closing-review",
+          "code": "closing-review",
+          "label": "Заполнить итоговое саморевью",
+          "summary": "Изменения, трудности и вопросы.",
+          "completion": "submitted",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-19-article-02",
+          "kind": "article",
+          "title": "Как проходит консультация",
+          "summary": "Формат и дальнейшие действия.",
+          "status": "ready",
+          "contentKind": "text",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-19-offer",
+          "kind": "offer",
+          "placement": "day-19-offer",
+          "event": "day_19_offer_opened",
+          "label": "Варианты консультации и дальнейшей работы",
+          "summary": "Доступные варианты после саморевью.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Блок предложения расположен после итогового саморевью и текста о консультации."
+        ]
+      },
+      "afterLead": "Заполните саморевью и подготовьте вопросы.",
+      "timings": []
+    },
+    {
+      "number": 20,
+      "slug": "day-20",
+      "title": "Зависимости и постановка цели",
+      "tocSummary": "Путеводитель по зависимостям и цель на пять лет.",
+      "lead": "Разбираем границы программы и длинную цель.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Мастер-класс помогает работать с питанием и привычками, но не должен изображать лечение зависимости. Сначала проводим границу, затем смотрим на цель шире ближайшей цифры на весах.",
+      "afterTitle": "",
+      "afterText": "",
+      "checks": [
+        {
+          "id": "day-20-check-1",
+          "text": "Изучить путеводитель.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-20-check-2",
+          "text": "Сформулировать цель на пять лет.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
+      "steps": [
+        {
+          "id": "day-20-article-01",
+          "kind": "article",
+          "title": "Путеводитель по зависимостям",
+          "summary": "Границы самостоятельной работы и дальнейшая помощь.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-20-article-02",
+          "kind": "article",
+          "title": "Кем вы видите себя через пять лет: постановка цели",
+          "summary": "Цель на длинную дистанцию.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Два самостоятельных материала."
+        ],
+        "triggers": []
+      },
+      "afterLead": "Сформулируйте цель шире цифры на весах.",
+      "timings": []
+    },
+    {
+      "number": 21,
+      "slug": "day-21",
+      "title": "Фазы и периодизация похудения",
+      "tocSummary": "Подготовка, активная фаза, поддержание и следующий цикл.",
+      "lead": "Похудение — не один бесконечный дефицит.",
+      "media": "none",
+      "video": 0,
+      "videoId": null,
+      "image": null,
+      "intro": "Сегодня собираем всё в долгосрочный план: подготовка, активное похудение, опорное поддержание, следующий цикл и обычная жизнь между ними.",
+      "afterTitle": "Мораль всей программы",
+      "afterText": "Не нужно делать всё одновременно. Нужно понимать, на какой фазе вы находитесь, какая задача стоит сейчас и по какому признаку пора переходить дальше.",
+      "checks": [
+        {
+          "id": "day-21-check-1",
+          "text": "Определить свой текущий этап.",
+          "required": true,
+          "hidden": false
+        },
+        {
+          "id": "day-21-check-2",
+          "text": "Записать условие перехода к следующей фазе.",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "recipeDay": false,
+      "publicationStatus": "ready",
+      "steps": [
+        {
+          "id": "day-21-article-01",
+          "kind": "article",
+          "title": "Фазы и периодизация похудения",
+          "summary": "Подготовительный этап, активное снижение веса, поддержание и следующий цикл.",
+          "status": "ready",
+          "contentKind": "text",
+          "hidden": false
+        },
+        {
+          "id": "day-21-offer",
+          "kind": "offer",
+          "placement": "day-21-offer",
+          "event": "day_21_offer_opened",
+          "label": "Последний этап специальных условий",
+          "summary": "Затем остаются стандартные цены.",
+          "completion": "opened",
+          "required": true,
+          "hidden": false
+        }
+      ],
+      "implementation": {
+        "notes": [
+          "Финальный пакет и редакция завершения будут уточнены отдельно."
+        ]
+      },
+      "afterLead": "Определите свой текущий этап и условие перехода к следующей фазе.",
+      "timings": []
     }
   ]
 }

@@ -1029,7 +1029,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/01-food-diary.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/01-food-diary.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/02-weighing.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1037,7 +1045,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/03-four-diet-categories.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/03-four-diet-categories.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/04-mediterranean-diet.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1049,7 +1065,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/06-necessary-restrictions.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/06-necessary-restrictions.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/07-reading-labels.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1058,6 +1082,10 @@
     {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/08-setup-checklist-and-questionnaire.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/08-whole-processed-ultraprocessed-food.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1097,7 +1125,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/15-plate-rule.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/15-plate-rule.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/16-health-block-closing.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1105,7 +1141,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/17-detox-vitamins-minerals-tests.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/17-detox-vitamins-minerals-tests.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/18-water.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1145,7 +1189,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/27-added-sugar-guide.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/27-added-sugar-guide.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/28-reduce-harm-from-sweets.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1153,7 +1205,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/29-reduce-amount-of-sweets.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/29-reduce-amount-of-sweets.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/30-breakdowns-overeating-cheat-meals.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1161,7 +1221,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/31-satiety-habits.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/31-satiety-habits.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/32-pleasure-habits.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1169,7 +1237,15 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/33-kitchen-matters.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/33-kitchen-matters.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/34-five-tastes.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1213,11 +1289,23 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/44-anchor-points-in-nutrition.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/44-anchor-points-in-nutrition.txt"
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/45-my-anchor-point-oatmeal.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/45-my-anchor-point-oatmeal.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/46-eating-outside-home.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1245,7 +1333,103 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/51-sugar-norms.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/52-how-consultation-works.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/53-recipe-adaptation.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/54-meal-constructor.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/55-store-food-without-cooking.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/56-same-products-four-forms.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/57-one-meal-three-characters.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/58-first-recipes-selection.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/59-recipe-system-offer.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/60-cooking-techniques.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/61-first-recipe-practice.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/62-fifty-shades-hunger-video-script.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/63-behind-scenes.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/64-addictions-guide.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/65-five-years-goal.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/66-sugar-plan.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/README.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/33-kitchen-matters/image(1).png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/33-kitchen-matters/image(2).png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/33-kitchen-matters/image.png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/44-anchor-points-in-nutrition/image.png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(1).png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(2).png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(3).png"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image.png"
     },
     {
       "module_id": "products.strength",
@@ -22895,7 +23079,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/01-food-diary.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/01-food-diary.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/02-weighing.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -22903,7 +23095,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/03-four-diet-categories.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/03-four-diet-categories.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/04-mediterranean-diet.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -22915,7 +23115,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/06-necessary-restrictions.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/06-necessary-restrictions.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/07-reading-labels.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -22924,6 +23132,10 @@
         {
           "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/08-setup-checklist-and-questionnaire.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/08-whole-processed-ultraprocessed-food.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -22963,7 +23175,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/15-plate-rule.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/15-plate-rule.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/16-health-block-closing.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -22971,7 +23191,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/17-detox-vitamins-minerals-tests.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/17-detox-vitamins-minerals-tests.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/18-water.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23011,7 +23239,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/27-added-sugar-guide.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/27-added-sugar-guide.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/28-reduce-harm-from-sweets.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23019,7 +23255,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/29-reduce-amount-of-sweets.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/29-reduce-amount-of-sweets.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/30-breakdowns-overeating-cheat-meals.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23027,7 +23271,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/31-satiety-habits.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/31-satiety-habits.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/32-pleasure-habits.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23035,7 +23287,15 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/33-kitchen-matters.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/33-kitchen-matters.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/34-five-tastes.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23079,11 +23339,23 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/44-anchor-points-in-nutrition.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/44-anchor-points-in-nutrition.txt"
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/45-my-anchor-point-oatmeal.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/45-my-anchor-point-oatmeal.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/46-eating-outside-home.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -23111,7 +23383,103 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/51-sugar-norms.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/52-how-consultation-works.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/53-recipe-adaptation.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/54-meal-constructor.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/55-store-food-without-cooking.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/56-same-products-four-forms.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/57-one-meal-three-characters.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/58-first-recipes-selection.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/59-recipe-system-offer.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/60-cooking-techniques.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/61-first-recipe-practice.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/62-fifty-shades-hunger-video-script.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/63-behind-scenes.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/64-addictions-guide.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/65-five-years-goal.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/66-sugar-plan.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/README.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/33-kitchen-matters/image(1).png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/33-kitchen-matters/image(2).png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/33-kitchen-matters/image.png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/44-anchor-points-in-nutrition/image.png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(1).png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(2).png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image(3).png"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image.png"
         },
         {
           "module_id": "products.masterclass.course",
@@ -26429,7 +26797,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 565,
+          "line": 566,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds",
           "qualname": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds"
@@ -26437,7 +26805,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 603,
+          "line": 604,
           "module_id": "products.masterclass.runtime",
           "name": "placement_token",
           "qualname": "placement_token"
@@ -26445,7 +26813,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 607,
+          "line": 608,
           "module_id": "products.masterclass.runtime",
           "name": "placement_query",
           "qualname": "placement_query"
@@ -26453,7 +26821,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 611,
+          "line": 612,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals",
           "qualname": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals"
@@ -26461,7 +26829,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 622,
+          "line": 623,
           "module_id": "products.masterclass.runtime",
           "name": "test_messenger_link_migration_stores_only_token_hash",
           "qualname": "test_messenger_link_migration_stores_only_token_hash"
@@ -26469,7 +26837,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 633,
+          "line": 634,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_window_migration_changes_only_future_early_duration",
           "qualname": "test_offer_window_migration_changes_only_future_early_duration"
@@ -26477,7 +26845,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 645,
+          "line": 646,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_migration_sets_each_approved_consultation_addon",
           "qualname": "test_site_short_migration_sets_each_approved_consultation_addon"
@@ -26485,7 +26853,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 663,
+          "line": 664,
           "module_id": "products.masterclass.runtime",
           "name": "setup",
           "qualname": "setup"
@@ -26493,7 +26861,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 667,
+          "line": 668,
           "module_id": "products.masterclass.runtime",
           "name": "override",
           "qualname": "setup.override"
@@ -26501,7 +26869,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 716,
+          "line": 717,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_personal_data_uses_tilda_email_and_server_access",
           "qualname": "test_masterclass_personal_data_uses_tilda_email_and_server_access"
@@ -26509,7 +26877,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 728,
+          "line": 729,
           "module_id": "products.masterclass.runtime",
           "name": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent",
           "qualname": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent"
@@ -26517,7 +26885,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 744,
+          "line": 745,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result",
           "qualname": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result"
@@ -26525,7 +26893,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 792,
+          "line": 793,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes",
           "qualname": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes"
@@ -26533,7 +26901,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 831,
+          "line": 832,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly",
           "qualname": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly"
@@ -26541,7 +26909,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 900,
+          "line": 901,
           "module_id": "products.masterclass.runtime",
           "name": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link",
           "qualname": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link"
@@ -26549,7 +26917,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 955,
+          "line": 956,
           "module_id": "products.masterclass.runtime",
           "name": "test_dqs_material_queues_a_link_only_for_linked_telegram",
           "qualname": "test_dqs_material_queues_a_link_only_for_linked_telegram"
@@ -26557,7 +26925,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1001,
+          "line": 1002,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price",
           "qualname": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price"
@@ -26565,7 +26933,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1027,
+          "line": 1028,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_one_offer_shows_early_price_without_starting_countdown",
           "qualname": "test_day_one_offer_shows_early_price_without_starting_countdown"
@@ -26573,7 +26941,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1068,
+          "line": 1069,
           "module_id": "products.masterclass.runtime",
           "name": "test_single_offers_stay_concise_and_bundles_list_their_products",
           "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products"
@@ -26581,7 +26949,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1069,
+          "line": 1070,
           "module_id": "products.masterclass.runtime",
           "name": "assert_composition",
           "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products.assert_composition"
@@ -26589,7 +26957,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1135,
+          "line": 1136,
           "module_id": "products.masterclass.runtime",
           "name": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards",
           "qualname": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards"
@@ -26597,7 +26965,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1185,
+          "line": 1186,
           "module_id": "products.masterclass.runtime",
           "name": "test_partial_bundle_keeps_the_temporary_full_program_name",
           "qualname": "test_partial_bundle_keeps_the_temporary_full_program_name"
@@ -26605,7 +26973,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1205,
+          "line": 1206,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_product_catalog_has_one_complete_card_contract",
           "qualname": "test_offer_product_catalog_has_one_complete_card_contract"
@@ -26613,7 +26981,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1231,
+          "line": 1232,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
           "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -26621,7 +26989,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1252,
+          "line": 1253,
           "module_id": "products.masterclass.runtime",
           "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
           "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -26629,7 +26997,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1312,
+          "line": 1313,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
           "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -26637,7 +27005,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1340,
+          "line": 1341,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
           "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -26645,7 +27013,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1388,
+          "line": 1389,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_preview_uses_production_offer_builder",
           "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -26653,7 +27021,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1410,
+          "line": 1411,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -26661,7 +27029,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1464,
+          "line": 1465,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
           "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -26669,7 +27037,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1484,
+          "line": 1485,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -26677,7 +27045,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1509,
+          "line": 1510,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
           "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -26685,7 +27053,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1532,
+          "line": 1533,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
           "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -26693,7 +27061,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1549,
+          "line": 1550,
           "module_id": "products.masterclass.runtime",
           "name": "test_checkout_rejects_token_from_another_offer_stage",
           "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -26701,7 +27069,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1562,
+          "line": 1563,
           "module_id": "products.masterclass.runtime",
           "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
           "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -26709,7 +27077,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1596,
+          "line": 1597,
           "module_id": "products.masterclass.runtime",
           "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
           "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -26717,7 +27085,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1631,
+          "line": 1632,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
           "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -26725,7 +27093,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1681,
+          "line": 1682,
           "module_id": "products.masterclass.runtime",
           "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
           "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -26733,7 +27101,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1707,
+          "line": 1708,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
           "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -26741,7 +27109,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1727,
+          "line": 1728,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
           "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -26749,7 +27117,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1759,
+          "line": 1760,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_21_day_offer_placements_select_expected_stages",
           "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -26757,7 +27125,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1777,
+          "line": 1778,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
           "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -26765,7 +27133,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1920,
+          "line": 1921,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
           "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -26773,7 +27141,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1954,
+          "line": 1955,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_enable_isolated_accelerated_course_profile",
           "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -26781,7 +27149,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1975,
+          "line": 1976,
           "module_id": "products.masterclass.runtime",
           "name": "test_closing_review_queues_three_review_week_messages_once",
           "qualname": "test_closing_review_queues_three_review_week_messages_once"
@@ -26789,7 +27157,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2007,
+          "line": 2008,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_content_uses_the_same_member_session",
           "qualname": "test_course_content_uses_the_same_member_session"
@@ -26797,7 +27165,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2027,
+          "line": 2028,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_gate_uses_access_and_records_open_once",
           "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -26805,7 +27173,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2062,
+          "line": 2063,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
           "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -26813,7 +27181,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2073,
+          "line": 2074,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
           "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -26821,7 +27189,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2098,
+          "line": 2099,
           "module_id": "products.masterclass.runtime",
           "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
           "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -26829,7 +27197,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2150,
+          "line": 2151,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
           "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -26837,7 +27205,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2180,
+          "line": 2181,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_19_fixes_review_and_last_week_timeline_once",
           "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -26845,7 +27213,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2205,
+          "line": 2206,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_21_during_review_only_shows_its_existing_remainder",
           "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -26853,7 +27221,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2231,
+          "line": 2232,
           "module_id": "products.masterclass.runtime",
           "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
           "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -26861,7 +27229,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2268,
+          "line": 2269,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
           "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -26869,7 +27237,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2290,
+          "line": 2291,
           "module_id": "products.masterclass.runtime",
           "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
           "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -38727,7 +39095,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 565,
+      "line": 566,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds",
       "qualname": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds"
@@ -38735,7 +39103,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 603,
+      "line": 604,
       "module_id": "products.masterclass.runtime",
       "name": "placement_token",
       "qualname": "placement_token"
@@ -38743,7 +39111,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 607,
+      "line": 608,
       "module_id": "products.masterclass.runtime",
       "name": "placement_query",
       "qualname": "placement_query"
@@ -38751,7 +39119,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 611,
+      "line": 612,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals",
       "qualname": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals"
@@ -38759,7 +39127,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 622,
+      "line": 623,
       "module_id": "products.masterclass.runtime",
       "name": "test_messenger_link_migration_stores_only_token_hash",
       "qualname": "test_messenger_link_migration_stores_only_token_hash"
@@ -38767,7 +39135,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 633,
+      "line": 634,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_window_migration_changes_only_future_early_duration",
       "qualname": "test_offer_window_migration_changes_only_future_early_duration"
@@ -38775,7 +39143,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 645,
+      "line": 646,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_migration_sets_each_approved_consultation_addon",
       "qualname": "test_site_short_migration_sets_each_approved_consultation_addon"
@@ -38783,7 +39151,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 663,
+      "line": 664,
       "module_id": "products.masterclass.runtime",
       "name": "setup",
       "qualname": "setup"
@@ -38791,7 +39159,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 667,
+      "line": 668,
       "module_id": "products.masterclass.runtime",
       "name": "override",
       "qualname": "setup.override"
@@ -38799,7 +39167,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 716,
+      "line": 717,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_personal_data_uses_tilda_email_and_server_access",
       "qualname": "test_masterclass_personal_data_uses_tilda_email_and_server_access"
@@ -38807,7 +39175,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 728,
+      "line": 729,
       "module_id": "products.masterclass.runtime",
       "name": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent",
       "qualname": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent"
@@ -38815,7 +39183,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 744,
+      "line": 745,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result",
       "qualname": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result"
@@ -38823,7 +39191,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 792,
+      "line": 793,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes",
       "qualname": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes"
@@ -38831,7 +39199,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 831,
+      "line": 832,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly",
       "qualname": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly"
@@ -38839,7 +39207,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 900,
+      "line": 901,
       "module_id": "products.masterclass.runtime",
       "name": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link",
       "qualname": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link"
@@ -38847,7 +39215,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 955,
+      "line": 956,
       "module_id": "products.masterclass.runtime",
       "name": "test_dqs_material_queues_a_link_only_for_linked_telegram",
       "qualname": "test_dqs_material_queues_a_link_only_for_linked_telegram"
@@ -38855,7 +39223,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1001,
+      "line": 1002,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price",
       "qualname": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price"
@@ -38863,7 +39231,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1027,
+      "line": 1028,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_one_offer_shows_early_price_without_starting_countdown",
       "qualname": "test_day_one_offer_shows_early_price_without_starting_countdown"
@@ -38871,7 +39239,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1068,
+      "line": 1069,
       "module_id": "products.masterclass.runtime",
       "name": "test_single_offers_stay_concise_and_bundles_list_their_products",
       "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products"
@@ -38879,7 +39247,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1069,
+      "line": 1070,
       "module_id": "products.masterclass.runtime",
       "name": "assert_composition",
       "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products.assert_composition"
@@ -38887,7 +39255,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1135,
+      "line": 1136,
       "module_id": "products.masterclass.runtime",
       "name": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards",
       "qualname": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards"
@@ -38895,7 +39263,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1185,
+      "line": 1186,
       "module_id": "products.masterclass.runtime",
       "name": "test_partial_bundle_keeps_the_temporary_full_program_name",
       "qualname": "test_partial_bundle_keeps_the_temporary_full_program_name"
@@ -38903,7 +39271,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1205,
+      "line": 1206,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_product_catalog_has_one_complete_card_contract",
       "qualname": "test_offer_product_catalog_has_one_complete_card_contract"
@@ -38911,7 +39279,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1231,
+      "line": 1232,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
       "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -38919,7 +39287,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1252,
+      "line": 1253,
       "module_id": "products.masterclass.runtime",
       "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
       "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -38927,7 +39295,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1312,
+      "line": 1313,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
       "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -38935,7 +39303,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1340,
+      "line": 1341,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
       "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -38943,7 +39311,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1388,
+      "line": 1389,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_preview_uses_production_offer_builder",
       "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -38951,7 +39319,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1410,
+      "line": 1411,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -38959,7 +39327,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1464,
+      "line": 1465,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
       "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -38967,7 +39335,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1484,
+      "line": 1485,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -38975,7 +39343,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1509,
+      "line": 1510,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
       "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -38983,7 +39351,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1532,
+      "line": 1533,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
       "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -38991,7 +39359,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1549,
+      "line": 1550,
       "module_id": "products.masterclass.runtime",
       "name": "test_checkout_rejects_token_from_another_offer_stage",
       "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -38999,7 +39367,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1562,
+      "line": 1563,
       "module_id": "products.masterclass.runtime",
       "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
       "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -39007,7 +39375,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1596,
+      "line": 1597,
       "module_id": "products.masterclass.runtime",
       "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
       "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -39015,7 +39383,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1631,
+      "line": 1632,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
       "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -39023,7 +39391,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1681,
+      "line": 1682,
       "module_id": "products.masterclass.runtime",
       "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
       "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -39031,7 +39399,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1707,
+      "line": 1708,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
       "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -39039,7 +39407,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1727,
+      "line": 1728,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
       "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -39047,7 +39415,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1759,
+      "line": 1760,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_21_day_offer_placements_select_expected_stages",
       "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -39055,7 +39423,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1777,
+      "line": 1778,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
       "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -39063,7 +39431,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1920,
+      "line": 1921,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
       "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -39071,7 +39439,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1954,
+      "line": 1955,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_enable_isolated_accelerated_course_profile",
       "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -39079,7 +39447,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1975,
+      "line": 1976,
       "module_id": "products.masterclass.runtime",
       "name": "test_closing_review_queues_three_review_week_messages_once",
       "qualname": "test_closing_review_queues_three_review_week_messages_once"
@@ -39087,7 +39455,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2007,
+      "line": 2008,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_content_uses_the_same_member_session",
       "qualname": "test_course_content_uses_the_same_member_session"
@@ -39095,7 +39463,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2027,
+      "line": 2028,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_gate_uses_access_and_records_open_once",
       "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -39103,7 +39471,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2062,
+      "line": 2063,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
       "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -39111,7 +39479,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2073,
+      "line": 2074,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
       "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -39119,7 +39487,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2098,
+      "line": 2099,
       "module_id": "products.masterclass.runtime",
       "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
       "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -39127,7 +39495,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2150,
+      "line": 2151,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
       "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -39135,7 +39503,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2180,
+      "line": 2181,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_19_fixes_review_and_last_week_timeline_once",
       "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -39143,7 +39511,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2205,
+      "line": 2206,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_21_during_review_only_shows_its_existing_remainder",
       "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -39151,7 +39519,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2231,
+      "line": 2232,
       "module_id": "products.masterclass.runtime",
       "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
       "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -39159,7 +39527,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2268,
+      "line": 2269,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
       "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -39167,7 +39535,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2290,
+      "line": 2291,
       "module_id": "products.masterclass.runtime",
       "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
       "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
