@@ -18640,7 +18640,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 301,
+          "line": 305,
           "module_id": "platform.content",
           "name": "CatalogAuthorshipTests",
           "qualname": "CatalogAuthorshipTests"
@@ -18648,7 +18648,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 302,
+          "line": 306,
           "module_id": "platform.content",
           "name": "test_telegram_preserves_embedded_link_targets",
           "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -18656,7 +18656,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 313,
+          "line": 317,
           "module_id": "platform.content",
           "name": "test_reply_page_separates_parent_context_from_owner_text",
           "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -18664,7 +18664,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 342,
+          "line": 346,
           "module_id": "platform.content",
           "name": "VoiceDecisionTests",
           "qualname": "VoiceDecisionTests"
@@ -18672,7 +18672,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 344,
+          "line": 348,
           "module_id": "platform.content",
           "name": "card",
           "qualname": "VoiceDecisionTests.card"
@@ -18680,7 +18680,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 356,
+          "line": 360,
           "module_id": "platform.content",
           "name": "test_link_only_variants_share_normalized_hash",
           "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -18688,7 +18688,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 366,
+          "line": 370,
           "module_id": "platform.content",
           "name": "test_parent_context_never_teaches_voice",
           "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -18696,7 +18696,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 373,
+          "line": 377,
           "module_id": "platform.content",
           "name": "test_owner_reply_is_eligible_when_long_enough",
           "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -18704,7 +18704,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 380,
+          "line": 384,
           "module_id": "platform.content",
           "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
           "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -18712,7 +18712,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 391,
+          "line": 395,
           "module_id": "platform.content",
           "name": "VoiceSearchIntegrationTests",
           "qualname": "VoiceSearchIntegrationTests"
@@ -18720,7 +18720,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 392,
+          "line": 396,
           "module_id": "platform.content",
           "name": "test_direct_owner_decision_reaches_runtime_evidence",
           "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -18728,7 +18728,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 521,
+          "line": 525,
           "module_id": "platform.content",
           "name": "test_old_materialization_version_is_not_current",
           "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -18736,7 +18736,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 532,
+          "line": 536,
           "module_id": "platform.content",
           "name": "test_materialization_rebuild_preserves_owner_corrections",
           "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -18744,7 +18744,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 541,
+          "line": 545,
           "module_id": "platform.content",
           "name": "test_cache_requires_all_derived_artifacts",
           "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -18752,7 +18752,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 550,
+          "line": 554,
           "module_id": "platform.content",
           "name": "test_natural_query_adds_shared_russian_prefix",
           "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -18760,7 +18760,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 554,
+          "line": 558,
           "module_id": "platform.content",
           "name": "test_reviewed_index_returns_source_linked_fragment",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -18768,7 +18768,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 605,
+          "line": 609,
           "module_id": "platform.content",
           "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
           "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -18776,7 +18776,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 654,
+          "line": 658,
           "module_id": "platform.content",
           "name": "test_search_softly_prioritizes_strength_and_surface",
           "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -18784,7 +18784,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 692,
+          "line": 696,
           "module_id": "platform.content",
           "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
           "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -18792,7 +18792,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 731,
+          "line": 735,
           "module_id": "platform.content",
           "name": "test_russian_word_forms_and_late_filtered_result_are_found",
           "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -18800,7 +18800,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 770,
+          "line": 774,
           "module_id": "platform.content",
           "name": "test_private_guard_rejects_git_tree",
           "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -18808,7 +18808,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 778,
+          "line": 782,
           "module_id": "platform.content",
           "name": "test_owner_correction_is_persisted_and_searchable",
           "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -18816,7 +18816,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 806,
+          "line": 810,
           "module_id": "platform.content",
           "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -18824,7 +18824,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 846,
+          "line": 850,
           "module_id": "platform.content",
           "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
           "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -18832,7 +18832,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 879,
+          "line": 883,
           "module_id": "platform.content",
           "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -18840,7 +18840,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 907,
+          "line": 911,
           "module_id": "platform.content",
           "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
           "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -18848,7 +18848,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 927,
+          "line": 931,
           "module_id": "platform.content",
           "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
           "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -18856,7 +18856,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 954,
+          "line": 958,
           "module_id": "platform.content",
           "name": "test_default_search_excludes_candidates_but_can_request_them",
           "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -18864,7 +18864,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 990,
+          "line": 994,
           "module_id": "platform.content",
           "name": "test_post_pack_carries_argument_route_and_edit_mode",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -18872,7 +18872,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1035,
+          "line": 1039,
           "module_id": "platform.content",
           "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -18880,7 +18880,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1112,
+          "line": 1116,
           "module_id": "platform.content",
           "name": "test_text_only_mode_preserves_structure_contract",
           "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -18888,7 +18888,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1174,
+          "line": 1178,
           "module_id": "platform.content",
           "name": "test_general_course_article_uses_article_rules_without_full_shell",
           "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -18896,7 +18896,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1192,
+          "line": 1196,
           "module_id": "platform.content",
           "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
           "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -18904,7 +18904,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1261,
+          "line": 1265,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -18912,7 +18912,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1310,
+          "line": 1314,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_source_text_and_goal",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -18920,7 +18920,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1332,
+          "line": 1336,
           "module_id": "platform.content",
           "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -18928,7 +18928,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1359,
+          "line": 1363,
           "module_id": "platform.content",
           "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
           "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -18936,7 +18936,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1439,
+          "line": 1443,
           "module_id": "platform.content",
           "name": "test_structure_only_protects_embedded_video_and_audio",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -18944,7 +18944,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1470,
+          "line": 1474,
           "module_id": "platform.content",
           "name": "test_sales_cta_pack_routes_editorial_linking",
           "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -18952,7 +18952,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1491,
+          "line": 1495,
           "module_id": "platform.content",
           "name": "test_edit_only_modes_require_source_text",
           "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -18960,7 +18960,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1513,
+          "line": 1517,
           "module_id": "platform.content",
           "name": "test_proofread_preserves_structure_and_requires_change_review",
           "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -18968,7 +18968,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1550,
+          "line": 1554,
           "module_id": "platform.content",
           "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -18976,7 +18976,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1618,
+          "line": 1622,
           "module_id": "platform.content",
           "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
           "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -18984,7 +18984,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1636,
+          "line": 1640,
           "module_id": "platform.content",
           "name": "test_correction_preserves_owner_final_and_review_rounds",
           "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
@@ -47182,7 +47182,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 301,
+      "line": 305,
       "module_id": "platform.content",
       "name": "CatalogAuthorshipTests",
       "qualname": "CatalogAuthorshipTests"
@@ -47190,7 +47190,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 302,
+      "line": 306,
       "module_id": "platform.content",
       "name": "test_telegram_preserves_embedded_link_targets",
       "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -47198,7 +47198,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 313,
+      "line": 317,
       "module_id": "platform.content",
       "name": "test_reply_page_separates_parent_context_from_owner_text",
       "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -47206,7 +47206,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 342,
+      "line": 346,
       "module_id": "platform.content",
       "name": "VoiceDecisionTests",
       "qualname": "VoiceDecisionTests"
@@ -47214,7 +47214,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 344,
+      "line": 348,
       "module_id": "platform.content",
       "name": "card",
       "qualname": "VoiceDecisionTests.card"
@@ -47222,7 +47222,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 356,
+      "line": 360,
       "module_id": "platform.content",
       "name": "test_link_only_variants_share_normalized_hash",
       "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -47230,7 +47230,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 366,
+      "line": 370,
       "module_id": "platform.content",
       "name": "test_parent_context_never_teaches_voice",
       "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -47238,7 +47238,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 373,
+      "line": 377,
       "module_id": "platform.content",
       "name": "test_owner_reply_is_eligible_when_long_enough",
       "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -47246,7 +47246,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 380,
+      "line": 384,
       "module_id": "platform.content",
       "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
       "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -47254,7 +47254,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 391,
+      "line": 395,
       "module_id": "platform.content",
       "name": "VoiceSearchIntegrationTests",
       "qualname": "VoiceSearchIntegrationTests"
@@ -47262,7 +47262,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 392,
+      "line": 396,
       "module_id": "platform.content",
       "name": "test_direct_owner_decision_reaches_runtime_evidence",
       "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -47270,7 +47270,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 521,
+      "line": 525,
       "module_id": "platform.content",
       "name": "test_old_materialization_version_is_not_current",
       "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -47278,7 +47278,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 532,
+      "line": 536,
       "module_id": "platform.content",
       "name": "test_materialization_rebuild_preserves_owner_corrections",
       "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -47286,7 +47286,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 541,
+      "line": 545,
       "module_id": "platform.content",
       "name": "test_cache_requires_all_derived_artifacts",
       "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -47294,7 +47294,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 550,
+      "line": 554,
       "module_id": "platform.content",
       "name": "test_natural_query_adds_shared_russian_prefix",
       "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -47302,7 +47302,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 554,
+      "line": 558,
       "module_id": "platform.content",
       "name": "test_reviewed_index_returns_source_linked_fragment",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -47310,7 +47310,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 605,
+      "line": 609,
       "module_id": "platform.content",
       "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
       "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -47318,7 +47318,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 654,
+      "line": 658,
       "module_id": "platform.content",
       "name": "test_search_softly_prioritizes_strength_and_surface",
       "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -47326,7 +47326,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 692,
+      "line": 696,
       "module_id": "platform.content",
       "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
       "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -47334,7 +47334,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 731,
+      "line": 735,
       "module_id": "platform.content",
       "name": "test_russian_word_forms_and_late_filtered_result_are_found",
       "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -47342,7 +47342,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 770,
+      "line": 774,
       "module_id": "platform.content",
       "name": "test_private_guard_rejects_git_tree",
       "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -47350,7 +47350,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 778,
+      "line": 782,
       "module_id": "platform.content",
       "name": "test_owner_correction_is_persisted_and_searchable",
       "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -47358,7 +47358,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 806,
+      "line": 810,
       "module_id": "platform.content",
       "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -47366,7 +47366,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 846,
+      "line": 850,
       "module_id": "platform.content",
       "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
       "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -47374,7 +47374,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 879,
+      "line": 883,
       "module_id": "platform.content",
       "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -47382,7 +47382,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 907,
+      "line": 911,
       "module_id": "platform.content",
       "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
       "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -47390,7 +47390,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 927,
+      "line": 931,
       "module_id": "platform.content",
       "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
       "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -47398,7 +47398,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 954,
+      "line": 958,
       "module_id": "platform.content",
       "name": "test_default_search_excludes_candidates_but_can_request_them",
       "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -47406,7 +47406,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 990,
+      "line": 994,
       "module_id": "platform.content",
       "name": "test_post_pack_carries_argument_route_and_edit_mode",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -47414,7 +47414,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1035,
+      "line": 1039,
       "module_id": "platform.content",
       "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -47422,7 +47422,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1112,
+      "line": 1116,
       "module_id": "platform.content",
       "name": "test_text_only_mode_preserves_structure_contract",
       "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -47430,7 +47430,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1174,
+      "line": 1178,
       "module_id": "platform.content",
       "name": "test_general_course_article_uses_article_rules_without_full_shell",
       "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -47438,7 +47438,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1192,
+      "line": 1196,
       "module_id": "platform.content",
       "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
       "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -47446,7 +47446,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1261,
+      "line": 1265,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -47454,7 +47454,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1310,
+      "line": 1314,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_source_text_and_goal",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -47462,7 +47462,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1332,
+      "line": 1336,
       "module_id": "platform.content",
       "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -47470,7 +47470,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1359,
+      "line": 1363,
       "module_id": "platform.content",
       "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
       "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -47478,7 +47478,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1439,
+      "line": 1443,
       "module_id": "platform.content",
       "name": "test_structure_only_protects_embedded_video_and_audio",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -47486,7 +47486,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1470,
+      "line": 1474,
       "module_id": "platform.content",
       "name": "test_sales_cta_pack_routes_editorial_linking",
       "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -47494,7 +47494,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1491,
+      "line": 1495,
       "module_id": "platform.content",
       "name": "test_edit_only_modes_require_source_text",
       "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -47502,7 +47502,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1513,
+      "line": 1517,
       "module_id": "platform.content",
       "name": "test_proofread_preserves_structure_and_requires_change_review",
       "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -47510,7 +47510,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1550,
+      "line": 1554,
       "module_id": "platform.content",
       "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -47518,7 +47518,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1618,
+      "line": 1622,
       "module_id": "platform.content",
       "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
       "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -47526,7 +47526,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1636,
+      "line": 1640,
       "module_id": "platform.content",
       "name": "test_correction_preserves_owner_final_and_review_rounds",
       "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
