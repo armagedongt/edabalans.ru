@@ -29,6 +29,10 @@ fi
 readonly PREVIOUS_SHA="$(git rev-parse HEAD)"
 deployment_started=false
 deployment_succeeded=false
+caddy_config_changed=false
+if ! git diff --quiet "${PREVIOUS_SHA}" "${TARGET_SHA}" -- infra/caddy/Caddyfile; then
+    caddy_config_changed=true
+fi
 read -r migration_deploy startup_data_deploy < <(
     git show "${TARGET_SHA}:infra/deploy/classify-deploy-impact" \
         | bash -s -- "${APP_DIR}" "${PREVIOUS_SHA}" "${TARGET_SHA}"
@@ -56,6 +60,9 @@ rollback() {
             fi
             docker compose build
             docker compose up -d --remove-orphans --wait --wait-timeout 180
+            if [[ "${caddy_config_changed}" == "true" ]]; then
+                docker compose up -d --force-recreate --wait --wait-timeout 180 caddy
+            fi
         fi
     fi
 
@@ -79,12 +86,37 @@ docker compose config --quiet
 docker compose build
 docker compose up -d --remove-orphans --wait --wait-timeout 180
 
+# A bind-mounted Caddyfile does not by itself recreate the running Caddy
+# container. Recreate only that service when its source changed so the live
+# proxy cannot keep the previous header or routing policy in memory.
+if [[ "${caddy_config_changed}" == "true" ]]; then
+    docker compose up -d --force-recreate --wait --wait-timeout 180 caddy
+fi
+
 curl --fail --silent --show-error --max-time 15 \
     https://api.edabalans.ru/health >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://api.edabalans.ru/ready >/dev/null
 curl --fail --silent --show-error --max-time 20 \
     https://data.edabalans.ru/api/v1/health >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://app.edabalans.ru/apps/masterclass-course.html >/dev/null
+
+if [[ "${caddy_config_changed}" == "true" ]]; then
+    app_headers="$(curl --fail --silent --show-error --max-time 15 \
+        --dump-header - --output /dev/null \
+        https://app.edabalans.ru/apps/masterclass-course.html | tr -d '\r')"
+    if ! grep -Fqi \
+        "content-security-policy: frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai" \
+        <<<"${app_headers}"; then
+        echo "Caddy did not apply the required Tilda embedding policy" >&2
+        exit 1
+    fi
+    if grep -Fqi "x-frame-options:" <<<"${app_headers}"; then
+        echo "Caddy still returns X-Frame-Options for the embeddable app" >&2
+        exit 1
+    fi
+fi
 
 # The timer launches installed control-plane copies. Refresh them only after the
 # target revision is healthy so the next deployment uses the reviewed scripts.
