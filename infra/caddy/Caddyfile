@@ -61,7 +61,7 @@
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
-		X-Frame-Options "DENY"
+		Content-Security-Policy "frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
 		Referrer-Policy "no-referrer"
 		-Server
 	}
