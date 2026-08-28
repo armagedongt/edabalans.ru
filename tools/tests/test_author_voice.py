@@ -246,8 +246,17 @@ class ProjectVoiceManifestTests(unittest.TestCase):
         private_root = Path(r"C:\private\edabalans-content-authoring")
         cards_path = private_root / "working" / "author-content-cards.jsonl"
         assessments_path = private_root / "voice" / "v1" / "source-assessments.jsonl"
-        if not cards_path.exists() or not assessments_path.exists():
+        try:
+            available = cards_path.exists() and assessments_path.exists()
+        except PermissionError:
+            self.skipTest("Private author corpus is protected from this process.")
+        if not available:
             self.skipTest("Private author corpus is not available in this environment.")
+        try:
+            cards_text = cards_path.read_text(encoding="utf-8")
+            assessments_text = assessments_path.read_text(encoding="utf-8")
+        except PermissionError:
+            self.skipTest("Private author corpus is protected from this process.")
 
         project_root = TOOLS.parent
         exemplars = json.loads(
@@ -259,7 +268,7 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             row["catalog_id"]: row
             for row in (
                 json.loads(line)
-                for line in cards_path.read_text(encoding="utf-8").splitlines()
+                for line in cards_text.splitlines()
                 if line.strip()
             )
         }
@@ -267,7 +276,7 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             row["catalog_id"]: row
             for row in (
                 json.loads(line)
-                for line in assessments_path.read_text(encoding="utf-8").splitlines()
+                for line in assessments_text.splitlines()
                 if line.strip()
             )
         }

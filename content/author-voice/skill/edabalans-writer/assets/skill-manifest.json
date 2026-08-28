@@ -1,16 +1,16 @@
 {
-  "package_version": "2.1.9-20260828",
+  "package_version": "2.1.10-20260828",
   "files": [
-    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "0bff26eff4ab8e4fdcb7d7b4144654a290dffa66ef14320b829ba0ff007b44a7"},
-    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "f0ae6d28e0abc784b15b49c222f83e5dea5fc249228559af4d31251bfc0f1cf6"},
-    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "fab9c16320a5bbc2daaffb01b3a55db74b14fa5410fceccdb2899be5925ace3d"},
-    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "55bbe3a66a28999a1cfff8a934305eb2a01cbd126b5a76d0973e4fb18de142e2"},
-    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "c300efecc3eb4bf76fe85556f60f40cf3168840f6b16003e16a13dd3c7c03928"},
+    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "5ffa6953d0c6f042734bd12c38ba24a5eec3b944c37eed69447131fbdfbd14bc"},
+    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "9823e5537c9cbaf65683fbec9cde62f45e5ddd563e7085efec6f1599253a725f"},
+    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "9b2b00914348fd53d519cf85d72d98f0a8d0b7093ac685567c7b2f87a6c8c19c"},
+    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "9a52bba88688769abc0ab001ae04dac610c001c7ac153dfac672916d56397f47"},
+    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "40d5abcdc1e77ff75b9aef0617d59dbb88f24188ba7943724a009d0d98dd40c7"},
     {"path": "content/author-voice/product-fact-router.md", "sha256": "4d46d805da832f9d1fb1dd2d383dd795381ec5182ef0effadb744976b170ae12"},
     {"path": "content/author-voice/editorial-linking-v1.md", "sha256": "ab98e3af021349db99ecd35622109e857f6056f33f9ca4cf0e7d9b9e75769b3a"},
-    {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "ed78797f672ba3e60184bf4100fdc304d67b998c70123bec79a7c406706a6af0"},
-    {"path": "content/author-voice/article-component-router.md", "sha256": "7a059d3b44ed6cdf526b12e90d1cd622d49612512312a70bf66fa44dee553c32"},
-    {"path": "content/author-voice/author-task.schema.json", "sha256": "1db735e09f25e00275215645923b139fd63c26139a3895988ca91ce10304d56a"},
-    {"path": "content/author-voice/material-status-v1.md", "sha256": "9565777cc06c106a44fc4dfabe3379e41952a183a2fe41b6e953f0924cedde2e"}
+    {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "87bb5f10b7041c6e22bdac698e4e388db93a0d010758524fdbddf32d95643a0b"},
+    {"path": "content/author-voice/article-component-router.md", "sha256": "c6d9971b3599c0c68c4ead1e1f49b6185f7d4d28965b1fd7a4619e6c17f5e8ef"},
+    {"path": "content/author-voice/author-task.schema.json", "sha256": "11d55413d57e22f3f29dbcd6cc470ceb889414228d410496388454b7a147efc6"},
+    {"path": "content/author-voice/material-status-v1.md", "sha256": "f565265b434d3588be9d36aba30e2722b04ab8fc26ab29efb7015f4c7c4ff030"}
   ]
 }
