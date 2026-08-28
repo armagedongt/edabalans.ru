@@ -27,6 +27,7 @@ from app.masterclass_offer_catalog import OFFER_CARD_COPY, OFFER_PRODUCTS  # noq
 from app.course_structure_service import (  # noqa: E402
     course_context,
     effective_required_check_ids,
+    effective_required_step_ids,
 )
 from app.masterclass_article_components import render_masterclass_component  # noqa: E402
 from app.models import (  # noqa: E402
@@ -155,6 +156,11 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     assert materials.status_code == 200
     assert step_id not in materials.json()["materials"]
 
+    opened = client.post(
+        "/api/masterclass/course/days/1/open",
+        json={"email": "member@example.test"},
+    )
+    assert opened.status_code == 200
     first = client.post(
         "/api/masterclass/course/days/1/steps/0/complete",
         json={"email": "member@example.test"},
