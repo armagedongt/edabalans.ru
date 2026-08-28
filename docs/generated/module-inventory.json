@@ -868,6 +868,22 @@
       "path": "content/calories/course/course.json"
     },
     {
+      "module_id": "products.calories",
+      "path": "content/calories/reference/README.md"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "content/calories/reference/transcripts/Калорийный курс — Расчёт активности и тренировок — транскрипт.txt"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "content/calories/reference/transcripts/Калорийный курс — Только калории — считаем — архивный транскрипт.txt"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "content/calories/reference/transcripts/Калорийный курс — Только калории, урок 1 — архивный транскрипт.txt"
+    },
+    {
       "module_id": "platform.content",
       "path": "content/external-references/README.md"
     },
@@ -950,6 +966,54 @@
     {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/imported-draft/extracted-2026-08-23.json"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/README.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/stream-masterclass-structured-transcript.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/README.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Большой стрим в канале, 2ч42м22с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Вредная еда, 58м59с — фрагмент 02 — ограничения и детали — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Вредная еда, 58м59с — фрагмент 03 — ОАДВЗ — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — День 03 — Вредная еда, 29м03с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — День 09 — 50 оттенков голода, 33м33с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Конструктор питания, 19м43с — версия не определена — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Периодизация похудения, 1ч14м02с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Пять правил сокращения сладкого, 12м17с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — Фазы похудения, 40м38с — транскрипт.txt"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1177,7 +1241,23 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/source-current/51-how-we-will-lose-weight-video-script.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/source-current/README.md"
+    },
+    {
+      "module_id": "products.strength",
+      "path": "content/training/reference/README.md"
+    },
+    {
+      "module_id": "products.strength",
+      "path": "content/training/reference/transcripts/Тренировки — короткая запись, 51м41с — дубль начала общего эфира.txt"
+    },
+    {
+      "module_id": "products.strength",
+      "path": "content/training/reference/transcripts/Тренировки — общий эфир, 2ч47м57с — транскрипт.txt"
     },
     {
       "module_id": "admin",
@@ -4355,7 +4435,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 65,
+          "line": 69,
           "module_id": "admin.project-knowledge",
           "name": "tracked_inputs",
           "qualname": "tracked_inputs"
@@ -4363,7 +4443,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 82,
+          "line": 86,
           "module_id": "admin.project-knowledge",
           "name": "_front_matter",
           "qualname": "_front_matter"
@@ -4371,7 +4451,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 107,
+          "line": 111,
           "module_id": "admin.project-knowledge",
           "name": "parse_card",
           "qualname": "parse_card"
@@ -4379,7 +4459,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 151,
+          "line": 155,
           "module_id": "admin.project-knowledge",
           "name": "top_document_status",
           "qualname": "top_document_status"
@@ -4387,7 +4467,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 162,
+          "line": 166,
           "module_id": "admin.project-knowledge",
           "name": "load_registry",
           "qualname": "load_registry"
@@ -4395,7 +4475,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 196,
+          "line": 200,
           "module_id": "admin.project-knowledge",
           "name": "pattern_specificity",
           "qualname": "pattern_specificity"
@@ -4403,7 +4483,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 201,
+          "line": 205,
           "module_id": "admin.project-knowledge",
           "name": "resolve_owner",
           "qualname": "resolve_owner"
@@ -4411,7 +4491,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 219,
+          "line": 223,
           "module_id": "admin.project-knowledge",
           "name": "_string_literal",
           "qualname": "_string_literal"
@@ -4419,7 +4499,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 225,
+          "line": 229,
           "module_id": "admin.project-knowledge",
           "name": "_call_name",
           "qualname": "_call_name"
@@ -4427,7 +4507,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 234,
+          "line": 238,
           "module_id": "admin.project-knowledge",
           "name": "extract_python",
           "qualname": "extract_python"
@@ -4435,7 +4515,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "class",
-          "line": 257,
+          "line": 261,
           "module_id": "admin.project-knowledge",
           "name": "Visitor",
           "qualname": "extract_python.Visitor"
@@ -4443,7 +4523,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 258,
+          "line": 262,
           "module_id": "admin.project-knowledge",
           "name": "__init__",
           "qualname": "extract_python.Visitor.__init__"
@@ -4451,7 +4531,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 261,
+          "line": 265,
           "module_id": "admin.project-knowledge",
           "name": "_visit_symbol",
           "qualname": "extract_python.Visitor._visit_symbol"
@@ -4459,7 +4539,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 317,
+          "line": 321,
           "module_id": "admin.project-knowledge",
           "name": "visit_ClassDef",
           "qualname": "extract_python.Visitor.visit_ClassDef"
@@ -4467,7 +4547,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 330,
+          "line": 334,
           "module_id": "admin.project-knowledge",
           "name": "visit_FunctionDef",
           "qualname": "extract_python.Visitor.visit_FunctionDef"
@@ -4475,7 +4555,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 333,
+          "line": 337,
           "module_id": "admin.project-knowledge",
           "name": "visit_AsyncFunctionDef",
           "qualname": "extract_python.Visitor.visit_AsyncFunctionDef"
@@ -4483,7 +4563,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "method",
-          "line": 336,
+          "line": 340,
           "module_id": "admin.project-knowledge",
           "name": "visit_Call",
           "qualname": "extract_python.Visitor.visit_Call"
@@ -4491,7 +4571,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 354,
+          "line": 358,
           "module_id": "admin.project-knowledge",
           "name": "extract_javascript",
           "qualname": "extract_javascript"
@@ -4499,7 +4579,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 374,
+          "line": 378,
           "module_id": "admin.project-knowledge",
           "name": "parse_plan",
           "qualname": "parse_plan"
@@ -4507,7 +4587,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 407,
+          "line": 411,
           "module_id": "admin.project-knowledge",
           "name": "parse_quick_notes",
           "qualname": "parse_quick_notes"
@@ -4515,7 +4595,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 471,
+          "line": 475,
           "module_id": "admin.project-knowledge",
           "name": "_module_rules",
           "qualname": "_module_rules"
@@ -4523,7 +4603,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 479,
+          "line": 483,
           "module_id": "admin.project-knowledge",
           "name": "validate_registry",
           "qualname": "validate_registry"
@@ -4531,7 +4611,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 626,
+          "line": 630,
           "module_id": "admin.project-knowledge",
           "name": "build_inventory",
           "qualname": "build_inventory"
@@ -4539,7 +4619,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 800,
+          "line": 804,
           "module_id": "admin.project-knowledge",
           "name": "render_json",
           "qualname": "render_json"
@@ -4547,7 +4627,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 804,
+          "line": 808,
           "module_id": "admin.project-knowledge",
           "name": "render_markdown",
           "qualname": "render_markdown"
@@ -4555,7 +4635,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 819,
+          "line": 823,
           "module_id": "admin.project-knowledge",
           "name": "append_branch",
           "qualname": "render_markdown.append_branch"
@@ -4563,7 +4643,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 838,
+          "line": 842,
           "module_id": "admin.project-knowledge",
           "name": "render_telegram_modules",
           "qualname": "render_telegram_modules"
@@ -4571,7 +4651,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 863,
+          "line": 867,
           "module_id": "admin.project-knowledge",
           "name": "changed_paths",
           "qualname": "changed_paths"
@@ -4579,7 +4659,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 873,
+          "line": 877,
           "module_id": "admin.project-knowledge",
           "name": "impact_report",
           "qualname": "impact_report"
@@ -4587,7 +4667,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 890,
+          "line": 894,
           "module_id": "admin.project-knowledge",
           "name": "write_or_check",
           "qualname": "write_or_check"
@@ -4595,7 +4675,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 916,
+          "line": 920,
           "module_id": "admin.project-knowledge",
           "name": "parse_args",
           "qualname": "parse_args"
@@ -4603,7 +4683,7 @@
         {
           "file": "tools/module_inventory.py",
           "kind": "function",
-          "line": 931,
+          "line": 935,
           "module_id": "admin.project-knowledge",
           "name": "main",
           "qualname": "main"
@@ -4621,13 +4701,21 @@
           "kind": "method",
           "line": 37,
           "module_id": "admin.project-knowledge",
+          "name": "test_git_paths_keep_non_ascii_names_unquoted",
+          "qualname": "ModuleInventoryTests.test_git_paths_keep_non_ascii_names_unquoted"
+        },
+        {
+          "file": "tools/tests/test_module_inventory.py",
+          "kind": "method",
+          "line": 51,
+          "module_id": "admin.project-knowledge",
           "name": "test_python_ast_extracts_symbols_routes_and_tables",
           "qualname": "ModuleInventoryTests.test_python_ast_extracts_symbols_routes_and_tables"
         },
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 61,
+          "line": 75,
           "module_id": "admin.project-knowledge",
           "name": "test_javascript_extractor_is_conservative",
           "qualname": "ModuleInventoryTests.test_javascript_extractor_is_conservative"
@@ -4635,7 +4723,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 78,
+          "line": 92,
           "module_id": "admin.project-knowledge",
           "name": "test_owner_uses_more_specific_rule_and_rejects_equal_overlap",
           "qualname": "ModuleInventoryTests.test_owner_uses_more_specific_rule_and_rejects_equal_overlap"
@@ -4643,7 +4731,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 93,
+          "line": 107,
           "module_id": "admin.project-knowledge",
           "name": "test_route_function_inherits_route_module_in_shared_file",
           "qualname": "ModuleInventoryTests.test_route_function_inherits_route_module_in_shared_file"
@@ -4651,7 +4739,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 133,
+          "line": 147,
           "module_id": "admin.project-knowledge",
           "name": "test_plan_provenance_is_required_only_for_active_plans",
           "qualname": "ModuleInventoryTests.test_plan_provenance_is_required_only_for_active_plans"
@@ -4659,7 +4747,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 151,
+          "line": 165,
           "module_id": "admin.project-knowledge",
           "name": "test_card_exposes_human_boundary_and_sources_of_truth",
           "qualname": "ModuleInventoryTests.test_card_exposes_human_boundary_and_sources_of_truth"
@@ -4667,7 +4755,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 169,
+          "line": 183,
           "module_id": "admin.project-knowledge",
           "name": "test_cross_project_plan_is_not_duplicated_in_module_plans",
           "qualname": "ModuleInventoryTests.test_cross_project_plan_is_not_duplicated_in_module_plans"
@@ -4675,7 +4763,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 201,
+          "line": 215,
           "module_id": "admin.project-knowledge",
           "name": "test_current_quick_notes_exposes_only_valid_planned_rows",
           "qualname": "ModuleInventoryTests.test_current_quick_notes_exposes_only_valid_planned_rows"
@@ -4683,7 +4771,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 220,
+          "line": 234,
           "module_id": "admin.project-knowledge",
           "name": "test_top_document_status_ignores_nested_statuses",
           "qualname": "ModuleInventoryTests.test_top_document_status_ignores_nested_statuses"
@@ -4691,7 +4779,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 235,
+          "line": 249,
           "module_id": "admin.project-knowledge",
           "name": "test_impact_report_lists_registered_consumers",
           "qualname": "ModuleInventoryTests.test_impact_report_lists_registered_consumers"
@@ -4699,7 +4787,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 256,
+          "line": 270,
           "module_id": "admin.project-knowledge",
           "name": "test_registry_validation_rejects_status_relation_and_shared_source_errors",
           "qualname": "ModuleInventoryTests.test_registry_validation_rejects_status_relation_and_shared_source_errors"
@@ -4707,7 +4795,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 294,
+          "line": 308,
           "module_id": "admin.project-knowledge",
           "name": "test_shared_source_consumer_must_read_from_owner",
           "qualname": "ModuleInventoryTests.test_shared_source_consumer_must_read_from_owner"
@@ -4715,7 +4803,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 328,
+          "line": 342,
           "module_id": "admin.project-knowledge",
           "name": "test_telegram_projection_uses_explicit_registry_fields",
           "qualname": "ModuleInventoryTests.test_telegram_projection_uses_explicit_registry_fields"
@@ -4723,7 +4811,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 359,
+          "line": 373,
           "module_id": "admin.project-knowledge",
           "name": "test_full_fixture_is_deterministic_and_check_detects_stale_output",
           "qualname": "ModuleInventoryTests.test_full_fixture_is_deterministic_and_check_detects_stale_output"
@@ -4731,7 +4819,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 444,
+          "line": 458,
           "module_id": "admin.project-knowledge",
           "name": "test_cli_check_fails_for_orphan_overlap_and_invalid_relation",
           "qualname": "ModuleInventoryTests.test_cli_check_fails_for_orphan_overlap_and_invalid_relation"
@@ -4739,7 +4827,7 @@
         {
           "file": "tools/tests/test_module_inventory.py",
           "kind": "method",
-          "line": 490,
+          "line": 504,
           "module_id": "admin.project-knowledge",
           "name": "_git",
           "qualname": "ModuleInventoryTests._git"
@@ -17946,13 +18034,21 @@
           "kind": "function",
           "line": 27,
           "module_id": "platform.content",
+          "name": "canonical_text_digest",
+          "qualname": "canonical_text_digest"
+        },
+        {
+          "file": "tools/install_edabalans_writer_skill.py",
+          "kind": "function",
+          "line": 35,
+          "module_id": "platform.content",
           "name": "sync_status",
           "qualname": "sync_status"
         },
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 43,
+          "line": 51,
           "module_id": "platform.content",
           "name": "install",
           "qualname": "install"
@@ -17960,7 +18056,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 63,
+          "line": 71,
           "module_id": "platform.content",
           "name": "package_status",
           "qualname": "package_status"
@@ -17968,7 +18064,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 94,
+          "line": 102,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18584,7 +18680,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 28,
+          "line": 29,
           "module_id": "platform.content",
           "name": "ProjectVoiceManifestTests",
           "qualname": "ProjectVoiceManifestTests"
@@ -18592,7 +18688,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 29,
+          "line": 30,
           "module_id": "platform.content",
           "name": "test_retrieval_full_text_has_a_hard_character_ceiling",
           "qualname": "ProjectVoiceManifestTests.test_retrieval_full_text_has_a_hard_character_ceiling"
@@ -18600,7 +18696,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 38,
+          "line": 39,
           "module_id": "platform.content",
           "name": "test_project_writer_skill_installer_keeps_runtime_copy_in_sync",
           "qualname": "ProjectVoiceManifestTests.test_project_writer_skill_installer_keeps_runtime_copy_in_sync"
@@ -18608,7 +18704,23 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 57,
+          "line": 61,
+          "module_id": "platform.content",
+          "name": "test_writer_skill_manifest_hash_ignores_checkout_newlines",
+          "qualname": "ProjectVoiceManifestTests.test_writer_skill_manifest_hash_ignores_checkout_newlines"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
+          "kind": "method",
+          "line": 74,
+          "module_id": "platform.content",
+          "name": "test_writer_skill_package_status_uses_canonical_text_hash",
+          "qualname": "ProjectVoiceManifestTests.test_writer_skill_package_status_uses_canonical_text_hash"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
+          "kind": "method",
+          "line": 112,
           "module_id": "platform.content",
           "name": "test_retrieval_depth_applies_item_and_full_text_ceilings",
           "qualname": "ProjectVoiceManifestTests.test_retrieval_depth_applies_item_and_full_text_ceilings"
@@ -18616,7 +18728,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 156,
+          "line": 211,
           "module_id": "platform.content",
           "name": "test_all_authoring_canon_files_have_one_platform_content_owner",
           "qualname": "ProjectVoiceManifestTests.test_all_authoring_canon_files_have_one_platform_content_owner"
@@ -18624,7 +18736,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 189,
+          "line": 244,
           "module_id": "platform.content",
           "name": "test_project_routes_every_writing_task_through_writer_skill",
           "qualname": "ProjectVoiceManifestTests.test_project_routes_every_writing_task_through_writer_skill"
@@ -18632,7 +18744,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 196,
+          "line": 251,
           "module_id": "platform.content",
           "name": "test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts",
           "qualname": "ProjectVoiceManifestTests.test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts"
@@ -18640,7 +18752,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 245,
+          "line": 300,
           "module_id": "platform.content",
           "name": "test_expanded_core_matches_private_catalog_when_available",
           "qualname": "ProjectVoiceManifestTests.test_expanded_core_matches_private_catalog_when_available"
@@ -18648,7 +18760,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 305,
+          "line": 360,
           "module_id": "platform.content",
           "name": "CatalogAuthorshipTests",
           "qualname": "CatalogAuthorshipTests"
@@ -18656,7 +18768,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 306,
+          "line": 361,
           "module_id": "platform.content",
           "name": "test_telegram_preserves_embedded_link_targets",
           "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -18664,7 +18776,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 317,
+          "line": 372,
           "module_id": "platform.content",
           "name": "test_reply_page_separates_parent_context_from_owner_text",
           "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -18672,7 +18784,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 346,
+          "line": 401,
           "module_id": "platform.content",
           "name": "VoiceDecisionTests",
           "qualname": "VoiceDecisionTests"
@@ -18680,7 +18792,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 348,
+          "line": 403,
           "module_id": "platform.content",
           "name": "card",
           "qualname": "VoiceDecisionTests.card"
@@ -18688,7 +18800,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 360,
+          "line": 415,
           "module_id": "platform.content",
           "name": "test_link_only_variants_share_normalized_hash",
           "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -18696,7 +18808,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 370,
+          "line": 425,
           "module_id": "platform.content",
           "name": "test_parent_context_never_teaches_voice",
           "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -18704,7 +18816,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 377,
+          "line": 432,
           "module_id": "platform.content",
           "name": "test_owner_reply_is_eligible_when_long_enough",
           "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -18712,7 +18824,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 384,
+          "line": 439,
           "module_id": "platform.content",
           "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
           "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -18720,7 +18832,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 395,
+          "line": 450,
           "module_id": "platform.content",
           "name": "VoiceSearchIntegrationTests",
           "qualname": "VoiceSearchIntegrationTests"
@@ -18728,7 +18840,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 396,
+          "line": 451,
           "module_id": "platform.content",
           "name": "test_direct_owner_decision_reaches_runtime_evidence",
           "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -18736,7 +18848,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 525,
+          "line": 580,
           "module_id": "platform.content",
           "name": "test_old_materialization_version_is_not_current",
           "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -18744,7 +18856,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 536,
+          "line": 591,
           "module_id": "platform.content",
           "name": "test_materialization_rebuild_preserves_owner_corrections",
           "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -18752,7 +18864,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 545,
+          "line": 600,
           "module_id": "platform.content",
           "name": "test_cache_requires_all_derived_artifacts",
           "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -18760,7 +18872,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 554,
+          "line": 609,
           "module_id": "platform.content",
           "name": "test_natural_query_adds_shared_russian_prefix",
           "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -18768,7 +18880,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 558,
+          "line": 613,
           "module_id": "platform.content",
           "name": "test_reviewed_index_returns_source_linked_fragment",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -18776,7 +18888,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 609,
+          "line": 664,
           "module_id": "platform.content",
           "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
           "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -18784,7 +18896,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 658,
+          "line": 713,
           "module_id": "platform.content",
           "name": "test_search_softly_prioritizes_strength_and_surface",
           "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -18792,7 +18904,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 696,
+          "line": 751,
           "module_id": "platform.content",
           "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
           "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -18800,7 +18912,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 735,
+          "line": 790,
           "module_id": "platform.content",
           "name": "test_russian_word_forms_and_late_filtered_result_are_found",
           "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -18808,7 +18920,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 774,
+          "line": 829,
           "module_id": "platform.content",
           "name": "test_private_guard_rejects_git_tree",
           "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -18816,7 +18928,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 782,
+          "line": 837,
           "module_id": "platform.content",
           "name": "test_owner_correction_is_persisted_and_searchable",
           "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -18824,7 +18936,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 810,
+          "line": 865,
           "module_id": "platform.content",
           "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -18832,7 +18944,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 850,
+          "line": 905,
           "module_id": "platform.content",
           "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
           "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -18840,7 +18952,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 883,
+          "line": 938,
           "module_id": "platform.content",
           "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -18848,7 +18960,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 911,
+          "line": 966,
           "module_id": "platform.content",
           "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
           "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -18856,7 +18968,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 931,
+          "line": 986,
           "module_id": "platform.content",
           "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
           "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -18864,7 +18976,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 958,
+          "line": 1013,
           "module_id": "platform.content",
           "name": "test_default_search_excludes_candidates_but_can_request_them",
           "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -18872,7 +18984,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 994,
+          "line": 1049,
           "module_id": "platform.content",
           "name": "test_post_pack_carries_argument_route_and_edit_mode",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -18880,7 +18992,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1039,
+          "line": 1094,
           "module_id": "platform.content",
           "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -18888,7 +19000,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1116,
+          "line": 1171,
           "module_id": "platform.content",
           "name": "test_text_only_mode_preserves_structure_contract",
           "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -18896,7 +19008,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1178,
+          "line": 1233,
           "module_id": "platform.content",
           "name": "test_general_course_article_uses_article_rules_without_full_shell",
           "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -18904,7 +19016,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1196,
+          "line": 1251,
           "module_id": "platform.content",
           "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
           "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -18912,7 +19024,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1265,
+          "line": 1320,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -18920,7 +19032,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1314,
+          "line": 1369,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_source_text_and_goal",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -18928,7 +19040,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1336,
+          "line": 1391,
           "module_id": "platform.content",
           "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -18936,7 +19048,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1363,
+          "line": 1418,
           "module_id": "platform.content",
           "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
           "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -18944,7 +19056,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1443,
+          "line": 1498,
           "module_id": "platform.content",
           "name": "test_structure_only_protects_embedded_video_and_audio",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -18952,7 +19064,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1474,
+          "line": 1529,
           "module_id": "platform.content",
           "name": "test_sales_cta_pack_routes_editorial_linking",
           "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -18960,7 +19072,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1495,
+          "line": 1550,
           "module_id": "platform.content",
           "name": "test_edit_only_modes_require_source_text",
           "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -18968,7 +19080,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1517,
+          "line": 1572,
           "module_id": "platform.content",
           "name": "test_proofread_preserves_structure_and_requires_change_review",
           "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -18976,7 +19088,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1554,
+          "line": 1609,
           "module_id": "platform.content",
           "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -18984,7 +19096,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1622,
+          "line": 1677,
           "module_id": "platform.content",
           "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
           "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -18992,7 +19104,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1640,
+          "line": 1695,
           "module_id": "platform.content",
           "name": "test_correction_preserves_owner_final_and_review_rounds",
           "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
@@ -20741,6 +20853,22 @@
         {
           "module_id": "products.calories",
           "path": "content/calories/course/course.json"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/reference/README.md"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/reference/transcripts/Калорийный курс — Расчёт активности и тренировок — транскрипт.txt"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/reference/transcripts/Калорийный курс — Только калории — считаем — архивный транскрипт.txt"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/reference/transcripts/Калорийный курс — Только калории, урок 1 — архивный транскрипт.txt"
         },
         {
           "module_id": "products.calories",
@@ -22707,6 +22835,54 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/README.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/stream-masterclass-structured-transcript.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/README.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Большой стрим в канале, 2ч42м22с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Вредная еда, 58м59с — фрагмент 02 — ограничения и детали — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Вредная еда, 58м59с — фрагмент 03 — ОАДВЗ — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — День 03 — Вредная еда, 29м03с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — День 09 — 50 оттенков голода, 33м33с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Конструктор питания, 19м43с — версия не определена — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Периодизация похудения, 1ч14м02с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Пять правил сокращения сладкого, 12м17с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — Фазы похудения, 40м38с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/00-how-to-use-masterclass.md"
         },
         {
@@ -22928,6 +23104,10 @@
         {
           "module_id": "products.masterclass.course",
           "path": "content/masterclass/source-current/50-final-stream-and-periodization.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/source-current/51-how-we-will-lose-weight-video-script.txt"
         },
         {
           "module_id": "products.masterclass.course",
@@ -27509,6 +27689,18 @@
         {
           "module_id": "products.strength",
           "path": "backend/app/static/apps/strength.html"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "content/training/reference/README.md"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "content/training/reference/transcripts/Тренировки — короткая запись, 51м41с — дубль начала общего эфира.txt"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "content/training/reference/transcripts/Тренировки — общий эфир, 2ч47м57с — транскрипт.txt"
         },
         {
           "module_id": "products.strength",
@@ -46089,13 +46281,21 @@
       "kind": "function",
       "line": 27,
       "module_id": "platform.content",
+      "name": "canonical_text_digest",
+      "qualname": "canonical_text_digest"
+    },
+    {
+      "file": "tools/install_edabalans_writer_skill.py",
+      "kind": "function",
+      "line": 35,
+      "module_id": "platform.content",
       "name": "sync_status",
       "qualname": "sync_status"
     },
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 43,
+      "line": 51,
       "module_id": "platform.content",
       "name": "install",
       "qualname": "install"
@@ -46103,7 +46303,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 63,
+      "line": 71,
       "module_id": "platform.content",
       "name": "package_status",
       "qualname": "package_status"
@@ -46111,7 +46311,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 94,
+      "line": 102,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -46295,7 +46495,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 65,
+      "line": 69,
       "module_id": "admin.project-knowledge",
       "name": "tracked_inputs",
       "qualname": "tracked_inputs"
@@ -46303,7 +46503,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 82,
+      "line": 86,
       "module_id": "admin.project-knowledge",
       "name": "_front_matter",
       "qualname": "_front_matter"
@@ -46311,7 +46511,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 107,
+      "line": 111,
       "module_id": "admin.project-knowledge",
       "name": "parse_card",
       "qualname": "parse_card"
@@ -46319,7 +46519,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 151,
+      "line": 155,
       "module_id": "admin.project-knowledge",
       "name": "top_document_status",
       "qualname": "top_document_status"
@@ -46327,7 +46527,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 162,
+      "line": 166,
       "module_id": "admin.project-knowledge",
       "name": "load_registry",
       "qualname": "load_registry"
@@ -46335,7 +46535,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 196,
+      "line": 200,
       "module_id": "admin.project-knowledge",
       "name": "pattern_specificity",
       "qualname": "pattern_specificity"
@@ -46343,7 +46543,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 201,
+      "line": 205,
       "module_id": "admin.project-knowledge",
       "name": "resolve_owner",
       "qualname": "resolve_owner"
@@ -46351,7 +46551,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 219,
+      "line": 223,
       "module_id": "admin.project-knowledge",
       "name": "_string_literal",
       "qualname": "_string_literal"
@@ -46359,7 +46559,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 225,
+      "line": 229,
       "module_id": "admin.project-knowledge",
       "name": "_call_name",
       "qualname": "_call_name"
@@ -46367,7 +46567,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 234,
+      "line": 238,
       "module_id": "admin.project-knowledge",
       "name": "extract_python",
       "qualname": "extract_python"
@@ -46375,7 +46575,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "class",
-      "line": 257,
+      "line": 261,
       "module_id": "admin.project-knowledge",
       "name": "Visitor",
       "qualname": "extract_python.Visitor"
@@ -46383,7 +46583,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 258,
+      "line": 262,
       "module_id": "admin.project-knowledge",
       "name": "__init__",
       "qualname": "extract_python.Visitor.__init__"
@@ -46391,7 +46591,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 261,
+      "line": 265,
       "module_id": "admin.project-knowledge",
       "name": "_visit_symbol",
       "qualname": "extract_python.Visitor._visit_symbol"
@@ -46399,7 +46599,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 317,
+      "line": 321,
       "module_id": "admin.project-knowledge",
       "name": "visit_ClassDef",
       "qualname": "extract_python.Visitor.visit_ClassDef"
@@ -46407,7 +46607,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 330,
+      "line": 334,
       "module_id": "admin.project-knowledge",
       "name": "visit_FunctionDef",
       "qualname": "extract_python.Visitor.visit_FunctionDef"
@@ -46415,7 +46615,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 333,
+      "line": 337,
       "module_id": "admin.project-knowledge",
       "name": "visit_AsyncFunctionDef",
       "qualname": "extract_python.Visitor.visit_AsyncFunctionDef"
@@ -46423,7 +46623,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "method",
-      "line": 336,
+      "line": 340,
       "module_id": "admin.project-knowledge",
       "name": "visit_Call",
       "qualname": "extract_python.Visitor.visit_Call"
@@ -46431,7 +46631,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 354,
+      "line": 358,
       "module_id": "admin.project-knowledge",
       "name": "extract_javascript",
       "qualname": "extract_javascript"
@@ -46439,7 +46639,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 374,
+      "line": 378,
       "module_id": "admin.project-knowledge",
       "name": "parse_plan",
       "qualname": "parse_plan"
@@ -46447,7 +46647,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 407,
+      "line": 411,
       "module_id": "admin.project-knowledge",
       "name": "parse_quick_notes",
       "qualname": "parse_quick_notes"
@@ -46455,7 +46655,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 471,
+      "line": 475,
       "module_id": "admin.project-knowledge",
       "name": "_module_rules",
       "qualname": "_module_rules"
@@ -46463,7 +46663,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 479,
+      "line": 483,
       "module_id": "admin.project-knowledge",
       "name": "validate_registry",
       "qualname": "validate_registry"
@@ -46471,7 +46671,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 626,
+      "line": 630,
       "module_id": "admin.project-knowledge",
       "name": "build_inventory",
       "qualname": "build_inventory"
@@ -46479,7 +46679,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 800,
+      "line": 804,
       "module_id": "admin.project-knowledge",
       "name": "render_json",
       "qualname": "render_json"
@@ -46487,7 +46687,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 804,
+      "line": 808,
       "module_id": "admin.project-knowledge",
       "name": "render_markdown",
       "qualname": "render_markdown"
@@ -46495,7 +46695,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 819,
+      "line": 823,
       "module_id": "admin.project-knowledge",
       "name": "append_branch",
       "qualname": "render_markdown.append_branch"
@@ -46503,7 +46703,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 838,
+      "line": 842,
       "module_id": "admin.project-knowledge",
       "name": "render_telegram_modules",
       "qualname": "render_telegram_modules"
@@ -46511,7 +46711,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 863,
+      "line": 867,
       "module_id": "admin.project-knowledge",
       "name": "changed_paths",
       "qualname": "changed_paths"
@@ -46519,7 +46719,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 873,
+      "line": 877,
       "module_id": "admin.project-knowledge",
       "name": "impact_report",
       "qualname": "impact_report"
@@ -46527,7 +46727,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 890,
+      "line": 894,
       "module_id": "admin.project-knowledge",
       "name": "write_or_check",
       "qualname": "write_or_check"
@@ -46535,7 +46735,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 916,
+      "line": 920,
       "module_id": "admin.project-knowledge",
       "name": "parse_args",
       "qualname": "parse_args"
@@ -46543,7 +46743,7 @@
     {
       "file": "tools/module_inventory.py",
       "kind": "function",
-      "line": 931,
+      "line": 935,
       "module_id": "admin.project-knowledge",
       "name": "main",
       "qualname": "main"
@@ -47151,7 +47351,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 28,
+      "line": 29,
       "module_id": "platform.content",
       "name": "ProjectVoiceManifestTests",
       "qualname": "ProjectVoiceManifestTests"
@@ -47159,7 +47359,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 29,
+      "line": 30,
       "module_id": "platform.content",
       "name": "test_retrieval_full_text_has_a_hard_character_ceiling",
       "qualname": "ProjectVoiceManifestTests.test_retrieval_full_text_has_a_hard_character_ceiling"
@@ -47167,7 +47367,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 38,
+      "line": 39,
       "module_id": "platform.content",
       "name": "test_project_writer_skill_installer_keeps_runtime_copy_in_sync",
       "qualname": "ProjectVoiceManifestTests.test_project_writer_skill_installer_keeps_runtime_copy_in_sync"
@@ -47175,7 +47375,23 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 57,
+      "line": 61,
+      "module_id": "platform.content",
+      "name": "test_writer_skill_manifest_hash_ignores_checkout_newlines",
+      "qualname": "ProjectVoiceManifestTests.test_writer_skill_manifest_hash_ignores_checkout_newlines"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
+      "kind": "method",
+      "line": 74,
+      "module_id": "platform.content",
+      "name": "test_writer_skill_package_status_uses_canonical_text_hash",
+      "qualname": "ProjectVoiceManifestTests.test_writer_skill_package_status_uses_canonical_text_hash"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
+      "kind": "method",
+      "line": 112,
       "module_id": "platform.content",
       "name": "test_retrieval_depth_applies_item_and_full_text_ceilings",
       "qualname": "ProjectVoiceManifestTests.test_retrieval_depth_applies_item_and_full_text_ceilings"
@@ -47183,7 +47399,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 156,
+      "line": 211,
       "module_id": "platform.content",
       "name": "test_all_authoring_canon_files_have_one_platform_content_owner",
       "qualname": "ProjectVoiceManifestTests.test_all_authoring_canon_files_have_one_platform_content_owner"
@@ -47191,7 +47407,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 189,
+      "line": 244,
       "module_id": "platform.content",
       "name": "test_project_routes_every_writing_task_through_writer_skill",
       "qualname": "ProjectVoiceManifestTests.test_project_routes_every_writing_task_through_writer_skill"
@@ -47199,7 +47415,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 196,
+      "line": 251,
       "module_id": "platform.content",
       "name": "test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts",
       "qualname": "ProjectVoiceManifestTests.test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts"
@@ -47207,7 +47423,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 245,
+      "line": 300,
       "module_id": "platform.content",
       "name": "test_expanded_core_matches_private_catalog_when_available",
       "qualname": "ProjectVoiceManifestTests.test_expanded_core_matches_private_catalog_when_available"
@@ -47215,7 +47431,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 305,
+      "line": 360,
       "module_id": "platform.content",
       "name": "CatalogAuthorshipTests",
       "qualname": "CatalogAuthorshipTests"
@@ -47223,7 +47439,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 306,
+      "line": 361,
       "module_id": "platform.content",
       "name": "test_telegram_preserves_embedded_link_targets",
       "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -47231,7 +47447,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 317,
+      "line": 372,
       "module_id": "platform.content",
       "name": "test_reply_page_separates_parent_context_from_owner_text",
       "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -47239,7 +47455,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 346,
+      "line": 401,
       "module_id": "platform.content",
       "name": "VoiceDecisionTests",
       "qualname": "VoiceDecisionTests"
@@ -47247,7 +47463,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 348,
+      "line": 403,
       "module_id": "platform.content",
       "name": "card",
       "qualname": "VoiceDecisionTests.card"
@@ -47255,7 +47471,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 360,
+      "line": 415,
       "module_id": "platform.content",
       "name": "test_link_only_variants_share_normalized_hash",
       "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -47263,7 +47479,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 370,
+      "line": 425,
       "module_id": "platform.content",
       "name": "test_parent_context_never_teaches_voice",
       "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -47271,7 +47487,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 377,
+      "line": 432,
       "module_id": "platform.content",
       "name": "test_owner_reply_is_eligible_when_long_enough",
       "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -47279,7 +47495,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 384,
+      "line": 439,
       "module_id": "platform.content",
       "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
       "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -47287,7 +47503,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 395,
+      "line": 450,
       "module_id": "platform.content",
       "name": "VoiceSearchIntegrationTests",
       "qualname": "VoiceSearchIntegrationTests"
@@ -47295,7 +47511,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 396,
+      "line": 451,
       "module_id": "platform.content",
       "name": "test_direct_owner_decision_reaches_runtime_evidence",
       "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -47303,7 +47519,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 525,
+      "line": 580,
       "module_id": "platform.content",
       "name": "test_old_materialization_version_is_not_current",
       "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -47311,7 +47527,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 536,
+      "line": 591,
       "module_id": "platform.content",
       "name": "test_materialization_rebuild_preserves_owner_corrections",
       "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -47319,7 +47535,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 545,
+      "line": 600,
       "module_id": "platform.content",
       "name": "test_cache_requires_all_derived_artifacts",
       "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -47327,7 +47543,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 554,
+      "line": 609,
       "module_id": "platform.content",
       "name": "test_natural_query_adds_shared_russian_prefix",
       "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -47335,7 +47551,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 558,
+      "line": 613,
       "module_id": "platform.content",
       "name": "test_reviewed_index_returns_source_linked_fragment",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -47343,7 +47559,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 609,
+      "line": 664,
       "module_id": "platform.content",
       "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
       "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -47351,7 +47567,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 658,
+      "line": 713,
       "module_id": "platform.content",
       "name": "test_search_softly_prioritizes_strength_and_surface",
       "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -47359,7 +47575,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 696,
+      "line": 751,
       "module_id": "platform.content",
       "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
       "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -47367,7 +47583,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 735,
+      "line": 790,
       "module_id": "platform.content",
       "name": "test_russian_word_forms_and_late_filtered_result_are_found",
       "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -47375,7 +47591,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 774,
+      "line": 829,
       "module_id": "platform.content",
       "name": "test_private_guard_rejects_git_tree",
       "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -47383,7 +47599,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 782,
+      "line": 837,
       "module_id": "platform.content",
       "name": "test_owner_correction_is_persisted_and_searchable",
       "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -47391,7 +47607,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 810,
+      "line": 865,
       "module_id": "platform.content",
       "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -47399,7 +47615,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 850,
+      "line": 905,
       "module_id": "platform.content",
       "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
       "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -47407,7 +47623,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 883,
+      "line": 938,
       "module_id": "platform.content",
       "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -47415,7 +47631,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 911,
+      "line": 966,
       "module_id": "platform.content",
       "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
       "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -47423,7 +47639,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 931,
+      "line": 986,
       "module_id": "platform.content",
       "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
       "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -47431,7 +47647,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 958,
+      "line": 1013,
       "module_id": "platform.content",
       "name": "test_default_search_excludes_candidates_but_can_request_them",
       "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -47439,7 +47655,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 994,
+      "line": 1049,
       "module_id": "platform.content",
       "name": "test_post_pack_carries_argument_route_and_edit_mode",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -47447,7 +47663,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1039,
+      "line": 1094,
       "module_id": "platform.content",
       "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -47455,7 +47671,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1116,
+      "line": 1171,
       "module_id": "platform.content",
       "name": "test_text_only_mode_preserves_structure_contract",
       "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -47463,7 +47679,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1178,
+      "line": 1233,
       "module_id": "platform.content",
       "name": "test_general_course_article_uses_article_rules_without_full_shell",
       "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -47471,7 +47687,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1196,
+      "line": 1251,
       "module_id": "platform.content",
       "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
       "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -47479,7 +47695,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1265,
+      "line": 1320,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -47487,7 +47703,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1314,
+      "line": 1369,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_source_text_and_goal",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -47495,7 +47711,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1336,
+      "line": 1391,
       "module_id": "platform.content",
       "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -47503,7 +47719,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1363,
+      "line": 1418,
       "module_id": "platform.content",
       "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
       "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -47511,7 +47727,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1443,
+      "line": 1498,
       "module_id": "platform.content",
       "name": "test_structure_only_protects_embedded_video_and_audio",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -47519,7 +47735,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1474,
+      "line": 1529,
       "module_id": "platform.content",
       "name": "test_sales_cta_pack_routes_editorial_linking",
       "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -47527,7 +47743,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1495,
+      "line": 1550,
       "module_id": "platform.content",
       "name": "test_edit_only_modes_require_source_text",
       "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -47535,7 +47751,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1517,
+      "line": 1572,
       "module_id": "platform.content",
       "name": "test_proofread_preserves_structure_and_requires_change_review",
       "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -47543,7 +47759,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1554,
+      "line": 1609,
       "module_id": "platform.content",
       "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -47551,7 +47767,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1622,
+      "line": 1677,
       "module_id": "platform.content",
       "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
       "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -47559,7 +47775,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1640,
+      "line": 1695,
       "module_id": "platform.content",
       "name": "test_correction_preserves_owner_final_and_review_rounds",
       "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
@@ -47857,13 +48073,21 @@
       "kind": "method",
       "line": 37,
       "module_id": "admin.project-knowledge",
+      "name": "test_git_paths_keep_non_ascii_names_unquoted",
+      "qualname": "ModuleInventoryTests.test_git_paths_keep_non_ascii_names_unquoted"
+    },
+    {
+      "file": "tools/tests/test_module_inventory.py",
+      "kind": "method",
+      "line": 51,
+      "module_id": "admin.project-knowledge",
       "name": "test_python_ast_extracts_symbols_routes_and_tables",
       "qualname": "ModuleInventoryTests.test_python_ast_extracts_symbols_routes_and_tables"
     },
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 61,
+      "line": 75,
       "module_id": "admin.project-knowledge",
       "name": "test_javascript_extractor_is_conservative",
       "qualname": "ModuleInventoryTests.test_javascript_extractor_is_conservative"
@@ -47871,7 +48095,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 78,
+      "line": 92,
       "module_id": "admin.project-knowledge",
       "name": "test_owner_uses_more_specific_rule_and_rejects_equal_overlap",
       "qualname": "ModuleInventoryTests.test_owner_uses_more_specific_rule_and_rejects_equal_overlap"
@@ -47879,7 +48103,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 93,
+      "line": 107,
       "module_id": "admin.project-knowledge",
       "name": "test_route_function_inherits_route_module_in_shared_file",
       "qualname": "ModuleInventoryTests.test_route_function_inherits_route_module_in_shared_file"
@@ -47887,7 +48111,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 133,
+      "line": 147,
       "module_id": "admin.project-knowledge",
       "name": "test_plan_provenance_is_required_only_for_active_plans",
       "qualname": "ModuleInventoryTests.test_plan_provenance_is_required_only_for_active_plans"
@@ -47895,7 +48119,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 151,
+      "line": 165,
       "module_id": "admin.project-knowledge",
       "name": "test_card_exposes_human_boundary_and_sources_of_truth",
       "qualname": "ModuleInventoryTests.test_card_exposes_human_boundary_and_sources_of_truth"
@@ -47903,7 +48127,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 169,
+      "line": 183,
       "module_id": "admin.project-knowledge",
       "name": "test_cross_project_plan_is_not_duplicated_in_module_plans",
       "qualname": "ModuleInventoryTests.test_cross_project_plan_is_not_duplicated_in_module_plans"
@@ -47911,7 +48135,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 201,
+      "line": 215,
       "module_id": "admin.project-knowledge",
       "name": "test_current_quick_notes_exposes_only_valid_planned_rows",
       "qualname": "ModuleInventoryTests.test_current_quick_notes_exposes_only_valid_planned_rows"
@@ -47919,7 +48143,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 220,
+      "line": 234,
       "module_id": "admin.project-knowledge",
       "name": "test_top_document_status_ignores_nested_statuses",
       "qualname": "ModuleInventoryTests.test_top_document_status_ignores_nested_statuses"
@@ -47927,7 +48151,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 235,
+      "line": 249,
       "module_id": "admin.project-knowledge",
       "name": "test_impact_report_lists_registered_consumers",
       "qualname": "ModuleInventoryTests.test_impact_report_lists_registered_consumers"
@@ -47935,7 +48159,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 256,
+      "line": 270,
       "module_id": "admin.project-knowledge",
       "name": "test_registry_validation_rejects_status_relation_and_shared_source_errors",
       "qualname": "ModuleInventoryTests.test_registry_validation_rejects_status_relation_and_shared_source_errors"
@@ -47943,7 +48167,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 294,
+      "line": 308,
       "module_id": "admin.project-knowledge",
       "name": "test_shared_source_consumer_must_read_from_owner",
       "qualname": "ModuleInventoryTests.test_shared_source_consumer_must_read_from_owner"
@@ -47951,7 +48175,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 328,
+      "line": 342,
       "module_id": "admin.project-knowledge",
       "name": "test_telegram_projection_uses_explicit_registry_fields",
       "qualname": "ModuleInventoryTests.test_telegram_projection_uses_explicit_registry_fields"
@@ -47959,7 +48183,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 359,
+      "line": 373,
       "module_id": "admin.project-knowledge",
       "name": "test_full_fixture_is_deterministic_and_check_detects_stale_output",
       "qualname": "ModuleInventoryTests.test_full_fixture_is_deterministic_and_check_detects_stale_output"
@@ -47967,7 +48191,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 444,
+      "line": 458,
       "module_id": "admin.project-knowledge",
       "name": "test_cli_check_fails_for_orphan_overlap_and_invalid_relation",
       "qualname": "ModuleInventoryTests.test_cli_check_fails_for_orphan_overlap_and_invalid_relation"
@@ -47975,7 +48199,7 @@
     {
       "file": "tools/tests/test_module_inventory.py",
       "kind": "method",
-      "line": 490,
+      "line": 504,
       "module_id": "admin.project-knowledge",
       "name": "_git",
       "qualname": "ModuleInventoryTests._git"

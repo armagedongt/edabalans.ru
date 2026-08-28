@@ -54,7 +54,11 @@ def posix_path(value: str | Path) -> str:
 
 def _run_git(repo: Path, *args: str) -> list[str]:
     result = subprocess.run(
-        ["git", *args], cwd=repo, text=True, encoding="utf-8", capture_output=True
+        ["git", "-c", "core.quotePath=false", *args],
+        cwd=repo,
+        text=True,
+        encoding="utf-8",
+        capture_output=True,
     )
     if result.returncode:
         detail = result.stderr.strip() or result.stdout.strip()

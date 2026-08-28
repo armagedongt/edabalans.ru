@@ -34,6 +34,20 @@ def upgrade():
 
 
 class ModuleInventoryTests(unittest.TestCase):
+    def test_git_paths_keep_non_ascii_names_unquoted(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            repo = Path(temporary)
+            self._git(repo, "init")
+            path = repo / "content" / "транскрипты" / "Голод.txt"
+            path.parent.mkdir(parents=True)
+            path.write_text("Текст\n", encoding="utf-8")
+            self._git(repo, "add", ".")
+
+            self.assertEqual(
+                ["content/транскрипты/Голод.txt"],
+                inventory.tracked_inputs(repo, []),
+            )
+
     def test_python_ast_extracts_symbols_routes_and_tables(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "sample.py"

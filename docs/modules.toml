@@ -204,6 +204,7 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
+  "content/training/reference/**",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
 owns_routes = ["*/apps/strength*", "*/api/apps/strength*"]
