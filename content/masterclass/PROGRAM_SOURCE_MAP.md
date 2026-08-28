@@ -1,7 +1,7 @@
 # Карта сборки новой программы из текущих материалов
 
 Статус: `draft / editorial assembly map`
-Обновлено: 23.08.2026
+Обновлено: 28.08.2026
 Основание: канонический `course/course.json` и архив `source-current/`.
 
 Файл показывает, из чего собирать каждый день. Он не требует переносить исходный
@@ -9,7 +9,7 @@
 
 | День | Текущие источники | Что ещё нужно собрать |
 |---:|---|---|
-| 1 | `09-how-we-will-lose-weight.md`; `08-setup-checklist-and-questionnaire.md`; `01-food-diary.txt`; `02-weighing.txt` | Короткая страница программы и редакционный блок «Что ещё можно купить» |
+| 1 | `09-how-we-will-lose-weight.md`; `51-how-we-will-lose-weight-video-script.txt`; `08-setup-checklist-and-questionnaire.md`; `01-food-diary.txt`; `02-weighing.txt` | Короткая страница программы и редакционный блок «Что ещё можно купить» |
 | 2 | `03-four-diet-categories.txt`; `04-mediterranean-diet.txt`; `10-assignment-food-categories.md` | Только редакционная склейка дня |
 | 3 | `06-necessary-restrictions.txt`; `07-reading-labels.txt`; `11-assignment-harmful-foods.md` | Текстовая версия видео «Вредная еда»; короткие посты о мёде и гематогене; тизер сладкого |
 | 4 | `13-dqs-system.txt`; `19-dqs-access-and-print-options.md`; `20-assignment-dqs.md` | Сократить основной путь чтения; подробности оставить справочной частью; позднее добавить текстовую версию видео |
