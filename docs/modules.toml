@@ -120,6 +120,7 @@ owns_files = [
   "content/author-voice/CALIBRATION_V1.md",
   "content/author-voice/telegram-linkout-review-v1.json",
   "content/author-voice/semantic-review-log-v1.json",
+  "content/external-references/**",
   "tools/analyze_saved_telegram_notes.py", "tools/build_author_working_corpus.py",
   "tools/build_voice_core.py", "tools/build_rhetorical_library.py",
   "tools/catalog_saved_notes_editorially.py",
