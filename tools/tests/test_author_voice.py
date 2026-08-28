@@ -9,6 +9,7 @@ import tomllib
 import unittest
 from contextlib import closing
 from pathlib import Path
+from unittest.mock import patch
 
 
 TOOLS = Path(__file__).resolve().parents[1]
@@ -36,7 +37,10 @@ class ProjectVoiceManifestTests(unittest.TestCase):
         self.assertLessEqual(len(selected[0]["full_text"]), 200)
 
     def test_project_writer_skill_installer_keeps_runtime_copy_in_sync(self) -> None:
-        with tempfile.TemporaryDirectory() as folder:
+        # The installer intentionally uses hard links so the project-owned skill and
+        # its Codex runtime copy cannot drift. Keep the fixture on the source volume:
+        # hosted CI may mount the checkout and /tmp on different filesystems.
+        with tempfile.TemporaryDirectory(dir=TOOLS.parent) as folder:
             destination = Path(folder) / "skills" / "edabalans-writer" / "SKILL.md"
             destination.parent.mkdir(parents=True)
             destination.write_text("stale runtime copy", encoding="utf-8")
@@ -53,6 +57,57 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             self.assertTrue(installed["hard_linked"])
             self.assertTrue(destination.samefile(writer_skill_installer.SOURCE))
             self.assertEqual(destination.read_bytes(), writer_skill_installer.SOURCE.read_bytes())
+
+    def test_writer_skill_manifest_hash_ignores_checkout_newlines(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            windows = root / "windows.md"
+            unix = root / "unix.md"
+            windows.write_bytes(b"first\r\nsecond\r\n")
+            unix.write_bytes(b"first\nsecond\n")
+
+            self.assertEqual(
+                writer_skill_installer.canonical_text_digest(windows),
+                writer_skill_installer.canonical_text_digest(unix),
+            )
+
+    def test_writer_skill_package_status_uses_canonical_text_hash(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            canonical = root / "canonical.md"
+            canonical.write_bytes(b"first\r\nsecond\r\n")
+            expected_source = root / "expected.md"
+            expected_source.write_bytes(b"first\nsecond\n")
+
+            manifest = root / "skill-manifest.json"
+            manifest.write_text(
+                json.dumps(
+                    {
+                        "package_version": "test",
+                        "files": [
+                            {
+                                "path": "canonical.md",
+                                "sha256": writer_skill_installer.canonical_text_digest(
+                                    expected_source
+                                ),
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            destination = root / "skills/edabalans-writer/SKILL.md"
+            installed_manifest = destination.parent / "assets" / manifest.name
+            installed_manifest.parent.mkdir(parents=True)
+            installed_manifest.hardlink_to(manifest)
+
+            with (
+                patch.object(writer_skill_installer, "PROJECT_ROOT", root),
+                patch.object(writer_skill_installer, "MANIFEST", manifest),
+            ):
+                result = writer_skill_installer.package_status(destination)
+
+            self.assertEqual(result["package_status"], "current", result)
 
     def test_retrieval_depth_applies_item_and_full_text_ceilings(self) -> None:
         with tempfile.TemporaryDirectory() as folder:

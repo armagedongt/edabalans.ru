@@ -429,18 +429,31 @@ class AuthorWorkflowTests(unittest.TestCase):
         (self.root / "analysis-state.json").write_text(json.dumps({"correction_chains": 1}), encoding="utf-8")
         with sqlite3.connect(health_index) as db:
             db.execute("INSERT INTO corrections VALUES (?, ?)", ("one", "{}"))
-        destination = self.root / "skills/edabalans-writer/SKILL.md"
-        install_edabalans_writer_skill.install(install_edabalans_writer_skill.SOURCE, destination)
-        with patch.object(install_edabalans_writer_skill, "default_destination", return_value=destination):
-            result = report_author_corpus_health.voice_freshness(self.root)
-        self.assertEqual(result["status"], "current", result)
-        (self.root / "semantic-report.json").write_text(
-            json.dumps({"correction_chains": 0}), encoding="utf-8"
-        )
-        with patch.object(install_edabalans_writer_skill, "default_destination", return_value=destination):
-            stale = report_author_corpus_health.voice_freshness(self.root)
-        self.assertEqual(stale["status"], "stale")
-        self.assertIn("semantic-report correction_chains is stale", stale["errors"])
+        # The production installer uses hard links. Put only this destination on
+        # the canonical source volume because CI can mount /tmp separately.
+        with tempfile.TemporaryDirectory(dir=TOOLS.parent) as skill_folder:
+            destination = Path(skill_folder) / "skills/edabalans-writer/SKILL.md"
+            install_edabalans_writer_skill.install(
+                install_edabalans_writer_skill.SOURCE, destination
+            )
+            with patch.object(
+                install_edabalans_writer_skill,
+                "default_destination",
+                return_value=destination,
+            ):
+                result = report_author_corpus_health.voice_freshness(self.root)
+            self.assertEqual(result["status"], "current", result)
+            (self.root / "semantic-report.json").write_text(
+                json.dumps({"correction_chains": 0}), encoding="utf-8"
+            )
+            with patch.object(
+                install_edabalans_writer_skill,
+                "default_destination",
+                return_value=destination,
+            ):
+                stale = report_author_corpus_health.voice_freshness(self.root)
+            self.assertEqual(stale["status"], "stale")
+            self.assertIn("semantic-report correction_chains is stale", stale["errors"])
 
 
 if __name__ == "__main__":
