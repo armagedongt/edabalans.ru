@@ -28,7 +28,7 @@ def normalize_email(value: str | None) -> str:
 def resolve_user_for_resource(
     db: Session,
     email: str | None,
-    resource_code: str,
+    resource_code: str | tuple[str, ...],
     *,
     require_legal_acceptance: bool = True,
 ) -> User:
@@ -59,9 +59,14 @@ def resolve_user_for_resource(
         )
 
     now = datetime.now(timezone.utc)
+    resource_filter = (
+        Resource.code.in_(resource_code)
+        if isinstance(resource_code, tuple)
+        else Resource.code == resource_code
+    )
     access_filters = (
         UserAccess.user_id == user.id,
-        Resource.code == resource_code,
+        resource_filter,
         Resource.status == "active",
         UserAccess.revoked_at.is_(None),
         (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),

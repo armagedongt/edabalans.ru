@@ -92,6 +92,18 @@
       "path": "backend/app/auth.py"
     },
     {
+      "module_id": "products.calories",
+      "path": "backend/app/calorie_course_material_service.py"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "backend/app/calorie_course_routes.py"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "backend/app/calorie_course_service.py"
+    },
+    {
       "module_id": "operations.delivery",
       "path": "backend/app/config.py"
     },
@@ -612,6 +624,10 @@
       "path": "backend/migrations/versions/20260827_0027_recipe_calculator.py"
     },
     {
+      "module_id": "products.calories",
+      "path": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "backend/requirements-collector.txt"
     },
@@ -650,6 +666,10 @@
     {
       "module_id": "platform.auth",
       "path": "backend/tests/test_app_auth.py"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "backend/tests/test_calorie_course_journey.py"
     },
     {
       "module_id": "platform.content",
@@ -798,6 +818,14 @@
     {
       "module_id": "platform.content",
       "path": "content/author-voice/writer-contract-v1.md"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "content/calories/course/README.md"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "content/calories/course/course.json"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1176,6 +1204,10 @@
       "path": "docs/knowledge-base/TILDA_GROUP_CLEANUP_GUIDE.md"
     },
     {
+      "module_id": "products.calories",
+      "path": "docs/knowledge-base/modules/calories/COURSE_RUNTIME.md"
+    },
+    {
       "module_id": "admin.control",
       "path": "docs/knowledge-base/modules/catalog/admin.control.md"
     },
@@ -1302,6 +1334,10 @@
     {
       "module_id": "platform",
       "path": "docs/knowledge-base/modules/catalog/platform.md"
+    },
+    {
+      "module_id": "products.calories",
+      "path": "docs/knowledge-base/modules/catalog/products.calories.md"
     },
     {
       "module_id": "products.catalog",
@@ -2368,7 +2404,7 @@
       "routes": [
         {
           "file": "backend/app/access_routes.py",
-          "line": 375,
+          "line": 379,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -2376,7 +2412,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 315,
+          "line": 319,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -2384,7 +2420,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 529,
+          "line": 594,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -2392,7 +2428,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 655,
+          "line": 720,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -2400,7 +2436,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 706,
+          "line": 773,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -2408,7 +2444,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 621,
+          "line": 686,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -2630,7 +2666,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 315,
+          "line": 319,
           "module_id": "admin.control",
           "name": "create_personal_link",
           "qualname": "create_personal_link"
@@ -2638,7 +2674,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 375,
+          "line": 379,
           "module_id": "admin.control",
           "name": "list_personal_links",
           "qualname": "list_personal_links"
@@ -2646,7 +2682,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 529,
+          "line": 594,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -2654,7 +2690,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 621,
+          "line": 686,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -2662,7 +2698,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 655,
+          "line": 720,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -2670,7 +2706,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 706,
+          "line": 773,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -10582,13 +10618,37 @@
           "kind": "class",
           "line": 565,
           "module_id": "operations.database",
+          "name": "CourseEvent",
+          "qualname": "CourseEvent"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 588,
+          "module_id": "operations.database",
+          "name": "CourseStageProgress",
+          "qualname": "CourseStageProgress"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 621,
+          "module_id": "operations.database",
+          "name": "CourseStepProgress",
+          "qualname": "CourseStepProgress"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 649,
+          "module_id": "operations.database",
           "name": "QuestionnaireRun",
           "qualname": "QuestionnaireRun"
         },
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 577,
+          "line": 661,
           "module_id": "operations.database",
           "name": "QuestionnaireAnswer",
           "qualname": "QuestionnaireAnswer"
@@ -10596,7 +10656,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 588,
+          "line": 672,
           "module_id": "operations.database",
           "name": "OfferStage",
           "qualname": "OfferStage"
@@ -10604,7 +10664,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 599,
+          "line": 683,
           "module_id": "operations.database",
           "name": "UserOffer",
           "qualname": "UserOffer"
@@ -10612,7 +10672,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 613,
+          "line": 697,
           "module_id": "operations.database",
           "name": "OfferCheckout",
           "qualname": "OfferCheckout"
@@ -10620,7 +10680,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 633,
+          "line": 717,
           "module_id": "operations.database",
           "name": "PersonalAccessLink",
           "qualname": "PersonalAccessLink"
@@ -10628,7 +10688,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 660,
+          "line": 744,
           "module_id": "operations.database",
           "name": "UserCoursePolicy",
           "qualname": "UserCoursePolicy"
@@ -10636,7 +10696,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 682,
+          "line": 766,
           "module_id": "operations.database",
           "name": "UserLegalAcceptance",
           "qualname": "UserLegalAcceptance"
@@ -10644,7 +10704,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 706,
+          "line": 790,
           "module_id": "operations.database",
           "name": "MasterclassNotification",
           "qualname": "MasterclassNotification"
@@ -10652,7 +10712,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 727,
+          "line": 811,
           "module_id": "operations.database",
           "name": "MasterclassTestProfile",
           "qualname": "MasterclassTestProfile"
@@ -10660,7 +10720,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 741,
+          "line": 825,
           "module_id": "operations.database",
           "name": "StrengthExercise",
           "qualname": "StrengthExercise"
@@ -10668,7 +10728,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 752,
+          "line": 836,
           "module_id": "operations.database",
           "name": "MetabolismState",
           "qualname": "MetabolismState"
@@ -10676,7 +10736,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 768,
+          "line": 852,
           "module_id": "operations.database",
           "name": "AdminAppEdit",
           "qualname": "AdminAppEdit"
@@ -10684,7 +10744,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 784,
+          "line": 868,
           "module_id": "operations.database",
           "name": "ManagedDocumentVersion",
           "qualname": "ManagedDocumentVersion"
@@ -10692,7 +10752,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 820,
+          "line": 904,
           "module_id": "operations.database",
           "name": "ContentSource",
           "qualname": "ContentSource"
@@ -10700,7 +10760,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 835,
+          "line": 919,
           "module_id": "operations.database",
           "name": "ContentItem",
           "qualname": "ContentItem"
@@ -10708,7 +10768,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 869,
+          "line": 953,
           "module_id": "operations.database",
           "name": "ContentItemVersion",
           "qualname": "ContentItemVersion"
@@ -10716,7 +10776,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 891,
+          "line": 975,
           "module_id": "operations.database",
           "name": "ContentMedia",
           "qualname": "ContentMedia"
@@ -10724,7 +10784,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 911,
+          "line": 995,
           "module_id": "operations.database",
           "name": "ContentLink",
           "qualname": "ContentLink"
@@ -10732,7 +10792,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 933,
+          "line": 1017,
           "module_id": "operations.database",
           "name": "ContentMetricSnapshot",
           "qualname": "ContentMetricSnapshot"
@@ -10740,7 +10800,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 957,
+          "line": 1041,
           "module_id": "operations.database",
           "name": "ContentComment",
           "qualname": "ContentComment"
@@ -10748,7 +10808,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 987,
+          "line": 1071,
           "module_id": "operations.database",
           "name": "ContentImportRun",
           "qualname": "ContentImportRun"
@@ -10904,7 +10964,7 @@
       "routes": [
         {
           "file": "backend/app/main.py",
-          "line": 50,
+          "line": 52,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -10912,7 +10972,7 @@
         },
         {
           "file": "backend/app/main.py",
-          "line": 56,
+          "line": 58,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/ready",
@@ -10958,7 +11018,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 50,
+          "line": 52,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -10966,7 +11026,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 56,
+          "line": 58,
           "module_id": "operations.delivery",
           "name": "ready",
           "qualname": "ready"
@@ -13100,7 +13160,7 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 769,
+          "line": 853,
           "module_id": "operations.imports",
           "name": "admin_app_edits",
           "source": "orm"
@@ -14400,7 +14460,7 @@
       "routes": [
         {
           "file": "backend/app/access_routes.py",
-          "line": 261,
+          "line": 265,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}",
@@ -14408,7 +14468,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 288,
+          "line": 292,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}/checkout",
@@ -14416,7 +14476,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 267,
+          "line": 271,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}/claim",
@@ -14424,7 +14484,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 246,
+          "line": 250,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access/registration-seen",
@@ -14440,7 +14500,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 218,
+          "line": 222,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/account",
@@ -14448,7 +14508,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 224,
+          "line": 228,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/account/legal-acceptances",
@@ -14456,7 +14516,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 93,
+          "line": 150,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal",
@@ -14464,7 +14524,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 93,
+          "line": 150,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal",
@@ -14472,7 +14532,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 98,
+          "line": 155,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/legal.css",
@@ -14480,7 +14540,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 103,
+          "line": 160,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}",
@@ -14488,7 +14548,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 85,
+          "line": 142,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}.html",
@@ -14654,7 +14714,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 218,
+          "line": 222,
           "module_id": "platform.commerce",
           "name": "account_catalog",
           "qualname": "account_catalog"
@@ -14662,7 +14722,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 224,
+          "line": 228,
           "module_id": "platform.commerce",
           "name": "accept_account_legal_documents",
           "qualname": "accept_account_legal_documents"
@@ -14670,7 +14730,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 246,
+          "line": 250,
           "module_id": "platform.commerce",
           "name": "registration_seen",
           "qualname": "registration_seen"
@@ -14678,7 +14738,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 261,
+          "line": 265,
           "module_id": "platform.commerce",
           "name": "personal_link",
           "qualname": "personal_link"
@@ -14686,7 +14746,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 267,
+          "line": 271,
           "module_id": "platform.commerce",
           "name": "claim_personal_link",
           "qualname": "claim_personal_link"
@@ -14694,7 +14754,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 288,
+          "line": 292,
           "module_id": "platform.commerce",
           "name": "personal_link_checkout",
           "qualname": "personal_link_checkout"
@@ -14782,7 +14842,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 85,
+          "line": 142,
           "module_id": "platform.commerce",
           "name": "legal_document",
           "qualname": "legal_document"
@@ -14790,7 +14850,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 93,
+          "line": 150,
           "module_id": "platform.commerce",
           "name": "legal_index",
           "qualname": "legal_index"
@@ -14798,7 +14858,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 98,
+          "line": 155,
           "module_id": "platform.commerce",
           "name": "legal_stylesheet",
           "qualname": "legal_stylesheet"
@@ -14806,7 +14866,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 103,
+          "line": 160,
           "module_id": "platform.commerce",
           "name": "legal_document_friendly",
           "qualname": "legal_document_friendly"
@@ -15542,7 +15602,7 @@
         },
         {
           "file": "backend/app/models.py",
-          "line": 634,
+          "line": 718,
           "module_id": "platform.commerce",
           "name": "personal_access_links",
           "source": "orm"
@@ -15598,14 +15658,14 @@
         },
         {
           "file": "backend/app/models.py",
-          "line": 661,
+          "line": 745,
           "module_id": "platform.commerce",
           "name": "user_course_policies",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 683,
+          "line": 767,
           "module_id": "platform.commerce",
           "name": "user_legal_acceptances",
           "source": "orm"
@@ -18579,56 +18639,56 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 958,
+          "line": 1042,
           "module_id": "platform.content",
           "name": "content_comments",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 988,
+          "line": 1072,
           "module_id": "platform.content",
           "name": "content_import_runs",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 870,
+          "line": 954,
           "module_id": "platform.content",
           "name": "content_item_versions",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 836,
+          "line": 920,
           "module_id": "platform.content",
           "name": "content_items",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 912,
+          "line": 996,
           "module_id": "platform.content",
           "name": "content_links",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 892,
+          "line": 976,
           "module_id": "platform.content",
           "name": "content_media",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 934,
+          "line": 1018,
           "module_id": "platform.content",
           "name": "content_metric_snapshots",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 821,
+          "line": 905,
           "module_id": "platform.content",
           "name": "content_sources",
           "source": "orm"
@@ -19135,7 +19195,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 78,
+          "line": 135,
           "method": "GET",
           "module_id": "products",
           "path": "/assets/{asset_name}",
@@ -19165,7 +19225,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 78,
+          "line": 135,
           "module_id": "products",
           "name": "app_asset",
           "qualname": "app_asset"
@@ -19173,7 +19233,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 119,
+          "line": 176,
           "module_id": "products",
           "name": "intensive_day_asset",
           "qualname": "intensive_day_asset"
@@ -19181,7 +19241,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 135,
+          "line": 192,
           "module_id": "products",
           "name": "error",
           "qualname": "error"
@@ -19189,7 +19249,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 139,
+          "line": 196,
           "module_id": "products",
           "name": "jsonp",
           "qualname": "jsonp"
@@ -19197,7 +19257,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 146,
+          "line": 203,
           "module_id": "products",
           "name": "empty_strength_state",
           "qualname": "empty_strength_state"
@@ -19205,7 +19265,15 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 167,
+          "line": 224,
+          "module_id": "products",
+          "name": "app_resource_codes",
+          "qualname": "app_resource_codes"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 230,
           "module_id": "products",
           "name": "empty_app_state",
           "qualname": "empty_app_state"
@@ -19213,7 +19281,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 275,
+          "line": 338,
           "module_id": "products",
           "name": "strength_payload",
           "qualname": "strength_payload"
@@ -19221,7 +19289,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 463,
+          "line": 528,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -19229,7 +19297,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 580,
+          "line": 645,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -19237,7 +19305,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 605,
+          "line": 670,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -19245,7 +19313,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 689,
+          "line": 756,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -19277,7 +19345,7 @@
         {
           "file": "backend/app/app_service.py",
           "kind": "function",
-          "line": 93,
+          "line": 98,
           "module_id": "products",
           "name": "primary_email",
           "qualname": "primary_email"
@@ -19285,7 +19353,7 @@
         {
           "file": "backend/app/app_service.py",
           "kind": "function",
-          "line": 103,
+          "line": 108,
           "module_id": "products",
           "name": "utc_iso",
           "qualname": "utc_iso"
@@ -19293,7 +19361,7 @@
         {
           "file": "backend/app/app_service.py",
           "kind": "function",
-          "line": 107,
+          "line": 112,
           "module_id": "products",
           "name": "clean_json",
           "qualname": "clean_json"
@@ -19373,7 +19441,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 34,
+          "line": 36,
           "module_id": "products",
           "name": "normalizeEmail",
           "qualname": "normalizeEmail"
@@ -19381,7 +19449,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 38,
+          "line": 40,
           "module_id": "products",
           "name": "validEmail",
           "qualname": "validEmail"
@@ -19389,7 +19457,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 42,
+          "line": 44,
           "module_id": "products",
           "name": "detectTildaEmail",
           "qualname": "detectTildaEmail"
@@ -19397,7 +19465,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 61,
+          "line": 63,
           "module_id": "products",
           "name": "detectTildaMemberEmail",
           "qualname": "detectTildaMemberEmail"
@@ -19405,7 +19473,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 72,
+          "line": 74,
           "module_id": "products",
           "name": "waitForTildaEmail",
           "qualname": "waitForTildaEmail"
@@ -19413,7 +19481,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 90,
+          "line": 92,
           "module_id": "products",
           "name": "rememberedIdentity",
           "qualname": "rememberedIdentity"
@@ -19421,7 +19489,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 105,
+          "line": 107,
           "module_id": "products",
           "name": "remember",
           "qualname": "remember"
@@ -19429,7 +19497,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 134,
+          "line": 136,
           "module_id": "products",
           "name": "tildaIdentityRequired",
           "qualname": "tildaIdentityRequired"
@@ -19437,7 +19505,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 140,
+          "line": 142,
           "module_id": "products",
           "name": "hideTildaUserbar",
           "qualname": "hideTildaUserbar"
@@ -19445,7 +19513,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 148,
+          "line": 150,
           "module_id": "products",
           "name": "legalFooterHtml",
           "qualname": "legalFooterHtml"
@@ -19453,7 +19521,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 157,
+          "line": 159,
           "module_id": "products",
           "name": "legalFooterHost",
           "qualname": "legalFooterHost"
@@ -19461,7 +19529,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 165,
+          "line": 170,
           "module_id": "products",
           "name": "ensureLegalFooter",
           "qualname": "ensureLegalFooter"
@@ -19469,7 +19537,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 169,
+          "line": 174,
           "module_id": "products",
           "name": "append",
           "qualname": "append"
@@ -19477,7 +19545,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 178,
+          "line": 183,
           "module_id": "products",
           "name": "askIdentity",
           "qualname": "askIdentity"
@@ -19485,7 +19553,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 252,
+          "line": 257,
           "module_id": "products",
           "name": "executeScripts",
           "qualname": "executeScripts"
@@ -19493,7 +19561,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 273,
+          "line": 278,
           "module_id": "products",
           "name": "load",
           "qualname": "load"
@@ -19501,7 +19569,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 318,
+          "line": 323,
           "module_id": "products",
           "name": "start",
           "qualname": "start"
@@ -19509,7 +19577,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 322,
+          "line": 327,
           "module_id": "products",
           "name": "boot",
           "qualname": "boot"
@@ -19727,13 +19795,21 @@
           "kind": "function",
           "line": 587,
           "module_id": "products",
+          "name": "test_masterclass_media_uses_present_links_and_player_route",
+          "qualname": "test_masterclass_media_uses_present_links_and_player_route"
+        },
+        {
+          "file": "backend/tests/test_app_assets.py",
+          "kind": "function",
+          "line": 603,
+          "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
         },
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 599,
+          "line": 615,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -19741,7 +19817,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 639,
+          "line": 655,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -19749,7 +19825,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 645,
+          "line": 661,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -19757,7 +19833,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 658,
+          "line": 674,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -19765,7 +19841,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 669,
+          "line": 685,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -19773,7 +19849,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 683,
+          "line": 699,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -19784,6 +19860,696 @@
       "title": "Продукты и клиентские приложения",
       "truths": [
         "Дочерние карточки, `docs/APPLICATION_PLATFORM.md`, `docs/knowledge-base/PRODUCTS.md`."
+      ]
+    },
+    {
+      "admin_catalog": [
+        {
+          "category": "tools",
+          "description": "Этапы, материалы, задания и готовность запуска курса.",
+          "label": "Калорийный курс",
+          "order": 65,
+          "url": "/admin/courses/calories/structure"
+        }
+      ],
+      "admin_urls": [],
+      "boundary": "Модуль не владеет формулами калькулятора метаболизма, программой тренировок,\nпродажей консультации и Telegram-последовательностями. Старые видео и Tilda-\nматериалы являются редакционной фактурой, а не активным runtime.",
+      "capabilities": [
+        "показывать пять редактируемых этапов и живое количество шагов внутри них;",
+        "хранить завершение материалов, задания и этапа;",
+        "открывать следующий этап сразу после завершения текущего, без календарного",
+        "публиковать Markdown-материалы по стабильному `step.id` с историей версий;",
+        "записывать идемпотентные события прохождения, не отправляя сообщения сам;",
+        "открываться из единственного кабинета Tilda без второго логина.",
+        "оставаться закрытым до публикации всех видимых статей и отдельного включения"
+      ],
+      "card": "docs/knowledge-base/modules/catalog/products.calories.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "products.calories",
+          "path": "backend/app/calorie_course_material_service.py"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "backend/app/calorie_course_routes.py"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "backend/app/calorie_course_service.py"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "backend/tests/test_calorie_course_journey.py"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/course/README.md"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "content/calories/course/course.json"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "docs/knowledge-base/modules/calories/COURSE_RUNTIME.md"
+        },
+        {
+          "module_id": "products.calories",
+          "path": "docs/knowledge-base/modules/catalog/products.calories.md"
+        }
+      ],
+      "id": "products.calories",
+      "implementation_status": "in_development",
+      "parent": "products",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "operations.delivery",
+          "platform.auth",
+          "platform.content",
+          "products.catalog",
+          "products.masterclass.course",
+          "products.metabolism"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [],
+        "writes_to": []
+      },
+      "routes": [
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 345,
+          "method": "GET",
+          "module_id": "products.calories",
+          "path": "/api/calories/course",
+          "symbol": "course_state"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 472,
+          "method": "PUT",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/days/{stage}/checks/{index}",
+          "symbol": "course_update_check"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 367,
+          "method": "POST",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/days/{stage}/open",
+          "symbol": "course_open_stage"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 383,
+          "method": "POST",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/days/{stage}/steps/{index}/complete",
+          "symbol": "course_complete_step"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 439,
+          "method": "POST",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/days/{stage}/task/open",
+          "symbol": "course_open_task"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 319,
+          "method": "GET",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/manifest",
+          "symbol": "course_manifest"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "line": 329,
+          "method": "GET",
+          "module_id": "products.calories",
+          "path": "/api/calories/course/materials",
+          "symbol": "course_materials"
+        }
+      ],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Этапный текстовый курс об учёте, анализе, расходе, дефиците и выходе из постоянного подсчёта.",
+      "symbols": [
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 22,
+          "module_id": "products.calories",
+          "name": "article_step",
+          "qualname": "article_step"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 33,
+          "module_id": "products.calories",
+          "name": "material_source",
+          "qualname": "material_source"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 52,
+          "module_id": "products.calories",
+          "name": "material_item",
+          "qualname": "material_item"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 67,
+          "module_id": "products.calories",
+          "name": "latest_version",
+          "qualname": "latest_version"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 73,
+          "module_id": "products.calories",
+          "name": "word_count",
+          "qualname": "word_count"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "products.calories",
+          "name": "version_payload",
+          "qualname": "version_payload"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 101,
+          "module_id": "products.calories",
+          "name": "get_material",
+          "qualname": "get_material"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 109,
+          "module_id": "products.calories",
+          "name": "list_materials",
+          "qualname": "list_materials"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 142,
+          "module_id": "products.calories",
+          "name": "publication_status",
+          "qualname": "publication_status"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 156,
+          "module_id": "products.calories",
+          "name": "render_material",
+          "qualname": "render_material"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 166,
+          "module_id": "products.calories",
+          "name": "material_hash",
+          "qualname": "material_hash"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 170,
+          "module_id": "products.calories",
+          "name": "publish_material",
+          "qualname": "publish_material"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 240,
+          "module_id": "products.calories",
+          "name": "material_versions",
+          "qualname": "material_versions"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 269,
+          "module_id": "products.calories",
+          "name": "restore_material",
+          "qualname": "restore_material"
+        },
+        {
+          "file": "backend/app/calorie_course_material_service.py",
+          "kind": "function",
+          "line": 298,
+          "module_id": "products.calories",
+          "name": "published_materials",
+          "qualname": "published_materials"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "class",
+          "line": 29,
+          "module_id": "products.calories",
+          "name": "RunActionIn",
+          "qualname": "RunActionIn"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "class",
+          "line": 34,
+          "module_id": "products.calories",
+          "name": "CourseCheckIn",
+          "qualname": "CourseCheckIn"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 39,
+          "module_id": "products.calories",
+          "name": "aware_utc",
+          "qualname": "aware_utc"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 43,
+          "module_id": "products.calories",
+          "name": "resolve_course_user",
+          "qualname": "resolve_course_user"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 55,
+          "module_id": "products.calories",
+          "name": "course_event",
+          "qualname": "course_event"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 83,
+          "module_id": "products.calories",
+          "name": "stage_progress",
+          "qualname": "stage_progress"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 95,
+          "module_id": "products.calories",
+          "name": "current_required_step_ids",
+          "qualname": "current_required_step_ids"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 105,
+          "module_id": "products.calories",
+          "name": "current_required_check_ids",
+          "qualname": "current_required_check_ids"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 113,
+          "module_id": "products.calories",
+          "name": "completed_step_indexes",
+          "qualname": "completed_step_indexes"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 125,
+          "module_id": "products.calories",
+          "name": "required_step_indexes",
+          "qualname": "required_step_indexes"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 136,
+          "module_id": "products.calories",
+          "name": "stage_can_open",
+          "qualname": "stage_can_open"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 151,
+          "module_id": "products.calories",
+          "name": "open_stage",
+          "qualname": "open_stage"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 188,
+          "module_id": "products.calories",
+          "name": "finalize_stage",
+          "qualname": "finalize_stage"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 216,
+          "module_id": "products.calories",
+          "name": "course_payload",
+          "qualname": "course_payload"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 319,
+          "module_id": "products.calories",
+          "name": "course_manifest",
+          "qualname": "course_manifest"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 329,
+          "module_id": "products.calories",
+          "name": "course_materials",
+          "qualname": "course_materials"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 345,
+          "module_id": "products.calories",
+          "name": "course_state",
+          "qualname": "course_state"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 367,
+          "module_id": "products.calories",
+          "name": "course_open_stage",
+          "qualname": "course_open_stage"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 383,
+          "module_id": "products.calories",
+          "name": "course_complete_step",
+          "qualname": "course_complete_step"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 439,
+          "module_id": "products.calories",
+          "name": "course_open_task",
+          "qualname": "course_open_task"
+        },
+        {
+          "file": "backend/app/calorie_course_routes.py",
+          "kind": "function",
+          "line": 472,
+          "module_id": "products.calories",
+          "name": "course_update_check",
+          "qualname": "course_update_check"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 41,
+          "module_id": "products.calories",
+          "name": "check_id",
+          "qualname": "check_id"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 45,
+          "module_id": "products.calories",
+          "name": "normalize_seed",
+          "qualname": "normalize_seed"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "products.calories",
+          "name": "seed_manifest",
+          "qualname": "seed_manifest"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "class",
+          "line": 82,
+          "module_id": "products.calories",
+          "name": "CalorieCourseContext",
+          "qualname": "CalorieCourseContext"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 90,
+          "module_id": "products.calories",
+          "name": "active_course_version",
+          "qualname": "active_course_version"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 100,
+          "module_id": "products.calories",
+          "name": "runtime_manifest",
+          "qualname": "runtime_manifest"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 104,
+          "module_id": "products.calories",
+          "name": "course_context",
+          "qualname": "course_context"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 118,
+          "module_id": "products.calories",
+          "name": "serialize_version",
+          "qualname": "serialize_version"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 133,
+          "module_id": "products.calories",
+          "name": "normalize_editor_payload",
+          "qualname": "normalize_editor_payload"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 250,
+          "module_id": "products.calories",
+          "name": "publish_course_structure",
+          "qualname": "publish_course_structure"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 266,
+          "module_id": "products.calories",
+          "name": "prepare_restore_payload",
+          "qualname": "prepare_restore_payload"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 270,
+          "module_id": "products.calories",
+          "name": "effective_required_step_ids",
+          "qualname": "effective_required_step_ids"
+        },
+        {
+          "file": "backend/app/calorie_course_service.py",
+          "kind": "function",
+          "line": 284,
+          "module_id": "products.calories",
+          "name": "effective_required_check_ids",
+          "qualname": "effective_required_check_ids"
+        },
+        {
+          "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+          "kind": "function",
+          "line": 17,
+          "module_id": "products.calories",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+          "kind": "function",
+          "line": 88,
+          "module_id": "products.calories",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 34,
+          "module_id": "products.calories",
+          "name": "setup",
+          "qualname": "setup"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 43,
+          "module_id": "products.calories",
+          "name": "override_db",
+          "qualname": "setup.override_db"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 131,
+          "module_id": "products.calories",
+          "name": "teardown_function",
+          "qualname": "teardown_function"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 136,
+          "module_id": "products.calories",
+          "name": "test_calorie_course_requires_access_and_exposes_five_stage_manifest",
+          "qualname": "test_calorie_course_requires_access_and_exposes_five_stage_manifest"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 235,
+          "module_id": "products.calories",
+          "name": "test_calorie_course_completes_stage_in_order_and_opens_next_immediately",
+          "qualname": "test_calorie_course_completes_stage_in_order_and_opens_next_immediately"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 284,
+          "module_id": "products.calories",
+          "name": "test_calorie_material_can_be_published_without_structure_deploy",
+          "qualname": "test_calorie_material_can_be_published_without_structure_deploy"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 319,
+          "module_id": "products.calories",
+          "name": "test_course_editor_lists_calories_and_updates_stage_copy",
+          "qualname": "test_course_editor_lists_calories_and_updates_stage_copy"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 364,
+          "module_id": "products.calories",
+          "name": "test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready",
+          "qualname": "test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 421,
+          "module_id": "products.calories",
+          "name": "test_launch_switch_cannot_open_course_with_missing_materials",
+          "qualname": "test_launch_switch_cannot_open_course_with_missing_materials"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 460,
+          "module_id": "products.calories",
+          "name": "test_hidden_article_does_not_block_launch_when_visible_articles_are_published",
+          "qualname": "test_hidden_article_does_not_block_launch_when_visible_articles_are_published"
+        },
+        {
+          "file": "backend/tests/test_calorie_course_journey.py",
+          "kind": "function",
+          "line": 500,
+          "module_id": "products.calories",
+          "name": "test_calorie_course_reuses_masterclass_shell_with_stage_routes",
+          "qualname": "test_calorie_course_reuses_masterclass_shell_with_stage_routes"
+        }
+      ],
+      "tables": [
+        {
+          "file": "backend/app/models.py",
+          "line": 566,
+          "module_id": "products.calories",
+          "name": "course_events",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 589,
+          "module_id": "products.calories",
+          "name": "course_stage_progress",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 622,
+          "module_id": "products.calories",
+          "name": "course_step_progress",
+          "source": "orm"
+        },
+        {
+          "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+          "line": 18,
+          "module_id": "products.calories",
+          "name": "course_events",
+          "source": "migration"
+        },
+        {
+          "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+          "line": 39,
+          "module_id": "products.calories",
+          "name": "course_stage_progress",
+          "source": "migration"
+        },
+        {
+          "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+          "line": 64,
+          "module_id": "products.calories",
+          "name": "course_step_progress",
+          "source": "migration"
+        }
+      ],
+      "telegram": null,
+      "title": "Калорийный курс",
+      "truths": [
+        "active `managed_document_versions` с ключом `calories` — структура;\n- `content_items`/`content_item_versions` источника\n  `calories-course-materials` — опубликованные статьи;\n- `content/calories/course/course.json` — seed и локальный fallback;\n- `course_stage_progress`, `course_step_progress`, `course_events` с\n  `course_code = calories` — прохождение;\n- [исполняемый контракт](../calories/COURSE_RUNTIME.md).",
+        "Редакционные карты до публикации лежат в `work/calorie-course-rebuild/`; они не\nзаменяют runtime и не являются каноническими пользовательскими статьями."
       ]
     },
     {
@@ -20192,7 +20958,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 180,
+          "line": 243,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/api/apps/dqs",
@@ -20200,7 +20966,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 73,
+          "line": 130,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/apps/dqs-category-rules.js",
@@ -20214,7 +20980,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 73,
+          "line": 130,
           "module_id": "products.dqs",
           "name": "dqs_category_rules",
           "qualname": "dqs_category_rules"
@@ -20222,7 +20988,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 180,
+          "line": 243,
           "module_id": "products.dqs",
           "name": "dqs_legacy_get",
           "qualname": "dqs_legacy_get"
@@ -20601,7 +21367,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 110,
+          "line": 167,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.css",
@@ -20609,7 +21375,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 115,
+          "line": 172,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.js",
@@ -20617,7 +21383,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 131,
+          "line": 188,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}",
@@ -20625,7 +21391,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 126,
+          "line": 183,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}.html",
@@ -20663,7 +21429,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 110,
+          "line": 167,
           "module_id": "products.intensive",
           "name": "intensive_stylesheet",
           "qualname": "intensive_stylesheet"
@@ -20671,7 +21437,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 115,
+          "line": 172,
           "module_id": "products.intensive",
           "name": "intensive_script",
           "qualname": "intensive_script"
@@ -20679,7 +21445,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 126,
+          "line": 183,
           "module_id": "products.intensive",
           "name": "intensive_day_html",
           "qualname": "intensive_day_html"
@@ -20687,7 +21453,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 131,
+          "line": 188,
           "module_id": "products.intensive",
           "name": "intensive_day_friendly",
           "qualname": "intensive_day_friendly"
@@ -21354,7 +22120,7 @@
       "routes": [
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 35,
+          "line": 44,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials",
@@ -21362,7 +22128,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 45,
+          "line": 54,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -21370,7 +22136,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 56,
+          "line": 65,
           "method": "PUT",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -21378,7 +22144,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 75,
+          "line": 83,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -21386,7 +22152,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 88,
+          "line": 100,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -21394,7 +22160,7 @@
         },
         {
           "file": "backend/app/course_structure_routes.py",
-          "line": 59,
+          "line": 72,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses",
@@ -21402,7 +22168,7 @@
         },
         {
           "file": "backend/app/course_structure_routes.py",
-          "line": 76,
+          "line": 106,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/structure",
@@ -21410,7 +22176,7 @@
         },
         {
           "file": "backend/app/course_structure_routes.py",
-          "line": 86,
+          "line": 114,
           "method": "PUT",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/structure",
@@ -21418,7 +22184,7 @@
         },
         {
           "file": "backend/app/course_structure_routes.py",
-          "line": 103,
+          "line": 126,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/structure/versions/{version_no}/restore",
@@ -21464,8 +22230,16 @@
       "symbols": [
         {
           "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 23,
+          "module_id": "products.masterclass.course",
+          "name": "material_service",
+          "qualname": "material_service"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 24,
+          "line": 33,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialUpdate",
           "qualname": "CourseMaterialUpdate"
@@ -21473,7 +22247,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 30,
+          "line": 39,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialRestore",
           "qualname": "CourseMaterialRestore"
@@ -21481,7 +22255,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 35,
+          "line": 44,
           "module_id": "products.masterclass.course",
           "name": "admin_course_materials",
           "qualname": "admin_course_materials"
@@ -21489,7 +22263,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 45,
+          "line": 54,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material",
           "qualname": "admin_course_material"
@@ -21497,7 +22271,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 56,
+          "line": 65,
           "module_id": "products.masterclass.course",
           "name": "admin_publish_course_material",
           "qualname": "admin_publish_course_material"
@@ -21505,7 +22279,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 75,
+          "line": 83,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material_versions",
           "qualname": "admin_course_material_versions"
@@ -21513,7 +22287,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 88,
+          "line": 100,
           "module_id": "products.masterclass.course",
           "name": "admin_restore_course_material",
           "qualname": "admin_restore_course_material"
@@ -21649,7 +22423,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "class",
-          "line": 24,
+          "line": 25,
           "module_id": "products.masterclass.course",
           "name": "CourseStructureUpdate",
           "qualname": "CourseStructureUpdate"
@@ -21657,7 +22431,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "class",
-          "line": 29,
+          "line": 30,
           "module_id": "products.masterclass.course",
           "name": "CourseStructureRestore",
           "qualname": "CourseStructureRestore"
@@ -21665,15 +22439,15 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "module_id": "products.masterclass.course",
-          "name": "checked_course",
-          "qualname": "checked_course"
+          "name": "course_service",
+          "qualname": "course_service"
         },
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 39,
+          "line": 42,
           "module_id": "products.masterclass.course",
           "name": "editor_payload",
           "qualname": "editor_payload"
@@ -21681,7 +22455,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 59,
+          "line": 72,
           "module_id": "products.masterclass.course",
           "name": "admin_courses",
           "qualname": "admin_courses"
@@ -21689,7 +22463,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 76,
+          "line": 106,
           "module_id": "products.masterclass.course",
           "name": "admin_course_structure",
           "qualname": "admin_course_structure"
@@ -21697,7 +22471,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 86,
+          "line": 114,
           "module_id": "products.masterclass.course",
           "name": "admin_save_course_structure",
           "qualname": "admin_save_course_structure"
@@ -21705,7 +22479,7 @@
         {
           "file": "backend/app/course_structure_routes.py",
           "kind": "function",
-          "line": 103,
+          "line": 126,
           "module_id": "products.masterclass.course",
           "name": "admin_restore_course_structure",
           "qualname": "admin_restore_course_structure"
@@ -21849,7 +22623,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 408,
+          "line": 424,
           "module_id": "products.masterclass.course",
           "name": "publish_course_structure",
           "qualname": "publish_course_structure"
@@ -21857,7 +22631,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 424,
+          "line": 440,
           "module_id": "products.masterclass.course",
           "name": "merge_seed_additions",
           "qualname": "merge_seed_additions"
@@ -21865,7 +22639,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 461,
+          "line": 477,
           "module_id": "products.masterclass.course",
           "name": "publish_course_seed_additions",
           "qualname": "publish_course_seed_additions"
@@ -21873,7 +22647,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 479,
+          "line": 495,
           "module_id": "products.masterclass.course",
           "name": "prepare_restore_payload",
           "qualname": "prepare_restore_payload"
@@ -21881,7 +22655,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 508,
+          "line": 524,
           "module_id": "products.masterclass.course",
           "name": "effective_required_step_ids",
           "qualname": "effective_required_step_ids"
@@ -21889,7 +22663,7 @@
         {
           "file": "backend/app/course_structure_service.py",
           "kind": "function",
-          "line": 522,
+          "line": 538,
           "module_id": "products.masterclass.course",
           "name": "effective_required_check_ids",
           "qualname": "effective_required_check_ids"
@@ -22011,13 +22785,45 @@
           "kind": "function",
           "line": 10,
           "module_id": "products.masterclass.course",
+          "name": "unitGenitive",
+          "qualname": "unitGenitive"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 11,
+          "module_id": "products.masterclass.course",
+          "name": "materialCount",
+          "qualname": "materialCount"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 12,
+          "module_id": "products.masterclass.course",
+          "name": "timingsText",
+          "qualname": "timingsText"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 13,
+          "module_id": "products.masterclass.course",
+          "name": "parseTimings",
+          "qualname": "parseTimings"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 14,
+          "module_id": "products.masterclass.course",
           "name": "renderMaterial",
           "qualname": "renderMaterial"
         },
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 11,
+          "line": 15,
           "module_id": "products.masterclass.course",
           "name": "renderDay",
           "qualname": "renderDay"
@@ -22025,7 +22831,7 @@
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 20,
+          "line": 24,
           "module_id": "products.masterclass.course",
           "name": "render",
           "qualname": "render"
@@ -22033,7 +22839,7 @@
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 21,
+          "line": 25,
           "module_id": "products.masterclass.course",
           "name": "renderHistory",
           "qualname": "renderHistory"
@@ -22041,7 +22847,15 @@
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 22,
+          "line": 26,
+          "module_id": "products.masterclass.course",
+          "name": "adoptPayload",
+          "qualname": "adoptPayload"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 27,
           "module_id": "products.masterclass.course",
           "name": "load",
           "qualname": "load"
@@ -22049,7 +22863,7 @@
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 23,
+          "line": 28,
           "module_id": "products.masterclass.course",
           "name": "showError",
           "qualname": "showError"
@@ -22057,10 +22871,18 @@
         {
           "file": "backend/app/static/course-structure-editor.js",
           "kind": "function",
-          "line": 24,
+          "line": 29,
           "module_id": "products.masterclass.course",
           "name": "clearError",
           "qualname": "clearError"
+        },
+        {
+          "file": "backend/app/static/course-structure-editor.js",
+          "kind": "function",
+          "line": 30,
+          "module_id": "products.masterclass.course",
+          "name": "updateDayMedia",
+          "qualname": "updateDayMedia"
         },
         {
           "file": "backend/migrations/versions/20260825_0024_course_structure_editor.py",
@@ -22242,7 +23064,7 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 785,
+          "line": 869,
           "module_id": "products.masterclass.course",
           "name": "managed_document_versions",
           "source": "orm"
@@ -22616,7 +23438,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 200,
+          "line": 206,
           "module_id": "products.masterclass.offers",
           "name": "bundle_detail",
           "qualname": "bundle_detail"
@@ -22624,7 +23446,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 205,
+          "line": 211,
           "module_id": "products.masterclass.offers",
           "name": "partial_bundle_copy",
           "qualname": "partial_bundle_copy"
@@ -22769,21 +23591,21 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 614,
+          "line": 698,
           "module_id": "products.masterclass.offers",
           "name": "offer_checkouts",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 589,
+          "line": 673,
           "module_id": "products.masterclass.offers",
           "name": "offer_stages",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 600,
+          "line": 684,
           "module_id": "products.masterclass.offers",
           "name": "user_offers",
           "source": "orm"
@@ -22889,14 +23711,14 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 578,
+          "line": 662,
           "module_id": "products.masterclass.questionnaires",
           "name": "questionnaire_answers",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 566,
+          "line": 650,
           "module_id": "products.masterclass.questionnaires",
           "name": "questionnaire_runs",
           "source": "orm"
@@ -24621,7 +25443,7 @@
         },
         {
           "file": "backend/app/models.py",
-          "line": 707,
+          "line": 791,
           "module_id": "products.masterclass.runtime",
           "name": "masterclass_notifications",
           "source": "orm"
@@ -24635,7 +25457,7 @@
         },
         {
           "file": "backend/app/models.py",
-          "line": 728,
+          "line": 812,
           "module_id": "products.masterclass.runtime",
           "name": "masterclass_test_profiles",
           "source": "orm"
@@ -24665,7 +25487,7 @@
         }
       ],
       "admin_urls": [],
-      "boundary": "Будущие курсы о калориях не копируют автоматически сценарии мастер-класса.",
+      "boundary": "Будущие курсы о калориях не копируют автоматически сценарии мастер-класса.\nКалорийный курс может открыть это же приложение встроенным шагом. Доступ к\nинструменту разрешён как по ресурсу `metabolism`, так и по действующему\n`ACCESS_CALORIES`; формула и состояние при этом остаются единственными.",
       "capabilities": [
         "загружать и сохранять состояние пользователя;",
         "работать через общую Tilda-оболочку и API;"
@@ -24708,7 +25530,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 477,
+          "line": 542,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -24716,7 +25538,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 494,
+          "line": 559,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -24724,7 +25546,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 431,
+          "line": 494,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -24732,7 +25554,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 446,
+          "line": 509,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -24746,7 +25568,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 431,
+          "line": 494,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -24754,7 +25576,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 446,
+          "line": 509,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -24762,7 +25584,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 477,
+          "line": 542,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -24770,7 +25592,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 494,
+          "line": 559,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -24779,7 +25601,7 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 753,
+          "line": 837,
           "module_id": "products.metabolism",
           "name": "metabolism_states",
           "source": "orm"
@@ -25386,7 +26208,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 336,
+          "line": 399,
           "method": "GET",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -25394,7 +26216,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 336,
+          "line": 399,
           "method": "POST",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -25408,7 +26230,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 336,
+          "line": 399,
           "module_id": "products.strength",
           "name": "strength_legacy",
           "qualname": "strength_legacy"
@@ -25593,7 +26415,7 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 742,
+          "line": 826,
           "module_id": "products.strength",
           "name": "strength_exercises",
           "source": "orm"
@@ -25893,6 +26715,36 @@
       "type": "depends_on"
     },
     {
+      "source": "products.calories",
+      "target": "operations.delivery",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.calories",
+      "target": "platform.auth",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.calories",
+      "target": "platform.content",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.calories",
+      "target": "products.catalog",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.calories",
+      "target": "products.masterclass.course",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.calories",
+      "target": "products.metabolism",
+      "type": "depends_on"
+    },
+    {
       "source": "products.catalog",
       "target": "platform.auth",
       "type": "depends_on"
@@ -26090,7 +26942,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 477,
+      "line": 542,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -26098,7 +26950,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 494,
+      "line": 559,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -26106,7 +26958,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 529,
+      "line": 594,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -26114,7 +26966,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 655,
+      "line": 720,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -26122,7 +26974,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 706,
+      "line": 773,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -26178,7 +27030,7 @@
     },
     {
       "file": "backend/app/course_structure_routes.py",
-      "line": 59,
+      "line": 72,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses",
@@ -26186,7 +27038,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 35,
+      "line": 44,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials",
@@ -26194,7 +27046,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 45,
+      "line": 54,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -26202,7 +27054,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 56,
+      "line": 65,
       "method": "PUT",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -26210,7 +27062,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 75,
+      "line": 83,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -26218,7 +27070,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 88,
+      "line": 100,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -26226,7 +27078,7 @@
     },
     {
       "file": "backend/app/course_structure_routes.py",
-      "line": 76,
+      "line": 106,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/structure",
@@ -26234,7 +27086,7 @@
     },
     {
       "file": "backend/app/course_structure_routes.py",
-      "line": 86,
+      "line": 114,
       "method": "PUT",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/structure",
@@ -26242,7 +27094,7 @@
     },
     {
       "file": "backend/app/course_structure_routes.py",
-      "line": 103,
+      "line": 126,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/structure/versions/{version_no}/restore",
@@ -26474,7 +27326,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 621,
+      "line": 686,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -26490,7 +27342,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 375,
+      "line": 379,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -26498,7 +27350,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 315,
+      "line": 319,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -26578,7 +27430,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 261,
+      "line": 265,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}",
@@ -26586,7 +27438,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 288,
+      "line": 292,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}/checkout",
@@ -26594,7 +27446,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 267,
+      "line": 271,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}/claim",
@@ -26602,7 +27454,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 246,
+      "line": 250,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access/registration-seen",
@@ -26618,7 +27470,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 218,
+      "line": 222,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/account",
@@ -26626,7 +27478,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 224,
+      "line": 228,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/account/legal-acceptances",
@@ -26650,7 +27502,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 180,
+      "line": 243,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/api/apps/dqs",
@@ -26658,7 +27510,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 431,
+      "line": 494,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -26666,7 +27518,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 446,
+      "line": 509,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -26754,7 +27606,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 336,
+      "line": 399,
       "method": "GET",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -26762,11 +27614,67 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 336,
+      "line": 399,
       "method": "POST",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
       "symbol": "strength_legacy"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 345,
+      "method": "GET",
+      "module_id": "products.calories",
+      "path": "/api/calories/course",
+      "symbol": "course_state"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 472,
+      "method": "PUT",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/days/{stage}/checks/{index}",
+      "symbol": "course_update_check"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 367,
+      "method": "POST",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/days/{stage}/open",
+      "symbol": "course_open_stage"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 383,
+      "method": "POST",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/days/{stage}/steps/{index}/complete",
+      "symbol": "course_complete_step"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 439,
+      "method": "POST",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/days/{stage}/task/open",
+      "symbol": "course_open_task"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 319,
+      "method": "GET",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/manifest",
+      "symbol": "course_manifest"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "line": 329,
+      "method": "GET",
+      "module_id": "products.calories",
+      "path": "/api/calories/course/materials",
+      "symbol": "course_materials"
     },
     {
       "file": "backend/app/intensive_routes.py",
@@ -27058,7 +27966,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 73,
+      "line": 130,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/apps/dqs-category-rules.js",
@@ -27074,7 +27982,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 78,
+      "line": 135,
       "method": "GET",
       "module_id": "products",
       "path": "/assets/{asset_name}",
@@ -27578,7 +28486,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 50,
+      "line": 52,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -27602,7 +28510,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 110,
+      "line": 167,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.css",
@@ -27610,7 +28518,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 115,
+      "line": 172,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.js",
@@ -27618,7 +28526,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 131,
+      "line": 188,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}",
@@ -27626,7 +28534,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 126,
+      "line": 183,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}.html",
@@ -27634,7 +28542,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 93,
+      "line": 150,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal",
@@ -27642,7 +28550,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 93,
+      "line": 150,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal",
@@ -27650,7 +28558,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 98,
+      "line": 155,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/legal.css",
@@ -27658,7 +28566,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 103,
+      "line": 160,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}",
@@ -27666,7 +28574,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 85,
+      "line": 142,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}.html",
@@ -27682,7 +28590,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 56,
+      "line": 58,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/ready",
@@ -27782,7 +28690,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 218,
+      "line": 222,
       "module_id": "platform.commerce",
       "name": "account_catalog",
       "qualname": "account_catalog"
@@ -27790,7 +28698,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 224,
+      "line": 228,
       "module_id": "platform.commerce",
       "name": "accept_account_legal_documents",
       "qualname": "accept_account_legal_documents"
@@ -27798,7 +28706,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 246,
+      "line": 250,
       "module_id": "platform.commerce",
       "name": "registration_seen",
       "qualname": "registration_seen"
@@ -27806,7 +28714,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 261,
+      "line": 265,
       "module_id": "platform.commerce",
       "name": "personal_link",
       "qualname": "personal_link"
@@ -27814,7 +28722,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 267,
+      "line": 271,
       "module_id": "platform.commerce",
       "name": "claim_personal_link",
       "qualname": "claim_personal_link"
@@ -27822,7 +28730,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 288,
+      "line": 292,
       "module_id": "platform.commerce",
       "name": "personal_link_checkout",
       "qualname": "personal_link_checkout"
@@ -27830,7 +28738,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 315,
+      "line": 319,
       "module_id": "admin.control",
       "name": "create_personal_link",
       "qualname": "create_personal_link"
@@ -27838,7 +28746,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 375,
+      "line": 379,
       "module_id": "admin.control",
       "name": "list_personal_links",
       "qualname": "list_personal_links"
@@ -28110,7 +29018,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 73,
+      "line": 130,
       "module_id": "products.dqs",
       "name": "dqs_category_rules",
       "qualname": "dqs_category_rules"
@@ -28118,7 +29026,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 78,
+      "line": 135,
       "module_id": "products",
       "name": "app_asset",
       "qualname": "app_asset"
@@ -28126,7 +29034,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 85,
+      "line": 142,
       "module_id": "platform.commerce",
       "name": "legal_document",
       "qualname": "legal_document"
@@ -28134,7 +29042,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 93,
+      "line": 150,
       "module_id": "platform.commerce",
       "name": "legal_index",
       "qualname": "legal_index"
@@ -28142,7 +29050,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 98,
+      "line": 155,
       "module_id": "platform.commerce",
       "name": "legal_stylesheet",
       "qualname": "legal_stylesheet"
@@ -28150,7 +29058,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 103,
+      "line": 160,
       "module_id": "platform.commerce",
       "name": "legal_document_friendly",
       "qualname": "legal_document_friendly"
@@ -28158,7 +29066,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 110,
+      "line": 167,
       "module_id": "products.intensive",
       "name": "intensive_stylesheet",
       "qualname": "intensive_stylesheet"
@@ -28166,7 +29074,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 115,
+      "line": 172,
       "module_id": "products.intensive",
       "name": "intensive_script",
       "qualname": "intensive_script"
@@ -28174,7 +29082,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 119,
+      "line": 176,
       "module_id": "products",
       "name": "intensive_day_asset",
       "qualname": "intensive_day_asset"
@@ -28182,7 +29090,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 126,
+      "line": 183,
       "module_id": "products.intensive",
       "name": "intensive_day_html",
       "qualname": "intensive_day_html"
@@ -28190,7 +29098,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 131,
+      "line": 188,
       "module_id": "products.intensive",
       "name": "intensive_day_friendly",
       "qualname": "intensive_day_friendly"
@@ -28198,7 +29106,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 135,
+      "line": 192,
       "module_id": "products",
       "name": "error",
       "qualname": "error"
@@ -28206,7 +29114,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 139,
+      "line": 196,
       "module_id": "products",
       "name": "jsonp",
       "qualname": "jsonp"
@@ -28214,7 +29122,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 146,
+      "line": 203,
       "module_id": "products",
       "name": "empty_strength_state",
       "qualname": "empty_strength_state"
@@ -28222,7 +29130,15 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 167,
+      "line": 224,
+      "module_id": "products",
+      "name": "app_resource_codes",
+      "qualname": "app_resource_codes"
+    },
+    {
+      "file": "backend/app/app_routes.py",
+      "kind": "function",
+      "line": 230,
       "module_id": "products",
       "name": "empty_app_state",
       "qualname": "empty_app_state"
@@ -28230,7 +29146,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 180,
+      "line": 243,
       "module_id": "products.dqs",
       "name": "dqs_legacy_get",
       "qualname": "dqs_legacy_get"
@@ -28238,7 +29154,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 275,
+      "line": 338,
       "module_id": "products",
       "name": "strength_payload",
       "qualname": "strength_payload"
@@ -28246,7 +29162,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 336,
+      "line": 399,
       "module_id": "products.strength",
       "name": "strength_legacy",
       "qualname": "strength_legacy"
@@ -28254,7 +29170,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 431,
+      "line": 494,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -28262,7 +29178,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 446,
+      "line": 509,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -28270,7 +29186,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 463,
+      "line": 528,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -28278,7 +29194,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 477,
+      "line": 542,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -28286,7 +29202,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 494,
+      "line": 559,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -28294,7 +29210,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 529,
+      "line": 594,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -28302,7 +29218,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 580,
+      "line": 645,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -28310,7 +29226,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 605,
+      "line": 670,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -28318,7 +29234,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 621,
+      "line": 686,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -28326,7 +29242,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 655,
+      "line": 720,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -28334,7 +29250,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 689,
+      "line": 756,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -28342,7 +29258,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 706,
+      "line": 773,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -28374,7 +29290,7 @@
     {
       "file": "backend/app/app_service.py",
       "kind": "function",
-      "line": 93,
+      "line": 98,
       "module_id": "products",
       "name": "primary_email",
       "qualname": "primary_email"
@@ -28382,7 +29298,7 @@
     {
       "file": "backend/app/app_service.py",
       "kind": "function",
-      "line": 103,
+      "line": 108,
       "module_id": "products",
       "name": "utc_iso",
       "qualname": "utc_iso"
@@ -28390,7 +29306,7 @@
     {
       "file": "backend/app/app_service.py",
       "kind": "function",
-      "line": 107,
+      "line": 112,
       "module_id": "products",
       "name": "clean_json",
       "qualname": "clean_json"
@@ -28564,6 +29480,398 @@
       "qualname": "require_admin"
     },
     {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 22,
+      "module_id": "products.calories",
+      "name": "article_step",
+      "qualname": "article_step"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 33,
+      "module_id": "products.calories",
+      "name": "material_source",
+      "qualname": "material_source"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 52,
+      "module_id": "products.calories",
+      "name": "material_item",
+      "qualname": "material_item"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 67,
+      "module_id": "products.calories",
+      "name": "latest_version",
+      "qualname": "latest_version"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 73,
+      "module_id": "products.calories",
+      "name": "word_count",
+      "qualname": "word_count"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "products.calories",
+      "name": "version_payload",
+      "qualname": "version_payload"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 101,
+      "module_id": "products.calories",
+      "name": "get_material",
+      "qualname": "get_material"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 109,
+      "module_id": "products.calories",
+      "name": "list_materials",
+      "qualname": "list_materials"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 142,
+      "module_id": "products.calories",
+      "name": "publication_status",
+      "qualname": "publication_status"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 156,
+      "module_id": "products.calories",
+      "name": "render_material",
+      "qualname": "render_material"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 166,
+      "module_id": "products.calories",
+      "name": "material_hash",
+      "qualname": "material_hash"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 170,
+      "module_id": "products.calories",
+      "name": "publish_material",
+      "qualname": "publish_material"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 240,
+      "module_id": "products.calories",
+      "name": "material_versions",
+      "qualname": "material_versions"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 269,
+      "module_id": "products.calories",
+      "name": "restore_material",
+      "qualname": "restore_material"
+    },
+    {
+      "file": "backend/app/calorie_course_material_service.py",
+      "kind": "function",
+      "line": 298,
+      "module_id": "products.calories",
+      "name": "published_materials",
+      "qualname": "published_materials"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "class",
+      "line": 29,
+      "module_id": "products.calories",
+      "name": "RunActionIn",
+      "qualname": "RunActionIn"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "class",
+      "line": 34,
+      "module_id": "products.calories",
+      "name": "CourseCheckIn",
+      "qualname": "CourseCheckIn"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 39,
+      "module_id": "products.calories",
+      "name": "aware_utc",
+      "qualname": "aware_utc"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 43,
+      "module_id": "products.calories",
+      "name": "resolve_course_user",
+      "qualname": "resolve_course_user"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 55,
+      "module_id": "products.calories",
+      "name": "course_event",
+      "qualname": "course_event"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 83,
+      "module_id": "products.calories",
+      "name": "stage_progress",
+      "qualname": "stage_progress"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 95,
+      "module_id": "products.calories",
+      "name": "current_required_step_ids",
+      "qualname": "current_required_step_ids"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 105,
+      "module_id": "products.calories",
+      "name": "current_required_check_ids",
+      "qualname": "current_required_check_ids"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 113,
+      "module_id": "products.calories",
+      "name": "completed_step_indexes",
+      "qualname": "completed_step_indexes"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 125,
+      "module_id": "products.calories",
+      "name": "required_step_indexes",
+      "qualname": "required_step_indexes"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 136,
+      "module_id": "products.calories",
+      "name": "stage_can_open",
+      "qualname": "stage_can_open"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 151,
+      "module_id": "products.calories",
+      "name": "open_stage",
+      "qualname": "open_stage"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 188,
+      "module_id": "products.calories",
+      "name": "finalize_stage",
+      "qualname": "finalize_stage"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 216,
+      "module_id": "products.calories",
+      "name": "course_payload",
+      "qualname": "course_payload"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 319,
+      "module_id": "products.calories",
+      "name": "course_manifest",
+      "qualname": "course_manifest"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 329,
+      "module_id": "products.calories",
+      "name": "course_materials",
+      "qualname": "course_materials"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 345,
+      "module_id": "products.calories",
+      "name": "course_state",
+      "qualname": "course_state"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 367,
+      "module_id": "products.calories",
+      "name": "course_open_stage",
+      "qualname": "course_open_stage"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 383,
+      "module_id": "products.calories",
+      "name": "course_complete_step",
+      "qualname": "course_complete_step"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 439,
+      "module_id": "products.calories",
+      "name": "course_open_task",
+      "qualname": "course_open_task"
+    },
+    {
+      "file": "backend/app/calorie_course_routes.py",
+      "kind": "function",
+      "line": 472,
+      "module_id": "products.calories",
+      "name": "course_update_check",
+      "qualname": "course_update_check"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 41,
+      "module_id": "products.calories",
+      "name": "check_id",
+      "qualname": "check_id"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 45,
+      "module_id": "products.calories",
+      "name": "normalize_seed",
+      "qualname": "normalize_seed"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "products.calories",
+      "name": "seed_manifest",
+      "qualname": "seed_manifest"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "class",
+      "line": 82,
+      "module_id": "products.calories",
+      "name": "CalorieCourseContext",
+      "qualname": "CalorieCourseContext"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 90,
+      "module_id": "products.calories",
+      "name": "active_course_version",
+      "qualname": "active_course_version"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 100,
+      "module_id": "products.calories",
+      "name": "runtime_manifest",
+      "qualname": "runtime_manifest"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 104,
+      "module_id": "products.calories",
+      "name": "course_context",
+      "qualname": "course_context"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 118,
+      "module_id": "products.calories",
+      "name": "serialize_version",
+      "qualname": "serialize_version"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 133,
+      "module_id": "products.calories",
+      "name": "normalize_editor_payload",
+      "qualname": "normalize_editor_payload"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 250,
+      "module_id": "products.calories",
+      "name": "publish_course_structure",
+      "qualname": "publish_course_structure"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 266,
+      "module_id": "products.calories",
+      "name": "prepare_restore_payload",
+      "qualname": "prepare_restore_payload"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 270,
+      "module_id": "products.calories",
+      "name": "effective_required_step_ids",
+      "qualname": "effective_required_step_ids"
+    },
+    {
+      "file": "backend/app/calorie_course_service.py",
+      "kind": "function",
+      "line": 284,
+      "module_id": "products.calories",
+      "name": "effective_required_check_ids",
+      "qualname": "effective_required_check_ids"
+    },
+    {
       "file": "backend/app/config.py",
       "kind": "class",
       "line": 6,
@@ -28717,8 +30025,16 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 23,
+      "module_id": "products.masterclass.course",
+      "name": "material_service",
+      "qualname": "material_service"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 24,
+      "line": 33,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialUpdate",
       "qualname": "CourseMaterialUpdate"
@@ -28726,7 +30042,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 30,
+      "line": 39,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialRestore",
       "qualname": "CourseMaterialRestore"
@@ -28734,7 +30050,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 35,
+      "line": 44,
       "module_id": "products.masterclass.course",
       "name": "admin_course_materials",
       "qualname": "admin_course_materials"
@@ -28742,7 +30058,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 45,
+      "line": 54,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material",
       "qualname": "admin_course_material"
@@ -28750,7 +30066,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 56,
+      "line": 65,
       "module_id": "products.masterclass.course",
       "name": "admin_publish_course_material",
       "qualname": "admin_publish_course_material"
@@ -28758,7 +30074,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 75,
+      "line": 83,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material_versions",
       "qualname": "admin_course_material_versions"
@@ -28766,7 +30082,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 88,
+      "line": 100,
       "module_id": "products.masterclass.course",
       "name": "admin_restore_course_material",
       "qualname": "admin_restore_course_material"
@@ -28902,7 +30218,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "class",
-      "line": 24,
+      "line": 25,
       "module_id": "products.masterclass.course",
       "name": "CourseStructureUpdate",
       "qualname": "CourseStructureUpdate"
@@ -28910,7 +30226,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "class",
-      "line": 29,
+      "line": 30,
       "module_id": "products.masterclass.course",
       "name": "CourseStructureRestore",
       "qualname": "CourseStructureRestore"
@@ -28918,15 +30234,15 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 33,
+      "line": 34,
       "module_id": "products.masterclass.course",
-      "name": "checked_course",
-      "qualname": "checked_course"
+      "name": "course_service",
+      "qualname": "course_service"
     },
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 39,
+      "line": 42,
       "module_id": "products.masterclass.course",
       "name": "editor_payload",
       "qualname": "editor_payload"
@@ -28934,7 +30250,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 59,
+      "line": 72,
       "module_id": "products.masterclass.course",
       "name": "admin_courses",
       "qualname": "admin_courses"
@@ -28942,7 +30258,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 76,
+      "line": 106,
       "module_id": "products.masterclass.course",
       "name": "admin_course_structure",
       "qualname": "admin_course_structure"
@@ -28950,7 +30266,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 86,
+      "line": 114,
       "module_id": "products.masterclass.course",
       "name": "admin_save_course_structure",
       "qualname": "admin_save_course_structure"
@@ -28958,7 +30274,7 @@
     {
       "file": "backend/app/course_structure_routes.py",
       "kind": "function",
-      "line": 103,
+      "line": 126,
       "module_id": "products.masterclass.course",
       "name": "admin_restore_course_structure",
       "qualname": "admin_restore_course_structure"
@@ -29102,7 +30418,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 408,
+      "line": 424,
       "module_id": "products.masterclass.course",
       "name": "publish_course_structure",
       "qualname": "publish_course_structure"
@@ -29110,7 +30426,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 424,
+      "line": 440,
       "module_id": "products.masterclass.course",
       "name": "merge_seed_additions",
       "qualname": "merge_seed_additions"
@@ -29118,7 +30434,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 461,
+      "line": 477,
       "module_id": "products.masterclass.course",
       "name": "publish_course_seed_additions",
       "qualname": "publish_course_seed_additions"
@@ -29126,7 +30442,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 479,
+      "line": 495,
       "module_id": "products.masterclass.course",
       "name": "prepare_restore_payload",
       "qualname": "prepare_restore_payload"
@@ -29134,7 +30450,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 508,
+      "line": 524,
       "module_id": "products.masterclass.course",
       "name": "effective_required_step_ids",
       "qualname": "effective_required_step_ids"
@@ -29142,7 +30458,7 @@
     {
       "file": "backend/app/course_structure_service.py",
       "kind": "function",
-      "line": 522,
+      "line": 538,
       "module_id": "products.masterclass.course",
       "name": "effective_required_check_ids",
       "qualname": "effective_required_check_ids"
@@ -30718,7 +32034,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 50,
+      "line": 52,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -30726,7 +32042,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 56,
+      "line": 58,
       "module_id": "operations.delivery",
       "name": "ready",
       "qualname": "ready"
@@ -30822,7 +32138,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 200,
+      "line": 206,
       "module_id": "products.masterclass.offers",
       "name": "bundle_detail",
       "qualname": "bundle_detail"
@@ -30830,7 +32146,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 205,
+      "line": 211,
       "module_id": "products.masterclass.offers",
       "name": "partial_bundle_copy",
       "qualname": "partial_bundle_copy"
@@ -31736,13 +33052,37 @@
       "kind": "class",
       "line": 565,
       "module_id": "operations.database",
+      "name": "CourseEvent",
+      "qualname": "CourseEvent"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 588,
+      "module_id": "operations.database",
+      "name": "CourseStageProgress",
+      "qualname": "CourseStageProgress"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 621,
+      "module_id": "operations.database",
+      "name": "CourseStepProgress",
+      "qualname": "CourseStepProgress"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 649,
+      "module_id": "operations.database",
       "name": "QuestionnaireRun",
       "qualname": "QuestionnaireRun"
     },
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 577,
+      "line": 661,
       "module_id": "operations.database",
       "name": "QuestionnaireAnswer",
       "qualname": "QuestionnaireAnswer"
@@ -31750,7 +33090,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 588,
+      "line": 672,
       "module_id": "operations.database",
       "name": "OfferStage",
       "qualname": "OfferStage"
@@ -31758,7 +33098,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 599,
+      "line": 683,
       "module_id": "operations.database",
       "name": "UserOffer",
       "qualname": "UserOffer"
@@ -31766,7 +33106,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 613,
+      "line": 697,
       "module_id": "operations.database",
       "name": "OfferCheckout",
       "qualname": "OfferCheckout"
@@ -31774,7 +33114,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 633,
+      "line": 717,
       "module_id": "operations.database",
       "name": "PersonalAccessLink",
       "qualname": "PersonalAccessLink"
@@ -31782,7 +33122,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 660,
+      "line": 744,
       "module_id": "operations.database",
       "name": "UserCoursePolicy",
       "qualname": "UserCoursePolicy"
@@ -31790,7 +33130,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 682,
+      "line": 766,
       "module_id": "operations.database",
       "name": "UserLegalAcceptance",
       "qualname": "UserLegalAcceptance"
@@ -31798,7 +33138,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 706,
+      "line": 790,
       "module_id": "operations.database",
       "name": "MasterclassNotification",
       "qualname": "MasterclassNotification"
@@ -31806,7 +33146,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 727,
+      "line": 811,
       "module_id": "operations.database",
       "name": "MasterclassTestProfile",
       "qualname": "MasterclassTestProfile"
@@ -31814,7 +33154,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 741,
+      "line": 825,
       "module_id": "operations.database",
       "name": "StrengthExercise",
       "qualname": "StrengthExercise"
@@ -31822,7 +33162,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 752,
+      "line": 836,
       "module_id": "operations.database",
       "name": "MetabolismState",
       "qualname": "MetabolismState"
@@ -31830,7 +33170,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 768,
+      "line": 852,
       "module_id": "operations.database",
       "name": "AdminAppEdit",
       "qualname": "AdminAppEdit"
@@ -31838,7 +33178,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 784,
+      "line": 868,
       "module_id": "operations.database",
       "name": "ManagedDocumentVersion",
       "qualname": "ManagedDocumentVersion"
@@ -31846,7 +33186,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 820,
+      "line": 904,
       "module_id": "operations.database",
       "name": "ContentSource",
       "qualname": "ContentSource"
@@ -31854,7 +33194,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 835,
+      "line": 919,
       "module_id": "operations.database",
       "name": "ContentItem",
       "qualname": "ContentItem"
@@ -31862,7 +33202,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 869,
+      "line": 953,
       "module_id": "operations.database",
       "name": "ContentItemVersion",
       "qualname": "ContentItemVersion"
@@ -31870,7 +33210,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 891,
+      "line": 975,
       "module_id": "operations.database",
       "name": "ContentMedia",
       "qualname": "ContentMedia"
@@ -31878,7 +33218,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 911,
+      "line": 995,
       "module_id": "operations.database",
       "name": "ContentLink",
       "qualname": "ContentLink"
@@ -31886,7 +33226,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 933,
+      "line": 1017,
       "module_id": "operations.database",
       "name": "ContentMetricSnapshot",
       "qualname": "ContentMetricSnapshot"
@@ -31894,7 +33234,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 957,
+      "line": 1041,
       "module_id": "operations.database",
       "name": "ContentComment",
       "qualname": "ContentComment"
@@ -31902,7 +33242,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 987,
+      "line": 1071,
       "module_id": "operations.database",
       "name": "ContentImportRun",
       "qualname": "ContentImportRun"
@@ -32904,13 +34244,45 @@
       "kind": "function",
       "line": 10,
       "module_id": "products.masterclass.course",
+      "name": "unitGenitive",
+      "qualname": "unitGenitive"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 11,
+      "module_id": "products.masterclass.course",
+      "name": "materialCount",
+      "qualname": "materialCount"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 12,
+      "module_id": "products.masterclass.course",
+      "name": "timingsText",
+      "qualname": "timingsText"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 13,
+      "module_id": "products.masterclass.course",
+      "name": "parseTimings",
+      "qualname": "parseTimings"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 14,
+      "module_id": "products.masterclass.course",
       "name": "renderMaterial",
       "qualname": "renderMaterial"
     },
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 11,
+      "line": 15,
       "module_id": "products.masterclass.course",
       "name": "renderDay",
       "qualname": "renderDay"
@@ -32918,7 +34290,7 @@
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 20,
+      "line": 24,
       "module_id": "products.masterclass.course",
       "name": "render",
       "qualname": "render"
@@ -32926,7 +34298,7 @@
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 21,
+      "line": 25,
       "module_id": "products.masterclass.course",
       "name": "renderHistory",
       "qualname": "renderHistory"
@@ -32934,7 +34306,15 @@
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 22,
+      "line": 26,
+      "module_id": "products.masterclass.course",
+      "name": "adoptPayload",
+      "qualname": "adoptPayload"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 27,
       "module_id": "products.masterclass.course",
       "name": "load",
       "qualname": "load"
@@ -32942,7 +34322,7 @@
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 23,
+      "line": 28,
       "module_id": "products.masterclass.course",
       "name": "showError",
       "qualname": "showError"
@@ -32950,10 +34330,18 @@
     {
       "file": "backend/app/static/course-structure-editor.js",
       "kind": "function",
-      "line": 24,
+      "line": 29,
       "module_id": "products.masterclass.course",
       "name": "clearError",
       "qualname": "clearError"
+    },
+    {
+      "file": "backend/app/static/course-structure-editor.js",
+      "kind": "function",
+      "line": 30,
+      "module_id": "products.masterclass.course",
+      "name": "updateDayMedia",
+      "qualname": "updateDayMedia"
     },
     {
       "file": "backend/app/static/crm.js",
@@ -33150,7 +34538,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 34,
+      "line": 36,
       "module_id": "products",
       "name": "normalizeEmail",
       "qualname": "normalizeEmail"
@@ -33158,7 +34546,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 38,
+      "line": 40,
       "module_id": "products",
       "name": "validEmail",
       "qualname": "validEmail"
@@ -33166,7 +34554,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 42,
+      "line": 44,
       "module_id": "products",
       "name": "detectTildaEmail",
       "qualname": "detectTildaEmail"
@@ -33174,7 +34562,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 61,
+      "line": 63,
       "module_id": "products",
       "name": "detectTildaMemberEmail",
       "qualname": "detectTildaMemberEmail"
@@ -33182,7 +34570,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 72,
+      "line": 74,
       "module_id": "products",
       "name": "waitForTildaEmail",
       "qualname": "waitForTildaEmail"
@@ -33190,7 +34578,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 90,
+      "line": 92,
       "module_id": "products",
       "name": "rememberedIdentity",
       "qualname": "rememberedIdentity"
@@ -33198,7 +34586,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 105,
+      "line": 107,
       "module_id": "products",
       "name": "remember",
       "qualname": "remember"
@@ -33206,7 +34594,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 134,
+      "line": 136,
       "module_id": "products",
       "name": "tildaIdentityRequired",
       "qualname": "tildaIdentityRequired"
@@ -33214,7 +34602,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 140,
+      "line": 142,
       "module_id": "products",
       "name": "hideTildaUserbar",
       "qualname": "hideTildaUserbar"
@@ -33222,7 +34610,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 148,
+      "line": 150,
       "module_id": "products",
       "name": "legalFooterHtml",
       "qualname": "legalFooterHtml"
@@ -33230,7 +34618,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 157,
+      "line": 159,
       "module_id": "products",
       "name": "legalFooterHost",
       "qualname": "legalFooterHost"
@@ -33238,7 +34626,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 165,
+      "line": 170,
       "module_id": "products",
       "name": "ensureLegalFooter",
       "qualname": "ensureLegalFooter"
@@ -33246,7 +34634,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 169,
+      "line": 174,
       "module_id": "products",
       "name": "append",
       "qualname": "append"
@@ -33254,7 +34642,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 178,
+      "line": 183,
       "module_id": "products",
       "name": "askIdentity",
       "qualname": "askIdentity"
@@ -33262,7 +34650,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 252,
+      "line": 257,
       "module_id": "products",
       "name": "executeScripts",
       "qualname": "executeScripts"
@@ -33270,7 +34658,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 273,
+      "line": 278,
       "module_id": "products",
       "name": "load",
       "qualname": "load"
@@ -33278,7 +34666,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 318,
+      "line": 323,
       "module_id": "products",
       "name": "start",
       "qualname": "start"
@@ -33286,7 +34674,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 322,
+      "line": 327,
       "module_id": "products",
       "name": "boot",
       "qualname": "boot"
@@ -34596,6 +35984,22 @@
       "qualname": "downgrade"
     },
     {
+      "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+      "kind": "function",
+      "line": 17,
+      "module_id": "products.calories",
+      "name": "upgrade",
+      "qualname": "upgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+      "kind": "function",
+      "line": 88,
+      "module_id": "products.calories",
+      "name": "downgrade",
+      "qualname": "downgrade"
+    },
+    {
       "file": "backend/scripts/generate_masterclass_offer_simulator.py",
       "kind": "function",
       "line": 69,
@@ -34832,13 +36236,21 @@
       "kind": "function",
       "line": 587,
       "module_id": "products",
+      "name": "test_masterclass_media_uses_present_links_and_player_route",
+      "qualname": "test_masterclass_media_uses_present_links_and_player_route"
+    },
+    {
+      "file": "backend/tests/test_app_assets.py",
+      "kind": "function",
+      "line": 603,
+      "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
     },
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 599,
+      "line": 615,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -34846,7 +36258,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 639,
+      "line": 655,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -34854,7 +36266,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 645,
+      "line": 661,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -34862,7 +36274,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 658,
+      "line": 674,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -34870,7 +36282,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 669,
+      "line": 685,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -34878,7 +36290,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 683,
+      "line": 699,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -34978,6 +36390,94 @@
       "module_id": "platform.auth",
       "name": "test_pending_owner_review_blocks_existing_resource_access",
       "qualname": "test_pending_owner_review_blocks_existing_resource_access"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 34,
+      "module_id": "products.calories",
+      "name": "setup",
+      "qualname": "setup"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 43,
+      "module_id": "products.calories",
+      "name": "override_db",
+      "qualname": "setup.override_db"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 131,
+      "module_id": "products.calories",
+      "name": "teardown_function",
+      "qualname": "teardown_function"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 136,
+      "module_id": "products.calories",
+      "name": "test_calorie_course_requires_access_and_exposes_five_stage_manifest",
+      "qualname": "test_calorie_course_requires_access_and_exposes_five_stage_manifest"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 235,
+      "module_id": "products.calories",
+      "name": "test_calorie_course_completes_stage_in_order_and_opens_next_immediately",
+      "qualname": "test_calorie_course_completes_stage_in_order_and_opens_next_immediately"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 284,
+      "module_id": "products.calories",
+      "name": "test_calorie_material_can_be_published_without_structure_deploy",
+      "qualname": "test_calorie_material_can_be_published_without_structure_deploy"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 319,
+      "module_id": "products.calories",
+      "name": "test_course_editor_lists_calories_and_updates_stage_copy",
+      "qualname": "test_course_editor_lists_calories_and_updates_stage_copy"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 364,
+      "module_id": "products.calories",
+      "name": "test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready",
+      "qualname": "test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 421,
+      "module_id": "products.calories",
+      "name": "test_launch_switch_cannot_open_course_with_missing_materials",
+      "qualname": "test_launch_switch_cannot_open_course_with_missing_materials"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 460,
+      "module_id": "products.calories",
+      "name": "test_hidden_article_does_not_block_launch_when_visible_articles_are_published",
+      "qualname": "test_hidden_article_does_not_block_launch_when_visible_articles_are_published"
+    },
+    {
+      "file": "backend/tests/test_calorie_course_journey.py",
+      "kind": "function",
+      "line": 500,
+      "module_id": "products.calories",
+      "name": "test_calorie_course_reuses_masterclass_shell_with_stage_routes",
+      "qualname": "test_calorie_course_reuses_masterclass_shell_with_stage_routes"
     },
     {
       "file": "backend/tests/test_content_catalog.py",
@@ -44495,7 +45995,7 @@
   "tables": [
     {
       "file": "backend/app/models.py",
-      "line": 769,
+      "line": 853,
       "module_id": "operations.imports",
       "name": "admin_app_edits",
       "source": "orm"
@@ -44523,59 +46023,101 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 958,
+      "line": 1042,
       "module_id": "platform.content",
       "name": "content_comments",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 988,
+      "line": 1072,
       "module_id": "platform.content",
       "name": "content_import_runs",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 870,
+      "line": 954,
       "module_id": "platform.content",
       "name": "content_item_versions",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 836,
+      "line": 920,
       "module_id": "platform.content",
       "name": "content_items",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 912,
+      "line": 996,
       "module_id": "platform.content",
       "name": "content_links",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 892,
+      "line": 976,
       "module_id": "platform.content",
       "name": "content_media",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 934,
+      "line": 1018,
       "module_id": "platform.content",
       "name": "content_metric_snapshots",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 821,
+      "line": 905,
       "module_id": "platform.content",
       "name": "content_sources",
       "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 566,
+      "module_id": "products.calories",
+      "name": "course_events",
+      "source": "orm"
+    },
+    {
+      "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+      "line": 18,
+      "module_id": "products.calories",
+      "name": "course_events",
+      "source": "migration"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 589,
+      "module_id": "products.calories",
+      "name": "course_stage_progress",
+      "source": "orm"
+    },
+    {
+      "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+      "line": 39,
+      "module_id": "products.calories",
+      "name": "course_stage_progress",
+      "source": "migration"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 622,
+      "module_id": "products.calories",
+      "name": "course_step_progress",
+      "source": "orm"
+    },
+    {
+      "file": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+      "line": 64,
+      "module_id": "products.calories",
+      "name": "course_step_progress",
+      "source": "migration"
     },
     {
       "file": "backend/app/models.py",
@@ -44600,7 +46142,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 785,
+      "line": 869,
       "module_id": "products.masterclass.course",
       "name": "managed_document_versions",
       "source": "orm"
@@ -44628,7 +46170,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 707,
+      "line": 791,
       "module_id": "products.masterclass.runtime",
       "name": "masterclass_notifications",
       "source": "orm"
@@ -44649,7 +46191,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 728,
+      "line": 812,
       "module_id": "products.masterclass.runtime",
       "name": "masterclass_test_profiles",
       "source": "orm"
@@ -44684,7 +46226,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 753,
+      "line": 837,
       "module_id": "products.metabolism",
       "name": "metabolism_states",
       "source": "orm"
@@ -44698,14 +46240,14 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 614,
+      "line": 698,
       "module_id": "products.masterclass.offers",
       "name": "offer_checkouts",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 589,
+      "line": 673,
       "module_id": "products.masterclass.offers",
       "name": "offer_stages",
       "source": "orm"
@@ -44719,7 +46261,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 634,
+      "line": 718,
       "module_id": "platform.commerce",
       "name": "personal_access_links",
       "source": "orm"
@@ -44761,14 +46303,14 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 578,
+      "line": 662,
       "module_id": "products.masterclass.questionnaires",
       "name": "questionnaire_answers",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 566,
+      "line": 650,
       "module_id": "products.masterclass.questionnaires",
       "name": "questionnaire_runs",
       "source": "orm"
@@ -44796,7 +46338,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 742,
+      "line": 826,
       "module_id": "products.strength",
       "name": "strength_exercises",
       "source": "orm"
@@ -44978,7 +46520,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 661,
+      "line": 745,
       "module_id": "platform.commerce",
       "name": "user_course_policies",
       "source": "orm"
@@ -44992,7 +46534,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 683,
+      "line": 767,
       "module_id": "platform.commerce",
       "name": "user_legal_acceptances",
       "source": "orm"
@@ -45006,7 +46548,7 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 600,
+      "line": 684,
       "module_id": "products.masterclass.offers",
       "name": "user_offers",
       "source": "orm"

@@ -172,7 +172,7 @@ def course_structure_editor_page(
         return RedirectResponse(
             f"/admin?next=/admin/courses/{course_code}/structure", status_code=303
         )
-    if course_code != "masterclass-21":
+    if course_code not in {"masterclass-21", "calories"}:
         raise HTTPException(404, "Курс не найден")
     return protected_file("course-structure-editor.html")
 

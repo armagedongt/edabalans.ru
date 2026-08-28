@@ -20,6 +20,7 @@ COPY PROJECT_CONTEXT.md ARCHITECTURE.md /app/
 COPY content/masterclass/imported-draft/extracted-2026-08-23.json /app/content/masterclass/imported-draft/extracted-2026-08-23.json
 COPY content/masterclass/course/course.json /app/content/masterclass/course/course.json
 COPY content/masterclass/source-current /app/content/masterclass/source-current
+COPY content/calories/course/course.json /app/content/calories/course/course.json
 
 RUN chmod -R a+rX /app
 

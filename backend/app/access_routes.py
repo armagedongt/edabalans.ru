@@ -178,6 +178,10 @@ def account_payload(email: str, db: Session) -> dict:
     ):
         definition = product_public(db, catalog_code)
         definition["account_code"] = account_code
+        if account_code == "calories":
+            from app.calorie_course_material_service import publication_status
+
+            definition["ready"] = publication_status(db)["ready"]
         definitions.append(definition)
     purchases = purchased_products(db, user.id)
     masterclass_purchase = next(

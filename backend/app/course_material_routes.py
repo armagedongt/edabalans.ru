@@ -16,6 +16,15 @@ from app.course_material_service import (
     restore_material,
 )
 from app.database import get_db
+from app import calorie_course_material_service
+from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
+
+
+def material_service(course_code: str):
+    if course_code == CALORIE_COURSE_CODE:
+        return calorie_course_material_service
+    checked_course(course_code)
+    return None
 
 
 router = APIRouter(tags=["course-material-publisher"])
@@ -37,8 +46,8 @@ def admin_course_materials(
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    checked_course(course_code)
-    return list_materials(db)
+    service = material_service(course_code)
+    return list_materials(db) if service is None else service.list_materials(db)
 
 
 @router.get("/admin/api/courses/{course_code}/materials/{step_id}")
@@ -48,8 +57,8 @@ def admin_course_material(
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    checked_course(course_code)
-    return get_material(db, step_id)
+    service = material_service(course_code)
+    return get_material(db, step_id) if service is None else service.get_material(db, step_id)
 
 
 @router.put("/admin/api/courses/{course_code}/materials/{step_id}")
@@ -60,8 +69,9 @@ def admin_publish_course_material(
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    checked_course(course_code)
-    return publish_material(
+    service = material_service(course_code)
+    publisher = publish_material if service is None else service.publish_material
+    return publisher(
         db,
         step_id=step_id,
         content=body.content,
@@ -69,8 +79,6 @@ def admin_publish_course_material(
         expected_version=body.expected_version,
         admin=admin,
     )
-
-
 @router.get("/admin/api/courses/{course_code}/materials/{step_id}/versions")
 def admin_course_material_versions(
     course_code: str,
@@ -78,8 +86,12 @@ def admin_course_material_versions(
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    checked_course(course_code)
-    return material_versions(db, step_id)
+    service = material_service(course_code)
+    return (
+        material_versions(db, step_id)
+        if service is None
+        else service.material_versions(db, step_id)
+    )
 
 
 @router.post(
@@ -93,8 +105,9 @@ def admin_restore_course_material(
     admin: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
-    checked_course(course_code)
-    return restore_material(
+    service = material_service(course_code)
+    restorer = restore_material if service is None else service.restore_material
+    return restorer(
         db,
         step_id=step_id,
         version_no=version_no,

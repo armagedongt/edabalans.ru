@@ -8,6 +8,7 @@
   var PROTECTED_APPS = {
     'account': true,
     'masterclass-course': true,
+    'calories-course': true,
     'onboarding-questionnaire': true,
     'masterclass-offers': true,
     'recipes-part-1': true,
@@ -19,6 +20,7 @@
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
+    'calories-course': 'calories-course-app',
     'masterclass-sales': 'masterclass-sales-app',
     dqs: 'dqs-app',
     strength: 'strength-app',
@@ -156,9 +158,12 @@
   }
 
   function legalFooterHost(mount) {
-    var courseMount = mount.getAttribute('data-edabalans-app') === 'masterclass-course'
+    var isCourse = ['masterclass-course', 'calories-course'].indexOf(
+      mount.getAttribute('data-edabalans-app')
+    ) >= 0;
+    var courseMount = isCourse
       ? mount
-      : mount.querySelector('[data-edabalans-app="masterclass-course"]');
+      : mount.querySelector('[data-edabalans-app="masterclass-course"],[data-edabalans-app="calories-course"]');
     var courseMain = courseMount && courseMount.querySelector(':scope > .main');
     return courseMain || mount;
   }

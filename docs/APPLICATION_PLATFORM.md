@@ -95,7 +95,9 @@ Telegram с предупреждением о VPN; вариант MAX показ
 
 - `MASTERCLASS_BASIC`, `MASTERCLASS_CONSULT`, `MASTERCLASS_RECIPES` → `dqs`;
 - `TRAINING_COURSE` → `strength`;
-- `CALORIES_COURSE` → `metabolism`.
+- `CALORIES_COURSE` → `calories-course`; калькулятор и пользовательские данные
+  метаболизма остаются отдельным приложением `metabolism`, которое курс может
+  открывать как встроенный инструмент.
 
 ## Импорт Google
 

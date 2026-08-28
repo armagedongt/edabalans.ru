@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Структура Мастер-класса</title>
+  <title>Структура курса</title>
   <link rel="stylesheet" href="/admin/static/course-structure-editor.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
     <header class="page-head">
       <div>
         <p><a href="/admin/courses">← Курсы</a></p>
-        <h1>Структура Мастер-класса</h1>
+        <h1 id="course-heading">Структура курса</h1>
       </div>
       <div class="save-box">
         <button id="save" class="button" disabled>Сохранить и применить</button>
@@ -19,6 +19,10 @@
       </div>
     </header>
     <div id="error" class="error" hidden></div>
+    <section id="launch-control" class="group" hidden>
+      <label class="row"><input id="launch-ready" type="checkbox"> Открыть курс участникам после публикации всех материалов</label>
+      <small>Даже при включённом переключателе курс останется закрыт, пока не опубликованы все видимые статьи.</small>
+    </section>
     <section id="days"></section>
     <details class="history">
       <summary>Предыдущие редакции</summary>

@@ -206,6 +206,25 @@ owns_tables = ["metabolism_states"]
 owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
 
 [[modules]]
+id = "products.calories"
+admin_catalog = [{ category = "tools", order = 65, url = "/admin/courses/calories/structure", label = "Калорийный курс", description = "Этапы, материалы, задания и готовность запуска курса." }]
+parent = "products"
+card = "docs/knowledge-base/modules/catalog/products.calories.md"
+depends_on = [
+  "platform.auth", "platform.content", "products.catalog",
+  "products.masterclass.course", "products.metabolism", "operations.delivery",
+]
+owns_files = [
+  "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
+  "backend/app/calorie_course_material_service.py",
+  "backend/migrations/versions/20260828_0028_calorie_course_runtime.py",
+  "backend/tests/test_calorie_course_journey.py", "content/calories/**",
+  "docs/knowledge-base/modules/calories/**",
+]
+owns_tables = ["course_events", "course_stage_progress", "course_step_progress"]
+owns_routes = ["*/api/calories/course*"]
+
+[[modules]]
 id = "products.recipes"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.recipes.md"

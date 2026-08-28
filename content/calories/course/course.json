@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "courseVersion": "2026-08-28.1",
+  "courseCode": "calories",
+  "launchReady": false,
+  "title": "Калорийный курс",
+  "status": "draft_runtime_manifest",
+  "source": "work/calorie-course-rebuild/program-v5-research-pass.md",
+  "unit": {
+    "one": "этап",
+    "many": "этапы"
+  },
+  "unlockPolicy": {
+    "rule": "next_stage_after_previous_stage_completion"
+  },
+  "stages": [
+    {
+      "number": 1,
+      "slug": "stage-01",
+      "title": "Научиться вести учёт и собрать исходный дневник",
+      "tocSummary": "Приложение, расчёт разных видов еды и семь обычных дней учёта.",
+      "lead": "Сначала научимся нормально записывать то, что уже происходит, и соберём данные. Пока не назначаем дефицит и не пытаемся заранее исправить питание.",
+      "media": "none",
+      "videoId": null,
+      "image": null,
+      "timings": [],
+      "intro": "<strong>Рабочая подводка.</strong> Финальная редакция появится после готовности трёх материалов этапа.",
+      "afterLead": "Семь обычных дней нужны не для оценки вашей дисциплины, а для следующего этапа анализа.",
+      "afterTitle": "Что должно получиться",
+      "afterText": "У вас есть полный дневник, в котором понятны продукты, блюда, примерные неизвестные позиции и повторяющиеся источники ошибок.",
+      "checks": [
+        {"id": "stage-1-check-app", "text": "Я умею добавлять и исправлять еду в актуальном приложении и выгружать дневник.", "required": true, "hidden": false},
+        {"id": "stage-1-check-cases", "text": "Я посчитал хотя бы один домашний рецепт, одну неизвестную еду вне дома и один повторяемый приём пищи.", "required": true, "hidden": false},
+        {"id": "stage-1-check-seven-days", "text": "Я собрал семь обычных полных дней без намеренной переделки рациона.", "required": true, "hidden": false}
+      ],
+      "steps": [
+        {"id": "calories-stage-01-app", "kind": "article", "title": "Учёт в актуальном приложении", "summary": "Минимальный рабочий маршрут в приложении «Худеем вместе»: продукты, записи, рецепты, исправления и экспорт.", "durationMinutes": 12, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-01-food-cases", "kind": "article", "title": "Расчёт и запись разных видов еды", "summary": "Еда вне дома, собранная тарелка, разовые и повторяемые блюда, усушка и уварка.", "durationMinutes": 28, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-01-accuracy", "kind": "article", "title": "Точность учёта и исходный дневник", "summary": "Какие ошибки действительно мешают, что взвешивать и как собрать семь пригодных для анализа дней.", "durationMinutes": 20, "status": "placeholder", "contentKind": "placeholder", "hidden": false}
+      ]
+    },
+    {
+      "number": 2,
+      "slug": "stage-02",
+      "title": "Разобрать калорийность и изменить текущий рацион",
+      "tocSummary": "БЖУ, источники калорий и корректировка своей обычной еды.",
+      "lead": "Теперь можно разбирать не идеальный рацион из головы, а собственные записи и собственные блюда.",
+      "media": "none",
+      "videoId": null,
+      "image": null,
+      "timings": [],
+      "intro": "<strong>Рабочая подводка.</strong> Не рисуем новое меню — учимся понимать и менять текущее.",
+      "afterLead": "После материалов выберите несколько изменений, которые не ломают насыщение, удовольствие, удобство и социальную жизнь.",
+      "afterTitle": "Результат этапа",
+      "afterText": "Вы понимаете основные источники калорий в своём дневнике и знаете, какие точечные изменения готовы проверить.",
+      "checks": [
+        {"id": "stage-2-check-metrics", "text": "Я разобрал показатели приложения на своих данных, а не по абстрактной норме.", "required": true, "hidden": false},
+        {"id": "stage-2-check-sources", "text": "Я определил основные источники калорий в продукте, одном рецепте и одном обычном дне.", "required": true, "hidden": false},
+        {"id": "stage-2-check-changes", "text": "Я выбрал точечные изменения своего текущего рациона без нового идеального меню.", "required": true, "hidden": false}
+      ],
+      "steps": [
+        {"id": "calories-stage-02-metrics", "kind": "article", "title": "Использование БЖУ и показателей приложения", "summary": "Что можно диагностировать по белкам, жирам, углеводам, клетчатке, плотности и порциям — и чего по ним не видно.", "durationMinutes": 28, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-02-sources", "kind": "article", "title": "Разбор калорийности продукта, рецепта и дня", "summary": "Вклад компонентов и несколько повторяющихся источников калорий вместо запрета еды по названию.", "durationMinutes": 30, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-02-adjust", "kind": "article", "title": "Корректировка своего рациона без нового меню", "summary": "Удаление, добавление, замена, изменение порции и перестройка рецепта на основе исходного дневника.", "durationMinutes": 25, "status": "placeholder", "contentKind": "placeholder", "hidden": false}
+      ]
+    },
+    {
+      "number": 3,
+      "slug": "stage-03",
+      "title": "Рассчитать расход энергии",
+      "tocSummary": "Актуальный калькулятор, диапазон расхода, шаги и тренировки без двойного счёта.",
+      "lead": "Калькулятор даёт стартовую модель, а не измеряет ваш расход с лабораторной точностью.",
+      "media": "none",
+      "videoId": null,
+      "image": null,
+      "timings": [],
+      "intro": "<strong>Рабочая подводка.</strong> Здесь появится актуальный калькулятор и объяснение его допущений.",
+      "afterLead": "Сохраните выбранный стартовый диапазон и отдельно запишите, как вы учитываете шаги и тренировки.",
+      "afterTitle": "Результат этапа",
+      "afterText": "У вас есть проверяемая стартовая модель расхода без двойного учёта одной активности.",
+      "checks": [
+        {"id": "stage-3-check-range", "text": "Я заполнил актуальный калькулятор и сохранил стартовый диапазон расхода.", "required": true, "hidden": false},
+        {"id": "stage-3-check-activity", "text": "Я зафиксировал правило учёта шагов и тренировок без двойного счёта.", "required": true, "hidden": false}
+      ],
+      "steps": [
+        {"id": "calories-stage-03-expenditure", "kind": "article", "title": "Расход энергии, калькулятор и стартовый диапазон", "summary": "Компоненты расхода, поля актуального калькулятора, допущения и интерпретация результата.", "durationMinutes": 30, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-03-calculator", "kind": "metabolism", "code": "metabolism", "title": "Рассчитать и сохранить свой диапазон", "summary": "Заполните актуальный калькулятор после объяснения полей и сохраните результат в своём профиле.", "durationMinutes": 10, "status": "ready", "contentKind": "application", "hidden": false},
+        {"id": "calories-stage-03-activity", "kind": "article", "title": "Учёт шагов и тренировок без двойного счёта", "summary": "Что уже входит в расчёт, как обращаться с часами и тренажёрами и не учитывать одну нагрузку дважды.", "durationMinutes": 22, "status": "placeholder", "contentKind": "placeholder", "hidden": false}
+      ]
+    },
+    {
+      "number": 4,
+      "slug": "stage-04",
+      "title": "Выбрать дефицит и проверить его на себе",
+      "tocSummary": "Текущая фаза, темп, сравнимые данные и корректировка модели.",
+      "lead": "Дефицит становится рабочей гипотезой, которую нужно проверить на достаточном количестве сравнимых данных.",
+      "media": "none",
+      "videoId": null,
+      "image": null,
+      "timings": [],
+      "intro": "<strong>Рабочая подводка.</strong> Окно наблюдения 7–14 дней — требование к данным, а не календарь открытия уроков.",
+      "afterLead": "Меняйте один параметр за раз и не объявляйте модель неправильной по нескольким случайным взвешиваниям.",
+      "afterTitle": "Результат этапа",
+      "afterText": "Вы выбрали режим, собрали сравнимые данные и знаете, когда оставить модель, изменить её или обратиться за разбором.",
+      "checks": [
+        {"id": "stage-4-check-plan", "text": "Я выбрал текущую фазу, дефицит, ожидаемый темп и срок проверки.", "required": true, "hidden": false},
+        {"id": "stage-4-check-data", "text": "Я собрал минимум 7–14 дней сравнимых данных о весе, потреблении, активности и состоянии.", "required": true, "hidden": false},
+        {"id": "stage-4-check-decision", "text": "Я прошёл алгоритм проверки и выбрал одно следующее действие.", "required": true, "hidden": false}
+      ],
+      "steps": [
+        {"id": "calories-stage-04-deficit", "kind": "article", "title": "Текущая фаза, дефицит, ожидаемый темп и срок", "summary": "Короткое применение периодизации из Мастер-класса и выбор конкретного проверяемого режима.", "durationMinutes": 30, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-04-data", "kind": "article", "title": "Сбор сравнимых данных о результате и состоянии", "summary": "Тренд веса, среднее потребление, активность, голод, силы, сон и способность продолжать.", "durationMinutes": 25, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-04-correction", "kind": "article", "title": "Корректировка модели и действия при отсутствии результата", "summary": "Дерево решений: полнота данных, вода, активность, ошибки учёта, переносимость и следующий шаг.", "durationMinutes": 35, "status": "placeholder", "contentKind": "placeholder", "hidden": false}
+      ]
+    },
+    {
+      "number": 5,
+      "slug": "stage-05",
+      "title": "Упростить учёт и перейти к системе без постоянного подсчёта",
+      "tocSummary": "Повторяемые приёмы пищи, ритм еды и поэтапный отказ от постоянного учёта.",
+      "lead": "Подсчёт нужен не для того, чтобы считать лучше всех, а чтобы однажды перестать в нём нуждаться.",
+      "media": "none",
+      "videoId": null,
+      "image": null,
+      "timings": [],
+      "intro": "<strong>Рабочая подводка.</strong> Упрощение начинается после знакомства со своей едой и проверенной модели, а не вместо них.",
+      "afterLead": "Соберите собственные правила воспроизведения привычной еды и заранее определите причины временно вернуть учёт.",
+      "afterTitle": "Результат курса",
+      "afterText": "Вы умеете использовать цифры как временный инструмент, переходить к воспроизводимым действиям и возвращать учёт только для конкретной задачи.",
+      "checks": [
+        {"id": "stage-5-check-catalog", "text": "Я собрал 5–10 повторяемых приёмов пищи и перевёл их в воспроизводимые бытовые порции.", "required": true, "hidden": false},
+        {"id": "stage-5-check-rhythm", "text": "Я разобрал свой ритм еды, голод, перекусы и кусочничество на фактических данных.", "required": true, "hidden": false},
+        {"id": "stage-5-check-exit", "text": "Я составил порядок прекращения постоянного учёта и условия временного возврата.", "required": true, "hidden": false}
+      ],
+      "steps": [
+        {"id": "calories-stage-05-catalog", "kind": "article", "title": "Повторяемые приёмы пищи, каталог и бытовые мерки", "summary": "Собственные опорные приёмы пищи, воспроизводимые порции, упаковки, ложки, кружки и правила сборки.", "durationMinutes": 35, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-05-hunger", "kind": "article", "title": "Распределение калорий, ритм еды, голод, перекусы и кусочничество", "summary": "Количественный разбор ритма еды без универсального запрета на перекусы или частоту питания.", "durationMinutes": 35, "status": "placeholder", "contentKind": "placeholder", "hidden": false},
+        {"id": "calories-stage-05-exit", "kind": "article", "title": "Прекращение постоянного учёта и условия возврата", "summary": "Постепенное выключение подсчёта знакомой еды, контрольные дни и причины временно вернуть приложение.", "durationMinutes": 28, "status": "placeholder", "contentKind": "placeholder", "hidden": false}
+      ]
+    }
+  ],
+  "optionalMaterials": [
+    {
+      "id": "calories-workshop-hunger-windows",
+      "title": "Окна голода",
+      "status": "research",
+      "note": "Не входит в обязательный путь до фактчека и отдельного решения владельца."
+    }
+  ]
+}

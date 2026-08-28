@@ -13,3 +13,6 @@
 !content/masterclass/course/course.json
 !content/masterclass/source-current/
 !content/masterclass/source-current/**
+!content/calories/
+!content/calories/course/
+!content/calories/course/course.json

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -61,11 +61,64 @@ def site_footer_loader() -> FileResponse:
 
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
-def app_fragment(app_code: str) -> FileResponse:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
+def app_fragment(app_code: str) -> Response:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
         raise HTTPException(status_code=404, detail="app not found")
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
+    if app_code == "calories-course":
+        template = (STATIC_DIR / "masterclass-first-days-preview.html").read_text(
+            encoding="utf-8"
+        )
+        replacements = {
+            "</head>": "<style>#calories-course-app .timer{display:none} #calories-course-app .unlock{justify-content:flex-end}</style></head>",
+            "Мастер-класс · первые дни": "Калорийный курс",
+            'id="masterclass-course-app"': 'id="calories-course-app"',
+            "edabalans_first_days_v2": "edabalans_calories_course_v1",
+            "/api/masterclass/course": "/api/calories/course",
+            "/content/masterclass/course/course.json": "/content/calories/course/course.json",
+            "masterclass-course": "calories-course",
+            "course_day": "calories_stage",
+            "course_material": "calories_material",
+            "d.number===21": "d.number===days.length",
+            "День ": "Этап ",
+            "День пройден": "Этап пройден",
+            "День уже открыт": "Этап уже открыт",
+            "К материалам дня": "К материалам этапа",
+            "Прошлый день": "Прошлый этап",
+            "Задание на сегодня": "Задание этапа",
+            "Следующий день": "Следующий этап",
+            "следующий день": "следующий этап",
+            "следующего дня": "следующего этапа",
+            "Следующий этап откроется после выполнения задания и окончания таймера.": "Следующий этап откроется сразу после выполнения задания.",
+            "До открытия следующего этапа осталось": "Следующий этап",
+            "Черновик · требуется редактура": "Материал готовится",
+            "Нужна редактура": "Материал готовится",
+            "Авторский материал для этой карточки ещё не загружен.": "Текст будет опубликован здесь.",
+            "['dqs','recipes-part-1','recipes-part-2','closing-review']": "['dqs','recipes-part-1','recipes-part-2','closing-review','metabolism']",
+            "Следующий этап откроется утром": "Следующий этап откроется сразу",
+            "<strong>06:00</strong><span>по вашему местному времени</span>": "<strong>Сразу</strong><span>после задания</span>",
+            "Если завершить день до полуночи по вашему местному времени, продолжение откроется в ближайшие <strong>06:00</strong>. Если закончить после полуночи — в 06:00 уже через день. Точное время покажет таймер.": "После всех обязательных материалов и пунктов задания следующий этап можно открыть сразу.",
+            "дню ": "этапу ",
+            "Открыть день ": "Открыть этап ",
+            "Перейти к дню ": "Перейти к этапу ",
+            "Мастер-класс завершён": "Калорийный курс завершён",
+            "Мастер-класса": "Калорийного курса",
+            "Мастер-класс": "Калорийный курс",
+            "masterclass-web": "calories-course-web",
+            "edabalans:masterclass-event": "edabalans:calories-event",
+            "EdabalansMasterclassEventSink": "EdabalansCaloriesEventSink",
+            "Masterclass load failed": "Calories course load failed",
+            "День": "Этап",
+            "дня": "этапа",
+            "день": "этап",
+        }
+        for source, target in replacements.items():
+            template = template.replace(source, target)
+        return HTMLResponse(
+            template,
+            headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+        )
     if app_code == "video-player":
         return public_asset(
             STATIC_DIR / "video-player-development" / "player-standard-with-contents.html"
@@ -166,6 +219,12 @@ APP_STATE_MODELS = {
     "strength": StrengthState,
     "metabolism": MetabolismState,
 }
+
+
+def app_resource_codes(app_code: str) -> tuple[str, ...]:
+    if app_code == "metabolism":
+        return ("metabolism", "ACCESS_CALORIES")
+    return (app_code,)
 
 
 def empty_app_state(app_code: str, user_id: uuid.UUID) -> Any:
@@ -434,7 +493,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
 @router.get("/api/apps/metabolism")
 def metabolism_get(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
     try:
-        user = resolve_user_for_resource(db, email, "metabolism")
+        user = resolve_user_for_resource(db, email, ("metabolism", "ACCESS_CALORIES"))
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:
             state = MetabolismState(user_id=user.id, variants={}, source="app")
@@ -450,7 +509,9 @@ def metabolism_get(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
 async def metabolism_put(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
         body = await request.json()
-        user = resolve_user_for_resource(db, body.get("email"), "metabolism")
+        user = resolve_user_for_resource(
+            db, body.get("email"), ("metabolism", "ACCESS_CALORIES")
+        )
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:
             state = MetabolismState(user_id=user.id, variants={}, source="app")
@@ -545,7 +606,7 @@ def admin_app_users(
             .join(Resource, Resource.id == UserAccess.resource_id)
             .join(User, User.id == UserAccess.user_id)
             .where(
-                Resource.code == app_code,
+                Resource.code.in_(app_resource_codes(app_code)),
                 Resource.status == "active",
                 User.status == "active",
                 User.merged_into_user_id.is_(None),
@@ -636,7 +697,7 @@ def admin_user_modules(
         state = db.scalar(select(model).where(model.user_id == user_id))
         result[code] = {
             "exists": state is not None,
-            "has_access": code in access_codes,
+            "has_access": bool(access_codes.intersection(app_resource_codes(code))),
             "updated_at": utc_iso(state.updated_at) if state else "",
             "version": state.version if state else None,
             "summary": admin_state_summary(code, state) if state else {},
@@ -669,7 +730,9 @@ def admin_app_user(
     state = db.scalar(select(model).where(model.user_id == user_id))
     if user is None or user.merged_into_user_id is not None:
         raise HTTPException(status_code=404, detail="user not found")
-    has_access = app_code in active_resource_codes(db, user_id)
+    has_access = bool(
+        active_resource_codes(db, user_id).intersection(app_resource_codes(app_code))
+    )
     return {
         "ok": True,
         "app_code": app_code,

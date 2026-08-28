@@ -19,6 +19,7 @@ from app.course_structure_routes import router as course_structure_router
 from app.course_material_routes import router as course_material_router
 from app.product_catalog_routes import router as product_catalog_router
 from app.recipe_routes import router as recipe_router
+from app.calorie_course_routes import router as calorie_course_router
 from app.database import get_db
 
 settings = get_settings()
@@ -44,6 +45,7 @@ app.include_router(course_structure_router)
 app.include_router(course_material_router)
 app.include_router(product_catalog_router)
 app.include_router(recipe_router)
+app.include_router(calorie_course_router)
 
 
 @app.get("/health", tags=["system"])

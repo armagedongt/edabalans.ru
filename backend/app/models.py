@@ -562,6 +562,90 @@ class MasterclassStepProgress(Base):
     )
 
 
+class CourseEvent(Base):
+    __tablename__ = "course_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "course_code", "event_key", name="uq_course_user_event_key"
+        ),
+        Index("ix_course_event_user_type", "user_id", "course_code", "event_type"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    course_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    event_key: Mapped[str] = mapped_column(String(160), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(80), nullable=False)
+    placement: Mapped[str | None] = mapped_column(String(80))
+    details: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class CourseStageProgress(Base):
+    __tablename__ = "course_stage_progress"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id", "course_code", "stage_number", name="uq_course_stage_progress"
+        ),
+        Index(
+            "ix_course_stage_user_number", "user_id", "course_code", "stage_number"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    course_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    stage_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    first_opened_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+    task_opened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    structure_revision_no: Mapped[int] = mapped_column(
+        Integer, default=1, server_default=text("1"), nullable=False
+    )
+    required_step_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    required_check_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    checkmarks: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False
+    )
+
+
+class CourseStepProgress(Base):
+    __tablename__ = "course_step_progress"
+    __table_args__ = (
+        UniqueConstraint(
+            "user_id",
+            "course_code",
+            "stage_number",
+            "step_index",
+            name="uq_course_step_progress",
+        ),
+        Index(
+            "ix_course_step_user_stage", "user_id", "course_code", "stage_number"
+        ),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), index=True
+    )
+    course_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    stage_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    step_index: Mapped[int] = mapped_column(Integer, nullable=False)
+    step_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    completed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class QuestionnaireRun(TimestampMixin, Base):
     __tablename__ = "questionnaire_runs"
     __table_args__ = (UniqueConstraint("user_id", "kind", name="uq_questionnaire_user_kind"),)
