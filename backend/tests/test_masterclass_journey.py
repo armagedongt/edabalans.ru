@@ -557,9 +557,10 @@ spoiler(
     )
     assert restored.status_code == 200
     restored_html = restored.json()["html"]
+    assert restored_html == html
     assert '<table class="dqs-score-table">' in restored_html
     assert 'data-component="image-slider"' in restored_html
-    assert 'class="gallery-next"' in restored_html
+    assert 'class="gallery-arrow gallery-next"' in restored_html
 
 
 def test_masterclass_component_registry_enforces_all_variants_and_slider_bounds():
