@@ -1786,7 +1786,7 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     assert manifest_data["title"] == (
         "Мастер-класс по изменению питания и пищевых привычек"
     )
-    assert manifest_data["days"][0]["title"] == "Начинаем с наблюдения"
+    assert manifest_data["days"][0]["title"] == "Добро пожаловать!"
     durations = [
         step.get("durationMinutes") for step in manifest_data["days"][0]["steps"]
     ]

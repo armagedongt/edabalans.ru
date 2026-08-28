@@ -321,7 +321,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     ] == [
         "Как пользоваться Мастер-классом",
         "Как вести дневник питания",
-        "Как необходимо взвешиваться",
+        "Как надо взвешиваться",
     ]
     assert next(
         index for index, step in enumerate(first_steps)
@@ -581,7 +581,7 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         step["title"] for step in manifest["days"][5]["steps"] if step["kind"] == "article"
     ] == [
         "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
-        "Пять вкусов еды", "Топпинги",
+        "Как сделать еду вкусной", "Почему рецепт с первого раза может быть не вашим",
     ]
     assert manifest["days"][6]["steps"][2]["items"] == [
         "Как устроена база рецептов и как пользоваться каталогом",
