@@ -5,7 +5,7 @@ from html import escape
 
 from fastapi import HTTPException
 
-from app.article_markup import safe_image_src
+from app.article_markup import inline_markdown, safe_image_src
 
 
 DQS_SCORE_CATEGORIES = {
@@ -80,9 +80,24 @@ def render_slider(arguments: list[str]) -> str:
     )
 
 
+def render_spoiler(arguments: list[str]) -> str:
+    if not 2 <= len(arguments) <= 40:
+        raise HTTPException(422, "Спойлер принимает заголовок и от 1 до 39 строк текста")
+    title, *paragraphs = arguments
+    return (
+        '<details class="article-spoiler">'
+        f"<summary>{inline_markdown(title)}</summary>"
+        '<div class="article-spoiler-body">'
+        + "".join(f"<p>{inline_markdown(paragraph)}</p>" for paragraph in paragraphs)
+        + "</div></details>"
+    )
+
+
 def render_masterclass_component(name: str, arguments: list[str]) -> str:
     if name == "slider":
         return render_slider(arguments)
     if name == "dqs_score_table":
         return render_score_table(arguments)
+    if name == "spoiler":
+        return render_spoiler(arguments)
     raise HTTPException(422, f"Неизвестный компонент материала: {name}")

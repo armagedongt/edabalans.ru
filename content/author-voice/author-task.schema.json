@@ -93,7 +93,7 @@
     },
     "article_components": {
       "type": "array",
-      "items": {"enum": ["slider", "dqs_score_table"]},
+      "items": {"enum": ["slider", "dqs_score_table", "spoiler"]},
       "uniqueItems": true
     },
     "legacy_article_migration": {"type": "boolean"},

@@ -1,16 +1,16 @@
 {
-  "package_version": "2.1.10-20260828",
+  "package_version": "2.1.11-20260828",
   "files": [
     {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "5ffa6953d0c6f042734bd12c38ba24a5eec3b944c37eed69447131fbdfbd14bc"},
     {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "9823e5537c9cbaf65683fbec9cde62f45e5ddd563e7085efec6f1599253a725f"},
     {"path": "content/author-voice/editing-modes-v1.md", "sha256": "9b2b00914348fd53d519cf85d72d98f0a8d0b7093ac685567c7b2f87a6c8c19c"},
     {"path": "content/author-voice/writer-contract-v1.md", "sha256": "9a52bba88688769abc0ab001ae04dac610c001c7ac153dfac672916d56397f47"},
-    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "40d5abcdc1e77ff75b9aef0617d59dbb88f24188ba7943724a009d0d98dd40c7"},
+    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "3c71784083e147b4a58aa3fd682ec75b4f7fe9894d187ad0d8fb2174c70e9124"},
     {"path": "content/author-voice/product-fact-router.md", "sha256": "4d46d805da832f9d1fb1dd2d383dd795381ec5182ef0effadb744976b170ae12"},
     {"path": "content/author-voice/editorial-linking-v1.md", "sha256": "ab98e3af021349db99ecd35622109e857f6056f33f9ca4cf0e7d9b9e75769b3a"},
     {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "87bb5f10b7041c6e22bdac698e4e388db93a0d010758524fdbddf32d95643a0b"},
-    {"path": "content/author-voice/article-component-router.md", "sha256": "c6d9971b3599c0c68c4ead1e1f49b6185f7d4d28965b1fd7a4619e6c17f5e8ef"},
-    {"path": "content/author-voice/author-task.schema.json", "sha256": "11d55413d57e22f3f29dbcd6cc470ceb889414228d410496388454b7a147efc6"},
+    {"path": "content/author-voice/article-component-router.md", "sha256": "be3528b6c9fe3028827417c756174db115c9ee16b1d53ececfbbcc8dea3b44b0"},
+    {"path": "content/author-voice/author-task.schema.json", "sha256": "4ceb759bdcabebb029c5bb3235e4811a4f3886a8d54851a3058809983e7cf7d5"},
     {"path": "content/author-voice/material-status-v1.md", "sha256": "f565265b434d3588be9d36aba30e2722b04ab8fc26ab29efb7015f4c7c4ff030"}
   ]
 }

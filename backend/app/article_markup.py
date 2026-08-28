@@ -15,7 +15,7 @@ ALLOWED_TAGS = {
 }
 COURSE_TAGS = ALLOWED_TAGS | {
     "figure", "figcaption", "section", "table", "thead", "tbody", "tr", "th",
-    "td", "span", "button",
+    "td", "span", "button", "details", "summary",
 }
 VOID_TAGS = {"img", "br", "hr"}
 BLOCKED_TAGS = {"script", "style", "iframe", "object", "svg", "math"}
@@ -24,6 +24,7 @@ COURSE_CLASS_TOKENS = {
     "gallery-arrow", "gallery-prev", "gallery-next", "gallery-footer",
     "gallery-counter", "gallery-dots", "gallery-dot", "active",
     "dqs-score-table-wrap", "dqs-score-table",
+    "article-spoiler", "article-spoiler-body",
     "score-2", "score-1", "score-0", "score--1", "score--2",
 }
 COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table"}

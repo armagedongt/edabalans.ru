@@ -484,6 +484,11 @@ slider(
 https://cdn.example.test/one.jpg
 /assets/course/two.jpg
 )
+
+spoiler(
+Составы и граммовки
+**Овсянка:** хлопья — 50 г; банан — 70 г; мёд — 5 г.
+)
 """
     response = client.put(
         endpoint,
@@ -498,6 +503,9 @@ https://cdn.example.test/one.jpg
     assert '<table class="dqs-score-table">' in html
     assert 'data-component="image-slider"' in html
     assert html.count('class="gallery-slide"') == 2
+    assert '<details class="article-spoiler">' in html
+    assert "<summary>Составы и граммовки</summary>" in html
+    assert "<p><strong>Овсянка:</strong> хлопья — 50 г; банан — 70 г; мёд — 5 г.</p>" in html
     course_ui = (Path(__file__).parents[1] / "app/static/masterclass-first-days-preview.html").read_text(encoding="utf-8")
     assert "closest('[data-component=\"image-slider\"]')" in course_ui
     assert '/course-assets/masterclass/article-components.css' in course_ui
@@ -508,6 +516,7 @@ https://cdn.example.test/one.jpg
     assert component_css.status_code == 200
     assert ".dqs-score-table-wrap" in component_css.text
     assert ".gallery-track" in component_css.text
+    assert ".article-spoiler" in component_css.text
     assert component_js.status_code == 200
     assert "global.bindGallery = bindGallery" in component_js.text
 
@@ -571,11 +580,18 @@ def test_masterclass_component_registry_enforces_all_variants_and_slider_bounds(
         rendered = render_masterclass_component("slider", arguments)
         assert rendered.count('class="gallery-slide"') == image_count
 
+    rendered_spoiler = render_masterclass_component(
+        "spoiler", ["Расчёт", "**Овсянка:** хлопья — 50 г; банан — 70 г; мёд — 5 г."]
+    )
+    assert '<details class="article-spoiler">' in rendered_spoiler
+    assert "<strong>Овсянка:</strong>" in rendered_spoiler
+
     invalid_calls = [
         ("dqs_score_table", ["missing"]),
         ("slider", ["https://cdn.example.test/one.jpg"]),
         ("slider", [f"https://cdn.example.test/{index}.jpg" for index in range(21)]),
         ("slider", ["https://cdn.example.test/one.jpg", "javascript:alert(1)"]),
+        ("spoiler", ["Только заголовок"]),
         ("unknown", ["value"]),
     ]
     for component, arguments in invalid_calls:

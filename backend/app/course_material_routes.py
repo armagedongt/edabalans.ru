@@ -41,6 +41,7 @@ def masterclass_article_component_styles() -> Response:
     css = "\n".join((
         component_asset("dqs-image-slider", "slider.css"),
         component_asset("dqs-score-tables", "score-tables.css"),
+        component_asset("article-spoiler", "spoiler.css"),
     ))
     return Response(
         css,

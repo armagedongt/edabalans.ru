@@ -1,0 +1,24 @@
+.article-spoiler {
+  margin: 28px 0;
+  border: 1px solid rgba(37, 37, 37, .14);
+  border-radius: 16px;
+  background: #fffdf9;
+  overflow: hidden;
+}
+
+.article-spoiler summary {
+  padding: 18px 20px;
+  cursor: pointer;
+  color: #252525;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.article-spoiler-body {
+  padding: 0 20px 18px;
+}
+
+.article-spoiler-body p {
+  margin: 14px 0 0;
+}
