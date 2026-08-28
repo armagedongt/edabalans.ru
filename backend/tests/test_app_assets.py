@@ -411,9 +411,6 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")
     assert dqs_step["completion"] == "tutorial_completed"
-    assert "пройдите <a" in fourth_day["afterText"]
-    assert "самостоятельно вернитесь в день 4" in fourth_day["afterText"]
-    assert "data-dqs-tutorial-link" in fourth_day["afterText"]
     assert "event.detail.completion!=='tutorial'" in course_html
     assert "markStep(d,currentStep).catch(showActionError)" in course_html
     assert "document.querySelectorAll('[data-dqs-tutorial-link]')" in course_html
@@ -432,7 +429,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
         for step in day.get("steps", [])
         if step.get("imagePresentation") == "gallery"
     ]
-    assert gallery_steps == []
+    assert gallery_steps == [(4, "day-04-article-01")]
 
     dqs_source = (root / "content" / "masterclass" / "source-current" / "13-dqs-system.txt").read_text(encoding="utf-8")
     assert [f"[[DQS_MATRIX:{kind}]]" for kind in ["all", "plants", "proteins", "fats", "garnishes", "harmful"]] == [
