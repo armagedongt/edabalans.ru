@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edabalans.ru/schemas/author-task-v2.json",
+  "title": "Edabalans author task",
+  "type": "object",
+  "required": ["note", "work_profile", "edit_mode"],
+  "properties": {
+    "note": {"type": "string", "minLength": 1},
+    "work_profile": {
+      "enum": ["structure", "transcript_to_article", "new_material", "develop_existing"]
+    },
+    "edit_mode": {
+      "enum": ["draft", "targeted_edit", "proofread", "structure_only", "text_only", "rewrite", "creative_rebuild"]
+    },
+    "surface_context": {
+      "enum": [
+        "article", "site_article", "telegram", "telegram_channel",
+        "pikabu", "pikabu_article", "landing", "service_text", "bot_sequence",
+        "course", "course_material", "course_package", "masterclass_course",
+        "masterclass_material", "intensive_article"
+      ]
+    },
+    "format_profile": {"enum": ["article", "course"]},
+    "source_text": {"type": "string"},
+    "rewrite_goal": {"type": "string", "minLength": 1},
+    "editable_scope": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {"type": "string", "minLength": 1},
+          {
+            "type": "object",
+            "required": ["source"],
+            "properties": {"source": {"type": "string", "minLength": 1}},
+            "additionalProperties": true
+          }
+        ]
+      }
+    },
+    "preservation_anchors": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "allowed_removals": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1}
+    },
+    "structural_labels": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "min_token_coverage": {"type": "number", "minimum": 0, "maximum": 1},
+    "min_length_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+    "fact_sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "fingerprint"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "fingerprint": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "fact_check_profile": {
+      "enum": ["instructional_strict", "editorial_materiality"]
+    },
+    "required_facts": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {"type": "string", "minLength": 1},
+          {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": {"type": "string", "minLength": 1},
+              "mode": {"enum": ["semantic", "verbatim"]}
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "forbidden_claims": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "article_components": {
+      "type": "array",
+      "items": {"enum": ["slider", "dqs_score_table"]},
+      "uniqueItems": true
+    },
+    "legacy_article_migration": {"type": "boolean"},
+    "visual_contract_change": {"type": "boolean"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"work_profile": {"const": "structure"}}},
+      "then": {"properties": {"edit_mode": {"const": "structure_only"}}, "required": ["source_text"]}
+    },
+    {
+      "if": {"properties": {"work_profile": {"const": "transcript_to_article"}}},
+      "then": {
+        "properties": {"edit_mode": {"const": "rewrite"}, "preservation_anchors": {"minItems": 1}},
+        "required": ["source_text", "preservation_anchors", "rewrite_goal"]
+      }
+    },
+    {
+      "if": {"properties": {"work_profile": {"const": "new_material"}}},
+      "then": {"properties": {"edit_mode": {"enum": ["draft", "creative_rebuild"]}}}
+    },
+    {
+      "if": {"properties": {"work_profile": {"const": "develop_existing"}}},
+      "then": {
+        "properties": {
+          "edit_mode": {"enum": ["rewrite", "targeted_edit", "proofread", "text_only"]},
+          "preservation_anchors": {"minItems": 1}
+        },
+        "required": ["source_text", "preservation_anchors"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "work_profile": {"const": "develop_existing"},
+          "edit_mode": {"const": "rewrite"}
+        },
+        "required": ["work_profile", "edit_mode"]
+      },
+      "then": {"required": ["rewrite_goal"]}
+    },
+    {
+      "if": {
+        "properties": {
+          "work_profile": {"const": "develop_existing"},
+          "edit_mode": {"const": "targeted_edit"}
+        },
+        "required": ["work_profile", "edit_mode"]
+      },
+      "then": {"required": ["editable_scope"]}
+    },
+    {
+      "if": {
+        "properties": {"required_facts": {"minItems": 1}},
+        "required": ["required_facts"]
+      },
+      "then": {
+        "properties": {"fact_sources": {"minItems": 1}},
+        "required": ["fact_sources"]
+      }
+    }
+  ],
+  "additionalProperties": true
+}

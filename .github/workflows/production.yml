@@ -24,6 +24,9 @@ jobs:
           # more than one commit.
           fetch-depth: 0
 
+      - name: Install tools test dependencies
+        run: python3 -m pip install --disable-pip-version-check -r tools/requirements-test.txt
+
       - name: Test module inventory
         run: python3 -m unittest discover -s tools/tests -v
 

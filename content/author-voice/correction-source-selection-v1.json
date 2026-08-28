@@ -1,0 +1,53 @@
+{
+  "correction_id": "correction:source-selection-20260828",
+  "title": "От тематической библиографии к доказательству авторского нажима",
+  "passport_version": "voice-v1",
+  "status": "owner_rule",
+  "context": {
+    "surface_context": "masterclass_material",
+    "scope": ["fact_check", "source_selection", "editorial_linking"]
+  },
+  "functional_explanation": "Работа с источниками начинается только после смысловой сборки текста и идёт отдельными зависимыми прогонами. Сначала выделяются и ранжируются реальные точки авторского нажима, затем под них ищутся кандидаты, после поиска оцениваются сила, дубли, плотность и распределение, и только потом ссылки минимально встраиваются в готовый текст. Каждый следующий прогон корректируется по результату предыдущего. Источник нужен не к теме вообще и не к очевидному факту. Если доказательство противоречит позиции автора, текст не меняется, источник не вставляется, а точный конфликт выносится Сергею отдельным отчётом. Проверка сохраняет дату, версию текста, версию политики, глубину и статус; старый более слабый проход помечается legacy.",
+  "candidate_rules": [
+    "source_supports_authorial_pressure_point",
+    "claim_first_source_second",
+    "one_evidentiary_function_per_source",
+    "preserve_existing_author_links",
+    "no_trivia_or_topic_only_citations",
+    "inline_claim_binding_before_bibliography",
+    "surface_source_conflict_before_rewrite",
+    "russian_sources_when_authoritative_and_applicable",
+    "local_label_claim_requires_matching_jurisdiction",
+    "foreign_source_only_for_universal_mechanism_or_substance",
+    "category_source_binds_to_category_function",
+    "three_source_floor_when_content_allows",
+    "six_to_eight_sources_for_dense_material",
+    "editorial_source_report_claim_link_scope",
+    "blue_link_text_names_supported_claim",
+    "minimal_sentence_reformat_before_link",
+    "bibliography_only_when_inline_distorts_voice",
+    "extra_strong_source_may_stay_bibliography_only",
+    "adaptive_multi_pass_source_workflow",
+    "pressure_points_ranked_before_search",
+    "candidate_search_before_density_decision",
+    "next_pass_adapts_to_previous_result",
+    "conflicting_source_never_silently_changes_text",
+    "source_review_records_text_version_date_policy_depth_status",
+    "legacy_source_review_not_equal_current_full_review",
+    "large_source_based_material_uses_separate_adaptive_layers",
+    "source_preservation_checked_before_structural_rewrite",
+    "autonomous_work_keeps_internal_semantic_checkpoints"
+  ],
+  "placement_examples": [
+    {
+      "before": "[Разнообразие учитываем](source) только внутри здоровых продуктовых категорий.",
+      "problem": "Кликабельная фраза сообщает внутреннее правило DQS, а не тезис, который подтверждает исследование.",
+      "after": "Чем разнообразнее рацион, тем выше [вероятность добрать необходимые нутриенты](source)."
+    },
+    {
+      "before": "[Фрукты и овощи](source) добавляют объём приёму пищи.",
+      "problem": "Синий текст называет тему, поэтому читатель не понимает доказательную функцию ссылки.",
+      "after": "Цельные фрукты помогают [лучше контролировать общую калорийность рациона](source)."
+    }
+  ]
+}

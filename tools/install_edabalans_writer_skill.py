@@ -10,6 +10,7 @@ from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 SOURCE = PROJECT_ROOT / "content" / "author-voice" / "skill" / "edabalans-writer" / "SKILL.md"
+MANIFEST = SOURCE.parent / "assets" / "skill-manifest.json"
 
 
 def default_destination() -> Path:
@@ -47,7 +48,47 @@ def install(source: Path, destination: Path) -> dict[str, str | bool | None]:
         destination.unlink()
     if not destination.exists():
         destination.hardlink_to(source)
-    return sync_status(source, destination)
+    result = sync_status(source, destination)
+    if source == SOURCE and MANIFEST.exists():
+        manifest_destination = destination.parent / "assets" / MANIFEST.name
+        manifest_destination.parent.mkdir(parents=True, exist_ok=True)
+        if manifest_destination.exists() and not MANIFEST.samefile(manifest_destination):
+            manifest_destination.unlink()
+        if not manifest_destination.exists():
+            manifest_destination.hardlink_to(MANIFEST)
+        result.update(package_status(destination))
+    return result
+
+
+def package_status(destination: Path) -> dict[str, object]:
+    if not MANIFEST.is_file():
+        return {"package_status": "outdated", "package_errors": [f"missing manifest: {MANIFEST}"]}
+    try:
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as exc:
+        return {"package_status": "outdated", "package_errors": [f"invalid manifest: {exc}"]}
+    errors: list[str] = []
+    files = manifest.get("files") or []
+    if not manifest.get("package_version") or not isinstance(files, list):
+        errors.append("manifest requires package_version and files")
+    for item in files:
+        relative = item.get("path") if isinstance(item, dict) else None
+        expected = item.get("sha256") if isinstance(item, dict) else None
+        path = PROJECT_ROOT / str(relative or "")
+        if not relative or not expected or digest(path) != expected:
+            errors.append(f"stale or missing canonical dependency: {relative}")
+    installed_manifest = destination.parent / "assets" / MANIFEST.name
+    if digest(installed_manifest) != digest(MANIFEST) or not (
+        installed_manifest.exists() and MANIFEST.samefile(installed_manifest)
+    ):
+        errors.append("installed skill manifest is missing, stale, or not hard-linked")
+    return {
+        "package_version": manifest.get("package_version"),
+        "package_status": "current" if not errors else "outdated",
+        "package_errors": errors,
+        "manifest": str(MANIFEST),
+        "installed_manifest": str(installed_manifest),
+    }
 
 
 def main() -> int:
@@ -57,9 +98,13 @@ def main() -> int:
     action.add_argument("--install", action="store_true")
     parser.add_argument("--destination", type=Path, default=default_destination())
     args = parser.parse_args()
-    result = install(SOURCE, args.destination) if args.install else sync_status(SOURCE, args.destination)
+    if args.install:
+        result = install(SOURCE, args.destination)
+    else:
+        result = sync_status(SOURCE, args.destination)
+        result.update(package_status(args.destination))
     print(json.dumps(result, ensure_ascii=False, indent=2))
-    return 0 if result["status"] == "current" else 1
+    return 0 if result["status"] == "current" and result.get("package_status") == "current" else 1
 
 
 if __name__ == "__main__":

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import argparse
 import base64
+from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -52,12 +54,62 @@ def api_request(
         detail = exc.read().decode("utf-8", errors="replace")
         raise SystemExit(f"API вернул {exc.code}: {detail}") from exc
     except URLError as exc:
+        if method == "PUT":
+            raise SystemExit(
+                "Результат публикации неизвестен из-за сетевой ошибки. "
+                "Сначала выполните `publish_course_material.py get STEP_ID`, "
+                "сверьте текущую версию и только затем решайте, нужен ли повтор. "
+                f"Причина: {exc.reason}"
+            ) from exc
         raise SystemExit(f"Не удалось обратиться к API: {exc.reason}") from exc
+    except TimeoutError as exc:
+        if method == "PUT":
+            raise SystemExit(
+                "Результат публикации неизвестен из-за таймаута. "
+                "Сначала выполните `publish_course_material.py get STEP_ID` "
+                "и не повторяйте PUT вслепую."
+            ) from exc
+        raise SystemExit("API не ответил за отведённое время") from exc
 
 
 def material_path(args: argparse.Namespace, suffix: str = "") -> str:
     step_id = quote(args.step_id, safe="")
     return f"/admin/api/courses/{quote(args.course, safe='')}/materials/{step_id}{suffix}"
+
+
+def sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def verify_publish_gate(file_path: Path, pack_path: Path, report_path: Path) -> dict:
+    for path in (file_path, pack_path, report_path):
+        if not path.is_file():
+            raise SystemExit(f"Файл не найден: {path}")
+    try:
+        report = json.loads(report_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Не удалось прочитать validation report: {exc}") from exc
+    if report.get("schema_version") != "author-validation-v1":
+        raise SystemExit("Публикация заблокирована: неизвестный формат validation report")
+    if report.get("status") != "pass":
+        raise SystemExit("Публикация заблокирована: validation report не имеет status=pass")
+    if report.get("pack_sha256") != sha256(pack_path):
+        raise SystemExit("Публикация заблокирована: pack изменился после проверки")
+    if report.get("draft_sha256") != sha256(file_path):
+        raise SystemExit("Публикация заблокирована: материал изменился после проверки")
+    if report.get("pending_manual_reviews") and not report.get("review_sha256"):
+        raise SystemExit("Публикация заблокирована: отсутствует подтверждённый manual review")
+    expires_at = report.get("fact_review_expires_at")
+    if expires_at:
+        try:
+            expiry = datetime.fromisoformat(str(expires_at).replace("Z", "+00:00"))
+            if expiry.tzinfo is None:
+                raise ValueError
+        except ValueError as exc:
+            raise SystemExit("Публикация заблокирована: некорректный срок fact review") from exc
+        if datetime.now(timezone.utc) >= expiry.astimezone(timezone.utc):
+            raise SystemExit("Публикация заблокирована: fact review старше 24 часов")
+    return report
 
 
 def main() -> int:
@@ -80,6 +132,8 @@ def main() -> int:
     publish_parser.add_argument("file", type=Path)
     publish_parser.add_argument("--format", choices=("markdown", "html"), default="markdown")
     publish_parser.add_argument("--expected-version", type=int)
+    publish_parser.add_argument("--pack", type=Path, required=True)
+    publish_parser.add_argument("--validation-report", type=Path, required=True)
     restore_parser = commands.add_parser("restore", help="Вернуть старую редакцию новой версией")
     restore_parser.add_argument("step_id")
     restore_parser.add_argument("version", type=int)
@@ -94,8 +148,7 @@ def main() -> int:
     elif args.command == "versions":
         result = api_request(args, "GET", material_path(args, "/versions"))
     elif args.command == "publish":
-        if not args.file.is_file():
-            raise SystemExit(f"Файл не найден: {args.file}")
+        verify_publish_gate(args.file, args.pack, args.validation_report)
         expected = args.expected_version
         if expected is None:
             expected = int(api_request(args, "GET", material_path(args))["version"])

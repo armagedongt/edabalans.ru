@@ -1,0 +1,8 @@
+/* DQS: таблицы баллов в учебном материале. */
+.dqs-score-table-wrap { overflow-x: auto; margin: 24px 0; padding: 12px; border-radius: 28px; background: #fffdf9; box-shadow: 0 12px 30px rgba(40, 29, 13, .08); }
+.dqs-score-table { width: 100%; min-width: 760px; border-collapse: separate; border-spacing: 6px; font: 700 16px/1.2 system-ui, sans-serif; }
+.dqs-score-table th, .dqs-score-table td { padding: 14px 10px; border-radius: 15px; text-align: center; background: #faf9f6; }
+.dqs-score-table thead th:first-child, .dqs-score-table tbody th { min-width: 190px; text-align: left; }
+.dqs-score-table tbody th { background: #fff0e5; font-size: 18px; }
+.dqs-score-table tbody th span { display: inline-block; margin-right: 14px; }
+.dqs-score-table .score-2 { background: #cfeecb; }.dqs-score-table .score-1 { background: #e1f3ce; }.dqs-score-table .score-0 { background: #fff0bc; }.dqs-score-table .score--1 { background: #ffe2bd; }.dqs-score-table .score--2 { background: #ffd5d2; }

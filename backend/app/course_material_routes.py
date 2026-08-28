@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Literal
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -15,9 +16,10 @@ from app.course_material_service import (
     publish_material,
     restore_material,
 )
-from app.database import get_db
 from app import calorie_course_material_service
 from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
+from app.course_structure_service import COURSE_CONTENT_ROOT
+from app.database import get_db
 
 
 def material_service(course_code: str):
@@ -28,6 +30,32 @@ def material_service(course_code: str):
 
 
 router = APIRouter(tags=["course-material-publisher"])
+
+
+def component_asset(*parts: str) -> str:
+    return COURSE_CONTENT_ROOT.joinpath("components", *parts).read_text(encoding="utf-8")
+
+
+@router.get("/course-assets/masterclass/article-components.css", include_in_schema=False)
+def masterclass_article_component_styles() -> Response:
+    css = "\n".join((
+        component_asset("dqs-image-slider", "slider.css"),
+        component_asset("dqs-score-tables", "score-tables.css"),
+    ))
+    return Response(
+        css,
+        media_type="text/css",
+        headers={"Cache-Control": "public, max-age=300"},
+    )
+
+
+@router.get("/course-assets/masterclass/article-components.js", include_in_schema=False)
+def masterclass_article_component_script() -> Response:
+    return Response(
+        component_asset("dqs-image-slider", "slider.js"),
+        media_type="application/javascript",
+        headers={"Cache-Control": "public, max-age=300"},
+    )
 
 
 class CourseMaterialUpdate(BaseModel):

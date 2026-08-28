@@ -5,6 +5,7 @@ import re
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+import pytest
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
@@ -26,6 +27,7 @@ from app.course_structure_service import (  # noqa: E402
     course_context,
     effective_required_check_ids,
 )
+from app.masterclass_article_components import render_masterclass_component  # noqa: E402
 from app.models import (  # noqa: E402
     ContentItem, ContentItemVersion, ContentSource,
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
@@ -325,6 +327,9 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         '<aside class="made-up"><strong>Важно</strong><p>Один тип плашки.</p></aside>'
         '<figure><img src="https://cdn.example.test/plate.jpg" alt="Тарелка" '
         'onerror="bad()"><figcaption>Пример тарелки</figcaption></figure>'
+        '<section class="article-gallery" data-gallery="true" '
+        'data-component="image-slider"><button class="gallery-next" '
+        'data-slide="1">Подмена компонента</button></section>'
         '<script>alert(1)</script>'
     )
     published = client.put(
@@ -341,6 +346,10 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
     assert "onclick" not in body["html"]
     assert "onerror" not in body["html"]
     assert "script" not in body["html"]
+    assert 'class="article-gallery"' not in body["html"]
+    assert "data-gallery" not in body["html"]
+    assert "data-component" not in body["html"]
+    assert "data-slide" not in body["html"]
 
     denied = client.get(
         "/api/masterclass/course/materials?email=other@example.test"
@@ -447,6 +456,132 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     )
     assert first_article.status_code == 200
     assert first_article.json()["published"] is True
+
+
+def test_course_material_markdown_blocks_notes_and_dqs_components():
+    client, _ = setup()
+    endpoint = "/admin/api/courses/masterclass-21/materials/day-04-article-01"
+    content = """<!-- редакторский комментарий -->
+## Раздел
+
+Это одна мягко перенесённая
+строка абзаца.
+
+> Первая строка цитаты.
+> Вторая строка цитаты.
+
+:::note [Ориентир]
+Первый абзац плашки.
+
+Второй абзац плашки.
+:::
+
+dqs_score_table(
+unhealthy
+)
+
+slider(
+https://cdn.example.test/one.jpg
+/assets/course/two.jpg
+)
+"""
+    response = client.put(
+        endpoint,
+        json={"expected_version": 0, "format": "markdown", "content": content},
+    )
+    assert response.status_code == 200
+    html = response.json()["html"]
+    assert "редакторский комментарий" not in html
+    assert "<p>Это одна мягко перенесённая строка абзаца.</p>" in html
+    assert "<blockquote>Первая строка цитаты.<br>Вторая строка цитаты.</blockquote>" in html
+    assert '<aside class="editorial-note"><strong>Ориентир</strong>' in html
+    assert '<table class="dqs-score-table">' in html
+    assert 'data-component="image-slider"' in html
+    assert html.count('class="gallery-slide"') == 2
+    course_ui = (Path(__file__).parents[1] / "app/static/masterclass-first-days-preview.html").read_text(encoding="utf-8")
+    assert "closest('[data-component=\"image-slider\"]')" in course_ui
+    assert '/course-assets/masterclass/article-components.css' in course_ui
+    assert '/course-assets/masterclass/article-components.js' in course_ui
+    assert "function bindGallery" not in course_ui
+    component_css = client.get("/course-assets/masterclass/article-components.css")
+    component_js = client.get("/course-assets/masterclass/article-components.js")
+    assert component_css.status_code == 200
+    assert ".dqs-score-table-wrap" in component_css.text
+    assert ".gallery-track" in component_css.text
+    assert component_js.status_code == 200
+    assert "global.bindGallery = bindGallery" in component_js.text
+
+    unknown = client.put(
+        endpoint,
+        json={
+            "expected_version": 1,
+            "format": "markdown",
+            "content": "unknown_component(\nvalue\n)",
+        },
+    )
+    assert unknown.status_code == 422
+    assert "Неизвестный компонент" in unknown.json()["detail"]
+
+    unclosed = client.put(
+        endpoint,
+        json={
+            "expected_version": 1,
+            "format": "markdown",
+            "content": ":::note\nТекст без закрытия",
+        },
+    )
+    assert unclosed.status_code == 422
+    assert "Незакрытая directive" in unclosed.json()["detail"]
+
+    replacement = client.put(
+        endpoint,
+        json={
+            "expected_version": 1,
+            "format": "markdown",
+            "content": "## Временная версия\n\nБез компонентов.",
+        },
+    )
+    assert replacement.status_code == 200
+    restored = client.post(
+        endpoint + "/versions/1/restore",
+        json={"expected_version": 2},
+    )
+    assert restored.status_code == 200
+    restored_html = restored.json()["html"]
+    assert '<table class="dqs-score-table">' in restored_html
+    assert 'data-component="image-slider"' in restored_html
+    assert 'class="gallery-next"' in restored_html
+
+
+def test_masterclass_component_registry_enforces_all_variants_and_slider_bounds():
+    expected_rows = {
+        "full": 17,
+        "plants": 3,
+        "protein": 2,
+        "fats": 3,
+        "side-dishes": 4,
+        "unhealthy": 5,
+    }
+    for name, rows in expected_rows.items():
+        rendered = render_masterclass_component("dqs_score_table", [name])
+        assert rendered.count("<tr>") == rows + 1
+
+    for image_count in (2, 20):
+        arguments = [f"https://cdn.example.test/{index}.jpg" for index in range(image_count)]
+        rendered = render_masterclass_component("slider", arguments)
+        assert rendered.count('class="gallery-slide"') == image_count
+
+    invalid_calls = [
+        ("dqs_score_table", ["missing"]),
+        ("slider", ["https://cdn.example.test/one.jpg"]),
+        ("slider", [f"https://cdn.example.test/{index}.jpg" for index in range(21)]),
+        ("slider", ["https://cdn.example.test/one.jpg", "javascript:alert(1)"]),
+        ("unknown", ["value"]),
+    ]
+    for component, arguments in invalid_calls:
+        with pytest.raises(Exception) as raised:
+            render_masterclass_component(component, arguments)
+        assert getattr(raised.value, "status_code", None) == 422
 
 
 def placement_token(placement: str) -> str:

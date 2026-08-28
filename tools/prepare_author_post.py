@@ -9,8 +9,9 @@ from pathlib import Path
 from search_author_voice import private, search_index
 
 
-SCHEMA_VERSION = "1.0"
-PACK_VERSION = "author-post-pack-v5-20260826"
+SCHEMA_VERSION = "2.0"
+PACK_VERSION = "author-post-pack-v6-20260827"
+FACT_CHECK_PROFILES = {"instructional_strict", "editorial_materiality"}
 EDIT_MODES = {
     "draft",
     "targeted_edit",
@@ -20,11 +21,68 @@ EDIT_MODES = {
     "rewrite",
     "creative_rebuild",
 }
-MODES_WITHOUT_VOICE_RETRIEVAL = {"proofread", "structure_only"}
+MODES_WITHOUT_VOICE_RETRIEVAL = {
+    "proofread", "structure_only", "targeted_edit", "text_only"
+}
+WORK_PROFILES = {
+    "structure": {
+        "edit_modes": {"structure_only"},
+        "min_token_coverage": 1.0,
+        "min_length_ratio": 1.0,
+        "floors": (1.0, 1.0),
+    },
+    "transcript_to_article": {
+        "edit_modes": {"rewrite"},
+        "min_token_coverage": 0.60,
+        "min_length_ratio": 0.55,
+        "floors": (0.40, 0.35),
+    },
+    "new_material": {
+        "edit_modes": {"draft", "creative_rebuild"},
+        "min_token_coverage": 0.0,
+        "min_length_ratio": 0.0,
+        "floors": (0.0, 0.0),
+    },
+    "develop_existing": {
+        "edit_modes": {"rewrite", "targeted_edit", "proofread", "text_only"},
+        "min_token_coverage": 0.50,
+        "min_length_ratio": 0.40,
+        "floors": (0.30, 0.25),
+    },
+}
+LEGACY_PROFILE_BY_MODE = {
+    "structure_only": "structure",
+    "draft": "new_material",
+    "creative_rebuild": "new_material",
+    "rewrite": "develop_existing",
+    "targeted_edit": "develop_existing",
+    "proofread": "develop_existing",
+    "text_only": "develop_existing",
+}
 ARTICLE_FORMAT_CONTEXTS = {
     "article", "site_article", "course_material", "masterclass_material", "intensive_article"
 }
 COURSE_PACKAGE_CONTEXTS = {"course", "course_package", "masterclass_course"}
+STRICT_FACT_SURFACES = {
+    "course",
+    "course_material",
+    "course_package",
+    "intensive_article",
+    "masterclass_course",
+    "masterclass_material",
+}
+EDITORIAL_FACT_SURFACES = {
+    "article",
+    "bot_sequence",
+    "landing",
+    "pikabu",
+    "pikabu_article",
+    "service_text",
+    "site_article",
+    "telegram",
+    "telegram_channel",
+}
+KNOWN_FACT_SURFACES = STRICT_FACT_SURFACES | EDITORIAL_FACT_SURFACES
 RETRIEVAL_PROFILES = {
     # Counts are ceilings, not quotas. Character budgets keep long exemplars from
     # turning a routine request into an unbounded context load.
@@ -97,6 +155,28 @@ def bounded_full_text(rows: list[dict], keys: tuple[str, ...], character_budget:
     return selected
 
 
+def fact_check_profile(
+    task: dict,
+    preferred_surface: str | None,
+    format_profile: str | None,
+) -> str:
+    requested = task.get("fact_check_profile")
+    if requested is not None:
+        if requested not in FACT_CHECK_PROFILES:
+            raise ValueError(f"unknown fact_check_profile: {requested}")
+        return requested
+    if preferred_surface is not None and preferred_surface not in KNOWN_FACT_SURFACES:
+        raise ValueError(
+            f"unknown surface_context for fact checking: {preferred_surface}; "
+            "use a canonical surface or set fact_check_profile explicitly"
+        )
+    return (
+        "instructional_strict"
+        if preferred_surface in STRICT_FACT_SURFACES or format_profile == "course"
+        else "editorial_materiality"
+    )
+
+
 def build_pack(task_path: Path, index_path: Path) -> dict:
     task_path, index_path = private(task_path), private(index_path)
     task = json.loads(task_path.read_text(encoding="utf-8"))
@@ -109,6 +189,15 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
     edit_mode = task.get("edit_mode") or "draft"
     if edit_mode not in EDIT_MODES:
         raise ValueError(f"unknown edit_mode: {edit_mode}")
+    requested_work_profile = task.get("work_profile")
+    work_profile = requested_work_profile or LEGACY_PROFILE_BY_MODE[edit_mode]
+    if work_profile not in WORK_PROFILES:
+        raise ValueError(f"unknown work_profile: {work_profile}")
+    profile = WORK_PROFILES[work_profile]
+    if edit_mode not in profile["edit_modes"]:
+        raise ValueError(
+            f"edit_mode {edit_mode} is not compatible with work_profile {work_profile}"
+        )
     source_text = task.get("source_text")
     if edit_mode in {"targeted_edit", "proofread", "structure_only", "text_only", "rewrite"} and not isinstance(source_text, str):
         raise ValueError(f"task.source_text is required for {edit_mode}")
@@ -127,12 +216,74 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
     rewrite_goal = task.get("rewrite_goal")
     if edit_mode == "rewrite" and not str(rewrite_goal or "").strip():
         raise ValueError("task.rewrite_goal is required for rewrite")
+    preservation_anchors = task.get("preservation_anchors") or []
+    if not isinstance(preservation_anchors, list) or any(
+        not isinstance(item, str) or not item.strip() for item in preservation_anchors
+    ):
+        raise ValueError("task.preservation_anchors must be a list of non-empty strings")
+    if requested_work_profile and work_profile in {
+        "transcript_to_article", "develop_existing"
+    } and not preservation_anchors:
+        raise ValueError(f"task.preservation_anchors is required for {work_profile}")
+    allowed_removals = task.get("allowed_removals") or []
+    if not isinstance(allowed_removals, list) or any(
+        not isinstance(item, str) or not item for item in allowed_removals
+    ):
+        raise ValueError("task.allowed_removals must be a list of exact non-empty fragments")
+    structural_labels = task.get("structural_labels") or []
+    if not isinstance(structural_labels, list) or any(
+        not isinstance(item, str) or not item.strip() for item in structural_labels
+    ):
+        raise ValueError("task.structural_labels must be a list of exact non-empty headings")
+    default_token = float(profile["min_token_coverage"])
+    default_length = float(profile["min_length_ratio"])
+    min_token_coverage = float(task.get("min_token_coverage", default_token))
+    min_length_ratio = float(task.get("min_length_ratio", default_length))
+    floor_token, floor_length = profile["floors"]
+    if not 0 <= min_token_coverage <= 1 or not 0 <= min_length_ratio <= 1:
+        raise ValueError("coverage thresholds must be between 0 and 1")
+    if min_token_coverage < floor_token or min_length_ratio < floor_length:
+        raise ValueError(
+            f"threshold is below the {work_profile} floor; use creative_rebuild"
+        )
+    if (
+        min_token_coverage < default_token or min_length_ratio < default_length
+    ) and not allowed_removals:
+        raise ValueError("lower thresholds require a non-empty task.allowed_removals ledger")
+    required_facts = task.get("required_facts") or []
+    if not isinstance(required_facts, list) or any(
+        not (
+            isinstance(item, str)
+            and item.strip()
+            or isinstance(item, dict)
+            and set(item) <= {"text", "mode"}
+            and str(item.get("text") or "").strip()
+            and item.get("mode", "semantic") in {"semantic", "verbatim"}
+        )
+        for item in required_facts
+    ):
+        raise ValueError(
+            "task.required_facts must be a list of non-empty strings or text/mode objects"
+        )
+    fact_sources = task.get("fact_sources") or []
+    if not isinstance(fact_sources, list) or any(
+        not isinstance(item, dict)
+        or not str(item.get("name") or "").strip()
+        or not str(item.get("fingerprint") or "").strip()
+        for item in fact_sources
+    ):
+        raise ValueError("task.fact_sources must contain name and fingerprint")
+    if required_facts and not fact_sources:
+        raise ValueError("task.fact_sources is required when required_facts is non-empty")
     format_profile = task.get("format_profile")
     if not format_profile:
         if preferred_surface in COURSE_PACKAGE_CONTEXTS:
             format_profile = "course"
         elif preferred_surface in ARTICLE_FORMAT_CONTEXTS:
             format_profile = "article"
+    resolved_fact_check_profile = fact_check_profile(
+        task, preferred_surface, format_profile
+    )
     effective_product = task.get("product") or (
         "masterclass" if preferred_surface == "masterclass_course" else None
     )
@@ -237,6 +388,7 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             )["results"]
     runtime_sources = {
         "authoring_skill": "content/author-voice/skill/edabalans-writer/SKILL.md",
+        "work_profiles": "content/author-voice/authoring-work-profiles-v1.md",
         "editing_modes": "content/author-voice/editing-modes-v1.md",
     }
     if edit_mode not in MODES_WITHOUT_VOICE_RETRIEVAL:
@@ -253,8 +405,12 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         or preferred_surface == "bot_sequence"
     ):
         runtime_sources["editorial_linking"] = "content/author-voice/editorial-linking-v1.md"
-    if format_profile in {"article", "course"}:
+    if format_profile in {"article", "course"} and (
+        task.get("legacy_article_migration") or task.get("visual_contract_change")
+    ):
         runtime_sources["article_standard"] = "docs/knowledge-base/ARTICLE_STANDARD.md"
+    if format_profile in {"article", "course"} and task.get("article_components"):
+        runtime_sources["component_router"] = "content/author-voice/article-component-router.md"
     if format_profile == "course":
         course_structure_source = task.get("course_structure_source")
         if not course_structure_source and preferred_surface == "masterclass_course":
@@ -280,7 +436,8 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "course_outline": course_outline,
             "chain_context": task.get("chain_context"),
             "dominant_job": job,
-            "required_facts": task.get("required_facts") or [],
+            "required_facts": required_facts,
+            "fact_check_profile": resolved_fact_check_profile,
             "forbidden_claims": task.get("forbidden_claims") or [],
             "product": effective_product,
             "cta": task.get("cta"),
@@ -296,10 +453,18 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "product_bridge_reason": task.get("product_bridge_reason"),
             "desired_action": task.get("desired_action"),
             "edit_mode": edit_mode,
+            "work_profile": work_profile,
+            "work_profile_source": "explicit" if requested_work_profile else "inferred",
             "source_text": source_text,
             "protected_text": task.get("protected_text"),
             "editable_scope": editable_scope,
             "rewrite_goal": rewrite_goal,
+            "preservation_anchors": preservation_anchors,
+            "allowed_removals": allowed_removals,
+            "structural_labels": structural_labels,
+            "min_token_coverage": min_token_coverage,
+            "min_length_ratio": min_length_ratio,
+            "fact_sources": fact_sources,
             "rewrite_preserve": task.get("rewrite_preserve") or [
                 "central thesis",
                 "required facts",
@@ -338,6 +503,7 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
                 if edit_mode in MODES_WITHOUT_VOICE_RETRIEVAL
                 else "content/author-voice/writer-contract-v1.md#проход-3-три-слоя-проверки"
             ),
+            "fact_check_profile": resolved_fact_check_profile,
         },
     }
 

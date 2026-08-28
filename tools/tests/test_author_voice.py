@@ -816,6 +816,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 "note": "Почему похудение не должно быть героизмом",
                 "job": "education",
                 "required_facts": [{"text": "7 граммов жира", "mode": "verbatim"}, {"text": "клетчатка удерживает влагу", "mode": "semantic"}],
+                "fact_sources": [{"name": "owner source", "fingerprint": "sha256:abc"}],
                 "cta": {"required_phrase": "В Мастер-классе"},
             }, ensure_ascii=False), encoding="utf-8")
 
@@ -825,8 +826,17 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             result = draft_validator.validate(pack_path, draft_path)
 
             self.assertEqual(pack["content_contract"]["required_facts"][0]["text"], "7 граммов жира")
-            self.assertEqual(result["status"], "pass")
-            self.assertEqual(result["semantic_fact_review_required_once"], ["клетчатка удерживает влагу"])
+            self.assertEqual(result["status"], "manual_review_required")
+            self.assertEqual(result["semantic_fact_review_required_once"], ["7 граммов жира", "клетчатка удерживает влагу"])
+            fact_check = next(item for item in result["pending_manual_reviews"] if item["id"] == "semantic_facts")
+            self.assertEqual(fact_check["items"], ["7 граммов жира", "клетчатка удерживает влагу"])
+            draft_path.write_text(
+                "Здесь есть жир. В Мастер-классе разберём подробнее.",
+                encoding="utf-8",
+            )
+            missing_verbatim = draft_validator.validate(pack_path, draft_path)
+            self.assertEqual(missing_verbatim["status"], "needs_fix")
+            self.assertEqual(missing_verbatim["missing_verbatim"], ["7 граммов жира"])
 
     def test_rhetorical_candidates_are_never_promoted_by_extraction(self) -> None:
         card = {
@@ -1045,12 +1055,19 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             self.assertEqual(pack["content_contract"]["edit_mode"], "structure_only")
             self.assertEqual(pack["content_contract"]["format_profile"], "article")
             self.assertTrue(all(not rows for rows in pack["retrieval"].values()))
-            self.assertEqual(
-                pack["runtime_sources"]["article_standard"],
-                "docs/knowledge-base/ARTICLE_STANDARD.md",
-            )
+            self.assertNotIn("article_standard", pack["runtime_sources"])
             self.assertNotIn("course_structure", pack["runtime_sources"])
             self.assertNotIn("course_visual", pack["runtime_sources"])
+
+            task_path.write_text(json.dumps({
+                "note": "Перенести legacy HTML со слайдером",
+                "surface_context": "course_material",
+                "legacy_article_migration": True,
+                "article_components": ["slider"],
+            }, ensure_ascii=False), encoding="utf-8")
+            migration = prepare.build_pack(task_path, index)
+            self.assertIn("article_standard", migration["runtime_sources"])
+            self.assertIn("component_router", migration["runtime_sources"])
             self.assertNotIn("writer_contract", pack["runtime_sources"])
             self.assertIn("editing_modes", pack["runtime_sources"])
             self.assertEqual(pack["review_policy"]["policy_id"], "protected-edit-v1")
@@ -1107,8 +1124,9 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
 
             self.assertEqual(pack["content_contract"]["edit_mode"], "text_only")
             self.assertIn("editing_modes", pack["runtime_sources"])
-            self.assertIn("writer_contract", pack["runtime_sources"])
+            self.assertNotIn("writer_contract", pack["runtime_sources"])
             self.assertNotIn("article_standard", pack["runtime_sources"])
+            self.assertTrue(all(not rows for rows in pack["retrieval"].values()))
 
             pack_path = root / "pack.json"
             draft_path = root / "draft.md"
@@ -1120,7 +1138,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             valid_result = draft_validator.validate(pack_path, draft_path)
-            self.assertEqual(valid_result["status"], "pass")
+            self.assertEqual(valid_result["status"], "manual_review_required")
             self.assertIsNotNone(valid_result["inline_binding_review_required_once"])
             draft_path.write_text(
                 "## Новый заголовок\n\n"
@@ -1145,7 +1163,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             moved_result = draft_validator.validate(pack_path, draft_path)
-            self.assertEqual(moved_result["status"], "pass")
+            self.assertEqual(moved_result["status"], "manual_review_required")
             self.assertIsNotNone(moved_result["inline_binding_review_required_once"])
 
     def test_general_course_article_uses_article_rules_without_full_shell(self) -> None:
@@ -1162,7 +1180,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             pack = prepare.build_pack(task_path, index)
 
             self.assertEqual(pack["content_contract"]["format_profile"], "article")
-            self.assertIn("article_standard", pack["runtime_sources"])
+            self.assertNotIn("article_standard", pack["runtime_sources"])
             self.assertNotIn("course_structure", pack["runtime_sources"])
             self.assertNotIn("course_visual", pack["runtime_sources"])
 
@@ -1186,7 +1204,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
 
             self.assertEqual(pack["content_contract"]["format_profile"], "course")
             self.assertEqual(pack["content_contract"]["retrieval_depth"], "deep")
-            self.assertIn("article_standard", pack["runtime_sources"])
+            self.assertNotIn("article_standard", pack["runtime_sources"])
             self.assertIn("course_structure", pack["runtime_sources"])
             self.assertNotIn("course_visual", pack["runtime_sources"])
             self.assertIn("complete course package", pack["instructions"][0])
@@ -1272,7 +1290,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             result = draft_validator.validate(pack_path, draft_path)
-            self.assertEqual(result["status"], "pass")
+            self.assertEqual(result["status"], "manual_review_required")
             self.assertEqual(
                 result["rewrite_continuity_review_required_once"]["goal"],
                 "Сократить повторяющиеся объяснения",
@@ -1395,7 +1413,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 '<p>Другой финал.</p>',
                 encoding="utf-8",
             )
-            self.assertEqual(draft_validator.validate(pack_path, draft_path)["status"], "pass")
+            self.assertEqual(draft_validator.validate(pack_path, draft_path)["status"], "manual_review_required")
             draft_path.write_text(
                 '<h2>Новый заголовок</h2><p class="callout"><strong>Здесь другая</strong> формулировка и '
                 '<a href="https://example.com">переход</a>.</p>'
@@ -1513,7 +1531,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 encoding="utf-8",
             )
             result = draft_validator.validate(pack_path, draft_path)
-            self.assertEqual(result["status"], "pass")
+            self.assertEqual(result["status"], "manual_review_required")
             proofread_review = result["proofread_change_review_required_once"]
             self.assertIn("spelling, punctuation", proofread_review["instruction"])
             self.assertGreater(proofread_review["similarity"], 0.9)
@@ -1625,6 +1643,11 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 "owner_feedback_rounds": ["Сначала накинуть, потом закон."],
                 "owner_revision": "Авторский черновик.",
                 "owner_final": "Финальная версия.",
+                "source_artifacts": [{"path": "D:/source.txt", "sha256": "abc123"}],
+                "before_after_examples": [{"before": "По мнению Сергея", "after": "Я считаю"}],
+                "positive_examples": ["Я считаю этот критерий рабочим."],
+                "negative_examples": ["Автор предлагает использовать критерий."],
+                "application_examples": ["Сначала резкий тезис, потом границы и действие."],
             }, ensure_ascii=False), encoding="utf-8")
 
             correction.record(payload, memory, index)
@@ -1633,6 +1656,156 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             self.assertEqual(saved["owner_final"], "Финальная версия.")
             self.assertIn("Вторая версия.", saved["full_case"])
             self.assertIn("Сначала накинуть", saved["full_case"])
+            self.assertEqual(saved["schema_version"], "1.3")
+            self.assertEqual(saved["assistant_versions"], ["Сухой первый текст.", "Вторая версия."])
+            self.assertEqual(saved["owner_feedback_rounds"], ["Нет хука.", "Сначала накинуть, потом закон."])
+            self.assertEqual(saved["owner_revision_rounds"], ["Авторский черновик."])
+            self.assertEqual(saved["owner_final_versions"], ["Финальная версия."])
+            self.assertEqual(saved["source_artifacts"][0]["sha256"], "abc123")
+            self.assertIn("По мнению Сергея", saved["full_case"])
+            self.assertIn("Я считаю этот критерий", saved["full_case"])
+            self.assertIn("Автор предлагает", saved["full_case"])
+            self.assertIn("резкий тезис", saved["full_case"])
+            with closing(sqlite3.connect(index)) as db:
+                searchable = db.execute(
+                    "SELECT count(*) FROM voice_fts "
+                    "WHERE voice_fts MATCH ? AND kind = 'correction'",
+                    ("предлагает",),
+                ).fetchone()[0]
+            self.assertEqual(searchable, 1)
+
+            saved["legacy_note"] = "Не потерять старое наследие 8472."
+            saved["schema_version"] = "1.1"
+            saved["owner_final_versions"] = [None, *saved["owner_final_versions"]]
+            saved["full_case"] += "\n\nУникальный фрагмент прежней полной цепочки 9631."
+            memory.write_text(
+                json.dumps(saved, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+            )
+            with closing(sqlite3.connect(index)) as db:
+                db.execute(
+                    "INSERT INTO corrections VALUES (?, ?)",
+                    ("correction:orphan", json.dumps({"correction_id": "correction:orphan"})),
+                )
+                db.execute(
+                    "INSERT INTO voice_fts VALUES (?, ?, ?, ?, ?, ?)",
+                    ("correction", "correction:orphan", "", "Сирота", "Осиротевшая запись 7419", ""),
+                )
+                db.execute(
+                    "INSERT INTO voice_fts VALUES (?, ?, ?, ?, ?, ?)",
+                    ("correction", "correction:fts-only", "", "Сирота FTS", "Осиротевшая FTS-запись 8520", ""),
+                )
+                db.commit()
+            payload.write_text(json.dumps({
+                "correction_id": saved["correction_id"],
+                "request": "Усилить тот же пост.",
+                "assistant_draft": "Новый, но всё ещё сухой текст.",
+                "owner_feedback": "Теперь потерялись границы.",
+                "owner_revision": "Вторая авторская редакция.",
+                "owner_final": "Второй подтверждённый финал.",
+                "application_examples": ["Новый пример применения."],
+            }, ensure_ascii=False), encoding="utf-8")
+
+            correction.record(payload, memory, index)
+
+            enriched = json.loads(memory.read_text(encoding="utf-8").splitlines()[0])
+            self.assertEqual(enriched["request"], "Усилить тот же пост.")
+            self.assertEqual(enriched["request_versions"], ["Написать пост.", "Усилить тот же пост."])
+            self.assertEqual(enriched["assistant_draft"], "Новый, но всё ещё сухой текст.")
+            self.assertEqual(enriched["owner_feedback"], "Теперь потерялись границы.")
+            self.assertEqual(enriched["owner_revision"], "Вторая авторская редакция.")
+            self.assertEqual(enriched["legacy_note"], "Не потерять старое наследие 8472.")
+            self.assertEqual(enriched["source_artifacts"][0]["sha256"], "abc123")
+            self.assertEqual(
+                enriched["before_after_examples"],
+                [{"before": "По мнению Сергея", "after": "Я считаю"}],
+            )
+            self.assertIn("Я считаю этот критерий рабочим.", enriched["positive_examples"])
+            self.assertIn("Автор предлагает использовать критерий.", enriched["negative_examples"])
+            self.assertIn(
+                "Сначала резкий тезис, потом границы и действие.",
+                enriched["application_examples"],
+            )
+            self.assertIn("Новый пример применения.", enriched["application_examples"])
+            self.assertIn("Сухой первый текст.", enriched["assistant_versions"])
+            self.assertIn("Написать пост.", enriched["request_versions"])
+            self.assertIn("Нет хука.", enriched["owner_feedback_rounds"])
+            self.assertIn("Авторский черновик.", enriched["owner_revision_rounds"])
+            self.assertIn("Финальная версия.", enriched["owner_final_versions"])
+            self.assertEqual(enriched["owner_final"], "Второй подтверждённый финал.")
+            self.assertEqual(
+                enriched["assistant_versions"],
+                ["Сухой первый текст.", "Вторая версия.", "Новый, но всё ещё сухой текст."],
+            )
+            self.assertEqual(
+                enriched["owner_feedback_rounds"],
+                ["Нет хука.", "Сначала накинуть, потом закон.", "Теперь потерялись границы."],
+            )
+            self.assertEqual(
+                enriched["owner_revision_rounds"],
+                ["Авторский черновик.", "Вторая авторская редакция."],
+            )
+            self.assertEqual(
+                enriched["owner_final_versions"],
+                ["Финальная версия.", "Второй подтверждённый финал."],
+            )
+            self.assertNotIn(None, enriched["owner_final_versions"])
+            self.assertIn("Не потерять старое наследие 8472", enriched["full_case"])
+            self.assertIn("Уникальный фрагмент прежней полной цепочки 9631", enriched["full_case"])
+            self.assertIn("Усилить тот же пост.", enriched["full_case"])
+            self.assertIn("Сухой первый текст.", enriched["full_case"])
+            self.assertIn("Новый, но всё ещё сухой текст.", enriched["full_case"])
+            self.assertIn("Теперь потерялись границы.", enriched["full_case"])
+            self.assertIn("Вторая авторская редакция.", enriched["full_case"])
+            self.assertIn("Второй подтверждённый финал.", enriched["full_case"])
+            with closing(sqlite3.connect(index)) as db:
+                legacy_searchable = db.execute(
+                    "SELECT count(*) FROM voice_fts "
+                    "WHERE voice_fts MATCH ? AND kind = 'correction'",
+                    ("8472",),
+                ).fetchone()[0]
+            self.assertEqual(legacy_searchable, 1)
+            with closing(sqlite3.connect(index)) as db:
+                history_searchable = db.execute(
+                    "SELECT count(*) FROM voice_fts "
+                    "WHERE voice_fts MATCH ? AND kind = 'correction'",
+                    ("9631",),
+                ).fetchone()[0]
+                orphan_rows = db.execute(
+                    "SELECT count(*) FROM corrections WHERE correction_id = ?",
+                    ("correction:orphan",),
+                ).fetchone()[0]
+                orphan_fts = db.execute(
+                    "SELECT count(*) FROM voice_fts WHERE kind = 'correction' AND item_id = ?",
+                    ("correction:orphan",),
+                ).fetchone()[0]
+                fts_only_orphan = db.execute(
+                    "SELECT count(*) FROM voice_fts WHERE kind = 'correction' AND item_id = ?",
+                    ("correction:fts-only",),
+                ).fetchone()[0]
+                current_round_searchable = db.execute(
+                    "SELECT count(*) FROM voice_fts "
+                    "WHERE voice_fts MATCH ? AND kind = 'correction'",
+                    ("потерялись",),
+                ).fetchone()[0]
+                current_request_searchable = db.execute(
+                    "SELECT count(*) FROM voice_fts "
+                    "WHERE voice_fts MATCH ? AND kind = 'correction'",
+                    ("усилить",),
+                ).fetchone()[0]
+            self.assertEqual(history_searchable, 1)
+            self.assertEqual(orphan_rows, 0)
+            self.assertEqual(orphan_fts, 0)
+            self.assertEqual(fts_only_orphan, 0)
+            self.assertEqual(current_round_searchable, 1)
+            self.assertEqual(current_request_searchable, 1)
+
+            wrong_memory = root / "wrong-memory.jsonl"
+            with self.assertRaisesRegex(ValueError, "missing or empty correction memory"):
+                correction.record(payload, wrong_memory, index)
+            self.assertFalse(wrong_memory.exists())
+            with closing(sqlite3.connect(index)) as db:
+                self.assertGreater(db.execute("SELECT COUNT(*) FROM corrections").fetchone()[0], 0)
 
 
 if __name__ == "__main__":

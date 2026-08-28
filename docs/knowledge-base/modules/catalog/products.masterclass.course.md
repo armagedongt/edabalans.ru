@@ -16,6 +16,11 @@ implementation_status: implemented
 - сохранять введённые через Enter переносы строк без HTML-кода в редакторе;
 - задавать каноническую структуру страницы статьи и её компактного оглавления без
   второго набора заголовков;
+- публиковать обычный текстовый материал отдельной версией по стабильному
+  `step.id`, не меняя структуру и не выполняя code deploy;
+- восстанавливать предыдущую редакцию одного материала без отката курса;
+- безопасно рендерить продуктовые вставки `slider(...)` и
+  `dqs_score_table(...)` из Markdown материала;
 
 ## Граница
 
@@ -24,6 +29,16 @@ implementation_status: implemented
 ## Источники истины
 
 Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; смысловой контракт — `COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета — `COURSE_VISUAL_SYSTEM.md`.
+
+`content/masterclass/source-current/` хранит редактируемые исходники материалов.
+Для DQS канонический исходник — `13-dqs-system.md`; прежний `.txt` сохранён как
+неизменяемый legacy-источник. Повторно используемые авторские вставки и код
+находятся в `content/masterclass/components/`: код слайдера отделён от ссылок на
+изображения, а таблицы получают данные из одного продуктового allowlist. Страница
+курса загружает CSS и JavaScript напрямую из этого каталога через
+`/course-assets/masterclass/article-components.*`; копии runtime-кода в HTML нет.
+Сырой HTML статьи не получает доверенные component-классы и `data-*` атрибуты:
+их может добавить только закрытый Markdown renderer продукта.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

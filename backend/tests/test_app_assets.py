@@ -17,6 +17,22 @@ from app.course_structure_service import normalize_seed  # noqa: E402
 client = TestClient(app)
 
 
+def test_masterclass_article_tables_keep_mobile_scroll_contract() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "app"
+        / "static"
+        / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+
+    wrapper = re.search(r"\.article-table-wrap\{(?P<rules>[^}]*)\}", source)
+    table = re.search(r"\.article-data-table\{(?P<rules>[^}]*)\}", source)
+    assert wrapper is not None
+    assert "overflow-x:auto" in wrapper.group("rules")
+    assert table is not None
+    assert "min-width:620px" in table.group("rules")
+
+
 def test_stable_embed_loader_is_public() -> None:
     response = client.get("/embed.js")
     assert response.status_code == 200
@@ -573,8 +589,17 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
         "Разбор БЖУ",
         "Первая партия рецептов",
     ]
-    assert [step["title"] for step in manifest["days"][17]["steps"]] == [
-        "Фазы и периодизация похудения", "Для тех, кто любит подглядывать",
+    assert [
+        step["title"] for step in manifest["days"][17]["steps"]
+        if not step.get("hidden", False)
+    ] == [
+        "Для тех, кто любит подглядывать",
+    ]
+    assert [
+        step["title"] for step in manifest["days"][20]["steps"]
+        if step["kind"] == "article"
+    ] == [
+        "Фазы и периодизация похудения",
     ]
 
     course_html = (

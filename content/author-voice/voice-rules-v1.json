@@ -143,6 +143,26 @@
       "evidence_ids": ["pikabu:14183275", "pikabu:14102926", "pikabu:10554025"]
     },
     {
+      "rule_id": "structure.sharp_thesis_then_decode",
+      "section": "structure",
+      "statement": "Сначала дать резкую и запоминающуюся формулировку, затем точно объяснить её смысл, границы и практическое применение.",
+      "mechanism": "Провокационная фраза открывает внимание; следующие абзацы расшифровывают, что именно она означает, где перестаёт работать и как человеку использовать вывод.",
+      "scope": ["content_marketing", "education", "myth_reframe", "longform"],
+      "counter_boundary": "Нельзя оставлять один лозунг, временно утверждать опасную неправду или закапывать рабочий вывод под оговорками до того, как он прозвучал.",
+      "confidence": "high",
+      "evidence_ids": ["correction:sharp-first-person-ecological-20260827", "case:nutritionists-law", "case:cutlets"]
+    },
+    {
+      "rule_id": "structure.critique_logic_not_believer",
+      "section": "structure",
+      "statement": "Критиковать правило, механизм и сломавшуюся логику, но не человека, который в них поверил.",
+      "mechanism": "Сначала показать, почему исходная логика казалась разумной, затем точно найти место поломки и заменить её рабочим критерием.",
+      "scope": ["content_marketing", "education", "myth_reframe", "engagement"],
+      "counter_boundary": "Допустимы жёсткость, провокация и реакция; недопустимы презрение к читателю, стыжение уязвимости и соломенное чучело.",
+      "confidence": "high",
+      "evidence_ids": ["correction:sharp-first-person-ecological-20260827", "case:cutlets", "correction:masterclass-days-2-5-owner-brief-2026-08-27"]
+    },
+    {
       "rule_id": "structure.factcheck_placement_preserves_tension",
       "section": "structure",
       "statement": "Юридическую или научную оговорку ставить после ясного конфликта, если точность и безопасность не требуют вынести её раньше.",
@@ -181,6 +201,16 @@
       "counter_boundary": "Не имитировать случайные оговорки и ошибки ради похожести.",
       "confidence": "high",
       "evidence_ids": ["telegram:1878297271:806", "pikabu:14183275", "telegram:1878297271:769", "case:cutlets"]
+    },
+    {
+      "rule_id": "language.first_person_on_author_surfaces",
+      "section": "language",
+      "statement": "Все читательские материалы сайта и программ писать от первого лица автора; не называть позицию «эвристикой Сергея», «мнением Сергея» или предложением автора.",
+      "mechanism": "Использовать прямые конструкции «я использую», «я считаю», «в своей практике я смотрю так», сохраняя личный контакт и ответственность за тезис.",
+      "scope": ["website", "courses", "programs", "telegram", "bot", "email", "downloadable_guides", "user_facing_docs"],
+      "counter_boundary": "Третье лицо допустимо только в юридическом документе, где внешний субъект действительно необходим, или во внутренней технической документации, которая не является текстом сайта или программы; публичная справка, FAQ и инструкция исключением не считаются.",
+      "confidence": "high",
+      "evidence_ids": ["correction:sharp-first-person-ecological-20260827", "owner:2026-08-27:first-person-client-sequences", "correction:masterclass-days-2-5-owner-brief-2026-08-27"]
     },
     {
       "rule_id": "language.rhythm_and_punch",

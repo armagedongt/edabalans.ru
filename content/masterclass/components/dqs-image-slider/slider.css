@@ -1,0 +1,16 @@
+/* Каноническое оформление галерей материалов и компонента slider(...). */
+.article-gallery { margin-top: 52px; }
+.article-gallery h2 { margin: 0 0 14px; }
+.gallery-window { position: relative; overflow: hidden; border-radius: 22px; background: #e9e2d8; box-shadow: var(--shadow); touch-action: pan-y; }
+.gallery-track { display: flex; transition: transform .28s ease; }
+.gallery-slide { flex: 0 0 100%; margin: 0 !important; display: grid; place-items: center; min-height: 280px; background: #eee8df; }
+.gallery-slide img { display: block; width: 100%; height: auto; max-height: 72vh; object-fit: contain; margin: 0 !important; border-radius: 0 !important; }
+.gallery-slide figcaption { width: 100%; padding: 10px 15px; background: #fffaf2; color: var(--muted); font-size: var(--text-xs); }
+.gallery-arrow { position: absolute; top: 50%; z-index: 2; display: grid; place-items: center; width: 44px; height: 44px; border: 0; border-radius: 50%; background: #fffdf8e8; color: var(--ink); box-shadow: 0 5px 18px #261b1340; cursor: pointer; transform: translateY(-50%); font-size: var(--text-title); }
+.gallery-prev { left: 12px; }
+.gallery-next { right: 12px; }
+.gallery-footer { display: flex; align-items: center; gap: 13px; margin-top: 12px; }
+.gallery-counter { flex: 0 0 auto; color: var(--muted); font-size: var(--text-xs); font-weight: var(--weight-bold); }
+.gallery-dots { display: flex; gap: 6px; overflow-x: auto; padding: 5px 2px; scrollbar-width: none; }
+.gallery-dot { flex: 0 0 auto; width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: #c8beb0; cursor: pointer; }
+.gallery-dot.active { background: var(--accent); transform: scale(1.35); }

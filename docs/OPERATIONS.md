@@ -69,6 +69,41 @@ firewall разрешает только 22/80/443, backup timer активен.
 SHA-256, восстанавливает временные базы, проверяет таблицы и удаляет только временные
 базы.
 
+### Приватная память писателя
+
+Каноническая память автора хранится на рабочем компьютере вне Git. Для защиты от
+потери компьютера создаётся отдельный AES-256-GCM архив с внутренним манифестом и
+SHA-256 каждого исходного файла. В Object Storage загружаются только `.aes256`,
+его `.sha256` и безопасный `.json` без исходных текстов и абсолютных путей.
+
+Локальный ключ находится в
+`C:\private\edabalans-content-authoring\secrets\author-memory-backup.key`; вторая
+копия находится на VM в
+`/root/.config/edabalans/author-memory-backup.key` с правами `600`. Ключ не
+загружается в Object Storage и не попадает в Git.
+
+Создание выполняется `tools/backup_author_memory.py create` из bundled Python с
+пакетом `cryptography`. В архив включаются только `voice/v1`, каталог
+`corrections` и глобальный `sergey-development-workflow`; временный рабочий корпус
+целиком не резервируется этим маршрутом. Перед удалением локальной копии выполнить
+тестовое восстановление в пустой временный каталог командой
+`tools/backup_author_memory.py restore` и сверить итоговый отчёт.
+
+На сервере artifacts хранятся в бакете
+`edabalans-postgres-backups-ajessi9majsb7glatojn` под префиксом
+`author-memory/`; сервер использует уже защищённые S3 credentials из
+`/root/.config/edabalans/s3.env`.
+
+После передачи трёх artifacts в
+`/var/backups/edabalans/author-memory/incoming` загрузку и сверку размера выполняет:
+
+```bash
+/opt/edabalans/infra/scripts/upload-author-memory-backup.sh
+```
+
+Успешная команда обязана вывести `Verified` для зашифрованного архива, checksum и
+metadata. Временные серверные copies удаляются только после этой проверки.
+
 ## Контрольные точки безопасности
 
 - SSH по ключу проверен в отдельной сессии; вход по паролю пока не отключён.

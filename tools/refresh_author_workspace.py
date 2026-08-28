@@ -25,8 +25,12 @@ def main() -> int:
     parser.add_argument("--originals", type=Path, required=True)
     parser.add_argument("--working", type=Path, required=True)
     parser.add_argument("--index", type=Path, required=True)
+    parser.add_argument("--voice", type=Path, required=True)
     args = parser.parse_args()
-    originals, working, index = private(args.originals), private(args.working), private(args.index)
+    originals = private(args.originals)
+    working = private(args.working)
+    index = private(args.index)
+    voice = private(args.voice)
     run("build_author_working_corpus.py", "--originals", str(originals), "--working", str(working))
     run("build_author_catalog.py", "--working", str(working))
     run("tag_author_catalog.py", "--working", str(working))
@@ -39,7 +43,12 @@ def main() -> int:
     run("report_voice_core.py", "--working", str(working))
     run("verify_author_corpus.py", "--originals", str(originals), "--working", str(working))
     run("report_bot_processing.py", "--originals", str(originals), "--working", str(working))
-    run("report_author_corpus_health.py", "--working", str(working))
+    run(
+        "report_author_corpus_health.py",
+        "--working", str(working),
+        "--voice", str(voice),
+        "--output", str(working / "author-corpus-health.json"),
+    )
     return 0
 
 

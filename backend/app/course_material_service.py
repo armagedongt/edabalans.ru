@@ -20,11 +20,12 @@ from app.course_structure_service import (
     course_context,
 )
 from app.models import ContentItem, ContentItemVersion, ContentSource
+from app.masterclass_article_components import render_masterclass_component
 
 
 SOURCE_PLATFORM = "internal"
 SOURCE_ACCOUNT_KEY = "masterclass-course-materials"
-PARSER_VERSION = "masterclass-material-v1"
+PARSER_VERSION = "masterclass-material-v2"
 MAX_MATERIAL_BYTES = 500_000
 
 
@@ -134,7 +135,9 @@ def legacy_material_html(step: dict) -> str:
         path = COURSE_CONTENT_ROOT / "source-current" / str(asset)
         if path.is_file():
             return markdown_to_article_html(
-                path.read_text(encoding="utf-8"), strip_source_metadata=True
+                path.read_text(encoding="utf-8"),
+                strip_source_metadata=True,
+                component_renderer=render_masterclass_component,
             )
     summary = str(step.get("summary") or "").strip()
     return f"<p>{summary}</p>" if summary else ""
@@ -187,10 +190,19 @@ def render_material(content: str, content_format: str) -> str:
     if len(content.encode("utf-8")) > MAX_MATERIAL_BYTES:
         raise HTTPException(413, "Текст материала превышает допустимый размер")
     if content_format == "markdown":
-        return markdown_to_article_html(content)
+        return markdown_to_article_html(
+            content, component_renderer=render_masterclass_component
+        )
     if content_format == "html":
         return sanitize_article_html(
             content, allow_h1=False, course_semantics=True
+        )
+    if content_format == "trusted_component_html":
+        return sanitize_article_html(
+            content,
+            allow_h1=False,
+            course_semantics=True,
+            allow_product_components=True,
         )
     raise HTTPException(422, "Формат материала должен быть markdown или html")
 
@@ -323,7 +335,7 @@ def restore_material(
         db,
         step_id=step_id,
         content=source.text_content,
-        content_format="html",
+        content_format="trusted_component_html",
         expected_version=expected_version,
         admin=admin,
     )

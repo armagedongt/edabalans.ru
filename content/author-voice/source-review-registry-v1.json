@@ -1,0 +1,139 @@
+{
+  "registry_version": "source-review-registry-v1",
+  "policy_version": "source-integration-v2-2026-08-28",
+  "updated_at": "2026-08-28",
+  "status_definitions": {
+    "passed": "Полный проход выполнен по текущей политике для указанной версии текста.",
+    "conflicts_reported": "Текущая проверка выполнена, но Сергею вынесены фактические конфликты без изменения текста.",
+    "needs_recheck": "Есть прежняя или неполная проверка, которую нельзя считать эквивалентной текущей.",
+    "stale": "После проверки изменились тезисы, факты, ссылки или соседние формулировки."
+  },
+  "scope_defaults": [
+    {
+      "path_glob": "content/masterclass/source-current/*.md",
+      "text_version": "current-files-at-2026-08-28",
+      "reviewed_at": null,
+      "review_policy": "pre-source-integration-v2-or-unknown",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck",
+      "notes": "Материалы Мастер-класса проверялись неравномерно и частью по более слабому workflow. До отдельной записи конкретный материал нельзя считать прошедшим текущий полный проход."
+    }
+  ],
+  "materials": [
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-01/01-app-tracking.md",
+      "text_version": "sha256:999e0f907ba62b4a",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-01/02-counting-different-food.md",
+      "text_version": "sha256:8337ba63f88a84ac",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-01/03-accuracy-baseline-diary.md",
+      "text_version": "sha256:567aa6b25ba76a93",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-02/01-app-metrics.md",
+      "text_version": "sha256:37f55a50e28619dd",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "stale",
+      "notes": "После полного прохода текст изменился. Прежняя карта A/B/C/X и отбор кандидатов сохранены как история, но текущая версия требует повторной проверки."
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-02/02-calorie-sources.md",
+      "text_version": "sha256:a6bfa5955668cbe7",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-02/03-adjust-current-diet.md",
+      "text_version": "sha256:e5576ea0ec967a2e",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-03/01-expenditure-calculator.md",
+      "text_version": "sha256:ab7e224526cd3ef5",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-03/02-steps-training-double-count.md",
+      "text_version": "sha256:a1e731aa136ad691",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-04/01-phase-deficit-pace.md",
+      "text_version": "sha256:2739e1fd11528332",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-04/02-comparable-data.md",
+      "text_version": "sha256:f1bfd35af14a8977",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-04/03-correct-the-model.md",
+      "text_version": "sha256:ecd07d0975817116",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Разведены активное снижение веса и стабильный вес, источник ресторанной вариативности встроен к точному тезису; конфликтов нет."
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-05/01-repeat-meals-household-measures.md",
+      "text_version": "sha256:5c7b23c1848e1023",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-05/02-rhythm-hunger-snacking.md",
+      "text_version": "sha256:dc7113f54c690078",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "source-integration-v2-2026-08-28",
+      "review_depth": "full",
+      "review_status": "passed",
+      "notes": "Удалён тематический источник об ультрапереработке, проверены три самостоятельные доказательные функции; ограничение узкой выборки сохранено."
+    },
+    {
+      "material_id": "work/calorie-course-rebuild/drafts/stage-05/03-stop-tracking.md",
+      "text_version": "sha256:a8d375e6435aee06",
+      "reviewed_at": "2026-08-28",
+      "review_policy": "pre-source-integration-v2-single-final-pass",
+      "review_depth": "legacy",
+      "review_status": "needs_recheck"
+    }
+  ]
+}

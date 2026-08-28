@@ -7,6 +7,12 @@
 аргументация и продажи принадлежат `writer-contract-v1.md`; оформление статей —
 `docs/knowledge-base/ARTICLE_STANDARD.md`.
 
+Перед техническим режимом выбрать рабочий профиль из
+`authoring-work-profiles-v1.md`. Профиль отвечает на вопрос «какую работу
+Сергей поручил», а режим — «какие слои исходника защищены и как это проверить».
+Четыре профиля: структурная сборка, транскрипт → статья, полный авторский
+материал и развитие готовой статьи.
+
 ## Выбор режима
 
 - `draft` — создать новый готовый текст по заметке и content contract.
@@ -70,6 +76,11 @@
 «покреативь заново» относится к `creative_rebuild`.
 
 ## Проверка режима
+
+Новый исполнимый маршрут: `tools/author_workflow.py prepare`, затем `validate`.
+Машинная ошибка возвращает `needs_fix`; назначенная смысловая проверка —
+`manual_review_required`; только hash-привязанный review переводит результат в
+`pass`. Штатный publish CLI принимает только такой `pass`.
 
 `targeted_edit`, `proofread`, `structure_only`, `text_only` и `rewrite` требуют
 `source_text` и проходят `tools/validate_author_draft.py`. Для `targeted_edit`
