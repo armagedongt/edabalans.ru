@@ -1,16 +1,16 @@
 {
   "package_version": "2.1.11-20260828",
   "files": [
-    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "5ffa6953d0c6f042734bd12c38ba24a5eec3b944c37eed69447131fbdfbd14bc"},
-    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "9823e5537c9cbaf65683fbec9cde62f45e5ddd563e7085efec6f1599253a725f"},
-    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "9b2b00914348fd53d519cf85d72d98f0a8d0b7093ac685567c7b2f87a6c8c19c"},
-    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "9a52bba88688769abc0ab001ae04dac610c001c7ac153dfac672916d56397f47"},
-    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "3c71784083e147b4a58aa3fd682ec75b4f7fe9894d187ad0d8fb2174c70e9124"},
-    {"path": "content/author-voice/product-fact-router.md", "sha256": "4d46d805da832f9d1fb1dd2d383dd795381ec5182ef0effadb744976b170ae12"},
-    {"path": "content/author-voice/editorial-linking-v1.md", "sha256": "ab98e3af021349db99ecd35622109e857f6056f33f9ca4cf0e7d9b9e75769b3a"},
-    {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "87bb5f10b7041c6e22bdac698e4e388db93a0d010758524fdbddf32d95643a0b"},
-    {"path": "content/author-voice/article-component-router.md", "sha256": "be3528b6c9fe3028827417c756174db115c9ee16b1d53ececfbbcc8dea3b44b0"},
-    {"path": "content/author-voice/author-task.schema.json", "sha256": "4ceb759bdcabebb029c5bb3235e4811a4f3886a8d54851a3058809983e7cf7d5"},
-    {"path": "content/author-voice/material-status-v1.md", "sha256": "f565265b434d3588be9d36aba30e2722b04ab8fc26ab29efb7015f4c7c4ff030"}
+    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "4b6099dfc7ab1a31ab2273768ebe4818ae8dd29a0921a03d300d571244d94bf7"},
+    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "ed233d252b1f1f11f6b8a96ce92f87a8b2a9767945c93554fb797ba88ca4b2a5"},
+    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "0a76ce54f28ec6d90ecbbb623a7d458650545ca5b88b7243781aa348b21d4bb0"},
+    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "8dcea998ff9884d8b4813218b321240e26fbea30728800a3df2dfc3b1224bdad"},
+    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "e295fb55c5705d5b67e695b3def7ee747d4d0c776284ba7476207b17102f1ea3"},
+    {"path": "content/author-voice/product-fact-router.md", "sha256": "a9785f2ea01464fa5d990e837a2456d0ffa74b4eb27f3ff4056c205e4abf982d"},
+    {"path": "content/author-voice/editorial-linking-v1.md", "sha256": "3193a4e4a90c076695449949823b2152efde1a41817c25015c1e5d489ce4269e"},
+    {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "0afdddef9356b8ecf700be54559799edfb8a10f469040cd493654223554e252d"},
+    {"path": "content/author-voice/article-component-router.md", "sha256": "44776dddb53b5afe4178ce8945bfdb56d76008c7956e9538d665dfd8f533aa81"},
+    {"path": "content/author-voice/author-task.schema.json", "sha256": "de5d66389bf6ea4c1aeb54dbf7d1435758864aa5830ae13c4718c64ab0c37692"},
+    {"path": "content/author-voice/material-status-v1.md", "sha256": "9565777cc06c106a44fc4dfabe3379e41952a183a2fe41b6e953f0924cedde2e"}
   ]
 }

@@ -24,6 +24,14 @@ def digest(path: Path) -> str | None:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def canonical_text_digest(path: Path) -> str | None:
+    """Hash project text independently of the checkout's newline convention."""
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8").replace("\r\n", "\n")
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
 def sync_status(source: Path, destination: Path) -> dict[str, str | bool | None]:
     source_hash = digest(source)
     destination_hash = digest(destination)
@@ -75,7 +83,7 @@ def package_status(destination: Path) -> dict[str, object]:
         relative = item.get("path") if isinstance(item, dict) else None
         expected = item.get("sha256") if isinstance(item, dict) else None
         path = PROJECT_ROOT / str(relative or "")
-        if not relative or not expected or digest(path) != expected:
+        if not relative or not expected or canonical_text_digest(path) != expected:
             errors.append(f"stale or missing canonical dependency: {relative}")
     installed_manifest = destination.parent / "assets" / MANIFEST.name
     if digest(installed_manifest) != digest(MANIFEST) or not (
