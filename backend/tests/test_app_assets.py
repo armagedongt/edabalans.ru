@@ -486,7 +486,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
     assert "overflow-wrap:anywhere" in course
     assert "renderContentEmbeds(parts.body)" in course
-    assert "window.EdabalansContentGallery.bind(document.querySelector('#article'))" in course
+    assert "window.EdabalansContentGallery.bind(article)" in course
 
 
 def test_masterclass_second_day_contains_current_diet_questionnaire() -> None:
