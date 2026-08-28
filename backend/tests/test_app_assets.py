@@ -333,7 +333,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     messenger_step = next(
         step for step in first_steps if step["id"] == "day-01-messenger-link"
     )
-    assert "уведомления об обновлениях" in messenger_step["summary"]
+    assert "уведомления о новых материалах" in messenger_step["summary"]
 
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
