@@ -157,6 +157,13 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*"]
 
 [[modules]]
+id = "platform.knowledge"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.knowledge.md"
+depends_on = ["platform.content", "admin.project-knowledge"]
+owns_files = ["docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md"]
+
+[[modules]]
 id = "products"
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]

@@ -1,7 +1,7 @@
 # Навигатор по документации edabalans.ru
 
 Статус: `current`  
-Проверено: 27.08.2026
+Проверено: 29.08.2026
 Назначение: единая точка входа для владельца, сотрудника и нового ИИ-чата.
 
 ## Базовый минимум
@@ -21,6 +21,7 @@
 | Нужно понять | Где смотреть | Владелец факта |
 |---|---|---|
 | Как Сергею ставить задачи и что значат термины | `knowledge-base/OWNER_PROJECT_GUIDE.md` | человекочитаемая памятка |
+| Как устроены контент, курсы, страницы, дизайн и публикация | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` | канон редакционно-продуктового процесса |
 | Что существует и как связано | `modules.toml`, `generated/module-map.md` | registry; Markdown — производная |
 | Что делает конкретный модуль | `knowledge-base/modules/catalog/<module_id>.md` | карточка модуля |
 | Полные правила бизнеса/продукта | `knowledge-base/README.md` и ссылки из карточки | канонический Markdown |
@@ -44,6 +45,7 @@
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
+| Редакционная и продуктовая система | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` |
 | Административные инструменты | `ADMIN_ARCHITECTURE.md` |
 | Теги | `TAG_RULES.md` |
