@@ -153,6 +153,8 @@ def test_review_queue_and_task_disclosure_policy() -> None:
             surface="open",
         )
         assert "нельзя выкладывать всю систему" in context["use_policy"]
+        assert "ближайшую принятую" in context["required_workflow"][0]
+        assert "каждого выбранного" in context["required_workflow"][1]
         assert library_summary(db)["pending_reviews"] == 1
         reviews = list_reviews(db)
         assert reviews[0]["resources"][0]["resource_key"] == "stream.periodization"

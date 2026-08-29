@@ -46,10 +46,9 @@ class ProjectVoiceManifestTests(unittest.TestCase):
         self.assertLessEqual(len(selected[0]["full_text"]), 200)
 
     def test_project_writer_skill_installer_keeps_runtime_copy_in_sync(self) -> None:
-        # The installer intentionally uses hard links so the project-owned skill and
-        # its Codex runtime copy cannot drift. Keep the fixture on the source volume:
-        # hosted CI may mount the checkout and /tmp on different filesystems.
-        with tempfile.TemporaryDirectory(dir=TOOLS.parent) as folder:
+        # Runtime installation is a managed copy: an uncommitted edit in a temporary
+        # worktree must not silently change the rules loaded by another task.
+        with tempfile.TemporaryDirectory() as folder:
             destination = Path(folder) / "skills" / "edabalans-writer" / "SKILL.md"
             destination.parent.mkdir(parents=True)
             destination.write_text("stale runtime copy", encoding="utf-8")
@@ -63,9 +62,27 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             installed = writer_skill_installer.install(writer_skill_installer.SOURCE, destination)
 
             self.assertEqual(installed["status"], "current")
-            self.assertTrue(installed["hard_linked"])
-            self.assertTrue(destination.samefile(writer_skill_installer.SOURCE))
+            self.assertFalse(installed["hard_linked"])
+            self.assertEqual(installed["install_mode"], "managed_copy")
+            self.assertFalse(destination.samefile(writer_skill_installer.SOURCE))
             self.assertEqual(destination.read_bytes(), writer_skill_installer.SOURCE.read_bytes())
+
+    def test_writer_runtime_copy_does_not_follow_later_worktree_edits(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source = root / "checkout/SKILL.md"
+            destination = root / "runtime/SKILL.md"
+            source.parent.mkdir(parents=True)
+            source.write_text("accepted version", encoding="utf-8")
+
+            writer_skill_installer.install(source, destination)
+            source.write_text("uncommitted next edit", encoding="utf-8")
+
+            self.assertEqual(destination.read_text(encoding="utf-8"), "accepted version")
+            self.assertEqual(
+                writer_skill_installer.sync_status(source, destination)["status"],
+                "outdated",
+            )
 
     def test_writer_skill_manifest_hash_ignores_checkout_newlines(self) -> None:
         with tempfile.TemporaryDirectory() as folder:
@@ -108,7 +125,7 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             destination = root / "skills/edabalans-writer/SKILL.md"
             installed_manifest = destination.parent / "assets" / manifest.name
             installed_manifest.parent.mkdir(parents=True)
-            installed_manifest.hardlink_to(manifest)
+            installed_manifest.write_bytes(manifest.read_bytes())
 
             with (
                 patch.object(writer_skill_installer, "PROJECT_ROOT", root),

@@ -319,9 +319,19 @@ url = "https://api.edabalans.ru/mcp/"
 bearer_token_env_var = "EDABALANS_KNOWLEDGE_TOKEN"
 ```
 
-Проектный skill устанавливается командой
-`python tools/install_edabalans_librarian_skill.py --install`. После первой
-настройки MCP или skill нужно открыть новую задачу либо перезапустить Codex.
+Проектные редакционные skills устанавливаются принятыми runtime-копиями:
+
+```powershell
+python tools/install_edabalans_writer_skill.py --install
+python tools/install_edabalans_librarian_skill.py --install
+python tools/install_edabalans_writer_skill.py --check
+python tools/install_edabalans_librarian_skill.py --check
+```
+
+Обе проверки выполняются одним выпуском, даже если менялся только один skill. Это
+не hard links на рабочий checkout: локальная правка соседнего чата не должна
+самовольно менять правила новых задач. После первой настройки MCP или изменения
+skill нужно открыть новую задачу либо перезапустить Codex.
 
 ## Автоматическая публикация
 

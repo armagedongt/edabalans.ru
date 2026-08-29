@@ -5,6 +5,8 @@ import argparse
 import hashlib
 import json
 import os
+import shutil
+import tempfile
 from pathlib import Path
 
 
@@ -24,6 +26,20 @@ def digest(path: Path) -> str | None:
     return hashlib.sha256(data).hexdigest()
 
 
+def replace_with_copy(source: Path, destination: Path) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    handle, temporary_name = tempfile.mkstemp(
+        dir=destination.parent, prefix=f".{destination.name}.", suffix=".tmp"
+    )
+    os.close(handle)
+    temporary = Path(temporary_name)
+    try:
+        shutil.copy2(source, temporary)
+        os.replace(temporary, destination)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
 def status(source: Path, destination: Path) -> dict[str, str | bool | None]:
     source_hash = digest(source)
     destination_hash = digest(destination)
@@ -31,23 +47,20 @@ def status(source: Path, destination: Path) -> dict[str, str | bool | None]:
         raise FileNotFoundError(source)
     linked = destination.exists() and source.samefile(destination)
     return {
-        "status": "current" if source_hash == destination_hash and linked else "outdated",
+        "status": "current" if source_hash == destination_hash else "outdated",
         "source": str(source),
         "destination": str(destination),
         "source_hash": source_hash,
         "destination_hash": destination_hash,
         "hard_linked": linked,
+        "install_mode": "managed_copy",
     }
 
 
 def install(source: Path, destination: Path) -> dict[str, str | bool | None]:
     if not source.is_file():
         raise FileNotFoundError(source)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    if destination.exists() and not source.samefile(destination):
-        destination.unlink()
-    if not destination.exists():
-        destination.hardlink_to(source)
+    replace_with_copy(source, destination)
     return status(source, destination)
 
 

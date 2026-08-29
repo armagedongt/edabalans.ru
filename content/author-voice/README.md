@@ -181,5 +181,7 @@ SQLite-индекса, semantic report, analysis state и установленн
 `content/author-voice/skill/edabalans-writer/`. После изменения skill или любого
 контракта из manifest запустить
 `tools/install_edabalans_writer_skill.py --install`; `--check` только проверяет
-hard link, package version и SHA-256 всего комплекта. Эти действия относятся к
+управляемую runtime-копию, package version и SHA-256 всего комплекта. Установщик
+не создаёт hard link на рабочий checkout: незакоммиченная правка одного чата не
+должна менять правила другого. Эти действия относятся к
 обслуживанию модуля и не выполняются внутри обычной писательской задачи.

@@ -619,9 +619,9 @@ class AuthorWorkflowTests(unittest.TestCase):
         (self.root / "analysis-state.json").write_text(json.dumps({"correction_chains": 1}), encoding="utf-8")
         with sqlite3.connect(health_index) as db:
             db.execute("INSERT INTO corrections VALUES (?, ?)", ("one", "{}"))
-        # The production installer uses hard links. Put only this destination on
-        # the canonical source volume because CI can mount /tmp separately.
-        with tempfile.TemporaryDirectory(dir=TOOLS.parent) as skill_folder:
+        # The production installer uses a managed copy so a task worktree cannot
+        # mutate the runtime skill before its change is accepted.
+        with tempfile.TemporaryDirectory() as skill_folder:
             destination = Path(skill_folder) / "skills/edabalans-writer/SKILL.md"
             install_edabalans_writer_skill.install(
                 install_edabalans_writer_skill.SOURCE, destination
