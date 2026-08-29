@@ -22,6 +22,51 @@ def private(path: Path) -> Path:
     return resolved
 
 
+ITEM_TABLES = {
+    "rule": ("rules", "rule_id"),
+    "exemplar": ("exemplars", "exemplar_id"),
+    "fragment": ("fragments", "fragment_id"),
+    "candidate": ("fragments", "fragment_id"),
+    "rhetoric": ("rhetoric", "entry_id"),
+    "correction": ("corrections", "correction_id"),
+    "corpus": ("corpus", "corpus_id"),
+}
+
+
+def get_index_item(index: Path, item_id: str, *, include_full_text: bool = False) -> dict:
+    """Fetch one exact indexed item after a compact search selected its ID."""
+    index = private(index)
+    with closing(sqlite3.connect(index)) as db:
+        match = db.execute(
+            "SELECT kind, catalog_id FROM voice_fts WHERE item_id = ? LIMIT 1",
+            (item_id,),
+        ).fetchone()
+        if not match:
+            raise ValueError(f"voice item not found: {item_id}")
+        kind, catalog_id = match
+        table, key = ITEM_TABLES[kind]
+        payload = db.execute(
+            f"SELECT payload_json FROM {table} WHERE {key} = ?",
+            (item_id,),
+        ).fetchone()
+        if not payload:
+            raise ValueError(f"voice item payload not found: {item_id}")
+    row = json.loads(payload[0])
+    result = {
+        "kind": kind,
+        "item_id": item_id,
+        "catalog_id": catalog_id,
+        "source": row.get("source"),
+        "source_url": row.get("source_url"),
+        "headline": row.get("headline"),
+    }
+    if include_full_text:
+        result["full_text"] = (
+            row.get("full_case") if kind == "correction" else row.get("text")
+        )
+    return result
+
+
 def matches(
     row: dict,
     job: str | None,
@@ -106,16 +151,7 @@ def search_index(
     results: list[dict] = []
     with closing(sqlite3.connect(index)) as db:
         for kind, item_id, catalog_id, excerpt, lexical_score in db.execute(sql, params):
-            table_and_key = {
-                "rule": ("rules", "rule_id"),
-                "exemplar": ("exemplars", "exemplar_id"),
-                "fragment": ("fragments", "fragment_id"),
-                "candidate": ("fragments", "fragment_id"),
-                "rhetoric": ("rhetoric", "entry_id"),
-                "correction": ("corrections", "correction_id"),
-                "corpus": ("corpus", "corpus_id"),
-            }
-            table, key = table_and_key[kind]
+            table, key = ITEM_TABLES[kind]
             payload = db.execute(f"SELECT payload_json FROM {table} WHERE {key} = ?", (item_id,)).fetchone()
             if not payload:
                 continue
@@ -199,7 +235,8 @@ def search_index(
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("query", help="Ordinary search phrase in Russian")
+    parser.add_argument("query", nargs="?", help="Ordinary search phrase in Russian")
+    parser.add_argument("--item-id", help="Fetch one exact search result by item_id")
     parser.add_argument("--index", type=Path, required=True)
     parser.add_argument("--kind", choices=("all", "rule", "exemplar", "rhetoric", "candidate", "fragment", "correction", "corpus"), default="all")
     parser.add_argument("--job", choices=("education", "personal", "engagement", "sales", "navigation"))
@@ -212,13 +249,23 @@ def main() -> int:
     parser.add_argument("--raw-fts", action="store_true", help="Treat query as expert SQLite FTS syntax")
     parser.add_argument("--include-full-text", action="store_true")
     args = parser.parse_args()
-    payload = search_index(
-        args.index, args.query, kind_filter=args.kind, job=args.job,
-        surface=args.surface, slot=args.slot, family=args.family,
-        preferred_surface=args.preferred_surface,
-        exclude_technical=args.exclude_technical,
-        limit=args.limit, raw_fts=args.raw_fts,
-        include_full_text=args.include_full_text,
+    if bool(args.query) == bool(args.item_id):
+        parser.error("provide exactly one of query or --item-id")
+    payload = (
+        get_index_item(
+            args.index,
+            args.item_id,
+            include_full_text=args.include_full_text,
+        )
+        if args.item_id
+        else search_index(
+            args.index, args.query, kind_filter=args.kind, job=args.job,
+            surface=args.surface, slot=args.slot, family=args.family,
+            preferred_surface=args.preferred_surface,
+            exclude_technical=args.exclude_technical,
+            limit=args.limit, raw_fts=args.raw_fts,
+            include_full_text=args.include_full_text,
+        )
     )
     print(json.dumps(payload, ensure_ascii=False, indent=2))
     return 0

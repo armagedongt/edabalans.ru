@@ -23,6 +23,7 @@ import install_edabalans_writer_skill as writer_skill_installer
 import materialize_author_voice as materialize
 import prepare_author_post as prepare
 import record_author_correction as correction
+import search_author_voice as author_search
 import validate_author_draft as draft_validator
 
 
@@ -215,6 +216,175 @@ class ProjectVoiceManifestTests(unittest.TestCase):
                         sum(len(row.get("full_text") or "") for row in rows),
                         profile["full_text_characters"],
                     )
+
+    def test_foundational_material_searches_authored_corpus_per_block(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            index = root / "voice.sqlite"
+            task_path = root / "task.json"
+            corpus = [
+                {
+                    "corpus_id": "corpus:protein",
+                    "catalog_id": "tilda:protein",
+                    "source": "tilda",
+                    "source_url": None,
+                    "headline": "Зачем нужен белок",
+                    "text": "Зачем нужен белок: полный авторский блок про белок и его роль.",
+                    "dominant_job": "sales",
+                    "surface_context": "course_material",
+                    "related_versions": [],
+                    "exact_cluster_ids": [],
+                },
+                {
+                    "corpus_id": "corpus:fats",
+                    "catalog_id": "tilda:fats",
+                    "source": "tilda",
+                    "source_url": None,
+                    "headline": "Зачем нужны жиры",
+                    "text": "Зачем нужны жиры: полный авторский блок про жиры и их роль.",
+                    "dominant_job": "education",
+                    "surface_context": "course_material",
+                    "related_versions": [],
+                    "exact_cluster_ids": [],
+                },
+            ]
+            exemplars = [{
+                "exemplar_id": "ex:protein",
+                "catalog_id": "tilda:protein",
+                "source": "tilda",
+                "source_url": None,
+                "headline": "Зачем нужен белок",
+                "text": "Зачем нужен белок: полный авторский блок про белок и его роль.",
+                "dominant_job": "education",
+                "composition_recipe": "explanation",
+                "surface_context": "course_material",
+                "media_dependency": "none_recorded",
+                "related_versions": [],
+                "exact_cluster_ids": [],
+            }]
+            materialize.build_index(index, [], exemplars, [], [], [], corpus)
+            task_path.write_text(json.dumps({
+                "note": "Собрать базовый материал про БЖУ",
+                "work_profile": "new_material",
+                "edit_mode": "draft",
+                "source_basis": "sparse_basis",
+                "job": "education",
+                "surface_context": "course_material",
+                "course_context": whole_day_context(),
+                "block_outline": ["зачем нужен белок", "зачем нужны жиры"],
+            }, ensure_ascii=False), encoding="utf-8")
+
+            pack = prepare.build_pack(task_path, index)
+
+            self.assertEqual(
+                pack["content_contract"]["author_reuse_mode"],
+                "authored_blocks_first",
+            )
+            self.assertEqual(pack["content_contract"]["block_outline_source"], "explicit")
+            authored = pack["retrieval"]["authored_reuse"]
+            self.assertEqual(len(authored["blocks"]), 2)
+            self.assertTrue(all(block["candidates"] for block in authored["blocks"]))
+            self.assertEqual(
+                {row["catalog_id"] for row in authored["sources"]},
+                {"tilda:protein", "tilda:fats"},
+            )
+            self.assertTrue(all(row.get("full_text") for row in authored["sources"]))
+            self.assertNotIn(
+                "tilda:protein",
+                {row["catalog_id"] for row in pack["retrieval"]["exemplars"]},
+            )
+            self.assertLessEqual(
+                sum(len(row.get("full_text") or "") for row in authored["sources"])
+                + sum(len(row.get("full_text") or "") for row in pack["retrieval"]["exemplars"])
+                + sum(len(row.get("full_case") or "") for row in pack["retrieval"]["corrections"]),
+                prepare.RETRIEVAL_PROFILES["standard"]["full_text_characters"],
+            )
+            self.assertIn("reuse a strong authored block verbatim", pack["instructions"][2])
+
+            self.assertNotIn(
+                "authored_block_reuse",
+                {
+                    check["id"]
+                    for check in draft_validator.required_manual_reviews(
+                        pack["content_contract"], "Готовый учебный материал."
+                    )
+                },
+            )
+
+    def test_omitted_authored_source_can_be_fetched_exactly_by_item_id(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            index = root / "voice.sqlite"
+            long_text = "Длинный авторский блок про насыщение. " * 20
+            corpus = [{
+                "corpus_id": "corpus:satiety",
+                "catalog_id": "telegram:satiety",
+                "source": "telegram_channel",
+                "source_url": None,
+                "headline": "Насыщение",
+                "text": long_text,
+                "dominant_job": "engagement",
+                "surface_context": "telegram_channel",
+                "related_versions": [],
+                "exact_cluster_ids": [],
+            }]
+            materialize.build_index(index, [], [], [], [], [], corpus)
+
+            reuse = prepare.authored_reuse_retrieval(
+                index,
+                ["насыщение"],
+                preferred_surface="course_material",
+                character_budget=20,
+                candidates_per_block=1,
+            )
+
+            candidate = reuse["blocks"][0]["candidates"][0]
+            self.assertFalse(candidate["full_text_in_pack"])
+            self.assertEqual(reuse["sources"], [])
+            fetched = author_search.get_index_item(
+                index,
+                candidate["item_id"],
+                include_full_text=True,
+            )
+            self.assertEqual(fetched["full_text"], long_text)
+            cli = subprocess.run(
+                [
+                    sys.executable,
+                    str(TOOLS / "search_author_voice.py"),
+                    "--index", str(index),
+                    "--item-id", candidate["item_id"],
+                    "--include-full-text",
+                ],
+                check=True,
+                capture_output=True,
+                text=True,
+                encoding="utf-8",
+            )
+            self.assertEqual(json.loads(cli.stdout)["full_text"], long_text)
+
+    def test_routine_telegram_defaults_to_original_composition(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            index = root / "voice.sqlite"
+            task_path = root / "task.json"
+            materialize.build_index(index, [], [], [], [])
+            task_path.write_text(json.dumps({
+                "note": "Новый пост про привычки",
+                "work_profile": "new_material",
+                "edit_mode": "draft",
+                "source_basis": "sparse_basis",
+                "surface_context": "telegram_channel",
+                "block_outline": ["почему привычки закрепляются"],
+            }, ensure_ascii=False), encoding="utf-8")
+
+            pack = prepare.build_pack(task_path, index)
+
+            self.assertEqual(
+                pack["content_contract"]["author_reuse_mode"],
+                "original_composition",
+            )
+            self.assertEqual(pack["retrieval"]["authored_reuse"], {})
+            self.assertIn("do not transplant old blocks automatically", pack["instructions"][2])
 
     def test_all_authoring_canon_files_have_one_platform_content_owner(self) -> None:
         project_root = TOOLS.parent

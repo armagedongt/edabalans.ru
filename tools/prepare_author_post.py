@@ -10,9 +10,10 @@ from search_author_voice import private, search_index
 
 
 SCHEMA_VERSION = "2.0"
-PACK_VERSION = "author-post-pack-v6-20260827"
+PACK_VERSION = "author-post-pack-v7-20260829"
 FACT_CHECK_PROFILES = {"instructional_strict", "editorial_materiality"}
 SOURCE_BASES = {"full_source", "sparse_basis"}
+AUTHOR_REUSE_MODES = {"authored_blocks_first", "original_composition"}
 TRANSCRIPT_ROLES = {"article_source", "video_script", "context_only"}
 EDIT_MODES = {
     "draft",
@@ -66,6 +67,7 @@ ARTICLE_FORMAT_CONTEXTS = {
 }
 COURSE_MATERIAL_CONTEXTS = {"course_material", "masterclass_material", "intensive_article"}
 COURSE_PACKAGE_CONTEXTS = {"course", "course_package", "masterclass_course"}
+ORIGINAL_COMPOSITION_CONTEXTS = {"telegram", "telegram_channel"}
 STRICT_FACT_SURFACES = {
     "course",
     "course_material",
@@ -156,6 +158,91 @@ def bounded_full_text(rows: list[dict], keys: tuple[str, ...], character_budget:
         selected.append(bounded)
         break
     return selected
+
+
+def bounded_complete_full_text(
+    rows: list[dict], key: str, character_budget: int
+) -> list[dict]:
+    """Keep only complete source texts; omitted rows can be fetched on demand."""
+    selected: list[dict] = []
+    used = 0
+    for row in rows:
+        size = len(str(row.get(key) or ""))
+        if not size or used + size > character_budget:
+            continue
+        selected.append(row)
+        used += size
+    return selected
+
+
+def authored_reuse_retrieval(
+    index_path: Path,
+    block_outline: list[str],
+    *,
+    preferred_surface: str | None,
+    character_budget: int,
+    candidates_per_block: int,
+) -> dict:
+    """Retrieve reusable authored sources separately for every planned block."""
+    rows_by_block: list[list[dict]] = []
+    blocks: list[dict] = []
+    for block in block_outline:
+        found = search_index(
+            index_path,
+            block,
+            kind_filter="corpus",
+            preferred_surface=preferred_surface,
+            exclude_technical=True,
+            limit=max(4, candidates_per_block * 2),
+            include_full_text=True,
+        )["results"]
+        candidates = distinct_version_groups(found, candidates_per_block)
+        rows_by_block.append(candidates)
+        blocks.append({
+            "block": block,
+            "search_status": "candidates_found" if candidates else "uncovered",
+            "candidates": [
+                {
+                    key: value
+                    for key, value in row.items()
+                    if key != "full_text"
+                }
+                for row in candidates
+            ],
+        })
+
+    # Round-robin keeps the first block from consuming the full-text budget.
+    ordered_sources: list[dict] = []
+    seen: set[str] = set()
+    max_rank = max((len(rows) for rows in rows_by_block), default=0)
+    for rank in range(max_rank):
+        for rows in rows_by_block:
+            if rank >= len(rows):
+                continue
+            row = rows[rank]
+            identity = str(row.get("item_id") or row.get("catalog_id") or "")
+            if not identity or identity in seen:
+                continue
+            seen.add(identity)
+            ordered_sources.append(row)
+    sources = bounded_complete_full_text(
+        ordered_sources,
+        "full_text",
+        character_budget,
+    )
+    included = {str(row.get("item_id") or "") for row in sources}
+    for block in blocks:
+        for candidate in block["candidates"]:
+            candidate["full_text_in_pack"] = str(candidate.get("item_id") or "") in included
+    return {
+        "blocks": blocks,
+        "sources": sources,
+        "fetch_missing_full_text": {
+            "tool": "tools/search_author_voice.py",
+            "index": str(index_path),
+            "arguments": ["--item-id", "<item_id>", "--include-full-text"],
+        },
+    }
 
 
 def fact_check_profile(
@@ -379,6 +466,54 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         raise ValueError("task.course_outline must contain days with non-empty material names")
     if format_profile == "course" and not effective_product:
         raise ValueError("task.product is required for a non-Masterclass full course")
+    requested_block_outline = task.get("block_outline")
+    if requested_block_outline is not None and (
+        not isinstance(requested_block_outline, list)
+        or not requested_block_outline
+        or any(not isinstance(item, str) or not item.strip() for item in requested_block_outline)
+    ):
+        raise ValueError("task.block_outline must be a non-empty list of block topics")
+    requested_author_reuse_mode = task.get("author_reuse_mode")
+    if requested_author_reuse_mode is not None and requested_author_reuse_mode not in AUTHOR_REUSE_MODES:
+        raise ValueError(f"unknown author_reuse_mode: {requested_author_reuse_mode}")
+    if requested_author_reuse_mode:
+        author_reuse_mode = requested_author_reuse_mode
+        author_reuse_mode_source = "explicit"
+    elif preferred_surface in ORIGINAL_COMPOSITION_CONTEXTS:
+        author_reuse_mode = "original_composition"
+        author_reuse_mode_source = "surface_default"
+    elif preferred_surface in COURSE_MATERIAL_CONTEXTS | COURSE_PACKAGE_CONTEXTS or requested_block_outline:
+        author_reuse_mode = "authored_blocks_first"
+        author_reuse_mode_source = "foundational_default"
+    else:
+        author_reuse_mode = "original_composition"
+        author_reuse_mode_source = "general_default"
+    if author_reuse_mode == "authored_blocks_first":
+        if requested_block_outline:
+            block_outline = [item.strip() for item in requested_block_outline]
+            block_outline_source = "explicit"
+        else:
+            argument_blocks = [
+                item.strip()
+                for item in (task.get("argument_route") or [])
+                if isinstance(item, str) and item.strip()
+            ]
+            if argument_blocks:
+                block_outline = argument_blocks
+                block_outline_source = "argument_route"
+            elif format_profile == "course" and isinstance(course_outline, list):
+                block_outline = [
+                    f"День {day['day']}: {material}"
+                    for day in course_outline
+                    for material in day["materials"]
+                ]
+                block_outline_source = "course_outline"
+            else:
+                block_outline = [note]
+                block_outline_source = "note_fallback"
+    else:
+        block_outline = []
+        block_outline_source = None
     retrieval_depth = task.get("retrieval_depth") or "standard"
     if retrieval_depth not in RETRIEVAL_PROFILES:
         raise ValueError(f"unknown retrieval_depth: {retrieval_depth}")
@@ -390,6 +525,7 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         "corrections": [],
         "rules": [],
         "topic_history": [],
+        "authored_reuse": {},
     }
     if edit_mode not in MODES_WITHOUT_VOICE_RETRIEVAL:
         rhetoric_results: list[dict] = []
@@ -411,18 +547,57 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
                 if row["item_id"] not in seen_rhetoric:
                     rhetoric_results.append(row)
                     seen_rhetoric.add(row["item_id"])
+        authored_reuse = (
+            authored_reuse_retrieval(
+                index_path,
+                block_outline,
+                preferred_surface=preferred_surface,
+                character_budget=retrieval_profile["full_text_characters"],
+                candidates_per_block=2,
+            )
+            if author_reuse_mode == "authored_blocks_first"
+            else {}
+        )
+        authored_blocked_versions = {
+            value
+            for block in (authored_reuse.get("blocks") or [])
+            for row in block.get("candidates") or []
+            for value in [
+                row.get("catalog_id"),
+                *(row.get("related_versions") or []),
+                *(row.get("exact_cluster_ids") or []),
+            ]
+            if value
+        }
+        authored_characters = sum(
+            len(str(row.get("full_text") or ""))
+            for row in (authored_reuse.get("sources") or [])
+        )
+        remaining_full_text_budget = max(
+            0,
+            retrieval_profile["full_text_characters"] - authored_characters,
+        )
         exemplar_candidates = search_index(
             index_path, query, kind_filter="exemplar", job=job,
             preferred_surface=preferred_surface,
             limit=max(10, retrieval_profile["exemplars"] * 5),
             include_full_text=True,
         )["results"]
-        exemplars = bounded_full_text(
-            distinct_version_groups(exemplar_candidates, retrieval_profile["exemplars"]),
-            ("full_text",),
-            retrieval_profile["full_text_characters"],
+        exemplar_selection = distinct_version_groups(
+            exemplar_candidates,
+            retrieval_profile["exemplars"],
+            authored_blocked_versions,
         )
-        blocked_versions = {
+        exemplars = (
+            bounded_full_text(
+                exemplar_selection,
+                ("full_text",),
+                remaining_full_text_budget,
+            )
+            if remaining_full_text_budget
+            else []
+        )
+        blocked_versions = authored_blocked_versions | {
             value
             for row in exemplars
             for value in [row.get("catalog_id"), *(row.get("related_versions") or []), *(row.get("exact_cluster_ids") or [])]
@@ -439,23 +614,24 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             limit=retrieval_profile["corrections"],
             include_full_text=True,
         )["results"] if retrieval_profile["corrections"] else []
-        remaining_full_text_budget = max(
+        remaining_correction_budget = max(
             0,
-            retrieval_profile["full_text_characters"]
+            remaining_full_text_budget
             - sum(len(str(row.get("full_text") or "")) for row in exemplars),
         )
         retrieval = {
             "exemplars": exemplars,
             "rhetoric": rhetoric_results[:retrieval_profile["rhetoric"]],
             "corrections": bounded_full_text(
-                corrections, ("full_case",), remaining_full_text_budget
-            ) if remaining_full_text_budget else [],
+                corrections, ("full_case",), remaining_correction_budget
+            ) if remaining_correction_budget else [],
             "rules": search_index(
                 index_path, query, kind_filter="rule", limit=retrieval_profile["rules"]
             )["results"],
             "topic_history": distinct_version_groups(
                 history_candidates, retrieval_profile["history"], blocked_versions
             ),
+            "authored_reuse": authored_reuse,
         }
         if task.get("include_unreviewed_candidates"):
             retrieval["unreviewed_candidates"] = search_index(
@@ -542,6 +718,10 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "work_profile_source": "explicit" if requested_work_profile else "inferred",
             "source_basis": source_basis,
             "source_basis_source": "explicit" if requested_source_basis else "inferred",
+            "author_reuse_mode": author_reuse_mode,
+            "author_reuse_mode_source": author_reuse_mode_source,
+            "block_outline": block_outline,
+            "block_outline_source": block_outline_source,
             "transcript_role": transcript_role,
             "transcript_role_source": (
                 "explicit" if requested_transcript_role else (
@@ -582,7 +762,11 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
                 else "Write one ready text, not a menu of blocks."
             ),
             "Facts come only from the content contract and current product canon.",
-            "Use retrieved material as source-linked patterns; do not paste it automatically.",
+            (
+                "Use retrieval.authored_reuse block by block: reuse a strong authored block verbatim or with edge-only edits, and write new prose only for a confirmed gap."
+                if author_reuse_mode == "authored_blocks_first"
+                else "Use retrieved material as source-linked patterns; do not transplant old blocks automatically."
+            ),
             "Build the emotion and argument route before drafting sentences.",
             "Apply editing permissions from editing-modes-v1.md without widening them.",
             "For a site article or course material, apply ARTICLE_STANDARD.md; never invent headings only to create a table of contents.",

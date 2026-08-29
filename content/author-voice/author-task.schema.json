@@ -10,6 +10,14 @@
       "enum": ["structure", "transcript_to_article", "new_material", "develop_existing"]
     },
     "source_basis": {"enum": ["full_source", "sparse_basis"]},
+    "author_reuse_mode": {
+      "enum": ["authored_blocks_first", "original_composition"]
+    },
+    "block_outline": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1}
+    },
     "transcript_role": {
       "enum": ["article_source", "video_script", "context_only"]
     },
