@@ -18725,7 +18725,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 28,
+          "line": 33,
           "module_id": "platform.content",
           "name": "read_jsonl",
           "qualname": "read_jsonl"
@@ -18733,7 +18733,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 41,
+          "line": 46,
           "module_id": "platform.content",
           "name": "load_snapshot",
           "qualname": "load_snapshot"
@@ -18741,7 +18741,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 53,
+          "line": 58,
           "module_id": "platform.content",
           "name": "_snapshot_digest",
           "qualname": "_snapshot_digest"
@@ -18749,7 +18749,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 63,
+          "line": 68,
           "module_id": "platform.content",
           "name": "validate_snapshot",
           "qualname": "validate_snapshot"
@@ -18757,7 +18757,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 96,
+          "line": 101,
           "module_id": "platform.content",
           "name": "find",
           "qualname": "validate_snapshot.find"
@@ -18765,7 +18765,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 121,
+          "line": 126,
           "module_id": "platform.content",
           "name": "_parse_datetime",
           "qualname": "_parse_datetime"
@@ -18773,7 +18773,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 127,
+          "line": 132,
           "module_id": "platform.content",
           "name": "_version_hash",
           "qualname": "_version_hash"
@@ -18781,7 +18781,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 145,
+          "line": 150,
           "module_id": "platform.content",
           "name": "_media_rows",
           "qualname": "_media_rows"
@@ -18789,7 +18789,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 175,
+          "line": 180,
           "module_id": "platform.content",
           "name": "_pair_key",
           "qualname": "_pair_key"
@@ -18797,7 +18797,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 179,
+          "line": 184,
           "module_id": "platform.content",
           "name": "_local_decision_key",
           "qualname": "_local_decision_key"
@@ -18805,7 +18805,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 185,
+          "line": 190,
           "module_id": "platform.content",
           "name": "import_snapshot",
           "qualname": "import_snapshot"
@@ -18813,7 +18813,7 @@
         {
           "file": "backend/scripts/import_content_authoring_catalog.py",
           "kind": "function",
-          "line": 319,
+          "line": 324,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18877,7 +18877,15 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 28,
+          "line": 30,
+          "module_id": "platform.content",
+          "name": "test_import_script_bootstraps_backend_path",
+          "qualname": "test_import_script_bootstraps_backend_path"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 46,
           "module_id": "platform.content",
           "name": "snapshot",
           "qualname": "snapshot"
@@ -18885,7 +18893,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 51,
+          "line": 69,
           "module_id": "platform.content",
           "name": "sqlite_session_factory",
           "qualname": "sqlite_session_factory"
@@ -18893,7 +18901,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 57,
+          "line": 75,
           "module_id": "platform.content",
           "name": "test_snapshot_validation_is_source_complete",
           "qualname": "test_snapshot_validation_is_source_complete"
@@ -18901,7 +18909,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 67,
+          "line": 85,
           "module_id": "platform.content",
           "name": "test_import_is_idempotent",
           "qualname": "test_import_is_idempotent"
@@ -18909,7 +18917,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 82,
+          "line": 100,
           "module_id": "platform.content",
           "name": "test_import_matches_existing_production_item_and_preserves_owner_revision",
           "qualname": "test_import_matches_existing_production_item_and_preserves_owner_revision"
@@ -18917,7 +18925,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 110,
+          "line": 128,
           "module_id": "platform.content",
           "name": "test_local_rejected_candidate_is_imported_as_rejected",
           "qualname": "test_local_rejected_candidate_is_imported_as_rejected"
@@ -18925,7 +18933,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 127,
+          "line": 145,
           "module_id": "platform.content",
           "name": "test_owner_save_creates_immutable_revision_and_detects_conflict",
           "qualname": "test_owner_save_creates_immutable_revision_and_detects_conflict"
@@ -18933,7 +18941,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 155,
+          "line": 173,
           "module_id": "platform.content",
           "name": "test_platform_reimport_preserves_owner_latest_and_revision_sequence",
           "qualname": "test_platform_reimport_preserves_owner_latest_and_revision_sequence"
@@ -18941,7 +18949,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 178,
+          "line": 196,
           "module_id": "platform.content",
           "name": "test_partial_candidate_merge_keeps_unselected_subgraph_pending",
           "qualname": "test_partial_candidate_merge_keeps_unselected_subgraph_pending"
@@ -18949,7 +18957,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 213,
+          "line": 231,
           "module_id": "platform.content",
           "name": "test_authoring_api_requires_admin",
           "qualname": "test_authoring_api_requires_admin"
@@ -18957,7 +18965,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 221,
+          "line": 239,
           "module_id": "platform.content",
           "name": "test_authoring_mutations_require_admin",
           "qualname": "test_authoring_mutations_require_admin"
@@ -18965,7 +18973,7 @@
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
           "kind": "function",
-          "line": 226,
+          "line": 244,
           "module_id": "platform.content",
           "name": "test_server_editor_keeps_metadata_below_text_and_has_save_controls",
           "qualname": "test_server_editor_keeps_metadata_below_text_and_has_save_controls"
@@ -22941,7 +22949,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 39,
+          "line": 48,
           "module_id": "platform.knowledge",
           "name": "knowledge_map",
           "qualname": "knowledge_map"
@@ -22949,7 +22957,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 46,
+          "line": 55,
           "module_id": "platform.knowledge",
           "name": "library_resource",
           "qualname": "library_resource"
@@ -22957,7 +22965,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 56,
+          "line": 65,
           "module_id": "platform.knowledge",
           "name": "search_knowledge",
           "qualname": "search_knowledge"
@@ -22965,7 +22973,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 72,
+          "line": 81,
           "module_id": "platform.knowledge",
           "name": "read_knowledge",
           "qualname": "read_knowledge"
@@ -22973,7 +22981,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 82,
+          "line": 91,
           "module_id": "platform.knowledge",
           "name": "prepare_editorial_context",
           "qualname": "prepare_editorial_context"
@@ -22981,7 +22989,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 98,
+          "line": 107,
           "module_id": "platform.knowledge",
           "name": "register_knowledge_resource",
           "qualname": "register_knowledge_resource"
@@ -22989,7 +22997,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 131,
+          "line": 140,
           "module_id": "platform.knowledge",
           "name": "link_knowledge_resources",
           "qualname": "link_knowledge_resources"
@@ -22997,7 +23005,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 146,
+          "line": 155,
           "module_id": "platform.knowledge",
           "name": "ask_librarian_review",
           "qualname": "ask_librarian_review"
@@ -23005,7 +23013,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "function",
-          "line": 162,
+          "line": 171,
           "module_id": "platform.knowledge",
           "name": "record_knowledge_use",
           "qualname": "record_knowledge_use"
@@ -23013,7 +23021,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "class",
-          "line": 181,
+          "line": 190,
           "module_id": "platform.knowledge",
           "name": "BearerTokenMiddleware",
           "qualname": "BearerTokenMiddleware"
@@ -23021,7 +23029,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "method",
-          "line": 184,
+          "line": 193,
           "module_id": "platform.knowledge",
           "name": "__init__",
           "qualname": "BearerTokenMiddleware.__init__"
@@ -23029,7 +23037,7 @@
         {
           "file": "backend/app/knowledge_mcp.py",
           "kind": "method",
-          "line": 187,
+          "line": 196,
           "module_id": "platform.knowledge",
           "name": "__call__",
           "qualname": "BearerTokenMiddleware.__call__"
@@ -23117,7 +23125,7 @@
         {
           "file": "backend/scripts/sync_knowledge_library.py",
           "kind": "function",
-          "line": 12,
+          "line": 17,
           "module_id": "platform.knowledge",
           "name": "_jsonl",
           "qualname": "_jsonl"
@@ -23125,7 +23133,7 @@
         {
           "file": "backend/scripts/sync_knowledge_library.py",
           "kind": "function",
-          "line": 29,
+          "line": 34,
           "module_id": "platform.knowledge",
           "name": "load_bundle",
           "qualname": "load_bundle"
@@ -23133,7 +23141,7 @@
         {
           "file": "backend/scripts/sync_knowledge_library.py",
           "kind": "function",
-          "line": 50,
+          "line": 55,
           "module_id": "platform.knowledge",
           "name": "sync_bundle",
           "qualname": "sync_bundle"
@@ -23141,7 +23149,7 @@
         {
           "file": "backend/scripts/sync_knowledge_library.py",
           "kind": "function",
-          "line": 87,
+          "line": 92,
           "module_id": "platform.knowledge",
           "name": "main",
           "qualname": "main"
@@ -23149,7 +23157,23 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 32,
+          "line": 36,
+          "module_id": "platform.knowledge",
+          "name": "test_sync_script_bootstraps_backend_path",
+          "qualname": "test_sync_script_bootstraps_backend_path"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 51,
+          "module_id": "platform.knowledge",
+          "name": "test_mcp_transport_security_has_an_exact_production_allowlist",
+          "qualname": "test_mcp_transport_security_has_an_exact_production_allowlist"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 60,
           "module_id": "platform.knowledge",
           "name": "session_factory",
           "qualname": "session_factory"
@@ -23157,7 +23181,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 42,
+          "line": 70,
           "module_id": "platform.knowledge",
           "name": "resource_payload",
           "qualname": "resource_payload"
@@ -23165,7 +23189,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 60,
+          "line": 88,
           "module_id": "platform.knowledge",
           "name": "test_resource_versions_search_relations_and_usage",
           "qualname": "test_resource_versions_search_relations_and_usage"
@@ -23173,7 +23197,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 96,
+          "line": 124,
           "module_id": "platform.knowledge",
           "name": "test_restricted_personal_keeps_person_reference",
           "qualname": "test_restricted_personal_keeps_person_reference"
@@ -23181,7 +23205,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 108,
+          "line": 136,
           "module_id": "platform.knowledge",
           "name": "test_review_queue_and_task_disclosure_policy",
           "qualname": "test_review_queue_and_task_disclosure_policy"
@@ -23189,7 +23213,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 133,
+          "line": 161,
           "module_id": "platform.knowledge",
           "name": "test_publication_taxonomy_is_searchable_and_returned",
           "qualname": "test_publication_taxonomy_is_searchable_and_returned"
@@ -23197,7 +23221,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 172,
+          "line": 200,
           "module_id": "platform.knowledge",
           "name": "test_library_api_and_mcp_require_authentication",
           "qualname": "test_library_api_and_mcp_require_authentication"
@@ -23205,7 +23229,7 @@
         {
           "file": "backend/tests/test_knowledge_library.py",
           "kind": "function",
-          "line": 181,
+          "line": 209,
           "module_id": "platform.knowledge",
           "name": "test_bundle_import_is_guarded_atomic_and_idempotent",
           "qualname": "test_bundle_import_is_guarded_atomic_and_idempotent"
@@ -37979,7 +38003,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 39,
+      "line": 48,
       "module_id": "platform.knowledge",
       "name": "knowledge_map",
       "qualname": "knowledge_map"
@@ -37987,7 +38011,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 46,
+      "line": 55,
       "module_id": "platform.knowledge",
       "name": "library_resource",
       "qualname": "library_resource"
@@ -37995,7 +38019,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 56,
+      "line": 65,
       "module_id": "platform.knowledge",
       "name": "search_knowledge",
       "qualname": "search_knowledge"
@@ -38003,7 +38027,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 72,
+      "line": 81,
       "module_id": "platform.knowledge",
       "name": "read_knowledge",
       "qualname": "read_knowledge"
@@ -38011,7 +38035,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 82,
+      "line": 91,
       "module_id": "platform.knowledge",
       "name": "prepare_editorial_context",
       "qualname": "prepare_editorial_context"
@@ -38019,7 +38043,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 98,
+      "line": 107,
       "module_id": "platform.knowledge",
       "name": "register_knowledge_resource",
       "qualname": "register_knowledge_resource"
@@ -38027,7 +38051,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 131,
+      "line": 140,
       "module_id": "platform.knowledge",
       "name": "link_knowledge_resources",
       "qualname": "link_knowledge_resources"
@@ -38035,7 +38059,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 146,
+      "line": 155,
       "module_id": "platform.knowledge",
       "name": "ask_librarian_review",
       "qualname": "ask_librarian_review"
@@ -38043,7 +38067,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "function",
-      "line": 162,
+      "line": 171,
       "module_id": "platform.knowledge",
       "name": "record_knowledge_use",
       "qualname": "record_knowledge_use"
@@ -38051,7 +38075,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "class",
-      "line": 181,
+      "line": 190,
       "module_id": "platform.knowledge",
       "name": "BearerTokenMiddleware",
       "qualname": "BearerTokenMiddleware"
@@ -38059,7 +38083,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "method",
-      "line": 184,
+      "line": 193,
       "module_id": "platform.knowledge",
       "name": "__init__",
       "qualname": "BearerTokenMiddleware.__init__"
@@ -38067,7 +38091,7 @@
     {
       "file": "backend/app/knowledge_mcp.py",
       "kind": "method",
-      "line": 187,
+      "line": 196,
       "module_id": "platform.knowledge",
       "name": "__call__",
       "qualname": "BearerTokenMiddleware.__call__"
@@ -42555,7 +42579,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 28,
+      "line": 33,
       "module_id": "platform.content",
       "name": "read_jsonl",
       "qualname": "read_jsonl"
@@ -42563,7 +42587,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 41,
+      "line": 46,
       "module_id": "platform.content",
       "name": "load_snapshot",
       "qualname": "load_snapshot"
@@ -42571,7 +42595,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 53,
+      "line": 58,
       "module_id": "platform.content",
       "name": "_snapshot_digest",
       "qualname": "_snapshot_digest"
@@ -42579,7 +42603,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 63,
+      "line": 68,
       "module_id": "platform.content",
       "name": "validate_snapshot",
       "qualname": "validate_snapshot"
@@ -42587,7 +42611,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 96,
+      "line": 101,
       "module_id": "platform.content",
       "name": "find",
       "qualname": "validate_snapshot.find"
@@ -42595,7 +42619,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 121,
+      "line": 126,
       "module_id": "platform.content",
       "name": "_parse_datetime",
       "qualname": "_parse_datetime"
@@ -42603,7 +42627,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 127,
+      "line": 132,
       "module_id": "platform.content",
       "name": "_version_hash",
       "qualname": "_version_hash"
@@ -42611,7 +42635,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 145,
+      "line": 150,
       "module_id": "platform.content",
       "name": "_media_rows",
       "qualname": "_media_rows"
@@ -42619,7 +42643,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 175,
+      "line": 180,
       "module_id": "platform.content",
       "name": "_pair_key",
       "qualname": "_pair_key"
@@ -42627,7 +42651,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 179,
+      "line": 184,
       "module_id": "platform.content",
       "name": "_local_decision_key",
       "qualname": "_local_decision_key"
@@ -42635,7 +42659,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 185,
+      "line": 190,
       "module_id": "platform.content",
       "name": "import_snapshot",
       "qualname": "import_snapshot"
@@ -42643,7 +42667,7 @@
     {
       "file": "backend/scripts/import_content_authoring_catalog.py",
       "kind": "function",
-      "line": 319,
+      "line": 324,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -42699,7 +42723,7 @@
     {
       "file": "backend/scripts/sync_knowledge_library.py",
       "kind": "function",
-      "line": 12,
+      "line": 17,
       "module_id": "platform.knowledge",
       "name": "_jsonl",
       "qualname": "_jsonl"
@@ -42707,7 +42731,7 @@
     {
       "file": "backend/scripts/sync_knowledge_library.py",
       "kind": "function",
-      "line": 29,
+      "line": 34,
       "module_id": "platform.knowledge",
       "name": "load_bundle",
       "qualname": "load_bundle"
@@ -42715,7 +42739,7 @@
     {
       "file": "backend/scripts/sync_knowledge_library.py",
       "kind": "function",
-      "line": 50,
+      "line": 55,
       "module_id": "platform.knowledge",
       "name": "sync_bundle",
       "qualname": "sync_bundle"
@@ -42723,7 +42747,7 @@
     {
       "file": "backend/scripts/sync_knowledge_library.py",
       "kind": "function",
-      "line": 87,
+      "line": 92,
       "module_id": "platform.knowledge",
       "name": "main",
       "qualname": "main"
@@ -43203,7 +43227,15 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 28,
+      "line": 30,
+      "module_id": "platform.content",
+      "name": "test_import_script_bootstraps_backend_path",
+      "qualname": "test_import_script_bootstraps_backend_path"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 46,
       "module_id": "platform.content",
       "name": "snapshot",
       "qualname": "snapshot"
@@ -43211,7 +43243,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 51,
+      "line": 69,
       "module_id": "platform.content",
       "name": "sqlite_session_factory",
       "qualname": "sqlite_session_factory"
@@ -43219,7 +43251,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 57,
+      "line": 75,
       "module_id": "platform.content",
       "name": "test_snapshot_validation_is_source_complete",
       "qualname": "test_snapshot_validation_is_source_complete"
@@ -43227,7 +43259,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 67,
+      "line": 85,
       "module_id": "platform.content",
       "name": "test_import_is_idempotent",
       "qualname": "test_import_is_idempotent"
@@ -43235,7 +43267,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 82,
+      "line": 100,
       "module_id": "platform.content",
       "name": "test_import_matches_existing_production_item_and_preserves_owner_revision",
       "qualname": "test_import_matches_existing_production_item_and_preserves_owner_revision"
@@ -43243,7 +43275,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 110,
+      "line": 128,
       "module_id": "platform.content",
       "name": "test_local_rejected_candidate_is_imported_as_rejected",
       "qualname": "test_local_rejected_candidate_is_imported_as_rejected"
@@ -43251,7 +43283,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 127,
+      "line": 145,
       "module_id": "platform.content",
       "name": "test_owner_save_creates_immutable_revision_and_detects_conflict",
       "qualname": "test_owner_save_creates_immutable_revision_and_detects_conflict"
@@ -43259,7 +43291,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 155,
+      "line": 173,
       "module_id": "platform.content",
       "name": "test_platform_reimport_preserves_owner_latest_and_revision_sequence",
       "qualname": "test_platform_reimport_preserves_owner_latest_and_revision_sequence"
@@ -43267,7 +43299,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 178,
+      "line": 196,
       "module_id": "platform.content",
       "name": "test_partial_candidate_merge_keeps_unselected_subgraph_pending",
       "qualname": "test_partial_candidate_merge_keeps_unselected_subgraph_pending"
@@ -43275,7 +43307,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 213,
+      "line": 231,
       "module_id": "platform.content",
       "name": "test_authoring_api_requires_admin",
       "qualname": "test_authoring_api_requires_admin"
@@ -43283,7 +43315,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 221,
+      "line": 239,
       "module_id": "platform.content",
       "name": "test_authoring_mutations_require_admin",
       "qualname": "test_authoring_mutations_require_admin"
@@ -43291,7 +43323,7 @@
     {
       "file": "backend/tests/test_content_authoring_catalog.py",
       "kind": "function",
-      "line": 226,
+      "line": 244,
       "module_id": "platform.content",
       "name": "test_server_editor_keeps_metadata_below_text_and_has_save_controls",
       "qualname": "test_server_editor_keeps_metadata_below_text_and_has_save_controls"
@@ -43691,7 +43723,23 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 32,
+      "line": 36,
+      "module_id": "platform.knowledge",
+      "name": "test_sync_script_bootstraps_backend_path",
+      "qualname": "test_sync_script_bootstraps_backend_path"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 51,
+      "module_id": "platform.knowledge",
+      "name": "test_mcp_transport_security_has_an_exact_production_allowlist",
+      "qualname": "test_mcp_transport_security_has_an_exact_production_allowlist"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 60,
       "module_id": "platform.knowledge",
       "name": "session_factory",
       "qualname": "session_factory"
@@ -43699,7 +43747,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 42,
+      "line": 70,
       "module_id": "platform.knowledge",
       "name": "resource_payload",
       "qualname": "resource_payload"
@@ -43707,7 +43755,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 60,
+      "line": 88,
       "module_id": "platform.knowledge",
       "name": "test_resource_versions_search_relations_and_usage",
       "qualname": "test_resource_versions_search_relations_and_usage"
@@ -43715,7 +43763,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 96,
+      "line": 124,
       "module_id": "platform.knowledge",
       "name": "test_restricted_personal_keeps_person_reference",
       "qualname": "test_restricted_personal_keeps_person_reference"
@@ -43723,7 +43771,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 108,
+      "line": 136,
       "module_id": "platform.knowledge",
       "name": "test_review_queue_and_task_disclosure_policy",
       "qualname": "test_review_queue_and_task_disclosure_policy"
@@ -43731,7 +43779,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 133,
+      "line": 161,
       "module_id": "platform.knowledge",
       "name": "test_publication_taxonomy_is_searchable_and_returned",
       "qualname": "test_publication_taxonomy_is_searchable_and_returned"
@@ -43739,7 +43787,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 172,
+      "line": 200,
       "module_id": "platform.knowledge",
       "name": "test_library_api_and_mcp_require_authentication",
       "qualname": "test_library_api_and_mcp_require_authentication"
@@ -43747,7 +43795,7 @@
     {
       "file": "backend/tests/test_knowledge_library.py",
       "kind": "function",
-      "line": 181,
+      "line": 209,
       "module_id": "platform.knowledge",
       "name": "test_bundle_import_is_guarded_atomic_and_idempotent",
       "qualname": "test_bundle_import_is_guarded_atomic_and_idempotent"
