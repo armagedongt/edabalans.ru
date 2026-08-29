@@ -45,6 +45,7 @@
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
+| Единая библиотека, Библиотекарь и MCP | `KNOWLEDGE_LIBRARY.md` |
 | Редакционная и продуктовая система | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` |
 | Бесплатный интенсив | `INTENSIVE_PAGES.md` |
 | Административные инструменты | `ADMIN_ARCHITECTURE.md` |

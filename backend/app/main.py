@@ -1,3 +1,5 @@
+from contextlib import asynccontextmanager
+
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
@@ -15,6 +17,8 @@ from app.access_routes import router as access_router
 from app.pricing_routes import router as pricing_router
 from app.intensive_routes import router as intensive_router
 from app.knowledge_routes import router as knowledge_router
+from app.knowledge_library_routes import router as knowledge_library_router
+from app.knowledge_mcp import knowledge_mcp_app, mcp as knowledge_mcp
 from app.course_structure_routes import router as course_structure_router
 from app.course_material_routes import router as course_material_router
 from app.product_catalog_routes import router as product_catalog_router
@@ -23,7 +27,15 @@ from app.calorie_course_routes import router as calorie_course_router
 from app.database import get_db
 
 settings = get_settings()
-app = FastAPI(title=settings.app_name, version=settings.app_version)
+
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):
+    async with knowledge_mcp.session_manager.run():
+        yield
+
+
+app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
@@ -41,11 +53,13 @@ app.include_router(access_router)
 app.include_router(pricing_router)
 app.include_router(intensive_router)
 app.include_router(knowledge_router)
+app.include_router(knowledge_library_router)
 app.include_router(course_structure_router)
 app.include_router(course_material_router)
 app.include_router(product_catalog_router)
 app.include_router(recipe_router)
 app.include_router(calorie_course_router)
+app.mount("/mcp", knowledge_mcp_app)
 
 
 @app.get("/health", tags=["system"])

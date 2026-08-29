@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
     personal_access_page_url: str = "https://похудение-это-есть.рф/personal-access"
     pricing_catalog_enabled: bool = False
+    knowledge_mcp_token: str = ""
 
     @property
     def allowed_origins_list(self) -> list[str]:

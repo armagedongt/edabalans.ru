@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Библиотекарь · edabalans</title>
+  <link rel="stylesheet" href="/admin/static/knowledge-library.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/admin">← Админка</a>
+    <div><h1>Библиотекарь</h1><p>Одна карта публикаций, продуктов, исходников и документов проекта.</p></div>
+    <span id="summary">Загрузка…</span>
+  </header>
+  <main>
+    <section class="search-panel">
+      <form id="search-form">
+        <input id="query" type="search" placeholder="Тема, фраза, материал или источник" autofocus>
+        <select id="contour"><option value="all">Вся карта</option><option value="editorial">Контент</option><option value="technical">Техническое</option></select>
+        <button type="submit">Найти</button>
+      </form>
+      <div id="results" class="results"><p class="muted">Введите запрос или откройте очередь решений.</p></div>
+    </section>
+    <aside>
+      <div class="aside-head"><h2>Нужны решения</h2><button id="refresh-reviews" type="button">Обновить</button></div>
+      <div id="reviews" class="reviews"></div>
+    </aside>
+    <section id="reader" class="reader" hidden>
+      <button id="close-reader" type="button">← К результатам</button>
+      <div id="reader-meta" class="reader-meta"></div>
+      <h2 id="reader-title"></h2>
+      <pre id="reader-text"></pre>
+    </section>
+  </main>
+  <script src="/admin/static/knowledge-library.js" defer></script>
+</body>
+</html>

@@ -6,3 +6,4 @@ pydantic-settings==2.15.0
 SQLAlchemy==2.0.52
 uvicorn==0.52.4
 Markdown==3.8.2
+mcp==1.29.1

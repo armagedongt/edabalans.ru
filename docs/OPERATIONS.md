@@ -276,6 +276,53 @@ docker compose run --rm --no-deps --user 0 \
 через `/admin/content`. Saved Messages, «Готовые посты» и подборки апреля–мая этой
 командой не импортируются.
 
+### Единая библиотека и MCP Библиотекаря
+
+Migration `20260829_0030` добавляет только новые таблицы библиотеки: источники,
+неизменяемые версии, связи, очередь решений и журнал использования. Она не
+переписывает каталог публикаций, курсы, покупки или клиентские данные.
+
+До выпуска обязательны свежий backup, настоящее test restore и проверка migration
+на восстановленной базе. В server env задаётся отдельный случайный
+`KNOWLEDGE_MCP_TOKEN`; значение не выводится в логи и не хранится в Git.
+
+Полные исходники передаются на сервер вне Git в именованный release-каталог,
+например `/srv/edabalans-private/knowledge/releases/2026-08-29`, доступный только
+root. Сначала выполняется dry-run:
+
+```bash
+docker compose run --rm --no-deps --user 0 \
+  -v /srv/edabalans-private/knowledge/releases/2026-08-29:/import:ro \
+  backend python scripts/sync_knowledge_library.py /import
+```
+
+После сверки количества объектов и digest тот же пакет применяется одной
+транзакцией:
+
+```bash
+docker compose run --rm --no-deps --user 0 \
+  -v /srv/edabalans-private/knowledge/releases/2026-08-29:/import:ro \
+  backend python scripts/sync_knowledge_library.py /import \
+  --apply --backup-confirmed --expected-digest <digest>
+```
+
+Повторный apply обязан сохранить прежнее число текстовых версий. После импорта
+проверяются `/admin/library`, поиск и чтение полного источника, `401` у `/mcp/`
+без токена и MCP initialize/search/read с токеном.
+
+Локальный Codex получает тот же токен через переменную окружения
+`EDABALANS_KNOWLEDGE_TOKEN`; в глобальном `config.toml` указывается только:
+
+```toml
+[mcp_servers.edabalans_knowledge]
+url = "https://api.edabalans.ru/mcp/"
+bearer_token_env_var = "EDABALANS_KNOWLEDGE_TOKEN"
+```
+
+Проектный skill устанавливается командой
+`python tools/install_edabalans_librarian_skill.py --install`. После первой
+настройки MCP или skill нужно открыть новую задачу либо перезапустить Codex.
+
 ## Автоматическая публикация
 
 Push в ветку `main` запускает `.github/workflows/production.yml`:

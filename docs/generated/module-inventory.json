@@ -113,6 +113,10 @@
     },
     {
       "module_id": "platform.content",
+      "path": "backend/app/content_authoring_service.py"
+    },
+    {
+      "module_id": "platform.content",
       "path": "backend/app/content_routes.py"
     },
     {
@@ -214,6 +218,18 @@
     {
       "module_id": "products.intensive",
       "path": "backend/app/intensive_routes.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/knowledge_library_routes.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/knowledge_library_service.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/knowledge_mcp.py"
     },
     {
       "module_id": "admin.project-knowledge",
@@ -368,6 +384,18 @@
       "path": "backend/app/static/apps/strength.html"
     },
     {
+      "module_id": "platform.content",
+      "path": "backend/app/static/content-catalog.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "backend/app/static/content-catalog.html"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "backend/app/static/content-catalog.js"
+    },
+    {
       "module_id": "products",
       "path": "backend/app/static/content-gallery.js"
     },
@@ -438,6 +466,18 @@
     {
       "module_id": "admin.project-knowledge",
       "path": "backend/app/static/knowledge-base.js"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/static/knowledge-library.css"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/static/knowledge-library.html"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/app/static/knowledge-library.js"
     },
     {
       "module_id": "operations.imports",
@@ -644,6 +684,14 @@
       "path": "backend/migrations/versions/20260828_0028_calorie_course_runtime.py"
     },
     {
+      "module_id": "platform.content",
+      "path": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/migrations/versions/20260829_0030_knowledge_library.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "backend/requirements-collector.txt"
     },
@@ -660,12 +708,20 @@
       "path": "backend/scripts/generate_masterclass_offer_simulator.py"
     },
     {
+      "module_id": "platform.content",
+      "path": "backend/scripts/import_content_authoring_catalog.py"
+    },
+    {
       "module_id": "products.recipes",
       "path": "backend/scripts/import_recipe_catalog.py"
     },
     {
       "module_id": "products.masterclass.course",
       "path": "backend/scripts/publish_course_structure_seed.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/scripts/sync_knowledge_library.py"
     },
     {
       "module_id": "platform.content",
@@ -690,6 +746,10 @@
     {
       "module_id": "products.calories",
       "path": "backend/tests/test_calorie_course_journey.py"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "backend/tests/test_content_authoring_catalog.py"
     },
     {
       "module_id": "platform.content",
@@ -718,6 +778,10 @@
     {
       "module_id": "admin.project-knowledge",
       "path": "backend/tests/test_knowledge_base.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "backend/tests/test_knowledge_library.py"
     },
     {
       "module_id": "operations.imports",
@@ -916,6 +980,34 @@
       "path": "content/external-references/the-endurance-diet.md"
     },
     {
+      "module_id": "platform.knowledge",
+      "path": "content/knowledge-library.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/knowledge/skill/edabalans-librarian/SKILL.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/library/INDEX.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/library/OPERATING_RULES.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/library/README.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/library/TRANSCRIPT_INVENTORY.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "content/library/server-source-manifest.json"
+    },
+    {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/MATERIAL_GAPS.md"
     },
@@ -1013,7 +1105,31 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/2025-04-07 — длинное — 30м40с — МК — Вступление — версия МК1, 30м40с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/2026-02-13 — Сайт — VSL — оригинал — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/2026-03-17 — Интенсив — День 01 — поздний рендер — 6м38с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/2026-03-28 — короткое — 3м56с — МК — Сладкому — да, 3м56с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/2026-03-29 — короткое — 6м31с — МК — Самоанализ — большая проблема, 6м31с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/reference/transcripts/README.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/Завтраки Большой файл — транскрипт.txt"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1037,6 +1153,14 @@
     },
     {
       "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — День 09 — эфир, ответы на вопросы, 1ч43м21с — предыдущая копия до сверки.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — День 09 — эфир, ответы на вопросы, 1ч43м21с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
       "path": "content/masterclass/reference/transcripts/МК — Конструктор питания, 19м43с — версия не определена — транскрипт.txt"
     },
     {
@@ -1050,6 +1174,22 @@
     {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/reference/transcripts/МК — Фазы похудения, 40м38с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — аудио — Наливайте чаёк — 13м04с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/МК — стрим «Вредная еда» — расширенный, 2ч37м13с — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/Презентация МК большой файл — транскрипт.txt"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/transcripts/Расширенный DQS. Категории продуктов по задачам.  — транскрипт.txt"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1468,6 +1608,10 @@
       "path": "content/masterclass/source-current/assets/45-my-anchor-point-oatmeal/image.png"
     },
     {
+      "module_id": "platform.knowledge",
+      "path": "content/media-catalog.md"
+    },
+    {
       "module_id": "products.strength",
       "path": "content/training/reference/README.md"
     },
@@ -1478,6 +1622,22 @@
     {
       "module_id": "products.strength",
       "path": "content/training/reference/transcripts/Тренировки — общий эфир, 2ч47м57с — транскрипт.txt"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "deliverables/очищенный-транскрипт-голод-и-сытость.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "deliverables/очищенный-транскрипт-конструктор-полезных-блюд.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "deliverables/очищенный-транскрипт-периодизация-похудения.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "deliverables/очищенный-транскрипт-план-сокращения-сладкого.md"
     },
     {
       "module_id": "admin",
@@ -1514,6 +1674,10 @@
     {
       "module_id": "products.intensive",
       "path": "docs/INTENSIVE_PAGES.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "docs/KNOWLEDGE_LIBRARY.md"
     },
     {
       "module_id": "operations.delivery",
@@ -2528,6 +2692,10 @@
       "path": "tools/build_dqs_legacy_style_preview.py"
     },
     {
+      "module_id": "platform.knowledge",
+      "path": "tools/build_knowledge_bundle.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "tools/build_leadteh_tag_plan.py"
     },
@@ -2582,6 +2750,10 @@
     {
       "module_id": "platform.content",
       "path": "tools/get_author_catalog_item.py"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "tools/install_edabalans_librarian_skill.py"
     },
     {
       "module_id": "platform.content",
@@ -2778,6 +2950,34 @@
     {
       "module_id": "operations.project-work",
       "path": "work/integration-20260829/integration-report.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/architecture-proposal.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/existing-transcripts-audit.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/first-batch-audit.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/inventory-route.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/knowledge-library-architecture/user-spec.md"
     },
     {
       "module_id": "admin.project-knowledge",
@@ -3080,7 +3280,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 341,
+          "line": 361,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/access-reviews",
@@ -3088,7 +3288,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 257,
+          "line": 277,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/tags",
@@ -3096,7 +3296,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 262,
+          "line": 282,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/variables",
@@ -3104,7 +3304,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 267,
+          "line": 287,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/summary",
@@ -3112,7 +3312,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 415,
+          "line": 435,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/tags",
@@ -3120,7 +3320,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 426,
+          "line": 446,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}",
@@ -3128,7 +3328,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 438,
+          "line": 458,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}/merge",
@@ -3136,7 +3336,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 274,
+          "line": 294,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users",
@@ -3144,7 +3344,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 292,
+          "line": 312,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -3152,7 +3352,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 304,
+          "line": 324,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -3160,7 +3360,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 361,
+          "line": 381,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/access-review",
@@ -3168,7 +3368,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 369,
+          "line": 389,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses",
@@ -3176,7 +3376,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 377,
+          "line": 397,
           "method": "DELETE",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -3184,7 +3384,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 352,
+          "line": 372,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/email",
@@ -3192,7 +3392,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 316,
+          "line": 336,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/notes",
@@ -3200,11 +3400,19 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 329,
+          "line": 349,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/tags",
           "symbol": "admin_add_tag"
+        },
+        {
+          "file": "backend/app/crm_routes.py",
+          "line": 201,
+          "method": "GET",
+          "module_id": "admin.control",
+          "path": "/admin/content",
+          "symbol": "content_catalog_page"
         },
         {
           "file": "backend/app/crm_routes.py",
@@ -3216,7 +3424,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 190,
+          "line": 210,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/users",
@@ -3224,7 +3432,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 199,
+          "line": 219,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/{section}",
@@ -3248,7 +3456,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 237,
+          "line": 257,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm",
@@ -3256,7 +3464,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 247,
+          "line": 267,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.css",
@@ -3264,7 +3472,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 252,
+          "line": 272,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.js",
@@ -3430,7 +3638,15 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 190,
+          "line": 201,
+          "module_id": "admin.control",
+          "name": "content_catalog_page",
+          "qualname": "content_catalog_page"
+        },
+        {
+          "file": "backend/app/crm_routes.py",
+          "kind": "function",
+          "line": 210,
           "module_id": "admin.control",
           "name": "legacy_admin_users",
           "qualname": "legacy_admin_users"
@@ -3438,7 +3654,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 199,
+          "line": 219,
           "module_id": "admin.control",
           "name": "admin_section",
           "qualname": "admin_section"
@@ -3446,7 +3662,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 237,
+          "line": 257,
           "module_id": "admin.control",
           "name": "crm_index",
           "qualname": "crm_index"
@@ -3454,7 +3670,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 247,
+          "line": 267,
           "module_id": "admin.control",
           "name": "crm_css",
           "qualname": "crm_css"
@@ -3462,7 +3678,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 252,
+          "line": 272,
           "module_id": "admin.control",
           "name": "crm_js",
           "qualname": "crm_js"
@@ -3470,7 +3686,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 257,
+          "line": 277,
           "module_id": "admin.control",
           "name": "admin_tag_audit",
           "qualname": "admin_tag_audit"
@@ -3478,7 +3694,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 262,
+          "line": 282,
           "module_id": "admin.control",
           "name": "admin_variable_audit",
           "qualname": "admin_variable_audit"
@@ -3486,7 +3702,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 267,
+          "line": 287,
           "module_id": "admin.control",
           "name": "admin_summary",
           "qualname": "admin_summary"
@@ -3494,7 +3710,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 274,
+          "line": 294,
           "module_id": "admin.control",
           "name": "admin_users",
           "qualname": "admin_users"
@@ -3502,7 +3718,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 292,
+          "line": 312,
           "module_id": "admin.control",
           "name": "admin_user",
           "qualname": "admin_user"
@@ -3510,7 +3726,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 304,
+          "line": 324,
           "module_id": "admin.control",
           "name": "admin_update_user",
           "qualname": "admin_update_user"
@@ -3518,7 +3734,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 316,
+          "line": 336,
           "module_id": "admin.control",
           "name": "admin_add_note",
           "qualname": "admin_add_note"
@@ -3526,7 +3742,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 329,
+          "line": 349,
           "module_id": "admin.control",
           "name": "admin_add_tag",
           "qualname": "admin_add_tag"
@@ -3534,7 +3750,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 341,
+          "line": 361,
           "module_id": "admin.control",
           "name": "admin_access_reviews",
           "qualname": "admin_access_reviews"
@@ -3542,7 +3758,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 352,
+          "line": 372,
           "module_id": "admin.control",
           "name": "admin_link_email",
           "qualname": "admin_link_email"
@@ -3550,7 +3766,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 361,
+          "line": 381,
           "module_id": "admin.control",
           "name": "admin_set_access_review",
           "qualname": "admin_set_access_review"
@@ -3558,7 +3774,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 369,
+          "line": 389,
           "module_id": "admin.control",
           "name": "admin_grant_access",
           "qualname": "admin_grant_access"
@@ -3566,7 +3782,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 377,
+          "line": 397,
           "module_id": "admin.control",
           "name": "admin_revoke_access",
           "qualname": "admin_revoke_access"
@@ -3574,7 +3790,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 415,
+          "line": 435,
           "module_id": "admin.control",
           "name": "admin_tags",
           "qualname": "admin_tags"
@@ -3582,7 +3798,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 426,
+          "line": 446,
           "module_id": "admin.control",
           "name": "admin_update_tag",
           "qualname": "admin_update_tag"
@@ -3590,7 +3806,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 438,
+          "line": 458,
           "module_id": "admin.control",
           "name": "admin_merge_tag",
           "qualname": "admin_merge_tag"
@@ -11466,7 +11682,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 953,
+          "line": 971,
           "module_id": "operations.database",
           "name": "ContentItemVersion",
           "qualname": "ContentItemVersion"
@@ -11474,7 +11690,31 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 975,
+          "line": 994,
+          "module_id": "operations.database",
+          "name": "ContentFamily",
+          "qualname": "ContentFamily"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1002,
+          "module_id": "operations.database",
+          "name": "ContentFamilyMembership",
+          "qualname": "ContentFamilyMembership"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1016,
+          "module_id": "operations.database",
+          "name": "ContentFamilyCandidate",
+          "qualname": "ContentFamilyCandidate"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1037,
           "module_id": "operations.database",
           "name": "ContentMedia",
           "qualname": "ContentMedia"
@@ -11482,7 +11722,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 995,
+          "line": 1057,
           "module_id": "operations.database",
           "name": "ContentLink",
           "qualname": "ContentLink"
@@ -11490,7 +11730,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 1017,
+          "line": 1079,
           "module_id": "operations.database",
           "name": "ContentMetricSnapshot",
           "qualname": "ContentMetricSnapshot"
@@ -11498,7 +11738,7 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 1041,
+          "line": 1103,
           "module_id": "operations.database",
           "name": "ContentComment",
           "qualname": "ContentComment"
@@ -11506,10 +11746,50 @@
         {
           "file": "backend/app/models.py",
           "kind": "class",
-          "line": 1071,
+          "line": 1133,
           "module_id": "operations.database",
           "name": "ContentImportRun",
           "qualname": "ContentImportRun"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1150,
+          "module_id": "operations.database",
+          "name": "KnowledgeResource",
+          "qualname": "KnowledgeResource"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1178,
+          "module_id": "operations.database",
+          "name": "KnowledgeResourceVersion",
+          "qualname": "KnowledgeResourceVersion"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1199,
+          "module_id": "operations.database",
+          "name": "KnowledgeRelation",
+          "qualname": "KnowledgeRelation"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1224,
+          "module_id": "operations.database",
+          "name": "KnowledgeReviewItem",
+          "qualname": "KnowledgeReviewItem"
+        },
+        {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1241,
+          "module_id": "operations.database",
+          "name": "KnowledgeUsageEvent",
+          "qualname": "KnowledgeUsageEvent"
         },
         {
           "file": "backend/migrations/env.py",
@@ -11662,7 +11942,7 @@
       "routes": [
         {
           "file": "backend/app/main.py",
-          "line": 52,
+          "line": 66,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -11670,7 +11950,7 @@
         },
         {
           "file": "backend/app/main.py",
-          "line": 58,
+          "line": 72,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/ready",
@@ -11700,7 +11980,7 @@
         {
           "file": "backend/app/config.py",
           "kind": "method",
-          "line": 28,
+          "line": 29,
           "module_id": "operations.delivery",
           "name": "allowed_origins_list",
           "qualname": "Settings.allowed_origins_list"
@@ -11708,7 +11988,7 @@
         {
           "file": "backend/app/config.py",
           "kind": "function",
-          "line": 44,
+          "line": 45,
           "module_id": "operations.delivery",
           "name": "get_settings",
           "qualname": "get_settings"
@@ -11716,7 +11996,15 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 52,
+          "line": 33,
+          "module_id": "operations.delivery",
+          "name": "lifespan",
+          "qualname": "lifespan"
+        },
+        {
+          "file": "backend/app/main.py",
+          "kind": "function",
+          "line": 66,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -11724,7 +12012,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 58,
+          "line": 72,
           "module_id": "operations.delivery",
           "name": "ready",
           "qualname": "ready"
@@ -14782,6 +15070,34 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/architecture-proposal.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/existing-transcripts-audit.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/first-batch-audit.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/inventory-route.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/knowledge-library-architecture/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/recipe-catalog/code-research.md"
         },
         {
@@ -15337,7 +15653,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 212,
+          "line": 232,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/login",
@@ -15345,7 +15661,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 231,
+          "line": 251,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/logout",
@@ -15551,7 +15867,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 212,
+          "line": 232,
           "module_id": "platform.auth",
           "name": "admin_login",
           "qualname": "admin_login"
@@ -15559,7 +15875,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 231,
+          "line": 251,
           "module_id": "platform.auth",
           "name": "admin_logout",
           "qualname": "admin_logout"
@@ -16084,7 +16400,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 407,
+          "line": 427,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payment-products",
@@ -16092,7 +16408,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 385,
+          "line": 405,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payments",
@@ -16100,7 +16416,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 347,
+          "line": 367,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/resources",
@@ -16402,7 +16718,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 347,
+          "line": 367,
           "module_id": "platform.commerce",
           "name": "admin_resources",
           "qualname": "admin_resources"
@@ -16410,7 +16726,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 385,
+          "line": 405,
           "module_id": "platform.commerce",
           "name": "admin_payments",
           "qualname": "admin_payments"
@@ -16418,7 +16734,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 407,
+          "line": 427,
           "module_id": "platform.commerce",
           "name": "admin_payment_products",
           "qualname": "admin_payment_products"
@@ -17216,10 +17532,14 @@
         }
       ],
       "admin_urls": [],
-      "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.\nПланируемая общая карта редакционного и технического знания, provenance, права и\nMCP-доступ принадлежат `platform.knowledge`; до её реализации этот модуль продолжает\nвладеть фактическим каталогом контента, приватным авторским корпусом и Писарем.",
+      "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.\nПланируемая общая карта редакционного и технического знания, provenance, права и\nMCP-доступ принадлежат `platform.knowledge`; этот модуль продолжает владеть\nфактическим каталогом контента, приватным авторским корпусом и Писарем.",
       "capabilities": [
         "собирать материалы из поддерживаемых источников;",
         "вести версии текста, связи, метрики и редакционные комментарии;",
+        "показывать в одной защищённой серверной витрине семьи и единичные материалы",
+        "сохранять правки владельца новой неизменяемой редакцией и не затирать",
+        "разбирать предполагаемые семьи без отдельной постоянной категории каталога;",
+        "держать необработанные Saved Messages, «Готовые посты» и подборки апреля–мая",
         "задавать единый стандарт структуры и визуальных выделений для статей сайта;",
         "хранить внешний слой книг, видео и других референсов отдельно от авторского",
         "предоставлять общие таблицы версий и безопасную семантическую разметку",
@@ -17258,11 +17578,27 @@
         },
         {
           "module_id": "platform.content",
+          "path": "backend/app/content_authoring_service.py"
+        },
+        {
+          "module_id": "platform.content",
           "path": "backend/app/content_routes.py"
         },
         {
           "module_id": "platform.content",
           "path": "backend/app/content_service.py"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "backend/app/static/content-catalog.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "backend/app/static/content-catalog.html"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "backend/app/static/content-catalog.js"
         },
         {
           "module_id": "platform.content",
@@ -17274,11 +17610,23 @@
         },
         {
           "module_id": "platform.content",
+          "path": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "backend/scripts/import_content_authoring_catalog.py"
+        },
+        {
+          "module_id": "platform.content",
           "path": "backend/tests/fixtures/telegram_channel_export.json"
         },
         {
           "module_id": "platform.content",
           "path": "backend/tests/test_article_markup.py"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "backend/tests/test_content_authoring_catalog.py"
         },
         {
           "module_id": "platform.content",
@@ -17611,7 +17959,55 @@
       "routes": [
         {
           "file": "backend/app/content_routes.py",
-          "line": 28,
+          "line": 146,
+          "method": "GET",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/candidates",
+          "symbol": "authoring_candidates"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 156,
+          "method": "POST",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/candidates/decision",
+          "symbol": "authoring_candidate_decision"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 97,
+          "method": "GET",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/groups",
+          "symbol": "authoring_groups"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 115,
+          "method": "GET",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/groups/{group_key}",
+          "symbol": "authoring_group"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 127,
+          "method": "PUT",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/items/{item_id}",
+          "symbol": "update_authoring_item"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 90,
+          "method": "GET",
+          "module_id": "platform.content",
+          "path": "/admin/api/content/authoring/summary",
+          "symbol": "authoring_catalog_summary"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "line": 53,
           "method": "GET",
           "module_id": "platform.content",
           "path": "/admin/api/content/items",
@@ -17619,7 +18015,7 @@
         },
         {
           "file": "backend/app/content_routes.py",
-          "line": 45,
+          "line": 70,
           "method": "GET",
           "module_id": "platform.content",
           "path": "/admin/api/content/items/{item_id}",
@@ -17627,7 +18023,7 @@
         },
         {
           "file": "backend/app/content_routes.py",
-          "line": 53,
+          "line": 78,
           "method": "GET",
           "module_id": "platform.content",
           "path": "/admin/api/content/items/{item_id}/comments",
@@ -17635,7 +18031,7 @@
         },
         {
           "file": "backend/app/content_routes.py",
-          "line": 23,
+          "line": 48,
           "method": "GET",
           "module_id": "platform.content",
           "path": "/admin/api/content/summary",
@@ -17799,9 +18195,153 @@
           "qualname": "article_plain_text"
         },
         {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "class",
+          "line": 24,
+          "module_id": "platform.content",
+          "name": "RevisionConflict",
+          "qualname": "RevisionConflict"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 28,
+          "module_id": "platform.content",
+          "name": "_source_label",
+          "qualname": "_source_label"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 42,
+          "module_id": "platform.content",
+          "name": "_snippet",
+          "qualname": "_snippet"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "platform.content",
+          "name": "_date_key",
+          "qualname": "_date_key"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 55,
+          "module_id": "platform.content",
+          "name": "_item_payload",
+          "qualname": "_item_payload"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 103,
+          "module_id": "platform.content",
+          "name": "_working_rows",
+          "qualname": "_working_rows"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 112,
+          "module_id": "platform.content",
+          "name": "authoring_summary",
+          "qualname": "authoring_summary"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 135,
+          "module_id": "platform.content",
+          "name": "list_authoring_groups",
+          "qualname": "list_authoring_groups"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 191,
+          "module_id": "platform.content",
+          "name": "get_authoring_group",
+          "qualname": "get_authoring_group"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 220,
+          "module_id": "platform.content",
+          "name": "_revision_hash",
+          "qualname": "_revision_hash"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 225,
+          "module_id": "platform.content",
+          "name": "save_authoring_item",
+          "qualname": "save_authoring_item"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 290,
+          "module_id": "platform.content",
+          "name": "_candidate_components",
+          "qualname": "_candidate_components"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 294,
+          "module_id": "platform.content",
+          "name": "find",
+          "qualname": "_candidate_components.find"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 299,
+          "module_id": "platform.content",
+          "name": "union",
+          "qualname": "_candidate_components.union"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 329,
+          "module_id": "platform.content",
+          "name": "list_candidate_groups",
+          "qualname": "list_candidate_groups"
+        },
+        {
+          "file": "backend/app/content_authoring_service.py",
+          "kind": "function",
+          "line": 343,
+          "module_id": "platform.content",
+          "name": "decide_candidate_group",
+          "qualname": "decide_candidate_group"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "class",
+          "line": 32,
+          "module_id": "platform.content",
+          "name": "AuthoringItemUpdate",
+          "qualname": "AuthoringItemUpdate"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "class",
+          "line": 40,
+          "module_id": "platform.content",
+          "name": "CandidateDecision",
+          "qualname": "CandidateDecision"
+        },
+        {
           "file": "backend/app/content_routes.py",
           "kind": "function",
-          "line": 23,
+          "line": 48,
           "module_id": "platform.content",
           "name": "summary",
           "qualname": "summary"
@@ -17809,7 +18349,7 @@
         {
           "file": "backend/app/content_routes.py",
           "kind": "function",
-          "line": 28,
+          "line": 53,
           "module_id": "platform.content",
           "name": "items",
           "qualname": "items"
@@ -17817,7 +18357,7 @@
         {
           "file": "backend/app/content_routes.py",
           "kind": "function",
-          "line": 45,
+          "line": 70,
           "module_id": "platform.content",
           "name": "item",
           "qualname": "item"
@@ -17825,15 +18365,71 @@
         {
           "file": "backend/app/content_routes.py",
           "kind": "function",
-          "line": 53,
+          "line": 78,
           "module_id": "platform.content",
           "name": "comments",
           "qualname": "comments"
         },
         {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 90,
+          "module_id": "platform.content",
+          "name": "authoring_catalog_summary",
+          "qualname": "authoring_catalog_summary"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 97,
+          "module_id": "platform.content",
+          "name": "authoring_groups",
+          "qualname": "authoring_groups"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 115,
+          "module_id": "platform.content",
+          "name": "authoring_group",
+          "qualname": "authoring_group"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 127,
+          "module_id": "platform.content",
+          "name": "update_authoring_item",
+          "qualname": "update_authoring_item"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 146,
+          "module_id": "platform.content",
+          "name": "authoring_candidates",
+          "qualname": "authoring_candidates"
+        },
+        {
+          "file": "backend/app/content_routes.py",
+          "kind": "function",
+          "line": 156,
+          "module_id": "platform.content",
+          "name": "authoring_candidate_decision",
+          "qualname": "authoring_candidate_decision"
+        },
+        {
           "file": "backend/app/content_service.py",
           "kind": "function",
           "line": 29,
+          "module_id": "platform.content",
+          "name": "_has_owner_latest",
+          "qualname": "_has_owner_latest"
+        },
+        {
+          "file": "backend/app/content_service.py",
+          "kind": "function",
+          "line": 36,
           "module_id": "platform.content",
           "name": "decode_pikabu_redirect",
           "qualname": "decode_pikabu_redirect"
@@ -17841,7 +18437,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 38,
+          "line": 45,
           "module_id": "platform.content",
           "name": "classify_link",
           "qualname": "classify_link"
@@ -17849,7 +18445,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 49,
+          "line": 56,
           "module_id": "platform.content",
           "name": "normalized_payload",
           "qualname": "normalized_payload"
@@ -17857,7 +18453,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 143,
+          "line": 150,
           "module_id": "platform.content",
           "name": "get_or_create_pikabu_source",
           "qualname": "get_or_create_pikabu_source"
@@ -17865,7 +18461,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 162,
+          "line": 169,
           "module_id": "platform.content",
           "name": "get_or_create_telegram_source",
           "qualname": "get_or_create_telegram_source"
@@ -17873,7 +18469,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 188,
+          "line": 195,
           "module_id": "platform.content",
           "name": "import_telegram_items",
           "qualname": "import_telegram_items"
@@ -17881,7 +18477,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 324,
+          "line": 335,
           "module_id": "platform.content",
           "name": "import_pikabu_items",
           "qualname": "import_pikabu_items"
@@ -17889,7 +18485,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 461,
+          "line": 476,
           "module_id": "platform.content",
           "name": "content_summary",
           "qualname": "content_summary"
@@ -17897,7 +18493,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 474,
+          "line": 489,
           "module_id": "platform.content",
           "name": "telegram_app_deep_link",
           "qualname": "telegram_app_deep_link"
@@ -17905,7 +18501,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 486,
+          "line": 501,
           "module_id": "platform.content",
           "name": "list_content_items",
           "qualname": "list_content_items"
@@ -17913,7 +18509,7 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 543,
+          "line": 558,
           "module_id": "platform.content",
           "name": "get_content_item",
           "qualname": "get_content_item"
@@ -17921,10 +18517,178 @@
         {
           "file": "backend/app/content_service.py",
           "kind": "function",
-          "line": 584,
+          "line": 599,
           "module_id": "platform.content",
           "name": "list_content_comments",
           "qualname": "list_content_comments"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 5,
+          "module_id": "platform.content",
+          "name": "el",
+          "qualname": "el"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 7,
+          "module_id": "platform.content",
+          "name": "api",
+          "qualname": "api"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 15,
+          "module_id": "platform.content",
+          "name": "text",
+          "qualname": "text"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 16,
+          "module_id": "platform.content",
+          "name": "setStatus",
+          "qualname": "setStatus"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 17,
+          "module_id": "platform.content",
+          "name": "markDirty",
+          "qualname": "markDirty"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 18,
+          "module_id": "platform.content",
+          "name": "canLeave",
+          "qualname": "canLeave"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 19,
+          "module_id": "platform.content",
+          "name": "queryString",
+          "qualname": "queryString"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 25,
+          "module_id": "platform.content",
+          "name": "itemLabel",
+          "qualname": "itemLabel"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 26,
+          "module_id": "platform.content",
+          "name": "groupCard",
+          "qualname": "groupCard"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 35,
+          "module_id": "platform.content",
+          "name": "candidateCard",
+          "qualname": "candidateCard"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 39,
+          "module_id": "platform.content",
+          "name": "loadSummary",
+          "qualname": "loadSummary"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 43,
+          "module_id": "platform.content",
+          "name": "loadPage",
+          "qualname": "loadPage"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 59,
+          "module_id": "platform.content",
+          "name": "renderListSelection",
+          "qualname": "renderListSelection"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 60,
+          "module_id": "platform.content",
+          "name": "selectGroup",
+          "qualname": "selectGroup"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 75,
+          "module_id": "platform.content",
+          "name": "topLink",
+          "qualname": "topLink"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 76,
+          "module_id": "platform.content",
+          "name": "renderEditor",
+          "qualname": "renderEditor"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 99,
+          "module_id": "platform.content",
+          "name": "renderCandidatePanel",
+          "qualname": "renderCandidatePanel"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 104,
+          "module_id": "platform.content",
+          "name": "currentItem",
+          "qualname": "currentItem"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 105,
+          "module_id": "platform.content",
+          "name": "save",
+          "qualname": "save"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 122,
+          "module_id": "platform.content",
+          "name": "candidateDecision",
+          "qualname": "candidateDecision"
+        },
+        {
+          "file": "backend/app/static/content-catalog.js",
+          "kind": "function",
+          "line": 139,
+          "module_id": "platform.content",
+          "name": "fail",
+          "qualname": "fail"
         },
         {
           "file": "backend/migrations/versions/20260822_0013_content_catalog.py",
@@ -17957,6 +18721,118 @@
           "module_id": "platform.content",
           "name": "downgrade",
           "qualname": "downgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py",
+          "kind": "function",
+          "line": 16,
+          "module_id": "platform.content",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py",
+          "kind": "function",
+          "line": 70,
+          "module_id": "platform.content",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 28,
+          "module_id": "platform.content",
+          "name": "read_jsonl",
+          "qualname": "read_jsonl"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 41,
+          "module_id": "platform.content",
+          "name": "load_snapshot",
+          "qualname": "load_snapshot"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 53,
+          "module_id": "platform.content",
+          "name": "_snapshot_digest",
+          "qualname": "_snapshot_digest"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 63,
+          "module_id": "platform.content",
+          "name": "validate_snapshot",
+          "qualname": "validate_snapshot"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 96,
+          "module_id": "platform.content",
+          "name": "find",
+          "qualname": "validate_snapshot.find"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 121,
+          "module_id": "platform.content",
+          "name": "_parse_datetime",
+          "qualname": "_parse_datetime"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 127,
+          "module_id": "platform.content",
+          "name": "_version_hash",
+          "qualname": "_version_hash"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 145,
+          "module_id": "platform.content",
+          "name": "_media_rows",
+          "qualname": "_media_rows"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 175,
+          "module_id": "platform.content",
+          "name": "_pair_key",
+          "qualname": "_pair_key"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 179,
+          "module_id": "platform.content",
+          "name": "_local_decision_key",
+          "qualname": "_local_decision_key"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 185,
+          "module_id": "platform.content",
+          "name": "import_snapshot",
+          "qualname": "import_snapshot"
+        },
+        {
+          "file": "backend/scripts/import_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 319,
+          "module_id": "platform.content",
+          "name": "main",
+          "qualname": "main"
         },
         {
           "file": "backend/tests/test_article_markup.py",
@@ -18013,6 +18889,102 @@
           "module_id": "platform.content",
           "name": "test_regular_markdown_link_is_unchanged",
           "qualname": "ArticleMarkupTests.test_regular_markdown_link_is_unchanged"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 28,
+          "module_id": "platform.content",
+          "name": "snapshot",
+          "qualname": "snapshot"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 51,
+          "module_id": "platform.content",
+          "name": "sqlite_session_factory",
+          "qualname": "sqlite_session_factory"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 57,
+          "module_id": "platform.content",
+          "name": "test_snapshot_validation_is_source_complete",
+          "qualname": "test_snapshot_validation_is_source_complete"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 67,
+          "module_id": "platform.content",
+          "name": "test_import_is_idempotent",
+          "qualname": "test_import_is_idempotent"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 82,
+          "module_id": "platform.content",
+          "name": "test_import_matches_existing_production_item_and_preserves_owner_revision",
+          "qualname": "test_import_matches_existing_production_item_and_preserves_owner_revision"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 110,
+          "module_id": "platform.content",
+          "name": "test_local_rejected_candidate_is_imported_as_rejected",
+          "qualname": "test_local_rejected_candidate_is_imported_as_rejected"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 127,
+          "module_id": "platform.content",
+          "name": "test_owner_save_creates_immutable_revision_and_detects_conflict",
+          "qualname": "test_owner_save_creates_immutable_revision_and_detects_conflict"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 155,
+          "module_id": "platform.content",
+          "name": "test_platform_reimport_preserves_owner_latest_and_revision_sequence",
+          "qualname": "test_platform_reimport_preserves_owner_latest_and_revision_sequence"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 178,
+          "module_id": "platform.content",
+          "name": "test_partial_candidate_merge_keeps_unselected_subgraph_pending",
+          "qualname": "test_partial_candidate_merge_keeps_unselected_subgraph_pending"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 213,
+          "module_id": "platform.content",
+          "name": "test_authoring_api_requires_admin",
+          "qualname": "test_authoring_api_requires_admin"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 221,
+          "module_id": "platform.content",
+          "name": "test_authoring_mutations_require_admin",
+          "qualname": "test_authoring_mutations_require_admin"
+        },
+        {
+          "file": "backend/tests/test_content_authoring_catalog.py",
+          "kind": "function",
+          "line": 226,
+          "module_id": "platform.content",
+          "name": "test_server_editor_keeps_metadata_below_text_and_has_save_controls",
+          "qualname": "test_server_editor_keeps_metadata_below_text_and_has_save_controls"
         },
         {
           "file": "backend/tests/test_content_catalog.py",
@@ -20970,21 +21942,42 @@
       "tables": [
         {
           "file": "backend/app/models.py",
-          "line": 1042,
+          "line": 1104,
           "module_id": "platform.content",
           "name": "content_comments",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 1072,
+          "line": 995,
+          "module_id": "platform.content",
+          "name": "content_families",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1017,
+          "module_id": "platform.content",
+          "name": "content_family_candidates",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1003,
+          "module_id": "platform.content",
+          "name": "content_family_memberships",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1134,
           "module_id": "platform.content",
           "name": "content_import_runs",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 954,
+          "line": 972,
           "module_id": "platform.content",
           "name": "content_item_versions",
           "source": "orm"
@@ -20998,21 +21991,21 @@
         },
         {
           "file": "backend/app/models.py",
-          "line": 996,
+          "line": 1058,
           "module_id": "platform.content",
           "name": "content_links",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 976,
+          "line": 1038,
           "module_id": "platform.content",
           "name": "content_media",
           "source": "orm"
         },
         {
           "file": "backend/app/models.py",
-          "line": 1018,
+          "line": 1080,
           "module_id": "platform.content",
           "name": "content_metric_snapshots",
           "source": "orm"
@@ -21442,9 +22435,17 @@
       ]
     },
     {
-      "admin_catalog": [],
+      "admin_catalog": [
+        {
+          "category": "tools",
+          "description": "Единый поиск по источникам, продуктам, публикациям и документам; очередь смысловых решений.",
+          "label": "Библиотекарь",
+          "order": 35,
+          "url": "/admin/library"
+        }
+      ],
       "admin_urls": [],
-      "boundary": "Не заменяет Project Knowledge, каталог контента, приватный авторский корпус или\nканонические документы продуктов. Не пишет материалы, не публикует их, не объединяет\nсмысловые совпадения и не обезличивает консультации без решения владельца.\n\nДо реализации серверного слоя текущий каталог и авторский корпус принадлежат\n`platform.content`, а техническая карта проекта — `admin.project-knowledge`.",
+      "boundary": "Не заменяет Project Knowledge, каталог контента, приватный авторский корпус или\nканонические документы продуктов. Не пишет материалы, не публикует их, не объединяет\nсмысловые совпадения и не обезличивает консультации без решения владельца.\n\nКаталог публикаций и авторский корпус принадлежат `platform.content`, техническая\nкарта проекта — `admin.project-knowledge`. Библиотека читает их как владельцев и\nне создаёт независимые копии.",
       "capabilities": [
         "индексировать канонические источники без создания второй копии канона;",
         "хранить provenance, версии, права доступа, связи и статус проверки;",
@@ -21458,15 +22459,111 @@
       "files": [
         {
           "module_id": "platform.knowledge",
+          "path": "backend/app/knowledge_library_routes.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/app/knowledge_library_service.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/app/knowledge_mcp.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/app/static/knowledge-library.css"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/app/static/knowledge-library.html"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/app/static/knowledge-library.js"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/migrations/versions/20260829_0030_knowledge_library.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/scripts/sync_knowledge_library.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "backend/tests/test_knowledge_library.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/knowledge-library.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/knowledge/skill/edabalans-librarian/SKILL.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/library/INDEX.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/library/OPERATING_RULES.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/library/README.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/library/TRANSCRIPT_INVENTORY.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/library/server-source-manifest.json"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "content/media-catalog.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "deliverables/очищенный-транскрипт-голод-и-сытость.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "deliverables/очищенный-транскрипт-конструктор-полезных-блюд.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "deliverables/очищенный-транскрипт-периодизация-похудения.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "deliverables/очищенный-транскрипт-план-сокращения-сладкого.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "docs/KNOWLEDGE_LIBRARY.md"
+        },
+        {
+          "module_id": "platform.knowledge",
           "path": "docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md"
         },
         {
           "module_id": "platform.knowledge",
           "path": "docs/knowledge-base/modules/catalog/platform.knowledge.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "tools/build_knowledge_bundle.py"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "tools/install_edabalans_librarian_skill.py"
         }
       ],
       "id": "platform.knowledge",
-      "implementation_status": "planned",
+      "implementation_status": "implemented",
       "parent": "platform",
       "plans": [],
       "public_urls": [],
@@ -21477,19 +22574,773 @@
         ],
         "events_in": [],
         "events_out": [],
-        "reads_from": [],
+        "reads_from": [
+          "admin.project-knowledge",
+          "platform.content"
+        ],
         "writes_to": []
       },
-      "routes": [],
+      "routes": [
+        {
+          "file": "backend/app/crm_routes.py",
+          "line": 156,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/library",
+          "symbol": "knowledge_library_page"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 102,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/read",
+          "symbol": "read"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 146,
+          "method": "POST",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/relations",
+          "symbol": "post_relation"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 130,
+          "method": "PUT",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/resources",
+          "symbol": "put_resource"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 178,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/reviews",
+          "symbol": "reviews"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 162,
+          "method": "POST",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/reviews",
+          "symbol": "post_review"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 188,
+          "method": "POST",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/reviews/{review_key}/decision",
+          "symbol": "review_decision"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 86,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/search",
+          "symbol": "search"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 81,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/summary",
+          "symbol": "summary"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 114,
+          "method": "GET",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/task-context",
+          "symbol": "get_task_context"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "line": 208,
+          "method": "POST",
+          "module_id": "platform.knowledge",
+          "path": "/admin/api/library/usage",
+          "symbol": "post_usage"
+        }
+      ],
       "runtime_services": [],
       "sources": [],
       "summary": "Планируемый серверный реестр источников, смыслов, происхождения, прав и редакционных прогонов.",
-      "symbols": [],
-      "tables": [],
+      "symbols": [
+        {
+          "file": "backend/app/crm_routes.py",
+          "kind": "function",
+          "line": 156,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_library_page",
+          "qualname": "knowledge_library_page"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "class",
+          "line": 29,
+          "module_id": "platform.knowledge",
+          "name": "ResourceWrite",
+          "qualname": "ResourceWrite"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "class",
+          "line": 50,
+          "module_id": "platform.knowledge",
+          "name": "RelationWrite",
+          "qualname": "RelationWrite"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "class",
+          "line": 57,
+          "module_id": "platform.knowledge",
+          "name": "ReviewWrite",
+          "qualname": "ReviewWrite"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "class",
+          "line": 65,
+          "module_id": "platform.knowledge",
+          "name": "UsageWrite",
+          "qualname": "UsageWrite"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "class",
+          "line": 75,
+          "module_id": "platform.knowledge",
+          "name": "ReviewDecision",
+          "qualname": "ReviewDecision"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 81,
+          "module_id": "platform.knowledge",
+          "name": "summary",
+          "qualname": "summary"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 86,
+          "module_id": "platform.knowledge",
+          "name": "search",
+          "qualname": "search"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 102,
+          "module_id": "platform.knowledge",
+          "name": "read",
+          "qualname": "read"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 114,
+          "module_id": "platform.knowledge",
+          "name": "get_task_context",
+          "qualname": "get_task_context"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 130,
+          "module_id": "platform.knowledge",
+          "name": "put_resource",
+          "qualname": "put_resource"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 146,
+          "module_id": "platform.knowledge",
+          "name": "post_relation",
+          "qualname": "post_relation"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 162,
+          "module_id": "platform.knowledge",
+          "name": "post_review",
+          "qualname": "post_review"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 178,
+          "module_id": "platform.knowledge",
+          "name": "reviews",
+          "qualname": "reviews"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 188,
+          "module_id": "platform.knowledge",
+          "name": "review_decision",
+          "qualname": "review_decision"
+        },
+        {
+          "file": "backend/app/knowledge_library_routes.py",
+          "kind": "function",
+          "line": 208,
+          "module_id": "platform.knowledge",
+          "name": "post_usage",
+          "qualname": "post_usage"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "class",
+          "line": 48,
+          "module_id": "platform.knowledge",
+          "name": "KnowledgeConflict",
+          "qualname": "KnowledgeConflict"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "class",
+          "line": 53,
+          "module_id": "platform.knowledge",
+          "name": "RepoDocument",
+          "qualname": "RepoDocument"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "method",
+          "line": 63,
+          "module_id": "platform.knowledge",
+          "name": "uri",
+          "qualname": "RepoDocument.uri"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 67,
+          "module_id": "platform.knowledge",
+          "name": "_validate",
+          "qualname": "_validate"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 74,
+          "module_id": "platform.knowledge",
+          "name": "_title_from_text",
+          "qualname": "_title_from_text"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 83,
+          "module_id": "platform.knowledge",
+          "name": "_repo_policy",
+          "qualname": "_repo_policy"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 102,
+          "module_id": "platform.knowledge",
+          "name": "repo_documents",
+          "qualname": "repo_documents"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 122,
+          "module_id": "platform.knowledge",
+          "name": "_snippet",
+          "qualname": "_snippet"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 139,
+          "module_id": "platform.knowledge",
+          "name": "_resource_payload",
+          "qualname": "_resource_payload"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 181,
+          "module_id": "platform.knowledge",
+          "name": "library_summary",
+          "qualname": "library_summary"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 204,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_search",
+          "qualname": "knowledge_search"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 305,
+          "module_id": "platform.knowledge",
+          "name": "score",
+          "qualname": "knowledge_search.score"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 316,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_read",
+          "qualname": "knowledge_read"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 358,
+          "module_id": "platform.knowledge",
+          "name": "save_resource",
+          "qualname": "save_resource"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 456,
+          "module_id": "platform.knowledge",
+          "name": "save_relation",
+          "qualname": "save_relation"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 488,
+          "module_id": "platform.knowledge",
+          "name": "queue_review",
+          "qualname": "queue_review"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 520,
+          "module_id": "platform.knowledge",
+          "name": "list_reviews",
+          "qualname": "list_reviews"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 552,
+          "module_id": "platform.knowledge",
+          "name": "decide_review",
+          "qualname": "decide_review"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 571,
+          "module_id": "platform.knowledge",
+          "name": "record_usage",
+          "qualname": "record_usage"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 595,
+          "module_id": "platform.knowledge",
+          "name": "task_context",
+          "qualname": "task_context"
+        },
+        {
+          "file": "backend/app/knowledge_library_service.py",
+          "kind": "function",
+          "line": 620,
+          "module_id": "platform.knowledge",
+          "name": "serialize_json",
+          "qualname": "serialize_json"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 39,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_map",
+          "qualname": "knowledge_map"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 46,
+          "module_id": "platform.knowledge",
+          "name": "library_resource",
+          "qualname": "library_resource"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 56,
+          "module_id": "platform.knowledge",
+          "name": "search_knowledge",
+          "qualname": "search_knowledge"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 72,
+          "module_id": "platform.knowledge",
+          "name": "read_knowledge",
+          "qualname": "read_knowledge"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 82,
+          "module_id": "platform.knowledge",
+          "name": "prepare_editorial_context",
+          "qualname": "prepare_editorial_context"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 98,
+          "module_id": "platform.knowledge",
+          "name": "register_knowledge_resource",
+          "qualname": "register_knowledge_resource"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 131,
+          "module_id": "platform.knowledge",
+          "name": "link_knowledge_resources",
+          "qualname": "link_knowledge_resources"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 146,
+          "module_id": "platform.knowledge",
+          "name": "ask_librarian_review",
+          "qualname": "ask_librarian_review"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "function",
+          "line": 162,
+          "module_id": "platform.knowledge",
+          "name": "record_knowledge_use",
+          "qualname": "record_knowledge_use"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "class",
+          "line": 181,
+          "module_id": "platform.knowledge",
+          "name": "BearerTokenMiddleware",
+          "qualname": "BearerTokenMiddleware"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "method",
+          "line": 184,
+          "module_id": "platform.knowledge",
+          "name": "__init__",
+          "qualname": "BearerTokenMiddleware.__init__"
+        },
+        {
+          "file": "backend/app/knowledge_mcp.py",
+          "kind": "method",
+          "line": 187,
+          "module_id": "platform.knowledge",
+          "name": "__call__",
+          "qualname": "BearerTokenMiddleware.__call__"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 3,
+          "module_id": "platform.knowledge",
+          "name": "esc",
+          "qualname": "esc"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 4,
+          "module_id": "platform.knowledge",
+          "name": "request",
+          "qualname": "request"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 5,
+          "module_id": "platform.knowledge",
+          "name": "loadSummary",
+          "qualname": "loadSummary"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 6,
+          "module_id": "platform.knowledge",
+          "name": "renderResults",
+          "qualname": "renderResults"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 7,
+          "module_id": "platform.knowledge",
+          "name": "search",
+          "qualname": "search"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 8,
+          "module_id": "platform.knowledge",
+          "name": "openResource",
+          "qualname": "openResource"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 9,
+          "module_id": "platform.knowledge",
+          "name": "decide",
+          "qualname": "decide"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 10,
+          "module_id": "platform.knowledge",
+          "name": "loadReviews",
+          "qualname": "loadReviews"
+        },
+        {
+          "file": "backend/migrations/versions/20260829_0030_knowledge_library.py",
+          "kind": "function",
+          "line": 16,
+          "module_id": "platform.knowledge",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260829_0030_knowledge_library.py",
+          "kind": "function",
+          "line": 116,
+          "module_id": "platform.knowledge",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
+          "file": "backend/scripts/sync_knowledge_library.py",
+          "kind": "function",
+          "line": 12,
+          "module_id": "platform.knowledge",
+          "name": "_jsonl",
+          "qualname": "_jsonl"
+        },
+        {
+          "file": "backend/scripts/sync_knowledge_library.py",
+          "kind": "function",
+          "line": 29,
+          "module_id": "platform.knowledge",
+          "name": "load_bundle",
+          "qualname": "load_bundle"
+        },
+        {
+          "file": "backend/scripts/sync_knowledge_library.py",
+          "kind": "function",
+          "line": 50,
+          "module_id": "platform.knowledge",
+          "name": "sync_bundle",
+          "qualname": "sync_bundle"
+        },
+        {
+          "file": "backend/scripts/sync_knowledge_library.py",
+          "kind": "function",
+          "line": 87,
+          "module_id": "platform.knowledge",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 32,
+          "module_id": "platform.knowledge",
+          "name": "session_factory",
+          "qualname": "session_factory"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 42,
+          "module_id": "platform.knowledge",
+          "name": "resource_payload",
+          "qualname": "resource_payload"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 60,
+          "module_id": "platform.knowledge",
+          "name": "test_resource_versions_search_relations_and_usage",
+          "qualname": "test_resource_versions_search_relations_and_usage"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 96,
+          "module_id": "platform.knowledge",
+          "name": "test_restricted_personal_keeps_person_reference",
+          "qualname": "test_restricted_personal_keeps_person_reference"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 108,
+          "module_id": "platform.knowledge",
+          "name": "test_review_queue_and_task_disclosure_policy",
+          "qualname": "test_review_queue_and_task_disclosure_policy"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 133,
+          "module_id": "platform.knowledge",
+          "name": "test_publication_taxonomy_is_searchable_and_returned",
+          "qualname": "test_publication_taxonomy_is_searchable_and_returned"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 172,
+          "module_id": "platform.knowledge",
+          "name": "test_library_api_and_mcp_require_authentication",
+          "qualname": "test_library_api_and_mcp_require_authentication"
+        },
+        {
+          "file": "backend/tests/test_knowledge_library.py",
+          "kind": "function",
+          "line": 181,
+          "module_id": "platform.knowledge",
+          "name": "test_bundle_import_is_guarded_atomic_and_idempotent",
+          "qualname": "test_bundle_import_is_guarded_atomic_and_idempotent"
+        },
+        {
+          "file": "tools/build_knowledge_bundle.py",
+          "kind": "function",
+          "line": 8,
+          "module_id": "platform.knowledge",
+          "name": "build_bundle",
+          "qualname": "build_bundle"
+        },
+        {
+          "file": "tools/build_knowledge_bundle.py",
+          "kind": "function",
+          "line": 61,
+          "module_id": "platform.knowledge",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
+          "file": "tools/install_edabalans_librarian_skill.py",
+          "kind": "function",
+          "line": 15,
+          "module_id": "platform.knowledge",
+          "name": "default_destination",
+          "qualname": "default_destination"
+        },
+        {
+          "file": "tools/install_edabalans_librarian_skill.py",
+          "kind": "function",
+          "line": 20,
+          "module_id": "platform.knowledge",
+          "name": "digest",
+          "qualname": "digest"
+        },
+        {
+          "file": "tools/install_edabalans_librarian_skill.py",
+          "kind": "function",
+          "line": 27,
+          "module_id": "platform.knowledge",
+          "name": "status",
+          "qualname": "status"
+        },
+        {
+          "file": "tools/install_edabalans_librarian_skill.py",
+          "kind": "function",
+          "line": 43,
+          "module_id": "platform.knowledge",
+          "name": "install",
+          "qualname": "install"
+        },
+        {
+          "file": "tools/install_edabalans_librarian_skill.py",
+          "kind": "function",
+          "line": 54,
+          "module_id": "platform.knowledge",
+          "name": "main",
+          "qualname": "main"
+        }
+      ],
+      "tables": [
+        {
+          "file": "backend/app/models.py",
+          "line": 1200,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_relations",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1179,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_resource_versions",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1151,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_resources",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1225,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_review_items",
+          "source": "orm"
+        },
+        {
+          "file": "backend/app/models.py",
+          "line": 1242,
+          "module_id": "platform.knowledge",
+          "name": "knowledge_usage_events",
+          "source": "orm"
+        }
+      ],
       "telegram": null,
       "title": "Библиотека и карта контента",
       "truths": [
-        "Пользовательский и межмодульный контракт описан в\n`docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md`. Канонические тексты, продуктовые\nправила и технические документы остаются у своих текущих module owners; будущий\nреестр хранит их URI, версии, provenance и права, а не независимое содержание."
+        "Пользовательский и межмодульный контракт описан в\n`docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md`. Канонические тексты, продуктовые\nправила и технические документы остаются у своих текущих module owners; серверный\nреестр хранит их URI, версии, provenance и права, а не независимое содержание.",
+        "Исполняемый контракт, URI, таблицы, API, MCP, импорт и эксплуатация описаны в\n`docs/KNOWLEDGE_LIBRARY.md`. Владелец работает с очередью через `/admin/library`,\nа Codex — через MCP `edabalans_knowledge` и project skill `edabalans-librarian`."
       ]
     },
     {
@@ -23027,7 +24878,7 @@
       "routes": [
         {
           "file": "backend/app/crm_routes.py",
-          "line": 181,
+          "line": 191,
           "method": "GET",
           "module_id": "products.catalog",
           "path": "/admin/products",
@@ -23065,7 +24916,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 181,
+          "line": 191,
           "module_id": "products.catalog",
           "name": "product_catalog_page",
           "qualname": "product_catalog_page"
@@ -24319,7 +26170,31 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/2025-04-07 — длинное — 30м40с — МК — Вступление — версия МК1, 30м40с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/2026-02-13 — Сайт — VSL — оригинал — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/2026-03-17 — Интенсив — День 01 — поздний рендер — 6м38с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/2026-03-28 — короткое — 3м56с — МК — Сладкому — да, 3м56с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/2026-03-29 — короткое — 6м31с — МК — Самоанализ — большая проблема, 6м31с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/reference/transcripts/README.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/Завтраки Большой файл — транскрипт.txt"
         },
         {
           "module_id": "products.masterclass.course",
@@ -24343,6 +26218,14 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — День 09 — эфир, ответы на вопросы, 1ч43м21с — предыдущая копия до сверки.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — День 09 — эфир, ответы на вопросы, 1ч43м21с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "content/masterclass/reference/transcripts/МК — Конструктор питания, 19м43с — версия не определена — транскрипт.txt"
         },
         {
@@ -24356,6 +26239,22 @@
         {
           "module_id": "products.masterclass.course",
           "path": "content/masterclass/reference/transcripts/МК — Фазы похудения, 40м38с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — аудио — Наливайте чаёк — 13м04с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/МК — стрим «Вредная еда» — расширенный, 2ч37м13с — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/Презентация МК большой файл — транскрипт.txt"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/transcripts/Расширенный DQS. Категории продуктов по задачам.  — транскрипт.txt"
         },
         {
           "module_id": "products.masterclass.course",
@@ -24944,7 +26843,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 156,
+          "line": 166,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/courses",
@@ -24952,7 +26851,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 166,
+          "line": 176,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/courses/{course_code}/structure",
@@ -25447,7 +27346,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 156,
+          "line": 166,
           "module_id": "products.masterclass.course",
           "name": "course_editors_page",
           "qualname": "course_editors_page"
@@ -25455,7 +27354,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 166,
+          "line": 176,
           "module_id": "products.masterclass.course",
           "name": "course_structure_editor_page",
           "qualname": "course_structure_editor_page"
@@ -30114,6 +32013,16 @@
       "type": "reads_from"
     },
     {
+      "source": "platform.knowledge",
+      "target": "admin.project-knowledge",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.knowledge",
+      "target": "platform.content",
+      "type": "reads_from"
+    },
+    {
       "source": "products.masterclass.runtime",
       "target": "products.masterclass.course",
       "type": "reads_from"
@@ -30138,7 +32047,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 341,
+      "line": 361,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/access-reviews",
@@ -30186,7 +32095,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 257,
+      "line": 277,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/tags",
@@ -30194,7 +32103,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 262,
+      "line": 282,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/variables",
@@ -30202,7 +32111,55 @@
     },
     {
       "file": "backend/app/content_routes.py",
-      "line": 28,
+      "line": 146,
+      "method": "GET",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/candidates",
+      "symbol": "authoring_candidates"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 156,
+      "method": "POST",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/candidates/decision",
+      "symbol": "authoring_candidate_decision"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 97,
+      "method": "GET",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/groups",
+      "symbol": "authoring_groups"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 115,
+      "method": "GET",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/groups/{group_key}",
+      "symbol": "authoring_group"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 127,
+      "method": "PUT",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/items/{item_id}",
+      "symbol": "update_authoring_item"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 90,
+      "method": "GET",
+      "module_id": "platform.content",
+      "path": "/admin/api/content/authoring/summary",
+      "symbol": "authoring_catalog_summary"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "line": 53,
       "method": "GET",
       "module_id": "platform.content",
       "path": "/admin/api/content/items",
@@ -30210,7 +32167,7 @@
     },
     {
       "file": "backend/app/content_routes.py",
-      "line": 45,
+      "line": 70,
       "method": "GET",
       "module_id": "platform.content",
       "path": "/admin/api/content/items/{item_id}",
@@ -30218,7 +32175,7 @@
     },
     {
       "file": "backend/app/content_routes.py",
-      "line": 53,
+      "line": 78,
       "method": "GET",
       "module_id": "platform.content",
       "path": "/admin/api/content/items/{item_id}/comments",
@@ -30226,7 +32183,7 @@
     },
     {
       "file": "backend/app/content_routes.py",
-      "line": 23,
+      "line": 48,
       "method": "GET",
       "module_id": "platform.content",
       "path": "/admin/api/content/summary",
@@ -30337,8 +32294,88 @@
       "symbol": "knowledge_document"
     },
     {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 102,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/read",
+      "symbol": "read"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 146,
+      "method": "POST",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/relations",
+      "symbol": "post_relation"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 130,
+      "method": "PUT",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/resources",
+      "symbol": "put_resource"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 178,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/reviews",
+      "symbol": "reviews"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 162,
+      "method": "POST",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/reviews",
+      "symbol": "post_review"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 188,
+      "method": "POST",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/reviews/{review_key}/decision",
+      "symbol": "review_decision"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 86,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/search",
+      "symbol": "search"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 81,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/summary",
+      "symbol": "summary"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 114,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/task-context",
+      "symbol": "get_task_context"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "line": 208,
+      "method": "POST",
+      "module_id": "platform.knowledge",
+      "path": "/admin/api/library/usage",
+      "symbol": "post_usage"
+    },
+    {
       "file": "backend/app/crm_routes.py",
-      "line": 212,
+      "line": 232,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/login",
@@ -30346,7 +32383,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 231,
+      "line": 251,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/logout",
@@ -30354,7 +32391,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 407,
+      "line": 427,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payment-products",
@@ -30362,7 +32399,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 385,
+      "line": 405,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payments",
@@ -30434,7 +32471,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 347,
+      "line": 367,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/resources",
@@ -30442,7 +32479,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 267,
+      "line": 287,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/summary",
@@ -30450,7 +32487,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 415,
+      "line": 435,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/tags",
@@ -30458,7 +32495,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 426,
+      "line": 446,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}",
@@ -30466,7 +32503,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 438,
+      "line": 458,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}/merge",
@@ -30474,7 +32511,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 274,
+      "line": 294,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users",
@@ -30482,7 +32519,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 292,
+      "line": 312,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -30490,7 +32527,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 304,
+      "line": 324,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -30498,7 +32535,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 361,
+      "line": 381,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/access-review",
@@ -30506,7 +32543,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 369,
+      "line": 389,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses",
@@ -30514,7 +32551,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 377,
+      "line": 397,
       "method": "DELETE",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -30522,7 +32559,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 352,
+      "line": 372,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/email",
@@ -30538,7 +32575,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 316,
+      "line": 336,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/notes",
@@ -30562,7 +32599,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 329,
+      "line": 349,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/tags",
@@ -30570,7 +32607,15 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 156,
+      "line": 201,
+      "method": "GET",
+      "module_id": "admin.control",
+      "path": "/admin/content",
+      "symbol": "content_catalog_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
+      "line": 166,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/courses",
@@ -30578,7 +32623,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 166,
+      "line": 176,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/courses/{course_code}/structure",
@@ -30594,6 +32639,14 @@
     },
     {
       "file": "backend/app/crm_routes.py",
+      "line": 156,
+      "method": "GET",
+      "module_id": "platform.knowledge",
+      "path": "/admin/library",
+      "symbol": "knowledge_library_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
       "line": 130,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
@@ -30602,7 +32655,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 181,
+      "line": 191,
       "method": "GET",
       "module_id": "products.catalog",
       "path": "/admin/products",
@@ -30618,7 +32671,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 190,
+      "line": 210,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/users",
@@ -30626,7 +32679,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 199,
+      "line": 219,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/{section}",
@@ -31666,7 +33719,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 237,
+      "line": 257,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm",
@@ -31674,7 +33727,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 247,
+      "line": 267,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.css",
@@ -31682,7 +33735,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 252,
+      "line": 272,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.js",
@@ -31706,7 +33759,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 52,
+      "line": 66,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -31810,7 +33863,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 58,
+      "line": 72,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/ready",
@@ -33126,7 +35179,7 @@
     {
       "file": "backend/app/config.py",
       "kind": "method",
-      "line": 28,
+      "line": 29,
       "module_id": "operations.delivery",
       "name": "allowed_origins_list",
       "qualname": "Settings.allowed_origins_list"
@@ -33134,15 +35187,159 @@
     {
       "file": "backend/app/config.py",
       "kind": "function",
-      "line": 44,
+      "line": 45,
       "module_id": "operations.delivery",
       "name": "get_settings",
       "qualname": "get_settings"
     },
     {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "class",
+      "line": 24,
+      "module_id": "platform.content",
+      "name": "RevisionConflict",
+      "qualname": "RevisionConflict"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 28,
+      "module_id": "platform.content",
+      "name": "_source_label",
+      "qualname": "_source_label"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 42,
+      "module_id": "platform.content",
+      "name": "_snippet",
+      "qualname": "_snippet"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "platform.content",
+      "name": "_date_key",
+      "qualname": "_date_key"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 55,
+      "module_id": "platform.content",
+      "name": "_item_payload",
+      "qualname": "_item_payload"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 103,
+      "module_id": "platform.content",
+      "name": "_working_rows",
+      "qualname": "_working_rows"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 112,
+      "module_id": "platform.content",
+      "name": "authoring_summary",
+      "qualname": "authoring_summary"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 135,
+      "module_id": "platform.content",
+      "name": "list_authoring_groups",
+      "qualname": "list_authoring_groups"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 191,
+      "module_id": "platform.content",
+      "name": "get_authoring_group",
+      "qualname": "get_authoring_group"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 220,
+      "module_id": "platform.content",
+      "name": "_revision_hash",
+      "qualname": "_revision_hash"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 225,
+      "module_id": "platform.content",
+      "name": "save_authoring_item",
+      "qualname": "save_authoring_item"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 290,
+      "module_id": "platform.content",
+      "name": "_candidate_components",
+      "qualname": "_candidate_components"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 294,
+      "module_id": "platform.content",
+      "name": "find",
+      "qualname": "_candidate_components.find"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 299,
+      "module_id": "platform.content",
+      "name": "union",
+      "qualname": "_candidate_components.union"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 329,
+      "module_id": "platform.content",
+      "name": "list_candidate_groups",
+      "qualname": "list_candidate_groups"
+    },
+    {
+      "file": "backend/app/content_authoring_service.py",
+      "kind": "function",
+      "line": 343,
+      "module_id": "platform.content",
+      "name": "decide_candidate_group",
+      "qualname": "decide_candidate_group"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "class",
+      "line": 32,
+      "module_id": "platform.content",
+      "name": "AuthoringItemUpdate",
+      "qualname": "AuthoringItemUpdate"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "class",
+      "line": 40,
+      "module_id": "platform.content",
+      "name": "CandidateDecision",
+      "qualname": "CandidateDecision"
+    },
+    {
       "file": "backend/app/content_routes.py",
       "kind": "function",
-      "line": 23,
+      "line": 48,
       "module_id": "platform.content",
       "name": "summary",
       "qualname": "summary"
@@ -33150,7 +35347,7 @@
     {
       "file": "backend/app/content_routes.py",
       "kind": "function",
-      "line": 28,
+      "line": 53,
       "module_id": "platform.content",
       "name": "items",
       "qualname": "items"
@@ -33158,7 +35355,7 @@
     {
       "file": "backend/app/content_routes.py",
       "kind": "function",
-      "line": 45,
+      "line": 70,
       "module_id": "platform.content",
       "name": "item",
       "qualname": "item"
@@ -33166,15 +35363,71 @@
     {
       "file": "backend/app/content_routes.py",
       "kind": "function",
-      "line": 53,
+      "line": 78,
       "module_id": "platform.content",
       "name": "comments",
       "qualname": "comments"
     },
     {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 90,
+      "module_id": "platform.content",
+      "name": "authoring_catalog_summary",
+      "qualname": "authoring_catalog_summary"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 97,
+      "module_id": "platform.content",
+      "name": "authoring_groups",
+      "qualname": "authoring_groups"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 115,
+      "module_id": "platform.content",
+      "name": "authoring_group",
+      "qualname": "authoring_group"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 127,
+      "module_id": "platform.content",
+      "name": "update_authoring_item",
+      "qualname": "update_authoring_item"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 146,
+      "module_id": "platform.content",
+      "name": "authoring_candidates",
+      "qualname": "authoring_candidates"
+    },
+    {
+      "file": "backend/app/content_routes.py",
+      "kind": "function",
+      "line": 156,
+      "module_id": "platform.content",
+      "name": "authoring_candidate_decision",
+      "qualname": "authoring_candidate_decision"
+    },
+    {
       "file": "backend/app/content_service.py",
       "kind": "function",
       "line": 29,
+      "module_id": "platform.content",
+      "name": "_has_owner_latest",
+      "qualname": "_has_owner_latest"
+    },
+    {
+      "file": "backend/app/content_service.py",
+      "kind": "function",
+      "line": 36,
       "module_id": "platform.content",
       "name": "decode_pikabu_redirect",
       "qualname": "decode_pikabu_redirect"
@@ -33182,7 +35435,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 38,
+      "line": 45,
       "module_id": "platform.content",
       "name": "classify_link",
       "qualname": "classify_link"
@@ -33190,7 +35443,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 49,
+      "line": 56,
       "module_id": "platform.content",
       "name": "normalized_payload",
       "qualname": "normalized_payload"
@@ -33198,7 +35451,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 143,
+      "line": 150,
       "module_id": "platform.content",
       "name": "get_or_create_pikabu_source",
       "qualname": "get_or_create_pikabu_source"
@@ -33206,7 +35459,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 162,
+      "line": 169,
       "module_id": "platform.content",
       "name": "get_or_create_telegram_source",
       "qualname": "get_or_create_telegram_source"
@@ -33214,7 +35467,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 188,
+      "line": 195,
       "module_id": "platform.content",
       "name": "import_telegram_items",
       "qualname": "import_telegram_items"
@@ -33222,7 +35475,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 324,
+      "line": 335,
       "module_id": "platform.content",
       "name": "import_pikabu_items",
       "qualname": "import_pikabu_items"
@@ -33230,7 +35483,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 461,
+      "line": 476,
       "module_id": "platform.content",
       "name": "content_summary",
       "qualname": "content_summary"
@@ -33238,7 +35491,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 474,
+      "line": 489,
       "module_id": "platform.content",
       "name": "telegram_app_deep_link",
       "qualname": "telegram_app_deep_link"
@@ -33246,7 +35499,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 486,
+      "line": 501,
       "module_id": "platform.content",
       "name": "list_content_items",
       "qualname": "list_content_items"
@@ -33254,7 +35507,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 543,
+      "line": 558,
       "module_id": "platform.content",
       "name": "get_content_item",
       "qualname": "get_content_item"
@@ -33262,7 +35515,7 @@
     {
       "file": "backend/app/content_service.py",
       "kind": "function",
-      "line": 584,
+      "line": 599,
       "module_id": "platform.content",
       "name": "list_content_comments",
       "qualname": "list_content_comments"
@@ -33855,6 +36108,14 @@
       "file": "backend/app/crm_routes.py",
       "kind": "function",
       "line": 156,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_library_page",
+      "qualname": "knowledge_library_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
+      "kind": "function",
+      "line": 166,
       "module_id": "products.masterclass.course",
       "name": "course_editors_page",
       "qualname": "course_editors_page"
@@ -33862,7 +36123,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 166,
+      "line": 176,
       "module_id": "products.masterclass.course",
       "name": "course_structure_editor_page",
       "qualname": "course_structure_editor_page"
@@ -33870,7 +36131,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 181,
+      "line": 191,
       "module_id": "products.catalog",
       "name": "product_catalog_page",
       "qualname": "product_catalog_page"
@@ -33878,7 +36139,15 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 190,
+      "line": 201,
+      "module_id": "admin.control",
+      "name": "content_catalog_page",
+      "qualname": "content_catalog_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
+      "kind": "function",
+      "line": 210,
       "module_id": "admin.control",
       "name": "legacy_admin_users",
       "qualname": "legacy_admin_users"
@@ -33886,7 +36155,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 199,
+      "line": 219,
       "module_id": "admin.control",
       "name": "admin_section",
       "qualname": "admin_section"
@@ -33894,7 +36163,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 212,
+      "line": 232,
       "module_id": "platform.auth",
       "name": "admin_login",
       "qualname": "admin_login"
@@ -33902,7 +36171,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 231,
+      "line": 251,
       "module_id": "platform.auth",
       "name": "admin_logout",
       "qualname": "admin_logout"
@@ -33910,7 +36179,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 237,
+      "line": 257,
       "module_id": "admin.control",
       "name": "crm_index",
       "qualname": "crm_index"
@@ -33918,7 +36187,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 247,
+      "line": 267,
       "module_id": "admin.control",
       "name": "crm_css",
       "qualname": "crm_css"
@@ -33926,7 +36195,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 252,
+      "line": 272,
       "module_id": "admin.control",
       "name": "crm_js",
       "qualname": "crm_js"
@@ -33934,7 +36203,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 257,
+      "line": 277,
       "module_id": "admin.control",
       "name": "admin_tag_audit",
       "qualname": "admin_tag_audit"
@@ -33942,7 +36211,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 262,
+      "line": 282,
       "module_id": "admin.control",
       "name": "admin_variable_audit",
       "qualname": "admin_variable_audit"
@@ -33950,7 +36219,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 267,
+      "line": 287,
       "module_id": "admin.control",
       "name": "admin_summary",
       "qualname": "admin_summary"
@@ -33958,7 +36227,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 274,
+      "line": 294,
       "module_id": "admin.control",
       "name": "admin_users",
       "qualname": "admin_users"
@@ -33966,7 +36235,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 292,
+      "line": 312,
       "module_id": "admin.control",
       "name": "admin_user",
       "qualname": "admin_user"
@@ -33974,7 +36243,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 304,
+      "line": 324,
       "module_id": "admin.control",
       "name": "admin_update_user",
       "qualname": "admin_update_user"
@@ -33982,7 +36251,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 316,
+      "line": 336,
       "module_id": "admin.control",
       "name": "admin_add_note",
       "qualname": "admin_add_note"
@@ -33990,7 +36259,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 329,
+      "line": 349,
       "module_id": "admin.control",
       "name": "admin_add_tag",
       "qualname": "admin_add_tag"
@@ -33998,7 +36267,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 341,
+      "line": 361,
       "module_id": "admin.control",
       "name": "admin_access_reviews",
       "qualname": "admin_access_reviews"
@@ -34006,7 +36275,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 347,
+      "line": 367,
       "module_id": "platform.commerce",
       "name": "admin_resources",
       "qualname": "admin_resources"
@@ -34014,7 +36283,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 352,
+      "line": 372,
       "module_id": "admin.control",
       "name": "admin_link_email",
       "qualname": "admin_link_email"
@@ -34022,7 +36291,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 361,
+      "line": 381,
       "module_id": "admin.control",
       "name": "admin_set_access_review",
       "qualname": "admin_set_access_review"
@@ -34030,7 +36299,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 369,
+      "line": 389,
       "module_id": "admin.control",
       "name": "admin_grant_access",
       "qualname": "admin_grant_access"
@@ -34038,7 +36307,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 377,
+      "line": 397,
       "module_id": "admin.control",
       "name": "admin_revoke_access",
       "qualname": "admin_revoke_access"
@@ -34046,7 +36315,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 385,
+      "line": 405,
       "module_id": "platform.commerce",
       "name": "admin_payments",
       "qualname": "admin_payments"
@@ -34054,7 +36323,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 407,
+      "line": 427,
       "module_id": "platform.commerce",
       "name": "admin_payment_products",
       "qualname": "admin_payment_products"
@@ -34062,7 +36331,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 415,
+      "line": 435,
       "module_id": "admin.control",
       "name": "admin_tags",
       "qualname": "admin_tags"
@@ -34070,7 +36339,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 426,
+      "line": 446,
       "module_id": "admin.control",
       "name": "admin_update_tag",
       "qualname": "admin_update_tag"
@@ -34078,7 +36347,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 438,
+      "line": 458,
       "module_id": "admin.control",
       "name": "admin_merge_tag",
       "qualname": "admin_merge_tag"
@@ -35452,6 +37721,390 @@
       "qualname": "save_intensive_page"
     },
     {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "class",
+      "line": 29,
+      "module_id": "platform.knowledge",
+      "name": "ResourceWrite",
+      "qualname": "ResourceWrite"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "class",
+      "line": 50,
+      "module_id": "platform.knowledge",
+      "name": "RelationWrite",
+      "qualname": "RelationWrite"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "class",
+      "line": 57,
+      "module_id": "platform.knowledge",
+      "name": "ReviewWrite",
+      "qualname": "ReviewWrite"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "class",
+      "line": 65,
+      "module_id": "platform.knowledge",
+      "name": "UsageWrite",
+      "qualname": "UsageWrite"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "class",
+      "line": 75,
+      "module_id": "platform.knowledge",
+      "name": "ReviewDecision",
+      "qualname": "ReviewDecision"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 81,
+      "module_id": "platform.knowledge",
+      "name": "summary",
+      "qualname": "summary"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 86,
+      "module_id": "platform.knowledge",
+      "name": "search",
+      "qualname": "search"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 102,
+      "module_id": "platform.knowledge",
+      "name": "read",
+      "qualname": "read"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 114,
+      "module_id": "platform.knowledge",
+      "name": "get_task_context",
+      "qualname": "get_task_context"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 130,
+      "module_id": "platform.knowledge",
+      "name": "put_resource",
+      "qualname": "put_resource"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 146,
+      "module_id": "platform.knowledge",
+      "name": "post_relation",
+      "qualname": "post_relation"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 162,
+      "module_id": "platform.knowledge",
+      "name": "post_review",
+      "qualname": "post_review"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 178,
+      "module_id": "platform.knowledge",
+      "name": "reviews",
+      "qualname": "reviews"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 188,
+      "module_id": "platform.knowledge",
+      "name": "review_decision",
+      "qualname": "review_decision"
+    },
+    {
+      "file": "backend/app/knowledge_library_routes.py",
+      "kind": "function",
+      "line": 208,
+      "module_id": "platform.knowledge",
+      "name": "post_usage",
+      "qualname": "post_usage"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "class",
+      "line": 48,
+      "module_id": "platform.knowledge",
+      "name": "KnowledgeConflict",
+      "qualname": "KnowledgeConflict"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "class",
+      "line": 53,
+      "module_id": "platform.knowledge",
+      "name": "RepoDocument",
+      "qualname": "RepoDocument"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "method",
+      "line": 63,
+      "module_id": "platform.knowledge",
+      "name": "uri",
+      "qualname": "RepoDocument.uri"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 67,
+      "module_id": "platform.knowledge",
+      "name": "_validate",
+      "qualname": "_validate"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 74,
+      "module_id": "platform.knowledge",
+      "name": "_title_from_text",
+      "qualname": "_title_from_text"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 83,
+      "module_id": "platform.knowledge",
+      "name": "_repo_policy",
+      "qualname": "_repo_policy"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 102,
+      "module_id": "platform.knowledge",
+      "name": "repo_documents",
+      "qualname": "repo_documents"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 122,
+      "module_id": "platform.knowledge",
+      "name": "_snippet",
+      "qualname": "_snippet"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 139,
+      "module_id": "platform.knowledge",
+      "name": "_resource_payload",
+      "qualname": "_resource_payload"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 181,
+      "module_id": "platform.knowledge",
+      "name": "library_summary",
+      "qualname": "library_summary"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 204,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_search",
+      "qualname": "knowledge_search"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 305,
+      "module_id": "platform.knowledge",
+      "name": "score",
+      "qualname": "knowledge_search.score"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 316,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_read",
+      "qualname": "knowledge_read"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 358,
+      "module_id": "platform.knowledge",
+      "name": "save_resource",
+      "qualname": "save_resource"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 456,
+      "module_id": "platform.knowledge",
+      "name": "save_relation",
+      "qualname": "save_relation"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 488,
+      "module_id": "platform.knowledge",
+      "name": "queue_review",
+      "qualname": "queue_review"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 520,
+      "module_id": "platform.knowledge",
+      "name": "list_reviews",
+      "qualname": "list_reviews"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 552,
+      "module_id": "platform.knowledge",
+      "name": "decide_review",
+      "qualname": "decide_review"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 571,
+      "module_id": "platform.knowledge",
+      "name": "record_usage",
+      "qualname": "record_usage"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 595,
+      "module_id": "platform.knowledge",
+      "name": "task_context",
+      "qualname": "task_context"
+    },
+    {
+      "file": "backend/app/knowledge_library_service.py",
+      "kind": "function",
+      "line": 620,
+      "module_id": "platform.knowledge",
+      "name": "serialize_json",
+      "qualname": "serialize_json"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 39,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_map",
+      "qualname": "knowledge_map"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 46,
+      "module_id": "platform.knowledge",
+      "name": "library_resource",
+      "qualname": "library_resource"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 56,
+      "module_id": "platform.knowledge",
+      "name": "search_knowledge",
+      "qualname": "search_knowledge"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 72,
+      "module_id": "platform.knowledge",
+      "name": "read_knowledge",
+      "qualname": "read_knowledge"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 82,
+      "module_id": "platform.knowledge",
+      "name": "prepare_editorial_context",
+      "qualname": "prepare_editorial_context"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 98,
+      "module_id": "platform.knowledge",
+      "name": "register_knowledge_resource",
+      "qualname": "register_knowledge_resource"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 131,
+      "module_id": "platform.knowledge",
+      "name": "link_knowledge_resources",
+      "qualname": "link_knowledge_resources"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 146,
+      "module_id": "platform.knowledge",
+      "name": "ask_librarian_review",
+      "qualname": "ask_librarian_review"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "function",
+      "line": 162,
+      "module_id": "platform.knowledge",
+      "name": "record_knowledge_use",
+      "qualname": "record_knowledge_use"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "class",
+      "line": 181,
+      "module_id": "platform.knowledge",
+      "name": "BearerTokenMiddleware",
+      "qualname": "BearerTokenMiddleware"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "method",
+      "line": 184,
+      "module_id": "platform.knowledge",
+      "name": "__init__",
+      "qualname": "BearerTokenMiddleware.__init__"
+    },
+    {
+      "file": "backend/app/knowledge_mcp.py",
+      "kind": "method",
+      "line": 187,
+      "module_id": "platform.knowledge",
+      "name": "__call__",
+      "qualname": "BearerTokenMiddleware.__call__"
+    },
+    {
       "file": "backend/app/knowledge_routes.py",
       "kind": "function",
       "line": 53,
@@ -35566,7 +38219,15 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 52,
+      "line": 33,
+      "module_id": "operations.delivery",
+      "name": "lifespan",
+      "qualname": "lifespan"
+    },
+    {
+      "file": "backend/app/main.py",
+      "kind": "function",
+      "line": 66,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -35574,7 +38235,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 58,
+      "line": 72,
       "module_id": "operations.delivery",
       "name": "ready",
       "qualname": "ready"
@@ -36766,7 +39427,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 953,
+      "line": 971,
       "module_id": "operations.database",
       "name": "ContentItemVersion",
       "qualname": "ContentItemVersion"
@@ -36774,7 +39435,31 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 975,
+      "line": 994,
+      "module_id": "operations.database",
+      "name": "ContentFamily",
+      "qualname": "ContentFamily"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1002,
+      "module_id": "operations.database",
+      "name": "ContentFamilyMembership",
+      "qualname": "ContentFamilyMembership"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1016,
+      "module_id": "operations.database",
+      "name": "ContentFamilyCandidate",
+      "qualname": "ContentFamilyCandidate"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1037,
       "module_id": "operations.database",
       "name": "ContentMedia",
       "qualname": "ContentMedia"
@@ -36782,7 +39467,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 995,
+      "line": 1057,
       "module_id": "operations.database",
       "name": "ContentLink",
       "qualname": "ContentLink"
@@ -36790,7 +39475,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 1017,
+      "line": 1079,
       "module_id": "operations.database",
       "name": "ContentMetricSnapshot",
       "qualname": "ContentMetricSnapshot"
@@ -36798,7 +39483,7 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 1041,
+      "line": 1103,
       "module_id": "operations.database",
       "name": "ContentComment",
       "qualname": "ContentComment"
@@ -36806,10 +39491,50 @@
     {
       "file": "backend/app/models.py",
       "kind": "class",
-      "line": 1071,
+      "line": 1133,
       "module_id": "operations.database",
       "name": "ContentImportRun",
       "qualname": "ContentImportRun"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1150,
+      "module_id": "operations.database",
+      "name": "KnowledgeResource",
+      "qualname": "KnowledgeResource"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1178,
+      "module_id": "operations.database",
+      "name": "KnowledgeResourceVersion",
+      "qualname": "KnowledgeResourceVersion"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1199,
+      "module_id": "operations.database",
+      "name": "KnowledgeRelation",
+      "qualname": "KnowledgeRelation"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1224,
+      "module_id": "operations.database",
+      "name": "KnowledgeReviewItem",
+      "qualname": "KnowledgeReviewItem"
+    },
+    {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1241,
+      "module_id": "operations.database",
+      "name": "KnowledgeUsageEvent",
+      "qualname": "KnowledgeUsageEvent"
     },
     {
       "file": "backend/app/pricing_routes.py",
@@ -37682,6 +40407,174 @@
       "module_id": "admin.control",
       "name": "run",
       "qualname": "run"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 5,
+      "module_id": "platform.content",
+      "name": "el",
+      "qualname": "el"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 7,
+      "module_id": "platform.content",
+      "name": "api",
+      "qualname": "api"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 15,
+      "module_id": "platform.content",
+      "name": "text",
+      "qualname": "text"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 16,
+      "module_id": "platform.content",
+      "name": "setStatus",
+      "qualname": "setStatus"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 17,
+      "module_id": "platform.content",
+      "name": "markDirty",
+      "qualname": "markDirty"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 18,
+      "module_id": "platform.content",
+      "name": "canLeave",
+      "qualname": "canLeave"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 19,
+      "module_id": "platform.content",
+      "name": "queryString",
+      "qualname": "queryString"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 25,
+      "module_id": "platform.content",
+      "name": "itemLabel",
+      "qualname": "itemLabel"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 26,
+      "module_id": "platform.content",
+      "name": "groupCard",
+      "qualname": "groupCard"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 35,
+      "module_id": "platform.content",
+      "name": "candidateCard",
+      "qualname": "candidateCard"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 39,
+      "module_id": "platform.content",
+      "name": "loadSummary",
+      "qualname": "loadSummary"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 43,
+      "module_id": "platform.content",
+      "name": "loadPage",
+      "qualname": "loadPage"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 59,
+      "module_id": "platform.content",
+      "name": "renderListSelection",
+      "qualname": "renderListSelection"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 60,
+      "module_id": "platform.content",
+      "name": "selectGroup",
+      "qualname": "selectGroup"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 75,
+      "module_id": "platform.content",
+      "name": "topLink",
+      "qualname": "topLink"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 76,
+      "module_id": "platform.content",
+      "name": "renderEditor",
+      "qualname": "renderEditor"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 99,
+      "module_id": "platform.content",
+      "name": "renderCandidatePanel",
+      "qualname": "renderCandidatePanel"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 104,
+      "module_id": "platform.content",
+      "name": "currentItem",
+      "qualname": "currentItem"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 105,
+      "module_id": "platform.content",
+      "name": "save",
+      "qualname": "save"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 122,
+      "module_id": "platform.content",
+      "name": "candidateDecision",
+      "qualname": "candidateDecision"
+    },
+    {
+      "file": "backend/app/static/content-catalog.js",
+      "kind": "function",
+      "line": 139,
+      "module_id": "platform.content",
+      "name": "fail",
+      "qualname": "fail"
     },
     {
       "file": "backend/app/static/content-gallery.js",
@@ -38586,6 +41479,70 @@
       "module_id": "admin.project-knowledge",
       "name": "renderView",
       "qualname": "renderView"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 3,
+      "module_id": "platform.knowledge",
+      "name": "esc",
+      "qualname": "esc"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 4,
+      "module_id": "platform.knowledge",
+      "name": "request",
+      "qualname": "request"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 5,
+      "module_id": "platform.knowledge",
+      "name": "loadSummary",
+      "qualname": "loadSummary"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 6,
+      "module_id": "platform.knowledge",
+      "name": "renderResults",
+      "qualname": "renderResults"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 7,
+      "module_id": "platform.knowledge",
+      "name": "search",
+      "qualname": "search"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 8,
+      "module_id": "platform.knowledge",
+      "name": "openResource",
+      "qualname": "openResource"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 9,
+      "module_id": "platform.knowledge",
+      "name": "decide",
+      "qualname": "decide"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 10,
+      "module_id": "platform.knowledge",
+      "name": "loadReviews",
+      "qualname": "loadReviews"
     },
     {
       "file": "backend/app/static/masterclass.js",
@@ -39564,6 +42521,38 @@
       "qualname": "downgrade"
     },
     {
+      "file": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py",
+      "kind": "function",
+      "line": 16,
+      "module_id": "platform.content",
+      "name": "upgrade",
+      "qualname": "upgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260829_0029_content_catalog_authoring.py",
+      "kind": "function",
+      "line": 70,
+      "module_id": "platform.content",
+      "name": "downgrade",
+      "qualname": "downgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260829_0030_knowledge_library.py",
+      "kind": "function",
+      "line": 16,
+      "module_id": "platform.knowledge",
+      "name": "upgrade",
+      "qualname": "upgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260829_0030_knowledge_library.py",
+      "kind": "function",
+      "line": 116,
+      "module_id": "platform.knowledge",
+      "name": "downgrade",
+      "qualname": "downgrade"
+    },
+    {
       "file": "backend/scripts/generate_masterclass_offer_simulator.py",
       "kind": "function",
       "line": 69,
@@ -39592,6 +42581,102 @@
       "kind": "function",
       "line": 195,
       "module_id": "products.masterclass.offers",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 28,
+      "module_id": "platform.content",
+      "name": "read_jsonl",
+      "qualname": "read_jsonl"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 41,
+      "module_id": "platform.content",
+      "name": "load_snapshot",
+      "qualname": "load_snapshot"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 53,
+      "module_id": "platform.content",
+      "name": "_snapshot_digest",
+      "qualname": "_snapshot_digest"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 63,
+      "module_id": "platform.content",
+      "name": "validate_snapshot",
+      "qualname": "validate_snapshot"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 96,
+      "module_id": "platform.content",
+      "name": "find",
+      "qualname": "validate_snapshot.find"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 121,
+      "module_id": "platform.content",
+      "name": "_parse_datetime",
+      "qualname": "_parse_datetime"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 127,
+      "module_id": "platform.content",
+      "name": "_version_hash",
+      "qualname": "_version_hash"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 145,
+      "module_id": "platform.content",
+      "name": "_media_rows",
+      "qualname": "_media_rows"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 175,
+      "module_id": "platform.content",
+      "name": "_pair_key",
+      "qualname": "_pair_key"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 179,
+      "module_id": "platform.content",
+      "name": "_local_decision_key",
+      "qualname": "_local_decision_key"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 185,
+      "module_id": "platform.content",
+      "name": "import_snapshot",
+      "qualname": "import_snapshot"
+    },
+    {
+      "file": "backend/scripts/import_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 319,
+      "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
     },
@@ -39640,6 +42725,38 @@
       "kind": "function",
       "line": 9,
       "module_id": "products.masterclass.course",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "backend/scripts/sync_knowledge_library.py",
+      "kind": "function",
+      "line": 12,
+      "module_id": "platform.knowledge",
+      "name": "_jsonl",
+      "qualname": "_jsonl"
+    },
+    {
+      "file": "backend/scripts/sync_knowledge_library.py",
+      "kind": "function",
+      "line": 29,
+      "module_id": "platform.knowledge",
+      "name": "load_bundle",
+      "qualname": "load_bundle"
+    },
+    {
+      "file": "backend/scripts/sync_knowledge_library.py",
+      "kind": "function",
+      "line": 50,
+      "module_id": "platform.knowledge",
+      "name": "sync_bundle",
+      "qualname": "sync_bundle"
+    },
+    {
+      "file": "backend/scripts/sync_knowledge_library.py",
+      "kind": "function",
+      "line": 87,
+      "module_id": "platform.knowledge",
       "name": "main",
       "qualname": "main"
     },
@@ -40116,6 +43233,102 @@
       "qualname": "test_calorie_course_reuses_masterclass_shell_with_stage_routes"
     },
     {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 28,
+      "module_id": "platform.content",
+      "name": "snapshot",
+      "qualname": "snapshot"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 51,
+      "module_id": "platform.content",
+      "name": "sqlite_session_factory",
+      "qualname": "sqlite_session_factory"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 57,
+      "module_id": "platform.content",
+      "name": "test_snapshot_validation_is_source_complete",
+      "qualname": "test_snapshot_validation_is_source_complete"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 67,
+      "module_id": "platform.content",
+      "name": "test_import_is_idempotent",
+      "qualname": "test_import_is_idempotent"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 82,
+      "module_id": "platform.content",
+      "name": "test_import_matches_existing_production_item_and_preserves_owner_revision",
+      "qualname": "test_import_matches_existing_production_item_and_preserves_owner_revision"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 110,
+      "module_id": "platform.content",
+      "name": "test_local_rejected_candidate_is_imported_as_rejected",
+      "qualname": "test_local_rejected_candidate_is_imported_as_rejected"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 127,
+      "module_id": "platform.content",
+      "name": "test_owner_save_creates_immutable_revision_and_detects_conflict",
+      "qualname": "test_owner_save_creates_immutable_revision_and_detects_conflict"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 155,
+      "module_id": "platform.content",
+      "name": "test_platform_reimport_preserves_owner_latest_and_revision_sequence",
+      "qualname": "test_platform_reimport_preserves_owner_latest_and_revision_sequence"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 178,
+      "module_id": "platform.content",
+      "name": "test_partial_candidate_merge_keeps_unselected_subgraph_pending",
+      "qualname": "test_partial_candidate_merge_keeps_unselected_subgraph_pending"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 213,
+      "module_id": "platform.content",
+      "name": "test_authoring_api_requires_admin",
+      "qualname": "test_authoring_api_requires_admin"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 221,
+      "module_id": "platform.content",
+      "name": "test_authoring_mutations_require_admin",
+      "qualname": "test_authoring_mutations_require_admin"
+    },
+    {
+      "file": "backend/tests/test_content_authoring_catalog.py",
+      "kind": "function",
+      "line": 226,
+      "module_id": "platform.content",
+      "name": "test_server_editor_keeps_metadata_below_text_and_has_save_controls",
+      "qualname": "test_server_editor_keeps_metadata_below_text_and_has_save_controls"
+    },
+    {
       "file": "backend/tests/test_content_catalog.py",
       "kind": "function",
       "line": 22,
@@ -40506,6 +43719,70 @@
       "module_id": "admin.project-knowledge",
       "name": "test_control_portal_redirects_to_the_single_admin_catalog",
       "qualname": "test_control_portal_redirects_to_the_single_admin_catalog"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 32,
+      "module_id": "platform.knowledge",
+      "name": "session_factory",
+      "qualname": "session_factory"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 42,
+      "module_id": "platform.knowledge",
+      "name": "resource_payload",
+      "qualname": "resource_payload"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 60,
+      "module_id": "platform.knowledge",
+      "name": "test_resource_versions_search_relations_and_usage",
+      "qualname": "test_resource_versions_search_relations_and_usage"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 96,
+      "module_id": "platform.knowledge",
+      "name": "test_restricted_personal_keeps_person_reference",
+      "qualname": "test_restricted_personal_keeps_person_reference"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 108,
+      "module_id": "platform.knowledge",
+      "name": "test_review_queue_and_task_disclosure_policy",
+      "qualname": "test_review_queue_and_task_disclosure_policy"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 133,
+      "module_id": "platform.knowledge",
+      "name": "test_publication_taxonomy_is_searchable_and_returned",
+      "qualname": "test_publication_taxonomy_is_searchable_and_returned"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 172,
+      "module_id": "platform.knowledge",
+      "name": "test_library_api_and_mcp_require_authentication",
+      "qualname": "test_library_api_and_mcp_require_authentication"
+    },
+    {
+      "file": "backend/tests/test_knowledge_library.py",
+      "kind": "function",
+      "line": 181,
+      "module_id": "platform.knowledge",
+      "name": "test_bundle_import_is_guarded_atomic_and_idempotent",
+      "qualname": "test_bundle_import_is_guarded_atomic_and_idempotent"
     },
     {
       "file": "backend/tests/test_legacy_import.py",
@@ -47996,6 +51273,22 @@
       "qualname": "main"
     },
     {
+      "file": "tools/build_knowledge_bundle.py",
+      "kind": "function",
+      "line": 8,
+      "module_id": "platform.knowledge",
+      "name": "build_bundle",
+      "qualname": "build_bundle"
+    },
+    {
+      "file": "tools/build_knowledge_bundle.py",
+      "kind": "function",
+      "line": 61,
+      "module_id": "platform.knowledge",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
       "file": "tools/build_leadteh_tag_plan.py",
       "kind": "function",
       "line": 100,
@@ -48664,6 +51957,46 @@
       "kind": "function",
       "line": 21,
       "module_id": "platform.content",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "tools/install_edabalans_librarian_skill.py",
+      "kind": "function",
+      "line": 15,
+      "module_id": "platform.knowledge",
+      "name": "default_destination",
+      "qualname": "default_destination"
+    },
+    {
+      "file": "tools/install_edabalans_librarian_skill.py",
+      "kind": "function",
+      "line": 20,
+      "module_id": "platform.knowledge",
+      "name": "digest",
+      "qualname": "digest"
+    },
+    {
+      "file": "tools/install_edabalans_librarian_skill.py",
+      "kind": "function",
+      "line": 27,
+      "module_id": "platform.knowledge",
+      "name": "status",
+      "qualname": "status"
+    },
+    {
+      "file": "tools/install_edabalans_librarian_skill.py",
+      "kind": "function",
+      "line": 43,
+      "module_id": "platform.knowledge",
+      "name": "install",
+      "qualname": "install"
+    },
+    {
+      "file": "tools/install_edabalans_librarian_skill.py",
+      "kind": "function",
+      "line": 54,
+      "module_id": "platform.knowledge",
       "name": "main",
       "qualname": "main"
     },
@@ -51131,21 +54464,42 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 1042,
+      "line": 1104,
       "module_id": "platform.content",
       "name": "content_comments",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 1072,
+      "line": 995,
+      "module_id": "platform.content",
+      "name": "content_families",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1017,
+      "module_id": "platform.content",
+      "name": "content_family_candidates",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1003,
+      "module_id": "platform.content",
+      "name": "content_family_memberships",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1134,
       "module_id": "platform.content",
       "name": "content_import_runs",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 954,
+      "line": 972,
       "module_id": "platform.content",
       "name": "content_item_versions",
       "source": "orm"
@@ -51159,21 +54513,21 @@
     },
     {
       "file": "backend/app/models.py",
-      "line": 996,
+      "line": 1058,
       "module_id": "platform.content",
       "name": "content_links",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 976,
+      "line": 1038,
       "module_id": "platform.content",
       "name": "content_media",
       "source": "orm"
     },
     {
       "file": "backend/app/models.py",
-      "line": 1018,
+      "line": 1080,
       "module_id": "platform.content",
       "name": "content_metric_snapshots",
       "source": "orm"
@@ -51239,6 +54593,41 @@
       "line": 259,
       "module_id": "operations.imports",
       "name": "import_batches",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1200,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_relations",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1179,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_resource_versions",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1151,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_resources",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1225,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_review_items",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1242,
+      "module_id": "platform.knowledge",
+      "name": "knowledge_usage_events",
       "source": "orm"
     },
     {

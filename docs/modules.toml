@@ -90,8 +90,12 @@ parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
   "backend/app/content_routes.py", "backend/app/content_service.py",
+  "backend/app/content_authoring_service.py",
   "backend/app/article_markup.py",
+  "backend/app/static/content-catalog.css", "backend/app/static/content-catalog.html",
+  "backend/app/static/content-catalog.js",
   "backend/tests/test_content_catalog.py", "backend/tests/test_telegram_catalog.py",
+  "backend/tests/test_content_authoring_catalog.py",
   "backend/tests/test_article_markup.py",
   "backend/tests/fixtures/telegram_channel_export.json",
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
@@ -149,19 +153,46 @@ owns_files = [
   "tools/telegram_public_metrics_collect.py",
   "backend/migrations/versions/20260822_0013_content_catalog.py",
   "backend/migrations/versions/20260822_0014_content_comments.py",
+  "backend/migrations/versions/20260829_0029_content_catalog_authoring.py",
+  "backend/scripts/import_content_authoring_catalog.py",
 ]
 owns_tables = [
   "content_sources", "content_items", "content_item_versions", "content_media",
   "content_links", "content_metric_snapshots", "content_comments", "content_import_runs",
+  "content_families", "content_family_memberships", "content_family_candidates",
 ]
 owns_routes = ["*/admin/api/content*"]
 
 [[modules]]
 id = "platform.knowledge"
+admin_catalog = [{ category = "tools", order = 35, url = "/admin/library", label = "Библиотекарь", description = "Единый поиск по источникам, продуктам, публикациям и документам; очередь смысловых решений." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.knowledge.md"
 depends_on = ["platform.content", "admin.project-knowledge"]
-owns_files = ["docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md"]
+owns_files = [
+  "docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md",
+  "docs/KNOWLEDGE_LIBRARY.md",
+  "backend/app/knowledge_library_service.py",
+  "backend/app/knowledge_library_routes.py",
+  "backend/app/knowledge_mcp.py",
+  "backend/app/static/knowledge-library.*",
+  "backend/tests/test_knowledge_library.py",
+  "backend/migrations/versions/20260829_0030_knowledge_library.py",
+  "content/knowledge-library.md",
+  "content/library/**",
+  "content/media-catalog.md",
+  "deliverables/**",
+  "content/knowledge/skill/edabalans-librarian/**",
+  "tools/install_edabalans_librarian_skill.py",
+  "tools/build_knowledge_bundle.py",
+  "backend/scripts/sync_knowledge_library.py",
+]
+owns_tables = [
+  "knowledge_resources", "knowledge_resource_versions", "knowledge_relations",
+  "knowledge_review_items", "knowledge_usage_events",
+]
+owns_routes = ["*/admin/library", "*/admin/api/library*", "*/mcp*"]
+reads_from = ["platform.content", "admin.project-knowledge"]
 
 [[modules]]
 id = "products"

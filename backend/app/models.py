@@ -1145,3 +1145,117 @@ class ContentImportRun(Base):
     )
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     summary: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class KnowledgeResource(TimestampMixin, Base):
+    __tablename__ = "knowledge_resources"
+    __table_args__ = (
+        Index("ix_knowledge_resources_contour_kind", "contour", "resource_kind"),
+        Index("ix_knowledge_resources_state", "state"),
+        Index("ix_knowledge_resources_access", "access_level"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    resource_key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    contour: Mapped[str] = mapped_column(String(32), nullable=False)
+    resource_kind: Mapped[str] = mapped_column(String(64), nullable=False)
+    role: Mapped[str] = mapped_column(String(32), nullable=False)
+    state: Mapped[str] = mapped_column(String(32), nullable=False)
+    storage_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    canonical_uri: Mapped[str] = mapped_column(Text, nullable=False)
+    owner_module: Mapped[str] = mapped_column(String(128), nullable=False)
+    access_level: Mapped[str] = mapped_column(String(32), nullable=False)
+    person_reference: Mapped[str | None] = mapped_column(Text)
+    source_author: Mapped[str | None] = mapped_column(Text)
+    source_date: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    latest_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("knowledge_resource_versions.id", ondelete="SET NULL", use_alter=True)
+    )
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class KnowledgeResourceVersion(Base):
+    __tablename__ = "knowledge_resource_versions"
+    __table_args__ = (
+        UniqueConstraint("resource_id", "version_no", name="uq_knowledge_resource_version_no"),
+        UniqueConstraint("resource_id", "content_hash", name="uq_knowledge_resource_version_hash"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    resource_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("knowledge_resources.id", ondelete="CASCADE"), index=True
+    )
+    version_no: Mapped[int] = mapped_column(Integer, nullable=False)
+    content_hash: Mapped[str] = mapped_column(String(64), nullable=False)
+    text_content: Mapped[str] = mapped_column(Text, nullable=False)
+    provenance: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_by: Mapped[str] = mapped_column(String(255), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class KnowledgeRelation(Base):
+    __tablename__ = "knowledge_relations"
+    __table_args__ = (
+        UniqueConstraint(
+            "source_resource_id", "target_resource_id", "relation_type",
+            name="uq_knowledge_relation",
+        ),
+        Index("ix_knowledge_relations_target", "target_resource_id", "relation_type"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    source_resource_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("knowledge_resources.id", ondelete="CASCADE"), index=True
+    )
+    target_resource_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("knowledge_resources.id", ondelete="CASCADE"), index=True
+    )
+    relation_type: Mapped[str] = mapped_column(String(48), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class KnowledgeReviewItem(TimestampMixin, Base):
+    __tablename__ = "knowledge_review_items"
+    __table_args__ = (
+        Index("ix_knowledge_review_status_kind", "status", "review_kind"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    review_key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    review_kind: Mapped[str] = mapped_column(String(48), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    resource_ids: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    details_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    decision_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class KnowledgeUsageEvent(Base):
+    __tablename__ = "knowledge_usage_events"
+    __table_args__ = (
+        Index("ix_knowledge_usage_resource_created", "resource_id", "created_at"),
+        Index("ix_knowledge_usage_task", "task_key"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    resource_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("knowledge_resources.id", ondelete="SET NULL"), index=True
+    )
+    source_uri: Mapped[str] = mapped_column(Text, nullable=False, index=True)
+    task_key: Mapped[str] = mapped_column(String(255), nullable=False)
+    destination: Mapped[str] = mapped_column(Text, nullable=False)
+    usage_kind: Mapped[str] = mapped_column(String(48), nullable=False)
+    excerpt_reference: Mapped[str | None] = mapped_column(Text)
+    output_uri: Mapped[str | None] = mapped_column(Text)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
