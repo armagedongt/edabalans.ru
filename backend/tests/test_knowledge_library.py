@@ -1,5 +1,8 @@
 import os
 import json
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,6 +30,21 @@ from app.models import ContentItem, ContentItemVersion, ContentSource
 from app.models import KnowledgeResourceVersion, KnowledgeUsageEvent
 from app.models import KnowledgeRelation, KnowledgeReviewItem, KnowledgeResource
 from scripts import sync_knowledge_library as sync_module
+
+
+def test_sync_script_bootstraps_backend_path(tmp_path: Path) -> None:
+    env = dict(os.environ)
+    env["PYTHONPATH"] = ""
+    result = subprocess.run(
+        [sys.executable, str(Path(sync_module.__file__).resolve()), "--help"],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "knowledge-library" in result.stdout
 
 
 def session_factory():
