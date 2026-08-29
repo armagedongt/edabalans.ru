@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - импортировать по фактической схеме источника с audit trail;
 - останавливать операцию при конфликте идентичности или неподтверждённом backup;
+- локально нормализовать Telegram Desktop export и папки с видео/аудио для расшифровки без CRM-анализа;
 
 ## Граница
 
@@ -20,7 +21,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-`backend/app/importers/`, `tools/`, import tables и профильные runbook.
+`backend/app/importers/`, `tools/`, import tables, профильные runbook и
+`docs/telegram-consultation-import.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

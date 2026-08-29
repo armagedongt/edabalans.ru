@@ -652,7 +652,7 @@ owns_files = [
   "backend/app/static/leadteh_tag_plan.json", "backend/app/static/leadteh_variables.json",
   "backend/tests/test_legacy_import.py", "backend/tests/test_manual_payments.py",
   "backend/tests/test_tag_rules_v2.py", "backend/tests/test_tilda_members_import.py",
-  "backend/tests/test_telegram_consultations.py", "docs/telegram-consultation-import.md",
+  "backend/tests/test_telegram_consultations.py", "backend/tests/test_local_media.py", "docs/telegram-consultation-import.md",
   ".codex/skills/telegram-consultation-transcription/**",
 ]
 owns_tables = ["import_batches", "legacy_import_records", "admin_app_edits"]
