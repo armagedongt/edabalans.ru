@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "lectureId": 7058441,
+  "assets": [
+    {
+      "order": 1,
+      "sourceUrl": "https://static.tildacdn.com/tild6536-3431-4462-a636-656436636561/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild6536-3431-4462-a636-656436636561/image.png",
+      "localPath": "assets/001.png",
+      "downloaded": true
+    },
+    {
+      "order": 2,
+      "sourceUrl": "https://static.tildacdn.com/tild6530-6534-4531-a633-386131346464/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild6530-6534-4531-a633-386131346464/image.png",
+      "localPath": "assets/002.png",
+      "downloaded": true
+    },
+    {
+      "order": 3,
+      "sourceUrl": "https://static.tildacdn.com/tild6161-6335-4239-b763-393661383265/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild6161-6335-4239-b763-393661383265/image.png",
+      "localPath": "assets/003.png",
+      "downloaded": true
+    },
+    {
+      "order": 4,
+      "sourceUrl": "https://static.tildacdn.com/tild3737-6164-4333-b663-396332656437/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3737-6164-4333-b663-396332656437/image.png",
+      "localPath": "assets/004.png",
+      "downloaded": true
+    },
+    {
+      "order": 5,
+      "sourceUrl": "https://static.tildacdn.com/tild3437-6563-4464-b964-643334373961/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3437-6563-4464-b964-643334373961/image.png",
+      "localPath": "assets/005.png",
+      "downloaded": true
+    },
+    {
+      "order": 6,
+      "sourceUrl": "https://static.tildacdn.com/tild3537-3535-4563-a335-333062613338/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3537-3535-4563-a335-333062613338/image.png",
+      "localPath": "assets/006.png",
+      "downloaded": true
+    },
+    {
+      "order": 7,
+      "sourceUrl": "https://static.tildacdn.com/tild3837-3334-4235-b966-326332396335/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3837-3334-4235-b966-326332396335/image.png",
+      "localPath": "assets/007.png",
+      "downloaded": true
+    },
+    {
+      "order": 8,
+      "sourceUrl": "https://static.tildacdn.com/tild3364-3737-4564-b638-653037376130/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3364-3737-4564-b638-653037376130/image.png",
+      "localPath": "assets/008.png",
+      "downloaded": true
+    }
+  ],
+  "failures": []
+}
+

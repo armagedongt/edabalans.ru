@@ -1,0 +1,239 @@
+{
+  "schemaVersion": "1.0",
+  "checkedAt": "2026-08-28",
+  "courseId": 425521,
+  "status": "passed",
+  "summary": {
+    "textLessons": 18,
+    "videoLessons": 3,
+    "blocks": 891,
+    "imageBlocks": 58,
+    "uniqueImages": 58,
+    "localImages": 58,
+    "links": 59,
+    "errors": 0
+  },
+  "lessons": [
+    {
+      "folder": "01-course-plan--7058269",
+      "lectureId": 7058269,
+      "title": "План этого курса",
+      "blocks": 1,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "02-bju-again--7058309",
+      "lectureId": 7058309,
+      "title": "Ещё раз про БЖУ",
+      "blocks": 51,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "03-track-workouts--7058285",
+      "lectureId": 7058285,
+      "title": "Как отслеживать тренировки?",
+      "blocks": 28,
+      "imageBlocks": 2,
+      "uniqueImages": 2,
+      "localImages": 2,
+      "links": 13,
+      "errors": []
+    },
+    {
+      "folder": "04-stage-one-tasks--7058281",
+      "lectureId": 7058281,
+      "title": "Задачи первого этапа",
+      "blocks": 7,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "05-menu-and-recipes--7058441",
+      "lectureId": 7058441,
+      "title": "Общие принципы составления меню и рецептов",
+      "blocks": 69,
+      "imageBlocks": 8,
+      "uniqueImages": 8,
+      "localImages": 8,
+      "links": 4,
+      "errors": []
+    },
+    {
+      "folder": "06-food-diary-app--7058293",
+      "lectureId": 7058293,
+      "title": "Как правильно пользоваться приложением. И каким?",
+      "blocks": 83,
+      "imageBlocks": 13,
+      "uniqueImages": 13,
+      "localImages": 13,
+      "links": 3,
+      "errors": []
+    },
+    {
+      "folder": "07-record-accurately--7058617",
+      "lectureId": 7058617,
+      "title": "Как точно нужно записывать?",
+      "blocks": 16,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "08-simplify-calorie-tracking--7058621",
+      "lectureId": 7058621,
+      "title": "Как упрощать учет калориий",
+      "blocks": 65,
+      "imageBlocks": 8,
+      "uniqueImages": 8,
+      "localImages": 8,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "09-stage-two-tasks--7058465",
+      "lectureId": 7058465,
+      "title": "Задачи второго этапа",
+      "blocks": 3,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "10-energy-balance--7058493",
+      "lectureId": 7058493,
+      "title": "Энергетический баланс",
+      "blocks": 84,
+      "imageBlocks": 11,
+      "uniqueImages": 11,
+      "localImages": 11,
+      "links": 17,
+      "errors": []
+    },
+    {
+      "folder": "11-set-calorie-deficit--7058497",
+      "lectureId": 7058497,
+      "title": "Как назначить себе дефицит калорий",
+      "blocks": 65,
+      "imageBlocks": 1,
+      "uniqueImages": 1,
+      "localImages": 1,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "12-weight-loss-rate--7058513",
+      "lectureId": 7058513,
+      "title": "Считаем скорость вашего похудения",
+      "blocks": 9,
+      "imageBlocks": 1,
+      "uniqueImages": 1,
+      "localImages": 1,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "13-workout-supplement--7058541",
+      "lectureId": 7058541,
+      "title": "Дополнительные материалы по тренировкам",
+      "blocks": 102,
+      "imageBlocks": 5,
+      "uniqueImages": 5,
+      "localImages": 5,
+      "links": 12,
+      "errors": []
+    },
+    {
+      "folder": "14-activity-bonus--7058553",
+      "lectureId": 7058553,
+      "title": "«Бонус» к активности",
+      "blocks": 55,
+      "imageBlocks": 2,
+      "uniqueImages": 2,
+      "localImages": 2,
+      "links": 4,
+      "errors": []
+    },
+    {
+      "folder": "15-stage-three-tasks--7058561",
+      "lectureId": 7058561,
+      "title": "Задачи третьего этапа",
+      "blocks": 1,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "16-food-blocks-and-catalog--7058577",
+      "lectureId": 7058577,
+      "title": "Блоки в питании и каталог приемов пищи",
+      "blocks": 68,
+      "imageBlocks": 1,
+      "uniqueImages": 1,
+      "localImages": 1,
+      "links": 0,
+      "errors": []
+    },
+    {
+      "folder": "17-hunger-snacking-grazing--7058585",
+      "lectureId": 7058585,
+      "title": "Окна голода, перекусы, кусочничество",
+      "blocks": 124,
+      "imageBlocks": 6,
+      "uniqueImages": 6,
+      "localImages": 6,
+      "links": 5,
+      "errors": []
+    },
+    {
+      "folder": "18-language-of-actions--7058589",
+      "lectureId": 7058589,
+      "title": "Язык правильных действий",
+      "blocks": 60,
+      "imageBlocks": 0,
+      "uniqueImages": 0,
+      "localImages": 0,
+      "links": 1,
+      "errors": []
+    }
+  ],
+  "videos": [
+    {
+      "folder": "01-intro--7058105",
+      "lectureId": 7058105,
+      "title": "Почему дефицит калорий не работает",
+      "videoId": "tg5Opyc4",
+      "errors": []
+    },
+    {
+      "folder": "02-training-activity--7058537",
+      "lectureId": 7058537,
+      "title": "Расчет тренировочной активности",
+      "videoId": "DIQRLzFy",
+      "errors": []
+    },
+    {
+      "folder": "03-periodization--7058605",
+      "lectureId": 7058605,
+      "title": "Периодизация похудения",
+      "videoId": "IQgljaNX",
+      "errors": []
+    }
+  ]
+}

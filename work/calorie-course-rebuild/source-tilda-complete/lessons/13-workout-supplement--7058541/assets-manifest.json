@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "1.0",
+  "lectureId": 7058541,
+  "assets": [
+    {
+      "order": 1,
+      "sourceUrl": "https://static.tildacdn.com/tild6333-3132-4361-b437-343834613765/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild6333-3132-4361-b437-343834613765/image.png",
+      "localPath": "assets/001.png",
+      "downloaded": true
+    },
+    {
+      "order": 2,
+      "sourceUrl": "https://static.tildacdn.com/tild3861-6261-4535-b663-363961393966/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3861-6261-4535-b663-363961393966/image.png",
+      "localPath": "assets/002.png",
+      "downloaded": true
+    },
+    {
+      "order": 3,
+      "sourceUrl": "https://static.tildacdn.com/tild3266-6561-4532-b933-313332313933/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3266-6561-4532-b933-313332313933/image.png",
+      "localPath": "assets/003.png",
+      "downloaded": true
+    },
+    {
+      "order": 4,
+      "sourceUrl": "https://static.tildacdn.com/tild3865-6338-4431-a437-623038396131/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3865-6338-4431-a437-623038396131/image.png",
+      "localPath": "assets/004.png",
+      "downloaded": true
+    },
+    {
+      "order": 5,
+      "sourceUrl": "https://static.tildacdn.com/tild3563-3334-4337-b431-623164363734/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3563-3334-4337-b431-623164363734/image.png",
+      "localPath": "assets/005.png",
+      "downloaded": true
+    }
+  ],
+  "failures": []
+}
+

@@ -1,0 +1,22 @@
+{
+  "schemaVersion": "1.0",
+  "lectureId": 7058285,
+  "assets": [
+    {
+      "order": 1,
+      "sourceUrl": "https://static.tildacdn.com/tild3534-3436-4232-a234-303238633831/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3534-3436-4232-a234-303238633831/image.png",
+      "localPath": "assets/001.png",
+      "downloaded": true
+    },
+    {
+      "order": 2,
+      "sourceUrl": "https://static.tildacdn.com/tild3134-3465-4435-b438-386537366164/image.png",
+      "resolvedUrl": "https://static.tildacdn.com/tild3134-3465-4435-b438-386537366164/image.png",
+      "localPath": "assets/002.png",
+      "downloaded": true
+    }
+  ],
+  "failures": []
+}
+
