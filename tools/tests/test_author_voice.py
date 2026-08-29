@@ -19,6 +19,7 @@ if str(TOOLS) not in sys.path:
 import build_author_catalog as catalog
 import build_author_voice as voice
 import build_rhetorical_library as rhetoric
+import install_edabalans_librarian_skill as librarian_skill_installer
 import install_edabalans_writer_skill as writer_skill_installer
 import materialize_author_voice as materialize
 import prepare_author_post as prepare
@@ -81,6 +82,23 @@ class ProjectVoiceManifestTests(unittest.TestCase):
             self.assertEqual(destination.read_text(encoding="utf-8"), "accepted version")
             self.assertEqual(
                 writer_skill_installer.sync_status(source, destination)["status"],
+                "outdated",
+            )
+
+    def test_librarian_runtime_copy_does_not_follow_later_worktree_edits(self) -> None:
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            source = root / "checkout/SKILL.md"
+            destination = root / "runtime/SKILL.md"
+            source.parent.mkdir(parents=True)
+            source.write_text("accepted librarian", encoding="utf-8")
+
+            librarian_skill_installer.install(source, destination)
+            source.write_text("uncommitted librarian edit", encoding="utf-8")
+
+            self.assertEqual(destination.read_text(encoding="utf-8"), "accepted librarian")
+            self.assertEqual(
+                librarian_skill_installer.status(source, destination)["status"],
                 "outdated",
             )
 
@@ -439,9 +457,22 @@ class ProjectVoiceManifestTests(unittest.TestCase):
     def test_project_routes_every_writing_task_through_writer_skill(self) -> None:
         project_root = TOOLS.parent
         agents = (project_root / "AGENTS.md").read_text(encoding="utf-8")
+        writer_skill = (
+            project_root / "content/author-voice/skill/edabalans-writer/SKILL.md"
+        ).read_text(encoding="utf-8")
+        librarian_skill = (
+            project_root / "content/knowledge/skill/edabalans-librarian/SKILL.md"
+        ).read_text(encoding="utf-8")
 
         self.assertIn("выполнять только через skill `edabalans-writer`", agents)
         self.assertIn("Единый писательский канон принадлежит только модулю `platform.content`", agents)
+        self.assertIn("skill `edabalans-librarian`", agents)
+        self.assertIn("install_edabalans_writer_skill.py --check", agents)
+        self.assertIn("install_edabalans_librarian_skill.py --check", agents)
+        self.assertIn("Слово «автономно» не отменяет предстартовый аудит", agents)
+        self.assertIn("Для ясной задачи ничего не спрашивать", writer_skill)
+        self.assertIn("ближайшую принятую авторскую основу", librarian_skill)
+        self.assertIn("каждый раз читать всю", librarian_skill)
 
     def test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts(self) -> None:
         project_root = TOOLS.parent
