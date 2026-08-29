@@ -72,3 +72,54 @@ commit не входят.
   дизайна.
 - В рабочем дереве остаются многочисленные посторонние изменения других потоков;
   этот commit и handoff их не принимают и не изменяют.
+
+---
+
+# Handoff: разбор Saved Messages и передача для планирования постов
+
+Статус: `локально завершено`.
+
+Реализация зафиксирована в commit: `6eb798058f1cd61a111b1ab93b4299c50d72c631`
+(`feat: publish course materials without deploy`); в нём находятся также инструменты
+этой задачи. Private-результаты остаются вне Git.
+
+## Изменённые файлы задачи
+
+- `tools/analyze_saved_telegram_notes.py` — обратимый разбор Telegram Saved
+  Messages: ссылки, опросы, дубли и очередь проверки без чтения медиа.
+- `tools/catalog_saved_notes_editorially.py` — редакторские виды: посты/черновики,
+  идеи/хуки, старые планы, ссылки, архив и review.
+- `tools/prepare_post_planning_handoff.py` — выборка материалов для соседнего
+  чата планирования постов.
+- `tools/tests/test_saved_telegram_notes.py`
+- `tools/tests/test_catalog_saved_notes_editorially.py`
+- `tools/tests/test_prepare_post_planning_handoff.py`
+
+## Локальные результаты вне Git
+
+- Полный разбор: `C:\private\edabalans-content-authoring\saved-notes\`.
+- Редакторские виды: `C:\private\edabalans-content-authoring\saved-notes\editorial\`.
+- Передача для планирования:
+  `C:\private\edabalans-content-authoring\saved-notes\post-planning-handoff\`.
+- Точка входа соседнего чата: `INSTRUCTIONS_FOR_POST_PLANNING_CHAT.md` в папке
+  передачи.
+
+## Проверки
+
+- `pytest tools/tests/test_saved_telegram_notes.py -q` — passed.
+- `pytest tools/tests/test_catalog_saved_notes_editorially.py -q` — passed.
+- `pytest tools/tests/test_prepare_post_planning_handoff.py -q` — passed.
+- В handoff только 2 556 авторских строк классов `authored_ready_post`,
+  `authored_draft_or_fragment`, `nutrition_or_content_idea`,
+  `template_or_mechanic`; 553 помечены как требующие исходного контекста.
+
+## Незавершённые вопросы
+
+- Разметка Saved Messages эвристическая; до server import готовые посты и
+  черновики требуют смысловой проверки небольшими пакетами.
+- Медиа-зависимые записи нельзя интерпретировать по одному тексту; медиа не
+  скачивались и не распознавались.
+- Внешние референсы, личный архив и технические записи сознательно исключены из
+  передачи для планирования постов.
+
+Push, merge, перенос в `main` и deploy не выполнялись.
