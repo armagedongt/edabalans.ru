@@ -1,125 +1,98 @@
-# Handoff: редизайн главной страницы
+# Handoff: первая часть Системы рецептов
 
 Статус: `локально завершено`
 
-Модуль: `platform.content`
-
-Основной commit: `420184b1a0fa6b821bd8724cde8ba8eafeff5e45` (`feat(site): add homepage redesign previews`).
+Основной commit: `a6271ebe0640182f88ed95c59dbc03b2796f1c23`
+(`content: draft recipe system and layered meal constructor`).
 
 ## Что изменено
 
-- `prototypes/homepage-redesign/README.md` — назначение прототипа, запуск и
-  зафиксированные дизайн-решения.
-- `prototypes/homepage-redesign/common.css` — общая светлая визуальная система,
-  адаптив, шапка, текстовые секции, программа, чат, тарифы, консультация и отзывы.
-- `prototypes/homepage-redesign/version-a.css` — спокойная редакционная версия.
-- `prototypes/homepage-redesign/version-b.css` — более свободная и акцентная версия.
-- `prototypes/homepage-redesign/preview.js` — сборка новых секций поверх сохранённой
-  страницы Tilda, навигация, тарифы и сохранение production-ссылок заказа.
-- `prototypes/homepage-redesign/build-previews.ps1` — генерация двух preview HTML и
-  удаление production-счётчиков из локальной сборки.
-- `prototypes/homepage-redesign/serve-preview.ps1` — локальная раздача preview и
-  исходных ресурсов Tilda.
+### Исследование, архитектура и решения
 
-Generated-файлы `prototypes/homepage-redesign/dist/*.html` остаются локальными и в
-commit не входят.
+- `work/recipe-catalog/code-research.md`
+- `work/recipe-catalog/day-06-semantic-map.md`
+- `work/recipe-catalog/decisions.md`
+- `work/recipe-catalog/first-part-system.md`
+- `work/recipe-catalog/user-spec.md`
+- `work/recipe-catalog/logs/userspec/interview.yml`
+- `work/recipe-catalog/fact-check-notes.md`
+
+### Материалы первой части
+
+- `work/recipe-catalog/drafts/01-anchor-points.md`
+- `work/recipe-catalog/drafts/02-oatmeal-evolution.md`
+- `work/recipe-catalog/drafts/03-how-to-make-food-tasty.md`
+- `work/recipe-catalog/drafts/04-why-recipe-may-not-fit.md`
+- `work/recipe-catalog/drafts/05-meal-constructor.md`
+- `work/recipe-catalog/drafts/06-store-food-without-cooking.md`
+- `work/recipe-catalog/drafts/07-demo-same-products-four-forms.md`
+- `work/recipe-catalog/drafts/08-demo-one-meal-three-characters.md`
+- `work/recipe-catalog/drafts/09-first-recipes-selection.md`
+- `work/recipe-catalog/drafts/10-system-of-recipes-offer.md`
+
+### Дизайн конструктора
+
+- `work/recipe-catalog/visuals/design-contract.md`
+- `work/recipe-catalog/visuals/prompts.md`
+- `work/recipe-catalog/visuals/meal-constructor-variant-1-stacked.png`
+- `work/recipe-catalog/visuals/meal-constructor-variant-2-route.png`
+- `work/recipe-catalog/visuals/meal-constructor-variant-3-layers.png`
+- `work/recipe-catalog/visuals/meal-constructor-variant-4a-full-stack.png`
+- `work/recipe-catalog/visuals/meal-constructor-variant-4b-grouped-stack.png`
+- `work/recipe-catalog/visuals/meal-constructor-variant-4c-grouped-with-spices.png`
 
 ## Зафиксированные дизайн-решения
 
-- Использовать светло-голубую, синюю и оранжевую палитру референса, а не прежнюю
-  палитру страницы.
-- Версию A вести как бережный редакционный редизайн, версию B — как более смелую
-  интерпретацию того же визуального языка.
-- Сохранять длинный авторский текст в обычных широких абзацах; не превращать каждый
-  тезис в карточку.
-- Не ставить подряд тяжёлые цветные секции; поддерживать светлые интервалы и смену
-  ритма.
-- Оставить видео по центру. Собственный плеер и аналитику просмотра не реализовывать
-  в этой задаче.
-- Использовать интерфейс мессенджера вместо терминала, оранжевые CTA, светлые тарифы
-  и наклонные карточки отзывов.
-- Не выводить курс по подсчёту в основное повествование; оставить его только
-  необязательным дополнительным продуктом.
+- Основной формат иллюстрации — горизонтальный 16:9.
+- Конструктор показывается полноширинными горизонтальными слоями, а не маршрутом,
+  стрелками или сходящимися дорожками.
+- Каждый слой перечисляет конкретные варианты выбора. Белки, гарниры,
+  форм-факторы, специи, соусы и топпинги не заменяются общими иконками.
+- Основная структура содержит одиннадцать слоёв и три группы: «Собираем основу»,
+  «Делаем вкусно», «Проверяем».
+- Объём остаётся отдельным слоем с тремя вариантами: овощи, фрукты/ягоды и жидкая
+  часть блюда.
+- Специи и ароматика находятся внутри конструктора отдельным слоем, но не становятся
+  отдельным учебным модулем.
+- Основной визуальный кандидат —
+  `meal-constructor-variant-4c-grouped-with-spices.png`.
+- PNG-файлы являются концептами. Для публикации выбранную схему нужно пересобрать
+  в редактируемом макете и проверить на фактической ширине материала.
 
-Полная формулировка решений находится в
-`prototypes/homepage-redesign/README.md` и является источником для следующей
-итерации прототипа.
+## Выполненные проверки
 
-## Проверки
-
-- Ранее визуально проверены обе версии на ширинах 360, 430, 768 и 1440 px;
-  горизонтального переполнения не обнаружено.
-- В сохранённых `dist/version-a.html` и `dist/version-b.html` проверено наличие
-  шапки, первого экрана, мессенджера, программы и новых тарифов.
-- В каждом сохранённом HTML присутствуют исходные ссылки Tilda `#order:`.
-- В сохранённых HTML отсутствуют маркеры Яндекс Метрики, Mail.ru, VK и Tilda Stat.
-- `git diff --cached --check` перед основным commit выполнен без ошибок.
-- Состав основного commit проверен: в нём только семь файлов
-  `prototypes/homepage-redesign/`; посторонние изменения рабочего дерева не вошли.
+- Все десять читательских черновиков проверены через
+  `tools/validate_author_draft.py`; итоговый статус каждого — `pass`.
+- Для подборки рецептов явно разрешено сохранение исходных Telegra.ph-ссылок;
+  после этого проверка защищённых ссылок прошла.
+- Выполнен поиск незакрытых `TODO`, `TBD`, `PENDING` и `PLACEHOLDER` внутри
+  `work/recipe-catalog`; совпадений нет.
+- `git diff --cached --check -- work/recipe-catalog` выполнен без ошибок после
+  исправления пробелов и лишних пустых строк.
+- `git show --check a6271ebe0640182f88ed95c59dbc03b2796f1c23` выполнен без ошибок.
+- Состав основного commit проверен через `git diff-tree`: в нём только 25 файлов
+  `work/recipe-catalog` этой задачи.
 - Push, merge, перенос в `main` и deploy не выполнялись.
 
 ## Незавершённые вопросы
 
-- Исходный файл `D:\сайт\Мастер-класс по изменению питания.html` сейчас недоступен,
-  поэтому повторная генерация `dist` в финальной приёмке не выполнена. После
-  возвращения файла достаточно запустить `build-previews.ps1`.
-- До следующей итерации нужно выбрать A или B как основное направление; обе версии
-  намеренно сохранены.
-- Собственный видеоплеер, ускоренное ощущение прогресса и аналитика уникального
-  просмотра явно отложены владельцем и в текущий commit не входят.
-- Production-страница Tilda, главная страница домена, SEO-настройки и корзина не
-  переключались. Их перенос требует отдельного подтверждённого шага после выбора
-  дизайна.
-- В рабочем дереве остаются многочисленные посторонние изменения других потоков;
-  этот commit и handoff их не принимают и не изменяют.
+- До публикации пересчитать актуальные КБЖУ, порции и DQS финальной овсянки.
+- Отобрать реальные карточки и фотографии магазинных продуктов для материала 06.
+- Утвердить окончательный список рецептов первой части и подготовить финальные
+  граммовки/карточки.
+- Выбрать production-компоновку между 4a, 4b и 4c. Рекомендация текущего потока —
+  4c, потому что в ней отдельно видны специи и смысловые группы.
+- Уточнить финальный список вариантов внутри слоёв: особенно белковые продукты,
+  гарниры, соусы и топпинги. Сейчас это содержательно полный рабочий набор, но не
+  закрытый справочник.
+- Пересобрать выбранную инфографику в редактируемом формате и проверить
+  типографику, контраст и читаемость на экране мастер-класса.
+- Отдельным решением перенести утверждённые материалы из `work/` в канонический
+  runtime мастер-класса и заменить старый placeholder «Топпинги» конструктором.
 
----
+## Состояние рабочего дерева
 
-# Handoff: разбор Saved Messages и передача для планирования постов
-
-Статус: `локально завершено`.
-
-Реализация зафиксирована в commit: `6eb798058f1cd61a111b1ab93b4299c50d72c631`
-(`feat: publish course materials without deploy`); в нём находятся также инструменты
-этой задачи. Private-результаты остаются вне Git.
-
-## Изменённые файлы задачи
-
-- `tools/analyze_saved_telegram_notes.py` — обратимый разбор Telegram Saved
-  Messages: ссылки, опросы, дубли и очередь проверки без чтения медиа.
-- `tools/catalog_saved_notes_editorially.py` — редакторские виды: посты/черновики,
-  идеи/хуки, старые планы, ссылки, архив и review.
-- `tools/prepare_post_planning_handoff.py` — выборка материалов для соседнего
-  чата планирования постов.
-- `tools/tests/test_saved_telegram_notes.py`
-- `tools/tests/test_catalog_saved_notes_editorially.py`
-- `tools/tests/test_prepare_post_planning_handoff.py`
-
-## Локальные результаты вне Git
-
-- Полный разбор: `C:\private\edabalans-content-authoring\saved-notes\`.
-- Редакторские виды: `C:\private\edabalans-content-authoring\saved-notes\editorial\`.
-- Передача для планирования:
-  `C:\private\edabalans-content-authoring\saved-notes\post-planning-handoff\`.
-- Точка входа соседнего чата: `INSTRUCTIONS_FOR_POST_PLANNING_CHAT.md` в папке
-  передачи.
-
-## Проверки
-
-- `pytest tools/tests/test_saved_telegram_notes.py -q` — passed.
-- `pytest tools/tests/test_catalog_saved_notes_editorially.py -q` — passed.
-- `pytest tools/tests/test_prepare_post_planning_handoff.py -q` — passed.
-- В handoff только 2 556 авторских строк классов `authored_ready_post`,
-  `authored_draft_or_fragment`, `nutrition_or_content_idea`,
-  `template_or_mechanic`; 553 помечены как требующие исходного контекста.
-
-## Незавершённые вопросы
-
-- Разметка Saved Messages эвристическая; до server import готовые посты и
-  черновики требуют смысловой проверки небольшими пакетами.
-- Медиа-зависимые записи нельзя интерпретировать по одному тексту; медиа не
-  скачивались и не распознавались.
-- Внешние референсы, личный архив и технические записи сознательно исключены из
-  передачи для планирования постов.
-
-Push, merge, перенос в `main` и deploy не выполнялись.
+В репозитории остались многочисленные посторонние изменения других потоков. Они не
+вошли в основной commit и не принимались этой задачей. До создания handoff в индексе
+уже находилась другая версия `work/integration-handoff.md`; её staged-содержимое
+сохранено отдельно от результата этого потока.
