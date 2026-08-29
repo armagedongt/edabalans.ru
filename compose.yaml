@@ -48,6 +48,7 @@ services:
       SMTP_USE_SSL: "${SMTP_USE_SSL:-true}"
       SMTP_STARTTLS: "${SMTP_STARTTLS:-false}"
       TELEGRAM_TEST_BOT_USERNAME: "${TELEGRAM_TEST_BOT_USERNAME:-}"
+      MASTERCLASS_COURSE_URL: "${MASTERCLASS_COURSE_URL:-https://похудение-это-есть.рф/lk}"
     expose:
       - "8000"
     depends_on:

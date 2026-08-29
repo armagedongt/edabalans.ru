@@ -48,7 +48,7 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
         assert counts == {WELCOME_CODE: 12, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 55
+        assert session.scalar(select(func.count(ContentItem.id))) == 56
         day_unopened_content = session.scalar(
             select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
         )
@@ -155,7 +155,7 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
             .where(SequenceStep.sequence_version_id == version.id)
             .order_by(SequenceStep.position)
         ))
-        assert len(steps) == 15
+        assert len(steps) == 11
         day_unopened_content = session.scalar(
             select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
         )
@@ -168,7 +168,9 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
         assert any(step.step_key == "pp_course_stalled_72h" for step in steps)
         assert any(step.step_key == "pp_current_diet_questionnaire" for step in steps)
         assert any(step.step_key == "pp_dqs_app_link" for step in steps)
-        assert any(step.step_key == "pp_review_week_day7" for step in steps)
+        closing_review = next(step for step in steps if step.step_key == "pp_closing_review_copy")
+        assert closing_review.configuration["trigger"] == "closing_review_submitted"
+        assert not any(step.step_key.startswith("pp_review_week_day") for step in steps)
         assert any(
             (step.configuration or {}).get("trigger") == "sales_last_chance_due"
             for step in steps

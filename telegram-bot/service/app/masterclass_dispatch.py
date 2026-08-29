@@ -6,6 +6,7 @@ import re
 from types import SimpleNamespace
 from typing import Callable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+import uuid
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
@@ -61,6 +62,19 @@ CURRENT_DIET_QUESTION_TITLES = {
 CURRENT_DIET_QUESTION_ORDER = {
     code: index for index, code in enumerate(CURRENT_DIET_QUESTION_TITLES)
 }
+CLOSING_REVIEW_QUESTION_TITLES = {
+    "diet_changes": "Как менялось питание",
+    "new_discoveries": "Что стало новым",
+    "applied": "Что удалось применить",
+    "resistance": "Что не подошло",
+    "focus": "Главная зона внимания",
+    "questions": "Вопросы к разбору",
+    "weighing": "Взвешивания",
+    "consultation_format": "Формат разбора",
+}
+CLOSING_REVIEW_QUESTION_ORDER = {
+    code: index for index, code in enumerate(CLOSING_REVIEW_QUESTION_TITLES)
+}
 MASTERCLASS_TARIFFS = {
     "MASTERCLASS_BASIC": "Минимальный",
     "MASTERCLASS_RECIPES": "Стандартный",
@@ -82,16 +96,23 @@ def crm_access_codes(session: Session, user_id: str) -> set[str]:
 
 
 def content_code_for(notification: MasterclassNotification, access: set[str]) -> str | None:
-    if notification.notification_kind in {"owner_closing_review", "dqs_support"}:
+    if notification.notification_kind in {
+        "owner_closing_review",
+        "dqs_support",
+        "review_followup",
+        "post_review_day_2",
+        "post_review_day_4",
+        "post_review_day_7",
+    }:
         return None
+    if notification.notification_kind == "closing_review_copy":
+        return notification.content_code or "tpl_postpurchase_closing_review_copy"
     if notification.notification_kind == "recipes_followup":
         if "ACCESS_RECIPES" not in access:
             return "tpl_postpurchase_recipes_missing"
         if DIGITAL_ACCESS_CODES - access:
             return "tpl_postpurchase_recipes_owned"
         return None
-    if notification.notification_kind == "review_followup":
-        return "tpl_postpurchase_review_consultation" if "ACCESS_CONSULTATION" in access else "tpl_postpurchase_review_no_consultation"
     if notification.notification_kind == "course_stalled_72h":
         return notification.content_code or "tpl_postpurchase_tempo_late"
     if notification.notification_kind == "course_day_unopened_18h":
@@ -225,6 +246,14 @@ def day_url(base_url: str, day: int) -> str:
     return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
 
 
+def course_material_url(base_url: str, day: int, material_id: str) -> str:
+    parts = urlsplit(base_url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["course_day"] = str(day)
+    query["course_material"] = material_id
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
 def telegram_text_parts(body: str, limit: int = 3900) -> list[str]:
     if len(body) <= limit:
         return [body]
@@ -314,6 +343,7 @@ def questionnaire_formatted(
     empty_text: str,
     *,
     numbered: bool = False,
+    include_empty: bool = False,
 ) -> str:
     answers = session.execute(
         text(
@@ -324,12 +354,22 @@ def questionnaire_formatted(
         ),
         {"user_id": user_id, "kind": kind},
     ).all()
+    stored = {str(code): str(answer or "").strip() for code, answer in answers}
+    codes = (
+        sorted(titles, key=lambda code: order.get(code, 999))
+        if include_empty
+        else [
+            str(code)
+            for code, answer in sorted(
+                answers, key=lambda row: order.get(str(row[0]), 999)
+            )
+            if str(answer or "").strip()
+        ]
+    )
     return "\n\n".join(
-        f"<b>{str(order.get(str(code), 999) + 1) + '. ' if numbered else ''}{escape(titles.get(str(code), str(code)), quote=True)}:</b>\n{escape(str(answer), quote=True)}"
-        for code, answer in sorted(
-            answers, key=lambda row: order.get(str(row[0]), 999)
-        )
-        if str(answer or "").strip()
+        f"<b>{str(order.get(code, 999) + 1) + '. ' if numbered else ''}{escape(titles.get(code, code), quote=True)}:</b>\n"
+        f"{escape(stored.get(code) or 'Ответ не заполнен.', quote=True)}"
+        for code in codes
     ) or empty_text
 
 
@@ -345,9 +385,17 @@ def client_values(
         "offers_url": escape(offers_url, quote=True),
         "course_url": escape(course_url or account_url, quote=True),
         "account_url": escape(account_url or course_url, quote=True),
+        "consultation_description_url": escape(
+            course_material_url(
+                course_url or account_url,
+                19,
+                "day-19-article-02",
+            ),
+            quote=True,
+        ),
         "offer_expires_at": "срок указан на странице предложения",
     }
-    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}", "{{current_diet_formatted}}")
+    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}", "{{current_diet_formatted}}", "{{closing_review_formatted}}")
     if not any(key in template_body for key in identity_keys):
         return values
     email = session.execute(
@@ -388,6 +436,16 @@ def client_values(
         "Опросник по продуктовым категориям пока не заполнен.",
         numbered=True,
     )
+    closing_review = questionnaire_formatted(
+        session,
+        contact.user_id,
+        "closing-review",
+        CLOSING_REVIEW_QUESTION_TITLES,
+        CLOSING_REVIEW_QUESTION_ORDER,
+        "Итоговое саморевью пока не заполнено.",
+        numbered=True,
+        include_empty=True,
+    )
     paid_at = payment[1] if payment else None
     if paid_at and not isinstance(paid_at, datetime):
         try:
@@ -402,6 +460,7 @@ def client_values(
         "purchase_date": paid_at.strftime("%d.%m.%Y") if paid_at else "дата не указана",
         "questionnaire_formatted": questionnaire,
         "current_diet_formatted": current_diet,
+        "closing_review_formatted": closing_review,
     }
 
 
@@ -446,8 +505,6 @@ def dispatch_due_masterclass_notifications(
         due_query = due_query.where(MasterclassNotification.notification_kind.in_(notification_kinds))
     due = list(session.scalars(due_query))
     for notification in due:
-        if notification.notification_kind == "owner_closing_review":
-            continue
         if test_only:
             enabled = session.execute(
                 text(
@@ -490,6 +547,46 @@ def dispatch_due_masterclass_notifications(
             notification.status = "skipped"
             notification.error_message = "offer window expired, changed, or was purchased"
             counters["skipped"] += 1
+            continue
+        delivery_prefix = f"system:masterclass:{notification.id}:part:"
+        stored_part_logs = list(session.scalars(
+            select(ManualMessage)
+            .where(
+                ManualMessage.contact_id == contact.id,
+                ManualMessage.operator_email.like(f"{delivery_prefix}%"),
+            )
+            .order_by(ManualMessage.operator_email)
+        ))
+        if stored_part_logs:
+            try:
+                for log in stored_part_logs:
+                    if log.status == "sent":
+                        continue
+                    log.status = "pending"
+                    saved_part = SimpleNamespace(
+                        code=notification.content_code or notification.notification_kind,
+                        title=notification.content_code or notification.notification_kind,
+                        body_source=log.body_source,
+                        source_format="telegram_html",
+                        media_kind=None,
+                        media_path=None,
+                        telegram_file_id=None,
+                    )
+                    try:
+                        log.platform_message_id = sender.send_content(contact.chat_id, saved_part, {})
+                        log.status = "sent"
+                        session.commit()
+                    except Exception:
+                        log.status = "failed"
+                        session.commit()
+                        raise
+                notification.status = "sent"
+                notification.sent_at = datetime.now(UTC)
+                notification.error_message = None
+                counters["sent"] += 1
+            except Exception as exc:
+                notification.error_message = str(exc)[:2000]
+                counters["failed"] += 1
             continue
         code = content_code_for(notification, access)
         if not code:
@@ -534,14 +631,45 @@ def dispatch_due_masterclass_notifications(
             counters["failed"] += 1
             continue
         try:
-            parts = telegram_text_parts(content.body_source) if not content.media_kind else [content.body_source]
-            for part in parts:
-                part_content = SimpleNamespace(**content.__dict__)
-                part_content.body_source = part
-                log = ManualMessage(contact_id=contact.id, direction="out", body_source=part, status="pending", operator_email="system:masterclass")
+            if content.media_kind:
+                log = ManualMessage(
+                    contact_id=contact.id,
+                    direction="out",
+                    body_source=content.body_source,
+                    status="pending",
+                    operator_email="system:masterclass",
+                )
                 session.add(log)
-                log.platform_message_id = sender.send_content(contact.chat_id, part_content, {})
+                log.platform_message_id = sender.send_content(contact.chat_id, content, {})
                 log.status = "sent"
+            else:
+                rendered_parts = telegram_text_parts(content.body_source)
+                part_logs = []
+                for part_index, part in enumerate(rendered_parts):
+                    log_id = str(uuid.uuid5(uuid.NAMESPACE_URL, f"masterclass-notification:{notification.id}:part:{part_index}"))
+                    log = ManualMessage(
+                        id=log_id,
+                        contact_id=contact.id,
+                        direction="out",
+                        body_source=part,
+                        status="pending",
+                        operator_email=f"{delivery_prefix}{part_index:04d}",
+                    )
+                    session.add(log)
+                    part_logs.append(log)
+                session.commit()
+                for log in part_logs:
+                    part_content = SimpleNamespace(**content.__dict__)
+                    part_content.body_source = log.body_source
+                    log.status = "pending"
+                    try:
+                        log.platform_message_id = sender.send_content(contact.chat_id, part_content, {})
+                        log.status = "sent"
+                        session.commit()
+                    except Exception:
+                        log.status = "failed"
+                        session.commit()
+                        raise
             notification.status = "sent"
             notification.sent_at = datetime.now(UTC)
             notification.error_message = None

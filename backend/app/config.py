@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     smtp_use_ssl: bool = True
     smtp_starttls: bool = False
     telegram_test_bot_username: str = ""
+    masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
     personal_access_page_url: str = "https://похудение-это-есть.рф/personal-access"
     pricing_catalog_enabled: bool = False
 

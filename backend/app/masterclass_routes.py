@@ -6,6 +6,7 @@ import hashlib
 import re
 import secrets
 import uuid
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -257,14 +258,6 @@ def masterclass_fully_unlocked(db: Session, user_id: uuid.UUID) -> bool:
 def notification_due(db: Session, user_id: uuid.UUID, normal: datetime) -> datetime:
     profile = test_profile(db, user_id)
     return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds) if profile else normal
-
-
-def review_week_due(db: Session, user_id: uuid.UUID, opened_at: datetime, day: int, ordinal: int) -> datetime:
-    """Keep real calendar days while making the owner's isolated test observable."""
-    profile = test_profile(db, user_id)
-    if profile:
-        return datetime.now(timezone.utc) + timedelta(seconds=profile.notification_delay_seconds * ordinal)
-    return aware_utc(opened_at) + timedelta(days=day)
 
 
 def unopened_day_reminder_due(
@@ -943,6 +936,14 @@ def questions(kind: str) -> list[tuple[str, str, str]]:
     raise HTTPException(404, "questionnaire not found")
 
 
+def consultation_description_url(base_url: str) -> str:
+    parts = urlsplit(base_url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["course_day"] = "19"
+    query["course_material"] = "day-19-article-02"
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
 def get_run(db: Session, user_id: uuid.UUID, kind: str) -> QuestionnaireRun:
     run = db.scalar(select(QuestionnaireRun).where(QuestionnaireRun.user_id == user_id, QuestionnaireRun.kind == kind))
     if not run:
@@ -1001,25 +1002,20 @@ def questionnaire(
         event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == "closing_review_opened"))
         if not event:
             event = MasterclassEvent(user_id=user.id, event_key="closing_review_opened", event_type="closing_review_opened", placement="closing-review", details={})
-            db.add(event); db.flush()
-            queue_notification(db, user.id, event, "review_followup", datetime.now(timezone.utc), payload={})
-            for ordinal, (day, notification_kind, content_code) in enumerate((
-                (2, "post_review_day_2", "tpl_postpurchase_review_week_1"),
-                (4, "post_review_day_4", "tpl_postpurchase_review_week_2"),
-                (7, "post_review_day_7", "tpl_postpurchase_review_week_3"),
-            ), start=1):
-                queue_notification(
-                    db,
-                    user.id,
-                    event,
-                    notification_kind,
-                    review_week_due(db, user.id, event.occurred_at, day, ordinal),
-                    content_code=content_code,
-                    payload={"anchor": "closing_review_opened", "day": day},
-                )
+            db.add(event)
     answers = {row.question_code: row.answer_text for row in db.scalars(select(QuestionnaireAnswer).where(QuestionnaireAnswer.run_id == run.id))}
     db.commit()
-    return {"ok": True, "kind": kind, "status": run.status, "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind)]}
+    return {
+        "ok": True,
+        "kind": kind,
+        "status": run.status,
+        "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind)],
+        "consultation_description_url": (
+            consultation_description_url(settings.masterclass_course_url)
+            if kind == "closing-review"
+            else None
+        ),
+    }
 
 
 @router.put("/questionnaires/{kind}/answer")
@@ -1070,7 +1066,15 @@ def finish_questionnaire(
         event = MasterclassEvent(user_id=user.id, event_key=event_key, event_type=event_type, details={"run_id": str(run.id), "status": run.status})
         db.add(event); db.flush()
     if kind == "closing-review" and action == "submit":
-        queue_notification(db, user.id, event, "owner_closing_review", datetime.now(timezone.utc), payload={"run_id": str(run.id)})
+        queue_notification(
+            db,
+            user.id,
+            event,
+            "closing_review_copy",
+            datetime.now(timezone.utc),
+            content_code="tpl_postpurchase_closing_review_copy",
+            payload={"questionnaire_kind": kind, "run_id": str(run.id)},
+        )
     if kind == "current-diet" and action == "submit":
         queue_notification(
             db,
@@ -1082,7 +1086,11 @@ def finish_questionnaire(
             payload={"questionnaire_kind": kind, "run_id": str(run.id)},
         )
     db.commit()
-    return {"ok": True, "status": run.status, "messenger_link_status": "planned"}
+    return {
+        "ok": True,
+        "status": run.status,
+        "messenger_link_status": "queued" if kind == "closing-review" and action == "submit" else "planned",
+    }
 
 
 @router.post("/events")

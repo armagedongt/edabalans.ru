@@ -24,13 +24,17 @@ START_CONTEXT = {
     "tpl_start_intensive_complete": ("Доставлен четвёртый день интенсива", "Стоп; интенсив не перезапускается"),
 }
 SILENT_EVENTS = {
-    "owner_closing_review": "Внутренняя задача владельцу; клиентское сообщение не требуется.",
+    "owner_closing_review": "Архивное событие: итоговое саморевью сохраняется в CRM, а копия отправляется участнику.",
     "dqs_support": "Архивное событие без автоматической клиентской отправки.",
 }
 ALLOWED_VARIABLES_BY_CONTENT_CODE = {
     "tpl_start_intensive_waiting": {"next_message_at", "wait_interval", "channel_link"},
     "tpl_postpurchase_identity": {"email", "telegram_username", "masterclass_tariff", "purchase_date", "account_url", "questionnaire_formatted"},
     "tpl_postpurchase_current_diet": {"current_diet_formatted"},
+    "tpl_postpurchase_closing_review_copy": {
+        "closing_review_formatted",
+        "consultation_description_url",
+    },
     "tpl_postpurchase_day_unopened": {"day_number", "day_title", "day_url"},
     "tpl_postpurchase_tempo_late": {"day_number", "day_title", "day_url"},
     "tpl_postpurchase_recipes_missing": {"offers_url", "offer_expires_at"},

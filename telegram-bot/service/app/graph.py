@@ -198,8 +198,9 @@ def postpurchase_graph(session: Session) -> dict[str, Any]:
             {"id": f"{message_id}:event", "source": event_id, "target": condition_id, "label": "Наступил срок", "branch": "event"},
             {"id": f"{message_id}:yes", "source": condition_id, "target": message_id, "label": "Да", "branch": "true"},
         ))
-    nodes.append({"id": "postpurchase_exit", "kind": "module_exit", "label": "7 дней после саморевью завершены", "subtitle": "Следующий модуль пока отключён", "position": len(TRIGGERS) * 3 + 1, "details": {"Следующий модуль": "postmasterclass_nurture", "Статус": "disabled"}})
-    edges.append({"id": "postpurchase:exit", "source": "pp_review_week_day7", "target": "postpurchase_exit", "label": "Отправлено", "branch": "default"})
+    nodes.append({"id": "postpurchase_exit", "kind": "module_exit", "label": "Цепочка мастер-класса завершена", "subtitle": "Следующий модуль пока отключён", "position": len(TRIGGERS) * 3 + 1, "details": {"Следующий модуль": "postmasterclass_nurture", "Статус": "disabled"}})
+    if TRIGGERS:
+        edges.append({"id": "postpurchase:exit", "source": TRIGGERS[-1]["step_key"], "target": "postpurchase_exit", "label": "Отправлено или безопасно пропущено", "branch": "default"})
     return {"level": "module", "module_code": "postpurchase_masterclass", "title": "4. После покупки мастер-класса", "status": "Событийный модуль · test-only", "description": "Каждая строка читается слева направо: событие → точная проверка → редактируемое сообщение. Ветка «нет» означает безопасный пропуск без отправки.", "nodes": nodes, "edges": edges, "issues": []}
 
 

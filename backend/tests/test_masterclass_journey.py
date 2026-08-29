@@ -2058,36 +2058,50 @@ def test_admin_can_enable_isolated_accelerated_course_profile():
     assert (unlock - opened).total_seconds() == 20
 
 
-def test_closing_review_queues_three_review_week_messages_once():
+def test_closing_review_sends_one_copy_only_after_submit():
     client, factory = setup()
-    enabled = client.put(
-        "/api/masterclass/admin/test-profile",
-        json={
-            "email": "member@example.test",
-            "enabled": True,
-            "day_interval_seconds": 20,
-            "notification_delay_seconds": 10,
-        },
-    )
-    assert enabled.status_code == 200
     first = client.get("/api/masterclass/questionnaires/closing-review?email=member@example.test")
     second = client.get("/api/masterclass/questionnaires/closing-review?email=member@example.test")
     assert first.status_code == second.status_code == 200
+    assert first.json()["consultation_description_url"].endswith(
+        "?course_day=19&course_material=day-19-article-02"
+    )
     with factory() as db:
-        rows = list(db.scalars(
-            select(MasterclassNotification)
-            .where(MasterclassNotification.notification_kind.like("post_review_day_%"))
-            .order_by(MasterclassNotification.due_at)
-        ))
-        assert [row.notification_kind for row in rows] == [
-            "post_review_day_2", "post_review_day_4", "post_review_day_7"
-        ]
-        assert [row.content_code for row in rows] == [
-            "tpl_postpurchase_review_week_1",
-            "tpl_postpurchase_review_week_2",
-            "tpl_postpurchase_review_week_3",
-        ]
-        assert [row.payload["day"] for row in rows] == [2, 4, 7]
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "closing_review_opened"
+        )) == 1
+
+    answer = {
+        "email": "member@example.test",
+        "question_code": "new_discoveries",
+        "answer_text": "Я стал иначе смотреть на структуру рациона",
+    }
+    assert client.put(
+        "/api/masterclass/questionnaires/closing-review/answer", json=answer
+    ).status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
+    submitted = client.post(
+        "/api/masterclass/questionnaires/closing-review/submit",
+        json={"email": "member@example.test"},
+    )
+    repeated = client.post(
+        "/api/masterclass/questionnaires/closing-review/submit",
+        json={"email": "member@example.test"},
+    )
+    assert submitted.status_code == repeated.status_code == 200
+    assert submitted.json()["messenger_link_status"] == "queued"
+
+    with factory() as db:
+        rows = list(db.scalars(select(MasterclassNotification)))
+        assert len(rows) == 1
+        assert rows[0].notification_kind == "closing_review_copy"
+        assert rows[0].content_code == "tpl_postpurchase_closing_review_copy"
+        assert rows[0].payload["questionnaire_kind"] == "closing-review"
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "closing_review_submitted"
+        )) == 1
 
 
 def test_course_content_uses_the_same_member_session():

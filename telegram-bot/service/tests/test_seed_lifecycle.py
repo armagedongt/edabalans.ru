@@ -30,7 +30,7 @@ def test_prepurchase_graph_has_no_repeated_purchase_conditions(tmp_path):
         assert any(step.step_key == "nurture_finish_day25" for step in steps)
 
 
-def test_postpurchase_has_review_week_and_postmasterclass_is_disabled(tmp_path):
+def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disabled(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'postpurchase-seed.sqlite'}")
     Base.metadata.create_all(engine)
     with Session(engine) as session:
@@ -44,7 +44,8 @@ def test_postpurchase_has_review_week_and_postmasterclass_is_disabled(tmp_path):
         keys = set(session.scalars(
             select(SequenceStep.step_key).where(SequenceStep.sequence_version_id == post_version.id)
         ))
-        assert {"pp_review_week_day2", "pp_review_week_day4", "pp_review_week_day7"} <= keys
+        assert "pp_closing_review_copy" in keys
+        assert not {"pp_review_week_day2", "pp_review_week_day4", "pp_review_week_day7"} & keys
 
         future = session.scalar(select(Sequence).where(Sequence.code == POSTMASTERCLASS_CODE))
         assert future.status == "disabled"

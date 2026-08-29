@@ -1,19 +1,20 @@
 from datetime import UTC, datetime, timedelta
-from pathlib import Path
 import re
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
+from app import main as main_module
 from app.database import Base, make_engine
 from app.content_formatting import validate_telegram_html
 from app.masterclass_dispatch import (
     client_values,
+    content_code_for,
     content_is_sendable,
     dispatch_due_masterclass_notifications,
     telegram_text_parts,
 )
-from app.models import BotInstance, Contact, ContentItem, MasterclassNotification
+from app.models import BotInstance, Contact, ContentItem, ManualMessage, MasterclassNotification
 
 
 class FakeSender:
@@ -79,6 +80,7 @@ def add_contact_and_content(session):
         "tpl_postpurchase_recipes_missing",
         "tpl_postpurchase_recipes_owned",
         "tpl_postpurchase_review_consultation",
+        "tpl_postpurchase_closing_review_copy",
         "tpl_postpurchase_tempo_late",
         "tpl_postpurchase_day_unopened",
         "tpl_postpurchase_final_offer",
@@ -86,6 +88,11 @@ def add_contact_and_content(session):
     ):
         if code == "tpl_postpurchase_day_unopened":
             body = "Откройте {{day_url}}"
+        elif code == "tpl_postpurchase_closing_review_copy":
+            body = (
+                "<b>Итоговое саморевью</b>\n\n{{closing_review_formatted}}\n\n"
+                "<a href=\"{{consultation_description_url}}\">Как проходит консультация</a>"
+            )
         elif code == "tpl_postpurchase_dqs_app_link":
             body = ('Ваша система оценки качества питания — '
                     '<a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.')
@@ -144,6 +151,12 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         session.execute(text(
             "INSERT INTO questionnaire_answers VALUES ('diet-run', 'vegetables', 'Овощи каждый день', CURRENT_TIMESTAMP)"
         ))
+        session.execute(text(
+            "INSERT INTO questionnaire_runs VALUES ('closing-run', :user_id, 'closing-review')"
+        ), {"user_id": user_id})
+        session.execute(text(
+            "INSERT INTO questionnaire_answers VALUES ('closing-run', 'new_discoveries', 'Стал иначе смотреть на свой рацион', CURRENT_TIMESTAMP)"
+        ))
         session.commit()
 
         values = client_values(
@@ -152,7 +165,7 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
             "https://example.test/offers",
             "https://example.test/course",
             "https://example.test/account",
-            "{{email}} {{masterclass_tariff}} {{questionnaire_formatted}} {{current_diet_formatted}}",
+            "{{email}} {{masterclass_tariff}} {{questionnaire_formatted}} {{current_diet_formatted}} {{closing_review_formatted}} {{consultation_description_url}}",
         )
 
         assert values["email"] == "buyer@example.com"
@@ -163,6 +176,161 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         assert "<b>2. Овощи:</b>" in values["current_diet_formatted"]
         assert "Овощи каждый день" in values["current_diet_formatted"]
         assert "vegetables" not in values["current_diet_formatted"]
+        assert "<b>2. Что стало новым:</b>" in values["closing_review_formatted"]
+        assert "Стал иначе смотреть на свой рацион" in values["closing_review_formatted"]
+        assert "<b>1. Как менялось питание:</b>\nОтвет не заполнен." in values["closing_review_formatted"]
+        expected_closing_titles = [
+            "Как менялось питание",
+            "Что стало новым",
+            "Что удалось применить",
+            "Что не подошло",
+            "Главная зона внимания",
+            "Вопросы к разбору",
+            "Взвешивания",
+            "Формат разбора",
+        ]
+        title_positions = [
+            values["closing_review_formatted"].index(f"{index}. {title}")
+            for index, title in enumerate(expected_closing_titles, start=1)
+        ]
+        assert title_positions == sorted(title_positions)
+        assert values["closing_review_formatted"].count("Ответ не заполнен.") == 7
+        assert values["consultation_description_url"].endswith(
+            "?course_day=19&amp;course_material=day-19-article-02"
+        )
+
+
+def test_closing_review_copy_does_not_branch_on_consultation_access():
+    notification = MasterclassNotification(
+        notification_kind="closing_review_copy",
+        content_code="tpl_postpurchase_closing_review_copy",
+        deduplication_key="closing-review:v1",
+        due_at=datetime.now(UTC),
+        payload={},
+    )
+
+    assert content_code_for(
+        notification, {"ACCESS_MASTERCLASS"}
+    ) == "tpl_postpurchase_closing_review_copy"
+    assert content_code_for(
+        notification, {"ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"}
+    ) == "tpl_postpurchase_closing_review_copy"
+
+
+def test_dispatch_sends_closing_review_copy_to_participant(tmp_path):
+    with session_factory(tmp_path) as session:
+        contact = add_contact_and_content(session)
+        for ddl in (
+            "CREATE TABLE user_emails (user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
+            "CREATE TABLE resources (id TEXT PRIMARY KEY, code TEXT)",
+            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, expires_at DATETIME)",
+            "CREATE TABLE products (id TEXT PRIMARY KEY, code TEXT, name TEXT)",
+            "CREATE TABLE payments (id TEXT PRIMARY KEY, product_id TEXT, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
+            "CREATE TABLE questionnaire_runs (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT)",
+            "CREATE TABLE questionnaire_answers (run_id TEXT, question_code TEXT, answer_text TEXT, updated_at DATETIME)",
+        ):
+            session.execute(text(ddl))
+        session.execute(text(
+            "INSERT INTO questionnaire_runs VALUES ('closing-run', :user_id, 'closing-review')"
+        ), {"user_id": contact.user_id})
+        session.execute(text(
+            "INSERT INTO questionnaire_answers VALUES "
+            "('closing-run', 'diet_changes', '<стало проще планировать>', CURRENT_TIMESTAMP), "
+            "('closing-run', 'consultation_format', 'голосовыми', CURRENT_TIMESTAMP)"
+        ))
+        notification = MasterclassNotification(
+            user_id=contact.user_id,
+            notification_kind="closing_review_copy",
+            content_code="tpl_postpurchase_closing_review_copy",
+            deduplication_key="closing-review:submitted:copy",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={"questionnaire_kind": "closing-review"},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "https://example.test/offers",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            course_url="https://example.test/course",
+            account_url="https://example.test/account",
+            notification_kinds={"closing_review_copy"},
+        )
+
+        assert result["sent"] == 1
+        assert notification.status == "sent"
+        assert sender.sent[0][0] == "42"
+        assert sender.sent[0][1] == "tpl_postpurchase_closing_review_copy"
+        body = sender.sent[0][2]
+        assert "Как менялось питание" in body
+        assert "&lt;стало проще планировать&gt;" in body
+        assert "Формат разбора" in body
+        assert "course_day=19&amp;course_material=day-19-article-02" in body
+        assert dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "https://example.test/offers",
+            lambda *_: {"ACCESS_MASTERCLASS", "ACCESS_CONSULTATION"},
+            notification_kinds={"closing_review_copy"},
+        )["sent"] == 0
+
+
+def test_multipart_retry_does_not_resend_already_delivered_parts(tmp_path):
+    class FailSecondPartOnce:
+        def __init__(self):
+            self.attempts = 0
+            self.accepted = []
+
+        def send_content(self, chat_id, content, configuration):
+            self.attempts += 1
+            if self.attempts == 2:
+                raise RuntimeError("temporary telegram failure")
+            self.accepted.append(content.body_source)
+            return str(self.attempts)
+
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        item = session.scalar(select(ContentItem).where(
+            ContentItem.code == "tpl_postpurchase_tempo_late"
+        ))
+        item.body_source = "<b>" + ("а" * 3889) + "&amp;" + ("б" * 40) + "</b>"
+        notification = MasterclassNotification(
+            id="90909090-9090-9090-9090-909090909090",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="test_copy",
+            content_code="tpl_postpurchase_tempo_late",
+            deduplication_key="multipart:retry",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FailSecondPartOnce()
+        first = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+        item.body_source = "<b>изменившийся шаблон не должен смешаться с уже начатой доставкой</b>"
+        item.status = "archived"
+        session.commit()
+        second = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+
+        assert first["failed"] == 1
+        assert second["sent"] == 1
+        assert notification.status == "sent"
+        assert sender.attempts == 3
+        assert len(sender.accepted) == 2
+        assert "изменившийся шаблон" not in "".join(sender.accepted)
+        logs = list(session.scalars(select(ManualMessage)))
+        assert len(logs) == 2
+        assert all(log.status == "sent" for log in logs)
 
 
 def test_long_telegram_summary_splits_on_paragraphs():
@@ -284,16 +452,60 @@ def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tm
         )]
 
 
-def test_disabled_postpurchase_scheduler_keeps_the_maintenance_gate_for_dqs_link():
-    source = (Path(__file__).resolve().parents[1] / "app" / "main.py").read_text(
-        encoding="utf-8"
-    )
-    disabled_branch = source.split("else:\n                        dispatch_due_masterclass_notifications(", 1)[1]
-    disabled_branch = disabled_branch.split("\n        except Exception:", 1)[0]
+def test_disabled_postpurchase_scheduler_dispatches_only_requested_service_deliveries(monkeypatch):
+    calls = []
 
-    assert 'notification_kinds={"dqs_app_link"}' in disabled_branch
-    assert "settings.telegram_maintenance_allowed_user_ids" in disabled_branch
-    assert "settings.telegram_maintenance_mode" in disabled_branch
+    def fake_dispatch(*args, **kwargs):
+        calls.append((args, kwargs))
+        return {"sent": 0}
+
+    monkeypatch.setattr(main_module, "dispatch_due_masterclass_notifications", fake_dispatch)
+    monkeypatch.setattr(main_module.settings, "postpurchase_dispatch_enabled", False)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", False)
+
+    result = main_module.dispatch_masterclass_notifications(object(), object())
+
+    assert result == {"sent": 0}
+    assert calls[0][1]["notification_kinds"] == {
+        "dqs_app_link",
+        "closing_review_copy",
+    }
+    assert "test_only" not in calls[0][1]
+
+
+def test_dispatch_skips_legacy_review_week_notifications(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        rows = []
+        for index, kind in enumerate(
+            ("post_review_day_2", "post_review_day_4", "post_review_day_7"),
+            start=1,
+        ):
+            row = MasterclassNotification(
+                user_id="11111111-1111-1111-1111-111111111111",
+                notification_kind=kind,
+                content_code=f"tpl_postpurchase_review_week_{index}",
+                deduplication_key=f"closing-review:legacy:{index}",
+                due_at=datetime.now(UTC) - timedelta(seconds=1),
+                status="pending",
+                payload={},
+            )
+            session.add(row)
+            rows.append(row)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+        )
+
+        assert result["skipped"] == 3
+        assert all(row.status == "skipped" for row in rows)
+        assert all(row.error_message == "nothing relevant to send" for row in rows)
+        assert sender.sent == []
 
 
 def test_sales_reminder_is_sent_once_for_its_current_window(tmp_path):

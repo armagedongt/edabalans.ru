@@ -402,6 +402,16 @@ def _postpurchase_messages() -> list[dict]:
             ["после покупки", "день-2", "опросник", "продуктовые категории"],
         ),
         (
+            "postpurchase_closing_review_copy",
+            "06 · Копия итогового саморевью",
+            "👉 <b>Итоговое саморевью</b>\n\n"
+            "{{closing_review_formatted}}\n\n"
+            "Это копия вашего итогового саморевью. Можете оставить её себе. Если хотите обсудить ответы или получить консультацию, перешлите это сообщение мне в личку и напишите, как вам было бы удобнее провести разбор.\n\n"
+            "<a href=\"{{consultation_description_url}}\">Как проходит консультация</a>",
+            None,
+            ["после покупки", "саморевью", "копия участнику", "консультация"],
+        ),
+        (
             "postpurchase_dqs_app_link",
             "DQS — ссылка на приложение",
             "Ваша система оценки качества питания — <a href=\"https://похудение-это-есть.рф/dqs\">открыть приложение</a>.",
@@ -619,6 +629,11 @@ def seed_defaults(
         "tpl_postpurchase_dqs_support",
         "tpl_postpurchase_tempo_ok",
         "tpl_postpurchase_recipes_second",
+        "tpl_postpurchase_review_consultation",
+        "tpl_postpurchase_review_no_consultation",
+        "tpl_postpurchase_review_week_1",
+        "tpl_postpurchase_review_week_2",
+        "tpl_postpurchase_review_week_3",
     ):
         obsolete = session.scalar(select(ContentItem).where(ContentItem.code == obsolete_code))
         if obsolete:
@@ -802,7 +817,7 @@ def seed_defaults(
     current_postpurchase = session.scalar(
         select(SequenceStep.id)
         .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
-        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_review_week_day7")
+        .where(SequenceVersion.sequence_id == post.id, SequenceStep.step_key == "pp_closing_review_copy")
         .limit(1)
     )
     current_day_unopened = session.scalar(
@@ -847,12 +862,8 @@ def seed_defaults(
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
             ("pp_sales_early_owned", "MESSAGE", "postpurchase_recipes_owned", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=true AND has_missing_products", "state": "editorial_slot"}),
-            ("pp_review_consultation", "MESSAGE", "postpurchase_review_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=true", "state": "editorial_slot"}),
-            ("pp_review_no_consultation", "MESSAGE", "postpurchase_review_no_consultation", None, {"trigger": "closing_review_opened", "condition": "consultation_access=false", "state": "editorial_slot"}),
+            ("pp_closing_review_copy", "MESSAGE", "postpurchase_closing_review_copy", None, {"trigger": "closing_review_submitted", "condition": "telegram_linked=true", "state": "participant_requested"}),
             ("pp_final_offer", "MESSAGE", "postpurchase_final_offer", None, {"trigger": "sales_last_chance_due", "condition": "stage=last_week AND has_missing_products", "state": "editorial_slot"}),
-            ("pp_review_week_day2", "MESSAGE", "postpurchase_review_week_1", None, {"trigger": "closing_review_opened + 2 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
-            ("pp_review_week_day4", "MESSAGE", "postpurchase_review_week_2", None, {"trigger": "closing_review_opened + 4 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
-            ("pp_review_week_day7", "MESSAGE", "postpurchase_review_week_3", None, {"trigger": "closing_review_opened + 7 days", "condition": "masterclass_access=true", "state": "editorial_slot"}),
             ("pp_finish", "STOP", None, None, {"reason": "postpurchase_automatic_messages_complete"}),
         ]
         for position, (key, kind, content_code, delay, config) in enumerate(specs, 1):

@@ -1,11 +1,15 @@
 ---
-document_status: planned
+document_status: archived
 date: 2026-08-25
 module_id: messaging.telegram.postpurchase
 origin: owner-explicit
 ---
 
 # Бриф писарю: сообщения Telegram после покупки Мастер-класса
+
+> Архивный бриф. Ветки саморевью по наличию консультации и сообщения через 2, 4 и
+> 7 дней отменены решением владельца от 29.08.2026. Текущая логика находится в
+> `MASTERCLASS_CLOSING_REVIEW_DELIVERY_SPEC.md` и каноническом документе Telegram.
 
 ## Задача
 

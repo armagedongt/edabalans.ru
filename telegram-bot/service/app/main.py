@@ -274,6 +274,33 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
     return sent, failed
 
 
+def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> dict[str, int]:
+    common = {
+        "course_url": settings.masterclass_course_url,
+        "account_url": settings.masterclass_account_url,
+        "allowed_telegram_ids": (
+            settings.telegram_maintenance_allowed_user_ids
+            if settings.telegram_maintenance_mode
+            else None
+        ),
+    }
+    if settings.postpurchase_dispatch_enabled:
+        return dispatch_due_masterclass_notifications(
+            session,
+            tg,
+            settings.masterclass_offers_url,
+            test_only=settings.postpurchase_test_only,
+            **common,
+        )
+    return dispatch_due_masterclass_notifications(
+        session,
+        tg,
+        settings.masterclass_offers_url,
+        notification_kinds={"dqs_app_link", "closing_review_copy"},
+        **common,
+    )
+
+
 async def scheduler_loop() -> None:
     while True:
         try:
@@ -298,34 +325,7 @@ async def scheduler_loop() -> None:
                     scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
                     for broadcast in scheduled:
                         _deliver_broadcast(session, broadcast, tg)
-                    if settings.postpurchase_dispatch_enabled:
-                        dispatch_due_masterclass_notifications(
-                            session,
-                            tg,
-                            settings.masterclass_offers_url,
-                            course_url=settings.masterclass_course_url,
-                            account_url=settings.masterclass_account_url,
-                            test_only=settings.postpurchase_test_only,
-                            allowed_telegram_ids=(
-                                settings.telegram_maintenance_allowed_user_ids
-                                if settings.telegram_maintenance_mode
-                                else None
-                            ),
-                        )
-                    else:
-                        dispatch_due_masterclass_notifications(
-                            session,
-                            tg,
-                            settings.masterclass_offers_url,
-                            course_url=settings.masterclass_course_url,
-                            account_url=settings.masterclass_account_url,
-                            allowed_telegram_ids=(
-                                settings.telegram_maintenance_allowed_user_ids
-                                if settings.telegram_maintenance_mode
-                                else None
-                            ),
-                            notification_kinds={"dqs_app_link"},
-                        )
+                    dispatch_masterclass_notifications(session, tg)
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
             logger.exception("Telegram scheduler iteration failed")
