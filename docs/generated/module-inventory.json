@@ -12650,7 +12650,7 @@
         {
           "file": "backend/app/importers/local_media.py",
           "kind": "function",
-          "line": 229,
+          "line": 230,
           "module_id": "operations.imports",
           "name": "main",
           "qualname": "main"
@@ -13074,7 +13074,7 @@
         {
           "file": "backend/app/importers/telegram_consultations.py",
           "kind": "function",
-          "line": 227,
+          "line": 229,
           "module_id": "operations.imports",
           "name": "persist_progress",
           "qualname": "import_export.persist_progress"
@@ -13082,7 +13082,7 @@
         {
           "file": "backend/app/importers/telegram_consultations.py",
           "kind": "function",
-          "line": 290,
+          "line": 292,
           "module_id": "operations.imports",
           "name": "main",
           "qualname": "main"
@@ -13260,13 +13260,37 @@
           "kind": "function",
           "line": 67,
           "module_id": "operations.imports",
+          "name": "test_replaced_media_with_same_path_is_retranscribed",
+          "qualname": "test_replaced_media_with_same_path_is_retranscribed"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 74,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_replaced_media_with_same_path_is_retranscribed.transcribe"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 89,
+          "module_id": "operations.imports",
+          "name": "test_interrupted_media_is_marked_for_review_without_retry",
+          "qualname": "test_interrupted_media_is_marked_for_review_without_retry"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 117,
+          "module_id": "operations.imports",
           "name": "test_multiple_chunks_are_transcribed_and_joined_in_order",
           "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order"
         },
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 73,
+          "line": 123,
           "module_id": "operations.imports",
           "name": "prepare",
           "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order.prepare"
@@ -13274,7 +13298,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 85,
+          "line": 135,
           "module_id": "operations.imports",
           "name": "test_result_directory_inside_source_is_rejected",
           "qualname": "test_result_directory_inside_source_is_rejected"
@@ -13282,7 +13306,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 96,
+          "line": 146,
           "module_id": "operations.imports",
           "name": "test_result_directory_inside_git_repository_is_rejected",
           "qualname": "test_result_directory_inside_git_repository_is_rejected"
@@ -13290,7 +13314,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 110,
+          "line": 160,
           "module_id": "operations.imports",
           "name": "test_symlink_outside_source_is_not_read_or_transcribed",
           "qualname": "test_symlink_outside_source_is_not_read_or_transcribed"
@@ -13298,7 +13322,23 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 134,
+          "line": 184,
+          "module_id": "operations.imports",
+          "name": "test_resolved_media_outside_source_is_rejected_before_read",
+          "qualname": "test_resolved_media_outside_source_is_rejected_before_read"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 193,
+          "module_id": "operations.imports",
+          "name": "fake_resolve",
+          "qualname": "test_resolved_media_outside_source_is_rejected_before_read.fake_resolve"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 213,
           "module_id": "operations.imports",
           "name": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command",
           "qualname": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command"
@@ -13306,7 +13346,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 139,
+          "line": 218,
           "module_id": "operations.imports",
           "name": "fake_run",
           "qualname": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command.fake_run"
@@ -13314,7 +13354,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 158,
+          "line": 237,
           "module_id": "operations.imports",
           "name": "test_one_failed_file_does_not_stop_later_file",
           "qualname": "test_one_failed_file_does_not_stop_later_file"
@@ -13322,7 +13362,7 @@
         {
           "file": "backend/tests/test_local_media.py",
           "kind": "function",
-          "line": 164,
+          "line": 243,
           "module_id": "operations.imports",
           "name": "transcribe",
           "qualname": "test_one_failed_file_does_not_stop_later_file.transcribe"
@@ -13436,13 +13476,21 @@
           "kind": "function",
           "line": 109,
           "module_id": "operations.imports",
+          "name": "test_interrupted_voice_is_marked_for_review_without_retry",
+          "qualname": "test_interrupted_voice_is_marked_for_review_without_retry"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 131,
+          "module_id": "operations.imports",
           "name": "test_rejects_result_directory_inside_folder_export",
           "qualname": "test_rejects_result_directory_inside_folder_export"
         },
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 120,
+          "line": 142,
           "module_id": "operations.imports",
           "name": "test_rejects_private_output_inside_git_repository",
           "qualname": "test_rejects_private_output_inside_git_repository"
@@ -13450,7 +13498,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 133,
+          "line": 155,
           "module_id": "operations.imports",
           "name": "test_media_symlink_outside_export_is_not_transcribed",
           "qualname": "test_media_symlink_outside_export_is_not_transcribed"
@@ -13458,7 +13506,31 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 152,
+          "line": 174,
+          "module_id": "operations.imports",
+          "name": "test_resolved_media_outside_export_is_rejected_before_read",
+          "qualname": "test_resolved_media_outside_export_is_rejected_before_read"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 181,
+          "module_id": "operations.imports",
+          "name": "fake_resolve",
+          "qualname": "test_resolved_media_outside_export_is_rejected_before_read.fake_resolve"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 196,
+          "module_id": "operations.imports",
+          "name": "test_result_json_symlink_outside_export_is_rejected",
+          "qualname": "test_result_json_symlink_outside_export_is_rejected"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 211,
           "module_id": "operations.imports",
           "name": "test_formatted_telegram_text_is_flattened_in_order",
           "qualname": "test_formatted_telegram_text_is_flattened_in_order"
@@ -13466,7 +13538,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 165,
+          "line": 224,
           "module_id": "operations.imports",
           "name": "test_zip_path_traversal_is_rejected_before_extraction",
           "qualname": "test_zip_path_traversal_is_rejected_before_extraction"
@@ -13474,7 +13546,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 177,
+          "line": 236,
           "module_id": "operations.imports",
           "name": "test_openai_transcriber_builds_expected_request",
           "qualname": "test_openai_transcriber_builds_expected_request"
@@ -13482,7 +13554,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "class",
-          "line": 182,
+          "line": 241,
           "module_id": "operations.imports",
           "name": "Response",
           "qualname": "test_openai_transcriber_builds_expected_request.Response"
@@ -13490,7 +13562,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "method",
-          "line": 183,
+          "line": 242,
           "module_id": "operations.imports",
           "name": "__enter__",
           "qualname": "test_openai_transcriber_builds_expected_request.Response.__enter__"
@@ -13498,7 +13570,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "method",
-          "line": 186,
+          "line": 245,
           "module_id": "operations.imports",
           "name": "__exit__",
           "qualname": "test_openai_transcriber_builds_expected_request.Response.__exit__"
@@ -13506,7 +13578,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "method",
-          "line": 189,
+          "line": 248,
           "module_id": "operations.imports",
           "name": "read",
           "qualname": "test_openai_transcriber_builds_expected_request.Response.read"
@@ -13514,7 +13586,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 192,
+          "line": 251,
           "module_id": "operations.imports",
           "name": "fake_urlopen",
           "qualname": "test_openai_transcriber_builds_expected_request.fake_urlopen"
@@ -13522,7 +13594,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 212,
+          "line": 271,
           "module_id": "operations.imports",
           "name": "test_one_failed_voice_does_not_stop_later_voice",
           "qualname": "test_one_failed_voice_does_not_stop_later_voice"
@@ -13530,7 +13602,7 @@
         {
           "file": "backend/tests/test_telegram_consultations.py",
           "kind": "function",
-          "line": 224,
+          "line": 283,
           "module_id": "operations.imports",
           "name": "transcribe",
           "qualname": "test_one_failed_voice_does_not_stop_later_voice.transcribe"
@@ -34713,7 +34785,7 @@
     {
       "file": "backend/app/importers/local_media.py",
       "kind": "function",
-      "line": 229,
+      "line": 230,
       "module_id": "operations.imports",
       "name": "main",
       "qualname": "main"
@@ -35137,7 +35209,7 @@
     {
       "file": "backend/app/importers/telegram_consultations.py",
       "kind": "function",
-      "line": 227,
+      "line": 229,
       "module_id": "operations.imports",
       "name": "persist_progress",
       "qualname": "import_export.persist_progress"
@@ -35145,7 +35217,7 @@
     {
       "file": "backend/app/importers/telegram_consultations.py",
       "kind": "function",
-      "line": 290,
+      "line": 292,
       "module_id": "operations.imports",
       "name": "main",
       "qualname": "main"
@@ -40451,13 +40523,37 @@
       "kind": "function",
       "line": 67,
       "module_id": "operations.imports",
+      "name": "test_replaced_media_with_same_path_is_retranscribed",
+      "qualname": "test_replaced_media_with_same_path_is_retranscribed"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 74,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_replaced_media_with_same_path_is_retranscribed.transcribe"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 89,
+      "module_id": "operations.imports",
+      "name": "test_interrupted_media_is_marked_for_review_without_retry",
+      "qualname": "test_interrupted_media_is_marked_for_review_without_retry"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 117,
+      "module_id": "operations.imports",
       "name": "test_multiple_chunks_are_transcribed_and_joined_in_order",
       "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order"
     },
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 73,
+      "line": 123,
       "module_id": "operations.imports",
       "name": "prepare",
       "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order.prepare"
@@ -40465,7 +40561,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 85,
+      "line": 135,
       "module_id": "operations.imports",
       "name": "test_result_directory_inside_source_is_rejected",
       "qualname": "test_result_directory_inside_source_is_rejected"
@@ -40473,7 +40569,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 96,
+      "line": 146,
       "module_id": "operations.imports",
       "name": "test_result_directory_inside_git_repository_is_rejected",
       "qualname": "test_result_directory_inside_git_repository_is_rejected"
@@ -40481,7 +40577,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 110,
+      "line": 160,
       "module_id": "operations.imports",
       "name": "test_symlink_outside_source_is_not_read_or_transcribed",
       "qualname": "test_symlink_outside_source_is_not_read_or_transcribed"
@@ -40489,7 +40585,23 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 134,
+      "line": 184,
+      "module_id": "operations.imports",
+      "name": "test_resolved_media_outside_source_is_rejected_before_read",
+      "qualname": "test_resolved_media_outside_source_is_rejected_before_read"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 193,
+      "module_id": "operations.imports",
+      "name": "fake_resolve",
+      "qualname": "test_resolved_media_outside_source_is_rejected_before_read.fake_resolve"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 213,
       "module_id": "operations.imports",
       "name": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command",
       "qualname": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command"
@@ -40497,7 +40609,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 139,
+      "line": 218,
       "module_id": "operations.imports",
       "name": "fake_run",
       "qualname": "test_prepare_audio_chunks_uses_segmented_ffmpeg_command.fake_run"
@@ -40505,7 +40617,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 158,
+      "line": 237,
       "module_id": "operations.imports",
       "name": "test_one_failed_file_does_not_stop_later_file",
       "qualname": "test_one_failed_file_does_not_stop_later_file"
@@ -40513,7 +40625,7 @@
     {
       "file": "backend/tests/test_local_media.py",
       "kind": "function",
-      "line": 164,
+      "line": 243,
       "module_id": "operations.imports",
       "name": "transcribe",
       "qualname": "test_one_failed_file_does_not_stop_later_file.transcribe"
@@ -41491,13 +41603,21 @@
       "kind": "function",
       "line": 109,
       "module_id": "operations.imports",
+      "name": "test_interrupted_voice_is_marked_for_review_without_retry",
+      "qualname": "test_interrupted_voice_is_marked_for_review_without_retry"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 131,
+      "module_id": "operations.imports",
       "name": "test_rejects_result_directory_inside_folder_export",
       "qualname": "test_rejects_result_directory_inside_folder_export"
     },
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 120,
+      "line": 142,
       "module_id": "operations.imports",
       "name": "test_rejects_private_output_inside_git_repository",
       "qualname": "test_rejects_private_output_inside_git_repository"
@@ -41505,7 +41625,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 133,
+      "line": 155,
       "module_id": "operations.imports",
       "name": "test_media_symlink_outside_export_is_not_transcribed",
       "qualname": "test_media_symlink_outside_export_is_not_transcribed"
@@ -41513,7 +41633,31 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 152,
+      "line": 174,
+      "module_id": "operations.imports",
+      "name": "test_resolved_media_outside_export_is_rejected_before_read",
+      "qualname": "test_resolved_media_outside_export_is_rejected_before_read"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 181,
+      "module_id": "operations.imports",
+      "name": "fake_resolve",
+      "qualname": "test_resolved_media_outside_export_is_rejected_before_read.fake_resolve"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 196,
+      "module_id": "operations.imports",
+      "name": "test_result_json_symlink_outside_export_is_rejected",
+      "qualname": "test_result_json_symlink_outside_export_is_rejected"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 211,
       "module_id": "operations.imports",
       "name": "test_formatted_telegram_text_is_flattened_in_order",
       "qualname": "test_formatted_telegram_text_is_flattened_in_order"
@@ -41521,7 +41665,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 165,
+      "line": 224,
       "module_id": "operations.imports",
       "name": "test_zip_path_traversal_is_rejected_before_extraction",
       "qualname": "test_zip_path_traversal_is_rejected_before_extraction"
@@ -41529,7 +41673,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 177,
+      "line": 236,
       "module_id": "operations.imports",
       "name": "test_openai_transcriber_builds_expected_request",
       "qualname": "test_openai_transcriber_builds_expected_request"
@@ -41537,7 +41681,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "class",
-      "line": 182,
+      "line": 241,
       "module_id": "operations.imports",
       "name": "Response",
       "qualname": "test_openai_transcriber_builds_expected_request.Response"
@@ -41545,7 +41689,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "method",
-      "line": 183,
+      "line": 242,
       "module_id": "operations.imports",
       "name": "__enter__",
       "qualname": "test_openai_transcriber_builds_expected_request.Response.__enter__"
@@ -41553,7 +41697,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "method",
-      "line": 186,
+      "line": 245,
       "module_id": "operations.imports",
       "name": "__exit__",
       "qualname": "test_openai_transcriber_builds_expected_request.Response.__exit__"
@@ -41561,7 +41705,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "method",
-      "line": 189,
+      "line": 248,
       "module_id": "operations.imports",
       "name": "read",
       "qualname": "test_openai_transcriber_builds_expected_request.Response.read"
@@ -41569,7 +41713,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 192,
+      "line": 251,
       "module_id": "operations.imports",
       "name": "fake_urlopen",
       "qualname": "test_openai_transcriber_builds_expected_request.fake_urlopen"
@@ -41577,7 +41721,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 212,
+      "line": 271,
       "module_id": "operations.imports",
       "name": "test_one_failed_voice_does_not_stop_later_voice",
       "qualname": "test_one_failed_voice_does_not_stop_later_voice"
@@ -41585,7 +41729,7 @@
     {
       "file": "backend/tests/test_telegram_consultations.py",
       "kind": "function",
-      "line": 224,
+      "line": 283,
       "module_id": "operations.imports",
       "name": "transcribe",
       "qualname": "test_one_failed_voice_does_not_stop_later_voice.transcribe"

@@ -26,7 +26,7 @@
 
 ## Проверки
 
-- `python -m pytest tests/test_local_media.py tests/test_telegram_consultations.py -q` из `backend/`: 16 passed, 2 skipped (символические ссылки на этом Windows-хосте недоступны; тесты выполнятся на среде с поддержкой symlink).
+- `python -m pytest tests/test_local_media.py tests/test_telegram_consultations.py -q` из `backend/`: 21 passed, 3 skipped (сама ОС не разрешила создать файловые symlink; ветви выхода пути за границу дополнительно выполнены через принудительное разрешение пути).
 - `python -m pytest tools/tests/test_module_inventory.py -q`: 16 passed, 3 subtests passed.
 - `python tools/module_inventory.py --tracked-only`: карта собрана, бесхозных файлов нет.
 - `git diff --check`: ошибок пробелов нет.

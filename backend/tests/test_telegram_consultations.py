@@ -106,6 +106,28 @@ def test_changed_voice_with_same_message_id_is_retranscribed(tmp_path: Path) -> 
     assert voice["media_sha256"] == hashlib.sha256(b"replacement audio").hexdigest()
 
 
+def test_interrupted_voice_is_marked_for_review_without_retry(tmp_path: Path) -> None:
+    export = make_export(tmp_path)
+    output = tmp_path / "private"
+    first = import_export(export, output, transcribe=lambda _: "first transcript")
+    messages_path = Path(first["client_path"]).parent / "messages.json"
+    messages = json.loads(messages_path.read_text(encoding="utf-8"))
+    voice = next(item for item in messages if item["message_id"] == 2)
+    voice["voice_status"] = "processing"
+    voice["transcript"] = None
+    messages_path.write_text(json.dumps(messages), encoding="utf-8")
+    calls: list[Path] = []
+
+    second = import_export(export, output, transcribe=lambda path: calls.append(path) or "must not run")
+    updated = json.loads(messages_path.read_text(encoding="utf-8"))
+    updated_voice = next(item for item in updated if item["message_id"] == 2)
+
+    assert calls == []
+    assert updated_voice["voice_status"] == "needs_review"
+    assert "interrupted" in updated_voice["voice_error"]
+    assert second["voices_transcribed"] == 0
+
+
 def test_rejects_result_directory_inside_folder_export(tmp_path: Path) -> None:
     export = make_export(tmp_path)
 
@@ -147,6 +169,43 @@ def test_media_symlink_outside_export_is_not_transcribed(tmp_path: Path) -> None
     assert calls == []
     assert summary["voices_success"] == 0
     assert "outside export" in summary["errors"][0]["error"]
+
+
+def test_resolved_media_outside_export_is_rejected_before_read(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    export = make_export(tmp_path)
+    linked = export / "voice_messages" / "voice.ogg"
+    outside = tmp_path / "outside.ogg"
+    outside.write_bytes(b"private outside audio")
+    original_resolve = Path.resolve
+
+    def fake_resolve(path: Path, *args, **kwargs) -> Path:
+        if path == linked:
+            return outside
+        return original_resolve(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", fake_resolve)
+    calls: list[Path] = []
+
+    summary = import_export(export, tmp_path / "private", transcribe=lambda path: calls.append(path) or "must not run")
+
+    assert calls == []
+    assert summary["voices_success"] == 0
+    assert "outside export" in summary["errors"][0]["error"]
+
+
+def test_result_json_symlink_outside_export_is_rejected(tmp_path: Path) -> None:
+    export = make_export(tmp_path)
+    outside = tmp_path / "outside-result.json"
+    outside.write_text((export / "result.json").read_text(encoding="utf-8"), encoding="utf-8")
+    result = export / "result.json"
+    result.unlink()
+    try:
+        os.symlink(outside, result)
+    except OSError:
+        pytest.skip("file symlinks are unavailable on this platform")
+
+    with pytest.raises(ValueError, match="result.json resolves outside"):
+        import_export(export, tmp_path / "private", transcribe=lambda _: "must not run")
 
 
 def test_formatted_telegram_text_is_flattened_in_order(tmp_path: Path) -> None:

@@ -216,6 +216,8 @@ def import_export(source: Path, output_root: Path, *, transcribe: TranscriptFunc
     with tempfile.TemporaryDirectory(prefix="telegram-consultation-") as temporary:
         source_root = _source_root(source, Path(temporary))
         result_path = _find_result_json(source_root)
+        if not result_path.resolve().is_relative_to(source_root.resolve()):
+            raise ValueError("result.json resolves outside the source export")
         payload = json.loads(result_path.read_text(encoding="utf-8"))
         messages, chat_id = _normalise_messages(payload, result_path.parent), str(payload["id"])
         package = output_root / f"chat-{re.sub(r'[^A-Za-z0-9_-]+', '_', chat_id)}"

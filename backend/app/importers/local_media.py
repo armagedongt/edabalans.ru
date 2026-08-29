@@ -211,6 +211,7 @@ def import_media_folder(
 
     files = sorted(by_path.values(), key=lambda item: (item["date"], item["source_path"]))
     timeline_path = package / "timeline.md"
+    _write_json(package / "media.json", files)
     timeline_path.write_text(_render_timeline(files), encoding="utf-8")
     errors = [
         {"source_path": item["source_path"], "error": item.get("transcription_error") or item.get("transcription_status")}

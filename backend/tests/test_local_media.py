@@ -64,6 +64,56 @@ def test_repeat_does_not_transcribe_unchanged_media(tmp_path: Path) -> None:
     assert second["files_transcribed"] == 0
 
 
+def test_replaced_media_with_same_path_is_retranscribed(tmp_path: Path) -> None:
+    media = tmp_path / "media"
+    media.mkdir()
+    source = media / "voice.ogg"
+    source.write_bytes(b"first voice")
+    calls: list[bytes] = []
+
+    def transcribe(chunk: Path) -> str:
+        calls.append(chunk.read_bytes())
+        return f"version {len(calls)}"
+
+    output = tmp_path / "results"
+    import_media_folder(media, output, transcribe=transcribe, prepare_audio=lambda path, _: [path])
+    source.write_bytes(b"replacement voice")
+    summary = import_media_folder(media, output, transcribe=transcribe, prepare_audio=lambda path, _: [path])
+    record = json.loads(Path(summary["media_path"]).read_text(encoding="utf-8"))[0]
+
+    assert calls == [b"first voice", b"replacement voice"]
+    assert record["transcript"]["clean_transcript"] == "version 2"
+    assert record["media_sha256"] == hashlib.sha256(b"replacement voice").hexdigest()
+
+
+def test_interrupted_media_is_marked_for_review_without_retry(tmp_path: Path) -> None:
+    media = tmp_path / "media"
+    media.mkdir()
+    source = media / "voice.ogg"
+    source.write_bytes(b"voice")
+    output = tmp_path / "results"
+    first = import_media_folder(media, output, transcribe=lambda _: "first transcript", prepare_audio=lambda path, _: [path])
+    media_path = Path(first["media_path"])
+    records = json.loads(media_path.read_text(encoding="utf-8"))
+    records[0]["transcription_status"] = "processing"
+    records[0]["transcript"] = None
+    media_path.write_text(json.dumps(records), encoding="utf-8")
+    calls: list[Path] = []
+
+    second = import_media_folder(
+        media,
+        output,
+        transcribe=lambda path: calls.append(path) or "must not run",
+        prepare_audio=lambda path, _: [path],
+    )
+    updated = json.loads(media_path.read_text(encoding="utf-8"))[0]
+
+    assert calls == []
+    assert updated["transcription_status"] == "needs_review"
+    assert "interrupted" in updated["transcription_error"]
+    assert second["files_transcribed"] == 0
+
+
 def test_multiple_chunks_are_transcribed_and_joined_in_order(tmp_path: Path) -> None:
     media = tmp_path / "media"
     media.mkdir()
@@ -117,6 +167,35 @@ def test_symlink_outside_source_is_not_read_or_transcribed(tmp_path: Path) -> No
         os.symlink(outside, linked)
     except OSError:
         pytest.skip("file symlinks are unavailable on this platform")
+    calls: list[Path] = []
+
+    summary = import_media_folder(
+        media,
+        tmp_path / "results",
+        transcribe=lambda path: calls.append(path) or "must not run",
+        prepare_audio=lambda source, _: [source],
+    )
+
+    assert calls == []
+    assert summary["files_success"] == 0
+    assert summary["errors"] == [{"source_path": "linked.mp3", "error": "media path resolves outside source folder"}]
+
+
+def test_resolved_media_outside_source_is_rejected_before_read(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    media = tmp_path / "media"
+    media.mkdir()
+    linked = media / "linked.mp3"
+    linked.write_bytes(b"placeholder")
+    outside = tmp_path / "outside.mp3"
+    outside.write_bytes(b"private outside audio")
+    original_resolve = Path.resolve
+
+    def fake_resolve(path: Path, *args, **kwargs) -> Path:
+        if path == linked:
+            return outside
+        return original_resolve(path, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "resolve", fake_resolve)
     calls: list[Path] = []
 
     summary = import_media_folder(
