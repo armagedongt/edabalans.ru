@@ -1560,6 +1560,10 @@
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md"
     },
     {
+      "module_id": "platform.knowledge",
+      "path": "docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md"
+    },
+    {
       "module_id": "platform.commerce",
       "path": "docs/knowledge-base/LEGAL_DOCUMENTS.md"
     },
@@ -1722,6 +1726,10 @@
     {
       "module_id": "platform.crm",
       "path": "docs/knowledge-base/modules/catalog/platform.crm.md"
+    },
+    {
+      "module_id": "platform.knowledge",
+      "path": "docs/knowledge-base/modules/catalog/platform.knowledge.md"
     },
     {
       "module_id": "platform",
@@ -17208,7 +17216,7 @@
         }
       ],
       "admin_urls": [],
-      "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.",
+      "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.\nПланируемая общая карта редакционного и технического знания, provenance, права и\nMCP-доступ принадлежат `platform.knowledge`; до её реализации этот модуль продолжает\nвладеть фактическим каталогом контента, приватным авторским корпусом и Писарем.",
       "capabilities": [
         "собирать материалы из поддерживаемых источников;",
         "вести версии текста, связи, метрики и редакционные комментарии;",
@@ -21431,6 +21439,57 @@
       "title": "CRM и единый клиент",
       "truths": [
         "`docs/CRM_CORE_DESIGN.md`, `docs/CRM_DATA_MODEL.md` и CRM runtime tables."
+      ]
+    },
+    {
+      "admin_catalog": [],
+      "admin_urls": [],
+      "boundary": "Не заменяет Project Knowledge, каталог контента, приватный авторский корпус или\nканонические документы продуктов. Не пишет материалы, не публикует их, не объединяет\nсмысловые совпадения и не обезличивает консультации без решения владельца.\n\nДо реализации серверного слоя текущий каталог и авторский корпус принадлежат\n`platform.content`, а техническая карта проекта — `admin.project-knowledge`.",
+      "capabilities": [
+        "индексировать канонические источники без создания второй копии канона;",
+        "хранить provenance, версии, права доступа, связи и статус проверки;",
+        "различать оригиналы, точные дубли, смысловые совпадения и неиспользованные фрагменты;",
+        "предоставлять карту и адресные ресурсы через MCP/API;",
+        "вести очередь решений Библиотекаря и события фактического использования;",
+        "связывать редакционный прогон с исходниками, принятой версией и публикацией;"
+      ],
+      "card": "docs/knowledge-base/modules/catalog/platform.knowledge.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "platform.knowledge",
+          "path": "docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md"
+        },
+        {
+          "module_id": "platform.knowledge",
+          "path": "docs/knowledge-base/modules/catalog/platform.knowledge.md"
+        }
+      ],
+      "id": "platform.knowledge",
+      "implementation_status": "planned",
+      "parent": "platform",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "admin.project-knowledge",
+          "platform.content"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [],
+        "writes_to": []
+      },
+      "routes": [],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Планируемый серверный реестр источников, смыслов, происхождения, прав и редакционных прогонов.",
+      "symbols": [],
+      "tables": [],
+      "telegram": null,
+      "title": "Библиотека и карта контента",
+      "truths": [
+        "Пользовательский и межмодульный контракт описан в\n`docs/knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md`. Канонические тексты, продуктовые\nправила и технические документы остаются у своих текущих module owners; будущий\nреестр хранит их URI, версии, provenance и права, а не независимое содержание."
       ]
     },
     {
@@ -29837,6 +29896,16 @@
     {
       "source": "platform.commerce",
       "target": "platform.crm",
+      "type": "depends_on"
+    },
+    {
+      "source": "platform.knowledge",
+      "target": "admin.project-knowledge",
+      "type": "depends_on"
+    },
+    {
+      "source": "platform.knowledge",
+      "target": "platform.content",
       "type": "depends_on"
     },
     {
