@@ -76,7 +76,22 @@ def _read_json(path: Path, fallback: Any) -> Any:
 
 def _write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    temporary = path.with_name(f".{path.name}.{uuid.uuid4().hex}.tmp")
+    try:
+        temporary.write_text(
+            json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
+            encoding="utf-8",
+        )
+        os.replace(temporary, path)
+    finally:
+        temporary.unlink(missing_ok=True)
+
+
+def _reject_repository_output(output_root: Path) -> None:
+    """Keep private import packages outside every Git working tree."""
+    for candidate in (output_root, *output_root.parents):
+        if (candidate / ".git").exists():
+            raise ValueError("output directory must be outside a Git repository")
 
 
 def _find_result_json(root: Path) -> Path:
@@ -197,6 +212,7 @@ def import_export(source: Path, output_root: Path, *, transcribe: TranscriptFunc
         raise ValueError(f"source does not exist: {source}")
     if source.is_dir() and output_root.is_relative_to(source):
         raise ValueError("output directory must be outside the source export")
+    _reject_repository_output(output_root)
     with tempfile.TemporaryDirectory(prefix="telegram-consultation-") as temporary:
         source_root = _source_root(source, Path(temporary))
         result_path = _find_result_json(source_root)
@@ -214,7 +230,8 @@ def import_export(source: Path, output_root: Path, *, transcribe: TranscriptFunc
         for message in messages:
             key = (message["chat_id"], message["message_id"])
             old = by_key.get(key)
-            if old:
+            same_media = bool(old and old.get("media_sha256") == message.get("media_sha256"))
+            if old and (not message["voice"] or same_media):
                 message["transcript"], message["voice_status"] = old.get("transcript"), old.get("voice_status")
                 message["voice_error"] = old.get("voice_error")
             else:
@@ -222,7 +239,7 @@ def import_export(source: Path, output_root: Path, *, transcribe: TranscriptFunc
             if not message["voice"]:
                 by_key[key] = message
                 continue
-            if old and message.get("voice_status") in {"success", "failed", "needs_review", "processing"}:
+            if old and same_media and message.get("voice_status") in {"success", "failed", "needs_review", "processing"}:
                 if message["voice_status"] == "processing":
                     message["voice_status"] = "needs_review"
                     message["voice_error"] = "previous transcription was interrupted; review before retry"

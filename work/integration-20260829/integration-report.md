@@ -26,13 +26,15 @@
 
 ## Проверки
 
-- `python -m pytest tests/test_local_media.py tests/test_telegram_consultations.py -q` из `backend/`: 9 passed.
+- `python -m pytest tests/test_local_media.py tests/test_telegram_consultations.py -q` из `backend/`: 16 passed, 2 skipped (символические ссылки на этом Windows-хосте недоступны; тесты выполнятся на среде с поддержкой symlink).
 - `python -m pytest tools/tests/test_module_inventory.py -q`: 16 passed, 3 subtests passed.
 - `python tools/module_inventory.py --tracked-only`: карта собрана, бесхозных файлов нет.
 - `git diff --check`: ошибок пробелов нет.
+- Широкие `test_knowledge_base.py` и `test_app_assets.py` на чистом хосте не собрались из-за отсутствующего `fastapi`; это ограничение среды, а не падение теста.
 
 ## Незавершённые решения владельца
 
 - Выбрать вариант визуала конструктора питания и после этого утвердить граммовки/DQS рецептурной системы.
 - Решить судьбу прототипа главной страницы после просмотра; production Tilda не переключалась.
 - Отдельно санитизировать и принять либо закрыть сырые расшифровки из `a9145c6`.
+- Перед импортом недоверенных архивов экстремального размера отдельно утвердить более жёсткие лимиты на один файл и серию платных API-запросов; сейчас CLI локальный и запускается явно оператором.

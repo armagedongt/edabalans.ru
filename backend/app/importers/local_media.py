@@ -15,7 +15,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .telegram_consultations import DEFAULT_MODEL, OpenAITranscriber, _clean_transcript, _sha256, _write_json
+from .telegram_consultations import (
+    DEFAULT_MODEL,
+    OpenAITranscriber,
+    _clean_transcript,
+    _reject_repository_output,
+    _sha256,
+    _write_json,
+)
 
 MEDIA_SUFFIXES = {
     ".aac", ".aiff", ".avi", ".flac", ".m4a", ".m4v", ".mkv", ".mov", ".mp3", ".mp4",
@@ -118,6 +125,7 @@ def import_media_folder(
         raise ValueError("source must be an existing folder")
     if output_root.is_relative_to(source):
         raise ValueError("output directory must be outside the source media folder")
+    _reject_repository_output(output_root)
     package = output_root / f"media-{hashlib.sha256(str(source).encode()).hexdigest()[:12]}"
     transcripts = package / "transcripts"
     package.mkdir(parents=True, exist_ok=True)
@@ -135,6 +143,18 @@ def import_media_folder(
     for media in candidates:
         relative = media.relative_to(source).as_posix()
         old = by_path.get(relative)
+        if not media.resolve().is_relative_to(source):
+            by_path[relative] = {
+                "source_path": relative,
+                "date": datetime.fromtimestamp(media.lstat().st_mtime, tz=timezone.utc).isoformat(),
+                "type": "unknown",
+                "media_sha256": None,
+                "media_duration_seconds": None,
+                "transcription_status": "needs_review",
+                "transcription_error": "media path resolves outside source folder",
+            }
+            persist()
+            continue
         try:
             source_hash = _sha256(media)
             file_date = _timestamp(media)
@@ -168,10 +188,7 @@ def import_media_folder(
             item["media_duration_seconds"] = _duration_seconds(media)
         except Exception as exc:
             item["media_duration_error"] = str(exc)
-        if not media.resolve().is_relative_to(source):
-            item["transcription_status"] = "needs_review"
-            item["transcription_error"] = "media path resolves outside source folder"
-        elif transcribe is None:
+        if transcribe is None:
             item["transcription_status"] = "failed"
             item["transcription_error"] = "OPENAI_API_KEY is not configured"
         else:

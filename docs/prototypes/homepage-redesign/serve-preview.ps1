@@ -7,6 +7,7 @@ $ErrorActionPreference = 'Stop'
 
 $dist = Join-Path $PSScriptRoot 'dist'
 $assets = [IO.Path]::GetFullPath($SourceAssets)
+$assetsPrefix = $assets.TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar
 
 if (-not [IO.Directory]::Exists($dist)) {
     & (Join-Path $PSScriptRoot 'build-previews.ps1')
@@ -62,7 +63,7 @@ try {
                 if ($route.StartsWith('/source-assets/')) {
                     $relative = $route.Substring('/source-assets/'.Length)
                     $candidate = [IO.Path]::GetFullPath((Join-Path $assets $relative))
-                    if ($candidate.StartsWith($assets, [StringComparison]::OrdinalIgnoreCase)) {
+                    if ($candidate.StartsWith($assetsPrefix, [StringComparison]::OrdinalIgnoreCase)) {
                         $target = $candidate
                     }
                 }

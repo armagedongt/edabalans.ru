@@ -2,7 +2,7 @@
 
 Статус: `draft`
 
-Модуль-владелец: `platform.content` (локальный визуальный прототип публичной
+Модуль-владелец: `operations.project-work` (локальный визуальный прототип публичной
 страницы; production Tilda остаётся источником опубликованной страницы).
 
 - `version-a.css` — бережный редизайн: структура и подача исходной страницы сохранены.
@@ -43,8 +43,8 @@ production-страницу. Тексты, ссылки оплаты, блоки
 Сборка и запуск:
 
 ```powershell
-.\prototypes\homepage-redesign\build-previews.ps1
-.\prototypes\homepage-redesign\serve-preview.ps1
+.\docs\prototypes\homepage-redesign\build-previews.ps1
+.\docs\prototypes\homepage-redesign\serve-preview.ps1
 ```
 
 По умолчанию после запуска доступны `http://127.0.0.1:34567/version-a` и

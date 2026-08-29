@@ -1,8 +1,12 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 
-from app.importers.local_media import _safe_name, import_media_folder
+import pytest
+
+from app.importers import local_media
+from app.importers.local_media import _prepare_audio_chunks, _safe_name, import_media_folder
 
 
 def test_folder_media_is_transcribed_and_source_is_not_modified(tmp_path: Path) -> None:
@@ -87,6 +91,68 @@ def test_result_directory_inside_source_is_rejected(tmp_path: Path) -> None:
         assert "outside the source media folder" in str(exc)
     else:
         raise AssertionError("result directory inside source must be rejected")
+
+
+def test_result_directory_inside_git_repository_is_rejected(tmp_path: Path) -> None:
+    media = tmp_path / "media"
+    media.mkdir()
+    repository = tmp_path / "repository"
+    (repository / ".git").mkdir(parents=True)
+
+    try:
+        import_media_folder(media, repository / "private")
+    except ValueError as exc:
+        assert "outside a Git repository" in str(exc)
+    else:
+        raise AssertionError("private output inside a Git repository must be rejected")
+
+
+def test_symlink_outside_source_is_not_read_or_transcribed(tmp_path: Path) -> None:
+    media = tmp_path / "media"
+    media.mkdir()
+    outside = tmp_path / "outside.mp3"
+    outside.write_bytes(b"private outside audio")
+    linked = media / "linked.mp3"
+    try:
+        os.symlink(outside, linked)
+    except OSError:
+        pytest.skip("file symlinks are unavailable on this platform")
+    calls: list[Path] = []
+
+    summary = import_media_folder(
+        media,
+        tmp_path / "results",
+        transcribe=lambda path: calls.append(path) or "must not run",
+        prepare_audio=lambda source, _: [source],
+    )
+
+    assert calls == []
+    assert summary["files_success"] == 0
+    assert summary["errors"] == [{"source_path": "linked.mp3", "error": "media path resolves outside source folder"}]
+
+
+def test_prepare_audio_chunks_uses_segmented_ffmpeg_command(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    source = tmp_path / "video.mp4"
+    source.write_bytes(b"video")
+    commands: list[list[str]] = []
+
+    def fake_run(command, **kwargs):
+        commands.append(command)
+        chunks = tmp_path / "temporary" / "chunks"
+        chunks.mkdir(parents=True, exist_ok=True)
+        (chunks / "part-0000.mp3").write_bytes(b"first")
+        (chunks / "part-0001.mp3").write_bytes(b"second")
+
+    monkeypatch.setattr(local_media, "_media_tools", lambda: ("ffmpeg", "ffprobe"))
+    monkeypatch.setattr(local_media.subprocess, "run", fake_run)
+
+    result = _prepare_audio_chunks(source, tmp_path / "temporary")
+
+    assert [path.name for path in result] == ["part-0000.mp3", "part-0001.mp3"]
+    assert commands[0][0] == "ffmpeg"
+    assert commands[0][commands[0].index("-segment_time") + 1] == str(local_media.CHUNK_SECONDS)
+    assert "-vn" in commands[0]
+    assert commands[0][-1].endswith("part-%04d.mp3")
 
 
 def test_one_failed_file_does_not_stop_later_file(tmp_path: Path) -> None:
