@@ -4,6 +4,7 @@ import secrets
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 from app.config import get_settings
 from app.database import SessionLocal
@@ -20,6 +21,13 @@ from app.knowledge_library_service import (
 )
 
 
+knowledge_mcp_transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=["api.edabalans.ru", "api.edabalans.ru:443"],
+    allowed_origins=["https://api.edabalans.ru"],
+)
+
+
 mcp = FastMCP(
     "edabalans knowledge",
     instructions=(
@@ -32,6 +40,7 @@ mcp = FastMCP(
     json_response=True,
     stateless_http=True,
     streamable_http_path="/",
+    transport_security=knowledge_mcp_transport_security,
 )
 
 

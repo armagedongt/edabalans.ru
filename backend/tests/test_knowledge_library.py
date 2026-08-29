@@ -26,6 +26,7 @@ from app.knowledge_library_service import (
     task_context,
 )
 from app.main import app
+from app.knowledge_mcp import knowledge_mcp_transport_security
 from app.models import ContentItem, ContentItemVersion, ContentSource
 from app.models import KnowledgeResourceVersion, KnowledgeUsageEvent
 from app.models import KnowledgeRelation, KnowledgeReviewItem, KnowledgeResource
@@ -45,6 +46,15 @@ def test_sync_script_bootstraps_backend_path(tmp_path: Path) -> None:
     )
     assert result.returncode == 0, result.stderr
     assert "knowledge-library" in result.stdout
+
+
+def test_mcp_transport_security_has_an_exact_production_allowlist() -> None:
+    assert knowledge_mcp_transport_security.enable_dns_rebinding_protection is True
+    assert knowledge_mcp_transport_security.allowed_hosts == [
+        "api.edabalans.ru",
+        "api.edabalans.ru:443",
+    ]
+    assert knowledge_mcp_transport_security.allowed_origins == ["https://api.edabalans.ru"]
 
 
 def session_factory():
