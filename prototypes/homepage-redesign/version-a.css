@@ -1,0 +1,114 @@
+body.eb-version-a {
+  --eb-soft: #f4faff;
+  background:
+    radial-gradient(circle at 50% 0, rgba(38,175,255,.15), transparent 520px),
+    #f4fbff;
+}
+
+.eb-version-a .sv-program { color: var(--eb-ink); background: #eef7fc; }
+.eb-version-a .sv-program__eyebrow { color: var(--eb-blue-deep); border-color: rgba(38,175,255,.25); background:#fff; }
+.eb-version-a .sv-program__rows article { border-color:#d8e6ee; background:#fff; box-shadow:0 16px 38px rgba(22,24,29,.055); }
+.eb-version-a .sv-program__num { color:var(--eb-blue); }
+.eb-version-a .sv-program__rows article span { color:var(--eb-blue-deep); }
+.eb-version-a .sv-program__rows p,
+.eb-version-a .sv-program__rows li { color:#586572; }
+.eb-version-a .sv-program__rows li::before { color:var(--eb-orange); }
+.eb-version-a .sv-program__result { color:#33404d; }
+
+.eb-version-a .eb-stage--overview .eb-text-chunk { background: #fff !important; }
+.eb-version-a .eb-stage--program .t089__text p {
+  display: block;
+  padding: 0 !important;
+  color: var(--eb-ink) !important;
+  background: transparent !important;
+  transform: none;
+}
+.eb-version-a .eb-stage--pricing #rec2042806011 .t396__artboard { display: none !important; }
+.eb-version-a .eb-stage--pricing #rec2042806011 { padding: 0 !important; }
+
+.eb-version-a #rec1505281361 .t050__title,
+.eb-version-a #rec1812637621 .t050__title {
+  max-width: 980px;
+  margin: 0 auto;
+  font-size: clamp(46px, 6vw, 76px) !important;
+  line-height: .98 !important;
+  text-transform: uppercase;
+  font-style: italic;
+}
+.eb-version-a #rec1505281361 .t050__title strong:nth-of-type(3),
+.eb-version-a #rec1812637621 .t050__title strong:nth-of-type(3) {
+  color: var(--eb-orange) !important;
+}
+.eb-version-a #rec1791088411 { padding-bottom: 30px !important; }
+.eb-version-a #rec1791088411 .t119__preface { text-align: center; max-width: 790px; margin: auto; }
+
+.eb-version-a #rec1792587011 .t119__preface,
+.eb-version-a #rec2154585191 .t119__preface,
+.eb-version-a #rec2154729211 .t119__preface,
+.eb-version-a #rec2154799981 .t119__preface,
+.eb-version-a #rec2154829581 .t119__preface,
+.eb-version-a #rec2155111231 .t119__preface,
+.eb-version-a #rec1792365771 .t119__preface,
+.eb-version-a #rec1812483351 .t119__preface {
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.eb-version-a #allrecords .eb-text-chunk { background: rgba(255,255,255,.92); }
+.eb-version-a #allrecords .eb-text-chunk:nth-child(3n+2) { background: #e2f5ff; }
+
+.eb-version-a #rec2154729891 .t089__text p,
+.eb-version-a #rec1793034171 .t089__text p,
+.eb-version-a #rec2154799541 .t089__text p {
+  display: inline-block;
+  padding: 6px 18px 10px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, transparent 42%, rgba(242,99,45,.95) 42%);
+  color: var(--eb-ink);
+}
+
+.eb-version-a #rec2042806011 .tn-group > .tn-molecule {
+  border-radius: 30px !important;
+}
+.eb-version-a #rec2042806011 .t396__artboard,
+.eb-version-a #rec2042806011 .t396__carrier {
+  background: linear-gradient(145deg, #dff4ff, #f7fcff) !important;
+}
+.eb-version-a #rec2042806011 .tn-group[data-group-id="176950925904600002"] > .tn-molecule,
+.eb-version-a #rec2042806011 .tn-group[data-group-id="176952629258200027"] > .tn-molecule,
+.eb-version-a #rec2042806011 .tn-group[data-group-id="176952631153300051"] > .tn-molecule {
+  box-shadow: 0 22px 60px rgba(22,24,29,.10);
+}
+
+.eb-version-a #rec2155107531,
+.eb-version-a #rec1099489631,
+.eb-version-a #rec1812491181,
+.eb-version-a #rec1098904406,
+.eb-version-a #rec1099304276,
+.eb-version-a #rec1099454781 { padding-top: 72px !important; }
+
+.eb-version-a #rec1099360771 .t585__wrapper,
+.eb-version-a #rec1099868106 .t585__wrapper {
+  margin-bottom: 10px;
+  padding: 0 20px;
+  border: 1px solid var(--eb-line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.eb-version-a #rec1406120551 .t-btn,
+.eb-version-a #rec1793272881 .t-btn { background: var(--eb-orange) !important; box-shadow: 0 12px 30px rgba(242,99,45,.25) !important; }
+
+@media (max-width: 520px) {
+  .eb-version-a #rec1505281361 .t050__title,
+  .eb-version-a #rec1812637621 .t050__title { font-size: 38px !important; }
+  .eb-version-a #rec1792587011 .t119__preface,
+  .eb-version-a #rec2154585191 .t119__preface,
+  .eb-version-a #rec2154729211 .t119__preface,
+  .eb-version-a #rec2154799981 .t119__preface,
+  .eb-version-a #rec2154829581 .t119__preface { padding: 22px; border-radius: 20px; }
+  .eb-version-a #rec1792587011 .t119__preface,
+  .eb-version-a #rec2154729211 .t119__preface,
+  .eb-version-a #rec2155111231 .t119__preface { padding:0 !important; border-radius:0; }
+}
