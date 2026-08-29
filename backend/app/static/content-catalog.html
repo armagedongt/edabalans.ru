@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Каталог материалов · edabalans</title>
+  <link rel="stylesheet" href="/admin/static/content-catalog.css">
+</head>
+<body>
+  <div class="catalog-app">
+    <aside class="catalog-sidebar">
+      <header>
+        <div class="catalog-brand"><a href="/admin">← Админка</a><span id="summary">Загрузка…</span></div>
+        <h1>Каталог материалов</h1>
+        <p>Семьи и единичные посты. По 10 элементов.</p>
+        <button id="candidate-toggle" class="candidate-toggle" type="button">Возможные семьи</button>
+        <form id="filters" class="filters">
+          <input id="search" type="search" placeholder="Поиск по заголовку или ID">
+          <div class="filter-row">
+            <select id="source" aria-label="Источник"><option value="">Все источники</option><option value="telegram">Telegram</option><option value="leadteh">Бот</option><option value="pikabu">Pikabu</option><option value="telegraph">Telegraph</option></select>
+            <select id="shape" aria-label="Форма материала"><option value="all">Все формы</option><option value="families">Только семьи</option><option value="singletons">Только единичные</option></select>
+          </div>
+          <select id="purpose" aria-label="Назначение"><option value="">Все назначения</option><option value="ordinary_content">Обычный контент</option><option value="selling">Продающее</option><option value="navigation">Навигация</option><option value="technical">Техническое</option></select>
+          <select id="editorial-status" aria-label="Редакционный статус"><option value="active">Рабочие материалы</option><option value="removed">Убранные материалы</option><option value="all">Рабочие и убранные</option></select>
+          <button type="submit">Применить</button>
+        </form>
+      </header>
+      <nav id="group-list" class="group-list" aria-label="Материалы"></nav>
+      <footer class="pager"><button id="prev" type="button">←</button><span id="page-label">—</span><button id="next" type="button">→</button></footer>
+    </aside>
+    <main class="catalog-main">
+      <div id="empty" class="empty">Выберите материал слева.</div>
+      <section id="editor" class="editor" hidden>
+        <div id="top-links" class="top-links"></div>
+        <div id="version-tabs" class="version-tabs"></div>
+        <div id="candidate-panel" class="candidate-panel" hidden>
+          <strong>Возможная семья</strong>
+          <p>Оставьте галочки только у материалов, которые относятся к одной теме.</p>
+          <div id="candidate-checks" class="candidate-checks"></div>
+          <div class="candidate-actions"><button id="merge-candidate" class="primary" type="button">Объединить выбранные</button><button id="reject-candidate" type="button">Это не семья</button></div>
+        </div>
+        <label class="field title-field"><span>Заголовок</span><input id="title" maxlength="400"></label>
+        <label class="field variant-field"><span>Подпись версии</span><input id="variant" maxlength="120" placeholder="например: продающая или нейтральная"></label>
+        <label class="field text-field"><span>Текст</span><textarea id="text" spellcheck="true"></textarea></label>
+        <div id="removed-note" class="removed-note" hidden>Эта версия будет убрана из рабочей выдачи после сохранения.</div>
+        <div class="actions"><button id="save" class="primary" type="button">Сохранить изменения</button><button id="toggle-remove" class="danger" type="button">Убрать эту версию</button><span id="save-state" role="status" aria-live="polite">Изменений нет</span></div>
+        <details class="metadata"><summary>Метаданные материала</summary><div id="metadata"></div></details>
+      </section>
+    </main>
+  </div>
+  <script src="/admin/static/content-catalog.js" defer></script>
+</body>
+</html>

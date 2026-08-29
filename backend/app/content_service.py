@@ -26,6 +26,13 @@ TELEGRAM_PARSER_VERSION = "telegram-desktop-json-v1"
 REFERENCE_DOMAINS = ("pubmed.ncbi.nlm.nih.gov", "doi.org", "jamanetwork.com")
 
 
+def _has_owner_latest(db: Session, item: ContentItem) -> bool:
+    if not item.latest_version_id:
+        return False
+    version = db.get(ContentItemVersion, item.latest_version_id)
+    return bool(version and version.parser_version == "owner-edit-v1")
+
+
 def decode_pikabu_redirect(url: str) -> str:
     parsed = urlparse(url)
     if parsed.hostname and parsed.hostname.endswith("pikabu.ru"):
@@ -237,8 +244,10 @@ def import_telegram_items(
                 db.add(item)
                 db.flush()
 
+            preserve_owner = _has_owner_latest(db, item)
             item.canonical_url = data["canonical_url"]
-            item.title = data["title"]
+            if not preserve_owner:
+                item.title = data["title"]
             item.author_name = data.get("author_name")
             item.published_at = data["published_at"]
             item.source_updated_at = data.get("source_updated_at")
@@ -280,10 +289,12 @@ def import_telegram_items(
                     db.add(ContentMedia(item_id=item.id, version_id=version.id, **media))
                 for link in data.get("links") or []:
                     db.add(ContentLink(item_id=item.id, version_id=version.id, **link))
-                item.latest_version_id = version.id
+                if not preserve_owner:
+                    item.latest_version_id = version.id
                 summary["created" if created else "updated"] += 1
             else:
-                item.latest_version_id = version.id
+                if not preserve_owner:
+                    item.latest_version_id = version.id
                 summary["unchanged"] += 1
 
             metrics = data.get("metrics") or {}
@@ -350,8 +361,10 @@ def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_js
                 )
                 db.add(item)
                 db.flush()
+            preserve_owner = _has_owner_latest(db, item)
             item.canonical_url = data["canonical_url"]
-            item.title = data["title"]
+            if not preserve_owner:
+                item.title = data["title"]
             item.author_name = data["author_name"]
             item.published_at = data["published_at"]
             item.status = data["status"]
@@ -384,10 +397,12 @@ def import_pikabu_items(db: Session, rows: list[dict], *, mode: str = "manual_js
                     db.add(ContentMedia(item_id=item.id, version_id=version.id, **media))
                 for link in data["links"]:
                     db.add(ContentLink(item_id=item.id, version_id=version.id, **link))
-                item.latest_version_id = version.id
+                if not preserve_owner:
+                    item.latest_version_id = version.id
                 summary["created" if created else "updated"] += 1
             else:
-                item.latest_version_id = version.id
+                if not preserve_owner:
+                    item.latest_version_id = version.id
                 summary["unchanged"] += 1
 
             metrics = data["metrics"]

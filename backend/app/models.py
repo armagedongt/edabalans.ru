@@ -948,6 +948,24 @@ class ContentItem(TimestampMixin, Base):
     review_status: Mapped[str] = mapped_column(
         String(32), default="pending", nullable=False
     )
+    catalog_key: Mapped[str | None] = mapped_column(String(255), unique=True)
+    manifestation_kind: Mapped[str] = mapped_column(
+        String(32), default="post", nullable=False
+    )
+    editorial_status: Mapped[str] = mapped_column(
+        String(32), default="active", nullable=False
+    )
+    purpose: Mapped[str] = mapped_column(
+        String(64), default="ordinary_content", nullable=False
+    )
+    sales_level: Mapped[str] = mapped_column(
+        String(32), default="none", nullable=False
+    )
+    meanings: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    topics: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    primary_function: Mapped[str | None] = mapped_column(String(80))
+    variant_label: Mapped[str] = mapped_column(Text, default="", nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
 
 
 class ContentItemVersion(Base):
@@ -970,6 +988,50 @@ class ContentItemVersion(Base):
     imported_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+    editorial_metadata: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+
+
+class ContentFamily(TimestampMixin, Base):
+    __tablename__ = "content_families"
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    family_key: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+
+
+class ContentFamilyMembership(Base):
+    __tablename__ = "content_family_memberships"
+
+    item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), primary_key=True
+    )
+    family_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_families.id", ondelete="CASCADE"), index=True
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class ContentFamilyCandidate(Base):
+    __tablename__ = "content_family_candidates"
+    __table_args__ = (
+        UniqueConstraint("left_item_id", "right_item_id", name="uq_content_family_candidate_pair"),
+        Index("ix_content_family_candidate_status", "status"),
+    )
+
+    pair_key: Mapped[str] = mapped_column(String(511), primary_key=True)
+    left_item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    right_item_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("content_items.id", ondelete="CASCADE"), index=True
+    )
+    method: Mapped[str] = mapped_column(String(64), nullable=False)
+    shared_tokens: Mapped[int | None] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
 
 
 class ContentMedia(Base):

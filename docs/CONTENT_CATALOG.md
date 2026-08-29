@@ -1,8 +1,8 @@
 # Каталог авторских материалов
 
 Статус: `current`
-Состояние внедрения: migration `0014` применена в production.
-Проверено: 26.08.2026
+Состояние внедрения: серверный редактор и migration `0029` реализованы.
+Проверено: 29.08.2026
 План и полный будущий scope: `plans/CONTENT_CATALOG_SPEC.md`
 
 ## Назначение
@@ -33,12 +33,40 @@
 | `tools/telegram_public_metrics_collect.py` | публичные просмотры и реакции Telegram без чтения discussion/chat |
 | `backend/app/importers/telegram_public_metrics.py` | dry-run и подтверждённый импорт публичных Telegram-метрик |
 | `backend/app/content_service.py` | нормализация, версии, импорт и чтение каталога |
-| `backend/app/content_routes.py` | защищённый read-only admin API |
+| `backend/app/content_routes.py` | защищённый API чтения и редактуры |
+| `backend/app/content_authoring_service.py` | семьи, единичные материалы, кандидаты и неизменяемые редакции |
+| `backend/scripts/import_content_authoring_catalog.py` | dry-run и идемпотентный импорт запечатанного локального снимка |
 | `backend/app/course_material_service.py` | отдельные версии обычных материалов курса по стабильному `step.id` |
 | `tools/publish_course_material.py` | публикация готовой статьи из чата без изменения Git и deploy |
-| `/admin/content` | список материалов и карточка исходника |
+| `/admin/content` | master-detail редактор по 10 семей/единичных материалов |
 | `20260822_0013_content_catalog.py` | схема PostgreSQL |
 | `20260822_0014_content_comments.py` | комментарии материалов |
+| `20260829_0029_content_catalog_authoring.py` | редакционная метаинформация, семьи и очередь кандидатов |
+
+## Рабочий серверный каталог
+
+Первый зафиксированный пакет содержит только уже разобранные опубликованные
+источники: основной Telegram-канал, LeadTeh-бот, Pikabu, 18 авторских ответов
+Pikabu и Telegraph. Контрольные числа снимка: 1 138 активных проявлений,
+74 подтверждённые семьи, 961 единичный материал и 70 предполагаемых групп на
+проверку. В Git тексты и локальные выгрузки не попадают.
+
+Saved Messages, «Готовые посты», подборки апреля–мая и другие необработанные
+источники не входят в первый импорт. Они подключаются позднее по одному источнику:
+сначала смысловая очистка, затем поиск дублей/семей, dry-run и только после этого
+идемпотентное добавление в тот же каталог.
+
+У семьи нет «главного оригинала»: Telegram, бот, Pikabu и Telegraph являются
+равноправными проявлениями. Одинаковый текст с заменой одной ссылки не создаёт
+рабочую версию. Смысловые варианты сохраняются отдельными проявлениями. Удаление
+из рабочей выдачи обратимо и не меняет запечатанный исходный архив.
+
+В редакторе над текстом находятся только ссылка на опубликованный оригинал и
+привязанные медиа. Назначение, темы, смысловая разметка, редакция и технический
+provenance показываются после текста. `Ctrl+S` и кнопка сохранения создают новую
+неизменяемую редакцию; устаревший номер редакции возвращает конфликт вместо
+перезаписи чужих изменений. Повторный импорт Telegram или Pikabu добавляет новую
+исходную редакцию, но не переводит текущий текст назад поверх ручной редакции.
 
 Локальная авторская надстройка не требует production и работает на сохранённых
 снимках. `tools/build_author_catalog.py` объединяет Telegram, конструктор бота,
@@ -128,6 +156,9 @@ forwards и число комментариев в файле отсутству
 | `content_metric_snapshots` | изменяемые просмотры, рейтинг, сохранения, эмоции и platform-specific `details_json` |
 | `content_comments` | доступные комментарии Pikabu, родители, глубина, авторство и permalink |
 | `content_import_runs` | отчёт каждого импорта и ошибки |
+| `content_families` | устойчивая карточка смысловой семьи без главного поста |
+| `content_family_memberships` | единственная принадлежность проявления семье |
+| `content_family_candidates` | временные пары для очереди «Возможные семьи» и решение владельца |
 
 Контентные сущности не связаны с CRM-тегами людей.
 
@@ -140,6 +171,12 @@ GET /admin/api/content/summary
 GET /admin/api/content/items
 GET /admin/api/content/items/{id}
 GET /admin/api/content/items/{id}/comments
+GET /admin/api/content/authoring/summary
+GET /admin/api/content/authoring/groups
+GET /admin/api/content/authoring/groups/{group_key}
+PUT /admin/api/content/authoring/items/{item_id}
+GET /admin/api/content/authoring/candidates
+POST /admin/api/content/authoring/candidates/decision
 ```
 
 В `/admin/content` источники Pikabu и Telegram разделены вкладками и не смешиваются.
@@ -155,6 +192,7 @@ GET /admin/api/content/items/{id}/comments
 - collector ничего не публикует и не редактирует на Pikabu;
 - export JSON и browser profile запрещено создавать внутри Git-репозитория;
 - Telegram discussion export не принимается T1-командой и остаётся будущим T2;
-- `--apply` требует явный `--backup-confirmed`;
+- `--apply` требует явный `--backup-confirmed`, а повторный запуск не создаёт
+  вторые карточки, редакции, семьи или кандидатов;
 - до production migration выполняются backup и test restore;
 - PostgreSQL и collector не публикуются наружу.

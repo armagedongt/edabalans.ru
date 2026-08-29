@@ -118,7 +118,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|knowledge-base\\.css|knowledge-base\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|knowledge-base\\.css|knowledge-base\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.js|content-catalog\\.css|content-catalog\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):
@@ -185,6 +185,16 @@ def product_catalog_page(
     if not admin_identity(request, credentials):
         return RedirectResponse("/admin?next=/admin/products", status_code=303)
     return protected_file("product-catalog-editor.html")
+
+
+@router.get("/admin/content", include_in_schema=False)
+def content_catalog_page(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/admin/content", status_code=303)
+    return protected_file("content-catalog.html")
 
 @router.get("/admin/users", include_in_schema=False)
 def legacy_admin_users(request: Request, credentials: HTTPBasicCredentials | None = Depends(security)) -> Response:

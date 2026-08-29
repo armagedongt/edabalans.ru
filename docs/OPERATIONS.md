@@ -242,6 +242,40 @@ docker compose exec backend python -m app.importers.telegram_public_metrics \
 Публичная страница не отдаёт надёжное число репостов и комментариев. Эти значения
 не подменяются нулями и остаются пустыми до подключения подтверждённого источника.
 
+### Единый рабочий каталог материалов
+
+Запечатанный локальный снимок передаётся на сервер вне Git. До записи обязательны
+fresh backup, test restore и dry-run с контрольными числами. Снимок размещается в
+именованном release-каталоге, например
+`/srv/edabalans-private/content-catalog/releases/2026-08-29`, с доступом только
+root. Штатный backend этот каталог не видит; для импорта запускается одноразовый
+контейнер без портов и с read-only bind mount:
+
+```bash
+docker compose run --rm --no-deps --user 0 \
+  -v /srv/edabalans-private/content-catalog/releases/2026-08-29:/catalog:ro \
+  backend python scripts/import_content_authoring_catalog.py --catalog /catalog
+```
+
+Первый пакет должен показать 1 138 активных проявлений, 74 семьи, 961 единичный
+материал, 70 групп кандидатов и 686 проявлений с медиа-привязкой. Dry-run также
+пересчитывает распределение по пяти источникам, включая 18 ответов Pikabu, и
+возвращает `snapshot_digest`. Digest обязан совпасть с локальным dry-run. После
+применения migration `20260829_0029` импорт запускается так:
+
+```bash
+docker compose run --rm --no-deps --user 0 \
+  -v /srv/edabalans-private/content-catalog/releases/2026-08-29:/catalog:ro \
+  backend python scripts/import_content_authoring_catalog.py --catalog /catalog \
+  --apply --backup-confirmed --expected-digest <snapshot_digest>
+```
+
+Сразу повторить ту же apply-команду: второй отчёт обязан показать ноль созданных
+карточек, редакций, членств и кандидатов. Исходный каталог на сервере после
+успешной сверки переводится в read-only; рабочее редактирование выполняется только
+через `/admin/content`. Saved Messages, «Готовые посты» и подборки апреля–мая этой
+командой не импортируются.
+
 ## Автоматическая публикация
 
 Push в ветку `main` запускает `.github/workflows/production.yml`:
@@ -296,6 +330,11 @@ GitHub не получает SSH-ключ или иной доступ к VM. С
 ```bash
 ALLOW_DATABASE_MIGRATIONS=1 /usr/local/sbin/edabalans-deploy <full-commit-sha>
 ```
+
+Перед ручным выпуском migration-коммита проверить jobs именно этого SHA: тесты и
+сборка должны завершиться успешно, а единственной ожидаемой причиной красного
+итога остаётся `Block automatic database migrations`. Локальный полный тестовый
+прогон не заменяет эту проверку CI.
 
 После успешных health-checks deploy автоматически обновляет установленные
 `/usr/local/sbin/edabalans-deploy` и `edabalans-deploy-poll` из проверенного коммита.
