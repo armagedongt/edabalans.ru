@@ -1,0 +1,182 @@
+# User-spec planning interview
+# Questions and answers are preserved verbatim. Topic fields track what is known and still open.
+
+interview_metadata:
+  started: "2026-08-29"
+  last_updated: "2026-08-29"
+  status: "in_progress"  # in_progress | completed
+  can_resume: true
+
+conversation_history:
+  - asked_at: "2026-08-29"
+    topic_keys: ["feature_name", "feature_description", "user_problem", "constraints", "integration_points"]
+    agent_questions: |
+      Initial task description supplied by the owner.
+    user_answer: |
+      До этого у меня по обрывкам работали разные чаты: кто-то собирал калории, кто-то работал на сервере, кто-то локально. Кто-то использовал не те транскрипты, оставлял сырой текст, перерабатывал его или делал пост почти один в один. Нужно понять всю систему: что, где и как лежит; подсветить дубли; фиксировать, если из большого стрима взята только часть, какая именно, куда она пошла, а остальное остаётся для идей и контекста. У каждой единицы информации должен быть один канонический источник.
+
+      В единую историю должны войти: свои стримы и видео внутри и вне МК, каталог статей, видео YouTube и канала, коммерческая информация (бизнес-модель, тарифы, презентации, продающие тезисы), а отдельно — чужие книги, вебинары и прочее. Нужна нормальная навигация, чтобы любой чат понимал, по какому вопросу куда обращаться. Сначала создать архитектуру, затем догружать транскрипты и вставлять их в готовую схему. Нужна максимальная применимость при минимальной сложности реализации и поддержки.
+  - asked_at: "2026-08-29"
+    topic_keys: ["feature_description", "constraints", "integration_points", "migration_needs"]
+    agent_questions: |
+      Уточнение границ и порядка наполнения библиотеки.
+    user_answer: |
+      Работа состоит из двух этапов. Сначала нужна общая архитектура и правила. Потом — наполнение материалами: каждый раз прогон копий и дублей, приведение к одному источнику, переименование всех связанных файлов. Например, транскрипт должен называться так же, как соответствующий файл на компьютере. В готовую схему нужно внести всё, что уже есть, а потом постепенно докидывать новое.
+
+      Модель и каталог постов делает другой бот.
+  - asked_at: "2026-08-29"
+    topic_keys: ["feature_description", "success_criteria", "integration_points", "migration_needs"]
+    agent_questions: |
+      Уточнение: библиотека была описана слишком узко как слой транскриптов.
+    user_answer: |
+      Нужна общая информационная библиотека проекта: учебные материалы, видео и аудио МК, Калорийного, тренировок и интенсива, голосовые Telegram, презентации, VSL, отзывы, бизнес-информация, внешние книги и другие источники. Видеотекст нужно не оставлять голым, а полностью структурировать; длинные стримы разбивать на карту тем, продаж, историй, вопросов и ответов. Видеоуроки должны иметь структурированный текст-компаньон, чтобы любой модуль понимал их смысл. В библиотеку нужно сначала перенести и переработать смысл из разрозненных мест, затем удалить лишние копии и переключить другие модули на единственный источник. Каталог постов и его модель делает другой бот; библиотека должна только связывать его с источниками.
+# Entry format:
+# - asked_at: "YYYY-MM-DD HH:MM:SS"
+#   topic_keys: ["user_problem", "success_criteria"]
+#   agent_questions: |
+#     Full question batch, verbatim.
+#   user_answer: |
+#     Full user answer, verbatim.
+
+general_understanding:
+  feature_name:
+    score: 80
+    value: "Единая библиотека знаний и происхождения контента"
+    gaps: ["Confirm the owner-facing name"]
+    required: true
+
+  feature_description:
+    score: 95
+    value: "Единая библиотека смысловых источников проекта: структурированные видео и аудио, карты стримов, статьи-компаньоны, коммерческие материалы, бизнес-контекст, внешние референсы и связи с продуктами/публикациями без второго владельца живых фактов."
+    gaps: []
+    required: true
+
+  work_type:
+    score: 90
+    value: "feature / информационная архитектура и миграция существующих связей"
+    gaps: []
+    required: true
+
+  user_problem:
+    score: 95
+    value: "Разные чаты создавали несогласованные копии, путали версии и степень переработки; непонятно, где первоисточник и что уже использовано."
+    gaps: []
+    required: true
+
+  target_users:
+    score: 0
+    value: ""
+    gaps: ["Identify affected users when applicable"]
+    required: false
+
+  success_criteria:
+    score: 0
+    value: ""
+    gaps: ["Define concrete observable success"]
+    required: true
+
+  constraints:
+    score: 95
+    value: "Два этапа: сначала архитектура/правила, затем контролируемая миграция. Не создавать второй каталог постов, отдельную БД или дубли runtime-данных; структурированная расшифровка заменяет голый raw после проверки; персональные данные не импортируются."
+    gaps: []
+    required: true
+
+  testing_strategy:
+    score: 0
+    value: ""
+    gaps: ["Map behavioral risks to the smallest reliable checks"]
+    required: true
+
+user_experience:
+  user_stories:
+    score: 0
+    value: ""
+    gaps: ["Describe applicable user flows step by step"]
+    required: true
+
+  acceptance_criteria:
+    score: 0
+    value: ""
+    gaps: ["Define testable acceptance criteria"]
+    required: true
+
+  edge_cases:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable boundaries and unusual scenarios"]
+    required: true
+
+  error_scenarios:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable failures and expected behavior"]
+    required: true
+
+  verification_strategy:
+    score: 0
+    value: ""
+    gaps: ["Define how the agent and user will verify the result"]
+    required: true
+
+  ui_ux_requirements:
+    score: 0
+    value: ""
+    gaps: ["Describe UI or UX requirements when applicable"]
+    required: false
+
+  risks:
+    score: 0
+    value: ""
+    gaps: ["Identify applicable risks and mitigations"]
+    required: true
+
+  technical_decisions:
+    score: 0
+    value: ""
+    gaps: ["Record material technical decisions and rejected alternatives"]
+    required: false
+
+  deploy_approach:
+    score: 0
+    value: ""
+    gaps: ["Describe deployment and required configuration when applicable"]
+    required: false
+
+  manual_user_actions:
+    score: 0
+    value: ""
+    gaps: ["List manual setup or launch actions when applicable"]
+    required: false
+
+integration:
+  integration_points:
+    score: 95
+    value: "Существующие content catalog, author-voice corpus, product/pricing runtime, course source-current, media-catalog, reference/transcripts, локальные и облачные архивы. Универсальный вход — content/knowledge-library.md, подробный реестр — будущий content/library/INDEX.md. Каталог и модель постов принадлежат другому боту и подключаются только ссылкой/стабильным идентификатором."
+    gaps: []
+    required: true
+
+  dependencies:
+    score: 0
+    value: ""
+    gaps: ["Identify relevant existing features, services, or libraries"]
+    required: false
+
+  technical_constraints:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable performance, security, or platform limits"]
+    required: false
+
+  data_requirements:
+    score: 0
+    value: ""
+    gaps: ["Describe required data, sources, destinations, and persistence"]
+    required: false
+
+  migration_needs:
+    score: 0
+    value: ""
+    gaps: ["Describe migration and compatibility needs when applicable"]
+    required: false
+
+notes: ""
