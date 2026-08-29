@@ -1624,22 +1624,6 @@
       "path": "content/training/reference/transcripts/Тренировки — общий эфир, 2ч47м57с — транскрипт.txt"
     },
     {
-      "module_id": "platform.knowledge",
-      "path": "deliverables/очищенный-транскрипт-голод-и-сытость.md"
-    },
-    {
-      "module_id": "platform.knowledge",
-      "path": "deliverables/очищенный-транскрипт-конструктор-полезных-блюд.md"
-    },
-    {
-      "module_id": "platform.knowledge",
-      "path": "deliverables/очищенный-транскрипт-периодизация-похудения.md"
-    },
-    {
-      "module_id": "platform.knowledge",
-      "path": "deliverables/очищенный-транскрипт-план-сокращения-сладкого.md"
-    },
-    {
       "module_id": "admin",
       "path": "docs/ADMIN_ARCHITECTURE.md"
     },
@@ -22527,22 +22511,6 @@
         },
         {
           "module_id": "platform.knowledge",
-          "path": "deliverables/очищенный-транскрипт-голод-и-сытость.md"
-        },
-        {
-          "module_id": "platform.knowledge",
-          "path": "deliverables/очищенный-транскрипт-конструктор-полезных-блюд.md"
-        },
-        {
-          "module_id": "platform.knowledge",
-          "path": "deliverables/очищенный-транскрипт-периодизация-похудения.md"
-        },
-        {
-          "module_id": "platform.knowledge",
-          "path": "deliverables/очищенный-транскрипт-план-сокращения-сладкого.md"
-        },
-        {
-          "module_id": "platform.knowledge",
           "path": "docs/KNOWLEDGE_LIBRARY.md"
         },
         {
@@ -22672,7 +22640,7 @@
       ],
       "runtime_services": [],
       "sources": [],
-      "summary": "Планируемый серверный реестр источников, смыслов, происхождения, прав и редакционных прогонов.",
+      "summary": "Серверный реестр источников, смыслов, происхождения, прав и редакционных прогонов.",
       "symbols": [
         {
           "file": "backend/app/crm_routes.py",
