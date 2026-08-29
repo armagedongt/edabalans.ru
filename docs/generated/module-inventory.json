@@ -16,6 +16,10 @@
   ],
   "files": [
     {
+      "module_id": "operations.imports",
+      "path": ".codex/skills/telegram-consultation-transcription/SKILL.md"
+    },
+    {
       "module_id": "operations",
       "path": ".dockerignore"
     },
@@ -177,6 +181,10 @@
     },
     {
       "module_id": "operations.imports",
+      "path": "backend/app/importers/local_media.py"
+    },
+    {
+      "module_id": "operations.imports",
       "path": "backend/app/importers/manual_payments.py"
     },
     {
@@ -190,6 +198,10 @@
     {
       "module_id": "operations.imports",
       "path": "backend/app/importers/telegram_catalog.py"
+    },
+    {
+      "module_id": "operations.imports",
+      "path": "backend/app/importers/telegram_consultations.py"
     },
     {
       "module_id": "operations.imports",
@@ -713,6 +725,10 @@
     },
     {
       "module_id": "operations.imports",
+      "path": "backend/tests/test_local_media.py"
+    },
+    {
+      "module_id": "operations.imports",
       "path": "backend/tests/test_manual_payments.py"
     },
     {
@@ -746,6 +762,10 @@
     {
       "module_id": "platform.content",
       "path": "backend/tests/test_telegram_catalog.py"
+    },
+    {
+      "module_id": "operations.imports",
+      "path": "backend/tests/test_telegram_consultations.py"
     },
     {
       "module_id": "operations.imports",
@@ -974,6 +994,22 @@
     {
       "module_id": "products.masterclass.course",
       "path": "content/masterclass/reference/stream-masterclass-structured-transcript.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-голод-и-сытость.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-конструктор-полезных-блюд.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-периодизация-похудения.md"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-план-сокращения-сладкого.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1960,12 +1996,44 @@
       "path": "docs/prototypes/INTERACTIVE_SCENARIO_PREVIEW.md"
     },
     {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/build-previews.ps1"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/common.css"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/preview.js"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/serve-preview.ps1"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/version-a.css"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/prototypes/homepage-redesign/version-b.css"
+    },
+    {
       "module_id": "products.masterclass.offers",
       "path": "docs/prototypes/masterclass-offer-simulator.fragment.html"
     },
     {
       "module_id": "operations.project-work",
       "path": "docs/prototypes/site-footer-preview.html"
+    },
+    {
+      "module_id": "operations.imports",
+      "path": "docs/telegram-consultation-import.md"
     },
     {
       "module_id": "operations.proxy",
@@ -2672,6 +2740,38 @@
       "path": "work/course-structure-editor/user-spec.md"
     },
     {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/00-owner-thread-verbatim.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/01-intensive-owner-comments-verbatim.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/02-latest-owner-comments-verbatim.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/03-source-and-program-handoff.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/04-command-for-writer-chat.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/05-owner-long-speech-index.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/integration-20260829/integration-report.md"
+    },
+    {
       "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/TASK_LIST.md"
     },
@@ -2694,6 +2794,106 @@
     {
       "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/user-spec.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/day-06-semantic-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/01-anchor-points.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/02-oatmeal-evolution.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/03-how-to-make-food-tasty.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/04-why-recipe-may-not-fit.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/05-meal-constructor.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/06-store-food-without-cooking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/07-demo-same-products-four-forms.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/08-demo-one-meal-three-characters.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/09-first-recipes-selection.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/drafts/10-system-of-recipes-offer.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/fact-check-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/first-part-system.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/user-spec.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/design-contract.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-1-stacked.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-2-route.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-3-layers.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-4a-full-stack.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-4b-grouped-stack.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/meal-constructor-variant-4c-grouped-with-spices.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/recipe-catalog/visuals/prompts.md"
     }
   ],
   "modules": [
@@ -11607,11 +11807,16 @@
       "boundary": "Реальные выгрузки и персональные данные не хранятся в Git.",
       "capabilities": [
         "импортировать по фактической схеме источника с audit trail;",
-        "останавливать операцию при конфликте идентичности или неподтверждённом backup;"
+        "останавливать операцию при конфликте идентичности или неподтверждённом backup;",
+        "локально нормализовать Telegram Desktop export и папки с видео/аудио для расшифровки без CRM-анализа;"
       ],
       "card": "docs/knowledge-base/modules/catalog/operations.imports.md",
       "document_status": "current",
       "files": [
+        {
+          "module_id": "operations.imports",
+          "path": ".codex/skills/telegram-consultation-transcription/SKILL.md"
+        },
         {
           "module_id": "operations.imports",
           "path": "backend/app/importers/__init__.py"
@@ -11646,6 +11851,10 @@
         },
         {
           "module_id": "operations.imports",
+          "path": "backend/app/importers/local_media.py"
+        },
+        {
+          "module_id": "operations.imports",
           "path": "backend/app/importers/manual_payments.py"
         },
         {
@@ -11659,6 +11868,10 @@
         {
           "module_id": "operations.imports",
           "path": "backend/app/importers/telegram_catalog.py"
+        },
+        {
+          "module_id": "operations.imports",
+          "path": "backend/app/importers/telegram_consultations.py"
         },
         {
           "module_id": "operations.imports",
@@ -11686,11 +11899,19 @@
         },
         {
           "module_id": "operations.imports",
+          "path": "backend/tests/test_local_media.py"
+        },
+        {
+          "module_id": "operations.imports",
           "path": "backend/tests/test_manual_payments.py"
         },
         {
           "module_id": "operations.imports",
           "path": "backend/tests/test_tag_rules_v2.py"
+        },
+        {
+          "module_id": "operations.imports",
+          "path": "backend/tests/test_telegram_consultations.py"
         },
         {
           "module_id": "operations.imports",
@@ -11703,6 +11924,10 @@
         {
           "module_id": "operations.imports",
           "path": "docs/knowledge-base/modules/catalog/operations.imports.md"
+        },
+        {
+          "module_id": "operations.imports",
+          "path": "docs/telegram-consultation-import.md"
         },
         {
           "module_id": "operations.imports",
@@ -12343,6 +12568,94 @@
           "qualname": "main"
         },
         {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 29,
+          "module_id": "operations.imports",
+          "name": "_timestamp",
+          "qualname": "_timestamp"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 33,
+          "module_id": "operations.imports",
+          "name": "_safe_name",
+          "qualname": "_safe_name"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 38,
+          "module_id": "operations.imports",
+          "name": "_read_json",
+          "qualname": "_read_json"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 42,
+          "module_id": "operations.imports",
+          "name": "_media_tools",
+          "qualname": "_media_tools"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 55,
+          "module_id": "operations.imports",
+          "name": "_duration_seconds",
+          "qualname": "_duration_seconds"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 65,
+          "module_id": "operations.imports",
+          "name": "_prepare_audio_chunks",
+          "qualname": "_prepare_audio_chunks"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 84,
+          "module_id": "operations.imports",
+          "name": "_render_timeline",
+          "qualname": "_render_timeline"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 95,
+          "module_id": "operations.imports",
+          "name": "_write_transcript",
+          "qualname": "_write_transcript"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 107,
+          "module_id": "operations.imports",
+          "name": "import_media_folder",
+          "qualname": "import_media_folder"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 132,
+          "module_id": "operations.imports",
+          "name": "persist",
+          "qualname": "import_media_folder.persist"
+        },
+        {
+          "file": "backend/app/importers/local_media.py",
+          "kind": "function",
+          "line": 212,
+          "module_id": "operations.imports",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
           "file": "backend/app/importers/manual_payments.py",
           "kind": "class",
           "line": 30,
@@ -12599,6 +12912,174 @@
           "qualname": "main"
         },
         {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 27,
+          "module_id": "operations.imports",
+          "name": "flatten_text",
+          "qualname": "flatten_text"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 35,
+          "module_id": "operations.imports",
+          "name": "_utc_timestamp",
+          "qualname": "_utc_timestamp"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 46,
+          "module_id": "operations.imports",
+          "name": "_safe_relative_path",
+          "qualname": "_safe_relative_path"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 53,
+          "module_id": "operations.imports",
+          "name": "_media_path",
+          "qualname": "_media_path"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 57,
+          "module_id": "operations.imports",
+          "name": "_is_voice",
+          "qualname": "_is_voice"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 61,
+          "module_id": "operations.imports",
+          "name": "_sha256",
+          "qualname": "_sha256"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 69,
+          "module_id": "operations.imports",
+          "name": "_clean_transcript",
+          "qualname": "_clean_transcript"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 73,
+          "module_id": "operations.imports",
+          "name": "_read_json",
+          "qualname": "_read_json"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "operations.imports",
+          "name": "_write_json",
+          "qualname": "_write_json"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 82,
+          "module_id": "operations.imports",
+          "name": "_find_result_json",
+          "qualname": "_find_result_json"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 89,
+          "module_id": "operations.imports",
+          "name": "_extract_zip",
+          "qualname": "_extract_zip"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 100,
+          "module_id": "operations.imports",
+          "name": "_source_root",
+          "qualname": "_source_root"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 109,
+          "module_id": "operations.imports",
+          "name": "_multipart_request",
+          "qualname": "_multipart_request"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "class",
+          "line": 121,
+          "module_id": "operations.imports",
+          "name": "OpenAITranscriber",
+          "qualname": "OpenAITranscriber"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "method",
+          "line": 122,
+          "module_id": "operations.imports",
+          "name": "__init__",
+          "qualname": "OpenAITranscriber.__init__"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "method",
+          "line": 125,
+          "module_id": "operations.imports",
+          "name": "__call__",
+          "qualname": "OpenAITranscriber.__call__"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 143,
+          "module_id": "operations.imports",
+          "name": "_normalise_messages",
+          "qualname": "_normalise_messages"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 179,
+          "module_id": "operations.imports",
+          "name": "_render_timeline",
+          "qualname": "_render_timeline"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 193,
+          "module_id": "operations.imports",
+          "name": "import_export",
+          "qualname": "import_export"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 211,
+          "module_id": "operations.imports",
+          "name": "persist_progress",
+          "qualname": "import_export.persist_progress"
+        },
+        {
+          "file": "backend/app/importers/telegram_consultations.py",
+          "kind": "function",
+          "line": 273,
+          "module_id": "operations.imports",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
           "file": "backend/app/importers/telegram_public_metrics.py",
           "kind": "function",
           "line": 14,
@@ -12719,6 +13200,94 @@
           "qualname": "test_duplicate_unidentified_client_rows_do_not_abort_batch"
         },
         {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 8,
+          "module_id": "operations.imports",
+          "name": "test_folder_media_is_transcribed_and_source_is_not_modified",
+          "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 17,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified.transcribe"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 21,
+          "module_id": "operations.imports",
+          "name": "prepare",
+          "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified.prepare"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 41,
+          "module_id": "operations.imports",
+          "name": "test_repeat_does_not_transcribe_unchanged_media",
+          "qualname": "test_repeat_does_not_transcribe_unchanged_media"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_repeat_does_not_transcribe_unchanged_media.transcribe"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 51,
+          "module_id": "operations.imports",
+          "name": "prepare",
+          "qualname": "test_repeat_does_not_transcribe_unchanged_media.prepare"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 63,
+          "module_id": "operations.imports",
+          "name": "test_multiple_chunks_are_transcribed_and_joined_in_order",
+          "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 69,
+          "module_id": "operations.imports",
+          "name": "prepare",
+          "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order.prepare"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 81,
+          "module_id": "operations.imports",
+          "name": "test_result_directory_inside_source_is_rejected",
+          "qualname": "test_result_directory_inside_source_is_rejected"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 92,
+          "module_id": "operations.imports",
+          "name": "test_one_failed_file_does_not_stop_later_file",
+          "qualname": "test_one_failed_file_does_not_stop_later_file"
+        },
+        {
+          "file": "backend/tests/test_local_media.py",
+          "kind": "function",
+          "line": 98,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_one_failed_file_does_not_stop_later_file.transcribe"
+        },
+        {
           "file": "backend/tests/test_manual_payments.py",
           "kind": "function",
           "line": 10,
@@ -12765,6 +13334,70 @@
           "module_id": "operations.imports",
           "name": "test_owner_approved_intensive_and_lottery_rules",
           "qualname": "test_owner_approved_intensive_and_lottery_rules"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 9,
+          "module_id": "operations.imports",
+          "name": "make_export",
+          "qualname": "make_export"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 26,
+          "module_id": "operations.imports",
+          "name": "test_imports_folder_voice_and_timeline_in_chronological_order",
+          "qualname": "test_imports_folder_voice_and_timeline_in_chronological_order"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 29,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_imports_folder_voice_and_timeline_in_chronological_order.transcribe"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 60,
+          "module_id": "operations.imports",
+          "name": "test_reimport_from_zip_does_not_duplicate_or_retranscribe",
+          "qualname": "test_reimport_from_zip_does_not_duplicate_or_retranscribe"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 70,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_reimport_from_zip_does_not_duplicate_or_retranscribe.transcribe"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 86,
+          "module_id": "operations.imports",
+          "name": "test_rejects_result_directory_inside_folder_export",
+          "qualname": "test_rejects_result_directory_inside_folder_export"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 97,
+          "module_id": "operations.imports",
+          "name": "test_one_failed_voice_does_not_stop_later_voice",
+          "qualname": "test_one_failed_voice_does_not_stop_later_voice"
+        },
+        {
+          "file": "backend/tests/test_telegram_consultations.py",
+          "kind": "function",
+          "line": 109,
+          "module_id": "operations.imports",
+          "name": "transcribe",
+          "qualname": "test_one_failed_voice_does_not_stop_later_voice.transcribe"
         },
         {
           "file": "backend/tests/test_tilda_members_import.py",
@@ -13673,7 +14306,7 @@
       "telegram": null,
       "title": "Импорт и служебные инструменты",
       "truths": [
-        "`backend/app/importers/`, `tools/`, import tables и профильные runbook."
+        "`backend/app/importers/`, `tools/`, import tables, профильные runbook и\n`docs/telegram-consultation-import.md`."
       ]
     },
     {
@@ -13865,11 +14498,171 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/build-previews.ps1"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/common.css"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/preview.js"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/serve-preview.ps1"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/version-a.css"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "docs/prototypes/homepage-redesign/version-b.css"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "docs/prototypes/site-footer-preview.html"
         },
         {
           "module_id": "operations.project-work",
           "path": "work/content-authoring-system/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/00-owner-thread-verbatim.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/01-intensive-owner-comments-verbatim.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/02-latest-owner-comments-verbatim.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/03-source-and-program-handoff.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/04-command-for-writer-chat.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/05-owner-long-speech-index.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/integration-20260829/integration-report.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/day-06-semantic-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/01-anchor-points.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/02-oatmeal-evolution.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/03-how-to-make-food-tasty.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/04-why-recipe-may-not-fit.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/05-meal-constructor.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/06-store-food-without-cooking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/07-demo-same-products-four-forms.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/08-demo-one-meal-three-characters.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/09-first-recipes-selection.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/drafts/10-system-of-recipes-offer.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/fact-check-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/first-part-system.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/design-contract.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-1-stacked.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-2-route.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-3-layers.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-4a-full-stack.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-4b-grouped-stack.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/meal-constructor-variant-4c-grouped-with-spices.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/recipe-catalog/visuals/prompts.md"
         }
       ],
       "id": "operations.project-work",
@@ -13888,7 +14681,32 @@
       "runtime_services": [],
       "sources": [],
       "summary": "Хранит временные research, spec, решения и checkpoints крупных изменений.",
-      "symbols": [],
+      "symbols": [
+        {
+          "file": "docs/prototypes/homepage-redesign/preview.js",
+          "kind": "function",
+          "line": 29,
+          "module_id": "operations.project-work",
+          "name": "wrapRecords",
+          "qualname": "wrapRecords"
+        },
+        {
+          "file": "docs/prototypes/homepage-redesign/preview.js",
+          "kind": "function",
+          "line": 55,
+          "module_id": "operations.project-work",
+          "name": "insertBefore",
+          "qualname": "insertBefore"
+        },
+        {
+          "file": "docs/prototypes/homepage-redesign/preview.js",
+          "kind": "function",
+          "line": 167,
+          "module_id": "operations.project-work",
+          "name": "linkFor",
+          "qualname": "linkFor"
+        }
+      ],
       "tables": [],
       "telegram": null,
       "title": "Активная работа и документация разработки",
@@ -16197,7 +17015,12 @@
         "передавать писателю единый стандарт статей сайта и материалов курсов без",
         "различать редактирование только структуры и редактирование только текста,",
         "выбирать один из четырёх авторских профилей: структурная сборка, транскрипт в",
+        "до содержательной работы различать `full_source` и `sparse_basis`: полный",
+        "для базового материала с каркасом сначала искать по каждому смысловому блоку",
+        "различать роли транскрипта `article_source`, `video_script` и `context_only`,",
         "выполнять преемственный рерайт под явную цель без переписывания ради замен;",
+        "перед отдельным материалом курса учитывать оболочку всего дня и соседние",
+        "прогонять новые фразы через функциональную проверку «Антинейрослоп», не",
         "маршрутизировать любую писательскую задачу через обязательный skill",
         "собирать task/pack с явным рабочим профилем, проверять сохранность исходника,",
         "проверять только существенные факты с автоматически выбранной строгостью:",
@@ -16205,6 +17028,7 @@
         "отдельным проходом встраивать доказательные ссылки в слова, которые называют",
         "вести дату, версию текста, версию политики, глубину и статус проверки",
         "независимо фиксировать редакторский этап, проверку Сергеем, проверку",
+        "после большого прогона вести ledger замечаний `применено / записано /",
         "владеть закрытым Markdown-диалектом и маршрутизатором продуктовых вставок, не",
         "хранить все новые редакторские правила и коррекции внутри этого модуля, не в",
         "создавать проверяемую зашифрованную резервную копию приватной памяти автора,"
@@ -17249,7 +18073,7 @@
         {
           "file": "tools/author_workflow.py",
           "kind": "function",
-          "line": 29,
+          "line": 38,
           "module_id": "platform.content",
           "name": "create_review",
           "qualname": "create_review"
@@ -17257,7 +18081,7 @@
         {
           "file": "tools/author_workflow.py",
           "kind": "function",
-          "line": 70,
+          "line": 79,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18297,7 +19121,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 27,
+          "line": 30,
           "module_id": "platform.content",
           "name": "canonical_text_digest",
           "qualname": "canonical_text_digest"
@@ -18305,7 +19129,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 35,
+          "line": 38,
           "module_id": "platform.content",
           "name": "sync_status",
           "qualname": "sync_status"
@@ -18313,7 +19137,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 51,
+          "line": 54,
           "module_id": "platform.content",
           "name": "install",
           "qualname": "install"
@@ -18321,7 +19145,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 71,
+          "line": 74,
           "module_id": "platform.content",
           "name": "package_status",
           "qualname": "package_status"
@@ -18329,7 +19153,7 @@
         {
           "file": "tools/install_edabalans_writer_skill.py",
           "kind": "function",
-          "line": 102,
+          "line": 105,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18489,7 +19313,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 104,
+          "line": 109,
           "module_id": "platform.content",
           "name": "distinct_version_groups",
           "qualname": "distinct_version_groups"
@@ -18497,7 +19321,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 127,
+          "line": 132,
           "module_id": "platform.content",
           "name": "bounded_full_text",
           "qualname": "bounded_full_text"
@@ -18505,7 +19329,23 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 158,
+          "line": 163,
+          "module_id": "platform.content",
+          "name": "bounded_complete_full_text",
+          "qualname": "bounded_complete_full_text"
+        },
+        {
+          "file": "tools/prepare_author_post.py",
+          "kind": "function",
+          "line": 178,
+          "module_id": "platform.content",
+          "name": "authored_reuse_retrieval",
+          "qualname": "authored_reuse_retrieval"
+        },
+        {
+          "file": "tools/prepare_author_post.py",
+          "kind": "function",
+          "line": 248,
           "module_id": "platform.content",
           "name": "fact_check_profile",
           "qualname": "fact_check_profile"
@@ -18513,7 +19353,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 180,
+          "line": 270,
           "module_id": "platform.content",
           "name": "build_pack",
           "qualname": "build_pack"
@@ -18521,7 +19361,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 511,
+          "line": 804,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18833,7 +19673,15 @@
         {
           "file": "tools/search_author_voice.py",
           "kind": "function",
-          "line": 25,
+          "line": 36,
+          "module_id": "platform.content",
+          "name": "get_index_item",
+          "qualname": "get_index_item"
+        },
+        {
+          "file": "tools/search_author_voice.py",
+          "kind": "function",
+          "line": 70,
           "module_id": "platform.content",
           "name": "matches",
           "qualname": "matches"
@@ -18841,7 +19689,7 @@
         {
           "file": "tools/search_author_voice.py",
           "kind": "function",
-          "line": 43,
+          "line": 88,
           "module_id": "platform.content",
           "name": "natural_fts_query",
           "qualname": "natural_fts_query"
@@ -18849,7 +19697,7 @@
         {
           "file": "tools/search_author_voice.py",
           "kind": "function",
-          "line": 74,
+          "line": 119,
           "module_id": "platform.content",
           "name": "search_index",
           "qualname": "search_index"
@@ -18857,7 +19705,7 @@
         {
           "file": "tools/search_author_voice.py",
           "kind": "function",
-          "line": 200,
+          "line": 236,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -18944,8 +19792,16 @@
         },
         {
           "file": "tools/tests/test_author_voice.py",
+          "kind": "function",
+          "line": 30,
+          "module_id": "platform.content",
+          "name": "whole_day_context",
+          "qualname": "whole_day_context"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 29,
+          "line": 38,
           "module_id": "platform.content",
           "name": "ProjectVoiceManifestTests",
           "qualname": "ProjectVoiceManifestTests"
@@ -18953,7 +19809,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 30,
+          "line": 39,
           "module_id": "platform.content",
           "name": "test_retrieval_full_text_has_a_hard_character_ceiling",
           "qualname": "ProjectVoiceManifestTests.test_retrieval_full_text_has_a_hard_character_ceiling"
@@ -18961,7 +19817,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 39,
+          "line": 48,
           "module_id": "platform.content",
           "name": "test_project_writer_skill_installer_keeps_runtime_copy_in_sync",
           "qualname": "ProjectVoiceManifestTests.test_project_writer_skill_installer_keeps_runtime_copy_in_sync"
@@ -18969,7 +19825,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 61,
+          "line": 70,
           "module_id": "platform.content",
           "name": "test_writer_skill_manifest_hash_ignores_checkout_newlines",
           "qualname": "ProjectVoiceManifestTests.test_writer_skill_manifest_hash_ignores_checkout_newlines"
@@ -18977,7 +19833,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 74,
+          "line": 83,
           "module_id": "platform.content",
           "name": "test_writer_skill_package_status_uses_canonical_text_hash",
           "qualname": "ProjectVoiceManifestTests.test_writer_skill_package_status_uses_canonical_text_hash"
@@ -18985,7 +19841,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 112,
+          "line": 121,
           "module_id": "platform.content",
           "name": "test_retrieval_depth_applies_item_and_full_text_ceilings",
           "qualname": "ProjectVoiceManifestTests.test_retrieval_depth_applies_item_and_full_text_ceilings"
@@ -18993,7 +19849,31 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 211,
+          "line": 220,
+          "module_id": "platform.content",
+          "name": "test_foundational_material_searches_authored_corpus_per_block",
+          "qualname": "ProjectVoiceManifestTests.test_foundational_material_searches_authored_corpus_per_block"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
+          "kind": "method",
+          "line": 314,
+          "module_id": "platform.content",
+          "name": "test_omitted_authored_source_can_be_fetched_exactly_by_item_id",
+          "qualname": "ProjectVoiceManifestTests.test_omitted_authored_source_can_be_fetched_exactly_by_item_id"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
+          "kind": "method",
+          "line": 365,
+          "module_id": "platform.content",
+          "name": "test_routine_telegram_defaults_to_original_composition",
+          "qualname": "ProjectVoiceManifestTests.test_routine_telegram_defaults_to_original_composition"
+        },
+        {
+          "file": "tools/tests/test_author_voice.py",
+          "kind": "method",
+          "line": 389,
           "module_id": "platform.content",
           "name": "test_all_authoring_canon_files_have_one_platform_content_owner",
           "qualname": "ProjectVoiceManifestTests.test_all_authoring_canon_files_have_one_platform_content_owner"
@@ -19001,7 +19881,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 244,
+          "line": 422,
           "module_id": "platform.content",
           "name": "test_project_routes_every_writing_task_through_writer_skill",
           "qualname": "ProjectVoiceManifestTests.test_project_routes_every_writing_task_through_writer_skill"
@@ -19009,7 +19889,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 251,
+          "line": 429,
           "module_id": "platform.content",
           "name": "test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts",
           "qualname": "ProjectVoiceManifestTests.test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts"
@@ -19017,7 +19897,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 300,
+          "line": 478,
           "module_id": "platform.content",
           "name": "test_expanded_core_matches_private_catalog_when_available",
           "qualname": "ProjectVoiceManifestTests.test_expanded_core_matches_private_catalog_when_available"
@@ -19025,7 +19905,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 360,
+          "line": 538,
           "module_id": "platform.content",
           "name": "CatalogAuthorshipTests",
           "qualname": "CatalogAuthorshipTests"
@@ -19033,7 +19913,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 361,
+          "line": 539,
           "module_id": "platform.content",
           "name": "test_telegram_preserves_embedded_link_targets",
           "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -19041,7 +19921,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 372,
+          "line": 550,
           "module_id": "platform.content",
           "name": "test_reply_page_separates_parent_context_from_owner_text",
           "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -19049,7 +19929,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 401,
+          "line": 579,
           "module_id": "platform.content",
           "name": "VoiceDecisionTests",
           "qualname": "VoiceDecisionTests"
@@ -19057,7 +19937,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 403,
+          "line": 581,
           "module_id": "platform.content",
           "name": "card",
           "qualname": "VoiceDecisionTests.card"
@@ -19065,7 +19945,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 415,
+          "line": 593,
           "module_id": "platform.content",
           "name": "test_link_only_variants_share_normalized_hash",
           "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -19073,7 +19953,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 425,
+          "line": 603,
           "module_id": "platform.content",
           "name": "test_parent_context_never_teaches_voice",
           "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -19081,7 +19961,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 432,
+          "line": 610,
           "module_id": "platform.content",
           "name": "test_owner_reply_is_eligible_when_long_enough",
           "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -19089,7 +19969,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 439,
+          "line": 617,
           "module_id": "platform.content",
           "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
           "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -19097,7 +19977,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "class",
-          "line": 450,
+          "line": 628,
           "module_id": "platform.content",
           "name": "VoiceSearchIntegrationTests",
           "qualname": "VoiceSearchIntegrationTests"
@@ -19105,7 +19985,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 451,
+          "line": 629,
           "module_id": "platform.content",
           "name": "test_direct_owner_decision_reaches_runtime_evidence",
           "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -19113,7 +19993,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 580,
+          "line": 758,
           "module_id": "platform.content",
           "name": "test_old_materialization_version_is_not_current",
           "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -19121,7 +20001,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 591,
+          "line": 769,
           "module_id": "platform.content",
           "name": "test_materialization_rebuild_preserves_owner_corrections",
           "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -19129,7 +20009,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 600,
+          "line": 778,
           "module_id": "platform.content",
           "name": "test_cache_requires_all_derived_artifacts",
           "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -19137,7 +20017,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 609,
+          "line": 787,
           "module_id": "platform.content",
           "name": "test_natural_query_adds_shared_russian_prefix",
           "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -19145,7 +20025,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 613,
+          "line": 791,
           "module_id": "platform.content",
           "name": "test_reviewed_index_returns_source_linked_fragment",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -19153,7 +20033,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 664,
+          "line": 842,
           "module_id": "platform.content",
           "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
           "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -19161,7 +20041,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 713,
+          "line": 891,
           "module_id": "platform.content",
           "name": "test_search_softly_prioritizes_strength_and_surface",
           "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -19169,7 +20049,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 751,
+          "line": 929,
           "module_id": "platform.content",
           "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
           "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -19177,7 +20057,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 790,
+          "line": 968,
           "module_id": "platform.content",
           "name": "test_russian_word_forms_and_late_filtered_result_are_found",
           "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -19185,7 +20065,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 829,
+          "line": 1007,
           "module_id": "platform.content",
           "name": "test_private_guard_rejects_git_tree",
           "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -19193,7 +20073,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 837,
+          "line": 1015,
           "module_id": "platform.content",
           "name": "test_owner_correction_is_persisted_and_searchable",
           "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -19201,7 +20081,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 865,
+          "line": 1043,
           "module_id": "platform.content",
           "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -19209,7 +20089,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 905,
+          "line": 1083,
           "module_id": "platform.content",
           "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
           "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -19217,7 +20097,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 938,
+          "line": 1116,
           "module_id": "platform.content",
           "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
           "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -19225,7 +20105,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 966,
+          "line": 1144,
           "module_id": "platform.content",
           "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
           "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -19233,7 +20113,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 986,
+          "line": 1164,
           "module_id": "platform.content",
           "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
           "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -19241,7 +20121,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1013,
+          "line": 1191,
           "module_id": "platform.content",
           "name": "test_default_search_excludes_candidates_but_can_request_them",
           "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -19249,7 +20129,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1049,
+          "line": 1227,
           "module_id": "platform.content",
           "name": "test_post_pack_carries_argument_route_and_edit_mode",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -19257,7 +20137,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1094,
+          "line": 1272,
           "module_id": "platform.content",
           "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -19265,7 +20145,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1171,
+          "line": 1351,
           "module_id": "platform.content",
           "name": "test_text_only_mode_preserves_structure_contract",
           "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -19273,7 +20153,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1233,
+          "line": 1413,
           "module_id": "platform.content",
           "name": "test_general_course_article_uses_article_rules_without_full_shell",
           "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -19281,7 +20161,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1251,
+          "line": 1432,
           "module_id": "platform.content",
           "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
           "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -19289,7 +20169,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1320,
+          "line": 1509,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -19297,7 +20177,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1369,
+          "line": 1558,
           "module_id": "platform.content",
           "name": "test_rewrite_requires_source_text_and_goal",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -19305,7 +20185,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1391,
+          "line": 1580,
           "module_id": "platform.content",
           "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
           "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -19313,7 +20193,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1418,
+          "line": 1607,
           "module_id": "platform.content",
           "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
           "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -19321,7 +20201,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1498,
+          "line": 1687,
           "module_id": "platform.content",
           "name": "test_structure_only_protects_embedded_video_and_audio",
           "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -19329,7 +20209,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1529,
+          "line": 1718,
           "module_id": "platform.content",
           "name": "test_sales_cta_pack_routes_editorial_linking",
           "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -19337,7 +20217,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1550,
+          "line": 1739,
           "module_id": "platform.content",
           "name": "test_edit_only_modes_require_source_text",
           "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -19345,7 +20225,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1572,
+          "line": 1761,
           "module_id": "platform.content",
           "name": "test_proofread_preserves_structure_and_requires_change_review",
           "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -19353,7 +20233,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1609,
+          "line": 1798,
           "module_id": "platform.content",
           "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
           "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -19361,7 +20241,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1677,
+          "line": 1866,
           "module_id": "platform.content",
           "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
           "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -19369,7 +20249,7 @@
         {
           "file": "tools/tests/test_author_voice.py",
           "kind": "method",
-          "line": 1695,
+          "line": 1884,
           "module_id": "platform.content",
           "name": "test_correction_preserves_owner_final_and_review_rounds",
           "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
@@ -19417,7 +20297,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 56,
+          "line": 76,
           "module_id": "platform.content",
           "name": "test_four_profiles_prepare_and_validate",
           "qualname": "AuthorWorkflowTests.test_four_profiles_prepare_and_validate"
@@ -19425,7 +20305,39 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 71,
+          "line": 91,
+          "module_id": "platform.content",
+          "name": "test_full_source_and_sparse_basis_route_different_owner_outputs",
+          "qualname": "AuthorWorkflowTests.test_full_source_and_sparse_basis_route_different_owner_outputs"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 121,
+          "module_id": "platform.content",
+          "name": "test_three_transcript_roles_are_explicit_and_separated",
+          "qualname": "AuthorWorkflowTests.test_three_transcript_roles_are_explicit_and_separated"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 159,
+          "module_id": "platform.content",
+          "name": "test_course_material_requires_whole_day_context_and_continuity",
+          "qualname": "AuthorWorkflowTests.test_course_material_requires_whole_day_context_and_continuity"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 218,
+          "module_id": "platform.content",
+          "name": "test_new_workflow_requires_explicit_basis_and_transcript_role",
+          "qualname": "AuthorWorkflowTests.test_new_workflow_requires_explicit_basis_and_transcript_role"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 260,
           "module_id": "platform.content",
           "name": "test_legacy_inference_and_profile_floors",
           "qualname": "AuthorWorkflowTests.test_legacy_inference_and_profile_floors"
@@ -19433,7 +20345,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 95,
+          "line": 284,
           "module_id": "platform.content",
           "name": "test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits",
           "qualname": "AuthorWorkflowTests.test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits"
@@ -19441,7 +20353,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 144,
+          "line": 333,
           "module_id": "platform.content",
           "name": "test_structure_profile_accepts_only_allowlisted_heading_text",
           "qualname": "AuthorWorkflowTests.test_structure_profile_accepts_only_allowlisted_heading_text"
@@ -19449,7 +20361,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 157,
+          "line": 346,
           "module_id": "platform.content",
           "name": "test_structure_profile_cannot_delete_move_or_duplicate_authored_heading",
           "qualname": "AuthorWorkflowTests.test_structure_profile_cannot_delete_move_or_duplicate_authored_heading"
@@ -19457,7 +20369,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 186,
+          "line": 375,
           "module_id": "platform.content",
           "name": "test_exact_removal_ledger_is_removed_from_coverage_baseline",
           "qualname": "AuthorWorkflowTests.test_exact_removal_ledger_is_removed_from_coverage_baseline"
@@ -19465,7 +20377,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 199,
+          "line": 388,
           "module_id": "platform.content",
           "name": "test_missing_anchor_and_coverage_need_fix",
           "qualname": "AuthorWorkflowTests.test_missing_anchor_and_coverage_need_fix"
@@ -19473,7 +20385,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 213,
+          "line": 402,
           "module_id": "platform.content",
           "name": "test_validator_cli_exit_codes",
           "qualname": "AuthorWorkflowTests.test_validator_cli_exit_codes"
@@ -19481,7 +20393,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 236,
+          "line": 425,
           "module_id": "platform.content",
           "name": "test_exact_review_set_hashes_and_fact_expiry",
           "qualname": "AuthorWorkflowTests.test_exact_review_set_hashes_and_fact_expiry"
@@ -19489,7 +20401,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 284,
+          "line": 473,
           "module_id": "platform.content",
           "name": "test_fact_check_profile_follows_surface_and_can_be_overridden",
           "qualname": "AuthorWorkflowTests.test_fact_check_profile_follows_surface_and_can_be_overridden"
@@ -19497,7 +20409,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 353,
+          "line": 542,
           "module_id": "platform.content",
           "name": "test_required_facts_require_sources_and_editorial_wording_is_not_literal",
           "qualname": "AuthorWorkflowTests.test_required_facts_require_sources_and_editorial_wording_is_not_literal"
@@ -19505,7 +20417,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 402,
+          "line": 592,
           "module_id": "platform.content",
           "name": "test_recording_correction_refreshes_semantic_counters",
           "qualname": "AuthorWorkflowTests.test_recording_correction_refreshes_semantic_counters"
@@ -19513,10 +20425,18 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 423,
+          "line": 613,
           "module_id": "platform.content",
           "name": "test_health_reports_one_fresh_voice_state",
           "qualname": "AuthorWorkflowTests.test_health_reports_one_fresh_voice_state"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 648,
+          "module_id": "platform.content",
+          "name": "test_skill_manifest_digest_ignores_text_line_endings",
+          "qualname": "AuthorWorkflowTests.test_skill_manifest_digest_ignores_text_line_endings"
         },
         {
           "file": "tools/tests/test_backup_author_memory.py",
@@ -19777,7 +20697,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 371,
+          "line": 414,
           "module_id": "platform.content",
           "name": "review_errors",
           "qualname": "review_errors"
@@ -19785,7 +20705,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 422,
+          "line": 465,
           "module_id": "platform.content",
           "name": "fact_review_expiry",
           "qualname": "fact_review_expiry"
@@ -19793,7 +20713,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 436,
+          "line": 479,
           "module_id": "platform.content",
           "name": "validate",
           "qualname": "validate"
@@ -19801,7 +20721,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 594,
+          "line": 637,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -19894,7 +20814,7 @@
       "truths": [
         "Единый нормативный канон принадлежит этому модулю:\n`content/author-voice/writer-contract-v1.md` владеет голосом, аргументацией и\nпродажами, `authoring-work-profiles-v1.md` — выбором авторского маршрута,\nсоседний `editing-modes-v1.md` — разрешениями на изменение исходника,\nа `docs/knowledge-base/ARTICLE_STANDARD.md` — общим оформлением статей сайта и\nматериалов любых курсов. Обязательная точка входа —\n`content/author-voice/skill/edabalans-writer/SKILL.md`. Продуктовые факты\nподключаются через `content/author-voice/product-fact-router.md` без копирования\nв голос.",
         "Машинный task описан `author-task.schema.json`, компонентные вызовы —\n`article-component-router.md`, проход доказательных ссылок —\n`source-integration-pass-v1.md`, состояние проверок —\n`source-review-registry-v1.json`, четыре оси состояния материала —\n`material-status-v1.md`, исполнимый маршрут — `tools/author_workflow.py`.",
-        "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,\n`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и `content/`.\nОсобенности оболочки курса задают канонические документы соответствующего курса,\nне создавая второй редакторский голос.\nВнешние книги, видео и другие переданные референсы маршрутизируются через\n`content/external-references/README.md`; этот слой поставляет идеи и provenance,\nно не определяет авторский голос, продуктовые факты или медицинские выводы.\nПолные локальные тексты и индексы голоса хранятся только в\n`C:\\private\\edabalans-content-authoring`; Git содержит контракт, правила и ID\nдоказательств в `content/author-voice/`.\nЗашифрованный backup приватного канона создаёт `tools/backup_author_memory.py`;\nоперационный маршрут хранения и восстановления описан в `docs/OPERATIONS.md`."
+        "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,\n`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и перечисленные в\n`docs/modules.toml` канонические файлы `content/author-voice/`.\nОсобенности оболочки курса задают канонические документы соответствующего курса,\nне создавая второй редакторский голос.\nВнешние книги, видео и другие переданные референсы маршрутизируются через\n`content/external-references/README.md`; этот слой поставляет идеи и provenance,\nно не определяет авторский голос, продуктовые факты или медицинские выводы.\nПолные локальные тексты и индексы голоса хранятся только в\n`C:\\private\\edabalans-content-authoring`; Git содержит контракт, правила и ID\nдоказательств в `content/author-voice/`.\nЗашифрованный backup приватного канона создаёт `tools/backup_author_memory.py`;\nоперационный маршрут хранения и восстановления описан в `docs/OPERATIONS.md`."
       ]
     },
     {
@@ -23113,6 +24033,22 @@
         {
           "module_id": "products.masterclass.course",
           "path": "content/masterclass/reference/stream-masterclass-structured-transcript.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-голод-и-сытость.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-конструктор-полезных-блюд.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-периодизация-похудения.md"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "content/masterclass/reference/structured-transcripts/очищенный-транскрипт-план-сокращения-сладкого.md"
         },
         {
           "module_id": "products.masterclass.course",
@@ -33559,6 +34495,94 @@
       "qualname": "main"
     },
     {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 29,
+      "module_id": "operations.imports",
+      "name": "_timestamp",
+      "qualname": "_timestamp"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 33,
+      "module_id": "operations.imports",
+      "name": "_safe_name",
+      "qualname": "_safe_name"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 38,
+      "module_id": "operations.imports",
+      "name": "_read_json",
+      "qualname": "_read_json"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 42,
+      "module_id": "operations.imports",
+      "name": "_media_tools",
+      "qualname": "_media_tools"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 55,
+      "module_id": "operations.imports",
+      "name": "_duration_seconds",
+      "qualname": "_duration_seconds"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 65,
+      "module_id": "operations.imports",
+      "name": "_prepare_audio_chunks",
+      "qualname": "_prepare_audio_chunks"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 84,
+      "module_id": "operations.imports",
+      "name": "_render_timeline",
+      "qualname": "_render_timeline"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 95,
+      "module_id": "operations.imports",
+      "name": "_write_transcript",
+      "qualname": "_write_transcript"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 107,
+      "module_id": "operations.imports",
+      "name": "import_media_folder",
+      "qualname": "import_media_folder"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 132,
+      "module_id": "operations.imports",
+      "name": "persist",
+      "qualname": "import_media_folder.persist"
+    },
+    {
+      "file": "backend/app/importers/local_media.py",
+      "kind": "function",
+      "line": 212,
+      "module_id": "operations.imports",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
       "file": "backend/app/importers/manual_payments.py",
       "kind": "class",
       "line": 30,
@@ -33810,6 +34834,174 @@
       "file": "backend/app/importers/telegram_catalog.py",
       "kind": "function",
       "line": 467,
+      "module_id": "operations.imports",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 27,
+      "module_id": "operations.imports",
+      "name": "flatten_text",
+      "qualname": "flatten_text"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 35,
+      "module_id": "operations.imports",
+      "name": "_utc_timestamp",
+      "qualname": "_utc_timestamp"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 46,
+      "module_id": "operations.imports",
+      "name": "_safe_relative_path",
+      "qualname": "_safe_relative_path"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 53,
+      "module_id": "operations.imports",
+      "name": "_media_path",
+      "qualname": "_media_path"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 57,
+      "module_id": "operations.imports",
+      "name": "_is_voice",
+      "qualname": "_is_voice"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 61,
+      "module_id": "operations.imports",
+      "name": "_sha256",
+      "qualname": "_sha256"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 69,
+      "module_id": "operations.imports",
+      "name": "_clean_transcript",
+      "qualname": "_clean_transcript"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 73,
+      "module_id": "operations.imports",
+      "name": "_read_json",
+      "qualname": "_read_json"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "operations.imports",
+      "name": "_write_json",
+      "qualname": "_write_json"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 82,
+      "module_id": "operations.imports",
+      "name": "_find_result_json",
+      "qualname": "_find_result_json"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 89,
+      "module_id": "operations.imports",
+      "name": "_extract_zip",
+      "qualname": "_extract_zip"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 100,
+      "module_id": "operations.imports",
+      "name": "_source_root",
+      "qualname": "_source_root"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 109,
+      "module_id": "operations.imports",
+      "name": "_multipart_request",
+      "qualname": "_multipart_request"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "class",
+      "line": 121,
+      "module_id": "operations.imports",
+      "name": "OpenAITranscriber",
+      "qualname": "OpenAITranscriber"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "method",
+      "line": 122,
+      "module_id": "operations.imports",
+      "name": "__init__",
+      "qualname": "OpenAITranscriber.__init__"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "method",
+      "line": 125,
+      "module_id": "operations.imports",
+      "name": "__call__",
+      "qualname": "OpenAITranscriber.__call__"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 143,
+      "module_id": "operations.imports",
+      "name": "_normalise_messages",
+      "qualname": "_normalise_messages"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 179,
+      "module_id": "operations.imports",
+      "name": "_render_timeline",
+      "qualname": "_render_timeline"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 193,
+      "module_id": "operations.imports",
+      "name": "import_export",
+      "qualname": "import_export"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 211,
+      "module_id": "operations.imports",
+      "name": "persist_progress",
+      "qualname": "import_export.persist_progress"
+    },
+    {
+      "file": "backend/app/importers/telegram_consultations.py",
+      "kind": "function",
+      "line": 273,
       "module_id": "operations.imports",
       "name": "main",
       "qualname": "main"
@@ -39063,6 +40255,94 @@
       "qualname": "test_duplicate_unidentified_client_rows_do_not_abort_batch"
     },
     {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 8,
+      "module_id": "operations.imports",
+      "name": "test_folder_media_is_transcribed_and_source_is_not_modified",
+      "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 17,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified.transcribe"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 21,
+      "module_id": "operations.imports",
+      "name": "prepare",
+      "qualname": "test_folder_media_is_transcribed_and_source_is_not_modified.prepare"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 41,
+      "module_id": "operations.imports",
+      "name": "test_repeat_does_not_transcribe_unchanged_media",
+      "qualname": "test_repeat_does_not_transcribe_unchanged_media"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_repeat_does_not_transcribe_unchanged_media.transcribe"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 51,
+      "module_id": "operations.imports",
+      "name": "prepare",
+      "qualname": "test_repeat_does_not_transcribe_unchanged_media.prepare"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 63,
+      "module_id": "operations.imports",
+      "name": "test_multiple_chunks_are_transcribed_and_joined_in_order",
+      "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 69,
+      "module_id": "operations.imports",
+      "name": "prepare",
+      "qualname": "test_multiple_chunks_are_transcribed_and_joined_in_order.prepare"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 81,
+      "module_id": "operations.imports",
+      "name": "test_result_directory_inside_source_is_rejected",
+      "qualname": "test_result_directory_inside_source_is_rejected"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 92,
+      "module_id": "operations.imports",
+      "name": "test_one_failed_file_does_not_stop_later_file",
+      "qualname": "test_one_failed_file_does_not_stop_later_file"
+    },
+    {
+      "file": "backend/tests/test_local_media.py",
+      "kind": "function",
+      "line": 98,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_one_failed_file_does_not_stop_later_file.transcribe"
+    },
+    {
       "file": "backend/tests/test_manual_payments.py",
       "kind": "function",
       "line": 10,
@@ -39975,6 +41255,70 @@
       "qualname": "test_repository_root_matches_flat_production_image"
     },
     {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 9,
+      "module_id": "operations.imports",
+      "name": "make_export",
+      "qualname": "make_export"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 26,
+      "module_id": "operations.imports",
+      "name": "test_imports_folder_voice_and_timeline_in_chronological_order",
+      "qualname": "test_imports_folder_voice_and_timeline_in_chronological_order"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 29,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_imports_folder_voice_and_timeline_in_chronological_order.transcribe"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 60,
+      "module_id": "operations.imports",
+      "name": "test_reimport_from_zip_does_not_duplicate_or_retranscribe",
+      "qualname": "test_reimport_from_zip_does_not_duplicate_or_retranscribe"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 70,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_reimport_from_zip_does_not_duplicate_or_retranscribe.transcribe"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 86,
+      "module_id": "operations.imports",
+      "name": "test_rejects_result_directory_inside_folder_export",
+      "qualname": "test_rejects_result_directory_inside_folder_export"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 97,
+      "module_id": "operations.imports",
+      "name": "test_one_failed_voice_does_not_stop_later_voice",
+      "qualname": "test_one_failed_voice_does_not_stop_later_voice"
+    },
+    {
+      "file": "backend/tests/test_telegram_consultations.py",
+      "kind": "function",
+      "line": 109,
+      "module_id": "operations.imports",
+      "name": "transcribe",
+      "qualname": "test_one_failed_voice_does_not_stop_later_voice.transcribe"
+    },
+    {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
       "line": 23,
@@ -40141,6 +41485,30 @@
       "module_id": "products.masterclass.course",
       "name": "show",
       "qualname": "show"
+    },
+    {
+      "file": "docs/prototypes/homepage-redesign/preview.js",
+      "kind": "function",
+      "line": 29,
+      "module_id": "operations.project-work",
+      "name": "wrapRecords",
+      "qualname": "wrapRecords"
+    },
+    {
+      "file": "docs/prototypes/homepage-redesign/preview.js",
+      "kind": "function",
+      "line": 55,
+      "module_id": "operations.project-work",
+      "name": "insertBefore",
+      "qualname": "insertBefore"
+    },
+    {
+      "file": "docs/prototypes/homepage-redesign/preview.js",
+      "kind": "function",
+      "line": 167,
+      "module_id": "operations.project-work",
+      "name": "linkFor",
+      "qualname": "linkFor"
     },
     {
       "file": "leadteh-export/src/auth_clipboard.py",
@@ -45425,7 +46793,7 @@
     {
       "file": "tools/author_workflow.py",
       "kind": "function",
-      "line": 29,
+      "line": 38,
       "module_id": "platform.content",
       "name": "create_review",
       "qualname": "create_review"
@@ -45433,7 +46801,7 @@
     {
       "file": "tools/author_workflow.py",
       "kind": "function",
-      "line": 70,
+      "line": 79,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -46833,7 +48201,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 27,
+      "line": 30,
       "module_id": "platform.content",
       "name": "canonical_text_digest",
       "qualname": "canonical_text_digest"
@@ -46841,7 +48209,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 35,
+      "line": 38,
       "module_id": "platform.content",
       "name": "sync_status",
       "qualname": "sync_status"
@@ -46849,7 +48217,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 51,
+      "line": 54,
       "module_id": "platform.content",
       "name": "install",
       "qualname": "install"
@@ -46857,7 +48225,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 71,
+      "line": 74,
       "module_id": "platform.content",
       "name": "package_status",
       "qualname": "package_status"
@@ -46865,7 +48233,7 @@
     {
       "file": "tools/install_edabalans_writer_skill.py",
       "kind": "function",
-      "line": 102,
+      "line": 105,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -47353,7 +48721,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 104,
+      "line": 109,
       "module_id": "platform.content",
       "name": "distinct_version_groups",
       "qualname": "distinct_version_groups"
@@ -47361,7 +48729,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 127,
+      "line": 132,
       "module_id": "platform.content",
       "name": "bounded_full_text",
       "qualname": "bounded_full_text"
@@ -47369,7 +48737,23 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 158,
+      "line": 163,
+      "module_id": "platform.content",
+      "name": "bounded_complete_full_text",
+      "qualname": "bounded_complete_full_text"
+    },
+    {
+      "file": "tools/prepare_author_post.py",
+      "kind": "function",
+      "line": 178,
+      "module_id": "platform.content",
+      "name": "authored_reuse_retrieval",
+      "qualname": "authored_reuse_retrieval"
+    },
+    {
+      "file": "tools/prepare_author_post.py",
+      "kind": "function",
+      "line": 248,
       "module_id": "platform.content",
       "name": "fact_check_profile",
       "qualname": "fact_check_profile"
@@ -47377,7 +48761,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 180,
+      "line": 270,
       "module_id": "platform.content",
       "name": "build_pack",
       "qualname": "build_pack"
@@ -47385,7 +48769,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 511,
+      "line": 804,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -47793,7 +49177,15 @@
     {
       "file": "tools/search_author_voice.py",
       "kind": "function",
-      "line": 25,
+      "line": 36,
+      "module_id": "platform.content",
+      "name": "get_index_item",
+      "qualname": "get_index_item"
+    },
+    {
+      "file": "tools/search_author_voice.py",
+      "kind": "function",
+      "line": 70,
       "module_id": "platform.content",
       "name": "matches",
       "qualname": "matches"
@@ -47801,7 +49193,7 @@
     {
       "file": "tools/search_author_voice.py",
       "kind": "function",
-      "line": 43,
+      "line": 88,
       "module_id": "platform.content",
       "name": "natural_fts_query",
       "qualname": "natural_fts_query"
@@ -47809,7 +49201,7 @@
     {
       "file": "tools/search_author_voice.py",
       "kind": "function",
-      "line": 74,
+      "line": 119,
       "module_id": "platform.content",
       "name": "search_index",
       "qualname": "search_index"
@@ -47817,7 +49209,7 @@
     {
       "file": "tools/search_author_voice.py",
       "kind": "function",
-      "line": 200,
+      "line": 236,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -47904,8 +49296,16 @@
     },
     {
       "file": "tools/tests/test_author_voice.py",
+      "kind": "function",
+      "line": 30,
+      "module_id": "platform.content",
+      "name": "whole_day_context",
+      "qualname": "whole_day_context"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 29,
+      "line": 38,
       "module_id": "platform.content",
       "name": "ProjectVoiceManifestTests",
       "qualname": "ProjectVoiceManifestTests"
@@ -47913,7 +49313,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 30,
+      "line": 39,
       "module_id": "platform.content",
       "name": "test_retrieval_full_text_has_a_hard_character_ceiling",
       "qualname": "ProjectVoiceManifestTests.test_retrieval_full_text_has_a_hard_character_ceiling"
@@ -47921,7 +49321,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 39,
+      "line": 48,
       "module_id": "platform.content",
       "name": "test_project_writer_skill_installer_keeps_runtime_copy_in_sync",
       "qualname": "ProjectVoiceManifestTests.test_project_writer_skill_installer_keeps_runtime_copy_in_sync"
@@ -47929,7 +49329,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 61,
+      "line": 70,
       "module_id": "platform.content",
       "name": "test_writer_skill_manifest_hash_ignores_checkout_newlines",
       "qualname": "ProjectVoiceManifestTests.test_writer_skill_manifest_hash_ignores_checkout_newlines"
@@ -47937,7 +49337,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 74,
+      "line": 83,
       "module_id": "platform.content",
       "name": "test_writer_skill_package_status_uses_canonical_text_hash",
       "qualname": "ProjectVoiceManifestTests.test_writer_skill_package_status_uses_canonical_text_hash"
@@ -47945,7 +49345,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 112,
+      "line": 121,
       "module_id": "platform.content",
       "name": "test_retrieval_depth_applies_item_and_full_text_ceilings",
       "qualname": "ProjectVoiceManifestTests.test_retrieval_depth_applies_item_and_full_text_ceilings"
@@ -47953,7 +49353,31 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 211,
+      "line": 220,
+      "module_id": "platform.content",
+      "name": "test_foundational_material_searches_authored_corpus_per_block",
+      "qualname": "ProjectVoiceManifestTests.test_foundational_material_searches_authored_corpus_per_block"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
+      "kind": "method",
+      "line": 314,
+      "module_id": "platform.content",
+      "name": "test_omitted_authored_source_can_be_fetched_exactly_by_item_id",
+      "qualname": "ProjectVoiceManifestTests.test_omitted_authored_source_can_be_fetched_exactly_by_item_id"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
+      "kind": "method",
+      "line": 365,
+      "module_id": "platform.content",
+      "name": "test_routine_telegram_defaults_to_original_composition",
+      "qualname": "ProjectVoiceManifestTests.test_routine_telegram_defaults_to_original_composition"
+    },
+    {
+      "file": "tools/tests/test_author_voice.py",
+      "kind": "method",
+      "line": 389,
       "module_id": "platform.content",
       "name": "test_all_authoring_canon_files_have_one_platform_content_owner",
       "qualname": "ProjectVoiceManifestTests.test_all_authoring_canon_files_have_one_platform_content_owner"
@@ -47961,7 +49385,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 244,
+      "line": 422,
       "module_id": "platform.content",
       "name": "test_project_routes_every_writing_task_through_writer_skill",
       "qualname": "ProjectVoiceManifestTests.test_project_routes_every_writing_task_through_writer_skill"
@@ -47969,7 +49393,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 251,
+      "line": 429,
       "module_id": "platform.content",
       "name": "test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts",
       "qualname": "ProjectVoiceManifestTests.test_expanded_exemplar_core_is_unique_and_keeps_owner_named_posts"
@@ -47977,7 +49401,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 300,
+      "line": 478,
       "module_id": "platform.content",
       "name": "test_expanded_core_matches_private_catalog_when_available",
       "qualname": "ProjectVoiceManifestTests.test_expanded_core_matches_private_catalog_when_available"
@@ -47985,7 +49409,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 360,
+      "line": 538,
       "module_id": "platform.content",
       "name": "CatalogAuthorshipTests",
       "qualname": "CatalogAuthorshipTests"
@@ -47993,7 +49417,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 361,
+      "line": 539,
       "module_id": "platform.content",
       "name": "test_telegram_preserves_embedded_link_targets",
       "qualname": "CatalogAuthorshipTests.test_telegram_preserves_embedded_link_targets"
@@ -48001,7 +49425,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 372,
+      "line": 550,
       "module_id": "platform.content",
       "name": "test_reply_page_separates_parent_context_from_owner_text",
       "qualname": "CatalogAuthorshipTests.test_reply_page_separates_parent_context_from_owner_text"
@@ -48009,7 +49433,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 401,
+      "line": 579,
       "module_id": "platform.content",
       "name": "VoiceDecisionTests",
       "qualname": "VoiceDecisionTests"
@@ -48017,7 +49441,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 403,
+      "line": 581,
       "module_id": "platform.content",
       "name": "card",
       "qualname": "VoiceDecisionTests.card"
@@ -48025,7 +49449,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 415,
+      "line": 593,
       "module_id": "platform.content",
       "name": "test_link_only_variants_share_normalized_hash",
       "qualname": "VoiceDecisionTests.test_link_only_variants_share_normalized_hash"
@@ -48033,7 +49457,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 425,
+      "line": 603,
       "module_id": "platform.content",
       "name": "test_parent_context_never_teaches_voice",
       "qualname": "VoiceDecisionTests.test_parent_context_never_teaches_voice"
@@ -48041,7 +49465,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 432,
+      "line": 610,
       "module_id": "platform.content",
       "name": "test_owner_reply_is_eligible_when_long_enough",
       "qualname": "VoiceDecisionTests.test_owner_reply_is_eligible_when_long_enough"
@@ -48049,7 +49473,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 439,
+      "line": 617,
       "module_id": "platform.content",
       "name": "test_linkout_with_original_value_is_fragment_not_full_exemplar",
       "qualname": "VoiceDecisionTests.test_linkout_with_original_value_is_fragment_not_full_exemplar"
@@ -48057,7 +49481,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "class",
-      "line": 450,
+      "line": 628,
       "module_id": "platform.content",
       "name": "VoiceSearchIntegrationTests",
       "qualname": "VoiceSearchIntegrationTests"
@@ -48065,7 +49489,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 451,
+      "line": 629,
       "module_id": "platform.content",
       "name": "test_direct_owner_decision_reaches_runtime_evidence",
       "qualname": "VoiceSearchIntegrationTests.test_direct_owner_decision_reaches_runtime_evidence"
@@ -48073,7 +49497,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 580,
+      "line": 758,
       "module_id": "platform.content",
       "name": "test_old_materialization_version_is_not_current",
       "qualname": "VoiceSearchIntegrationTests.test_old_materialization_version_is_not_current"
@@ -48081,7 +49505,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 591,
+      "line": 769,
       "module_id": "platform.content",
       "name": "test_materialization_rebuild_preserves_owner_corrections",
       "qualname": "VoiceSearchIntegrationTests.test_materialization_rebuild_preserves_owner_corrections"
@@ -48089,7 +49513,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 600,
+      "line": 778,
       "module_id": "platform.content",
       "name": "test_cache_requires_all_derived_artifacts",
       "qualname": "VoiceSearchIntegrationTests.test_cache_requires_all_derived_artifacts"
@@ -48097,7 +49521,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 609,
+      "line": 787,
       "module_id": "platform.content",
       "name": "test_natural_query_adds_shared_russian_prefix",
       "qualname": "VoiceSearchIntegrationTests.test_natural_query_adds_shared_russian_prefix"
@@ -48105,7 +49529,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 613,
+      "line": 791,
       "module_id": "platform.content",
       "name": "test_reviewed_index_returns_source_linked_fragment",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_index_returns_source_linked_fragment"
@@ -48113,7 +49537,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 664,
+      "line": 842,
       "module_id": "platform.content",
       "name": "test_writer_retrieval_returns_full_examples_and_rhetorical_context",
       "qualname": "VoiceSearchIntegrationTests.test_writer_retrieval_returns_full_examples_and_rhetorical_context"
@@ -48121,7 +49545,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 713,
+      "line": 891,
       "module_id": "platform.content",
       "name": "test_search_softly_prioritizes_strength_and_surface",
       "qualname": "VoiceSearchIntegrationTests.test_search_softly_prioritizes_strength_and_surface"
@@ -48129,7 +49553,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 751,
+      "line": 929,
       "module_id": "platform.content",
       "name": "test_strength_bonus_cannot_overrule_large_relevance_gap",
       "qualname": "VoiceSearchIntegrationTests.test_strength_bonus_cannot_overrule_large_relevance_gap"
@@ -48137,7 +49561,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 790,
+      "line": 968,
       "module_id": "platform.content",
       "name": "test_russian_word_forms_and_late_filtered_result_are_found",
       "qualname": "VoiceSearchIntegrationTests.test_russian_word_forms_and_late_filtered_result_are_found"
@@ -48145,7 +49569,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 829,
+      "line": 1007,
       "module_id": "platform.content",
       "name": "test_private_guard_rejects_git_tree",
       "qualname": "VoiceSearchIntegrationTests.test_private_guard_rejects_git_tree"
@@ -48153,7 +49577,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 837,
+      "line": 1015,
       "module_id": "platform.content",
       "name": "test_owner_correction_is_persisted_and_searchable",
       "qualname": "VoiceSearchIntegrationTests.test_owner_correction_is_persisted_and_searchable"
@@ -48161,7 +49585,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 865,
+      "line": 1043,
       "module_id": "platform.content",
       "name": "test_post_pack_preserves_contract_and_draft_validator_checks_literals",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_preserves_contract_and_draft_validator_checks_literals"
@@ -48169,7 +49593,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 905,
+      "line": 1083,
       "module_id": "platform.content",
       "name": "test_rhetorical_candidates_are_never_promoted_by_extraction",
       "qualname": "VoiceSearchIntegrationTests.test_rhetorical_candidates_are_never_promoted_by_extraction"
@@ -48177,7 +49601,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 938,
+      "line": 1116,
       "module_id": "platform.content",
       "name": "test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash",
       "qualname": "VoiceSearchIntegrationTests.test_reviewed_rhetoric_requires_semantic_provenance_and_matching_hash"
@@ -48185,7 +49609,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 966,
+      "line": 1144,
       "module_id": "platform.content",
       "name": "test_review_batch_is_unique_stratified_and_skips_already_reviewed",
       "qualname": "VoiceSearchIntegrationTests.test_review_batch_is_unique_stratified_and_skips_already_reviewed"
@@ -48193,7 +49617,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 986,
+      "line": 1164,
       "module_id": "platform.content",
       "name": "test_review_decision_promotes_text_from_private_candidate_not_safe_config",
       "qualname": "VoiceSearchIntegrationTests.test_review_decision_promotes_text_from_private_candidate_not_safe_config"
@@ -48201,7 +49625,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1013,
+      "line": 1191,
       "module_id": "platform.content",
       "name": "test_default_search_excludes_candidates_but_can_request_them",
       "qualname": "VoiceSearchIntegrationTests.test_default_search_excludes_candidates_but_can_request_them"
@@ -48209,7 +49633,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1049,
+      "line": 1227,
       "module_id": "platform.content",
       "name": "test_post_pack_carries_argument_route_and_edit_mode",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_carries_argument_route_and_edit_mode"
@@ -48217,7 +49641,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1094,
+      "line": 1272,
       "module_id": "platform.content",
       "name": "test_structure_only_pack_skips_voice_retrieval_and_routes_article_format",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_pack_skips_voice_retrieval_and_routes_article_format"
@@ -48225,7 +49649,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1171,
+      "line": 1351,
       "module_id": "platform.content",
       "name": "test_text_only_mode_preserves_structure_contract",
       "qualname": "VoiceSearchIntegrationTests.test_text_only_mode_preserves_structure_contract"
@@ -48233,7 +49657,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1233,
+      "line": 1413,
       "module_id": "platform.content",
       "name": "test_general_course_article_uses_article_rules_without_full_shell",
       "qualname": "VoiceSearchIntegrationTests.test_general_course_article_uses_article_rules_without_full_shell"
@@ -48241,7 +49665,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1251,
+      "line": 1432,
       "module_id": "platform.content",
       "name": "test_full_masterclass_course_requires_outline_and_routes_course_structure",
       "qualname": "VoiceSearchIntegrationTests.test_full_masterclass_course_requires_outline_and_routes_course_structure"
@@ -48249,7 +49673,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1320,
+      "line": 1509,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_goal_preserves_links_and_declares_review_layers",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_goal_preserves_links_and_declares_review_layers"
@@ -48257,7 +49681,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1369,
+      "line": 1558,
       "module_id": "platform.content",
       "name": "test_rewrite_requires_source_text_and_goal",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_requires_source_text_and_goal"
@@ -48265,7 +49689,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1391,
+      "line": 1580,
       "module_id": "platform.content",
       "name": "test_rewrite_protects_unquoted_html_link_and_media_targets",
       "qualname": "VoiceSearchIntegrationTests.test_rewrite_protects_unquoted_html_link_and_media_targets"
@@ -48273,7 +49697,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1418,
+      "line": 1607,
       "module_id": "platform.content",
       "name": "test_protected_edit_modes_cover_html_links_media_and_structure",
       "qualname": "VoiceSearchIntegrationTests.test_protected_edit_modes_cover_html_links_media_and_structure"
@@ -48281,7 +49705,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1498,
+      "line": 1687,
       "module_id": "platform.content",
       "name": "test_structure_only_protects_embedded_video_and_audio",
       "qualname": "VoiceSearchIntegrationTests.test_structure_only_protects_embedded_video_and_audio"
@@ -48289,7 +49713,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1529,
+      "line": 1718,
       "module_id": "platform.content",
       "name": "test_sales_cta_pack_routes_editorial_linking",
       "qualname": "VoiceSearchIntegrationTests.test_sales_cta_pack_routes_editorial_linking"
@@ -48297,7 +49721,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1550,
+      "line": 1739,
       "module_id": "platform.content",
       "name": "test_edit_only_modes_require_source_text",
       "qualname": "VoiceSearchIntegrationTests.test_edit_only_modes_require_source_text"
@@ -48305,7 +49729,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1572,
+      "line": 1761,
       "module_id": "platform.content",
       "name": "test_proofread_preserves_structure_and_requires_change_review",
       "qualname": "VoiceSearchIntegrationTests.test_proofread_preserves_structure_and_requires_change_review"
@@ -48313,7 +49737,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1609,
+      "line": 1798,
       "module_id": "platform.content",
       "name": "test_post_pack_deduplicates_platform_variants_and_adds_topic_history",
       "qualname": "VoiceSearchIntegrationTests.test_post_pack_deduplicates_platform_variants_and_adds_topic_history"
@@ -48321,7 +49745,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1677,
+      "line": 1866,
       "module_id": "platform.content",
       "name": "test_corpus_usability_marks_bot_placeholders_as_technical",
       "qualname": "VoiceSearchIntegrationTests.test_corpus_usability_marks_bot_placeholders_as_technical"
@@ -48329,7 +49753,7 @@
     {
       "file": "tools/tests/test_author_voice.py",
       "kind": "method",
-      "line": 1695,
+      "line": 1884,
       "module_id": "platform.content",
       "name": "test_correction_preserves_owner_final_and_review_rounds",
       "qualname": "VoiceSearchIntegrationTests.test_correction_preserves_owner_final_and_review_rounds"
@@ -48377,7 +49801,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 56,
+      "line": 76,
       "module_id": "platform.content",
       "name": "test_four_profiles_prepare_and_validate",
       "qualname": "AuthorWorkflowTests.test_four_profiles_prepare_and_validate"
@@ -48385,7 +49809,39 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 71,
+      "line": 91,
+      "module_id": "platform.content",
+      "name": "test_full_source_and_sparse_basis_route_different_owner_outputs",
+      "qualname": "AuthorWorkflowTests.test_full_source_and_sparse_basis_route_different_owner_outputs"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 121,
+      "module_id": "platform.content",
+      "name": "test_three_transcript_roles_are_explicit_and_separated",
+      "qualname": "AuthorWorkflowTests.test_three_transcript_roles_are_explicit_and_separated"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 159,
+      "module_id": "platform.content",
+      "name": "test_course_material_requires_whole_day_context_and_continuity",
+      "qualname": "AuthorWorkflowTests.test_course_material_requires_whole_day_context_and_continuity"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 218,
+      "module_id": "platform.content",
+      "name": "test_new_workflow_requires_explicit_basis_and_transcript_role",
+      "qualname": "AuthorWorkflowTests.test_new_workflow_requires_explicit_basis_and_transcript_role"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 260,
       "module_id": "platform.content",
       "name": "test_legacy_inference_and_profile_floors",
       "qualname": "AuthorWorkflowTests.test_legacy_inference_and_profile_floors"
@@ -48393,7 +49849,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 95,
+      "line": 284,
       "module_id": "platform.content",
       "name": "test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits",
       "qualname": "AuthorWorkflowTests.test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits"
@@ -48401,7 +49857,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 144,
+      "line": 333,
       "module_id": "platform.content",
       "name": "test_structure_profile_accepts_only_allowlisted_heading_text",
       "qualname": "AuthorWorkflowTests.test_structure_profile_accepts_only_allowlisted_heading_text"
@@ -48409,7 +49865,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 157,
+      "line": 346,
       "module_id": "platform.content",
       "name": "test_structure_profile_cannot_delete_move_or_duplicate_authored_heading",
       "qualname": "AuthorWorkflowTests.test_structure_profile_cannot_delete_move_or_duplicate_authored_heading"
@@ -48417,7 +49873,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 186,
+      "line": 375,
       "module_id": "platform.content",
       "name": "test_exact_removal_ledger_is_removed_from_coverage_baseline",
       "qualname": "AuthorWorkflowTests.test_exact_removal_ledger_is_removed_from_coverage_baseline"
@@ -48425,7 +49881,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 199,
+      "line": 388,
       "module_id": "platform.content",
       "name": "test_missing_anchor_and_coverage_need_fix",
       "qualname": "AuthorWorkflowTests.test_missing_anchor_and_coverage_need_fix"
@@ -48433,7 +49889,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 213,
+      "line": 402,
       "module_id": "platform.content",
       "name": "test_validator_cli_exit_codes",
       "qualname": "AuthorWorkflowTests.test_validator_cli_exit_codes"
@@ -48441,7 +49897,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 236,
+      "line": 425,
       "module_id": "platform.content",
       "name": "test_exact_review_set_hashes_and_fact_expiry",
       "qualname": "AuthorWorkflowTests.test_exact_review_set_hashes_and_fact_expiry"
@@ -48449,7 +49905,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 284,
+      "line": 473,
       "module_id": "platform.content",
       "name": "test_fact_check_profile_follows_surface_and_can_be_overridden",
       "qualname": "AuthorWorkflowTests.test_fact_check_profile_follows_surface_and_can_be_overridden"
@@ -48457,7 +49913,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 353,
+      "line": 542,
       "module_id": "platform.content",
       "name": "test_required_facts_require_sources_and_editorial_wording_is_not_literal",
       "qualname": "AuthorWorkflowTests.test_required_facts_require_sources_and_editorial_wording_is_not_literal"
@@ -48465,7 +49921,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 402,
+      "line": 592,
       "module_id": "platform.content",
       "name": "test_recording_correction_refreshes_semantic_counters",
       "qualname": "AuthorWorkflowTests.test_recording_correction_refreshes_semantic_counters"
@@ -48473,10 +49929,18 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 423,
+      "line": 613,
       "module_id": "platform.content",
       "name": "test_health_reports_one_fresh_voice_state",
       "qualname": "AuthorWorkflowTests.test_health_reports_one_fresh_voice_state"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 648,
+      "module_id": "platform.content",
+      "name": "test_skill_manifest_digest_ignores_text_line_endings",
+      "qualname": "AuthorWorkflowTests.test_skill_manifest_digest_ignores_text_line_endings"
     },
     {
       "file": "tools/tests/test_backup_author_memory.py",
@@ -49097,7 +50561,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 371,
+      "line": 414,
       "module_id": "platform.content",
       "name": "review_errors",
       "qualname": "review_errors"
@@ -49105,7 +50569,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 422,
+      "line": 465,
       "module_id": "platform.content",
       "name": "fact_review_expiry",
       "qualname": "fact_review_expiry"
@@ -49113,7 +50577,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 436,
+      "line": 479,
       "module_id": "platform.content",
       "name": "validate",
       "qualname": "validate"
@@ -49121,7 +50585,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 594,
+      "line": 637,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
