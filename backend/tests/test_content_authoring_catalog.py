@@ -1,5 +1,7 @@
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -23,6 +25,22 @@ from app.database import Base
 from app.main import app
 from app.models import ContentFamilyCandidate, ContentFamilyMembership, ContentItem, ContentItemVersion, ContentMedia, ContentSource
 from scripts.import_content_authoring_catalog import _local_decision_key, import_snapshot, validate_snapshot
+
+
+def test_import_script_bootstraps_backend_path(tmp_path: Path) -> None:
+    env = dict(os.environ)
+    env["PYTHONPATH"] = ""
+    script = Path(__file__).resolve().parents[1] / "scripts" / "import_content_authoring_catalog.py"
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    assert "--catalog" in result.stdout
 
 
 def snapshot(tmp_path: Path) -> Path:
