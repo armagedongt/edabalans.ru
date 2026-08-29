@@ -552,6 +552,10 @@ def list_reviews(db: Session, status: str = "pending", limit: int = 100) -> list
 def decide_review(db: Session, *, review_key: str, status: str, decision: dict) -> dict:
     if status not in {"resolved", "dismissed"}:
         raise ValueError("invalid review status")
+    if not isinstance(decision, dict) or not decision:
+        raise ValueError("review decision is required")
+    if not str(decision.get("basis") or decision.get("owner_note") or "").strip():
+        raise ValueError("review decision basis is required")
     item = db.scalar(
         select(KnowledgeReviewItem)
         .where(KnowledgeReviewItem.review_key == review_key)

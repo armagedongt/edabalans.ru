@@ -68,6 +68,10 @@
 - `register_knowledge_resource` — новый источник или новая версия;
 - `link_knowledge_resources` — доказанная связь;
 - `ask_librarian_review` — очередь неоднозначного решения;
+- `list_librarian_reviews` — текущая очередь и история решений; перед новым вопросом
+  Библиотекарь проверяет `status=all`;
+- `decide_librarian_review` — закрытие подтверждённого решения с обязательным
+  непустым полем `decision.basis`;
 - `record_knowledge_use` — журнал фактического использования.
 
 MCP использует Streamable HTTP и отдельный bearer token. Реальный токен хранится

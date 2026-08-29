@@ -1,3 +1,4 @@
+import asyncio
 import os
 import json
 import subprocess
@@ -6,6 +7,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+from mcp.server.fastmcp.exceptions import ToolError
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -14,7 +16,10 @@ os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://test:test@127.0.0.1:
 os.environ.setdefault("KNOWLEDGE_MCP_TOKEN", "library-test-token")
 
 from app.database import Base
+import app.knowledge_mcp as knowledge_mcp_module
 from app.knowledge_library_service import (
+    KnowledgeConflict,
+    decide_review,
     knowledge_read,
     knowledge_search,
     library_summary,
@@ -26,7 +31,7 @@ from app.knowledge_library_service import (
     task_context,
 )
 from app.main import app
-from app.knowledge_mcp import knowledge_mcp_transport_security
+from app.knowledge_mcp import knowledge_mcp_transport_security, mcp as knowledge_mcp
 from app.models import ContentItem, ContentItemVersion, ContentSource
 from app.models import KnowledgeResourceVersion, KnowledgeUsageEvent
 from app.models import KnowledgeRelation, KnowledgeReviewItem, KnowledgeResource
@@ -55,6 +60,52 @@ def test_mcp_transport_security_has_an_exact_production_allowlist() -> None:
         "api.edabalans.ru:443",
     ]
     assert knowledge_mcp_transport_security.allowed_origins == ["https://api.edabalans.ru"]
+
+
+def test_librarian_review_tools_are_registered_in_mcp() -> None:
+    names = {tool.name for tool in asyncio.run(knowledge_mcp.list_tools())}
+    assert "list_librarian_reviews" in names
+    assert "decide_librarian_review" in names
+
+
+def test_librarian_review_tools_execute_through_mcp(monkeypatch) -> None:
+    factory = session_factory()
+    monkeypatch.setattr(knowledge_mcp_module, "SessionLocal", factory)
+    with factory() as db:
+        save_resource(db, **resource_payload("mcp.review.source", "Источник MCP"))
+        queue_review(
+            db,
+            review_key="mcp.review",
+            review_kind="semantic_overlap",
+            title="Решение через MCP",
+            resource_keys=["mcp.review.source"],
+            details={"reason": "Проверить контракт"},
+        )
+
+    listed = asyncio.run(knowledge_mcp._tool_manager.call_tool(
+        "list_librarian_reviews", {"status": "all", "limit": 100},
+    ))
+    assert listed[0]["review_key"] == "mcp.review"
+
+    decided = asyncio.run(knowledge_mcp._tool_manager.call_tool(
+        "decide_librarian_review",
+        {
+            "review_key": "mcp.review",
+            "status": "resolved",
+            "decision": {"basis": "Владелец подтвердил решение в текущем чате."},
+        },
+    ))
+    assert decided["status"] == "resolved"
+
+    history = asyncio.run(knowledge_mcp._tool_manager.call_tool(
+        "list_librarian_reviews", {"status": "all", "limit": 100},
+    ))
+    assert history[0]["decision"]["basis"].startswith("Владелец подтвердил")
+
+    with pytest.raises(ToolError, match="invalid review status"):
+        asyncio.run(knowledge_mcp._tool_manager.call_tool(
+            "list_librarian_reviews", {"status": "unknown", "limit": 100},
+        ))
 
 
 def session_factory():
@@ -158,6 +209,104 @@ def test_review_queue_and_task_disclosure_policy() -> None:
         assert library_summary(db)["pending_reviews"] == 1
         reviews = list_reviews(db)
         assert reviews[0]["resources"][0]["resource_key"] == "stream.periodization"
+        decision = decide_review(
+            db,
+            review_key="overlap.periodization",
+            status="resolved",
+            decision={
+                "action": "keep_separate",
+                "confirmed_by": "owner",
+                "basis": "Владелец явно подтвердил отдельные версии.",
+            },
+        )
+        assert decision["status"] == "resolved"
+        assert list_reviews(db) == []
+        resolved = list_reviews(db, status="resolved")
+        assert resolved[0]["decision"] == {
+            "action": "keep_separate",
+            "confirmed_by": "owner",
+            "basis": "Владелец явно подтвердил отдельные версии.",
+        }
+
+        with pytest.raises(KnowledgeConflict, match="already resolved"):
+            decide_review(
+                db,
+                review_key="overlap.periodization",
+                status="dismissed",
+                decision={"basis": "Повторное решение недопустимо."},
+            )
+
+        with pytest.raises(ValueError, match="decision is required"):
+            decide_review(
+                db,
+                review_key="overlap.periodization",
+                status="resolved",
+                decision={},
+            )
+
+        with pytest.raises(ValueError, match="decision basis is required"):
+            decide_review(
+                db,
+                review_key="overlap.periodization",
+                status="resolved",
+                decision={"action": "missing_basis"},
+            )
+
+        with pytest.raises(ValueError, match="decision basis is required"):
+            decide_review(
+                db,
+                review_key="overlap.periodization",
+                status="resolved",
+                decision={"basis": "   "},
+            )
+
+        with pytest.raises(LookupError, match="not found"):
+            decide_review(
+                db,
+                review_key="missing.review",
+                status="resolved",
+                decision={"basis": "Такого пункта нет."},
+            )
+
+        queue_review(
+            db,
+            review_key="overlap.dismissed",
+            review_kind="semantic_overlap",
+            title="Ложное совпадение",
+            resource_keys=["stream.periodization"],
+            details={"reason": "Проверить и отклонить"},
+        )
+        dismissed = decide_review(
+            db,
+            review_key="overlap.dismissed",
+            status="dismissed",
+            decision={"basis": "Сравнение подтвердило отсутствие совпадения."},
+        )
+        assert dismissed["status"] == "dismissed"
+        assert list_reviews(db, status="dismissed")[0]["review_key"] == "overlap.dismissed"
+        history = list_reviews(db, status="all")
+        assert {item["status"] for item in history} == {"resolved", "dismissed"}
+
+
+def test_review_decision_keeps_admin_owner_note_compatible() -> None:
+    factory = session_factory()
+    with factory() as db:
+        save_resource(db, **resource_payload("admin.review.source", "Источник админки"))
+        queue_review(
+            db,
+            review_key="admin.review",
+            review_kind="semantic_overlap",
+            title="Решение из админки",
+            resource_keys=["admin.review.source"],
+            details={},
+        )
+        result = decide_review(
+            db,
+            review_key="admin.review",
+            status="resolved",
+            decision={"owner_note": "Подтверждено через действующую админку."},
+        )
+        assert result["status"] == "resolved"
 
 
 def test_publication_taxonomy_is_searchable_and_returned() -> None:

@@ -9,9 +9,11 @@ from mcp.server.transport_security import TransportSecuritySettings
 from app.config import get_settings
 from app.database import SessionLocal
 from app.knowledge_library_service import (
+    decide_review,
     knowledge_read,
     knowledge_search,
     library_summary,
+    list_reviews,
     queue_review,
     record_usage,
     save_relation,
@@ -166,6 +168,33 @@ def ask_librarian_review(
         return queue_review(
             db, review_key=review_key, review_kind=review_kind,
             title=title, resource_keys=resource_keys, details=details,
+        )
+
+
+@mcp.tool()
+def list_librarian_reviews(
+    status: str = "pending",
+    limit: int = 100,
+) -> list[dict[str, Any]]:
+    """Покажи текущую очередь решений Библиотекаря или её историю."""
+    if status not in {"pending", "resolved", "dismissed", "all"}:
+        raise ValueError("invalid review status")
+    with SessionLocal() as db:
+        return list_reviews(db, status=status, limit=max(1, min(limit, 500)))
+
+
+@mcp.tool()
+def decide_librarian_review(
+    review_key: str,
+    status: str,
+    decision: dict[str, Any],
+) -> dict[str, Any]:
+    """Закрой подтверждённый владельцем пункт очереди с проверяемым решением."""
+    if not str(decision.get("basis", "")).strip():
+        raise ValueError("decision.basis is required")
+    with SessionLocal() as db:
+        return decide_review(
+            db, review_key=review_key, status=status, decision=decision,
         )
 
 
