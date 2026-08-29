@@ -327,6 +327,49 @@ def required_manual_reviews(contract: dict, draft: str) -> list[dict]:
     checks: list[dict] = []
     work_profile = contract.get("work_profile")
     edit_mode = contract.get("edit_mode")
+    transcript_role = contract.get("transcript_role")
+    if transcript_role == "video_script":
+        checks.append({
+            "id": "transcript_output_role",
+            "instruction": "Confirm that the result is a recording-ready video script, not an article silently prepared for publication.",
+        })
+    elif transcript_role == "context_only":
+        checks.append({
+            "id": "transcript_context_separation",
+            "instruction": "Confirm that the transcript informed boundaries and continuity but was not automatically copied or republished as the target text.",
+        })
+    if contract.get("source_basis") == "sparse_basis":
+        checks.append({
+            "id": "sparse_basis_owner_review",
+            "instruction": (
+                "Confirm that the publishable draft is complete and that a separate, clearly "
+                "non-publishable owner-review note was prepared with ready extra blocks and "
+                "insertion points, relevant visuals, the weakest block, and only questions "
+                "that can materially change the result."
+            ),
+        })
+    course_context = contract.get("course_context")
+    if isinstance(course_context, dict) and edit_mode not in {"structure_only", "proofread"}:
+        checks.append({
+            "id": "course_context_continuity",
+            "instruction": (
+                "Confirm that the material performs its recorded role inside the whole day, "
+                "does not repeat the day shell, continues inherited ideas, adds the named new "
+                "layer, and hands off only what is actually next."
+            ),
+            "course_context": course_context,
+        })
+    if contract.get("format_profile") == "course":
+        checks.append({
+            "id": "course_architecture",
+            "instruction": (
+                "Confirm that stages, days, and materials follow source coverage and teaching "
+                "function rather than an artificial equal count or equal length, and that the "
+                "recorded course-continuity routes show where each core idea is introduced, "
+                "developed, applied, and handed forward."
+            ),
+            "course_continuity": contract.get("course_continuity"),
+        })
     if edit_mode == "rewrite" and work_profile in {
         "transcript_to_article", "develop_existing"
     }:
@@ -521,7 +564,7 @@ def validate(
         protected_layer_errors.append("allowed_removals contains fragments absent from source_text")
     metrics = preservation_metrics(source_for_metrics, draft)
     work_profile = contract.get("work_profile")
-    if work_profile in {"transcript_to_article", "develop_existing"}:
+    if work_profile in {"transcript_to_article", "develop_existing"} or contract.get("source_basis") == "full_source":
         for anchor in contract.get("preservation_anchors") or []:
             if normalized(anchor) not in normalized(draft):
                 protected_layer_errors.append(f"missing preservation anchor: {anchor}")

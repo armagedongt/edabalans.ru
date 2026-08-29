@@ -12,6 +12,8 @@ from search_author_voice import private, search_index
 SCHEMA_VERSION = "2.0"
 PACK_VERSION = "author-post-pack-v6-20260827"
 FACT_CHECK_PROFILES = {"instructional_strict", "editorial_materiality"}
+SOURCE_BASES = {"full_source", "sparse_basis"}
+TRANSCRIPT_ROLES = {"article_source", "video_script", "context_only"}
 EDIT_MODES = {
     "draft",
     "targeted_edit",
@@ -62,6 +64,7 @@ LEGACY_PROFILE_BY_MODE = {
 ARTICLE_FORMAT_CONTEXTS = {
     "article", "site_article", "course_material", "masterclass_material", "intensive_article"
 }
+COURSE_MATERIAL_CONTEXTS = {"course_material", "masterclass_material", "intensive_article"}
 COURSE_PACKAGE_CONTEXTS = {"course", "course_package", "masterclass_course"}
 STRICT_FACT_SURFACES = {
     "course",
@@ -198,7 +201,52 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         raise ValueError(
             f"edit_mode {edit_mode} is not compatible with work_profile {work_profile}"
         )
+    requested_source_basis = task.get("source_basis")
+    source_basis = requested_source_basis or (
+        "sparse_basis" if work_profile == "new_material" else "full_source"
+    )
+    if source_basis not in SOURCE_BASES:
+        raise ValueError(f"unknown source_basis: {source_basis}")
+    if source_basis == "sparse_basis" and work_profile != "new_material":
+        raise ValueError("sparse_basis requires work_profile new_material")
+    if (
+        source_basis == "full_source"
+        and work_profile == "new_material"
+        and edit_mode != "creative_rebuild"
+    ):
+        raise ValueError("full_source with new_material requires creative_rebuild")
+    requested_transcript_role = task.get("transcript_role")
+    transcript_role = requested_transcript_role or (
+        "article_source" if work_profile == "transcript_to_article" else None
+    )
+    if transcript_role is not None and transcript_role not in TRANSCRIPT_ROLES:
+        raise ValueError(f"unknown transcript_role: {transcript_role}")
+    transcript_context = task.get("transcript_context")
+    if work_profile == "transcript_to_article" and transcript_role not in {
+        "article_source", "video_script"
+    }:
+        raise ValueError(
+            "transcript_to_article requires transcript_role article_source or video_script"
+        )
+    if transcript_role in {"article_source", "video_script"} and work_profile != "transcript_to_article":
+        raise ValueError(
+            f"transcript_role {transcript_role} requires work_profile transcript_to_article"
+        )
+    if transcript_role == "context_only":
+        if work_profile == "transcript_to_article":
+            raise ValueError("context_only cannot use work_profile transcript_to_article")
+        if not isinstance(transcript_context, str) or not transcript_context.strip():
+            raise ValueError("task.transcript_context is required for context_only")
+    elif transcript_context is not None:
+        raise ValueError("task.transcript_context is only valid for transcript_role context_only")
     source_text = task.get("source_text")
+    if (
+        source_basis == "full_source"
+        and work_profile == "new_material"
+        and edit_mode == "creative_rebuild"
+        and not isinstance(source_text, str)
+    ):
+        raise ValueError("full_source creative_rebuild requires task.source_text")
     if edit_mode in {"targeted_edit", "proofread", "structure_only", "text_only", "rewrite"} and not isinstance(source_text, str):
         raise ValueError(f"task.source_text is required for {edit_mode}")
     editable_scope = task.get("editable_scope")
@@ -225,6 +273,13 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         "transcript_to_article", "develop_existing"
     } and not preservation_anchors:
         raise ValueError(f"task.preservation_anchors is required for {work_profile}")
+    if (
+        source_basis == "full_source"
+        and work_profile == "new_material"
+        and edit_mode == "creative_rebuild"
+        and not preservation_anchors
+    ):
+        raise ValueError("full_source creative_rebuild requires preservation_anchors")
     allowed_removals = task.get("allowed_removals") or []
     if not isinstance(allowed_removals, list) or any(
         not isinstance(item, str) or not item for item in allowed_removals
@@ -284,6 +339,26 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
     resolved_fact_check_profile = fact_check_profile(
         task, preferred_surface, format_profile
     )
+    course_context = task.get("course_context")
+    if preferred_surface in COURSE_MATERIAL_CONTEXTS:
+        if not isinstance(course_context, dict):
+            raise ValueError("task.course_context is required for a course material")
+        required_course_fields = {"day_context", "material_role", "continuity"}
+        if not required_course_fields.issubset(course_context):
+            raise ValueError(
+                "task.course_context requires day_context, material_role, and continuity"
+            )
+        if any(
+            not isinstance(course_context.get(field), str)
+            or not course_context[field].strip()
+            for field in required_course_fields
+        ):
+            raise ValueError("course_context text fields must be non-empty strings")
+    elif course_context is not None:
+        raise ValueError("task.course_context is only valid for a course material surface")
+    course_continuity = task.get("course_continuity")
+    if format_profile != "course" and course_continuity is not None:
+        raise ValueError("task.course_continuity is only valid for format_profile course")
     effective_product = task.get("product") or (
         "masterclass" if preferred_surface == "masterclass_course" else None
     )
@@ -417,6 +492,16 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             course_structure_source = "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md"
         if not course_structure_source:
             raise ValueError("task.course_structure_source is required for a non-Masterclass full course")
+        if not isinstance(course_continuity, list) or not course_continuity:
+            raise ValueError("task.course_continuity is required for a full course")
+        if any(
+            not isinstance(item, dict)
+            or set(item) != {"idea", "route"}
+            or not str(item.get("idea") or "").strip()
+            or not str(item.get("route") or "").strip()
+            for item in course_continuity
+        ):
+            raise ValueError("course_continuity items require non-empty idea and route")
         runtime_sources["course_structure"] = str(course_structure_source)
     if task.get("include_course_visual"):
         runtime_sources["course_visual"] = str(
@@ -455,6 +540,17 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "edit_mode": edit_mode,
             "work_profile": work_profile,
             "work_profile_source": "explicit" if requested_work_profile else "inferred",
+            "source_basis": source_basis,
+            "source_basis_source": "explicit" if requested_source_basis else "inferred",
+            "transcript_role": transcript_role,
+            "transcript_role_source": (
+                "explicit" if requested_transcript_role else (
+                    "legacy_default" if transcript_role else None
+                )
+            ),
+            "transcript_context": transcript_context,
+            "course_context": course_context,
+            "course_continuity": course_continuity,
             "source_text": source_text,
             "protected_text": task.get("protected_text"),
             "editable_scope": editable_scope,
@@ -491,6 +587,19 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "Apply editing permissions from editing-modes-v1.md without widening them.",
             "For a site article or course material, apply ARTICLE_STANDARD.md; never invent headings only to create a table of contents.",
             "Apply the review policy owned by the selected normative contract.",
+            (
+                "Return a clean continuous text without an automatic suggestion appendix."
+                if source_basis == "full_source"
+                else
+                "Return a complete publishable text plus a clearly non-publishable owner-review note with ready extra blocks, visuals, the weakest block, and material owner questions."
+            ),
+            (
+                "Treat the transcript as context only: use it to avoid duplication and understand the neighboring material; do not copy its wording into the target automatically."
+                if transcript_role == "context_only"
+                else "Preserve the transcript as the authored source for the selected article or video-script output."
+                if transcript_role in {"article_source", "video_script"}
+                else "No transcript role applies."
+            ),
         ],
         "review_policy": {
             "policy_id": (

@@ -46,6 +46,26 @@ class AuthorWorkflowTests(unittest.TestCase):
         self.folder.cleanup()
 
     def pack(self, payload: dict) -> tuple[Path, dict]:
+        payload = dict(payload)
+        payload.setdefault(
+            "source_basis",
+            "sparse_basis" if payload.get("work_profile") == "new_material" else "full_source",
+        )
+        if payload.get("work_profile") == "transcript_to_article":
+            payload.setdefault("transcript_role", "article_source")
+        if payload.get("surface_context") in {
+            "course_material", "masterclass_material", "intensive_article"
+        }:
+            payload.setdefault("course_context", {
+                "day_context": "Учебный день: прочитаны вводная, список материалов, задание и соседние материалы.",
+                "material_role": "Раскрыть текущую тему без повтора оболочки.",
+                "continuity": "Продолжить введённую идею, добавить новый прикладной слой и передать следующий шаг.",
+            })
+        if payload.get("format_profile") == "course":
+            payload.setdefault("course_continuity", [{
+                "idea": "Главный принцип курса",
+                "route": "Вводится в первом этапе, развивается во втором и применяется в финале.",
+            }])
         task = self.root / f"task-{len(list(self.root.glob('task-*')))}.json"
         output = self.root / f"pack-{len(list(self.root.glob('pack-*')))}.json"
         task.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
@@ -58,7 +78,7 @@ class AuthorWorkflowTests(unittest.TestCase):
         cases = [
             ({"note": "структура материала", "work_profile": "structure", "edit_mode": "structure_only", "source_text": source, "structural_labels": ["Раздел"]}, "## Раздел\n\n" + source, "pass"),
             ({"note": "транскрипт питание", "work_profile": "transcript_to_article", "edit_mode": "rewrite", "source_text": source, "rewrite_goal": "Собрать статью", "preservation_anchors": ["авторская мысль"]}, source, "manual_review_required"),
-            ({"note": "новый материал питание", "work_profile": "new_material", "edit_mode": "draft"}, "Совершенно новый готовый материал.", "pass"),
+            ({"note": "новый материал питание", "work_profile": "new_material", "edit_mode": "draft"}, "Совершенно новый готовый материал.", "manual_review_required"),
             ({"note": "развитие статьи", "work_profile": "develop_existing", "edit_mode": "proofread", "source_text": source, "preservation_anchors": ["авторская мысль"]}, source, "manual_review_required"),
         ]
         for task, draft_text, expected in cases:
@@ -67,6 +87,175 @@ class AuthorWorkflowTests(unittest.TestCase):
             draft = self.root / f"draft-{task['work_profile']}.md"
             draft.write_text(draft_text, encoding="utf-8")
             self.assertEqual(validate_author_draft.validate(pack_path, draft)["status"], expected)
+
+    def test_full_source_and_sparse_basis_route_different_owner_outputs(self) -> None:
+        source = "Полный авторский исходник с примером, ходом мысли и выводом."
+        _, full_pack = self.pack({
+            "note": "Преемственно развить статью",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_basis": "full_source",
+            "source_text": source,
+            "rewrite_goal": "Уточнить один блок",
+            "preservation_anchors": ["Полный авторский исходник"],
+        })
+        self.assertIn(
+            "without an automatic suggestion appendix",
+            " ".join(full_pack["instructions"]),
+        )
+
+        sparse_pack_path, sparse_pack = self.pack({
+            "note": "Написать новый материал из короткой заметки",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+        })
+        self.assertIn("clearly non-publishable owner-review note", " ".join(sparse_pack["instructions"]))
+        sparse_draft = self.root / "sparse-draft.md"
+        sparse_draft.write_text("Полноценный новый материал.", encoding="utf-8")
+        pending = validate_author_draft.validate(
+            sparse_pack_path, sparse_draft
+        )["pending_manual_reviews"]
+        self.assertIn("sparse_basis_owner_review", {item["id"] for item in pending})
+
+    def test_three_transcript_roles_are_explicit_and_separated(self) -> None:
+        source = "Автор подробно объясняет мысль и приводит живой пример. " * 8
+        for role in ("article_source", "video_script"):
+            pack_path, pack = self.pack({
+                "note": f"Транскрипт как {role}",
+                "work_profile": "transcript_to_article",
+                "edit_mode": "rewrite",
+                "source_basis": "full_source",
+                "transcript_role": role,
+                "source_text": source,
+                "rewrite_goal": "Собрать готовый материал",
+                "preservation_anchors": ["живой пример"],
+            })
+            self.assertEqual(pack["content_contract"]["transcript_role"], role)
+            draft = self.root / f"{role}.md"
+            draft.write_text(source, encoding="utf-8")
+            pending = {
+                item["id"] for item in validate_author_draft.validate(pack_path, draft)["pending_manual_reviews"]
+            }
+            self.assertIn("rewrite_continuity", pending)
+            self.assertEqual("transcript_output_role" in pending, role == "video_script")
+
+        context_pack_path, context_pack = self.pack({
+            "note": "Написать дополняющий гайд рядом с видео",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+            "transcript_role": "context_only",
+            "transcript_context": source,
+        })
+        self.assertEqual(context_pack["content_contract"]["transcript_role"], "context_only")
+        context_draft = self.root / "context-only.md"
+        context_draft.write_text("Самостоятельный дополняющий гайд.", encoding="utf-8")
+        pending = {
+            item["id"] for item in validate_author_draft.validate(context_pack_path, context_draft)["pending_manual_reviews"]
+        }
+        self.assertEqual(pending, {"transcript_context_separation", "sparse_basis_owner_review"})
+
+    def test_course_material_requires_whole_day_context_and_continuity(self) -> None:
+        task = self.root / "missing-course-context.json"
+        task.write_text(json.dumps({
+            "note": "Материал дня",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+            "surface_context": "course_material",
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "course_context is required"):
+            prepare_author_post.build_pack(task, self.index)
+
+        pack_path, pack = self.pack({
+            "note": "Материал дня",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+            "surface_context": "course_material",
+        })
+        self.assertIn("новый прикладной слой", pack["content_contract"]["course_context"]["continuity"])
+        draft = self.root / "course-material.md"
+        draft.write_text("Готовый материал дня.", encoding="utf-8")
+        pending = validate_author_draft.validate(pack_path, draft)["pending_manual_reviews"]
+        self.assertIn("course_context_continuity", {item["id"] for item in pending})
+
+        course_path, _ = self.pack({
+            "note": "Полный живой курс",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+            "format_profile": "course",
+            "product": "calorie_course",
+            "course_outline": [
+                {"day": 1, "materials": ["Один материал"]},
+                {"day": 2, "materials": ["Первый", "Второй", "Третий"]},
+            ],
+            "course_structure_source": "course-structure.md",
+        })
+        course_draft = self.root / "course.md"
+        course_draft.write_text("Полный пакет курса.", encoding="utf-8")
+        pending = validate_author_draft.validate(course_path, course_draft)["pending_manual_reviews"]
+        self.assertIn("course_architecture", {item["id"] for item in pending})
+        architecture = next(item for item in pending if item["id"] == "course_architecture")
+        self.assertEqual(architecture["course_continuity"][0]["idea"], "Главный принцип курса")
+
+        missing_continuity = self.root / "missing-course-continuity.json"
+        missing_continuity.write_text(json.dumps({
+            "note": "Полный курс без карты преемственности",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "source_basis": "sparse_basis",
+            "format_profile": "course",
+            "product": "calorie_course",
+            "course_outline": [{"day": 1, "materials": ["Введение"]}],
+            "course_structure_source": "course-structure.md",
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "course_continuity is required"):
+            prepare_author_post.build_pack(missing_continuity, self.index)
+
+    def test_new_workflow_requires_explicit_basis_and_transcript_role(self) -> None:
+        task = self.root / "missing-basis.json"
+        output = self.root / "missing-basis-pack.json"
+        task.write_text(json.dumps({
+            "note": "Новый материал",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "explicit source_basis"):
+            author_workflow.prepare(task, self.index, output)
+
+        task.write_text(json.dumps({
+            "note": "Транскрипт",
+            "work_profile": "transcript_to_article",
+            "edit_mode": "rewrite",
+            "source_basis": "full_source",
+            "source_text": "Полный транскрипт",
+            "rewrite_goal": "Собрать статью",
+            "preservation_anchors": ["транскрипт"],
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "explicit transcript_role"):
+            author_workflow.prepare(task, self.index, output)
+
+        task.write_text(json.dumps({
+            "note": "Творчески пересобрать полные статьи",
+            "work_profile": "new_material",
+            "edit_mode": "creative_rebuild",
+            "source_basis": "full_source",
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "requires task.source_text"):
+            author_workflow.prepare(task, self.index, output)
+
+        task.write_text(json.dumps({
+            "note": "Творчески пересобрать полные статьи",
+            "work_profile": "new_material",
+            "edit_mode": "creative_rebuild",
+            "source_basis": "full_source",
+            "source_text": "Полный авторский исходник с важным примером.",
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "requires preservation_anchors"):
+            author_workflow.prepare(task, self.index, output)
 
     def test_legacy_inference_and_profile_floors(self) -> None:
         task = self.root / "legacy.json"
@@ -217,7 +406,7 @@ class AuthorWorkflowTests(unittest.TestCase):
         new_draft = self.root / "new.md"
         new_draft.write_text("Готовый текст.", encoding="utf-8")
         with patch.object(sys, "argv", ["validate_author_draft.py", "--pack", str(new_pack), "--draft", str(new_draft)]), redirect_stdout(StringIO()):
-            self.assertEqual(validate_author_draft.main(), 0)
+            self.assertEqual(validate_author_draft.main(), 2)
 
         source = " ".join(["Авторская мысль остаётся в подробном объяснении."] * 10)
         review_pack, _ = self.pack({
@@ -391,7 +580,8 @@ class AuthorWorkflowTests(unittest.TestCase):
             review_path,
             reviewer="Редактор",
             check_values=[
-                "semantic_facts=Разговорная формулировка сохраняет смысл источника"
+                "semantic_facts=Разговорная формулировка сохраняет смысл источника",
+                "sparse_basis_owner_review=Отдельное непубликуемое примечание подготовлено полностью",
             ],
         )
         self.assertEqual(
@@ -454,6 +644,16 @@ class AuthorWorkflowTests(unittest.TestCase):
                 stale = report_author_corpus_health.voice_freshness(self.root)
             self.assertEqual(stale["status"], "stale")
             self.assertIn("semantic-report correction_chains is stale", stale["errors"])
+
+    def test_skill_manifest_digest_ignores_text_line_endings(self) -> None:
+        lf = self.root / "lf.md"
+        crlf = self.root / "crlf.md"
+        lf.write_bytes(b"one\ntwo\n")
+        crlf.write_bytes(b"one\r\ntwo\r\n")
+        self.assertEqual(
+            install_edabalans_writer_skill.digest(lf),
+            install_edabalans_writer_skill.digest(crlf),
+        )
 
 
 if __name__ == "__main__":

@@ -26,6 +26,14 @@ import record_author_correction as correction
 import validate_author_draft as draft_validator
 
 
+def whole_day_context() -> dict:
+    return {
+        "day_context": "Учебный день: прочитаны вводная, список материалов, задание и соседние материалы.",
+        "material_role": "Раскрыть текущую тему без повтора оболочки.",
+        "continuity": "Продолжить введённую идею, добавить новый прикладной слой и передать следующий шаг.",
+    }
+
+
 class ProjectVoiceManifestTests(unittest.TestCase):
     def test_retrieval_full_text_has_a_hard_character_ceiling(self) -> None:
         rows = [{"item_id": "long", "full_text": "а" * 1000}]
@@ -1112,6 +1120,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 ),
                 "edit_mode": "structure_only",
                 "surface_context": "masterclass_material",
+                "course_context": whole_day_context(),
             }, ensure_ascii=False), encoding="utf-8")
 
             pack = prepare.build_pack(task_path, index)
@@ -1128,6 +1137,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                 "surface_context": "course_material",
                 "legacy_article_migration": True,
                 "article_components": ["slider"],
+                "course_context": whole_day_context(),
             }, ensure_ascii=False), encoding="utf-8")
             migration = prepare.build_pack(task_path, index)
             self.assertIn("article_standard", migration["runtime_sources"])
@@ -1239,6 +1249,7 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             task_path.write_text(json.dumps({
                 "note": "Новый материал другого курса",
                 "surface_context": "course_material",
+                "course_context": whole_day_context(),
             }, ensure_ascii=False), encoding="utf-8")
 
             pack = prepare.build_pack(task_path, index)
@@ -1261,6 +1272,10 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
                     {"day": 1, "materials": ["Введение", "Задание"]},
                     {"day": 2, "materials": ["Разбор питания"]},
                 ],
+                "course_continuity": [{
+                    "idea": "Осознанный выбор",
+                    "route": "Вводится во введении и применяется в разборе питания.",
+                }],
                 "retrieval_depth": "deep",
             }, ensure_ascii=False), encoding="utf-8")
 
@@ -1276,6 +1291,10 @@ class VoiceSearchIntegrationTests(unittest.TestCase):
             task_path.write_text(json.dumps({
                 "note": "Написать курс без программы",
                 "surface_context": "masterclass_course",
+                "course_continuity": [{
+                    "idea": "Осознанный выбор",
+                    "route": "Вводится во введении и применяется в разборе питания.",
+                }],
             }, ensure_ascii=False), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "course_outline is required"):
                 prepare.build_pack(task_path, index)

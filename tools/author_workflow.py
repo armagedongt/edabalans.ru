@@ -21,6 +21,15 @@ def prepare(task_path: Path, index_path: Path, output_path: Path) -> dict:
     task = json.loads(private(task_path).read_text(encoding="utf-8"))
     if not str(task.get("work_profile") or "").strip():
         raise ValueError("new workflow tasks require an explicit work_profile")
+    if not str(task.get("source_basis") or "").strip():
+        raise ValueError("new workflow tasks require an explicit source_basis")
+    if (
+        task.get("work_profile") == "transcript_to_article"
+        and not str(task.get("transcript_role") or "").strip()
+    ):
+        raise ValueError(
+            "transcript_to_article workflow tasks require an explicit transcript_role"
+        )
     pack = build_pack(task_path, index_path)
     write_json(output_path, pack)
     return {"status": "prepared", "output": str(private(output_path)), "work_profile": pack["content_contract"]["work_profile"]}

@@ -3,12 +3,17 @@
   "$id": "https://edabalans.ru/schemas/author-task-v2.json",
   "title": "Edabalans author task",
   "type": "object",
-  "required": ["note", "work_profile", "edit_mode"],
+  "required": ["note", "work_profile", "edit_mode", "source_basis"],
   "properties": {
     "note": {"type": "string", "minLength": 1},
     "work_profile": {
       "enum": ["structure", "transcript_to_article", "new_material", "develop_existing"]
     },
+    "source_basis": {"enum": ["full_source", "sparse_basis"]},
+    "transcript_role": {
+      "enum": ["article_source", "video_script", "context_only"]
+    },
+    "transcript_context": {"type": "string", "minLength": 1},
     "edit_mode": {
       "enum": ["draft", "targeted_edit", "proofread", "structure_only", "text_only", "rewrite", "creative_rebuild"]
     },
@@ -21,6 +26,29 @@
       ]
     },
     "format_profile": {"enum": ["article", "course"]},
+    "course_context": {
+      "type": "object",
+      "required": ["day_context", "material_role", "continuity"],
+      "properties": {
+        "day_context": {"type": "string", "minLength": 1},
+        "material_role": {"type": "string", "minLength": 1},
+        "continuity": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "course_continuity": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["idea", "route"],
+        "properties": {
+          "idea": {"type": "string", "minLength": 1},
+          "route": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": false
+      }
+    },
     "source_text": {"type": "string"},
     "rewrite_goal": {"type": "string", "minLength": 1},
     "editable_scope": {
@@ -107,13 +135,58 @@
     {
       "if": {"properties": {"work_profile": {"const": "transcript_to_article"}}},
       "then": {
-        "properties": {"edit_mode": {"const": "rewrite"}, "preservation_anchors": {"minItems": 1}},
-        "required": ["source_text", "preservation_anchors", "rewrite_goal"]
+        "properties": {
+          "edit_mode": {"const": "rewrite"},
+          "source_basis": {"const": "full_source"},
+          "transcript_role": {"enum": ["article_source", "video_script"]},
+          "preservation_anchors": {"minItems": 1}
+        },
+        "required": ["source_text", "transcript_role", "preservation_anchors", "rewrite_goal"]
+      }
+    },
+    {
+      "if": {
+        "properties": {"transcript_role": {"const": "context_only"}},
+        "required": ["transcript_role"]
+      },
+      "then": {
+        "properties": {
+          "work_profile": {"enum": ["new_material", "develop_existing"]}
+        },
+        "required": ["transcript_context"]
       }
     },
     {
       "if": {"properties": {"work_profile": {"const": "new_material"}}},
       "then": {"properties": {"edit_mode": {"enum": ["draft", "creative_rebuild"]}}}
+    },
+    {
+      "if": {
+        "properties": {"source_basis": {"const": "sparse_basis"}},
+        "required": ["source_basis"]
+      },
+      "then": {
+        "properties": {
+          "work_profile": {"const": "new_material"},
+          "edit_mode": {"enum": ["draft", "creative_rebuild"]}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source_basis": {"const": "full_source"},
+          "work_profile": {"const": "new_material"}
+        },
+        "required": ["source_basis", "work_profile"]
+      },
+      "then": {
+        "properties": {
+          "edit_mode": {"const": "creative_rebuild"},
+          "preservation_anchors": {"minItems": 1}
+        },
+        "required": ["source_text", "preservation_anchors"]
+      }
     },
     {
       "if": {"properties": {"work_profile": {"const": "develop_existing"}}},
@@ -154,6 +227,24 @@
         "properties": {"fact_sources": {"minItems": 1}},
         "required": ["fact_sources"]
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "surface_context": {
+            "enum": ["course_material", "masterclass_material", "intensive_article"]
+          }
+        },
+        "required": ["surface_context"]
+      },
+      "then": {"required": ["course_context"]}
+    },
+    {
+      "if": {
+        "properties": {"format_profile": {"const": "course"}},
+        "required": ["format_profile"]
+      },
+      "then": {"required": ["course_continuity"]}
     }
   ],
   "additionalProperties": true

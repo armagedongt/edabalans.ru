@@ -1,16 +1,16 @@
 {
-  "package_version": "2.1.11-20260828",
+  "package_version": "2.2.0-20260829",
   "files": [
-    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "4b6099dfc7ab1a31ab2273768ebe4818ae8dd29a0921a03d300d571244d94bf7"},
-    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "ed233d252b1f1f11f6b8a96ce92f87a8b2a9767945c93554fb797ba88ca4b2a5"},
-    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "0a76ce54f28ec6d90ecbbb623a7d458650545ca5b88b7243781aa348b21d4bb0"},
-    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "8dcea998ff9884d8b4813218b321240e26fbea30728800a3df2dfc3b1224bdad"},
-    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "e295fb55c5705d5b67e695b3def7ee747d4d0c776284ba7476207b17102f1ea3"},
+    {"path": "content/author-voice/skill/edabalans-writer/SKILL.md", "sha256": "53593e8769c44128af5afbfaff1e306fef61a0cb2e036a791dbc0c6b0f28b2f7"},
+    {"path": "content/author-voice/authoring-work-profiles-v1.md", "sha256": "edc68136547c1be2eec81bf93ea10c74e3d539f2d37748c5979a253a4734c662"},
+    {"path": "content/author-voice/editing-modes-v1.md", "sha256": "8861e3b938e109a303494dfc08638fb839ebd9bc9a4a42d387785771374e9852"},
+    {"path": "content/author-voice/writer-contract-v1.md", "sha256": "0be2eaf9a8cb60e2173be47be0a2ac3fa491517d1c9fd6daa4f4b5498863377d"},
+    {"path": "docs/knowledge-base/ARTICLE_STANDARD.md", "sha256": "cb94c689191ec8215c5b93e2eb4c484639ea14dd903c79891a8be52d73c1dc33"},
     {"path": "content/author-voice/product-fact-router.md", "sha256": "a9785f2ea01464fa5d990e837a2456d0ffa74b4eb27f3ff4056c205e4abf982d"},
     {"path": "content/author-voice/editorial-linking-v1.md", "sha256": "3193a4e4a90c076695449949823b2152efde1a41817c25015c1e5d489ce4269e"},
     {"path": "content/author-voice/source-integration-pass-v1.md", "sha256": "0afdddef9356b8ecf700be54559799edfb8a10f469040cd493654223554e252d"},
-    {"path": "content/author-voice/article-component-router.md", "sha256": "44776dddb53b5afe4178ce8945bfdb56d76008c7956e9538d665dfd8f533aa81"},
-    {"path": "content/author-voice/author-task.schema.json", "sha256": "de5d66389bf6ea4c1aeb54dbf7d1435758864aa5830ae13c4718c64ab0c37692"},
-    {"path": "content/author-voice/material-status-v1.md", "sha256": "9565777cc06c106a44fc4dfabe3379e41952a183a2fe41b6e953f0924cedde2e"}
+    {"path": "content/author-voice/article-component-router.md", "sha256": "5d98020018a10e1a43f6eec2130850aed464ef7074d84f07fa20883185d8202c"},
+    {"path": "content/author-voice/author-task.schema.json", "sha256": "84fdfcb9e6bc1531bd9531752c1f9496cb97976344ea9c01988de7b2eceef98a"},
+    {"path": "content/author-voice/material-status-v1.md", "sha256": "15912a6fcab0054483c49e516dddaffeab331242f39ef6d515bd09fbe7b76094"}
   ]
 }

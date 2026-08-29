@@ -153,6 +153,26 @@
       "evidence_ids": ["correction:sharp-first-person-ecological-20260827", "case:nutritionists-law", "case:cutlets"]
     },
     {
+      "rule_id": "structure.function_before_limitation",
+      "section": "structure",
+      "statement": "Перед критикой показателя или правила сначала точно назвать его реальную функцию, а затем обозначить, чего по нему определить нельзя.",
+      "mechanism": "Сохранить полезную часть инструмента и провести предметную границу по другой задаче вместо общего обесценивания.",
+      "scope": ["education", "comparison", "methodology", "longform"],
+      "counter_boundary": "Если инструмент действительно не решает заявленную задачу, это можно сказать прямо; нельзя приписывать ему пользу только ради симметрии.",
+      "confidence": "high",
+      "evidence_ids": ["correction:bzhu-calories-balance-scope-2026-08-28"]
+    },
+    {
+      "rule_id": "language.concrete_boundary_not_empty_disclaimer",
+      "section": "language",
+      "statement": "Оговорка называет конкретное условие, действие, число, продукт или границу вывода, а не прикрывает текст пустой страховочной формулой.",
+      "mechanism": "Заменить «не готовый приговор» и «не медицинский максимум» точным объяснением того, что показатель означает для читателя и где заканчивается его применение.",
+      "scope": ["education", "medical_boundary", "comparison", "guidance"],
+      "counter_boundary": "Короткая оговорка допустима, когда конкретная граница уже полностью объяснена рядом и повтор не нужен.",
+      "confidence": "high",
+      "evidence_ids": ["correction:a9cfb44c94fa7d2d", "correction:63ff9590137157c4"]
+    },
+    {
       "rule_id": "structure.critique_logic_not_believer",
       "section": "structure",
       "statement": "Критиковать правило, механизм и сломавшуюся логику, но не человека, который в них поверил.",
@@ -281,6 +301,16 @@
       "counter_boundary": "Прямая просьба переписать с нуля или полностью покреативить относится к creative_rebuild; ссылки и медиа меняются только по явному разрешению.",
       "confidence": "high",
       "evidence_ids": ["owner:2026-08-26:rewrite-continuity"]
+    },
+    {
+      "rule_id": "editing.owner_rejected_quote_minimal_repair",
+      "section": "editing",
+      "statement": "Прямую авторскую цитату можно минимально исправить, если Сергей сам отверг её формулировку; функция, резкость и место фразы в аргументе сохраняются.",
+      "mechanism": "Править только отвергнутую фразу и ближайшее согласование, не превращая локальное разрешение в переписывание соседнего текста.",
+      "scope": ["rewrite", "transcript_to_article", "collaborative_revision"],
+      "counter_boundary": "Без прямого отвержения владельцем буквальная цитата остаётся защищённым исходником, даже если редактору хочется сделать её глаже.",
+      "confidence": "high",
+      "evidence_ids": ["correction:a9cfb44c94fa7d2d", "correction:literal-author-generalizations-20260827"]
     },
     {
       "rule_id": "sales.sell_mechanism_and_life",
