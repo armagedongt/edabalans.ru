@@ -11828,7 +11828,8 @@
       "admin_urls": [],
       "boundary": "Push, CI и deploy — разные технические этапы одного маршрута.",
       "capabilities": [
-        "строить и тестировать backend/Telegram images;",
+        "классифицировать влияние commit на данные, backend, Telegram, Caddy и Compose;",
+        "строить, тестировать и перезапускать только затронутые сервисы;",
         "блокировать автоматический deploy при migration или провале checks;"
       ],
       "card": "docs/knowledge-base/modules/catalog/operations.delivery.md",
@@ -12052,7 +12053,15 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 44,
+          "line": 46,
+          "module_id": "operations.delivery",
+          "name": "test_ci_builds_and_tests_only_changed_application_services",
+          "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 56,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -12060,7 +12069,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 89,
+          "line": 127,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -12068,7 +12077,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 98,
+          "line": 137,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -12076,7 +12085,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 104,
+          "line": 143,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -54255,7 +54264,15 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 44,
+      "line": 46,
+      "module_id": "operations.delivery",
+      "name": "test_ci_builds_and_tests_only_changed_application_services",
+      "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 56,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -54263,7 +54280,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 89,
+      "line": 127,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -54271,7 +54288,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 98,
+      "line": 137,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -54279,7 +54296,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 104,
+      "line": 143,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"

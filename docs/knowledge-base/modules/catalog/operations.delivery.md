@@ -11,7 +11,8 @@ implementation_status: implemented
 
 ## Функции
 
-- строить и тестировать backend/Telegram images;
+- классифицировать влияние commit на данные, backend, Telegram, Caddy и Compose;
+- строить, тестировать и перезапускать только затронутые сервисы;
 - блокировать автоматический deploy при migration или провале checks;
 
 ## Граница

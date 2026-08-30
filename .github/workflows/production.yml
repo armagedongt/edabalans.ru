@@ -27,6 +27,26 @@ jobs:
       - name: Install tools test dependencies
         run: python3 -m pip install --disable-pip-version-check -r tools/requirements-test.txt
 
+      - name: Classify change impact
+        id: impact
+        shell: bash
+        run: |
+          before="${{ github.event.before }}"
+          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
+            before="HEAD^"
+          fi
+
+          read -r migration startup_data backend telegram caddy compose < <(
+            bash infra/deploy/classify-deploy-impact "$PWD" "$before" "$GITHUB_SHA"
+          )
+          echo "migration=$migration" >> "$GITHUB_OUTPUT"
+          echo "startup_data=$startup_data" >> "$GITHUB_OUTPUT"
+          echo "backend=$backend" >> "$GITHUB_OUTPUT"
+          echo "telegram=$telegram" >> "$GITHUB_OUTPUT"
+          echo "caddy=$caddy" >> "$GITHUB_OUTPUT"
+          echo "compose=$compose" >> "$GITHUB_OUTPUT"
+          echo "Impact: backend=$backend telegram=$telegram caddy=$caddy compose=$compose migration=$migration startup_data=$startup_data"
+
       - name: Test module inventory
         run: python3 -m unittest discover -s tools/tests -v
 
@@ -46,9 +66,11 @@ jobs:
         run: docker compose --env-file .env.example config --quiet
 
       - name: Build backend
+        if: steps.impact.outputs.backend == 'true'
         run: docker build --file ./backend/Dockerfile --tag edabalans-backend-test .
 
       - name: Run backend tests
+        if: steps.impact.outputs.backend == 'true'
         shell: bash
         run: |
           set -o pipefail
@@ -75,9 +97,11 @@ jobs:
           exit 1
 
       - name: Build Telegram service
+        if: steps.impact.outputs.telegram == 'true'
         run: docker build --file ./telegram-bot/service/Dockerfile --tag edabalans-telegram-test ./telegram-bot
 
       - name: Run Telegram service tests
+        if: steps.impact.outputs.telegram == 'true'
         run: |
           docker run --rm \
             --user root \
@@ -88,14 +112,8 @@ jobs:
             sh -c "pip install --quiet -r requirements-dev.txt && python -m pytest -q"
 
       - name: Block automatic database migrations
+        if: steps.impact.outputs.migration == 'true'
         shell: bash
         run: |
-          before="${{ github.event.before }}"
-          if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
-            before="HEAD^"
-          fi
-
-          if git diff --name-only "$before" "$GITHUB_SHA" | grep -q '^backend/migrations/versions/'; then
-            echo "A database migration was detected. Automatic production deployment is blocked." >&2
-            exit 1
-          fi
+          echo "A database migration was detected. Automatic production deployment is blocked." >&2
+          exit 1

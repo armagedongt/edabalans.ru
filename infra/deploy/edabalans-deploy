@@ -29,14 +29,54 @@ fi
 readonly PREVIOUS_SHA="$(git rev-parse HEAD)"
 deployment_started=false
 deployment_succeeded=false
-caddy_config_changed=false
-if ! git diff --quiet "${PREVIOUS_SHA}" "${TARGET_SHA}" -- infra/caddy/Caddyfile; then
-    caddy_config_changed=true
-fi
-read -r migration_deploy startup_data_deploy < <(
+read -r migration_deploy startup_data_deploy backend_changed telegram_changed caddy_changed compose_changed < <(
     git show "${TARGET_SHA}:infra/deploy/classify-deploy-impact" \
         | bash -s -- "${APP_DIR}" "${PREVIOUS_SHA}" "${TARGET_SHA}"
 )
+
+build_changed_services() {
+    local -a build_services=()
+
+    if [[ "${backend_changed}" == "true" ]]; then
+        build_services+=(backend)
+    fi
+    if [[ "${telegram_changed}" == "true" ]]; then
+        build_services+=(telegram-bot)
+    fi
+
+    if ((${#build_services[@]})); then
+        docker compose build "${build_services[@]}"
+    else
+        echo "No application image changed; skipping Docker build"
+    fi
+}
+
+start_changed_services() {
+    local -a runtime_services=()
+
+    if [[ "${compose_changed}" == "true" ]]; then
+        docker compose up -d --remove-orphans --wait --wait-timeout 180
+    else
+        if [[ "${backend_changed}" == "true" ]]; then
+            runtime_services+=(backend)
+        fi
+        if [[ "${telegram_changed}" == "true" ]]; then
+            runtime_services+=(telegram-bot)
+        fi
+
+        if ((${#runtime_services[@]})); then
+            docker compose up -d --no-deps --wait --wait-timeout 180 "${runtime_services[@]}"
+        else
+            echo "No application service changed; skipping application restart"
+        fi
+
+    fi
+
+    # Bind-mounted Caddy source does not trigger Compose recreation by itself.
+    if [[ "${caddy_changed}" == "true" ]]; then
+        docker compose up -d --no-deps --force-recreate --wait --wait-timeout 180 caddy
+    fi
+}
 
 if [[ "${migration_deploy}" == "true" && "${ALLOW_DATABASE_MIGRATIONS:-0}" != "1" ]]; then
     echo "Deployment includes database migrations and requires ALLOW_DATABASE_MIGRATIONS=1 after manual verification" >&2
@@ -58,11 +98,8 @@ rollback() {
                 echo "Inventory refresh failed during rollback; restoring the previous containers with its checked-in map" >&2
                 git checkout --quiet --force "${PREVIOUS_SHA}"
             fi
-            docker compose build
-            docker compose up -d --remove-orphans --wait --wait-timeout 180
-            if [[ "${caddy_config_changed}" == "true" ]]; then
-                docker compose up -d --force-recreate --wait --wait-timeout 180 caddy
-            fi
+            build_changed_services
+            start_changed_services
         fi
     fi
 
@@ -83,15 +120,8 @@ docker compose config --quiet
 # Routine releases reuse the server's cached base images. Pulling Python on every
 # code-only release makes production availability depend on Docker Hub's anonymous
 # rate limit; explicit image refreshes remain an operational action.
-docker compose build
-docker compose up -d --remove-orphans --wait --wait-timeout 180
-
-# A bind-mounted Caddyfile does not by itself recreate the running Caddy
-# container. Recreate only that service when its source changed so the live
-# proxy cannot keep the previous header or routing policy in memory.
-if [[ "${caddy_config_changed}" == "true" ]]; then
-    docker compose up -d --force-recreate --wait --wait-timeout 180 caddy
-fi
+build_changed_services
+start_changed_services
 
 curl --fail --silent --show-error --max-time 15 \
     https://api.edabalans.ru/health >/dev/null
@@ -102,7 +132,7 @@ curl --fail --silent --show-error --max-time 20 \
 curl --fail --silent --show-error --max-time 15 \
     https://app.edabalans.ru/apps/masterclass-course.html >/dev/null
 
-if [[ "${caddy_config_changed}" == "true" ]]; then
+if [[ "${caddy_changed}" == "true" ]]; then
     app_headers="$(curl --fail --silent --show-error --max-time 15 \
         --dump-header - --output /dev/null \
         https://app.edabalans.ru/apps/masterclass-course.html | tr -d '\r')"
