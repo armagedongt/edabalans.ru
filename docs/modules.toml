@@ -223,6 +223,7 @@ owns_files = [
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
+  "backend/app/static/app-shell.css",
 ]
 owns_routes = ["*/apps/*", "*/assets/*"]
 
