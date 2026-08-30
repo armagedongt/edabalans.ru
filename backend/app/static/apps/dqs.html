@@ -3804,11 +3804,23 @@ function getTutorialSlide(step){
 
 
 /* =========================
-   LOGIN
+   ВХОД ЧЕРЕЗ TILDA
 ========================= */
 
-function showLogin(
-  errorText = ''
+function redirectToTildaLogin(){
+
+  try{
+    localStorage.removeItem(STORAGE_EMAIL);
+    localStorage.removeItem('edabalans_identity_v1');
+  }catch(error){}
+
+  window.EdabalansIdentity = null;
+  location.replace('/members/login');
+}
+
+
+function showDqsError(
+  errorText = 'Не удалось открыть DQS'
 ){
 
   document
@@ -3824,154 +3836,19 @@ function showLogin(
       </div>
 
       <div class="dqs-subtitle">
-        Введите email,
-        который использовали
-        при регистрации.
+        ${escapeHtml(errorText)}
       </div>
 
-      <input
-        id="dqs-email"
-        class="dqs-input"
-        type="email"
-        placeholder="email"
-        value="${
-          escapeHtml(
-            localStorage
-              .getItem(
-                STORAGE_EMAIL
-              ) || ''
-          )
-        }"
-      >
-
-      <button
+      <a
         class="dqs-btn"
-        onclick="loginUser()"
+        href="/lk"
+        style="display:block;text-align:center;text-decoration:none"
       >
-        Войти
-      </button>
-
-      ${
-        errorText
-          ? `
-            <div class="dqs-status-err">
-              ${escapeHtml(errorText)}
-            </div>
-          `
-          : ''
-      }
+        Вернуться в личный кабинет
+      </a>
 
     </div>
   `;
-}
-
-
-async function loginUser(){
-
-  const email =
-    (
-      document
-        .getElementById(
-          'dqs-email'
-        )
-        .value || ''
-    )
-      .trim()
-      .toLowerCase();
-
-
-  if(!email){
-
-    showLogin(
-      'Введите email'
-    );
-
-    return;
-  }
-
-
-  document
-    .getElementById(
-      'dqs-app'
-    )
-    .innerHTML =
-      `
-      <div class="dqs-auth-card">
-        Загрузка...
-      </div>
-      `;
-
-
-  try{
-
-    const data =
-      await api({
-        action:'openUser',
-        email:email
-      });
-
-
-    if(!data.ok){
-
-      showLogin(
-        data.error ||
-        'Не удалось войти'
-      );
-
-      return;
-    }
-
-
-    localStorage
-      .setItem(
-        STORAGE_EMAIL,
-        email
-      );
-
-
-    currentUser =
-      data;
-
-
-    appDays =
-      normalizeDays(
-        data.days || []
-      );
-
-
-    mergeLocalDays();
-
-
-    if(
-      data.needsStartDate
-    ){
-
-      showStartDate();
-
-    }else{
-
-      currentDay =
-        getDefaultDay(
-          data.startDate
-        );
-
-      currentView =
-        'diary';
-
-      renderCurrentView(
-        false
-      );
-
-      maybeShowTutorial();
-    }
-
-
-  }catch(error){
-
-    showLogin(
-      error.message
-    );
-  }
 }
 
 
@@ -4972,7 +4849,7 @@ function renderCurrentView(
 ){
 
   if(!currentUser || !currentUser.email){
-    showLogin();
+    redirectToTildaLogin();
     return;
   }
 
@@ -5733,7 +5610,21 @@ function logoutUser(){
 
   saveStatusText = '';
 
-  showLogin();
+  try{
+    localStorage.removeItem('edabalans_identity_v1');
+  }catch(error){}
+
+  window.EdabalansIdentity = null;
+
+  if(
+    typeof window.tma__userbar__sendLogout ===
+    'function'
+  ){
+    window.tma__userbar__sendLogout();
+    return;
+  }
+
+  location.assign('/members/login?exit=y');
 }
 
 
@@ -5777,18 +5668,28 @@ window
 
 (async function initDqs(){
 
-  const rememberedEmail =
-    localStorage
-      .getItem(
-        STORAGE_EMAIL
-      );
+  const tildaIdentity =
+    window.EdabalansIdentity || {};
 
-  if(!rememberedEmail){
+  const tildaEmail =
+    tildaIdentity.source === 'tilda'
+      ? String(tildaIdentity.email || '')
+          .trim()
+          .toLowerCase()
+      : '';
 
-    showLogin();
+  if(!tildaEmail){
+
+    redirectToTildaLogin();
 
     return;
   }
+
+  localStorage
+    .setItem(
+      STORAGE_EMAIL,
+      tildaEmail
+    );
 
 
   document
@@ -5808,7 +5709,7 @@ window
     const data =
       await api({
         action:'openUser',
-        email:rememberedEmail
+        email:tildaEmail
       });
 
 
@@ -5819,9 +5720,9 @@ window
           STORAGE_EMAIL
         );
 
-      showLogin(
+      showDqsError(
         data.error ||
-        'Не удалось войти'
+        'Не удалось открыть DQS'
       );
 
       return;
@@ -5865,7 +5766,7 @@ window
 
   }catch(error){
 
-    showLogin(
+    showDqsError(
       error.message
     );
   }

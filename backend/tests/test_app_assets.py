@@ -157,6 +157,16 @@ def test_application_fragments_use_server_api() -> None:
         assert "google" not in lowered
         assert "apps script" not in lowered
 
+    dqs = client.get("/apps/dqs.html").text
+    assert "showLogin" not in dqs
+    assert "loginUser" not in dqs
+    assert 'id="dqs-email"' not in dqs
+    assert 'type="email"' not in dqs
+    assert "window.EdabalansIdentity" in dqs
+    assert "tildaIdentity.source === 'tilda'" in dqs
+    assert "tma__userbar__sendLogout" in dqs
+    assert "location.replace('/members/login')" in dqs
+
 
 def test_production_admin_assets_do_not_name_legacy_storage() -> None:
     static_dir = Path(__file__).resolve().parents[1] / "app" / "static"
@@ -243,22 +253,26 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
-    assert "tildaIdentityRequired" in loader
     assert "tma__getProfileObjFromLS" in loader
     assert "detectTildaMemberEmail" in loader
     assert "waitForTildaEmail" in loader
-    assert "protectedApps ? detectTildaMemberEmail() : detectTildaEmail()" in loader
-    assert "remembered.source === 'tilda'" not in loader
-    assert "askIdentity(mounts, detected, true)" not in loader
-    assert "remember(detected, '', 0, 'tilda')" in loader
-    assert "Откройте приложение из личного кабинета" in loader
+    assert "redirectToTildaLogin" in loader
+    assert "location.replace('/members/login')" in loader
+    assert "askIdentity" not in loader
+    assert "Не удалось автоматически определить email" not in loader
+    assert "Введите email, на который оформлена покупка" not in loader
+    assert "remember(detected)" in loader
     assert "masterclass-course" in loader
-    assert "'account': true" in loader
     assert "hideTildaUserbar" in loader
     assert "data-edabalans-account-url" in loader
     assert "data-edabalans-account-offer" in loader
     assert "focusProductCode" in loader
-    assert "source: identitySource" in loader
+    assert "source: 'tilda'" in loader
+    account = client.get("/apps/account.html").text
+    assert "Вы вошли как" in account
+    assert "account-session-email" in account
+    assert "tma__userbar__sendLogout" in account
+    assert "/members/login?exit=y" in account
     assert "identity.source==='tilda'" in course.text
     assert "function authHeaders()" in course.text
     assert "Мастер-класс по изменению питания и пищевых привычек" in course.text

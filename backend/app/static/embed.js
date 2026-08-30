@@ -5,18 +5,6 @@
     ? location.origin
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
-  var PROTECTED_APPS = {
-    'account': true,
-    'masterclass-course': true,
-    'calories-course': true,
-    'onboarding-questionnaire': true,
-    'masterclass-offers': true,
-    'recipes-part-1': true,
-    'recipes-part-2': true,
-    'recipes': true,
-    'closing-review': true,
-    'personal-access': true
-  };
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -40,25 +28,6 @@
 
   function validEmail(value) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-  }
-
-  function detectTildaEmail() {
-    var candidates = [];
-    var inputs = document.querySelectorAll('input');
-    var i;
-    for (i = 0; i < inputs.length; i += 1) {
-      if (/email/i.test(String(inputs[i].name || '') + ' ' + String(inputs[i].type || ''))) {
-        candidates.push(inputs[i].value);
-      }
-    }
-    var text = String(document.body && document.body.innerText || '');
-    var matches = text.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi) || [];
-    candidates = candidates.concat(matches);
-    for (i = 0; i < candidates.length; i += 1) {
-      var email = normalizeEmail(candidates[i]);
-      if (validEmail(email)) return email;
-    }
-    return '';
   }
 
   function detectTildaMemberEmail() {
@@ -90,39 +59,18 @@
     }, 200);
   }
 
-  function rememberedIdentity() {
-    try {
-      var saved = JSON.parse(localStorage.getItem(STORAGE_IDENTITY) || 'null');
-      if (!saved || !validEmail(normalizeEmail(saved.email))) return null;
-      return {
-        email: normalizeEmail(saved.email),
-        sessionToken: String(saved.sessionToken || ''),
-        expiresAt: Number(saved.expiresAt || 0),
-        source: String(saved.source || '')
-      };
-    } catch (error) {
-      return null;
-    }
-  }
-
-  function remember(email, sessionToken, expiresIn, source) {
-    var current = rememberedIdentity() || {};
-    var token = sessionToken === undefined ? String(current.sessionToken || '') : String(sessionToken || '');
-    var expiresAt = expiresIn === undefined
-      ? Number(current.expiresAt || 0)
-      : Date.now() + Number(expiresIn || 0) * 1000;
-    var identitySource = source === undefined ? String(current.source || '') : String(source || '');
+  function remember(email) {
     try {
       localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
         email: email,
-        sessionToken: token,
-        expiresAt: expiresAt,
-        source: identitySource,
+        sessionToken: '',
+        expiresAt: 0,
+        source: 'tilda',
         confirmedAt: new Date().toISOString()
       }));
       localStorage.setItem('dqs_email', email);
     } catch (error) {}
-    window.EdabalansIdentity = {email: email, sessionToken: token, source: identitySource};
+    window.EdabalansIdentity = {email: email, sessionToken: '', source: 'tilda'};
     var marker = document.getElementById('edabalans-member-email');
     if (!marker) {
       marker = document.createElement('input');
@@ -134,10 +82,13 @@
     marker.value = email;
   }
 
-  function tildaIdentityRequired(mounts) {
-    mounts[0].innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
-      '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Откройте приложение из личного кабинета</div>' +
-      '<div style="line-height:1.5">На этой странице не найден email участника Tilda. Вернитесь в Members Area и откройте личный кабинет оттуда.</div></div>';
+  function redirectToTildaLogin() {
+    try {
+      localStorage.removeItem(STORAGE_IDENTITY);
+      localStorage.removeItem('dqs_email');
+    } catch (error) {}
+    window.EdabalansIdentity = null;
+    location.replace('/members/login');
   }
 
   function hideTildaUserbar() {
@@ -179,80 +130,6 @@
     }
     append();
     new MutationObserver(append).observe(mount, {childList: true, subtree: true});
-  }
-
-  function askIdentity(mounts, candidate, requireConfirmation) {
-    var host = mounts[0];
-    host.innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
-      '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Вход в приложение</div>' +
-      (candidate ? '<div style="line-height:1.45;margin-bottom:18px">Вы входите как:<br><b>' + candidate.replace(/</g, '&lt;') + '</b><br>Это ваш email?</div>' : '<div style="line-height:1.45;margin-bottom:14px">Не удалось автоматически определить email. Введите email, на который оформлена покупка.</div>') +
-      '<input data-edabalans-email type="email" value="' + candidate.replace(/"/g, '&quot;') + '" placeholder="email@example.com" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #c7c7cc;border-radius:12px;font-size:16px;margin-bottom:12px">' +
-      '<button data-edabalans-confirm style="width:100%;padding:12px;border:0;border-radius:12px;background:#1d1d1f;color:#fff;font-size:16px;font-weight:600;cursor:pointer">' + (requireConfirmation ? 'Получить код на почту' : 'Продолжить') + '</button>' +
-      '<div data-edabalans-error style="color:#b42318;font-size:14px;margin-top:10px"></div></div>';
-    host.querySelector('[data-edabalans-confirm]').addEventListener('click', function () {
-      var email = normalizeEmail(host.querySelector('[data-edabalans-email]').value);
-      if (!validEmail(email)) {
-        host.querySelector('[data-edabalans-error]').textContent = 'Введите корректный email';
-        return;
-      }
-      if (!requireConfirmation) {
-        remember(email, '', 0);
-        start(mounts);
-        return;
-      }
-      var button = host.querySelector('[data-edabalans-confirm]');
-      var error = host.querySelector('[data-edabalans-error]');
-      button.disabled = true;
-      error.textContent = 'Отправляю код…';
-      fetch(APP_HOST + '/api/app-auth/challenge', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({email: email})
-      }).then(function (response) {
-        return response.json().then(function (data) {
-          if (!response.ok) throw new Error(data.detail || 'Не удалось отправить код');
-          return data;
-        });
-      }).then(function (challenge) {
-        host.innerHTML = '<div style="max-width:520px;margin:30px auto;padding:24px;border-radius:20px;background:#fff;box-shadow:0 12px 35px rgba(0,0,0,.09);font-family:Arial,sans-serif;color:#1d1d1f">' +
-          '<div style="font-size:22px;font-weight:700;margin-bottom:10px">Введите код</div>' +
-          '<div style="line-height:1.45;margin-bottom:18px">Шестизначный код отправлен на <b>' + email.replace(/</g, '&lt;') + '</b>. Он действует 10 минут.</div>' +
-          '<input data-edabalans-code inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="000000" style="box-sizing:border-box;width:100%;padding:12px 14px;border:1px solid #c7c7cc;border-radius:12px;font-size:22px;letter-spacing:6px;text-align:center;margin-bottom:12px">' +
-          '<button data-edabalans-verify style="width:100%;padding:12px;border:0;border-radius:12px;background:#1d1d1f;color:#fff;font-size:16px;font-weight:600;cursor:pointer">Войти</button>' +
-          '<button data-edabalans-back style="width:100%;padding:10px;border:0;background:transparent;color:#555;cursor:pointer">Изменить email</button>' +
-          '<div data-edabalans-error style="color:#b42318;font-size:14px;margin-top:10px"></div></div>';
-        host.querySelector('[data-edabalans-back]').onclick = function () {
-          askIdentity(mounts, email, true);
-        };
-        host.querySelector('[data-edabalans-verify]').onclick = function () {
-          var code = String(host.querySelector('[data-edabalans-code]').value || '').replace(/\D/g, '');
-          var verifyError = host.querySelector('[data-edabalans-error]');
-          if (code.length !== 6) {
-            verifyError.textContent = 'Введите все 6 цифр';
-            return;
-          }
-          verifyError.textContent = 'Проверяю…';
-          fetch(APP_HOST + '/api/app-auth/verify', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({challenge_token: challenge.challenge_token, code: code})
-          }).then(function (response) {
-            return response.json().then(function (data) {
-              if (!response.ok) throw new Error(data.detail || 'Неверный код');
-              return data;
-            });
-          }).then(function (session) {
-            remember(session.email, session.session_token, session.expires_in);
-            start(mounts);
-          }).catch(function (verifyFailure) {
-            verifyError.textContent = String(verifyFailure.message || verifyFailure);
-          });
-        };
-      }).catch(function (failure) {
-        button.disabled = false;
-        error.textContent = String(failure.message || failure);
-      });
-    });
   }
 
   function executeScripts(doc) {
@@ -328,38 +205,18 @@
   function boot() {
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'));
     if (!mounts.length) return;
-    var protectedApps = mounts.some(function (mount) {
-      return Boolean(PROTECTED_APPS[String(mount.getAttribute('data-edabalans-app') || '').toLowerCase()]);
-    });
-    var detected = protectedApps ? detectTildaMemberEmail() : detectTildaEmail();
-    var remembered = rememberedIdentity();
-    if (protectedApps) {
-      hideTildaUserbar();
-      if (detected) {
-        remember(detected, '', 0, 'tilda');
-        start(mounts);
-        return;
-      }
-      mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Определяю участника Tilda…</div>';
-      waitForTildaEmail(function (email) {
-        remember(email, '', 0, 'tilda');
-        start(mounts);
-      }, function () {
-        tildaIdentityRequired(mounts);
-      });
-      return;
-    }
-    if (remembered && remembered.sessionToken && remembered.expiresAt > Date.now() && (!detected || remembered.email === detected)) {
-      remember(remembered.email);
+    var detected = detectTildaMemberEmail();
+    hideTildaUserbar();
+    if (detected) {
+      remember(detected);
       start(mounts);
       return;
     }
-    if (!protectedApps && remembered && (!detected || remembered.email === detected)) {
-      remember(remembered.email);
+    mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход через Tilda…</div>';
+    waitForTildaEmail(function (email) {
+      remember(email);
       start(mounts);
-      return;
-    }
-    askIdentity(mounts, detected || (remembered && remembered.email) || '', protectedApps);
+    }, redirectToTildaLogin);
   }
 
   window.EdabalansEmbed = {load: load, boot: boot};
