@@ -172,10 +172,14 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
     return courses
 
 
+APPLICATION_PREVIEW_RESOURCE = "ACCESS_APPLICATION_PREVIEW"
+
+
 def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
+    preview_enabled = APPLICATION_PREVIEW_RESOURCE in owned
     definitions = (
         ("dqs", "Система оценки качества питания", "Оценивайте рацион по продуктовым категориям и наблюдайте изменения.", "dqs", "dqs", True),
-        ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "ACCESS_STRENGTH", "strength", False),
+        ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "strength", "strength", False),
         ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", False),
         ("metabolism", "Калькулятор метаболизма и тренировок", "Оценивайте расход энергии и тренировочную нагрузку.", "metabolism", "metabolism", False),
     )
@@ -186,9 +190,9 @@ def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
             "summary": summary,
             "resource": resource,
             "owned": resource in owned,
-            "ready": ready,
-            "state": "available" if resource in owned and ready else "preparing" if resource in owned else "not_owned",
-            "app": app if resource in owned and ready and not legal_required else None,
+            "ready": ready or preview_enabled,
+            "state": "available" if resource in owned and (ready or preview_enabled) else "preparing" if resource in owned else "not_owned",
+            "app": app if resource in owned and (ready or preview_enabled) and not legal_required else None,
         }
         for code, title, summary, resource, app, ready in definitions
     ]

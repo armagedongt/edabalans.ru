@@ -176,6 +176,9 @@ def test_application_fragments_use_server_api() -> None:
     assert "location.replace('/members/login')" in dqs
     assert "dqs-app-footer" not in dqs
     assert "renderAppFooter" not in dqs
+    assert "Все права защищены" not in dqs
+    assert "© ${new Date().getFullYear()}" not in dqs
+    assert "Сергей Воронцов" not in dqs
 
 
 def test_client_apps_share_design_tokens_account_link_and_single_footer() -> None:

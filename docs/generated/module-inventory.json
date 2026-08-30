@@ -720,6 +720,10 @@
       "path": "backend/migrations/versions/20260830_0031_product_copy.py"
     },
     {
+      "module_id": "platform.commerce",
+      "path": "backend/migrations/versions/20260831_0032_application_preview_access.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "backend/requirements-collector.txt"
     },
@@ -3065,6 +3069,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/masterclass-faq-neurozeh-v1.html"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/assets/masterclass-pricing-neurozeh-v32.html"
     },
     {
@@ -3106,6 +3114,10 @@
     {
       "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
     },
     {
       "module_id": "operations.project-work",
@@ -3324,7 +3336,7 @@
       "routes": [
         {
           "file": "backend/app/access_routes.py",
-          "line": 414,
+          "line": 418,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -3332,7 +3344,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 354,
+          "line": 358,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -3594,7 +3606,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 354,
+          "line": 358,
           "module_id": "admin.control",
           "name": "create_personal_link",
           "qualname": "create_personal_link"
@@ -3602,7 +3614,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 414,
+          "line": 418,
           "module_id": "admin.control",
           "name": "list_personal_links",
           "qualname": "list_personal_links"
@@ -15235,6 +15247,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/masterclass-faq-neurozeh-v1.html"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/assets/masterclass-pricing-neurozeh-v32.html"
         },
         {
@@ -15276,6 +15292,10 @@
         {
           "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
         },
         {
           "module_id": "operations.project-work",
@@ -16556,6 +16576,10 @@
         },
         {
           "module_id": "platform.commerce",
+          "path": "backend/migrations/versions/20260831_0032_application_preview_access.py"
+        },
+        {
+          "module_id": "platform.commerce",
           "path": "backend/tests/test_personal_access_links.py"
         },
         {
@@ -16639,7 +16663,7 @@
       "routes": [
         {
           "file": "backend/app/access_routes.py",
-          "line": 300,
+          "line": 304,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}",
@@ -16647,7 +16671,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 327,
+          "line": 331,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}/checkout",
@@ -16655,7 +16679,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 306,
+          "line": 310,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access-links/{token}/claim",
@@ -16663,7 +16687,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 285,
+          "line": 289,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/access/registration-seen",
@@ -16679,7 +16703,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 257,
+          "line": 261,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/account",
@@ -16687,7 +16711,7 @@
         },
         {
           "file": "backend/app/access_routes.py",
-          "line": 263,
+          "line": 267,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/account/legal-acceptances",
@@ -16901,7 +16925,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 175,
+          "line": 178,
           "module_id": "platform.commerce",
           "name": "account_applications",
           "qualname": "account_applications"
@@ -16909,7 +16933,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 197,
+          "line": 201,
           "module_id": "platform.commerce",
           "name": "account_payload",
           "qualname": "account_payload"
@@ -16917,7 +16941,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 257,
+          "line": 261,
           "module_id": "platform.commerce",
           "name": "account_catalog",
           "qualname": "account_catalog"
@@ -16925,7 +16949,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 263,
+          "line": 267,
           "module_id": "platform.commerce",
           "name": "accept_account_legal_documents",
           "qualname": "accept_account_legal_documents"
@@ -16933,7 +16957,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 285,
+          "line": 289,
           "module_id": "platform.commerce",
           "name": "registration_seen",
           "qualname": "registration_seen"
@@ -16941,7 +16965,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 300,
+          "line": 304,
           "module_id": "platform.commerce",
           "name": "personal_link",
           "qualname": "personal_link"
@@ -16949,7 +16973,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 306,
+          "line": 310,
           "module_id": "platform.commerce",
           "name": "claim_personal_link",
           "qualname": "claim_personal_link"
@@ -16957,7 +16981,7 @@
         {
           "file": "backend/app/access_routes.py",
           "kind": "function",
-          "line": 327,
+          "line": 331,
           "module_id": "platform.commerce",
           "name": "personal_link_checkout",
           "qualname": "personal_link_checkout"
@@ -17587,9 +17611,25 @@
           "qualname": "downgrade"
         },
         {
+          "file": "backend/migrations/versions/20260831_0032_application_preview_access.py",
+          "kind": "function",
+          "line": 22,
+          "module_id": "platform.commerce",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260831_0032_application_preview_access.py",
+          "kind": "function",
+          "line": 44,
+          "module_id": "platform.commerce",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 28,
+          "line": 29,
           "module_id": "platform.commerce",
           "name": "setup",
           "qualname": "setup"
@@ -17597,7 +17637,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 37,
+          "line": 38,
           "module_id": "platform.commerce",
           "name": "override_db",
           "qualname": "setup.override_db"
@@ -17605,7 +17645,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 71,
+          "line": 72,
           "module_id": "platform.commerce",
           "name": "login",
           "qualname": "login"
@@ -17613,7 +17653,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 79,
+          "line": 80,
           "module_id": "platform.commerce",
           "name": "test_free_personal_link_is_bound_to_tilda_email_and_grants_once",
           "qualname": "test_free_personal_link_is_bound_to_tilda_email_and_grants_once"
@@ -17621,7 +17661,7 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 121,
+          "line": 122,
           "module_id": "platform.commerce",
           "name": "test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_access",
           "qualname": "test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_access"
@@ -17629,10 +17669,26 @@
         {
           "file": "backend/tests/test_personal_access_links.py",
           "kind": "function",
-          "line": 142,
+          "line": 143,
           "module_id": "platform.commerce",
           "name": "test_universal_account_blocks_review_and_uses_server_resources_for_catalog",
           "qualname": "test_universal_account_blocks_review_and_uses_server_resources_for_catalog"
+        },
+        {
+          "file": "backend/tests/test_personal_access_links.py",
+          "kind": "function",
+          "line": 239,
+          "module_id": "platform.commerce",
+          "name": "test_application_preview_entitlement_opens_only_owned_unreleased_apps",
+          "qualname": "test_application_preview_entitlement_opens_only_owned_unreleased_apps"
+        },
+        {
+          "file": "backend/tests/test_personal_access_links.py",
+          "kind": "function",
+          "line": 287,
+          "module_id": "platform.commerce",
+          "name": "test_application_preview_requires_preview_and_concrete_app_resource",
+          "qualname": "test_application_preview_requires_preview_and_concrete_app_resource"
         },
         {
           "file": "backend/tests/test_pricing_catalog.py",
@@ -24510,7 +24566,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 181,
+          "line": 184,
           "module_id": "products",
           "name": "test_client_apps_share_design_tokens_account_link_and_single_footer",
           "qualname": "test_client_apps_share_design_tokens_account_link_and_single_footer"
@@ -24518,7 +24574,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 226,
+          "line": 229,
           "module_id": "products",
           "name": "test_production_admin_assets_do_not_name_legacy_storage",
           "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -24526,7 +24582,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 234,
+          "line": 237,
           "module_id": "products",
           "name": "test_unknown_application_fragment_is_404",
           "qualname": "test_unknown_application_fragment_is_404"
@@ -24534,7 +24590,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 238,
+          "line": 241,
           "module_id": "products",
           "name": "test_shared_content_gallery_asset_is_public_without_captions",
           "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -24542,7 +24598,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 253,
+          "line": 256,
           "module_id": "products",
           "name": "test_masterclass_fragments_and_shared_assets_are_public",
           "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -24550,7 +24606,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 455,
+          "line": 458,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -24558,7 +24614,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 638,
+          "line": 641,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -24566,7 +24622,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 656,
+          "line": 659,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -24574,7 +24630,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 683,
+          "line": 686,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -24582,7 +24638,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 708,
+          "line": 711,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -24590,7 +24646,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 722,
+          "line": 725,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -24598,7 +24654,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 788,
+          "line": 791,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -24606,7 +24662,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 804,
+          "line": 807,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -24614,7 +24670,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 816,
+          "line": 819,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -24622,7 +24678,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 856,
+          "line": 859,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -24630,7 +24686,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 862,
+          "line": 865,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -24638,7 +24694,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 875,
+          "line": 878,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -24646,7 +24702,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 886,
+          "line": 889,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -24654,7 +24710,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 900,
+          "line": 903,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -33228,7 +33284,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 414,
+      "line": 418,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -33236,7 +33292,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 354,
+      "line": 358,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/personal-access-links",
@@ -33332,7 +33388,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 300,
+      "line": 304,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}",
@@ -33340,7 +33396,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 327,
+      "line": 331,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}/checkout",
@@ -33348,7 +33404,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 306,
+      "line": 310,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access-links/{token}/claim",
@@ -33356,7 +33412,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 285,
+      "line": 289,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/access/registration-seen",
@@ -33372,7 +33428,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 257,
+      "line": 261,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/account",
@@ -33380,7 +33436,7 @@
     },
     {
       "file": "backend/app/access_routes.py",
-      "line": 263,
+      "line": 267,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/account/legal-acceptances",
@@ -34640,7 +34696,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 175,
+      "line": 178,
       "module_id": "platform.commerce",
       "name": "account_applications",
       "qualname": "account_applications"
@@ -34648,7 +34704,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 197,
+      "line": 201,
       "module_id": "platform.commerce",
       "name": "account_payload",
       "qualname": "account_payload"
@@ -34656,7 +34712,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 257,
+      "line": 261,
       "module_id": "platform.commerce",
       "name": "account_catalog",
       "qualname": "account_catalog"
@@ -34664,7 +34720,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 263,
+      "line": 267,
       "module_id": "platform.commerce",
       "name": "accept_account_legal_documents",
       "qualname": "accept_account_legal_documents"
@@ -34672,7 +34728,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 285,
+      "line": 289,
       "module_id": "platform.commerce",
       "name": "registration_seen",
       "qualname": "registration_seen"
@@ -34680,7 +34736,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 300,
+      "line": 304,
       "module_id": "platform.commerce",
       "name": "personal_link",
       "qualname": "personal_link"
@@ -34688,7 +34744,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 306,
+      "line": 310,
       "module_id": "platform.commerce",
       "name": "claim_personal_link",
       "qualname": "claim_personal_link"
@@ -34696,7 +34752,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 327,
+      "line": 331,
       "module_id": "platform.commerce",
       "name": "personal_link_checkout",
       "qualname": "personal_link_checkout"
@@ -34704,7 +34760,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 354,
+      "line": 358,
       "module_id": "admin.control",
       "name": "create_personal_link",
       "qualname": "create_personal_link"
@@ -34712,7 +34768,7 @@
     {
       "file": "backend/app/access_routes.py",
       "kind": "function",
-      "line": 414,
+      "line": 418,
       "module_id": "admin.control",
       "name": "list_personal_links",
       "qualname": "list_personal_links"
@@ -43326,6 +43382,22 @@
       "qualname": "downgrade"
     },
     {
+      "file": "backend/migrations/versions/20260831_0032_application_preview_access.py",
+      "kind": "function",
+      "line": 22,
+      "module_id": "platform.commerce",
+      "name": "upgrade",
+      "qualname": "upgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260831_0032_application_preview_access.py",
+      "kind": "function",
+      "line": 44,
+      "module_id": "platform.commerce",
+      "name": "downgrade",
+      "qualname": "downgrade"
+    },
+    {
       "file": "backend/scripts/generate_masterclass_offer_simulator.py",
       "kind": "function",
       "line": 69,
@@ -43624,7 +43696,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 181,
+      "line": 184,
       "module_id": "products",
       "name": "test_client_apps_share_design_tokens_account_link_and_single_footer",
       "qualname": "test_client_apps_share_design_tokens_account_link_and_single_footer"
@@ -43632,7 +43704,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 226,
+      "line": 229,
       "module_id": "products",
       "name": "test_production_admin_assets_do_not_name_legacy_storage",
       "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -43640,7 +43712,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 234,
+      "line": 237,
       "module_id": "products",
       "name": "test_unknown_application_fragment_is_404",
       "qualname": "test_unknown_application_fragment_is_404"
@@ -43648,7 +43720,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 238,
+      "line": 241,
       "module_id": "products",
       "name": "test_shared_content_gallery_asset_is_public_without_captions",
       "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -43656,7 +43728,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 253,
+      "line": 256,
       "module_id": "products",
       "name": "test_masterclass_fragments_and_shared_assets_are_public",
       "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -43664,7 +43736,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 455,
+      "line": 458,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -43672,7 +43744,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 638,
+      "line": 641,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -43680,7 +43752,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 656,
+      "line": 659,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -43688,7 +43760,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 683,
+      "line": 686,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -43696,7 +43768,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 708,
+      "line": 711,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -43704,7 +43776,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 722,
+      "line": 725,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -43712,7 +43784,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 788,
+      "line": 791,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -43720,7 +43792,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 804,
+      "line": 807,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -43728,7 +43800,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 816,
+      "line": 819,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -43736,7 +43808,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 856,
+      "line": 859,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -43744,7 +43816,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 862,
+      "line": 865,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -43752,7 +43824,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 875,
+      "line": 878,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -43760,7 +43832,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 886,
+      "line": 889,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -43768,7 +43840,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 900,
+      "line": 903,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -45496,7 +45568,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 28,
+      "line": 29,
       "module_id": "platform.commerce",
       "name": "setup",
       "qualname": "setup"
@@ -45504,7 +45576,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 37,
+      "line": 38,
       "module_id": "platform.commerce",
       "name": "override_db",
       "qualname": "setup.override_db"
@@ -45512,7 +45584,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 71,
+      "line": 72,
       "module_id": "platform.commerce",
       "name": "login",
       "qualname": "login"
@@ -45520,7 +45592,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 79,
+      "line": 80,
       "module_id": "platform.commerce",
       "name": "test_free_personal_link_is_bound_to_tilda_email_and_grants_once",
       "qualname": "test_free_personal_link_is_bound_to_tilda_email_and_grants_once"
@@ -45528,7 +45600,7 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 121,
+      "line": 122,
       "module_id": "platform.commerce",
       "name": "test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_access",
       "qualname": "test_opening_account_page_moves_waiting_buyer_to_pending_without_granting_access"
@@ -45536,10 +45608,26 @@
     {
       "file": "backend/tests/test_personal_access_links.py",
       "kind": "function",
-      "line": 142,
+      "line": 143,
       "module_id": "platform.commerce",
       "name": "test_universal_account_blocks_review_and_uses_server_resources_for_catalog",
       "qualname": "test_universal_account_blocks_review_and_uses_server_resources_for_catalog"
+    },
+    {
+      "file": "backend/tests/test_personal_access_links.py",
+      "kind": "function",
+      "line": 239,
+      "module_id": "platform.commerce",
+      "name": "test_application_preview_entitlement_opens_only_owned_unreleased_apps",
+      "qualname": "test_application_preview_entitlement_opens_only_owned_unreleased_apps"
+    },
+    {
+      "file": "backend/tests/test_personal_access_links.py",
+      "kind": "function",
+      "line": 287,
+      "module_id": "platform.commerce",
+      "name": "test_application_preview_requires_preview_and_concrete_app_resource",
+      "qualname": "test_application_preview_requires_preview_and_concrete_app_resource"
     },
     {
       "file": "backend/tests/test_pricing_catalog.py",

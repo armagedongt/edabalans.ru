@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import Settings, get_settings  # noqa: E402
+from app.access_routes import account_applications  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
@@ -233,3 +234,78 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     with factory() as db:
         assert db.scalar(select(func.count(UserLegalAcceptance.id))) == 2
     app.dependency_overrides.clear()
+
+
+def test_application_preview_entitlement_opens_only_owned_unreleased_apps():
+    client, factory, user_id = setup()
+    with factory() as db:
+        user = db.get(User, user_id)
+        user.access_review_status = "completed"
+        resources = [
+            Resource(code="ACCESS_APPLICATION_PREVIEW", name="Предпросмотр", status="active"),
+            Resource(code="strength", name="Дневник силовых", status="active"),
+            Resource(code="recipes", name="Калькулятор рецептов", status="active"),
+            Resource(code="metabolism", name="Калькулятор метаболизма", status="active"),
+        ]
+        db.add_all(resources)
+        db.flush()
+        db.add_all(
+            UserAccess(
+                user_id=user.id,
+                resource_id=resource.id,
+                source="test-preview",
+                granted_at=datetime.now(timezone.utc),
+            )
+            for resource in resources
+        )
+        db.commit()
+
+    data = client.get("/api/account?email=client@example.test").json()
+    applications = {item["code"]: item for item in data["applications"]}
+    assert applications["strength"]["app"] is None
+    assert applications["strength"]["ready"] is True
+    assert applications["recipes"]["app"] is None
+    assert applications["metabolism"]["app"] is None
+
+    accepted = client.post(
+        "/api/account/legal-acceptances",
+        json={
+            "email": "client@example.test",
+            "document_codes": [
+                "educational_disclaimer",
+                "personal_data_consent",
+            ],
+        },
+    ).json()
+    applications = {item["code"]: item for item in accepted["applications"]}
+    assert applications["strength"]["app"] == "strength"
+    assert applications["recipes"]["app"] == "recipes"
+    assert applications["metabolism"]["app"] == "metabolism"
+    app.dependency_overrides.clear()
+
+
+def test_application_preview_requires_preview_and_concrete_app_resource():
+    preview_only = {
+        item["code"]: item
+        for item in account_applications({"ACCESS_APPLICATION_PREVIEW"}, False)
+    }
+    resource_only = {
+        item["code"]: item
+        for item in account_applications({"recipes"}, False)
+    }
+    both = {
+        item["code"]: item
+        for item in account_applications(
+            {"ACCESS_APPLICATION_PREVIEW", "recipes"}, False
+        )
+    }
+
+    assert preview_only["recipes"]["ready"] is True
+    assert preview_only["recipes"]["owned"] is False
+    assert preview_only["recipes"]["app"] is None
+    assert resource_only["recipes"]["ready"] is False
+    assert resource_only["recipes"]["owned"] is True
+    assert resource_only["recipes"]["app"] is None
+    assert both["recipes"]["ready"] is True
+    assert both["recipes"]["owned"] is True
+    assert both["recipes"]["app"] == "recipes"

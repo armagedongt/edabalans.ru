@@ -60,6 +60,7 @@ owns_files = [
   "backend/migrations/versions/20260823_0019_personal_access_links.py",
   "backend/migrations/versions/20260823_0020_pricing_catalog.py",
   "backend/migrations/versions/20260824_0022_user_legal_acceptances.py",
+  "backend/migrations/versions/20260831_0032_application_preview_access.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
