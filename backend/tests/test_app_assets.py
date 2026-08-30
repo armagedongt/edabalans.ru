@@ -290,10 +290,44 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "focusProductCode" in loader
     assert "source: 'tilda'" in loader
     account = client.get("/apps/account.html").text
-    assert "Вы вошли как" in account
-    assert "account-session-email" in account
+    assert (
+        '<h1>Личный кабинет</h1><p class="account-session">Вы вошли как '
+        '<strong class="account-session-email">'
+    ) in account
+    assert 'class="account-logout" href="/members/login?exit=y">Выйти</a>' in account
     assert "Курсы и программы" in account
     assert "Приложения" in account
+    assert "Чтобы худеть было проще." in account
+    assert "Рабочие инструменты — компактно, без отдельного входа." not in account
+    assert (
+        '<section class="account-legal"><p>Чтобы пользоваться личным кабинетом, '
+        'прочитайте дисклеймер и политику обработки персональных данных.</p><div class="legal-grid">'
+    ) in account
+    assert "Пара важных вещей" not in account
+    assert "Полные тексты можно открыть" not in account
+    assert ">Принять и продолжить</button>" in account
+    assert ">Принимаю и продолжаю</button>" not in account
+    assert ".legal-copy>strong,.legal-copy>span{display:block}" in account
+    assert ".legal-copy>.legal-paragraph+.legal-paragraph{margin-top:12px}" in account
+    assert "function accountSession" not in account
+    application_renderer = account[
+        account.index("function applicationCard") : account.index("function legacyPortal")
+    ]
+    assert "account-state" not in application_renderer
+    assert (
+        "action=canOpen?'<button class=\"account-open available\" data-app=\"'+esc(item.app)"
+        "+'\">Открыть</button>':'<button class=\"account-open\" disabled>'+esc(label)+'</button>'"
+        in application_renderer
+    )
+    assert (
+        "return '<article class=\"application-card\"><div><h3>'+esc(item.title)"
+        "+'</h3><p>'+esc(item.summary)+'</p></div>'+action+'</article>'"
+        in application_renderer
+    )
+    assert "item.ready?(item.owned?'Открыть':'Доступ закрыт'):'Скоро'" in account
+    account_button_rules = re.search(r"\.account-open\{(?P<rules>[^}]*)\}", account)
+    assert account_button_rules is not None
+    assert "white-space:nowrap" in account_button_rules.group("rules")
     assert "Система оценки качества питания" not in account  # names come from the server catalog
     assert "Старый личный кабинет" in account
     assert "Пока доступы не подключены" in account
