@@ -266,6 +266,12 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
     assert "tma__getProfileObjFromLS" in loader
+    assert "function ensureTildaProfileReader" in loader
+    assert "https://members.tildaapi.com/frontend/js/tilda-members-init.min.js" in loader
+    assert loader.index("ensureTildaProfileReader().then") < loader.index(
+        "var detected = detectTildaMemberEmail();",
+        loader.index("function boot"),
+    )
     assert "detectTildaMemberEmail" in loader
     assert "waitForTildaEmail" in loader
     assert "redirectToTildaLogin" in loader

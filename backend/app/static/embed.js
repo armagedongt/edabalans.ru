@@ -6,6 +6,8 @@
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var STORAGE_RETURN_PATH = 'edabalans_return_path_v1';
+  var TILDA_PROFILE_READER = 'https://members.tildaapi.com/frontend/js/tilda-members-init.min.js';
+  var profileReaderPromise = null;
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -94,6 +96,27 @@
     } catch (error) {}
     window.EdabalansIdentity = null;
     location.replace('/members/login');
+  }
+
+  function ensureTildaProfileReader() {
+    if (typeof window.tma__getProfileObjFromLS === 'function') return Promise.resolve();
+    if (profileReaderPromise) return profileReaderPromise;
+    profileReaderPromise = new Promise(function (resolve) {
+      var existing = document.getElementById('tilda-membersarea-js') || document.getElementById('edabalans-tilda-profile-reader');
+      if (existing) {
+        existing.addEventListener('load', resolve, {once: true});
+        setTimeout(resolve, 600);
+        return;
+      }
+      var script = document.createElement('script');
+      script.id = 'edabalans-tilda-profile-reader';
+      script.src = TILDA_PROFILE_READER;
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = resolve;
+      document.head.appendChild(script);
+    });
+    return profileReaderPromise;
   }
 
   function restoreReturnPath() {
@@ -223,20 +246,22 @@
   function boot() {
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'));
     if (!mounts.length) return;
-    var detected = detectTildaMemberEmail();
     hideTildaUserbar();
-    if (detected) {
-      remember(detected);
-      if (restoreReturnPath()) return;
-      start(mounts);
-      return;
-    }
     mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход через Tilda…</div>';
-    waitForTildaEmail(function (email) {
-      remember(email);
-      if (restoreReturnPath()) return;
-      start(mounts);
-    }, redirectToTildaLogin);
+    ensureTildaProfileReader().then(function () {
+      var detected = detectTildaMemberEmail();
+      if (detected) {
+        remember(detected);
+        if (restoreReturnPath()) return;
+        start(mounts);
+        return;
+      }
+      waitForTildaEmail(function (email) {
+        remember(email);
+        if (restoreReturnPath()) return;
+        start(mounts);
+      }, redirectToTildaLogin);
+    });
   }
 
   window.EdabalansEmbed = {load: load, boot: boot};

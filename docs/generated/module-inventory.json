@@ -15582,6 +15582,7 @@
         "проверять Tilda-профиль и продуктовый доступ без второго клиентского логина;",
         "при отсутствии профиля отправлять клиента на штатный вход Tilda без ручного",
         "после штатного входа возвращать клиента только на сохранённый внутренний путь,",
+        "читать существующий Tilda-профиль и на публичной странице приложения, чтобы",
         "завершать клиентскую сессию штатным механизмом Tilda из главного экрана ЛК;"
       ],
       "card": "docs/knowledge-base/modules/catalog/platform.auth.md",
@@ -23826,7 +23827,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 25,
+          "line": 27,
           "module_id": "products",
           "name": "normalizeEmail",
           "qualname": "normalizeEmail"
@@ -23834,7 +23835,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 29,
+          "line": 31,
           "module_id": "products",
           "name": "validEmail",
           "qualname": "validEmail"
@@ -23842,7 +23843,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 33,
+          "line": 35,
           "module_id": "products",
           "name": "detectTildaMemberEmail",
           "qualname": "detectTildaMemberEmail"
@@ -23850,7 +23851,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 44,
+          "line": 46,
           "module_id": "products",
           "name": "waitForTildaEmail",
           "qualname": "waitForTildaEmail"
@@ -23858,7 +23859,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 62,
+          "line": 64,
           "module_id": "products",
           "name": "remember",
           "qualname": "remember"
@@ -23866,7 +23867,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 85,
+          "line": 87,
           "module_id": "products",
           "name": "redirectToTildaLogin",
           "qualname": "redirectToTildaLogin"
@@ -23874,7 +23875,15 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 98,
+          "line": 100,
+          "module_id": "products",
+          "name": "ensureTildaProfileReader",
+          "qualname": "ensureTildaProfileReader"
+        },
+        {
+          "file": "backend/app/static/embed.js",
+          "kind": "function",
+          "line": 121,
           "module_id": "products",
           "name": "restoreReturnPath",
           "qualname": "restoreReturnPath"
@@ -23882,7 +23891,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 111,
+          "line": 134,
           "module_id": "products",
           "name": "hideTildaUserbar",
           "qualname": "hideTildaUserbar"
@@ -23890,7 +23899,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 119,
+          "line": 142,
           "module_id": "products",
           "name": "legalFooterHtml",
           "qualname": "legalFooterHtml"
@@ -23898,7 +23907,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 128,
+          "line": 151,
           "module_id": "products",
           "name": "legalFooterHost",
           "qualname": "legalFooterHost"
@@ -23906,7 +23915,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 139,
+          "line": 162,
           "module_id": "products",
           "name": "ensureLegalFooter",
           "qualname": "ensureLegalFooter"
@@ -23914,7 +23923,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 143,
+          "line": 166,
           "module_id": "products",
           "name": "append",
           "qualname": "append"
@@ -23922,7 +23931,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 152,
+          "line": 175,
           "module_id": "products",
           "name": "executeScripts",
           "qualname": "executeScripts"
@@ -23930,7 +23939,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 173,
+          "line": 196,
           "module_id": "products",
           "name": "load",
           "qualname": "load"
@@ -23938,7 +23947,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 218,
+          "line": 241,
           "module_id": "products",
           "name": "start",
           "qualname": "start"
@@ -23946,7 +23955,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 222,
+          "line": 245,
           "module_id": "products",
           "name": "boot",
           "qualname": "boot"
@@ -24130,7 +24139,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 351,
+          "line": 357,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -24138,7 +24147,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 534,
+          "line": 540,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -24146,7 +24155,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 552,
+          "line": 558,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -24154,7 +24163,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 579,
+          "line": 585,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -24162,7 +24171,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 604,
+          "line": 610,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -24170,7 +24179,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 618,
+          "line": 624,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -24178,7 +24187,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 684,
+          "line": 690,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -24186,7 +24195,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 700,
+          "line": 706,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -24194,7 +24203,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 712,
+          "line": 718,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -24202,7 +24211,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 752,
+          "line": 758,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -24210,7 +24219,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 758,
+          "line": 764,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -24218,7 +24227,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 771,
+          "line": 777,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -24226,7 +24235,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 782,
+          "line": 788,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -24234,7 +24243,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 796,
+          "line": 802,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -41240,7 +41249,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 25,
+      "line": 27,
       "module_id": "products",
       "name": "normalizeEmail",
       "qualname": "normalizeEmail"
@@ -41248,7 +41257,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 29,
+      "line": 31,
       "module_id": "products",
       "name": "validEmail",
       "qualname": "validEmail"
@@ -41256,7 +41265,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 33,
+      "line": 35,
       "module_id": "products",
       "name": "detectTildaMemberEmail",
       "qualname": "detectTildaMemberEmail"
@@ -41264,7 +41273,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 44,
+      "line": 46,
       "module_id": "products",
       "name": "waitForTildaEmail",
       "qualname": "waitForTildaEmail"
@@ -41272,7 +41281,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 62,
+      "line": 64,
       "module_id": "products",
       "name": "remember",
       "qualname": "remember"
@@ -41280,7 +41289,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 85,
+      "line": 87,
       "module_id": "products",
       "name": "redirectToTildaLogin",
       "qualname": "redirectToTildaLogin"
@@ -41288,7 +41297,15 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 98,
+      "line": 100,
+      "module_id": "products",
+      "name": "ensureTildaProfileReader",
+      "qualname": "ensureTildaProfileReader"
+    },
+    {
+      "file": "backend/app/static/embed.js",
+      "kind": "function",
+      "line": 121,
       "module_id": "products",
       "name": "restoreReturnPath",
       "qualname": "restoreReturnPath"
@@ -41296,7 +41313,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 111,
+      "line": 134,
       "module_id": "products",
       "name": "hideTildaUserbar",
       "qualname": "hideTildaUserbar"
@@ -41304,7 +41321,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 119,
+      "line": 142,
       "module_id": "products",
       "name": "legalFooterHtml",
       "qualname": "legalFooterHtml"
@@ -41312,7 +41329,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 128,
+      "line": 151,
       "module_id": "products",
       "name": "legalFooterHost",
       "qualname": "legalFooterHost"
@@ -41320,7 +41337,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 139,
+      "line": 162,
       "module_id": "products",
       "name": "ensureLegalFooter",
       "qualname": "ensureLegalFooter"
@@ -41328,7 +41345,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 143,
+      "line": 166,
       "module_id": "products",
       "name": "append",
       "qualname": "append"
@@ -41336,7 +41353,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 152,
+      "line": 175,
       "module_id": "products",
       "name": "executeScripts",
       "qualname": "executeScripts"
@@ -41344,7 +41361,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 173,
+      "line": 196,
       "module_id": "products",
       "name": "load",
       "qualname": "load"
@@ -41352,7 +41369,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 218,
+      "line": 241,
       "module_id": "products",
       "name": "start",
       "qualname": "start"
@@ -41360,7 +41377,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 222,
+      "line": 245,
       "module_id": "products",
       "name": "boot",
       "qualname": "boot"
@@ -43160,7 +43177,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 351,
+      "line": 357,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -43168,7 +43185,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 534,
+      "line": 540,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -43176,7 +43193,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 552,
+      "line": 558,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -43184,7 +43201,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 579,
+      "line": 585,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -43192,7 +43209,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 604,
+      "line": 610,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -43200,7 +43217,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 618,
+      "line": 624,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -43208,7 +43225,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 684,
+      "line": 690,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -43216,7 +43233,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 700,
+      "line": 706,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -43224,7 +43241,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 712,
+      "line": 718,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -43232,7 +43249,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 752,
+      "line": 758,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -43240,7 +43257,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 758,
+      "line": 764,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -43248,7 +43265,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 771,
+      "line": 777,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -43256,7 +43273,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 782,
+      "line": 788,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -43264,7 +43281,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 796,
+      "line": 802,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
