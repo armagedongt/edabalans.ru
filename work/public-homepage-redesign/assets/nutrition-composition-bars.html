@@ -1,0 +1,162 @@
+<meta charset="utf-8">
+
+<style>
+  .nutrition-comparison {
+    --nutrition-font-family: Montserrat, Arial, sans-serif;
+    --nutrition-background: transparent;
+    --nutrition-heading-color: #ffffff;
+    --nutrition-accent-color: #67cbff;
+    --nutrition-label-color: #252525;
+    --nutrition-useful-color: #b4fe51;
+    --nutrition-empty-color: #d9d9d9;
+    --nutrition-harmful-color: #fe956d;
+    --nutrition-heading-stretch: 1.1;
+    --nutrition-label-stretch: 1.12;
+    --nutrition-empty-label-stretch: 1.28;
+
+    box-sizing: border-box;
+    container-type: inline-size;
+    width: min(100%, 949px);
+    padding: clamp(32px, 7.17%, 68px) clamp(16px, 3.16%, 30px)
+      clamp(40px, 14.12%, 134px) clamp(16px, 4.22%, 40px);
+    margin: 0 auto;
+    background: var(--nutrition-background);
+    font-family: var(--nutrition-font-family);
+  }
+
+  .nutrition-comparison,
+  .nutrition-comparison * {
+    box-sizing: border-box;
+  }
+
+  .nutrition-comparison__item {
+    margin: 0;
+  }
+
+  .nutrition-comparison__item + .nutrition-comparison__item {
+    margin-top: clamp(44px, 8.65cqw, 76px);
+  }
+
+  .nutrition-comparison__heading {
+    width: max-content;
+    max-width: 100%;
+    margin: 0;
+    color: var(--nutrition-heading-color);
+    font-size: clamp(23px, 4.55cqw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    transform: scaleX(var(--nutrition-heading-stretch));
+    transform-origin: left center;
+    white-space: nowrap;
+  }
+
+  .nutrition-comparison__heading strong {
+    color: var(--nutrition-accent-color);
+    font: inherit;
+  }
+
+  .nutrition-comparison__bar {
+    display: grid;
+    width: 100%;
+    height: clamp(52px, 7.85cqw, 69px);
+    margin-top: clamp(18px, 3.08cqw, 27px);
+    overflow: hidden;
+  }
+
+  .nutrition-comparison__bar--expected {
+    grid-template-columns: 51.65fr 48.35fr;
+  }
+
+  .nutrition-comparison__bar--actual {
+    grid-template-columns: 13.54fr 68.15fr 18.31fr;
+  }
+
+  .nutrition-comparison__bar--target {
+    grid-template-columns: 55.18fr 13.42fr 31.4fr;
+  }
+
+  .nutrition-comparison__segment {
+    display: grid;
+    min-width: 0;
+    place-items: center;
+    color: var(--nutrition-label-color);
+    font-size: clamp(13px, 3.87cqw, 34px);
+    font-weight: 500;
+    line-height: 1;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .nutrition-comparison__segment--useful {
+    background: var(--nutrition-useful-color);
+  }
+
+  .nutrition-comparison__segment--empty {
+    background: var(--nutrition-empty-color);
+    font-weight: 700;
+  }
+
+  .nutrition-comparison__segment--harmful {
+    background: var(--nutrition-harmful-color);
+  }
+
+  .nutrition-comparison__label {
+    display: inline-block;
+    transform: scaleX(var(--nutrition-label-stretch));
+  }
+
+  .nutrition-comparison__segment--empty .nutrition-comparison__label {
+    transform: scaleX(var(--nutrition-empty-label-stretch));
+  }
+
+  @container (max-width: 600px) {
+    .nutrition-comparison__heading {
+      width: auto;
+      transform: none;
+      white-space: normal;
+    }
+
+    .nutrition-comparison__label {
+      transform: none;
+    }
+
+    .nutrition-comparison__segment--empty .nutrition-comparison__label {
+      transform: none;
+    }
+  }
+</style>
+
+<section class="nutrition-comparison" aria-label="Соотношение полезной, бесполезной и вредной еды">
+  <figure class="nutrition-comparison__item">
+    <figcaption class="nutrition-comparison__heading">
+      <strong>Все думают,</strong> что питание выглядит так:
+    </figcaption>
+    <div class="nutrition-comparison__bar nutrition-comparison__bar--expected" role="img" aria-label="Полезная и вредная еда примерно поровну">
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--useful"><span class="nutrition-comparison__label">Полезная еда</span></span>
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--harmful"><span class="nutrition-comparison__label">Вредная еда</span></span>
+    </div>
+  </figure>
+
+  <figure class="nutrition-comparison__item">
+    <figcaption class="nutrition-comparison__heading">
+      <strong>На самом деле</strong> оно выглядит так:
+    </figcaption>
+    <div class="nutrition-comparison__bar nutrition-comparison__bar--actual" role="img" aria-label="Немного полезной еды, преимущественно бесполезная еда и немного вредной">
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--useful" aria-hidden="true"></span>
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--empty"><span class="nutrition-comparison__label">Бесполезная</span></span>
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--harmful" aria-hidden="true"></span>
+    </div>
+  </figure>
+
+  <figure class="nutrition-comparison__item">
+    <figcaption class="nutrition-comparison__heading">
+      <strong>А надо,</strong> чтобы было вот так:
+    </figcaption>
+    <div class="nutrition-comparison__bar nutrition-comparison__bar--target" role="img" aria-label="Преимущественно полезная еда, немного бесполезной и умеренно вредной">
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--useful"><span class="nutrition-comparison__label">Полезная еда</span></span>
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--empty" aria-hidden="true"></span>
+      <span class="nutrition-comparison__segment nutrition-comparison__segment--harmful"><span class="nutrition-comparison__label">Вредная еда</span></span>
+    </div>
+  </figure>
+</section>

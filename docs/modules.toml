@@ -207,6 +207,13 @@ owns_routes = ["*/admin/library", "*/admin/api/library*", "*/mcp*"]
 reads_from = ["platform.content", "admin.project-knowledge"]
 
 [[modules]]
+id = "platform.web_design"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.web_design.md"
+depends_on = ["platform.content"]
+owns_files = ["content/design-workflow/**"]
+
+[[modules]]
 id = "products"
 card = "docs/knowledge-base/modules/catalog/products.md"
 depends_on = ["platform.auth", "platform.commerce"]
