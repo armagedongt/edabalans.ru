@@ -6,14 +6,14 @@
 
 <style>
 :root{
-  --st-text:#292733;
-  --st-muted:#858894;
-  --st-line:#dedfe6;
-  --st-bg:#f6f6f8;
-  --st-card:#ffffff;
+  --st-text:var(--ed-app-text,#17172b);
+  --st-muted:var(--ed-app-muted,#7b8094);
+  --st-line:var(--ed-app-line,#e7e7ef);
+  --st-bg:var(--ed-app-bg,#f5f5f7);
+  --st-card:var(--ed-app-card,#ffffff);
 
-  --st-purple:#7042e8;
-  --st-purple-soft:#f0ebff;
+  --st-purple:var(--ed-app-accent,#6f3de8);
+  --st-purple-soft:var(--ed-app-accent-soft,#f5f1ff);
 
   --st-green:#e5f3e3;
   --st-red:#fbe5e4;
@@ -56,9 +56,9 @@
 }
 
 .st-card{
-  background:#fff;
-  border-radius:15px;
-  box-shadow:0 5px 18px rgba(30,30,55,.06);
+  background:var(--st-card);
+  border-radius:var(--ed-app-radius,16px);
+  box-shadow:var(--ed-app-shadow,0 5px 18px rgba(20,20,40,.08));
 }
 
 .st-header{
@@ -83,15 +83,17 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  border-radius:11px;
-  background:#efeff4;
+  border:1px solid var(--st-line);
+  border-radius:13px;
+  background:var(--st-card);
+  box-shadow:var(--ed-app-shadow,0 5px 18px rgba(20,20,40,.08));
   text-decoration:none;
 }
 
 .st-profile svg{
   width:21px;
   height:21px;
-  stroke:#666a76;
+  stroke:currentColor;
 }
 
 .st-client-head{
@@ -1139,6 +1141,7 @@ var API_URL =
   'https://api.edabalans.ru/api/apps/strength';
 
 var APP_CONTEXT = window.EdabalansAppContext || {};
+var ACCOUNT_URL = String(APP_CONTEXT.accountUrl || '/lk');
 var MANAGED_TARGET =
   APP_CONTEXT.mode === 'admin'
   ? String(APP_CONTEXT.targetUserId || '')
@@ -2496,7 +2499,7 @@ function commonHeader(){
         '<div>'+
           '<div class="st-title">Силовые тренировки</div>'+
         '</div>'+
-        '<a class="st-profile" href="#openmembersbar">'+
+        '<a class="st-profile ed-app-account-link" href="'+esc(ACCOUNT_URL)+'" aria-label="Личный кабинет" title="Личный кабинет">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
             '<circle cx="12" cy="8" r="4"></circle>'+
             '<path d="M4.5 21c.8-4.2 3.3-6.3 7.5-6.3s6.7 2.1 7.5 6.3"></path>'+

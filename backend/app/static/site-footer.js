@@ -73,7 +73,7 @@
                 '<button class="eb-site-footer__panel-close" type="button" data-close-panel>Бесплатный интенсив</button>' +
                 '<div class="eb-site-footer__panel-options">' +
                   optionLink(LINKS.intensiveTelegram, 'Telegram', 'Понадобится VPN') +
-                  '<span class="eb-site-footer__option eb-site-footer__option--disabled" aria-disabled="true"><span>MAX</span><small>Пока недоступно</small></span>' +
+                  '<span class="eb-site-footer__option eb-site-footer__option--disabled" aria-disabled="true"><span>MAX</span><small>Скоро</small></span>' +
                 '</div>' +
               '</section>' +
             '</div>' +
@@ -85,7 +85,7 @@
                   optionLink(LINKS.telegram, 'Написать в Telegram') +
                   optionLink(LINKS.max, 'Написать в MAX') +
                   optionLink(LINKS.telegramChannel, 'Telegram-канал') +
-                  '<span class="eb-site-footer__option eb-site-footer__option--disabled" aria-disabled="true"><span>MAX-канал</span><small>В разработке</small></span>' +
+                  '<span class="eb-site-footer__option eb-site-footer__option--disabled" aria-disabled="true"><span>MAX-канал</span><small>Скоро</small></span>' +
                 '</nav>' +
               '</section>' +
             '</div>' +

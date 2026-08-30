@@ -1,0 +1,49 @@
+:root{
+  --ed-app-bg:#f5f5f7;
+  --ed-app-card:#fff;
+  --ed-app-text:#17172b;
+  --ed-app-muted:#7b8094;
+  --ed-app-line:#e7e7ef;
+  --ed-app-accent:#6f3de8;
+  --ed-app-accent-strong:#4f28b7;
+  --ed-app-accent-soft:#f5f1ff;
+  --ed-app-shadow:0 5px 18px rgba(20,20,40,.08);
+  --ed-app-radius:16px;
+}
+
+[data-edabalans-app]{
+  color:var(--ed-app-text);
+  font-family:Arial,sans-serif;
+}
+
+.ed-app-account-link{
+  display:inline-grid;
+  place-items:center;
+  flex:0 0 auto;
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border:1px solid var(--ed-app-line);
+  border-radius:13px;
+  background:var(--ed-app-card);
+  color:var(--ed-app-muted);
+  box-shadow:var(--ed-app-shadow);
+  text-decoration:none;
+  cursor:pointer;
+}
+
+.ed-app-account-link:hover{
+  border-color:#cfc6ec;
+  color:var(--ed-app-accent);
+}
+
+.ed-app-account-link:focus-visible{
+  outline:3px solid #d9cff8;
+  outline-offset:2px;
+}
+
+.ed-app-account-link svg{
+  display:block;
+  width:21px;
+  height:21px;
+}

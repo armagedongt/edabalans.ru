@@ -139,12 +139,12 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "https://max.ru/u/" in response.text
     assert "LINKS.intensiveTelegram" in response.text
     assert "Понадобится VPN" in response.text
-    assert "Пока недоступно" in response.text
+    assert "Пока недоступно" not in response.text
     assert "optionLink(LINKS.telegramChannel, 'Telegram-канал')" in response.text
     assert "optionLink(LINKS.telegram, 'Написать в Telegram')" in response.text
     assert "optionLink(LINKS.max, 'Написать в MAX')" in response.text
     assert "MAX-канал" in response.text
-    assert "В разработке" in response.text
+    assert "Скоро" in response.text
     assert "https://go.похудение-это-есть.рф/legal/offer" in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
     assert "https://go.похудение-это-есть.рф/legal/consent" in response.text
@@ -176,6 +176,51 @@ def test_application_fragments_use_server_api() -> None:
     assert "location.replace('/members/login')" in dqs
     assert "dqs-app-footer" not in dqs
     assert "renderAppFooter" not in dqs
+
+
+def test_client_apps_share_design_tokens_account_link_and_single_footer() -> None:
+    shell = client.get("/assets/app-shell.css")
+    assert shell.status_code == 200
+    assert "--ed-app-accent:#6f3de8" in shell.text
+    assert ".ed-app-account-link" in shell.text
+
+    loader = client.get("/embed.js").text
+    load_function = loader[loader.index("function load(mount)") : loader.index("function start(mounts)")]
+    assert "ensureAppShellStylesheet();" in load_function
+    assert "'/assets/app-shell.css'" in loader
+    assert "location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk'" in loader
+    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk" in loader
+    assert "var(--ed-app-line,#e7e7ef)" in loader
+    assert "var(--ed-app-muted,#7b8094)" in loader
+
+    fragments = {
+        app_code: client.get(f"/apps/{app_code}.html").text
+        for app_code in ("dqs", "strength", "recipes", "metabolism")
+    }
+    for fragment in fragments.values():
+        assert "accountUrl" in fragment
+        assert "'/lk'" in fragment
+        assert "openmembersbar" not in fragment
+        assert "<footer" not in fragment
+        assert "data-edabalans-legal-footer" not in fragment
+        assert "--ed-app-" in fragment
+
+    for app_code in ("strength", "recipes", "metabolism"):
+        assert re.search(r'class=["\'][^"\']*footer', fragments[app_code], re.IGNORECASE) is None
+        assert "©" not in fragments[app_code]
+
+    assert 'href="${escapeHtml(ACCOUNT_URL)}"' in fragments["dqs"]
+    assert re.search(r'dqs-profile-link ed-app-account-link[^>]*>\s*<svg', fragments["dqs"])
+    assert "href=\"'+esc(ACCOUNT_URL)+'\"" in fragments["strength"]
+    assert re.search(r'st-profile ed-app-account-link[^>]*>\s*[^<]*<svg', fragments["strength"])
+    assert "root.querySelector('.open-account').onclick=function(){location.href=accountUrl}" in fragments["recipes"]
+    assert "mask:url(" in fragments["recipes"]
+    metabolism = fragments["metabolism"]
+    assert "href=\"'+escapeAttr(accountUrl)+'\"" in metabolism
+    assert "ed-app-account-link" in metabolism
+    assert re.search(r'ed-app-account-link[^>]*>[^<]*\'\+\s*\'<svg', metabolism)
+    assert "mc-footer" not in metabolism
+    assert "Сергей Воронцов" not in metabolism
 
 
 def test_production_admin_assets_do_not_name_legacy_storage() -> None:
@@ -332,12 +377,18 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
         "+'\">Открыть</button>':'<button class=\"account-open\" disabled>'+esc(label)+'</button>'"
         in application_renderer
     )
-    assert (
-        "return '<article class=\"application-card\"><div><h3>'+esc(item.title)"
-        "+'</h3><p>'+esc(item.summary)+'</p></div>'+action+'</article>'"
-        in application_renderer
-    )
+    assert "applicationIcon(item.code)" in application_renderer
+    assert "application-icon-" in account
+    icons = dict(re.findall(r"(dqs|strength|recipes|metabolism):'([^']+)'", account))
+    assert set(icons) == {"dqs", "strength", "recipes", "metabolism"}
+    assert len(set(icons.values())) == 4
     assert "item.ready?(item.owned?'Открыть':'Доступ закрыт'):'Скоро'" in account
+    course_renderer = account[account.index("function card") : account.index("function applicationIcon")]
+    assert "label=item.ready?(item.owned?'Доступ открыт':'Доступ закрыт'):'Скоро'" in course_renderer
+    assert "item.ready?'Доступ закрыт':'Скоро'" in course_renderer
+    assert "'В разработке'" not in account
+    assert "'Куплен, готовится'" not in account
+    assert "'Программа готовится к открытию'" not in account
     account_button_rules = re.search(r"\.account-open\{(?P<rules>[^}]*)\}", account)
     assert account_button_rules is not None
     assert "white-space:nowrap" in account_button_rules.group("rules")

@@ -2,16 +2,16 @@
 
 <style>
 :root{
-  --bg:#f5f5f7;
-  --card:#ffffff;
-  --text:#17172b;
-  --muted:#7b8094;
-  --line:#e7e7ef;
+  --bg:var(--ed-app-bg,#f5f5f7);
+  --card:var(--ed-app-card,#ffffff);
+  --text:var(--ed-app-text,#17172b);
+  --muted:var(--ed-app-muted,#7b8094);
+  --line:var(--ed-app-line,#e7e7ef);
 
-  --purple:#6f3de8;
-  --purple-soft:#f5f1ff;
+  --purple:var(--ed-app-accent,#6f3de8);
+  --purple-soft:var(--ed-app-accent-soft,#f5f1ff);
 
-  --shadow:0 5px 18px rgba(20,20,40,.08);
+  --shadow:var(--ed-app-shadow,0 5px 18px rgba(20,20,40,.08));
 
   --score-p2:#cfeec5;
   --score-p1:#e8f3c7;
@@ -888,15 +888,16 @@ body{
 
 .dqs-profile-link{
   display:inline-flex;
-  width:38px;
-  height:38px;
+  width:42px;
+  height:42px;
   align-items:center;
   justify-content:center;
   flex:0 0 auto;
-  border-radius:999px;
+  border:1px solid var(--line);
+  border-radius:13px;
   background:var(--card);
-  color:var(--text);
-  box-shadow:var(--shadow-sm);
+  color:var(--muted);
+  box-shadow:var(--shadow);
   text-decoration:none;
 }
 
@@ -1521,6 +1522,9 @@ const API_URL =
   'https://api.edabalans.ru/api/apps/dqs';
 
 const DAY_COUNT = 30;
+
+const ACCOUNT_URL =
+  String((window.EdabalansAppContext || {}).accountUrl || '/lk');
 
 const STORAGE_EMAIL = 'dqs_email';
 const STORAGE_PREFIX = 'dqs_day_';
@@ -4058,7 +4062,7 @@ function renderShell(
             DQS&nbsp;${formatScore(total)}
           </div>
 
-          <a class="dqs-profile-link" href="#openmembersbar" aria-label="Открыть профиль Tilda" title="Профиль">
+          <a class="dqs-profile-link ed-app-account-link" href="${escapeHtml(ACCOUNT_URL)}" aria-label="Личный кабинет" title="Личный кабинет">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </a>
 

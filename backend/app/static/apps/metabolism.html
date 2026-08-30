@@ -2,20 +2,20 @@
 
 <style>
 :root{
-  --bg:#f5f5f7;
-  --card:#ffffff;
-  --text:#242235;
-  --muted:#7b8094;
-  --line:#e4e4eb;
+  --bg:var(--ed-app-bg,#f5f5f7);
+  --card:var(--ed-app-card,#ffffff);
+  --text:var(--ed-app-text,#17172b);
+  --muted:var(--ed-app-muted,#7b8094);
+  --line:var(--ed-app-line,#e7e7ef);
 
-  --purple:#7042e8;
-  --purple-soft:#f0ebff;
+  --purple:var(--ed-app-accent,#6f3de8);
+  --purple-soft:var(--ed-app-accent-soft,#f5f1ff);
 
   --green-soft:#e3f1df;
   --blue-soft:#e7f0f8;
   --yellow-soft:#f6efcf;
 
-  --shadow:0 6px 22px rgba(30,30,55,.07);
+  --shadow:var(--ed-app-shadow,0 5px 18px rgba(20,20,40,.08));
 }
 
 *{
@@ -51,6 +51,10 @@ select{
 
 .mc-header{
   padding:11px 13px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 42px;
+  align-items:center;
+  gap:10px;
 }
 
 .mc-title{
@@ -389,13 +393,6 @@ select{
   color:#777b88;
 }
 
-.mc-footer{
-  padding:9px;
-  text-align:center;
-  color:#999ca7;
-  font-size:7px;
-}
-
 /* MOBILE */
 
 @media(max-width:700px){
@@ -456,6 +453,7 @@ var root=document.getElementById('metabolism-app');
 
 var STORAGE_KEY='metabolism_calc_v3';
 var appContext=window.EdabalansAppContext||{};
+var accountUrl=String(appContext.accountUrl||'/lk');
 var adminMode=appContext.mode==='admin'&&appContext.targetUserId;
 var API_URL=adminMode
   ? '/admin/api/apps/metabolism/users/'+encodeURIComponent(appContext.targetUserId)+'/runtime'
@@ -789,13 +787,17 @@ function render(){
 
     '<div class="mc-card mc-header">'+
 
-      '<div class="mc-title">'+
+      '<div><div class="mc-title">'+
         'Калькулятор энергобаланса'+
       '</div>'+
 
       '<div class="mc-sub">'+
         'Расчёт энергобаланса и скорости снижения веса'+
-      '</div>'+
+      '</div></div>'+
+
+      '<a class="ed-app-account-link" href="'+escapeAttr(accountUrl)+'" aria-label="Личный кабинет" title="Личный кабинет">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"></circle><path d="M4.5 21c.8-4.2 3.3-6.3 7.5-6.3s6.7 2.1 7.5 6.3"></path></svg>'+
+      '</a>'+
 
     '</div>'+
 
@@ -827,13 +829,7 @@ function render(){
 
     '</div>'+
 
-    renderCompare()+
-
-    '<div class="mc-footer">'+
-      '© '+
-      new Date().getFullYear()+
-      ' Сергей Воронцов'+
-    '</div>';
+    renderCompare();
 
 }
 

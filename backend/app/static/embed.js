@@ -6,6 +6,7 @@
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var STORAGE_RETURN_PATH = 'edabalans_return_path_v1';
+  var PUBLIC_ACCOUNT_URL = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk';
   var TILDA_PROFILE_READER = 'https://members.tildaapi.com/frontend/js/tilda-members-init.min.js';
   var profileReaderPromise = null;
   var roots = {
@@ -140,8 +141,17 @@
     document.head.appendChild(style);
   }
 
+  function ensureAppShellStylesheet() {
+    if (document.getElementById('edabalans-app-shell-styles')) return;
+    var link = document.createElement('link');
+    link.id = 'edabalans-app-shell-styles';
+    link.rel = 'stylesheet';
+    link.href = APP_HOST + '/assets/app-shell.css';
+    document.head.appendChild(link);
+  }
+
   function legalFooterHtml() {
-    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 34px;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:13px/1.55 Inter,Arial,sans-serif">' +
+    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 34px;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid var(--ed-app-line,#e7e7ef);color:var(--ed-app-muted,#7b8094);font:13px/1.55 Inter,Arial,sans-serif">' +
       '<div><div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
       '<div>Все права защищены. Полное или частичное копирование запрещено.</div></div>' +
       '<div class="edabalans-legal-links"><div><span data-edabalans-footer-context></span>Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
@@ -214,13 +224,17 @@
   }
 
   function load(mount) {
+    ensureAppShellStylesheet();
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
     var adminUser = String(mount.getAttribute('data-edabalans-admin-user') || '');
     var placement = String(mount.getAttribute('data-edabalans-placement') || '');
     var placementToken = String(mount.getAttribute('data-edabalans-placement-token') || '');
     var accountOffer = mount.getAttribute('data-edabalans-account-offer') === 'true';
     var focusProductCode = String(mount.getAttribute('data-edabalans-focus-product') || '');
-    var accountUrl = String(mount.getAttribute('data-edabalans-account-url') || '');
+    var accountUrl = String(
+      mount.getAttribute('data-edabalans-account-url') ||
+      (location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk')
+    );
     var linkToken = String(mount.getAttribute('data-edabalans-link-token') || new URLSearchParams(location.search).get('access_token') || '');
     if (!roots[app]) {
       mount.textContent = 'Неизвестное приложение: ' + app;

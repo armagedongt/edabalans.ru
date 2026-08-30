@@ -133,7 +133,7 @@ def dqs_category_rules() -> FileResponse:
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"masterclass.js", "masterclass.css", "max-logo.png", "content-gallery.js"}:
+    if asset_name not in {"masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png", "content-gallery.js"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)
 
