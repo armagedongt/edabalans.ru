@@ -2997,10 +2997,6 @@
     },
     {
       "module_id": "operations.project-work",
-      "path": "work/product-copy-update-2026-08-30/author-task.json"
-    },
-    {
-      "module_id": "operations.project-work",
       "path": "work/recipe-catalog/code-research.md"
     },
     {
@@ -15091,10 +15087,6 @@
         {
           "module_id": "operations.project-work",
           "path": "work/knowledge-library-architecture/user-spec.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/product-copy-update-2026-08-30/author-task.json"
         },
         {
           "module_id": "operations.project-work",
