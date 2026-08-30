@@ -1000,6 +1000,26 @@
       "path": "content/calories/reference/transcripts/Калорийный курс — Только калории, урок 1 — архивный транскрипт.txt"
     },
     {
+      "module_id": "platform.web_design",
+      "path": "content/design-workflow/skill/sergey-web-design/SKILL.md"
+    },
+    {
+      "module_id": "platform.web_design",
+      "path": "content/design-workflow/skill/sergey-web-design/references/collaboration-workflow.md"
+    },
+    {
+      "module_id": "platform.web_design",
+      "path": "content/design-workflow/skill/sergey-web-design/references/design-corrections.md"
+    },
+    {
+      "module_id": "platform.web_design",
+      "path": "content/design-workflow/skill/sergey-web-design/references/design-preferences.md"
+    },
+    {
+      "module_id": "platform.web_design",
+      "path": "content/design-workflow/skill/sergey-web-design/references/workflow-corrections.md"
+    },
+    {
       "module_id": "platform.content",
       "path": "content/external-references/README.md"
     },
@@ -1918,6 +1938,10 @@
     {
       "module_id": "platform",
       "path": "docs/knowledge-base/modules/catalog/platform.md"
+    },
+    {
+      "module_id": "platform.web_design",
+      "path": "docs/knowledge-base/modules/catalog/platform.web_design.md"
     },
     {
       "module_id": "products.calories",
@@ -3022,6 +3046,54 @@
     {
       "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/user-spec.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/crying-character.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/montserrat-cyrillic.woff2"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/montserrat-latin.woff2"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/nutrition-composition-bars.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/weight-loss-after-masterclass.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/weight-loss-before-after-masterclass.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/weight-loss-before-masterclass.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/weight-loss-masterclass-scroll-reveal.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/block-registry.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/decisions.md"
     },
     {
       "module_id": "operations.project-work",
@@ -15135,6 +15207,54 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/crying-character.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/montserrat-cyrillic.woff2"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/montserrat-latin.woff2"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/nutrition-composition-bars.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/weight-loss-after-masterclass.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/weight-loss-before-after-masterclass.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/weight-loss-before-masterclass.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/weight-loss-masterclass-scroll-reveal.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/block-registry.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/recipe-catalog/code-research.md"
         },
         {
@@ -23671,6 +23791,73 @@
     {
       "admin_catalog": [],
       "admin_urls": [],
+      "boundary": "Модуль не владеет авторским голосом, продуктовыми фактами, юридическими условиями,\nкодом конкретной страницы или публикацией в Tilda. Публичный текст проходит через\n`platform.content`; факты и ограничения поставляет владеющий ими продуктовый\nмодуль. Реализация конкретного сайта остаётся в его проектном модуле или активном\nрабочем контуре.",
+      "capabilities": [
+        "вести раздельную память визуальных предпочтений и удобного процесса работы;",
+        "сохранять раздельные append-only журналы дизайн-коррекций и коррекций workflow;",
+        "согласовывать сайт по одному смысловому блоку за цикл;",
+        "показывать mobile-first варианты блока прямо в разговоре;",
+        "отделять общие предпочтения владельца от решений конкретного сайта;",
+        "передавать другому чату активный блок и принятые решения через общий skill."
+      ],
+      "card": "docs/knowledge-base/modules/catalog/platform.web_design.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "platform.web_design",
+          "path": "content/design-workflow/skill/sergey-web-design/SKILL.md"
+        },
+        {
+          "module_id": "platform.web_design",
+          "path": "content/design-workflow/skill/sergey-web-design/references/collaboration-workflow.md"
+        },
+        {
+          "module_id": "platform.web_design",
+          "path": "content/design-workflow/skill/sergey-web-design/references/design-corrections.md"
+        },
+        {
+          "module_id": "platform.web_design",
+          "path": "content/design-workflow/skill/sergey-web-design/references/design-preferences.md"
+        },
+        {
+          "module_id": "platform.web_design",
+          "path": "content/design-workflow/skill/sergey-web-design/references/workflow-corrections.md"
+        },
+        {
+          "module_id": "platform.web_design",
+          "path": "docs/knowledge-base/modules/catalog/platform.web_design.md"
+        }
+      ],
+      "id": "platform.web_design",
+      "implementation_status": "implemented",
+      "parent": "platform",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "platform.content"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [],
+        "writes_to": []
+      },
+      "routes": [],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Владеет переносимыми визуальными предпочтениями Сергея, протоколом поблочного согласования и журналами коррекций.",
+      "symbols": [],
+      "tables": [],
+      "telegram": null,
+      "title": "Веб-дизайн и дизайн-взаимодействие",
+      "truths": [
+        "`content/design-workflow/skill/sergey-web-design/SKILL.md` — обязательный маршрут;\n- `content/design-workflow/skill/sergey-web-design/references/design-preferences.md` —\n  устойчивые визуальные предпочтения;\n- `content/design-workflow/skill/sergey-web-design/references/collaboration-workflow.md` —\n  правила совместной работы;\n- два соседних correction log — история подтверждённых изменений этих правил.",
+        "Глобальный каталог Codex подключает проектную папку skill через directory junction,\nпоэтому у проекта и других чатов остаётся один источник истины без копий."
+      ]
+    },
+    {
+      "admin_catalog": [],
+      "admin_urls": [],
       "boundary": "Не является отдельным экраном или монолитной админкой.",
       "capabilities": [
         "объединять продуктовые модули на общем backend и user_id;",
@@ -32197,6 +32384,11 @@
     },
     {
       "source": "platform.knowledge",
+      "target": "platform.content",
+      "type": "depends_on"
+    },
+    {
+      "source": "platform.web_design",
       "target": "platform.content",
       "type": "depends_on"
     },
