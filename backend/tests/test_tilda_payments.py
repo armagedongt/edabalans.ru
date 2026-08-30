@@ -49,7 +49,11 @@ HEADERS = {"X-Tilda-Webhook-Token": TOKEN}
 def test_checkout_resource_codes_preserve_primary_and_add_exact_companions(
     item: str, expected: list[str]
 ) -> None:
-    assert checkout_resource_codes([item], set(expected)) == expected
+    every_active_resource = {
+        "ACCESS_MASTERCLASS", "ACCESS_RECIPES", "ACCESS_CALORIES", "ACCESS_STRENGTH",
+        "dqs", "recipes", "metabolism", "strength", "ACCESS_CONSULTATION",
+    }
+    assert checkout_resource_codes([item], every_active_resource) == expected
 
 
 def test_checkout_resource_codes_require_the_primary_resource() -> None:
