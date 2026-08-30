@@ -144,12 +144,14 @@
     return '<footer data-edabalans-legal-footer style="box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 34px;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid #ddd4c5;color:#716e67;font:13px/1.55 Inter,Arial,sans-serif">' +
       '<div><div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
       '<div>Все права защищены. Полное или частичное копирование запрещено.</div></div>' +
-      '<div class="edabalans-legal-links"><div>Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
+      '<div class="edabalans-legal-links"><div><span data-edabalans-footer-context></span>Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
       '<div style="margin-top:4px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div></div>' +
       '</footer>';
   }
 
   function legalFooterHost(mount) {
+    var dqsMount = mount.querySelector('[data-edabalans-app="dqs"]');
+    if (dqsMount) return dqsMount;
     var isCourse = ['masterclass-course', 'calories-course'].indexOf(
       mount.getAttribute('data-edabalans-app')
     ) >= 0;
@@ -166,8 +168,25 @@
     function append() {
       var host = legalFooterHost(mount);
       var footer = mount.querySelector('[data-edabalans-legal-footer]');
-      if (!footer) host.insertAdjacentHTML('beforeend', legalFooterHtml());
+      if (!footer) {
+        host.insertAdjacentHTML('beforeend', legalFooterHtml());
+        footer = mount.querySelector('[data-edabalans-legal-footer]');
+      }
       else if (footer.parentElement !== host) host.appendChild(footer);
+      var context = footer && footer.querySelector('[data-edabalans-footer-context]');
+      var hasDqs = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase() === 'dqs' || Boolean(mount.querySelector('[data-edabalans-app="dqs"]'));
+      if (context && hasDqs && !context.querySelector('[data-edabalans-footer-action="dqs-tutorial"]')) {
+        context.innerHTML = '<button type="button" data-edabalans-footer-action="dqs-tutorial" style="border:0;padding:0;background:none;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Как пользоваться</button> · ';
+      } else if (context && !hasDqs && context.textContent) {
+        context.innerHTML = '';
+      }
+      var tutorialButton = footer && footer.querySelector('[data-edabalans-footer-action="dqs-tutorial"]');
+      if (tutorialButton && !tutorialButton.getAttribute('data-edabalans-bound')) {
+        tutorialButton.setAttribute('data-edabalans-bound', 'true');
+        tutorialButton.addEventListener('click', function () {
+          if (typeof window.EdabalansDqsOpenTutorial === 'function') window.EdabalansDqsOpenTutorial();
+        });
+      }
     }
     append();
     new MutationObserver(append).observe(mount, {childList: true, subtree: true});

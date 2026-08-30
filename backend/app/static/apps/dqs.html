@@ -556,44 +556,6 @@ body{
 
 
 /* =========================
-   FOOTER
-========================= */
-
-.dqs-app-footer{
-  text-align:center;
-
-  padding:13px 8px 6px;
-
-  color:#858a9b;
-
-  font-size:11px;
-  line-height:1.6;
-}
-
-.dqs-app-footer-links{
-  margin-bottom:4px;
-}
-
-.dqs-footer-link{
-  border:0;
-  background:none;
-  padding:0;
-
-  font:inherit;
-  font-weight:700;
-
-  color:var(--purple);
-
-  cursor:pointer;
-}
-
-.dqs-footer-dot{
-  padding:0 5px;
-  color:#b3b6c0;
-}
-
-
-/* =========================
    ЭКРАН БАЛЛОВ
 ========================= */
 
@@ -4017,53 +3979,6 @@ async function saveStartDate(){
 
 
 /* =========================
-   FOOTER
-========================= */
-
-function renderAppFooter(){
-
-  const year =
-    new Date()
-      .getFullYear();
-
-  return `
-
-    <div class="dqs-app-footer">
-
-      <div class="dqs-app-footer-links">
-
-        <button
-          class="dqs-footer-link"
-          onclick="openTutorial(0)"
-        >
-          Как пользоваться
-        </button>
-
-        <span class="dqs-footer-dot">
-          ·
-        </span>
-
-        <button
-          class="dqs-footer-link"
-          onclick="showContacts()"
-        >
-          Контакты
-        </button>
-
-      </div>
-
-      <div>
-        © ${year}
-        Сергей Воронцов ·
-        Все права защищены
-      </div>
-
-    </div>
-  `;
-}
-
-
-/* =========================
    ШАПКА
 ========================= */
 
@@ -4559,8 +4474,6 @@ function renderDiary(){
 
     </div>
 
-
-    ${renderAppFooter()}
   `;
 
 
@@ -4824,8 +4737,6 @@ function renderScores(){
 
     </div>
 
-
-    ${renderAppFooter()}
   `;
 
 

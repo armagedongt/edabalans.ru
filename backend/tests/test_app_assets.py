@@ -44,14 +44,22 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     loader = client.get("/embed.js").text
     assert "data-edabalans-legal-footer" in loader
     assert "data-edabalans-footer-owner" in loader
+    assert 'data-edabalans-footer-action="dqs-tutorial"' in loader
+    assert '>Как пользоваться</button> · ' in loader
+    assert "window.EdabalansDqsOpenTutorial()" in loader
+    assert 'mount.querySelector(\'[data-edabalans-app="dqs"]\')' in loader
+    assert "context.innerHTML = ''" in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
     assert "ensureLegalFooter(mount);" in loader
     assert "function legalFooterHost(mount)" in loader
+    assert 'var dqsMount = mount.querySelector(\'[data-edabalans-app="dqs"]\')' in loader
+    assert "if (dqsMount) return dqsMount" in loader
     assert "courseMount.querySelector(':scope > .main')" in loader
     assert "footer.parentElement !== host" in loader
     assert "host.appendChild(footer)" in loader
     assert "{childList: true, subtree: true}" in loader
     footer = loader[loader.index("function legalFooterHtml"):loader.index("function ensureLegalFooter")]
+    assert "data-edabalans-footer-context" in footer
     assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in footer
     assert "Полное или частичное копирование запрещено" in footer
     assert "Контакты:" in footer
@@ -166,6 +174,8 @@ def test_application_fragments_use_server_api() -> None:
     assert "tildaIdentity.source === 'tilda'" in dqs
     assert "tma__userbar__sendLogout" in dqs
     assert "location.replace('/members/login')" in dqs
+    assert "dqs-app-footer" not in dqs
+    assert "renderAppFooter" not in dqs
 
 
 def test_production_admin_assets_do_not_name_legacy_storage() -> None:
@@ -297,6 +307,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert 'class="account-logout" href="/members/login?exit=y">Выйти</a>' in account
     assert "Курсы и программы" in account
     assert "Приложения" in account
+    assert "Курсы, программы и приложения собраны в одном месте." not in account
+    assert "Доступные вам материалы можно открыть сразу." not in account
+    assert "Ваша программа откроется здесь после покупки или подтверждения прежнего доступа." not in account
     assert "Чтобы худеть было проще." in account
     assert "Рабочие инструменты — компактно, без отдельного входа." not in account
     assert (
