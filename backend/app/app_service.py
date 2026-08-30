@@ -53,11 +53,6 @@ def resolve_user_for_resource(
             "Исторические покупки требуют подтверждения Сергея. Напишите Сергею, чтобы он проверил и открыл нужные программы."
         )
 
-    if require_legal_acceptance and not legal_acceptances_complete(db, user.id):
-        raise AppAccessError(
-            "Сначала примите дисклеймер и политику обработки данных в личном кабинете"
-        )
-
     now = datetime.now(timezone.utc)
     resource_filter = (
         Resource.code.in_(resource_code)
@@ -92,6 +87,10 @@ def resolve_user_for_resource(
         )
     if not access:
         raise AppAccessError("Для этого email нет доступа к приложению")
+    if require_legal_acceptance and not legal_acceptances_complete(db, user.id):
+        raise AppAccessError(
+            "Сначала примите дисклеймер и политику обработки данных в личном кабинете"
+        )
     return user
 
 

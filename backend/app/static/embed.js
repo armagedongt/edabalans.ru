@@ -34,6 +34,14 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
   }
 
+  function escapeHtml(value) {
+    return String(value || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
   function detectTildaMemberEmail() {
     try {
       if (typeof window.tma__getProfileObjFromLS !== 'function') return '';
@@ -237,6 +245,96 @@
     }, Promise.resolve());
   }
 
+  function jsonRequest(url, options) {
+    return fetch(url, options).then(function (response) {
+      return response.json().then(function (payload) {
+        if (!response.ok) {
+          throw new Error(payload.detail || payload.error || 'Не удалось выполнить запрос');
+        }
+        return payload;
+      });
+    });
+  }
+
+  function dqsLegalGate(mount) {
+    var identity = window.EdabalansIdentity || {};
+    var email = normalizeEmail(identity.email);
+    if (!validEmail(email)) return Promise.resolve();
+    return fetch(APP_HOST + '/api/apps/dqs/access?email=' + encodeURIComponent(email))
+      .then(function (response) {
+        return response.json().then(function (payload) {
+          // The DQS fragment owns its existing login/access error flow. The
+          // preflight only replaces the app when entitlement was confirmed.
+          return response.ok ? payload : null;
+        });
+      })
+      .then(function (status) {
+        if (!status) return;
+        var legal = status.legal;
+        if (!legal || !legal.required) return;
+        return new Promise(function (resolve, reject) {
+          var documents = legal.documents || [];
+          var cards = documents.map(function (item) {
+            var policy = item.code === 'personal_data_consent'
+              ? ' · <a href="' + escapeHtml(APP_HOST + '/legal/privacy.html') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
+              : '';
+            return '<label class="edabalans-dqs-legal-card">' +
+              '<input type="checkbox" data-edabalans-dqs-legal="' + escapeHtml(item.code) + '"' + (item.accepted ? ' checked disabled' : '') + '>' +
+              '<span><strong>' + escapeHtml(item.title) + '</strong>' +
+              '<span>' + escapeHtml(item.summary) + '</span>' +
+              '<a href="' + escapeHtml(APP_HOST + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
+          }).join('');
+          mount.innerHTML = '<style>' +
+            '.edabalans-dqs-legal-shell{box-sizing:border-box;min-height:70vh;display:grid;place-items:center;padding:32px 18px;background:#f5f0e7;color:#25241f;font:16px/1.5 Inter,Arial,sans-serif}' +
+            '.edabalans-dqs-legal-window{box-sizing:border-box;width:min(760px,100%);padding:28px;border:1px solid #e3a38f;border-radius:24px;background:#fffdf8;box-shadow:0 18px 50px rgba(80,53,27,.12)}' +
+            '.edabalans-dqs-legal-window>p{margin:12px 0 22px;color:#684c43}' +
+            '.edabalans-dqs-legal-list{display:grid;gap:12px}' +
+            '.edabalans-dqs-legal-card{box-sizing:border-box;display:grid;grid-template-columns:26px 1fr;gap:12px;padding:18px;border:1px solid #ead4ca;border-radius:16px;background:#fff}' +
+            '.edabalans-dqs-legal-card input{width:22px;height:22px;margin:2px 0 0;accent-color:#dc6748}' +
+            '.edabalans-dqs-legal-card strong,.edabalans-dqs-legal-card span>span{display:block}' +
+            '.edabalans-dqs-legal-card span>span{margin-top:6px;color:#716e67;font-size:15px}' +
+            '.edabalans-dqs-legal-card a{display:inline-block;margin-top:10px;color:#94412d;font-size:14px;font-weight:800}' +
+            '.edabalans-dqs-legal-action{width:100%;margin-top:18px;padding:14px 20px;border:0;border-radius:14px;background:#25241f;color:#fff;font-size:16px;font-weight:850;cursor:pointer}' +
+            '.edabalans-dqs-legal-action:disabled{background:#d8d1c7;color:#817b73;cursor:default}' +
+            '.edabalans-dqs-legal-error{min-height:21px;margin:10px 0 0;color:#9b3725;text-align:center;font-size:14px}' +
+            '@media(max-width:600px){.edabalans-dqs-legal-shell{padding:14px}.edabalans-dqs-legal-window{padding:21px 16px}}' +
+            '</style><section class="edabalans-dqs-legal-shell"><div class="edabalans-dqs-legal-window" role="dialog" aria-modal="true" aria-label="Подтверждение документов">' +
+            '<p>Чтобы пользоваться личным кабинетом, прочитайте дисклеймер и политику обработки персональных данных.</p>' +
+            '<div class="edabalans-dqs-legal-list">' + cards + '</div>' +
+            '<button class="edabalans-dqs-legal-action" type="button" disabled>Принять и продолжить</button>' +
+            '<p class="edabalans-dqs-legal-error" aria-live="polite"></p></div></section>';
+          var boxes = Array.prototype.slice.call(mount.querySelectorAll('[data-edabalans-dqs-legal]'));
+          var button = mount.querySelector('.edabalans-dqs-legal-action');
+          var error = mount.querySelector('.edabalans-dqs-legal-error');
+          function update() {
+            button.disabled = !boxes.length || !boxes.every(function (box) { return box.checked; });
+          }
+          boxes.forEach(function (box) { box.addEventListener('change', update); });
+          update();
+          button.addEventListener('click', function () {
+            button.disabled = true;
+            error.textContent = 'Сохраняю подтверждение…';
+            jsonRequest(APP_HOST + '/api/account/legal-acceptances', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                email: email,
+                document_codes: documents.map(function (item) { return item.code; })
+              })
+            }).then(function (account) {
+              if (account.legal && account.legal.required) {
+                throw new Error('Подтверждение не сохранилось. Попробуйте ещё раз.');
+              }
+              resolve();
+            }).catch(function (failure) {
+              error.textContent = String(failure.message || failure);
+              update();
+            });
+          });
+        });
+      });
+  }
+
   function load(mount) {
     ensureAppShellStylesheet();
     var app = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase();
@@ -254,8 +352,13 @@
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
     }
-    mount.innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
-    return fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'})
+    var preflight = app === 'dqs' && !adminUser
+      ? dqsLegalGate(mount)
+      : Promise.resolve();
+    return preflight.then(function () {
+      mount.innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
+      return fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'});
+    })
       .then(function (response) {
         if (!response.ok) throw new Error('Не удалось загрузить приложение');
         return response.text();

@@ -22,6 +22,7 @@ from app.app_service import (
 )
 from app.auth import require_admin, session_admin
 from app.database import get_db
+from app.legal_service import legal_status_payload
 from app.models import (
     AdminAppEdit,
     DqsState,
@@ -333,6 +334,24 @@ def dqs_legacy_get(
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
         db.rollback()
         return jsonp(error(str(exc)), callback)
+
+
+@router.get("/api/apps/dqs/access")
+def dqs_access_status(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+    """Confirm DQS entitlement before the shared legal gate is displayed."""
+    try:
+        user = resolve_user_for_resource(
+            db,
+            email,
+            "dqs",
+            require_legal_acceptance=False,
+        )
+    except AppAccessError as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    return {
+        "ok": True,
+        "legal": legal_status_payload(db, user.id),
+    }
 
 
 def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, workout_type: int) -> dict[str, Any]:
