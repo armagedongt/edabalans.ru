@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить смысл, фактуру, авторский голос, примеры и медиа; структурировать под статью сайта; удалить Pikabu/Telegram/рекламные хвосты; научные риски исправить или квалифицировать.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "useful examples",
+      "source-linked media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 6725,
+    "draft_characters": 7427
+  },
+  "semantic_fact_review_required_once": [
+    "Сохранена центральная мысль о влиянии пищевой среды и воспитания, а не волшебной генетики.",
+    "Сохранены четыре практических принципа: насыщение, порции, разнообразие и среда.",
+    "Японские школьные практики описаны без заявления, что все детали универсальны для каждой школы."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Универсальные неподтверждённые правила для всех японских школ.",
+    "Утверждение, что в Японии почти нет людей с лишним весом.",
+    "Платформенная реклама или просьба комментировать."
+  ],
+  "external_id": "11927800",
+  "draft_file": "11927800-pochemu-yapontsy-hudye-a-ty-net.md",
+  "source_sha256": "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b"
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "writer-three-layer-review-v1",
+  "external_id": "13277231",
+  "status": "pass",
+  "layers": {
+    "facts": "pass",
+    "logic_and_continuity": "pass",
+    "voice_and_naturalness": "pass"
+  },
+  "checks": {
+    "full_source_continuity": "pass",
+    "article_standard": "pass",
+    "platform_tail_removal": "pass",
+    "media_provenance": "pass",
+    "anti_neuroslop": "pass"
+  },
+  "review_notes": [
+    "Формула 7300 ккал/кг сохранена только как авторский практический ориентир, не как точная физиологическая константа.",
+    "Сохранены исходная история, расчёт 10 кг за 42 дня и тезис об устойчивом дефиците."
+  ]
+}

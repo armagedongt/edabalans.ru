@@ -1,0 +1,187 @@
+{
+  "schema_version": "blog-editorial-manifest-v1",
+  "project": "Похудение — это есть.рф",
+  "author": "Сергей Воронцов",
+  "adaptation_mode": "full_source",
+  "items": [
+    {
+      "external_id": "13277231",
+      "file": "13277231-skolko-vremeni-nuzhno-na-pohudenie.md",
+      "source_url": "https://pikabu.ru/story/skolko_vremeni_nuzhno_na_pokhudenie_13277231",
+      "title": "Сколько времени нужно на похудение?",
+      "slug": "skolko-vremeni-nuzhno-na-pohudenie",
+      "category": "Похудение",
+      "excerpt": "Почему сроки похудения лучше считать не от желаемой даты, а от дефицита, который вы сможете спокойно удерживать месяцами.",
+      "hero": "https://cs17.pikabu.ru/s/2025/10/11/11/mjwvk2e5_lg.png",
+      "media": [
+        "https://cs17.pikabu.ru/s/2025/10/11/11/mjwvk2e5_lg.png",
+        "https://cs19.pikabu.ru/s/2025/10/11/13/aqaew6iq_lg.png"
+      ],
+      "provenance": {
+        "exact_source": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/work/training-course-design/sources/author-posts/pikabu/13277231.md",
+        "catalog_id": "pikabu:13277231",
+        "source_text_sha256": "caffa8b6a629bd75d5b38a512dd48559b3ec12c70c9d35519d67e9666d9b345b",
+        "snapshot_file_sha256": "595ce8cb7a91c9a5779556663d42cb24e3a8f8977beadfb4408f097370bc1c5a",
+        "media_resolution": "Current public source page inspected to recover original placements."
+      },
+      "suggested_cta": "Предложить читателю оценить реалистичный дефицит и собрать спокойный план похудения без жёсткой диеты.",
+      "related_candidates": ["Похудение начинается не с похудения!", "Почему японцы худые, а ты нет?", "Неприятная правда про мёд"],
+      "validation": "pass",
+      "review": "pass"
+    },
+    {
+      "external_id": "11401696",
+      "file": "11401696-pohudenie-nachinaetsya-ne-s-pohudeniya.md",
+      "source_url": "https://pikabu.ru/story/pokhudenie_nachinaetsya_ne_s_pokhudeniya_11401696",
+      "title": "Похудение начинается не с похудения!",
+      "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+      "category": "Похудение",
+      "excerpt": "Почему перед дефицитом калорий стоит наладить качество питания, понять свои привычки и собрать план, который переживёт спад мотивации.",
+      "hero": "https://cs14.pikabu.ru/post_img/big/2024/05/10/7/171533641124377381.jpg",
+      "media": [
+        "https://cs14.pikabu.ru/post_img/big/2024/05/10/7/171533641124377381.jpg",
+        "https://cs13.pikabu.ru/post_img/big/2024/02/10/9/1707579970191190328.png",
+        "https://cs13.pikabu.ru/post_img/2024/05/10/7/1715336411256247352.jpg",
+        "https://cs14.pikabu.ru/post_img/big/2024/05/10/7/1715336412271726775.png",
+        "https://cs13.pikabu.ru/post_img/big/2024/05/10/7/1715336412234868999.jpg",
+        "https://cs13.pikabu.ru/post_img/big/2024/05/10/7/1715336412292922716.jpg",
+        "https://cs13.pikabu.ru/post_img/big/2024/05/10/7/1715336413221746740.jpg",
+        "https://cs13.pikabu.ru/post_img/2024/05/10/7/171533641128474538.jpg"
+      ],
+      "provenance": {
+        "exact_source": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/outputs/pikabu-community-research-2026-08-30/raw-source/best-800-posts.json#external_id=11401696",
+        "source_text_sha256": "1f9dee6d7651088a17a4d6004d5f7df6c1111eb02f9aa4be2da8fd5086a78bd9",
+        "snapshot_file_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843",
+        "media_resolution": "Original-size URL selected from each webp/original pair; one parser self-link discarded."
+      },
+      "suggested_cta": "Предложить начать с недельного дневника питания или диагностики рациона, не обещая немедленного похудения.",
+      "related_candidates": ["Сколько времени нужно на похудение?", "Почему японцы худые, а ты нет?", "Неприятная правда про мёд"],
+      "validation": "pass",
+      "review": "pass"
+    },
+    {
+      "external_id": "11927800",
+      "file": "11927800-pochemu-yapontsy-hudye-a-ty-net.md",
+      "source_url": "https://pikabu.ru/story/pochemu_yapontsyi_khudyie_a_tyi_net_11927800",
+      "title": "Почему японцы худые, а ты нет?",
+      "slug": "pochemu-yapontsy-hudye-a-ty-net",
+      "category": "Похудение",
+      "excerpt": "Не про волшебные гены и не про одну секретную еду, а про среду, школьное пищевое воспитание, размер порций и привычку замечать насыщение.",
+      "hero": "https://cs15.pikabu.ru/post_img/2024/10/19/6/1729327497125418882.jpg",
+      "media": [
+        "https://cs15.pikabu.ru/post_img/2024/10/19/6/1729327497125418882.jpg",
+        "https://cs19.pikabu.ru/s/2025/11/17/13/shrex6p7_lg.png",
+        "https://cs19.pikabu.ru/s/2025/11/17/13/p7texsdz_lg.png",
+        "https://cs15.pikabu.ru/post_img/2024/10/19/6/1729330548141026128.jpg",
+        "https://cs20.pikabu.ru/s/2025/11/17/14/xif2xonp_lg.png",
+        "https://cs15.pikabu.ru/post_img/2024/10/19/7/1729334010119944124.jpg",
+        "https://cs17.pikabu.ru/s/2025/11/17/14/uuhvlylf_s0f0d72m0_1280x720p.jpg",
+        "https://cs17.pikabu.ru/s/2025/11/17/14/uuhvlylf_s0f0d72m0_1280x720.mp4"
+      ],
+      "provenance": {
+        "exact_source": "C:/private/edabalans-content-authoring/voice/v1/voice-index.sqlite#catalog_id=pikabu:11927800",
+        "catalog_id": "pikabu:11927800",
+        "source_text_sha256": "43e5b32bd74e13c043cab351dbbb8122ab06614d6d8f4f809e85e9617c18e72b",
+        "media_resolution": "Current public source page inspected; several media URLs are later CDN replacements dated 2025-11-17. Video is represented by a poster image and a direct Markdown link."
+      },
+      "suggested_cta": "Предложить читателю разобрать домашнюю пищевую среду: порции, доступность еды, темп и разнообразие рациона.",
+      "related_candidates": ["Похудение начинается не с похудения!", "Сколько времени нужно на похудение?", "Неприятная правда про мёд"],
+      "validation": "pass",
+      "review": "pass"
+    },
+    {
+      "external_id": "11269472",
+      "file": "11269472-temperatura-vody-dlya-priema-vnutr.md",
+      "source_url": "https://pikabu.ru/story/temperatura_vodyi_dlya_priema_vnutr_11269472",
+      "title": "Температура воды (для приёма внутрь)",
+      "slug": "temperatura-vody-dlya-priema-vnutr",
+      "category": "ЗОЖ",
+      "excerpt": "Почему очень горячие чай, кофе и другие напитки лучше немного остудить — и где проходит практический температурный рубеж.",
+      "hero": "https://cs13.pikabu.ru/post_img/2024/03/28/8/1711632147188097065.jpg",
+      "media": [
+        "https://cs13.pikabu.ru/post_img/2024/03/28/8/1711632147188097065.jpg",
+        "https://cs13.pikabu.ru/post_img/big/2024/03/28/8/171163104116394849.jpg",
+        "https://cs14.pikabu.ru/post_img/2024/03/28/8/17116299861126500.jpg"
+      ],
+      "provenance": {
+        "exact_source": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/outputs/pikabu-community-research-2026-08-30/raw-source/best-800-posts.json#external_id=11269472",
+        "source_text_sha256": "fe2cfe27c64d9d41bb2004116a32947cdd96e628f37ebcc684655cc905c7c697",
+        "snapshot_file_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843",
+        "media_resolution": "Original-size URL selected from each webp/original pair."
+      },
+      "suggested_cta": "Предложить читателю проверить привычную температуру напитка кухонным термометром и дать ему остыть.",
+      "related_candidates": ["Самый здоровый человек на планете", "Похудение начинается не с похудения!", "Неприятная правда про мёд"],
+      "validation": "pass",
+      "review": "pass"
+    },
+    {
+      "external_id": "12237133",
+      "file": "12237133-samyy-zdorovyy-chelovek-na-planete.md",
+      "source_url": "https://pikabu.ru/story/samyiy_zdorovyiy_chelovek_na_planete_12237133",
+      "title": "Самый здоровый человек на планете",
+      "slug": "samyy-zdorovyy-chelovek-na-planete",
+      "category": "ЗОЖ",
+      "excerpt": "Разбираю один день Брайана Джонсона: где в его режиме полезная база, где дорогие эксперименты, а где привычки, которые доступны без миллионов.",
+      "hero": "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736528540151438721.jpg",
+      "media": [
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736528540151438721.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/09/7/1736417425181392229.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/1736518586113851120.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/1736522356169714496.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/173651888717717442.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/1736521835152048337.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/1736522489160868372.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/17365219991769072.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/173652264617538186.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/173652280919276879.png",
+        "https://cs15.pikabu.ru/post_img/2025/01/10/9/1736523576157976199.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/1736523295133828330.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/173652549719336553.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736526504162916045.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736526900137192617.png",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736527205198232213.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/173652621115053151.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/17365263101446745.png"
+      ],
+      "provenance": {
+        "exact_source": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/outputs/pikabu-community-research-2026-08-30/raw-source/best-800-posts.json#external_id=12237133",
+        "source_text_sha256": "0db3764b300bddf573e5a0bbf5cc7b599ebb8936cf90dc6ddb617b1a521a7104",
+        "snapshot_file_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843",
+        "media_resolution": "Original-size URL selected from each webp/original pair; parser self-link discarded."
+      },
+      "suggested_cta": "Предложить выбрать одну бесплатную привычку из режима Джонсона и проверить её устойчивость две недели.",
+      "related_candidates": ["Температура воды (для приёма внутрь)", "Похудение начинается не с похудения!", "Сколько времени нужно на похудение?"],
+      "validation": "pass",
+      "review": "pass"
+    },
+    {
+      "external_id": "11875492",
+      "file": "11875492-nepriyatnaya-pravda-pro-med.md",
+      "source_url": "https://pikabu.ru/story/nepriyatnaya_pravda_pro_myod_11875492",
+      "title": "Неприятная правда про мёд",
+      "slug": "nepriyatnaya-pravda-pro-med",
+      "category": "Качество питания",
+      "excerpt": "Мёд содержит витамины и минералы, но остаётся в первую очередь источником свободных сахаров. Разбираемся без запретов и нимба полезности.",
+      "hero": "https://cs15.pikabu.ru/post_img/big/2024/10/04/9/1728050423119293034.png",
+      "media": [
+        "https://cs15.pikabu.ru/post_img/big/2024/10/04/9/1728050423119293034.png",
+        "https://cs15.pikabu.ru/post_img/big/2024/10/04/9/1728051440164614927.jpg",
+        "https://cs15.pikabu.ru/post_img/big/2024/10/04/9/1728051622112196524.jpg",
+        "https://cs15.pikabu.ru/post_img/2024/10/04/9/1728051758180722300.jpg",
+        "https://cs15.pikabu.ru/post_img/2024/10/04/9/1728053169142389729.jpg",
+        "https://cs15.pikabu.ru/post_img/2024/10/04/9/1728053299182578812.jpg",
+        "https://cs15.pikabu.ru/post_img/2024/10/04/9/1728053355192119103.jpg"
+      ],
+      "provenance": {
+        "exact_source": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/outputs/pikabu-community-research-2026-08-30/raw-source/best-800-posts.json#external_id=11875492",
+        "source_text_sha256": "1c19323867136dde3aa7461e31ebdf307e152cee78e2ab48533c718dacdcca35",
+        "snapshot_file_sha256": "a5089313ca48c98b615b68e1c191d993cba7f54a67ec233b0f45bc2d99b5e843",
+        "media_resolution": "Original-size URL selected from each webp/original pair; parser self-link discarded."
+      },
+      "suggested_cta": "Предложить оценивать мёд вместе со всеми свободными сахарами рациона, а не как отдельный лечебный продукт.",
+      "related_candidates": ["Похудение начинается не с похудения!", "Сколько времени нужно на похудение?", "Почему японцы худые, а ты нет?"],
+      "validation": "pass",
+      "review": "pass"
+    }
+  ]
+}

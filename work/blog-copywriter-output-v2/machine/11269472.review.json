@@ -1,0 +1,21 @@
+{
+  "schema_version": "writer-three-layer-review-v1",
+  "external_id": "11269472",
+  "status": "pass",
+  "layers": {
+    "facts": "pass",
+    "logic_and_continuity": "pass",
+    "voice_and_naturalness": "pass"
+  },
+  "checks": {
+    "full_source_continuity": "pass",
+    "article_standard": "pass",
+    "platform_tail_removal": "pass",
+    "media_provenance": "pass",
+    "anti_neuroslop": "pass"
+  },
+  "review_notes": [
+    "Исправлена существенная ошибка: 90% заменено корректным результатом когорты — HR 1,41 при температуре от 60 °C.",
+    "Пальцевый тест помечен как невалидированный; сохранён практический совет остужать напиток."
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": "writer-three-layer-review-v1",
+  "external_id": "12237133",
+  "status": "pass",
+  "layers": {
+    "facts": "pass",
+    "logic_and_continuity": "pass",
+    "voice_and_naturalness": "pass"
+  },
+  "checks": {
+    "full_source_continuity": "pass",
+    "article_standard": "pass",
+    "platform_tail_removal": "pass",
+    "media_provenance": "pass",
+    "anti_neuroslop": "pass"
+  },
+  "review_notes": [
+    "Распорядок и авторские комментарии сохранены; заявления Blueprint явно отделены от независимо установленных фактов.",
+    "Убраны опасные или недоказанные универсализации про ультрафиолет, гипербарическую терапию и отказ от жидкости после 16:30."
+  ]
+}

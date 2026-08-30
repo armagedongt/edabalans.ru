@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить смысл, фактуру, авторский голос, примеры и медиа; структурировать под статью сайта; удалить Pikabu/Telegram/рекламные хвосты; научные риски исправить или квалифицировать.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "useful examples",
+      "source-linked media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 10310,
+    "draft_characters": 12233
+  },
+  "semantic_fact_review_required_once": [
+    "Сохранён распорядок дня Брайана Джонсона и авторское разделение базы и дорогих экспериментов.",
+    "Самоописание самого здорового человека и биологический возраст помечены как заявления проекта.",
+    "Гипербарическая оксигенация не представлена доказанной универсальной терапией долголетия."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Совет смотреть на солнце или получать ультрафиолет в глаза.",
+    "Универсальная рекомендация перестать пить после 16:30.",
+    "Медицинское обещание бессмертия или омоложения."
+  ],
+  "external_id": "12237133",
+  "draft_file": "12237133-samyy-zdorovyy-chelovek-na-planete.md",
+  "source_sha256": "0db3764b300bddf573e5a0bbf5cc7b599ebb8936cf90dc6ddb617b1a521a7104"
+}

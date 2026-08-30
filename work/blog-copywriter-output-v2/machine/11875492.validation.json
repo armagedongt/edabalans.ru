@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить смысл, фактуру, авторский голос, примеры и медиа; структурировать под статью сайта; удалить Pikabu/Telegram/рекламные хвосты; научные риски исправить или квалифицировать.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "useful examples",
+      "source-linked media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 4581,
+    "draft_characters": 6421
+  },
+  "semantic_fact_review_required_once": [
+    "Сохранена центральная мысль: мёд содержит микронутриенты, но преимущественно состоит из сахаров и воды.",
+    "Мёд включён в общий лимит свободных сахаров по определению ВОЗ.",
+    "Вывод не запрещает мёд и возвращает читателя к балансу всего рациона."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Заявление, что мёд не содержит никаких полезных веществ.",
+    "Статистика 85 г сахара в сутки как точное индивидуальное потребление россиянина.",
+    "Просьба написать в комментариях или перейти в Telegram."
+  ],
+  "external_id": "11875492",
+  "draft_file": "11875492-nepriyatnaya-pravda-pro-med.md",
+  "source_sha256": "1c19323867136dde3aa7461e31ebdf307e152cee78e2ab48533c718dacdcca35"
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "pack_version": "author-post-pack-v5-20260826",
+  "external_id": "11927800",
+  "runtime_sources": {
+    "authoring_skill": "content/author-voice/skill/edabalans-writer/SKILL.md",
+    "editing_modes": "content/author-voice/editing-modes-v1.md",
+    "writer_contract": "content/author-voice/writer-contract-v1.md",
+    "article_standard": "docs/knowledge-base/ARTICLE_STANDARD.md"
+  },
+  "review_policy": {
+    "policy_id": "writer-three-layer-v1",
+    "source": "content/author-voice/writer-contract-v1.md#проход-3-три-слоя-проверки"
+  },
+  "retrieval_counts": {
+    "exemplars": 7,
+    "rhetoric": 0,
+    "corrections": 2,
+    "rules": 3,
+    "topic_history": 12
+  },
+  "retrieved_catalog_ids": {
+    "exemplars": [
+      "pikabu:11927800",
+      "pikabu:14183275",
+      "telegram:1878297271:795",
+      "pikabu:11833079",
+      "pikabu:14062380",
+      "pikabu:13277231",
+      "telegram:1878297271:776"
+    ],
+    "rhetoric": [],
+    "corrections": [],
+    "rules": [],
+    "topic_history": [
+      "telegraph:0010989e2d7584769fac",
+      "pikabu:11741121",
+      "pikabu:11906015",
+      "telegraph:496dbdeea4c80123d18f",
+      "pikabu:11207593",
+      "telegram:1878297271:135",
+      "telegraph:34cbbc4200bffc8efefc",
+      "telegram:1878297271:392",
+      "leadteh_048526d5625824ce07dc0f32",
+      "telegram:1878297271:251",
+      "telegraph:eaa809ecba0f6f80179b",
+      "telegraph:36eb17203aaa99e98ada"
+    ]
+  },
+  "privacy_note": "Full private retrieval rows remain outside Git; this summary records the canonical retrieval run."
+}

@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить смысл, фактуру, авторский голос, примеры и медиа; структурировать под статью сайта; удалить Pikabu/Telegram/рекламные хвосты; научные риски исправить или квалифицировать.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "useful examples",
+      "source-linked media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 3438,
+    "draft_characters": 4722
+  },
+  "semantic_fact_review_required_once": [
+    "Рубеж очень горячих напитков указан как 65 °C по IARC.",
+    "Результат Голестанского исследования передан как HR около 1,41 для 60 °C и выше.",
+    "Пальцевый тест назван бытовым и невалидированным; предложен термометр или остывание."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Ложное утверждение, что 90% случаев в когорте пришлись на любителей чая горячее 60 °C.",
+    "Гарантия рака от одной чашки.",
+    "Платформенные рекомендации и хвосты."
+  ],
+  "external_id": "11269472",
+  "draft_file": "11269472-temperatura-vody-dlya-priema-vnutr.md",
+  "source_sha256": "fe2cfe27c64d9d41bb2004116a32947cdd96e628f37ebcc684655cc905c7c697"
+}
