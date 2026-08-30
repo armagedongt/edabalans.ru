@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="{{DESCRIPTION}}">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{TITLE}}">
+  <meta property="og:description" content="{{DESCRIPTION}}">
+  <meta property="og:url" content="{{CANONICAL}}">
+  <meta property="og:image" content="{{HERO_ABSOLUTE}}">
+  <link rel="canonical" href="{{CANONICAL}}">
+  <link rel="stylesheet" href="/blog/assets/blog.css?v=20260831c">
+  <title>{{TITLE}} · Похудение — это есть</title>
+  <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
+</head>
+<body data-page="article">
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="/">
+        <strong>Похудение — это есть.рф</strong>
+        <span>Блог Сергея Воронцова</span>
+      </a>
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="https://похудение-это-есть.рф/">Главная</a>
+        <a href="https://похудение-это-есть.рф/#masterclass">Мастер-класс</a>
+        <a href="/" aria-current="page">Блог</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <button class="theme-toggle" type="button" aria-label="Включить тёмную тему" title="Включить тёмную тему">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <article class="article-shell">
+      <header class="article-hero">
+        <a class="back-link" href="/">← Все статьи</a>
+        <span class="article-category">{{CATEGORY}}</span>
+        <h1>{{TITLE}}</h1>
+        <p>{{DESCRIPTION}}</p>
+        <figure><img src="{{HERO_SRC}}" alt="{{HERO_ALT}}"></figure>
+      </header>
+      {{TOC_MOBILE}}
+      <div class="article-layout">
+        <div class="article-body">{{ARTICLE_BODY}}</div>
+        {{TOC_DESKTOP}}
+      </div>
+    </article>
+
+    <section class="shell related-section" aria-labelledby="related-title">
+      <h2 id="related-title">Читайте также</h2>
+      <div class="article-grid">{{RELATED_CARDS}}</div>
+    </section>
+  </main>
+
+  <div id="contacts" data-edabalans-site-footer></div>
+  <script src="https://app.edabalans.ru/site-footer.js" defer></script>
+  <script src="/blog/assets/blog.js?v=20260831c" defer></script>
+</body>
+</html>

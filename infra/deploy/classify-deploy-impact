@@ -18,7 +18,7 @@ caddy_changed=false
 compose_changed=false
 changed_files="$(git -C "${REPOSITORY}" diff --name-only "${PREVIOUS_SHA}" "${TARGET_SHA}")"
 
-if grep -Eq '^(backend/|docs/|PROJECT_CONTEXT\.md$|ARCHITECTURE\.md$|\.dockerignore$|content/masterclass/imported-draft/extracted-2026-08-23\.json$|content/masterclass/course/course\.json$|content/masterclass/source-current/|content/masterclass/components/|content/calories/course/course\.json$)' <<<"${changed_files}"; then
+if grep -Eq '^(backend/|docs/|PROJECT_CONTEXT\.md$|ARCHITECTURE\.md$|\.dockerignore$|content/masterclass/imported-draft/extracted-2026-08-23\.json$|content/masterclass/course/course\.json$|content/masterclass/source-current/|content/masterclass/components/|content/calories/course/course\.json$|content/blog/)' <<<"${changed_files}"; then
     backend_changed=true
 fi
 

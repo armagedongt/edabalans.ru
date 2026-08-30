@@ -16,3 +16,5 @@
 !content/calories/
 !content/calories/course/
 !content/calories/course/course.json
+!content/blog/
+!content/blog/**

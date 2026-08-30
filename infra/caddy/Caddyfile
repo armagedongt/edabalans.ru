@@ -137,6 +137,30 @@
 		reverse_proxy backend:8000
 	}
 
+	handle /blog/assets/* {
+		reverse_proxy backend:8000
+	}
+
+	handle /blog/media/* {
+		reverse_proxy backend:8000
+	}
+
+	@blog_article path_regexp blog_article ^/articles/([a-z0-9]+(?:-[a-z0-9]+)*)/?$
+	handle @blog_article {
+		rewrite * /blog/articles/{re.blog_article.1}
+		reverse_proxy backend:8000
+	}
+
+	handle /sitemap.xml {
+		rewrite * /blog/sitemap.xml
+		reverse_proxy backend:8000
+	}
+
+	handle /robots.txt {
+		rewrite * /blog/robots.txt
+		reverse_proxy backend:8000
+	}
+
 	respond 404
 
 	log {

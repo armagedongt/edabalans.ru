@@ -16,7 +16,7 @@ except ImportError:
     fastapi_stub.HTTPException = HTTPException
     sys.modules["fastapi"] = fastapi_stub
 
-from app.article_markup import markdown_to_article_html
+from app.article_markup import markdown_to_article_html, safe_href, safe_image_src
 
 
 class ArticleMarkupTests(unittest.TestCase):
@@ -65,6 +65,11 @@ class ArticleMarkupTests(unittest.TestCase):
             '<p><a href="https://example.test/source" target="_blank" rel="noopener">'
             'Источник</a></p>',
         )
+
+    def test_network_path_disguised_with_backslash_is_rejected(self) -> None:
+        self.assertFalse(safe_image_src(r"/\evil.example/pixel", allow_relative=True))
+        self.assertFalse(safe_image_src("/%5cevil.example/pixel", allow_relative=True))
+        self.assertFalse(safe_href(r"/\evil.example/page"))
 
 
 if __name__ == "__main__":

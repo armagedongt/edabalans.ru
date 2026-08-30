@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - разбирать start payload и сохранить атрибуцию;
 - связать invite, UTM и tracking events с контактом;
+- поставлять публичную ссылку и CTA канала внешним поверхностям проекта;
 
 ## Граница
 
@@ -20,7 +21,9 @@ implementation_status: implemented
 
 ## Источники истины
 
-`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`, `LEAD_ENTRY_TECHNICAL_SPEC.md` и runtime tracking data.
+`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,
+`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data и
+`backend/app/telegram_public_cta.py` для публичного CTA.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

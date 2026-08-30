@@ -22,6 +22,7 @@ COPY content/masterclass/course/course.json /app/content/masterclass/course/cour
 COPY content/masterclass/source-current /app/content/masterclass/source-current
 COPY content/masterclass/components /app/content/masterclass/components
 COPY content/calories/course/course.json /app/content/calories/course/course.json
+COPY content/blog /app/content/blog
 
 RUN chmod -R a+rX /app
 

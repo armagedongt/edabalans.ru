@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - объединять все тарифы в одной программе с серверной проверкой доступа;
 - координировать дочерние модули без копирования их правил;
+- поставлять проверенный публичный CTA Мастер-класса внешним поверхностям;
 
 ## Граница
 
@@ -20,7 +21,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-`docs/knowledge-base/modules/masterclass/README.md` и дочерние карточки.
+`docs/knowledge-base/modules/masterclass/README.md`, дочерние карточки и
+`backend/app/masterclass_public_cta.py` для публичного CTA.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

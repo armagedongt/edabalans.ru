@@ -169,10 +169,12 @@ id = "platform.blog"
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.blog.md"
 depends_on = ["platform.content"]
-reads_from = ["products", "operations.proxy"]
+reads_from = ["products.intensive", "products.masterclass", "messaging.telegram.attribution", "operations.proxy"]
 owns_files = [
-  "backend/app/blog_routes.py", "backend/app/static/blog/**",
-  "backend/tests/test_blog.py",
+  "backend/app/blog_routes.py", "backend/app/blog_content.py",
+  "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
+  "backend/tests/test_blog.py", "backend/tests/test_blog_content.py",
+  "content/blog/**", "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md",
 ]
 owns_routes = ["*/blog", "*/blog/*"]
 
@@ -321,6 +323,7 @@ admin_catalog = [{ category = "tools", order = 70, url = "https://app.edabalans.
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
+  "backend/app/intensive_public_cta.py",
   "backend/app/intensive_routes.py", "backend/app/static/intensive/**",
   "backend/tests/test_intensive_editor.py", "docs/INTENSIVE_PAGES.md",
   "backend/migrations/versions/20260822_0010_intensive_restart_guard.py",
@@ -335,6 +338,7 @@ parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
 depends_on = ["platform.commerce"]
 owns_files = [
+  "backend/app/masterclass_public_cta.py",
   "docs/TILDA_MASTERCLASS_EMBEDS.md", "docs/knowledge-base/modules/masterclass/README.md",
 ]
 
@@ -479,6 +483,7 @@ telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временно включён режим ремонта"
 telegram_order = 10
 owns_files = [
+  "backend/app/telegram_public_cta.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
   "telegram-bot/service/tests/test_start_router.py", "telegram-bot/service/tests/test_tracking.py",
   "docs/knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md",

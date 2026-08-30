@@ -133,6 +133,14 @@ curl --fail --silent --show-error --max-time 15 \
     https://app.edabalans.ru/apps/masterclass-course.html >/dev/null
 curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
     https://blog.похудение-это-есть.рф/ >/dev/null
+curl --fail --silent --show-error --max-time 20 \
+    https://blog.похудение-это-есть.рф/articles/skolko-vremeni-nuzhno-na-pohudenie >/dev/null
+curl --fail --silent --show-error --max-time 20 \
+    https://blog.похудение-это-есть.рф/blog/media/13277231/01.png >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://blog.похудение-это-есть.рф/sitemap.xml >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://blog.похудение-это-есть.рф/robots.txt >/dev/null
 
 if [[ "${caddy_changed}" == "true" ]]; then
     app_headers="$(curl --fail --silent --show-error --max-time 15 \

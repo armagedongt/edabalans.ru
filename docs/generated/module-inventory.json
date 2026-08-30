@@ -97,6 +97,10 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "backend/app/blog_content.py"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "backend/app/blog_routes.py"
     },
     {
@@ -221,6 +225,10 @@
     },
     {
       "module_id": "products.intensive",
+      "path": "backend/app/intensive_public_cta.py"
+    },
+    {
+      "module_id": "products.intensive",
       "path": "backend/app/intensive_routes.py"
     },
     {
@@ -264,6 +272,10 @@
       "path": "backend/app/masterclass_offer_rules.py"
     },
     {
+      "module_id": "products.masterclass",
+      "path": "backend/app/masterclass_public_cta.py"
+    },
+    {
       "module_id": "products.masterclass.runtime",
       "path": "backend/app/masterclass_routes.py"
     },
@@ -290,6 +302,10 @@
     {
       "module_id": "platform.commerce",
       "path": "backend/app/product_identity.py"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/public_cta_catalog.py"
     },
     {
       "module_id": "products.recipes",
@@ -390,6 +406,22 @@
     {
       "module_id": "products.strength",
       "path": "backend/app/static/apps/strength.html"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/article.html"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/blog.css"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/blog.js"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/sergey-author.png"
     },
     {
       "module_id": "platform.blog",
@@ -578,6 +610,10 @@
     {
       "module_id": "products.masterclass.runtime",
       "path": "backend/app/static/video-player-development/player-standard-with-contents.html"
+    },
+    {
+      "module_id": "messaging.telegram.attribution",
+      "path": "backend/app/telegram_public_cta.py"
     },
     {
       "module_id": "platform.commerce",
@@ -778,6 +814,10 @@
     {
       "module_id": "platform.blog",
       "path": "backend/tests/test_blog.py"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/tests/test_blog_content.py"
     },
     {
       "module_id": "products.calories",
@@ -982,6 +1022,214 @@
     {
       "module_id": "platform.content",
       "path": "content/author-voice/writer-contract-v1.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11269472.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11401696.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11875492.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/11927800.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/12237133.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/articles/13277231.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/manifest.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11269472/01.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11269472/02.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11269472/03.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/01.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/02.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/03.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/04.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/05.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/06.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/07.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11401696/08.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/01.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/02.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/03.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/04.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/05.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/06.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11875492/07.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/01.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/02.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/03.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/04.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/05.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/06.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/11927800/07.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/01.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/02.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/03.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/04.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/05.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/06.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/07.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/08.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/09.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/10.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/11.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/12.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/13.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/14.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/15.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/16.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/17.jpg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/12237133/18.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13277231/01.png"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "content/blog/media/13277231/02.png"
     },
     {
       "module_id": "products.calories",
@@ -1766,6 +2014,10 @@
     {
       "module_id": "platform.content",
       "path": "docs/knowledge-base/ARTICLE_STANDARD.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md"
     },
     {
       "module_id": "platform.knowledge",
@@ -2950,6 +3202,174 @@
     {
       "module_id": "platform.content",
       "path": "tools/verify_author_corpus.py"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/11269472-temperatura-vody-dlya-priema-vnutr.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/11401696-pohudenie-nachinaetsya-ne-s-pohudeniya.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/11875492-nepriyatnaya-pravda-pro-med.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/11927800-pochemu-yapontsy-hudye-a-ty-net.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/12237133-samyy-zdorovyy-chelovek-na-planete.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/13277231-skolko-vremeni-nuzhno-na-pohudenie.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/editorial-handoff.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/factcheck-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11269472.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11269472.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11269472.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11269472.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11401696.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11401696.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11401696.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11401696.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11875492.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11875492.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11875492.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11875492.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11927800.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11927800.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11927800.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/11927800.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/12237133.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/12237133.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/12237133.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/12237133.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/13277231.author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/13277231.retrieval-summary.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/13277231.review.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/machine/13277231.validation.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-copywriter-output-v2/manifest.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/evidence/article-1440.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/evidence/article-390.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/evidence/home-1440.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/evidence/home-390.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/integrate-writer-output.ps1"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/blog-editorial-system/user-spec.md"
     },
     {
       "module_id": "operations.project-work",
@@ -5915,11 +6335,16 @@
       "boundary": "Ссылка, UTM и tag являются компонентами этого модуля, а не отдельными глобальными модулями.",
       "capabilities": [
         "разбирать start payload и сохранить атрибуцию;",
-        "связать invite, UTM и tracking events с контактом;"
+        "связать invite, UTM и tracking events с контактом;",
+        "поставлять публичную ссылку и CTA канала внешним поверхностям проекта;"
       ],
       "card": "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md",
       "document_status": "current",
       "files": [
+        {
+          "module_id": "messaging.telegram.attribution",
+          "path": "backend/app/telegram_public_cta.py"
+        },
         {
           "module_id": "messaging.telegram.attribution",
           "path": "backend/migrations/versions/20260822_0012_lead_entry_attribution.py"
@@ -6810,7 +7235,7 @@
       },
       "title": "Старт и атрибуция Telegram",
       "truths": [
-        "`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`, `LEAD_ENTRY_TECHNICAL_SPEC.md` и runtime tracking data."
+        "`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,\n`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data и\n`backend/app/telegram_public_cta.py` для публичного CTA."
       ]
     },
     {
@@ -12167,13 +12592,21 @@
           "kind": "method",
           "line": 16,
           "module_id": "operations.delivery",
+          "name": "test_backend_build_context_includes_blog_content",
+          "qualname": "DeployPolicyTests.test_backend_build_context_includes_blog_content"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 22,
+          "module_id": "operations.delivery",
           "name": "test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts",
           "qualname": "DeployPolicyTests.test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts"
         },
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 32,
+          "line": 38,
           "module_id": "operations.delivery",
           "name": "test_routine_deploy_reuses_cached_base_images",
           "qualname": "DeployPolicyTests.test_routine_deploy_reuses_cached_base_images"
@@ -12181,7 +12614,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 46,
+          "line": 52,
           "module_id": "operations.delivery",
           "name": "test_deploy_smoke_checks_the_public_blog_boundary",
           "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
@@ -12189,7 +12622,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 52,
+          "line": 62,
           "module_id": "operations.delivery",
           "name": "test_ci_builds_and_tests_only_changed_application_services",
           "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
@@ -12197,7 +12630,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 62,
+          "line": 72,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -12205,7 +12638,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 133,
+          "line": 150,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -12213,7 +12646,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 143,
+          "line": 160,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -12221,7 +12654,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 149,
+          "line": 166,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -15171,6 +15604,174 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/11269472-temperatura-vody-dlya-priema-vnutr.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/11401696-pohudenie-nachinaetsya-ne-s-pohudeniya.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/11875492-nepriyatnaya-pravda-pro-med.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/11927800-pochemu-yapontsy-hudye-a-ty-net.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/12237133-samyy-zdorovyy-chelovek-na-planete.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/13277231-skolko-vremeni-nuzhno-na-pohudenie.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/editorial-handoff.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/factcheck-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11269472.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11269472.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11269472.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11269472.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11401696.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11401696.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11401696.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11401696.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11875492.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11875492.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11875492.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11875492.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11927800.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11927800.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11927800.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/11927800.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/12237133.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/12237133.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/12237133.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/12237133.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/13277231.author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/13277231.retrieval-summary.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/13277231.review.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/machine/13277231.validation.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-copywriter-output-v2/manifest.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/evidence/article-1440.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/evidence/article-390.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/evidence/home-1440.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/evidence/home-390.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/integrate-writer-output.ps1"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-editorial-system/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/content-authoring-system/decisions.md"
         },
         {
@@ -16332,9 +16933,11 @@
     {
       "admin_catalog": [],
       "admin_urls": [],
-      "boundary": "Модуль владеет публичной оболочкой блога, но не авторским голосом и не продуктовой\nлогикой Мастер-класса. Тексты статей и их редакционный канон принадлежат\n`platform.content`; домен и HTTPS принадлежат `operations.proxy`.",
+      "boundary": "Модуль владеет публичной оболочкой, manifest публикации, Markdown-файлами готовых\nстатей и типизированной сборкой публичных CTA от владельцев продуктов. Авторский голос, редакционные правила и\nмаршрутизация писателя принадлежат `platform.content`; продуктовые обещания и\nусловия CTA остаются у соответствующего продукта. Домен и HTTPS принадлежат\n`operations.proxy`.",
       "capabilities": [
         "показывать главную с каталогом статей и рубриками;",
+        "публиковать индексируемые страницы статей с оглавлением, локальными медиа,",
+        "выдавать `sitemap.xml` и `robots.txt` для публичного домена;",
         "сохранять выбранную светлую или тёмную тему на устройстве;",
         "вести посетителя на основную главную, Мастер-класс и контакты;",
         "использовать общий `site-footer.js` без второй реализации подвала."
@@ -16344,7 +16947,31 @@
       "files": [
         {
           "module_id": "platform.blog",
+          "path": "backend/app/blog_content.py"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "backend/app/blog_routes.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/public_cta_catalog.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/article.html"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/blog.css"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/blog.js"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/sergey-author.png"
         },
         {
           "module_id": "platform.blog",
@@ -16368,6 +16995,222 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "backend/tests/test_blog_content.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11269472.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11401696.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11875492.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/11927800.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/12237133.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/articles/13277231.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/manifest.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11269472/01.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11269472/02.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11269472/03.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/01.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/02.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/03.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/04.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/05.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/06.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/07.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11401696/08.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/01.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/02.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/03.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/04.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/05.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/06.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11875492/07.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/01.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/02.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/03.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/04.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/05.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/06.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/11927800/07.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/01.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/02.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/03.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/04.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/05.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/06.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/07.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/08.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/09.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/10.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/11.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/12.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/13.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/14.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/15.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/16.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/17.jpg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/12237133/18.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13277231/01.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "content/blog/media/13277231/02.png"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "docs/knowledge-base/modules/catalog/platform.blog.md"
         }
       ],
@@ -16383,15 +17226,17 @@
         "events_in": [],
         "events_out": [],
         "reads_from": [
+          "messaging.telegram.attribution",
           "operations.proxy",
-          "products"
+          "products.intensive",
+          "products.masterclass"
         ],
         "writes_to": []
       },
       "routes": [
         {
           "file": "backend/app/blog_routes.py",
-          "line": 14,
+          "line": 44,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog",
@@ -16399,7 +17244,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 14,
+          "line": 44,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog",
@@ -16407,21 +17252,237 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 21,
+          "line": 59,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/articles/{slug}",
+          "symbol": "blog_article"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 120,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/fonts/{font_name}",
           "symbol": "blog_font"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 139,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/media/{media_name:path}",
+          "symbol": "blog_media"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 112,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/robots.txt",
+          "symbol": "blog_robots"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 101,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/sitemap.xml",
+          "symbol": "blog_sitemap"
         }
       ],
       "runtime_services": [],
       "sources": [],
-      "summary": "Публикует главную блога Сергея Воронцова и в дальнейшем страницы статей на отдельном субдомене.",
+      "summary": "Публикует главную и безопасные Markdown-статьи блога Сергея Воронцова на отдельном субдомене.",
       "symbols": [
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "class",
+          "line": 30,
+          "module_id": "platform.blog",
+          "name": "BlogHero",
+          "qualname": "BlogHero"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "class",
+          "line": 37,
+          "module_id": "platform.blog",
+          "name": "BlogArticle",
+          "qualname": "BlogArticle"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "class",
+          "line": 52,
+          "module_id": "platform.blog",
+          "name": "BlogCatalog",
+          "qualname": "BlogCatalog"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "method",
+          "line": 57,
+          "module_id": "platform.blog",
+          "name": "published",
+          "qualname": "BlogCatalog.published"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "method",
+          "line": 60,
+          "module_id": "platform.blog",
+          "name": "by_slug",
+          "qualname": "BlogCatalog.by_slug"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "method",
+          "line": 63,
+          "module_id": "platform.blog",
+          "name": "by_source_id",
+          "qualname": "BlogCatalog.by_source_id"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "method",
+          "line": 67,
+          "module_id": "platform.blog",
+          "name": "allowed_media",
+          "qualname": "BlogCatalog.allowed_media"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 75,
+          "module_id": "platform.blog",
+          "name": "default_content_dir",
+          "qualname": "default_content_dir"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 79,
+          "module_id": "platform.blog",
+          "name": "_required_text",
+          "qualname": "_required_text"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 86,
+          "module_id": "platform.blog",
+          "name": "load_blog_catalog",
+          "qualname": "load_blog_catalog"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 138,
+          "module_id": "platform.blog",
+          "name": "_safe_relative_file",
+          "qualname": "_safe_relative_file"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 143,
+          "module_id": "platform.blog",
+          "name": "validate_blog_catalog",
+          "qualname": "validate_blog_catalog"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 178,
+          "module_id": "platform.blog",
+          "name": "validate_component",
+          "qualname": "validate_blog_catalog.validate_component"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 210,
+          "module_id": "platform.blog",
+          "name": "render_blog_component",
+          "qualname": "render_blog_component"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 225,
+          "module_id": "platform.blog",
+          "name": "_heading_anchor",
+          "qualname": "_heading_anchor"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 231,
+          "module_id": "platform.blog",
+          "name": "add_heading_anchors",
+          "qualname": "add_heading_anchors"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 235,
+          "module_id": "platform.blog",
+          "name": "replace",
+          "qualname": "add_heading_anchors.replace"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 249,
+          "module_id": "platform.blog",
+          "name": "render_article_body",
+          "qualname": "render_article_body"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 255,
+          "module_id": "platform.blog",
+          "name": "card_html",
+          "qualname": "card_html"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 269,
+          "module_id": "platform.blog",
+          "name": "related_cards_html",
+          "qualname": "related_cards_html"
+        },
+        {
+          "file": "backend/app/blog_content.py",
+          "kind": "function",
+          "line": 276,
+          "module_id": "platform.blog",
+          "name": "toc_html",
+          "qualname": "toc_html"
+        },
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 14,
+          "line": 32,
+          "module_id": "platform.blog",
+          "name": "_template",
+          "qualname": "_template"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 36,
+          "module_id": "platform.blog",
+          "name": "_html_response",
+          "qualname": "_html_response"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 44,
           "module_id": "platform.blog",
           "name": "blog_home",
           "qualname": "blog_home"
@@ -16429,23 +17490,111 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 21,
+          "line": 59,
+          "module_id": "platform.blog",
+          "name": "blog_article",
+          "qualname": "blog_article"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 101,
+          "module_id": "platform.blog",
+          "name": "blog_sitemap",
+          "qualname": "blog_sitemap"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 112,
+          "module_id": "platform.blog",
+          "name": "blog_robots",
+          "qualname": "blog_robots"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 120,
           "module_id": "platform.blog",
           "name": "blog_font",
           "qualname": "blog_font"
         },
         {
-          "file": "backend/tests/test_blog.py",
+          "file": "backend/app/blog_routes.py",
           "kind": "function",
+          "line": 139,
+          "module_id": "platform.blog",
+          "name": "blog_media",
+          "qualname": "blog_media"
+        },
+        {
+          "file": "backend/app/public_cta_catalog.py",
+          "kind": "class",
           "line": 12,
           "module_id": "platform.blog",
-          "name": "test_blog_home_is_public_and_uses_the_accepted_structure",
-          "qualname": "test_blog_home_is_public_and_uses_the_accepted_structure"
+          "name": "PublicCta",
+          "qualname": "PublicCta"
+        },
+        {
+          "file": "backend/app/public_cta_catalog.py",
+          "kind": "function",
+          "line": 29,
+          "module_id": "platform.blog",
+          "name": "public_cta",
+          "qualname": "public_cta"
+        },
+        {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 9,
+          "module_id": "platform.blog",
+          "name": "applyTheme",
+          "qualname": "applyTheme"
+        },
+        {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 35,
+          "module_id": "platform.blog",
+          "name": "filteredCards",
+          "qualname": "filteredCards"
+        },
+        {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 41,
+          "module_id": "platform.blog",
+          "name": "renderPagination",
+          "qualname": "renderPagination"
+        },
+        {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 64,
+          "module_id": "platform.blog",
+          "name": "showSelection",
+          "qualname": "showSelection"
+        },
+        {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 111,
+          "module_id": "platform.blog",
+          "name": "closeToc",
+          "qualname": "closeToc"
         },
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 31,
+          "line": 13,
+          "module_id": "platform.blog",
+          "name": "test_blog_home_is_public_and_uses_manifest_cards",
+          "qualname": "test_blog_home_is_public_and_uses_manifest_cards"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 34,
           "module_id": "platform.blog",
           "name": "test_blog_home_trailing_slash_is_supported",
           "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -16453,17 +17602,129 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 35,
+          "line": 38,
           "module_id": "platform.blog",
-          "name": "test_blog_fonts_are_self_hosted_and_whitelisted",
-          "qualname": "test_blog_fonts_are_self_hosted_and_whitelisted"
+          "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
+          "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 57,
+          "module_id": "platform.blog",
+          "name": "test_unknown_blog_article_returns_404",
+          "qualname": "test_unknown_blog_article_returns_404"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 61,
+          "module_id": "platform.blog",
+          "name": "test_blog_assets_and_fonts_are_whitelisted",
+          "qualname": "test_blog_assets_and_fonts_are_whitelisted"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "platform.blog",
+          "name": "test_blog_media_is_manifest_whitelisted",
+          "qualname": "test_blog_media_is_manifest_whitelisted"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 86,
+          "module_id": "platform.blog",
+          "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
+          "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 100,
+          "module_id": "platform.blog",
+          "name": "test_every_published_article_and_declared_image_is_served",
+          "qualname": "test_every_published_article_and_declared_image_is_served"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 14,
+          "module_id": "platform.blog",
+          "name": "write_catalog",
+          "qualname": "write_catalog"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 57,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_self_related_link",
+          "qualname": "test_catalog_rejects_self_related_link"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 64,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_unknown_cta",
+          "qualname": "test_catalog_rejects_unknown_cta"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 71,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_missing_required_media",
+          "qualname": "test_catalog_rejects_missing_required_media"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 79,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_external_image_hotlink",
+          "qualname": "test_catalog_rejects_external_image_hotlink"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 88,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_arbitrary_raw_html",
+          "qualname": "test_catalog_rejects_arbitrary_raw_html"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 100,
+          "module_id": "platform.blog",
+          "name": "test_catalog_resolves_directives_against_manifest_cta",
+          "qualname": "test_catalog_resolves_directives_against_manifest_cta"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 118,
+          "module_id": "platform.blog",
+          "name": "test_heading_anchors_are_deterministic_and_unique",
+          "qualname": "test_heading_anchors_are_deterministic_and_unique"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 130,
+          "module_id": "platform.blog",
+          "name": "test_blog_component_is_closed_and_preserves_tracking_key",
+          "qualname": "test_blog_component_is_closed_and_preserves_tracking_key"
         }
       ],
       "tables": [],
       "telegram": null,
       "title": "Публичный блог",
       "truths": [
-        "`backend/app/static/blog/index.html` — текущая опубликованная главная;\n- `backend/app/blog_routes.py` — публичный серверный маршрут;\n- `docs/knowledge-base/ARTICLE_STANDARD.md` — общая типографика будущих статей."
+        "`content/blog/manifest.json` — порядок, рубрики, обложки, CTA и связанные статьи;\n- `content/blog/articles/*.md` — тела опубликованных материалов;\n- `backend/app/blog_content.py` — валидация каталога и безопасный renderer;\n- `backend/app/public_cta_catalog.py` — типизированная сборка разрешённых CTA;\n- `backend/app/blog_routes.py` — публичные маршруты, metadata, sitemap и media;\n- `docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md` — устойчивый маршрут новой статьи;\n- `docs/knowledge-base/ARTICLE_STANDARD.md` — общая типографика статей."
       ]
     },
     {
@@ -18493,7 +19754,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 33,
+          "line": 35,
           "module_id": "platform.content",
           "name": "safe_href",
           "qualname": "safe_href"
@@ -18501,7 +19762,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 40,
+          "line": 43,
           "module_id": "platform.content",
           "name": "safe_image_src",
           "qualname": "safe_image_src"
@@ -18509,7 +19770,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "class",
-          "line": 50,
+          "line": 54,
           "module_id": "platform.content",
           "name": "ArticleSanitizer",
           "qualname": "ArticleSanitizer"
@@ -18517,7 +19778,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 51,
+          "line": 55,
           "module_id": "platform.content",
           "name": "__init__",
           "qualname": "ArticleSanitizer.__init__"
@@ -18525,7 +19786,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 66,
+          "line": 70,
           "module_id": "platform.content",
           "name": "handle_starttag",
           "qualname": "ArticleSanitizer.handle_starttag"
@@ -18533,7 +19794,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 125,
+          "line": 139,
           "module_id": "platform.content",
           "name": "handle_startendtag",
           "qualname": "ArticleSanitizer.handle_startendtag"
@@ -18541,7 +19802,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 131,
+          "line": 145,
           "module_id": "platform.content",
           "name": "handle_endtag",
           "qualname": "ArticleSanitizer.handle_endtag"
@@ -18549,7 +19810,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 142,
+          "line": 156,
           "module_id": "platform.content",
           "name": "handle_data",
           "qualname": "ArticleSanitizer.handle_data"
@@ -18557,7 +19818,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 147,
+          "line": 161,
           "module_id": "platform.content",
           "name": "sanitize_article_html",
           "qualname": "sanitize_article_html"
@@ -18565,7 +19826,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 172,
+          "line": 186,
           "module_id": "platform.content",
           "name": "inline_markdown",
           "qualname": "inline_markdown"
@@ -18573,7 +19834,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 175,
+          "line": 189,
           "module_id": "platform.content",
           "name": "render_link",
           "qualname": "inline_markdown.render_link"
@@ -18581,7 +19842,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 189,
+          "line": 203,
           "module_id": "platform.content",
           "name": "markdown_table_cells",
           "qualname": "markdown_table_cells"
@@ -18589,7 +19850,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 199,
+          "line": 213,
           "module_id": "platform.content",
           "name": "is_markdown_table_separator",
           "qualname": "is_markdown_table_separator"
@@ -18597,7 +19858,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 204,
+          "line": 218,
           "module_id": "platform.content",
           "name": "markdown_to_article_html",
           "qualname": "markdown_to_article_html"
@@ -18605,7 +19866,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 218,
+          "line": 232,
           "module_id": "platform.content",
           "name": "is_boundary",
           "qualname": "markdown_to_article_html.is_boundary"
@@ -18613,7 +19874,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "class",
-          "line": 372,
+          "line": 386,
           "module_id": "platform.content",
           "name": "PlainTextExtractor",
           "qualname": "PlainTextExtractor"
@@ -18621,7 +19882,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 373,
+          "line": 387,
           "module_id": "platform.content",
           "name": "__init__",
           "qualname": "PlainTextExtractor.__init__"
@@ -18629,7 +19890,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "method",
-          "line": 377,
+          "line": 391,
           "module_id": "platform.content",
           "name": "handle_data",
           "qualname": "PlainTextExtractor.handle_data"
@@ -18637,7 +19898,7 @@
         {
           "file": "backend/app/article_markup.py",
           "kind": "function",
-          "line": 382,
+          "line": 396,
           "module_id": "platform.content",
           "name": "article_plain_text",
           "qualname": "article_plain_text"
@@ -19337,6 +20598,14 @@
           "module_id": "platform.content",
           "name": "test_regular_markdown_link_is_unchanged",
           "qualname": "ArticleMarkupTests.test_regular_markdown_link_is_unchanged"
+        },
+        {
+          "file": "backend/tests/test_article_markup.py",
+          "kind": "method",
+          "line": 69,
+          "module_id": "platform.content",
+          "name": "test_network_path_disguised_with_backslash_is_rejected",
+          "qualname": "ArticleMarkupTests.test_network_path_disguised_with_backslash_is_rejected"
         },
         {
           "file": "backend/tests/test_content_authoring_catalog.py",
@@ -24037,6 +25306,14 @@
           "module_id": "products",
           "path": "/assets/{asset_name}",
           "symbol": "app_asset"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 129,
+          "method": "GET",
+          "module_id": "products",
+          "path": "/blog/assets/{asset_name}",
+          "symbol": "blog_asset"
         }
       ],
       "runtime_services": [],
@@ -24202,6 +25479,14 @@
           "module_id": "products",
           "name": "clean_json",
           "qualname": "clean_json"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 129,
+          "module_id": "products",
+          "name": "blog_asset",
+          "qualname": "blog_asset"
         },
         {
           "file": "backend/app/static/content-gallery.js",
@@ -26245,11 +27530,16 @@
       "boundary": "Это web-продукт; Telegram welcome/intensive является соседним messaging-модулем.",
       "capabilities": [
         "показывать четыре дня по временным правилам;",
-        "редактировать содержимое через специализированный admin flow;"
+        "редактировать содержимое через специализированный admin flow;",
+        "поставлять проверенный публичный CTA для внешних поверхностей проекта;"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.intensive.md",
       "document_status": "current",
       "files": [
+        {
+          "module_id": "products.intensive",
+          "path": "backend/app/intensive_public_cta.py"
+        },
         {
           "module_id": "products.intensive",
           "path": "backend/app/intensive_routes.py"
@@ -26616,7 +27906,7 @@
       "telegram": null,
       "title": "Бесплатный интенсив",
       "truths": [
-        "`docs/INTENSIVE_PAGES.md`, intensive routes/static и content runtime."
+        "`docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и\n`backend/app/intensive_public_cta.py` для публичного CTA."
       ]
     },
     {
@@ -26633,11 +27923,16 @@
       "boundary": "Не владеет Telegram-текстами и не создаёт отдельную программу под каждый тариф.",
       "capabilities": [
         "объединять все тарифы в одной программе с серверной проверкой доступа;",
-        "координировать дочерние модули без копирования их правил;"
+        "координировать дочерние модули без копирования их правил;",
+        "поставлять проверенный публичный CTA Мастер-класса внешним поверхностям;"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.masterclass.md",
       "document_status": "current",
       "files": [
+        {
+          "module_id": "products.masterclass",
+          "path": "backend/app/masterclass_public_cta.py"
+        },
         {
           "module_id": "products.masterclass",
           "path": "docs/TILDA_MASTERCLASS_EMBEDS.md"
@@ -26674,7 +27969,7 @@
       "telegram": null,
       "title": "Мастер-класс",
       "truths": [
-        "`docs/knowledge-base/modules/masterclass/README.md` и дочерние карточки."
+        "`docs/knowledge-base/modules/masterclass/README.md`, дочерние карточки и\n`backend/app/masterclass_public_cta.py` для публичного CTA."
       ]
     },
     {
@@ -32705,12 +34000,22 @@
     },
     {
       "source": "platform.blog",
+      "target": "messaging.telegram.attribution",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.blog",
       "target": "operations.proxy",
       "type": "reads_from"
     },
     {
       "source": "platform.blog",
-      "target": "products",
+      "target": "products.intensive",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.blog",
+      "target": "products.masterclass",
       "type": "reads_from"
     },
     {
@@ -33948,7 +35253,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 14,
+      "line": 44,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog",
@@ -33956,7 +35261,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 14,
+      "line": 44,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog",
@@ -33964,11 +35269,51 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 21,
+      "line": 59,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/articles/{slug}",
+      "symbol": "blog_article"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 129,
+      "method": "GET",
+      "module_id": "products",
+      "path": "/blog/assets/{asset_name}",
+      "symbol": "blog_asset"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 120,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/fonts/{font_name}",
       "symbol": "blog_font"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 139,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/media/{media_name:path}",
+      "symbol": "blog_media"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 112,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/robots.txt",
+      "symbol": "blog_robots"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 101,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/sitemap.xml",
+      "symbol": "blog_sitemap"
     },
     {
       "file": "telegram-bot/service/app/main.py",
@@ -35336,7 +36681,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 33,
+      "line": 35,
       "module_id": "platform.content",
       "name": "safe_href",
       "qualname": "safe_href"
@@ -35344,7 +36689,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 40,
+      "line": 43,
       "module_id": "platform.content",
       "name": "safe_image_src",
       "qualname": "safe_image_src"
@@ -35352,7 +36697,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "class",
-      "line": 50,
+      "line": 54,
       "module_id": "platform.content",
       "name": "ArticleSanitizer",
       "qualname": "ArticleSanitizer"
@@ -35360,7 +36705,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 51,
+      "line": 55,
       "module_id": "platform.content",
       "name": "__init__",
       "qualname": "ArticleSanitizer.__init__"
@@ -35368,7 +36713,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 66,
+      "line": 70,
       "module_id": "platform.content",
       "name": "handle_starttag",
       "qualname": "ArticleSanitizer.handle_starttag"
@@ -35376,7 +36721,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 125,
+      "line": 139,
       "module_id": "platform.content",
       "name": "handle_startendtag",
       "qualname": "ArticleSanitizer.handle_startendtag"
@@ -35384,7 +36729,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 131,
+      "line": 145,
       "module_id": "platform.content",
       "name": "handle_endtag",
       "qualname": "ArticleSanitizer.handle_endtag"
@@ -35392,7 +36737,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 142,
+      "line": 156,
       "module_id": "platform.content",
       "name": "handle_data",
       "qualname": "ArticleSanitizer.handle_data"
@@ -35400,7 +36745,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 147,
+      "line": 161,
       "module_id": "platform.content",
       "name": "sanitize_article_html",
       "qualname": "sanitize_article_html"
@@ -35408,7 +36753,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 172,
+      "line": 186,
       "module_id": "platform.content",
       "name": "inline_markdown",
       "qualname": "inline_markdown"
@@ -35416,7 +36761,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 175,
+      "line": 189,
       "module_id": "platform.content",
       "name": "render_link",
       "qualname": "inline_markdown.render_link"
@@ -35424,7 +36769,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 189,
+      "line": 203,
       "module_id": "platform.content",
       "name": "markdown_table_cells",
       "qualname": "markdown_table_cells"
@@ -35432,7 +36777,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 199,
+      "line": 213,
       "module_id": "platform.content",
       "name": "is_markdown_table_separator",
       "qualname": "is_markdown_table_separator"
@@ -35440,7 +36785,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 204,
+      "line": 218,
       "module_id": "platform.content",
       "name": "markdown_to_article_html",
       "qualname": "markdown_to_article_html"
@@ -35448,7 +36793,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 218,
+      "line": 232,
       "module_id": "platform.content",
       "name": "is_boundary",
       "qualname": "markdown_to_article_html.is_boundary"
@@ -35456,7 +36801,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "class",
-      "line": 372,
+      "line": 386,
       "module_id": "platform.content",
       "name": "PlainTextExtractor",
       "qualname": "PlainTextExtractor"
@@ -35464,7 +36809,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 373,
+      "line": 387,
       "module_id": "platform.content",
       "name": "__init__",
       "qualname": "PlainTextExtractor.__init__"
@@ -35472,7 +36817,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "method",
-      "line": 377,
+      "line": 391,
       "module_id": "platform.content",
       "name": "handle_data",
       "qualname": "PlainTextExtractor.handle_data"
@@ -35480,7 +36825,7 @@
     {
       "file": "backend/app/article_markup.py",
       "kind": "function",
-      "line": 382,
+      "line": 396,
       "module_id": "platform.content",
       "name": "article_plain_text",
       "qualname": "article_plain_text"
@@ -35526,9 +36871,193 @@
       "qualname": "require_admin"
     },
     {
+      "file": "backend/app/blog_content.py",
+      "kind": "class",
+      "line": 30,
+      "module_id": "platform.blog",
+      "name": "BlogHero",
+      "qualname": "BlogHero"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "class",
+      "line": 37,
+      "module_id": "platform.blog",
+      "name": "BlogArticle",
+      "qualname": "BlogArticle"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "class",
+      "line": 52,
+      "module_id": "platform.blog",
+      "name": "BlogCatalog",
+      "qualname": "BlogCatalog"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "method",
+      "line": 57,
+      "module_id": "platform.blog",
+      "name": "published",
+      "qualname": "BlogCatalog.published"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "method",
+      "line": 60,
+      "module_id": "platform.blog",
+      "name": "by_slug",
+      "qualname": "BlogCatalog.by_slug"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "method",
+      "line": 63,
+      "module_id": "platform.blog",
+      "name": "by_source_id",
+      "qualname": "BlogCatalog.by_source_id"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "method",
+      "line": 67,
+      "module_id": "platform.blog",
+      "name": "allowed_media",
+      "qualname": "BlogCatalog.allowed_media"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 75,
+      "module_id": "platform.blog",
+      "name": "default_content_dir",
+      "qualname": "default_content_dir"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 79,
+      "module_id": "platform.blog",
+      "name": "_required_text",
+      "qualname": "_required_text"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 86,
+      "module_id": "platform.blog",
+      "name": "load_blog_catalog",
+      "qualname": "load_blog_catalog"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 138,
+      "module_id": "platform.blog",
+      "name": "_safe_relative_file",
+      "qualname": "_safe_relative_file"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 143,
+      "module_id": "platform.blog",
+      "name": "validate_blog_catalog",
+      "qualname": "validate_blog_catalog"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 178,
+      "module_id": "platform.blog",
+      "name": "validate_component",
+      "qualname": "validate_blog_catalog.validate_component"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 210,
+      "module_id": "platform.blog",
+      "name": "render_blog_component",
+      "qualname": "render_blog_component"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 225,
+      "module_id": "platform.blog",
+      "name": "_heading_anchor",
+      "qualname": "_heading_anchor"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 231,
+      "module_id": "platform.blog",
+      "name": "add_heading_anchors",
+      "qualname": "add_heading_anchors"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 235,
+      "module_id": "platform.blog",
+      "name": "replace",
+      "qualname": "add_heading_anchors.replace"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 249,
+      "module_id": "platform.blog",
+      "name": "render_article_body",
+      "qualname": "render_article_body"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 255,
+      "module_id": "platform.blog",
+      "name": "card_html",
+      "qualname": "card_html"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 269,
+      "module_id": "platform.blog",
+      "name": "related_cards_html",
+      "qualname": "related_cards_html"
+    },
+    {
+      "file": "backend/app/blog_content.py",
+      "kind": "function",
+      "line": 276,
+      "module_id": "platform.blog",
+      "name": "toc_html",
+      "qualname": "toc_html"
+    },
+    {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 14,
+      "line": 32,
+      "module_id": "platform.blog",
+      "name": "_template",
+      "qualname": "_template"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 36,
+      "module_id": "platform.blog",
+      "name": "_html_response",
+      "qualname": "_html_response"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 44,
       "module_id": "platform.blog",
       "name": "blog_home",
       "qualname": "blog_home"
@@ -35536,10 +37065,50 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 21,
+      "line": 59,
+      "module_id": "platform.blog",
+      "name": "blog_article",
+      "qualname": "blog_article"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 101,
+      "module_id": "platform.blog",
+      "name": "blog_sitemap",
+      "qualname": "blog_sitemap"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 112,
+      "module_id": "platform.blog",
+      "name": "blog_robots",
+      "qualname": "blog_robots"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 120,
       "module_id": "platform.blog",
       "name": "blog_font",
       "qualname": "blog_font"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 129,
+      "module_id": "products",
+      "name": "blog_asset",
+      "qualname": "blog_asset"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 139,
+      "module_id": "platform.blog",
+      "name": "blog_media",
+      "qualname": "blog_media"
     },
     {
       "file": "backend/app/calorie_course_material_service.py",
@@ -40630,6 +42199,22 @@
       "qualname": "purchased_products"
     },
     {
+      "file": "backend/app/public_cta_catalog.py",
+      "kind": "class",
+      "line": 12,
+      "module_id": "platform.blog",
+      "name": "PublicCta",
+      "qualname": "PublicCta"
+    },
+    {
+      "file": "backend/app/public_cta_catalog.py",
+      "kind": "function",
+      "line": 29,
+      "module_id": "platform.blog",
+      "name": "public_cta",
+      "qualname": "public_cta"
+    },
+    {
       "file": "backend/app/recipe_models.py",
       "kind": "class",
       "line": 14,
@@ -41188,6 +42773,46 @@
       "module_id": "admin.control",
       "name": "run",
       "qualname": "run"
+    },
+    {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 9,
+      "module_id": "platform.blog",
+      "name": "applyTheme",
+      "qualname": "applyTheme"
+    },
+    {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 35,
+      "module_id": "platform.blog",
+      "name": "filteredCards",
+      "qualname": "filteredCards"
+    },
+    {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 41,
+      "module_id": "platform.blog",
+      "name": "renderPagination",
+      "qualname": "renderPagination"
+    },
+    {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 64,
+      "module_id": "platform.blog",
+      "name": "showSelection",
+      "qualname": "showSelection"
+    },
+    {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 111,
+      "module_id": "platform.blog",
+      "name": "closeToc",
+      "qualname": "closeToc"
     },
     {
       "file": "backend/app/static/content-catalog.js",
@@ -44006,17 +45631,25 @@
       "qualname": "ArticleMarkupTests.test_regular_markdown_link_is_unchanged"
     },
     {
-      "file": "backend/tests/test_blog.py",
-      "kind": "function",
-      "line": 12,
-      "module_id": "platform.blog",
-      "name": "test_blog_home_is_public_and_uses_the_accepted_structure",
-      "qualname": "test_blog_home_is_public_and_uses_the_accepted_structure"
+      "file": "backend/tests/test_article_markup.py",
+      "kind": "method",
+      "line": 69,
+      "module_id": "platform.content",
+      "name": "test_network_path_disguised_with_backslash_is_rejected",
+      "qualname": "ArticleMarkupTests.test_network_path_disguised_with_backslash_is_rejected"
     },
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 31,
+      "line": 13,
+      "module_id": "platform.blog",
+      "name": "test_blog_home_is_public_and_uses_manifest_cards",
+      "qualname": "test_blog_home_is_public_and_uses_manifest_cards"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 34,
       "module_id": "platform.blog",
       "name": "test_blog_home_trailing_slash_is_supported",
       "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -44024,10 +45657,122 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 35,
+      "line": 38,
       "module_id": "platform.blog",
-      "name": "test_blog_fonts_are_self_hosted_and_whitelisted",
-      "qualname": "test_blog_fonts_are_self_hosted_and_whitelisted"
+      "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
+      "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 57,
+      "module_id": "platform.blog",
+      "name": "test_unknown_blog_article_returns_404",
+      "qualname": "test_unknown_blog_article_returns_404"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 61,
+      "module_id": "platform.blog",
+      "name": "test_blog_assets_and_fonts_are_whitelisted",
+      "qualname": "test_blog_assets_and_fonts_are_whitelisted"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "platform.blog",
+      "name": "test_blog_media_is_manifest_whitelisted",
+      "qualname": "test_blog_media_is_manifest_whitelisted"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 86,
+      "module_id": "platform.blog",
+      "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
+      "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 100,
+      "module_id": "platform.blog",
+      "name": "test_every_published_article_and_declared_image_is_served",
+      "qualname": "test_every_published_article_and_declared_image_is_served"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 14,
+      "module_id": "platform.blog",
+      "name": "write_catalog",
+      "qualname": "write_catalog"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 57,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_self_related_link",
+      "qualname": "test_catalog_rejects_self_related_link"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 64,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_unknown_cta",
+      "qualname": "test_catalog_rejects_unknown_cta"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 71,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_missing_required_media",
+      "qualname": "test_catalog_rejects_missing_required_media"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 79,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_external_image_hotlink",
+      "qualname": "test_catalog_rejects_external_image_hotlink"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 88,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_arbitrary_raw_html",
+      "qualname": "test_catalog_rejects_arbitrary_raw_html"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 100,
+      "module_id": "platform.blog",
+      "name": "test_catalog_resolves_directives_against_manifest_cta",
+      "qualname": "test_catalog_resolves_directives_against_manifest_cta"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 118,
+      "module_id": "platform.blog",
+      "name": "test_heading_anchors_are_deterministic_and_unique",
+      "qualname": "test_heading_anchors_are_deterministic_and_unique"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 130,
+      "module_id": "platform.blog",
+      "name": "test_blog_component_is_closed_and_preserves_tracking_key",
+      "qualname": "test_blog_component_is_closed_and_preserves_tracking_key"
     },
     {
       "file": "backend/tests/test_calorie_course_journey.py",
@@ -54866,13 +56611,21 @@
       "kind": "method",
       "line": 16,
       "module_id": "operations.delivery",
+      "name": "test_backend_build_context_includes_blog_content",
+      "qualname": "DeployPolicyTests.test_backend_build_context_includes_blog_content"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 22,
+      "module_id": "operations.delivery",
       "name": "test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts",
       "qualname": "DeployPolicyTests.test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts"
     },
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 32,
+      "line": 38,
       "module_id": "operations.delivery",
       "name": "test_routine_deploy_reuses_cached_base_images",
       "qualname": "DeployPolicyTests.test_routine_deploy_reuses_cached_base_images"
@@ -54880,7 +56633,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 46,
+      "line": 52,
       "module_id": "operations.delivery",
       "name": "test_deploy_smoke_checks_the_public_blog_boundary",
       "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
@@ -54888,7 +56641,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 52,
+      "line": 62,
       "module_id": "operations.delivery",
       "name": "test_ci_builds_and_tests_only_changed_application_services",
       "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
@@ -54896,7 +56649,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 62,
+      "line": 72,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -54904,7 +56657,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 133,
+      "line": 150,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -54912,7 +56665,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 143,
+      "line": 160,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -54920,7 +56673,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 149,
+      "line": 166,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"

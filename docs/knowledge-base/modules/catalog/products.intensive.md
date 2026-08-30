@@ -13,6 +13,7 @@ implementation_status: implemented
 
 - показывать четыре дня по временным правилам;
 - редактировать содержимое через специализированный admin flow;
+- поставлять проверенный публичный CTA для внешних поверхностей проекта;
 
 ## Граница
 
@@ -20,7 +21,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-`docs/INTENSIVE_PAGES.md`, intensive routes/static и content runtime.
+`docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и
+`backend/app/intensive_public_cta.py` для публичного CTA.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

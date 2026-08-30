@@ -13,6 +13,12 @@ CLASSIFIER = REPOSITORY_ROOT / "infra" / "deploy" / "classify-deploy-impact"
 
 
 class DeployPolicyTests(unittest.TestCase):
+    def test_backend_build_context_includes_blog_content(self) -> None:
+        dockerignore = (REPOSITORY_ROOT / ".dockerignore").read_text(encoding="utf-8")
+
+        self.assertIn("!content/blog/", dockerignore)
+        self.assertIn("!content/blog/**", dockerignore)
+
     def test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts(self) -> None:
         source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
 
@@ -47,6 +53,10 @@ class DeployPolicyTests(unittest.TestCase):
         source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
 
         self.assertIn("https://blog.похудение-это-есть.рф/", source)
+        self.assertIn("/articles/skolko-vremeni-nuzhno-na-pohudenie", source)
+        self.assertIn("/blog/media/13277231/01.png", source)
+        self.assertIn("/sitemap.xml", source)
+        self.assertIn("/robots.txt", source)
         self.assertIn("--retry 5 --retry-all-errors --retry-delay 3", source)
 
     def test_ci_builds_and_tests_only_changed_application_services(self) -> None:
@@ -71,11 +81,13 @@ class DeployPolicyTests(unittest.TestCase):
             migration = repo / "backend" / "migrations" / "versions" / "001.py"
             docs = repo / "docs" / "OPERATIONS.md"
             caddy = repo / "infra" / "caddy" / "Caddyfile"
+            blog_article = repo / "content" / "blog" / "articles" / "one.md"
             main.parent.mkdir(parents=True)
             backend.parent.mkdir(parents=True)
             migration.parent.mkdir(parents=True)
             docs.parent.mkdir(parents=True)
             caddy.parent.mkdir(parents=True)
+            blog_article.parent.mkdir(parents=True)
             main.write_text(
                 "def start():\n"
                 "        seed_defaults(\n"
@@ -87,6 +99,7 @@ class DeployPolicyTests(unittest.TestCase):
             backend.write_text("VALUE = 1\n", encoding="utf-8")
             docs.write_text("operations\n", encoding="utf-8")
             caddy.write_text("example.com\n", encoding="utf-8")
+            blog_article.write_text("first version\n", encoding="utf-8")
             (repo / "compose.yaml").write_text("services: {}\n", encoding="utf-8")
             (repo / "README.md").write_text("base\n", encoding="utf-8")
             base = self.commit(repo, "base")
@@ -103,9 +116,13 @@ class DeployPolicyTests(unittest.TestCase):
             docs_sha = self.commit(repo, "docs")
             self.assertEqual((False, False, True, False, False, False), self.classify(repo, backend_sha, docs_sha))
 
+            blog_article.write_text("second version\n", encoding="utf-8")
+            blog_sha = self.commit(repo, "blog content")
+            self.assertEqual((False, False, True, False, False, False), self.classify(repo, docs_sha, blog_sha))
+
             migration.write_text("migration\n", encoding="utf-8")
             migration_sha = self.commit(repo, "migration")
-            self.assertEqual((True, False, True, False, False, False), self.classify(repo, docs_sha, migration_sha))
+            self.assertEqual((True, False, True, False, False, False), self.classify(repo, blog_sha, migration_sha))
 
             seed.write_text("DEFAULT = 2\n", encoding="utf-8")
             seed_sha = self.commit(repo, "seed")

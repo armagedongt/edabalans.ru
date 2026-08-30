@@ -4,7 +4,7 @@ from html import escape
 from html.parser import HTMLParser
 import re
 from typing import Callable
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from fastapi import HTTPException
 
@@ -25,6 +25,8 @@ COURSE_CLASS_TOKENS = {
     "gallery-counter", "gallery-dots", "gallery-dot", "active",
     "dqs-score-table-wrap", "dqs-score-table",
     "article-spoiler", "article-spoiler-body",
+    "blog-cta", "blog-cta-intensive", "blog-cta-masterclass", "blog-cta-telegram",
+    "blog-cta-eyebrow",
     "score-2", "score-1", "score-0", "score--1", "score--2",
 }
 COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table"}
@@ -32,14 +34,16 @@ COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table"}
 
 def safe_href(value: str) -> bool:
     cleaned = value.strip()
-    if cleaned.startswith("//") or any(ord(character) < 32 for character in cleaned):
+    decoded = unquote(cleaned)
+    if decoded.startswith("//") or "\\" in decoded or any(ord(character) < 32 for character in decoded):
         return False
     return urlparse(cleaned).scheme in {"", "http", "https", "mailto"}
 
 
 def safe_image_src(value: str, *, allow_relative: bool = False) -> bool:
     cleaned = value.strip()
-    if cleaned.startswith("//") or any(ord(character) < 32 for character in cleaned):
+    decoded = unquote(cleaned)
+    if decoded.startswith("//") or "\\" in decoded or any(ord(character) < 32 for character in decoded):
         return False
     if allow_relative and cleaned.startswith("/"):
         return True
@@ -81,6 +85,16 @@ class ArticleSanitizer(HTMLParser):
                 rendered_attrs = f' href="{escape(href.strip(), quote=True)}"'
                 if self.course_semantics:
                     rendered_attrs += ' target="_blank" rel="noopener"'
+                tracking_key = next(
+                    (value for name, value in attrs if name.lower() == "data-tracking-key"),
+                    None,
+                )
+                if self.allow_product_components and tracking_key and re.fullmatch(
+                    r"[a-z0-9_-]{1,80}", tracking_key
+                ):
+                    rendered_attrs += (
+                        f' data-tracking-key="{escape(tracking_key, quote=True)}"'
+                    )
         elif tag == "img":
             src = next((value for name, value in attrs if name.lower() == "src"), None)
             if not src or not safe_image_src(
@@ -109,8 +123,8 @@ class ArticleSanitizer(HTMLParser):
                     rendered.append(f'class="{escape(" ".join(tokens), quote=True)}"')
             if self.allow_product_components and tag == "section" and attributes.get("data-gallery") == "true":
                 rendered.append('data-gallery="true"')
-            if self.allow_product_components and tag == "section" and attributes.get("data-component") == "image-slider":
-                rendered.append('data-component="image-slider"')
+            if self.allow_product_components and tag == "section" and attributes.get("data-component") in {"image-slider", "blog-cta"}:
+                rendered.append(f'data-component="{attributes["data-component"]}"')
             if tag == "button" and self.allow_product_components:
                 slide = str(attributes.get("data-slide") or "")
                 label = str(attributes.get("aria-label") or "")
