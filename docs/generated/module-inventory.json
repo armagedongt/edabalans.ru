@@ -421,6 +421,18 @@
     },
     {
       "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/favicon-test-black.svg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/favicon-test-blue.svg"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/assets/favicon-test-face.png"
+    },
+    {
+      "module_id": "platform.blog",
       "path": "backend/app/static/blog/assets/sergey-author.png"
     },
     {
@@ -12624,13 +12636,21 @@
           "kind": "method",
           "line": 62,
           "module_id": "operations.delivery",
+          "name": "test_caddy_exposes_only_the_three_temporary_favicon_pages",
+          "qualname": "DeployPolicyTests.test_caddy_exposes_only_the_three_temporary_favicon_pages"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 82,
+          "module_id": "operations.delivery",
           "name": "test_ci_builds_and_tests_only_changed_application_services",
           "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
         },
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 72,
+          "line": 92,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -12638,7 +12658,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 150,
+          "line": 170,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -12646,7 +12666,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 160,
+          "line": 180,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -12654,7 +12674,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 166,
+          "line": 186,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -16971,6 +16991,18 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/favicon-test-black.svg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/favicon-test-blue.svg"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/assets/favicon-test-face.png"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "backend/app/static/blog/assets/sergey-author.png"
         },
         {
@@ -17236,7 +17268,7 @@
       "routes": [
         {
           "file": "backend/app/blog_routes.py",
-          "line": 44,
+          "line": 57,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog",
@@ -17244,7 +17276,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 44,
+          "line": 57,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog",
@@ -17252,7 +17284,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 59,
+          "line": 94,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/articles/{slug}",
@@ -17260,7 +17292,15 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 120,
+          "line": 72,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/favicon-tests/{variant}",
+          "symbol": "favicon_test_page"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 155,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/fonts/{font_name}",
@@ -17268,7 +17308,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 139,
+          "line": 174,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/media/{media_name:path}",
@@ -17276,7 +17316,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 112,
+          "line": 147,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/robots.txt",
@@ -17284,7 +17324,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 101,
+          "line": 136,
           "method": "GET",
           "module_id": "platform.blog",
           "path": "/blog/sitemap.xml",
@@ -17314,7 +17354,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "class",
-          "line": 52,
+          "line": 53,
           "module_id": "platform.blog",
           "name": "BlogCatalog",
           "qualname": "BlogCatalog"
@@ -17322,7 +17362,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "method",
-          "line": 57,
+          "line": 58,
           "module_id": "platform.blog",
           "name": "published",
           "qualname": "BlogCatalog.published"
@@ -17330,7 +17370,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "method",
-          "line": 60,
+          "line": 61,
           "module_id": "platform.blog",
           "name": "by_slug",
           "qualname": "BlogCatalog.by_slug"
@@ -17338,7 +17378,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "method",
-          "line": 63,
+          "line": 64,
           "module_id": "platform.blog",
           "name": "by_source_id",
           "qualname": "BlogCatalog.by_source_id"
@@ -17346,7 +17386,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "method",
-          "line": 67,
+          "line": 68,
           "module_id": "platform.blog",
           "name": "allowed_media",
           "qualname": "BlogCatalog.allowed_media"
@@ -17354,7 +17394,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 75,
+          "line": 77,
           "module_id": "platform.blog",
           "name": "default_content_dir",
           "qualname": "default_content_dir"
@@ -17362,7 +17402,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 79,
+          "line": 81,
           "module_id": "platform.blog",
           "name": "_required_text",
           "qualname": "_required_text"
@@ -17370,7 +17410,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 86,
+          "line": 88,
           "module_id": "platform.blog",
           "name": "load_blog_catalog",
           "qualname": "load_blog_catalog"
@@ -17378,7 +17418,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 138,
+          "line": 149,
           "module_id": "platform.blog",
           "name": "_safe_relative_file",
           "qualname": "_safe_relative_file"
@@ -17386,7 +17426,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 143,
+          "line": 154,
           "module_id": "platform.blog",
           "name": "validate_blog_catalog",
           "qualname": "validate_blog_catalog"
@@ -17394,7 +17434,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 178,
+          "line": 189,
           "module_id": "platform.blog",
           "name": "validate_component",
           "qualname": "validate_blog_catalog.validate_component"
@@ -17402,7 +17442,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 210,
+          "line": 221,
           "module_id": "platform.blog",
           "name": "render_blog_component",
           "qualname": "render_blog_component"
@@ -17410,7 +17450,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 225,
+          "line": 236,
           "module_id": "platform.blog",
           "name": "_heading_anchor",
           "qualname": "_heading_anchor"
@@ -17418,7 +17458,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 231,
+          "line": 242,
           "module_id": "platform.blog",
           "name": "add_heading_anchors",
           "qualname": "add_heading_anchors"
@@ -17426,7 +17466,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 235,
+          "line": 246,
           "module_id": "platform.blog",
           "name": "replace",
           "qualname": "add_heading_anchors.replace"
@@ -17434,7 +17474,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 249,
+          "line": 260,
           "module_id": "platform.blog",
           "name": "render_article_body",
           "qualname": "render_article_body"
@@ -17442,7 +17482,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 255,
+          "line": 266,
           "module_id": "platform.blog",
           "name": "card_html",
           "qualname": "card_html"
@@ -17450,7 +17490,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 269,
+          "line": 281,
           "module_id": "platform.blog",
           "name": "related_cards_html",
           "qualname": "related_cards_html"
@@ -17458,7 +17498,7 @@
         {
           "file": "backend/app/blog_content.py",
           "kind": "function",
-          "line": 276,
+          "line": 288,
           "module_id": "platform.blog",
           "name": "toc_html",
           "qualname": "toc_html"
@@ -17466,7 +17506,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 32,
+          "line": 45,
           "module_id": "platform.blog",
           "name": "_template",
           "qualname": "_template"
@@ -17474,7 +17514,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 36,
+          "line": 49,
           "module_id": "platform.blog",
           "name": "_html_response",
           "qualname": "_html_response"
@@ -17482,7 +17522,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 44,
+          "line": 57,
           "module_id": "platform.blog",
           "name": "blog_home",
           "qualname": "blog_home"
@@ -17490,7 +17530,15 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 59,
+          "line": 72,
+          "module_id": "platform.blog",
+          "name": "favicon_test_page",
+          "qualname": "favicon_test_page"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 94,
           "module_id": "platform.blog",
           "name": "blog_article",
           "qualname": "blog_article"
@@ -17498,7 +17546,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 101,
+          "line": 136,
           "module_id": "platform.blog",
           "name": "blog_sitemap",
           "qualname": "blog_sitemap"
@@ -17506,7 +17554,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 112,
+          "line": 147,
           "module_id": "platform.blog",
           "name": "blog_robots",
           "qualname": "blog_robots"
@@ -17514,7 +17562,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 120,
+          "line": 155,
           "module_id": "platform.blog",
           "name": "blog_font",
           "qualname": "blog_font"
@@ -17522,7 +17570,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 139,
+          "line": 174,
           "module_id": "platform.blog",
           "name": "blog_media",
           "qualname": "blog_media"
@@ -17594,7 +17642,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 34,
+          "line": 38,
           "module_id": "platform.blog",
           "name": "test_blog_home_trailing_slash_is_supported",
           "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -17602,7 +17650,15 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 38,
+          "line": 42,
+          "module_id": "platform.blog",
+          "name": "test_favicon_test_pages_are_isolated_and_noindex",
+          "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 62,
           "module_id": "platform.blog",
           "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
           "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -17610,7 +17666,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 57,
+          "line": 81,
           "module_id": "platform.blog",
           "name": "test_unknown_blog_article_returns_404",
           "qualname": "test_unknown_blog_article_returns_404"
@@ -17618,7 +17674,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 61,
+          "line": 85,
           "module_id": "platform.blog",
           "name": "test_blog_assets_and_fonts_are_whitelisted",
           "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -17626,7 +17682,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 77,
+          "line": 115,
           "module_id": "platform.blog",
           "name": "test_blog_media_is_manifest_whitelisted",
           "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -17634,7 +17690,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 86,
+          "line": 124,
           "module_id": "platform.blog",
           "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
           "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -17642,7 +17698,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 100,
+          "line": 138,
           "module_id": "platform.blog",
           "name": "test_every_published_article_and_declared_image_is_served",
           "qualname": "test_every_published_article_and_declared_image_is_served"
@@ -17658,7 +17714,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 57,
+          "line": 63,
           "module_id": "platform.blog",
           "name": "test_catalog_rejects_self_related_link",
           "qualname": "test_catalog_rejects_self_related_link"
@@ -17666,7 +17722,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 64,
+          "line": 70,
           "module_id": "platform.blog",
           "name": "test_catalog_rejects_unknown_cta",
           "qualname": "test_catalog_rejects_unknown_cta"
@@ -17674,7 +17730,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 71,
+          "line": 77,
           "module_id": "platform.blog",
           "name": "test_catalog_rejects_missing_required_media",
           "qualname": "test_catalog_rejects_missing_required_media"
@@ -17682,7 +17738,31 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 79,
+          "line": 85,
+          "module_id": "platform.blog",
+          "name": "test_catalog_requires_dedicated_card_metadata",
+          "qualname": "test_catalog_requires_dedicated_card_metadata"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 96,
+          "module_id": "platform.blog",
+          "name": "test_catalog_rejects_missing_dedicated_card_file",
+          "qualname": "test_catalog_rejects_missing_dedicated_card_file"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 104,
+          "module_id": "platform.blog",
+          "name": "test_dedicated_card_file_is_added_to_media_whitelist",
+          "qualname": "test_dedicated_card_file_is_added_to_media_whitelist"
+        },
+        {
+          "file": "backend/tests/test_blog_content.py",
+          "kind": "function",
+          "line": 110,
           "module_id": "platform.blog",
           "name": "test_catalog_rejects_external_image_hotlink",
           "qualname": "test_catalog_rejects_external_image_hotlink"
@@ -17690,7 +17770,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 88,
+          "line": 119,
           "module_id": "platform.blog",
           "name": "test_catalog_rejects_arbitrary_raw_html",
           "qualname": "test_catalog_rejects_arbitrary_raw_html"
@@ -17698,7 +17778,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 100,
+          "line": 131,
           "module_id": "platform.blog",
           "name": "test_catalog_resolves_directives_against_manifest_cta",
           "qualname": "test_catalog_resolves_directives_against_manifest_cta"
@@ -17706,7 +17786,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 118,
+          "line": 149,
           "module_id": "platform.blog",
           "name": "test_heading_anchors_are_deterministic_and_unique",
           "qualname": "test_heading_anchors_are_deterministic_and_unique"
@@ -17714,7 +17794,7 @@
         {
           "file": "backend/tests/test_blog_content.py",
           "kind": "function",
-          "line": 130,
+          "line": 161,
           "module_id": "platform.blog",
           "name": "test_blog_component_is_closed_and_preserves_tracking_key",
           "qualname": "test_blog_component_is_closed_and_preserves_tracking_key"
@@ -25309,7 +25389,7 @@
         },
         {
           "file": "backend/app/blog_routes.py",
-          "line": 129,
+          "line": 164,
           "method": "GET",
           "module_id": "products",
           "path": "/blog/assets/{asset_name}",
@@ -25483,7 +25563,7 @@
         {
           "file": "backend/app/blog_routes.py",
           "kind": "function",
-          "line": 129,
+          "line": 164,
           "module_id": "products",
           "name": "blog_asset",
           "qualname": "blog_asset"
@@ -35253,7 +35333,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 44,
+      "line": 57,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog",
@@ -35261,7 +35341,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 44,
+      "line": 57,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog",
@@ -35269,7 +35349,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 59,
+      "line": 94,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/articles/{slug}",
@@ -35277,7 +35357,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 129,
+      "line": 164,
       "method": "GET",
       "module_id": "products",
       "path": "/blog/assets/{asset_name}",
@@ -35285,7 +35365,15 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 120,
+      "line": 72,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/favicon-tests/{variant}",
+      "symbol": "favicon_test_page"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 155,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/fonts/{font_name}",
@@ -35293,7 +35381,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 139,
+      "line": 174,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/media/{media_name:path}",
@@ -35301,7 +35389,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 112,
+      "line": 147,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/robots.txt",
@@ -35309,7 +35397,7 @@
     },
     {
       "file": "backend/app/blog_routes.py",
-      "line": 101,
+      "line": 136,
       "method": "GET",
       "module_id": "platform.blog",
       "path": "/blog/sitemap.xml",
@@ -36889,7 +36977,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "class",
-      "line": 52,
+      "line": 53,
       "module_id": "platform.blog",
       "name": "BlogCatalog",
       "qualname": "BlogCatalog"
@@ -36897,7 +36985,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "method",
-      "line": 57,
+      "line": 58,
       "module_id": "platform.blog",
       "name": "published",
       "qualname": "BlogCatalog.published"
@@ -36905,7 +36993,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "method",
-      "line": 60,
+      "line": 61,
       "module_id": "platform.blog",
       "name": "by_slug",
       "qualname": "BlogCatalog.by_slug"
@@ -36913,7 +37001,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "method",
-      "line": 63,
+      "line": 64,
       "module_id": "platform.blog",
       "name": "by_source_id",
       "qualname": "BlogCatalog.by_source_id"
@@ -36921,7 +37009,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "method",
-      "line": 67,
+      "line": 68,
       "module_id": "platform.blog",
       "name": "allowed_media",
       "qualname": "BlogCatalog.allowed_media"
@@ -36929,7 +37017,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 75,
+      "line": 77,
       "module_id": "platform.blog",
       "name": "default_content_dir",
       "qualname": "default_content_dir"
@@ -36937,7 +37025,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 79,
+      "line": 81,
       "module_id": "platform.blog",
       "name": "_required_text",
       "qualname": "_required_text"
@@ -36945,7 +37033,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 86,
+      "line": 88,
       "module_id": "platform.blog",
       "name": "load_blog_catalog",
       "qualname": "load_blog_catalog"
@@ -36953,7 +37041,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 138,
+      "line": 149,
       "module_id": "platform.blog",
       "name": "_safe_relative_file",
       "qualname": "_safe_relative_file"
@@ -36961,7 +37049,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 143,
+      "line": 154,
       "module_id": "platform.blog",
       "name": "validate_blog_catalog",
       "qualname": "validate_blog_catalog"
@@ -36969,7 +37057,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 178,
+      "line": 189,
       "module_id": "platform.blog",
       "name": "validate_component",
       "qualname": "validate_blog_catalog.validate_component"
@@ -36977,7 +37065,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 210,
+      "line": 221,
       "module_id": "platform.blog",
       "name": "render_blog_component",
       "qualname": "render_blog_component"
@@ -36985,7 +37073,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 225,
+      "line": 236,
       "module_id": "platform.blog",
       "name": "_heading_anchor",
       "qualname": "_heading_anchor"
@@ -36993,7 +37081,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 231,
+      "line": 242,
       "module_id": "platform.blog",
       "name": "add_heading_anchors",
       "qualname": "add_heading_anchors"
@@ -37001,7 +37089,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 235,
+      "line": 246,
       "module_id": "platform.blog",
       "name": "replace",
       "qualname": "add_heading_anchors.replace"
@@ -37009,7 +37097,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 249,
+      "line": 260,
       "module_id": "platform.blog",
       "name": "render_article_body",
       "qualname": "render_article_body"
@@ -37017,7 +37105,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 255,
+      "line": 266,
       "module_id": "platform.blog",
       "name": "card_html",
       "qualname": "card_html"
@@ -37025,7 +37113,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 269,
+      "line": 281,
       "module_id": "platform.blog",
       "name": "related_cards_html",
       "qualname": "related_cards_html"
@@ -37033,7 +37121,7 @@
     {
       "file": "backend/app/blog_content.py",
       "kind": "function",
-      "line": 276,
+      "line": 288,
       "module_id": "platform.blog",
       "name": "toc_html",
       "qualname": "toc_html"
@@ -37041,7 +37129,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 32,
+      "line": 45,
       "module_id": "platform.blog",
       "name": "_template",
       "qualname": "_template"
@@ -37049,7 +37137,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 36,
+      "line": 49,
       "module_id": "platform.blog",
       "name": "_html_response",
       "qualname": "_html_response"
@@ -37057,7 +37145,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 44,
+      "line": 57,
       "module_id": "platform.blog",
       "name": "blog_home",
       "qualname": "blog_home"
@@ -37065,7 +37153,15 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 59,
+      "line": 72,
+      "module_id": "platform.blog",
+      "name": "favicon_test_page",
+      "qualname": "favicon_test_page"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 94,
       "module_id": "platform.blog",
       "name": "blog_article",
       "qualname": "blog_article"
@@ -37073,7 +37169,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 101,
+      "line": 136,
       "module_id": "platform.blog",
       "name": "blog_sitemap",
       "qualname": "blog_sitemap"
@@ -37081,7 +37177,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 112,
+      "line": 147,
       "module_id": "platform.blog",
       "name": "blog_robots",
       "qualname": "blog_robots"
@@ -37089,7 +37185,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 120,
+      "line": 155,
       "module_id": "platform.blog",
       "name": "blog_font",
       "qualname": "blog_font"
@@ -37097,7 +37193,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 129,
+      "line": 164,
       "module_id": "products",
       "name": "blog_asset",
       "qualname": "blog_asset"
@@ -37105,7 +37201,7 @@
     {
       "file": "backend/app/blog_routes.py",
       "kind": "function",
-      "line": 139,
+      "line": 174,
       "module_id": "platform.blog",
       "name": "blog_media",
       "qualname": "blog_media"
@@ -45649,7 +45745,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 34,
+      "line": 38,
       "module_id": "platform.blog",
       "name": "test_blog_home_trailing_slash_is_supported",
       "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -45657,7 +45753,15 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 38,
+      "line": 42,
+      "module_id": "platform.blog",
+      "name": "test_favicon_test_pages_are_isolated_and_noindex",
+      "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 62,
       "module_id": "platform.blog",
       "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
       "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -45665,7 +45769,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 57,
+      "line": 81,
       "module_id": "platform.blog",
       "name": "test_unknown_blog_article_returns_404",
       "qualname": "test_unknown_blog_article_returns_404"
@@ -45673,7 +45777,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 61,
+      "line": 85,
       "module_id": "platform.blog",
       "name": "test_blog_assets_and_fonts_are_whitelisted",
       "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -45681,7 +45785,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 77,
+      "line": 115,
       "module_id": "platform.blog",
       "name": "test_blog_media_is_manifest_whitelisted",
       "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -45689,7 +45793,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 86,
+      "line": 124,
       "module_id": "platform.blog",
       "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
       "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -45697,7 +45801,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 100,
+      "line": 138,
       "module_id": "platform.blog",
       "name": "test_every_published_article_and_declared_image_is_served",
       "qualname": "test_every_published_article_and_declared_image_is_served"
@@ -45713,7 +45817,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 57,
+      "line": 63,
       "module_id": "platform.blog",
       "name": "test_catalog_rejects_self_related_link",
       "qualname": "test_catalog_rejects_self_related_link"
@@ -45721,7 +45825,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 64,
+      "line": 70,
       "module_id": "platform.blog",
       "name": "test_catalog_rejects_unknown_cta",
       "qualname": "test_catalog_rejects_unknown_cta"
@@ -45729,7 +45833,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 71,
+      "line": 77,
       "module_id": "platform.blog",
       "name": "test_catalog_rejects_missing_required_media",
       "qualname": "test_catalog_rejects_missing_required_media"
@@ -45737,7 +45841,31 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 79,
+      "line": 85,
+      "module_id": "platform.blog",
+      "name": "test_catalog_requires_dedicated_card_metadata",
+      "qualname": "test_catalog_requires_dedicated_card_metadata"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 96,
+      "module_id": "platform.blog",
+      "name": "test_catalog_rejects_missing_dedicated_card_file",
+      "qualname": "test_catalog_rejects_missing_dedicated_card_file"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 104,
+      "module_id": "platform.blog",
+      "name": "test_dedicated_card_file_is_added_to_media_whitelist",
+      "qualname": "test_dedicated_card_file_is_added_to_media_whitelist"
+    },
+    {
+      "file": "backend/tests/test_blog_content.py",
+      "kind": "function",
+      "line": 110,
       "module_id": "platform.blog",
       "name": "test_catalog_rejects_external_image_hotlink",
       "qualname": "test_catalog_rejects_external_image_hotlink"
@@ -45745,7 +45873,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 88,
+      "line": 119,
       "module_id": "platform.blog",
       "name": "test_catalog_rejects_arbitrary_raw_html",
       "qualname": "test_catalog_rejects_arbitrary_raw_html"
@@ -45753,7 +45881,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 100,
+      "line": 131,
       "module_id": "platform.blog",
       "name": "test_catalog_resolves_directives_against_manifest_cta",
       "qualname": "test_catalog_resolves_directives_against_manifest_cta"
@@ -45761,7 +45889,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 118,
+      "line": 149,
       "module_id": "platform.blog",
       "name": "test_heading_anchors_are_deterministic_and_unique",
       "qualname": "test_heading_anchors_are_deterministic_and_unique"
@@ -45769,7 +45897,7 @@
     {
       "file": "backend/tests/test_blog_content.py",
       "kind": "function",
-      "line": 130,
+      "line": 161,
       "module_id": "platform.blog",
       "name": "test_blog_component_is_closed_and_preserves_tracking_key",
       "qualname": "test_blog_component_is_closed_and_preserves_tracking_key"
@@ -56643,13 +56771,21 @@
       "kind": "method",
       "line": 62,
       "module_id": "operations.delivery",
+      "name": "test_caddy_exposes_only_the_three_temporary_favicon_pages",
+      "qualname": "DeployPolicyTests.test_caddy_exposes_only_the_three_temporary_favicon_pages"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 82,
+      "module_id": "operations.delivery",
       "name": "test_ci_builds_and_tests_only_changed_application_services",
       "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
     },
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 72,
+      "line": 92,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -56657,7 +56793,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 150,
+      "line": 170,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -56665,7 +56801,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 160,
+      "line": 180,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -56673,7 +56809,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 166,
+      "line": 186,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"

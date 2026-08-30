@@ -141,6 +141,14 @@ curl --fail --silent --show-error --max-time 15 \
     https://blog.похудение-это-есть.рф/sitemap.xml >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://blog.похудение-это-есть.рф/robots.txt >/dev/null
+for favicon_page in black blue face; do
+    curl --fail --silent --show-error --max-time 15 \
+        "https://blog.похудение-это-есть.рф/favicon-tests/${favicon_page}" >/dev/null
+done
+for favicon_asset in favicon-test-black.svg favicon-test-blue.svg favicon-test-face.png; do
+    curl --fail --silent --show-error --max-time 15 \
+        "https://blog.похудение-это-есть.рф/blog/assets/${favicon_asset}" >/dev/null
+done
 
 if [[ "${caddy_changed}" == "true" ]]; then
     app_headers="$(curl --fail --silent --show-error --max-time 15 \

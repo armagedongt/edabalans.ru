@@ -22,7 +22,20 @@ from app.blog_content import (
 router = APIRouter()
 BLOG_DIR = Path(__file__).resolve().parent / "static" / "blog"
 BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2"}
-BLOG_ASSET_FILES = {"blog.css", "blog.js", "sergey-author.png"}
+BLOG_ASSET_FILES = {
+    "blog.css",
+    "blog.js",
+    "favicon-test-black.svg",
+    "favicon-test-blue.svg",
+    "favicon-test-face.png",
+    "sergey-author.png",
+}
+FAVICON_TEST_PAGES = {
+    "black": ("Блог — чёрная П.", "favicon-test-black.svg"),
+    "blue": ("Личный кабинет — синяя П.", "favicon-test-blue.svg"),
+    "face": ("Главная — фотография", "favicon-test-face.png"),
+}
+FAVICON_TEST_VERSION = "20260831a"
 BLOG_PUBLIC_ORIGIN = os.getenv(
     "BLOG_PUBLIC_ORIGIN",
     "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
@@ -53,6 +66,28 @@ def blog_home() -> HTMLResponse:
         .replace("<!-- BLOG_CARDS -->", "".join(card_html(article) for article in catalog.published))
     )
     return _html_response(rendered)
+
+
+@router.get("/blog/favicon-tests/{variant}", include_in_schema=False)
+def favicon_test_page(variant: str) -> HTMLResponse:
+    page = FAVICON_TEST_PAGES.get(variant)
+    if page is None:
+        raise HTTPException(status_code=404, detail="favicon test page not found")
+    title, favicon = page
+    rendered = f"""<!doctype html>
+<html lang=\"ru\">
+<head>
+  <meta charset=\"utf-8\">
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+  <meta name=\"robots\" content=\"noindex, nofollow\">
+  <title>{escape(title)}</title>
+  <link rel=\"icon\" href=\"/blog/assets/{favicon}?v={FAVICON_TEST_VERSION}\">
+</head>
+<body></body>
+</html>"""
+    response = _html_response(rendered)
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
 
 
 @router.get("/blog/articles/{slug}", include_in_schema=False)

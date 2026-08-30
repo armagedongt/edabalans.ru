@@ -15,6 +15,7 @@ def write_catalog(root: Path, *, related: list[str] | None = None, cta: str = "i
     (root / "articles").mkdir(parents=True)
     (root / "media").mkdir()
     (root / "media" / "hero.jpg").write_bytes(b"image")
+    (root / "media" / "card.jpg").write_bytes(b"image")
     source_ids = ["1", "2", "3", "4"]
     entries = []
     for index, source_id in enumerate(source_ids):
@@ -40,6 +41,11 @@ def write_catalog(root: Path, *, related: list[str] | None = None, cta: str = "i
                 "hero": {
                     "file": "hero.jpg",
                     "alt": "Обложка",
+                    "provenance": "owner source",
+                },
+                "card": {
+                    "file": "card.jpg",
+                    "alt": "Обложка карточки",
                     "provenance": "owner source",
                 },
                 "related_source_ids": article_related,
@@ -74,6 +80,31 @@ def test_catalog_rejects_missing_required_media(tmp_path: Path) -> None:
 
     with pytest.raises(ValueError, match="missing blog media"):
         load_blog_catalog(tmp_path)
+
+
+def test_catalog_requires_dedicated_card_metadata(tmp_path: Path) -> None:
+    write_catalog(tmp_path)
+    manifest = tmp_path / "manifest.json"
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["articles"][0].pop("card")
+    manifest.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="must have card metadata"):
+        load_blog_catalog(tmp_path)
+
+
+def test_catalog_rejects_missing_dedicated_card_file(tmp_path: Path) -> None:
+    write_catalog(tmp_path)
+    (tmp_path / "media" / "card.jpg").unlink()
+
+    with pytest.raises(ValueError, match="missing blog media: card.jpg"):
+        load_blog_catalog(tmp_path)
+
+
+def test_dedicated_card_file_is_added_to_media_whitelist(tmp_path: Path) -> None:
+    write_catalog(tmp_path)
+
+    assert load_blog_catalog(tmp_path).allowed_media == frozenset({"hero.jpg", "card.jpg"})
 
 
 def test_catalog_rejects_external_image_hotlink(tmp_path: Path) -> None:

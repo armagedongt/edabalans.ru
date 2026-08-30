@@ -122,14 +122,15 @@ html[data-theme="dark"] .theme-toggle .moon { display: block; }
   padding: clamp(64px, 8vw, 108px) 0 58px;
 }
 .eyebrow, .article-category, .blog-cta-eyebrow { margin: 0; color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
-.hero h1 { max-width: 800px; margin: 14px 0 0; font-size: clamp(46px, 6.5vw, 76px); font-weight: 600; letter-spacing: -.055em; line-height: 1; }
+.hero .eyebrow { margin-top: 18px; color: var(--muted); font-size: 18px; font-weight: 600; letter-spacing: 0; text-transform: none; }
+.hero h1 { max-width: 800px; margin: 0; font-size: clamp(46px, 6.5vw, 76px); font-weight: 800; letter-spacing: -.055em; line-height: 1; }
 .lead { max-width: 720px; margin: 25px 0 0; color: var(--muted); font-size: clamp(19px, 2vw, 23px); line-height: 1.5; }
 .hero-photo { position: relative; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 24px 24px 10px 24px; background: var(--surface-soft); box-shadow: var(--shadow); }
 .hero-photo::before { content: ""; display: block; padding-top: 100%; }
-.hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+.hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top right; transform: scale(2.6); transform-origin: top right; }
 .categories { display: flex; flex-wrap: wrap; gap: 9px; margin: 32px 0 0; padding: 0; list-style: none; }
-.categories button { padding: 9px 13px; border: 1px solid var(--border); border-radius: 999px; background: var(--surface-soft); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
-.categories button:hover, .categories button.active { border-color: var(--blue); background: var(--blue); color: #fff; }
+.categories button { padding: 9px 13px; border: 1px solid color-mix(in srgb, var(--border) 76%, transparent); border-radius: 7px; background: color-mix(in srgb, var(--surface-soft) 72%, transparent); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
+.categories button:hover, .categories button.active { border-color: color-mix(in srgb, var(--blue) 42%, var(--border)); background: color-mix(in srgb, var(--surface) 72%, transparent); color: var(--text); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--blue) 12%, transparent); }
 
 .articles-section { padding: 28px 0 84px; border-top: 1px solid var(--border); }
 .article-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
@@ -141,8 +142,8 @@ html[data-theme="dark"] .theme-toggle .moon { display: block; }
 .card-visual { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--surface-soft); }
 .card-visual img { width: 100%; height: 100%; object-fit: cover; transition: transform .24s ease; }
 .card-link:hover .card-visual img { transform: scale(1.025); }
-.card-tag { position: absolute; left: 16px; bottom: 14px; padding: 7px 11px; border-radius: 999px; background: var(--surface); color: var(--blue); font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
-html[data-theme="dark"] .card-tag { background: var(--blue); color: #fff; }
+.card-tag { position: absolute; left: 16px; bottom: 14px; padding: 7px 11px; border: 1px solid color-mix(in srgb, var(--border) 64%, transparent); border-radius: 7px; background: color-mix(in srgb, var(--surface) 76%, transparent); color: var(--blue); backdrop-filter: blur(10px); font-size: 12px; font-weight: 800; letter-spacing: .03em; text-transform: uppercase; }
+html[data-theme="dark"] .card-tag { background: color-mix(in srgb, var(--surface) 68%, transparent); color: #fff; }
 .card-body { display: grid; gap: 9px; padding: 21px; }
 .card-title { margin: 0; font-size: 19px; font-weight: 600; letter-spacing: -.02em; line-height: 1.35; }
 .card-copy { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.55; }

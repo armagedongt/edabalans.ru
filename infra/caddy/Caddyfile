@@ -151,6 +151,12 @@
 		reverse_proxy backend:8000
 	}
 
+	@blog_favicon_test path_regexp blog_favicon_test ^/favicon-tests/(black|blue|face)/?$
+	handle @blog_favicon_test {
+		rewrite * /blog/favicon-tests/{re.blog_favicon_test.1}
+		reverse_proxy backend:8000
+	}
+
 	handle /sitemap.xml {
 		rewrite * /blog/sitemap.xml
 		reverse_proxy backend:8000

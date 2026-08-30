@@ -59,6 +59,26 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertIn("/robots.txt", source)
         self.assertIn("--retry 5 --retry-all-errors --retry-delay 3", source)
 
+    def test_caddy_exposes_only_the_three_temporary_favicon_pages(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
+        deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
+
+        self.assertIn(
+            "^/favicon-tests/(black|blue|face)/?$",
+            source,
+        )
+        self.assertIn(
+            "rewrite * /blog/favicon-tests/{re.blog_favicon_test.1}",
+            source,
+        )
+        self.assertIn("favicon_page in black blue face", deploy)
+        self.assertIn("/favicon-tests/${favicon_page}", deploy)
+        self.assertIn(
+            "favicon-test-black.svg favicon-test-blue.svg favicon-test-face.png",
+            deploy,
+        )
+        self.assertIn("/blog/assets/${favicon_asset}", deploy)
+
     def test_ci_builds_and_tests_only_changed_application_services(self) -> None:
         source = (REPOSITORY_ROOT / ".github/workflows/production.yml").read_text(encoding="utf-8")
 

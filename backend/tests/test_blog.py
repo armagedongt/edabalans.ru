@@ -1,3 +1,5 @@
+import re
+
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -16,7 +18,10 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "Похудение — это есть.рф" in response.text
-    assert "Авторский блог Сергея Воронцова" in response.text
+    assert "Блог Сергея Воронцова" in response.text
+    assert response.text.index('<h1 id="blog-title">') < response.text.index(
+        '<p class="eyebrow">Блог Сергея Воронцова</p>'
+    )
     assert (
         "Пишу о питании, похудении и пищевых привычках, "
         "чтобы сделать ваше похудение проще."
@@ -27,12 +32,33 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'data-category-filter="ЗОЖ"' in response.text
     assert 'id="articles-title"' not in response.text
     assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
+    assert '/blog/media/13277231/02.png' in response.text
     assert "site-footer.js" in response.text
     assert "/blog/assets/blog.css" in response.text
 
 
 def test_blog_home_trailing_slash_is_supported() -> None:
     assert client.get("/blog/").status_code == 200
+
+
+def test_favicon_test_pages_are_isolated_and_noindex() -> None:
+    expected = {
+        "black": ("Блог — чёрная П.", "favicon-test-black.svg"),
+        "blue": ("Личный кабинет — синяя П.", "favicon-test-blue.svg"),
+        "face": ("Главная — фотография", "favicon-test-face.png"),
+    }
+
+    for variant, (title, favicon) in expected.items():
+        response = client.get(f"/blog/favicon-tests/{variant}")
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "no-cache"
+        assert response.headers["x-robots-tag"] == "noindex, nofollow"
+        assert f"<title>{title}</title>" in response.text
+        assert '<meta name="robots" content="noindex, nofollow">' in response.text
+        assert f'/blog/assets/{favicon}?v=20260831a' in response.text
+        assert "article-card" not in response.text
+
+    assert client.get("/blog/favicon-tests/unknown").status_code == 404
 
 
 def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
@@ -62,14 +88,36 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     font = client.get("/blog/fonts/inter-cyrillic.woff2")
     stylesheet = client.get("/blog/assets/blog.css")
     photo = client.get("/blog/assets/sergey-author.png")
+    black_favicon = client.get("/blog/assets/favicon-test-black.svg")
+    blue_favicon = client.get("/blog/assets/favicon-test-blue.svg")
+    face_favicon = client.get("/blog/assets/favicon-test-face.png")
 
     assert font.status_code == 200
     assert font.headers["content-type"] == "font/woff2"
     assert font.headers["cache-control"] == "public, max-age=31536000, immutable"
     assert stylesheet.status_code == 200
     assert stylesheet.headers["content-type"].startswith("text/css")
+    assert re.search(r"\.hero h1 \{[^}]*font-weight: 800;[^}]*\}", stylesheet.text)
+    assert re.search(
+        r"\.hero-photo img \{[^}]*transform: scale\(2\.6\);[^}]*transform-origin: top right;[^}]*\}",
+        stylesheet.text,
+    )
+    assert re.search(
+        r"\.categories button \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*\}",
+        stylesheet.text,
+    )
+    assert re.search(
+        r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*backdrop-filter: blur\(10px\);[^}]*\}",
+        stylesheet.text,
+    )
     assert photo.status_code == 200
     assert photo.headers["content-type"] == "image/png"
+    assert black_favicon.status_code == 200
+    assert black_favicon.headers["content-type"] == "image/svg+xml"
+    assert blue_favicon.status_code == 200
+    assert blue_favicon.headers["content-type"] == "image/svg+xml"
+    assert face_favicon.status_code == 200
+    assert face_favicon.headers["content-type"] == "image/png"
     assert client.get("/blog/fonts/unknown.woff2").status_code == 404
     assert client.get("/blog/assets/unknown.js").status_code == 404
 
@@ -108,7 +156,7 @@ def test_every_published_article_and_declared_image_is_served() -> None:
         assert page.text.count('class="article-card"') == 3
         assert '<img src="http' not in page.text
         assert page.text.count(f'<figure><img src="/blog/media/{article.hero.file}"') == 1
-        for media_name in (article.hero.file, *article.media):
+        for media_name in (article.hero.file, article.card.file, *article.media):
             media = client.get(f"/blog/media/{media_name}")
             assert media.status_code == 200
             assert media.headers["content-type"].startswith("image/")

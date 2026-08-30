@@ -42,6 +42,7 @@ class BlogArticle:
     category: str
     body_file: str
     hero: BlogHero
+    card: BlogHero
     related_source_ids: tuple[str, ...]
     cta: str
     status: str
@@ -68,6 +69,7 @@ class BlogCatalog:
         names: set[str] = set()
         for article in self.published:
             names.add(article.hero.file)
+            names.add(article.card.file)
             names.update(article.media)
         return frozenset(names)
 
@@ -109,6 +111,14 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             alt=_required_text(hero_raw, "alt"),
             provenance=_required_text(hero_raw, "provenance"),
         )
+        card_raw = raw.get("card")
+        if not isinstance(card_raw, dict):
+            raise ValueError(f"blog article {source_id} must have card metadata")
+        card = BlogHero(
+            file=_required_text(card_raw, "file"),
+            alt=_required_text(card_raw, "alt"),
+            provenance=_required_text(card_raw, "provenance"),
+        )
         related_raw = raw.get("related_source_ids")
         media_raw = raw.get("media", [])
         if not isinstance(related_raw, list) or not all(isinstance(item, str) for item in related_raw):
@@ -123,6 +133,7 @@ def load_blog_catalog(content_dir: Path | None = None) -> BlogCatalog:
             category=category,
             body_file=body_file,
             hero=hero,
+            card=card,
             related_source_ids=tuple(related_raw),
             cta=cta,
             status=status,
@@ -163,7 +174,7 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
         if not _safe_relative_file(article.body_file) or not (catalog.content_dir / "articles" / article.body_file).is_file():
             raise ValueError(f"missing blog body: {article.body_file}")
         body = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
-        declared_media = (article.hero.file, *article.media)
+        declared_media = (article.hero.file, article.card.file, *article.media)
         for media_file in declared_media:
             if not _safe_relative_file(media_file) or not (catalog.content_dir / "media" / media_file).is_file():
                 raise ValueError(f"missing blog media: {media_file}")
@@ -259,7 +270,8 @@ def card_html(article: BlogArticle, *, heading_level: int = 2) -> str:
         f'<article class="article-card" data-category="{escape(article.category, quote=True)}">'
         f'<a class="card-link" href="/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
-        f'<img src="/blog/media/{escape(article.hero.file, quote=True)}" alt="" loading="lazy">'
+        f'<img src="/blog/media/{escape(article.card.file, quote=True)}" '
+        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy">'
         f'<span class="card-tag">{escape(article.category)}</span></div>'
         f'<div class="card-body"><h{heading_level} class="card-title">{escape(article.title)}</h{heading_level}>'
         f'<p class="card-copy">{escape(article.excerpt)}</p></div></a></article>'
