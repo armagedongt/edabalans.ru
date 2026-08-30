@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Частые вопросы — Мастер-класс</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--ink:#16181d;--muted:#5b6470;--blue:#26afff;--warm:#e76850;--line:#edf0f4;--page:#f6f8fb}
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--ink);background:var(--page);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .faq-section{min-height:100vh;padding:64px 18px 88px}
+    .faq-shell{width:min(100%,1180px);margin:0 auto}
+    h1{max-width:880px;margin:0;font-size:23px;font-weight:800;line-height:1.1;letter-spacing:-1px;text-wrap:balance}
+    .faq-list{display:flex;flex-direction:column;gap:12px;max-width:880px;margin-top:36px}
+    .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
+    .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
+    .faq-item[data-open="true"]{background:linear-gradient(145deg,#fffaf8 0%,#fff0ec 100%);border-color:rgba(231,104,80,.42);box-shadow:0 16px 34px -27px rgba(143,54,39,.45)}
+    .faq-question{display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;gap:16px;width:100%;padding:22px 24px;color:var(--ink);background:transparent;border:0;font:inherit;text-align:left;cursor:pointer}
+    .faq-question-text{font-size:17px;font-weight:700;line-height:1.32;letter-spacing:-.2px}
+    .faq-sign{display:grid;width:28px;height:28px;place-items:center;color:var(--blue);font-size:25px;font-weight:600;line-height:1;transform:translateY(-1px)}
+    .faq-item[data-open="true"] .faq-sign{color:var(--warm)}
+    .faq-answer{animation:faq-open .2s ease both}
+    .faq-answer[hidden]{display:none}
+    .faq-answer-inner{overflow:hidden}
+    .faq-answer-copy{display:flex;flex-direction:column;gap:12px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
+    .faq-answer-copy p{margin:0}
+    .faq-answer-copy a{color:#168fd3;text-decoration-thickness:1px;text-underline-offset:3px}
+    .faq-media{display:block;width:100%;max-height:430px;object-fit:contain;background:#f6f8fb;border:1px solid rgba(38,175,255,.12);border-radius:13px}
+    @keyframes faq-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+    @media(min-width:901px){.faq-section{padding:96px 32px 120px}h1{font-size:36px}.faq-answer-copy{padding-right:66px}}
+    @media(prefers-reduced-motion:reduce){.faq-answer,.faq-item{animation:none;transition:none}}
+  </style>
+</head>
+<body>
+  <main class="faq-section">
+    <section class="faq-shell" aria-labelledby="faq-title">
+      <h1 id="faq-title">Частые вопросы</h1>
+      <div class="faq-list">
+        <article class="faq-item" data-open="true">
+          <button class="faq-question" type="button" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у вас образование?</span><span class="faq-sign" aria-hidden="true">−</span></button>
+          <div class="faq-answer" id="faq-answer-1"><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Я нутрициолог. Мои квалификации — «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта». <a href="https://vk.cc/cwXk54" target="_blank" rel="noreferrer">Документы можно посмотреть по ссылке</a>.</p>
+            <p>Я не ставлю диагнозы и не лечу заболевания. При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своей компетенции.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Я уже проходила разные марафоны. Чем этот отличается?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Здесь не будет меню на неделю и списка запрещённых продуктов. Одно дело знать в теории, что «надо правильно питаться», и другое — увидеть собственное питание, понять, что именно мешает вам, и научиться менять это в обычной жизни.</p>
+            <p>Поэтому весь Мастер-класс строится вокруг дневника питания и практических заданий.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">А если я не ем определённые продукты?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Ничего страшного. Система не требует есть конкретный набор продуктов. Если какой-то продукт вам не подходит из-за вкуса, непереносимости или рекомендации врача, вы будете собирать рацион из доступных вам вариантов.</p>
+            <p>Дневник нужен как раз затем, чтобы применять общие принципы к своей жизни, а не подгонять себя под чужое меню.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Я смогу пройти всё самостоятельно?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Да. Основная программа рассчитана на самостоятельное прохождение: посмотрели материал, выполнили задание, применили к своему рациону.</p>
+            <p>Если вам нужны ответы по ходу программы и индивидуальный разбор дневника, для этого есть тариф с консультацией.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">На сколько я похудею за 21 день?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-5" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Я не могу заранее обещать конкретное число килограммов. Это не марафон с целью любой ценой показать меньшую цифру через три недели.</p>
+            <p>Задача Мастер-класса — помочь вам разобраться в своём питании и научиться принимать решения, с которыми можно продолжать худеть дальше без очередного списка запретов.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span class="faq-question-text">А если мне не нужно худеть?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-6" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Тоже подойдёт. Мастер-класс помогает оценить качество рациона, разобраться с насыщением и пищевыми привычками и понять, что стоит изменить именно вам. Это пригодится и для поддержания веса.</p></div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">А если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-7" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Теория и применение — разные вещи. Можно знать всё про белки, овощи и калории, но не замечать, что происходит в собственном рационе.</p>
+            <p>Здесь вы не просто читаете правила: ведёте дневник, оцениваете питание и выбираете конкретные изменения для себя.</p>
+          </div></div></div>
+        </article>
+      </div>
+    </section>
+  </main>
+  <script>
+    document.querySelectorAll('.faq-question').forEach((button)=>button.addEventListener('click',()=>{
+      const item=button.closest('.faq-item');const open=item.dataset.open!=='true';
+      document.querySelectorAll('.faq-item').forEach((other)=>{other.dataset.open='false';const b=other.querySelector('.faq-question');b.setAttribute('aria-expanded','false');other.querySelector('.faq-sign').textContent='+';other.querySelector('.faq-answer').hidden=true});
+      if(open){item.dataset.open='true';button.setAttribute('aria-expanded','true');item.querySelector('.faq-sign').textContent='−';item.querySelector('.faq-answer').hidden=false}
+    }));
+  </script>
+</body>
+</html>
