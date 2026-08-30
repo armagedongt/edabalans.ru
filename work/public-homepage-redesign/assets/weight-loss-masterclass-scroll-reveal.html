@@ -1,0 +1,167 @@
+<!--
+  Готовый блок для вставки в HTML-блок сайта.
+  Все стили ограничены классом .wl-masterclass-story.
+-->
+<section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
+  <div
+    class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
+    data-wl-reveal="from-right"
+  >
+    <img
+      src="https://storage.yandexcloud.net/workcloud1/design/homepage/weight-loss-before-after/weight-loss-before-masterclass.svg"
+      alt="Похудение до мастер-класса: запутанный путь"
+      width="1354"
+      height="410"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+
+  <div
+    class="wl-masterclass-story__divider"
+    data-wl-reveal="divider"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="wl-masterclass-story__visual wl-masterclass-story__visual--after"
+    data-wl-reveal="from-left"
+  >
+    <img
+      src="https://storage.yandexcloud.net/workcloud1/design/homepage/weight-loss-before-after/weight-loss-after-masterclass.svg"
+      alt="Похудение после мастер-класса: прямой путь"
+      width="1354"
+      height="315"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+</section>
+
+<style>
+  .wl-masterclass-story {
+    --wl-ink: #171717;
+    --wl-max-width: 1180px;
+    --wl-side-padding: clamp(16px, 4vw, 44px);
+    --wl-reveal-distance: clamp(54px, 11vw, 150px);
+    --wl-reveal-duration: 850ms;
+
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    padding: clamp(44px, 7vw, 92px) var(--wl-side-padding);
+    color: var(--wl-ink);
+    background: transparent;
+  }
+
+  .wl-masterclass-story *,
+  .wl-masterclass-story *::before,
+  .wl-masterclass-story *::after {
+    box-sizing: border-box;
+  }
+
+  .wl-masterclass-story__visual,
+  .wl-masterclass-story__divider {
+    width: min(100%, var(--wl-max-width));
+    margin-inline: auto;
+  }
+
+  .wl-masterclass-story__visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .wl-masterclass-story__divider {
+    height: 2px;
+    margin-block: clamp(38px, 8vw, 92px);
+    background: repeating-linear-gradient(
+      90deg,
+      currentColor 0 20px,
+      transparent 20px 40px
+    );
+    transform-origin: center;
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal] {
+    opacity: 0;
+    transition:
+      opacity var(--wl-reveal-duration) ease,
+      transform var(--wl-reveal-duration) cubic-bezier(.22, 1, .36, 1);
+    will-change: opacity, transform;
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="from-right"] {
+    transform: translate3d(var(--wl-reveal-distance), 0, 0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="from-left"] {
+    transform: translate3d(calc(-1 * var(--wl-reveal-distance)), 0, 0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="divider"] {
+    transform: scaleX(0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal].is-wl-visible {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  @media (max-width: 600px) {
+    .wl-masterclass-story {
+      padding-block: 36px;
+    }
+
+    .wl-masterclass-story__divider {
+      margin-block: 34px;
+      background-size: 30px 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wl-masterclass-story.is-wl-ready [data-wl-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      will-change: auto;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const blocks = document.querySelectorAll('.wl-masterclass-story:not([data-wl-initialized])');
+
+    blocks.forEach((block) => {
+      block.dataset.wlInitialized = 'true';
+      const items = block.querySelectorAll('[data-wl-reveal]');
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach((item) => item.classList.add('is-wl-visible'));
+        return;
+      }
+
+      block.classList.add('is-wl-ready');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-wl-visible');
+            return;
+          }
+
+          if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove('is-wl-visible');
+          }
+        });
+      }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -12% 0px'
+      });
+
+      items.forEach((item) => observer.observe(item));
+    });
+  })();
+</script>

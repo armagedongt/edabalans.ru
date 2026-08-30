@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Да как уже надоело! — scroll-прототип</title>
+  <style>
+    @font-face {
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 500 900;
+      font-display: swap;
+      src: url('montserrat-cyrillic.woff2') format('woff2');
+      unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+    }
+
+    @font-face {
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 500 900;
+      font-display: swap;
+      src: url('montserrat-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    :root {
+      --crying-bg: #f7fbfe;
+      --crying-paper: #ffffff;
+      --crying-ink: #252525;
+      --crying-blue: #1769d2;
+      --crying-blue-dark: #1769d2;
+      --crying-font: Montserrat, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--crying-bg); }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--crying-ink);
+      font-family: var(--crying-font);
+      background: radial-gradient(circle at 12% 5%, rgba(23, 105, 210, .09), transparent 28%), var(--crying-bg);
+    }
+
+    .preview-space {
+      display: grid;
+      min-height: 72svh;
+      place-items: center;
+      padding: 32px 20px;
+      color: #65808f;
+      text-align: center;
+    }
+
+    .preview-space__inner {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+      max-width: 620px;
+    }
+
+    .preview-space__eyebrow {
+      margin: 0;
+      color: var(--crying-blue-dark);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .preview-space__title {
+      margin: 0;
+      color: var(--crying-ink);
+      font-size: clamp(27px, 5vw, 54px);
+      font-weight: 900;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .preview-space__text {
+      max-width: 520px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .preview-space__arrow {
+      position: relative;
+      width: 2px;
+      height: 42px;
+      margin-top: 8px;
+      background: var(--crying-blue);
+    }
+
+    .preview-space__arrow::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--crying-blue);
+      border-bottom: 2px solid var(--crying-blue);
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .crying-scroll {
+      position: relative;
+      height: 360svh;
+    }
+
+    .crying-scroll__scene {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 45%, rgba(23, 105, 210, .11), transparent 42%), linear-gradient(180deg, #fff 0 14%, #f8fcff 40%, #e9f7ff 100%);
+      isolation: isolate;
+    }
+
+    .crying-scroll__mask {
+      position: absolute;
+      z-index: 20;
+      top: 0;
+      right: 0;
+      left: 0;
+      display: grid;
+      min-height: clamp(112px, 19svh, 188px);
+      align-content: center;
+      justify-items: center;
+      padding: clamp(22px, 4vw, 48px) 18px 24px;
+      background: var(--crying-paper);
+      box-shadow: 0 16px 32px rgba(29, 91, 126, .06);
+    }
+
+    .crying-scroll__mask::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -36px;
+      left: 0;
+      height: 36px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, .98), rgba(255, 255, 255, 0));
+      pointer-events: none;
+    }
+
+    .crying-scroll__title {
+      margin: 0;
+      white-space: nowrap;
+      font-size: clamp(25px, 6.3vw, 86px);
+      font-weight: 800;
+      letter-spacing: -.062em;
+      line-height: .9;
+      text-transform: uppercase;
+    }
+
+    .crying-scroll__visual {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: grid;
+      height: calc(100svh - clamp(112px, 19svh, 188px));
+      min-height: 430px;
+      align-items: start;
+      justify-items: center;
+      padding: clamp(42px, 6svh, 70px) clamp(10px, 3vw, 46px) 0;
+      opacity: 0;
+      transform: scale(.84);
+      transform-origin: 50% 68%;
+      will-change: opacity, transform, filter;
+      filter: blur(9px);
+    }
+
+    .crying-scroll__person {
+      display: block;
+      width: min(94vw, 1050px);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 24px 28px rgba(20, 75, 106, .13));
+    }
+
+    .crying-scroll__pains {
+      position: absolute;
+      z-index: 8;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .crying-scroll__pain {
+      position: absolute;
+      top: 0;
+      width: min(84vw, 470px);
+      margin: 0;
+      border: 0;
+      border-radius: 22px 22px 7px 22px;
+      padding: clamp(15px, 2.2vw, 22px) clamp(17px, 2.5vw, 26px);
+      color: rgba(37, 37, 37, .84);
+      font-family: inherit;
+      font-size: clamp(16px, 2vw, 24px);
+      font-weight: 600;
+      letter-spacing: -.018em;
+      line-height: 1.18;
+      background: rgba(247, 251, 255, .84);
+      box-shadow: 0 16px 42px rgba(22, 89, 124, .13);
+      backdrop-filter: blur(12px) saturate(1.06);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .crying-scroll__pain::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      bottom: -13px;
+      width: 23px;
+      height: 23px;
+      background: inherit;
+      clip-path: polygon(100% 0, 100% 100%, 0 0);
+    }
+
+    .crying-scroll__pain:nth-child(odd) {
+      left: max(5vw, calc(50% - 520px));
+      border-radius: 22px 22px 22px 7px;
+    }
+
+    .crying-scroll__pain:nth-child(odd)::after {
+      right: auto;
+      left: -1px;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    .crying-scroll__pain:nth-child(even) {
+      right: max(5vw, calc(50% - 520px));
+    }
+
+    .crying-scroll__pain--final {
+      left: 50% !important;
+      border: 0;
+      border-radius: 22px;
+      color: #fff;
+      font-weight: 800;
+      text-align: center;
+      background: rgba(23, 105, 210, .96);
+      box-shadow: 0 20px 54px rgba(23, 105, 210, .28);
+    }
+
+    .crying-scroll__pain--final::after { display: none; }
+
+    .crying-scroll__counter {
+      position: absolute;
+      z-index: 21;
+      right: 20px;
+      bottom: 18px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .crying-scroll__counter span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(18, 24, 32, .16);
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .crying-scroll__counter span.is-active {
+      background: var(--crying-blue-dark);
+      transform: scale(1.35);
+    }
+
+    @media (max-width: 700px) {
+      .crying-scroll { height: 390svh; }
+      .crying-scroll__scene { min-height: 560px; }
+
+      .crying-scroll__mask {
+        min-height: 126px;
+        padding: 23px 10px 20px;
+      }
+
+      .crying-scroll__title {
+        font-size: clamp(21px, 6.25vw, 29px);
+        letter-spacing: -.055em;
+      }
+
+      .crying-scroll__visual {
+        bottom: 0;
+        height: calc(100svh - 126px);
+        min-height: 390px;
+        padding: clamp(38px, 5.5svh, 52px) 6px 0;
+      }
+
+      .crying-scroll__person { width: 100%; }
+
+      .crying-scroll__pain {
+        width: min(84vw, 340px);
+        border-radius: 18px 18px 6px 18px;
+        padding: 15px 17px;
+        font-size: clamp(15px, 4.2vw, 18px);
+      }
+
+      .crying-scroll__pain:nth-child(odd) {
+        left: 5vw;
+        border-radius: 18px 18px 18px 6px;
+      }
+
+      .crying-scroll__pain:nth-child(even) { right: 5vw; }
+
+      .crying-scroll__pain--final {
+        width: min(88vw, 350px);
+        border-radius: 18px;
+      }
+
+      .crying-scroll__counter {
+        right: 14px;
+        bottom: 13px;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crying-scroll { height: auto; }
+
+      .crying-scroll__scene {
+        position: relative;
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding-bottom: 48px;
+      }
+
+      .crying-scroll__mask {
+        position: relative;
+        min-height: 0;
+      }
+
+      .crying-scroll__mask::after,
+      .crying-scroll__counter { display: none; }
+
+      .crying-scroll__visual {
+        position: relative;
+        bottom: auto;
+        height: auto;
+        min-height: 0;
+        padding: 24px 10px;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+
+      .crying-scroll__pains {
+        position: relative;
+        display: grid;
+        gap: 14px;
+        padding: 0 16px;
+      }
+
+      .crying-scroll__pain,
+      .crying-scroll__pain:nth-child(odd),
+      .crying-scroll__pain:nth-child(even),
+      .crying-scroll__pain--final {
+        position: relative;
+        top: auto;
+        right: auto;
+        left: auto !important;
+        width: min(100%, 620px);
+        margin-inline: auto;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="preview-space" aria-label="Место перед демонстрационным блоком">
+    <div class="preview-space__inner">
+      <p class="preview-space__eyebrow">Scroll-прототип · блок узнавания</p>
+      <h1 class="preview-space__title">Здесь заканчивается предыдущий блок страницы</h1>
+      <p class="preview-space__text">Прокрути ниже: заголовок закрепится, персонаж проявится из глубины, а временные тезисы начнут подниматься поверх картинки.</p>
+      <span class="preview-space__arrow" aria-hidden="true"></span>
+    </div>
+  </section>
+
+  <section class="crying-scroll" data-crying-scroll>
+    <div class="crying-scroll__scene">
+      <header class="crying-scroll__mask">
+        <h2 class="crying-scroll__title">Да как уже надоело!</h2>
+      </header>
+
+      <div class="crying-scroll__visual" data-crying-person>
+        <img class="crying-scroll__person" src="crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
+      </div>
+
+      <div class="crying-scroll__pains" aria-label="Временные примеры трудностей с похудением">
+        <p class="crying-scroll__pain">Весь день держалась. Вечером — снова срыв на диете</p>
+        <p class="crying-scroll__pain">Похудела на 5 кг. Потом набрала 6</p>
+        <p class="crying-scroll__pain">Опять убрала всё «вредное». Надолго не хватило</p>
+        <p class="crying-scroll__pain">С понедельника начинаю заново. Уже который раз</p>
+        <p class="crying-scroll__pain crying-scroll__pain--final">Я так больше не могу</p>
+      </div>
+
+      <div class="crying-scroll__counter" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="preview-space" aria-label="Место после демонстрационного блока">
+    <div class="preview-space__inner">
+      <p class="preview-space__eyebrow">Блок закончен</p>
+      <h2 class="preview-space__title">Дальше продолжается обычная страница</h2>
+      <p class="preview-space__text">Последняя фраза остаётся на картинке до самого выхода из закреплённой сцены, а затем весь блок уезжает вверх.</p>
+    </div>
+  </section>
+
+  <script>
+    (() => {
+      const root = document.querySelector('[data-crying-scroll]');
+      if (!root) return;
+
+      const scene = root.querySelector('.crying-scroll__scene');
+      const person = root.querySelector('[data-crying-person]');
+      const personImage = root.querySelector('.crying-scroll__person');
+      const pains = [...root.querySelectorAll('.crying-scroll__pain')];
+      const dots = [...root.querySelectorAll('.crying-scroll__counter span')];
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let ticking = false;
+
+      const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+      const mix = (from, to, amount) => from + (to - from) * amount;
+      const ease = (value) => 1 - Math.pow(1 - clamp(value), 3);
+
+      const setPainState = (pain, index, progress) => {
+        const isFinal = index === pains.length - 1;
+        const start = index * .10;
+        const travel = .44;
+        const local = clamp((progress - start) / travel);
+        const viewportHeight = window.innerHeight;
+        const startY = viewportHeight * .87;
+        const imageRect = personImage.getBoundingClientRect();
+        const sceneRect = scene.getBoundingClientRect();
+        const endY = -viewportHeight * .13;
+        const finalY = imageRect.bottom - sceneRect.top - pain.offsetHeight - clamp(viewportHeight * .015, 10, 16);
+        const movingY = mix(startY, endY, local);
+        const y = isFinal ? Math.max(finalY, movingY) : movingY;
+
+        let opacity = clamp(local / .045);
+        if (!isFinal) opacity *= clamp((1 - local) / .15);
+
+        pain.style.opacity = opacity.toFixed(3);
+        pain.style.transform = isFinal
+          ? `translate3d(-50%, ${y}px, 0)`
+          : `translate3d(0, ${y}px, 0)`;
+
+        return local;
+      };
+
+      const render = () => {
+        ticking = false;
+        if (reducedMotion.matches) return;
+
+        const rect = root.getBoundingClientRect();
+        const distance = Math.max(1, root.offsetHeight - window.innerHeight);
+        const triggerLead = window.innerHeight * .10;
+        const progress = clamp((triggerLead - rect.top) / (distance + triggerLead));
+        const reveal = ease(progress / .035);
+
+        person.style.opacity = reveal.toFixed(3);
+        person.style.transform = `scale(${mix(.93, 1, reveal).toFixed(4)})`;
+        person.style.filter = `blur(${mix(4, 0, reveal).toFixed(2)}px)`;
+
+        let activeIndex = -1;
+        pains.forEach((pain, index) => {
+          if (setPainState(pain, index, progress) > .08) activeIndex = index;
+        });
+
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('is-active', index === activeIndex);
+        });
+      };
+
+      const requestRender = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(render);
+      };
+
+      reducedMotion.addEventListener?.('change', requestRender);
+      window.addEventListener('scroll', requestRender, { passive: true });
+      window.addEventListener('resize', requestRender);
+      requestRender();
+    })();
+  </script>
+</body>
+</html>
