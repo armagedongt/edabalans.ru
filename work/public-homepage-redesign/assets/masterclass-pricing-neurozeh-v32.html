@@ -1,0 +1,1217 @@
+<meta charset="utf-8">
+<div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="https://api.edabalans.ru/api/pricing/site">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
+
+    #edb-pricing-neurozeh-v1 {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: #16181d;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    #edb-pricing-neurozeh-v1 * {
+      box-sizing: border-box;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-toolbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      display: flex;
+      width: min(100%, 390px);
+      gap: 8px;
+      padding: 10px 18px;
+      background: rgba(22, 24, 29, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-switch {
+      flex: 1;
+      min-height: 38px;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 999px;
+      background: transparent;
+      color: rgba(255, 255, 255, .72);
+      font: 800 12px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-switch[aria-pressed="true"] {
+      border-color: #ffffff;
+      background: #ffffff;
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-phone {
+      width: min(100%, 390px);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 92% 5%, rgba(38, 175, 255, .17), transparent 19%),
+        #f5f7fa;
+      padding: 58px 18px 68px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 8px 14px;
+      border: 1px solid #dce4ec;
+      border-radius: 11px;
+      background: #ffffff;
+      box-shadow: 0 3px 8px rgba(20, 30, 60, .06);
+      color: #1391e8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-kicker::before {
+      width: 9px;
+      height: 9px;
+      margin-right: 9px;
+      border-radius: 999px;
+      background: #ff6a2a;
+      content: '';
+    }
+
+    #edb-pricing-neurozeh-v1 h2 {
+      max-width: 330px;
+      margin: 20px 0 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 29px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-lead {
+      margin: 16px 0 0;
+      color: #59616e;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-status {
+      margin: 30px 0 0;
+      padding: 20px;
+      border: 1px solid #dfe5ec;
+      border-radius: 18px;
+      background: #ffffff;
+      color: #343942;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan {
+      position: relative;
+      overflow: hidden;
+      padding: 27px 25px 25px;
+      border: 1px solid #e7ebf0;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 28px 54px -34px rgba(20, 30, 60, .42);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured {
+      border: 0;
+      background:
+        radial-gradient(circle at 94% 1%, rgba(255, 255, 255, .22), transparent 29%),
+        linear-gradient(150deg, #29b7ff 0%, #168fe8 100%);
+      color: #ffffff;
+      box-shadow: 0 30px 60px -32px rgba(21, 145, 232, .8);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-name {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name {
+      font-size: 21px;
+      letter-spacing: -.06em;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-ribbon {
+      display: inline-flex;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #ff6a2a;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transform: rotate(-1.5deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-descriptor {
+      margin: 11px 0 0;
+      color: #68717e;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-descriptor {
+      color: rgba(255, 255, 255, .88);
+    }
+
+    #edb-pricing-neurozeh-v1 ul {
+      display: grid;
+      gap: 11px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #edb-pricing-neurozeh-v1 li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 11px;
+      align-items: start;
+      color: #2b2f36;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured li {
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      margin-top: 0;
+      border-radius: 8px;
+      background: #eaf7ff;
+      color: #1391e8;
+      box-shadow: inset 0 0 0 1px rgba(19, 145, 232, .08);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check svg {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check::before {
+      content: '✓';
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-check {
+      background: #ffffff;
+      color: #1391e8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-bottom {
+      margin-top: 27px;
+      padding-top: 23px;
+      border-top: 1px solid #edf0f4;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-bottom {
+      border-top-color: rgba(255, 255, 255, .23);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price-row {
+      display: flex;
+      min-height: 34px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 5px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price-row[hidden] {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old {
+      position: relative;
+      display: inline-block;
+      color: #8b929c;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old:not(:empty)::after {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      right: -2px;
+      left: -2px;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      content: '';
+      transform: rotate(-3deg);
+      transform-origin: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old:empty {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket {
+      position: relative;
+      display: none;
+      min-height: 23px;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border: 0;
+      background: #ff6738;
+      box-shadow: 0 10px 18px -11px rgba(116, 34, 10, .72);
+      clip-path: polygon(4% 0, 96% 0, 100% 17%, 96% 34%, 100% 51%, 96% 68%, 100% 85%, 96% 100%, 4% 100%, 0 83%, 4% 66%, 0 49%, 4% 32%, 0 15%);
+      color: #ffffff;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      line-height: 1;
+      text-transform: uppercase;
+      transform: rotate(-3deg);
+      transform-origin: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket::before {
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      width: 20px;
+      height: 6px;
+      border-radius: 2px;
+      background: rgba(255, 240, 207, .72);
+      box-shadow: 0 2px 4px rgba(95, 42, 20, .12);
+      content: '';
+      transform: translateX(-50%) rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket.is-visible {
+      display: inline-flex;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket strong {
+      font-size: 11px;
+      letter-spacing: -.02em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-saving {
+      display: none;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: -.01em;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child ul {
+      margin-top: 16px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-bottom {
+      margin-top: 18px;
+      padding-top: 18px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-old {
+      color: rgba(255, 255, 255, .7);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-discount-ticket {
+      background: #ff6738;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 37px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.05em;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-button {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 19px;
+      border: 0;
+      border-radius: 16px;
+      background: #26afff;
+      box-shadow: 0 16px 30px -17px rgba(38, 175, 255, .72);
+      color: #ffffff;
+      font: 800 16px 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-button {
+      background: #ffffff;
+      box-shadow: 0 16px 30px -17px rgba(4, 63, 103, .38);
+      color: #0d7fc7;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+      overflow: visible;
+      border: 0;
+      background:
+        radial-gradient(circle at 95% 3%, rgba(244, 197, 106, .2), transparent 30%),
+        linear-gradient(145deg, #202228 0%, #101115 100%);
+      color: #ffffff;
+      box-shadow: 0 30px 58px -30px rgba(15, 16, 20, .88);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name,
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-price {
+      color: #f4c56a;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult li {
+      color: #f4f1e9;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-bottom {
+      border-top-color: rgba(244, 197, 106, .22);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-old {
+      color: rgba(244, 241, 233, .62);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      background: #ffd06b;
+      color: #17191e;
+      transform: rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-discount-ticket {
+      padding: 6px 13px;
+      border: 2px dashed #ff7a47;
+      background: #fff9f4;
+      box-shadow: none;
+      clip-path: none;
+      color: #bd451e;
+      transform: rotate(-1deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      border-color: #e0ad49;
+      background: #fff8e5;
+      color: #7e5715;
+      transform: rotate(1deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-discount-ticket::before {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket {
+      min-height: 38px;
+      grid-template-columns: auto auto;
+      gap: 4px 7px;
+      padding: 7px 14px;
+      border: 1px solid #8bcff7;
+      border-radius: 9px;
+      background: #e9f7ff;
+      box-shadow: 0 9px 18px -13px rgba(19, 127, 193, .72);
+      clip-path: none;
+      color: #126fa8;
+      transform: rotate(-2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket.is-visible {
+      display: inline-grid;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      border-color: #e1ba67;
+      background: #fff5d9;
+      color: #75500d;
+      transform: rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket::before {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-saving {
+      display: block;
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-button {
+      background: linear-gradient(135deg, #ffd47d, #e8ae45);
+      box-shadow: 0 16px 30px -17px rgba(244, 197, 106, .8);
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:not(.edb-pricing-plan-featured):not(.edb-pricing-plan-consult) .edb-pricing-button:hover {
+      background: #26afff;
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 16px 30px -17px rgba(38, 175, 255, .72);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-button:hover {
+      background: linear-gradient(135deg, #ffffff, #eaf7ff);
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 20px 32px -15px rgba(4, 63, 103, .52);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-button:hover {
+      background: linear-gradient(135deg, #ff934f, #ffd47d);
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 20px 32px -15px rgba(255, 147, 79, .9);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-check {
+      background: rgba(255, 255, 255, .09);
+      color: #88d4ff;
+      box-shadow: inset 0 0 0 1px rgba(136, 212, 255, .22);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-premium-item .edb-pricing-check {
+      background: linear-gradient(135deg, #ff6542 0%, #ffc247 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 18px -9px rgba(255, 101, 66, .95);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker {
+      position: absolute;
+      z-index: 3;
+      top: -62px;
+      right: 6px;
+      display: none;
+      width: 70px;
+      height: 70px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 143, 75, .52);
+      border-radius: 18px;
+      background-color: #f4c56a;
+      background-image: url('data:image/jpeg;base64,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');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      box-shadow: 0 14px 28px -12px rgba(0, 0, 0, .82), 0 0 18px rgba(255, 143, 75, .18);
+      transform: rotate(4deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker img {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name {
+      max-width: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+      margin-top: 0;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances {
+      display: grid;
+      gap: 10px;
+      margin: 42px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances li {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 15px 14px 15px 10px;
+      border: 1px solid #f1d8cc;
+      border-radius: 14px;
+      background: rgba(255, 248, 244, .82);
+      color: #333b45;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances strong {
+      color: #15191e;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-assurance-icon {
+      display: grid;
+      width: 36px;
+      height: 40px;
+      place-items: center;
+      align-self: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-assurance-icon img {
+      display: block;
+      width: 40px;
+      height: 44px;
+      object-fit: contain;
+      filter: drop-shadow(0 5px 6px rgba(34, 125, 44, .2));
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-fire-emoji {
+      display: block;
+      font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+      font-size: 35px;
+      font-style: normal;
+      line-height: 1;
+      filter: drop-shadow(0 5px 6px rgba(255, 94, 32, .2));
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details {
+      margin-top: 26px;
+      padding: 22px 0 0;
+      border-top: 1px solid #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details-title {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 28px;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 54px;
+      padding: 13px 12px 13px 15px;
+      border: 1px solid transparent;
+      border-radius: 15px;
+      background: #ffffff;
+      box-shadow: 0 16px 28px -25px rgba(20, 30, 60, .55);
+      color: #24303a;
+      font: 800 14px 'Manrope', sans-serif;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .13s ease-out, border-color .13s ease-out, background .13s ease-out, color .13s ease-out, box-shadow .13s ease-out;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link:hover {
+      border-color: #87cfff;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-detail-open-icon {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 9px;
+      background: #eaf7ff;
+      color: #158fd8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link:hover .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-detail-open-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-next-step {
+      margin: 13px 2px 0;
+      color: #66707c;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-next-step strong {
+      color: #2b333d;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-divider {
+      height: 1px;
+      margin: 18px 0;
+      background: #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-divider svg {
+      display: none;
+      width: 100%;
+      height: 30px;
+      overflow: visible;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-divider {
+      height: 1px;
+      background: #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-divider {
+      height: 30px;
+      background: transparent;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-divider svg {
+      display: block;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-zigzag-a,
+    #edb-pricing-neurozeh-v1 .edb-zigzag-b {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-zigzag-a { stroke: #aeb9c5; }
+    #edb-pricing-neurozeh-v1 .edb-zigzag-b { stroke: #d2d9e0; }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-followups {
+      display: grid;
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-detail-link {
+      border-color: #d9e1e8;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-detail-link {
+      border-width: 2px;
+      border-color: #c9e5f6;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-details-links .edb-pricing-detail-link:first-child {
+      border-color: #87cfff;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-details-links .edb-pricing-detail-link:first-child .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-details-links .edb-pricing-detail-link:nth-child(2) {
+      border-color: #66bdf2;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-details-links .edb-pricing-detail-link:nth-child(2) .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      overflow-y: auto;
+      background: #f5f7fa;
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay.is-open {
+      display: block;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-bar {
+      position: sticky;
+      z-index: 2;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      padding: 12px 18px;
+      border-bottom: 1px solid #e0e5ea;
+      background: rgba(245, 247, 250, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-back {
+      width: min(100%, 354px);
+      min-height: 48px;
+      border: 0;
+      border-radius: 14px;
+      border: 1px solid #dbe2e8;
+      background: #ffffff;
+      color: #26313b;
+      font: 800 15px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
+      width: min(100%, 390px);
+      margin: 0 auto;
+      padding: 48px 18px 72px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-title {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-copy {
+      margin: 18px 0 0;
+      color: #4f5965;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #dfe5ea;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe {
+      margin: 0 -12px;
+      padding: 14px 12px;
+      border-bottom-color: transparent;
+      border-radius: 14px;
+      background: #fff0e8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe .edb-product-day-number,
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe .edb-product-day-title {
+      color: #d8572d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-number {
+      font-family: 'Unbounded', sans-serif;
+      color: #168fdc;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-title {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-copy {
+      display: block;
+      color: #68717d;
+      font-weight: 600;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-cta {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 28px;
+      border: 0;
+      border-radius: 16px;
+      background: #26afff;
+      color: #ffffff;
+      font: 800 16px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    @media (max-width: 350px) {
+      #edb-pricing-neurozeh-v1 .edb-pricing-phone {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-plan {
+        padding-right: 21px;
+        padding-left: 21px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-price {
+        font-size: 33px;
+      }
+    }
+  </style>
+
+  <div class="edb-preview-toolbar" aria-label="Варианты оформления">
+    <button class="edb-preview-switch" type="button" data-variant-button="vip" aria-pressed="true">Основной вариант</button>
+    <button class="edb-preview-switch" type="button" data-variant-button="icons" aria-pressed="false">Иконки</button>
+    <button class="edb-preview-switch" type="button" data-variant-button="zigzag" aria-pressed="false">Зигзаг</button>
+  </div>
+
+  <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
+    <div class="edb-pricing-kicker">Мастер-класс · 21 день</div>
+    <h2 id="edb-pricing-title">Выберите формат участия</h2>
+    <p class="edb-pricing-lead">Программа одна. Тарифы отличаются дополнительными материалами и личным разбором.</p>
+    <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
+
+    <div class="edb-pricing-list">
+      <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+
+      <article class="edb-pricing-plan edb-pricing-plan-featured" data-price-code="site.masterclass.recipes">
+        <div class="edb-pricing-ribbon">Выбирают чаще</div>
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+
+      <article class="edb-pricing-plan edb-pricing-plan-consult" data-price-code="site.masterclass.consult">
+        <div class="edb-pricing-photo-sticker"><img src="data:image/jpeg;base64,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" alt="Сергей Воронцов"></div>
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-chat"></use></svg></span><span><strong>Ответы на вопросы</strong> во время прохождения программы</span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-clipboard"></use></svg></span><span><strong>Индивидуальная консультация и разбор дневника питания</strong></span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+    </div>
+
+    <ul class="edb-pricing-assurances">
+      <li>
+        <span class="edb-assurance-icon">
+          <span class="edb-fire-emoji" aria-hidden="true">🔥</span>
+        </span>
+        <span><strong>Доступ к материалам навсегда</strong> + пожизненные обновления материалов. Старт сразу после оплаты.</span>
+      </li>
+      <li>
+        <span class="edb-assurance-icon">
+          <img src="money-bag-ruble-v1.webp" alt="" aria-hidden="true">
+        </span>
+        <span><strong>Гарантирую 100% возврат</strong>, если в первые 3 дня Мастер-класса вам не понравится мой подход.</span>
+      </li>
+    </ul>
+
+    <div class="edb-pricing-details">
+      <h3 class="edb-pricing-details-title">Что входит в программу</h3>
+      <div class="edb-pricing-details-links">
+        <button class="edb-pricing-detail-link" type="button" data-product="program"><span>Основная программа</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="recipes"><span>Система рецептов</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="consultation"><span>Как проходит консультация</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+      </div>
+      <div class="edb-pricing-divider" aria-hidden="true"><svg viewBox="0 0 320 30" preserveAspectRatio="none"><path class="edb-zigzag-a" d="M2 7 18 20 34 7 50 20 66 7 82 20 98 7 114 20 130 7 146 20 162 7 178 20 194 7 210 20 226 7 242 20 258 7 274 20 290 7 306 20 318 10"/><path class="edb-zigzag-b" d="M2 23 18 10 34 23 50 10 66 23 82 10 98 23 114 10 130 23 146 10 162 23 178 10 194 23 210 10 226 23 242 10 258 23 274 10 290 23 306 10 318 20"/></svg></div>
+      <div class="edb-pricing-followups">
+        <button class="edb-pricing-detail-link" type="button" data-product="calories"><span>Мини-курс «Калорийный»</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="training"><span>Мини-курс «С дивана до тренировок»</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+      </div>
+      <p class="edb-pricing-next-step">Мини-курсы доступны для приобретения <strong>только после прохождения Мастер-класса.</strong></p>
+    </div>
+  </section>
+
+  <section class="edb-product-overlay" aria-hidden="true" aria-live="polite">
+    <div class="edb-product-overlay-bar">
+      <button class="edb-product-overlay-back" type="button">← Назад</button>
+    </div>
+    <div class="edb-product-overlay-content">
+      <h2 class="edb-product-overlay-title"></h2>
+      <p class="edb-product-overlay-copy"></p>
+      <div class="edb-product-overlay-points"></div>
+      <button class="edb-product-overlay-cta" type="button">Выбрать тариф</button>
+    </div>
+  </section>
+
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+    <symbol id="edb-icon-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
+    <symbol id="edb-icon-pot" viewBox="0 0 24 24"><path d="M5 10h14v5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5zM3 10h18M8 6c0-1 1-1.5 1-2.5M12 6c0-1 1-1.5 1-2.5M16 6c0-1 1-1.5 1-2.5"/></symbol>
+    <symbol id="edb-icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="edb-icon-chat" viewBox="0 0 24 24"><path d="M20 15a4 4 0 0 1-4 4H9l-5 3v-7a4 4 0 0 1-1-2.6V8a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></symbol>
+    <symbol id="edb-icon-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h4"/></symbol>
+    <symbol id="edb-icon-gift" viewBox="0 0 24 24"><path d="M3 9h18v4H3zM5 13h14v8H5zM12 9v12M12 9H8.5A2.5 2.5 0 1 1 11 6.5zM12 9h3.5A2.5 2.5 0 1 0 13 6.5z"/></symbol>
+    <symbol id="edb-icon-open" viewBox="0 0 24 24"><path d="M8 16 16 8M9 8h7v7"/></symbol>
+    <symbol id="edb-icon-fire" viewBox="0 0 24 24"><path d="M12 22c4.4 0 8-3.6 8-8 0-3-1.5-5.6-4-8.5.2 2.2-.6 3.8-2.2 5C14.2 7 12 4 8.5 2c.3 3.8-2.2 6-3.5 8.2C4.4 11.3 4 12.5 4 14c0 4.4 3.6 8 8 8Z"/><path d="M9.5 17c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5c0-1.2-.8-2.2-2.5-3.8-1.7 1.6-2.5 2.6-2.5 3.8Z"/></symbol>
+  </svg>
+
+  <script>
+    (() => {
+      const root = document.getElementById('edb-pricing-neurozeh-v1');
+      const overlay = root.querySelector('.edb-product-overlay');
+      const overlayTitle = root.querySelector('.edb-product-overlay-title');
+      const overlayCopy = root.querySelector('.edb-product-overlay-copy');
+      const overlayPoints = root.querySelector('.edb-product-overlay-points');
+      const overlayCta = root.querySelector('.edb-product-overlay-cta');
+      const plans = root.querySelectorAll('.edb-pricing-plan');
+      const pricingStatus = root.querySelector('.edb-pricing-status');
+      const previewPricingCatalog = {
+        version: 1,
+        status: 'draft',
+        tariffs: [
+          { code: 'site.masterclass.basic', name: 'Минимальный', compare_at_amount: 6900, sale_amount: 6900, currency: 'RUB' },
+          { code: 'site.masterclass.recipes', name: 'Стандартный', compare_at_amount: 10800, sale_amount: 8900, currency: 'RUB' },
+          { code: 'site.masterclass.consult', name: 'С консультацией', compare_at_amount: 17700, sale_amount: 15900, currency: 'RUB' }
+        ]
+      };
+
+      const formatPrice = (amount) => {
+        const numericAmount = Number(amount);
+        const hasKopecks = !Number.isInteger(numericAmount);
+        const formatted = new Intl.NumberFormat('ru-RU', {
+          minimumFractionDigits: hasKopecks ? 2 : 0,
+          maximumFractionDigits: hasKopecks ? 2 : 0
+        }).format(numericAmount).replace(/\u00a0/g, '\u202f');
+        return `${formatted} ₽`;
+      };
+
+      function renderPricingCatalog(catalog, source) {
+        const byCode = Object.fromEntries((catalog.tariffs || []).map((tariff) => [tariff.code, tariff]));
+        plans.forEach((plan) => {
+          const tariff = byCode[plan.dataset.priceCode];
+          plan.hidden = !tariff;
+          if (!tariff) return;
+          plan.querySelector('[data-price-field="name"]').textContent = tariff.name;
+          plan.querySelector('[data-price-field="sale"]').textContent = formatPrice(tariff.sale_amount);
+          const compare = Number(tariff.compare_at_amount || 0);
+          const sale = Number(tariff.sale_amount || 0);
+          const oldPrice = plan.querySelector('[data-price-field="compare"]');
+          const ticket = plan.querySelector('[data-price-field="discount"]');
+          const priceRow = oldPrice.closest('.edb-pricing-price-row');
+          const saving = plan.querySelector('[data-price-field="saving"]');
+          const hasDiscount = compare > sale && sale >= 0;
+          priceRow.hidden = !hasDiscount;
+          oldPrice.textContent = hasDiscount ? formatPrice(compare) : '';
+          ticket.classList.toggle('is-visible', hasDiscount);
+          ticket.querySelector('strong').textContent = hasDiscount ? `−${Math.round((1 - sale / compare) * 100)}%` : '';
+          saving.textContent = hasDiscount ? `экономия ${formatPrice(compare - sale)}` : '';
+        });
+        root.dataset.pricingSource = source;
+        root.dataset.pricingVersion = String(catalog.version || 'preview');
+        pricingStatus.hidden = Object.keys(byCode).length > 0;
+      }
+
+      async function loadPricingCatalog() {
+        const isLocalPreview = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+        if (isLocalPreview) {
+          renderPricingCatalog(previewPricingCatalog, 'draft-preview');
+          return;
+        }
+        plans.forEach((plan) => { plan.hidden = true; });
+        pricingStatus.hidden = false;
+        root.dataset.pricingSource = 'loading';
+        try {
+          const response = await fetch(root.dataset.pricingEndpoint, { credentials: 'omit' });
+          if (!response.ok) throw new Error(`pricing catalog ${response.status}`);
+          const catalog = await response.json();
+          renderPricingCatalog(catalog, 'database');
+        } catch (error) {
+          root.dataset.pricingSource = 'unavailable';
+          pricingStatus.hidden = false;
+        }
+      }
+
+      loadPricingCatalog();
+      const productData = {
+        program: {
+          title: 'Основная программа',
+          copy: 'Самая важная база о том, как сделать питание сбалансированным, а пищевые привычки — здоровыми с помощью дневника питания по моей системе. Фундамент любого похудения. База!',
+          points: [
+            ['01','Добро пожаловать!','Программа Мастер-класса, формат дневника, анкета и вообще, здравствуйте =)'],
+            ['02','Что такое "Диеты" на самом деле','Первый и последний раз в мастер-классе обсуждаем это слово'],
+            ['03','Что такое вредная еда на самом деле','Какие есть реальные ограничения в здоровом питании, а на что можно не обращать внимание'],
+            ['04','DQS — Система оценки качества питания','Разделим абсолютно всю еду на 17 продуктовых категорий и будем искать в них баланс'],
+            ['05','Баланс продуктовых категорий','КБЖУК и правило тарелки.'],
+            ['06','Опорные точки и эволюция рецепта','Овсянка, пять вкусов, топпинги и знакомство с рецептами.','recipe'],
+            ['07','Система рецептов','Каталог, продукты, БЖУ и первая партия рецептов.','recipe'],
+            ['08','Начинаем менять питание','План следующих дней и последнее напоминание о рецептах.','recipe'],
+            ['09','50 оттенков голода','Голод, аппетит, насыщение и эмоциональный голод.'],
+            ['10','Сколько сладкого уже есть в вашем рационе','План, нормы и гайд по добавленному сахару.'],
+            ['11','Как есть меньше сладкого и не страдать','11 способов уменьшить вред и 17 способов уменьшить тягу.'],
+            ['12','Срывы, зажоры и чит-милы','Чем отличаются, что делать и как предотвращать.'],
+            ['13','Насыщение и удовольствие','Привычки для насыщения и удовольствия.'],
+            ['14','Питание вне дома','Фастфуд, отпуск, праздники и поездки.'],
+            ['15','Конструктор питания','Техники, кухонные запасы и вторая часть рецептов.','recipe'],
+            ['16','Пауза для второй части рецептов','Практика и последний день текущих условий.','recipe'],
+            ['17','50 оттенков ЗОЖ','ЗОЖ, детоксы, витамины, анализы, вода и водно-солевой баланс.'],
+            ['18','Для тех, кто любит подглядывать','Примеры чужих дневников для анализа собственной системы.'],
+            ['19','Саморевью и подготовка к консультации','Подготовка, саморевью, консультация и варианты работы.'],
+            ['20','Зависимости и постановка цели','Путеводитель по зависимостям и цель на пять лет.'],
+            ['21','Фазы и периодизация похудения','Подготовка, активная фаза, поддержание и следующий цикл.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        },
+        recipes: {
+          title: 'Система рецептов',
+          copy: 'Коротко: на практических примерах показываю, как применять принципы питания из Мастер-класса в обычной жизни — на реальных продуктах, тарелках и рецептах. Это не просто сборник, а система самостоятельной сборки еды.',
+          points: [
+            ['01','16 рецептов с подробным разбором','На их примере показываю, насколько легко применять рекомендации из Мастер-класса и делать это вкусно.'],
+            ['02','Разбор 10 продуктов','Какие готовые продукты заметно упрощают приготовление здоровых блюд.'],
+            ['03','Техники и принципы сборки тарелки','Три техники обработки продуктов и три принципа составления тарелки.']
+          ],
+          target: 1,
+          cta: 'Выбрать тариф'
+        },
+        consultation: {
+          title: 'Индивидуальная консультация',
+          copy: 'Коротко: сначала я разбираю ваш дневник питания, а затем мы обсуждаем выводы и вопросы в удобном формате — звонком, голосовыми сообщениями или текстом.',
+          points: [
+            ['01','Разбор дневника питания','Подсвечу слабые и сильные стороны и определю важнейшие изменения.'],
+            ['02','Удобный формат обсуждения','Звонок, голосовые сообщения или подробный текстовый файл.'],
+            ['03','Ответы после разбора','После консультации можно ещё несколько дней задавать вопросы по рекомендациям.']
+          ],
+          target: 2,
+          cta: 'Выбрать тариф'
+        },
+        calories: {
+          title: 'Мини-курс «Калорийный»',
+          copy: 'Коротко: учимся считать калории без лишнего геморроя, учитывать не только еду, но и расход энергии, а затем переводить цифры в понятные действия. Считать, чтобы перестать считать.',
+          points: [
+            ['01','Неделя 1 — учёт без геморроя','Взвешиваем и записываем без перфекционизма и лишней точности.'],
+            ['02','Неделя 2 — считаем не только еду','Учитываем шаги, движение и тренировки и находим свой энергетический баланс.'],
+            ['03','Неделя 3 — слезаем с калорий','Переводим цифры в понятные действия и постепенно отказываемся от постоянного приложения.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        },
+        training: {
+          title: 'Мини-курс «С мягкого дивана до регулярных тренировок»',
+          copy: 'Коротко: как встать с дивана и начать получать от тренировок и удовольствие, и результат — без требования посвящать спорту всю жизнь.',
+          points: [
+            ['01','Понять, зачем вам тренироваться','Выбираем результат, который действительно вам нужен.'],
+            ['02','Выбрать направление','Разбираемся, какой формат тренировок подходит под вашу цель.'],
+            ['03','Определить рабочий объём','От минимального уровня до более серьёзной любительской нагрузки.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        }
+      };
+
+      root.querySelectorAll('[data-variant-button]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const variant = button.dataset.variantButton;
+          root.dataset.variant = variant;
+          root.querySelectorAll('[data-variant-button]').forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+        });
+      });
+
+      function openProduct(code) {
+        const product = productData[code];
+        overlayTitle.textContent = product.title;
+        overlayCopy.textContent = product.copy;
+        overlayPoints.replaceChildren(...product.points.map(([number, title, copy, marker]) => {
+          const point = document.createElement('div');
+          point.className = `edb-product-overlay-point${marker === 'recipe' ? ' is-recipe' : ''}`;
+          const numberElement = document.createElement('span');
+          numberElement.className = 'edb-product-day-number';
+          numberElement.textContent = number;
+          const content = document.createElement('span');
+          content.innerHTML = `<span class="edb-product-day-title">${title}</span><span class="edb-product-day-copy">${copy}</span>`;
+          point.append(numberElement, content);
+          return point;
+        }));
+        overlayCta.textContent = product.cta;
+        overlayCta.dataset.target = String(product.target);
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        overlay.scrollTop = 0;
+      }
+
+      function closeOverlay() {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
+
+      root.querySelectorAll('[data-product]').forEach((button) => {
+        button.addEventListener('click', () => openProduct(button.dataset.product));
+      });
+      root.querySelector('.edb-product-overlay-back').addEventListener('click', closeOverlay);
+      overlayCta.addEventListener('click', () => {
+        const preferredTarget = plans[Number(overlayCta.dataset.target || 0)];
+        const target = preferredTarget && !preferredTarget.hidden
+          ? preferredTarget
+          : [...plans].find((plan) => !plan.hidden) || pricingStatus;
+        closeOverlay();
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    })();
+  </script>
+</div>
