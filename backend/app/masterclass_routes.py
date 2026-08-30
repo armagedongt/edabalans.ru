@@ -1909,10 +1909,32 @@ def recipe_gate(
     allowed = "ACCESS_RECIPES" in access_codes(db, user.id)
     payload = {"ok": True, "part": part, "allowed": allowed}
     if allowed:
+        recipe_items: list[dict] = []
+        context = course_context(db)
+        for day in context.manifest.get("days", []):
+            for step in day.get("steps", []):
+                if step.get("kind") != f"recipes-part-{part}":
+                    continue
+                for item in step.get("items", []):
+                    if isinstance(item, str):
+                        recipe_items.append({
+                            "title": item,
+                            "status": "ready",
+                            "openable": True,
+                            "required": False,
+                        })
+                    else:
+                        recipe_items.append({
+                            "title": str(item.get("title", "")),
+                            "status": str(item.get("status", "ready")),
+                            "openable": bool(item.get("openable", True)),
+                            "required": bool(item.get("required", False)),
+                        })
         payload.update({
             "state": "content",
             "title": f"Рецепты · часть {part}",
             "message": "Доступ подтверждён. Подборка открыта и будет дополняться без изменения этой ссылки.",
+            "items": recipe_items,
         })
     else:
         payload.update({"state": "offer", "message": "Этот раздел не входит в ваш текущий тариф.", "offer": build_offers(db, user, placement, use_pricing_catalog=settings.pricing_catalog_enabled)})

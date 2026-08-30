@@ -235,6 +235,10 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     masterclass_asset = client.get("/assets/masterclass.js").text
     assert "Получить саморевью в Telegram" in masterclass_asset
     assert "Сергей получит уведомление" not in masterclass_asset
+    assert "item.status==='soon'||!item.openable" in masterclass_asset
+    assert 'class="mc-recipe-item soon" aria-disabled="true"' in masterclass_asset
+    assert "<strong>Скоро</strong>" in masterclass_asset
+    assert "itemCards(d.items)" in masterclass_asset
     loader = client.get("/embed.js").text
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
@@ -613,7 +617,12 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
     ]
     assert manifest["days"][6]["steps"][2]["items"] == [
         "Как устроена база рецептов и как пользоваться каталогом",
-        "Разбор отдельных продуктов: готовых и не очень",
+        {
+            "title": "Как выбирать готовую еду в магазинах и доставках",
+            "status": "soon",
+            "openable": False,
+            "required": False,
+        },
         "Разбор БЖУ",
         "Первая партия рецептов",
     ]

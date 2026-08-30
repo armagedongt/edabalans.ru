@@ -9,6 +9,11 @@
 .mc .save{margin-top:6px;color:var(--muted);font-size:13px}
 .mc button,.mc .button{display:inline-flex;align-items:center;justify-content:center;padding:13px 20px;border:0;border-radius:14px;background:var(--ink);color:#fff;font-weight:700;text-decoration:none;cursor:pointer}
 .mc .secondary{background:#eee7dd;color:var(--ink)}
+.mc-recipe-items{display:grid;gap:10px;margin-top:18px}
+.mc .mc-recipe-item{display:flex;width:100%;justify-content:space-between;gap:18px;padding:15px 16px;border:1px solid var(--line);background:#fff;color:var(--ink);text-align:left}
+.mc .mc-recipe-item strong{color:var(--accent);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.mc .mc-recipe-item.soon{border-style:dashed;background:#f3f0eb;color:#77716a;cursor:default;opacity:1}
+.mc .mc-recipe-item.soon strong{color:#77716a}
 .mc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
 .offer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px}
 .offer-price{font-size:34px;font-weight:800}

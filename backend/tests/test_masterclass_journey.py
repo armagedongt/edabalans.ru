@@ -2144,6 +2144,33 @@ def test_recipe_gate_uses_access_and_records_open_once():
     assert allowed["allowed"] is True
     assert allowed["state"] == "content"
     assert allowed["title"] == "Рецепты · часть 1"
+    store_food = next(
+        item for item in allowed["items"]
+        if item["title"] == "Как выбирать готовую еду в магазинах и доставках"
+    )
+    assert store_food == {
+        "title": "Как выбирать готовую еду в магазинах и доставках",
+        "status": "soon",
+        "openable": False,
+        "required": False,
+    }
+    ready_items = {
+        item["title"]: item
+        for item in allowed["items"]
+        if item["status"] == "ready"
+    }
+    assert ready_items["Как устроена база рецептов и как пользоваться каталогом"] == {
+        "title": "Как устроена база рецептов и как пользоваться каталогом",
+        "status": "ready",
+        "openable": True,
+        "required": False,
+    }
+    assert ready_items["Разбор БЖУ"] == {
+        "title": "Разбор БЖУ",
+        "status": "ready",
+        "openable": True,
+        "required": False,
+    }
     with factory() as db:
         assert db.scalar(select(func.count(MasterclassEvent.id)).where(
             MasterclassEvent.event_type == "recipes_part_1_opened"
