@@ -44,10 +44,32 @@ OFFER_RESOURCES = {
     "recordings": "ACCESS_CONSULTATION_RECORDINGS",
     "consultation": "ACCESS_CONSULTATION",
 }
+OFFER_RESOURCE_COMPANIONS = {
+    "ACCESS_MASTERCLASS": ("dqs",),
+    "ACCESS_RECIPES": ("recipes",),
+    "ACCESS_CALORIES": ("recipes", "metabolism"),
+    "ACCESS_STRENGTH": ("strength",),
+}
 
 
 class TildaPayloadError(ValueError):
     pass
+
+
+def checkout_resource_codes(items: list[str], configured_codes: set[str]) -> list[str]:
+    primary_codes = list(dict.fromkeys(
+        OFFER_RESOURCES.get(item, item)
+        for item in items
+        if item in OFFER_RESOURCES or str(item).startswith("ACCESS_")
+    ))
+    if set(primary_codes) - configured_codes:
+        raise TildaPayloadError("offer resources are not configured")
+    candidates = list(dict.fromkeys(
+        code
+        for primary in primary_codes
+        for code in (primary, *OFFER_RESOURCE_COMPANIONS.get(primary, ()))
+    ))
+    return [code for code in candidates if code in configured_codes]
 
 
 def find_offer_checkout(
@@ -397,11 +419,10 @@ def grant_payment_access(
 
     resource_sources: list[tuple[Any, str]] = []
     if checkout is not None:
-        resource_codes = list(dict.fromkeys(
-            OFFER_RESOURCES.get(item, item)
-            for item in checkout.items
-            if item in OFFER_RESOURCES or str(item).startswith("ACCESS_")
+        configured_codes = set(db.scalars(
+            select(Resource.code).where(Resource.status == "active")
         ))
+        resource_codes = checkout_resource_codes(list(checkout.items), configured_codes)
         personal_link = db.scalar(
             select(PersonalAccessLink).where(PersonalAccessLink.checkout_id == checkout.id)
         )
@@ -428,8 +449,6 @@ def grant_payment_access(
                 select(Resource).where(Resource.code.in_(resource_codes))
             )
         }
-        if set(resource_codes) - set(resources):
-            raise TildaPayloadError("offer resources are not configured")
         resource_sources = [
             (resources[code].id, "paid_offer_checkout") for code in resource_codes
         ]

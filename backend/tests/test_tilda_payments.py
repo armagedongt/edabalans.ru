@@ -4,6 +4,8 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
+import pytest
+
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
 from fastapi.testclient import TestClient  # noqa: E402
@@ -15,7 +17,7 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.masterclass_routes import offer_checkout_order  # noqa: E402
-from app.tilda_service import find_offer_checkout  # noqa: E402
+from app.tilda_service import checkout_resource_codes, find_offer_checkout  # noqa: E402
 from app.models import (  # noqa: E402
     MasterclassEvent,
     MasterclassNotification,
@@ -36,6 +38,23 @@ from app.models import (  # noqa: E402
 
 TOKEN = "test-tilda-token"
 HEADERS = {"X-Tilda-Webhook-Token": TOKEN}
+
+
+@pytest.mark.parametrize(("item", "expected"), [
+    ("ACCESS_MASTERCLASS", ["ACCESS_MASTERCLASS", "dqs"]),
+    ("recipes", ["ACCESS_RECIPES", "recipes"]),
+    ("calories", ["ACCESS_CALORIES", "recipes", "metabolism"]),
+    ("training", ["ACCESS_STRENGTH", "strength"]),
+])
+def test_checkout_resource_codes_preserve_primary_and_add_exact_companions(
+    item: str, expected: list[str]
+) -> None:
+    assert checkout_resource_codes([item], set(expected)) == expected
+
+
+def test_checkout_resource_codes_require_the_primary_resource() -> None:
+    with pytest.raises(ValueError, match="offer resources are not configured"):
+        checkout_resource_codes(["ACCESS_MASTERCLASS"], {"dqs"})
 
 
 def make_client() -> tuple[TestClient, sessionmaker[Session]]:
@@ -335,6 +354,8 @@ def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
             [
                 Resource(code="ACCESS_RECIPES", name="Рецепты"),
                 Resource(code="ACCESS_CALORIES", name="Калории"),
+                Resource(code="recipes", name="Калькулятор рецептов"),
+                Resource(code="metabolism", name="Калькулятор метаболизма"),
             ]
         )
         checkout = OfferCheckout(
@@ -386,7 +407,7 @@ def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
         assert payment is not None
         assert payment.payment_status == "paid"
         assert db.scalar(select(func.count(Payment.id))) == 1
-        assert db.scalar(select(func.count(UserAccess.id))) == 2
+        assert db.scalar(select(func.count(UserAccess.id))) == 4
         assert db.scalar(select(OfferCheckout.status)) == "paid"
 
     duplicate = client.post(
@@ -396,7 +417,7 @@ def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
     assert duplicate.json()["status"] == "duplicate"
     with session_factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 1
-        assert db.scalar(select(func.count(UserAccess.id))) == 2
+        assert db.scalar(select(func.count(UserAccess.id))) == 4
     app.dependency_overrides.clear()
 
 

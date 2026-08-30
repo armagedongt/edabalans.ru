@@ -60,6 +60,8 @@ def setup():
             UserEmail(user_id=other.id, email_original="other@example.test", email_normalized="other@example.test", is_primary=True, source="test"),
             Resource(code="ACCESS_MASTERCLASS", name="Новый Мастер-класс", status="active"),
             Resource(code="ACCESS_CALORIES", name="Курс о калориях", status="active"),
+            Resource(code="dqs", name="DQS", status="active"),
+            Resource(code="ACCESS_MASTERCLASS_LEGACY", name="Старый мастер-класс", status="active"),
         ])
         db.commit()
         user_id = user.id
@@ -142,7 +144,22 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     blocked = client.get("/api/account?email=client@example.test")
     assert blocked.status_code == 200
     assert blocked.json()["state"] == "review_required"
-    assert blocked.json()["courses"] == []
+    assert len(blocked.json()["courses"]) == 6
+    assert all(item["owned"] is False for item in blocked.json()["courses"])
+    assert all(item["app"] is None for item in blocked.json()["courses"])
+    assert [item["title"] for item in blocked.json()["applications"]] == [
+        "Система оценки качества питания",
+        "Дневник силовых тренировок",
+        "Калькулятор и каталог рецептов",
+        "Калькулятор метаболизма и тренировок",
+    ]
+    assert blocked.json()["legacy_portal"]["available"] is False
+
+    unknown = client.get("/api/account?email=new@example.test")
+    assert unknown.status_code == 200
+    assert unknown.json()["state"] == "review_required"
+    assert len(unknown.json()["courses"]) == 6
+    assert len(unknown.json()["applications"]) == 4
 
     with factory() as db:
         user = db.get(User, user_id)
@@ -158,6 +175,14 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
                 granted_at=datetime.now(timezone.utc),
             )
         )
+        dqs = db.scalar(select(Resource).where(Resource.code == "dqs"))
+        legacy = db.scalar(
+            select(Resource).where(Resource.code == "ACCESS_MASTERCLASS_LEGACY")
+        )
+        db.add_all([
+            UserAccess(user_id=user.id, resource_id=dqs.id, source="test", granted_at=datetime.now(timezone.utc)),
+            UserAccess(user_id=user.id, resource_id=legacy.id, source="test", granted_at=datetime.now(timezone.utc)),
+        ])
         db.commit()
 
     ready = client.get("/api/account?email=client@example.test")
@@ -171,6 +196,10 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     recipes_card = next(item for item in data["courses"] if item["code"] == "recipes")
     assert recipes_card["state"] == "not_owned"
     assert recipes_card["app"] is None
+    dqs_card = next(item for item in data["applications"] if item["code"] == "dqs")
+    assert dqs_card["owned"] is True
+    assert dqs_card["app"] is None
+    assert data["legacy_portal"]["available"] is True
 
     accepted = client.post(
         "/api/account/legal-acceptances",
@@ -188,6 +217,8 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
         item for item in accepted.json()["courses"] if item["code"] == "masterclass"
     )
     assert masterclass_card["app"] == "masterclass-course"
+    dqs_card = next(item for item in accepted.json()["applications"] if item["code"] == "dqs")
+    assert dqs_card["app"] == "dqs"
     repeated = client.post(
         "/api/account/legal-acceptances",
         json={

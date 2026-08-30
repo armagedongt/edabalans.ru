@@ -5,6 +5,7 @@
     ? location.origin
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
+  var STORAGE_RETURN_PATH = 'edabalans_return_path_v1';
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -84,11 +85,28 @@
 
   function redirectToTildaLogin() {
     try {
+      var returnPath = location.pathname + location.search + location.hash;
+      if (returnPath.charAt(0) === '/' && returnPath.indexOf('//') !== 0 && returnPath.indexOf('/members/login') !== 0) {
+        sessionStorage.setItem(STORAGE_RETURN_PATH, returnPath);
+      }
       localStorage.removeItem(STORAGE_IDENTITY);
       localStorage.removeItem('dqs_email');
     } catch (error) {}
     window.EdabalansIdentity = null;
     location.replace('/members/login');
+  }
+
+  function restoreReturnPath() {
+    var returnPath = '';
+    try {
+      returnPath = String(sessionStorage.getItem(STORAGE_RETURN_PATH) || '');
+      sessionStorage.removeItem(STORAGE_RETURN_PATH);
+    } catch (error) {}
+    if (!returnPath || returnPath.charAt(0) !== '/' || returnPath.indexOf('//') === 0 || returnPath.indexOf('://') >= 0) return false;
+    var currentPath = location.pathname + location.search + location.hash;
+    if (returnPath === currentPath) return false;
+    location.replace(returnPath);
+    return true;
   }
 
   function hideTildaUserbar() {
@@ -209,12 +227,14 @@
     hideTildaUserbar();
     if (detected) {
       remember(detected);
+      if (restoreReturnPath()) return;
       start(mounts);
       return;
     }
     mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход через Tilda…</div>';
     waitForTildaEmail(function (email) {
       remember(email);
+      if (restoreReturnPath()) return;
       start(mounts);
     }, redirectToTildaLogin);
   }

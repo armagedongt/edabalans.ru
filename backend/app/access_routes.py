@@ -135,25 +135,82 @@ def access_status(email: str, db: Session = Depends(get_db)) -> dict:
     }
 
 
+def account_product_definitions(db: Session) -> list[dict]:
+    definitions = []
+    for account_code, catalog_code in (
+        ("masterclass", "masterclass"), ("recipes", "recipes"),
+        ("calories", "calories"), ("strength", "training"),
+        ("recordings", "recordings"), ("consultation", "consultation"),
+    ):
+        definition = product_public(db, catalog_code)
+        definition["account_code"] = account_code
+        if account_code == "calories":
+            from app.calorie_course_material_service import publication_status
+
+            definition["ready"] = publication_status(db)["ready"]
+        definitions.append(definition)
+    return definitions
+
+
+def account_courses(definitions: list[dict], owned: set[str], legal_required: bool) -> list[dict]:
+    courses = []
+    for definition in definitions:
+        code = definition["account_code"]
+        has_access = definition["resource"] in owned
+        courses.append({
+            "code": code,
+            "product_code": definition["code"],
+            "title": definition["name"],
+            "summary": definition["description"],
+            "resource": definition["resource"],
+            "catalog_status": definition["status"],
+            "owned": has_access,
+            "ready": definition["ready"],
+            "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
+            "app": definition["app"] if has_access and definition["ready"] and not legal_required else None,
+        })
+    return courses
+
+
+def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
+    definitions = (
+        ("dqs", "Система оценки качества питания", "Оценивайте рацион по продуктовым категориям и наблюдайте изменения.", "dqs", "dqs", True),
+        ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "ACCESS_STRENGTH", "strength", False),
+        ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", False),
+        ("metabolism", "Калькулятор метаболизма и тренировок", "Оценивайте расход энергии и тренировочную нагрузку.", "metabolism", "metabolism", False),
+    )
+    return [
+        {
+            "code": code,
+            "title": title,
+            "summary": summary,
+            "resource": resource,
+            "owned": resource in owned,
+            "ready": ready,
+            "state": "available" if resource in owned and ready else "preparing" if resource in owned else "not_owned",
+            "app": app if resource in owned and ready and not legal_required else None,
+        }
+        for code, title, summary, resource, app, ready in definitions
+    ]
+
+
 def account_payload(email: str, db: Session) -> dict:
     user = user_for_email(db, email)
-    if user is None:
+    definitions = account_product_definitions(db)
+    if user is None or review_blocks_access(user):
         return {
             "ok": True,
             "state": "review_required",
-            "review_status": "unknown",
-            "message": "Аккаунт пока не связан с CRM. Напишите Сергею и укажите email личного кабинета.",
-            "legal": None,
-            "courses": [],
-        }
-    if review_blocks_access(user):
-        return {
-            "ok": True,
-            "state": "review_required",
-            "review_status": user.access_review_status,
-            "message": "Нужно решение Сергея по вашим прежним покупкам. Напишите ему и укажите email личного кабинета.",
-            "legal": legal_status_payload(db, user.id),
-            "courses": [],
+            "review_status": "unknown" if user is None else user.access_review_status,
+            "message": (
+                "Аккаунт пока не связан с покупками. Если вы уже что-то приобретали, напишите Сергею и укажите email личного кабинета."
+                if user is None
+                else "Нужно уточнить ваши прежние покупки. Напишите Сергею и укажите email личного кабинета."
+            ),
+            "legal": None if user is None else legal_status_payload(db, user.id),
+            "courses": account_courses(definitions, set(), False),
+            "applications": account_applications(set(), False),
+            "legacy_portal": {"available": False, "url": "/members/"},
         }
 
     legal = legal_status_payload(db, user.id)
@@ -170,43 +227,16 @@ def account_payload(email: str, db: Session) -> dict:
             )
         )
     )
-    definitions = []
-    for account_code, catalog_code in (
-        ("masterclass", "masterclass"), ("recipes", "recipes"),
-        ("calories", "calories"), ("strength", "training"),
-        ("recordings", "recordings"), ("consultation", "consultation"),
-    ):
-        definition = product_public(db, catalog_code)
-        definition["account_code"] = account_code
-        if account_code == "calories":
-            from app.calorie_course_material_service import publication_status
-
-            definition["ready"] = publication_status(db)["ready"]
-        definitions.append(definition)
     purchases = purchased_products(db, user.id)
     masterclass_purchase = next(
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,
     )
-    courses = []
-    for definition in definitions:
-        code = definition["account_code"]
-        has_access = definition["resource"] in owned
-        item = {
-                "code": code,
-                "product_code": definition["code"],
-                "title": definition["name"],
-                "summary": definition["description"],
-                "resource": definition["resource"],
-                "catalog_status": definition["status"],
-                "owned": has_access,
-                "ready": definition["ready"],
-                "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
-                "app": definition["app"] if has_access and definition["ready"] and not legal["required"] else None,
-            }
+    courses = account_courses(definitions, owned, legal["required"])
+    for item in courses:
+        code = item["code"]
         if code == "masterclass" and masterclass_purchase:
             item["tariff"] = masterclass_purchase["tariff"]
-        courses.append(item)
     return {
         "ok": True,
         "state": "ready",
@@ -215,6 +245,11 @@ def account_payload(email: str, db: Session) -> dict:
         "legal": legal,
         "purchased_products": purchases,
         "courses": courses,
+        "applications": account_applications(owned, legal["required"]),
+        "legacy_portal": {
+            "available": bool({"ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"} & owned),
+            "url": "/members/",
+        },
     }
 
 

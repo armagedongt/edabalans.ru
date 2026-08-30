@@ -258,6 +258,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "waitForTildaEmail" in loader
     assert "redirectToTildaLogin" in loader
     assert "location.replace('/members/login')" in loader
+    assert "edabalans_return_path_v1" in loader
+    assert "restoreReturnPath" in loader
+    assert "returnPath.indexOf('://')" in loader
     assert "askIdentity" not in loader
     assert "Не удалось автоматически определить email" not in loader
     assert "Введите email, на который оформлена покупка" not in loader
@@ -271,6 +274,12 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     account = client.get("/apps/account.html").text
     assert "Вы вошли как" in account
     assert "account-session-email" in account
+    assert "Курсы и программы" in account
+    assert "Приложения" in account
+    assert "Система оценки качества питания" not in account  # names come from the server catalog
+    assert "Старый личный кабинет" in account
+    assert "Пока доступы не подключены" in account
+    assert "data.state!=='ready'" in account
     assert "tma__userbar__sendLogout" in account
     assert "/members/login?exit=y" in account
     assert "identity.source==='tilda'" in course.text
