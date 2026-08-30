@@ -115,3 +115,32 @@
 
 	respond 404
 }
+
+{$BLOG_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	@blog_home path /
+	handle @blog_home {
+		rewrite * /blog
+		reverse_proxy backend:8000
+	}
+
+	handle /blog/fonts/* {
+		reverse_proxy backend:8000
+	}
+
+	respond 404
+
+	log {
+		output stdout
+		format json
+	}
+}

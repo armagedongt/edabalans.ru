@@ -7,7 +7,7 @@
 | Компонент | Назначение | Публичный доступ |
 | --- | --- | --- |
 | Caddy | HTTPS и маршрутизация | 80/443 |
-| FastAPI | API приложений и публичные документы | `api.edabalans.ru`, приложения через `app.edabalans.ru`, документы через `go.похудение-это-есть.рф/legal` |
+| FastAPI | API приложений, публичные документы и блог | `api.edabalans.ru`, приложения через `app.edabalans.ru`, документы через `go.похудение-это-есть.рф/legal`, блог через `blog.похудение-это-есть.рф` |
 | Telegram-бот | Polling, scheduler, цепочки и админка сообщений | `api.edabalans.ru/bot`, API только после входа администратора |
 | PostgreSQL 17 | источник структурированных данных | нет |
 | NocoDB 2026.08.0 | человекочитаемый просмотр таблиц | `data.edabalans.ru`, вход обязателен |
@@ -37,6 +37,7 @@ curl -fsS https://go.похудение-это-есть.рф/legal/privacy
 curl -fsS https://go.похудение-это-есть.рф/legal/consent
 curl -fsS https://go.похудение-это-есть.рф/legal/offer
 curl -fsS https://app.edabalans.ru/intensive/day-1
+curl -fsS https://blog.похудение-это-есть.рф/
 ufw status
 systemctl status edabalans-backup.timer
 ```

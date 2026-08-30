@@ -131,6 +131,8 @@ curl --fail --silent --show-error --max-time 20 \
     https://data.edabalans.ru/api/v1/health >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://app.edabalans.ru/apps/masterclass-course.html >/dev/null
+curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
+    https://blog.похудение-это-есть.рф/ >/dev/null
 
 if [[ "${caddy_changed}" == "true" ]]; then
     app_headers="$(curl --fail --silent --show-error --max-time 15 \

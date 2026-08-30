@@ -11,7 +11,7 @@ implementation_status: implemented
 
 ## Функции
 
-- маршрутизировать app/api/data домены через Caddy;
+- маршрутизировать app/api/data/go/blog домены через Caddy;
 - не публиковать PostgreSQL и внутренние порты напрямую;
 
 ## Граница

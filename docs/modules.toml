@@ -164,6 +164,18 @@ owns_tables = [
 owns_routes = ["*/admin/api/content*"]
 
 [[modules]]
+id = "platform.blog"
+parent = "platform"
+card = "docs/knowledge-base/modules/catalog/platform.blog.md"
+depends_on = ["platform.content"]
+reads_from = ["products", "operations.proxy"]
+owns_files = [
+  "backend/app/blog_routes.py", "backend/app/static/blog/**",
+  "backend/tests/test_blog.py",
+]
+owns_routes = ["*/blog", "*/blog/*"]
+
+[[modules]]
 id = "platform.knowledge"
 admin_catalog = [{ category = "tools", order = 35, url = "/admin/library", label = "Библиотекарь", description = "Единый поиск по источникам, продуктам, публикациям и документам; очередь смысловых решений." }]
 parent = "platform"

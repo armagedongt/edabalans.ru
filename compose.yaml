@@ -9,6 +9,7 @@ services:
       DATA_DOMAIN: "${DATA_DOMAIN}"
       APP_DOMAIN: "${APP_DOMAIN}"
       GO_DOMAIN: "${GO_DOMAIN}"
+      BLOG_DOMAIN: "${BLOG_DOMAIN:-blog.похудение-это-есть.рф}"
       ACME_EMAIL: "${ACME_EMAIL}"
     ports:
       - "80:80"

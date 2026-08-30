@@ -43,6 +43,12 @@ class DeployPolicyTests(unittest.TestCase):
         )
         self.assertIsNotNone(re.search(pull_pattern, "docker compose build \\\n  --pull"))
 
+    def test_deploy_smoke_checks_the_public_blog_boundary(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
+
+        self.assertIn("https://blog.похудение-это-есть.рф/", source)
+        self.assertIn("--retry 5 --retry-all-errors --retry-delay 3", source)
+
     def test_ci_builds_and_tests_only_changed_application_services(self) -> None:
         source = (REPOSITORY_ROOT / ".github/workflows/production.yml").read_text(encoding="utf-8")
 

@@ -96,6 +96,10 @@
       "path": "backend/app/auth.py"
     },
     {
+      "module_id": "platform.blog",
+      "path": "backend/app/blog_routes.py"
+    },
+    {
       "module_id": "products.calories",
       "path": "backend/app/calorie_course_material_service.py"
     },
@@ -382,6 +386,22 @@
     {
       "module_id": "products.strength",
       "path": "backend/app/static/apps/strength.html"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/fonts/OFL.txt"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/fonts/inter-cyrillic.woff2"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/fonts/inter-latin.woff2"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/app/static/blog/index.html"
     },
     {
       "module_id": "platform.content",
@@ -746,6 +766,10 @@
     {
       "module_id": "platform.content",
       "path": "backend/tests/test_article_markup.py"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "backend/tests/test_blog.py"
     },
     {
       "module_id": "products.calories",
@@ -1870,6 +1894,10 @@
     {
       "module_id": "platform.auth",
       "path": "docs/knowledge-base/modules/catalog/platform.auth.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "docs/knowledge-base/modules/catalog/platform.blog.md"
     },
     {
       "module_id": "platform.commerce",
@@ -11935,7 +11963,7 @@
       "routes": [
         {
           "file": "backend/app/main.py",
-          "line": 66,
+          "line": 68,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -11943,7 +11971,7 @@
         },
         {
           "file": "backend/app/main.py",
-          "line": 72,
+          "line": 74,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/ready",
@@ -11989,7 +12017,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "module_id": "operations.delivery",
           "name": "lifespan",
           "qualname": "lifespan"
@@ -11997,7 +12025,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 66,
+          "line": 68,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -12005,7 +12033,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 72,
+          "line": 74,
           "module_id": "operations.delivery",
           "name": "ready",
           "qualname": "ready"
@@ -12055,13 +12083,21 @@
           "kind": "method",
           "line": 46,
           "module_id": "operations.delivery",
+          "name": "test_deploy_smoke_checks_the_public_blog_boundary",
+          "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 52,
+          "module_id": "operations.delivery",
           "name": "test_ci_builds_and_tests_only_changed_application_services",
           "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
         },
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 56,
+          "line": 62,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -12069,7 +12105,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 127,
+          "line": 133,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -12077,7 +12113,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 137,
+          "line": 143,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -12085,7 +12121,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 143,
+          "line": 149,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -15252,7 +15288,7 @@
       "admin_urls": [],
       "boundary": "Не владеет авторизацией приложений или содержанием страниц.",
       "capabilities": [
-        "маршрутизировать app/api/data домены через Caddy;",
+        "маршрутизировать app/api/data/go/blog домены через Caddy;",
         "не публиковать PostgreSQL и внутренние порты напрямую;"
       ],
       "card": "docs/knowledge-base/modules/catalog/operations.proxy.md",
@@ -16126,6 +16162,143 @@
       ]
     },
     {
+      "admin_catalog": [],
+      "admin_urls": [],
+      "boundary": "Модуль владеет публичной оболочкой блога, но не авторским голосом и не продуктовой\nлогикой Мастер-класса. Тексты статей и их редакционный канон принадлежат\n`platform.content`; домен и HTTPS принадлежат `operations.proxy`.",
+      "capabilities": [
+        "показывать главную с каталогом статей и рубриками;",
+        "сохранять выбранную светлую или тёмную тему на устройстве;",
+        "вести посетителя на основную главную, Мастер-класс и контакты;",
+        "использовать общий `site-footer.js` без второй реализации подвала."
+      ],
+      "card": "docs/knowledge-base/modules/catalog/platform.blog.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/blog_routes.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/fonts/OFL.txt"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/fonts/inter-cyrillic.woff2"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/fonts/inter-latin.woff2"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/app/static/blog/index.html"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "backend/tests/test_blog.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "docs/knowledge-base/modules/catalog/platform.blog.md"
+        }
+      ],
+      "id": "platform.blog",
+      "implementation_status": "implemented",
+      "parent": "platform",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "platform.content"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [
+          "operations.proxy",
+          "products"
+        ],
+        "writes_to": []
+      },
+      "routes": [
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 14,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog",
+          "symbol": "blog_home"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 14,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog",
+          "symbol": "blog_home"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "line": 21,
+          "method": "GET",
+          "module_id": "platform.blog",
+          "path": "/blog/fonts/{font_name}",
+          "symbol": "blog_font"
+        }
+      ],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Публикует главную блога Сергея Воронцова и в дальнейшем страницы статей на отдельном субдомене.",
+      "symbols": [
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 14,
+          "module_id": "platform.blog",
+          "name": "blog_home",
+          "qualname": "blog_home"
+        },
+        {
+          "file": "backend/app/blog_routes.py",
+          "kind": "function",
+          "line": 21,
+          "module_id": "platform.blog",
+          "name": "blog_font",
+          "qualname": "blog_font"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 12,
+          "module_id": "platform.blog",
+          "name": "test_blog_home_is_public_and_uses_the_accepted_structure",
+          "qualname": "test_blog_home_is_public_and_uses_the_accepted_structure"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 31,
+          "module_id": "platform.blog",
+          "name": "test_blog_home_trailing_slash_is_supported",
+          "qualname": "test_blog_home_trailing_slash_is_supported"
+        },
+        {
+          "file": "backend/tests/test_blog.py",
+          "kind": "function",
+          "line": 35,
+          "module_id": "platform.blog",
+          "name": "test_blog_fonts_are_self_hosted_and_whitelisted",
+          "qualname": "test_blog_fonts_are_self_hosted_and_whitelisted"
+        }
+      ],
+      "tables": [],
+      "telegram": null,
+      "title": "Публичный блог",
+      "truths": [
+        "`backend/app/static/blog/index.html` — текущая опубликованная главная;\n- `backend/app/blog_routes.py` — публичный серверный маршрут;\n- `docs/knowledge-base/ARTICLE_STANDARD.md` — общая типографика будущих статей."
+      ]
+    },
+    {
       "admin_catalog": [
         {
           "category": "tools",
@@ -16139,7 +16312,8 @@
       "boundary": "Не владеет содержанием курса или текстами Telegram.",
       "capabilities": [
         "вести продукты, тарифы и опубликованные версии цен;",
-        "принимать оплаты и выдавать/проверять продуктовые права;"
+        "принимать оплаты и выдавать/проверять продуктовые права;",
+        "показывать в общем личном кабинете курсы, приложения и их фактическую"
       ],
       "card": "docs/knowledge-base/modules/catalog/platform.commerce.md",
       "document_status": "current",
@@ -24139,7 +24313,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 357,
+          "line": 391,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -24147,7 +24321,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 540,
+          "line": 574,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -24155,7 +24329,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 558,
+          "line": 592,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -24163,7 +24337,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 585,
+          "line": 619,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -24171,7 +24345,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 610,
+          "line": 644,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -24179,7 +24353,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 624,
+          "line": 658,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -24187,7 +24361,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 690,
+          "line": 724,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -24195,7 +24369,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 706,
+          "line": 740,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -24203,7 +24377,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 718,
+          "line": 752,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -24211,7 +24385,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 758,
+          "line": 792,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -24219,7 +24393,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 764,
+          "line": 798,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -24227,7 +24401,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 777,
+          "line": 811,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -24235,7 +24409,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 788,
+          "line": 822,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -24243,7 +24417,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 802,
+          "line": 836,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -32007,6 +32181,11 @@
       "type": "depends_on"
     },
     {
+      "source": "platform.blog",
+      "target": "platform.content",
+      "type": "depends_on"
+    },
+    {
       "source": "platform.commerce",
       "target": "platform.crm",
       "type": "depends_on"
@@ -32224,6 +32403,16 @@
     {
       "source": "messaging.telegram.postpurchase",
       "target": "products.masterclass.offers",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.blog",
+      "target": "operations.proxy",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.blog",
+      "target": "products",
       "type": "reads_from"
     },
     {
@@ -33460,6 +33649,30 @@
       "symbol": "app_asset"
     },
     {
+      "file": "backend/app/blog_routes.py",
+      "line": 14,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog",
+      "symbol": "blog_home"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 14,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog",
+      "symbol": "blog_home"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "line": 21,
+      "method": "GET",
+      "module_id": "platform.blog",
+      "path": "/blog/fonts/{font_name}",
+      "symbol": "blog_font"
+    },
+    {
       "file": "telegram-bot/service/app/main.py",
       "line": 389,
       "method": "GET",
@@ -33973,7 +34186,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 66,
+      "line": 68,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -34077,7 +34290,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 72,
+      "line": 74,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/ready",
@@ -35013,6 +35226,22 @@
       "module_id": "platform.auth",
       "name": "require_admin",
       "qualname": "require_admin"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 14,
+      "module_id": "platform.blog",
+      "name": "blog_home",
+      "qualname": "blog_home"
+    },
+    {
+      "file": "backend/app/blog_routes.py",
+      "kind": "function",
+      "line": 21,
+      "module_id": "platform.blog",
+      "name": "blog_font",
+      "qualname": "blog_font"
     },
     {
       "file": "backend/app/calorie_course_material_service.py",
@@ -38473,7 +38702,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 33,
+      "line": 34,
       "module_id": "operations.delivery",
       "name": "lifespan",
       "qualname": "lifespan"
@@ -38481,7 +38710,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 66,
+      "line": 68,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -38489,7 +38718,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 72,
+      "line": 74,
       "module_id": "operations.delivery",
       "name": "ready",
       "qualname": "ready"
@@ -43177,7 +43406,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 357,
+      "line": 391,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -43185,7 +43414,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 540,
+      "line": 574,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -43193,7 +43422,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 558,
+      "line": 592,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -43201,7 +43430,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 585,
+      "line": 619,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -43209,7 +43438,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 610,
+      "line": 644,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -43217,7 +43446,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 624,
+      "line": 658,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -43225,7 +43454,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 690,
+      "line": 724,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -43233,7 +43462,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 706,
+      "line": 740,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -43241,7 +43470,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 718,
+      "line": 752,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -43249,7 +43478,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 758,
+      "line": 792,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -43257,7 +43486,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 764,
+      "line": 798,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -43265,7 +43494,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 777,
+      "line": 811,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -43273,7 +43502,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 788,
+      "line": 822,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -43281,7 +43510,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 802,
+      "line": 836,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -43445,6 +43674,30 @@
       "module_id": "platform.content",
       "name": "test_regular_markdown_link_is_unchanged",
       "qualname": "ArticleMarkupTests.test_regular_markdown_link_is_unchanged"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 12,
+      "module_id": "platform.blog",
+      "name": "test_blog_home_is_public_and_uses_the_accepted_structure",
+      "qualname": "test_blog_home_is_public_and_uses_the_accepted_structure"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 31,
+      "module_id": "platform.blog",
+      "name": "test_blog_home_trailing_slash_is_supported",
+      "qualname": "test_blog_home_trailing_slash_is_supported"
+    },
+    {
+      "file": "backend/tests/test_blog.py",
+      "kind": "function",
+      "line": 35,
+      "module_id": "platform.blog",
+      "name": "test_blog_fonts_are_self_hosted_and_whitelisted",
+      "qualname": "test_blog_fonts_are_self_hosted_and_whitelisted"
     },
     {
       "file": "backend/tests/test_calorie_course_journey.py",
@@ -54283,13 +54536,21 @@
       "kind": "method",
       "line": 46,
       "module_id": "operations.delivery",
+      "name": "test_deploy_smoke_checks_the_public_blog_boundary",
+      "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 52,
+      "module_id": "operations.delivery",
       "name": "test_ci_builds_and_tests_only_changed_application_services",
       "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
     },
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 56,
+      "line": 62,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -54297,7 +54558,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 127,
+      "line": 133,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -54305,7 +54566,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 137,
+      "line": 143,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -54313,7 +54574,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 143,
+      "line": 149,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"
