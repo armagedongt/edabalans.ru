@@ -1,0 +1,21 @@
+{
+  "schema_version": "writer-three-layer-review-v1",
+  "external_id": "11401696",
+  "status": "pass",
+  "layers": {
+    "facts": "pass",
+    "logic_and_continuity": "pass",
+    "voice_and_naturalness": "pass"
+  },
+  "checks": {
+    "full_source_continuity": "pass",
+    "article_standard": "pass",
+    "platform_tail_removal": "pass",
+    "media_provenance": "pass",
+    "anti_neuroslop": "pass"
+  },
+  "review_notes": [
+    "Сохранены все четыре смысловые части: качество питания, сладкое, активность и мотивация.",
+    "Сохранены два клиентских примера и пять стадий от вдохновения до привычки; рекламный финал удалён."
+  ]
+}

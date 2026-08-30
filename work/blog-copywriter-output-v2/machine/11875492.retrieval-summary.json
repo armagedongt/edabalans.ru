@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "pack_version": "author-post-pack-v5-20260826",
+  "external_id": "11875492",
+  "runtime_sources": {
+    "authoring_skill": "content/author-voice/skill/edabalans-writer/SKILL.md",
+    "editing_modes": "content/author-voice/editing-modes-v1.md",
+    "writer_contract": "content/author-voice/writer-contract-v1.md",
+    "article_standard": "docs/knowledge-base/ARTICLE_STANDARD.md"
+  },
+  "review_policy": {
+    "policy_id": "writer-three-layer-v1",
+    "source": "content/author-voice/writer-contract-v1.md#проход-3-три-слоя-проверки"
+  },
+  "retrieval_counts": {
+    "exemplars": 7,
+    "rhetoric": 0,
+    "corrections": 2,
+    "rules": 1,
+    "topic_history": 12
+  },
+  "retrieved_catalog_ids": {
+    "exemplars": [
+      "pikabu:11875492",
+      "telegram:1878297271:795",
+      "pikabu:10877887",
+      "pikabu:14062380",
+      "pikabu:14183275",
+      "pikabu:11833079",
+      "telegram:1878297271:557"
+    ],
+    "rhetoric": [],
+    "corrections": [
+      "masterclass:protein-fat-carbohydrates"
+    ],
+    "rules": [],
+    "topic_history": [
+      "leadteh_16bbc4b4b9090e25d9155696",
+      "leadteh_dcfc26d47df35cc22cc261f5",
+      "pikabu:13306420",
+      "telegraph:a4460b0b2deb1a7d5401",
+      "leadteh_86e1002f4c7153b5ef801e91",
+      "pikabu:11385251",
+      "telegram:1878297271:739",
+      "leadteh_16f0b78439b128491573f3d8",
+      "telegram:1878297271:235",
+      "telegraph:1c5848bffa9b828c5f67",
+      "pikabu:10273494",
+      "telegraph:22e13ee84efa248d067e"
+    ]
+  },
+  "privacy_note": "Full private retrieval rows remain outside Git; this summary records the canonical retrieval run."
+}

@@ -1,0 +1,34 @@
+{
+  "status": "pass",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": {
+    "goal": "Сохранить смысл, фактуру, авторский голос, примеры и медиа; структурировать под статью сайта; удалить Pikabu/Telegram/рекламные хвосты; научные риски исправить или квалифицировать.",
+    "preserve": [
+      "central thesis",
+      "author position",
+      "useful examples",
+      "source-linked media",
+      "recognizable voice"
+    ],
+    "comparison_texts": [],
+    "source_characters": 9381,
+    "draft_characters": 9081
+  },
+  "semantic_fact_review_required_once": [
+    "До снижения калорийности читателю предложено улучшить качество и организацию питания.",
+    "Сохранены дневник питания, постепенные изменения, два примера активности и пять стадий поведения.",
+    "Мотивация не представлена достаточной опорой для долгосрочного результата."
+  ],
+  "forbidden_claims_to_check_once": [
+    "Универсальная норма шагов для всех.",
+    "Обещание результата только за счёт силы воли.",
+    "Платформенные или рекламные хвосты."
+  ],
+  "external_id": "11401696",
+  "draft_file": "11401696-pohudenie-nachinaetsya-ne-s-pohudeniya.md",
+  "source_sha256": "1f9dee6d7651088a17a4d6004d5f7df6c1111eb02f9aa4be2da8fd5086a78bd9"
+}

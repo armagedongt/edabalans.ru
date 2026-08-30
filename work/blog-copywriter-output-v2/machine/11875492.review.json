@@ -1,0 +1,21 @@
+{
+  "schema_version": "writer-three-layer-review-v1",
+  "external_id": "11875492",
+  "status": "pass",
+  "layers": {
+    "facts": "pass",
+    "logic_and_continuity": "pass",
+    "voice_and_naturalness": "pass"
+  },
+  "checks": {
+    "full_source_continuity": "pass",
+    "article_standard": "pass",
+    "platform_tail_removal": "pass",
+    "media_provenance": "pass",
+    "anti_neuroslop": "pass"
+  },
+  "review_notes": [
+    "Сохранены сравнения с яйцом и семечками, состав мёда и вывод о балансе всего рациона.",
+    "Показатель 85 г/сутки не выдан за точное индивидуальное потребление; мёд корректно отнесён ВОЗ к источникам свободных сахаров."
+  ]
+}

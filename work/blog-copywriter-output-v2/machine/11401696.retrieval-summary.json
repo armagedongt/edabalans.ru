@@ -1,0 +1,56 @@
+{
+  "schema_version": "1.0",
+  "pack_version": "author-post-pack-v5-20260826",
+  "external_id": "11401696",
+  "runtime_sources": {
+    "authoring_skill": "content/author-voice/skill/edabalans-writer/SKILL.md",
+    "editing_modes": "content/author-voice/editing-modes-v1.md",
+    "writer_contract": "content/author-voice/writer-contract-v1.md",
+    "article_standard": "docs/knowledge-base/ARTICLE_STANDARD.md"
+  },
+  "review_policy": {
+    "policy_id": "writer-three-layer-v1",
+    "source": "content/author-voice/writer-contract-v1.md#проход-3-три-слоя-проверки"
+  },
+  "retrieval_counts": {
+    "exemplars": 7,
+    "rhetoric": 2,
+    "corrections": 1,
+    "rules": 0,
+    "topic_history": 12
+  },
+  "retrieved_catalog_ids": {
+    "exemplars": [
+      "pikabu:11401696",
+      "telegram:1878297271:258",
+      "pikabu:13785403",
+      "tilda:294eb4d0000c71b1c56e",
+      "telegram:1878297271:262",
+      "pikabu:13178972",
+      "telegram:1878297271:698"
+    ],
+    "rhetoric": [
+      "pikabu:13436070",
+      "leadteh_e3a23e3f8ef7ac7785de4c99"
+    ],
+    "corrections": [
+      "case:nutritionists-law"
+    ],
+    "rules": [],
+    "topic_history": [
+      "telegraph:c8709a61227cbf7d5c64",
+      "telegram:1878297271:534",
+      "leadteh_46014cdb099d72b719788abd",
+      "telegraph:6790b63a3652bd48fc0f",
+      "telegram:1878297271:572",
+      "pikabu:11954127",
+      "telegram:1878297271:415",
+      "pikabu:12200917",
+      "telegraph:5cdc74d306679547cb56",
+      "leadteh_7c84b8e3e38cca2482690c50",
+      "telegram:1878297271:250",
+      "telegraph:da4f8747534a68b9c35b"
+    ]
+  },
+  "privacy_note": "Full private retrieval rows remain outside Git; this summary records the canonical retrieval run."
+}
