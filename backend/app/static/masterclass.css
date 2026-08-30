@@ -53,6 +53,7 @@
 .mc-offer-terms>[data-offer]:disabled{opacity:.45;cursor:not-allowed}
 .mc-offers .offer-grid{display:grid;grid-template-columns:1fr;gap:12px}
 .mc-offer-card{display:grid;grid-template-columns:minmax(0,1fr) 176px;gap:24px;padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--card);box-shadow:0 8px 24px #3a2e1c0a}
+.mc-offer-card.is-featured{border-color:#e3a38f;background:#fff5ef;box-shadow:0 12px 30px #8f3f2417}
 .mc-offer-copy{min-width:0}
 .mc-offer-kind{color:var(--accent);font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
 .mc-offer-card h2{margin:5px 0 6px;font-size:23px;line-height:1.18}

@@ -1363,8 +1363,20 @@ def test_account_offer_entry_prioritises_selected_product_without_resetting_wind
         "focus_product_code=consultation"
     )
     assert consultation.status_code == 200
-    assert consultation.json()["offers"][0]["code"] == "single:consultation"
-    assert consultation.json()["offers"][0]["price"] >= 7000
+    consultation_payload = consultation.json()
+    assert consultation_payload["offers"][0]["code"] == "single:consultation"
+    assert consultation_payload["offers"][0]["title"] == "Индивидуальная консультация"
+    assert consultation_payload["offers"][0]["description"] == (
+        "Разбор дневника питания, определение плана действий и ответы на любые вопросы."
+    )
+    assert consultation_payload["offers"][0]["price"] >= 7000
+    ordinary = client.get(
+        "/api/masterclass/account-offers?email=member@example.test"
+    )
+    assert ordinary.status_code == 200
+    assert [card["code"] for card in consultation_payload["offers"][1:]] == [
+        card["code"] for card in ordinary.json()["offers"]
+    ]
     with factory() as db:
         offer_after = db.scalar(select(UserOffer))
         assert offer_after.started_at == started_before
@@ -1405,7 +1417,7 @@ def test_offer_simulator_is_generated_from_runtime_css_and_product_catalog():
     ).read_text(encoding="utf-8")
     assert runtime_css in rendered
     assert runtime_js in rendered
-    assert "class=\"mc-offer-card\"" in rendered
+    assert "class=\"mc-offer-card'+featured+'\"" in rendered
     assert "productPresentationMarkup" in rendered
     assert "headerMarkup:offerPageHeaderMarkup" in rendered
     assert "var back=ctx.accountOffer?" in rendered

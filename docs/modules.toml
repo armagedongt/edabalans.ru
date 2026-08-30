@@ -216,6 +216,8 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/product_catalog_service.py", "backend/app/product_catalog_routes.py",
   "backend/app/static/product-catalog-editor.*", "docs/knowledge-base/PRODUCT_CATALOG.md",
+  "backend/migrations/versions/20260830_0031_product_copy.py",
+  "backend/tests/test_product_copy_migration.py",
 ]
 owns_routes = ["*/admin/products", "*/admin/api/product-catalog*"]
 

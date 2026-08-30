@@ -23,9 +23,30 @@ from app.models import (  # noqa: E402
     Resource,
     UserAccess,
 )
+from app.product_catalog_service import PRODUCT_CATALOG_SEED  # noqa: E402
 
 
 TOKEN = "pricing-test-token"
+
+
+def test_owner_approved_recordings_and_consultation_copy_is_exact() -> None:
+    products = {
+        item["code"]: item for item in PRODUCT_CATALOG_SEED["products"]
+    }
+    assert products["recordings"] == {
+        **products["recordings"],
+        "shortName": "Два реальных разбора",
+        "fullName": "Два реальных разбора участников Мастер-класса прошлых потоков",
+        "descriptor": "Оригиналы дневника и запись всей консультации.",
+    }
+    assert products["consultation"] == {
+        **products["consultation"],
+        "shortName": "Индивидуальная консультация",
+        "fullName": "Индивидуальная консультация",
+        "descriptor": (
+            "Разбор дневника питания, определение плана действий и ответы на любые вопросы."
+        ),
+    }
 
 
 def make_client(*, enabled: bool) -> tuple[TestClient, sessionmaker[Session]]:
@@ -137,13 +158,24 @@ def test_product_catalog_keeps_technical_connections_out_of_editor() -> None:
     assert "app" not in product
 
     edited = deepcopy(body["active"]["manifest"])
-    edited["products"][0]["descriptor"] = "Как проверить единый текст в карточках"
+    edited["products"][0]["descriptor"] = "Утверждённый владельцем дескрипшн без шаблонного начала."
     saved = client.put(
         "/admin/api/product-catalog",
         json={"expected_version": body["active"]["version"], "payload": edited},
     )
     assert saved.status_code == 200
     assert saved.json()["active"]["manifest"]["products"][0]["descriptor"] == edited["products"][0]["descriptor"]
+
+    empty_descriptor = deepcopy(saved.json()["active"]["manifest"])
+    empty_descriptor["products"][0]["descriptor"] = ""
+    rejected_empty = client.put(
+        "/admin/api/product-catalog",
+        json={
+            "expected_version": saved.json()["active"]["version"],
+            "payload": empty_descriptor,
+        },
+    )
+    assert rejected_empty.status_code == 422
 
     invalid = deepcopy(saved.json()["active"]["manifest"])
     invalid["products"][0]["code"] = "other"

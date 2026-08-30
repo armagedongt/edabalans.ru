@@ -208,13 +208,25 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
+    assert ".account-card.available-card" in account.text
+    assert ".account-card.featured" in account.text
+    assert "item.product_code==='consultation'?' featured'" in account.text
+    assert "<article class=\"account-card'+cardCls+'\">" in account.text
+    assert "function legalSummary" in account.text
+    assert "legal-paragraph" in account.text
+    assert "+legalSummary(item.summary)+" in account.text
+    assert "String(value||'').split(/\\n\\s*\\n/).map" in account.text
     for app_code in ("onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review"):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
         assert f'id="{app_code}-app"' in response.text
         assert "masterclass.js" in response.text
-    assert client.get("/assets/masterclass.js").status_code == 200
-    assert client.get("/assets/masterclass.css").status_code == 200
+    offers_js = client.get("/assets/masterclass.js")
+    offers_css = client.get("/assets/masterclass.css")
+    assert offers_js.status_code == 200
+    assert offers_css.status_code == 200
+    assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
+    assert ".mc-offer-card.is-featured" in offers_css.text
     assert client.get("/assets/max-logo.png").status_code == 200
     course = client.get("/apps/masterclass-course.html")
     assert course.status_code == 200

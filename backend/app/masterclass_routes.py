@@ -1721,11 +1721,20 @@ def build_offers(
             card for card in cards
             if card["composition"] == "bundle" and focus_product_code in card["items"]
         ]
-        cards = [focused_single, *focused_bundles[:2]]
+        if focus_product_code == "consultation":
+            # The personal account has a permanent direct consultation entry.
+            # Keep the ordinary current offers below it instead of turning the
+            # focused view into a consultation-only bundle list.
+            cards = [
+                focused_single,
+                *[card for card in cards if card["code"] != focused_single["code"]],
+            ]
+        else:
+            cards = [focused_single, *focused_bundles[:2]]
     for card in cards:
         card["saving"] = card["standard_price"] - card["price"]
         card["saving_percent"] = round(card["saving"] * 100 / card["standard_price"]) if card["standard_price"] else 0
-    visible_cards = cards[:3]
+    visible_cards = cards if focus_product_code == "consultation" else cards[:3]
     visible_product_codes = {
         product_code
         for card in visible_cards

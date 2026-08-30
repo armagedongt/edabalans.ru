@@ -96,8 +96,8 @@ OFFER_PRODUCTS: dict[str, OfferProduct] = {
         ],
     },
     "recordings": {
-        "name": "Записи консультаций других участников",
-        "description": "Практические записи разборов питания и решений других участников.",
+        "name": "Два реальных разбора участников Мастер-класса прошлых потоков",
+        "description": "Оригиналы дневника и запись всей консультации.",
         "long_description": "",
         "resource": "ACCESS_CONSULTATION_RECORDINGS",
         "standard": 3900,
@@ -116,7 +116,7 @@ OFFER_PRODUCTS: dict[str, OfferProduct] = {
     },
     "consultation": {
         "name": "Индивидуальная консультация",
-        "description": "Сначала разбор дневника, затем обсуждение выводов звонком или голосовыми.",
+        "description": "Разбор дневника питания, определение плана действий и ответы на любые вопросы.",
         "long_description": "",
         "resource": "ACCESS_CONSULTATION",
         "standard": 8900,

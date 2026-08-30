@@ -24,6 +24,29 @@ from app.models import (  # noqa: E402
 )
 
 
+def test_legal_gate_summaries_use_owner_approved_copy_and_safe_storage_boundary():
+    by_code = {item["code"]: item for item in LEGAL_DOCUMENTS}
+
+    disclaimer = by_code["educational_disclaimer"]["summary"]
+    assert disclaimer == (
+        "Все материалы личного кабинета и мои консультации носят "
+        "информационно-образовательный характер. Они не являются медицинской "
+        "услугой, диагностикой или назначением лечения.\n\n"
+        "При любых заболеваниях и патологиях рекомендации врача имеют "
+        "приоритет над любой информацией, полученной от меня."
+    )
+
+    consent = by_code["personal_data_consent"]["summary"]
+    assert consent == (
+        "В личном кабинете хранятся все данные вашего аккаунта — история "
+        "покупок, прогресс обучения, анкета, дневник питания и любые другие "
+        "сведения, которые вы укажете самостоятельно.\n\n"
+        "По умолчанию основные базы данных личного кабинета хранятся на "
+        "территории РФ в соответствии с законом. Политика подробно объясняет "
+        "состав данных, цели обработки, сроки хранения и ваши права."
+    )
+
+
 def setup() -> tuple[TestClient, sessionmaker[Session]]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
