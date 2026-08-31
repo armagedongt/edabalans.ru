@@ -100,8 +100,10 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Вы долистали сайт до конца…",
     ):
         assert marker in response.text
-    for theme in ("white", "blue-mist", "blue-rhythm", "blue-crescendo"):
-        assert f'data-page-theme-button="{theme}"' in response.text
+    assert '<body data-page-theme="blue-mist">' in response.text
+    assert "page-theme-toolbar" not in response.text
+    assert 'id="site-footer" data-edabalans-site-footer="public"' in response.text
+    assert '[data-edabalans-site-footer]{position:relative;z-index:1;background:transparent;color:#17212b}' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' in response.text
     assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' in response.text
     assert 'data-tilda-cart-url="https://похудение-это-есть.рф/"' in response.text
