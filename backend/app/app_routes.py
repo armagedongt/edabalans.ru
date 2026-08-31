@@ -61,6 +61,29 @@ def site_footer_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-footer.js", stable_loader=True)
 
 
+@router.get("/preview/homepage-recognition", include_in_schema=False)
+def homepage_recognition_preview() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "homepage-preview" / "recognition.html",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get(
+    "/preview/homepage-recognition/crying-character.png",
+    include_in_schema=False,
+)
+def homepage_recognition_preview_image() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "homepage-preview" / "crying-character.png",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> Response:
     if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:

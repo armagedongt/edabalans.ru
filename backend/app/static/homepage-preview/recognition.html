@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Старая формула похудения — блок 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@1,800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#17191e;
+      --text:#343940;
+      --red:#ff665b;
+      --paper:#fff;
+      --blue-soft:#a9d2ff;
+      --final:#332b3b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#fff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
+    .argument{padding:clamp(24px,4vw,52px) clamp(18px,2.2vw,32px) 8px;background:#fff}
+    .argument__inner{width:min(100%,940px);margin:0 auto}
+    .argument h1{max-width:900px;margin:0;font-size:clamp(31px,7.8vw,58px);font-weight:800;line-height:1.07;letter-spacing:-.052em;text-wrap:balance}
+    .old-formula__line{position:relative;display:inline-block;white-space:nowrap}
+    .strike-svg{position:absolute;z-index:2;right:-.08em;left:-.08em;top:42%;display:block;width:calc(100% + .16em);height:28%;overflow:visible;pointer-events:none}
+    .strike-svg path{fill:none;stroke:var(--red);stroke-width:clamp(3.6px,.09em,5.4px);stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+    .old-formula__line:last-child .strike-svg{top:52%}
+    .argument__copy{max-width:780px;margin-top:24px}
+    .argument__copy p{margin:0;color:var(--text);font-size:clamp(18px,2.5vw,20px);font-weight:500;line-height:1.62}
+    .argument__copy p+p{margin-top:10px}
+
+    .recognition{--window-height:calc(100svh - 6px);--step-height:clamp(125px,24svh,180px);--field-width:100%;position:relative;display:grid;width:min(100%,1180px);max-width:100%;height:auto;margin:0 auto;padding:0 clamp(14px,2vw,24px);grid-template:minmax(0,1fr)/minmax(0,1fr)}
+    .recognition__scene{position:sticky;z-index:2;top:6px;min-width:0;align-self:start;grid-area:1/1;height:var(--window-height);overflow:visible;border:0;border-radius:0;background:#fff;box-shadow:none;isolation:isolate}
+    .recognition__steps{display:grid;grid-area:1/1;visibility:hidden;pointer-events:none}
+    .recognition__steps::after{height:max(0px,calc(var(--window-height) - 60px));content:""}
+    .recognition__step{height:var(--step-height)}
+    .recognition__person-wrap{position:relative;z-index:2;display:grid;width:var(--field-width);margin:0 auto;padding-bottom:28px;overflow:visible;align-items:start;justify-items:center;pointer-events:none}
+    .recognition__person{display:block;width:96%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
+    .recognition__pains{position:absolute;z-index:8;right:0;bottom:0;left:0;height:min(100%,340px);clip-path:inset(0 -60px -60px -60px);pointer-events:none}
+    .pain{position:absolute;top:0;width:min(84vw,450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 13px 34px rgba(22,89,124,.12);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
+    .pain::after{position:absolute;right:22px;bottom:-9px;width:18px;height:14px;border-radius:0 0 4px 0;background:inherit;clip-path:polygon(0 0,100% 0,100% 100%);content:""}
+    .pain:nth-child(odd){left:5vw}
+    .pain:nth-child(odd)::after{right:auto;left:22px;border-radius:0 0 0 4px;clip-path:polygon(0 0,100% 0,0 100%)}
+    .pain:nth-child(even){right:5vw}
+    .pain--final{left:50%!important;width:min(88vw,390px);background:var(--final);color:#fff;font-weight:800;text-align:center;box-shadow:0 12px 34px rgba(51,43,59,.20)}
+    .final-old{position:relative;display:inline-block}
+    .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
+    .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
+
+    .method-transition{position:relative;z-index:12;margin-top:0;padding:52px 18px 104px;background:#fff}
+    .method-transition__inner{width:min(100%,940px);margin:0 auto}
+    .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:clamp(28px,7vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
+    .method-list{display:grid;gap:13px;max-width:790px;margin:28px 0 0;padding:0;list-style:none}
+    .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:750;line-height:1.45}
+    .method-list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#e6f6fe;color:#118ed8;content:"✓";font-size:15px;font-weight:900}
+    .method-list p{margin:0}
+    .method-list span{color:#66707a;font-weight:600}
+    .method-list strong{color:var(--ink);font-weight:850}
+
+    @media(max-width:380px){
+      .old-formula__line{letter-spacing:clamp(-.078em,calc(-16.926px + 4.03vw),-.052em)}
+    }
+    @media(min-width:720px){
+      .recognition__person{width:100%}
+      .pain{width:min(84vw,clamp(450px,42vw,470px));padding:19px 23px;font-size:20px}
+      .pain:nth-child(odd){left:max(5vw,calc(50% - 520px))}
+      .pain:nth-child(even){right:max(5vw,calc(50% - 520px))}
+    }
+    @media(min-width:1100px){
+      .argument{padding-top:40px;padding-bottom:14px}
+      .argument__copy{max-width:940px;margin-top:20px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .recognition{height:auto}
+      .recognition__scene{position:relative;top:auto;height:auto;min-height:0;overflow:visible;padding:28px 0 44px}
+      .recognition__steps{display:none}
+      .recognition__pains{position:relative;display:grid;gap:11px;padding:0 16px}
+      .pain,.pain:nth-child(odd),.pain:nth-child(even),.pain--final{position:relative;top:auto;right:auto;left:auto!important;width:min(100%,620px);margin-inline:auto;opacity:1!important;transform:none!important}
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="recognition" data-recognition>
+      <div class="recognition__scene">
+        <section class="argument">
+          <div class="argument__inner">
+            <h1>Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
+            <div class="argument__copy">
+              <p>Пожалуй, все хоть раз слышали эту фразу. И вообще-то похудение так и работает.</p>
+              <p>Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается?</p>
+            </div>
+          </div>
+        </section>
+        <div class="recognition__person-wrap" data-person>
+          <img class="recognition__person" src="/preview/homepage-recognition/crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
+          <div class="recognition__pains" aria-label="Трудности с похудением">
+            <p class="pain">Весь день держалась. Вечером сорвалась</p>
+            <p class="pain">Я ем мало. Вес стоит</p>
+            <p class="pain">Похудела — всё вернулось</p>
+            <p class="pain">Стресс — и снова тянет к еде</p>
+            <p class="pain">Я всё знаю. Но не делаю</p>
+            <p class="pain pain--final">Я так больше <span class="final-old">не могу</span><span class="final-new">не хочу</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="recognition__steps" aria-hidden="true">
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+      </div>
+    </section>
+
+    <section class="method-transition" aria-label="Следующий блок страницы">
+      <div class="method-transition__inner">
+        <p class="method-kicker">Значит, пора менять подход!</p>
+        <ul class="method-list">
+          <li><p><span>Вместо ограничений — </span><strong>баланс</strong></p></li>
+          <li><p><span>Вместо ПП-рецептов — </span><strong>пищевые привычки</strong></p></li>
+          <li><p><span>Вместо уменьшения еды — </span><strong>увеличение насыщения</strong></p></li>
+          <li><p><span>Вместо калорий — </span><strong>дневник питания по фото</strong></p></li>
+          <li><p><span>Вместо погони за цифрами на весах — </span><strong>изменение образа жизни</strong></p></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+  <script>
+    (()=>{
+      const root=document.querySelector('[data-recognition]');
+      if(!root)return;
+      const scene=root.querySelector('.recognition__scene');
+      const field=root.querySelector('.recognition__person-wrap');
+      const lane=root.querySelector('.recognition__pains');
+      const argument=root.querySelector('.argument');
+      const person=root.querySelector('.recognition__person');
+      const pains=[...root.querySelectorAll('.pain')];
+      const steps=[...root.querySelectorAll('.recognition__step')];
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+      const clamp=(v,min=0,max=1)=>Math.min(max,Math.max(min,v));
+      let ticking=false;
+
+      const syncGeometry=()=>{
+        const availableWidth=root.clientWidth-(window.innerWidth>=720?48:28);
+        const aspect=(Number(person.getAttribute('width'))||1280)/(Number(person.getAttribute('height'))||639);
+        const availableHeight=Math.max(180,window.innerHeight-argument.offsetHeight-42);
+        const heightLimitedWidth=availableHeight*aspect;
+        const width=Math.max(0,Math.min(availableWidth,heightLimitedWidth));
+        root.style.setProperty('--field-width',`${Math.round(width)}px`);
+      };
+
+      const setPain=(pain,index)=>{
+        const step=steps[index];
+        if(!step)return;
+        const stepRect=step.getBoundingClientRect();
+        const triggerLine=parseFloat(getComputedStyle(scene).top)||0;
+        const local=(triggerLine-stepRect.top)/Math.max(1,stepRect.height);
+        const fieldHeight=lane.clientHeight;
+        const enterY=fieldHeight+18;
+        const exitY=-pain.offsetHeight-18;
+        const stepHeight=Math.max(1,stepRect.height);
+        const targetSpeed=.80;
+        const motionDuration=(enterY-exitY)/(targetSpeed*stepHeight);
+        const final=pain.classList.contains('pain--final');
+        let y;
+        let opacity;
+        if(final){
+          const targetY=fieldHeight-pain.offsetHeight-14;
+          const arrivalDuration=Math.max(.58,(enterY-targetY)/(targetSpeed*stepHeight));
+          const arrival=clamp(local/arrivalDuration);
+          const eased=1-Math.pow(1-arrival,3);
+          y=enterY+((targetY-enterY)*eased);
+          opacity=clamp(local/.12);
+        }else{
+          const travel=clamp(local/motionDuration);
+          y=enterY+((exitY-enterY)*travel);
+          opacity=clamp(local/.12)*clamp((motionDuration-.18-local)/.24);
+        }
+        pain.style.opacity=opacity.toFixed(3);
+        pain.style.transform=final
+          ?`translate3d(-50%,${y}px,0)`
+          :`translate3d(0,${y}px,0)`;
+      };
+
+      const render=()=>{
+        ticking=false;
+        if(reduced.matches)return;
+        syncGeometry();
+        pains.forEach((pain,index)=>setPain(pain,index));
+      };
+      const request=()=>{if(ticking)return;ticking=true;requestAnimationFrame(render)};
+      addEventListener('scroll',request,{passive:true});
+      addEventListener('resize',request);
+      reduced.addEventListener?.('change',request);
+      if(person.complete)request();
+      else person.addEventListener('load',request,{once:true});
+    })();
+  </script>
+</body>
+</html>

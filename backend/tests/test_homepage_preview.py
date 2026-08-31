@@ -1,0 +1,58 @@
+import os
+from html.parser import HTMLParser
+
+os.environ.setdefault(
+    "DATABASE_URL",
+    "postgresql+psycopg://test:test@127.0.0.1:5432/test",
+)
+
+from fastapi.testclient import TestClient  # noqa: E402
+
+from app.main import app  # noqa: E402
+
+
+client = TestClient(app)
+
+
+class RobotsMetaParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.content: str | None = None
+        self.image_sources: set[str] = set()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attributes = dict(attrs)
+        if tag == "meta" and attributes.get("name") == "robots":
+            self.content = attributes.get("content")
+        if tag == "img" and attributes.get("src"):
+            self.image_sources.add(attributes["src"])
+
+
+def test_homepage_recognition_preview_is_public_and_noindex() -> None:
+    response = client.get("/preview/homepage-recognition")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    parser = RobotsMetaParser()
+    parser.feed(response.text)
+    assert parser.content is not None
+    assert {value.strip() for value in parser.content.split(",")} == {
+        "noindex",
+        "nofollow",
+    }
+    assert "/preview/homepage-recognition/crying-character.png" in parser.image_sources
+    assert "data-recognition" in response.text
+
+
+def test_homepage_recognition_preview_image_is_public_and_noindex() -> None:
+    response = client.get("/preview/homepage-recognition/crying-character.png")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "image/png"
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
+    assert b"IHDR" in response.content[:32]
+    assert b"IEND" in response.content[-32:]
