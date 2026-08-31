@@ -3,6 +3,7 @@ title: "Выбрать главный результат ближайшего т
 course_step: "1.4"
 document_status: "draft"
 editorial_review: "writer_pass"
+owner_review: "positive_direction_with_rebuild_requested_2026-09-01"
 ---
 
 ## Какую тренировку мне выбрать?

@@ -91,3 +91,9 @@ Google Doc: [«Карта продуктовой линейки и маркет�
 | Дословная фактура постов | `sources/author-posts/` |
 | Научные опоры и будущий фактчек | `sources/external/` и [07-fact-check-backlog.md](07-fact-check-backlog.md) |
 | Точка заморозки и возврата | [08-production-handoff.md](08-production-handoff.md) |
+
+## Актуальный аудит после комментария 01.09.2026
+
+- [Полная тезисная карта обеих записей и судьба тем](analysis/stream-thesis-map-v2.md).
+- [Авторская пересборка задачи](13-owner-rebuild-2026-09-01.md).
+- [Программа v3](15-course-program-v3.md).
