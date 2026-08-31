@@ -21,6 +21,7 @@ from app.product_catalog_service import product_public
 DOCUMENT_TYPE = "course-structure"
 DOCUMENT_KEY = "masterclass-21"
 MANAGED_SCHEMA_VERSION = 1
+MASTERCLASS_DAY_COUNT = 20
 COURSE_CONTENT_ROOT = Path(__file__).resolve().parents[2] / "content" / "masterclass"
 COURSE_MANIFEST_PATH = COURSE_CONTENT_ROOT / "course" / "course.json"
 SYSTEM_KINDS = {
@@ -234,11 +235,15 @@ def normalize_editor_payload(proposed: dict, current: dict, next_version: int) -
     if (
         not isinstance(days, list)
         or not all(isinstance(day, dict) for day in days)
-        or len(days) != 21
-        or len(current_days) != 21
+        or len(days) != MASTERCLASS_DAY_COUNT
+        or len(current_days) != MASTERCLASS_DAY_COUNT
     ):
-        raise HTTPException(422, "В Мастер-классе должно быть 21 день")
-    if [day.get("number") for day in days] != list(range(1, 22)):
+        raise HTTPException(
+            422, f"В Мастер-классе должно быть {MASTERCLASS_DAY_COUNT} дней"
+        )
+    if [day.get("number") for day in days] != list(
+        range(1, MASTERCLASS_DAY_COUNT + 1)
+    ):
         raise HTTPException(422, "Порядок дней нельзя менять")
 
     for key in current:
@@ -506,6 +511,12 @@ def publish_course_seed_additions(db: Session, *, admin: str) -> ManagedDocument
 def prepare_restore_payload(source: dict, current: dict, next_version: int) -> dict:
     restored = deepcopy(source)
     restored_days = {int(day["number"]): day for day in restored["days"]}
+    current_day_numbers = {int(day["number"]) for day in current["days"]}
+    if set(restored_days) != current_day_numbers:
+        raise HTTPException(
+            422,
+            "Нельзя восстановить редакцию с другим количеством дней курса",
+        )
     for current_day in current["days"]:
         day = restored_days[int(current_day["number"])]
         merged_steps = []
