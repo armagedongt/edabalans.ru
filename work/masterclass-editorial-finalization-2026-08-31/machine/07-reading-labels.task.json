@@ -1,0 +1,29 @@
+{
+  "note": "Финальный фактчек и корректура полного авторского материала дня 3 о чтении этикеток.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная редактируемая авторская основа: content/masterclass/source-current/07-reading-labels.md. Она прочитана целиком и является основой результата.",
+  "course_context": {"day_context": "День 3", "material_role": "Дать практический порядок чтения упаковки без демонизации добавок.", "continuity": "Завершает день о вредной еде; подготавливает DQS."},
+  "rewrite_goal": "Сохранить авторские примеры и практическую последовательность; исправить неверные обобщения об Е-добавках, глютене, ГМО, органической продукции и маркировке сахара.",
+  "preservation_anchors": ["## Наименование", "## Состав", "## Дополнительные надписи"],
+  "required_facts": [
+    {"text": "Разрешённые пищевые добавки проходят оценку безопасности и применяются в регламентированных условиях.", "mode": "semantic"},
+    {"text": "ГМ-продукты оцениваются индивидуально; одобренные продукты не показали вреда для населения в странах их применения.", "mode": "semantic"},
+    {"text": "Органическая маркировка в России регулируется законом и требует подтверждения соответствия.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "EAEU food labeling and additive regulations", "fingerprint": "TR-TS-022-2011+029-2012"},
+    {"name": "WHO genetically modified food Q&A", "fingerprint": "who.int/FAQ-genetically-modified-foods"},
+    {"name": "Federal Law 280-FZ organic products", "fingerprint": "280-FZ-2018"}
+  ],
+  "forbidden_claims": [
+    "ГМО — это то же самое, что обычная селекция.",
+    "Любая Е-добавка может навредить только теоретически.",
+    "Безглютеновое питание не имеет показаний кроме целиакии."
+  ]
+}

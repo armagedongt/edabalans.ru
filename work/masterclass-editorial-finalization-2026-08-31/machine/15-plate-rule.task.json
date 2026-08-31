@@ -1,0 +1,29 @@
+{
+  "note": "Финальный фактчек и корректура материала дня 5 о правиле тарелки.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная редактируемая авторская основа: content/masterclass/source-current/15-plate-rule.md. Она прочитана целиком и является основой результата.",
+  "course_context": {"day_context": "День 5", "material_role": "Научить использовать пропорции тарелки без буквального копирования картинки.", "continuity": "После DQS и КБЖУК; перед практическими опорными точками."},
+  "rewrite_goal": "Сохранить авторскую критику буквального применения тарелки; убрать приписанные Гарварду диаметры и проценты, обновить контекст рекомендаций и отделить авторские ориентиры.",
+  "preservation_anchors": ["## Суть \"Здоровой Тарелки\"", "## Почему правило тарелки не помогает?", "## Выводы:"],
+  "required_facts": [
+    {"text": "Гарвардская Healthy Eating Plate не задаёт обязательный диаметр тарелки или отдельный размер по полу.", "mode": "semantic"},
+    {"text": "Действующие рекомендации США имеют выпуск 2025–2030, а MyPlate был запущен в 2011 году как визуальная схема.", "mode": "semantic"},
+    {"text": "Ориентир 10–12 приёмов пищи в неделю обозначен как практический ориентир Сергея.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "Harvard Healthy Eating Plate", "fingerprint": "harvard-healthy-eating-plate-current"},
+    {"name": "Dietary Guidelines for Americans 2025-2030", "fingerprint": "dietaryguidelines.gov/2025-2030"},
+    {"name": "Russian MR 2.3.1.0253-21", "fingerprint": "MR-2.3.1.0253-21"}
+  ],
+  "forbidden_claims": [
+    "Гарвард требует тарелку 22 см для женщин и 24 см для мужчин.",
+    "В России отсутствуют любые официальные рекомендации по питанию.",
+    "Средиземноморская диета официально содержит ровно 10 процентов белка."
+  ]
+}

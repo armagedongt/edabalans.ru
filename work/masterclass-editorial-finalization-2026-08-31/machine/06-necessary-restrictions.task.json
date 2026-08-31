@@ -1,0 +1,29 @@
+{
+  "note": "Финальный фактчек и корректура полного авторского материала дня 3 без пересказа и сокращения сильных авторских блоков.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная редактируемая авторская основа: content/masterclass/source-current/06-necessary-restrictions.md. Она прочитана целиком и является основой результата.",
+  "course_context": {"day_context": "День 3", "material_role": "Дать конкретные ограничения с доказуемыми причинами без запрета всей вредной еды.", "continuity": "После вводных дней; перед ультрапереработкой, этикетками и DQS."},
+  "rewrite_goal": "Сохранить авторскую структуру, примеры и резкость; исправить только доказанные фактические ошибки, опасные абсолюты, опечатки и связь источников с тезисами.",
+  "preservation_anchors": ["Я познакомился с чипсами Doritos.", "## Список того, что надо сокращать", "гроб, гроб, кладбище"],
+  "required_facts": [
+    {"text": "IARC классифицирует силу доказательств канцерогенности, а не величину риска; действующая схема использует группы 1, 2A, 2B и 3.", "mode": "semantic"},
+    {"text": "ВОЗ рекомендует свободные сахара ниже 10% энергии и предлагает снижение примерно до 5% для дополнительной пользы.", "mode": "semantic"},
+    {"text": "ВОЗ рекомендует трансжиры ниже 1% энергии и не считает безопасными естественные трансжиры только из-за происхождения.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "WHO healthy diet, sugar, salt and trans fat guidance", "fingerprint": "who.int/current-2026"},
+    {"name": "IARC agents classification", "fingerprint": "iarc.who.int/current-2026"},
+    {"name": "Rosstat 2020 food consumption category", "fingerprint": "rosstat.gov.ru/2020"}
+  ],
+  "forbidden_claims": [
+    "Сахар сам по себе неизбежно вызывает диабет.",
+    "Точное количество трансжиров можно определить по названию булочки или печенья.",
+    "31,1 кг из статистики Росстата — это чистый добавленный сахар."
+  ]
+}

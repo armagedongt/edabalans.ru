@@ -1,0 +1,28 @@
+{
+  "note": "Финальный фактчек и корректура полного авторского материала дня 3 об ультрапереработанной еде.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная редактируемая авторская основа: content/masterclass/source-current/08-whole-processed-ultraprocessed-food.md. Она прочитана целиком и является основой результата.",
+  "course_context": {"day_context": "День 3", "material_role": "Научить различать цельную, переработанную и ультрапереработанную еду на практике.", "continuity": "После реальных ограничений; перед этикетками и DQS."},
+  "rewrite_goal": "Сохранить авторский разбор и примеры; отделить научные классификации от практического фильтра Сергея, убрать выдуманные численные оценки и необоснованные абсолюты.",
+  "preservation_anchors": ["## Как ультрапереработанная еда заставляет нас есть больше", "тест во рту", "## Исключения"],
+  "required_facts": [
+    {"text": "Практический фильтр Сергея прямо обозначен как авторский и не выдан за официальное определение NOVA или PAHO.", "mode": "semantic"},
+    {"text": "Контролируемое исследование Hall et al. показало большее потребление энергии и набор веса на ультрапереработанном рационе в условиях эксперимента.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "PAHO ultra-processed food report", "fingerprint": "PAHO-FAO-report"},
+    {"name": "Hall et al. inpatient randomized trial", "fingerprint": "PMID:31105044"},
+    {"name": "Texture and eating rate trial", "fingerprint": "PMID:35285882"}
+  ],
+  "forbidden_claims": [
+    "У любой слойки содержится конкретное количество трансжиров.",
+    "Вся влажная еда обязательно плохо хранится.",
+    "Все ультрапереработанные продукты мягкие."
+  ]
+}

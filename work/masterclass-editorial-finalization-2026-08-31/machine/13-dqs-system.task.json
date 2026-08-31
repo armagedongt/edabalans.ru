@@ -1,0 +1,25 @@
+{
+  "note": "Публикация принятой полной редакции DQS после проверки оглавления, ссылок и границы между авторской системой и внешними нормами.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная принятая редакция: content/masterclass/source-current/13-dqs-system.md. Она прочитана целиком; содержание системы не переписывается.",
+  "course_context": {"day_context": "День 4", "material_role": "Полное руководство по категориям, порциям и разбору блюд в DQS.", "continuity": "После вредной еды и этикеток; база для всего дальнейшего Мастер-класса."},
+  "rewrite_goal": "Сохранить принятую редакцию целиком; проверить оглавление, ссылки, примеры и границу между авторскими правилами DQS и внешними научными нормами.",
+  "preservation_anchors": ["## Что такое порция?", "## Как считать сложные блюда", "## Примеры"],
+  "required_facts": [
+    {"text": "Порции, баллы и границы категорий прямо подаются как авторская система DQS, а не как норматив ВОЗ.", "mode": "semantic"},
+    {"text": "Материал содержит рабочие примеры разбора домашних блюд и еды вне дома.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "DQS author method and cited research links in the material", "fingerprint": "content/masterclass/source-current/13-dqs-system.md@2026-08-31"}
+  ],
+  "forbidden_claims": [
+    "DQS является официальным медицинским диагностическим инструментом.",
+    "Одна оценка DQS гарантирует здоровье или похудение."
+  ]
+}

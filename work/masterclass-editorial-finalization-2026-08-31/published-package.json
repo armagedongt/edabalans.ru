@@ -1,0 +1,70 @@
+{
+  "generated_at": "2026-08-31T05:22:59.635541+00:00",
+  "package_sha256": "60d2ba4184e579008fa50644ce0ba70c8a0200b8d663c96daf37bd082f19635a",
+  "materials": [
+    {
+      "asset": "06-necessary-restrictions.md",
+      "step_id": "day-03-video-01",
+      "previous_version": 15,
+      "draft_sha256": "37e515b8a287ba024e643629511046eb57846500d4e1394290058fbb3f14ba0e",
+      "validation": "pass",
+      "published_version": 16
+    },
+    {
+      "asset": "27-added-sugar-guide.md",
+      "step_id": "day-10-article-03",
+      "previous_version": 3,
+      "draft_sha256": "a4b6da03aa893419e6bec910a6dad752a872341a02068f15f5a5b940dc5290b6",
+      "validation": "pass",
+      "published_version": 4
+    },
+    {
+      "asset": "28-reduce-harm-from-sweets.md",
+      "step_id": "day-11-article-01",
+      "previous_version": 3,
+      "draft_sha256": "4aa9dc6f30fb65b1e547169f3263f6ab784ca63a95c475034fbc6b72f10c6692",
+      "validation": "pass",
+      "published_version": 4
+    },
+    {
+      "asset": "29-reduce-amount-of-sweets.md",
+      "step_id": "day-11-article-02",
+      "previous_version": 2,
+      "draft_sha256": "54edd664835dbe1f961279540c45538311b5070ab66f3004511d52598d5c7c4e",
+      "validation": "pass",
+      "published_version": 3
+    },
+    {
+      "asset": "31-satiety-habits.md",
+      "step_id": "day-13-article-01",
+      "previous_version": 3,
+      "draft_sha256": "029184e2f2373991b3520ecd280a11554cd253b4d927f8dd27c296e87c9a6a11",
+      "validation": "pass",
+      "published_version": 4
+    },
+    {
+      "asset": "46-eating-outside-home.md",
+      "step_id": "day-14-article-01",
+      "previous_version": 3,
+      "draft_sha256": "8b1caf2c64286fadc7a4e5393b88f98647aad29a572649af587e7e4f9292b6cf",
+      "validation": "pass",
+      "published_version": 4
+    },
+    {
+      "asset": "17-detox-vitamins-minerals-tests.md",
+      "step_id": "day-17-article-02",
+      "previous_version": 4,
+      "draft_sha256": "6fd4bb2fc7ea5fad08737a420e970cadf89612936c19d54e5b2d261bd9936f8d",
+      "validation": "pass",
+      "published_version": 5
+    },
+    {
+      "asset": "18-water.md",
+      "step_id": "day-17-article-03",
+      "previous_version": 3,
+      "draft_sha256": "966f40f1b22ba8513f3a9708f6da022c2a0960e3dc67d14d7aa3207cce770452",
+      "validation": "pass",
+      "published_version": 4
+    }
+  ]
+}

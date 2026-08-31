@@ -1,0 +1,344 @@
+[
+  {
+    "day": 1,
+    "step_id": "day-01-article-02",
+    "asset": "01-food-diary.md",
+    "version": 3,
+    "matches": false,
+    "local_sha": "a58c0f5d726d23a3",
+    "production_sha": "caa42f72958b72b5"
+  },
+  {
+    "day": 1,
+    "step_id": "day-01-article-03",
+    "asset": "02-weighing.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "933cbc35cafef761",
+    "production_sha": "933cbc35cafef761"
+  },
+  {
+    "day": 2,
+    "step_id": "day-02-article-01",
+    "asset": "03-four-diet-categories.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "6fcc0c4dccb8feab",
+    "production_sha": "6fcc0c4dccb8feab"
+  },
+  {
+    "day": 2,
+    "step_id": "day-02-article-02",
+    "asset": "04-mediterranean-diet.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "602f71969aad14c1",
+    "production_sha": "602f71969aad14c1"
+  },
+  {
+    "day": 3,
+    "step_id": "day-03-video-01",
+    "asset": "06-necessary-restrictions.md",
+    "version": 16,
+    "matches": true,
+    "local_sha": "cce6c6e2c1df99ae",
+    "production_sha": "cce6c6e2c1df99ae"
+  },
+  {
+    "day": 3,
+    "step_id": "day-03-article-02",
+    "asset": "08-whole-processed-ultraprocessed-food.md",
+    "version": 9,
+    "matches": true,
+    "local_sha": "9af3a6b00d0faf4a",
+    "production_sha": "9af3a6b00d0faf4a"
+  },
+  {
+    "day": 3,
+    "step_id": "day-03-article-03",
+    "asset": "07-reading-labels.md",
+    "version": 5,
+    "matches": true,
+    "local_sha": "8cb940153adfb8b0",
+    "production_sha": "8cb940153adfb8b0"
+  },
+  {
+    "day": 4,
+    "step_id": "day-04-article-01",
+    "asset": "13-dqs-system.md",
+    "version": 11,
+    "matches": true,
+    "local_sha": "bee22ebf03aca5e1",
+    "production_sha": "bee22ebf03aca5e1"
+  },
+  {
+    "day": 5,
+    "step_id": "day-05-article-01",
+    "asset": "14-protein-fat-carbohydrates.md",
+    "version": 5,
+    "matches": true,
+    "local_sha": "7c9eac1723747e9d",
+    "production_sha": "7c9eac1723747e9d"
+  },
+  {
+    "day": 5,
+    "step_id": "day-05-article-03",
+    "asset": "15-plate-rule.md",
+    "version": 5,
+    "matches": true,
+    "local_sha": "014691aaadf67607",
+    "production_sha": "014691aaadf67607"
+  },
+  {
+    "day": 6,
+    "step_id": "day-06-article-01",
+    "asset": "44-anchor-points-in-nutrition.md",
+    "version": 1,
+    "matches": true,
+    "local_sha": "8275ef04eed18872",
+    "production_sha": "8275ef04eed18872"
+  },
+  {
+    "day": 6,
+    "step_id": "day-06-article-02",
+    "asset": "45-my-anchor-point-oatmeal.md",
+    "version": 1,
+    "matches": true,
+    "local_sha": "52817a8cc064228b",
+    "production_sha": "52817a8cc064228b"
+  },
+  {
+    "day": 6,
+    "step_id": "day-06-article-03",
+    "asset": "34-five-tastes.md",
+    "version": 2,
+    "matches": false,
+    "local_sha": "4621139e911f3ed1",
+    "production_sha": "5c20dc284a190045"
+  },
+  {
+    "day": 6,
+    "step_id": "day-06-article-04",
+    "asset": "53-recipe-adaptation.md",
+    "version": 1,
+    "matches": true,
+    "local_sha": "cab5ee45cb1b320c",
+    "production_sha": "cab5ee45cb1b320c"
+  },
+  {
+    "day": 7,
+    "step_id": "day-07-video-01",
+    "asset": "54-meal-constructor.md",
+    "version": 2,
+    "matches": false,
+    "local_sha": "43dbc85c85cbf54d",
+    "production_sha": "52a67cac3a994068"
+  },
+  {
+    "day": 8,
+    "step_id": "day-08-article-01",
+    "asset": "61-first-recipe-practice.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "b3fa9e8e2ae32e33",
+    "production_sha": "b3fa9e8e2ae32e33"
+  },
+  {
+    "day": 9,
+    "step_id": "day-09-article-01",
+    "asset": "67-emotional-hunger-guide.md",
+    "version": 3,
+    "matches": false,
+    "local_sha": "c9c4abec33f25295",
+    "production_sha": "5ef903e355061f84"
+  },
+  {
+    "day": 10,
+    "step_id": "day-10-article-01",
+    "asset": "66-sugar-plan.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "a138165e5cf1937e",
+    "production_sha": "a138165e5cf1937e"
+  },
+  {
+    "day": 10,
+    "step_id": "day-10-article-02",
+    "asset": "51-sugar-norms.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "0e0c2bc45ec0ad45",
+    "production_sha": "0e0c2bc45ec0ad45"
+  },
+  {
+    "day": 10,
+    "step_id": "day-10-article-03",
+    "asset": "27-added-sugar-guide.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "9209247146bbf25f",
+    "production_sha": "9209247146bbf25f"
+  },
+  {
+    "day": 11,
+    "step_id": "day-11-article-01",
+    "asset": "28-reduce-harm-from-sweets.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "f478cea62cb408f3",
+    "production_sha": "f478cea62cb408f3"
+  },
+  {
+    "day": 11,
+    "step_id": "day-11-article-02",
+    "asset": "29-reduce-amount-of-sweets.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "877571c126a74a72",
+    "production_sha": "877571c126a74a72"
+  },
+  {
+    "day": 12,
+    "step_id": "day-12-article-01",
+    "asset": "30-breakdowns-overeating-cheat-meals.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "32680d978557177f",
+    "production_sha": "32680d978557177f"
+  },
+  {
+    "day": 12,
+    "step_id": "day-12-article-02",
+    "asset": "38-cheat-meals-audio.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "eb5ea4ee0d6e00ab",
+    "production_sha": "eb5ea4ee0d6e00ab"
+  },
+  {
+    "day": 13,
+    "step_id": "day-13-article-01",
+    "asset": "31-satiety-habits.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "b9026e43771b9497",
+    "production_sha": "b9026e43771b9497"
+  },
+  {
+    "day": 13,
+    "step_id": "day-13-article-02",
+    "asset": "32-pleasure-habits.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "a8acac4c4cfc13b9",
+    "production_sha": "a8acac4c4cfc13b9"
+  },
+  {
+    "day": 14,
+    "step_id": "day-14-article-01",
+    "asset": "46-eating-outside-home.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "fc5a16d52205ebac",
+    "production_sha": "fc5a16d52205ebac"
+  },
+  {
+    "day": 15,
+    "step_id": "day-15-article-01",
+    "asset": "60-cooking-techniques.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "143236db0f0f6ec3",
+    "production_sha": "143236db0f0f6ec3"
+  },
+  {
+    "day": 15,
+    "step_id": "day-15-article-02",
+    "asset": "33-kitchen-matters.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "803a094f53a0b854",
+    "production_sha": "803a094f53a0b854"
+  },
+  {
+    "day": 16,
+    "step_id": "day-18-article-02",
+    "asset": "63-behind-scenes.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "e346113ab53d2620",
+    "production_sha": "e346113ab53d2620"
+  },
+  {
+    "day": 17,
+    "step_id": "day-17-article-01",
+    "asset": "16-health-block-closing.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "5231689007b70e85",
+    "production_sha": "5231689007b70e85"
+  },
+  {
+    "day": 17,
+    "step_id": "day-17-article-02",
+    "asset": "17-detox-vitamins-minerals-tests.md",
+    "version": 5,
+    "matches": true,
+    "local_sha": "617f7bfb07cd55d5",
+    "production_sha": "617f7bfb07cd55d5"
+  },
+  {
+    "day": 17,
+    "step_id": "day-17-article-03",
+    "asset": "18-water.md",
+    "version": 4,
+    "matches": true,
+    "local_sha": "72911d98c6e42c2a",
+    "production_sha": "72911d98c6e42c2a"
+  },
+  {
+    "day": 18,
+    "step_id": "day-18-video-01",
+    "asset": "50-final-stream-and-periodization.md",
+    "version": 0,
+    "matches": true,
+    "local_sha": "256eda8076a68916",
+    "production_sha": "256eda8076a68916"
+  },
+  {
+    "day": 18,
+    "step_id": "day-20-article-01",
+    "asset": "64-addictions-guide.md",
+    "version": 2,
+    "matches": false,
+    "local_sha": "3c76009ca2a1972e",
+    "production_sha": "e34da543b9daa114"
+  },
+  {
+    "day": 18,
+    "step_id": "day-20-article-02",
+    "asset": "65-five-years-goal.md",
+    "version": 2,
+    "matches": true,
+    "local_sha": "dcaa52916a592ed6",
+    "production_sha": "dcaa52916a592ed6"
+  },
+  {
+    "day": 19,
+    "step_id": "day-19-article-02",
+    "asset": "52-how-consultation-works.md",
+    "version": 3,
+    "matches": true,
+    "local_sha": "931bf2f53803e104",
+    "production_sha": "931bf2f53803e104"
+  },
+  {
+    "day": 20,
+    "step_id": "day-21-article-01",
+    "asset": "50-final-stream-and-periodization.md",
+    "version": 6,
+    "matches": false,
+    "local_sha": "256eda8076a68916",
+    "production_sha": "fe32bb33e5fc678d"
+  }
+]

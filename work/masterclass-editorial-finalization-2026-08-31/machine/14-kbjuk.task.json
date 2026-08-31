@@ -1,0 +1,29 @@
+{
+  "note": "Финальный фактчек, корректура и сверка расчётов материала дня 5 о КБЖУК.",
+  "work_profile": "develop_existing",
+  "edit_mode": "rewrite",
+  "surface_context": "masterclass_material",
+  "format_profile": "article",
+  "source_basis": "full_source",
+  "author_reuse_mode": "authored_blocks_first",
+  "allow_link_media_changes": true,
+  "source_text": "Полная редактируемая авторская основа: content/masterclass/source-current/14-protein-fat-carbohydrates.md. Она прочитана целиком и является основой результата.",
+  "course_context": {"day_context": "День 5", "material_role": "Объяснить КБЖУК как фон для DQS, а не новый обязательный ежедневный подсчёт.", "continuity": "После DQS; перед правилом тарелки."},
+  "rewrite_goal": "Сохранить авторские ориентиры, пояснив их статус; исправить арифметику рационов, биохимические неточности и опасные абсолюты.",
+  "preservation_anchors": ["## Калории", "## Одинаковые КБЖУ — разное качество рациона", "## \"У\" — Удовольствие"],
+  "required_facts": [
+    {"text": "Итоги рационов пересчитаны: 1902/124,3/66,1/201,6 и 1900/123,5/67,7/205,0.", "mode": "semantic"},
+    {"text": "Организм использует 20 стандартных аминокислот, девять из которых взрослому нужно получать с пищей.", "mode": "semantic"},
+    {"text": "Соотношения 70/30 и минимум жира обозначены как практические ориентиры автора, а не норматив ВОЗ.", "mode": "semantic"}
+  ],
+  "fact_sources": [
+    {"name": "WHO fat and carbohydrate guidelines", "fingerprint": "WHO-2023-fat+carbohydrate"},
+    {"name": "FAO protein quality report", "fingerprint": "FAO-2013-protein-quality"},
+    {"name": "Arithmetic recalculation of both menu tables", "fingerprint": "manual-recalculation-2026-08-31"}
+  ],
+  "forbidden_claims": [
+    "Животные жиры официально предпочтительнее ненасыщенных растительных.",
+    "DQS гарантирует набор нормы клетчатки.",
+    "1000 ккал всегда равны точному изменению веса на 130 граммов."
+  ]
+}
