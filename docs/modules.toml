@@ -229,7 +229,10 @@ owns_files = [
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
 ]
-owns_routes = ["*/apps/*", "*/assets/*", "*/preview/homepage-recognition*"]
+owns_routes = [
+  "*/apps/*", "*/assets/*",
+  "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+]
 
 [[modules]]
 id = "products.catalog"

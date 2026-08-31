@@ -1,0 +1,2261 @@
+<!doctype html>
+<html lang="ru" data-variant="blue">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Новая главная — мобильная цепочка принятых блоков</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@0,700;0,800;1,800&display=swap" rel="stylesheet">
+  <style>
+
+    @font-face {
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 500 900;
+      font-display: swap;
+      src: url('/preview/homepage-mobile/montserrat-cyrillic.woff2') format('woff2');
+      unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+    }
+
+    @font-face {
+      font-family: 'Montserrat';
+      font-style: normal;
+      font-weight: 500 900;
+      font-display: swap;
+      src: url('/preview/homepage-mobile/montserrat-latin.woff2') format('woff2');
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+
+    :root {
+      --crying-bg: #f7fbfe;
+      --crying-paper: #ffffff;
+      --crying-ink: #252525;
+      --crying-blue: #1769d2;
+      --crying-blue-dark: #1769d2;
+      --crying-font: Montserrat, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--crying-bg); }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--crying-ink);
+      font-family: var(--crying-font);
+      background: radial-gradient(circle at 12% 5%, rgba(23, 105, 210, .09), transparent 28%), var(--crying-bg);
+    }
+
+    .preview-space {
+      display: grid;
+      min-height: 72svh;
+      place-items: center;
+      padding: 32px 20px;
+      color: #65808f;
+      text-align: center;
+    }
+
+    .preview-space__inner {
+      display: grid;
+      gap: 12px;
+      justify-items: center;
+      max-width: 620px;
+    }
+
+    .preview-space__eyebrow {
+      margin: 0;
+      color: var(--crying-blue-dark);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    .preview-space__title {
+      margin: 0;
+      color: var(--crying-ink);
+      font-size: clamp(27px, 5vw, 54px);
+      font-weight: 900;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .preview-space__text {
+      max-width: 520px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .preview-space__arrow {
+      position: relative;
+      width: 2px;
+      height: 42px;
+      margin-top: 8px;
+      background: var(--crying-blue);
+    }
+
+    .preview-space__arrow::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      width: 10px;
+      height: 10px;
+      border-right: 2px solid var(--crying-blue);
+      border-bottom: 2px solid var(--crying-blue);
+      transform: translateX(-50%) rotate(45deg);
+    }
+
+    .crying-scroll {
+      position: relative;
+      height: 300svh;
+    }
+
+    .crying-scroll__scene {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      min-height: 600px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 45%, rgba(23, 105, 210, .11), transparent 42%), linear-gradient(180deg, #fff 0 14%, #f8fcff 40%, #e9f7ff 100%);
+      isolation: isolate;
+    }
+
+    .crying-scroll__visual {
+      position: absolute;
+      z-index: 2;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: grid;
+      height: 100svh;
+      min-height: 430px;
+      align-items: start;
+      justify-items: center;
+      padding: clamp(32px, 5svh, 60px) clamp(10px, 3vw, 46px) 0;
+      opacity: 1;
+      transform: none;
+      transform-origin: 50% 68%;
+      will-change: opacity, transform, filter;
+      filter: blur(5px);
+    }
+
+    .crying-scroll__person {
+      display: block;
+      width: min(94vw, 1050px);
+      height: auto;
+      pointer-events: none;
+      user-select: none;
+      filter: drop-shadow(0 24px 28px rgba(20, 75, 106, .13));
+    }
+
+    .crying-scroll__pains {
+      position: absolute;
+      z-index: 8;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .crying-scroll__pain {
+      position: absolute;
+      top: 0;
+      width: min(84vw, 470px);
+      margin: 0;
+      border: 0;
+      border-radius: 22px 22px 7px 22px;
+      padding: clamp(15px, 2.2vw, 22px) clamp(17px, 2.5vw, 26px);
+      color: rgba(37, 37, 37, .84);
+      font-family: inherit;
+      font-size: clamp(16px, 2vw, 24px);
+      font-weight: 600;
+      letter-spacing: -.018em;
+      line-height: 1.18;
+      background: rgba(247, 251, 255, .84);
+      box-shadow: 0 16px 42px rgba(22, 89, 124, .13);
+      backdrop-filter: blur(12px) saturate(1.06);
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    .crying-scroll__pain::after {
+      content: '';
+      position: absolute;
+      right: -1px;
+      bottom: -13px;
+      width: 23px;
+      height: 23px;
+      background: inherit;
+      clip-path: polygon(100% 0, 100% 100%, 0 0);
+    }
+
+    .crying-scroll__pain:nth-child(odd) {
+      left: max(5vw, calc(50% - 520px));
+      border-radius: 22px 22px 22px 7px;
+    }
+
+    .crying-scroll__pain:nth-child(odd)::after {
+      right: auto;
+      left: -1px;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    .crying-scroll__pain:nth-child(even) {
+      right: max(5vw, calc(50% - 520px));
+    }
+
+    .crying-scroll__pain--final {
+      left: 50% !important;
+      color: #fff;
+      font-weight: 800;
+      text-align: center;
+      background: rgba(23, 105, 210, .96);
+      box-shadow: 0 20px 54px rgba(23, 105, 210, .28);
+    }
+
+    html[data-variant="green"] .crying-scroll__pain--final { background: rgba(32,45,68,.97); box-shadow: 0 20px 54px rgba(32,45,68,.24); }
+
+    .crying-scroll__counter {
+      position: absolute;
+      z-index: 21;
+      right: 20px;
+      bottom: 18px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .crying-scroll__counter span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(18, 24, 32, .16);
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .crying-scroll__counter span.is-active {
+      background: var(--crying-blue-dark);
+      transform: scale(1.35);
+    }
+
+    @media (max-width: 700px) {
+      .crying-scroll { height: 310svh; }
+      .crying-scroll__scene { min-height: 560px; }
+
+      .crying-scroll__visual {
+        bottom: 0;
+        height: 100svh;
+        min-height: 390px;
+        padding: clamp(38px, 5.5svh, 52px) 6px 0;
+      }
+
+      .crying-scroll__person { width: 100%; }
+
+      .crying-scroll__pain {
+        width: min(84vw, 340px);
+        border-radius: 18px 18px 6px 18px;
+        padding: 15px 17px;
+        font-size: clamp(15px, 4.2vw, 18px);
+      }
+
+      .crying-scroll__pain:nth-child(odd) {
+        left: 5vw;
+        border-radius: 18px 18px 18px 6px;
+      }
+
+      .crying-scroll__pain:nth-child(even) { right: 5vw; }
+
+      .crying-scroll__pain--final {
+        width: min(88vw, 350px);
+        border-radius: 18px;
+      }
+
+      .crying-scroll__counter {
+        right: 14px;
+        bottom: 13px;
+      }
+
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .crying-scroll { height: auto; }
+
+      .crying-scroll__scene {
+        position: relative;
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+        padding-bottom: 48px;
+      }
+
+      .crying-scroll__counter { display: none; }
+
+      .crying-scroll__visual {
+        position: relative;
+        bottom: auto;
+        height: auto;
+        min-height: 0;
+        padding: 24px 10px;
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+      }
+
+      .crying-scroll__pains {
+        position: relative;
+        display: grid;
+        gap: 14px;
+        padding: 0 16px;
+      }
+
+      .crying-scroll__pain,
+      .crying-scroll__pain:nth-child(odd),
+      .crying-scroll__pain:nth-child(even),
+      .crying-scroll__pain--final {
+        position: relative;
+        top: auto;
+        right: auto;
+        left: auto !important;
+        width: min(100%, 620px);
+        margin-inline: auto;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+    }
+
+
+    :root {
+      --site-blue: #27aff5;
+      --site-blue-deep: #118ed8;
+      --site-orange: #f46a35;
+      --site-red: #ef4f47;
+      --site-ink: #17191e;
+      --site-text: #4f555e;
+      --crying-bg: #f2faff;
+      --crying-paper: #fff;
+      --crying-ink: var(--site-ink);
+      --crying-blue: var(--site-blue);
+      --crying-blue-dark: var(--site-blue-deep);
+      --crying-font: Manrope, Arial, sans-serif;
+    }
+
+    body { background: #fff; font-family: Manrope, Arial, sans-serif; }
+    button, a { font: inherit; }
+
+    .desktop-header { display: none; }
+    .mobile-toggle {
+      position: fixed;
+      z-index: 60;
+      top: 14px;
+      right: 14px;
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(18,24,31,.08);
+      border-radius: 13px;
+      background: rgba(255,255,255,.94);
+      box-shadow: 0 11px 28px -12px rgba(18,24,31,.35), 0 2px 8px rgba(18,24,31,.08);
+      color: #17191e;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: transform .18s ease, background .18s ease;
+    }
+    .mobile-toggle:hover, .mobile-toggle:focus-visible { background: #fff; transform: translateY(-2px); }
+    .mobile-bars { display: grid; gap: 5px; }
+    .mobile-bars span { display: block; width: 21px; height: 2px; border-radius: 5px; background: currentColor; transition: transform .2s ease, opacity .2s ease; }
+    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(2) { opacity: 0; }
+    .mobile-toggle[aria-expanded="true"] .mobile-bars span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-sheet {
+      position: fixed;
+      z-index: 55;
+      inset: 0;
+      display: grid;
+      align-content: start;
+      padding: 78px 18px 28px;
+      background: rgba(255,255,255,.96);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-10px);
+      transition: opacity .2s ease, transform .2s ease;
+      backdrop-filter: blur(14px);
+    }
+    .mobile-sheet.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .mobile-sheet__title { margin: 0 0 16px; color: var(--site-blue-deep); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    .mobile-links { display: grid; }
+    .mobile-links a { display: flex; justify-content: space-between; padding: 15px 3px; border-bottom: 1px solid #e5e9ec; color: var(--site-ink); font-size: 18px; font-weight: 800; text-decoration: none; }
+    .mobile-links a::after { color: #a7adb2; content: "→"; }
+    .mobile-links .mobile-account { margin-top: 16px; padding: 14px 16px; border: 0; border-radius: 13px; background: #e9f7fe; color: #237fae; font-size: 15px; }
+
+    .site-hero { padding: 62px 18px 58px; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
+    .site-hero__inner { width: min(100%, 940px); margin: 0 auto; }
+    .site-eyebrow { display: block; width: max-content; max-width: 100%; margin: 0 auto; padding: 8px 14px; border-radius: 24px; background: #ff642f; color: #fff; font-family: Unbounded, sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2; letter-spacing: .25px; text-transform: uppercase; }
+    .site-title { margin: 18px 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
+    .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; }
+    .site-title__plain { font-size: clamp(29px,8vw,52px); }
+    .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .72em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
+    .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(20px,6vw,58px); line-height: 1.02; letter-spacing: -.045em; white-space: nowrap; transform: rotate(-.8deg); }
+    .site-lead { max-width: 790px; margin: 31px 0 0; color: var(--site-text); font-size: 17px; font-weight: 500; line-height: 1.6; }
+    .site-player { width: min(100%,540px); margin: 25px auto 0; }
+    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: 0 32px 48px -34px rgba(13,25,35,.88); }
+
+    .argument-intro { padding: 42px 18px 46px; background: #fff; }
+    .argument-intro__inner, .method-transition__inner { width: min(100%,940px); margin: 0 auto; }
+    .argument-intro h2 { max-width: 890px; margin: 0; font-size: clamp(31px,7.8vw,58px); font-weight: 800; line-height: 1.06; letter-spacing: -.052em; text-wrap: balance; }
+    .argument-copy { max-width: 760px; margin-top: 24px; }
+    .argument-intro p { margin: 0; color: #3f444c; font-size: 18px; font-weight: 500; line-height: 1.62; }
+    .argument-intro p + p { margin-top: 10px; }
+    .crossed-rule { padding-inline: .03em; color: rgba(24,26,31,.56); background: linear-gradient(-1.2deg, transparent 43%, var(--site-red) 44% 54%, transparent 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+
+    .crying-scroll__pain { background: rgba(255,255,255,.82); box-shadow: 0 16px 42px rgba(17,142,216,.14); }
+    .crying-scroll__pain--final { background: rgba(17,142,216,.96); }
+    .final-old { position: relative; display: inline-block; }
+    .final-old::after { position: absolute; top: 52%; right: -.08em; left: -.08em; height: 3px; border-radius: 3px; background: #ff6a55; content: ""; transform: rotate(-5deg); }
+    .final-new { display: inline-block; margin-left: .35em; color: #ff6a55; font-family: "Segoe Print", "Comic Sans MS", cursive; font-size: 1.14em; transform: rotate(-4deg); }
+
+    .method-transition { padding: 82px 18px 108px; background: #fff; }
+    .method-kicker { display: inline-block; margin: 0; padding: 8px 12px; border-radius: 9px; background: var(--site-orange); color: #fff; font-size: 15px; font-weight: 800; transform: rotate(-1deg); }
+    .method-transition h2 { max-width: 780px; margin: 22px 0 0; font-size: clamp(31px,7.6vw,54px); font-weight: 800; line-height: 1.05; letter-spacing: -.05em; }
+    .method-list { display: grid; gap: 13px; max-width: 790px; margin: 28px 0 0; padding: 0; list-style: none; }
+    .method-list li { display: grid; grid-template-columns: 27px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 750; line-height: 1.45; }
+    .method-list li::before { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #e6f6fe; color: var(--site-blue-deep); content: "✓"; font-size: 15px; font-weight: 900; }
+    html[data-variant="green"] .method-list li::before { background: #e8f8ef; color: #24a765; }
+    .method-list p { margin: 0; }
+    .method-list span { color: #66707a; font-weight: 600; }
+    .method-list strong { color: var(--site-ink); font-weight: 850; }
+    .flow-placeholder { margin-top: 54px; padding: 23px 25px; border: 1px dashed #cfd8de; border-radius: 15px; color: #737a82; font-size: 14px; line-height: 1.5; }
+
+    @media (min-width: 900px) {
+      .mobile-toggle, .mobile-sheet { display: none; }
+      .desktop-header { position: relative; z-index: 50; display: block; padding: 18px 12px 0; background: #fff; }
+      .desktop-header__pill { display: flex; width: min(100%,1390px); min-height: 68px; align-items: center; gap: 20px; margin: 0 auto; padding: 9px 13px 9px 25px; border-radius: 34px; background: var(--site-blue); box-shadow: 0 16px 34px -28px rgba(17,142,216,.8); }
+      .desktop-wordmark { color: #fff; font-family: Unbounded,Manrope,sans-serif; font-size: 17px; font-weight: 800; line-height: 1; letter-spacing: -.055em; text-decoration: none; white-space: nowrap; }
+      .desktop-nav { display: flex; align-items: center; justify-content: center; gap: 4px; margin-left: auto; }
+      .desktop-nav a { padding: 10px 12px; border-radius: 14px; color: #fff; font-size: 14px; font-weight: 800; text-decoration: none; transition: background .16s ease; }
+      .desktop-nav a:hover, .desktop-nav a:focus-visible { background: rgba(255,255,255,.16); }
+      .desktop-account { margin-left: 6px; padding: 12px 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 23px; background: rgba(255,255,255,.16); color: #fff; font-size: 13px; font-weight: 800; text-decoration: none; }
+      .site-hero { padding: 54px 32px 72px; }
+      .site-eyebrow { padding: 8px 14px; font-size: 10px; }
+      .site-title__plain { font-size: 58px; }
+      .site-lead { font-size: 21px; }
+      .site-player { margin-top: 31px; }
+      .argument-intro { padding: 58px 32px 62px; }
+      .argument-intro p { font-size: 20px; }
+      .method-transition { padding: 104px 32px 130px; }
+      .method-list li { font-size: 19px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mobile-toggle, .mobile-bars span, .mobile-sheet, .desktop-nav a { transition: none; }
+    }
+
+
+    :root{
+      --ink:#17191e;
+      --text:#343940;
+      --red:#ff665b;
+      --paper:#fff;
+      --blue-soft:#a9d2ff;
+      --final:#332b3b;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:#fff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
+    .argument{padding:clamp(24px,4vw,52px) clamp(18px,2.2vw,32px) 8px;background:#fff}
+    .argument__inner{width:min(100%,940px);margin:0 auto}
+    .argument h1{max-width:900px;margin:0;font-size:clamp(31px,7.8vw,58px);font-weight:800;line-height:1.07;letter-spacing:-.052em;text-wrap:balance}
+    .old-formula__line{position:relative;display:inline-block;white-space:nowrap}
+    .strike-svg{position:absolute;z-index:2;right:-.08em;left:-.08em;top:42%;display:block;width:calc(100% + .16em);height:28%;overflow:visible;pointer-events:none}
+    .strike-svg path{fill:none;stroke:var(--red);stroke-width:clamp(3.6px,.09em,5.4px);stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+    .old-formula__line:last-child .strike-svg{top:52%}
+    .argument__copy{max-width:780px;margin-top:24px}
+    .argument__copy p{margin:0;color:var(--text);font-size:clamp(18px,2.5vw,20px);font-weight:500;line-height:1.62}
+    .argument__copy p+p{margin-top:10px}
+
+    .recognition{--scene-height:540px;--step-height:clamp(125px,24svh,180px);--field-width:100%;position:relative;display:grid;width:min(100%,1180px);max-width:100%;height:auto;margin:0 auto;padding:0 clamp(14px,2vw,24px);grid-template:minmax(0,1fr)/minmax(0,1fr)}
+    .recognition__scene{position:sticky;z-index:2;top:6px;min-width:0;align-self:start;grid-area:1/1;height:auto;overflow:visible;border:0;border-radius:0;background:#fff;box-shadow:none;isolation:isolate}
+    .recognition__steps{display:grid;grid-area:1/1;visibility:hidden;pointer-events:none}
+    .recognition__steps::after{height:max(0px,calc(var(--scene-height) - 60px));content:""}
+    .recognition__step{height:var(--step-height)}
+    .recognition__person-wrap{position:relative;z-index:2;display:grid;width:var(--field-width);margin:0 auto;padding-bottom:28px;overflow:visible;align-items:start;justify-items:center;pointer-events:none}
+    .recognition__person{display:block;width:96%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
+    .recognition__pains{position:absolute;z-index:8;right:0;bottom:0;left:0;height:min(100%,340px);clip-path:inset(0 -60px -60px -60px);pointer-events:none}
+    .pain{position:absolute;top:0;width:min(84vw,450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 7px 16px rgba(22,89,124,.10);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
+    .pain::after{position:absolute;right:22px;bottom:-9px;width:18px;height:14px;border-radius:0 0 4px 0;background:inherit;clip-path:polygon(0 0,100% 0,100% 100%);content:""}
+    .pain:nth-child(odd){left:5vw}
+    .pain:nth-child(odd)::after{right:auto;left:22px;border-radius:0 0 0 4px;clip-path:polygon(0 0,100% 0,0 100%)}
+    .pain:nth-child(even){right:5vw}
+    .pain--final{left:50%!important;width:min(88vw,390px);background:var(--final);color:#fff;font-weight:800;text-align:center;box-shadow:0 7px 16px rgba(51,43,59,.16)}
+    .final-old{position:relative;display:inline-block}
+    .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
+    .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
+
+    .method-transition{position:relative;z-index:12;margin-top:0;padding:52px 18px 104px;background:#fff}
+    .method-transition__inner{width:min(100%,940px);margin:0 auto}
+    .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:clamp(28px,7vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
+    .method-list{display:grid;gap:13px;max-width:790px;margin:28px 0 0;padding:0;list-style:none}
+    .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:750;line-height:1.45}
+    .method-list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#e6f6fe;color:#118ed8;content:"✓";font-size:15px;font-weight:900}
+    .method-list p{margin:0}
+    .method-list span{color:#66707a;font-weight:600}
+    .method-list strong{color:var(--ink);font-weight:850}
+
+    @media(max-width:380px){
+      .old-formula__line{letter-spacing:clamp(-.078em,calc(-16.926px + 4.03vw),-.052em)}
+    }
+    @media(min-width:720px){
+      .recognition__person{width:100%}
+      .pain{width:min(84vw,clamp(450px,42vw,470px));padding:19px 23px;font-size:20px}
+      .pain:nth-child(odd){left:max(5vw,calc(50% - 520px))}
+      .pain:nth-child(even){right:max(5vw,calc(50% - 520px))}
+    }
+    @media(min-width:1100px){
+      .argument{padding-top:40px;padding-bottom:14px}
+      .argument__copy{max-width:940px;margin-top:20px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .recognition{height:auto}
+      .recognition__scene{position:relative;top:auto;height:auto;min-height:0;overflow:visible;padding:28px 0 44px}
+      .recognition__steps{display:none}
+      .recognition__pains{position:relative;display:grid;gap:11px;padding:0 16px}
+      .pain,.pain:nth-child(odd),.pain:nth-child(even),.pain--final{position:relative;top:auto;right:auto;left:auto!important;width:min(100%,620px);margin-inline:auto;opacity:1!important;transform:none!important}
+    }
+
+
+  .wl-masterclass-story {
+    --wl-ink: #171717;
+    --wl-max-width: 1180px;
+    --wl-side-padding: clamp(16px, 4vw, 44px);
+    --wl-reveal-distance: clamp(54px, 11vw, 150px);
+    --wl-reveal-duration: 850ms;
+
+    box-sizing: border-box;
+    width: 100%;
+    overflow: hidden;
+    padding: clamp(44px, 7vw, 92px) var(--wl-side-padding);
+    color: var(--wl-ink);
+    background: transparent;
+  }
+
+  .wl-masterclass-story *,
+  .wl-masterclass-story *::before,
+  .wl-masterclass-story *::after {
+    box-sizing: border-box;
+  }
+
+  .wl-masterclass-story__visual,
+  .wl-masterclass-story__divider {
+    width: min(100%, var(--wl-max-width));
+    margin-inline: auto;
+  }
+
+  .wl-masterclass-story__visual img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .wl-masterclass-story__divider {
+    height: 2px;
+    margin-block: clamp(38px, 8vw, 92px);
+    background: repeating-linear-gradient(
+      90deg,
+      currentColor 0 20px,
+      transparent 20px 40px
+    );
+    transform-origin: center;
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal] {
+    opacity: 0;
+    transition:
+      opacity var(--wl-reveal-duration) ease,
+      transform var(--wl-reveal-duration) cubic-bezier(.22, 1, .36, 1);
+    will-change: opacity, transform;
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="from-right"] {
+    transform: translate3d(var(--wl-reveal-distance), 0, 0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="from-left"] {
+    transform: translate3d(calc(-1 * var(--wl-reveal-distance)), 0, 0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal="divider"] {
+    transform: scaleX(0);
+  }
+
+  .wl-masterclass-story.is-wl-ready [data-wl-reveal].is-wl-visible {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  @media (max-width: 600px) {
+    .wl-masterclass-story {
+      padding-block: 36px;
+    }
+
+    .wl-masterclass-story__divider {
+      margin-block: 34px;
+      background-size: 30px 2px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wl-masterclass-story.is-wl-ready [data-wl-reveal] {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      will-change: auto;
+    }
+  }
+
+
+    .chain-block--faq{--ink:#16181d;--muted:#5b6470;--blue:#26afff;--warm:#e76850;--line:#edf0f4;--page:#f6f8fb}
+    *{box-sizing:border-box}
+    .chain-block--faq{margin:0;color:var(--ink);background:var(--page);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .faq-section{min-height:100vh;padding:64px 18px 88px}
+    .faq-shell{width:min(100%,1180px);margin:0 auto}
+    .chain-block--faq h1{max-width:880px;margin:0;font-size:23px;font-weight:800;line-height:1.1;letter-spacing:-1px;text-wrap:balance}
+    .faq-list{display:flex;flex-direction:column;gap:12px;max-width:880px;margin-top:36px}
+    .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
+    .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
+    .faq-item[data-open="true"]{background:linear-gradient(145deg,#fffaf8 0%,#fff0ec 100%);border-color:rgba(231,104,80,.42);box-shadow:0 16px 34px -27px rgba(143,54,39,.45)}
+    .faq-question{display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;gap:16px;width:100%;padding:22px 24px;color:var(--ink);background:transparent;border:0;font:inherit;text-align:left;cursor:pointer}
+    .faq-question-text{font-size:17px;font-weight:700;line-height:1.32;letter-spacing:-.2px}
+    .faq-sign{display:grid;width:28px;height:28px;place-items:center;color:var(--blue);font-size:25px;font-weight:600;line-height:1;transform:translateY(-1px)}
+    .faq-item[data-open="true"] .faq-sign{color:var(--warm)}
+    .faq-answer{animation:faq-open .2s ease both}
+    .faq-answer[hidden]{display:none}
+    .faq-answer-inner{overflow:hidden}
+    .faq-answer-copy{display:flex;flex-direction:column;gap:12px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
+    .faq-answer-copy p{margin:0}
+    .faq-answer-copy a{color:#168fd3;text-decoration-thickness:1px;text-underline-offset:3px}
+    .faq-media{display:block;width:100%;max-height:430px;object-fit:contain;background:#f6f8fb;border:1px solid rgba(38,175,255,.12);border-radius:13px}
+    @keyframes faq-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+    @media(min-width:901px){.faq-section{padding:96px 32px 120px}.chain-block--faq h1{font-size:36px}.faq-answer-copy{padding-right:66px}}
+    @media(prefers-reduced-motion:reduce){.faq-answer,.faq-item{animation:none;transition:none}}
+
+
+    .chain-block--final{--blue:#26afff;--blue-deep:#118ed8;--orange:#ff684b;--telegram:#229ed9;--max-blue:#471aff;--max-violet:#9500ff}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    .chain-block--final{margin:0;background:#f6f8fb;color:#fff;font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+    .chain-block--final a:focus-visible{outline:3px solid #fff;outline-offset:4px}
+    .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    .final-section{padding:34px 14px 54px}
+    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,1180px);margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 30px 70px -38px rgba(3,94,151,.72)}
+    .final-card::before,.final-card::after{position:absolute;z-index:-1;border-radius:50%;content:"";pointer-events:none}
+    .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
+    .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
+    .final-main{display:flex;max-width:860px;flex-direction:column;align-items:flex-start;padding:46px 18px 64px;text-align:left}
+    .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:Unbounded,Manrope,sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
+    .chain-block--final h1{display:grid;max-width:790px;margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(30px,7.8vw,58px);font-weight:700;line-height:1.14;letter-spacing:-1.35px;text-wrap:balance}
+    .chain-block--final h1 span+span{margin-top:24px}
+    .chain-block--final h1 .final-sign{text-shadow:0 4px 0 rgba(5,104,164,.16)}
+    .chain-block--final h1 .question-line{font-family:Manrope,Arial,sans-serif;font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
+    .meme-card{position:relative;width:min(100%,390px);aspect-ratio:800/776;margin:38px 0 0;border:3px solid rgba(255,255,255,.86);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 24px 48px -28px rgba(0,53,90,.72);transform:rotate(-1.25deg)}
+    .meme-card img{display:block;width:100%;height:100%;object-fit:cover}
+    .action-group{width:min(100%,680px);margin-top:42px}
+    .contact-copy{max-width:640px;margin:0 0 22px;color:rgba(255,255,255,.9);font-size:17px;font-weight:400;line-height:1.55}
+    .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 Manrope,sans-serif;text-decoration:none;transition:background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
+    .social-button{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;box-shadow:0 16px 28px -22px rgba(0,48,80,.75)}
+    .social-button:hover,.social-button:focus-visible{filter:saturate(1.08) brightness(1.04);box-shadow:0 19px 30px -20px rgba(0,48,80,.9)}
+    .social-button--telegram{color:var(--telegram);background:#fff}
+    .social-button--max{color:#0d001a;background:#fff;border:1px solid rgba(71,26,255,.14)}
+    .social-icon{display:grid;width:39px;height:39px;flex:none;place-items:center}
+    .social-icon svg{display:block;width:37px;height:37px}
+    .max-logo{display:block;width:102px;height:38px;object-fit:contain}
+    .primary-cta{display:flex;align-items:center;justify-content:center;width:100%;margin-top:24px;padding:0 22px;color:#fff;background:#ff684b;box-shadow:0 16px 30px -17px rgba(255,104,75,.72);transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
+    .primary-cta:hover,.primary-ct.chain-block--final a:focus-visible{color:#fff;background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 20px 32px -15px rgba(232,174,69,.82);transform:rotate(-1deg) translateY(-2px)}
+    @media(min-width:760px){.final-section{padding:64px 32px 90px}.final-main{padding:58px 72px 78px}.sign-sticker{margin-bottom:28px;font-size:12px}.action-group{margin-top:52px}}
+    @media(max-width:430px){.final-main{padding-inline:14px}.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.meme-card{border-radius:18px}.contact-copy{font-size:15px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.social-button,.primary-cta{transition:none}}
+
+    html{scroll-behavior:smooth;background:#fff}
+    body{overflow-x:hidden;background:#fff}
+    .homepage-chain{display:block;min-width:0;overflow:clip}
+    .chain-block{position:relative;min-width:0}
+    .chain-block--before-after{padding:34px 0 56px;background:#fff}
+    .chain-block--pricing{padding:20px 0 74px;background:#fff}
+    .chain-block--faq{padding:0 0 54px;background:#fff}
+    .chain-block--final{background:#087aca;color:#fff}
+    #edb-pricing-neurozeh-v1 .edb-preview-toolbar{display:none!important}
+    #edb-pricing-neurozeh-v1{padding-top:0!important}
+    [data-edabalans-site-footer]{background:#087aca;color:#fff}
+    @media(max-width:719px){
+      .desktop-header{display:none!important}
+      .chain-block--before-after{padding-top:18px;padding-bottom:42px}
+      .chain-block--pricing{padding-top:6px;padding-bottom:54px}
+      .chain-block--faq{padding-bottom:32px}
+    }
+  </style>
+</head>
+<body>
+  <header class="desktop-header">
+    <div class="desktop-header__pill">
+      <a class="desktop-wordmark" href="#top">ПОХУДЕНИЕ — ЭТО ЕСТЬ<span>.РФ</span></a>
+      <nav class="desktop-nav" aria-label="Основная навигация">
+        <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a><a href="#contacts">Контакты</a>
+      </nav>
+      <a class="desktop-account" href="/lk">Личный кабинет</a>
+    </div>
+  </header>
+
+  <button class="mobile-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-menu">
+    <span class="mobile-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+  </button>
+  <aside class="mobile-sheet" id="mobile-menu" aria-hidden="true" inert>
+    <nav class="mobile-links" aria-label="Мобильная навигация">
+      <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a><a href="#contacts">Контакты</a><a class="mobile-account" href="/lk">Личный кабинет</a>
+    </nav>
+  </aside>
+
+
+  <main class="homepage-chain">
+    <div class="chain-block chain-block--hero"><section class="site-hero" id="top">
+      <div class="site-hero__inner">
+        <p class="site-eyebrow">Мастер-класс · 21 день</p>
+        <h1 class="site-title"><span class="site-title__plain">По изменению питания <small>и</small></span><span class="site-title__accent">пищевых привычек</span></h1>
+        <p class="site-lead">Вы перестанете делить еду на «можно» и «нельзя», разберётесь в своём питании и научитесь менять его без очередной диеты.</p>
+        <div class="site-player"><iframe src="/preview/homepage-mobile/vsl-player.html?v=1" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+      </div>
+    </section>
+
+    </div>
+    <div class="chain-block chain-block--recognition"><section class="recognition" data-recognition>
+      <div class="recognition__scene">
+        <section class="argument">
+          <div class="argument__inner">
+            <h1>Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
+            <div class="argument__copy">
+              <p>Пожалуй, все хоть раз слышали эту фразу. И вообще-то похудение так и работает.</p>
+              <p>Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается?</p>
+            </div>
+          </div>
+        </section>
+        <div class="recognition__person-wrap" data-person>
+          <img class="recognition__person" src="/preview/homepage-mobile/crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
+          <div class="recognition__pains" aria-label="Трудности с похудением">
+            <p class="pain">Весь день держалась. Вечером сорвалась</p>
+            <p class="pain">Я ем мало. Вес стоит</p>
+            <p class="pain">Похудела — всё вернулось</p>
+            <p class="pain">Стресс — и снова тянет к еде</p>
+            <p class="pain">Я всё знаю. Но не делаю</p>
+            <p class="pain pain--final">Я так больше <span class="final-old">не могу</span><span class="final-new">не хочу</span></p>
+          </div>
+        </div>
+      </div>
+      <div class="recognition__steps" aria-hidden="true">
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+        <i class="recognition__step"></i>
+      </div>
+    </section>
+
+    <section class="method-transition" aria-label="Следующий блок страницы">
+      <div class="method-transition__inner">
+        <p class="method-kicker">Значит, пора менять подход!</p>
+        <ul class="method-list">
+          <li><p><span>Вместо ограничений — </span><strong>баланс</strong></p></li>
+          <li><p><span>Вместо ПП-рецептов — </span><strong>пищевые привычки</strong></p></li>
+          <li><p><span>Вместо уменьшения еды — </span><strong>увеличение насыщения</strong></p></li>
+          <li><p><span>Вместо калорий — </span><strong>дневник питания по фото</strong></p></li>
+          <li><p><span>Вместо погони за цифрами на весах — </span><strong>изменение образа жизни</strong></p></li>
+        </ul>
+      </div>
+    </section>
+  </div>
+    <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
+  <div
+    class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
+    data-wl-reveal="from-right"
+  >
+    <img
+      src="/preview/homepage-mobile/weight-loss-before-masterclass.svg"
+      alt="Похудение до мастер-класса: запутанный путь"
+      width="1354"
+      height="410"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+
+  <div
+    class="wl-masterclass-story__divider"
+    data-wl-reveal="divider"
+    aria-hidden="true"
+  ></div>
+
+  <div
+    class="wl-masterclass-story__visual wl-masterclass-story__visual--after"
+    data-wl-reveal="from-left"
+  >
+    <img
+      src="/preview/homepage-mobile/weight-loss-after-masterclass.svg"
+      alt="Похудение после мастер-класса: прямой путь"
+      width="1354"
+      height="315"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+</section>
+
+</section>
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="https://api.edabalans.ru/api/pricing/site">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
+
+    #edb-pricing-neurozeh-v1 {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      color: #16181d;
+      font-family: 'Manrope', sans-serif;
+    }
+
+    #edb-pricing-neurozeh-v1 * {
+      box-sizing: border-box;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-toolbar {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      display: flex;
+      width: min(100%, 390px);
+      gap: 8px;
+      padding: 10px 18px;
+      background: rgba(22, 24, 29, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-switch {
+      flex: 1;
+      min-height: 38px;
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 999px;
+      background: transparent;
+      color: rgba(255, 255, 255, .72);
+      font: 800 12px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-preview-switch[aria-pressed="true"] {
+      border-color: #ffffff;
+      background: #ffffff;
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-phone {
+      width: min(100%, 390px);
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 92% 5%, rgba(38, 175, 255, .17), transparent 19%),
+        #f5f7fa;
+      padding: 58px 18px 68px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
+      display: inline-flex;
+      align-items: center;
+      min-height: 32px;
+      padding: 8px 14px;
+      border: 1px solid #dce4ec;
+      border-radius: 11px;
+      background: #ffffff;
+      box-shadow: 0 3px 8px rgba(20, 30, 60, .06);
+      color: #1391e8;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-kicker::before {
+      width: 9px;
+      height: 9px;
+      margin-right: 9px;
+      border-radius: 999px;
+      background: #ff6a2a;
+      content: '';
+    }
+
+    #edb-pricing-neurozeh-v1 h2 {
+      max-width: 330px;
+      margin: 20px 0 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 29px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.045em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-lead {
+      margin: 16px 0 0;
+      color: #59616e;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-list {
+      display: grid;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-status {
+      margin: 30px 0 0;
+      padding: 20px;
+      border: 1px solid #dfe5ec;
+      border-radius: 18px;
+      background: #ffffff;
+      color: #343942;
+      font-size: 15px;
+      font-weight: 800;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan {
+      position: relative;
+      overflow: hidden;
+      padding: 27px 25px 25px;
+      border: 1px solid #e7ebf0;
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 28px 54px -34px rgba(20, 30, 60, .42);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured {
+      border: 0;
+      background:
+        radial-gradient(circle at 94% 1%, rgba(255, 255, 255, .22), transparent 29%),
+        linear-gradient(150deg, #29b7ff 0%, #168fe8 100%);
+      color: #ffffff;
+      box-shadow: 0 30px 60px -32px rgba(21, 145, 232, .8);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-name {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name {
+      font-size: 21px;
+      letter-spacing: -.06em;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-ribbon {
+      display: inline-flex;
+      margin-bottom: 15px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: #ff6a2a;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      transform: rotate(-1.5deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-descriptor {
+      margin: 11px 0 0;
+      color: #68717e;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-descriptor {
+      color: rgba(255, 255, 255, .88);
+    }
+
+    #edb-pricing-neurozeh-v1 ul {
+      display: grid;
+      gap: 11px;
+      margin: 22px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #edb-pricing-neurozeh-v1 li {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 11px;
+      align-items: start;
+      color: #2b2f36;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured li {
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check {
+      display: grid;
+      width: 24px;
+      height: 24px;
+      place-items: center;
+      margin-top: 0;
+      border-radius: 8px;
+      background: #eaf7ff;
+      color: #1391e8;
+      box-shadow: inset 0 0 0 1px rgba(19, 145, 232, .08);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check svg {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-check::before {
+      content: '✓';
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-check {
+      background: #ffffff;
+      color: #1391e8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-bottom {
+      margin-top: 27px;
+      padding-top: 23px;
+      border-top: 1px solid #edf0f4;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-bottom {
+      border-top-color: rgba(255, 255, 255, .23);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price-row {
+      display: flex;
+      min-height: 34px;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 5px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price-row[hidden] {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old {
+      position: relative;
+      display: inline-block;
+      color: #8b929c;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old:not(:empty)::after {
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      right: -2px;
+      left: -2px;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      content: '';
+      transform: rotate(-3deg);
+      transform-origin: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-old:empty {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket {
+      position: relative;
+      display: none;
+      min-height: 23px;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border: 0;
+      background: #ff6738;
+      box-shadow: 0 10px 18px -11px rgba(116, 34, 10, .72);
+      clip-path: polygon(4% 0, 96% 0, 100% 17%, 96% 34%, 100% 51%, 96% 68%, 100% 85%, 96% 100%, 4% 100%, 0 83%, 4% 66%, 0 49%, 4% 32%, 0 15%);
+      color: #ffffff;
+      font-size: 8px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      line-height: 1;
+      text-transform: uppercase;
+      transform: rotate(-3deg);
+      transform-origin: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket::before {
+      position: absolute;
+      top: -3px;
+      left: 50%;
+      width: 20px;
+      height: 6px;
+      border-radius: 2px;
+      background: rgba(255, 240, 207, .72);
+      box-shadow: 0 2px 4px rgba(95, 42, 20, .12);
+      content: '';
+      transform: translateX(-50%) rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket.is-visible {
+      display: inline-flex;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket strong {
+      font-size: 11px;
+      letter-spacing: -.02em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-saving {
+      display: none;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: -.01em;
+      text-transform: none;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child ul {
+      margin-top: 16px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-bottom {
+      margin-top: 18px;
+      padding-top: 18px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-old {
+      color: rgba(255, 255, 255, .7);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-discount-ticket {
+      background: #ff6738;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-price {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 37px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -.05em;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-button {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 19px;
+      border: 0;
+      border-radius: 16px;
+      background: #26afff;
+      box-shadow: 0 16px 30px -17px rgba(38, 175, 255, .72);
+      color: #ffffff;
+      font: 800 16px 'Manrope', sans-serif;
+      cursor: pointer;
+      transition: transform .18s ease, background .18s ease, color .18s ease, box-shadow .18s ease;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-button {
+      background: #ffffff;
+      box-shadow: 0 16px 30px -17px rgba(4, 63, 103, .38);
+      color: #0d7fc7;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+      overflow: visible;
+      border: 0;
+      background:
+        radial-gradient(circle at 95% 3%, rgba(244, 197, 106, .2), transparent 30%),
+        linear-gradient(145deg, #202228 0%, #101115 100%);
+      color: #ffffff;
+      box-shadow: 0 30px 58px -30px rgba(15, 16, 20, .88);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name,
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-price {
+      color: #f4c56a;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult li {
+      color: #f4f1e9;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-bottom {
+      border-top-color: rgba(244, 197, 106, .22);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-old {
+      color: rgba(244, 241, 233, .62);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      background: #ffd06b;
+      color: #17191e;
+      transform: rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-discount-ticket {
+      padding: 6px 13px;
+      border: 2px dashed #ff7a47;
+      background: #fff9f4;
+      box-shadow: none;
+      clip-path: none;
+      color: #bd451e;
+      transform: rotate(-1deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      border-color: #e0ad49;
+      background: #fff8e5;
+      color: #7e5715;
+      transform: rotate(1deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-discount-ticket::before {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket {
+      min-height: 38px;
+      grid-template-columns: auto auto;
+      gap: 4px 7px;
+      padding: 7px 14px;
+      border: 1px solid #8bcff7;
+      border-radius: 9px;
+      background: #e9f7ff;
+      box-shadow: 0 9px 18px -13px rgba(19, 127, 193, .72);
+      clip-path: none;
+      color: #126fa8;
+      transform: rotate(-2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket.is-visible {
+      display: inline-grid;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-plan-consult .edb-pricing-discount-ticket {
+      border-color: #e1ba67;
+      background: #fff5d9;
+      color: #75500d;
+      transform: rotate(2deg);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-ticket::before {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-discount-saving {
+      display: block;
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-button {
+      background: linear-gradient(135deg, #ffd47d, #e8ae45);
+      box-shadow: 0 16px 30px -17px rgba(244, 197, 106, .8);
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan:not(.edb-pricing-plan-featured):not(.edb-pricing-plan-consult) .edb-pricing-button:hover {
+      background: #26afff;
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 16px 30px -17px rgba(38, 175, 255, .72);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-button:hover {
+      background: linear-gradient(135deg, #ffffff, #eaf7ff);
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 20px 32px -15px rgba(4, 63, 103, .52);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-button:hover {
+      background: linear-gradient(135deg, #ff934f, #ffd47d);
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 20px 32px -15px rgba(255, 147, 79, .9);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-check {
+      background: rgba(255, 255, 255, .09);
+      color: #88d4ff;
+      box-shadow: inset 0 0 0 1px rgba(136, 212, 255, .22);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-premium-item .edb-pricing-check {
+      background: linear-gradient(135deg, #ff6542 0%, #ffc247 100%);
+      color: #ffffff;
+      box-shadow: 0 8px 18px -9px rgba(255, 101, 66, .95);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker {
+      position: absolute;
+      z-index: 3;
+      top: -62px;
+      right: 6px;
+      display: none;
+      width: 70px;
+      height: 70px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 143, 75, .52);
+      border-radius: 18px;
+      background-color: #f4c56a;
+      background-image: url('data:image/jpeg;base64,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');
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+      box-shadow: 0 14px 28px -12px rgba(0, 0, 0, .82), 0 0 18px rgba(255, 143, 75, .18);
+      transform: rotate(4deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-photo-sticker img {
+      display: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-plan-name {
+      max-width: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+      margin-top: 0;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances {
+      display: grid;
+      gap: 10px;
+      margin: 42px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances li {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 10px;
+      align-items: center;
+      padding: 15px 14px 15px 10px;
+      border: 1px solid #f1d8cc;
+      border-radius: 14px;
+      background: rgba(255, 248, 244, .82);
+      color: #333b45;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances strong {
+      color: #15191e;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-assurance-icon {
+      display: grid;
+      width: 36px;
+      height: 40px;
+      place-items: center;
+      align-self: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-assurance-icon img {
+      display: block;
+      width: 40px;
+      height: 44px;
+      object-fit: contain;
+      filter: drop-shadow(0 5px 6px rgba(34, 125, 44, .2));
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-fire-emoji {
+      display: block;
+      font-family: 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+      font-size: 35px;
+      font-style: normal;
+      line-height: 1;
+      filter: drop-shadow(0 5px 6px rgba(255, 94, 32, .2));
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details {
+      margin-top: 26px;
+      padding: 22px 0 0;
+      border-top: 1px solid #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details-title {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-details-links {
+      display: grid;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 28px;
+      gap: 12px;
+      align-items: center;
+      width: 100%;
+      min-height: 54px;
+      padding: 13px 12px 13px 15px;
+      border: 1px solid transparent;
+      border-radius: 15px;
+      background: #ffffff;
+      box-shadow: 0 16px 28px -25px rgba(20, 30, 60, .55);
+      color: #24303a;
+      font: 800 14px 'Manrope', sans-serif;
+      text-align: left;
+      cursor: pointer;
+      transition: transform .13s ease-out, border-color .13s ease-out, background .13s ease-out, color .13s ease-out, box-shadow .13s ease-out;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link:hover {
+      border-color: #87cfff;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-detail-open-icon {
+      display: grid;
+      width: 28px;
+      height: 28px;
+      place-items: center;
+      border-radius: 9px;
+      background: #eaf7ff;
+      color: #158fd8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-detail-link:hover .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-detail-open-icon svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: currentColor;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-next-step {
+      margin: 13px 2px 0;
+      color: #66707c;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-next-step strong {
+      color: #2b333d;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-divider {
+      height: 1px;
+      margin: 18px 0;
+      background: #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-divider svg {
+      display: none;
+      width: 100%;
+      height: 30px;
+      overflow: visible;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-divider {
+      height: 1px;
+      background: #dfe5eb;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-divider {
+      height: 30px;
+      background: transparent;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-divider svg {
+      display: block;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-zigzag-a,
+    #edb-pricing-neurozeh-v1 .edb-zigzag-b {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 3;
+      vector-effect: non-scaling-stroke;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-zigzag-a { stroke: #aeb9c5; }
+    #edb-pricing-neurozeh-v1 .edb-zigzag-b { stroke: #d2d9e0; }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-followups {
+      display: grid;
+      gap: 10px;
+      margin-top: 0;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-detail-link {
+      border-color: #d9e1e8;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-detail-link {
+      border-width: 2px;
+      border-color: #c9e5f6;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-details-links .edb-pricing-detail-link:first-child {
+      border-color: #87cfff;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="icons"] .edb-pricing-details-links .edb-pricing-detail-link:first-child .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-details-links .edb-pricing-detail-link:nth-child(2) {
+      border-color: #66bdf2;
+      background: #edf8ff;
+      color: #176faa;
+      box-shadow: 0 12px 24px -20px rgba(21, 150, 232, .75);
+      transform: translateY(-1px);
+    }
+
+    #edb-pricing-neurozeh-v1[data-variant="zigzag"] .edb-pricing-details-links .edb-pricing-detail-link:nth-child(2) .edb-detail-open-icon {
+      background: #1596e8;
+      color: #ffffff;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay {
+      position: fixed;
+      z-index: 100;
+      inset: 0;
+      display: none;
+      overflow-y: auto;
+      background: #f5f7fa;
+      color: #16181d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay.is-open {
+      display: block;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-bar {
+      position: sticky;
+      z-index: 2;
+      top: 0;
+      display: flex;
+      justify-content: center;
+      padding: 12px 18px;
+      border-bottom: 1px solid #e0e5ea;
+      background: rgba(245, 247, 250, .94);
+      backdrop-filter: blur(12px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-back {
+      width: min(100%, 354px);
+      min-height: 48px;
+      border: 0;
+      border-radius: 14px;
+      border: 1px solid #dbe2e8;
+      background: #ffffff;
+      color: #26313b;
+      font: 800 15px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
+      width: min(100%, 390px);
+      margin: 0 auto;
+      padding: 48px 18px 72px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-title {
+      margin: 0;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-copy {
+      margin: 18px 0 0;
+      color: #4f5965;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points {
+      display: grid;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid #dfe5ea;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe {
+      margin: 0 -12px;
+      padding: 14px 12px;
+      border-bottom-color: transparent;
+      border-radius: 14px;
+      background: #fff0e8;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe .edb-product-day-number,
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-point.is-recipe .edb-product-day-title {
+      color: #d8572d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-number {
+      font-family: 'Unbounded', sans-serif;
+      color: #168fdc;
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-title {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-day-copy {
+      display: block;
+      color: #68717d;
+      font-weight: 600;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-cta {
+      width: 100%;
+      min-height: 56px;
+      margin-top: 28px;
+      border: 0;
+      border-radius: 16px;
+      background: #26afff;
+      color: #ffffff;
+      font: 800 16px 'Manrope', sans-serif;
+      cursor: pointer;
+    }
+
+    @media (max-width: 350px) {
+      #edb-pricing-neurozeh-v1 .edb-pricing-phone {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-plan {
+        padding-right: 21px;
+        padding-left: 21px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult {
+        padding-right: 14px;
+        padding-left: 14px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-price {
+        font-size: 33px;
+      }
+    }
+  </style>
+
+  <div class="edb-preview-toolbar" aria-label="Варианты оформления">
+    <button class="edb-preview-switch" type="button" data-variant-button="vip" aria-pressed="true">Основной вариант</button>
+    <button class="edb-preview-switch" type="button" data-variant-button="icons" aria-pressed="false">Иконки</button>
+    <button class="edb-preview-switch" type="button" data-variant-button="zigzag" aria-pressed="false">Зигзаг</button>
+  </div>
+
+  <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
+    <div class="edb-pricing-kicker">Мастер-класс · 21 день</div>
+    <h2 id="edb-pricing-title">Выберите формат участия</h2>
+    <p class="edb-pricing-lead">Программа одна. Тарифы отличаются дополнительными материалами и личным разбором.</p>
+    <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
+
+    <div class="edb-pricing-list">
+      <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+
+      <article class="edb-pricing-plan edb-pricing-plan-featured" data-price-code="site.masterclass.recipes">
+        <div class="edb-pricing-ribbon">Выбирают чаще</div>
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+
+      <article class="edb-pricing-plan edb-pricing-plan-consult" data-price-code="site.masterclass.consult">
+        <div class="edb-pricing-photo-sticker"><img src="data:image/jpeg;base64,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" alt="Сергей Воронцов"></div>
+        <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
+        <ul>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-pot"></use></svg></span><span>Система рецептов</span></li>
+          <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-chat"></use></svg></span><span><strong>Ответы на вопросы</strong> во время прохождения программы</span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-clipboard"></use></svg></span><span><strong>Индивидуальная консультация и разбор дневника питания</strong></span></li>
+          <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
+        </ul>
+        <div class="edb-pricing-bottom">
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
+        </div>
+      </article>
+    </div>
+
+    <ul class="edb-pricing-assurances">
+      <li>
+        <span class="edb-assurance-icon">
+          <span class="edb-fire-emoji" aria-hidden="true">🔥</span>
+        </span>
+        <span><strong>Доступ к материалам навсегда</strong> + пожизненные обновления материалов. Старт сразу после оплаты.</span>
+      </li>
+      <li>
+        <span class="edb-assurance-icon">
+          <img src="/preview/homepage-mobile/money-bag-ruble-v1.webp" alt="" aria-hidden="true">
+        </span>
+        <span><strong>Гарантирую 100% возврат</strong>, если в первые 3 дня Мастер-класса вам не понравится мой подход.</span>
+      </li>
+    </ul>
+
+    <div class="edb-pricing-details">
+      <h3 class="edb-pricing-details-title">Что входит в программу</h3>
+      <div class="edb-pricing-details-links">
+        <button class="edb-pricing-detail-link" type="button" data-product="program"><span>Основная программа</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="recipes"><span>Система рецептов</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="consultation"><span>Как проходит консультация</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+      </div>
+      <div class="edb-pricing-divider" aria-hidden="true"><svg viewBox="0 0 320 30" preserveAspectRatio="none"><path class="edb-zigzag-a" d="M2 7 18 20 34 7 50 20 66 7 82 20 98 7 114 20 130 7 146 20 162 7 178 20 194 7 210 20 226 7 242 20 258 7 274 20 290 7 306 20 318 10"/><path class="edb-zigzag-b" d="M2 23 18 10 34 23 50 10 66 23 82 10 98 23 114 10 130 23 146 10 162 23 178 10 194 23 210 10 226 23 242 10 258 23 274 10 290 23 306 10 318 20"/></svg></div>
+      <div class="edb-pricing-followups">
+        <button class="edb-pricing-detail-link" type="button" data-product="calories"><span>Мини-курс «Калорийный»</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+        <button class="edb-pricing-detail-link" type="button" data-product="training"><span>Мини-курс «С дивана до тренировок»</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
+      </div>
+      <p class="edb-pricing-next-step">Мини-курсы доступны для приобретения <strong>только после прохождения Мастер-класса.</strong></p>
+    </div>
+  </section>
+
+  <section class="edb-product-overlay" aria-hidden="true" aria-live="polite">
+    <div class="edb-product-overlay-bar">
+      <button class="edb-product-overlay-back" type="button">← Назад</button>
+    </div>
+    <div class="edb-product-overlay-content">
+      <h2 class="edb-product-overlay-title"></h2>
+      <p class="edb-product-overlay-copy"></p>
+      <div class="edb-product-overlay-points"></div>
+      <button class="edb-product-overlay-cta" type="button">Выбрать тариф</button>
+    </div>
+  </section>
+
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
+    <symbol id="edb-icon-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
+    <symbol id="edb-icon-pot" viewBox="0 0 24 24"><path d="M5 10h14v5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5zM3 10h18M8 6c0-1 1-1.5 1-2.5M12 6c0-1 1-1.5 1-2.5M16 6c0-1 1-1.5 1-2.5"/></symbol>
+    <symbol id="edb-icon-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="edb-icon-chat" viewBox="0 0 24 24"><path d="M20 15a4 4 0 0 1-4 4H9l-5 3v-7a4 4 0 0 1-1-2.6V8a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z"/><path d="M8 11h.01M12 11h.01M16 11h.01"/></symbol>
+    <symbol id="edb-icon-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4.5V3h6v1.5M9 10h6M9 14h6M9 18h4"/></symbol>
+    <symbol id="edb-icon-gift" viewBox="0 0 24 24"><path d="M3 9h18v4H3zM5 13h14v8H5zM12 9v12M12 9H8.5A2.5 2.5 0 1 1 11 6.5zM12 9h3.5A2.5 2.5 0 1 0 13 6.5z"/></symbol>
+    <symbol id="edb-icon-open" viewBox="0 0 24 24"><path d="M8 16 16 8M9 8h7v7"/></symbol>
+    <symbol id="edb-icon-fire" viewBox="0 0 24 24"><path d="M12 22c4.4 0 8-3.6 8-8 0-3-1.5-5.6-4-8.5.2 2.2-.6 3.8-2.2 5C14.2 7 12 4 8.5 2c.3 3.8-2.2 6-3.5 8.2C4.4 11.3 4 12.5 4 14c0 4.4 3.6 8 8 8Z"/><path d="M9.5 17c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5c0-1.2-.8-2.2-2.5-3.8-1.7 1.6-2.5 2.6-2.5 3.8Z"/></symbol>
+  </svg>
+
+  <script>
+    (() => {
+      const root = document.getElementById('edb-pricing-neurozeh-v1');
+      const overlay = root.querySelector('.edb-product-overlay');
+      const overlayTitle = root.querySelector('.edb-product-overlay-title');
+      const overlayCopy = root.querySelector('.edb-product-overlay-copy');
+      const overlayPoints = root.querySelector('.edb-product-overlay-points');
+      const overlayCta = root.querySelector('.edb-product-overlay-cta');
+      const plans = root.querySelectorAll('.edb-pricing-plan');
+      const pricingStatus = root.querySelector('.edb-pricing-status');
+      const previewPricingCatalog = {
+        version: 1,
+        status: 'draft',
+        tariffs: [
+          { code: 'site.masterclass.basic', name: 'Минимальный', compare_at_amount: 6900, sale_amount: 6900, currency: 'RUB' },
+          { code: 'site.masterclass.recipes', name: 'Стандартный', compare_at_amount: 10800, sale_amount: 8900, currency: 'RUB' },
+          { code: 'site.masterclass.consult', name: 'С консультацией', compare_at_amount: 17700, sale_amount: 15900, currency: 'RUB' }
+        ]
+      };
+
+      const formatPrice = (amount) => {
+        const numericAmount = Number(amount);
+        const hasKopecks = !Number.isInteger(numericAmount);
+        const formatted = new Intl.NumberFormat('ru-RU', {
+          minimumFractionDigits: hasKopecks ? 2 : 0,
+          maximumFractionDigits: hasKopecks ? 2 : 0
+        }).format(numericAmount).replace(/\u00a0/g, '\u202f');
+        return `${formatted} ₽`;
+      };
+
+      function renderPricingCatalog(catalog, source) {
+        const byCode = Object.fromEntries((catalog.tariffs || []).map((tariff) => [tariff.code, tariff]));
+        plans.forEach((plan) => {
+          const tariff = byCode[plan.dataset.priceCode];
+          plan.hidden = !tariff;
+          if (!tariff) return;
+          plan.querySelector('[data-price-field="name"]').textContent = tariff.name;
+          plan.querySelector('[data-price-field="sale"]').textContent = formatPrice(tariff.sale_amount);
+          const compare = Number(tariff.compare_at_amount || 0);
+          const sale = Number(tariff.sale_amount || 0);
+          const oldPrice = plan.querySelector('[data-price-field="compare"]');
+          const ticket = plan.querySelector('[data-price-field="discount"]');
+          const priceRow = oldPrice.closest('.edb-pricing-price-row');
+          const saving = plan.querySelector('[data-price-field="saving"]');
+          const hasDiscount = compare > sale && sale >= 0;
+          priceRow.hidden = !hasDiscount;
+          oldPrice.textContent = hasDiscount ? formatPrice(compare) : '';
+          ticket.classList.toggle('is-visible', hasDiscount);
+          ticket.querySelector('strong').textContent = hasDiscount ? `−${Math.round((1 - sale / compare) * 100)}%` : '';
+          saving.textContent = hasDiscount ? `экономия ${formatPrice(compare - sale)}` : '';
+        });
+        root.dataset.pricingSource = source;
+        root.dataset.pricingVersion = String(catalog.version || 'preview');
+        pricingStatus.hidden = Object.keys(byCode).length > 0;
+      }
+
+      async function loadPricingCatalog() {
+        const isLocalPreview = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
+        if (isLocalPreview) {
+          renderPricingCatalog(previewPricingCatalog, 'draft-preview');
+          return;
+        }
+        plans.forEach((plan) => { plan.hidden = true; });
+        pricingStatus.hidden = false;
+        root.dataset.pricingSource = 'loading';
+        try {
+          const response = await fetch(root.dataset.pricingEndpoint, { credentials: 'omit' });
+          if (!response.ok) throw new Error(`pricing catalog ${response.status}`);
+          const catalog = await response.json();
+          renderPricingCatalog(catalog, 'database');
+        } catch (error) {
+          root.dataset.pricingSource = 'unavailable';
+          pricingStatus.hidden = false;
+        }
+      }
+
+      loadPricingCatalog();
+      const productData = {
+        program: {
+          title: 'Основная программа',
+          copy: 'Самая важная база о том, как сделать питание сбалансированным, а пищевые привычки — здоровыми с помощью дневника питания по моей системе. Фундамент любого похудения. База!',
+          points: [
+            ['01','Добро пожаловать!','Программа Мастер-класса, формат дневника, анкета и вообще, здравствуйте =)'],
+            ['02','Что такое "Диеты" на самом деле','Первый и последний раз в мастер-классе обсуждаем это слово'],
+            ['03','Что такое вредная еда на самом деле','Какие есть реальные ограничения в здоровом питании, а на что можно не обращать внимание'],
+            ['04','DQS — Система оценки качества питания','Разделим абсолютно всю еду на 17 продуктовых категорий и будем искать в них баланс'],
+            ['05','Баланс продуктовых категорий','КБЖУК и правило тарелки.'],
+            ['06','Опорные точки и эволюция рецепта','Овсянка, пять вкусов, топпинги и знакомство с рецептами.','recipe'],
+            ['07','Система рецептов','Каталог, продукты, БЖУ и первая партия рецептов.','recipe'],
+            ['08','Начинаем менять питание','План следующих дней и последнее напоминание о рецептах.','recipe'],
+            ['09','50 оттенков голода','Голод, аппетит, насыщение и эмоциональный голод.'],
+            ['10','Сколько сладкого уже есть в вашем рационе','План, нормы и гайд по добавленному сахару.'],
+            ['11','Как есть меньше сладкого и не страдать','11 способов уменьшить вред и 17 способов уменьшить тягу.'],
+            ['12','Срывы, зажоры и чит-милы','Чем отличаются, что делать и как предотвращать.'],
+            ['13','Насыщение и удовольствие','Привычки для насыщения и удовольствия.'],
+            ['14','Питание вне дома','Фастфуд, отпуск, праздники и поездки.'],
+            ['15','Конструктор питания','Техники, кухонные запасы и вторая часть рецептов.','recipe'],
+            ['16','Пауза для второй части рецептов','Практика и последний день текущих условий.','recipe'],
+            ['17','50 оттенков ЗОЖ','ЗОЖ, детоксы, витамины, анализы, вода и водно-солевой баланс.'],
+            ['18','Для тех, кто любит подглядывать','Примеры чужих дневников для анализа собственной системы.'],
+            ['19','Саморевью и подготовка к консультации','Подготовка, саморевью, консультация и варианты работы.'],
+            ['20','Зависимости и постановка цели','Путеводитель по зависимостям и цель на пять лет.'],
+            ['21','Фазы и периодизация похудения','Подготовка, активная фаза, поддержание и следующий цикл.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        },
+        recipes: {
+          title: 'Система рецептов',
+          copy: 'Коротко: на практических примерах показываю, как применять принципы питания из Мастер-класса в обычной жизни — на реальных продуктах, тарелках и рецептах. Это не просто сборник, а система самостоятельной сборки еды.',
+          points: [
+            ['01','16 рецептов с подробным разбором','На их примере показываю, насколько легко применять рекомендации из Мастер-класса и делать это вкусно.'],
+            ['02','Разбор 10 продуктов','Какие готовые продукты заметно упрощают приготовление здоровых блюд.'],
+            ['03','Техники и принципы сборки тарелки','Три техники обработки продуктов и три принципа составления тарелки.']
+          ],
+          target: 1,
+          cta: 'Выбрать тариф'
+        },
+        consultation: {
+          title: 'Индивидуальная консультация',
+          copy: 'Коротко: сначала я разбираю ваш дневник питания, а затем мы обсуждаем выводы и вопросы в удобном формате — звонком, голосовыми сообщениями или текстом.',
+          points: [
+            ['01','Разбор дневника питания','Подсвечу слабые и сильные стороны и определю важнейшие изменения.'],
+            ['02','Удобный формат обсуждения','Звонок, голосовые сообщения или подробный текстовый файл.'],
+            ['03','Ответы после разбора','После консультации можно ещё несколько дней задавать вопросы по рекомендациям.']
+          ],
+          target: 2,
+          cta: 'Выбрать тариф'
+        },
+        calories: {
+          title: 'Мини-курс «Калорийный»',
+          copy: 'Коротко: учимся считать калории без лишнего геморроя, учитывать не только еду, но и расход энергии, а затем переводить цифры в понятные действия. Считать, чтобы перестать считать.',
+          points: [
+            ['01','Неделя 1 — учёт без геморроя','Взвешиваем и записываем без перфекционизма и лишней точности.'],
+            ['02','Неделя 2 — считаем не только еду','Учитываем шаги, движение и тренировки и находим свой энергетический баланс.'],
+            ['03','Неделя 3 — слезаем с калорий','Переводим цифры в понятные действия и постепенно отказываемся от постоянного приложения.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        },
+        training: {
+          title: 'Мини-курс «С мягкого дивана до регулярных тренировок»',
+          copy: 'Коротко: как встать с дивана и начать получать от тренировок и удовольствие, и результат — без требования посвящать спорту всю жизнь.',
+          points: [
+            ['01','Понять, зачем вам тренироваться','Выбираем результат, который действительно вам нужен.'],
+            ['02','Выбрать направление','Разбираемся, какой формат тренировок подходит под вашу цель.'],
+            ['03','Определить рабочий объём','От минимального уровня до более серьёзной любительской нагрузки.']
+          ],
+          target: 0,
+          cta: 'Выбрать тариф'
+        }
+      };
+
+      root.querySelectorAll('[data-variant-button]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const variant = button.dataset.variantButton;
+          root.dataset.variant = variant;
+          root.querySelectorAll('[data-variant-button]').forEach((item) => {
+            item.setAttribute('aria-pressed', String(item === button));
+          });
+        });
+      });
+
+      function openProduct(code) {
+        const product = productData[code];
+        overlayTitle.textContent = product.title;
+        overlayCopy.textContent = product.copy;
+        overlayPoints.replaceChildren(...product.points.map(([number, title, copy, marker]) => {
+          const point = document.createElement('div');
+          point.className = `edb-product-overlay-point${marker === 'recipe' ? ' is-recipe' : ''}`;
+          const numberElement = document.createElement('span');
+          numberElement.className = 'edb-product-day-number';
+          numberElement.textContent = number;
+          const content = document.createElement('span');
+          content.innerHTML = `<span class="edb-product-day-title">${title}</span><span class="edb-product-day-copy">${copy}</span>`;
+          point.append(numberElement, content);
+          return point;
+        }));
+        overlayCta.textContent = product.cta;
+        overlayCta.dataset.target = String(product.target);
+        overlay.classList.add('is-open');
+        overlay.setAttribute('aria-hidden', 'false');
+        overlay.scrollTop = 0;
+      }
+
+      function closeOverlay() {
+        overlay.classList.remove('is-open');
+        overlay.setAttribute('aria-hidden', 'true');
+      }
+
+      root.querySelectorAll('[data-product]').forEach((button) => {
+        button.addEventListener('click', () => openProduct(button.dataset.product));
+      });
+      root.querySelector('.edb-product-overlay-back').addEventListener('click', closeOverlay);
+      overlayCta.addEventListener('click', () => {
+        const preferredTarget = plans[Number(overlayCta.dataset.target || 0)];
+        const target = preferredTarget && !preferredTarget.hidden
+          ? preferredTarget
+          : [...plans].find((plan) => !plan.hidden) || pricingStatus;
+        closeOverlay();
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    })();
+  </script>
+</div>
+</section>
+    <section class="chain-block chain-block--faq" id="faq" aria-label="Частые вопросы"><div class="faq-section">
+    <section class="faq-shell" aria-labelledby="faq-title">
+      <h1 id="faq-title">Частые вопросы</h1>
+      <div class="faq-list">
+        <article class="faq-item" data-open="true">
+          <button class="faq-question" type="button" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у вас образование?</span><span class="faq-sign" aria-hidden="true">−</span></button>
+          <div class="faq-answer" id="faq-answer-1"><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Я нутрициолог. Мои квалификации — «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта». <a href="https://vk.cc/cwXk54" target="_blank" rel="noreferrer">Документы можно посмотреть по ссылке</a>.</p>
+            <p>Я не ставлю диагнозы и не лечу заболевания. При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своей компетенции.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Я уже проходила разные марафоны. Чем этот отличается?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Здесь не будет меню на неделю и списка запрещённых продуктов. Одно дело знать в теории, что «надо правильно питаться», и другое — увидеть собственное питание, понять, что именно мешает вам, и научиться менять это в обычной жизни.</p>
+            <p>Поэтому весь Мастер-класс строится вокруг дневника питания и практических заданий.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">А если я не ем определённые продукты?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Ничего страшного. Система не требует есть конкретный набор продуктов. Если какой-то продукт вам не подходит из-за вкуса, непереносимости или рекомендации врача, вы будете собирать рацион из доступных вам вариантов.</p>
+            <p>Дневник нужен как раз затем, чтобы применять общие принципы к своей жизни, а не подгонять себя под чужое меню.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Я смогу пройти всё самостоятельно?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Да. Основная программа рассчитана на самостоятельное прохождение: посмотрели материал, выполнили задание, применили к своему рациону.</p>
+            <p>Если вам нужны ответы по ходу программы и индивидуальный разбор дневника, для этого есть тариф с консультацией.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">На сколько я похудею за 21 день?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-5" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Я не могу заранее обещать конкретное число килограммов. Это не марафон с целью любой ценой показать меньшую цифру через три недели.</p>
+            <p>Задача Мастер-класса — помочь вам разобраться в своём питании и научиться принимать решения, с которыми можно продолжать худеть дальше без очередного списка запретов.</p>
+          </div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span class="faq-question-text">А если мне не нужно худеть?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-6" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Тоже подойдёт. Мастер-класс помогает оценить качество рациона, разобраться с насыщением и пищевыми привычками и понять, что стоит изменить именно вам. Это пригодится и для поддержания веса.</p></div></div></div>
+        </article>
+        <article class="faq-item" data-open="false">
+          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">А если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button>
+          <div class="faq-answer" id="faq-answer-7" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
+            <p>Теория и применение — разные вещи. Можно знать всё про белки, овощи и калории, но не замечать, что происходит в собственном рационе.</p>
+            <p>Здесь вы не просто читаете правила: ведёте дневник, оцениваете питание и выбираете конкретные изменения для себя.</p>
+          </div></div></div>
+        </article>
+      </div>
+    </section>
+  </div>
+  </section>
+    <section class="chain-block chain-block--final" id="contacts" aria-label="Финальный выбор"><div class="final-section">
+    <section class="final-card" aria-labelledby="final-title">
+      <div class="final-main">
+        <div class="sign-sticker">ПУ-ПУ-ПУ…</div>
+        <h1 id="final-title">
+          <span>Вы долистали сайт до конца…</span>
+          <span class="question-line">Ждёте какой-то особый знак?</span>
+          <span class="final-sign">Вот вам знак!</span>
+        </h1>
+        <figure class="meme-card">
+          <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет">
+        </figure>
+        <div class="action-group">
+          <p class="contact-copy">Сомневаетесь → напишите мне в личные сообщения, расскажите о ваших трудностях и задайте любой вопрос. <strong>Всем отвечаю лично.</strong></p>
+          <div class="social-row">
+            <a class="social-button social-button--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer">
+              <span class="social-icon" aria-hidden="true"><svg viewBox="0 0 1000 1000"><defs><linearGradient id="tg-gradient" x1="50%" y1="0%" x2="50%" y2="99.258%"><stop stop-color="#2aabee"/><stop offset="1" stop-color="#229ed9"/></linearGradient></defs><circle cx="500" cy="500" r="500" fill="url(#tg-gradient)"/><path d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z" fill="#fff"/></svg></span>
+              <span>Telegram</span>
+            </a>
+            <a class="social-button social-button--max" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noreferrer">
+              <img class="max-logo" src="/preview/homepage-mobile/max-full-colored-dark-official.png" alt="MAX">
+            </a>
+          </div>
+          <a class="primary-cta" href="#pricing">Выбрать тариф</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
+  </main>
+  <div data-edabalans-site-footer="public"></div>
+  <script>
+
+    (() => {
+      const toggle = document.querySelector('.mobile-toggle');
+      const sheet = document.querySelector('.mobile-sheet');
+      if (!toggle || !sheet) return;
+      const setOpen = (open) => {
+        toggle.setAttribute('aria-expanded', String(open));
+        toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+        sheet.classList.toggle('open', open);
+        sheet.setAttribute('aria-hidden', String(!open));
+        sheet.inert = !open;
+        document.body.classList.toggle('menu-open', open);
+        if (!open && sheet.contains(document.activeElement)) toggle.focus();
+      };
+      toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+      sheet.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
+    })();
+
+  </script>
+  <script>
+
+    (()=>{
+      const root=document.querySelector('[data-recognition]');
+      if(!root)return;
+      const scene=root.querySelector('.recognition__scene');
+      const field=root.querySelector('.recognition__person-wrap');
+      const lane=root.querySelector('.recognition__pains');
+      const argument=root.querySelector('.argument');
+      const person=root.querySelector('.recognition__person');
+      const pains=[...root.querySelectorAll('.pain')];
+      const steps=[...root.querySelectorAll('.recognition__step')];
+      const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
+      const clamp=(v,min=0,max=1)=>Math.min(max,Math.max(min,v));
+      let ticking=false;
+
+      const syncGeometry=()=>{
+        const availableWidth=root.clientWidth-(window.innerWidth>=720?48:28);
+        const aspect=(Number(person.getAttribute('width'))||1280)/(Number(person.getAttribute('height'))||639);
+        const viewportHeight=window.visualViewport?.height||window.innerHeight;
+        const availableHeight=Math.max(180,viewportHeight-argument.offsetHeight-42);
+        const heightLimitedWidth=availableHeight*aspect;
+        const width=Math.max(0,Math.min(availableWidth,heightLimitedWidth));
+        root.style.setProperty('--field-width',`${Math.round(width)}px`);
+        root.style.setProperty('--scene-height',`${argument.offsetHeight+field.offsetHeight}px`);
+      };
+
+      const setPain=(pain,index)=>{
+        const step=steps[index];
+        if(!step)return;
+        const stepRect=step.getBoundingClientRect();
+        const triggerLine=parseFloat(getComputedStyle(scene).top)||0;
+        const local=(triggerLine-stepRect.top)/Math.max(1,stepRect.height);
+        const fieldHeight=lane.clientHeight;
+        const enterY=fieldHeight+18;
+        const exitY=-pain.offsetHeight-18;
+        const stepHeight=Math.max(1,stepRect.height);
+        const targetSpeed=.80;
+        const motionDuration=(enterY-exitY)/(targetSpeed*stepHeight);
+        const final=pain.classList.contains('pain--final');
+        let y;
+        let opacity;
+        if(final){
+          const targetY=fieldHeight-pain.offsetHeight-14;
+          const arrivalDuration=Math.max(.58,(enterY-targetY)/(targetSpeed*stepHeight));
+          const arrival=clamp(local/arrivalDuration);
+          const eased=1-Math.pow(1-arrival,3);
+          y=enterY+((targetY-enterY)*eased);
+          opacity=clamp(local/.12);
+        }else{
+          const travel=clamp(local/motionDuration);
+          y=enterY+((exitY-enterY)*travel);
+          opacity=clamp(local/.12)*clamp((motionDuration-.18-local)/.24);
+        }
+        pain.style.opacity=opacity.toFixed(3);
+        pain.style.transform=final
+          ?`translate3d(-50%,${y}px,0)`
+          :`translate3d(0,${y}px,0)`;
+      };
+
+      const render=()=>{
+        ticking=false;
+        if(reduced.matches)return;
+        syncGeometry();
+        pains.forEach((pain,index)=>setPain(pain,index));
+      };
+      const request=()=>{if(ticking)return;ticking=true;requestAnimationFrame(render)};
+      addEventListener('scroll',request,{passive:true});
+      addEventListener('resize',request);
+      window.visualViewport?.addEventListener('resize',request,{passive:true});
+      reduced.addEventListener?.('change',request);
+      if(person.complete)request();
+      else person.addEventListener('load',request,{once:true});
+    })();
+
+  </script>
+  <script>
+
+  (() => {
+    const blocks = document.querySelectorAll('.wl-masterclass-story:not([data-wl-initialized])');
+
+    blocks.forEach((block) => {
+      block.dataset.wlInitialized = 'true';
+      const items = block.querySelectorAll('[data-wl-reveal]');
+
+      if (!('IntersectionObserver' in window)) {
+        items.forEach((item) => item.classList.add('is-wl-visible'));
+        return;
+      }
+
+      block.classList.add('is-wl-ready');
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-wl-visible');
+            return;
+          }
+
+          if (entry.boundingClientRect.top > 0) {
+            entry.target.classList.remove('is-wl-visible');
+          }
+        });
+      }, {
+        threshold: 0.2,
+        rootMargin: '0px 0px -12% 0px'
+      });
+
+      items.forEach((item) => observer.observe(item));
+    });
+  })();
+
+  </script>
+  <script>
+
+    document.querySelectorAll('.faq-question').forEach((button)=>button.addEventListener('click',()=>{
+      const item=button.closest('.faq-item');const open=item.dataset.open!=='true';
+      document.querySelectorAll('.faq-item').forEach((other)=>{other.dataset.open='false';const b=other.querySelector('.faq-question');b.setAttribute('aria-expanded','false');other.querySelector('.faq-sign').textContent='+';other.querySelector('.faq-answer').hidden=true});
+      if(open){item.dataset.open='true';button.setAttribute('aria-expanded','true');item.querySelector('.faq-sign').textContent='−';item.querySelector('.faq-answer').hidden=false}
+    }));
+
+  </script>
+  <script src="/site-footer.js"></script>
+</body>
+</html>

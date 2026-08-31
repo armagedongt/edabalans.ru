@@ -19,6 +19,9 @@ class RobotsMetaParser(HTMLParser):
         super().__init__()
         self.content: str | None = None
         self.image_sources: set[str] = set()
+        self.iframe_sources: set[str] = set()
+        self.ids: list[str] = []
+        self.main_count = 0
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
@@ -26,6 +29,12 @@ class RobotsMetaParser(HTMLParser):
             self.content = attributes.get("content")
         if tag == "img" and attributes.get("src"):
             self.image_sources.add(attributes["src"])
+        if tag == "iframe" and attributes.get("src"):
+            self.iframe_sources.add(attributes["src"])
+        if attributes.get("id"):
+            self.ids.append(attributes["id"])
+        if tag == "main":
+            self.main_count += 1
 
 
 def test_homepage_recognition_preview_is_public_and_noindex() -> None:
@@ -56,3 +65,62 @@ def test_homepage_recognition_preview_image_is_public_and_noindex() -> None:
     assert response.content.startswith(b"\x89PNG\r\n\x1a\n")
     assert b"IHDR" in response.content[:32]
     assert b"IEND" in response.content[-32:]
+
+
+def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks() -> None:
+    response = client.get("/preview/homepage-mobile")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+
+    parser = RobotsMetaParser()
+    parser.feed(response.text)
+    assert parser.content is not None
+    assert {value.strip() for value in parser.content.split(",")} == {
+        "noindex",
+        "nofollow",
+    }
+    assert parser.main_count == 1
+    assert len(parser.ids) == len(set(parser.ids))
+    assert "/preview/homepage-mobile/vsl-player.html?v=1" in parser.iframe_sources
+    assert {
+        "/preview/homepage-mobile/crying-character.png",
+        "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
+        "/preview/homepage-mobile/weight-loss-after-masterclass.svg",
+        "/preview/homepage-mobile/weight-loss-before-masterclass.svg",
+    }.issubset(parser.image_sources)
+    for marker in (
+        "Мастер-класс · 21 день",
+        "Чтобы похудеть, нужно",
+        "Значит, пора менять подход!",
+        "Выберите формат участия",
+        "Частые вопросы",
+        "Вы долистали сайт до конца…",
+    ):
+        assert marker in response.text
+
+
+def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:
+    assets = {
+        "crying-character.png",
+        "final-cta-cat-clock.webp",
+        "max-full-colored-dark-official.png",
+        "money-bag-ruble-v1.webp",
+        "montserrat-cyrillic.woff2",
+        "montserrat-latin.woff2",
+        "vsl-player.html",
+        "weight-loss-after-masterclass.svg",
+        "weight-loss-before-masterclass.svg",
+    }
+
+    for asset_name in assets:
+        response = client.get(f"/preview/homepage-mobile/{asset_name}")
+        assert response.status_code == 200, asset_name
+        assert response.headers["cache-control"] == "no-cache", asset_name
+        assert response.headers["x-robots-tag"] == "noindex, nofollow", asset_name
+        assert response.content, asset_name
+
+    assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
+    assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404

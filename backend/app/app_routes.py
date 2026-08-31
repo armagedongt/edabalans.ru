@@ -42,6 +42,17 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 DAY_COUNT = 30
 CATEGORY_COUNT = 17
 JSONP_CALLBACK = re.compile(r"^[A-Za-z_$][0-9A-Za-z_$]*$")
+HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
+    "crying-character.png",
+    "final-cta-cat-clock.webp",
+    "max-full-colored-dark-official.png",
+    "money-bag-ruble-v1.webp",
+    "montserrat-cyrillic.woff2",
+    "montserrat-latin.woff2",
+    "vsl-player.html",
+    "weight-loss-after-masterclass.svg",
+    "weight-loss-before-masterclass.svg",
+}
 
 
 def public_asset(path: Path, stable_loader: bool = False) -> FileResponse:
@@ -78,6 +89,29 @@ def homepage_recognition_preview() -> FileResponse:
 def homepage_recognition_preview_image() -> FileResponse:
     response = public_asset(
         STATIC_DIR / "homepage-preview" / "crying-character.png",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/homepage-mobile", include_in_schema=False)
+@router.get("/preview/homepage-mobile/", include_in_schema=False)
+def homepage_mobile_preview() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "homepage-preview" / "mobile.html",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/homepage-mobile/{asset_name}", include_in_schema=False)
+def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
+    if asset_name not in HOMEPAGE_MOBILE_PREVIEW_ASSETS:
+        raise HTTPException(status_code=404, detail="preview asset not found")
+    response = public_asset(
+        STATIC_DIR / "homepage-preview" / asset_name,
         stable_loader=True,
     )
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
