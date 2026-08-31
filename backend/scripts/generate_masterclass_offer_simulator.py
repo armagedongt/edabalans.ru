@@ -68,6 +68,7 @@ tariff.addEventListener('change',()=>{checks.forEach(c=>c.checked=false);render(
 
 def course_offer_scenarios() -> dict[str, dict]:
     course = json.loads(COURSE_PATH.read_text(encoding="utf-8"))
+    final_day_number = max(int(day["number"]) for day in course["days"])
     scenarios: dict[str, dict] = {}
     first_day_by_stage: dict[str, int] = {}
     for day in course["days"]:
@@ -105,19 +106,19 @@ def course_offer_scenarios() -> dict[str, dict]:
                 scenario["elapsedHours"] = (
                     day_number - first_day_by_stage[stage]
                 ) * 24
-            if day_number == 21:
+            if day_number == final_day_number and placement == "day-21-offer":
                 review_start = first_day_by_stage.get("review", 19)
-                scenarios["day21Review"] = {
+                scenarios["day20Review"] = {
                     **scenario,
-                    "label": "День 21 · review ещё действует · показать остаток",
+                    "label": f"День {day_number} · review ещё действует · показать остаток",
                     "stage": "review",
                     "hours": OFFER_STAGE_DURATIONS["review"],
                     "timerKey": "review",
                     "elapsedHours": (day_number - review_start) * 24,
                 }
-                scenarios["day21LastWeek"] = {
+                scenarios["day20LastWeek"] = {
                     **scenario,
-                    "label": "День 21 · last_week уже идёт · показать остаток",
+                    "label": f"День {day_number} · last_week уже идёт · показать остаток",
                     "stage": "last_week",
                     "hours": OFFER_STAGE_DURATIONS["last_week"],
                     "timerKey": "last_week",

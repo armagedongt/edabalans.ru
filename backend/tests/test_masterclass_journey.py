@@ -73,11 +73,11 @@ def test_optional_course_steps_do_not_block_required_progression():
             ]
             for day in (7, 8, 9, 15, 16)
         }
-    assert required[7] == [0, 1]
-    assert required[8] == [0]
+    assert required[7] == [2]
+    assert required[8] == []
     assert required[9] == []
-    assert required[15] == [0, 1, 3]
-    assert required[16] == [0]
+    assert required[15] == [1, 3]
+    assert required[16] == [1]
     assert current_required_step_ids(context, 9) == []
 
     old_progress = MasterclassDayProgress(
@@ -1460,7 +1460,7 @@ def test_offer_simulator_lists_every_current_course_checkpoint_in_order():
         (15, "recipes-part-2-gate", "recipes_part_2_offer_reopened"),
         (16, "recipes-part-2-gate", "recipes_part_2_last_day_opened"),
         (19, "day-19-offer", "day_19_offer_opened"),
-        (21, "day-21-offer", "day_21_offer_opened"),
+        (20, "day-21-offer", "day_21_offer_opened"),
     ]
     rendered = render_simulator()
     for _, placement, event in checkpoints:
@@ -1472,7 +1472,7 @@ def test_offer_simulator_lists_every_current_course_checkpoint_in_order():
     scenarios = course_offer_scenarios()
     assert list(scenarios) == [
         "day1", "day6", "day7", "day8", "day14", "day15", "day16",
-        "day19", "day21Review", "day21LastWeek", "standard",
+        "day19", "day20Review", "day20LastWeek", "standard",
     ]
     for day_number, placement, event in checkpoints:
         matching = [
@@ -1830,7 +1830,7 @@ def test_admin_offer_stages_explain_the_runtime_window_rules():
     assert "День 6" in rules["early"] and "дни 7–8" in rules["early"]
     assert "День 14" in rules["second"] and "дни 15–16" in rules["second"]
     assert "review.expires_at" in rules["last_week"]
-    assert "день 21" in rules["last_week"]
+    assert "день 20" in rules["last_week"]
 
     rejected = client.put("/api/masterclass/admin/offer-stages/early", json={
         "duration_hours": 96,
@@ -1879,7 +1879,7 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     )
     assert manifest.status_code == 200
     manifest_data = manifest.json()
-    assert len(manifest_data["days"]) == 21
+    assert len(manifest_data["days"]) == 20
     assert manifest_data["title"] == (
         "Мастер-класс по изменению питания и пищевых привычек"
     )
@@ -2125,7 +2125,7 @@ def test_course_content_uses_the_same_member_session():
     assert imported.status_code == 200
     assert imported.json()["pages"]
     response = client.get(
-        "/api/masterclass/course/content/31-satiety-habits.txt"
+        "/api/masterclass/course/content/44-anchor-points-in-nutrition.md"
         "?email=member@example.test"
     )
     assert response.status_code == 200
@@ -2171,14 +2171,14 @@ def test_recipe_gate_uses_access_and_records_open_once():
         for item in allowed["items"]
         if item["status"] == "ready"
     }
-    assert ready_items["Как устроена база рецептов и как пользоваться каталогом"] == {
-        "title": "Как устроена база рецептов и как пользоваться каталогом",
+    assert ready_items["Как получать от еды то, что вы хотите"] == {
+        "title": "Как получать от еды то, что вы хотите",
         "status": "ready",
         "openable": True,
         "required": False,
     }
-    assert ready_items["Разбор БЖУ"] == {
-        "title": "Разбор БЖУ",
+    assert ready_items["Конструктор полноценного приёма пищи"] == {
+        "title": "Конструктор полноценного приёма пищи",
         "status": "ready",
         "openable": True,
         "required": False,

@@ -122,6 +122,7 @@ def main() -> None:
                     step.get("kind") == "article"
                     and step.get("contentKind") != "tutorial"
                     and not step.get("hidden", False)
+                    and not step.get("locked", False)
                 ):
                     state = get_material(db, str(step["id"]))
                     if not state.get("published") or int(state.get("version") or 0) < 1:

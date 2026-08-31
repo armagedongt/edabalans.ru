@@ -753,6 +753,8 @@
           "contentKind": "text",
           "contentAsset": "67-emotional-hunger-guide.md",
           "hidden": false,
+          "locked": true,
+          "badge": "Скоро",
           "requiredForAllAfterRevision": 38
         }
       ],

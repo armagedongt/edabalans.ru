@@ -802,7 +802,7 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
 
     assert manifest["schemaVersion"] == 2
     assert manifest["status"] == "current_runtime_manifest"
-    assert [day["number"] for day in manifest["days"]] == list(range(1, 22))
+    assert [day["number"] for day in manifest["days"]] == list(range(1, 21))
 
     required_day_fields = {
         "title", "tocSummary", "lead", "media", "videoId", "image", "intro",
@@ -822,30 +822,31 @@ def test_masterclass_manifest_is_the_complete_canonical_program() -> None:
     assert len(step_ids) == len(set(step_ids))
 
     assert [
-        step["title"] for step in manifest["days"][5]["steps"] if step["kind"] == "article"
+        step["title"] for step in manifest["days"][5]["steps"]
+        if step["kind"] == "article" and not step.get("hidden", False)
     ] == [
         "Опорные точки в питании", "Эволюция рецепта на примере овсянки",
-        "Как сделать еду вкусной", "Почему рецепт с первого раза может быть не вашим",
+        "Почему рецепт с первого раза может быть не вашим",
     ]
-    assert manifest["days"][6]["steps"][2]["items"] == [
-        "Как устроена база рецептов и как пользоваться каталогом",
+    assert manifest["days"][6]["steps"][1]["items"] == [
+        "Как получать от еды то, что вы хотите",
+        "Конструктор полноценного приёма пищи",
         {
             "title": "Как выбирать готовую еду в магазинах и доставках",
             "status": "soon",
             "openable": False,
             "required": False,
         },
-        "Разбор БЖУ",
-        "Первая партия рецептов",
+        "Первая порция рецептов",
     ]
     assert [
-        step["title"] for step in manifest["days"][17]["steps"]
-        if not step.get("hidden", False)
+        step["title"] for step in manifest["days"][15]["steps"]
+        if step["kind"] == "article" and not step.get("hidden", False)
     ] == [
         "Для тех, кто любит подглядывать",
     ]
     assert [
-        step["title"] for step in manifest["days"][20]["steps"]
+        step["title"] for step in manifest["days"][19]["steps"]
         if step["kind"] == "article"
     ] == [
         "Фазы и периодизация похудения",
