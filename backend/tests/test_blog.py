@@ -32,8 +32,15 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
     assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
     assert "Ответ на вопрос о сроках либо поставит жирный крест" in response.text
+    assert (
+        "На фотографии — Брайан Джонсон. В 47 лет предприниматель называл себя "
+        "самым здоровым человеком на планете и тратил огромные деньги на проект "
+        "Blueprint: анализы, режим, оборудование и попытку замедлить старение."
+    ) in response.text
     assert 'data-category-filter="Личное"' in response.text
-    assert 'data-category-filter="ЗОЖ"' in response.text
+    assert 'data-category-filter="Ну, типа... ЗОЖ"' in response.text
+    assert 'data-category-filter="ЗОЖ"' not in response.text
+    assert response.text.count('data-category="Ну, типа... ЗОЖ"') == 2
     assert 'id="articles-title"' not in response.text
     assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
     assert '/blog/media/13277231/02.png' in response.text
@@ -119,6 +126,7 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     )
     assert re.search(r"\.categories button:hover, \.categories button\.active \{[^}]*background: var\(--blue\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: var\(--cloud\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.card-copy \{[^}]*overflow: hidden;[^}]*-webkit-line-clamp: 4;[^}]*\}", stylesheet.text)
     assert re.search(r"\.theme-toggle:hover \{[^}]*border-color: var\(--blue\);[^}]*color: var\(--blue\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.article-layout \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.article-hero \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)

@@ -82,6 +82,17 @@ def test_catalog_rejects_missing_required_media(tmp_path: Path) -> None:
         load_blog_catalog(tmp_path)
 
 
+def test_catalog_rejects_retired_health_category(tmp_path: Path) -> None:
+    write_catalog(tmp_path)
+    manifest = tmp_path / "manifest.json"
+    payload = json.loads(manifest.read_text(encoding="utf-8"))
+    payload["articles"][0]["category"] = "ЗОЖ"
+    manifest.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="unknown blog category: ЗОЖ"):
+        load_blog_catalog(tmp_path)
+
+
 def test_catalog_requires_dedicated_card_metadata(tmp_path: Path) -> None:
     write_catalog(tmp_path)
     manifest = tmp_path / "manifest.json"

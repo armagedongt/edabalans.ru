@@ -21,7 +21,7 @@ BLOG_CATEGORIES = (
     "Тренировки",
     "Качество питания",
     "Личное",
-    "ЗОЖ",
+    "Ну, типа... ЗОЖ",
 )
 SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
 
@@ -165,8 +165,6 @@ def validate_blog_catalog(catalog: BlogCatalog) -> None:
             raise ValueError(f"invalid blog slug: {article.slug}")
         if article.category not in BLOG_CATEGORIES:
             raise ValueError(f"unknown blog category: {article.category}")
-        if len(article.excerpt) > 180:
-            raise ValueError(f"blog excerpt is longer than 180 characters: {article.source_id}")
         if article.status not in {"draft", "published"}:
             raise ValueError(f"unknown blog status: {article.status}")
         if public_cta(article.cta) is None:
