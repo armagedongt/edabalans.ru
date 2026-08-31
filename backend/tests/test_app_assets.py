@@ -739,9 +739,9 @@ def test_masterclass_day_three_order_and_cards_have_no_editorial_markers() -> No
         "day-03-article-03",
     ]
     assert [step.get("contentAsset") for step in manifest["days"][2]["steps"]] == [
-        "06-necessary-restrictions.txt",
-        "08-whole-processed-ultraprocessed-food.txt",
-        "07-reading-labels.txt",
+        "06-necessary-restrictions.md",
+        "08-whole-processed-ultraprocessed-food.md",
+        "07-reading-labels.md",
     ]
 
     course_html = (
