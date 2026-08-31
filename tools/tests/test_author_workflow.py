@@ -154,7 +154,19 @@ class AuthorWorkflowTests(unittest.TestCase):
         pending = {
             item["id"] for item in validate_author_draft.validate(context_pack_path, context_draft)["pending_manual_reviews"]
         }
-        self.assertEqual(pending, {"transcript_context_separation", "sparse_basis_owner_review"})
+        self.assertEqual(
+            pending,
+            {"transcript_context_separation", "sparse_basis_owner_review", "semantic_facts"},
+        )
+        semantic_check = next(
+            item
+            for item in validate_author_draft.validate(
+                context_pack_path, context_draft
+            )["pending_manual_reviews"]
+            if item["id"] == "semantic_facts"
+        )
+        self.assertEqual(semantic_check["items"], [])
+        self.assertIn("entire assembled draft", semantic_check["instruction"])
 
     def test_course_material_requires_whole_day_context_and_continuity(self) -> None:
         task = self.root / "missing-course-context.json"
@@ -437,7 +449,8 @@ class AuthorWorkflowTests(unittest.TestCase):
         self.assertEqual({item["id"] for item in initial["pending_manual_reviews"]}, {"rewrite_continuity", "semantic_facts"})
         fact_check = next(item for item in initial["pending_manual_reviews"] if item["id"] == "semantic_facts")
         self.assertEqual(fact_check["fact_check_profile"], "editorial_materiality")
-        self.assertIn("Do not fail colloquial rounding", fact_check["instruction"])
+        self.assertIn("entire assembled draft", fact_check["instruction"])
+        self.assertIn("do not edit the draft", fact_check["instruction"])
         review_path = self.root / "review.json"
         author_workflow.create_review(
             pack_path, draft, review_path, reviewer="Сергей",
@@ -499,9 +512,9 @@ class AuthorWorkflowTests(unittest.TestCase):
             fact_check = next(item for item in pending if item["id"] == "semantic_facts")
             self.assertEqual(fact_check["fact_check_profile"], expected)
             if expected == "instructional_strict":
-                self.assertIn("medical or food guidance", fact_check["instruction"])
+                self.assertIn("against strong sources", fact_check["instruction"])
             else:
-                self.assertIn("Do not fail colloquial rounding", fact_check["instruction"])
+                self.assertIn("materially false or invented facts", fact_check["instruction"])
 
         course_task = {
             "note": "полный учебный курс",
@@ -517,6 +530,113 @@ class AuthorWorkflowTests(unittest.TestCase):
             course_pack["content_contract"]["fact_check_profile"],
             "instructional_strict",
         )
+
+    def test_approved_factual_targeted_edit_still_requires_semantic_review(self) -> None:
+        source = "В этом месте стоит старая цифра 10. Остальной текст защищён."
+        pack_path, _ = self.pack({
+            "note": "Исправить одобренную фактическую цифру",
+            "work_profile": "develop_existing",
+            "edit_mode": "targeted_edit",
+            "source_text": source,
+            "editable_scope": ["старая цифра 10"],
+            "preservation_anchors": ["Остальной текст защищён"],
+            "required_facts": [{"text": "новая цифра 12", "mode": "semantic"}],
+            "fact_sources": [{"name": "source", "fingerprint": "sha256:fact"}],
+        })
+        draft = self.root / "factual-targeted-edit.md"
+        draft.write_text(
+            source.replace("старая цифра 10", "новая цифра 12"), encoding="utf-8"
+        )
+        pending = validate_author_draft.validate(pack_path, draft)[
+            "pending_manual_reviews"
+        ]
+        self.assertIn("semantic_facts", {item["id"] for item in pending})
+
+    def test_proofread_preserves_intentional_spoken_tokens(self) -> None:
+        source = "Ну вооот, кааак это объяснить? Пу-пу-пу — сейчас соберусь."
+        pack_path, _ = self.pack({
+            "note": "Исправить обычные ошибки, сохранив разговорную запись",
+            "work_profile": "develop_existing",
+            "edit_mode": "proofread",
+            "source_text": source,
+            "preservation_anchors": ["сейчас соберусь"],
+        })
+        cases = {
+            "elongated": "Ну вот, как это объяснить? Пу-пу-пу — сейчас соберусь.",
+            "repeated": "Ну вооот, кааак это объяснить? Пу-пу — сейчас соберусь.",
+        }
+        for name, changed_text in cases.items():
+            with self.subTest(name=name):
+                changed = self.root / f"normalized-spoken-{name}.md"
+                changed.write_text(changed_text, encoding="utf-8")
+                result = validate_author_draft.validate(pack_path, changed)
+                self.assertEqual(result["status"], "needs_fix")
+                self.assertIn(
+                    "proofread changed intentional elongated or repeated spoken tokens",
+                    result["protected_layer_errors"],
+                )
+
+    def test_rewrite_and_creative_rebuild_factcheck_whole_draft_without_fact_list(self) -> None:
+        source = "Полный авторский исходник с важным примером и основной мыслью."
+        cases = (
+            {
+                "note": "Пересобрать авторский материал",
+                "work_profile": "develop_existing",
+                "edit_mode": "rewrite",
+                "source_text": source,
+                "rewrite_goal": "Собрать новую версию",
+                "preservation_anchors": ["важным примером"],
+            },
+            {
+                "note": "Творчески пересобрать полные статьи",
+                "work_profile": "new_material",
+                "edit_mode": "creative_rebuild",
+                "source_basis": "full_source",
+                "source_text": source,
+                "preservation_anchors": ["важным примером"],
+            },
+        )
+        for task in cases:
+            with self.subTest(edit_mode=task["edit_mode"]):
+                pack_path, _ = self.pack(task)
+                draft = self.root / f"whole-{task['edit_mode']}.md"
+                draft.write_text(source, encoding="utf-8")
+                pending = validate_author_draft.validate(pack_path, draft)[
+                    "pending_manual_reviews"
+                ]
+                semantic = [item for item in pending if item["id"] == "semantic_facts"]
+                self.assertEqual(len(semantic), 1)
+                self.assertEqual(semantic[0]["items"], [])
+
+    def test_whole_draft_fact_review_without_sources_does_not_expire(self) -> None:
+        pack_path, _ = self.pack({
+            "note": "Новый короткий материал",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+        })
+        draft = self.root / "whole-draft-review.md"
+        draft.write_text("Самостоятельный готовый текст.", encoding="utf-8")
+        initial = validate_author_draft.validate(pack_path, draft)
+        checks = [
+            f"{item['id']}=Проверка выполнена"
+            for item in initial["pending_manual_reviews"]
+        ]
+        review_path = self.root / "whole-draft-review.json"
+        author_workflow.create_review(
+            pack_path,
+            draft,
+            review_path,
+            reviewer="Сергей",
+            check_values=checks,
+        )
+        review = json.loads(review_path.read_text(encoding="utf-8"))
+        review["reviewed_at"] = (
+            datetime.now(timezone.utc) - timedelta(hours=25)
+        ).isoformat()
+        review_path.write_text(json.dumps(review, ensure_ascii=False), encoding="utf-8")
+        result = validate_author_draft.validate(pack_path, draft, review_path)
+        self.assertEqual(result["status"], "pass")
+        self.assertIsNone(result["fact_review_expires_at"])
 
         invalid = {
             "note": "проверить факт",

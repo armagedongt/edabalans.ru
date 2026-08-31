@@ -323,6 +323,19 @@ def preservation_metrics(source: str, draft: str) -> dict:
     }
 
 
+def intentional_spoken_tokens(text: str) -> Counter:
+    patterns = (
+        r"\b[\w-]*([A-Za-zА-Яа-яЁё])\1{2,}[\w-]*\b",
+        r"\b([A-Za-zА-Яа-яЁё]+)(?:-\1){1,}\b",
+    )
+    tokens = [
+        match.group(0).casefold()
+        for pattern in patterns
+        for match in re.finditer(pattern, text, flags=re.I)
+    ]
+    return Counter(tokens)
+
+
 def required_manual_reviews(contract: dict, draft: str) -> list[dict]:
     checks: list[dict] = []
     work_profile = contract.get("work_profile")
@@ -379,18 +392,27 @@ def required_manual_reviews(contract: dict, draft: str) -> list[dict]:
         facts_to_review.append(
             item if isinstance(item, str) else str(item.get("text") or "")
         )
-    if any(facts_to_review):
+    requires_whole_draft_factcheck = edit_mode in {
+        "draft", "rewrite", "creative_rebuild"
+    }
+    requires_approved_fact_edit_check = (
+        edit_mode == "targeted_edit" and any(facts_to_review)
+    )
+    if requires_whole_draft_factcheck or requires_approved_fact_edit_check:
         profile = contract.get("fact_check_profile") or "editorial_materiality"
         instruction = (
-            "Confirm numbers, definitions, medical or food guidance, risk, and causality "
-            "against the task sources. Accept a clearly signalled analogy or simplification "
-            "only when it preserves the correct practical principle."
+            "Review the entire assembled draft, including claims introduced by the writer, "
+            "against strong sources. Classify conflicts using source-integration-pass-v1.md. "
+            "Do not edit the draft. Record level 1 while owner calibration is active and "
+            "always record level 2; pass means the review "
+            "is complete and no level 3 conflict remains, not that the report is empty."
             if profile == "instructional_strict"
             else
-            "Confirm that the draft contains no materially false or invented number, "
-            "mechanism, diagnosis, contraindication, or claim that changes the advice. "
-            "Do not fail colloquial rounding, metaphor, irony, or stylistic simplification "
-            "that preserves the factual meaning."
+            "Review the entire assembled draft, including claims introduced by the writer, "
+            "for materially false or invented facts. Classify conflicts using "
+            "source-integration-pass-v1.md and do not edit the draft. Record level 1 while "
+            "owner calibration is active and always record level 2; "
+            "pass means the review is complete and no level 3 conflict remains."
         )
         checks.append({
             "id": "semantic_facts",
@@ -454,7 +476,7 @@ def review_errors(
     reviewed_at_utc = reviewed_at.astimezone(timezone.utc) if reviewed_at else None
     if reviewed_at_utc and reviewed_at_utc > now:
         errors.append("reviewed_at cannot be in the future")
-    if "semantic_facts" in expected:
+    if "semantic_facts" in expected and fact_sources:
         if reviewed_at_utc and reviewed_at_utc <= now and now - reviewed_at_utc > FACT_REVIEW_TTL:
             errors.append("semantic fact review is older than 24 hours")
         if review.get("fact_sources") != fact_sources:
@@ -462,8 +484,16 @@ def review_errors(
     return errors
 
 
-def fact_review_expiry(review: dict | None, pending: list[dict]) -> str | None:
-    if not review or not any(item["id"] == "semantic_facts" for item in pending):
+def fact_review_expiry(
+    review: dict | None,
+    pending: list[dict],
+    fact_sources: list[dict],
+) -> str | None:
+    if (
+        not review
+        or not fact_sources
+        or not any(item["id"] == "semantic_facts" for item in pending)
+    ):
         return None
     try:
         reviewed_at = datetime.fromisoformat(
@@ -530,6 +560,12 @@ def validate(
                 protected_layer_errors.append("proofread changed protected structure or presentation markup")
             if len(source_text) >= 50 and similarity < 0.82:
                 protected_layer_errors.append("proofread changed too much text for a correction-only mode")
+            source_spoken = intentional_spoken_tokens(source_text)
+            draft_spoken = intentional_spoken_tokens(draft)
+            if source_spoken - draft_spoken:
+                protected_layer_errors.append(
+                    "proofread changed intentional elongated or repeated spoken tokens"
+                )
     elif edit_mode == "structure_only":
         if not isinstance(source_text, str):
             protected_layer_errors.append("source_text is required for structure_only")
@@ -630,7 +666,9 @@ def validate(
         "preservation_metrics": metrics,
         "pending_manual_reviews": pending,
         "manual_review_errors": manual_review_errors,
-        "fact_review_expires_at": fact_review_expiry(review, pending),
+        "fact_review_expires_at": fact_review_expiry(
+            review, pending, contract.get("fact_sources") or []
+        ),
     }
 
 
