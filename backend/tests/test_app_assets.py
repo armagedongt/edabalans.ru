@@ -44,11 +44,8 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     loader = client.get("/embed.js").text
     assert "data-edabalans-legal-footer" in loader
     assert "data-edabalans-footer-owner" in loader
-    assert 'data-edabalans-footer-action="dqs-tutorial"' in loader
-    assert '>Как пользоваться</button> · ' in loader
-    assert "window.EdabalansDqsOpenTutorial()" in loader
+    assert 'data-edabalans-footer-action="dqs-tutorial"' not in loader
     assert 'mount.querySelector(\'[data-edabalans-app="dqs"]\')' in loader
-    assert "context.innerHTML = ''" in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
     assert "ensureLegalFooter(mount);" in loader
     assert "function legalFooterHost(mount)" in loader
@@ -179,13 +176,108 @@ def test_application_fragments_use_server_api() -> None:
     assert "Все права защищены" not in dqs
     assert "© ${new Date().getFullYear()}" not in dqs
     assert "Сергей Воронцов" not in dqs
+    desktop_grid = "grid-template-columns:minmax(0,1.42fr) minmax(58px,1fr) minmax(58px,.92fr) 42px"
+    compact_grid = "grid-template-columns:minmax(0,1.36fr) minmax(52px,1fr) minmax(52px,.94fr) 42px"
+    assert dqs.count(desktop_grid) == 3  # base, max-width:520px and tutorial preview
+    assert compact_grid in dqs  # max-width:385px
+    assert dqs.count('class="dqs-foot-left"') == 2  # diary and scores
+    assert dqs.count('class="dqs-foot-account"') == 2
+    assert dqs.count('onclick="window.EdabalansDqsOpenTutorial()"') == 2
+    assert "function masterclassCategoriesUrl()" in dqs
+    assert "url.searchParams.set('course_day', '4')" in dqs
+    assert "url.searchParams.set('course_material', 'day-04-article-01')" in dqs
+    assert 'href="${MASTERCLASS_CATEGORIES_URL}"' in dqs
+    assert "opisanie-produktovyh-kategorij" not in dqs
+    dqs_mobile = dqs.split("@media(max-width:520px){", 1)[1].split(
+        "@media(max-width:385px){", 1
+    )[0]
+    dqs_narrow = dqs.split("@media(max-width:385px){", 1)[1].split("</style>", 1)[0]
+    for mobile_rules in (dqs_mobile, dqs_narrow):
+        assert re.search(
+            r"\.dqs-chip-date-text\s*\{\s*font-size:13px", mobile_rules
+        )
+        assert re.search(
+            r"\.dqs-chip-day,\s*\.dqs-chip-score\s*\{\s*font-size:15px",
+            mobile_rules,
+        )
+    date_formatter = dqs[
+        dqs.index("function getDateForDay") : dqs.index("function isCurrentDayToday")
+    ]
+    assert "year:'numeric'" not in date_formatter
+    dqs_radii = set(re.findall(r"border-radius:([^;]+)", dqs))
+    assert dqs_radii <= {
+        "8px",
+        "10px",
+        "var(--radius-control)",
+        "var(--radius-small)",
+        "var(--radius-large)",
+    }
 
 
 def test_client_apps_share_design_tokens_account_link_and_single_footer() -> None:
     shell = client.get("/assets/app-shell.css")
     assert shell.status_code == 200
     assert "--ed-app-accent:#6f3de8" in shell.text
+    assert "--ed-app-radius-large:16px" in shell.text
+    assert "--ed-app-radius-small:10px" in shell.text
+    assert "--ed-app-radius-control:8px" in shell.text
     assert ".ed-app-account-link" in shell.text
+    assert "border-radius:var(--ed-app-radius-control)" in shell.text
+
+    account = client.get("/apps/account.html").text
+    assert "border-radius:var(--radius-large)" in account
+    assert "border-radius:var(--radius-small)" in account
+    assert "border-radius:var(--radius-control)" in account
+    assert "border-radius:999px" not in account
+    assert re.search(
+        r"\.account-card\{[^}]*border-radius:var\(--radius-large\)", account
+    )
+    assert re.search(
+        r"\.account-review\{[^}]*border-radius:var\(--radius-large\)", account
+    )
+    assert re.search(
+        r"\.account-legal\{[^}]*border-radius:var\(--radius-large\)", account
+    )
+    assert re.search(
+        r"\.application-card\{[^}]*border-radius:var\(--radius-small\)", account
+    )
+    assert re.search(
+        r"\.legacy-card\{[^}]*border-radius:var\(--radius-small\)", account
+    )
+    assert re.search(
+        r"\.legal-card\{[^}]*border-radius:var\(--radius-small\)", account
+    )
+    assert re.search(
+        r"\.account-open\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert re.search(
+        r"\.account-state\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert re.search(
+        r"\.account-contact a\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert re.search(
+        r"\.legacy-link\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert re.search(
+        r"\.legal-action\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert re.search(
+        r"\.application-icon\{[^}]*border-radius:var\(--radius-control\)", account
+    )
+    assert "@media(max-width:760px){#account-app{font-size:17px}" in account
+    assert ".account-session{font-size:15px}" in account
+    assert ".account-kicker,.account-state{font-size:13px}" in account
+    assert ".account-card p,.account-legal>p{font-size:17px}" in account
+    assert ".account-open,.account-contact a,.legacy-link{font-size:15px}" in account
+    assert ".application-card h3{font-size:18px}" in account
+    assert ".application-card p,.legacy-card p,.legal-error{font-size:15px}" in account
+
+    course = client.get("/apps/masterclass-course.html").text
+    assert ":root{--text-xs:13px;--text-sm:14px;--text-base:17px;--text-lead:18px}" in course
+    assert ".hero h1{font-size:38px}" in course
+    assert ".article h1{font-size:38px}" in course
+    assert "font-size:12px;white-space:nowrap" in course
 
     loader = client.get("/embed.js").text
     load_function = loader[loader.index("function load(mount)") : loader.index("function start(mounts)")]
@@ -207,6 +299,13 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer() -> Non
         assert "<footer" not in fragment
         assert "data-edabalans-legal-footer" not in fragment
         assert "--ed-app-" in fragment
+
+    assert "--ed-app-radius," not in fragments["strength"]
+    assert "--ed-app-radius," not in fragments["recipes"]
+    assert "--ed-app-radius-large" in fragments["strength"]
+    assert "--ed-app-radius-large" in fragments["recipes"]
+    assert "border-radius:var(--ed-app-radius-control,8px)" in fragments["strength"]
+    assert "border-radius:var(--ed-app-radius-control,8px)" in fragments["recipes"]
 
     for app_code in ("strength", "recipes", "metabolism"):
         assert re.search(r'class=["\'][^"\']*footer', fragments[app_code], re.IGNORECASE) is None
@@ -349,16 +448,17 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "source: 'tilda'" in loader
     account = client.get("/apps/account.html").text
     assert (
-        '<h1>Личный кабинет</h1><p class="account-session">Вы вошли как '
+        '<h1>Личный кабинет</h1><p class="account-session">'
         '<strong class="account-session-email">'
     ) in account
+    assert "Вы вошли как" not in account
     assert 'class="account-logout" href="/members/login?exit=y">Выйти</a>' in account
     assert "Курсы и программы" in account
     assert "Приложения" in account
     assert "Курсы, программы и приложения собраны в одном месте." not in account
     assert "Доступные вам материалы можно открыть сразу." not in account
     assert "Ваша программа откроется здесь после покупки или подтверждения прежнего доступа." not in account
-    assert "Чтобы худеть было проще." in account
+    assert "Чтобы худеть было проще." not in account
     assert "Рабочие инструменты — компактно, без отдельного входа." not in account
     assert (
         '<section class="account-legal"><p>Чтобы пользоваться личным кабинетом, '

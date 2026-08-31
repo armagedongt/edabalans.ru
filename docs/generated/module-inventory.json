@@ -17634,7 +17634,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 13,
+          "line": 15,
           "module_id": "platform.blog",
           "name": "test_blog_home_is_public_and_uses_manifest_cards",
           "qualname": "test_blog_home_is_public_and_uses_manifest_cards"
@@ -17642,7 +17642,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 38,
+          "line": 40,
           "module_id": "platform.blog",
           "name": "test_blog_home_trailing_slash_is_supported",
           "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -17650,7 +17650,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 42,
+          "line": 44,
           "module_id": "platform.blog",
           "name": "test_favicon_test_pages_are_isolated_and_noindex",
           "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
@@ -17658,7 +17658,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 62,
+          "line": 64,
           "module_id": "platform.blog",
           "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
           "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -17666,7 +17666,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 81,
+          "line": 83,
           "module_id": "platform.blog",
           "name": "test_unknown_blog_article_returns_404",
           "qualname": "test_unknown_blog_article_returns_404"
@@ -17674,7 +17674,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 85,
+          "line": 87,
           "module_id": "platform.blog",
           "name": "test_blog_assets_and_fonts_are_whitelisted",
           "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -17682,7 +17682,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 115,
+          "line": 125,
           "module_id": "platform.blog",
           "name": "test_blog_media_is_manifest_whitelisted",
           "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -17690,7 +17690,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 124,
+          "line": 134,
           "module_id": "platform.blog",
           "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
           "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -17698,7 +17698,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 138,
+          "line": 148,
           "module_id": "platform.blog",
           "name": "test_every_published_article_and_declared_image_is_served",
           "qualname": "test_every_published_article_and_declared_image_is_served"
@@ -25296,6 +25296,7 @@
         "объединять продуктовые модули на общем backend и user_id;",
         "сохранять отдельный UX каждого продукта;",
         "давать приложениям общий дизайн-код на основе DQS и единый переход в серверный ЛК;",
+        "использовать единую карту цветов, три радиуса и повторяемые типы карточек из",
         "показывать незавершённые продукты единым статусом «Скоро», отличая их от готовых",
         "показывать общий юридический подвал внутри доступной контентной области приложения;"
       ],
@@ -25755,7 +25756,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 204,
+          "line": 190,
           "module_id": "products",
           "name": "executeScripts",
           "qualname": "executeScripts"
@@ -25763,7 +25764,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 225,
+          "line": 211,
           "module_id": "products",
           "name": "load",
           "qualname": "load"
@@ -25771,7 +25772,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 274,
+          "line": 260,
           "module_id": "products",
           "name": "start",
           "qualname": "start"
@@ -25779,7 +25780,7 @@
         {
           "file": "backend/app/static/embed.js",
           "kind": "function",
-          "line": 278,
+          "line": 264,
           "module_id": "products",
           "name": "boot",
           "qualname": "boot"
@@ -25915,7 +25916,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 75,
+          "line": 72,
           "module_id": "products",
           "name": "test_stable_site_footer_loader_is_public",
           "qualname": "test_stable_site_footer_loader_is_public"
@@ -25923,7 +25924,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 158,
+          "line": 155,
           "module_id": "products",
           "name": "test_application_fragments_use_server_api",
           "qualname": "test_application_fragments_use_server_api"
@@ -25931,7 +25932,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 184,
+          "line": 217,
           "module_id": "products",
           "name": "test_client_apps_share_design_tokens_account_link_and_single_footer",
           "qualname": "test_client_apps_share_design_tokens_account_link_and_single_footer"
@@ -25939,7 +25940,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 229,
+          "line": 328,
           "module_id": "products",
           "name": "test_production_admin_assets_do_not_name_legacy_storage",
           "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -25947,7 +25948,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 237,
+          "line": 336,
           "module_id": "products",
           "name": "test_unknown_application_fragment_is_404",
           "qualname": "test_unknown_application_fragment_is_404"
@@ -25955,7 +25956,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 241,
+          "line": 340,
           "module_id": "products",
           "name": "test_shared_content_gallery_asset_is_public_without_captions",
           "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -25963,7 +25964,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 256,
+          "line": 355,
           "module_id": "products",
           "name": "test_masterclass_fragments_and_shared_assets_are_public",
           "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -25971,7 +25972,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 458,
+          "line": 558,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -25979,7 +25980,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 641,
+          "line": 741,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -25987,7 +25988,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 659,
+          "line": 759,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -25995,7 +25996,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 686,
+          "line": 786,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -26003,7 +26004,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 711,
+          "line": 811,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -26011,7 +26012,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 725,
+          "line": 825,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -26019,7 +26020,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 791,
+          "line": 891,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -26027,7 +26028,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 807,
+          "line": 907,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -26035,7 +26036,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 819,
+          "line": 919,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -26043,7 +26044,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 859,
+          "line": 959,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -26051,7 +26052,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 865,
+          "line": 965,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -26059,7 +26060,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 878,
+          "line": 978,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -26067,7 +26068,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 889,
+          "line": 989,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -26075,7 +26076,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 903,
+          "line": 1003,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -27192,7 +27193,10 @@
       "boundary": "Методика и будущие улучшения не должны додумываться из legacy-кода.",
       "capabilities": [
         "загружать и сохранять состояние DQS пользователя;",
-        "работать внутри Tilda через общий FastAPI/PostgreSQL контур;"
+        "работать внутри Tilda через общий FastAPI/PostgreSQL контур;",
+        "держать дату, номер дня, счёт и переход в ЛК в одной верхней строке;",
+        "показывать «Как пользоваться» слева в рамке под таблицей, а email и выход — справа;",
+        "открывать полные правила подсчёта в каноническом материале четвёртого дня"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.dqs.md",
       "document_status": "current",
@@ -43609,7 +43613,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 204,
+      "line": 190,
       "module_id": "products",
       "name": "executeScripts",
       "qualname": "executeScripts"
@@ -43617,7 +43621,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 225,
+      "line": 211,
       "module_id": "products",
       "name": "load",
       "qualname": "load"
@@ -43625,7 +43629,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 274,
+      "line": 260,
       "module_id": "products",
       "name": "start",
       "qualname": "start"
@@ -43633,7 +43637,7 @@
     {
       "file": "backend/app/static/embed.js",
       "kind": "function",
-      "line": 278,
+      "line": 264,
       "module_id": "products",
       "name": "boot",
       "qualname": "boot"
@@ -45401,7 +45405,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 75,
+      "line": 72,
       "module_id": "products",
       "name": "test_stable_site_footer_loader_is_public",
       "qualname": "test_stable_site_footer_loader_is_public"
@@ -45409,7 +45413,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 158,
+      "line": 155,
       "module_id": "products",
       "name": "test_application_fragments_use_server_api",
       "qualname": "test_application_fragments_use_server_api"
@@ -45417,7 +45421,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 184,
+      "line": 217,
       "module_id": "products",
       "name": "test_client_apps_share_design_tokens_account_link_and_single_footer",
       "qualname": "test_client_apps_share_design_tokens_account_link_and_single_footer"
@@ -45425,7 +45429,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 229,
+      "line": 328,
       "module_id": "products",
       "name": "test_production_admin_assets_do_not_name_legacy_storage",
       "qualname": "test_production_admin_assets_do_not_name_legacy_storage"
@@ -45433,7 +45437,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 237,
+      "line": 336,
       "module_id": "products",
       "name": "test_unknown_application_fragment_is_404",
       "qualname": "test_unknown_application_fragment_is_404"
@@ -45441,7 +45445,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 241,
+      "line": 340,
       "module_id": "products",
       "name": "test_shared_content_gallery_asset_is_public_without_captions",
       "qualname": "test_shared_content_gallery_asset_is_public_without_captions"
@@ -45449,7 +45453,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 256,
+      "line": 355,
       "module_id": "products",
       "name": "test_masterclass_fragments_and_shared_assets_are_public",
       "qualname": "test_masterclass_fragments_and_shared_assets_are_public"
@@ -45457,7 +45461,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 458,
+      "line": 558,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -45465,7 +45469,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 641,
+      "line": 741,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -45473,7 +45477,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 659,
+      "line": 759,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -45481,7 +45485,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 686,
+      "line": 786,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -45489,7 +45493,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 711,
+      "line": 811,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -45497,7 +45501,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 725,
+      "line": 825,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -45505,7 +45509,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 791,
+      "line": 891,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -45513,7 +45517,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 807,
+      "line": 907,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -45521,7 +45525,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 819,
+      "line": 919,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -45529,7 +45533,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 859,
+      "line": 959,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -45537,7 +45541,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 865,
+      "line": 965,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -45545,7 +45549,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 878,
+      "line": 978,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -45553,7 +45557,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 889,
+      "line": 989,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -45561,7 +45565,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 903,
+      "line": 1003,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -45737,7 +45741,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 13,
+      "line": 15,
       "module_id": "platform.blog",
       "name": "test_blog_home_is_public_and_uses_manifest_cards",
       "qualname": "test_blog_home_is_public_and_uses_manifest_cards"
@@ -45745,7 +45749,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 38,
+      "line": 40,
       "module_id": "platform.blog",
       "name": "test_blog_home_trailing_slash_is_supported",
       "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -45753,7 +45757,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 42,
+      "line": 44,
       "module_id": "platform.blog",
       "name": "test_favicon_test_pages_are_isolated_and_noindex",
       "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
@@ -45761,7 +45765,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 62,
+      "line": 64,
       "module_id": "platform.blog",
       "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
       "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -45769,7 +45773,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 81,
+      "line": 83,
       "module_id": "platform.blog",
       "name": "test_unknown_blog_article_returns_404",
       "qualname": "test_unknown_blog_article_returns_404"
@@ -45777,7 +45781,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 85,
+      "line": 87,
       "module_id": "platform.blog",
       "name": "test_blog_assets_and_fonts_are_whitelisted",
       "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -45785,7 +45789,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 115,
+      "line": 125,
       "module_id": "platform.blog",
       "name": "test_blog_media_is_manifest_whitelisted",
       "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -45793,7 +45797,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 124,
+      "line": 134,
       "module_id": "platform.blog",
       "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
       "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -45801,7 +45805,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 138,
+      "line": 148,
       "module_id": "platform.blog",
       "name": "test_every_published_article_and_declared_image_is_served",
       "qualname": "test_every_published_article_and_declared_image_is_served"

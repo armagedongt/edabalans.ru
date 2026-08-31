@@ -12,6 +12,9 @@
   --purple-soft:var(--ed-app-accent-soft,#f5f1ff);
 
   --shadow:var(--ed-app-shadow,0 5px 18px rgba(20,20,40,.08));
+  --radius-large:var(--ed-app-radius-large,16px);
+  --radius-small:var(--ed-app-radius-small,10px);
+  --radius-control:var(--ed-app-radius-control,8px);
 
   --score-p2:#cfeec5;
   --score-p1:#e8f3c7;
@@ -48,7 +51,7 @@ body{
   max-width:760px;
   margin:0 auto;
   padding:6px 8px 14px;
-  font-family:Arial,sans-serif;
+  font-family:Inter,Arial,sans-serif;
   color:var(--text);
 }
 
@@ -60,7 +63,7 @@ body{
 .dqs-auth-card{
   margin-top:16px;
   background:#fff;
-  border-radius:20px;
+  border-radius:var(--radius-large);
   box-shadow:var(--shadow);
   padding:20px;
 }
@@ -82,7 +85,7 @@ body{
   width:100%;
   padding:13px 15px;
   border:1px solid #d7d9e4;
-  border-radius:13px;
+  border-radius:var(--radius-control);
   font-size:16px;
   margin-bottom:12px;
   background:#fff;
@@ -91,7 +94,7 @@ body{
 .dqs-btn{
   width:100%;
   border:0;
-  border-radius:13px;
+  border-radius:var(--radius-control);
   background:var(--purple);
   color:#fff;
   font-size:16px;
@@ -149,7 +152,7 @@ body{
 
 .dqs-top{
   display:grid;
-  grid-template-columns:1.42fr 1fr .92fr;
+  grid-template-columns:minmax(0,1.42fr) minmax(58px,1fr) minmax(58px,.92fr) 42px;
   gap:7px;
   align-items:stretch;
 }
@@ -160,7 +163,7 @@ body{
   padding:0 9px;
 
   background:#fff;
-  border-radius:13px;
+  border-radius:var(--radius-control);
   box-shadow:var(--shadow);
 
   display:flex;
@@ -232,7 +235,7 @@ body{
   height:42px;
 
   border:0;
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   background:#fff;
   box-shadow:var(--shadow);
@@ -262,7 +265,7 @@ body{
 
   background:#e3e5ec;
 
-  border-radius:13px;
+  border-radius:var(--radius-control);
 
   padding:3px;
 
@@ -277,7 +280,7 @@ body{
   height:36px;
 
   border:0;
-  border-radius:10px;
+  border-radius:var(--radius-control);
 
   font-size:12px;
   font-weight:700;
@@ -301,7 +304,7 @@ body{
 
 .dqs-body-card{
   background:#fff;
-  border-radius:17px;
+  border-radius:var(--radius-large);
   box-shadow:var(--shadow);
   overflow:hidden;
 }
@@ -349,7 +352,7 @@ body{
 .dqs-cat-pill{
   min-height:38px;
 
-  border-radius:9px;
+  border-radius:var(--radius-control);
 
   display:flex;
   align-items:center;
@@ -428,7 +431,7 @@ body{
 .dqs-counter-value{
   height:31px;
 
-  border-radius:9px;
+  border-radius:var(--radius-control);
   border:1px solid #dddfee;
 
   display:flex;
@@ -525,6 +528,7 @@ body{
   padding:8px 10px 10px;
 
   display:flex;
+  flex-wrap:wrap;
   justify-content:space-between;
   gap:8px;
 
@@ -532,11 +536,31 @@ body{
 
   color:#757b91;
 
-  font-size:10px;
+  font-size:12px;
+}
+
+.dqs-foot-left{
+  display:flex;
+  flex:1 1 150px;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px;
+  min-width:0;
+}
+
+.dqs-foot-account{
+  flex:1 1 160px;
+  min-width:0;
+  overflow-wrap:anywhere;
+  text-align:right;
 }
 
 .dqs-save-status{
   min-height:13px;
+}
+
+.dqs-save-status:empty{
+  display:none;
 }
 
 .dqs-link-btn{
@@ -545,7 +569,7 @@ body{
 
   color:var(--purple);
 
-  font-size:10px;
+  font-size:12px;
 
   cursor:pointer;
 
@@ -731,7 +755,7 @@ body{
 
   border:0;
 
-  border-radius:11px;
+  border-radius:var(--radius-control);
 
   background:#fff;
 
@@ -766,7 +790,7 @@ body{
 .dqs-help-card{
   background:#fff;
 
-  border-radius:17px;
+  border-radius:var(--radius-large);
 
   padding:17px;
 
@@ -783,7 +807,7 @@ body{
 
   overflow:hidden;
 
-  border-radius:11px;
+  border-radius:var(--radius-small);
 
   border:1px solid #ececf2;
 }
@@ -894,7 +918,7 @@ body{
   justify-content:center;
   flex:0 0 auto;
   border:1px solid var(--line);
-  border-radius:13px;
+  border-radius:var(--radius-control);
   background:var(--card);
   color:var(--muted);
   box-shadow:var(--shadow);
@@ -931,7 +955,7 @@ body{
 
   background:#fff;
 
-  border-radius:20px;
+  border-radius:var(--radius-large);
 
   padding:21px 19px 18px;
 
@@ -992,7 +1016,7 @@ body{
 
   border:0;
 
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   background:var(--purple);
 
@@ -1022,7 +1046,7 @@ body{
 
   background:#f6f6f9;
 
-  border-radius:11px;
+  border-radius:var(--radius-small);
 
   padding:11px 12px;
 
@@ -1068,7 +1092,7 @@ body{
 
   background:#fff;
 
-  border-radius:21px;
+  border-radius:var(--radius-large);
 
   padding:16px;
 
@@ -1102,7 +1126,7 @@ body{
 .dqs-tutorial-preview{
   background:#f5f5f7;
 
-  border-radius:15px;
+  border-radius:var(--radius-large);
 
   padding:10px;
 
@@ -1149,7 +1173,7 @@ body{
 
   border:0;
 
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   background:#eff0f4;
 
@@ -1170,7 +1194,7 @@ body{
 
   border:0;
 
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   background:var(--purple);
 
@@ -1188,7 +1212,7 @@ body{
 .dqs-tut-top{
   display:grid;
 
-  grid-template-columns:1.42fr 1fr .92fr;
+  grid-template-columns:minmax(0,1.42fr) minmax(58px,1fr) minmax(58px,.92fr) 42px;
 
   gap:6px;
 }
@@ -1196,7 +1220,7 @@ body{
 .dqs-tut-chip{
   min-height:42px;
 
-  border-radius:12px;
+  border-radius:var(--radius-small);
 
   background:#fff;
 
@@ -1239,7 +1263,7 @@ body{
 
   background:#fff;
 
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   display:flex;
   align-items:center;
@@ -1255,7 +1279,7 @@ body{
 
   background:#e3e5ec;
 
-  border-radius:12px;
+  border-radius:var(--radius-control);
 
   padding:3px;
 
@@ -1269,7 +1293,7 @@ body{
   align-items:center;
   justify-content:center;
 
-  border-radius:9px;
+  border-radius:var(--radius-control);
 
   font-size:11px;
   font-weight:800;
@@ -1295,7 +1319,7 @@ body{
 .dqs-tut-cat{
   min-height:42px;
 
-  border-radius:9px;
+  border-radius:var(--radius-small);
 
   display:flex;
   align-items:center;
@@ -1348,7 +1372,7 @@ body{
 .dqs-tut-diversity{
   background:#fff;
 
-  border-radius:12px;
+  border-radius:var(--radius-small);
 
   padding:11px;
 
@@ -1366,7 +1390,7 @@ body{
 .dqs-tut-footer-preview{
   background:#fff;
 
-  border-radius:12px;
+  border-radius:var(--radius-small);
 
   box-shadow:0 4px 13px rgba(20,20,40,.07);
 
@@ -1414,16 +1438,21 @@ body{
   }
 
   .dqs-top{
-    grid-template-columns:1.42fr 1fr .92fr;
+    grid-template-columns:minmax(0,1.42fr) minmax(58px,1fr) minmax(58px,.92fr) 42px;
   }
 
   .dqs-chip-date-text{
-    font-size:11.5px;
+    font-size:13px;
   }
 
   .dqs-chip-day,
   .dqs-chip-score{
-    font-size:12px;
+    font-size:15px;
+  }
+
+  .dqs-foot,
+  .dqs-link-btn{
+    font-size:13px;
   }
 
   .dqs-table col.col-cat{
@@ -1447,7 +1476,7 @@ body{
 @media(max-width:385px){
 
   .dqs-top{
-    grid-template-columns:1.36fr 1fr .94fr;
+    grid-template-columns:minmax(0,1.36fr) minmax(52px,1fr) minmax(52px,.94fr) 42px;
   }
 
   .dqs-chip{
@@ -1459,12 +1488,12 @@ body{
   }
 
   .dqs-chip-date-text{
-    font-size:10.5px;
+    font-size:13px;
   }
 
   .dqs-chip-day,
   .dqs-chip-score{
-    font-size:11px;
+    font-size:15px;
   }
 
   .dqs-table col.col-cat{
@@ -1526,12 +1555,19 @@ const DAY_COUNT = 30;
 const ACCOUNT_URL =
   String((window.EdabalansAppContext || {}).accountUrl || '/lk');
 
+function masterclassCategoriesUrl(){
+  const url = new URL(ACCOUNT_URL, window.location.href);
+  url.searchParams.set('course_day', '4');
+  url.searchParams.set('course_material', 'day-04-article-01');
+  return url.toString();
+}
+
 const STORAGE_EMAIL = 'dqs_email';
 const STORAGE_PREFIX = 'dqs_day_';
 const TUTORIAL_PREFIX = 'dqs_tutorial_seen_';
 
 const MASTERCLASS_CATEGORIES_URL =
-  'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/members/courses/master-klass/opisanie-produktovyh-kategorij-i-porcij-obnovlenie-659246172248';
+  masterclassCategoriesUrl();
 
 const TELEGRAM_URL =
   'https://t.me/FitnessSergey';
@@ -2574,8 +2610,7 @@ function getDateForDay(
       'ru-RU',
       {
         day:'numeric',
-        month:'long',
-        year:'numeric'
+        month:'long'
       }
     );
 }
@@ -3478,6 +3513,10 @@ function getTutorialSlide(step){
             DQS ${realScore}
           </div>
 
+          <div class="dqs-tut-chip" aria-label="Личный кабинет">
+            👤
+          </div>
+
         </div>
       `,
 
@@ -3703,7 +3742,7 @@ function getTutorialSlide(step){
           <div class="dqs-tut-save">
 
             <span>
-              Сохранено
+              Как пользоваться
             </span>
 
             <span>
@@ -3715,13 +3754,7 @@ function getTutorialSlide(step){
           <div class="dqs-tut-footer-bottom">
 
             <strong>
-              Как пользоваться
-            </strong>
-
-            ·
-
-            <strong>
-              Контакты
+              Контакты · Дисклеймер · Политика
             </strong>
 
           </div>
@@ -3740,14 +3773,14 @@ function getTutorialSlide(step){
         </p>
 
         <p>
-          Внизу приложения всегда есть
+          В рамке под таблицей всегда есть
           <strong>«Как пользоваться»</strong> —
           через эту ссылку можно
           открыть эту инструкцию заново.
         </p>
 
         <p>
-          Там же находится ссылка
+          В общем подвале ниже находится ссылка
           <strong>«Контакты»</strong>,
           если потребуется связаться со мной.
         </p>
@@ -4437,19 +4470,28 @@ function renderDiary(){
       <div class="dqs-foot">
 
 
-        <div
-          class="dqs-save-status"
-        >
-          ${
-            escapeHtml(
-              saveStatusText ||
-              ''
-            )
-          }
+        <div class="dqs-foot-left">
+          <button
+            class="dqs-link-btn"
+            onclick="window.EdabalansDqsOpenTutorial()"
+          >
+            Как пользоваться
+          </button>
+
+          <div
+            class="dqs-save-status"
+          >
+            ${
+              escapeHtml(
+                saveStatusText ||
+                ''
+              )
+            }
+          </div>
         </div>
 
 
-        <div>
+        <div class="dqs-foot-account">
 
           ${
             escapeHtml(
@@ -4700,19 +4742,28 @@ function renderScores(){
       <div class="dqs-foot">
 
 
-        <div
-          class="dqs-save-status"
-        >
-          ${
-            escapeHtml(
-              saveStatusText ||
-              ''
-            )
-          }
+        <div class="dqs-foot-left">
+          <button
+            class="dqs-link-btn"
+            onclick="window.EdabalansDqsOpenTutorial()"
+          >
+            Как пользоваться
+          </button>
+
+          <div
+            class="dqs-save-status"
+          >
+            ${
+              escapeHtml(
+                saveStatusText ||
+                ''
+              )
+            }
+          </div>
         </div>
 
 
-        <div>
+        <div class="dqs-foot-account">
 
           ${
             escapeHtml(

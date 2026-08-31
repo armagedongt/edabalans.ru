@@ -183,20 +183,6 @@
         footer = mount.querySelector('[data-edabalans-legal-footer]');
       }
       else if (footer.parentElement !== host) host.appendChild(footer);
-      var context = footer && footer.querySelector('[data-edabalans-footer-context]');
-      var hasDqs = String(mount.getAttribute('data-edabalans-app') || '').toLowerCase() === 'dqs' || Boolean(mount.querySelector('[data-edabalans-app="dqs"]'));
-      if (context && hasDqs && !context.querySelector('[data-edabalans-footer-action="dqs-tutorial"]')) {
-        context.innerHTML = '<button type="button" data-edabalans-footer-action="dqs-tutorial" style="border:0;padding:0;background:none;color:inherit;font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer">Как пользоваться</button> · ';
-      } else if (context && !hasDqs && context.textContent) {
-        context.innerHTML = '';
-      }
-      var tutorialButton = footer && footer.querySelector('[data-edabalans-footer-action="dqs-tutorial"]');
-      if (tutorialButton && !tutorialButton.getAttribute('data-edabalans-bound')) {
-        tutorialButton.setAttribute('data-edabalans-bound', 'true');
-        tutorialButton.addEventListener('click', function () {
-          if (typeof window.EdabalansDqsOpenTutorial === 'function') window.EdabalansDqsOpenTutorial();
-        });
-      }
     }
     append();
     new MutationObserver(append).observe(mount, {childList: true, subtree: true});
