@@ -517,7 +517,7 @@
     let drag = null;
     let suppressClick = false;
     root.addEventListener('pointerdown', (event)=>{
-      if (event.pointerType !== 'touch') return;
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
       drag = { id:event.pointerId, startX:event.clientX, startY:event.clientY, lastX:event.clientX, active:false };
     });
     root.addEventListener('pointermove', (event)=>{

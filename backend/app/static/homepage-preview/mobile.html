@@ -35,7 +35,12 @@
       --crying-blue: #1769d2;
       --crying-blue-dark: #1769d2;
       --crying-font: Montserrat, Arial, sans-serif;
+      --support-surface: rgba(255, 240, 236, .9);
+      --support-border: rgba(231, 104, 80, .34);
+      --support-accent: #d75b45;
     }
+
+    body[data-support-tone="green"] { --support-surface: rgba(237,249,239,.9); --support-border: rgba(105,185,126,.34); --support-accent: #34985a; }
 
     * { box-sizing: border-box; }
     html { background: var(--crying-bg); }
@@ -390,17 +395,19 @@
     .mobile-links a::after { color: #a7adb2; content: "→"; }
     .mobile-links .mobile-account { margin-top: 16px; padding: 14px 16px; border: 0; border-radius: 13px; background: #e9f7fe; color: #237fae; font-size: 15px; }
 
-    .site-hero { padding: 62px 18px 58px; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
+    .site-hero { padding: 28px 18px 58px; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, 940px); margin: 0 auto; }
-    .site-eyebrow { display: block; width: max-content; max-width: 100%; margin: 0 auto; padding: 8px 14px; border-radius: 24px; background: #ff642f; color: #fff; font-family: Unbounded, sans-serif; font-size: 10px; font-weight: 700; line-height: 1.2; letter-spacing: .25px; text-transform: uppercase; }
+    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 50px; align-items: center; margin: 0 auto 24px; padding: 12px 18px; border: 1px solid rgba(33,85,121,.14); border-radius: 17px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(12px,3.7vw,16px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
+    .site-eyebrow::before { width: 14px; height: 14px; flex: 0 0 14px; margin-right: 14px; border-radius: 50%; background: #ff6738; content: ""; }
     .site-title { margin: 18px 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; }
     .site-title__plain { font-size: clamp(29px,8vw,52px); }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .72em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(18px,5.4vw,58px); line-height: 1.02; letter-spacing: -.025em; white-space: nowrap; transform: rotate(-.8deg); }
     .site-lead { max-width: 790px; margin: 31px 0 0; color: var(--site-text); font-size: 17px; font-weight: 500; line-height: 1.6; }
-    .site-player { width: min(100%,540px); margin: 25px auto 0; }
-    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: 0 32px 48px -34px rgba(13,25,35,.88); }
+    .site-player { position: relative; isolation: isolate; width: min(100%,540px); margin: 25px auto 0; padding: 2px; border-radius: 18px; background: rgba(255,255,255,.58); box-shadow: 0 22px 44px -27px rgba(13,25,35,.62), 0 0 30px -15px rgba(30,159,228,.34); }
+    .site-player::before { position: absolute; z-index: -1; inset: 10px; border-radius: 18px; background: rgba(29,160,231,.18); content: ""; filter: blur(22px); }
+    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 15px; background: #000; }
 
     .argument-intro { padding: 42px 18px 46px; background: #fff; }
     .argument-intro__inner, .method-transition__inner { width: min(100%,940px); margin: 0 auto; }
@@ -438,7 +445,7 @@
       .desktop-nav a:hover, .desktop-nav a:focus-visible { background: rgba(255,255,255,.16); }
       .desktop-account { margin-left: 6px; padding: 12px 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 23px; background: rgba(255,255,255,.16); color: #fff; font-size: 13px; font-weight: 800; text-decoration: none; }
       .site-hero { padding: 54px 32px 72px; }
-      .site-eyebrow { padding: 8px 14px; font-size: 10px; }
+      .site-eyebrow { padding: 13px 20px; }
       .site-title__plain { font-size: 58px; }
       .site-lead { font-size: 21px; }
       .site-player { margin-top: 31px; }
@@ -492,7 +499,7 @@
     .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
     .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
 
-    .method-transition{position:relative;z-index:12;margin-top:0;padding:52px 18px 104px;background:#fff}
+    .method-transition{position:relative;z-index:12;margin-top:0;padding:52px 18px 48px;background:#fff}
     .method-transition__inner{width:min(100%,940px);margin:0 auto}
     .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:clamp(28px,7vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
     .method-list{display:grid;gap:13px;max-width:790px;margin:28px 0 0;padding:0;list-style:none}
@@ -624,11 +631,12 @@
     .faq-list{display:flex;flex-direction:column;gap:12px;max-width:880px;margin-top:36px}
     .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
     .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
-    .faq-item[data-open="true"]{background:linear-gradient(145deg,#fffaf8 0%,#fff0ec 100%);border-color:rgba(231,104,80,.42);box-shadow:0 16px 34px -27px rgba(143,54,39,.45)}
+    .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(255,250,248,.96) 0%,var(--support-surface) 100%);border-color:var(--support-border);box-shadow:0 16px 34px -27px rgba(143,54,39,.38)}
+    body[data-support-tone="green"] .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(249,255,250,.96) 0%,var(--support-surface) 100%);box-shadow:0 16px 34px -27px rgba(52,152,90,.36)}
     .faq-question{display:grid;grid-template-columns:minmax(0,1fr) 28px;align-items:center;gap:16px;width:100%;padding:22px 24px;color:var(--ink);background:transparent;border:0;font:inherit;text-align:left;cursor:pointer}
     .faq-question-text{font-size:17px;font-weight:700;line-height:1.32;letter-spacing:-.2px}
     .faq-sign{display:grid;width:28px;height:28px;place-items:center;color:var(--blue);font-size:25px;font-weight:600;line-height:1;transform:translateY(-1px)}
-    .faq-item[data-open="true"] .faq-sign{color:var(--warm)}
+    .faq-item[data-open="true"] .faq-sign{color:var(--support-accent)}
     .faq-answer{animation:faq-open .2s ease both}
     .faq-answer[hidden]{display:none}
     .faq-answer-inner{overflow:hidden}
@@ -652,7 +660,7 @@
     .chain-block--final a:focus-visible{outline:3px solid #fff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     .final-section{padding:34px 14px 54px}
-    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,1180px);margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 30px 70px -38px rgba(3,94,151,.72)}
+    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,1180px);margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 28px 54px -27px rgba(3,94,151,.68),0 10px 24px -18px rgba(3,70,114,.62)}
     .final-card::before,.final-card::after{position:absolute;z-index:-1;border-radius:50%;content:"";pointer-events:none}
     .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
     .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
@@ -694,17 +702,38 @@
     }
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:transparent}
     .chain-block{position:relative;z-index:1;min-width:0}
-    .chain-block--before-after{padding:34px 0 56px;background:transparent}
+    .chain-block--before-after{padding:0 0 56px;background:transparent}
     .chain-block--anya{padding:26px 0 72px;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
     .anya-story{width:min(100%,1180px);margin:0 auto;padding:0 18px}
     .anya-story__header{max-width:760px}
-    .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.03em;transform:rotate(-2deg)}
+    .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(32px,8.6vw,64px);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:16px;font-weight:600;line-height:1.55}
-    .anya-story__viewport{margin:32px -18px 0;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
+    .anya-story__swipe-hint{display:grid;min-height:60px;place-items:center;margin:20px 0 8px;color:#168fd3}
+    .anya-swipe-option{display:none;align-items:center;justify-content:center;gap:10px;color:#168fd3;font-size:12px;font-weight:800}
+    body[data-anya-hint="tilda"] .anya-swipe-option--tilda,body[data-anya-hint="finger"] .anya-swipe-option--finger,body[data-anya-hint="nudge"] .anya-swipe-option--nudge{display:flex}
+    .anya-swipe-tilda{position:relative;width:92px;height:48px}
+    .anya-swipe-tilda__cards{position:absolute;inset:7px 0 auto;display:flex;gap:5px;animation:anya-cards 2s ease-in-out infinite}
+    .anya-swipe-tilda__cards i{display:block;width:25px;height:30px;border:1.5px solid currentColor;border-radius:6px;background:rgba(255,255,255,.64)}
+    .anya-swipe-tilda__hand{position:absolute;right:14px;bottom:0;width:25px;height:29px;animation:anya-hand 2s ease-in-out infinite;filter:drop-shadow(0 3px 4px rgba(21,105,155,.15))}
+    .anya-swipe-tilda__hand path{fill:#fff;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .anya-swipe-finger{display:grid;grid-template-columns:auto 44px;align-items:center;gap:8px}
+    .anya-swipe-finger svg{width:26px;height:31px;animation:anya-finger 1.7s ease-in-out infinite}
+    .anya-swipe-finger path{fill:#fff;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+    .anya-swipe-track{position:relative;width:44px;height:2px;border-radius:99px;background:rgba(22,143,211,.24)}
+    .anya-swipe-track::before,.anya-swipe-track::after{position:absolute;top:50%;width:7px;height:7px;border-top:2px solid currentColor;border-right:2px solid currentColor;content:""}
+    .anya-swipe-track::before{left:0;transform:translateY(-50%) rotate(-135deg)}
+    .anya-swipe-track::after{right:0;transform:translateY(-50%) rotate(45deg)}
+    .anya-swipe-nudge{display:flex;align-items:center;gap:7px;padding:8px 11px;border:1px solid rgba(22,143,211,.16);border-radius:999px;background:rgba(255,255,255,.7);box-shadow:0 8px 20px -18px rgba(20,80,120,.6)}
+    .anya-swipe-nudge i{display:block;width:17px;height:22px;border-radius:5px;background:#168fd3;animation:anya-nudge 1.7s ease-in-out infinite;box-shadow:21px 0 0 rgba(22,143,211,.18)}
+    @keyframes anya-hand{0%,15%,85%,100%{transform:translateX(10px) rotate(-5deg)}45%,60%{transform:translateX(-24px) rotate(-5deg)}}
+    @keyframes anya-cards{0%,15%,85%,100%{transform:translateX(-5px)}45%,60%{transform:translateX(10px)}}
+    @keyframes anya-finger{0%,15%,85%,100%{transform:translateX(8px)}45%,60%{transform:translateX(-8px)}}
+    @keyframes anya-nudge{0%,18%,82%,100%{transform:translateX(0)}45%,60%{transform:translateX(12px)}}
+    .anya-story__viewport{margin:0 -18px;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
     .anya-story__viewport::-webkit-scrollbar{display:none}
-    .anya-story__track{display:flex;gap:14px;width:max-content;padding:0 18px 18px}
-    .anya-slide{position:relative;display:flex;width:min(78vw,350px);height:min(110vw,488px);flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 42px -30px rgba(18,55,86,.58)}
+    .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 18px 42px}
+    .anya-slide{position:relative;display:flex;width:min(78vw,350px);height:min(110vw,488px);flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 38px -24px rgba(18,55,86,.44)}
     .anya-slide--video{background:#121018}
     .anya-slide--video iframe{width:100%;height:100%;border:0}
     .anya-placeholder-note{position:absolute;z-index:5;right:10px;bottom:10px;left:10px;padding:8px 10px;border-radius:10px;background:rgba(18,16,24,.72);color:rgba(255,255,255,.82);font-size:10px;font-weight:800;line-height:1.25;text-align:center;pointer-events:none;backdrop-filter:blur(8px)}
@@ -716,20 +745,18 @@
     .anya-slide--ending span{font-size:12px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
     .anya-slide--ending strong{margin-top:12px;font-family:Unbounded,Manrope,sans-serif;font-size:24px;line-height:1.15}
     .anya-slide--ending p{margin:18px 0 0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
-    .anya-story__footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;color:#65717d;font-size:13px;font-weight:900}
-    .anya-story__buttons{display:flex;gap:8px}
-    .anya-story__buttons button{display:grid;width:46px;height:46px;place-items:center;border:0;border-radius:14px;background:#fff;color:#168fd3;box-shadow:0 12px 25px -20px rgba(20,80,120,.7);font:900 20px Manrope,sans-serif;cursor:pointer;transition:transform .15s ease,background .15s ease,color .15s ease}
-    .anya-story__buttons button:hover,.anya-story__buttons button:focus-visible{background:#159ee9;color:#fff;transform:translateY(-2px)}
+    .anya-story__after{max-width:620px;margin:22px 0 0;color:#55616d;font-size:15px;line-height:1.6}
     .chain-block--pricing{padding:20px 0 74px;background:transparent}
     .chain-block--faq{padding:0 0 54px;background:transparent}
     .chain-block--final{background:transparent;color:#fff}
     .site-hero,.argument-intro,.argument,.method-transition,.recognition__scene{background:transparent}
     #edb-pricing-neurozeh-v1 .edb-preview-toolbar{display:none!important}
     #edb-pricing-neurozeh-v1{padding-top:0!important}
+    .chain-block--before-after .wl-masterclass-story{padding-top:8px}
     [data-edabalans-site-footer]{position:relative;z-index:1;background:transparent;color:#17212b}
     @media(max-width:719px){
       .desktop-header{display:none!important}
-      .chain-block--before-after{padding-top:18px;padding-bottom:42px}
+      .chain-block--before-after{padding-top:0;padding-bottom:42px}
       .chain-block--anya{padding-top:18px;padding-bottom:54px}
       .chain-block--pricing{padding-top:6px;padding-bottom:54px}
       .chain-block--faq{padding-bottom:32px}
@@ -737,6 +764,18 @@
   </style>
 </head>
 <body data-page-theme="blue-mist">
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const hint = params.get('anya-hint');
+      document.body.dataset.anyaHint = ['tilda', 'finger', 'nudge'].includes(hint) ? hint : 'tilda';
+      const timer = params.get('timer');
+      document.body.dataset.pricingTimer = ['tag', 'bubble', 'flag'].includes(timer) ? timer : 'none';
+      const fill = params.get('pricing-fill');
+      document.body.dataset.pricingFill = ['min-blue', 'min-sky'].includes(fill) ? fill : 'base';
+      document.body.dataset.supportTone = params.get('support') === 'green' ? 'green' : 'warm';
+    })();
+  </script>
   <header class="desktop-header">
     <div class="desktop-header__pill">
       <a class="desktop-wordmark" href="#top">ПОХУДЕНИЕ — ЭТО ЕСТЬ<span>.РФ</span></a>
@@ -846,11 +885,22 @@
     <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
       <div class="anya-story">
         <header class="anya-story__header">
-          <span class="anya-story__kicker">Одна история целиком</span>
+          <span class="anya-story__kicker">ИСТОРИЯ</span>
           <h2 id="anya-story-title">Что случилось с Аней?</h2>
           <p>Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
         </header>
-        <div class="anya-story__viewport" data-anya-slider>
+        <div class="anya-story__swipe-hint" aria-label="Смахните вбок, чтобы листать историю">
+          <div class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true">
+            <span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span>
+            <span>Смахните вбок</span>
+          </div>
+          <div class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true">
+            <span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span>
+            <span>Листайте историю</span>
+          </div>
+          <div class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i><span>Потяните карточки</span></span></div>
+        </div>
+        <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
           <div class="anya-story__track">
             <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
               <iframe src="/preview/homepage-mobile/vsl-player.html?v=2&context=anya-placeholder" title="Видео Ани — временная медиазаглушка" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
@@ -875,13 +925,7 @@
             </article>
           </div>
         </div>
-        <div class="anya-story__footer">
-          <span data-anya-counter>1 / 5</span>
-          <div class="anya-story__buttons">
-            <button type="button" data-anya-prev aria-label="Предыдущий слайд">←</button>
-            <button type="button" data-anya-next aria-label="Следующий слайд">→</button>
-          </div>
-        </div>
+        <p class="anya-story__after">Здесь будет короткий итог истории Ани.</p>
       </div>
     </section>
 
@@ -937,12 +981,12 @@
       width: min(100%, 390px);
       overflow: visible;
       background: transparent;
-      padding: 26px 18px 68px;
+      padding: 16px 18px 68px;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intro {
       width: min(100%, 1180px);
-      padding: 38px 18px 0;
+      padding: 28px 18px 0;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
@@ -970,28 +1014,10 @@
       content: '';
     }
 
-    #edb-pricing-neurozeh-v1 .edb-pricing-intro h2 {
-      max-width: 760px;
-      margin: 20px 0 0;
-      font-family: 'Unbounded', sans-serif;
-      font-size: 29px;
-      font-weight: 800;
-      line-height: 1.08;
-      letter-spacing: -.045em;
-    }
-
-    #edb-pricing-neurozeh-v1 .edb-pricing-intro .edb-pricing-lead {
-      max-width: 680px;
-      margin: 16px 0 0;
-      color: #59616e;
-      font-size: 16px;
-      line-height: 1.5;
-    }
-
     #edb-pricing-neurozeh-v1 .edb-pricing-list {
       display: grid;
       gap: 18px;
-      margin-top: 30px;
+      margin-top: 0;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-status {
@@ -1127,12 +1153,30 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-price-row {
+      position: relative;
       display: flex;
       min-height: 34px;
       align-items: center;
       gap: 12px;
       margin-bottom: 5px;
+      overflow: visible;
     }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-timer { display: none; }
+    body:not([data-pricing-timer="none"]) #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket.is-visible + .edb-pricing-timer { position: relative; display: inline-grid; align-content: center; margin-left: -5px; padding: 4px 8px 5px; color: #1c2530; font-family: Manrope,sans-serif; line-height: 1; transform: rotate(2deg); }
+    #edb-pricing-neurozeh-v1 .edb-pricing-timer small { font-size: 7px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+    #edb-pricing-neurozeh-v1 .edb-pricing-timer strong { margin-top: 2px; font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+    body[data-pricing-timer="tag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { border: 1px dashed rgba(22,143,211,.42); border-radius: 7px; background: rgba(235,248,255,.96); box-shadow: 0 8px 16px -13px rgba(16,91,136,.65); }
+    body[data-pricing-timer="bubble"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left: -7px; border: 1px solid rgba(255,103,56,.24); border-radius: 999px; background: #fff7f2; color: #b84623; box-shadow: 0 8px 16px -13px rgba(116,34,10,.55); transform: rotate(-1deg); }
+    body[data-pricing-timer="flag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left: -8px; padding-right: 13px; background: #252933; clip-path: polygon(0 0,100% 0,88% 50%,100% 100%,0 100%); color: #fff; transform: rotate(1deg); }
+
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child { border: 0; background: radial-gradient(circle at 94% 1%,rgba(255,255,255,.2),transparent 29%),linear-gradient(150deg,#36bdff 0%,#168fe8 100%); color:#fff; box-shadow:0 30px 60px -32px rgba(21,145,232,.72); }
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child li { color:#fff; }
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-check { background:#fff;color:#1391e8; }
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-bottom { border-top-color:rgba(255,255,255,.23); }
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-old { color:rgba(255,255,255,.7); }
+    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-button { background:#fff;color:#0d7fc7;box-shadow:0 16px 30px -17px rgba(4,63,103,.38); }
+    body[data-pricing-fill="min-sky"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child { border-color:rgba(31,157,227,.22); background:linear-gradient(150deg,rgba(246,252,255,.98),rgba(216,243,255,.96)); box-shadow:0 28px 54px -32px rgba(20,126,188,.38); }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-price-row[hidden] {
       display: none;
@@ -1476,9 +1520,9 @@
       gap: 10px;
       align-items: center;
       padding: 15px 14px 15px 10px;
-      border: 1px solid #f1d8cc;
+      border: 1px solid var(--support-border);
       border-radius: 14px;
-      background: rgba(255, 248, 244, .82);
+      background: var(--support-surface);
       color: #333b45;
       font-size: 14px;
       line-height: 1.5;
@@ -1747,7 +1791,7 @@
       margin-top: 24px;
     }
     @media(min-width:720px){.anya-story{padding-inline:32px}.anya-story__viewport{margin-inline:-32px}.anya-story__track{padding-inline:32px}.anya-slide{width:min(48vw,430px);height:min(68vw,590px)}}
-    @media(prefers-reduced-motion:reduce){.anya-story__buttons button{transition:none}}
+    @media(prefers-reduced-motion:reduce){.anya-swipe-tilda__cards,.anya-swipe-tilda__hand,.anya-swipe-finger svg,.anya-swipe-nudge i{animation:none}}
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-points > p {
       margin: 0 0 12px;
@@ -1863,9 +1907,7 @@
   </div>
 
   <header class="edb-pricing-intro">
-    <div class="edb-pricing-kicker">Мастер-класс · 21 день</div>
-    <h2 id="edb-pricing-title">Выберите формат участия</h2>
-    <p class="edb-pricing-lead">Программа одна. Тарифы отличаются дополнительными материалами и личным разбором.</p>
+    <div class="edb-pricing-kicker" id="edb-pricing-title">Выберите тариф</div>
   </header>
 
   <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
@@ -1878,7 +1920,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1893,7 +1935,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1911,7 +1953,7 @@
           <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -2313,7 +2355,6 @@
       const viewport = document.querySelector('[data-anya-slider]');
       if (!viewport) return;
       const slides = [...viewport.querySelectorAll('.anya-slide')];
-      const counter = document.querySelector('[data-anya-counter]');
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const slideLeft = (slide) => {
         const slideBox = slide.getBoundingClientRect();
@@ -2326,7 +2367,6 @@
           Math.abs(slideLeft(slide) - left) < Math.abs(slideLeft(slides[best]) - left) ? index : best
         ), 0);
       };
-      const update = () => { counter.textContent = `${currentIndex() + 1} / ${slides.length}`; };
       const moveTo = (index) => {
         const target = slides[Math.max(0, Math.min(slides.length - 1, index))];
         viewport.scrollTo({
@@ -2334,17 +2374,12 @@
           behavior: reducedMotion.matches ? 'auto' : 'smooth'
         });
       };
-      const move = (direction) => {
-        moveTo(currentIndex() + direction);
-      };
-      document.querySelector('[data-anya-prev]').addEventListener('click', () => move(-1));
-      document.querySelector('[data-anya-next]').addEventListener('click', () => move(1));
-      let frame = 0;
-      viewport.addEventListener('scroll', () => {
-        cancelAnimationFrame(frame);
-        frame = requestAnimationFrame(update);
-      }, { passive: true });
       const videoFrame = viewport.querySelector('.anya-slide--video iframe');
+      viewport.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        moveTo(currentIndex() + (event.key === 'ArrowRight' ? 1 : -1));
+      });
       window.addEventListener('message', (event) => {
         if (!videoFrame || event.source !== videoFrame.contentWindow) return;
         if (event.data?.type !== 'edabalans:anya-drag') return;
@@ -2354,7 +2389,6 @@
         }
         if (event.data.phase === 'end') moveTo(currentIndex());
       });
-      update();
     })();
   </script>
   <script>
@@ -2374,7 +2408,22 @@
           const kicker = shell.querySelector('p');
           const list = shell.querySelector('ul');
           if (kicker) kicker.className = 'method-kicker';
-          if (list) list.className = 'method-list';
+          if (list) {
+            list.className = 'method-list';
+            list.querySelectorAll('li').forEach((item) => {
+              const emphasis = item.querySelector('strong');
+              if (!emphasis) return;
+              const plainText = [...item.childNodes]
+                .filter((node) => node !== emphasis)
+                .map((node) => node.textContent)
+                .join('');
+              const line = document.createElement('p');
+              const plain = document.createElement('span');
+              plain.textContent = plainText;
+              line.append(plain, emphasis);
+              item.replaceChildren(line);
+            });
+          }
         } catch (error) {
           shell.textContent = 'Текст временно недоступен.';
         }

@@ -94,7 +94,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     for marker in (
         "Мастер-класс · 21 день",
         "Чтобы похудеть, нужно",
-        "Выберите формат участия",
+        "Выберите тариф",
         "Что случилось с Аней?",
         "Частые вопросы",
         "Вы долистали сайт до конца…",
@@ -112,6 +112,17 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "fetch('/api/public-site/content/faq'" in response.text
     assert "fetch('/api/public-site/content/approach'" in response.text
     assert 'data-anya-slider' in response.text
+    assert 'data-anya-counter' not in response.text
+    assert 'data-anya-prev' not in response.text
+    assert 'data-anya-next' not in response.text
+    assert "document.body.dataset.anyaHint" in response.text
+    assert "? hint : 'tilda'" in response.text
+    assert "document.body.dataset.pricingTimer" in response.text
+    assert "? timer : 'none'" in response.text
+    assert "document.body.dataset.pricingFill" in response.text
+    assert "? fill : 'base'" in response.text
+    assert "document.body.dataset.supportTone" in response.text
+    assert 'class="edb-pricing-timer"' in response.text
 
 
 def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
@@ -124,6 +135,7 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "analyticsApi.markEngaged()" in response.text
     assert "mvp--controls-hidden" in response.text
     assert "Содержание" not in response.text
+    assert "event.pointerType === 'mouse' && event.button !== 0" in response.text
 
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:
