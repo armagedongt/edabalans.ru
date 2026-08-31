@@ -17632,6 +17632,14 @@
           "qualname": "closeToc"
         },
         {
+          "file": "backend/app/static/blog/assets/blog.js",
+          "kind": "function",
+          "line": 133,
+          "module_id": "platform.blog",
+          "name": "updateTocCurrent",
+          "qualname": "updateTocCurrent"
+        },
+        {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
           "line": 15,
@@ -17642,7 +17650,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 40,
+          "line": 44,
           "module_id": "platform.blog",
           "name": "test_blog_home_trailing_slash_is_supported",
           "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -17650,7 +17658,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 44,
+          "line": 48,
           "module_id": "platform.blog",
           "name": "test_favicon_test_pages_are_isolated_and_noindex",
           "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
@@ -17658,7 +17666,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 64,
+          "line": 68,
           "module_id": "platform.blog",
           "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
           "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -17666,7 +17674,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 83,
+          "line": 93,
           "module_id": "platform.blog",
           "name": "test_unknown_blog_article_returns_404",
           "qualname": "test_unknown_blog_article_returns_404"
@@ -17674,7 +17682,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 87,
+          "line": 97,
           "module_id": "platform.blog",
           "name": "test_blog_assets_and_fonts_are_whitelisted",
           "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -17682,7 +17690,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 125,
+          "line": 133,
           "module_id": "platform.blog",
           "name": "test_blog_media_is_manifest_whitelisted",
           "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -17690,7 +17698,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 134,
+          "line": 142,
           "module_id": "platform.blog",
           "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
           "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -17698,7 +17706,7 @@
         {
           "file": "backend/tests/test_blog.py",
           "kind": "function",
-          "line": 148,
+          "line": 156,
           "module_id": "platform.blog",
           "name": "test_every_published_article_and_declared_image_is_served",
           "qualname": "test_every_published_article_and_declared_image_is_served"
@@ -27990,7 +27998,8 @@
       "telegram": null,
       "title": "Бесплатный интенсив",
       "truths": [
-        "`docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и\n`backend/app/intensive_public_cta.py` для публичного CTA."
+        "`docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и\n`backend/app/intensive_public_cta.py` для публичного CTA.",
+        "Публичная карточка интенсива на внешних поверхностях использует заголовок\n«Как сделать похудение проще» и действие «Читать бесплатно»; URL и tracking key\nостаются типизированными фактами runtime."
       ]
     },
     {
@@ -42915,6 +42924,14 @@
       "qualname": "closeToc"
     },
     {
+      "file": "backend/app/static/blog/assets/blog.js",
+      "kind": "function",
+      "line": 133,
+      "module_id": "platform.blog",
+      "name": "updateTocCurrent",
+      "qualname": "updateTocCurrent"
+    },
+    {
       "file": "backend/app/static/content-catalog.js",
       "kind": "function",
       "line": 5,
@@ -45749,7 +45766,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 40,
+      "line": 44,
       "module_id": "platform.blog",
       "name": "test_blog_home_trailing_slash_is_supported",
       "qualname": "test_blog_home_trailing_slash_is_supported"
@@ -45757,7 +45774,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 44,
+      "line": 48,
       "module_id": "platform.blog",
       "name": "test_favicon_test_pages_are_isolated_and_noindex",
       "qualname": "test_favicon_test_pages_are_isolated_and_noindex"
@@ -45765,7 +45782,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 64,
+      "line": 68,
       "module_id": "platform.blog",
       "name": "test_blog_article_has_toc_cta_metadata_and_related_cards",
       "qualname": "test_blog_article_has_toc_cta_metadata_and_related_cards"
@@ -45773,7 +45790,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 83,
+      "line": 93,
       "module_id": "platform.blog",
       "name": "test_unknown_blog_article_returns_404",
       "qualname": "test_unknown_blog_article_returns_404"
@@ -45781,7 +45798,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 87,
+      "line": 97,
       "module_id": "platform.blog",
       "name": "test_blog_assets_and_fonts_are_whitelisted",
       "qualname": "test_blog_assets_and_fonts_are_whitelisted"
@@ -45789,7 +45806,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 125,
+      "line": 133,
       "module_id": "platform.blog",
       "name": "test_blog_media_is_manifest_whitelisted",
       "qualname": "test_blog_media_is_manifest_whitelisted"
@@ -45797,7 +45814,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 134,
+      "line": 142,
       "module_id": "platform.blog",
       "name": "test_blog_is_indexable_and_sitemap_lists_all_articles",
       "qualname": "test_blog_is_indexable_and_sitemap_lists_all_articles"
@@ -45805,7 +45822,7 @@
     {
       "file": "backend/tests/test_blog.py",
       "kind": "function",
-      "line": 148,
+      "line": 156,
       "module_id": "platform.blog",
       "name": "test_every_published_article_and_declared_image_is_served",
       "qualname": "test_every_published_article_and_declared_image_is_served"

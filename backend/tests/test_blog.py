@@ -28,6 +28,10 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     ) in response.text
     assert response.text.count('class="article-card"') == 6
     assert response.text.count('class="card-tag"') == 6
+    first_card = response.text.split('class="article-card"', 1)[1].split('</article>', 1)[0]
+    assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
+    assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
+    assert "Ответ на вопрос о сроках либо поставит жирный крест" in response.text
     assert 'data-category-filter="Личное"' in response.text
     assert 'data-category-filter="ЗОЖ"' in response.text
     assert 'id="articles-title"' not in response.text
@@ -72,9 +76,16 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
         'articles/skolko-vremeni-nuzhno-na-pohudenie">'
     ) in response.text
     assert 'class="toc-mobile"' in response.text
+    assert '<details class="toc-mobile"><summary>Содержание</summary>' in response.text
     assert 'class="toc-dock"' in response.text
+    assert "В этом материале" in response.text
     assert 'data-component="blog-cta"' in response.text
     assert 'data-tracking-key="blog_intensive"' in response.text
+    assert "Как сделать похудение проще" in response.text
+    assert "Читать бесплатно" in response.text
+    assert '<header class="article-hero">' in response.text
+    article_hero = response.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
+    assert "<p>" not in article_hero
     assert "blog_cta(" not in response.text
     assert response.text.count('class="article-card"') == 3
     assert '<meta property="og:type" content="article">' in response.text
@@ -87,6 +98,7 @@ def test_unknown_blog_article_returns_404() -> None:
 def test_blog_assets_and_fonts_are_whitelisted() -> None:
     font = client.get("/blog/fonts/inter-cyrillic.woff2")
     stylesheet = client.get("/blog/assets/blog.css")
+    script = client.get("/blog/assets/blog.js")
     photo = client.get("/blog/assets/sergey-author.png")
     black_favicon = client.get("/blog/assets/favicon-test-black.svg")
     blue_favicon = client.get("/blog/assets/favicon-test-blue.svg")
@@ -97,19 +109,31 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert font.headers["cache-control"] == "public, max-age=31536000, immutable"
     assert stylesheet.status_code == 200
     assert stylesheet.headers["content-type"].startswith("text/css")
+    assert script.status_code == 200
+    assert script.headers["content-type"].startswith(("text/javascript", "application/javascript"))
     assert re.search(r"\.hero h1 \{[^}]*font-weight: 800;[^}]*\}", stylesheet.text)
-    assert re.search(
-        r"\.hero-photo img \{[^}]*transform: scale\(2\.6\);[^}]*transform-origin: top right;[^}]*\}",
-        stylesheet.text,
-    )
+    assert re.search(r"\.hero-photo img \{[^}]*object-position: center;[^}]*transform: none;[^}]*\}", stylesheet.text)
     assert re.search(
         r"\.categories button \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*\}",
         stylesheet.text,
     )
-    assert re.search(
-        r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: color-mix[^}]*backdrop-filter: blur\(10px\);[^}]*\}",
-        stylesheet.text,
-    )
+    assert re.search(r"\.categories button:hover, \.categories button\.active \{[^}]*background: var\(--blue\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: var\(--cloud\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.theme-toggle:hover \{[^}]*border-color: var\(--blue\);[^}]*color: var\(--blue\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.article-layout \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.article-hero \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.toc-dock \{[^}]*position: fixed;[^}]*\}", stylesheet.text)
+    assert re.search(r"\.toc-button \{[^}]*writing-mode: vertical-rl;[^}]*\}", stylesheet.text)
+    mobile_rules = re.search(r"@media \(max-width: 920px\) \{(.*?)\n\}", stylesheet.text, re.DOTALL)
+    assert mobile_rules is not None
+    assert re.search(r"\.toc-dock \{[^}]*display: none;[^}]*\}", mobile_rules.group(1))
+    assert re.search(r"\.toc-mobile \{[^}]*display: block;[^}]*\}", mobile_rules.group(1))
+    assert "mobileToc.open = false" in script.text
+    assert "document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)))" in script.text
+    assert ".filter(Boolean)" in script.text
+    assert "window.addEventListener('scroll', updateTocCurrent" in script.text
+    assert "setAttribute('aria-current', 'location')" in script.text
+    assert "removeAttribute('aria-current')" in script.text
     assert photo.status_code == 200
     assert photo.headers["content-type"] == "image/png"
     assert black_favicon.status_code == 200

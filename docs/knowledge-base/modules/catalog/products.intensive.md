@@ -24,6 +24,10 @@ implementation_status: implemented
 `docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и
 `backend/app/intensive_public_cta.py` для публичного CTA.
 
+Публичная карточка интенсива на внешних поверхностях использует заголовок
+«Как сделать похудение проще» и действие «Читать бесплатно»; URL и tracking key
+остаются типизированными фактами runtime.
+
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
 

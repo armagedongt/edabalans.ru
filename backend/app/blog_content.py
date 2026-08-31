@@ -271,9 +271,9 @@ def card_html(article: BlogArticle, *, heading_level: int = 2) -> str:
         f'<a class="card-link" href="/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
         f'<img src="/blog/media/{escape(article.card.file, quote=True)}" '
-        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy">'
-        f'<span class="card-tag">{escape(article.category)}</span></div>'
-        f'<div class="card-body"><h{heading_level} class="card-title">{escape(article.title)}</h{heading_level}>'
+        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy"></div>'
+        f'<div class="card-body"><span class="card-tag">{escape(article.category)}</span>'
+        f'<h{heading_level} class="card-title">{escape(article.title)}</h{heading_level}>'
         f'<p class="card-copy">{escape(article.excerpt)}</p></div></a></article>'
     )
 
@@ -290,9 +290,13 @@ def toc_html(toc: tuple[tuple[str, str], ...], *, mobile: bool) -> str:
         return ""
     items = "".join(f'<li><a href="#{escape(anchor, quote=True)}">{escape(title)}</a></li>' for anchor, title in toc)
     if mobile:
-        return f'<nav class="toc-mobile" aria-label="Содержание"><strong>Содержание</strong><ol>{items}</ol></nav>'
+        return (
+            '<details class="toc-mobile"><summary>Содержание</summary>'
+            f'<nav aria-label="Содержание"><strong>В этом материале</strong><ol>{items}</ol></nav></details>'
+        )
     return (
         '<aside class="toc-dock"><button class="toc-button" type="button" aria-expanded="false" '
         'aria-controls="article-toc">Содержание</button>'
-        f'<nav class="toc-popover" id="article-toc" aria-label="Содержание" hidden><ol>{items}</ol></nav></aside>'
+        f'<nav class="toc-popover" id="article-toc" aria-label="Содержание" hidden>'
+        f'<strong>В этом материале</strong><ol>{items}</ol></nav></aside>'
     )

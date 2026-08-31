@@ -123,4 +123,28 @@
     document.addEventListener('click', function (event) { if (!tocPopover.hidden && !event.target.closest('.toc-dock')) closeToc(); });
     document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeToc(); tocButton.focus(); } });
   }
+
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-popover a, .toc-mobile a'));
+  var mobileToc = document.querySelector('.toc-mobile');
+  if (mobileToc) mobileToc.addEventListener('click', function (event) { if (event.target.closest('a')) mobileToc.open = false; });
+  var tocHeadings = tocLinks.map(function (link) {
+    return document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)));
+  }).filter(Boolean);
+  function updateTocCurrent() {
+    if (!tocHeadings.length) return;
+    var current = tocHeadings[0];
+    var atPageEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+    tocHeadings.forEach(function (heading) {
+      if (heading.getBoundingClientRect().top <= 140) current = heading;
+    });
+    if (atPageEnd) current = tocHeadings[tocHeadings.length - 1];
+    tocLinks.forEach(function (link) {
+      if (link.getAttribute('href') === '#' + current.id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+  if (tocHeadings.length) {
+    updateTocCurrent();
+    window.addEventListener('scroll', updateTocCurrent, { passive: true });
+  }
 }());
