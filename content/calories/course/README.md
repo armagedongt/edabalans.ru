@@ -21,22 +21,28 @@
 
 ## Файлы, ID и публикация
 
+Ниже зафиксирована привязка текущего пятиэтапного runtime к ближайшей совместимой
+редакторской сборке v5. Эти тексты прошли внутренние проверки, но Сергей их не
+принимал; публиковать их до отдельного авторского просмотра нельзя. Последняя v6
+имеет другую четырёхэтапную архитектуру и описана в
+`work/calorie-course-rebuild/README.md`; автоматически подставлять её в эти ID нельзя.
+
 | Этап | `step.id` | Файл черновика |
 |---|---|---|
-| 1 | `calories-stage-01-app` | `work/calorie-course-rebuild/drafts/stage-01/01-app-tracking.md` |
-| 1 | `calories-stage-01-food-cases` | `work/calorie-course-rebuild/drafts/stage-01/02-counting-different-food.md` |
-| 1 | `calories-stage-01-accuracy` | `work/calorie-course-rebuild/drafts/stage-01/03-accuracy-baseline-diary.md` |
-| 2 | `calories-stage-02-metrics` | `work/calorie-course-rebuild/drafts/stage-02/01-app-metrics.md` |
-| 2 | `calories-stage-02-sources` | `work/calorie-course-rebuild/drafts/stage-02/02-calorie-sources.md` |
-| 2 | `calories-stage-02-adjust` | `work/calorie-course-rebuild/drafts/stage-02/03-adjust-current-diet.md` |
-| 3 | `calories-stage-03-expenditure` | `work/calorie-course-rebuild/drafts/stage-03/01-expenditure-calculator.md` |
-| 3 | `calories-stage-03-activity` | `work/calorie-course-rebuild/drafts/stage-03/02-steps-training-double-count.md` |
-| 4 | `calories-stage-04-deficit` | `work/calorie-course-rebuild/drafts/stage-04/01-phase-deficit-pace.md` |
-| 4 | `calories-stage-04-data` | `work/calorie-course-rebuild/drafts/stage-04/02-comparable-data.md` |
-| 4 | `calories-stage-04-correction` | `work/calorie-course-rebuild/drafts/stage-04/03-correct-the-model.md` |
-| 5 | `calories-stage-05-catalog` | `work/calorie-course-rebuild/drafts/stage-05/01-repeat-meals-household-measures.md` |
-| 5 | `calories-stage-05-hunger` | `work/calorie-course-rebuild/drafts/stage-05/02-rhythm-hunger-snacking.md` |
-| 5 | `calories-stage-05-exit` | `work/calorie-course-rebuild/drafts/stage-05/03-stop-tracking.md` |
+| 1 | `calories-stage-01-app` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/01-app-tracking.md` |
+| 1 | `calories-stage-01-food-cases` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/02-counting-different-food.md` |
+| 1 | `calories-stage-01-accuracy` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/03-accuracy-baseline-diary.md` |
+| 2 | `calories-stage-02-metrics` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/01-app-metrics.md` |
+| 2 | `calories-stage-02-sources` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/02-calorie-sources.md` |
+| 2 | `calories-stage-02-adjust` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/03-adjust-current-diet.md` |
+| 3 | `calories-stage-03-expenditure` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/01-expenditure-calculator.md` |
+| 3 | `calories-stage-03-activity` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/02-steps-training-double-count.md` |
+| 4 | `calories-stage-04-deficit` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/01-phase-deficit-pace.md` |
+| 4 | `calories-stage-04-data` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/02-comparable-data.md` |
+| 4 | `calories-stage-04-correction` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/03-correct-the-model.md` |
+| 5 | `calories-stage-05-catalog` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/01-repeat-meals-household-measures.md` |
+| 5 | `calories-stage-05-hunger` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/02-rhythm-hunger-snacking.md` |
+| 5 | `calories-stage-05-exit` | `work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/03-stop-tracking.md` |
 
 Помимо четырнадцати статей, в этапе 3 есть обязательный технический шаг
 `calories-stage-03-calculator`. Он открывает существующее приложение `metabolism`
