@@ -118,17 +118,19 @@ html[data-theme="dark"] .theme-toggle .moon { display: block; }
   display: grid;
   grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr);
   align-items: center;
-  gap: clamp(36px, 7vw, 90px);
-  padding: clamp(64px, 8vw, 108px) 0 58px;
+  column-gap: clamp(36px, 7vw, 90px);
+  row-gap: 32px;
+  padding: clamp(48px, 6vw, 82px) 0 58px;
 }
+.hero-copy { grid-column: 1; }
 .eyebrow, .article-category, .blog-cta-eyebrow { margin: 0; color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
 .hero .eyebrow { margin-top: 18px; color: var(--blue); font-size: 18px; font-weight: 600; letter-spacing: 0; text-transform: none; }
 .hero h1 { max-width: 800px; margin: 0; font-size: clamp(46px, 6.5vw, 76px); font-weight: 800; letter-spacing: -.055em; line-height: 1; }
 .lead { max-width: 720px; margin: 25px 0 0; color: var(--muted); font-size: clamp(19px, 2vw, 23px); line-height: 1.5; }
-.hero-photo { position: relative; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 24px 24px 10px 24px; background: var(--surface-soft); box-shadow: var(--shadow); }
+.hero-photo { position: relative; grid-column: 2; grid-row: 1 / span 2; margin: 0; overflow: hidden; border: 1px solid var(--border); border-radius: 24px 24px 10px 24px; background: var(--surface-soft); box-shadow: var(--shadow); }
 .hero-photo::before { content: ""; display: block; padding-top: 100%; }
 .hero-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center; transform: none; }
-.categories { display: flex; flex-wrap: wrap; gap: 9px; margin: 32px 0 0; padding: 0; list-style: none; }
+.categories { grid-column: 1; display: flex; flex-wrap: wrap; gap: 9px; margin: 0; padding: 0; list-style: none; }
 .categories button { padding: 9px 13px; border: 1px solid color-mix(in srgb, var(--border) 76%, transparent); border-radius: 7px; background: color-mix(in srgb, var(--surface-soft) 72%, transparent); color: var(--text); font-size: 13px; font-weight: 600; cursor: pointer; }
 .categories button:hover, .categories button.active { border-color: var(--blue); background: var(--blue); color: #fff; box-shadow: none; }
 
@@ -204,7 +206,7 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
   .header-inner { grid-template-columns: 1fr auto; }
   .brand { display: none; }
   .nav { justify-content: flex-start; overflow-x: auto; }
-  .hero { grid-template-columns: minmax(0, 1.25fr) minmax(220px, .75fr); gap: 30px; }
+  .hero { grid-template-columns: minmax(0, 1.25fr) minmax(220px, .75fr); column-gap: 30px; }
   .article-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .toc-dock { display: none; }
   .toc-mobile { width: min(720px, calc(100% - 40px)); display: block; margin: 34px auto 0; padding: 14px 16px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); box-shadow: var(--shadow); }
@@ -217,12 +219,14 @@ html[data-theme="dark"] .card-tag { background: var(--cloud); color: #fff; }
   .nav::-webkit-scrollbar { display: none; }
   .nav a { flex: 0 0 auto; font-size: 13px; }
   .theme-toggle { width: 38px; height: 38px; }
-  .hero { grid-template-columns: 1fr; padding: 50px 0 44px; }
-  .hero h1 { font-size: clamp(40px, 14vw, 58px); }
-  .lead { font-size: 18px; }
-  .hero-photo { width: min(100%, 420px); border-radius: 18px 18px 10px 18px; }
+  .hero { grid-template-columns: minmax(0, 1fr) clamp(108px, 33vw, 140px); align-items: start; column-gap: 14px; row-gap: 20px; padding: 30px 0 40px; }
+  .hero-copy { grid-column: 1; min-width: 0; }
+  .hero h1 { font-size: clamp(34px, 8vw, 48px); }
+  .hero .eyebrow { margin-top: 10px; font-size: 15px; }
+  .lead { margin-top: 14px; font-size: 16px; line-height: 1.42; }
+  .hero-photo { width: 100%; grid-column: 2; grid-row: 1; align-self: start; border-radius: 16px 16px 8px 16px; }
   .hero-photo::before { padding-top: 100%; }
-  .categories { margin-top: 25px; gap: 7px; }
+  .categories { grid-column: 1 / -1; gap: 7px; }
   .categories button { padding: 8px 10px; font-size: 12px; }
   .article-grid { grid-template-columns: 1fr; gap: 18px; }
   .articles-section { padding-bottom: 64px; }

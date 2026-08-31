@@ -22,6 +22,10 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert response.text.index('<h1 id="blog-title">') < response.text.index(
         '<p class="eyebrow">Блог Сергея Воронцова</p>'
     )
+    hero = response.text.split('<section class="shell hero"', 1)[1].split('</section>', 1)[0]
+    hero_copy = hero.split('<div class="hero-copy">', 1)[1].split('</div>', 1)[0]
+    assert 'class="categories"' not in hero_copy
+    assert hero.index('class="hero-photo"') < hero.index('class="categories"')
     assert (
         "Пишу о питании, похудении и пищевых привычках, "
         "чтобы сделать ваше похудение проще."
