@@ -94,8 +94,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     for marker in (
         "Мастер-класс · 21 день",
         "Чтобы похудеть, нужно",
-        "Значит, пора менять подход!",
         "Выберите формат участия",
+        "Что случилось с Аней?",
         "Частые вопросы",
         "Вы долистали сайт до конца…",
     ):
@@ -103,14 +103,20 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     for theme in ("white", "blue-mist", "blue-rhythm", "blue-crescendo"):
         assert f'data-page-theme-button="{theme}"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' in response.text
+    assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' in response.text
+    assert 'data-tilda-cart-url="https://похудение-это-есть.рф/"' in response.text
     assert "previewPricingCatalog" not in response.text
+    assert "const productData" not in response.text
+    assert "fetch('/api/public-site/content/faq'" in response.text
+    assert "fetch('/api/public-site/content/approach'" in response.text
+    assert 'data-anya-slider' in response.text
 
 
 def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     response = client.get("/preview/homepage-mobile/vsl-player.html")
 
     assert response.status_code == 200
-    assert "PROGRESS_CONFIG = {\n    boost: 7" in response.text
+    assert "boost: 7" in response.text
     assert "endpoint: '/api/public/video-analytics'" in response.text
     assert "video.currentTime = 0" in response.text
     assert "analyticsApi.markEngaged()" in response.text

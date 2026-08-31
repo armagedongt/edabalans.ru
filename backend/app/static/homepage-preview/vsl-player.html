@@ -512,6 +512,44 @@
   root.addEventListener('focusin', ()=>{ if (soundEngaged) showControls(true); });
   root.addEventListener('touchstart', ()=>{ if (soundEngaged) showControls(true); }, {passive:true});
 
+  if (new URLSearchParams(location.search).get('context') === 'anya-placeholder') {
+    root.style.touchAction = 'pan-y';
+    let drag = null;
+    let suppressClick = false;
+    root.addEventListener('pointerdown', (event)=>{
+      if (event.pointerType !== 'touch') return;
+      drag = { id:event.pointerId, startX:event.clientX, startY:event.clientY, lastX:event.clientX, active:false };
+    });
+    root.addEventListener('pointermove', (event)=>{
+      if (!drag || drag.id !== event.pointerId) return;
+      const distanceX = event.clientX - drag.startX;
+      const distanceY = event.clientY - drag.startY;
+      if (!drag.active && Math.abs(distanceX) > 8 && Math.abs(distanceX) > Math.abs(distanceY)) {
+        drag.active = true;
+        try { root.setPointerCapture?.(event.pointerId); } catch (_) {}
+      }
+      if (!drag.active) return;
+      parent.postMessage({ type:'edabalans:anya-drag', phase:'move', delta:drag.lastX - event.clientX }, location.origin);
+      drag.lastX = event.clientX;
+    });
+    const finishDrag = (event)=>{
+      if (!drag || drag.id !== event.pointerId) return;
+      if (drag.active) {
+        suppressClick = true;
+        parent.postMessage({ type:'edabalans:anya-drag', phase:'end' }, location.origin);
+        setTimeout(()=>{ suppressClick = false; }, 250);
+      }
+      drag = null;
+    };
+    root.addEventListener('pointerup', finishDrag);
+    root.addEventListener('pointercancel', finishDrag);
+    root.addEventListener('click', (event)=>{
+      if (!suppressClick) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
+  }
+
   muteBtn.addEventListener('click', ()=>{
     video.muted = !video.muted;
     volumeSlider.value = video.muted ? 0 : video.volume;

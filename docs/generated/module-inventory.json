@@ -308,7 +308,19 @@
       "path": "backend/app/public_cta_catalog.py"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
+      "path": "backend/app/public_site_content_cli.py"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "backend/app/public_site_content_service.py"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "backend/app/public_site_routes.py"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "backend/app/public_video_analytics_routes.py"
     },
     {
@@ -504,47 +516,47 @@
       "path": "backend/app/static/embed.js"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/crying-character.png"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/final-cta-cat-clock.webp"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/max-full-colored-dark-official.png"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/money-bag-ruble-v1.webp"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/montserrat-cyrillic.woff2"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/montserrat-latin.woff2"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/recognition.html"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/vsl-player.html"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg"
     },
     {
@@ -820,7 +832,7 @@
       "path": "backend/migrations/versions/20260831_0032_application_preview_access.py"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/migrations/versions/20260831_0033_public_video_analytics.py"
     },
     {
@@ -912,7 +924,7 @@
       "path": "backend/tests/test_health.py"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "backend/tests/test_homepage_preview.py"
     },
     {
@@ -968,7 +980,11 @@
       "path": "backend/tests/test_product_copy_migration.py"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
+      "path": "backend/tests/test_public_site_content.py"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "backend/tests/test_public_video_analytics.py"
     },
     {
@@ -2016,6 +2032,34 @@
       "path": "content/media-catalog.md"
     },
     {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/approach.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/calories.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/consultation.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/faq.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/program.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/recipes.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "content/public-site/homepage/training.md"
+    },
+    {
       "module_id": "products.strength",
       "path": "content/training/reference/README.md"
     },
@@ -2148,7 +2192,11 @@
       "path": "docs/knowledge-base/PRODUCT_CATALOG.md"
     },
     {
-      "module_id": "products",
+      "module_id": "products.public-site",
+      "path": "docs/knowledge-base/PUBLIC_SITE.md"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md"
     },
     {
@@ -2352,6 +2400,10 @@
       "path": "docs/knowledge-base/modules/catalog/products.metabolism.md"
     },
     {
+      "module_id": "products.public-site",
+      "path": "docs/knowledge-base/modules/catalog/products.public-site.md"
+    },
+    {
       "module_id": "products.recipes",
       "path": "docs/knowledge-base/modules/catalog/products.recipes.md"
     },
@@ -2518,6 +2570,10 @@
     {
       "module_id": "operations.project-work",
       "path": "docs/plans/PLATFORM_LONG_TERM.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "docs/plans/PRICING_NEXT_STEPS.md"
     },
     {
       "module_id": "operations.project-work",
@@ -3206,6 +3262,10 @@
     {
       "module_id": "products.masterclass.course",
       "path": "tools/publish_final_masterclass_structure.py"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "tools/publish_public_site_content.ps1"
     },
     {
       "module_id": "messaging.telegram.engine",
@@ -5560,203 +5620,207 @@
       "path": "work/module-knowledge-system/user-spec.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
+      "path": "work/public-homepage-redesign/anya-story-brief-v1.md"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/README.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/cookie-banner-variants.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/crying-character.png"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/03-account-lk.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-square-circle-comparison.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/account-blue.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/blog-black.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/site-face.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-three-options.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-dot-variants.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon-circle-variants.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-icons-10.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-original-10.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue-circle.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-circle.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/scale-icons-10.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-avatar.jpg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon-circle.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon.png"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/masterclass-faq-neurozeh-v1.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/masterclass-pricing-neurozeh-v32.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/money-bag-ruble-v1.webp"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/montserrat-cyrillic.woff2"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/montserrat-latin.woff2"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/nutrition-composition-bars.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/weight-loss-after-masterclass.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/weight-loss-before-after-masterclass.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/weight-loss-before-masterclass.svg"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/assets/weight-loss-masterclass-scroll-reveal.html"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/autonomous-checkpoint.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/block-registry.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/code-research.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/current-homepage-inventory.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/decisions.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/design-governance.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/design-pattern-library.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/design-source-inventory.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/homepage-information-architecture.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/mobile-wireframe.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/presentation-matrix.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/pricing-block-brief-v1.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/reference-analysis-v1.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/reference-intake-brief.md"
     },
     {
-      "module_id": "operations.project-work",
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
     },
     {
@@ -15012,7 +15076,7 @@
       "routes": [
         {
           "file": "backend/app/main.py",
-          "line": 70,
+          "line": 72,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -15020,7 +15084,7 @@
         },
         {
           "file": "backend/app/main.py",
-          "line": 76,
+          "line": 78,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/ready",
@@ -15066,7 +15130,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 35,
+          "line": 36,
           "module_id": "operations.delivery",
           "name": "lifespan",
           "qualname": "lifespan"
@@ -15074,7 +15138,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 70,
+          "line": 72,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -15082,7 +15146,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 76,
+          "line": 78,
           "module_id": "operations.delivery",
           "name": "ready",
           "qualname": "ready"
@@ -18052,6 +18116,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "docs/plans/PRICING_NEXT_STEPS.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "docs/plans/PRODUCTS_AND_OFFERS.md"
         },
         {
@@ -20345,206 +20413,6 @@
         {
           "module_id": "operations.project-work",
           "path": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/README.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/cookie-banner-variants.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/crying-character.png"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/03-account-lk.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-square-circle-comparison.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/account-blue.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/blog-black.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/site-face.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-three-options.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-dot-variants.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon-circle-variants.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-icons-10.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-original-10.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue-circle.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-circle.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/scale-icons-10.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-avatar.jpg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon-circle.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon.png"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/masterclass-faq-neurozeh-v1.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/masterclass-pricing-neurozeh-v32.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/money-bag-ruble-v1.webp"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/montserrat-cyrillic.woff2"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/montserrat-latin.woff2"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/nutrition-composition-bars.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/weight-loss-after-masterclass.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/weight-loss-before-after-masterclass.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/weight-loss-before-masterclass.svg"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/assets/weight-loss-masterclass-scroll-reveal.html"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/autonomous-checkpoint.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/block-registry.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/code-research.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/current-homepage-inventory.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/decisions.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/design-governance.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/design-pattern-library.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/design-source-inventory.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/homepage-information-architecture.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/mobile-wireframe.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/presentation-matrix.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/pricing-block-brief-v1.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/reference-analysis-v1.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/reference-intake-brief.md"
-        },
-        {
-          "module_id": "operations.project-work",
-          "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
         },
         {
           "module_id": "operations.project-work",
@@ -23143,6 +23011,14 @@
           "origin": "owner-explicit",
           "path": "docs/plans/ACCESS_DATA_SIMPLIFICATION.md",
           "title": "Упрощение данных о доступах после перестройки Tilda"
+        },
+        {
+          "cross_project": false,
+          "date": "2026-08-31",
+          "module_id": "platform.commerce",
+          "origin": "owner-explicit",
+          "path": "docs/plans/PRICING_NEXT_STEPS.md",
+          "title": "Следующие этапы повышения цен"
         }
       ],
       "public_urls": [],
@@ -23280,7 +23156,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 64,
+          "line": 106,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing",
@@ -23288,7 +23164,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 80,
+          "line": 122,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/drafts",
@@ -23296,7 +23172,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 88,
+          "line": 130,
           "method": "PUT",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/versions/{version_id}",
@@ -23304,7 +23180,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 121,
+          "line": 163,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/versions/{version_id}/publish",
@@ -23312,7 +23188,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 165,
+          "line": 207,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site",
@@ -23320,7 +23196,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 186,
+          "line": 228,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site/checkout",
@@ -23328,11 +23204,19 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 177,
+          "line": 219,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site/preview",
           "symbol": "public_site_pricing_preview"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "line": 242,
+          "method": "POST",
+          "module_id": "platform.commerce",
+          "path": "/api/pricing/site/preview-checkout",
+          "symbol": "public_site_preview_checkout"
         },
         {
           "file": "backend/app/tilda_routes.py",
@@ -23670,7 +23554,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 33,
+          "line": 40,
           "module_id": "platform.commerce",
           "name": "PriceEntryUpdate",
           "qualname": "PriceEntryUpdate"
@@ -23678,7 +23562,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "method",
-          "line": 41,
+          "line": 48,
           "module_id": "platform.commerce",
           "name": "validate_prices",
           "qualname": "PriceEntryUpdate.validate_prices"
@@ -23686,7 +23570,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 49,
+          "line": 56,
           "module_id": "platform.commerce",
           "name": "PricingDraftUpdate",
           "qualname": "PricingDraftUpdate"
@@ -23694,7 +23578,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 55,
+          "line": 62,
           "module_id": "platform.commerce",
           "name": "PublicCheckoutIn",
           "qualname": "PublicCheckoutIn"
@@ -23702,7 +23586,23 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 59,
+          "line": 66,
+          "module_id": "platform.commerce",
+          "name": "enforce_preview_checkout_rate_limit",
+          "qualname": "enforce_preview_checkout_rate_limit"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 91,
+          "module_id": "platform.commerce",
+          "name": "enforce_preview_checkout_origin",
+          "qualname": "enforce_preview_checkout_origin"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 101,
           "module_id": "platform.commerce",
           "name": "safe_order_name",
           "qualname": "safe_order_name"
@@ -23710,7 +23610,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 64,
+          "line": 106,
           "module_id": "platform.commerce",
           "name": "admin_pricing",
           "qualname": "admin_pricing"
@@ -23718,7 +23618,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 80,
+          "line": 122,
           "module_id": "platform.commerce",
           "name": "admin_create_pricing_draft",
           "qualname": "admin_create_pricing_draft"
@@ -23726,7 +23626,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 88,
+          "line": 130,
           "module_id": "platform.commerce",
           "name": "admin_update_pricing_draft",
           "qualname": "admin_update_pricing_draft"
@@ -23734,7 +23634,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 121,
+          "line": 163,
           "module_id": "platform.commerce",
           "name": "admin_publish_pricing_version",
           "qualname": "admin_publish_pricing_version"
@@ -23742,7 +23642,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 141,
+          "line": 183,
           "module_id": "platform.commerce",
           "name": "site_pricing_payload",
           "qualname": "site_pricing_payload"
@@ -23750,7 +23650,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 165,
+          "line": 207,
           "module_id": "platform.commerce",
           "name": "public_site_pricing",
           "qualname": "public_site_pricing"
@@ -23758,7 +23658,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 177,
+          "line": 219,
           "module_id": "platform.commerce",
           "name": "public_site_pricing_preview",
           "qualname": "public_site_pricing_preview"
@@ -23766,10 +23666,26 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 186,
+          "line": 228,
           "module_id": "platform.commerce",
           "name": "public_site_checkout",
           "qualname": "public_site_checkout"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 242,
+          "module_id": "platform.commerce",
+          "name": "public_site_preview_checkout",
+          "qualname": "public_site_preview_checkout"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 254,
+          "module_id": "platform.commerce",
+          "name": "create_site_checkout",
+          "qualname": "create_site_checkout"
         },
         {
           "file": "backend/app/pricing_service.py",
@@ -24272,13 +24188,13 @@
           "kind": "function",
           "line": 220,
           "module_id": "platform.commerce",
-          "name": "test_preview_reads_active_prices_without_enabling_public_checkout",
-          "qualname": "test_preview_reads_active_prices_without_enabling_public_checkout"
+          "name": "test_preview_reads_prices_and_preview_checkout_requires_published_version",
+          "qualname": "test_preview_reads_prices_and_preview_checkout_requires_published_version"
         },
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 235,
+          "line": 282,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
           "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -24286,7 +24202,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 283,
+          "line": 330,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
           "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -30625,7 +30541,7 @@
     {
       "admin_catalog": [],
       "admin_urls": [],
-      "boundary": "Не является отдельным экраном или монолитной админкой. Временный preview-route не\nстановится production-источником главной: финальная страница собирается автономным\nT123 и после регистрации принадлежит модулю публичного сайта.",
+      "boundary": "Не является отдельным экраном или монолитной админкой. Публичные страницы и их\nконтент принадлежат дочернему `products.public-site`; этот родитель задаёт только\nобщие продуктовые границы.",
       "capabilities": [
         "объединять продуктовые модули на общем backend и user_id;",
         "сохранять отдельный UX каждого продукта;",
@@ -30633,8 +30549,7 @@
         "использовать единую карту цветов, три радиуса и повторяемые типы карточек из",
         "показывать незавершённые продукты единым статусом «Скоро», отличая их от готовых",
         "показывать общий юридический подвал внутри доступной контентной области приложения;",
-        "временно публиковать отдельные `noindex`-предпросмотры принятых блоков новой",
-        "обезличенно учитывать осознанные просмотры публичного VSL, начиная только после"
+        "передавать публичную главную, её `noindex`-предпросмотры и аналитику VSL"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.md",
       "document_status": "current",
@@ -30646,10 +30561,6 @@
         {
           "module_id": "products",
           "path": "backend/app/app_service.py"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/public_video_analytics_routes.py"
         },
         {
           "module_id": "products",
@@ -30673,55 +30584,7 @@
         },
         {
           "module_id": "products",
-          "path": "backend/app/static/homepage-preview/crying-character.png"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/final-cta-cat-clock.webp"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/max-full-colored-dark-official.png"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/mobile.html"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/money-bag-ruble-v1.webp"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/montserrat-cyrillic.woff2"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/montserrat-latin.woff2"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/recognition.html"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/vsl-player.html"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg"
-        },
-        {
-          "module_id": "products",
           "path": "backend/app/static/site-footer.js"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/migrations/versions/20260831_0033_public_video_analytics.py"
         },
         {
           "module_id": "products",
@@ -30733,23 +30596,11 @@
         },
         {
           "module_id": "products",
-          "path": "backend/tests/test_homepage_preview.py"
-        },
-        {
-          "module_id": "products",
-          "path": "backend/tests/test_public_video_analytics.py"
-        },
-        {
-          "module_id": "products",
           "path": "docs/APPLICATION_BACKLOG.md"
         },
         {
           "module_id": "products",
           "path": "docs/APPLICATION_PLATFORM.md"
-        },
-        {
-          "module_id": "products",
-          "path": "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md"
         },
         {
           "module_id": "products",
@@ -30789,60 +30640,12 @@
           "symbol": "app_asset"
         },
         {
-          "file": "backend/app/app_routes.py",
-          "line": 100,
-          "method": "GET",
-          "module_id": "products",
-          "path": "/preview/homepage-mobile",
-          "symbol": "homepage_mobile_preview"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 100,
-          "method": "GET",
-          "module_id": "products",
-          "path": "/preview/homepage-mobile",
-          "symbol": "homepage_mobile_preview"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 110,
-          "method": "GET",
-          "module_id": "products",
-          "path": "/preview/homepage-mobile/{asset_name}",
-          "symbol": "homepage_mobile_preview_asset"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 76,
-          "method": "GET",
-          "module_id": "products",
-          "path": "/preview/homepage-recognition",
-          "symbol": "homepage_recognition_preview"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "line": 89,
-          "method": "GET",
-          "module_id": "products",
-          "path": "/preview/homepage-recognition/crying-character.png",
-          "symbol": "homepage_recognition_preview_image"
-        },
-        {
           "file": "backend/app/blog_routes.py",
           "line": 164,
           "method": "GET",
           "module_id": "products",
           "path": "/blog/assets/{asset_name}",
           "symbol": "blog_asset"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "line": 116,
-          "method": "POST",
-          "module_id": "products",
-          "path": "/api/public/video-analytics",
-          "symbol": "collect_public_video_analytics"
         }
       ],
       "runtime_services": [],
@@ -30856,38 +30659,6 @@
           "module_id": "products",
           "name": "public_asset",
           "qualname": "public_asset"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "kind": "function",
-          "line": 76,
-          "module_id": "products",
-          "name": "homepage_recognition_preview",
-          "qualname": "homepage_recognition_preview"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "kind": "function",
-          "line": 89,
-          "module_id": "products",
-          "name": "homepage_recognition_preview_image",
-          "qualname": "homepage_recognition_preview_image"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "kind": "function",
-          "line": 100,
-          "module_id": "products",
-          "name": "homepage_mobile_preview",
-          "qualname": "homepage_mobile_preview"
-        },
-        {
-          "file": "backend/app/app_routes.py",
-          "kind": "function",
-          "line": 110,
-          "module_id": "products",
-          "name": "homepage_mobile_preview_asset",
-          "qualname": "homepage_mobile_preview_asset"
         },
         {
           "file": "backend/app/app_routes.py",
@@ -31048,62 +30819,6 @@
           "module_id": "products",
           "name": "blog_asset",
           "qualname": "blog_asset"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "class",
-          "line": 30,
-          "module_id": "products",
-          "name": "PublicVideoAnalyticsIn",
-          "qualname": "PublicVideoAnalyticsIn"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "method",
-          "line": 47,
-          "module_id": "products",
-          "name": "validate_video_id",
-          "qualname": "PublicVideoAnalyticsIn.validate_video_id"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "method",
-          "line": 54,
-          "module_id": "products",
-          "name": "validate_page_path",
-          "qualname": "PublicVideoAnalyticsIn.validate_page_path"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "method",
-          "line": 61,
-          "module_id": "products",
-          "name": "validate_watched_buckets",
-          "qualname": "PublicVideoAnalyticsIn.validate_watched_buckets"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "function",
-          "line": 73,
-          "module_id": "products",
-          "name": "viewer_key",
-          "qualname": "viewer_key"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "function",
-          "line": 77,
-          "module_id": "products",
-          "name": "enforce_rate_limit",
-          "qualname": "enforce_rate_limit"
-        },
-        {
-          "file": "backend/app/public_video_analytics_routes.py",
-          "kind": "function",
-          "line": 116,
-          "module_id": "products",
-          "name": "collect_public_video_analytics",
-          "qualname": "collect_public_video_analytics"
         },
         {
           "file": "backend/app/static/content-gallery.js",
@@ -31434,22 +31149,6 @@
           "qualname": "observe"
         },
         {
-          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
-          "kind": "function",
-          "line": 18,
-          "module_id": "products",
-          "name": "upgrade",
-          "qualname": "upgrade"
-        },
-        {
-          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
-          "kind": "function",
-          "line": 47,
-          "module_id": "products",
-          "name": "downgrade",
-          "qualname": "downgrade"
-        },
-        {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
           "line": 30,
@@ -31688,153 +31387,9 @@
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "class",
-          "line": 17,
-          "module_id": "products",
-          "name": "RobotsMetaParser",
-          "qualname": "RobotsMetaParser"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "method",
-          "line": 18,
-          "module_id": "products",
-          "name": "__init__",
-          "qualname": "RobotsMetaParser.__init__"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "method",
-          "line": 26,
-          "module_id": "products",
-          "name": "handle_starttag",
-          "qualname": "RobotsMetaParser.handle_starttag"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "function",
-          "line": 40,
-          "module_id": "products",
-          "name": "test_homepage_recognition_preview_is_public_and_noindex",
-          "qualname": "test_homepage_recognition_preview_is_public_and_noindex"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "function",
-          "line": 58,
-          "module_id": "products",
-          "name": "test_homepage_recognition_preview_image_is_public_and_noindex",
-          "qualname": "test_homepage_recognition_preview_image_is_public_and_noindex"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "function",
-          "line": 70,
-          "module_id": "products",
-          "name": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks",
-          "qualname": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "function",
-          "line": 109,
-          "module_id": "products",
-          "name": "test_homepage_vsl_uses_first_engagement_and_server_analytics",
-          "qualname": "test_homepage_vsl_uses_first_engagement_and_server_analytics"
-        },
-        {
-          "file": "backend/tests/test_homepage_preview.py",
-          "kind": "function",
-          "line": 121,
-          "module_id": "products",
-          "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
-          "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 17,
-          "module_id": "products",
-          "name": "make_client",
-          "qualname": "make_client"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 26,
-          "module_id": "products",
-          "name": "override_db",
-          "qualname": "make_client.override_db"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 34,
-          "module_id": "products",
-          "name": "payload",
-          "qualname": "payload"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 47,
-          "module_id": "products",
-          "name": "test_engagement_creates_one_anonymous_session",
-          "qualname": "test_engagement_creates_one_anonymous_session"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 66,
-          "module_id": "products",
-          "name": "test_progress_merges_buckets_and_positions_idempotently",
-          "qualname": "test_progress_merges_buckets_and_positions_idempotently"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 94,
-          "module_id": "products",
-          "name": "test_completion_is_sticky_after_exit",
-          "qualname": "test_completion_is_sticky_after_exit"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 119,
-          "module_id": "products",
-          "name": "test_session_rejects_another_viewer_and_invalid_payloads",
-          "qualname": "test_session_rejects_another_viewer_and_invalid_payloads"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 139,
-          "module_id": "products",
-          "name": "test_progress_cannot_create_a_session_without_engagement",
-          "qualname": "test_progress_cannot_create_a_session_without_engagement"
-        },
-        {
-          "file": "backend/tests/test_public_video_analytics.py",
-          "kind": "function",
-          "line": 151,
-          "module_id": "products",
-          "name": "test_new_sessions_are_rate_limited_per_network_client",
-          "qualname": "test_new_sessions_are_rate_limited_per_network_client"
         }
       ],
-      "tables": [
-        {
-          "file": "backend/app/models.py",
-          "line": 1267,
-          "module_id": "products",
-          "name": "public_video_views",
-          "source": "orm"
-        }
-      ],
+      "tables": [],
       "telegram": null,
       "title": "Продукты и клиентские приложения",
       "truths": [
@@ -38644,6 +38199,897 @@
     {
       "admin_catalog": [],
       "admin_urls": [],
+      "boundary": "Не владеет ценами, размерами скидок, оплатой и выдачей доступа. Не владеет\nавторским голосом и не переписывает тексты. `platform.commerce` поставляет цены и\ncheckout, `platform.content` — Markdown-диалект и версионирование, а\n`platform.web_design` — дизайн-код и correction memory.",
+      "capabilities": [
+        "показывать `noindex`-предпросмотр принятой мобильной цепочки;",
+        "хранить часто изменяемый текст продуктовых мини-страниц, FAQ и содержательных",
+        "безопасно рендерить Markdown через общий редакционный renderer;",
+        "читать тарифы только из канонического pricing catalog;",
+        "создавать server checkout и передавать штатную команду заказа корзине Tilda;",
+        "обезличенно учитывать осознанный просмотр публичного VSL;",
+        "переиспользовать принятые блоки на других публичных страницах без копирования"
+      ],
+      "card": "docs/knowledge-base/modules/catalog/products.public-site.md",
+      "document_status": "current",
+      "files": [
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/public_site_content_cli.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/public_site_content_service.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/public_site_routes.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/public_video_analytics_routes.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/crying-character.png"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/final-cta-cat-clock.webp"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/max-full-colored-dark-official.png"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/mobile.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/money-bag-ruble-v1.webp"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/montserrat-cyrillic.woff2"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/montserrat-latin.woff2"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/recognition.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/vsl-player.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/migrations/versions/20260831_0033_public_video_analytics.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/tests/test_homepage_preview.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/tests/test_public_site_content.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/tests/test_public_video_analytics.py"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/approach.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/calories.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/consultation.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/faq.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/program.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/recipes.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "content/public-site/homepage/training.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "docs/knowledge-base/PUBLIC_SITE.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "docs/knowledge-base/modules/catalog/products.public-site.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "tools/publish_public_site_content.ps1"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/anya-story-brief-v1.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/README.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/cookie-banner-variants.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/crying-character.png"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/03-account-lk.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-square-circle-comparison.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/account-blue.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/blog-black.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/site-face.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-three-options.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-dot-variants.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon-circle-variants.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-icons-10.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-original-10.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue-circle.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-circle.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/scale-icons-10.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-avatar.jpg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon-circle.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon.png"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/masterclass-faq-neurozeh-v1.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/masterclass-pricing-neurozeh-v32.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/money-bag-ruble-v1.webp"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/montserrat-cyrillic.woff2"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/montserrat-latin.woff2"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/nutrition-composition-bars.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/weight-loss-after-masterclass.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/weight-loss-before-after-masterclass.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/weight-loss-before-masterclass.svg"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/assets/weight-loss-masterclass-scroll-reveal.html"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/autonomous-checkpoint.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/block-registry.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/code-research.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/current-homepage-inventory.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/decisions.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/design-governance.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/design-pattern-library.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/design-source-inventory.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/homepage-information-architecture.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/mobile-wireframe.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/presentation-matrix.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/pricing-block-brief-v1.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/reference-analysis-v1.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/reference-intake-brief.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
+        }
+      ],
+      "id": "products.public-site",
+      "implementation_status": "implemented",
+      "parent": "products",
+      "plans": [],
+      "public_urls": [],
+      "relations": {
+        "depends_on": [
+          "platform.commerce",
+          "platform.content",
+          "platform.web_design"
+        ],
+        "events_in": [],
+        "events_out": [],
+        "reads_from": [],
+        "writes_to": []
+      },
+      "routes": [
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 100,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/preview/homepage-mobile",
+          "symbol": "homepage_mobile_preview"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 100,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/preview/homepage-mobile",
+          "symbol": "homepage_mobile_preview"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 110,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/preview/homepage-mobile/{asset_name}",
+          "symbol": "homepage_mobile_preview_asset"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 76,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/preview/homepage-recognition",
+          "symbol": "homepage_recognition_preview"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "line": 89,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/preview/homepage-recognition/crying-character.png",
+          "symbol": "homepage_recognition_preview_image"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "line": 34,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/admin/api/public-site/content",
+          "symbol": "public_site_content_index"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "line": 47,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/admin/api/public-site/content/{slug}",
+          "symbol": "public_site_content_editor"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "line": 67,
+          "method": "PUT",
+          "module_id": "products.public-site",
+          "path": "/admin/api/public-site/content/{slug}",
+          "symbol": "update_public_site_content"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "line": 29,
+          "method": "GET",
+          "module_id": "products.public-site",
+          "path": "/api/public-site/content/{slug}",
+          "symbol": "public_site_content"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "line": 116,
+          "method": "POST",
+          "module_id": "products.public-site",
+          "path": "/api/public/video-analytics",
+          "symbol": "collect_public_video_analytics"
+        }
+      ],
+      "runtime_services": [],
+      "sources": [],
+      "summary": "Собирает главную по принятым блокам, публикует изменяемый Markdown и открывает checkout через канонический каталог цен.",
+      "symbols": [
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 76,
+          "module_id": "products.public-site",
+          "name": "homepage_recognition_preview",
+          "qualname": "homepage_recognition_preview"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 89,
+          "module_id": "products.public-site",
+          "name": "homepage_recognition_preview_image",
+          "qualname": "homepage_recognition_preview_image"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 100,
+          "module_id": "products.public-site",
+          "name": "homepage_mobile_preview",
+          "qualname": "homepage_mobile_preview"
+        },
+        {
+          "file": "backend/app/app_routes.py",
+          "kind": "function",
+          "line": 110,
+          "module_id": "products.public-site",
+          "name": "homepage_mobile_preview_asset",
+          "qualname": "homepage_mobile_preview_asset"
+        },
+        {
+          "file": "backend/app/public_site_content_cli.py",
+          "kind": "function",
+          "line": 15,
+          "module_id": "products.public-site",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 31,
+          "module_id": "products.public-site",
+          "name": "document_definition",
+          "qualname": "document_definition"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 38,
+          "module_id": "products.public-site",
+          "name": "seed_markdown",
+          "qualname": "seed_markdown"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 43,
+          "module_id": "products.public-site",
+          "name": "normalize_payload",
+          "qualname": "normalize_payload"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 62,
+          "module_id": "products.public-site",
+          "name": "render_faq",
+          "qualname": "render_faq"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 82,
+          "module_id": "products.public-site",
+          "name": "render_document",
+          "qualname": "render_document"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 89,
+          "module_id": "products.public-site",
+          "name": "ensure_public_site_document",
+          "qualname": "ensure_public_site_document"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 101,
+          "module_id": "products.public-site",
+          "name": "active_public_site_document",
+          "qualname": "active_public_site_document"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 106,
+          "module_id": "products.public-site",
+          "name": "serialize_public_site_document",
+          "qualname": "serialize_public_site_document"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 118,
+          "module_id": "products.public-site",
+          "name": "serialize_public_site_rendered_document",
+          "qualname": "serialize_public_site_rendered_document"
+        },
+        {
+          "file": "backend/app/public_site_content_service.py",
+          "kind": "function",
+          "line": 132,
+          "module_id": "products.public-site",
+          "name": "publish_public_site_document",
+          "qualname": "publish_public_site_document"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "kind": "class",
+          "line": 23,
+          "module_id": "products.public-site",
+          "name": "PublicSiteContentUpdate",
+          "qualname": "PublicSiteContentUpdate"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "kind": "function",
+          "line": 29,
+          "module_id": "products.public-site",
+          "name": "public_site_content",
+          "qualname": "public_site_content"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "kind": "function",
+          "line": 34,
+          "module_id": "products.public-site",
+          "name": "public_site_content_index",
+          "qualname": "public_site_content_index"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "products.public-site",
+          "name": "public_site_content_editor",
+          "qualname": "public_site_content_editor"
+        },
+        {
+          "file": "backend/app/public_site_routes.py",
+          "kind": "function",
+          "line": 67,
+          "module_id": "products.public-site",
+          "name": "update_public_site_content",
+          "qualname": "update_public_site_content"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "class",
+          "line": 30,
+          "module_id": "products.public-site",
+          "name": "PublicVideoAnalyticsIn",
+          "qualname": "PublicVideoAnalyticsIn"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 47,
+          "module_id": "products.public-site",
+          "name": "validate_video_id",
+          "qualname": "PublicVideoAnalyticsIn.validate_video_id"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 54,
+          "module_id": "products.public-site",
+          "name": "validate_page_path",
+          "qualname": "PublicVideoAnalyticsIn.validate_page_path"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 61,
+          "module_id": "products.public-site",
+          "name": "validate_watched_buckets",
+          "qualname": "PublicVideoAnalyticsIn.validate_watched_buckets"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 73,
+          "module_id": "products.public-site",
+          "name": "viewer_key",
+          "qualname": "viewer_key"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "products.public-site",
+          "name": "enforce_rate_limit",
+          "qualname": "enforce_rate_limit"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 116,
+          "module_id": "products.public-site",
+          "name": "collect_public_video_analytics",
+          "qualname": "collect_public_video_analytics"
+        },
+        {
+          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+          "kind": "function",
+          "line": 18,
+          "module_id": "products.public-site",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "products.public-site",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "class",
+          "line": 17,
+          "module_id": "products.public-site",
+          "name": "RobotsMetaParser",
+          "qualname": "RobotsMetaParser"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "method",
+          "line": 18,
+          "module_id": "products.public-site",
+          "name": "__init__",
+          "qualname": "RobotsMetaParser.__init__"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "method",
+          "line": 26,
+          "module_id": "products.public-site",
+          "name": "handle_starttag",
+          "qualname": "RobotsMetaParser.handle_starttag"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 40,
+          "module_id": "products.public-site",
+          "name": "test_homepage_recognition_preview_is_public_and_noindex",
+          "qualname": "test_homepage_recognition_preview_is_public_and_noindex"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 58,
+          "module_id": "products.public-site",
+          "name": "test_homepage_recognition_preview_image_is_public_and_noindex",
+          "qualname": "test_homepage_recognition_preview_image_is_public_and_noindex"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 70,
+          "module_id": "products.public-site",
+          "name": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks",
+          "qualname": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 115,
+          "module_id": "products.public-site",
+          "name": "test_homepage_vsl_uses_first_engagement_and_server_analytics",
+          "qualname": "test_homepage_vsl_uses_first_engagement_and_server_analytics"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 127,
+          "module_id": "products.public-site",
+          "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
+          "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 15,
+          "module_id": "products.public-site",
+          "name": "make_client",
+          "qualname": "make_client"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 24,
+          "module_id": "products.public-site",
+          "name": "override_db",
+          "qualname": "make_client.override_db"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 33,
+          "module_id": "products.public-site",
+          "name": "test_public_markdown_document_is_seeded_and_rendered",
+          "qualname": "test_public_markdown_document_is_seeded_and_rendered"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 50,
+          "module_id": "products.public-site",
+          "name": "test_faq_is_returned_as_structured_items",
+          "qualname": "test_faq_is_returned_as_structured_items"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 60,
+          "module_id": "products.public-site",
+          "name": "test_admin_update_creates_version_and_rejects_stale_write",
+          "qualname": "test_admin_update_creates_version_and_rejects_stale_write"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 79,
+          "module_id": "products.public-site",
+          "name": "test_public_markdown_sanitizes_script_and_rejects_missing_document",
+          "qualname": "test_public_markdown_sanitizes_script_and_rejects_missing_document"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 96,
+          "module_id": "products.public-site",
+          "name": "test_faq_rejects_missing_questions_and_empty_answers",
+          "qualname": "test_faq_rejects_missing_questions_and_empty_answers"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 107,
+          "module_id": "products.public-site",
+          "name": "test_public_site_editor_requires_admin",
+          "qualname": "test_public_site_editor_requires_admin"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 17,
+          "module_id": "products.public-site",
+          "name": "make_client",
+          "qualname": "make_client"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 26,
+          "module_id": "products.public-site",
+          "name": "override_db",
+          "qualname": "make_client.override_db"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 34,
+          "module_id": "products.public-site",
+          "name": "payload",
+          "qualname": "payload"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "products.public-site",
+          "name": "test_engagement_creates_one_anonymous_session",
+          "qualname": "test_engagement_creates_one_anonymous_session"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 66,
+          "module_id": "products.public-site",
+          "name": "test_progress_merges_buckets_and_positions_idempotently",
+          "qualname": "test_progress_merges_buckets_and_positions_idempotently"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 94,
+          "module_id": "products.public-site",
+          "name": "test_completion_is_sticky_after_exit",
+          "qualname": "test_completion_is_sticky_after_exit"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 119,
+          "module_id": "products.public-site",
+          "name": "test_session_rejects_another_viewer_and_invalid_payloads",
+          "qualname": "test_session_rejects_another_viewer_and_invalid_payloads"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 139,
+          "module_id": "products.public-site",
+          "name": "test_progress_cannot_create_a_session_without_engagement",
+          "qualname": "test_progress_cannot_create_a_session_without_engagement"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 151,
+          "module_id": "products.public-site",
+          "name": "test_new_sessions_are_rate_limited_per_network_client",
+          "qualname": "test_new_sessions_are_rate_limited_per_network_client"
+        }
+      ],
+      "tables": [
+        {
+          "file": "backend/app/models.py",
+          "line": 1267,
+          "module_id": "products.public-site",
+          "name": "public_video_views",
+          "source": "orm"
+        }
+      ],
+      "telegram": null,
+      "title": "Публичный сайт",
+      "truths": [
+        "`docs/knowledge-base/PUBLIC_SITE.md`, `content/public-site/homepage/`, активные\nредакции `public-site-content` в `managed_document_versions` и runtime-компоненты\n`backend/app/static/homepage-preview/`."
+      ]
+    },
+    {
+      "admin_catalog": [],
+      "admin_urls": [],
       "boundary": "Модуль не связан с расчётом метаболизма. Он использует тот же переходный вход\nTilda и внутренний `user_id`, но хранит самостоятельные таблицы, API и экран.",
       "capabilities": [],
       "card": "docs/knowledge-base/modules/catalog/products.recipes.md",
@@ -39591,6 +40037,14 @@
       "origin": "owner-explicit",
       "path": "docs/plans/MASTERCLASS_EDITORIAL_SEQUENCE.md",
       "title": "Последовательность редакторской сборки Мастер-класса"
+    },
+    {
+      "cross_project": false,
+      "date": "2026-08-31",
+      "module_id": "platform.commerce",
+      "origin": "owner-explicit",
+      "path": "docs/plans/PRICING_NEXT_STEPS.md",
+      "title": "Следующие этапы повышения цен"
     }
   ],
   "relations": [
@@ -39877,6 +40331,21 @@
     {
       "source": "products.metabolism",
       "target": "platform.commerce",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.public-site",
+      "target": "platform.commerce",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.public-site",
+      "target": "platform.content",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.public-site",
+      "target": "platform.web_design",
       "type": "depends_on"
     },
     {
@@ -40384,7 +40853,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 64,
+      "line": 106,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing",
@@ -40392,7 +40861,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 80,
+      "line": 122,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/drafts",
@@ -40400,7 +40869,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 88,
+      "line": 130,
       "method": "PUT",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/versions/{version_id}",
@@ -40408,7 +40877,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 121,
+      "line": 163,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/versions/{version_id}/publish",
@@ -40445,6 +40914,30 @@
       "module_id": "admin.project-knowledge",
       "path": "/admin/api/project-map",
       "symbol": "project_map"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "line": 34,
+      "method": "GET",
+      "module_id": "products.public-site",
+      "path": "/admin/api/public-site/content",
+      "symbol": "public_site_content_index"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "line": 47,
+      "method": "GET",
+      "module_id": "products.public-site",
+      "path": "/admin/api/public-site/content/{slug}",
+      "symbol": "public_site_content_editor"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "line": 67,
+      "method": "PUT",
+      "module_id": "products.public-site",
+      "path": "/admin/api/public-site/content/{slug}",
+      "symbol": "update_public_site_content"
     },
     {
       "file": "backend/app/crm_routes.py",
@@ -41192,7 +41685,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 165,
+      "line": 207,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site",
@@ -41200,7 +41693,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 186,
+      "line": 228,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site/checkout",
@@ -41208,17 +41701,33 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 177,
+      "line": 219,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site/preview",
       "symbol": "public_site_pricing_preview"
     },
     {
+      "file": "backend/app/pricing_routes.py",
+      "line": 242,
+      "method": "POST",
+      "module_id": "platform.commerce",
+      "path": "/api/pricing/site/preview-checkout",
+      "symbol": "public_site_preview_checkout"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "line": 29,
+      "method": "GET",
+      "module_id": "products.public-site",
+      "path": "/api/public-site/content/{slug}",
+      "symbol": "public_site_content"
+    },
+    {
       "file": "backend/app/public_video_analytics_routes.py",
       "line": 116,
       "method": "POST",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/api/public/video-analytics",
       "symbol": "collect_public_video_analytics"
     },
@@ -41832,7 +42341,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 70,
+      "line": 72,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -41930,7 +42439,7 @@
       "file": "backend/app/app_routes.py",
       "line": 100,
       "method": "GET",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/preview/homepage-mobile",
       "symbol": "homepage_mobile_preview"
     },
@@ -41938,7 +42447,7 @@
       "file": "backend/app/app_routes.py",
       "line": 100,
       "method": "GET",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/preview/homepage-mobile",
       "symbol": "homepage_mobile_preview"
     },
@@ -41946,7 +42455,7 @@
       "file": "backend/app/app_routes.py",
       "line": 110,
       "method": "GET",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/preview/homepage-mobile/{asset_name}",
       "symbol": "homepage_mobile_preview_asset"
     },
@@ -41954,7 +42463,7 @@
       "file": "backend/app/app_routes.py",
       "line": 76,
       "method": "GET",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/preview/homepage-recognition",
       "symbol": "homepage_recognition_preview"
     },
@@ -41962,7 +42471,7 @@
       "file": "backend/app/app_routes.py",
       "line": 89,
       "method": "GET",
-      "module_id": "products",
+      "module_id": "products.public-site",
       "path": "/preview/homepage-recognition/crying-character.png",
       "symbol": "homepage_recognition_preview_image"
     },
@@ -41976,7 +42485,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 76,
+      "line": 78,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/ready",
@@ -42421,7 +42930,7 @@
       "file": "backend/app/app_routes.py",
       "kind": "function",
       "line": 76,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "homepage_recognition_preview",
       "qualname": "homepage_recognition_preview"
     },
@@ -42429,7 +42938,7 @@
       "file": "backend/app/app_routes.py",
       "kind": "function",
       "line": 89,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "homepage_recognition_preview_image",
       "qualname": "homepage_recognition_preview_image"
     },
@@ -42437,7 +42946,7 @@
       "file": "backend/app/app_routes.py",
       "kind": "function",
       "line": 100,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "homepage_mobile_preview",
       "qualname": "homepage_mobile_preview"
     },
@@ -42445,7 +42954,7 @@
       "file": "backend/app/app_routes.py",
       "kind": "function",
       "line": 110,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "homepage_mobile_preview_asset",
       "qualname": "homepage_mobile_preview_asset"
     },
@@ -46668,7 +47177,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 35,
+      "line": 36,
       "module_id": "operations.delivery",
       "name": "lifespan",
       "qualname": "lifespan"
@@ -46676,7 +47185,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 70,
+      "line": 72,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -46684,7 +47193,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 76,
+      "line": 78,
       "module_id": "operations.delivery",
       "name": "ready",
       "qualname": "ready"
@@ -47996,7 +48505,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 33,
+      "line": 40,
       "module_id": "platform.commerce",
       "name": "PriceEntryUpdate",
       "qualname": "PriceEntryUpdate"
@@ -48004,7 +48513,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "method",
-      "line": 41,
+      "line": 48,
       "module_id": "platform.commerce",
       "name": "validate_prices",
       "qualname": "PriceEntryUpdate.validate_prices"
@@ -48012,7 +48521,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 49,
+      "line": 56,
       "module_id": "platform.commerce",
       "name": "PricingDraftUpdate",
       "qualname": "PricingDraftUpdate"
@@ -48020,7 +48529,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 55,
+      "line": 62,
       "module_id": "platform.commerce",
       "name": "PublicCheckoutIn",
       "qualname": "PublicCheckoutIn"
@@ -48028,7 +48537,23 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 59,
+      "line": 66,
+      "module_id": "platform.commerce",
+      "name": "enforce_preview_checkout_rate_limit",
+      "qualname": "enforce_preview_checkout_rate_limit"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 91,
+      "module_id": "platform.commerce",
+      "name": "enforce_preview_checkout_origin",
+      "qualname": "enforce_preview_checkout_origin"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 101,
       "module_id": "platform.commerce",
       "name": "safe_order_name",
       "qualname": "safe_order_name"
@@ -48036,7 +48561,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 64,
+      "line": 106,
       "module_id": "platform.commerce",
       "name": "admin_pricing",
       "qualname": "admin_pricing"
@@ -48044,7 +48569,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 80,
+      "line": 122,
       "module_id": "platform.commerce",
       "name": "admin_create_pricing_draft",
       "qualname": "admin_create_pricing_draft"
@@ -48052,7 +48577,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 88,
+      "line": 130,
       "module_id": "platform.commerce",
       "name": "admin_update_pricing_draft",
       "qualname": "admin_update_pricing_draft"
@@ -48060,7 +48585,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 121,
+      "line": 163,
       "module_id": "platform.commerce",
       "name": "admin_publish_pricing_version",
       "qualname": "admin_publish_pricing_version"
@@ -48068,7 +48593,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 141,
+      "line": 183,
       "module_id": "platform.commerce",
       "name": "site_pricing_payload",
       "qualname": "site_pricing_payload"
@@ -48076,7 +48601,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 165,
+      "line": 207,
       "module_id": "platform.commerce",
       "name": "public_site_pricing",
       "qualname": "public_site_pricing"
@@ -48084,7 +48609,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 177,
+      "line": 219,
       "module_id": "platform.commerce",
       "name": "public_site_pricing_preview",
       "qualname": "public_site_pricing_preview"
@@ -48092,10 +48617,26 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 186,
+      "line": 228,
       "module_id": "platform.commerce",
       "name": "public_site_checkout",
       "qualname": "public_site_checkout"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 242,
+      "module_id": "platform.commerce",
+      "name": "public_site_preview_checkout",
+      "qualname": "public_site_preview_checkout"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 254,
+      "module_id": "platform.commerce",
+      "name": "create_site_checkout",
+      "qualname": "create_site_checkout"
     },
     {
       "file": "backend/app/pricing_service.py",
@@ -48338,10 +48879,138 @@
       "qualname": "public_cta"
     },
     {
+      "file": "backend/app/public_site_content_cli.py",
+      "kind": "function",
+      "line": 15,
+      "module_id": "products.public-site",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 31,
+      "module_id": "products.public-site",
+      "name": "document_definition",
+      "qualname": "document_definition"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 38,
+      "module_id": "products.public-site",
+      "name": "seed_markdown",
+      "qualname": "seed_markdown"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 43,
+      "module_id": "products.public-site",
+      "name": "normalize_payload",
+      "qualname": "normalize_payload"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 62,
+      "module_id": "products.public-site",
+      "name": "render_faq",
+      "qualname": "render_faq"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 82,
+      "module_id": "products.public-site",
+      "name": "render_document",
+      "qualname": "render_document"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 89,
+      "module_id": "products.public-site",
+      "name": "ensure_public_site_document",
+      "qualname": "ensure_public_site_document"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 101,
+      "module_id": "products.public-site",
+      "name": "active_public_site_document",
+      "qualname": "active_public_site_document"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 106,
+      "module_id": "products.public-site",
+      "name": "serialize_public_site_document",
+      "qualname": "serialize_public_site_document"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 118,
+      "module_id": "products.public-site",
+      "name": "serialize_public_site_rendered_document",
+      "qualname": "serialize_public_site_rendered_document"
+    },
+    {
+      "file": "backend/app/public_site_content_service.py",
+      "kind": "function",
+      "line": 132,
+      "module_id": "products.public-site",
+      "name": "publish_public_site_document",
+      "qualname": "publish_public_site_document"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "kind": "class",
+      "line": 23,
+      "module_id": "products.public-site",
+      "name": "PublicSiteContentUpdate",
+      "qualname": "PublicSiteContentUpdate"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "kind": "function",
+      "line": 29,
+      "module_id": "products.public-site",
+      "name": "public_site_content",
+      "qualname": "public_site_content"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "kind": "function",
+      "line": 34,
+      "module_id": "products.public-site",
+      "name": "public_site_content_index",
+      "qualname": "public_site_content_index"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "products.public-site",
+      "name": "public_site_content_editor",
+      "qualname": "public_site_content_editor"
+    },
+    {
+      "file": "backend/app/public_site_routes.py",
+      "kind": "function",
+      "line": 67,
+      "module_id": "products.public-site",
+      "name": "update_public_site_content",
+      "qualname": "update_public_site_content"
+    },
+    {
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "class",
       "line": 30,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "PublicVideoAnalyticsIn",
       "qualname": "PublicVideoAnalyticsIn"
     },
@@ -48349,7 +49018,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "method",
       "line": 47,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "validate_video_id",
       "qualname": "PublicVideoAnalyticsIn.validate_video_id"
     },
@@ -48357,7 +49026,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "method",
       "line": 54,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "validate_page_path",
       "qualname": "PublicVideoAnalyticsIn.validate_page_path"
     },
@@ -48365,7 +49034,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "method",
       "line": 61,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "validate_watched_buckets",
       "qualname": "PublicVideoAnalyticsIn.validate_watched_buckets"
     },
@@ -48373,7 +49042,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "function",
       "line": 73,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "viewer_key",
       "qualname": "viewer_key"
     },
@@ -48381,7 +49050,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "function",
       "line": 77,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "enforce_rate_limit",
       "qualname": "enforce_rate_limit"
     },
@@ -48389,7 +49058,7 @@
       "file": "backend/app/public_video_analytics_routes.py",
       "kind": "function",
       "line": 116,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "collect_public_video_analytics",
       "qualname": "collect_public_video_analytics"
     },
@@ -51269,7 +51938,7 @@
       "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
       "kind": "function",
       "line": 18,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "upgrade",
       "qualname": "upgrade"
     },
@@ -51277,7 +51946,7 @@
       "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
       "kind": "function",
       "line": 47,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "downgrade",
       "qualname": "downgrade"
     },
@@ -52525,7 +53194,7 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "class",
       "line": 17,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "RobotsMetaParser",
       "qualname": "RobotsMetaParser"
     },
@@ -52533,7 +53202,7 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "method",
       "line": 18,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "__init__",
       "qualname": "RobotsMetaParser.__init__"
     },
@@ -52541,7 +53210,7 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "method",
       "line": 26,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "handle_starttag",
       "qualname": "RobotsMetaParser.handle_starttag"
     },
@@ -52549,7 +53218,7 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
       "line": 40,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_homepage_recognition_preview_is_public_and_noindex",
       "qualname": "test_homepage_recognition_preview_is_public_and_noindex"
     },
@@ -52557,7 +53226,7 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
       "line": 58,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_homepage_recognition_preview_image_is_public_and_noindex",
       "qualname": "test_homepage_recognition_preview_image_is_public_and_noindex"
     },
@@ -52565,23 +53234,23 @@
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
       "line": 70,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks",
       "qualname": "test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_blocks"
     },
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 109,
-      "module_id": "products",
+      "line": 115,
+      "module_id": "products.public-site",
       "name": "test_homepage_vsl_uses_first_engagement_and_server_analytics",
       "qualname": "test_homepage_vsl_uses_first_engagement_and_server_analytics"
     },
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 121,
-      "module_id": "products",
+      "line": 127,
+      "module_id": "products.public-site",
       "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
       "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
     },
@@ -53830,13 +54499,13 @@
       "kind": "function",
       "line": 220,
       "module_id": "platform.commerce",
-      "name": "test_preview_reads_active_prices_without_enabling_public_checkout",
-      "qualname": "test_preview_reads_active_prices_without_enabling_public_checkout"
+      "name": "test_preview_reads_prices_and_preview_checkout_requires_published_version",
+      "qualname": "test_preview_reads_prices_and_preview_checkout_requires_published_version"
     },
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 235,
+      "line": 282,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
       "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -53844,7 +54513,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 283,
+      "line": 330,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
       "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -53866,10 +54535,74 @@
       "qualname": "test_upgrade_publishes_a_new_active_version_for_existing_catalog"
     },
     {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 15,
+      "module_id": "products.public-site",
+      "name": "make_client",
+      "qualname": "make_client"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 24,
+      "module_id": "products.public-site",
+      "name": "override_db",
+      "qualname": "make_client.override_db"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 33,
+      "module_id": "products.public-site",
+      "name": "test_public_markdown_document_is_seeded_and_rendered",
+      "qualname": "test_public_markdown_document_is_seeded_and_rendered"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 50,
+      "module_id": "products.public-site",
+      "name": "test_faq_is_returned_as_structured_items",
+      "qualname": "test_faq_is_returned_as_structured_items"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 60,
+      "module_id": "products.public-site",
+      "name": "test_admin_update_creates_version_and_rejects_stale_write",
+      "qualname": "test_admin_update_creates_version_and_rejects_stale_write"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 79,
+      "module_id": "products.public-site",
+      "name": "test_public_markdown_sanitizes_script_and_rejects_missing_document",
+      "qualname": "test_public_markdown_sanitizes_script_and_rejects_missing_document"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 96,
+      "module_id": "products.public-site",
+      "name": "test_faq_rejects_missing_questions_and_empty_answers",
+      "qualname": "test_faq_rejects_missing_questions_and_empty_answers"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 107,
+      "module_id": "products.public-site",
+      "name": "test_public_site_editor_requires_admin",
+      "qualname": "test_public_site_editor_requires_admin"
+    },
+    {
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 17,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "make_client",
       "qualname": "make_client"
     },
@@ -53877,7 +54610,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 26,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "override_db",
       "qualname": "make_client.override_db"
     },
@@ -53885,7 +54618,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 34,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"
     },
@@ -53893,7 +54626,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 47,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_engagement_creates_one_anonymous_session",
       "qualname": "test_engagement_creates_one_anonymous_session"
     },
@@ -53901,7 +54634,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 66,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_progress_merges_buckets_and_positions_idempotently",
       "qualname": "test_progress_merges_buckets_and_positions_idempotently"
     },
@@ -53909,7 +54642,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 94,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_completion_is_sticky_after_exit",
       "qualname": "test_completion_is_sticky_after_exit"
     },
@@ -53917,7 +54650,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 119,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_session_rejects_another_viewer_and_invalid_payloads",
       "qualname": "test_session_rejects_another_viewer_and_invalid_payloads"
     },
@@ -53925,7 +54658,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 139,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_progress_cannot_create_a_session_without_engagement",
       "qualname": "test_progress_cannot_create_a_session_without_engagement"
     },
@@ -53933,7 +54666,7 @@
       "file": "backend/tests/test_public_video_analytics.py",
       "kind": "function",
       "line": 151,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "test_new_sessions_are_rate_limited_per_network_client",
       "qualname": "test_new_sessions_are_rate_limited_per_network_client"
     },
@@ -64466,7 +65199,7 @@
     {
       "file": "backend/app/models.py",
       "line": 1267,
-      "module_id": "products",
+      "module_id": "products.public-site",
       "name": "public_video_views",
       "source": "orm"
     },

@@ -397,7 +397,7 @@
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; }
     .site-title__plain { font-size: clamp(29px,8vw,52px); }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .72em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
-    .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(20px,6vw,58px); line-height: 1.02; letter-spacing: -.045em; white-space: nowrap; transform: rotate(-.8deg); }
+    .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(18px,5.4vw,58px); line-height: 1.02; letter-spacing: -.025em; white-space: nowrap; transform: rotate(-.8deg); }
     .site-lead { max-width: 790px; margin: 31px 0 0; color: var(--site-text); font-size: 17px; font-weight: 500; line-height: 1.6; }
     .site-player { width: min(100%,540px); margin: 25px auto 0; }
     .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: 0 32px 48px -34px rgba(13,25,35,.88); }
@@ -635,6 +635,10 @@
     .faq-answer-copy{display:flex;flex-direction:column;gap:12px;padding:0 60px 24px 24px;color:var(--muted);font-size:15.5px;font-weight:400;line-height:1.62}
     .faq-answer-copy p{margin:0}
     .faq-answer-copy a{color:#168fd3;text-decoration-thickness:1px;text-underline-offset:3px}
+    .method-transition__inner figure,.faq-answer-copy figure,#edb-pricing-neurozeh-v1 .edb-product-overlay-points figure{max-width:100%;margin:18px 0}
+    .method-transition__inner img,.faq-answer-copy img,#edb-pricing-neurozeh-v1 .edb-product-overlay-points img{display:block;max-width:100%;height:auto;border-radius:14px}
+    .method-transition__inner table,.faq-answer-copy table,#edb-pricing-neurozeh-v1 .edb-product-overlay-points table{display:block;width:100%;max-width:100%;overflow-x:auto;border-collapse:collapse;-webkit-overflow-scrolling:touch}
+    .method-transition__inner th,.method-transition__inner td,.faq-answer-copy th,.faq-answer-copy td,#edb-pricing-neurozeh-v1 .edb-product-overlay-points th,#edb-pricing-neurozeh-v1 .edb-product-overlay-points td{min-width:120px;padding:8px 10px;border:1px solid rgba(22,143,211,.18);text-align:left;vertical-align:top}
     .faq-media{display:block;width:100%;max-height:430px;object-fit:contain;background:#f6f8fb;border:1px solid rgba(38,175,255,.12);border-radius:13px}
     @keyframes faq-open{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
     @media(min-width:901px){.faq-section{padding:96px 32px 120px}.chain-block--faq h1{font-size:36px}.faq-answer-copy{padding-right:66px}}
@@ -682,6 +686,31 @@
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:#fff}
     .chain-block{position:relative;z-index:1;min-width:0}
     .chain-block--before-after{padding:34px 0 56px;background:transparent}
+    .chain-block--anya{padding:26px 0 72px;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
+    .anya-story{width:min(100%,1180px);margin:0 auto;padding:0 18px}
+    .anya-story__header{max-width:760px}
+    .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.03em;transform:rotate(-2deg)}
+    .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(32px,8.6vw,64px);font-weight:800;line-height:1.04;letter-spacing:-.055em}
+    .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:16px;font-weight:600;line-height:1.55}
+    .anya-story__viewport{margin:32px -18px 0;overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
+    .anya-story__viewport::-webkit-scrollbar{display:none}
+    .anya-story__track{display:flex;gap:14px;width:max-content;padding:0 18px 18px}
+    .anya-slide{position:relative;display:flex;width:min(78vw,350px);height:min(110vw,488px);flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 42px -30px rgba(18,55,86,.58)}
+    .anya-slide--video{background:#121018}
+    .anya-slide--video iframe{width:100%;height:100%;border:0}
+    .anya-placeholder-note{position:absolute;z-index:5;right:10px;bottom:10px;left:10px;padding:8px 10px;border-radius:10px;background:rgba(18,16,24,.72);color:rgba(255,255,255,.82);font-size:10px;font-weight:800;line-height:1.25;text-align:center;pointer-events:none;backdrop-filter:blur(8px)}
+    .anya-slide--image{flex-direction:column;margin:0;background:linear-gradient(150deg,#fff,#edf8ff)}
+    .anya-slide--image img{width:100%;height:calc(100% - 70px);object-fit:contain;background:#fff}
+    .anya-slide--image figcaption{display:flex;min-height:70px;align-items:center;padding:12px 15px;color:#47535e;font-size:13px;font-weight:800;line-height:1.3}
+    .anya-slide--ending{flex-direction:column;justify-content:flex-end;padding:26px;color:#fff;background:linear-gradient(150deg,#159ee9,#087aca)}
+    .anya-slide--ending::before{position:absolute;top:-70px;right:-70px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.18);content:""}
+    .anya-slide--ending span{font-size:12px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
+    .anya-slide--ending strong{margin-top:12px;font-family:Unbounded,Manrope,sans-serif;font-size:24px;line-height:1.15}
+    .anya-slide--ending p{margin:18px 0 0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
+    .anya-story__footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;color:#65717d;font-size:13px;font-weight:900}
+    .anya-story__buttons{display:flex;gap:8px}
+    .anya-story__buttons button{display:grid;width:46px;height:46px;place-items:center;border:0;border-radius:14px;background:#fff;color:#168fd3;box-shadow:0 12px 25px -20px rgba(20,80,120,.7);font:900 20px Manrope,sans-serif;cursor:pointer;transition:transform .15s ease,background .15s ease,color .15s ease}
+    .anya-story__buttons button:hover,.anya-story__buttons button:focus-visible{background:#159ee9;color:#fff;transform:translateY(-2px)}
     .chain-block--pricing{padding:20px 0 74px;background:transparent}
     .chain-block--faq{padding:0 0 54px;background:transparent}
     .chain-block--final{background:transparent;color:#fff}
@@ -716,6 +745,7 @@
     @media(max-width:719px){
       .desktop-header{display:none!important}
       .chain-block--before-after{padding-top:18px;padding-bottom:42px}
+      .chain-block--anya{padding-top:18px;padding-bottom:54px}
       .chain-block--pricing{padding-top:6px;padding-bottom:54px}
       .chain-block--faq{padding-bottom:32px}
       .page-theme-toolbar{top:auto;right:10px;bottom:10px;left:10px;justify-content:center;overflow-x:auto;max-width:none}
@@ -796,17 +826,8 @@
       </div>
     </section>
 
-    <section class="method-transition" aria-label="Следующий блок страницы">
-      <div class="method-transition__inner">
-        <p class="method-kicker">Значит, пора менять подход!</p>
-        <ul class="method-list">
-          <li><p><span>Вместо ограничений — </span><strong>баланс</strong></p></li>
-          <li><p><span>Вместо ПП-рецептов — </span><strong>пищевые привычки</strong></p></li>
-          <li><p><span>Вместо уменьшения еды — </span><strong>увеличение насыщения</strong></p></li>
-          <li><p><span>Вместо калорий — </span><strong>дневник питания по фото</strong></p></li>
-          <li><p><span>Вместо погони за цифрами на весах — </span><strong>изменение образа жизни</strong></p></li>
-        </ul>
-      </div>
+    <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach">
+      <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
     </section>
   </div>
     <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
@@ -846,7 +867,50 @@
 </section>
 
 </section>
-    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview">
+
+    <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
+      <div class="anya-story">
+        <header class="anya-story__header">
+          <span class="anya-story__kicker">Одна история целиком</span>
+          <h2 id="anya-story-title">Что случилось с Аней?</h2>
+          <p>Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
+        </header>
+        <div class="anya-story__viewport" data-anya-slider>
+          <div class="anya-story__track">
+            <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
+              <iframe src="/preview/homepage-mobile/vsl-player.html?v=2&context=anya-placeholder" title="Видео Ани — временная медиазаглушка" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+              <span class="anya-placeholder-note">Временное видео для проверки механики</span>
+            </article>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/weight-loss-before-masterclass.svg" alt="Временная заглушка для фотографии Ани до участия">
+              <figcaption>Фото до — заменить исходным материалом</figcaption>
+            </figure>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/weight-loss-after-masterclass.svg" alt="Временная заглушка для фотографии Ани после участия">
+              <figcaption>Фото после — заменить исходным материалом</figcaption>
+            </figure>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Временная заглушка для скриншота или фотографии">
+              <figcaption>Здесь будет переписка, тарелка или соревнование</figcaption>
+            </figure>
+            <article class="anya-slide anya-slide--ending">
+              <span>Продолжение истории</span>
+              <strong>Бег, соревнования и тот самый триатлон</strong>
+              <p>Финальный текст появится после редакторской сборки реальных материалов.</p>
+            </article>
+          </div>
+        </div>
+        <div class="anya-story__footer">
+          <span data-anya-counter>1 / 5</span>
+          <div class="anya-story__buttons">
+            <button type="button" data-anya-prev aria-label="Предыдущий слайд">←</button>
+            <button type="button" data-anya-next aria-label="Следующий слайд">→</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/pricing/site/preview-checkout" data-tilda-cart-url="https://похудение-это-есть.рф/">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
 
@@ -1168,6 +1232,42 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket strong {
       font-size: 11px;
       letter-spacing: -.02em;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon {
+      position: relative;
+      display: none;
+      width: 15px;
+      height: 15px;
+      flex: 0 0 15px;
+      border: 2px solid #e83e35;
+      border-radius: 50%;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon::before,
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon::after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 2px;
+      border-radius: 999px;
+      background: #e83e35;
+      content: '';
+      transform-origin: 50% 100%;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon::before {
+      height: 4px;
+      transform: translate(-50%,-100%);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon::after {
+      height: 5px;
+      transform: translate(-50%,-100%) rotate(125deg);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket.is-money .edb-pricing-discount-icon {
+      display: inline-block;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-discount-saving {
@@ -1671,6 +1771,33 @@
       gap: 10px;
       margin-top: 24px;
     }
+    @media(min-width:720px){.anya-story{padding-inline:32px}.anya-story__viewport{margin-inline:-32px}.anya-story__track{padding-inline:32px}.anya-slide{width:min(48vw,430px);height:min(68vw,590px)}}
+    @media(prefers-reduced-motion:reduce){.anya-story__buttons button{transition:none}}
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > p {
+      margin: 0 0 12px;
+      color: #4f5965;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > h2 {
+      margin: 12px 0 0;
+      padding: 15px 0 7px;
+      border-top: 1px solid #dfe5ea;
+      font-size: 15px;
+      font-weight: 900;
+      line-height: 1.35;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-product-overlay-points > h2 + p {
+      margin: 0 0 4px;
+      color: #66707c;
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-point {
       display: grid;
@@ -1776,7 +1903,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1791,7 +1918,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1809,7 +1936,7 @@
           <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span>Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1908,7 +2035,13 @@
           priceRow.hidden = !hasDiscount;
           oldPrice.textContent = hasDiscount ? formatPrice(compare) : '';
           ticket.classList.toggle('is-visible', hasDiscount);
-          ticket.querySelector('strong').textContent = hasDiscount ? `−${Math.round((1 - sale / compare) * 100)}%` : '';
+          const usesMoneyBadge = tariff.code === 'site.masterclass.basic';
+          ticket.classList.toggle('is-money', hasDiscount && usesMoneyBadge);
+          ticket.querySelector('strong').textContent = !hasDiscount
+            ? ''
+            : usesMoneyBadge
+              ? `−${formatPrice(compare - sale)}`
+              : `−${Math.round((1 - sale / compare) * 100)}%`;
           saving.textContent = hasDiscount ? `экономия ${formatPrice(compare - sale)}` : '';
         });
         root.dataset.pricingSource = source;
@@ -1934,81 +2067,7 @@
       }
 
       loadPricingCatalog();
-      const productData = {
-        program: {
-          title: 'Основная программа',
-          copy: 'Самая важная база о том, как сделать питание сбалансированным, а пищевые привычки — здоровыми с помощью дневника питания по моей системе. Фундамент любого похудения. База!',
-          points: [
-            ['01','Добро пожаловать!','Программа Мастер-класса, формат дневника, анкета и вообще, здравствуйте =)'],
-            ['02','Что такое "Диеты" на самом деле','Первый и последний раз в мастер-классе обсуждаем это слово'],
-            ['03','Что такое вредная еда на самом деле','Какие есть реальные ограничения в здоровом питании, а на что можно не обращать внимание'],
-            ['04','DQS — Система оценки качества питания','Разделим абсолютно всю еду на 17 продуктовых категорий и будем искать в них баланс'],
-            ['05','Баланс продуктовых категорий','КБЖУК и правило тарелки.'],
-            ['06','Опорные точки и эволюция рецепта','Овсянка, пять вкусов, топпинги и знакомство с рецептами.','recipe'],
-            ['07','Система рецептов','Каталог, продукты, БЖУ и первая партия рецептов.','recipe'],
-            ['08','Начинаем менять питание','План следующих дней и последнее напоминание о рецептах.','recipe'],
-            ['09','50 оттенков голода','Голод, аппетит, насыщение и эмоциональный голод.'],
-            ['10','Сколько сладкого уже есть в вашем рационе','План, нормы и гайд по добавленному сахару.'],
-            ['11','Как есть меньше сладкого и не страдать','11 способов уменьшить вред и 17 способов уменьшить тягу.'],
-            ['12','Срывы, зажоры и чит-милы','Чем отличаются, что делать и как предотвращать.'],
-            ['13','Насыщение и удовольствие','Привычки для насыщения и удовольствия.'],
-            ['14','Питание вне дома','Фастфуд, отпуск, праздники и поездки.'],
-            ['15','Конструктор питания','Техники, кухонные запасы и вторая часть рецептов.','recipe'],
-            ['16','Пауза для второй части рецептов','Практика и последний день текущих условий.','recipe'],
-            ['17','50 оттенков ЗОЖ','ЗОЖ, детоксы, витамины, анализы, вода и водно-солевой баланс.'],
-            ['18','Для тех, кто любит подглядывать','Примеры чужих дневников для анализа собственной системы.'],
-            ['19','Саморевью и подготовка к консультации','Подготовка, саморевью, консультация и варианты работы.'],
-            ['20','Зависимости и постановка цели','Путеводитель по зависимостям и цель на пять лет.'],
-            ['21','Фазы и периодизация похудения','Подготовка, активная фаза, поддержание и следующий цикл.']
-          ],
-          target: 0,
-          cta: 'Выбрать тариф'
-        },
-        recipes: {
-          title: 'Система рецептов',
-          copy: 'Коротко: на практических примерах показываю, как применять принципы питания из Мастер-класса в обычной жизни — на реальных продуктах, тарелках и рецептах. Это не просто сборник, а система самостоятельной сборки еды.',
-          points: [
-            ['01','16 рецептов с подробным разбором','На их примере показываю, насколько легко применять рекомендации из Мастер-класса и делать это вкусно.'],
-            ['02','Разбор 10 продуктов','Какие готовые продукты заметно упрощают приготовление здоровых блюд.'],
-            ['03','Техники и принципы сборки тарелки','Три техники обработки продуктов и три принципа составления тарелки.']
-          ],
-          target: 1,
-          cta: 'Выбрать тариф'
-        },
-        consultation: {
-          title: 'Индивидуальная консультация',
-          copy: 'Коротко: сначала я разбираю ваш дневник питания, а затем мы обсуждаем выводы и вопросы в удобном формате — звонком, голосовыми сообщениями или текстом.',
-          points: [
-            ['01','Разбор дневника питания','Подсвечу слабые и сильные стороны и определю важнейшие изменения.'],
-            ['02','Удобный формат обсуждения','Звонок, голосовые сообщения или подробный текстовый файл.'],
-            ['03','Ответы после разбора','После консультации можно ещё несколько дней задавать вопросы по рекомендациям.']
-          ],
-          target: 2,
-          cta: 'Выбрать тариф'
-        },
-        calories: {
-          title: 'Мини-курс «Калорийный»',
-          copy: 'Коротко: учимся считать калории без лишнего геморроя, учитывать не только еду, но и расход энергии, а затем переводить цифры в понятные действия. Считать, чтобы перестать считать.',
-          points: [
-            ['01','Неделя 1 — учёт без геморроя','Взвешиваем и записываем без перфекционизма и лишней точности.'],
-            ['02','Неделя 2 — считаем не только еду','Учитываем шаги, движение и тренировки и находим свой энергетический баланс.'],
-            ['03','Неделя 3 — слезаем с калорий','Переводим цифры в понятные действия и постепенно отказываемся от постоянного приложения.']
-          ],
-          target: 0,
-          cta: 'Выбрать тариф'
-        },
-        training: {
-          title: 'Мини-курс «С мягкого дивана до регулярных тренировок»',
-          copy: 'Коротко: как встать с дивана и начать получать от тренировок и удовольствие, и результат — без требования посвящать спорту всю жизнь.',
-          points: [
-            ['01','Понять, зачем вам тренироваться','Выбираем результат, который действительно вам нужен.'],
-            ['02','Выбрать направление','Разбираемся, какой формат тренировок подходит под вашу цель.'],
-            ['03','Определить рабочий объём','От минимального уровня до более серьёзной любительской нагрузки.']
-          ],
-          target: 0,
-          cta: 'Выбрать тариф'
-        }
-      };
+      const productTargets = { program: 0, recipes: 1, consultation: 2, calories: 0, training: 0 };
 
       root.querySelectorAll('[data-variant-button]').forEach((button) => {
         button.addEventListener('click', () => {
@@ -2020,26 +2079,27 @@
         });
       });
 
-      function openProduct(code) {
-        const product = productData[code];
-        overlayTitle.textContent = product.title;
-        overlayCopy.textContent = product.copy;
-        overlayPoints.replaceChildren(...product.points.map(([number, title, copy, marker]) => {
-          const point = document.createElement('div');
-          point.className = `edb-product-overlay-point${marker === 'recipe' ? ' is-recipe' : ''}`;
-          const numberElement = document.createElement('span');
-          numberElement.className = 'edb-product-day-number';
-          numberElement.textContent = number;
-          const content = document.createElement('span');
-          content.innerHTML = `<span class="edb-product-day-title">${title}</span><span class="edb-product-day-copy">${copy}</span>`;
-          point.append(numberElement, content);
-          return point;
-        }));
-        overlayCta.textContent = product.cta;
-        overlayCta.dataset.target = String(product.target);
+      async function openProduct(code) {
+        overlayTitle.textContent = 'Загружаю…';
+        overlayCopy.textContent = '';
+        overlayPoints.replaceChildren();
+        overlayCta.hidden = true;
         overlay.classList.add('is-open');
         overlay.setAttribute('aria-hidden', 'false');
         overlay.scrollTop = 0;
+        try {
+          const response = await fetch(`/api/public-site/content/${encodeURIComponent(code)}`, { credentials: 'omit' });
+          if (!response.ok) throw new Error(`public content ${response.status}`);
+          const product = await response.json();
+          overlayTitle.textContent = product.title;
+          overlayPoints.innerHTML = product.html;
+          overlayCta.textContent = 'Выбрать тариф';
+          overlayCta.dataset.target = String(productTargets[code] || 0);
+          overlayCta.hidden = false;
+        } catch (error) {
+          overlayTitle.textContent = 'Не удалось открыть страницу';
+          overlayCopy.textContent = 'Обновите страницу и попробуйте ещё раз.';
+        }
       }
 
       function closeOverlay() {
@@ -2059,6 +2119,44 @@
         closeOverlay();
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
+
+      function openTildaCart(command) {
+        const match = /^#order:([^=]+)=(\d+(?:\.\d+)?)$/.exec(String(command || ''));
+        if (match && typeof window.tcart__addProduct === 'function' && typeof window.tcart__openCart === 'function') {
+          window.tcart__addProduct({ name: match[1], price: Number(match[2]), quantity: 1 });
+          window.tcart__openCart();
+          return;
+        }
+        const destination = new URL(root.dataset.tildaCartUrl);
+        destination.hash = String(command || '').replace(/^#/, '');
+        window.location.assign(destination.toString());
+      }
+
+      plans.forEach((plan) => {
+        const button = plan.querySelector('.edb-pricing-button');
+        button.addEventListener('click', async () => {
+          if (button.disabled) return;
+          const original = button.textContent;
+          button.disabled = true;
+          button.textContent = 'Открываю корзину…';
+          try {
+            const response = await fetch(root.dataset.checkoutEndpoint, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'omit',
+              body: JSON.stringify({ price_code: plan.dataset.priceCode })
+            });
+            if (!response.ok) throw new Error(`checkout ${response.status}`);
+            const result = await response.json();
+            openTildaCart(result.cart_command);
+          } catch (error) {
+            pricingStatus.textContent = 'Не удалось открыть корзину. Обновите страницу и попробуйте ещё раз.';
+            pricingStatus.hidden = false;
+            button.disabled = false;
+            button.textContent = original;
+          }
+        });
+      });
     })();
   </script>
 </div>
@@ -2066,54 +2164,7 @@
     <section class="chain-block chain-block--faq" id="faq" aria-label="Частые вопросы"><div class="faq-section">
     <section class="faq-shell" aria-labelledby="faq-title">
       <h1 id="faq-title">Частые вопросы</h1>
-      <div class="faq-list">
-        <article class="faq-item" data-open="true">
-          <button class="faq-question" type="button" aria-expanded="true" aria-controls="faq-answer-1"><span class="faq-question-text">Какое у вас образование?</span><span class="faq-sign" aria-hidden="true">−</span></button>
-          <div class="faq-answer" id="faq-answer-1"><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Я нутрициолог. Мои квалификации — «Фитнес-нутрициолог» и «Специалист по инструкторской и методической работе в области физической культуры и спорта». <a href="https://vk.cc/cwXk54" target="_blank" rel="noreferrer">Документы можно посмотреть по ссылке</a>.</p>
-            <p>Я не ставлю диагнозы и не лечу заболевания. При медицинских ограничениях опираюсь на заключение врача и работаю только в границах своей компетенции.</p>
-          </div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-2"><span class="faq-question-text">Я уже проходила разные марафоны. Чем этот отличается?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-2" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Здесь не будет меню на неделю и списка запрещённых продуктов. Одно дело знать в теории, что «надо правильно питаться», и другое — увидеть собственное питание, понять, что именно мешает вам, и научиться менять это в обычной жизни.</p>
-            <p>Поэтому весь Мастер-класс строится вокруг дневника питания и практических заданий.</p>
-          </div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-3"><span class="faq-question-text">А если я не ем определённые продукты?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-3" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Ничего страшного. Система не требует есть конкретный набор продуктов. Если какой-то продукт вам не подходит из-за вкуса, непереносимости или рекомендации врача, вы будете собирать рацион из доступных вам вариантов.</p>
-            <p>Дневник нужен как раз затем, чтобы применять общие принципы к своей жизни, а не подгонять себя под чужое меню.</p>
-          </div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-4"><span class="faq-question-text">Я смогу пройти всё самостоятельно?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-4" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Да. Основная программа рассчитана на самостоятельное прохождение: посмотрели материал, выполнили задание, применили к своему рациону.</p>
-            <p>Если вам нужны ответы по ходу программы и индивидуальный разбор дневника, для этого есть тариф с консультацией.</p>
-          </div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-5"><span class="faq-question-text">На сколько я похудею за 21 день?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-5" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Я не могу заранее обещать конкретное число килограммов. Это не марафон с целью любой ценой показать меньшую цифру через три недели.</p>
-            <p>Задача Мастер-класса — помочь вам разобраться в своём питании и научиться принимать решения, с которыми можно продолжать худеть дальше без очередного списка запретов.</p>
-          </div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-6"><span class="faq-question-text">А если мне не нужно худеть?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-6" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Тоже подойдёт. Мастер-класс помогает оценить качество рациона, разобраться с насыщением и пищевыми привычками и понять, что стоит изменить именно вам. Это пригодится и для поддержания веса.</p></div></div></div>
-        </article>
-        <article class="faq-item" data-open="false">
-          <button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-7"><span class="faq-question-text">А если я и так много знаю о правильном питании?</span><span class="faq-sign" aria-hidden="true">+</span></button>
-          <div class="faq-answer" id="faq-answer-7" hidden><div class="faq-answer-inner"><div class="faq-answer-copy">
-            <p>Теория и применение — разные вещи. Можно знать всё про белки, овощи и калории, но не замечать, что происходит в собственном рационе.</p>
-            <p>Здесь вы не просто читаете правила: ведёте дневник, оцениваете питание и выбираете конкретные изменения для себя.</p>
-          </div></div></div>
-        </article>
-      </div>
+      <div class="faq-list" data-public-faq aria-live="polite">Загружаю вопросы…</div>
     </section>
   </div>
   </section>
@@ -2303,13 +2354,118 @@
 
   </script>
   <script>
+    (() => {
+      const viewport = document.querySelector('[data-anya-slider]');
+      if (!viewport) return;
+      const slides = [...viewport.querySelectorAll('.anya-slide')];
+      const counter = document.querySelector('[data-anya-counter]');
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      const slideLeft = (slide) => {
+        const slideBox = slide.getBoundingClientRect();
+        const viewportBox = viewport.getBoundingClientRect();
+        return viewport.scrollLeft + slideBox.left - viewportBox.left;
+      };
+      const currentIndex = () => {
+        const left = viewport.scrollLeft;
+        return slides.reduce((best, slide, index) => (
+          Math.abs(slideLeft(slide) - left) < Math.abs(slideLeft(slides[best]) - left) ? index : best
+        ), 0);
+      };
+      const update = () => { counter.textContent = `${currentIndex() + 1} / ${slides.length}`; };
+      const moveTo = (index) => {
+        const target = slides[Math.max(0, Math.min(slides.length - 1, index))];
+        viewport.scrollTo({
+          left: slideLeft(target),
+          behavior: reducedMotion.matches ? 'auto' : 'smooth'
+        });
+      };
+      const move = (direction) => {
+        moveTo(currentIndex() + direction);
+      };
+      document.querySelector('[data-anya-prev]').addEventListener('click', () => move(-1));
+      document.querySelector('[data-anya-next]').addEventListener('click', () => move(1));
+      let frame = 0;
+      viewport.addEventListener('scroll', () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(update);
+      }, { passive: true });
+      const videoFrame = viewport.querySelector('.anya-slide--video iframe');
+      window.addEventListener('message', (event) => {
+        if (!videoFrame || event.source !== videoFrame.contentWindow) return;
+        if (event.data?.type !== 'edabalans:anya-drag') return;
+        if (event.data.phase === 'move') {
+          viewport.scrollLeft += Number(event.data.delta) || 0;
+          return;
+        }
+        if (event.data.phase === 'end') moveTo(currentIndex());
+      });
+      update();
+    })();
+  </script>
+  <script>
+    (() => {
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
 
-    document.querySelectorAll('.faq-question').forEach((button)=>button.addEventListener('click',()=>{
-      const item=button.closest('.faq-item');const open=item.dataset.open!=='true';
-      document.querySelectorAll('.faq-item').forEach((other)=>{other.dataset.open='false';const b=other.querySelector('.faq-question');b.setAttribute('aria-expanded','false');other.querySelector('.faq-sign').textContent='+';other.querySelector('.faq-answer').hidden=true});
-      if(open){item.dataset.open='true';button.setAttribute('aria-expanded','true');item.querySelector('.faq-sign').textContent='−';item.querySelector('.faq-answer').hidden=false}
-    }));
+      async function loadApproach() {
+        const shell = document.querySelector('[data-public-content="approach"] .method-transition__inner');
+        if (!shell) return;
+        try {
+          const response = await fetch('/api/public-site/content/approach', { credentials: 'omit' });
+          if (!response.ok) throw new Error(`approach ${response.status}`);
+          const documentData = await response.json();
+          shell.innerHTML = documentData.html;
+          const kicker = shell.querySelector('p');
+          const list = shell.querySelector('ul');
+          if (kicker) kicker.className = 'method-kicker';
+          if (list) list.className = 'method-list';
+        } catch (error) {
+          shell.textContent = 'Текст временно недоступен.';
+        }
+      }
 
+      function bindFaq(list) {
+        list.querySelectorAll('.faq-question').forEach((button) => button.addEventListener('click', () => {
+          const item = button.closest('.faq-item');
+          const open = item.dataset.open !== 'true';
+          list.querySelectorAll('.faq-item').forEach((other) => {
+            other.dataset.open = 'false';
+            const otherButton = other.querySelector('.faq-question');
+            otherButton.setAttribute('aria-expanded', 'false');
+            other.querySelector('.faq-sign').textContent = '+';
+            other.querySelector('.faq-answer').hidden = true;
+          });
+          if (open) {
+            item.dataset.open = 'true';
+            button.setAttribute('aria-expanded', 'true');
+            item.querySelector('.faq-sign').textContent = '−';
+            item.querySelector('.faq-answer').hidden = false;
+          }
+        }));
+      }
+
+      async function loadFaq() {
+        const list = document.querySelector('[data-public-faq]');
+        if (!list) return;
+        try {
+          const response = await fetch('/api/public-site/content/faq', { credentials: 'omit' });
+          if (!response.ok) throw new Error(`faq ${response.status}`);
+          const documentData = await response.json();
+          list.innerHTML = documentData.items.map((item, index) => {
+            const open = index === 0;
+            const answerId = `faq-answer-${index + 1}`;
+            return `<article class="faq-item" data-open="${open}"><button class="faq-question" type="button" aria-expanded="${open}" aria-controls="${answerId}"><span class="faq-question-text">${escapeHtml(item.question)}</span><span class="faq-sign" aria-hidden="true">${open ? '−' : '+'}</span></button><div class="faq-answer" id="${answerId}"${open ? '' : ' hidden'}><div class="faq-answer-inner"><div class="faq-answer-copy">${item.html}</div></div></div></article>`;
+          }).join('');
+          bindFaq(list);
+        } catch (error) {
+          list.textContent = 'Вопросы временно недоступны. Обновите страницу чуть позже.';
+        }
+      }
+
+      loadApproach();
+      loadFaq();
+    })();
   </script>
   <script src="/site-footer.js"></script>
 </body>

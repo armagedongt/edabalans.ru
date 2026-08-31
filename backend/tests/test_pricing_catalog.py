@@ -1,6 +1,6 @@
 import os
 from copy import deepcopy
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -217,7 +217,7 @@ def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
     app.dependency_overrides.clear()
 
 
-def test_preview_reads_active_prices_without_enabling_public_checkout() -> None:
+def test_preview_reads_prices_and_preview_checkout_requires_published_version() -> None:
     client, factory = make_client(enabled=False)
     seed_draft(factory)
 
@@ -229,6 +229,53 @@ def test_preview_reads_active_prices_without_enabling_public_checkout() -> None:
         "/api/pricing/site/checkout",
         json={"price_code": "site.masterclass.consult"},
     ).status_code == 503
+    assert client.post(
+        "/api/pricing/site/preview-checkout",
+        json={"price_code": "site.masterclass.consult"},
+        headers={"Origin": "http://testserver"},
+    ).status_code == 503
+
+    version_id = preview.json()["version"]
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.version_number == version_id))
+        assert version is not None
+        publish_id = str(version.id)
+    assert client.post(f"/admin/api/pricing/versions/{publish_id}/publish").status_code == 200
+    assert "/api/pricing/site/preview-checkout" not in client.get("/openapi.json").json()["paths"]
+    with factory() as db:
+        db.add(
+            OfferCheckout(
+                user_id=None,
+                checkout_kind="public_site",
+                pricing_version_id=version.id,
+                price_entry_code="site.masterclass.consult",
+                offer_code="site.masterclass.consult",
+                title="Просроченный checkout",
+                items=[],
+                amount=Decimal("15900"),
+                expires_at=datetime.now(timezone.utc) - timedelta(minutes=1),
+            )
+        )
+        db.commit()
+    assert client.post(
+        "/api/pricing/site/preview-checkout",
+        json={"price_code": "site.masterclass.consult"},
+    ).status_code == 403
+    assert client.post(
+        "/api/pricing/site/preview-checkout",
+        json={"price_code": "site.masterclass.consult"},
+        headers={"Origin": "https://example.test"},
+    ).status_code == 403
+    checkout = client.post(
+        "/api/pricing/site/preview-checkout",
+        json={"price_code": "site.masterclass.consult"},
+        headers={"Origin": "http://testserver"},
+    )
+    assert checkout.status_code == 200
+    assert checkout.json()["pricing_version"] == version_id
+    assert checkout.json()["cart_command"].startswith("#order:EB-")
+    with factory() as db:
+        assert db.scalar(select(func.count(OfferCheckout.id))) == 1
     app.dependency_overrides.clear()
 
 
