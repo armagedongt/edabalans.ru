@@ -3889,6 +3889,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/owner-decisions-2026-08-30.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/calorie-course-rebuild/owner-input-needed.md"
     },
     {
@@ -4026,6 +4030,474 @@
     {
       "module_id": "operations.project-work",
       "path": "work/calorie-course-rebuild/rebuild-v4-final-2026-08-29/validation-summary.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/architecture-checkpoint.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/course-continuity.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/evidence-report.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/media-tasks.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/owner-questions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/01-app-tracking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/02-counting-different-food.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/03-accuracy-baseline-diary.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-005.jpg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-007.jpg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-010.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-011.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/01-app-metrics.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/02-calorie-sources.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/03-adjust-current-diet.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-003.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-004.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-005.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-007.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-008.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/01-expenditure-calculator.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/02-steps-training-double-count.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/03-track-workouts-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/10-energy-balance-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/10-energy-balance-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/13-workout-supplement-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/01-phase-deficit-pace.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/02-comparable-data.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/03-correct-the-model.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/assets/synthetic-weight-trend.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/01-repeat-meals-household-measures.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/02-rhythm-hunger-snacking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/03-stop-tracking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/08-simplify-calorie-tracking-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/08-simplify-calorie-tracking-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/status.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/architecture-checkpoint.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/course-continuity.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/evidence-report.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/marketing-course-concept-draft.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media-tasks.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/01-baseline.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/02-activity.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/03-deficit.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/index.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/owner-questions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/01-app-and-why.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/02-dishes-purchased-outside.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/03-accuracy.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/04-simplify-tracking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/05-personal-recipe-catalog.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/003.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/004.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/005.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/007.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/008.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-005.jpg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-007.jpg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-010.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-011.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/01-energy-balance-calculator.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/02-training-accounting.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/03-energy-turnover-exercise-snacks.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/003.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/004.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/005.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/03-track-workouts-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/10-energy-balance-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/10-energy-balance-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/13-workout-supplement-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/activity-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/activity-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-003.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/01-report-kbju-fat.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/02-deficit-pace-deadlines.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/03-corrections-steps-plateau.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/assets/001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/assets/synthetic-weight-trend.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/01-phases-periodization.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/02-hunger-windows-blocks.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/03-catalog-and-stop-tracking.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/003.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/004.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/005.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/08-simplify-calorie-tracking-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/08-simplify-calorie-tracking-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-001.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-002.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-006.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/source-use-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/status.md"
     },
     {
       "module_id": "operations.project-work",
@@ -4669,6 +5141,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/SOURCE_BASELINE.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/free-intensive-rebuild/handoff/00-owner-thread-verbatim.md"
     },
     {
@@ -4690,6 +5166,278 @@
     {
       "module_id": "operations.project-work",
       "path": "work/free-intensive-rebuild/handoff/05-owner-long-speech-index.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/06-integration-handoff.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/handoff/07-workflow-and-voice-findings.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/01-program-v1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/02-critical-review.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/03-program-v2.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/04-source-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/05-editorial-review.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/06-production-assets.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/07-source-provenance-audit.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/08-masterclass-bridge-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/09-masterclass-bridge-critical-review.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/10-periodization-shared-source.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/11-future-content-web-concept.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/12-old-published-intensive-fate.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/13-vsl-old-day1-rebuild-brief.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/README-HISTORY.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/author-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/fact-check-notes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/source-origin-report.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/articles/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/comparison/day-04-comparison.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-ledgers/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-manifests/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-origin-report.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/video-scripts/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/SHA256SUMS"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-04.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-01.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-02.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-03.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-04.md"
     },
     {
       "module_id": "operations.project-work",
@@ -4754,6 +5502,10 @@
     {
       "module_id": "operations.project-work",
       "path": "work/masterclass-editorial-finalization-2026-08-31/masterclass-material-audit.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-editorial-finalization-2026-08-31/next-editorial-pass-handoff.md"
     },
     {
       "module_id": "operations.project-work",
@@ -5106,6 +5858,306 @@
     {
       "module_id": "operations.project-work",
       "path": "work/recipe-catalog/visuals/prompts.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/00-version-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/01-owner-position.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/02-source-catalog.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/03-course-program.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/04-starting-point-goal-matrix.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/05-calorie-boundary-and-links.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/06-content-and-marketing-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/07-fact-check-backlog.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/08-production-handoff.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/09-competitor-program-review.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/10-methodology-passes.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/11-course-program-v2.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/12-source-fate-and-production-map.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/analysis/stream-analysis.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/01-main-result-and-price.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/02-training-that-fits-life.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/03-author-method.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/04-weight-shape-capabilities.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/05-starting-point.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/06-cycle-week-0-1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/07-cycle-week-2-3.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/08-cycle-week-4-5.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/09-cycle-week-6.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/10-next-cycle.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/11-where-course-ends.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/12-calories-training-no-double-count.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/13-common-training-base.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/14-load-recovery-stop-rule.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/drafts/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/retrieval-task.json"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/catalog.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10379941.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10425659.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10715268.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10756513.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10757775.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10778250.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10779442.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10797468.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10797523.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/10840474.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/13277231.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/13436070.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/13741138.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/13785403.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/13894066.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/pikabu/14102926.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0029.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0082.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0096.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0115.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0145.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0149.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0199.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0200.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0208.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0210.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0226.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0228.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0232.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0262.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0572.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0645.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0656.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0657.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0658.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0663.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0665.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/author-posts/telegram/0673.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/external/evidence-index.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/transcripts/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/transcripts/training-stream-2025-notes-cp1251.txt"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/sources/transcripts/training-streams-raw-merged.txt"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/training-course-design/tools/export_author_sources.py"
     }
   ],
   "modules": [
@@ -17664,6 +18716,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/owner-decisions-2026-08-30.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/calorie-course-rebuild/owner-input-needed.md"
         },
         {
@@ -17801,6 +18857,474 @@
         {
           "module_id": "operations.project-work",
           "path": "work/calorie-course-rebuild/rebuild-v4-final-2026-08-29/validation-summary.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/architecture-checkpoint.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/course-continuity.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/evidence-report.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/media-tasks.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/owner-questions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/01-app-tracking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/02-counting-different-food.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/03-accuracy-baseline-diary.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-005.jpg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-007.jpg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-010.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/assets/06-food-diary-app-011.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-01/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/01-app-metrics.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/02-calorie-sources.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/03-adjust-current-diet.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-003.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-004.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-005.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-007.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/assets/05-menu-and-recipes-008.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-02/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/01-expenditure-calculator.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/02-steps-training-double-count.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/03-track-workouts-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/10-energy-balance-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/10-energy-balance-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/assets/13-workout-supplement-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-03/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/01-phase-deficit-pace.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/02-comparable-data.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/03-correct-the-model.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/assets/synthetic-weight-trend.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-04/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/01-repeat-meals-household-measures.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/02-rhythm-hunger-snacking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/03-stop-tracking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/08-simplify-calorie-tracking-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/08-simplify-calorie-tracking-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/assets/17-hunger-snacking-grazing-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/stage-05/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v5-editorial-2026-08-30/status.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/architecture-checkpoint.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/course-continuity.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/evidence-report.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/marketing-course-concept-draft.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media-tasks.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/01-baseline.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/02-activity.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/03-deficit.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/media/calculator-example/index.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/owner-questions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/01-app-and-why.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/02-dishes-purchased-outside.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/03-accuracy.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/04-simplify-tracking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/05-personal-recipe-catalog.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/003.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/004.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/005.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/007.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/008.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-005.jpg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-007.jpg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-010.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/assets/06-food-diary-app-011.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-01/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/01-energy-balance-calculator.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/02-training-accounting.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/03-energy-turnover-exercise-snacks.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/003.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/004.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/005.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/03-track-workouts-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/10-energy-balance-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/10-energy-balance-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/13-workout-supplement-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/activity-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/activity-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/assets/training-003.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-02/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/01-report-kbju-fat.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/02-deficit-pace-deadlines.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/03-corrections-steps-plateau.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/assets/001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/assets/synthetic-weight-trend.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-03/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/01-phases-periodization.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/02-hunger-windows-blocks.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/03-catalog-and-stop-tracking.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/003.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/004.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/005.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/08-simplify-calorie-tracking-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/08-simplify-calorie-tracking-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-001.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-002.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/assets/17-hunger-snacking-grazing-006.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/stage-04/source-use-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/calorie-course-rebuild/rebuild-v6-owner-restructure-2026-08-30/status.md"
         },
         {
           "module_id": "operations.project-work",
@@ -18428,6 +19952,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/SOURCE_BASELINE.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/free-intensive-rebuild/handoff/00-owner-thread-verbatim.md"
         },
         {
@@ -18449,6 +19977,278 @@
         {
           "module_id": "operations.project-work",
           "path": "work/free-intensive-rebuild/handoff/05-owner-long-speech-index.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/06-integration-handoff.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/handoff/07-workflow-and-voice-findings.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/01-program-v1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/02-critical-review.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/03-program-v2.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/04-source-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/05-editorial-review.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/06-production-assets.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/07-source-provenance-audit.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/08-masterclass-bridge-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/09-masterclass-bridge-critical-review.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/10-periodization-shared-source.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/11-future-content-web-concept.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/12-old-published-intensive-fate.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/13-vsl-old-day1-rebuild-brief.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/README-HISTORY.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/articles/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/author-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/fact-check-notes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/articles/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/versions/2026-08-28-before-owner-reading/video-scripts/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/history/01-rejected-first-assembly-2026-08-28/video-scripts/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/articles/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/source-ledgers/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/source-origin-report.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v2/video-scripts/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/articles/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/comparison/day-04-comparison.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-ledgers/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-manifests/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/source-origin-report.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/rebuild-v3-source-isolated/video-scripts/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/SHA256SUMS"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/articles/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/source-ledgers/day-04.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-01.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-02.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-03.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/free-intensive-rebuild/versions/03-current-owner-review-2026-08-31/video-scripts/day-04.md"
         },
         {
           "module_id": "operations.project-work",
@@ -18513,6 +20313,10 @@
         {
           "module_id": "operations.project-work",
           "path": "work/masterclass-editorial-finalization-2026-08-31/masterclass-material-audit.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-editorial-finalization-2026-08-31/next-editorial-pass-handoff.md"
         },
         {
           "module_id": "operations.project-work",
@@ -18841,6 +20645,306 @@
         {
           "module_id": "operations.project-work",
           "path": "work/recipe-catalog/visuals/prompts.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/00-version-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/01-owner-position.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/02-source-catalog.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/03-course-program.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/04-starting-point-goal-matrix.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/05-calorie-boundary-and-links.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/06-content-and-marketing-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/07-fact-check-backlog.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/08-production-handoff.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/09-competitor-program-review.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/10-methodology-passes.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/11-course-program-v2.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/12-source-fate-and-production-map.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/analysis/stream-analysis.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/01-main-result-and-price.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/02-training-that-fits-life.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/03-author-method.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/04-weight-shape-capabilities.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/05-starting-point.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/06-cycle-week-0-1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/07-cycle-week-2-3.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/08-cycle-week-4-5.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/09-cycle-week-6.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/10-next-cycle.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/11-where-course-ends.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/12-calories-training-no-double-count.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/13-common-training-base.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/14-load-recovery-stop-rule.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/drafts/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/retrieval-task.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/catalog.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10379941.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10425659.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10715268.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10756513.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10757775.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10778250.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10779442.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10797468.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10797523.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/10840474.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/13277231.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/13436070.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/13741138.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/13785403.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/13894066.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/pikabu/14102926.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0029.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0082.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0096.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0115.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0145.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0149.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0199.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0200.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0208.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0210.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0226.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0228.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0232.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0262.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0572.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0645.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0656.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0657.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0658.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0663.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0665.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/author-posts/telegram/0673.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/external/evidence-index.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/transcripts/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/transcripts/training-stream-2025-notes-cp1251.txt"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/sources/transcripts/training-streams-raw-merged.txt"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/training-course-design/tools/export_author_sources.py"
         }
       ],
       "id": "operations.project-work",
@@ -19072,6 +21176,30 @@
           "file": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py",
           "kind": "function",
           "line": 145,
+          "module_id": "operations.project-work",
+          "name": "main",
+          "qualname": "main"
+        },
+        {
+          "file": "work/training-course-design/tools/export_author_sources.py",
+          "kind": "function",
+          "line": 58,
+          "module_id": "operations.project-work",
+          "name": "safe_yaml",
+          "qualname": "safe_yaml"
+        },
+        {
+          "file": "work/training-course-design/tools/export_author_sources.py",
+          "kind": "function",
+          "line": 62,
+          "module_id": "operations.project-work",
+          "name": "output_path",
+          "qualname": "output_path"
+        },
+        {
+          "file": "work/training-course-design/tools/export_author_sources.py",
+          "kind": "function",
+          "line": 73,
           "module_id": "operations.project-work",
           "name": "main",
           "qualname": "main"
@@ -22404,6 +24532,8 @@
         "начинать authored-blocks-first с ближайшей принятой качественной версии, а не",
         "различать роли транскрипта `article_source`, `video_script` и `context_only`,",
         "выполнять преемственный рерайт под явную цель без переписывания ради замен;",
+        "принимать смешанные комментарии внутри голосового наброска, черновика или",
+        "считать структурирование одной пользовательской операцией: обычная корректура",
         "перед отдельным материалом курса учитывать оболочку всего дня и соседние",
         "прогонять новые фразы через функциональную проверку «Антинейрослоп», не",
         "маршрутизировать любую писательскую задачу через обязательный skill",
@@ -25374,7 +27504,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 109,
+          "line": 118,
           "module_id": "platform.content",
           "name": "distinct_version_groups",
           "qualname": "distinct_version_groups"
@@ -25382,7 +27512,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 132,
+          "line": 141,
           "module_id": "platform.content",
           "name": "bounded_full_text",
           "qualname": "bounded_full_text"
@@ -25390,7 +27520,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 163,
+          "line": 172,
           "module_id": "platform.content",
           "name": "bounded_complete_full_text",
           "qualname": "bounded_complete_full_text"
@@ -25398,7 +27528,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 178,
+          "line": 187,
           "module_id": "platform.content",
           "name": "authored_reuse_retrieval",
           "qualname": "authored_reuse_retrieval"
@@ -25406,7 +27536,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 248,
+          "line": 257,
           "module_id": "platform.content",
           "name": "fact_check_profile",
           "qualname": "fact_check_profile"
@@ -25414,7 +27544,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 270,
+          "line": 279,
           "module_id": "platform.content",
           "name": "build_pack",
           "qualname": "build_pack"
@@ -25422,7 +27552,7 @@
         {
           "file": "tools/prepare_author_post.py",
           "kind": "function",
-          "line": 804,
+          "line": 898,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -26398,7 +28528,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 159,
+          "line": 171,
           "module_id": "platform.content",
           "name": "test_course_material_requires_whole_day_context_and_continuity",
           "qualname": "AuthorWorkflowTests.test_course_material_requires_whole_day_context_and_continuity"
@@ -26406,7 +28536,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 218,
+          "line": 230,
           "module_id": "platform.content",
           "name": "test_new_workflow_requires_explicit_basis_and_transcript_role",
           "qualname": "AuthorWorkflowTests.test_new_workflow_requires_explicit_basis_and_transcript_role"
@@ -26414,7 +28544,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 260,
+          "line": 272,
           "module_id": "platform.content",
           "name": "test_legacy_inference_and_profile_floors",
           "qualname": "AuthorWorkflowTests.test_legacy_inference_and_profile_floors"
@@ -26422,7 +28552,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 284,
+          "line": 296,
           "module_id": "platform.content",
           "name": "test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits",
           "qualname": "AuthorWorkflowTests.test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits"
@@ -26430,7 +28560,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 333,
+          "line": 345,
           "module_id": "platform.content",
           "name": "test_structure_profile_accepts_only_allowlisted_heading_text",
           "qualname": "AuthorWorkflowTests.test_structure_profile_accepts_only_allowlisted_heading_text"
@@ -26438,7 +28568,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 346,
+          "line": 358,
           "module_id": "platform.content",
           "name": "test_structure_profile_cannot_delete_move_or_duplicate_authored_heading",
           "qualname": "AuthorWorkflowTests.test_structure_profile_cannot_delete_move_or_duplicate_authored_heading"
@@ -26446,7 +28576,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 375,
+          "line": 387,
           "module_id": "platform.content",
           "name": "test_exact_removal_ledger_is_removed_from_coverage_baseline",
           "qualname": "AuthorWorkflowTests.test_exact_removal_ledger_is_removed_from_coverage_baseline"
@@ -26454,7 +28584,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 388,
+          "line": 400,
           "module_id": "platform.content",
           "name": "test_missing_anchor_and_coverage_need_fix",
           "qualname": "AuthorWorkflowTests.test_missing_anchor_and_coverage_need_fix"
@@ -26462,7 +28592,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 402,
+          "line": 414,
           "module_id": "platform.content",
           "name": "test_validator_cli_exit_codes",
           "qualname": "AuthorWorkflowTests.test_validator_cli_exit_codes"
@@ -26470,7 +28600,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 425,
+          "line": 437,
           "module_id": "platform.content",
           "name": "test_exact_review_set_hashes_and_fact_expiry",
           "qualname": "AuthorWorkflowTests.test_exact_review_set_hashes_and_fact_expiry"
@@ -26478,7 +28608,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 473,
+          "line": 486,
           "module_id": "platform.content",
           "name": "test_fact_check_profile_follows_surface_and_can_be_overridden",
           "qualname": "AuthorWorkflowTests.test_fact_check_profile_follows_surface_and_can_be_overridden"
@@ -26486,7 +28616,39 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 542,
+          "line": 534,
+          "module_id": "platform.content",
+          "name": "test_approved_factual_targeted_edit_still_requires_semantic_review",
+          "qualname": "AuthorWorkflowTests.test_approved_factual_targeted_edit_still_requires_semantic_review"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 555,
+          "module_id": "platform.content",
+          "name": "test_proofread_preserves_intentional_spoken_tokens",
+          "qualname": "AuthorWorkflowTests.test_proofread_preserves_intentional_spoken_tokens"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 579,
+          "module_id": "platform.content",
+          "name": "test_rewrite_and_creative_rebuild_factcheck_whole_draft_without_fact_list",
+          "qualname": "AuthorWorkflowTests.test_rewrite_and_creative_rebuild_factcheck_whole_draft_without_fact_list"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 611,
+          "module_id": "platform.content",
+          "name": "test_whole_draft_fact_review_without_sources_does_not_expire",
+          "qualname": "AuthorWorkflowTests.test_whole_draft_fact_review_without_sources_does_not_expire"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 662,
           "module_id": "platform.content",
           "name": "test_required_facts_require_sources_and_editorial_wording_is_not_literal",
           "qualname": "AuthorWorkflowTests.test_required_facts_require_sources_and_editorial_wording_is_not_literal"
@@ -26494,7 +28656,111 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 592,
+          "line": 712,
+          "module_id": "platform.content",
+          "name": "test_mixed_block_instructions_are_carried_and_verbatim_is_protected",
+          "qualname": "AuthorWorkflowTests.test_mixed_block_instructions_are_carried_and_verbatim_is_protected"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 772,
+          "module_id": "platform.content",
+          "name": "test_block_instruction_source_must_be_unique_in_source",
+          "qualname": "AuthorWorkflowTests.test_block_instruction_source_must_be_unique_in_source"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 787,
+          "module_id": "platform.content",
+          "name": "test_same_block_cannot_receive_conflicting_actions",
+          "qualname": "AuthorWorkflowTests.test_same_block_cannot_receive_conflicting_actions"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 806,
+          "module_id": "platform.content",
+          "name": "test_block_instructions_require_an_addressable_target_or_assignment",
+          "qualname": "AuthorWorkflowTests.test_block_instructions_require_an_addressable_target_or_assignment"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 833,
+          "module_id": "platform.content",
+          "name": "test_find_author_material_and_write_new_are_valid_block_routes",
+          "qualname": "AuthorWorkflowTests.test_find_author_material_and_write_new_are_valid_block_routes"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 856,
+          "module_id": "platform.content",
+          "name": "test_remove_block_instruction_updates_preservation_baseline",
+          "qualname": "AuthorWorkflowTests.test_remove_block_instruction_updates_preservation_baseline"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 878,
+          "module_id": "platform.content",
+          "name": "test_verbatim_only_block_instruction_needs_no_duplicate_manual_review",
+          "qualname": "AuthorWorkflowTests.test_verbatim_only_block_instruction_needs_no_duplicate_manual_review"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 896,
+          "module_id": "platform.content",
+          "name": "test_verbatim_is_accepted_in_narrow_structure_route",
+          "qualname": "AuthorWorkflowTests.test_verbatim_is_accepted_in_narrow_structure_route"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 923,
+          "module_id": "platform.content",
+          "name": "test_light_edit_requires_addressable_manual_review",
+          "qualname": "AuthorWorkflowTests.test_light_edit_requires_addressable_manual_review"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 941,
+          "module_id": "platform.content",
+          "name": "test_marketing_brief_is_preserved_in_content_contract",
+          "qualname": "AuthorWorkflowTests.test_marketing_brief_is_preserved_in_content_contract"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 958,
+          "module_id": "platform.content",
+          "name": "test_known_marketing_brief_fields_must_be_non_empty_strings",
+          "qualname": "AuthorWorkflowTests.test_known_marketing_brief_fields_must_be_non_empty_strings"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 970,
+          "module_id": "platform.content",
+          "name": "test_substantive_block_action_cannot_run_inside_proofread",
+          "qualname": "AuthorWorkflowTests.test_substantive_block_action_cannot_run_inside_proofread"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 987,
+          "module_id": "platform.content",
+          "name": "test_light_edit_cannot_run_inside_structure_only",
+          "qualname": "AuthorWorkflowTests.test_light_edit_cannot_run_inside_structure_only"
+        },
+        {
+          "file": "tools/tests/test_author_workflow.py",
+          "kind": "method",
+          "line": 1004,
           "module_id": "platform.content",
           "name": "test_recording_correction_refreshes_semantic_counters",
           "qualname": "AuthorWorkflowTests.test_recording_correction_refreshes_semantic_counters"
@@ -26502,7 +28768,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 613,
+          "line": 1025,
           "module_id": "platform.content",
           "name": "test_health_reports_one_fresh_voice_state",
           "qualname": "AuthorWorkflowTests.test_health_reports_one_fresh_voice_state"
@@ -26510,7 +28776,7 @@
         {
           "file": "tools/tests/test_author_workflow.py",
           "kind": "method",
-          "line": 648,
+          "line": 1060,
           "module_id": "platform.content",
           "name": "test_skill_manifest_digest_ignores_text_line_endings",
           "qualname": "AuthorWorkflowTests.test_skill_manifest_digest_ignores_text_line_endings"
@@ -26768,13 +29034,21 @@
           "kind": "function",
           "line": 326,
           "module_id": "platform.content",
+          "name": "intentional_spoken_tokens",
+          "qualname": "intentional_spoken_tokens"
+        },
+        {
+          "file": "tools/validate_author_draft.py",
+          "kind": "function",
+          "line": 339,
+          "module_id": "platform.content",
           "name": "required_manual_reviews",
           "qualname": "required_manual_reviews"
         },
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 414,
+          "line": 453,
           "module_id": "platform.content",
           "name": "review_errors",
           "qualname": "review_errors"
@@ -26782,7 +29056,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 465,
+          "line": 504,
           "module_id": "platform.content",
           "name": "fact_review_expiry",
           "qualname": "fact_review_expiry"
@@ -26790,7 +29064,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 479,
+          "line": 526,
           "module_id": "platform.content",
           "name": "validate",
           "qualname": "validate"
@@ -26798,7 +29072,7 @@
         {
           "file": "tools/validate_author_draft.py",
           "kind": "function",
-          "line": 637,
+          "line": 698,
           "module_id": "platform.content",
           "name": "main",
           "qualname": "main"
@@ -59490,7 +61764,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 109,
+      "line": 118,
       "module_id": "platform.content",
       "name": "distinct_version_groups",
       "qualname": "distinct_version_groups"
@@ -59498,7 +61772,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 132,
+      "line": 141,
       "module_id": "platform.content",
       "name": "bounded_full_text",
       "qualname": "bounded_full_text"
@@ -59506,7 +61780,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 163,
+      "line": 172,
       "module_id": "platform.content",
       "name": "bounded_complete_full_text",
       "qualname": "bounded_complete_full_text"
@@ -59514,7 +61788,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 178,
+      "line": 187,
       "module_id": "platform.content",
       "name": "authored_reuse_retrieval",
       "qualname": "authored_reuse_retrieval"
@@ -59522,7 +61796,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 248,
+      "line": 257,
       "module_id": "platform.content",
       "name": "fact_check_profile",
       "qualname": "fact_check_profile"
@@ -59530,7 +61804,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 270,
+      "line": 279,
       "module_id": "platform.content",
       "name": "build_pack",
       "qualname": "build_pack"
@@ -59538,7 +61812,7 @@
     {
       "file": "tools/prepare_author_post.py",
       "kind": "function",
-      "line": 804,
+      "line": 898,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -60642,7 +62916,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 159,
+      "line": 171,
       "module_id": "platform.content",
       "name": "test_course_material_requires_whole_day_context_and_continuity",
       "qualname": "AuthorWorkflowTests.test_course_material_requires_whole_day_context_and_continuity"
@@ -60650,7 +62924,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 218,
+      "line": 230,
       "module_id": "platform.content",
       "name": "test_new_workflow_requires_explicit_basis_and_transcript_role",
       "qualname": "AuthorWorkflowTests.test_new_workflow_requires_explicit_basis_and_transcript_role"
@@ -60658,7 +62932,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 260,
+      "line": 272,
       "module_id": "platform.content",
       "name": "test_legacy_inference_and_profile_floors",
       "qualname": "AuthorWorkflowTests.test_legacy_inference_and_profile_floors"
@@ -60666,7 +62940,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 284,
+      "line": 296,
       "module_id": "platform.content",
       "name": "test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits",
       "qualname": "AuthorWorkflowTests.test_preservation_thresholds_are_inclusive_and_activate_at_exact_limits"
@@ -60674,7 +62948,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 333,
+      "line": 345,
       "module_id": "platform.content",
       "name": "test_structure_profile_accepts_only_allowlisted_heading_text",
       "qualname": "AuthorWorkflowTests.test_structure_profile_accepts_only_allowlisted_heading_text"
@@ -60682,7 +62956,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 346,
+      "line": 358,
       "module_id": "platform.content",
       "name": "test_structure_profile_cannot_delete_move_or_duplicate_authored_heading",
       "qualname": "AuthorWorkflowTests.test_structure_profile_cannot_delete_move_or_duplicate_authored_heading"
@@ -60690,7 +62964,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 375,
+      "line": 387,
       "module_id": "platform.content",
       "name": "test_exact_removal_ledger_is_removed_from_coverage_baseline",
       "qualname": "AuthorWorkflowTests.test_exact_removal_ledger_is_removed_from_coverage_baseline"
@@ -60698,7 +62972,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 388,
+      "line": 400,
       "module_id": "platform.content",
       "name": "test_missing_anchor_and_coverage_need_fix",
       "qualname": "AuthorWorkflowTests.test_missing_anchor_and_coverage_need_fix"
@@ -60706,7 +62980,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 402,
+      "line": 414,
       "module_id": "platform.content",
       "name": "test_validator_cli_exit_codes",
       "qualname": "AuthorWorkflowTests.test_validator_cli_exit_codes"
@@ -60714,7 +62988,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 425,
+      "line": 437,
       "module_id": "platform.content",
       "name": "test_exact_review_set_hashes_and_fact_expiry",
       "qualname": "AuthorWorkflowTests.test_exact_review_set_hashes_and_fact_expiry"
@@ -60722,7 +62996,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 473,
+      "line": 486,
       "module_id": "platform.content",
       "name": "test_fact_check_profile_follows_surface_and_can_be_overridden",
       "qualname": "AuthorWorkflowTests.test_fact_check_profile_follows_surface_and_can_be_overridden"
@@ -60730,7 +63004,39 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 542,
+      "line": 534,
+      "module_id": "platform.content",
+      "name": "test_approved_factual_targeted_edit_still_requires_semantic_review",
+      "qualname": "AuthorWorkflowTests.test_approved_factual_targeted_edit_still_requires_semantic_review"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 555,
+      "module_id": "platform.content",
+      "name": "test_proofread_preserves_intentional_spoken_tokens",
+      "qualname": "AuthorWorkflowTests.test_proofread_preserves_intentional_spoken_tokens"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 579,
+      "module_id": "platform.content",
+      "name": "test_rewrite_and_creative_rebuild_factcheck_whole_draft_without_fact_list",
+      "qualname": "AuthorWorkflowTests.test_rewrite_and_creative_rebuild_factcheck_whole_draft_without_fact_list"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 611,
+      "module_id": "platform.content",
+      "name": "test_whole_draft_fact_review_without_sources_does_not_expire",
+      "qualname": "AuthorWorkflowTests.test_whole_draft_fact_review_without_sources_does_not_expire"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 662,
       "module_id": "platform.content",
       "name": "test_required_facts_require_sources_and_editorial_wording_is_not_literal",
       "qualname": "AuthorWorkflowTests.test_required_facts_require_sources_and_editorial_wording_is_not_literal"
@@ -60738,7 +63044,111 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 592,
+      "line": 712,
+      "module_id": "platform.content",
+      "name": "test_mixed_block_instructions_are_carried_and_verbatim_is_protected",
+      "qualname": "AuthorWorkflowTests.test_mixed_block_instructions_are_carried_and_verbatim_is_protected"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 772,
+      "module_id": "platform.content",
+      "name": "test_block_instruction_source_must_be_unique_in_source",
+      "qualname": "AuthorWorkflowTests.test_block_instruction_source_must_be_unique_in_source"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 787,
+      "module_id": "platform.content",
+      "name": "test_same_block_cannot_receive_conflicting_actions",
+      "qualname": "AuthorWorkflowTests.test_same_block_cannot_receive_conflicting_actions"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 806,
+      "module_id": "platform.content",
+      "name": "test_block_instructions_require_an_addressable_target_or_assignment",
+      "qualname": "AuthorWorkflowTests.test_block_instructions_require_an_addressable_target_or_assignment"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 833,
+      "module_id": "platform.content",
+      "name": "test_find_author_material_and_write_new_are_valid_block_routes",
+      "qualname": "AuthorWorkflowTests.test_find_author_material_and_write_new_are_valid_block_routes"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 856,
+      "module_id": "platform.content",
+      "name": "test_remove_block_instruction_updates_preservation_baseline",
+      "qualname": "AuthorWorkflowTests.test_remove_block_instruction_updates_preservation_baseline"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 878,
+      "module_id": "platform.content",
+      "name": "test_verbatim_only_block_instruction_needs_no_duplicate_manual_review",
+      "qualname": "AuthorWorkflowTests.test_verbatim_only_block_instruction_needs_no_duplicate_manual_review"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 896,
+      "module_id": "platform.content",
+      "name": "test_verbatim_is_accepted_in_narrow_structure_route",
+      "qualname": "AuthorWorkflowTests.test_verbatim_is_accepted_in_narrow_structure_route"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 923,
+      "module_id": "platform.content",
+      "name": "test_light_edit_requires_addressable_manual_review",
+      "qualname": "AuthorWorkflowTests.test_light_edit_requires_addressable_manual_review"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 941,
+      "module_id": "platform.content",
+      "name": "test_marketing_brief_is_preserved_in_content_contract",
+      "qualname": "AuthorWorkflowTests.test_marketing_brief_is_preserved_in_content_contract"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 958,
+      "module_id": "platform.content",
+      "name": "test_known_marketing_brief_fields_must_be_non_empty_strings",
+      "qualname": "AuthorWorkflowTests.test_known_marketing_brief_fields_must_be_non_empty_strings"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 970,
+      "module_id": "platform.content",
+      "name": "test_substantive_block_action_cannot_run_inside_proofread",
+      "qualname": "AuthorWorkflowTests.test_substantive_block_action_cannot_run_inside_proofread"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 987,
+      "module_id": "platform.content",
+      "name": "test_light_edit_cannot_run_inside_structure_only",
+      "qualname": "AuthorWorkflowTests.test_light_edit_cannot_run_inside_structure_only"
+    },
+    {
+      "file": "tools/tests/test_author_workflow.py",
+      "kind": "method",
+      "line": 1004,
       "module_id": "platform.content",
       "name": "test_recording_correction_refreshes_semantic_counters",
       "qualname": "AuthorWorkflowTests.test_recording_correction_refreshes_semantic_counters"
@@ -60746,7 +63156,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 613,
+      "line": 1025,
       "module_id": "platform.content",
       "name": "test_health_reports_one_fresh_voice_state",
       "qualname": "AuthorWorkflowTests.test_health_reports_one_fresh_voice_state"
@@ -60754,7 +63164,7 @@
     {
       "file": "tools/tests/test_author_workflow.py",
       "kind": "method",
-      "line": 648,
+      "line": 1060,
       "module_id": "platform.content",
       "name": "test_skill_manifest_digest_ignores_text_line_endings",
       "qualname": "AuthorWorkflowTests.test_skill_manifest_digest_ignores_text_line_endings"
@@ -61404,13 +63814,21 @@
       "kind": "function",
       "line": 326,
       "module_id": "platform.content",
+      "name": "intentional_spoken_tokens",
+      "qualname": "intentional_spoken_tokens"
+    },
+    {
+      "file": "tools/validate_author_draft.py",
+      "kind": "function",
+      "line": 339,
+      "module_id": "platform.content",
       "name": "required_manual_reviews",
       "qualname": "required_manual_reviews"
     },
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 414,
+      "line": 453,
       "module_id": "platform.content",
       "name": "review_errors",
       "qualname": "review_errors"
@@ -61418,7 +63836,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 465,
+      "line": 504,
       "module_id": "platform.content",
       "name": "fact_review_expiry",
       "qualname": "fact_review_expiry"
@@ -61426,7 +63844,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 479,
+      "line": 526,
       "module_id": "platform.content",
       "name": "validate",
       "qualname": "validate"
@@ -61434,7 +63852,7 @@
     {
       "file": "tools/validate_author_draft.py",
       "kind": "function",
-      "line": 637,
+      "line": 698,
       "module_id": "platform.content",
       "name": "main",
       "qualname": "main"
@@ -61651,6 +64069,30 @@
       "file": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py",
       "kind": "function",
       "line": 145,
+      "module_id": "operations.project-work",
+      "name": "main",
+      "qualname": "main"
+    },
+    {
+      "file": "work/training-course-design/tools/export_author_sources.py",
+      "kind": "function",
+      "line": 58,
+      "module_id": "operations.project-work",
+      "name": "safe_yaml",
+      "qualname": "safe_yaml"
+    },
+    {
+      "file": "work/training-course-design/tools/export_author_sources.py",
+      "kind": "function",
+      "line": 62,
+      "module_id": "operations.project-work",
+      "name": "output_path",
+      "qualname": "output_path"
+    },
+    {
+      "file": "work/training-course-design/tools/export_author_sources.py",
+      "kind": "function",
+      "line": 73,
       "module_id": "operations.project-work",
       "name": "main",
       "qualname": "main"
