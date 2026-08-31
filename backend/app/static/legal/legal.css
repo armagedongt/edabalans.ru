@@ -21,7 +21,6 @@ ul,ol{padding-left:24px}
 .definition{display:grid;grid-template-columns:minmax(160px,220px) 1fr;gap:10px 24px;margin:18px 0}
 .definition dt{font-weight:700}.definition dd{margin:0;color:var(--copy)}
 .requisites{padding:20px;border:1px solid var(--line);border-radius:16px;background:var(--soft)}
-.legal-footer{margin-top:58px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
 .document-list{border-top:1px solid var(--line)}
 .document{display:block;padding:23px 0;border-bottom:1px solid var(--line);text-decoration:none}
 .document strong{display:block;margin-bottom:4px;font-size:21px}.document span{color:var(--muted)}

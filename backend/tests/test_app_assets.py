@@ -42,9 +42,17 @@ def test_stable_embed_loader_is_public() -> None:
 
 def test_course_footer_contract_is_shared_and_minimal() -> None:
     loader = client.get("/embed.js").text
-    assert "data-edabalans-legal-footer" in loader
     assert "data-edabalans-footer-owner" in loader
-    assert 'data-edabalans-footer-action="dqs-tutorial"' not in loader
+    assert 'data-edabalans-footer="private"' in loader
+    assert "function ensureFooterRenderer()" in loader
+    assert "APP_HOST + '/site-footer.js'" in loader
+    assert "renderer.mount(footer, 'private')" in loader
+    assert "footerRendererPromise = null" in loader
+    assert "footerLoadRetries >= 1" in loader
+    assert "setTimeout(append, 300)" in loader
+    assert "function legalFooterHtml" not in loader
+    assert "Копирование материалов запрещено" not in loader
+    assert "Образовательный дисклеймер" not in loader
     assert 'mount.querySelector(\'[data-edabalans-app="dqs"]\')' in loader
     assert "mount.parentElement.closest('[data-edabalans-footer-owner]')" in loader
     assert "ensureLegalFooter(mount);" in loader
@@ -55,18 +63,6 @@ def test_course_footer_contract_is_shared_and_minimal() -> None:
     assert "footer.parentElement !== host" in loader
     assert "host.appendChild(footer)" in loader
     assert "{childList: true, subtree: true}" in loader
-    footer = loader[loader.index("function legalFooterHtml"):loader.index("function ensureLegalFooter")]
-    assert "data-edabalans-footer-context" in footer
-    assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in footer
-    assert "Полное или частичное копирование запрещено" in footer
-    assert "Контакты:" in footer
-    assert 'href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a>' in footer
-    assert 'href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a>' in footer
-    assert 'href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a>' in footer
-    assert 'href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a>' in footer
-    assert "Похудение — это есть!" not in footer
-    assert "/legal/offer" not in footer
-    assert "/legal/consent" not in footer
 
 
 def test_stable_site_footer_loader_is_public() -> None:
@@ -76,80 +72,52 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "data-edabalans-site-footer" in text
+    assert "data-edabalans-footer" in text
+    assert "function publicMarkup()" in text
+    assert "function privateMarkup()" in text
+    assert "function modeFor(root, requestedMode)" in text
+    assert "requestedMode === 'private'" in text
+    assert "requestedMode === 'public'" in text
+    assert "root.getAttribute('data-edabalans-footer') === 'private' ? 'private' : 'public'" in text
+    assert "window.EdabalansFooter = {boot: boot, mount: mount}" in text
+    assert "window.EdabalansSiteFooter = window.EdabalansFooter" in text
+    assert "new MutationObserver" in text
     assert "new Date().getFullYear()" in text
     assert "ИП Воронцов Сергей Сергеевич" in text
     assert "ИНН 230409966750" in text
-    assert "Все права защищены" in text
     assert "Копирование материалов запрещено" in text
-    assert "root.innerHTML = markup(index)" in text
-    assert "roots.forEach(mount)" in text
-    assert "document.addEventListener('DOMContentLoaded', boot)" in text
-    close_all = re.search(
-        r"    function closeAll\(\) \{\n(?P<body>.*?)\n    \}\n\n    buttons\.forEach",
-        text,
-        re.DOTALL,
-    )
-    assert close_all is not None
-    assert "item.setAttribute('aria-expanded', 'false')" in close_all.group("body")
-    assert "item.hidden = false" in close_all.group("body")
-    assert "item.hidden = true" in close_all.group("body")
-    assert "panel.hidden = false" in text
-    click_handler = re.search(
-        r"button\.addEventListener\('click', function \(\) \{(?P<body>.*?)\n\s*\}\);",
-        text,
-        re.DOTALL,
-    )
-    assert click_handler is not None
-    click_body = click_handler.group("body")
-    assert click_body.index("closeAll();") < click_body.index("panel.hidden = false;")
-    assert click_body.index("button.hidden = true;") < click_body.index("panel.hidden = false;")
-    close_handler = re.search(
-        r"closeButton\.addEventListener\('click', function \(\) \{(?P<body>.*?)\n\s*\}\);",
-        response.text,
-        re.DOTALL,
-    )
-    assert close_handler is not None
-    assert "closeAll();" in close_handler.group("body")
-    assert "button.focus();" in close_handler.group("body")
-    assert "data-close-panel>Бесплатный интенсив" in response.text
-    assert "data-close-panel>Контакты" in response.text
-    assert re.search(
-        r"'<div class=\"eb-site-footer__action-group\">' \+\s*"
-        r"'<button.*?data-panel=\"' \+ intensiveId .*?</button>' \+\s*"
-        r"'<section.*?id=\"' \+ intensiveId .*?</section>' \+\s*"
-        r"'</div>' \+",
-        response.text,
-        re.DOTALL,
-    )
-    assert re.search(
-        r"'<div class=\"eb-site-footer__action-group\">' \+\s*"
-        r"'<button.*?data-panel=\"' \+ contactsId .*?</button>' \+\s*"
-        r"'<section.*?id=\"' \+ contactsId .*?</section>' \+\s*"
-        r"'</div>' \+",
-        response.text,
-        re.DOTALL,
-    )
-    assert ".eb-site-footer{box-sizing:border-box;width:100%;background:transparent" in response.text
-    assert "https://t.me/Fitness_Talks_bot?start=" in response.text
+    assert ".eb-footer{box-sizing:border-box;width:100%;background:transparent" in text
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
-    assert "LINKS.intensiveTelegram" in response.text
-    assert "Понадобится VPN" in response.text
-    assert "Пока недоступно" not in response.text
-    assert "optionLink(LINKS.telegramChannel, 'Telegram-канал')" in response.text
-    assert "optionLink(LINKS.telegram, 'Написать в Telegram')" in response.text
-    assert "optionLink(LINKS.max, 'Написать в MAX')" in response.text
-    assert "MAX-канал" in response.text
-    assert "Скоро" in response.text
     assert "https://go.похудение-это-есть.рф/legal/offer" in response.text
     assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
-    assert "https://go.похудение-это-есть.рф/legal/consent" in response.text
     assert "https://go.похудение-это-есть.рф/legal/disclaimer" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
-    assert "link(LINKS.privacy, 'Политика обработки данных')" in response.text
-    assert "link(LINKS.consent, 'Согласие на обработку данных')" in response.text
+    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
+    assert "MAX-канал" not in response.text
+    assert "Скоро" not in response.text
+    assert "Бесплатный интенсив" not in response.text
+    assert "/legal/consent" not in response.text
+    public = text[text.index("function publicMarkup"):text.index("function privateMarkup")]
+    private = text[text.index("function privateMarkup"):text.index("function ensureStyle")]
+    assert "Оферта" in public
+    assert "Образовательный дисклеймер" not in public
+    assert "Telegram-канал" in public
+    assert "ИП Воронцов Сергей Сергеевич" in public
+    assert "link(LINKS.telegram, 'Telegram')" in public
+    assert "link(LINKS.max, 'MAX')" in public
+    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in public
+    assert "cookie-settings" not in public
+    assert "Образовательный дисклеймер" in private
+    assert "Оферта" not in private
+    assert "Telegram-канал" not in private
+    assert "© ' + new Date().getFullYear() + ' Воронцов Сергей" in private
+    assert "link(LINKS.telegram, 'Telegram')" in private
+    assert "link(LINKS.max, 'MAX')" in private
+    assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in private
+    assert "cookie-settings" not in private
 
 
 def test_application_fragments_use_server_api() -> None:
@@ -285,8 +253,8 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer() -> Non
     assert "'/assets/app-shell.css'" in loader
     assert "location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk'" in loader
     assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk" in loader
-    assert "var(--ed-app-line,#e7e7ef)" in loader
-    assert "var(--ed-app-muted,#7b8094)" in loader
+    footer = client.get("/site-footer.js").text
+    assert "var(--ed-app-muted,#7b8094)" in footer
 
     fragments = {
         app_code: client.get(f"/apps/{app_code}.html").text
@@ -526,6 +494,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "«Старт» или «START»" in privacy
     assert "/stop прекращает все сообщения" in privacy
     assert "https://похудение-это-есть.рф/lk" in privacy
+    assert 'id="cookie-settings"' in privacy
     assert "платёжная система «Робокасса»" in privacy
     assert "Telegram, MAX, сервис электронной почты" not in privacy
     assert "Редакция от" not in privacy
@@ -546,7 +515,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "№ 237н" in disclaimer
     assert "№ 273-ФЗ" in disclaimer
     assert "Пользователь отвечает за достоверность" not in disclaimer
-    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in loader
+    footer_renderer = client.get("/site-footer.js").text
+    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in footer_renderer
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
@@ -914,6 +884,13 @@ def test_legal_friendly_routes_are_public() -> None:
     assert client.get("/legal/offer").status_code == 200
     assert client.get("/legal/legal.css").status_code == 200
     assert client.get("/legal/unknown").status_code == 404
+    for route in ("", "disclaimer", "privacy", "consent", "messages", "offer"):
+        suffix = f"/{route}" if route else ""
+        page = client.get(f"/legal{suffix}").text
+        assert "data-edabalans-site-footer" in page
+        assert '<script src="/site-footer.js" defer></script>' in page
+        assert "legal-footer" not in page
+        assert "data-year" not in page
 
 
 def test_intensive_concept_pages_are_public() -> None:
@@ -939,7 +916,9 @@ def test_intensive_concept_pages_are_public() -> None:
         assert "/intensiv/tpost/" in friendly.text
         assert "Переход к Мастер-классу" in friendly.text
         assert "utm_source=free_intensive" in friendly.text
-        assert "/legal/disclaimer" in friendly.text
+        assert "data-edabalans-site-footer" in friendly.text
+        assert '<script src="/site-footer.js" defer></script>' in friendly.text
+        assert '<p><a href="/legal/disclaimer">' not in friendly.text
         assert "video-script" not in friendly.text
         assert "cards" not in friendly.text
         assert "callout" not in friendly.text

@@ -137,7 +137,7 @@
     if (document.getElementById('edabalans-hide-tilda-userbar')) return;
     var style = document.createElement('style');
     style.id = 'edabalans-hide-tilda-userbar';
-    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}[data-edabalans-legal-footer] .edabalans-legal-links{text-align:right}@media(max-width:640px){[data-edabalans-legal-footer]{text-align:center}[data-edabalans-legal-footer] .edabalans-legal-links{text-align:center}}';
+    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}';
     document.head.appendChild(style);
   }
 
@@ -150,13 +150,32 @@
     document.head.appendChild(link);
   }
 
-  function legalFooterHtml() {
-    return '<footer data-edabalans-legal-footer style="box-sizing:border-box;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px 34px;width:min(1080px,100%);margin:0 auto;padding:24px 20px 34px;border-top:1px solid var(--ed-app-line,#e7e7ef);color:var(--ed-app-muted,#7b8094);font:13px/1.55 Inter,Arial,sans-serif">' +
-      '<div><div>© ' + new Date().getFullYear() + ' Воронцов Сергей</div>' +
-      '<div>Все права защищены. Полное или частичное копирование запрещено.</div></div>' +
-      '<div class="edabalans-legal-links"><div><span data-edabalans-footer-context></span>Контакты: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener" style="color:inherit">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener" style="color:inherit">MAX</a></div>' +
-      '<div style="margin-top:4px"><a href="https://go.похудение-это-есть.рф/legal/disclaimer" target="_blank" rel="noopener" style="color:inherit">Образовательный дисклеймер</a> · <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" style="color:inherit">Политика обработки данных</a></div></div>' +
-      '</footer>';
+  var footerRendererPromise;
+
+  function ensureFooterRenderer() {
+    if (window.EdabalansFooter) return Promise.resolve(window.EdabalansFooter);
+    if (footerRendererPromise) return footerRendererPromise;
+    footerRendererPromise = new Promise(function (resolve, reject) {
+      var existing = document.getElementById('edabalans-footer-renderer');
+      var script = existing || document.createElement('script');
+      function failed(error) {
+        footerRendererPromise = null;
+        if (script.parentElement) script.parentElement.removeChild(script);
+        reject(error);
+      }
+      function ready() {
+        if (window.EdabalansFooter) resolve(window.EdabalansFooter);
+        else failed(new Error('Не удалось загрузить общий подвал'));
+      }
+      script.addEventListener('load', ready, {once: true});
+      script.addEventListener('error', failed, {once: true});
+      if (!existing) {
+        script.id = 'edabalans-footer-renderer';
+        script.src = APP_HOST + '/site-footer.js';
+        document.head.appendChild(script);
+      }
+    });
+    return footerRendererPromise;
   }
 
   function legalFooterHost(mount) {
@@ -175,14 +194,23 @@
   function ensureLegalFooter(mount) {
     if (mount.parentElement && mount.parentElement.closest('[data-edabalans-footer-owner]')) return;
     mount.setAttribute('data-edabalans-footer-owner', 'true');
+    var footerLoadRetries = 0;
     function append() {
       var host = legalFooterHost(mount);
-      var footer = mount.querySelector('[data-edabalans-legal-footer]');
+      var footer = mount.querySelector('[data-edabalans-footer="private"]');
       if (!footer) {
-        host.insertAdjacentHTML('beforeend', legalFooterHtml());
-        footer = mount.querySelector('[data-edabalans-legal-footer]');
+        footer = document.createElement('div');
+        footer.setAttribute('data-edabalans-footer', 'private');
+        host.appendChild(footer);
       }
       else if (footer.parentElement !== host) host.appendChild(footer);
+      ensureFooterRenderer()
+        .then(function (renderer) { renderer.mount(footer, 'private'); })
+        .catch(function () {
+          if (footerLoadRetries >= 1) return;
+          footerLoadRetries += 1;
+          setTimeout(append, 300);
+        });
     }
     append();
     new MutationObserver(append).observe(mount, {childList: true, subtree: true});
