@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="900" viewBox="0 0 520 900" role="img" aria-labelledby="title">
+  <title id="title">Десять простых вариантов знака на основе буквы П</title>
+  <rect width="520" height="900" fill="#fff"/>
+  <text x="30" y="58" fill="#172033" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="800">10 вариантов буквы П</text>
+  <defs>
+    <symbol id="p-1" viewBox="0 0 120 120">
+      <rect x="12" y="12" width="96" height="96" rx="25" fill="#1769D2"/>
+      <path d="M35 88V34h50v54" fill="none" stroke="#fff" stroke-width="13" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="p-2" viewBox="0 0 120 120">
+      <path d="M27 94V25h66v69" fill="none" stroke="#1769D2" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="p-3" viewBox="0 0 120 120">
+      <circle cx="60" cy="60" r="52" fill="#1769D2"/>
+      <path d="M34 89V34h52v55" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="p-4" viewBox="0 0 120 120">
+      <rect x="20" y="25" width="16" height="72" rx="8" fill="#2BB4FF"/>
+      <rect x="84" y="25" width="16" height="72" rx="8" fill="#1769D2"/>
+      <rect x="20" y="25" width="80" height="16" rx="8" fill="#1769D2"/>
+    </symbol>
+    <symbol id="p-5" viewBox="0 0 120 120">
+      <path d="M14 37c0-13 10-23 23-23h46c13 0 23 10 23 23v69H82V42H38v64H14Z" fill="#1769D2"/>
+    </symbol>
+    <symbol id="p-6" viewBox="0 0 120 120">
+      <path d="M28 94V47c0-14 11-25 25-25h14c14 0 25 11 25 25v47" fill="none" stroke="#1769D2" stroke-width="12" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="p-7" viewBox="0 0 120 120">
+      <rect x="15" y="15" width="90" height="90" rx="24" fill="#EAF6FF"/>
+      <path d="M32 88V33h56v55" fill="none" stroke="#1769D2" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="60" cy="33" r="7" fill="#2BB4FF"/>
+    </symbol>
+    <symbol id="p-8" viewBox="0 0 120 120">
+      <path d="M22 96 34 24h62L84 96" fill="none" stroke="#1769D2" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="p-9" viewBox="0 0 120 120">
+      <rect x="13" y="13" width="94" height="94" rx="27" fill="none" stroke="#1769D2" stroke-width="6"/>
+      <path d="M35 87V35h50v52" fill="none" stroke="#172033" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="p-10" viewBox="0 0 120 120">
+      <rect x="15" y="15" width="90" height="90" rx="24" fill="#1769D2"/>
+      <rect x="33" y="31" width="54" height="15" rx="7.5" fill="#fff"/>
+      <rect x="33" y="31" width="15" height="58" rx="7.5" fill="#fff"/>
+      <rect x="72" y="31" width="15" height="58" rx="7.5" fill="#9DD8FF"/>
+    </symbol>
+  </defs>
+  <g font-family="Inter,Arial,sans-serif" font-size="15" font-weight="800" text-anchor="middle">
+    <g transform="translate(10 70)"><text x="25" y="25" fill="#1769D2">1</text><use href="#p-1" x="45" width="150" height="150"/></g>
+    <g transform="translate(260 70)"><text x="25" y="25" fill="#1769D2">2</text><use href="#p-2" x="45" width="150" height="150"/></g>
+    <g transform="translate(10 230)"><text x="25" y="25" fill="#1769D2">3</text><use href="#p-3" x="45" width="150" height="150"/></g>
+    <g transform="translate(260 230)"><text x="25" y="25" fill="#1769D2">4</text><use href="#p-4" x="45" width="150" height="150"/></g>
+    <g transform="translate(10 390)"><text x="25" y="25" fill="#1769D2">5</text><use href="#p-5" x="45" width="150" height="150"/></g>
+    <g transform="translate(260 390)"><text x="25" y="25" fill="#1769D2">6</text><use href="#p-6" x="45" width="150" height="150"/></g>
+    <g transform="translate(10 550)"><text x="25" y="25" fill="#1769D2">7</text><use href="#p-7" x="45" width="150" height="150"/></g>
+    <g transform="translate(260 550)"><text x="25" y="25" fill="#1769D2">8</text><use href="#p-8" x="45" width="150" height="150"/></g>
+    <g transform="translate(10 710)"><text x="25" y="25" fill="#1769D2">9</text><use href="#p-9" x="45" width="150" height="150"/></g>
+    <g transform="translate(260 710)"><text x="25" y="25" fill="#1769D2">10</text><use href="#p-10" x="45" width="150" height="150"/></g>
+  </g>
+</svg>

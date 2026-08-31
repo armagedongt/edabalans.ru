@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 150" role="img" aria-labelledby="title">
+  <title id="title">Личный кабинет, вариант ЛК</title>
+  <g transform="translate(14 14)">
+    <rect width="122" height="122" rx="35" fill="#F0F8FF"/>
+    <rect x="9" y="9" width="104" height="104" rx="28" fill="none" stroke="#1769D2" stroke-width="7"/>
+    <text x="61" y="78" fill="#1769D2" font-family="Inter,Arial,sans-serif" font-size="47" font-weight="800" text-anchor="middle">ЛК</text>
+  </g>
+  <text x="160" y="67" fill="#172033" font-family="Inter,Arial,sans-serif" font-size="38" font-weight="800" letter-spacing="-1.2">Личный</text>
+  <text x="160" y="108" fill="#1769D2" font-family="Inter,Arial,sans-serif" font-size="38" font-weight="800" letter-spacing="-1.2">кабинет</text>
+</svg>

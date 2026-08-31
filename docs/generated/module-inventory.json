@@ -4809,11 +4809,91 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/cookie-banner-variants.html"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
     },
     {
       "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/assets/crying-character.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/03-account-lk.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-square-circle-comparison.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/account-blue.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/blog-black.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/site-face.html"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-three-options.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-dot-variants.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon-circle-variants.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-icons-10.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-original-10.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue-circle.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-circle.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/scale-icons-10.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-avatar.jpg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon-circle.svg"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon.png"
     },
     {
       "module_id": "operations.project-work",
@@ -4857,7 +4937,19 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/autonomous-checkpoint.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/block-registry.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/current-homepage-inventory.md"
     },
     {
       "module_id": "operations.project-work",
@@ -4865,7 +4957,23 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/design-governance.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/design-pattern-library.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/design-source-inventory.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/homepage-information-architecture.md"
     },
     {
       "module_id": "operations.project-work",
@@ -4873,7 +4981,27 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/mobile-wireframe.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/presentation-matrix.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/pricing-block-brief-v1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/reference-analysis-v1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/reference-intake-brief.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
     },
     {
       "module_id": "operations.project-work",
@@ -18412,11 +18540,91 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/cookie-banner-variants.html"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/assets/crying-character-pain-variants.html"
         },
         {
           "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/assets/crying-character.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/03-account-lk.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-square-circle-comparison.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/account-blue.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/blog-black.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-tests/site-face.html"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/favicon-three-options.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-dot-variants.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon-circle-variants.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-favicon.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-icons-10.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-original-10.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue-circle.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-blue.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem-circle.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/p-sdelaem.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/scale-icons-10.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-avatar.jpg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon-circle.svg"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/assets/logo-concepts/telegram-channel-favicon.png"
         },
         {
           "module_id": "operations.project-work",
@@ -18460,7 +18668,19 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/autonomous-checkpoint.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/block-registry.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/current-homepage-inventory.md"
         },
         {
           "module_id": "operations.project-work",
@@ -18468,7 +18688,23 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/design-governance.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/design-pattern-library.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/design-source-inventory.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/homepage-information-architecture.md"
         },
         {
           "module_id": "operations.project-work",
@@ -18476,7 +18712,27 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/mobile-wireframe.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/presentation-matrix.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/pricing-block-brief-v1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/reference-analysis-v1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/reference-intake-brief.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
         },
         {
           "module_id": "operations.project-work",

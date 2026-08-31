@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="520" viewBox="0 0 520 520" role="img" aria-labelledby="title">
+  <title id="title">Четыре варианта знака П с точкой</title>
+  <rect width="520" height="520" fill="#fff"/>
+  <defs>
+    <g id="base">
+      <rect x="18" y="18" width="164" height="164" rx="42" fill="#1769D2"/>
+      <path d="M50 150V48h100v102" fill="none" stroke="#fff" stroke-width="25" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </defs>
+
+  <g transform="translate(25 20)">
+    <use href="#base"/>
+    <circle cx="207" cy="150" r="15" fill="#1769D2"/>
+  </g>
+  <g transform="translate(275 20)">
+    <use href="#base"/>
+    <circle cx="205" cy="144" r="19" fill="#2BB4FF"/>
+  </g>
+  <g transform="translate(25 270)">
+    <use href="#base"/>
+    <circle cx="202" cy="162" r="11" fill="#1769D2"/>
+  </g>
+  <g transform="translate(275 270)">
+    <use href="#base"/>
+    <circle cx="164" cy="164" r="13" fill="#9DD8FF"/>
+  </g>
+</svg>

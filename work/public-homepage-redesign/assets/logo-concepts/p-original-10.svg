@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="П">
+  <rect x="15" y="15" width="90" height="90" rx="24" fill="#1769D2"/>
+  <rect x="33" y="31" width="54" height="15" rx="7.5" fill="#fff"/>
+  <rect x="33" y="31" width="15" height="58" rx="7.5" fill="#fff"/>
+  <rect x="72" y="31" width="15" height="58" rx="7.5" fill="#9DD8FF"/>
+</svg>
