@@ -217,6 +217,22 @@ def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
     app.dependency_overrides.clear()
 
 
+def test_preview_reads_active_prices_without_enabling_public_checkout() -> None:
+    client, factory = make_client(enabled=False)
+    version_id = seed_draft(factory)
+    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+
+    preview = client.get("/api/pricing/site/preview")
+    assert preview.status_code == 200
+    assert preview.json()["tariffs"][0]["sale_amount"] == 15900
+    assert client.get("/api/pricing/site").status_code == 503
+    assert client.post(
+        "/api/pricing/site/checkout",
+        json={"price_code": "site.masterclass.consult"},
+    ).status_code == 503
+    app.dependency_overrides.clear()
+
+
 def test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot() -> None:
     client, factory = make_client(enabled=True)
     version_id = seed_draft(factory)

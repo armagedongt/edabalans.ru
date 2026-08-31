@@ -102,7 +102,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         assert marker in response.text
     for theme in ("white", "blue-mist", "blue-rhythm", "blue-crescendo"):
         assert f'data-page-theme-button="{theme}"' in response.text
-    assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site/preview"' in response.text
     assert "previewPricingCatalog" not in response.text
 
 

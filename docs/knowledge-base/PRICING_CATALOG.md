@@ -80,6 +80,11 @@ Telegram, MAX и будущие каналы не должны хранить с
 версию неизменяемой, но пока `PRICING_CATALOG_ENABLED=false`, даже опубликованная
 версия не влияет на текущий сайт и действующие покупки.
 
+Для `noindex`-предпросмотра новой главной доступен отдельный read-only
+route `/api/pricing/site/preview`. Он читает ту же активную версию PostgreSQL,
+но не включает `/api/pricing/site/checkout` и не меняет
+`PRICING_CATALOG_ENABLED`.
+
 ## Новый сайт и Tilda
 
 После переключения:

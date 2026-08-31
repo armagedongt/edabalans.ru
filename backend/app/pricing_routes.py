@@ -137,12 +137,7 @@ def admin_publish_pricing_version(
     }
 
 
-@router.get("/api/pricing/site")
-def public_site_pricing(
-    db: Session = Depends(get_db), settings: Settings = Depends(get_settings)
-) -> dict:
-    if not settings.pricing_catalog_enabled:
-        raise HTTPException(503, "Новый серверный каталог цен ещё не включён")
+def site_pricing_payload(db: Session) -> dict:
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
@@ -166,6 +161,21 @@ def public_site_pricing(
         "effective_from": version.effective_from.isoformat() if version.effective_from else None,
         "tariffs": entries,
     }
+
+
+@router.get("/api/pricing/site")
+def public_site_pricing(
+    db: Session = Depends(get_db), settings: Settings = Depends(get_settings)
+) -> dict:
+    if not settings.pricing_catalog_enabled:
+        raise HTTPException(503, "Новый серверный каталог цен ещё не включён")
+    return site_pricing_payload(db)
+
+
+@router.get("/api/pricing/site/preview")
+def public_site_pricing_preview(db: Session = Depends(get_db)) -> dict:
+    """Expose active display prices to noindex previews without enabling checkout."""
+    return site_pricing_payload(db)
 
 
 @router.post("/api/pricing/site/checkout")

@@ -20920,7 +20920,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 141,
+          "line": 167,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site",
@@ -20928,11 +20928,19 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 172,
+          "line": 182,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site/checkout",
           "symbol": "public_site_checkout"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "line": 176,
+          "method": "GET",
+          "module_id": "platform.commerce",
+          "path": "/api/pricing/site/preview",
+          "symbol": "public_site_pricing_preview"
         },
         {
           "file": "backend/app/tilda_routes.py",
@@ -21342,7 +21350,15 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 141,
+          "line": 140,
+          "module_id": "platform.commerce",
+          "name": "site_pricing_payload",
+          "qualname": "site_pricing_payload"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 167,
           "module_id": "platform.commerce",
           "name": "public_site_pricing",
           "qualname": "public_site_pricing"
@@ -21350,7 +21366,15 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 172,
+          "line": 176,
+          "module_id": "platform.commerce",
+          "name": "public_site_pricing_preview",
+          "qualname": "public_site_pricing_preview"
+        },
+        {
+          "file": "backend/app/pricing_routes.py",
+          "kind": "function",
+          "line": 182,
           "module_id": "platform.commerce",
           "name": "public_site_checkout",
           "qualname": "public_site_checkout"
@@ -21856,13 +21880,21 @@
           "kind": "function",
           "line": 220,
           "module_id": "platform.commerce",
+          "name": "test_preview_reads_active_prices_without_enabling_public_checkout",
+          "qualname": "test_preview_reads_active_prices_without_enabling_public_checkout"
+        },
+        {
+          "file": "backend/tests/test_pricing_catalog.py",
+          "kind": "function",
+          "line": 236,
+          "module_id": "platform.commerce",
           "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
           "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
         },
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 268,
+          "line": 284,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
           "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -38622,7 +38654,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 141,
+      "line": 167,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site",
@@ -38630,11 +38662,19 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 172,
+      "line": 182,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site/checkout",
       "symbol": "public_site_checkout"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "line": 176,
+      "method": "GET",
+      "module_id": "platform.commerce",
+      "path": "/api/pricing/site/preview",
+      "symbol": "public_site_pricing_preview"
     },
     {
       "file": "backend/app/public_video_analytics_routes.py",
@@ -45490,7 +45530,15 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 141,
+      "line": 140,
+      "module_id": "platform.commerce",
+      "name": "site_pricing_payload",
+      "qualname": "site_pricing_payload"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 167,
       "module_id": "platform.commerce",
       "name": "public_site_pricing",
       "qualname": "public_site_pricing"
@@ -45498,7 +45546,15 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 172,
+      "line": 176,
+      "module_id": "platform.commerce",
+      "name": "public_site_pricing_preview",
+      "qualname": "public_site_pricing_preview"
+    },
+    {
+      "file": "backend/app/pricing_routes.py",
+      "kind": "function",
+      "line": 182,
       "module_id": "platform.commerce",
       "name": "public_site_checkout",
       "qualname": "public_site_checkout"
@@ -51236,13 +51292,21 @@
       "kind": "function",
       "line": 220,
       "module_id": "platform.commerce",
+      "name": "test_preview_reads_active_prices_without_enabling_public_checkout",
+      "qualname": "test_preview_reads_active_prices_without_enabling_public_checkout"
+    },
+    {
+      "file": "backend/tests/test_pricing_catalog.py",
+      "kind": "function",
+      "line": 236,
+      "module_id": "platform.commerce",
       "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
       "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
     },
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 268,
+      "line": 284,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
       "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
