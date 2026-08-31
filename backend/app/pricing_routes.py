@@ -17,6 +17,7 @@ from app.models import OfferCheckout, PricingVersion
 from app.pricing_service import (
     active_pricing_version,
     create_draft,
+    latest_pricing_version,
     pricing_entry_map,
     publish_draft,
     serialize_entry,
@@ -137,10 +138,7 @@ def admin_publish_pricing_version(
     }
 
 
-def site_pricing_payload(db: Session) -> dict:
-    version = active_pricing_version(db)
-    if version is None:
-        raise HTTPException(503, "Активная версия цен не опубликована")
+def site_pricing_payload(db: Session, version: PricingVersion) -> dict:
     entries = []
     for entry in pricing_entry_map(db, version).values():
         if entry.section != "site_tariffs" or not entry.enabled:
@@ -169,13 +167,19 @@ def public_site_pricing(
 ) -> dict:
     if not settings.pricing_catalog_enabled:
         raise HTTPException(503, "Новый серверный каталог цен ещё не включён")
-    return site_pricing_payload(db)
+    version = active_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Активная версия цен не опубликована")
+    return site_pricing_payload(db, version)
 
 
 @router.get("/api/pricing/site/preview")
 def public_site_pricing_preview(db: Session = Depends(get_db)) -> dict:
-    """Expose active display prices to noindex previews without enabling checkout."""
-    return site_pricing_payload(db)
+    """Expose current display prices to noindex previews without enabling checkout."""
+    version = active_pricing_version(db) or latest_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Версия цен для preview не создана")
+    return site_pricing_payload(db, version)
 
 
 @router.post("/api/pricing/site/checkout")

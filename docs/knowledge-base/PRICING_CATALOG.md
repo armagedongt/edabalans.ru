@@ -81,8 +81,9 @@ Telegram, MAX и будущие каналы не должны хранить с
 версия не влияет на текущий сайт и действующие покупки.
 
 Для `noindex`-предпросмотра новой главной доступен отдельный read-only
-route `/api/pricing/site/preview`. Он читает ту же активную версию PostgreSQL,
-но не включает `/api/pricing/site/checkout` и не меняет
+route `/api/pricing/site/preview`. Он читает активную версию PostgreSQL, а до
+первой публикации — самый свежий черновик. Preview остаётся read-only:
+он не включает `/api/pricing/site/checkout`, не публикует черновик и не меняет
 `PRICING_CATALOG_ENABLED`.
 
 ## Новый сайт и Tilda

@@ -219,8 +219,7 @@ def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
 
 def test_preview_reads_active_prices_without_enabling_public_checkout() -> None:
     client, factory = make_client(enabled=False)
-    version_id = seed_draft(factory)
-    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+    seed_draft(factory)
 
     preview = client.get("/api/pricing/site/preview")
     assert preview.status_code == 200

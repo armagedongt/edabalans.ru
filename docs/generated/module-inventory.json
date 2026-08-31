@@ -20888,7 +20888,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 63,
+          "line": 64,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing",
@@ -20896,7 +20896,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 79,
+          "line": 80,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/drafts",
@@ -20904,7 +20904,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 87,
+          "line": 88,
           "method": "PUT",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/versions/{version_id}",
@@ -20912,7 +20912,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 120,
+          "line": 121,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/admin/api/pricing/versions/{version_id}/publish",
@@ -20920,7 +20920,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 167,
+          "line": 165,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site",
@@ -20928,7 +20928,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 182,
+          "line": 186,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site/checkout",
@@ -20936,7 +20936,7 @@
         },
         {
           "file": "backend/app/pricing_routes.py",
-          "line": 176,
+          "line": 177,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/pricing/site/preview",
@@ -21278,7 +21278,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 32,
+          "line": 33,
           "module_id": "platform.commerce",
           "name": "PriceEntryUpdate",
           "qualname": "PriceEntryUpdate"
@@ -21286,7 +21286,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "method",
-          "line": 40,
+          "line": 41,
           "module_id": "platform.commerce",
           "name": "validate_prices",
           "qualname": "PriceEntryUpdate.validate_prices"
@@ -21294,7 +21294,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 48,
+          "line": 49,
           "module_id": "platform.commerce",
           "name": "PricingDraftUpdate",
           "qualname": "PricingDraftUpdate"
@@ -21302,7 +21302,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "class",
-          "line": 54,
+          "line": 55,
           "module_id": "platform.commerce",
           "name": "PublicCheckoutIn",
           "qualname": "PublicCheckoutIn"
@@ -21310,7 +21310,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 58,
+          "line": 59,
           "module_id": "platform.commerce",
           "name": "safe_order_name",
           "qualname": "safe_order_name"
@@ -21318,7 +21318,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 63,
+          "line": 64,
           "module_id": "platform.commerce",
           "name": "admin_pricing",
           "qualname": "admin_pricing"
@@ -21326,7 +21326,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 79,
+          "line": 80,
           "module_id": "platform.commerce",
           "name": "admin_create_pricing_draft",
           "qualname": "admin_create_pricing_draft"
@@ -21334,7 +21334,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 87,
+          "line": 88,
           "module_id": "platform.commerce",
           "name": "admin_update_pricing_draft",
           "qualname": "admin_update_pricing_draft"
@@ -21342,7 +21342,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 120,
+          "line": 121,
           "module_id": "platform.commerce",
           "name": "admin_publish_pricing_version",
           "qualname": "admin_publish_pricing_version"
@@ -21350,7 +21350,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 140,
+          "line": 141,
           "module_id": "platform.commerce",
           "name": "site_pricing_payload",
           "qualname": "site_pricing_payload"
@@ -21358,7 +21358,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 167,
+          "line": 165,
           "module_id": "platform.commerce",
           "name": "public_site_pricing",
           "qualname": "public_site_pricing"
@@ -21366,7 +21366,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 176,
+          "line": 177,
           "module_id": "platform.commerce",
           "name": "public_site_pricing_preview",
           "qualname": "public_site_pricing_preview"
@@ -21374,7 +21374,7 @@
         {
           "file": "backend/app/pricing_routes.py",
           "kind": "function",
-          "line": 182,
+          "line": 186,
           "module_id": "platform.commerce",
           "name": "public_site_checkout",
           "qualname": "public_site_checkout"
@@ -21886,7 +21886,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 236,
+          "line": 235,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
           "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -21894,7 +21894,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 284,
+          "line": 283,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
           "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -37846,7 +37846,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 63,
+      "line": 64,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing",
@@ -37854,7 +37854,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 79,
+      "line": 80,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/drafts",
@@ -37862,7 +37862,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 87,
+      "line": 88,
       "method": "PUT",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/versions/{version_id}",
@@ -37870,7 +37870,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 120,
+      "line": 121,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/admin/api/pricing/versions/{version_id}/publish",
@@ -38654,7 +38654,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 167,
+      "line": 165,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site",
@@ -38662,7 +38662,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 182,
+      "line": 186,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site/checkout",
@@ -38670,7 +38670,7 @@
     },
     {
       "file": "backend/app/pricing_routes.py",
-      "line": 176,
+      "line": 177,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/pricing/site/preview",
@@ -45458,7 +45458,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 32,
+      "line": 33,
       "module_id": "platform.commerce",
       "name": "PriceEntryUpdate",
       "qualname": "PriceEntryUpdate"
@@ -45466,7 +45466,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "method",
-      "line": 40,
+      "line": 41,
       "module_id": "platform.commerce",
       "name": "validate_prices",
       "qualname": "PriceEntryUpdate.validate_prices"
@@ -45474,7 +45474,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 48,
+      "line": 49,
       "module_id": "platform.commerce",
       "name": "PricingDraftUpdate",
       "qualname": "PricingDraftUpdate"
@@ -45482,7 +45482,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
-      "line": 54,
+      "line": 55,
       "module_id": "platform.commerce",
       "name": "PublicCheckoutIn",
       "qualname": "PublicCheckoutIn"
@@ -45490,7 +45490,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 58,
+      "line": 59,
       "module_id": "platform.commerce",
       "name": "safe_order_name",
       "qualname": "safe_order_name"
@@ -45498,7 +45498,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 63,
+      "line": 64,
       "module_id": "platform.commerce",
       "name": "admin_pricing",
       "qualname": "admin_pricing"
@@ -45506,7 +45506,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 79,
+      "line": 80,
       "module_id": "platform.commerce",
       "name": "admin_create_pricing_draft",
       "qualname": "admin_create_pricing_draft"
@@ -45514,7 +45514,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 87,
+      "line": 88,
       "module_id": "platform.commerce",
       "name": "admin_update_pricing_draft",
       "qualname": "admin_update_pricing_draft"
@@ -45522,7 +45522,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 120,
+      "line": 121,
       "module_id": "platform.commerce",
       "name": "admin_publish_pricing_version",
       "qualname": "admin_publish_pricing_version"
@@ -45530,7 +45530,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 140,
+      "line": 141,
       "module_id": "platform.commerce",
       "name": "site_pricing_payload",
       "qualname": "site_pricing_payload"
@@ -45538,7 +45538,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 167,
+      "line": 165,
       "module_id": "platform.commerce",
       "name": "public_site_pricing",
       "qualname": "public_site_pricing"
@@ -45546,7 +45546,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 176,
+      "line": 177,
       "module_id": "platform.commerce",
       "name": "public_site_pricing_preview",
       "qualname": "public_site_pricing_preview"
@@ -45554,7 +45554,7 @@
     {
       "file": "backend/app/pricing_routes.py",
       "kind": "function",
-      "line": 182,
+      "line": 186,
       "module_id": "platform.commerce",
       "name": "public_site_checkout",
       "qualname": "public_site_checkout"
@@ -51298,7 +51298,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 236,
+      "line": 235,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
       "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -51306,7 +51306,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 284,
+      "line": 283,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
       "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
