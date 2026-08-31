@@ -1259,3 +1259,30 @@ class KnowledgeUsageEvent(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
+
+
+class PublicVideoView(TimestampMixin, Base):
+    """Aggregated, anonymous viewing state for one public video session."""
+
+    __tablename__ = "public_video_views"
+    __table_args__ = (
+        Index("ix_public_video_views_video_created", "video_id", "created_at"),
+        Index("ix_public_video_views_viewer", "viewer_key"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    session_id: Mapped[str] = mapped_column(String(36), unique=True, nullable=False)
+    viewer_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    video_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    page_path: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="engaged", nullable=False)
+    last_event_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    last_position_sec: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    max_position_sec: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    watched_buckets: Mapped[list] = mapped_column(JSON, default=list, nullable=False)
+    event_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    completed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+    engaged_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    last_event_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    exited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

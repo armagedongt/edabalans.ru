@@ -308,6 +308,10 @@
       "path": "backend/app/public_cta_catalog.py"
     },
     {
+      "module_id": "products",
+      "path": "backend/app/public_video_analytics_routes.py"
+    },
+    {
       "module_id": "products.recipes",
       "path": "backend/app/recipe_models.py"
     },
@@ -816,6 +820,10 @@
       "path": "backend/migrations/versions/20260831_0032_application_preview_access.py"
     },
     {
+      "module_id": "products",
+      "path": "backend/migrations/versions/20260831_0033_public_video_analytics.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "backend/requirements-collector.txt"
     },
@@ -958,6 +966,10 @@
     {
       "module_id": "products.catalog",
       "path": "backend/tests/test_product_copy_migration.py"
+    },
+    {
+      "module_id": "products",
+      "path": "backend/tests/test_public_video_analytics.py"
     },
     {
       "module_id": "products.recipes",
@@ -2134,6 +2146,10 @@
     {
       "module_id": "products.catalog",
       "path": "docs/knowledge-base/PRODUCT_CATALOG.md"
+    },
+    {
+      "module_id": "products",
+      "path": "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md"
     },
     {
       "module_id": "admin.project-knowledge",
@@ -4850,6 +4866,10 @@
     {
       "module_id": "operations.project-work",
       "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
     },
     {
       "module_id": "operations.project-work",
@@ -13649,6 +13669,14 @@
           "qualname": "KnowledgeUsageEvent"
         },
         {
+          "file": "backend/app/models.py",
+          "kind": "class",
+          "line": 1264,
+          "module_id": "operations.database",
+          "name": "PublicVideoView",
+          "qualname": "PublicVideoView"
+        },
+        {
           "file": "backend/migrations/env.py",
           "kind": "function",
           "line": 19,
@@ -13800,7 +13828,7 @@
       "routes": [
         {
           "file": "backend/app/main.py",
-          "line": 68,
+          "line": 70,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/health",
@@ -13808,7 +13836,7 @@
         },
         {
           "file": "backend/app/main.py",
-          "line": 74,
+          "line": 76,
           "method": "GET",
           "module_id": "operations.delivery",
           "path": "/ready",
@@ -13854,7 +13882,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 34,
+          "line": 35,
           "module_id": "operations.delivery",
           "name": "lifespan",
           "qualname": "lifespan"
@@ -13862,7 +13890,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 68,
+          "line": 70,
           "module_id": "operations.delivery",
           "name": "health",
           "qualname": "health"
@@ -13870,7 +13898,7 @@
         {
           "file": "backend/app/main.py",
           "kind": "function",
-          "line": 74,
+          "line": 76,
           "module_id": "operations.delivery",
           "name": "ready",
           "qualname": "ready"
@@ -18441,6 +18469,10 @@
         {
           "module_id": "operations.project-work",
           "path": "work/public-homepage-redesign/faq-block-brief-v1.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
         },
         {
           "module_id": "operations.project-work",
@@ -28031,7 +28063,8 @@
         "использовать единую карту цветов, три радиуса и повторяемые типы карточек из",
         "показывать незавершённые продукты единым статусом «Скоро», отличая их от готовых",
         "показывать общий юридический подвал внутри доступной контентной области приложения;",
-        "временно публиковать отдельные `noindex`-предпросмотры принятых блоков новой"
+        "временно публиковать отдельные `noindex`-предпросмотры принятых блоков новой",
+        "обезличенно учитывать осознанные просмотры публичного VSL, начиная только после"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.md",
       "document_status": "current",
@@ -28043,6 +28076,10 @@
         {
           "module_id": "products",
           "path": "backend/app/app_service.py"
+        },
+        {
+          "module_id": "products",
+          "path": "backend/app/public_video_analytics_routes.py"
         },
         {
           "module_id": "products",
@@ -28114,6 +28151,10 @@
         },
         {
           "module_id": "products",
+          "path": "backend/migrations/versions/20260831_0033_public_video_analytics.py"
+        },
+        {
+          "module_id": "products",
           "path": "backend/tests/test_admin_apps.py"
         },
         {
@@ -28126,11 +28167,19 @@
         },
         {
           "module_id": "products",
+          "path": "backend/tests/test_public_video_analytics.py"
+        },
+        {
+          "module_id": "products",
           "path": "docs/APPLICATION_BACKLOG.md"
         },
         {
           "module_id": "products",
           "path": "docs/APPLICATION_PLATFORM.md"
+        },
+        {
+          "module_id": "products",
+          "path": "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md"
         },
         {
           "module_id": "products",
@@ -28216,6 +28265,14 @@
           "module_id": "products",
           "path": "/blog/assets/{asset_name}",
           "symbol": "blog_asset"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "line": 116,
+          "method": "POST",
+          "module_id": "products",
+          "path": "/api/public/video-analytics",
+          "symbol": "collect_public_video_analytics"
         }
       ],
       "runtime_services": [],
@@ -28421,6 +28478,62 @@
           "module_id": "products",
           "name": "blog_asset",
           "qualname": "blog_asset"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "class",
+          "line": 30,
+          "module_id": "products",
+          "name": "PublicVideoAnalyticsIn",
+          "qualname": "PublicVideoAnalyticsIn"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 47,
+          "module_id": "products",
+          "name": "validate_video_id",
+          "qualname": "PublicVideoAnalyticsIn.validate_video_id"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 54,
+          "module_id": "products",
+          "name": "validate_page_path",
+          "qualname": "PublicVideoAnalyticsIn.validate_page_path"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "method",
+          "line": 61,
+          "module_id": "products",
+          "name": "validate_watched_buckets",
+          "qualname": "PublicVideoAnalyticsIn.validate_watched_buckets"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 73,
+          "module_id": "products",
+          "name": "viewer_key",
+          "qualname": "viewer_key"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "products",
+          "name": "enforce_rate_limit",
+          "qualname": "enforce_rate_limit"
+        },
+        {
+          "file": "backend/app/public_video_analytics_routes.py",
+          "kind": "function",
+          "line": 116,
+          "module_id": "products",
+          "name": "collect_public_video_analytics",
+          "qualname": "collect_public_video_analytics"
         },
         {
           "file": "backend/app/static/content-gallery.js",
@@ -28751,6 +28864,22 @@
           "qualname": "observe"
         },
         {
+          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+          "kind": "function",
+          "line": 18,
+          "module_id": "products",
+          "name": "upgrade",
+          "qualname": "upgrade"
+        },
+        {
+          "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "products",
+          "name": "downgrade",
+          "qualname": "downgrade"
+        },
+        {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
           "line": 30,
@@ -29041,13 +29170,101 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 105,
+          "line": 109,
+          "module_id": "products",
+          "name": "test_homepage_vsl_uses_first_engagement_and_server_analytics",
+          "qualname": "test_homepage_vsl_uses_first_engagement_and_server_analytics"
+        },
+        {
+          "file": "backend/tests/test_homepage_preview.py",
+          "kind": "function",
+          "line": 121,
           "module_id": "products",
           "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
           "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 17,
+          "module_id": "products",
+          "name": "make_client",
+          "qualname": "make_client"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 26,
+          "module_id": "products",
+          "name": "override_db",
+          "qualname": "make_client.override_db"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 34,
+          "module_id": "products",
+          "name": "payload",
+          "qualname": "payload"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "products",
+          "name": "test_engagement_creates_one_anonymous_session",
+          "qualname": "test_engagement_creates_one_anonymous_session"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 66,
+          "module_id": "products",
+          "name": "test_progress_merges_buckets_and_positions_idempotently",
+          "qualname": "test_progress_merges_buckets_and_positions_idempotently"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 94,
+          "module_id": "products",
+          "name": "test_completion_is_sticky_after_exit",
+          "qualname": "test_completion_is_sticky_after_exit"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 119,
+          "module_id": "products",
+          "name": "test_session_rejects_another_viewer_and_invalid_payloads",
+          "qualname": "test_session_rejects_another_viewer_and_invalid_payloads"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 139,
+          "module_id": "products",
+          "name": "test_progress_cannot_create_a_session_without_engagement",
+          "qualname": "test_progress_cannot_create_a_session_without_engagement"
+        },
+        {
+          "file": "backend/tests/test_public_video_analytics.py",
+          "kind": "function",
+          "line": 151,
+          "module_id": "products",
+          "name": "test_new_sessions_are_rate_limited_per_network_client",
+          "qualname": "test_new_sessions_are_rate_limited_per_network_client"
         }
       ],
-      "tables": [],
+      "tables": [
+        {
+          "file": "backend/app/models.py",
+          "line": 1267,
+          "module_id": "products",
+          "name": "public_video_views",
+          "source": "orm"
+        }
+      ],
       "telegram": null,
       "title": "Продукты и клиентские приложения",
       "truths": [
@@ -38420,6 +38637,14 @@
       "symbol": "public_site_checkout"
     },
     {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "line": 116,
+      "method": "POST",
+      "module_id": "products",
+      "path": "/api/public/video-analytics",
+      "symbol": "collect_public_video_analytics"
+    },
+    {
       "file": "backend/app/app_routes.py",
       "line": 188,
       "method": "GET",
@@ -39029,7 +39254,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 68,
+      "line": 70,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/health",
@@ -39173,7 +39398,7 @@
     },
     {
       "file": "backend/app/main.py",
-      "line": 74,
+      "line": 76,
       "method": "GET",
       "module_id": "operations.delivery",
       "path": "/ready",
@@ -43865,7 +44090,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 34,
+      "line": 35,
       "module_id": "operations.delivery",
       "name": "lifespan",
       "qualname": "lifespan"
@@ -43873,7 +44098,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 68,
+      "line": 70,
       "module_id": "operations.delivery",
       "name": "health",
       "qualname": "health"
@@ -43881,7 +44106,7 @@
     {
       "file": "backend/app/main.py",
       "kind": "function",
-      "line": 74,
+      "line": 76,
       "module_id": "operations.delivery",
       "name": "ready",
       "qualname": "ready"
@@ -45183,6 +45408,14 @@
       "qualname": "KnowledgeUsageEvent"
     },
     {
+      "file": "backend/app/models.py",
+      "kind": "class",
+      "line": 1264,
+      "module_id": "operations.database",
+      "name": "PublicVideoView",
+      "qualname": "PublicVideoView"
+    },
+    {
       "file": "backend/app/pricing_routes.py",
       "kind": "class",
       "line": 32,
@@ -45509,6 +45742,62 @@
       "module_id": "platform.blog",
       "name": "public_cta",
       "qualname": "public_cta"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "class",
+      "line": 30,
+      "module_id": "products",
+      "name": "PublicVideoAnalyticsIn",
+      "qualname": "PublicVideoAnalyticsIn"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "method",
+      "line": 47,
+      "module_id": "products",
+      "name": "validate_video_id",
+      "qualname": "PublicVideoAnalyticsIn.validate_video_id"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "method",
+      "line": 54,
+      "module_id": "products",
+      "name": "validate_page_path",
+      "qualname": "PublicVideoAnalyticsIn.validate_page_path"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "method",
+      "line": 61,
+      "module_id": "products",
+      "name": "validate_watched_buckets",
+      "qualname": "PublicVideoAnalyticsIn.validate_watched_buckets"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "function",
+      "line": 73,
+      "module_id": "products",
+      "name": "viewer_key",
+      "qualname": "viewer_key"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "products",
+      "name": "enforce_rate_limit",
+      "qualname": "enforce_rate_limit"
+    },
+    {
+      "file": "backend/app/public_video_analytics_routes.py",
+      "kind": "function",
+      "line": 116,
+      "module_id": "products",
+      "name": "collect_public_video_analytics",
+      "qualname": "collect_public_video_analytics"
     },
     {
       "file": "backend/app/recipe_models.py",
@@ -48383,6 +48672,22 @@
       "qualname": "downgrade"
     },
     {
+      "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+      "kind": "function",
+      "line": 18,
+      "module_id": "products",
+      "name": "upgrade",
+      "qualname": "upgrade"
+    },
+    {
+      "file": "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "products",
+      "name": "downgrade",
+      "qualname": "downgrade"
+    },
+    {
       "file": "backend/scripts/generate_masterclass_offer_simulator.py",
       "kind": "function",
       "line": 69,
@@ -49673,7 +49978,15 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 105,
+      "line": 109,
+      "module_id": "products",
+      "name": "test_homepage_vsl_uses_first_engagement_and_server_analytics",
+      "qualname": "test_homepage_vsl_uses_first_engagement_and_server_analytics"
+    },
+    {
+      "file": "backend/tests/test_homepage_preview.py",
+      "kind": "function",
+      "line": 121,
       "module_id": "products",
       "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
       "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
@@ -50949,6 +51262,78 @@
       "module_id": "products.catalog",
       "name": "test_upgrade_publishes_a_new_active_version_for_existing_catalog",
       "qualname": "test_upgrade_publishes_a_new_active_version_for_existing_catalog"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 17,
+      "module_id": "products",
+      "name": "make_client",
+      "qualname": "make_client"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 26,
+      "module_id": "products",
+      "name": "override_db",
+      "qualname": "make_client.override_db"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 34,
+      "module_id": "products",
+      "name": "payload",
+      "qualname": "payload"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "products",
+      "name": "test_engagement_creates_one_anonymous_session",
+      "qualname": "test_engagement_creates_one_anonymous_session"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 66,
+      "module_id": "products",
+      "name": "test_progress_merges_buckets_and_positions_idempotently",
+      "qualname": "test_progress_merges_buckets_and_positions_idempotently"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 94,
+      "module_id": "products",
+      "name": "test_completion_is_sticky_after_exit",
+      "qualname": "test_completion_is_sticky_after_exit"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 119,
+      "module_id": "products",
+      "name": "test_session_rejects_another_viewer_and_invalid_payloads",
+      "qualname": "test_session_rejects_another_viewer_and_invalid_payloads"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 139,
+      "module_id": "products",
+      "name": "test_progress_cannot_create_a_session_without_engagement",
+      "qualname": "test_progress_cannot_create_a_session_without_engagement"
+    },
+    {
+      "file": "backend/tests/test_public_video_analytics.py",
+      "kind": "function",
+      "line": 151,
+      "module_id": "products",
+      "name": "test_new_sessions_are_rate_limited_per_network_client",
+      "qualname": "test_new_sessions_are_rate_limited_per_network_client"
     },
     {
       "file": "backend/tests/test_recipe_calculator.py",
@@ -61306,6 +61691,13 @@
       "line": 157,
       "module_id": "platform.commerce",
       "name": "products",
+      "source": "orm"
+    },
+    {
+      "file": "backend/app/models.py",
+      "line": 1267,
+      "module_id": "products",
+      "name": "public_video_views",
       "source": "orm"
     },
     {

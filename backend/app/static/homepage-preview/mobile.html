@@ -679,12 +679,37 @@
 
     html{scroll-behavior:smooth;background:#fff}
     body{overflow-x:hidden;background:#fff}
-    .homepage-chain{display:block;min-width:0;overflow:clip}
-    .chain-block{position:relative;min-width:0}
-    .chain-block--before-after{padding:34px 0 56px;background:#fff}
-    .chain-block--pricing{padding:20px 0 74px;background:#fff}
-    .chain-block--faq{padding:0 0 54px;background:#fff}
-    .chain-block--final{background:#087aca;color:#fff}
+    .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:#fff}
+    .chain-block{position:relative;z-index:1;min-width:0}
+    .chain-block--before-after{padding:34px 0 56px;background:transparent}
+    .chain-block--pricing{padding:20px 0 74px;background:transparent}
+    .chain-block--faq{padding:0 0 54px;background:transparent}
+    .chain-block--final{background:transparent;color:#fff}
+    .site-hero,.argument-intro,.argument,.method-transition,.recognition__scene{background:transparent}
+    body[data-page-theme="blue-mist"] .homepage-chain{
+      background:
+        radial-gradient(ellipse 84% 13% at 12% 10%,rgba(102,196,255,.23),transparent 72%),
+        radial-gradient(ellipse 90% 14% at 92% 36%,rgba(39,175,245,.15),transparent 72%),
+        radial-gradient(ellipse 78% 13% at 8% 62%,rgba(124,210,255,.22),transparent 72%),
+        radial-gradient(ellipse 100% 18% at 80% 90%,rgba(39,175,245,.25),transparent 74%),
+        linear-gradient(180deg,#fbfdff 0%,#f3faff 45%,#e7f7ff 100%);
+    }
+    body[data-page-theme="blue-rhythm"] .homepage-chain{
+      background:
+        radial-gradient(ellipse 70% 10% at 86% 20%,rgba(66,184,247,.21),transparent 72%),
+        radial-gradient(ellipse 80% 12% at 10% 72%,rgba(75,190,248,.24),transparent 74%),
+        linear-gradient(180deg,#fff 0 16%,#eaf7ff 29%,#fbfdff 43%,#dff3ff 61%,#f8fcff 74%,#bde8ff 91%,#67c8f5 100%);
+    }
+    body[data-page-theme="blue-crescendo"] .homepage-chain{
+      background:
+        radial-gradient(ellipse 80% 10% at 12% 28%,rgba(87,196,252,.16),transparent 74%),
+        radial-gradient(ellipse 95% 14% at 88% 64%,rgba(43,177,242,.25),transparent 76%),
+        linear-gradient(180deg,#fff 0%,#fbfdff 15%,#edf9ff 38%,#d5f1ff 61%,#99dcfa 79%,#35afe8 91%,#087aca 100%);
+    }
+    .page-theme-toolbar{position:fixed;z-index:80;top:12px;left:12px;display:flex;align-items:center;gap:5px;max-width:calc(100vw - 72px);padding:5px;border:1px solid rgba(20,30,60,.12);border-radius:14px;background:rgba(255,255,255,.9);box-shadow:0 12px 28px -18px rgba(20,30,60,.55);backdrop-filter:blur(12px);font:700 11px/1 Manrope,Arial,sans-serif}
+    .page-theme-toolbar>span{padding:0 5px;color:#77808a;text-transform:uppercase;letter-spacing:.06em}
+    .page-theme-toolbar button{min-height:30px;padding:0 9px;border:0;border-radius:9px;background:transparent;color:#47505a;font:inherit;cursor:pointer}
+    .page-theme-toolbar button[aria-pressed="true"]{background:#159ee9;color:#fff}
     #edb-pricing-neurozeh-v1 .edb-preview-toolbar{display:none!important}
     #edb-pricing-neurozeh-v1{padding-top:0!important}
     [data-edabalans-site-footer]{background:#087aca;color:#fff}
@@ -693,10 +718,20 @@
       .chain-block--before-after{padding-top:18px;padding-bottom:42px}
       .chain-block--pricing{padding-top:6px;padding-bottom:54px}
       .chain-block--faq{padding-bottom:32px}
+      .page-theme-toolbar{top:auto;right:10px;bottom:10px;left:10px;justify-content:center;overflow-x:auto;max-width:none}
+      .page-theme-toolbar>span{display:none}
+      .page-theme-toolbar button{padding-inline:8px;font-size:10px;white-space:nowrap}
     }
   </style>
 </head>
-<body>
+<body data-page-theme="white">
+  <aside class="page-theme-toolbar" aria-label="Фон тестовой страницы">
+    <span>Фон</span>
+    <button type="button" data-page-theme-button="white" aria-pressed="true">Белый</button>
+    <button type="button" data-page-theme-button="blue-mist" aria-pressed="false">Дымка</button>
+    <button type="button" data-page-theme-button="blue-rhythm" aria-pressed="false">Ритм</button>
+    <button type="button" data-page-theme-button="blue-crescendo" aria-pressed="false">Нарастание</button>
+  </aside>
   <header class="desktop-header">
     <div class="desktop-header__pill">
       <a class="desktop-wordmark" href="#top">ПОХУДЕНИЕ — ЭТО ЕСТЬ<span>.РФ</span></a>
@@ -723,7 +758,7 @@
         <p class="site-eyebrow">Мастер-класс · 21 день</p>
         <h1 class="site-title"><span class="site-title__plain">По изменению питания <small>и</small></span><span class="site-title__accent">пищевых привычек</span></h1>
         <p class="site-lead">Вы перестанете делить еду на «можно» и «нельзя», разберётесь в своём питании и научитесь менять его без очередной диеты.</p>
-        <div class="site-player"><iframe src="/preview/homepage-mobile/vsl-player.html?v=1" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="site-player"><iframe src="/preview/homepage-mobile/vsl-player.html?v=2" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
       </div>
     </section>
 
@@ -811,7 +846,7 @@
 </section>
 
 </section>
-    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="https://api.edabalans.ru/api/pricing/site">
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
 
@@ -861,11 +896,14 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-phone {
       width: min(100%, 390px);
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 92% 5%, rgba(38, 175, 255, .17), transparent 19%),
-        #f5f7fa;
-      padding: 58px 18px 68px;
+      overflow: visible;
+      background: transparent;
+      padding: 26px 18px 68px;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-intro {
+      width: min(100%, 1180px);
+      padding: 38px 18px 0;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
@@ -893,8 +931,8 @@
       content: '';
     }
 
-    #edb-pricing-neurozeh-v1 h2 {
-      max-width: 330px;
+    #edb-pricing-neurozeh-v1 .edb-pricing-intro h2 {
+      max-width: 760px;
       margin: 20px 0 0;
       font-family: 'Unbounded', sans-serif;
       font-size: 29px;
@@ -903,7 +941,8 @@
       letter-spacing: -.045em;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-pricing-lead {
+    #edb-pricing-neurozeh-v1 .edb-pricing-intro .edb-pricing-lead {
+      max-width: 680px;
       margin: 16px 0 0;
       color: #59616e;
       font-size: 16px;
@@ -1707,6 +1746,12 @@
         font-size: 33px;
       }
     }
+
+    @media (min-width: 760px) {
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro { padding: 62px 32px 8px; }
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro h2 { font-size: 44px; }
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro .edb-pricing-lead { font-size: 18px; }
+    }
   </style>
 
   <div class="edb-preview-toolbar" aria-label="Варианты оформления">
@@ -1715,10 +1760,13 @@
     <button class="edb-preview-switch" type="button" data-variant-button="zigzag" aria-pressed="false">Зигзаг</button>
   </div>
 
-  <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
+  <header class="edb-pricing-intro">
     <div class="edb-pricing-kicker">Мастер-класс · 21 день</div>
     <h2 id="edb-pricing-title">Выберите формат участия</h2>
     <p class="edb-pricing-lead">Программа одна. Тарифы отличаются дополнительными материалами и личным разбором.</p>
+  </header>
+
+  <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
     <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
 
     <div class="edb-pricing-list">
@@ -1832,16 +1880,6 @@
       const overlayCta = root.querySelector('.edb-product-overlay-cta');
       const plans = root.querySelectorAll('.edb-pricing-plan');
       const pricingStatus = root.querySelector('.edb-pricing-status');
-      const previewPricingCatalog = {
-        version: 1,
-        status: 'draft',
-        tariffs: [
-          { code: 'site.masterclass.basic', name: 'Минимальный', compare_at_amount: 6900, sale_amount: 6900, currency: 'RUB' },
-          { code: 'site.masterclass.recipes', name: 'Стандартный', compare_at_amount: 10800, sale_amount: 8900, currency: 'RUB' },
-          { code: 'site.masterclass.consult', name: 'С консультацией', compare_at_amount: 17700, sale_amount: 15900, currency: 'RUB' }
-        ]
-      };
-
       const formatPrice = (amount) => {
         const numericAmount = Number(amount);
         const hasKopecks = !Number.isInteger(numericAmount);
@@ -1879,12 +1917,8 @@
       }
 
       async function loadPricingCatalog() {
-        const isLocalPreview = location.hostname === '127.0.0.1' || location.hostname === 'localhost';
-        if (isLocalPreview) {
-          renderPricingCatalog(previewPricingCatalog, 'draft-preview');
-          return;
-        }
         plans.forEach((plan) => { plan.hidden = true; });
+        pricingStatus.textContent = 'Загружаю актуальные тарифы…';
         pricingStatus.hidden = false;
         root.dataset.pricingSource = 'loading';
         try {
@@ -1894,6 +1928,7 @@
           renderPricingCatalog(catalog, 'database');
         } catch (error) {
           root.dataset.pricingSource = 'unavailable';
+          pricingStatus.textContent = 'Тарифы временно недоступны. Обновите страницу чуть позже.';
           pricingStatus.hidden = false;
         }
       }
@@ -2113,6 +2148,26 @@
 </section>
   </main>
   <div data-edabalans-site-footer="public"></div>
+  <script>
+    (()=>{
+      const allowed=new Set(['white','blue-mist','blue-rhythm','blue-crescendo']);
+      const params=new URLSearchParams(location.search);
+      const initial=allowed.has(params.get('theme'))?params.get('theme'):'white';
+      const buttons=[...document.querySelectorAll('[data-page-theme-button]')];
+      const setTheme=(theme,updateUrl=true)=>{
+        document.body.dataset.pageTheme=theme;
+        buttons.forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.pageThemeButton===theme)));
+        if(updateUrl){
+          const next=new URL(location.href);
+          if(theme==='white')next.searchParams.delete('theme');
+          else next.searchParams.set('theme',theme);
+          history.replaceState(null,'',next);
+        }
+      };
+      buttons.forEach(button=>button.addEventListener('click',()=>setTheme(button.dataset.pageThemeButton)));
+      setTheme(initial,false);
+    })();
+  </script>
   <script>
 
     (() => {

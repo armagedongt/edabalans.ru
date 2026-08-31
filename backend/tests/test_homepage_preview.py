@@ -84,7 +84,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     }
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
-    assert "/preview/homepage-mobile/vsl-player.html?v=1" in parser.iframe_sources
+    assert "/preview/homepage-mobile/vsl-player.html?v=2" in parser.iframe_sources
     assert {
         "/preview/homepage-mobile/crying-character.png",
         "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
@@ -100,6 +100,22 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Вы долистали сайт до конца…",
     ):
         assert marker in response.text
+    for theme in ("white", "blue-mist", "blue-rhythm", "blue-crescendo"):
+        assert f'data-page-theme-button="{theme}"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
+    assert "previewPricingCatalog" not in response.text
+
+
+def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
+    response = client.get("/preview/homepage-mobile/vsl-player.html")
+
+    assert response.status_code == 200
+    assert "PROGRESS_CONFIG = {\n    boost: 7" in response.text
+    assert "endpoint: '/api/public/video-analytics'" in response.text
+    assert "video.currentTime = 0" in response.text
+    assert "analyticsApi.markEngaged()" in response.text
+    assert "mvp--controls-hidden" in response.text
+    assert "Содержание" not in response.text
 
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:

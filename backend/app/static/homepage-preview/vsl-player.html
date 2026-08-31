@@ -1,6 +1,6 @@
 <style>html,body{margin:0;background:transparent}body{padding:0}</style>
-<div id="modular-video-player" class="mvp">
-  <video class="mvp__video" src="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline preload="metadata"></video>
+<div id="modular-video-player" class="mvp" tabindex="0">
+  <video class="mvp__video" src="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
 
   <div class="mvp__shade"></div>
   <div class="mvp__loader" hidden aria-label="Загрузка"></div>
@@ -19,21 +19,6 @@
     </span>
     <span class="mvp__sound-text"><span>Нажмите, чтобы включить звук</span><span>Рассказываю кое-что интересное</span></span>
   </button>
-
-  <button class="mvp__contents-btn" type="button" aria-expanded="false">
-    <span>☰</span>
-    <span>Содержание</span>
-  </button>
-
-  <aside class="mvp__drawer" aria-label="Содержание видео" aria-hidden="true" inert>
-    <div class="mvp__drawer-head">
-      <div>
-        <div class="mvp__drawer-title">Содержание</div>
-      </div>
-      <button class="mvp__close" type="button" aria-label="Закрыть">×</button>
-    </div>
-    <div class="mvp__chapters"></div>
-  </aside>
 
   <div class="mvp__settings" hidden>
     <button class="mvp__settings-row mvp__speed-row" type="button">
@@ -141,37 +126,14 @@
 }
 #modular-video-player .mvp__sound-icon{font-size:34px;margin-bottom:24px}
 #modular-video-player .mvp__sound-text{font-size:25px;line-height:1.28;font-weight:800}
-#modular-video-player .mvp__contents-btn{
-  position:absolute;z-index:7;top:14px;right:14px;display:flex;align-items:center;gap:8px;
-  min-height:36px;padding:0 12px;border:1px solid rgba(255,255,255,.16);border-radius:999px;background:rgba(15,15,18,.58);
-  color:rgba(255,255,255,.9);font-size:12px;font-weight:650;cursor:pointer;backdrop-filter:blur(8px);
-}
-#modular-video-player .mvp__drawer{
-  position:absolute;z-index:10;top:0;right:0;bottom:0;width:min(360px,88%);
-  display:flex;flex-direction:column;background:rgba(255,255,255,.985);color:#241e29;
-  box-shadow:-18px 0 42px rgba(0,0,0,.22);transform:translateX(102%);transition:transform .22s ease;
-}
-#modular-video-player.mvp--drawer-open .mvp__drawer{transform:translateX(0)}
-#modular-video-player .mvp__drawer-head{
-  display:flex;align-items:center;justify-content:space-between;padding:17px 16px;border-bottom:1px solid #ece8f3;
-}
-#modular-video-player .mvp__eyebrow{color:var(--accent);font-size:10px;font-weight:800;letter-spacing:.12em}
-#modular-video-player .mvp__drawer-title{margin-top:3px;font-size:18px;font-weight:800}
-#modular-video-player .mvp__close{
-  width:38px;height:38px;border:0;border-radius:50%;background:#e8f7ff;color:var(--accent);font-size:24px;cursor:pointer;
-}
-#modular-video-player .mvp__chapters{overflow:auto;padding:8px}
-#modular-video-player .mvp__chapter{
-  width:100%;display:block;padding:15px 12px;border:0;border-radius:12px;
-  background:transparent;text-align:left;color:#28222d;cursor:default;
-}
-#modular-video-player .mvp__chapter.is-active{background:#e8f7ff}
-#modular-video-player .mvp__chapter.is-active{box-shadow:inset 3px 0 0 var(--accent)}
-#modular-video-player .mvp__chapter-title{font-size:14px;font-weight:650;line-height:1.25}
-
 #modular-video-player .mvp__controls{
   position:absolute;z-index:6;left:0;right:0;bottom:0;padding:0 16px 12px;color:#fff;
+  opacity:1;transition:opacity .2s ease;
 }
+#modular-video-player.mvp--controls-hidden .mvp__controls,
+#modular-video-player.mvp--controls-hidden .mvp__shade{opacity:0;pointer-events:none}
+#modular-video-player.mvp--awaiting-sound .mvp__controls{pointer-events:none}
+#modular-video-player .mvp__shade{transition:opacity .2s ease}
 #modular-video-player .mvp__progress{
   position:relative;width:100%;height:4px;margin:0 0 8px;border-radius:99px;overflow:hidden;
   background:rgba(255,255,255,.34);pointer-events:none;
@@ -236,8 +198,6 @@
   #modular-video-player .mvp__play-triangle{border-top-width:15px;border-bottom-width:15px;border-left-width:26px}
   #modular-video-player .mvp__sound-card{width:min(260px,72%);min-height:210px;padding:28px 18px 22px}
   #modular-video-player .mvp__sound-text{font-size:20px}
-  #modular-video-player .mvp__contents-btn{top:9px;right:9px;min-height:38px;padding:0 11px}
-  #modular-video-player .mvp__drawer{width:100%}
   #modular-video-player .mvp__controls{padding:0 8px 7px}
   #modular-video-player .mvp__mute{display:none}
   #modular-video-player .mvp__time{font-size:11px}
@@ -314,20 +274,6 @@
 }
 #modular-video-player .mvp__speed-option.is-active{background:rgba(255,255,255,.10)}
 #modular-video-player .mvp__speed-option.is-active::after{margin-left:9px;font-size:13px}
-#modular-video-player .mvp__drawer{
-  background:rgba(12,12,14,.86);color:#fff;box-shadow:-18px 0 42px rgba(0,0,0,.34);backdrop-filter:blur(14px);
-}
-#modular-video-player .mvp__drawer-head{border-bottom-color:rgba(255,255,255,.14)}
-#modular-video-player .mvp__drawer-title,
-#modular-video-player .mvp__chapter{color:#fff}
-#modular-video-player .mvp__close{background:rgba(255,255,255,.12);color:#fff}
-#modular-video-player .mvp__chapter.is-active{background:rgba(255,255,255,.11)}
-#modular-video-player .mvp__chapter.is-active{box-shadow:inset 3px 0 0 var(--accent)}
-#modular-video-player .mvp__chapter-time{color:#fff}
-#modular-video-player .mvp__chapter.is-active .mvp__chapter-time{
-  display:inline-flex;align-items:center;justify-content:center;width:max-content;min-width:42px;
-  margin:-4px 0;padding:4px 7px;border-radius:7px;background:var(--accent);color:#fff;
-}
 @media(max-width:700px){
   #modular-video-player{border-radius:12px}
   #modular-video-player .mvp__controls{padding:0 9px 7px}
@@ -371,27 +317,16 @@
      'standard'   = обычный запуск + обычная шкала + полное время + без аналитики */
   const PLAYER_MODE = 'engagement';
 
-  /* Содержание независимо от режима. */
-  const CONTENTS_ENABLED = true;
-
   const MODE_PRESETS = {
     engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
     standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
-  const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard), contents:CONTENTS_ENABLED };
+  const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard) };
 
-  /* Внешний плеер показывает опережающий визуальный прогресс по контрольным
-     точкам. Видео при этом идёт с реальной скоростью и не перематывается. */
+  /* Внешний плеер показывает плавный опережающий прогресс. Видео при этом
+     идёт с реальной скоростью и не перематывается. */
   const PROGRESS_CONFIG = {
-    checkpoints: [
-      { real:0, shown:0 },
-      { real:0.01, shown:0.10 },
-      { real:0.05, shown:0.25 },
-      { real:0.25, shown:0.50 },
-      { real:0.60, shown:0.90 },
-      { real:0.70, shown:0.96 },
-      { real:1, shown:1 }
-    ]
+    boost: 7
   };
 
   /* Варианты качества. Для каждого дополнительного качества укажи прямую ссылку.
@@ -407,24 +342,12 @@
     Для реальной отправки на сервер укажи endpoint.
   */
   const ANALYTICS_CONFIG = {
-    endpoint: '',
+    endpoint: '/api/public/video-analytics',
     videoId: 'homepage-vsl-2026-02-13',
     bucketSizeSec: 5,
     completionThreshold: 0.95,
     heartbeatSec: 15
   };
-
-  /* Временные внутренние границы будут заменены после сверки отдельной задачей.
-     В интерфейсе намеренно показываются только названия глав. */
-  const chapters = [
-    { at: 0, title: 'Почему вес возвращается' },
-    { at: 120, title: 'Навыки вместо силы воли' },
-    { at: 235, title: 'Четыре области навыков' },
-    { at: 325, title: 'Как навыки работают в обычной жизни' },
-    { at: 610, title: 'Калории — последний этап' },
-    { at: 790, title: 'Что даёт Мастер-класс' },
-    { at: 1090, title: 'Почему не стоит откладывать' }
-  ];
 
   const video = root.querySelector('.mvp__video');
   if (video && /\.m3u8(?:[?#].*)?$/i.test(video.getAttribute('src') || '') && window.Hls && window.Hls.isSupported()) {
@@ -460,10 +383,6 @@
   const current = root.querySelector('.mvp__current');
   const duration = root.querySelector('.mvp__duration');
   const timeBox = root.querySelector('.mvp__time');
-  const contentsBtn = root.querySelector('.mvp__contents-btn');
-  const drawer = root.querySelector('.mvp__drawer');
-  const closeBtn = root.querySelector('.mvp__close');
-  const chaptersBox = root.querySelector('.mvp__chapters');
 
   function formatTime(value){
     const s = Math.max(0, Math.floor(Number(value) || 0));
@@ -473,20 +392,7 @@
     return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
   }
 
-  chaptersBox.innerHTML = chapters.map((ch,i)=>`
-    <div class="mvp__chapter" data-index="${i}">
-      <span class="mvp__chapter-title">${ch.title}</span>
-    </div>
-  `).join('');
-
-  const chapterButtons = [...root.querySelectorAll('.mvp__chapter')];
-
   function applyModules(){
-    if (!MODULES.contents) {
-      contentsBtn.hidden = true;
-      drawer.hidden = true;
-    }
-
     timeBox.hidden = false;
     if (MODULES.acceleratedProgress) {
       root.querySelector('.mvp__sep').hidden = true;
@@ -500,6 +406,7 @@
       video.muted = true;
       soundCard.hidden = false;
       bigPlay.hidden = true;
+      root.classList.add('mvp--awaiting-sound');
 
       const start = () => {
         video.play().catch(()=>{});
@@ -512,9 +419,7 @@
       bigPlay.hidden = false;
     }
 
-    if (MODULES.analytics) {
-      initAnalytics();
-    }
+    if (MODULES.analytics) analyticsApi = initAnalytics();
   }
 
   function visualProgress(realRatio){
@@ -522,17 +427,8 @@
 
     if (!MODULES.acceleratedProgress) return x;
 
-    const points = PROGRESS_CONFIG.checkpoints;
-    for (let i = 1; i < points.length; i += 1) {
-      const previous = points[i - 1];
-      const next = points[i];
-      if (x <= next.real) {
-        const span = next.real - previous.real;
-        const local = span > 0 ? (x - previous.real) / span : 1;
-        return previous.shown + (next.shown - previous.shown) * local;
-      }
-    }
-    return 1;
+    const boost = Math.max(0, Number(PROGRESS_CONFIG.boost) || 0);
+    return x * (1 + boost) / (1 + boost * x);
   }
 
   function updatePlayUI(){
@@ -542,9 +438,8 @@
       ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>'
       : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8c0-1.2 1.3-1.9 2.3-1.2l10.2 7.2c.9.6.9 1.9 0 2.5L9.3 20.5C8.3 21.2 7 20.5 7 19.3V4.8z"/></svg>';
 
-    if (!MODULES.autoplay) {
-      bigPlay.hidden = playing;
-    }
+    bigPlay.hidden = !soundEngaged || playing;
+    if (!playing && soundEngaged) showControls(false);
   }
 
   function togglePlay(){
@@ -567,44 +462,55 @@
       progressFill.style.width = `${shownRatio * 100}%`;
     }
 
-    let active = -1;
-    chapters.forEach((ch,i)=>{ if(t >= ch.at) active = i; });
-    chapterButtons.forEach((btn,i)=>btn.classList.toggle('is-active', i===active));
   }
 
-  function enableSoundAndWatch(restart = false){
+  let analyticsApi = { markEngaged(){} };
+  let controlsTimer = null;
+
+  function showControls(scheduleHide = true){
+    root.classList.remove('mvp--controls-hidden');
+    clearTimeout(controlsTimer);
+    if (scheduleHide && soundEngaged && !video.paused && !video.ended) {
+      controlsTimer = setTimeout(()=>root.classList.add('mvp--controls-hidden'), 3000);
+    }
+  }
+
+  function enableSoundAndWatch(){
     if (soundEngaged) return;
     soundEngaged = true;
-    if (MODULES.autoplay && restart) {
-      video.currentTime = 0;
-    }
+    video.currentTime = 0;
     video.muted = false;
     soundCard.hidden = true;
+    root.classList.remove('mvp--awaiting-sound');
+    analyticsApi.markEngaged();
     video.play().catch(()=>{});
+    showControls(true);
   }
 
   bigPlay.addEventListener('click', ()=>{
-    if (MODULES.autoplay && !soundEngaged) enableSoundAndWatch(false);
-    else togglePlay();
+    if (!soundEngaged) return;
+    togglePlay();
   });
   playBtn.addEventListener('click', ()=>{
-    if (MODULES.autoplay && !soundEngaged) enableSoundAndWatch(false);
-    else togglePlay();
+    if (!soundEngaged) return;
+    togglePlay();
   });
   video.addEventListener('click', ()=>{
-    if (MODULES.autoplay && !soundEngaged) {
-      enableSoundAndWatch(false);
-    } else {
-      togglePlay();
-    }
+    if (!soundEngaged) return;
+    if (root.classList.contains('mvp--controls-hidden')) showControls(true);
+    else togglePlay();
   });
-  soundCard.addEventListener('click', ()=>enableSoundAndWatch(true));
+  soundCard.addEventListener('click', enableSoundAndWatch);
 
-  video.addEventListener('play', updatePlayUI);
-  video.addEventListener('pause', updatePlayUI);
-  video.addEventListener('ended', updatePlayUI);
+  video.addEventListener('play', ()=>{ updatePlayUI(); if (soundEngaged) showControls(true); });
+  video.addEventListener('pause', ()=>{ updatePlayUI(); showControls(false); });
+  video.addEventListener('ended', ()=>{ updatePlayUI(); showControls(false); });
   video.addEventListener('timeupdate', updateProgress);
   video.addEventListener('loadedmetadata', updateProgress);
+
+  root.addEventListener('pointermove', ()=>{ if (soundEngaged) showControls(true); });
+  root.addEventListener('focusin', ()=>{ if (soundEngaged) showControls(true); });
+  root.addEventListener('touchstart', ()=>{ if (soundEngaged) showControls(true); }, {passive:true});
 
   muteBtn.addEventListener('click', ()=>{
     video.muted = !video.muted;
@@ -747,49 +653,43 @@
     else root.requestFullscreen?.();
   });
 
-  function setDrawerOpen(open){
-    root.classList.toggle('mvp--drawer-open', open);
-    contentsBtn.setAttribute('aria-expanded', String(open));
-    drawer.setAttribute('aria-hidden', String(!open));
-    drawer.inert = !open;
-  }
-
-  contentsBtn.addEventListener('click', ()=>{
-    if (!MODULES.contents) return;
-    closeSettingsPanels();
-    setDrawerOpen(!root.classList.contains('mvp--drawer-open'));
-  });
-  closeBtn.addEventListener('click', ()=>setDrawerOpen(false));
-
   document.addEventListener('click', event=>{
     if (!root.contains(event.target)) closeSettingsPanels();
   });
   document.addEventListener('keydown', event=>{
     if (event.key === 'Escape') {
       closeSettingsPanels();
-      setDrawerOpen(false);
     }
   });
 
   function initAnalytics(){
     const STORAGE_PREFIX = 'mvp_analytics_v1';
     const viewerKey = `${STORAGE_PREFIX}:viewer_id`;
+    const randomUuid = ()=>{
+      if (window.crypto?.randomUUID) return window.crypto.randomUUID();
+      const bytes = new Uint8Array(16);
+      if (window.crypto?.getRandomValues) window.crypto.getRandomValues(bytes);
+      else bytes.forEach((_,index)=>{ bytes[index]=Math.floor(Math.random()*256); });
+      bytes[6] = (bytes[6] & 0x0f) | 0x40;
+      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      const hex = [...bytes].map(value=>value.toString(16).padStart(2,'0')).join('');
+      return `${hex.slice(0,8)}-${hex.slice(8,12)}-${hex.slice(12,16)}-${hex.slice(16,20)}-${hex.slice(20)}`;
+    };
+    const sessionId = randomUuid();
     const stateKey = `${STORAGE_PREFIX}:${ANALYTICS_CONFIG.videoId}`;
 
     let viewerId = localStorage.getItem(viewerKey);
 
     function ensureViewerId(){
       if (!viewerId) {
-        viewerId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
+        viewerId = randomUuid();
         localStorage.setItem(viewerKey, viewerId);
       }
       return viewerId;
     }
 
-    let state = {};
-    try { state = JSON.parse(localStorage.getItem(stateKey) || '{}'); } catch(e) {}
-
-    const watched = new Set(Array.isArray(state.watchedBuckets) ? state.watchedBuckets : []);
+    const state = { sessionId };
+    const watched = new Set();
     let engaged = false;
     let lastT = null;
     let heartbeat = 0;
@@ -806,8 +706,12 @@
       const payload = {
         event,
         viewer_id: ensureViewerId(),
+        session_id: sessionId,
         video_id: ANALYTICS_CONFIG.videoId,
-        ts: new Date().toISOString(),
+        page_path: (()=>{
+          try { return new URL(document.referrer).pathname || location.pathname; }
+          catch(e) { return location.pathname; }
+        })(),
         last_position_sec: state.lastPosition || 0,
         max_position_sec: state.maxPosition || 0,
         watched_buckets_5s: state.watchedBuckets || [],
@@ -832,17 +736,6 @@
       heartbeat = Date.now();
       send('video_engaged');
     }
-
-    root.addEventListener('click', e=>{
-      if (
-        e.target === video ||
-        e.target.closest('.mvp__big-play') ||
-        e.target.closest('.mvp__play') ||
-        e.target.closest('.mvp__sound-card') ||
-        e.target.closest('.mvp__controls')
-      ) markEngaged();
-    });
-    volumeSlider.addEventListener('input', markEngaged);
 
     video.addEventListener('timeupdate', ()=>{
       const t = video.currentTime || 0;
@@ -875,6 +768,8 @@
     window.addEventListener('pagehide', ()=>{
       if (engaged) send('video_exit');
     });
+
+    return { markEngaged };
   }
 
   applyModules();

@@ -225,6 +225,9 @@ owns_files = [
   "backend/app/app_routes.py", "backend/app/app_service.py",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
   "backend/tests/test_homepage_preview.py", "backend/app/static/homepage-preview/**",
+  "backend/app/public_video_analytics_routes.py", "backend/tests/test_public_video_analytics.py",
+  "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+  "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
@@ -232,7 +235,9 @@ owns_files = [
 owns_routes = [
   "*/apps/*", "*/assets/*",
   "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/api/public/video-analytics",
 ]
+owns_tables = ["public_video_views"]
 
 [[modules]]
 id = "products.catalog"
