@@ -3445,6 +3445,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/blog-design/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/blog-editorial-system/code-research.md"
     },
     {
@@ -17213,6 +17217,10 @@
         {
           "module_id": "operations.project-work",
           "path": "work/blog-copywriter-output-v2/manifest.json"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/blog-design/README.md"
         },
         {
           "module_id": "operations.project-work",
