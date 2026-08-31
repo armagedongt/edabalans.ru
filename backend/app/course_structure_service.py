@@ -126,6 +126,45 @@ def normalize_seed(manifest: dict) -> dict:
     return result
 
 
+def prepare_20_day_migration(
+    current_raw: dict,
+    desired_raw: dict,
+    next_version: int,
+) -> tuple[dict, list[str]]:
+    """Build the approved 20-day structure without rewriting days 1–5.
+
+    Stable step IDs preserve participant progress. A step that becomes visible
+    again is required only for participants who enter after the new revision.
+    """
+    current = normalize_seed(current_raw)
+    desired = normalize_seed(desired_raw)
+    current_days = {int(day["number"]): day for day in current["days"]}
+    desired_days = {int(day["number"]): day for day in desired["days"]}
+    if set(current_days) not in (set(range(1, 21)), set(range(1, 22))):
+        raise ValueError("Current structure must contain 20 or legacy 21 days")
+    if set(desired_days) != set(range(1, 21)):
+        raise ValueError("Desired structure must contain 20 days")
+
+    result = deepcopy(desired)
+    result["days"][:5] = deepcopy(current["days"][:5])
+    current_steps = {
+        step["id"]: step
+        for day in current["days"]
+        for step in day.get("steps", [])
+    }
+    changes: list[str] = []
+    for number in range(6, 21):
+        target = result["days"][number - 1]
+        previous = current_days.get(number)
+        if previous is None or previous != target:
+            changes.append(f"day {number}: replace approved structure")
+        for step in target.get("steps", []):
+            old = current_steps.get(step["id"])
+            if old and old.get("hidden", False) and not step.get("hidden", False):
+                step["requiredForAllAfterRevision"] = next_version
+    return result, changes
+
+
 @dataclass(frozen=True)
 class CourseContext:
     revision: ManagedDocumentVersion
