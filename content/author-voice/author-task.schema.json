@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://edabalans.ru/schemas/author-task-v2.json",
+  "$id": "https://edabalans.ru/schemas/author-task-v2.1.json",
   "title": "Edabalans author task",
   "type": "object",
   "required": ["note", "work_profile", "edit_mode", "source_basis"],
@@ -17,6 +17,68 @@
       "type": "array",
       "minItems": 1,
       "items": {"type": "string", "minLength": 1}
+    },
+    "block_instructions": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["action"],
+        "properties": {
+          "source": {"type": "string", "minLength": 1},
+          "action": {
+            "enum": [
+              "verbatim",
+              "light_edit",
+              "expand_thesis",
+              "find_author_material",
+              "research_and_write",
+              "write_new",
+              "remove"
+            ]
+          },
+          "instruction": {"type": "string", "minLength": 1},
+          "placement": {"type": "string", "minLength": 1}
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "action": {
+                  "enum": [
+                    "verbatim",
+                    "light_edit",
+                    "expand_thesis",
+                    "find_author_material",
+                    "research_and_write",
+                    "remove"
+                  ]
+                }
+              }
+            },
+            "then": {"required": ["source"]}
+          },
+          {
+            "if": {"properties": {"action": {"const": "write_new"}}},
+            "then": {"required": ["instruction"]}
+          }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "marketing_brief": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "audience_segment": {"type": "string", "minLength": 1},
+        "promise": {"type": "string", "minLength": 1},
+        "offer": {"type": "string", "minLength": 1},
+        "path": {"type": "string", "minLength": 1},
+        "disclosure_boundary": {"type": "string", "minLength": 1},
+        "cta": {"type": "string", "minLength": 1},
+        "success_metric": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
     },
     "transcript_role": {
       "enum": ["article_source", "video_script", "context_only"]

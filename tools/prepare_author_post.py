@@ -9,11 +9,20 @@ from pathlib import Path
 from search_author_voice import private, search_index
 
 
-SCHEMA_VERSION = "2.0"
-PACK_VERSION = "author-post-pack-v7-20260829"
+SCHEMA_VERSION = "2.1"
+PACK_VERSION = "author-post-pack-v8-20260831"
 FACT_CHECK_PROFILES = {"instructional_strict", "editorial_materiality"}
 SOURCE_BASES = {"full_source", "sparse_basis"}
 AUTHOR_REUSE_MODES = {"authored_blocks_first", "original_composition"}
+BLOCK_ACTIONS = {
+    "verbatim",
+    "light_edit",
+    "expand_thesis",
+    "find_author_material",
+    "research_and_write",
+    "write_new",
+    "remove",
+}
 TRANSCRIPT_ROLES = {"article_source", "video_script", "context_only"}
 EDIT_MODES = {
     "draft",
@@ -473,6 +482,84 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
         or any(not isinstance(item, str) or not item.strip() for item in requested_block_outline)
     ):
         raise ValueError("task.block_outline must be a non-empty list of block topics")
+    block_instructions = task.get("block_instructions") or []
+    if not isinstance(block_instructions, list) or any(
+        not isinstance(item, dict)
+        or item.get("action") not in BLOCK_ACTIONS
+        or (
+            item.get("source") is not None
+            and (not isinstance(item.get("source"), str) or not item["source"].strip())
+        )
+        or (
+            item.get("instruction") is not None
+            and (
+                not isinstance(item.get("instruction"), str)
+                or not item["instruction"].strip()
+            )
+        )
+        or (
+            item.get("placement") is not None
+            and (
+                not isinstance(item.get("placement"), str)
+                or not item["placement"].strip()
+            )
+        )
+        or (
+            item.get("action") != "write_new"
+            and not item.get("source")
+        )
+        or (
+            item.get("action") == "write_new"
+            and not item.get("instruction")
+        )
+        for item in block_instructions
+    ):
+        raise ValueError("task.block_instructions contains an invalid block action")
+    if block_instructions and not isinstance(source_text, str):
+        raise ValueError("task.source_text is required when block_instructions are used")
+    for item in block_instructions:
+        source_fragment = item.get("source")
+        if source_fragment and source_text.count(source_fragment) != 1:
+            raise ValueError(
+                "each block_instructions source fragment must occur exactly once"
+            )
+    addressed_fragments = [
+        item["source"] for item in block_instructions if item.get("source")
+    ]
+    if len(addressed_fragments) != len(set(addressed_fragments)):
+        raise ValueError(
+            "each source fragment may have only one block_instructions action"
+        )
+    if edit_mode in {"proofread", "structure_only"} and any(
+        item["action"] != "verbatim"
+        for item in block_instructions
+    ):
+        raise ValueError(
+            f"substantive block_instructions require rewrite before {edit_mode}"
+        )
+    for item in block_instructions:
+        if item["action"] == "remove" and item["source"] not in allowed_removals:
+            allowed_removals.append(item["source"])
+    marketing_brief = task.get("marketing_brief")
+    if marketing_brief is not None and (
+        not isinstance(marketing_brief, dict) or not marketing_brief
+    ):
+        raise ValueError("task.marketing_brief must be a non-empty object")
+    known_marketing_fields = {
+        "audience_segment", "promise", "offer", "path",
+        "disclosure_boundary", "cta", "success_metric",
+    }
+    if isinstance(marketing_brief, dict) and any(
+        key in marketing_brief
+        and (
+            not isinstance(marketing_brief[key], str)
+            or not marketing_brief[key].strip()
+        )
+        for key in known_marketing_fields
+    ):
+        raise ValueError(
+            "known task.marketing_brief fields must be non-empty strings"
+        )
     requested_author_reuse_mode = task.get("author_reuse_mode")
     if requested_author_reuse_mode is not None and requested_author_reuse_mode not in AUTHOR_REUSE_MODES:
         raise ValueError(f"unknown author_reuse_mode: {requested_author_reuse_mode}")
@@ -722,6 +809,8 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             "author_reuse_mode_source": author_reuse_mode_source,
             "block_outline": block_outline,
             "block_outline_source": block_outline_source,
+            "block_instructions": block_instructions,
+            "marketing_brief": marketing_brief,
             "transcript_role": transcript_role,
             "transcript_role_source": (
                 "explicit" if requested_transcript_role else (
@@ -769,6 +858,11 @@ def build_pack(task_path: Path, index_path: Path) -> dict:
             ),
             "Build the emotion and argument route before drafting sentences.",
             "Apply editing permissions from editing-modes-v1.md without widening them.",
+            *(
+                ["Apply every block_instructions action independently. Verbatim blocks are exact; unmarked accepted author blocks stay unchanged or receive only the minimum edit required by the task."]
+                if block_instructions
+                else []
+            ),
             "For a site article or course material, apply ARTICLE_STANDARD.md; never invent headings only to create a table of contents.",
             "Apply the review policy owned by the selected normative contract.",
             (

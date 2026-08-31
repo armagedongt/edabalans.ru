@@ -709,6 +709,298 @@ class AuthorWorkflowTests(unittest.TestCase):
             "pass",
         )
 
+    def test_mixed_block_instructions_are_carried_and_verbatim_is_protected(self) -> None:
+        source = (
+            "Эту фразу оставить дословно.\n\n"
+            "Этот тезис нужно раскрыть.\n\n"
+            "Этот блок можно дополнить исследованием."
+        )
+        pack_path, pack = self.pack({
+            "note": "Доработать разные части готового текста по комментариям",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_text": source,
+            "rewrite_goal": "Применить комментарии внутри черновика",
+            "preservation_anchors": ["Эту фразу оставить дословно"],
+            "block_instructions": [
+                {"source": "Эту фразу оставить дословно.", "action": "verbatim"},
+                {
+                    "source": "Этот тезис нужно раскрыть.",
+                    "action": "expand_thesis",
+                    "instruction": "Добавить практический пример",
+                },
+                {
+                    "source": "Этот блок можно дополнить исследованием.",
+                    "action": "research_and_write",
+                },
+            ],
+        })
+        self.assertEqual(
+            pack["content_contract"]["block_instructions"][1]["action"],
+            "expand_thesis",
+        )
+        draft = self.root / "mixed-blocks.md"
+        draft.write_text(
+            source.replace(
+                "Этот тезис нужно раскрыть.",
+                "Этот тезис нужно раскрыть. Вот практический пример.",
+            ),
+            encoding="utf-8",
+        )
+        result = validate_author_draft.validate(pack_path, draft)
+        self.assertFalse(
+            any("verbatim block instruction" in item for item in result["protected_layer_errors"])
+        )
+        self.assertIn(
+            "block_instructions",
+            {item["id"] for item in result["pending_manual_reviews"]},
+        )
+
+        draft.write_text(
+            draft.read_text(encoding="utf-8").replace("дословно", "почти дословно"),
+            encoding="utf-8",
+        )
+        self.assertTrue(
+            any(
+                "verbatim block instruction" in item
+                for item in validate_author_draft.validate(pack_path, draft)[
+                    "protected_layer_errors"
+                ]
+            )
+        )
+
+    def test_block_instruction_source_must_be_unique_in_source(self) -> None:
+        task = self.root / "duplicate-block-task.json"
+        task.write_text(json.dumps({
+            "note": "Развить повторяющийся блок",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_basis": "full_source",
+            "source_text": "Повтор. Повтор.",
+            "rewrite_goal": "Раскрыть один блок",
+            "preservation_anchors": ["Повтор"],
+            "block_instructions": [{"source": "Повтор.", "action": "expand_thesis"}],
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "must occur exactly once"):
+            prepare_author_post.build_pack(task, self.index)
+
+    def test_same_block_cannot_receive_conflicting_actions(self) -> None:
+        source = "Этот блок имеет один адрес."
+        task = self.root / "conflicting-block-actions.json"
+        task.write_text(json.dumps({
+            "note": "Не назначать блоку две операции",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_basis": "full_source",
+            "source_text": source,
+            "rewrite_goal": "Сохранить однозначные разрешения",
+            "preservation_anchors": ["один адрес"],
+            "block_instructions": [
+                {"source": source, "action": "verbatim"},
+                {"source": source, "action": "remove"},
+            ],
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "only one block_instructions action"):
+            prepare_author_post.build_pack(task, self.index)
+
+    def test_block_instructions_require_an_addressable_target_or_assignment(self) -> None:
+        base = {
+            "note": "Разобрать комментарии внутри текста",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_basis": "full_source",
+            "source_text": "Первый блок. Второй блок.",
+            "rewrite_goal": "Применить комментарии",
+            "preservation_anchors": ["Первый блок"],
+        }
+        invalid = (
+            {"action": "remove"},
+            {"action": "expand_thesis"},
+            {"action": "write_new"},
+        )
+        for number, instruction in enumerate(invalid):
+            task = self.root / f"unaddressed-block-{number}.json"
+            task.write_text(
+                json.dumps(
+                    {**base, "block_instructions": [instruction]},
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "invalid block action"):
+                prepare_author_post.build_pack(task, self.index)
+
+    def test_find_author_material_and_write_new_are_valid_block_routes(self) -> None:
+        source = "Здесь нужно найти мой старый пример."
+        _, pack = self.pack({
+            "note": "Собрать два назначенных блока",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_text": source,
+            "rewrite_goal": "Применить комментарии по блокам",
+            "preservation_anchors": ["старый пример"],
+            "block_instructions": [
+                {"source": source, "action": "find_author_material"},
+                {
+                    "action": "write_new",
+                    "instruction": "Добавить короткий переход к следующему разделу",
+                    "placement": "После найденного авторского примера",
+                },
+            ],
+        })
+        self.assertEqual(
+            [item["action"] for item in pack["content_contract"]["block_instructions"]],
+            ["find_author_material", "write_new"],
+        )
+
+    def test_remove_block_instruction_updates_preservation_baseline(self) -> None:
+        removable = "Удаляемое длинное вступление. " * 40
+        kept = "Сохраняемый основной авторский блок. " * 20
+        pack_path, pack = self.pack({
+            "note": "Удалить прямо отмеченное вступление",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_text": removable + kept,
+            "rewrite_goal": "Убрать вступление",
+            "preservation_anchors": ["Сохраняемый основной авторский блок"],
+            "block_instructions": [
+                {"source": removable, "action": "remove"},
+            ],
+        })
+        self.assertIn(removable, pack["content_contract"]["allowed_removals"])
+        draft = self.root / "removed-block.md"
+        draft.write_text(kept, encoding="utf-8")
+        result = validate_author_draft.validate(pack_path, draft)
+        self.assertFalse(
+            any("coverage" in item or "length" in item for item in result["protected_layer_errors"])
+        )
+
+    def test_verbatim_only_block_instruction_needs_no_duplicate_manual_review(self) -> None:
+        source = "Эта цитата остаётся дословно."
+        pack_path, _ = self.pack({
+            "note": "Сохранить цитату",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_text": source,
+            "rewrite_goal": "Сохранить материал",
+            "preservation_anchors": ["остаётся дословно"],
+            "block_instructions": [{"source": source, "action": "verbatim"}],
+        })
+        draft = self.root / "verbatim-only.md"
+        draft.write_text(source, encoding="utf-8")
+        pending = validate_author_draft.validate(pack_path, draft)[
+            "pending_manual_reviews"
+        ]
+        self.assertNotIn("block_instructions", {item["id"] for item in pending})
+
+    def test_verbatim_is_accepted_in_narrow_structure_route(self) -> None:
+        source = "Эта цитата остаётся дословно."
+        for profile, mode in (
+            ("develop_existing", "proofread"),
+            ("structure", "structure_only"),
+        ):
+            pack_path, pack = self.pack({
+                "note": "Защитить цитату",
+                "work_profile": profile,
+                "edit_mode": mode,
+                "source_text": source,
+                "preservation_anchors": ["остаётся дословно"],
+                "block_instructions": [{"source": source, "action": "verbatim"}],
+            })
+            self.assertEqual(
+                pack["content_contract"]["block_instructions"][0]["action"],
+                "verbatim",
+            )
+            draft = self.root / f"verbatim-{mode}.md"
+            draft.write_text(source, encoding="utf-8")
+            result = validate_author_draft.validate(pack_path, draft)
+            self.assertFalse(result["protected_layer_errors"])
+            self.assertNotIn(
+                "block_instructions",
+                {item["id"] for item in result["pending_manual_reviews"]},
+            )
+
+    def test_light_edit_requires_addressable_manual_review(self) -> None:
+        source = "Эту фразу можно слегка поправить."
+        pack_path, _ = self.pack({
+            "note": "Слегка поправить фразу",
+            "work_profile": "develop_existing",
+            "edit_mode": "rewrite",
+            "source_text": source,
+            "rewrite_goal": "Исправить только назначенный фрагмент",
+            "preservation_anchors": ["слегка поправить"],
+            "block_instructions": [{"source": source, "action": "light_edit"}],
+        })
+        draft = self.root / "light-edit.md"
+        draft.write_text("Эту фразу нужно слегка поправить.", encoding="utf-8")
+        pending = validate_author_draft.validate(pack_path, draft)[
+            "pending_manual_reviews"
+        ]
+        self.assertIn("block_instructions", {item["id"] for item in pending})
+
+    def test_marketing_brief_is_preserved_in_content_contract(self) -> None:
+        brief = {
+            "audience_segment": "Люди, которые устали начинать заново",
+            "promise": "Показать выполнимый следующий шаг",
+            "offer": "Мастер-класс",
+            "disclosure_boundary": "Не публиковать весь платный алгоритм",
+            "cta": "Перейти к программе",
+            "success_metric": "Переход на страницу продукта",
+        }
+        _, pack = self.pack({
+            "note": "Написать продуктовый пост",
+            "work_profile": "new_material",
+            "edit_mode": "draft",
+            "marketing_brief": brief,
+        })
+        self.assertEqual(pack["content_contract"]["marketing_brief"], brief)
+
+    def test_known_marketing_brief_fields_must_be_non_empty_strings(self) -> None:
+        for number, brief in enumerate(({"cta": ""}, {"success_metric": 7})):
+            task = self.root / f"invalid-marketing-brief-{number}.json"
+            task.write_text(json.dumps({
+                "note": "Написать продуктовый пост",
+                "work_profile": "new_material",
+                "edit_mode": "draft",
+                "marketing_brief": brief,
+            }, ensure_ascii=False), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "must be non-empty strings"):
+                prepare_author_post.build_pack(task, self.index)
+
+    def test_substantive_block_action_cannot_run_inside_proofread(self) -> None:
+        task = self.root / "substantive-proofread.json"
+        task.write_text(json.dumps({
+            "note": "Структурировать и раскрыть тезис",
+            "work_profile": "develop_existing",
+            "edit_mode": "proofread",
+            "source_basis": "full_source",
+            "source_text": "Этот тезис нужно раскрыть.",
+            "preservation_anchors": ["Этот тезис"],
+            "block_instructions": [{
+                "source": "Этот тезис нужно раскрыть.",
+                "action": "expand_thesis",
+            }],
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "require rewrite before proofread"):
+            prepare_author_post.build_pack(task, self.index)
+
+    def test_light_edit_cannot_run_inside_structure_only(self) -> None:
+        task = self.root / "light-edit-structure-only.json"
+        task.write_text(json.dumps({
+            "note": "Структурировать и слегка поправить фразу",
+            "work_profile": "structure",
+            "edit_mode": "structure_only",
+            "source_basis": "full_source",
+            "source_text": "Эту фразу можно слегка поправить.",
+            "preservation_anchors": ["слегка поправить"],
+            "block_instructions": [{
+                "source": "Эту фразу можно слегка поправить.",
+                "action": "light_edit",
+            }],
+        }, ensure_ascii=False), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "require rewrite before structure_only"):
+            prepare_author_post.build_pack(task, self.index)
+
     def test_recording_correction_refreshes_semantic_counters(self) -> None:
         memory = self.root / "correction-memory.jsonl"
         (self.root / "semantic-report.json").write_text(

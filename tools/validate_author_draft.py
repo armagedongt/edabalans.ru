@@ -387,6 +387,23 @@ def required_manual_reviews(contract: dict, draft: str) -> list[dict]:
         "transcript_to_article", "develop_existing"
     }:
         checks.append({"id": "rewrite_continuity", "instruction": "Confirm that the source argument, author position, and useful examples remain continuous."})
+    substantive_block_instructions = [
+        item
+        for item in (contract.get("block_instructions") or [])
+        if item.get("action") != "verbatim"
+    ]
+    if substantive_block_instructions:
+        checks.append({
+            "id": "block_instructions",
+            "instruction": (
+                "Confirm that every block-specific instruction was applied independently: "
+                "verbatim text stayed exact, thesis blocks were expanded rather than "
+                "replaced, author-material requests used the full selected source, research "
+                "requests did not rewrite neighboring author text, and unmarked accepted "
+                "blocks received only the minimum task-required edit."
+            ),
+            "items": substantive_block_instructions,
+        })
     facts_to_review = []
     for item in contract.get("required_facts") or []:
         facts_to_review.append(
@@ -592,6 +609,12 @@ def validate(
             and link_and_media_targets(source_text) != link_and_media_targets(draft)
         ):
             protected_layer_errors.append("rewrite changed links or media without explicit permission")
+    for item in contract.get("block_instructions") or []:
+        if item.get("action") == "verbatim" and item.get("source") not in draft:
+            protected_layer_errors.append(
+                "verbatim block instruction is not preserved exactly: "
+                + str(item.get("source"))
+            )
     source_for_metrics = source_text if isinstance(source_text, str) else ""
     source_for_metrics, missing_removals = without_allowed_removals(
         source_for_metrics, contract.get("allowed_removals") or []
