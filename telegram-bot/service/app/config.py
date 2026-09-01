@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     database_url: str = "sqlite:///./telegram-bot/runtime/service.sqlite"
     telegram_test_bot_username: str = ""
     telegram_test_bot_token: str = ""
+    app_auth_secret: str = ""
     telegram_webhook_secret: str = ""
     telegram_public_base_url: str = ""
     telegram_proxy_url: str = ""

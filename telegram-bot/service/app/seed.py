@@ -358,6 +358,16 @@ def _start_system_messages() -> list[dict]:
             None,
             ["система", "welcome", "подписка", "повторная проверка"],
         ),
+        (
+            "web_login_code",
+            "Код входа на сайт через Telegram",
+            "Telegram подтверждён. Введите на открытой странице код: <b>{{login_code}}</b>\n\nКод действует 15 минут. Никому его не пересылайте.",
+            None,
+            ["система", "вход", "сайт", "Telegram"],
+        ),
+        ("web_login_invalid", "Ошибка входа — ссылка недействительна", "Ссылка входа недействительна или устарела. Вернитесь на сайт и создайте новую.", None, ["система", "вход", "ошибка"]),
+        ("web_login_used", "Ошибка входа — ссылка использована", "Эта ссылка уже использована. Вернитесь на сайт и создайте новую.", None, ["система", "вход", "ошибка"]),
+        ("web_login_identity_failed", "Ошибка входа — аккаунт не определён", "Не удалось определить Telegram-аккаунт. Вернитесь на сайт и создайте новую ссылку.", None, ["система", "вход", "ошибка"]),
     ]
     return [{"code": r[0], "title": r[1], "body": r[2], "media": r[3], "labels": r[4]} for r in rows]
 
@@ -544,7 +554,7 @@ def seed_defaults(
 
     items: dict[str, ContentItem] = {}
     postpurchase_rows = _postpurchase_messages()
-    published_codes = {row["code"] for row in postpurchase_rows} | {"maintenance_notice"}
+    published_codes = {row["code"] for row in postpurchase_rows} | {"maintenance_notice", "web_login_code", "web_login_invalid", "web_login_used", "web_login_identity_failed"}
     for row in [*_messages(), *_start_system_messages(), *postpurchase_rows]:
         code = f"tpl_{row['code']}"
         purpose, writer_brief, editorial_status = _editorial_metadata(

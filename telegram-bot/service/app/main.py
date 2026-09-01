@@ -27,6 +27,7 @@ from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_COD
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
+from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables
@@ -512,6 +513,18 @@ def process_update(update: dict, session: Session) -> dict:
             text = "/start"
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
+            if token and token.startswith("I") and not _maintenance_allows_contact(contact):
+                _handle_maintenance_contact(session, contact, receipt_id, "start", {"web_login": True})
+                session.commit()
+                return {"ok": True, "maintenance": True, "web_login": True}
+            handled, reply, variables = consume_web_login(session, contact, message["from"], token or "", settings.app_auth_secret)
+            if handled:
+                content = session.scalar(select(ContentItem).where(ContentItem.code == f"tpl_{reply}"))
+                if not content or content.status != "published":
+                    raise HTTPException(503, "Telegram login confirmation is not published")
+                client().send_content(contact.chat_id, content, variables)
+                session.commit()
+                return {"ok": True, "web_login": True}
             handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")
             if handled:
                 if not _maintenance_allows_contact(contact):

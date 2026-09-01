@@ -358,6 +358,20 @@ owns_routes = ["*/intensive*", "*/admin/api/intensive*"]
 depends_on = ["platform.content"]
 
 [[modules]]
+id = "products.intensive.telegram-login"
+parent = "products.intensive"
+card = "docs/knowledge-base/modules/catalog/products.intensive.telegram-login.md"
+depends_on = ["messaging.telegram.attribution", "platform.auth"]
+owns_files = [
+  "backend/app/intensive_login_routes.py", "backend/app/static/intensive-login/**",
+  "backend/tests/test_intensive_telegram_login.py",
+  "backend/migrations/versions/20260901_0034_telegram_web_login.py",
+  "telegram-bot/service/app/web_login.py", "telegram-bot/service/tests/test_web_login.py",
+]
+owns_tables = ["telegram_login_attempts"]
+owns_routes = ["*/intensive/telegram-login*", "*/api/intensive/telegram-login*"]
+
+[[modules]]
 id = "products.masterclass"
 admin_catalog = [{ category = "tools", order = 60, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." }]
 parent = "products"
