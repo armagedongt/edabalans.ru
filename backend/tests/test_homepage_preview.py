@@ -166,11 +166,21 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     }
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
-    assert "/preview/homepage-mobile/vsl-player.html?v=4" in parser.iframe_sources
+    assert "/preview/homepage-mobile/vsl-player.html?v=5" in parser.iframe_sources
     assert (
-        "/preview/homepage-mobile/vsl-player.html?v=4&context=anya-review"
+        "/preview/homepage-mobile/vsl-player.html?v=5&context=anya-review"
         in parser.iframe_sources
     )
+    assert "edabalans:player-active" in response.text
+    assert "edabalans:pause-player" in response.text
+    assert "event.origin !== location.origin" in response.text
+    assert "event.source === frame.contentWindow" in response.text
+    player_coordination = response.text.split(
+        "const playerFrames = [...document.querySelectorAll", 1
+    )[1].split("<!-- library:public-content-script:start -->", 1)[0]
+    assert "if (activeFrame && frame !== activeFrame) pauseFrame(frame);" in player_coordination
+    assert "if (frame === activeFrame) return;" in player_coordination
+    assert "pauseFrame(frame);" in player_coordination
     assert {
         "/preview/homepage-mobile/crying-character.png",
         "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
@@ -264,14 +274,31 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "} else {", 1
     )[0]
     assert "video.loop = true;" in autoplay_setup
+    assert "if (!passiveAutoplayAllowed || soundEngaged) return;" in autoplay_setup
+    assert "video.play().catch(()=>{});" in autoplay_setup
+    assert "playAndTakeFocus" not in autoplay_setup
     sound_engagement = response.text.split("function enableSoundAndWatch(){", 1)[1].split(
         "\n  }", 1
     )[0]
     assert "soundEngaged = true;" in sound_engagement
     assert "video.loop = false;" in sound_engagement
     assert "soundCard.hidden = true;" in sound_engagement
-    assert "video.play().catch(()=>{});" in sound_engagement
+    assert "playAndTakeFocus();" in sound_engagement
     assert "showControls(true);" in sound_engagement
+    active_player = response.text.split("function playAndTakeFocus(){", 1)[1].split(
+        "\n  }", 1
+    )[0]
+    assert "video.play();" in active_player
+    assert "attempt.then(announceActivePlayer).catch(()=>{});" in active_player
+    assert "edabalans:player-active" in response.text
+    assert "edabalans:pause-player" in response.text
+    assert "event.source !== parent" in response.text
+    pause_handler = response.text.split(
+        "if (event.data?.type !== 'edabalans:pause-player') return;", 1
+    )[1].split("\n  });", 1)[0]
+    assert "passiveAutoplayAllowed = false;" in pause_handler
+    assert "video.removeEventListener('canplay', autoplayStart);" in pause_handler
+    assert "if (!video.paused) video.pause();" in pause_handler
     first_player_click = response.text.split(
         "function engageFromFirstPlayerClick(event){", 1
     )[1].split("\n  }", 1)[0]

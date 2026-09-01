@@ -419,6 +419,8 @@
   const current = root.querySelector('.mvp__current');
   const duration = root.querySelector('.mvp__duration');
   const timeBox = root.querySelector('.mvp__time');
+  let passiveAutoplayAllowed = true;
+  let autoplayStart = null;
 
   function formatTime(value){
     const s = Math.max(0, Math.floor(Number(value) || 0));
@@ -446,8 +448,10 @@
       root.classList.add('mvp--awaiting-sound');
 
       const start = () => {
+        if (!passiveAutoplayAllowed || soundEngaged) return;
         video.play().catch(()=>{});
       };
+      autoplayStart = start;
 
       if (video.readyState >= 2) start();
       else video.addEventListener('canplay', start, {once:true});
@@ -480,8 +484,22 @@
     if (!playing && soundEngaged) showControls(false);
   }
 
+  function announceActivePlayer(){
+    if (parent === window) return;
+    parent.postMessage({ type:'edabalans:player-active', context:PLAYER_CONTEXT }, location.origin);
+  }
+
+  function playAndTakeFocus(){
+    const attempt = video.play();
+    if (attempt && typeof attempt.then === 'function') {
+      attempt.then(announceActivePlayer).catch(()=>{});
+      return;
+    }
+    announceActivePlayer();
+  }
+
   function togglePlay(){
-    if(video.paused) video.play().catch(()=>{});
+    if(video.paused) playAndTakeFocus();
     else video.pause();
   }
 
@@ -515,6 +533,7 @@
 
   function enableSoundAndWatch(){
     if (soundEngaged) return;
+    passiveAutoplayAllowed = false;
     soundEngaged = true;
     video.loop = false;
     video.currentTime = 0;
@@ -522,7 +541,7 @@
     soundCard.hidden = true;
     root.classList.remove('mvp--awaiting-sound');
     analyticsApi.markEngaged();
-    video.play().catch(()=>{});
+    playAndTakeFocus();
     showControls(true);
   }
 
@@ -595,6 +614,14 @@
   }
 
   root.addEventListener('click', engageFromFirstPlayerClick, true);
+
+  window.addEventListener('message', (event)=>{
+    if (event.origin !== location.origin || event.source !== parent) return;
+    if (event.data?.type !== 'edabalans:pause-player') return;
+    passiveAutoplayAllowed = false;
+    if (autoplayStart) video.removeEventListener('canplay', autoplayStart);
+    if (!video.paused) video.pause();
+  });
 
   muteBtn.addEventListener('click', ()=>{
     video.muted = !video.muted;
