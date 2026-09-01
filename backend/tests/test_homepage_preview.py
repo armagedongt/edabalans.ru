@@ -117,6 +117,9 @@ def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     assert 'data-library-status="accepted"' in response.text
     assert "data-recognition-followup" in response.text
     assert "--recognition-media-gap:clamp(40px,6vw,56px)" in response.text
+    assert "new URLSearchParams(location.search).get('cloud-shadow') === 'hard'" in response.text
+    assert 'html[data-cloud-shadow="hard"] .pain:not(.pain--final)' in response.text
+    assert "box-shadow:0 2px 6px rgba(22,89,124,.28)" in response.text
     assert "height:calc(var(--scene-height) + var(--animation-distance))" in response.text
     assert "Math.max(maxPainHeight+18,((laneHeight+maxPainHeight)/2)+8)" in response.text
     assert "(viewportHeight/2)-(field.offsetTop+(field.offsetHeight/2))" in response.text
