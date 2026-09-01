@@ -30,6 +30,7 @@ class RobotsMetaParser(HTMLParser):
         self.image_sources: set[str] = set()
         self.block_image_source_order: dict[str, list[str]] = {}
         self.image_source_order: list[str] = []
+        self.block_image_source_order: dict[str, list[str]] = {}
         self.iframe_sources: set[str] = set()
         self.ids: list[str] = []
         self.main_count = 0
@@ -69,6 +70,10 @@ class RobotsMetaParser(HTMLParser):
                     attributes["src"]
                 )
             self.image_source_order.append(attributes["src"])
+            if block_id:
+                self.block_image_source_order.setdefault(block_id, []).append(
+                    attributes["src"]
+                )
         if tag == "iframe" and attributes.get("src"):
             self.iframe_sources.add(attributes["src"])
         if attributes.get("id"):
@@ -526,13 +531,9 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
         "tild3263-3566-4161-a438-313262653237",
         "tild3933-6339-4537-b036-656633366263",
     ]
-    assert parser.image_source_order[:4] == expected_featured_sources
-    tilda_sources = [
-        source
-        for source in parser.image_source_order
-        if source.startswith("https://optim.tildacdn.com/")
-    ]
-    actual_tilda_asset_ids = [source.split("/")[3] for source in tilda_sources[4:]]
+    assert parser.block_image_source_order["reviews-featured"] == expected_featured_sources
+    wall_sources = parser.block_image_source_order["reviews-wall"]
+    actual_tilda_asset_ids = [source.split("/")[3] for source in wall_sources]
     assert actual_tilda_asset_ids == expected_tilda_asset_ids
     assert response.text.count('class="reviews-featured__item"') == 4
     assert response.text.count('class="reviews-wall__item"') == 21
@@ -544,6 +545,13 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert 'data-voice-file' in response.text
     assert 'data-voice-seek' in response.text
     assert 'accept="audio/*"' in response.text
+    assert 'src="/blog/assets/favicon-test-face.png"' in response.text
+    assert '<div class="voice-widget__author">Анна К.</div>' in response.text
+    assert 'О том, что изменилось в питании и что стало проще в обычной жизни' in response.text
+    assert 'О том, что изменилось в питании<br>' not in response.text
+    assert 'тестовое аудио · нажмите на аватар, чтобы заменить' not in response.text
+    assert "voice-widget__telegram" not in response.text
+    assert "voice-widget__upload-badge" not in response.text
     assert "const seconds = 12.8" in response.text
     assert "URL.createObjectURL" in response.text
     assert "audio.play()" in response.text
@@ -553,8 +561,17 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert 'aria-live="polite"' in response.text
     assert "seek.disabled = true" in response.text
     assert "seek.disabled = false" in response.text
-    assert "border:1px solid #d7e3ec" in response.text
-    assert "border-radius:0 15px 15px 15px" in response.text
+    assert "--bubble-mask:" in response.text
+    assert "margin-left:-8px" in response.text
+    assert "-webkit-mask:var(--bubble-mask)" in response.text
+    assert "mask:var(--bubble-mask)" in response.text
+    assert "filter:drop-shadow(0 0 1.2px rgba(29,91,130,.24)) drop-shadow(0 4px 4.8px rgba(29,91,130,.18))" in response.text
+    assert ".voice-widget__bubble::before" not in response.text
+    assert "voice-widget__tail" not in response.text
+    assert "viewBox='0 0 12 24'" in response.text
+    assert "max-width:600px" in response.text
+    assert "max-width:620px" in response.text
+    assert "max-width:760px" in response.text
     assert 'class="telegram-chat"' not in response.text
     assert 'data-homepage-block="reviews-featured"' in response.text
     assert 'data-review-index="1"' in response.text
@@ -563,6 +580,9 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert "grid-template-columns:repeat(2,minmax(0,1fr))" in response.text
     assert "columns:2" in response.text
     assert "transform:rotate(var(--tilt))" in response.text
+    assert ".reviews-featured__item:nth-child(4){transform:translateY(-33%) rotate(var(--tilt))}" in response.text
+    assert "filter:drop-shadow(0 5px 5px rgba(25,73,108,.23))" in response.text
+    assert ".reviews-wall__item{filter:drop-shadow(0 7px 7px rgba(25,73,108,.21))}" in response.text
     tilts = [
         float(value.removesuffix("deg"))
         for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
