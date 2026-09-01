@@ -31,7 +31,7 @@ from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables
-from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, validate_telegram_html
+from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
@@ -522,7 +522,14 @@ def process_update(update: dict, session: Session) -> dict:
                 content = session.scalar(select(ContentItem).where(ContentItem.code == f"tpl_{reply}"))
                 if not content or content.status != "published":
                     raise HTTPException(503, "Telegram login confirmation is not published")
-                client().send_content(contact.chat_id, content, variables)
+                rendered_content = SimpleNamespace(
+                    title=content.title,
+                    body_source=replace_template_values(content.body_source, variables),
+                    media_kind=content.media_kind,
+                    media_path=content.media_path,
+                    telegram_file_id=content.telegram_file_id,
+                )
+                client().send_content(contact.chat_id, rendered_content, {})
                 session.commit()
                 return {"ok": True, "web_login": True}
             handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")

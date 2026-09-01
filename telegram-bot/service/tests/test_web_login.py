@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import hmac
+import re
 import struct
 import time
 
@@ -65,7 +66,7 @@ def test_process_update_delivers_code_only_to_maintenance_allowlist(tmp_path, mo
     sent = []
     class FakeTelegram:
         def send_content(self, chat_id, content, variables):
-            sent.append((chat_id, content.code, variables))
+            sent.append((chat_id, content.body_source, variables))
             return "1"
     monkeypatch.setattr(main_module, "client", lambda: FakeTelegram())
     monkeypatch.setattr(main_module.settings, "app_auth_secret", "secret")
@@ -75,8 +76,11 @@ def test_process_update_delivers_code_only_to_maintenance_allowlist(tmp_path, mo
     with Session(engine) as session:
         result = main_module.process_update({"update_id":1,"message":{"from":{"id":42,"first_name":"Сергей"},"chat":{"id":42},"text":f"/start {owner_token}"}}, session)
         assert result == {"ok":True,"web_login":True}
-        assert sent[-1][1] == "tpl_web_login_code"
-        assert len(sent[-1][2]["login_code"]) == 6
+        assert "{{login_code}}" not in sent[-1][1]
+        delivered_code = re.search(r"(?<!\d)(\d{6})(?!\d)", sent[-1][1]).group(1)
+        attempt = session.scalar(select(TelegramLoginAttempt))
+        assert hashlib.sha256(delivered_code.encode()).hexdigest() == attempt.verification_code_hash
+        assert sent[-1][2] == {}
         before = session.scalar(select(func.count(TelegramLoginAttempt.id)))
     outsider_token, _ = payload("secret")
     with Session(engine) as session:
