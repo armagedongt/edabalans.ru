@@ -2097,7 +2097,7 @@
 
     @media (min-width: 900px) {
       #edb-pricing-neurozeh-v1 .edb-pricing-phone {
-        width: min(100%, calc(var(--content-wide) + 64px));
+        width: min(100%, calc(var(--content-standard-max) + 64px));
         max-width: none;
         padding-right: 32px;
         padding-left: 32px;
@@ -2117,9 +2117,10 @@
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-plan:last-child {
-        width: min(100%, 580px);
-        grid-column: 1 / -1;
-        justify-self: center;
+        width: 100%;
+        grid-column: 1;
+        grid-row: 2;
+        justify-self: stretch;
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-assurances {
@@ -2146,6 +2147,10 @@
     }
 
     @media (min-width: 1180px) {
+      #edb-pricing-neurozeh-v1 .edb-pricing-phone {
+        width: min(100%, calc(var(--content-wide) + 64px));
+      }
+
       #edb-pricing-neurozeh-v1 .edb-pricing-list {
         grid-template-columns: repeat(3, minmax(0, 1fr));
       }
@@ -2153,6 +2158,7 @@
       #edb-pricing-neurozeh-v1 .edb-pricing-plan:last-child {
         width: auto;
         grid-column: auto;
+        grid-row: auto;
       }
     }
 

@@ -263,6 +263,16 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         in response.text
     )
     assert (
+        "width: min(100%, calc(var(--content-standard-max) + 64px));"
+        in response.text
+    )
+    assert "grid-column: 1;\n        grid-row: 2;" in response.text
+    assert (
+        "width: min(100%, calc(var(--content-wide) + 64px));"
+        in response.text
+    )
+    assert "grid-column: auto;\n        grid-row: auto;" in response.text
+    assert (
         ".pain:not(.pain--final){background:rgba(255,255,255,.85);"
         "color:rgb(31,34,38);font-weight:700}"
         in response.text
