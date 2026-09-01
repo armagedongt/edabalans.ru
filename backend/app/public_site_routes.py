@@ -40,7 +40,12 @@ def public_site_content(slug: str, db: Session = Depends(get_db)) -> dict:
     result = serialize_public_site_rendered_document(active_public_site_document(db, slug))
     product_code = PRODUCT_SLUGS.get(slug)
     if product_code:
-        result["description"] = product_public(db, product_code)["description"]
+        description = product_public(db, product_code)["description"]
+        result["description"] = (
+            "Как проходит консультация: разбираю дневник питания, определяю план действий и отвечаю на ваши вопросы."
+            if slug == "consultation"
+            else description
+        )
     return result
 
 
