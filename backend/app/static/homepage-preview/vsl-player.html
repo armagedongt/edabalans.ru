@@ -1,6 +1,6 @@
 <style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent!important}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
-  <video class="mvp__video" data-default-source="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" data-default-poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
+  <video class="mvp__video" data-default-source="https://cdn-g.boomstream.com/balancer/5wlZSJxs-9WmCBBoU.mp4" data-default-poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
 
   <div class="mvp__shade"></div>
   <div class="mvp__loader" hidden aria-label="Загрузка"></div>
@@ -349,12 +349,14 @@
   const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || {
     source: root.querySelector('.mvp__video')?.dataset.defaultSource || '',
     poster: root.querySelector('.mvp__video')?.dataset.defaultPoster || '',
-    videoId: 'homepage-vsl-2026-02-13'
+    videoId: 'homepage-vsl-2026-02-13',
+    volume: 0.85
   };
   const video = root.querySelector('.mvp__video');
   if (video) {
     video.src = mediaPreset.source;
     video.poster = mediaPreset.poster;
+    video.volume = mediaPreset.volume ?? 1;
   }
 
   /* Внешний плеер показывает плавный опережающий прогресс. Видео при этом
@@ -396,6 +398,7 @@
   const playBtn = root.querySelector('.mvp__play');
   const muteBtn = root.querySelector('.mvp__mute');
   const volumeSlider = root.querySelector('.mvp__volume');
+  volumeSlider.value = String(video.volume);
   const captionsBtn = root.querySelector('.mvp__captions');
   const pipBtn = root.querySelector('.mvp__pip');
   const loader = root.querySelector('.mvp__loader');

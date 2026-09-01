@@ -221,6 +221,30 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "homepage-anya-review-2026-09-01" in response.text
     assert "PLAYER_CONTEXT === 'anya-review'" in response.text
     assert (
+        "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') "
+        "|| 'homepage-vsl';"
+        in response.text
+    )
+    assert (
+        'data-default-source="https://cdn-g.boomstream.com/balancer/'
+        '5wlZSJxs-9WmCBBoU.mp4"'
+        in response.text
+    )
+    media_presets = response.text.split("const MEDIA_PRESETS = {", 1)[1].split(
+        "\n  };\n  const mediaPreset", 1
+    )[0]
+    assert "'homepage-vsl':" not in media_presets
+    anya_media_preset = media_presets.split("'anya-review': {", 1)[1].split(
+        "\n    }", 1
+    )[0]
+    assert "volume:" not in anya_media_preset
+    main_media_preset = response.text.split(
+        "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || {", 1
+    )[1].split("\n  };", 1)[0]
+    assert "volume: 0.85" in main_media_preset
+    assert "video.volume = mediaPreset.volume ?? 1;" in response.text
+    assert "volumeSlider.value = String(video.volume);" in response.text
+    assert (
         "https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/"
         "243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4"
         in response.text
