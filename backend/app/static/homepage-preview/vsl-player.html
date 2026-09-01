@@ -240,13 +240,15 @@
 #modular-video-player .mvp__sound-card{
   left:50%;top:50%;display:flex;width:min(330px,76%);min-height:258px;flex-direction:column;align-items:center;
   justify-content:center;padding:36px 25px 31px;transform:translate(-50%,-50%);
-  overflow:hidden;isolation:isolate;animation:none;
+  overflow:visible;isolation:isolate;animation:none;
 }
 #modular-video-player .mvp__sound-card[hidden]{display:none}
 #modular-video-player .mvp__sound-card::before,
 #modular-video-player .mvp__sound-card::after{
-  content:none;
+  position:absolute;z-index:-1;inset:-13px;border:2px solid rgba(151,147,255,.72);border-radius:16px;
+  content:"";pointer-events:none;animation:mvp-card-wave 2.15s ease-out infinite;
 }
+#modular-video-player .mvp__sound-card::after{animation-delay:1.05s}
 #modular-video-player .mvp__sound-card .mvp__sound-icon{display:block;width:72px;height:72px;margin:0 0 24px;color:#fff}
 #modular-video-player .mvp__sound-icon svg{display:block;width:100%;height:100%;overflow:visible}
 #modular-video-player .mvp__sound-speaker{fill:currentColor}
@@ -255,6 +257,11 @@
 #modular-video-player .mvp__sound-card .mvp__sound-text{display:block;max-width:100%;font-size:24px;line-height:1.22;font-weight:700;text-wrap:balance}
 #modular-video-player .mvp__sound-card .mvp__sound-text span{display:block;margin-top:7px}
 #modular-video-player .mvp__sound-card .mvp__sound-text span:first-child{margin-top:0}
+@keyframes mvp-card-wave{
+  0%{opacity:0;transform:scale(.94)}
+  18%{opacity:.82}
+  72%,100%{opacity:0;transform:scale(1.12)}
+}
 @keyframes mvp-sound-arc{
   0%,12%{opacity:0;transform:scale(.72)}
   32%,62%{opacity:1;transform:scale(1)}
@@ -297,7 +304,7 @@
   #modular-video-player .mvp__sound-card .mvp__sound-icon{width:60px;height:60px;margin-bottom:18px}
   #modular-video-player .mvp__sound-card .mvp__sound-text{font-size:20px}
 }
-@media(prefers-reduced-motion:reduce){#modular-video-player .mvp__sound-arc{animation:none;opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){#modular-video-player .mvp__sound-arc{animation:none;opacity:1;transform:none}#modular-video-player .mvp__sound-card::before,#modular-video-player .mvp__sound-card::after{animation:none;opacity:.35;transform:none}}
 @media(max-width:380px){
   #modular-video-player .mvp__sound-card{width:min(270px,82%);min-height:164px;padding:16px 14px}
   #modular-video-player .mvp__sound-card .mvp__sound-icon{width:44px;height:44px;margin-bottom:10px}
@@ -471,7 +478,7 @@
     root.classList.remove('mvp--controls-hidden');
     clearTimeout(controlsTimer);
     if (scheduleHide && soundEngaged && !video.paused && !video.ended) {
-      controlsTimer = setTimeout(()=>root.classList.add('mvp--controls-hidden'), 3000);
+      controlsTimer = setTimeout(()=>root.classList.add('mvp--controls-hidden'), 2000);
     }
   }
 
@@ -501,6 +508,11 @@
     else togglePlay();
   });
   soundCard.addEventListener('click', enableSoundAndWatch);
+  window.addEventListener('message', (event)=>{
+    if (event.origin !== location.origin || event.data?.type !== 'edabalans:video-play') return;
+    if (!soundEngaged) enableSoundAndWatch();
+    else video.play().catch(()=>{});
+  });
 
   video.addEventListener('play', ()=>{ updatePlayUI(); if (soundEngaged) showControls(true); });
   video.addEventListener('pause', ()=>{ updatePlayUI(); showControls(false); });
