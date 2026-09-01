@@ -430,7 +430,9 @@
     .method-list li { display: grid; grid-template-columns: 27px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 500; line-height: 1.45; }
     .method-checks { display: flex; }
     .method-check { display: grid; width: 27px; height: 27px; flex: none; place-items: center; font-size: 15px; font-style: normal; font-weight: 900; }
-    .method-check--selected { border-radius: 8px; background: linear-gradient(145deg,#32b7ff,#087dcc); color: #fff; box-shadow: 0 8px 16px -9px rgba(8,125,204,.82); }
+    .method-check--selected { border-radius: 8px; }
+    .method-check--strong { background: linear-gradient(145deg,#55cf82,#24a55a); color: #fff; box-shadow: 0 8px 16px -9px rgba(36,165,90,.68); }
+    .method-check--soft { background: #e4f7ea; color: #35a765; }
     html[data-variant="green"] .method-list li::before { background: #e8f8ef; color: #24a765; }
     .method-list p { margin: 0; }
     .method-list p > span { color: var(--site-text); font-weight: 500; }
@@ -508,7 +510,9 @@
     .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:500;line-height:1.45}
     .method-checks{display:flex}
     .method-check{display:grid;width:27px;height:27px;flex:none;place-items:center;font-size:15px;font-style:normal;font-weight:900}
-    .method-check--selected{border-radius:8px;background:linear-gradient(145deg,#32b7ff,#087dcc);color:#fff;box-shadow:0 8px 16px -9px rgba(8,125,204,.82)}
+    .method-check--selected{border-radius:8px}
+    .method-check--strong{background:linear-gradient(145deg,#55cf82,#24a55a);color:#fff;box-shadow:0 8px 16px -9px rgba(36,165,90,.68)}
+    .method-check--soft{background:#e4f7ea;color:#35a765}
     .method-list p{margin:0}
     .method-list p > span{color:var(--text);font-weight:500}
     .method-list strong{color:var(--ink);font-weight:850}
@@ -2444,7 +2448,7 @@
           if (kicker) kicker.className = 'method-kicker';
           if (list) {
             list.className = 'method-list';
-            list.querySelectorAll('li').forEach((item) => {
+            list.querySelectorAll('li').forEach((item, index) => {
               const emphasis = item.querySelector('strong');
               if (!emphasis) return;
               const plainText = [...item.childNodes]
@@ -2456,7 +2460,7 @@
               const checks = document.createElement('span');
               checks.className = 'method-checks';
               checks.setAttribute('aria-hidden', 'true');
-              checks.innerHTML = '<i class="method-check method-check--selected">✓</i>';
+              checks.innerHTML = `<i class="method-check method-check--selected ${index < 2 ? 'method-check--strong' : 'method-check--soft'}">✓</i>`;
               plain.textContent = plainText;
               line.append(plain, emphasis);
               item.replaceChildren(checks, line);
