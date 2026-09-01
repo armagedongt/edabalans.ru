@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from app.auth import require_admin
 from app.database import get_db
 from app.managed_documents import version_history
+from app.product_catalog_service import product_public
 from app.public_site_content_service import (
     DOCUMENTS,
     DOCUMENT_TYPE,
@@ -20,6 +21,15 @@ from app.public_site_content_service import (
 router = APIRouter(tags=["public-site"])
 
 
+PRODUCT_SLUGS = {
+    "program": "masterclass",
+    "recipes": "recipes",
+    "consultation": "consultation",
+    "calories": "calories",
+    "training": "training",
+}
+
+
 class PublicSiteContentUpdate(BaseModel):
     expected_version: int = Field(ge=1)
     markdown: str = Field(min_length=1, max_length=250_000)
@@ -27,7 +37,11 @@ class PublicSiteContentUpdate(BaseModel):
 
 @router.get("/api/public-site/content/{slug}")
 def public_site_content(slug: str, db: Session = Depends(get_db)) -> dict:
-    return serialize_public_site_rendered_document(active_public_site_document(db, slug))
+    result = serialize_public_site_rendered_document(active_public_site_document(db, slug))
+    product_code = PRODUCT_SLUGS.get(slug)
+    if product_code:
+        result["description"] = product_public(db, product_code)["description"]
+    return result
 
 
 @router.get("/admin/api/public-site/content")
