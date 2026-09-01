@@ -85,6 +85,10 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
     assert "/preview/homepage-mobile/vsl-player.html?v=2" in parser.iframe_sources
+    assert (
+        "/preview/homepage-mobile/vsl-player.html?v=3&context=anya-review"
+        in parser.iframe_sources
+    )
     assert {
         "/preview/homepage-mobile/crying-character.png",
         "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
@@ -115,6 +119,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
+    assert "Видео Ани — временная медиазаглушка" not in response.text
+    assert "Временное видео для проверки механики" not in response.text
     assert "document.body.dataset.anyaHint" not in response.text
     assert "document.body.dataset.anyaControls" not in response.text
     assert "document.body.dataset.playerFrame" not in response.text
@@ -141,6 +147,13 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text
+    assert "homepage-anya-review-2026-09-01" in response.text
+    assert "PLAYER_CONTEXT === 'anya-review'" in response.text
+    assert (
+        "https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/"
+        "243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4"
+        in response.text
+    )
 
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:

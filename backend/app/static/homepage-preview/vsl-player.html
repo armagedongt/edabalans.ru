@@ -1,6 +1,6 @@
 <style>html,body{margin:0;background:transparent}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
-  <video class="mvp__video" src="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
+  <video class="mvp__video" data-default-source="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" data-default-poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
 
   <div class="mvp__shade"></div>
   <div class="mvp__loader" hidden aria-label="Загрузка"></div>
@@ -329,6 +329,24 @@
     standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
   const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard) };
+  const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') || 'homepage-vsl';
+  const MEDIA_PRESETS = {
+    'anya-review': {
+      source: 'https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4',
+      poster: 'https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/243116__FFMPEG/thumb/thumbnail-5_0.jpg',
+      videoId: 'homepage-anya-review-2026-09-01'
+    }
+  };
+  const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || {
+    source: root.querySelector('.mvp__video')?.dataset.defaultSource || '',
+    poster: root.querySelector('.mvp__video')?.dataset.defaultPoster || '',
+    videoId: 'homepage-vsl-2026-02-13'
+  };
+  const video = root.querySelector('.mvp__video');
+  if (video) {
+    video.src = mediaPreset.source;
+    video.poster = mediaPreset.poster;
+  }
 
   /* Внешний плеер показывает плавный опережающий прогресс. Видео при этом
      идёт с реальной скоростью и не перематывается. */
@@ -350,13 +368,12 @@
   */
   const ANALYTICS_CONFIG = {
     endpoint: '/api/public/video-analytics',
-    videoId: 'homepage-vsl-2026-02-13',
+    videoId: mediaPreset.videoId,
     bucketSizeSec: 5,
     completionThreshold: 0.95,
     heartbeatSec: 15
   };
 
-  const video = root.querySelector('.mvp__video');
   if (video && /\.m3u8(?:[?#].*)?$/i.test(video.getAttribute('src') || '') && window.Hls && window.Hls.isSupported()) {
     const source = video.getAttribute('src');
     video.removeAttribute('src');
@@ -518,7 +535,7 @@
   root.addEventListener('focusin', ()=>{ if (soundEngaged) showControls(true); });
   root.addEventListener('touchstart', ()=>{ if (soundEngaged) showControls(true); }, {passive:true});
 
-  if (new URLSearchParams(location.search).get('context') === 'anya-placeholder') {
+  if (PLAYER_CONTEXT === 'anya-review') {
     root.style.touchAction = 'pan-y';
     let drag = null;
     let suppressClick = false;
