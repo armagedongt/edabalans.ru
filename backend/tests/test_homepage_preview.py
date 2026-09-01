@@ -27,6 +27,7 @@ class RobotsMetaParser(HTMLParser):
         super().__init__()
         self.content: str | None = None
         self.image_sources: set[str] = set()
+        self.block_image_source_order: dict[str, list[str]] = {}
         self.iframe_sources: set[str] = set()
         self.ids: list[str] = []
         self.main_count = 0
@@ -61,6 +62,10 @@ class RobotsMetaParser(HTMLParser):
             self.content = attributes.get("content")
         if tag == "img" and attributes.get("src"):
             self.image_sources.add(attributes["src"])
+            if block_id:
+                self.block_image_source_order.setdefault(block_id, []).append(
+                    attributes["src"]
+                )
         if tag == "iframe" and attributes.get("src"):
             self.iframe_sources.add(attributes["src"])
         if attributes.get("id"):
@@ -308,6 +313,59 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "document.body.dataset.anyaHint" not in response.text
     assert "document.body.dataset.anyaControls" not in response.text
     assert "document.body.dataset.playerFrame" not in response.text
+    assert parser.block_order.index("reviews-voice") < parser.block_order.index(
+        "reviews-featured"
+    ) < parser.block_order.index("anya-heading")
+    assert parser.block_order.index("reviews-after-cat") < parser.block_order.index(
+        "reviews-wall"
+    ) < parser.block_order.index("footer")
+    assert parser.block_image_source_order["reviews-featured"] == [
+        "https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp",
+        "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
+        "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
+        "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
+    ]
+    assert parser.block_image_source_order["reviews-wall"] == [
+        "https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp",
+        "https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp",
+        "https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp",
+        "https://optim.tildacdn.com/tild3763-3332-4166-b234-326266323263/-/resize/600x600/-/format/webp/__4.jpg.webp",
+        "https://optim.tildacdn.com/tild3562-3438-4937-a663-386133663562/-/resize/600x600/-/format/webp/__6.jpg.webp",
+        "https://optim.tildacdn.com/tild3038-3638-4630-b132-616433356430/-/resize/600x600/-/format/webp/__7.jpg.webp",
+        "https://optim.tildacdn.com/tild3635-3435-4565-b535-313163343663/-/resize/600x600/-/format/webp/__8.jpg.webp",
+        "https://optim.tildacdn.com/tild6630-6530-4236-a638-343130303032/-/resize/600x600/-/format/webp/__28.jpg.webp",
+        "https://optim.tildacdn.com/tild3363-3531-4861-b430-383064316239/-/resize/600x600/-/format/webp/__21.jpg.webp",
+        "https://optim.tildacdn.com/tild6339-3131-4637-b335-623438313365/-/resize/600x600/-/format/webp/__22.jpg.webp",
+        "https://optim.tildacdn.com/tild3566-3132-4161-b964-666430616538/-/resize/600x600/-/format/webp/__23.jpg.webp",
+        "https://optim.tildacdn.com/tild6538-6330-4538-b766-343366643330/-/resize/600x600/-/format/webp/__24.jpg.webp",
+        "https://optim.tildacdn.com/tild3734-3437-4164-b265-326365313164/-/resize/600x600/-/format/webp/__25.jpg.webp",
+        "https://optim.tildacdn.com/tild3962-6238-4435-b935-326636626263/-/resize/600x600/-/format/webp/__26.jpg.webp",
+        "https://optim.tildacdn.com/tild6635-3630-4165-a332-373434623264/-/resize/600x600/-/format/webp/__27.jpg.webp",
+        "https://optim.tildacdn.com/tild3264-3637-4930-b066-613665343762/-/resize/600x600/-/format/webp/__1.jpg.webp",
+        "https://optim.tildacdn.com/tild6661-3731-4966-a466-316131393864/-/resize/600x600/-/format/webp/__2.jpg.webp",
+        "https://optim.tildacdn.com/tild3065-6139-4561-b334-643739396331/-/resize/600x600/-/format/webp/__3.jpg.webp",
+        "https://optim.tildacdn.com/tild3861-3865-4437-b330-313263383230/-/resize/600x600/-/format/webp/__4.jpg.webp",
+        "https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp",
+        "https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp",
+    ]
+    assert response.text.count('class="reviews-featured__item"') == 4
+    assert response.text.count('class="reviews-wall__item"') == 21
+    assert "const seconds = 12.8" in response.text
+    assert "URL.createObjectURL" in response.text
+    assert "const playButton = widget.querySelector('[data-voice-play]')" in response.text
+    assert "const uploadButton = widget.querySelector('[data-voice-upload]')" in response.text
+    assert "const fileInput = widget.querySelector('[data-voice-file]')" in response.text
+    assert "const seek = widget.querySelector('[data-voice-seek]')" in response.text
+    assert "playButton.addEventListener('click', async () =>" in response.text
+    assert "uploadButton.addEventListener('click', () => fileInput.click())" in response.text
+    assert "fileInput.addEventListener('change', () =>" in response.text
+    assert "seek.addEventListener('input', () =>" in response.text
+    assert "audio.addEventListener('play', () =>" in response.text
+    assert "audio.addEventListener('pause', () =>" in response.text
+    assert "pointerStart" in response.text
+    assert "event.key === 'ArrowRight'" in response.text
+    assert 'class="review-lightbox__cta-button" href="#pricing"' in response.text
+    assert "ctaButton.addEventListener('click', () => close({ restoreFocus: false }))" in response.text
     block_map_path = Path(__file__).parents[2] / "content/public-site/homepage/block-map.json"
     block_map = json.loads(block_map_path.read_text(encoding="utf-8"))
     assert parser.block_order == [block["id"] for block in block_map["blocks"]]
