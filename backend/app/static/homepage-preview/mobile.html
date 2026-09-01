@@ -427,11 +427,10 @@
     .method-kicker { display: inline-block; margin: 0; padding: 8px 12px; border-radius: 9px; background: var(--site-orange); color: #fff; font-size: 15px; font-weight: 800; transform: rotate(-1deg); }
     .method-transition h2 { max-width: 780px; margin: 22px 0 0; font-size: clamp(31px,7.6vw,54px); font-weight: 800; line-height: 1.05; letter-spacing: -.05em; }
     .method-list { display: grid; gap: 13px; max-width: 790px; margin: 28px 0 0; padding: 0; list-style: none; }
-    .method-list li { display: grid; grid-template-columns: 62px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 500; line-height: 1.45; }
-    .method-checks { display: flex; gap: 6px; }
+    .method-list li { display: grid; grid-template-columns: 27px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 500; line-height: 1.45; }
+    .method-checks { display: flex; }
     .method-check { display: grid; width: 27px; height: 27px; flex: none; place-items: center; font-size: 15px; font-style: normal; font-weight: 900; }
-    .method-check--soft { border-radius: 8px; background: #e6f6fe; color: var(--site-blue-deep); }
-    .method-check--bold { border-radius: 50%; background: linear-gradient(145deg,#32b7ff,#087dcc); color: #fff; box-shadow: 0 8px 16px -9px rgba(8,125,204,.82); transform: rotate(-5deg); }
+    .method-check--selected { border-radius: 8px; background: linear-gradient(145deg,#32b7ff,#087dcc); color: #fff; box-shadow: 0 8px 16px -9px rgba(8,125,204,.82); }
     html[data-variant="green"] .method-list li::before { background: #e8f8ef; color: #24a765; }
     .method-list p { margin: 0; }
     .method-list p > span { color: var(--site-text); font-weight: 500; }
@@ -506,11 +505,10 @@
     .method-transition__inner{width:min(100%,940px);margin:0 auto}
     .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:clamp(28px,7vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
     .method-list{display:grid;gap:13px;max-width:790px;margin:28px 0 0;padding:0;list-style:none}
-    .method-list li{display:grid;grid-template-columns:62px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:500;line-height:1.45}
-    .method-checks{display:flex;gap:6px}
+    .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:500;line-height:1.45}
+    .method-checks{display:flex}
     .method-check{display:grid;width:27px;height:27px;flex:none;place-items:center;font-size:15px;font-style:normal;font-weight:900}
-    .method-check--soft{border-radius:8px;background:#e6f6fe;color:#118ed8}
-    .method-check--bold{border-radius:50%;background:linear-gradient(145deg,#32b7ff,#087dcc);color:#fff;box-shadow:0 8px 16px -9px rgba(8,125,204,.82);transform:rotate(-5deg)}
+    .method-check--selected{border-radius:8px;background:linear-gradient(145deg,#32b7ff,#087dcc);color:#fff;box-shadow:0 8px 16px -9px rgba(8,125,204,.82)}
     .method-list p{margin:0}
     .method-list p > span{color:var(--text);font-weight:500}
     .method-list strong{color:var(--ink);font-weight:850}
@@ -761,11 +759,11 @@
     .anya-story__arrow:hover,.anya-story__arrow:focus-visible{box-shadow:0 17px 28px -15px rgba(37,28,116,.9);transform:translateY(-2px)}
     .anya-story__arrow:disabled{opacity:.34;cursor:default;box-shadow:none;transform:none}
     .anya-story__side-controls{position:absolute;z-index:12;top:14px;right:-10px;bottom:42px;left:-10px;pointer-events:none}
-    .anya-story__side-arrow{position:absolute;top:50%;width:46px;height:46px;border-radius:50%;pointer-events:auto;transform:translateY(-50%);box-shadow:0 14px 28px -15px rgba(37,28,116,.92)}
+    .anya-story__side-arrow{position:absolute;top:50%;width:46px;height:46px;border-radius:50%;background:rgba(97,92,245,.78);pointer-events:auto;transform:translateY(-50%);box-shadow:0 14px 28px -15px rgba(37,28,116,.72)}
     .anya-story__side-arrow--prev{left:0}
     .anya-story__side-arrow--next{right:0}
-    .anya-story__side-arrow:hover,.anya-story__side-arrow:focus-visible{transform:translateY(calc(-50% - 2px))}
-    .anya-story__side-arrow:disabled{transform:translateY(-50%)}
+    .anya-story__side-arrow:hover,.anya-story__side-arrow:focus-visible{background:rgba(97,92,245,.9);transform:translateY(calc(-50% - 2px))}
+    .anya-story__side-arrow:disabled{opacity:0;pointer-events:none;transform:translateY(-50%)}
     .chain-block--pricing{padding:20px 0 74px;background:transparent}
     .chain-block--faq{padding:0 0 54px;background:transparent}
     .chain-block--final{background:transparent;color:#fff}
@@ -934,7 +932,7 @@
             </div>
           </div>
           <div class="anya-story__side-controls" aria-label="Переключение слайдов по краям">
-            <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
+            <button class="anya-story__arrow anya-story__arrow--prev anya-story__side-arrow anya-story__side-arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
             <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
           </div>
         </div>
@@ -2458,7 +2456,7 @@
               const checks = document.createElement('span');
               checks.className = 'method-checks';
               checks.setAttribute('aria-hidden', 'true');
-              checks.innerHTML = '<i class="method-check method-check--soft">✓</i><i class="method-check method-check--bold">✓</i>';
+              checks.innerHTML = '<i class="method-check method-check--selected">✓</i>';
               plain.textContent = plainText;
               line.append(plain, emphasis);
               item.replaceChildren(checks, line);
