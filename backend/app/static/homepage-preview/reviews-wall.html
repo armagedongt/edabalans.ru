@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="robots" content="noindex,nofollow">
-  <title>Отзывы — полотно из скриншотов</title>
+  <title>Отзывы — два блока со скриншотами</title>
   <style>
     @font-face{
       font-family:Montserrat;
@@ -35,6 +35,16 @@
         linear-gradient(180deg,#fbfdff 0%,#f4fbff 30%,#eef9ff 61%,#eaf7ff 100%);
     }
     body.reviews-wall--locked{overflow:hidden}
+    .reviews-flow{width:100%;overflow:hidden}
+    .reviews-featured{
+      width:min(100%,800px);
+      margin:0 auto;
+      padding:22px 20px clamp(76px,14vw,124px);
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      align-items:start;
+      gap:clamp(10px,3vw,18px);
+    }
     .reviews-wall{
       width:min(100%,800px);
       margin:0 auto;
@@ -42,10 +52,10 @@
       columns:2;
       column-gap:clamp(10px,3vw,18px);
     }
+    .reviews-featured__item,
     .reviews-wall__item{
       display:block;
       width:100%;
-      margin:0 0 clamp(10px,3vw,17px);
       padding:0;
       border:0;
       break-inside:avoid;
@@ -56,10 +66,14 @@
       transform-origin:50% 50%;
       filter:drop-shadow(0 7px 13px rgba(25,73,108,.18));
     }
+    .reviews-featured__item{margin:0}
+    .reviews-wall__item{margin:0 0 clamp(10px,3vw,17px)}
+    .reviews-featured__item:focus-visible,
     .reviews-wall__item:focus-visible{
       outline:3px solid #247fd3;
       outline-offset:4px;
     }
+    .reviews-featured__item img,
     .reviews-wall__item img{
       display:block;
       width:100%;
@@ -110,6 +124,70 @@
       filter:drop-shadow(0 18px 28px rgba(0,0,0,.28));
       pointer-events:none;
     }
+    .review-lightbox__image[hidden],
+    .review-lightbox__control[hidden],
+    .review-lightbox__counter[hidden]{display:none}
+    .review-lightbox__cta[hidden]{display:none}
+    .review-lightbox__cta{
+      width:min(100%,480px,calc((100svh - 300px) * 1.03));
+      height:auto;
+      max-height:100%;
+      min-width:0;
+      min-height:0;
+      display:grid;
+      grid-template-rows:auto auto auto;
+      gap:14px;
+      padding:16px;
+      overflow:hidden;
+      border-radius:24px;
+      background:linear-gradient(145deg,#16a9f2 0%,#087bc7 100%);
+      box-shadow:0 24px 56px rgba(0,87,145,.42);
+      user-select:none;
+    }
+    .review-lightbox__cta img{
+      display:block;
+      width:100%;
+      height:auto;
+      min-height:0;
+      aspect-ratio:800/776;
+      object-fit:cover;
+      border:2px solid rgba(255,255,255,.82);
+      border-radius:17px;
+      pointer-events:none;
+      -webkit-user-drag:none;
+    }
+    .review-lightbox__cta-copy{
+      margin:0;
+      color:#fff;
+      font-size:clamp(32px,9vw,54px);
+      font-weight:900;
+      line-height:1;
+      text-align:center;
+      letter-spacing:-.04em;
+    }
+    .review-lightbox__cta-button{
+      min-height:58px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0 22px;
+      border-radius:16px;
+      color:#fff;
+      background:#ff684b;
+      box-shadow:0 16px 30px -17px rgba(255,104,75,.72);
+      font-size:16px;
+      font-weight:900;
+      text-decoration:none;
+      transition:transform .18s ease,background .18s ease,box-shadow .18s ease;
+    }
+    .review-lightbox__cta-button:hover,
+    .review-lightbox__cta-button:focus-visible{
+      background:linear-gradient(135deg,#ffd47d,#e8ae45);
+      box-shadow:0 20px 32px -15px rgba(232,174,69,.82);
+      transform:rotate(-1deg) translateY(-2px);
+      outline:3px solid #fff;
+      outline-offset:3px;
+    }
     .review-lightbox__control{
       position:absolute;
       z-index:2;
@@ -126,6 +204,8 @@
       backdrop-filter:blur(8px);
     }
     .review-lightbox__control:hover{background:rgba(255,255,255,.24)}
+    .review-lightbox__control:disabled{opacity:.28;cursor:default}
+    .review-lightbox__control:disabled:hover{background:rgba(255,255,255,.14)}
     .review-lightbox__control:focus-visible{
       outline:3px solid #65c7ff;
       outline-offset:3px;
@@ -153,16 +233,54 @@
       backdrop-filter:blur(8px);
     }
     @media (min-width:768px){
+      .reviews-featured{padding:38px 28px 132px}
       .reviews-wall{padding:38px 28px 52px}
+      .reviews-featured__item,
       .reviews-wall__item{filter:drop-shadow(0 10px 18px rgba(25,73,108,.17))}
       .review-lightbox__stage{padding:58px 78px 52px}
       .review-lightbox__prev{left:14px}
       .review-lightbox__next{right:14px}
     }
+    @media (max-height:520px) and (orientation:landscape){
+      .review-lightbox__stage{padding:44px 58px 12px}
+      .review-lightbox__cta{
+        width:min(100%,560px);
+        height:100%;
+        max-height:280px;
+        grid-template-columns:minmax(0,1fr) minmax(180px,.9fr);
+        grid-template-rows:minmax(0,1fr) auto;
+        gap:10px;
+        padding:12px;
+      }
+      .review-lightbox__cta img{
+        grid-column:1;
+        grid-row:1 / 3;
+        width:100%;
+        height:100%;
+        aspect-ratio:auto;
+        object-fit:cover;
+      }
+      .review-lightbox__cta-copy{
+        align-self:end;
+        font-size:clamp(28px,7vh,42px);
+      }
+      .review-lightbox__cta-button{min-height:50px;padding-inline:14px;font-size:14px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      html{scroll-behavior:auto}
+      .review-lightbox__cta-button{transition:none}
+    }
   </style>
 </head>
 <body>
-  <main class="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-block-width="visual">
+  <main class="reviews-flow">
+  <section class="reviews-featured" aria-label="Избранные отзывы участников" data-homepage-block="reviews-featured" data-block-width="visual">
+    <button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть избранный отзыв 1 из 4"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Избранный отзыв участницы 1"></button>
+    <button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть избранный отзыв 2 из 4"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Избранный отзыв участницы 2"></button>
+    <button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="3" aria-label="Открыть избранный отзыв 3 из 4"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Избранный отзыв участницы 3"></button>
+    <button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="4" aria-label="Открыть избранный отзыв 4 из 4"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Избранный отзыв участницы 4"></button>
+  </section>
+  <section class="reviews-wall" id="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-block-width="visual">
     <button class="reviews-wall__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв 1 из 22"><img src="https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 1"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.8deg" data-review-index="2" aria-label="Открыть отзыв 2 из 22"><img src="https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 2"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-.5deg" data-review-index="3" aria-label="Открыть отзыв 3 из 22"><img src="https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 3"></button>
@@ -185,6 +303,7 @@
     <button class="reviews-wall__item" type="button" style="--tilt:.5deg" data-review-index="20" aria-label="Открыть отзыв 20 из 22"><img src="https://optim.tildacdn.com/tild3861-3865-4437-b330-313263383230/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 20"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1.3deg" data-review-index="21" aria-label="Открыть отзыв 21 из 22"><img src="https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 21"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.7deg" data-review-index="22" aria-label="Открыть отзыв 22 из 22"><img src="https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 22"></button>
+  </section>
   </main>
   <div class="review-lightbox" data-review-lightbox role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр отзывов" hidden>
     <div class="review-lightbox__panel">
@@ -196,6 +315,11 @@
       </button>
       <div class="review-lightbox__stage" data-review-stage>
         <img class="review-lightbox__image" data-review-image src="" alt="">
+        <article class="review-lightbox__cta" data-review-cta hidden>
+          <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет">
+          <p class="review-lightbox__cta-copy">ПОРА!!</p>
+          <a class="review-lightbox__cta-button" href="/preview/homepage-mobile#pricing">Выбрать тариф</a>
+        </article>
       </div>
       <button class="review-lightbox__control review-lightbox__next" type="button" data-review-next aria-label="Следующий отзыв">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
@@ -205,51 +329,123 @@
   </div>
   <script>
     (() => {
-      const triggers = [...document.querySelectorAll('[data-review-index]')];
+      const groups = {
+        featured: [...document.querySelectorAll('.reviews-featured__item')],
+        wall: [...document.querySelectorAll('.reviews-wall__item')],
+      };
+      const wallSection = document.querySelector('[data-homepage-block="reviews-wall"]');
       const lightbox = document.querySelector('[data-review-lightbox]');
       const stage = lightbox.querySelector('[data-review-stage]');
       const activeImage = lightbox.querySelector('[data-review-image]');
+      const cta = lightbox.querySelector('[data-review-cta]');
+      const ctaButton = cta.querySelector('.review-lightbox__cta-button');
       const counter = lightbox.querySelector('[data-review-counter]');
       const closeButton = lightbox.querySelector('[data-review-close]');
       const previousButton = lightbox.querySelector('[data-review-prev]');
       const nextButton = lightbox.querySelector('[data-review-next]');
+      let activeGroup = 'featured';
       let activeIndex = 0;
+      let activeMode = 'image';
       let previousFocus = null;
       let pointerStart = null;
 
-      const show = (index) => {
-        activeIndex = (index + triggers.length) % triggers.length;
+      const updateControls = () => {
+        const triggers = groups[activeGroup];
+        const onCta = activeMode === 'cta';
+        previousButton.disabled = !onCta && activeIndex === 0;
+        previousButton.hidden = false;
+        nextButton.hidden = onCta;
+        if (onCta) return;
+        const onLast = activeIndex === triggers.length - 1;
+        nextButton.setAttribute('aria-label', onLast
+          ? activeGroup === 'featured'
+            ? 'Продолжить к следующим отзывам'
+            : 'Показать финальную карточку'
+          : 'Следующий отзыв');
+      };
+
+      const showImage = (index) => {
+        const triggers = groups[activeGroup];
+        activeMode = 'image';
+        activeIndex = Math.max(0, Math.min(index, triggers.length - 1));
         const sourceImage = triggers[activeIndex].querySelector('img');
         activeImage.src = sourceImage.currentSrc || sourceImage.src;
         activeImage.alt = sourceImage.alt;
+        activeImage.hidden = false;
+        cta.hidden = true;
+        counter.hidden = false;
         counter.textContent = `${activeIndex + 1} / ${triggers.length}`;
-        [activeIndex - 1, activeIndex + 1].forEach((neighbor) => {
-          const image = triggers[(neighbor + triggers.length) % triggers.length].querySelector('img');
-          image.decode?.().catch(() => {});
+        [activeIndex - 1, activeIndex + 1].forEach((neighborIndex) => {
+          const image = triggers[neighborIndex]?.querySelector('img');
+          image?.decode?.().catch(() => {});
         });
+        updateControls();
       };
 
-      const open = (index) => {
+      const showCta = () => {
+        const moveFocusToCta = document.activeElement === nextButton;
+        activeMode = 'cta';
+        activeImage.hidden = true;
+        activeImage.removeAttribute('src');
+        cta.hidden = false;
+        counter.hidden = true;
+        updateControls();
+        if (moveFocusToCta) ctaButton.focus();
+      };
+
+      const open = (group, index) => {
         previousFocus = document.activeElement;
-        show(index);
+        activeGroup = group;
+        showImage(index);
         lightbox.hidden = false;
         document.body.classList.add('reviews-wall--locked');
         closeButton.focus();
       };
 
-      const close = () => {
+      const close = ({ restoreFocus = true } = {}) => {
         lightbox.hidden = true;
         activeImage.removeAttribute('src');
         document.body.classList.remove('reviews-wall--locked');
-        previousFocus?.focus();
+        if (restoreFocus) previousFocus?.focus();
       };
 
-      triggers.forEach((trigger, index) => trigger.addEventListener('click', () => open(index)));
+      const continueBelow = () => {
+        close({ restoreFocus: false });
+        wallSection.scrollIntoView({
+          behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+          block: 'start',
+        });
+        groups.wall[0].focus({ preventScroll: true });
+      };
+
+      const step = (direction) => {
+        if (activeMode === 'cta') {
+          if (direction < 0) showImage(groups.wall.length - 1);
+          return;
+        }
+        const triggers = groups[activeGroup];
+        const targetIndex = activeIndex + direction;
+        if (targetIndex < 0) return;
+        if (targetIndex < triggers.length) {
+          showImage(targetIndex);
+          return;
+        }
+        if (activeGroup === 'featured') {
+          continueBelow();
+          return;
+        }
+        showCta();
+      };
+
+      Object.entries(groups).forEach(([group, triggers]) => {
+        triggers.forEach((trigger, index) => trigger.addEventListener('click', () => open(group, index)));
+      });
       closeButton.addEventListener('click', close);
-      previousButton.addEventListener('click', () => show(activeIndex - 1));
-      nextButton.addEventListener('click', () => show(activeIndex + 1));
+      previousButton.addEventListener('click', () => step(-1));
+      nextButton.addEventListener('click', () => step(1));
       stage.addEventListener('pointerdown', (event) => {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
+        if (event.target.closest('a')) return;
         pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
         try { stage.setPointerCapture(event.pointerId); } catch {}
       });
@@ -259,7 +455,7 @@
         const deltaY = event.clientY - pointerStart.y;
         pointerStart = null;
         if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-        show(activeIndex + (deltaX < 0 ? 1 : -1));
+        step(deltaX < 0 ? 1 : -1);
       });
       stage.addEventListener('pointercancel', () => { pointerStart = null; });
 
@@ -271,14 +467,15 @@
         }
         if (event.key === 'ArrowLeft') {
           event.preventDefault();
-          show(activeIndex - 1);
+          step(-1);
         }
         if (event.key === 'ArrowRight') {
           event.preventDefault();
-          show(activeIndex + 1);
+          step(1);
         }
         if (event.key !== 'Tab') return;
-        const controls = [closeButton, previousButton, nextButton];
+        const controls = [closeButton, previousButton, nextButton, ...lightbox.querySelectorAll('a')]
+          .filter((control) => !control.hidden && !control.disabled && control.offsetParent !== null);
         const current = controls.indexOf(document.activeElement);
         event.preventDefault();
         if (current === -1) {

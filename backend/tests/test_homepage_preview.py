@@ -488,7 +488,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
 
 
-def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
+def test_homepage_reviews_preview_uses_featured_order_and_first_22_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 
     assert response.status_code == 200
@@ -497,6 +497,12 @@ def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     parser = RobotsMetaParser()
     parser.feed(response.text)
+    expected_featured_sources = [
+        "https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp",
+        "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
+        "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
+        "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
+    ]
     expected_tilda_asset_ids = [
         "tild3133-3832-4464-b037-623236633763",
         "tild3438-6233-4630-a533-336566346264",
@@ -521,25 +527,33 @@ def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
         "tild3263-3566-4161-a438-313262653237",
         "tild3933-6339-4537-b036-656633366263",
     ]
-    actual_tilda_asset_ids = [
-        source.split("/")[3] for source in parser.image_source_order
+    assert parser.image_source_order[:4] == expected_featured_sources
+    tilda_sources = [
+        source
+        for source in parser.image_source_order
+        if source.startswith("https://optim.tildacdn.com/")
     ]
+    actual_tilda_asset_ids = [source.split("/")[3] for source in tilda_sources[4:]]
     assert actual_tilda_asset_ids == expected_tilda_asset_ids
+    assert response.text.count('class="reviews-featured__item"') == 4
     assert response.text.count('class="reviews-wall__item"') == 22
+    assert 'data-homepage-block="reviews-featured"' in response.text
     assert 'data-review-index="1"' in response.text
     assert 'data-review-index="22"' in response.text
+    assert "grid-template-columns:repeat(2,minmax(0,1fr))" in response.text
     assert "columns:2" in response.text
     assert "transform:rotate(var(--tilt))" in response.text
     tilts = [
         float(value.removesuffix("deg"))
         for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
     ]
-    assert len(tilts) == 22
+    assert len(tilts) == 26
     assert all(0 < abs(tilt) <= 2 for tilt in tilts)
     assert min(tilts) < 0 < max(tilts)
     assert "tild6131-3266-4736-b265-396265366664" not in response.text
     assert "tild6338-3130-4939-a335-653164356231" not in response.text
     assert response.text.count('aria-label="Открыть отзыв ') == 22
+    assert response.text.count('aria-label="Открыть избранный отзыв ') == 4
     assert 'data-review-lightbox role="dialog" aria-modal="true"' in response.text
     assert 'data-review-stage' in response.text
     assert 'data-review-prev' in response.text
@@ -549,6 +563,12 @@ def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
     assert "event.key === 'Escape'" in response.text
     assert "event.key === 'ArrowLeft'" in response.text
     assert "event.key === 'ArrowRight'" in response.text
+    assert "wallSection.scrollIntoView" in response.text
+    assert "const showCta" in response.text
+    assert 'data-review-cta hidden' in response.text
+    assert ">ПОРА!!</p>" in response.text
+    assert 'href="/preview/homepage-mobile#pricing">Выбрать тариф</a>' in response.text
+    assert '/preview/homepage-mobile/final-cta-cat-clock.webp?v=2' in parser.image_sources
 
 
 def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
