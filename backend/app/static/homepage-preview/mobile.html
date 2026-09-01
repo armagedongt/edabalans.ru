@@ -802,6 +802,19 @@
         radial-gradient(ellipse 54% 8% at -4% 97%,rgba(255,174,91,.31),transparent 65%),
         linear-gradient(180deg,#fffdfa 0%,#fff5ee 22%,#f6fbff 45%,#fff5ee 70%,#eff9ff 100%);
     }
+    body[data-bg-theme="blue-scatter"]{
+      background:
+        radial-gradient(ellipse 61% 8% at -4% 5%,rgba(35,168,246,.28),transparent 66%),
+        radial-gradient(ellipse 56% 7% at 104% 15%,rgba(103,203,255,.24),transparent 66%),
+        radial-gradient(ellipse 65% 8% at -5% 27%,rgba(91,195,251,.2),transparent 68%),
+        radial-gradient(ellipse 58% 8% at 105% 38%,rgba(31,162,239,.25),transparent 66%),
+        radial-gradient(ellipse 62% 8% at -4% 50%,rgba(115,207,255,.23),transparent 68%),
+        radial-gradient(ellipse 54% 7% at 104% 61%,rgba(39,174,245,.22),transparent 66%),
+        radial-gradient(ellipse 65% 8% at -5% 72%,rgba(80,190,249,.24),transparent 67%),
+        radial-gradient(ellipse 58% 8% at 105% 84%,rgba(28,164,241,.27),transparent 66%),
+        radial-gradient(ellipse 62% 8% at -4% 96%,rgba(105,204,255,.24),transparent 68%),
+        linear-gradient(180deg,#fbfdff 0%,#f4fbff 30%,#eef9ff 61%,#eaf7ff 100%);
+    }
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:transparent}
     .chain-block{position:relative;z-index:1;min-width:0}
     .chain-block--before-after{padding:0;background:transparent}
@@ -892,6 +905,7 @@
         'orange-whisper': 'Фон 1 — нежный оранжевый',
         'orange-balance': 'Фон 2 — ярче и сбалансированно',
         'orange-flare': 'Фон 3 — оранжевые вспышки',
+        'blue-scatter': 'Фон 4 — много голубых пятен',
       };
       const backgroundTheme = params.get('bg');
       if (backgroundThemes[backgroundTheme]) {
