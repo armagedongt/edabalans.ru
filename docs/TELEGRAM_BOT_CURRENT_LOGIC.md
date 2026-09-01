@@ -5,7 +5,7 @@
 ## Telegram-first вход бесплатного интенсива
 
 Test-only production-контур принимает HMAC-подписанный `/start I…` от страницы
-`/intensive/telegram-login`. Payload действует 15 минут и не содержит открытого
+`/telegram-login`. Payload действует 15 минут и не содержит открытого
 идентификатора. После проверки consumer связывает фактический Telegram ID с CRM,
 записывает `telegram_login_attempts` и отправляет опубликованный слот
 `tpl_web_login_code` с шестизначным кодом. Сайт завершает вход только после ввода

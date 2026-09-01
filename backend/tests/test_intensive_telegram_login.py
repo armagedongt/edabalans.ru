@@ -37,6 +37,7 @@ def _db(factory):
 
 def test_browser_starts_pending_then_receives_linked_identity(tmp_path):
     client, factory = setup(tmp_path)
+    assert client.get("/telegram-login").status_code == 200
     started = client.post("/api/intensive/telegram-login/start")
     assert started.status_code == 200
     payload = started.json()["deep_link"].split("?start=",1)[1]

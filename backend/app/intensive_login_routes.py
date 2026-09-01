@@ -59,12 +59,12 @@ def _session_user_id(secret: str, value: str | None) -> str | None:
     return user_id
 
 
-@router.get("/intensive/telegram-login", include_in_schema=False)
+@router.get("/telegram-login", include_in_schema=False)
 def page() -> FileResponse:
     return FileResponse(STATIC / "index.html")
 
 
-@router.get("/intensive/telegram-login/{asset}", include_in_schema=False)
+@router.get("/telegram-login/{asset}", include_in_schema=False)
 def asset(asset: str) -> FileResponse:
     if asset not in {"app.js", "styles.css"}:
         raise HTTPException(404)
