@@ -488,7 +488,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
 
 
-def test_homepage_reviews_preview_uses_featured_order_and_first_22_wall_reviews() -> None:
+def test_homepage_reviews_preview_uses_voice_mockup_featured_order_and_21_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 
     assert response.status_code == 200
@@ -508,7 +508,6 @@ def test_homepage_reviews_preview_uses_featured_order_and_first_22_wall_reviews(
         "tild3438-6233-4630-a533-336566346264",
         "tild3537-6466-4733-a337-623831303937",
         "tild3763-3332-4166-b234-326266323263",
-        "tild3438-6466-4063-b435-336239383962",
         "tild3562-3438-4937-a663-386133663562",
         "tild3038-3638-4630-b132-616433356430",
         "tild3635-3435-4565-b535-313163343663",
@@ -536,10 +535,18 @@ def test_homepage_reviews_preview_uses_featured_order_and_first_22_wall_reviews(
     actual_tilda_asset_ids = [source.split("/")[3] for source in tilda_sources[4:]]
     assert actual_tilda_asset_ids == expected_tilda_asset_ids
     assert response.text.count('class="reviews-featured__item"') == 4
-    assert response.text.count('class="reviews-wall__item"') == 22
+    assert response.text.count('class="reviews-wall__item"') == 21
+    assert 'data-homepage-block="reviews-voice"' in response.text
+    assert 'data-voice-placeholder' in response.text
+    assert response.text.count('class="telegram-voice ') == 2
+    assert response.text.count('class="telegram-voice"') == 1
+    assert response.text.count('class="telegram-voice__play"') == 3
+    assert response.text.count('class="telegram-voice__wave"') == 3
+    assert "3 голосовых сообщения" in response.text
     assert 'data-homepage-block="reviews-featured"' in response.text
     assert 'data-review-index="1"' in response.text
-    assert 'data-review-index="22"' in response.text
+    assert 'data-review-index="21"' in response.text
+    assert 'data-review-index="22"' not in response.text
     assert "grid-template-columns:repeat(2,minmax(0,1fr))" in response.text
     assert "columns:2" in response.text
     assert "transform:rotate(var(--tilt))" in response.text
@@ -547,12 +554,13 @@ def test_homepage_reviews_preview_uses_featured_order_and_first_22_wall_reviews(
         float(value.removesuffix("deg"))
         for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
     ]
-    assert len(tilts) == 26
+    assert len(tilts) == 25
     assert all(0 < abs(tilt) <= 2 for tilt in tilts)
     assert min(tilts) < 0 < max(tilts)
     assert "tild6131-3266-4736-b265-396265366664" not in response.text
     assert "tild6338-3130-4939-a335-653164356231" not in response.text
-    assert response.text.count('aria-label="Открыть отзыв ') == 22
+    assert "tild3438-6466-4063-b435-336239383962" not in response.text
+    assert response.text.count('aria-label="Открыть отзыв ') == 21
     assert response.text.count('aria-label="Открыть избранный отзыв ') == 4
     assert 'data-review-lightbox role="dialog" aria-modal="true"' in response.text
     assert 'data-review-stage' in response.text
