@@ -25,7 +25,7 @@
 | 14 | `46-eating-outside-home.txt` | Тизер второй рецептурной части и запуск второго 72-часового окна |
 | 15 | `43-food-constructor-video.md`; `33-kitchen-matters.txt`; `42-kitchen-section-introduction-and-assignment.md`; рецептурные ссылки из `48-recipes-selection-and-assignment.md` | Текстовая версия конструктора; граница бесплатной части и второй части рецептов |
 | 16 | `63-behind-scenes.md` | Лёгкий день после полного каталога: реальные дневники и идеи для собственной системы |
-| 17 | `16-health-block-closing.txt`; `18-water.txt`; `22-assignment-health-block.md` | Отсылка к курсу тренировок и редакционная склейка блока |
+| 17 | `16-health-block-closing.txt`; `18-water.txt`; `22-assignment-health-block.md`; темы нового материала в `68-cycles-and-womens-body.md` | Написать материал «Циклы и женское тело» после подбора источников и медицинского фактчека; отсылка к курсу тренировок и редакционная склейка блока |
 | 18 | `64-addictions-guide.md`; `65-five-years-goal.md` | Переход от похудения к изменению жизни; без прямого призыва к покупке |
 | 19 | `49-closing-self-review.md`; `52-how-consultation-works.md` | Подготовка реализована штатной формой `closing-review`, отдельный дублирующий шаг скрыт; статья о формате консультации опубликована |
 | 20 | `50-final-stream-and-periodization.md`; логика окна в `../../docs/knowledge-base/modules/telegram/POST_PURCHASE_MASTERCLASS.md` | Готовая статья о фазах похудения и периодизации; финальная витрина остаётся после материала; технические ID `day-21-*` сохранены |

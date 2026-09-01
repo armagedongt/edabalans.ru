@@ -1304,6 +1304,16 @@
           "contentKind": "text",
           "contentAsset": "18-water.md",
           "hidden": false
+        },
+        {
+          "id": "day-17-article-04",
+          "kind": "article",
+          "title": "Циклы и женское тело",
+          "summary": "Цикл, ПМС, аппетит, энергия, настроение, отёчность и спокойное отношение к разным состояниям.",
+          "status": "draft",
+          "contentKind": "placeholder",
+          "required": false,
+          "hidden": true
         }
       ],
       "implementation": {
