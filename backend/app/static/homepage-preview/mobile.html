@@ -427,11 +427,14 @@
     .method-kicker { display: inline-block; margin: 0; padding: 8px 12px; border-radius: 9px; background: var(--site-orange); color: #fff; font-size: 15px; font-weight: 800; transform: rotate(-1deg); }
     .method-transition h2 { max-width: 780px; margin: 22px 0 0; font-size: clamp(31px,7.6vw,54px); font-weight: 800; line-height: 1.05; letter-spacing: -.05em; }
     .method-list { display: grid; gap: 13px; max-width: 790px; margin: 28px 0 0; padding: 0; list-style: none; }
-    .method-list li { display: grid; grid-template-columns: 27px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 750; line-height: 1.45; }
-    .method-list li::before { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 8px; background: #e6f6fe; color: var(--site-blue-deep); content: "✓"; font-size: 15px; font-weight: 900; }
+    .method-list li { display: grid; grid-template-columns: 62px 1fr; gap: 11px; align-items: start; font-size: 17px; font-weight: 500; line-height: 1.45; }
+    .method-checks { display: flex; gap: 6px; }
+    .method-check { display: grid; width: 27px; height: 27px; flex: none; place-items: center; font-size: 15px; font-style: normal; font-weight: 900; }
+    .method-check--soft { border-radius: 8px; background: #e6f6fe; color: var(--site-blue-deep); }
+    .method-check--bold { border-radius: 50%; background: linear-gradient(145deg,#32b7ff,#087dcc); color: #fff; box-shadow: 0 8px 16px -9px rgba(8,125,204,.82); transform: rotate(-5deg); }
     html[data-variant="green"] .method-list li::before { background: #e8f8ef; color: #24a765; }
     .method-list p { margin: 0; }
-    .method-list span { color: #66707a; font-weight: 600; }
+    .method-list p > span { color: var(--site-text); font-weight: 500; }
     .method-list strong { color: var(--site-ink); font-weight: 850; }
     .flow-placeholder { margin-top: 54px; padding: 23px 25px; border: 1px dashed #cfd8de; border-radius: 15px; color: #737a82; font-size: 14px; line-height: 1.5; }
 
@@ -503,10 +506,13 @@
     .method-transition__inner{width:min(100%,940px);margin:0 auto}
     .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:clamp(28px,7vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
     .method-list{display:grid;gap:13px;max-width:790px;margin:28px 0 0;padding:0;list-style:none}
-    .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:750;line-height:1.45}
-    .method-list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#e6f6fe;color:#118ed8;content:"✓";font-size:15px;font-weight:900}
+    .method-list li{display:grid;grid-template-columns:62px 1fr;gap:11px;align-items:start;font-size:17px;font-weight:500;line-height:1.45}
+    .method-checks{display:flex;gap:6px}
+    .method-check{display:grid;width:27px;height:27px;flex:none;place-items:center;font-size:15px;font-style:normal;font-weight:900}
+    .method-check--soft{border-radius:8px;background:#e6f6fe;color:#118ed8}
+    .method-check--bold{border-radius:50%;background:linear-gradient(145deg,#32b7ff,#087dcc);color:#fff;box-shadow:0 8px 16px -9px rgba(8,125,204,.82);transform:rotate(-5deg)}
     .method-list p{margin:0}
-    .method-list span{color:#66707a;font-weight:600}
+    .method-list p > span{color:var(--text);font-weight:500}
     .method-list strong{color:var(--ink);font-weight:850}
 
     @media(max-width:380px){
@@ -731,6 +737,7 @@
     @keyframes anya-cards{0%,15%,85%,100%{transform:translateX(-5px)}45%,60%{transform:translateX(10px)}}
     @keyframes anya-finger{0%,15%,85%,100%{transform:translateX(8px)}45%,60%{transform:translateX(-8px)}}
     @keyframes anya-nudge{0%,18%,82%,100%{transform:translateX(0)}45%,60%{transform:translateX(12px)}}
+    .anya-story__slider{position:relative}
     .anya-story__viewport{margin:14px -18px 0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
     .anya-story__viewport::-webkit-scrollbar{display:none}
     .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 18px 42px 30px}
@@ -753,6 +760,12 @@
     .anya-story__arrow--prev::before{transform:rotate(-135deg)}
     .anya-story__arrow:hover,.anya-story__arrow:focus-visible{box-shadow:0 17px 28px -15px rgba(37,28,116,.9);transform:translateY(-2px)}
     .anya-story__arrow:disabled{opacity:.34;cursor:default;box-shadow:none;transform:none}
+    .anya-story__side-controls{position:absolute;z-index:12;top:14px;right:-10px;bottom:42px;left:-10px;pointer-events:none}
+    .anya-story__side-arrow{position:absolute;top:50%;width:46px;height:46px;border-radius:50%;pointer-events:auto;transform:translateY(-50%);box-shadow:0 14px 28px -15px rgba(37,28,116,.92)}
+    .anya-story__side-arrow--prev{left:0}
+    .anya-story__side-arrow--next{right:0}
+    .anya-story__side-arrow:hover,.anya-story__side-arrow:focus-visible{transform:translateY(calc(-50% - 2px))}
+    .anya-story__side-arrow:disabled{transform:translateY(-50%)}
     .chain-block--pricing{padding:20px 0 74px;background:transparent}
     .chain-block--faq{padding:0 0 54px;background:transparent}
     .chain-block--final{background:transparent;color:#fff}
@@ -894,8 +907,9 @@
           </span></h2>
           <p>Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
         </header>
-        <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
-          <div class="anya-story__track">
+        <div class="anya-story__slider">
+          <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
+            <div class="anya-story__track">
             <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
               <iframe src="/preview/homepage-mobile/vsl-player.html?v=2&context=anya-placeholder" title="Видео Ани — временная медиазаглушка" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
               <span class="anya-placeholder-note">Временное видео для проверки механики</span>
@@ -917,6 +931,11 @@
               <strong>Бег, соревнования и тот самый триатлон</strong>
               <p>Финальный текст появится после редакторской сборки реальных материалов.</p>
             </article>
+            </div>
+          </div>
+          <div class="anya-story__side-controls" aria-label="Переключение слайдов по краям">
+            <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
+            <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
           </div>
         </div>
         <div class="anya-story__controls" aria-label="Переключение слайдов">
@@ -1888,6 +1907,10 @@
       .anya-story__arrow { transition: none; }
       .anya-story__arrow:hover,
       .anya-story__arrow:focus-visible { transform: none; }
+      .anya-story__side-arrow,
+      .anya-story__side-arrow:hover,
+      .anya-story__side-arrow:focus-visible,
+      .anya-story__side-arrow:disabled { transform: translateY(-50%); }
     }
 
     @media (min-width: 760px) {
@@ -2372,17 +2395,17 @@
         });
       };
       const videoFrames = [...viewport.querySelectorAll('.anya-slide--video iframe')];
-      const prevButton = document.querySelector('[data-anya-prev]');
-      const nextButton = document.querySelector('[data-anya-next]');
+      const prevButtons = [...document.querySelectorAll('[data-anya-prev]')];
+      const nextButtons = [...document.querySelectorAll('[data-anya-next]')];
       let controlsFrame = 0;
       const syncControls = () => {
         controlsFrame = 0;
         const index = currentIndex();
-        if (prevButton) prevButton.disabled = index === 0;
-        if (nextButton) nextButton.disabled = index === slides.length - 1;
+        prevButtons.forEach((button) => { button.disabled = index === 0; });
+        nextButtons.forEach((button) => { button.disabled = index === slides.length - 1; });
       };
-      prevButton?.addEventListener('click', () => moveTo(currentIndex() - 1));
-      nextButton?.addEventListener('click', () => moveTo(currentIndex() + 1));
+      prevButtons.forEach((button) => button.addEventListener('click', () => moveTo(currentIndex() - 1)));
+      nextButtons.forEach((button) => button.addEventListener('click', () => moveTo(currentIndex() + 1)));
       viewport.addEventListener('scroll', () => {
         if (controlsFrame) return;
         controlsFrame = requestAnimationFrame(syncControls);
@@ -2432,9 +2455,13 @@
                 .join('');
               const line = document.createElement('p');
               const plain = document.createElement('span');
+              const checks = document.createElement('span');
+              checks.className = 'method-checks';
+              checks.setAttribute('aria-hidden', 'true');
+              checks.innerHTML = '<i class="method-check method-check--soft">✓</i><i class="method-check method-check--bold">✓</i>';
               plain.textContent = plainText;
               line.append(plain, emphasis);
-              item.replaceChildren(line);
+              item.replaceChildren(checks, line);
             });
           }
         } catch (error) {
