@@ -148,6 +148,17 @@ def homepage_mobile_preview() -> HTMLResponse:
     return response
 
 
+@router.get("/preview/homepage-reviews-wall", include_in_schema=False)
+@router.get("/preview/homepage-reviews-wall/", include_in_schema=False)
+def homepage_reviews_wall_preview() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "homepage-preview" / "reviews-wall.html",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 @router.get("/preview/homepage-mobile/{asset_name}", include_in_schema=False)
 def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
     if asset_name not in HOMEPAGE_MOBILE_PREVIEW_ASSETS:

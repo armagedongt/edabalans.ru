@@ -256,6 +256,7 @@ owns_files = [
 ]
 owns_routes = [
   "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/preview/homepage-reviews-wall*",
   "*/api/public/video-analytics", "*/api/public-site/content/*",
   "*/admin/api/public-site/content*",
 ]

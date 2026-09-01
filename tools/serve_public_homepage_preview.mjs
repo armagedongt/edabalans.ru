@@ -131,6 +131,11 @@ const server = createServer(async (request, response) => {
       await sendFile(response, join(homepageRoot, 'mobile.html'))
       return
     }
+    if (url.pathname === '/preview/homepage-reviews-wall'
+      || url.pathname === '/preview/homepage-reviews-wall/') {
+      await sendFile(response, join(homepageRoot, 'reviews-wall.html'))
+      return
+    }
     if (url.pathname === '/site-footer.js') {
       await sendFile(response, join(staticRoot, 'site-footer.js'))
       return

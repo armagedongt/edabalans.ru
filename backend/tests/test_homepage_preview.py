@@ -1,5 +1,6 @@
 import json
 import os
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 
@@ -28,6 +29,7 @@ class RobotsMetaParser(HTMLParser):
         self.content: str | None = None
         self.image_sources: set[str] = set()
         self.block_image_source_order: dict[str, list[str]] = {}
+        self.image_source_order: list[str] = []
         self.iframe_sources: set[str] = set()
         self.ids: list[str] = []
         self.main_count = 0
@@ -66,6 +68,7 @@ class RobotsMetaParser(HTMLParser):
                 self.block_image_source_order.setdefault(block_id, []).append(
                     attributes["src"]
                 )
+            self.image_source_order.append(attributes["src"])
         if tag == "iframe" and attributes.get("src"):
             self.iframe_sources.add(attributes["src"])
         if attributes.get("id"):
@@ -483,6 +486,59 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "position: fixed;" in overlay_bar_rule
     assert "bottom: 0;" in overlay_bar_rule
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
+
+
+def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
+    response = client.get("/preview/homepage-reviews-wall")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    parser = RobotsMetaParser()
+    parser.feed(response.text)
+    expected_tilda_asset_ids = [
+        "tild3133-3832-4464-b037-623236633763",
+        "tild3438-6233-4630-a533-336566346264",
+        "tild3537-6466-4733-a337-623831303937",
+        "tild3763-3332-4166-b234-326266323263",
+        "tild3438-6466-4063-b435-336239383962",
+        "tild3562-3438-4937-a663-386133663562",
+        "tild3038-3638-4630-b132-616433356430",
+        "tild3635-3435-4565-b535-313163343663",
+        "tild6630-6530-4236-a638-343130303032",
+        "tild3363-3531-4861-b430-383064316239",
+        "tild6339-3131-4637-b335-623438313365",
+        "tild3566-3132-4161-b964-666430616538",
+        "tild6538-6330-4538-b766-343366643330",
+        "tild3734-3437-4164-b265-326365313164",
+        "tild3962-6238-4435-b935-326636626263",
+        "tild6635-3630-4165-a332-373434623264",
+        "tild3264-3637-4930-b066-613665343762",
+        "tild6661-3731-4966-a466-316131393864",
+        "tild3065-6139-4561-b334-643739396331",
+        "tild3861-3865-4437-b330-313263383230",
+        "tild3263-3566-4161-a438-313262653237",
+        "tild3933-6339-4537-b036-656633366263",
+    ]
+    actual_tilda_asset_ids = [
+        source.split("/")[3] for source in parser.image_source_order
+    ]
+    assert actual_tilda_asset_ids == expected_tilda_asset_ids
+    assert response.text.count('class="reviews-wall__item"') == 22
+    assert 'data-review-index="1"' in response.text
+    assert 'data-review-index="22"' in response.text
+    assert "columns:2" in response.text
+    assert "transform:rotate(var(--tilt))" in response.text
+    tilts = [
+        float(value.removesuffix("deg"))
+        for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
+    ]
+    assert len(tilts) == 22
+    assert all(0 < abs(tilt) <= 2 for tilt in tilts)
+    assert min(tilts) < 0 < max(tilts)
+    assert "tild6131-3266-4736-b265-396265366664" not in response.text
+    assert "tild6338-3130-4939-a335-653164356231" not in response.text
 
 
 def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
