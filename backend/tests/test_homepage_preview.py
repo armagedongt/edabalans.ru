@@ -202,10 +202,15 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "setTimeout(()=>root.classList.add('mvp--controls-hidden'), 1000)" in response.text
     assert "Рассказываю кое-что интересное" not in response.text
     assert response.text.count("Нажмите, чтобы включить звук") == 1
+    autoplay_setup = response.text.split("if (MODULES.autoplay) {", 1)[1].split(
+        "} else {", 1
+    )[0]
+    assert "video.loop = true;" in autoplay_setup
     sound_engagement = response.text.split("function enableSoundAndWatch(){", 1)[1].split(
         "\n  }", 1
     )[0]
     assert "soundEngaged = true;" in sound_engagement
+    assert "video.loop = false;" in sound_engagement
     assert "soundCard.hidden = true;" in sound_engagement
     assert "video.play().catch(()=>{});" in sound_engagement
     assert "showControls(true);" in sound_engagement

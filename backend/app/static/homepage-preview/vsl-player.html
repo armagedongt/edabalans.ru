@@ -437,6 +437,7 @@
 
     if (MODULES.autoplay) {
       video.muted = true;
+      video.loop = true;
       soundCard.hidden = false;
       bigPlay.hidden = true;
       root.classList.add('mvp--awaiting-sound');
@@ -448,6 +449,7 @@
       if (video.readyState >= 2) start();
       else video.addEventListener('canplay', start, {once:true});
     } else {
+      video.loop = false;
       soundCard.hidden = true;
       bigPlay.hidden = false;
     }
@@ -511,6 +513,7 @@
   function enableSoundAndWatch(){
     if (soundEngaged) return;
     soundEngaged = true;
+    video.loop = false;
     video.currentTime = 0;
     video.muted = false;
     soundCard.hidden = true;
