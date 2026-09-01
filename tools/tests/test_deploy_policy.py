@@ -10,9 +10,22 @@ from pathlib import Path
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 CLASSIFIER = REPOSITORY_ROOT / "infra" / "deploy" / "classify-deploy-impact"
+PUBLIC_SITE_PUBLISHER = REPOSITORY_ROOT / "tools" / "publish_public_site_content.ps1"
 
 
 class DeployPolicyTests(unittest.TestCase):
+    def test_public_site_markdown_is_published_as_utf8_without_bom(self) -> None:
+        source = PUBLIC_SITE_PUBLISHER.read_text(encoding="utf-8")
+
+        encoding_setup = source.index("$OutputEncoding = $utf8WithoutBom")
+        ssh_pipe = source.index("ssh $HostAlias")
+        self.assertLess(encoding_setup, ssh_pipe)
+        self.assertIn("[Console]::OutputEncoding = $utf8WithoutBom", source)
+        self.assertIn(
+            "[IO.File]::WriteAllText($contentPath, $updatedMarkdown, $utf8WithoutBom)",
+            source,
+        )
+
     def test_backend_build_context_includes_blog_content(self) -> None:
         dockerignore = (REPOSITORY_ROOT / ".dockerignore").read_text(encoding="utf-8")
 
