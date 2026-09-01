@@ -244,7 +244,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
 
 
-def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
+def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     response = client.get("/preview/homepage-mobile/vsl-player.html")
 
     assert response.status_code == 200
@@ -269,7 +269,18 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "soundCard.hidden = true;" in sound_engagement
     assert "video.play().catch(()=>{});" in sound_engagement
     assert "showControls(true);" in sound_engagement
-    assert "soundCard.addEventListener('click', enableSoundAndWatch);" in response.text
+    first_player_click = response.text.split(
+        "function engageFromFirstPlayerClick(event){", 1
+    )[1].split("\n  }", 1)[0]
+    assert "if (soundEngaged || event.button !== 0) return;" in first_player_click
+    assert "event.preventDefault();" in first_player_click
+    assert "event.stopImmediatePropagation();" in first_player_click
+    assert "enableSoundAndWatch();" in first_player_click
+    assert (
+        "root.addEventListener('click', engageFromFirstPlayerClick, true);"
+        in response.text
+    )
+    assert "soundCard.addEventListener('click', enableSoundAndWatch);" not in response.text
     assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text

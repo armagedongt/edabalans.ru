@@ -526,6 +526,13 @@
     showControls(true);
   }
 
+  function engageFromFirstPlayerClick(event){
+    if (soundEngaged || event.button !== 0) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    enableSoundAndWatch();
+  }
+
   bigPlay.addEventListener('click', ()=>{
     if (!soundEngaged) return;
     togglePlay();
@@ -539,7 +546,6 @@
     if (root.classList.contains('mvp--controls-hidden')) showControls(true);
     else togglePlay();
   });
-  soundCard.addEventListener('click', enableSoundAndWatch);
   video.addEventListener('play', ()=>{ updatePlayUI(); if (soundEngaged) showControls(true); });
   video.addEventListener('pause', ()=>{ updatePlayUI(); showControls(false); });
   video.addEventListener('ended', ()=>{ updatePlayUI(); showControls(false); });
@@ -587,6 +593,8 @@
       event.stopImmediatePropagation();
     }, true);
   }
+
+  root.addEventListener('click', engageFromFirstPlayerClick, true);
 
   muteBtn.addEventListener('click', ()=>{
     video.muted = !video.muted;
