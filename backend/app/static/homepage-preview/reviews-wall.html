@@ -39,157 +39,163 @@
     .reviews-voice{
       width:min(100%,800px);
       margin:0 auto;
-      padding:22px 20px clamp(70px,13vw,112px);
+      padding:clamp(64px,12vw,112px) 20px clamp(82px,14vw,128px);
     }
-    .telegram-chat{
-      width:min(100%,430px);
-      margin:0 auto;
-      overflow:hidden;
-      border:1px solid rgba(20,80,117,.13);
-      border-radius:18px;
-      background:#b9d7c9;
-      box-shadow:0 20px 52px rgba(32,88,120,.2);
-    }
-    .telegram-chat__header{
-      height:60px;
-      display:grid;
-      grid-template-columns:28px 42px minmax(0,1fr) 28px;
-      align-items:center;
-      gap:9px;
-      padding:0 13px 0 11px;
-      color:#fff;
-      background:#517da2;
-    }
-    .telegram-chat__icon{
-      width:24px;
-      height:24px;
-      fill:none;
-      stroke:currentColor;
-      stroke-width:2;
-      stroke-linecap:round;
-      stroke-linejoin:round;
-    }
-    .telegram-chat__avatar,
-    .telegram-voice__avatar{
-      display:grid;
-      place-items:center;
-      flex:none;
-      border-radius:50%;
-      color:#fff;
-      font-weight:700;
-      line-height:1;
-      background:linear-gradient(145deg,#ffb268,#e16b62);
-    }
-    .telegram-chat__avatar{width:42px;height:42px;font-size:16px}
-    .telegram-chat__identity{min-width:0}
-    .telegram-chat__title{
-      overflow:hidden;
-      font-size:15px;
-      font-weight:700;
-      line-height:1.25;
-      text-overflow:ellipsis;
-      white-space:nowrap;
-    }
-    .telegram-chat__status{margin-top:2px;font-size:12px;line-height:1.2;opacity:.78}
-    .telegram-chat__body{
-      min-height:420px;
-      display:flex;
-      flex-direction:column;
-      gap:11px;
-      padding:13px 9px 14px;
-      background-color:#d7e6df;
-      background-image:
-        radial-gradient(circle at 18px 18px,rgba(83,122,105,.08) 0 2px,transparent 2.5px),
-        radial-gradient(circle at 46px 38px,transparent 0 8px,rgba(83,122,105,.06) 8.5px 9.5px,transparent 10px),
-        linear-gradient(135deg,transparent 46%,rgba(83,122,105,.045) 47% 53%,transparent 54%);
-      background-size:64px 64px,78px 78px,86px 86px;
-    }
-    .telegram-chat__date{
-      align-self:center;
-      margin-bottom:1px;
-      padding:5px 10px;
-      border-radius:999px;
-      color:#fff;
-      background:rgba(71,104,91,.48);
-      box-shadow:0 1px 2px rgba(22,60,46,.12);
-      font-size:11px;
-      font-weight:700;
-      line-height:1;
-    }
-    .telegram-voice{
-      width:100%;
-      display:flex;
-      align-items:flex-end;
-      gap:7px;
-    }
-    .telegram-voice__avatar{width:34px;height:34px;font-size:12px}
-    .telegram-voice--blue .telegram-voice__avatar{background:linear-gradient(145deg,#7fcde7,#438ccd)}
-    .telegram-voice--green .telegram-voice__avatar{background:linear-gradient(145deg,#a6d56e,#5ca76f)}
-    .telegram-voice__bubble{
-      position:relative;
-      width:min(79%,286px);
-      min-height:68px;
+    .voice-widget{
+      width:min(100%,560px);
       display:grid;
       grid-template-columns:46px minmax(0,1fr);
-      grid-template-rows:auto auto;
-      column-gap:8px;
-      padding:8px 10px 7px 8px;
-      border-radius:11px 11px 11px 4px;
-      background:#fff;
-      box-shadow:0 1px 2px rgba(20,62,46,.18);
+      align-items:start;
+      gap:10px;
+      margin:0 auto;
+      font-family:Roboto,Arial,sans-serif;
     }
-    .telegram-voice__bubble::before{
-      content:"";
-      position:absolute;
-      left:-7px;
-      bottom:0;
-      width:10px;
-      height:15px;
-      background:#fff;
-      clip-path:polygon(100% 0,100% 100%,0 100%);
-    }
-    .telegram-voice__play{
-      grid-row:1 / 3;
-      align-self:center;
+    .voice-widget__avatar{
+      position:relative;
       width:46px;
       height:46px;
       display:grid;
       place-items:center;
+      padding:0;
+      border:0;
       border-radius:50%;
       color:#fff;
-      background:#3390ec;
+      background:linear-gradient(145deg,#ffac71,#ef755f);
+      box-shadow:0 8px 22px rgba(74,126,161,.24);
+      cursor:pointer;
     }
-    .telegram-voice__play svg{width:22px;height:22px;fill:currentColor;transform:translateX(1px)}
-    .telegram-voice__wave{
-      align-self:end;
+    .voice-widget__avatar svg{width:27px;height:27px;fill:currentColor}
+    .voice-widget__avatar:focus-visible,
+    .voice-widget__play:focus-visible,
+    .voice-widget__seek:focus-visible{
+      outline:3px solid #247fd3;
+      outline-offset:3px;
+    }
+    .voice-widget__upload-badge{
+      position:absolute;
+      right:-2px;
+      bottom:-2px;
+      width:18px;
+      height:18px;
+      display:grid;
+      place-items:center;
+      border:2px solid #f7fcff;
+      border-radius:50%;
+      color:#fff;
+      background:#3391d4;
+    }
+    .voice-widget__upload-badge svg{width:9px;height:9px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+    .voice-widget__bubble{
+      position:relative;
+      min-width:0;
+      min-height:104px;
+      padding:10px 14px 10px 16px;
+      border:1px solid #d7e3ec;
+      border-radius:0 15px 15px 15px;
+      background:#fff;
+      box-shadow:0 14px 36px rgba(29,91,130,.13);
+    }
+    .voice-widget__tail{
+      position:absolute;
+      top:-1px;
+      left:-9px;
+      width:9px;
+      height:20px;
+    }
+    .voice-widget__telegram{
+      position:absolute;
+      top:9px;
+      right:10px;
+      width:23px;
+      height:23px;
+      color:#54a9e6;
+      opacity:.88;
+    }
+    .voice-widget__telegram path{fill:currentColor}
+    .voice-widget__author{
+      min-height:21px;
+      padding-right:30px;
+      overflow:hidden;
+      color:#3391d4;
+      font-size:15px;
+      font-weight:600;
+      line-height:21px;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .voice-widget__kind{
+      margin-top:-1px;
+      color:#8b9ba7;
+      font-size:11px;
+      line-height:16px;
+    }
+    .voice-widget__player{
+      width:100%;
+      display:grid;
+      grid-template-columns:44px minmax(0,1fr);
+      grid-template-rows:34px 14px;
+      column-gap:9px;
+      margin-top:4px;
+    }
+    .voice-widget__play{
+      grid-row:1 / 3;
+      align-self:center;
+      width:44px;
+      height:44px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:0;
+      border-radius:50%;
+      color:#fff;
+      background:#3391d4;
+      cursor:pointer;
+      transition:transform .16s ease,background .16s ease;
+    }
+    .voice-widget__play:hover{background:#2481c4;transform:scale(1.035)}
+    .voice-widget__play:disabled{opacity:.48;cursor:not-allowed;transform:none}
+    .voice-widget__play svg{width:20px;height:20px;fill:currentColor}
+    .voice-widget__pause{display:none}
+    .voice-widget[data-state="playing"] .voice-widget__play-icon{display:none}
+    .voice-widget[data-state="playing"] .voice-widget__pause{display:block}
+    .voice-widget__wave{
+      position:relative;
+      align-self:center;
       width:100%;
       height:30px;
-      color:#9bb4c7;
+      color:#9eb6c8;
     }
-    .telegram-voice__wave rect{fill:currentColor}
-    .telegram-voice__meta{
+    .voice-widget__wave svg{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+    }
+    .voice-widget__wave rect{fill:currentColor}
+    .voice-widget__wave-played{
+      color:#3391d4;
+      clip-path:inset(0 calc(100% - var(--voice-progress,0%)) 0 0);
+    }
+    .voice-widget__seek{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      margin:0;
+      opacity:0;
+      cursor:pointer;
+    }
+    .voice-widget__meta{
       display:flex;
       align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-top:1px;
-      color:#6d7f8c;
+      gap:4px;
+      color:#7e8e99;
       font-size:10px;
-      line-height:1;
+      line-height:14px;
+      font-variant-numeric:tabular-nums;
     }
-    .telegram-chat__composer{
-      height:54px;
-      display:grid;
-      grid-template-columns:26px minmax(0,1fr) 26px;
-      align-items:center;
-      gap:7px;
-      padding:6px 10px;
-      color:#87939c;
-      background:#fff;
-      border-top:1px solid rgba(42,74,94,.1);
-    }
-    .telegram-chat__composer span{font-size:14px}
-    .telegram-chat__composer .telegram-chat__icon{width:22px;height:22px}
+    .voice-widget__meta-separator{opacity:.6}
+    .voice-widget__audio{display:none}
     .reviews-featured{
       width:min(100%,800px);
       margin:0 auto;
@@ -429,50 +435,33 @@
 </head>
 <body>
   <main class="reviews-flow">
-  <section class="reviews-voice" aria-label="Макет голосовых отзывов" data-homepage-block="reviews-voice" data-block-width="visual" data-voice-placeholder>
-    <div class="telegram-chat" role="img" aria-label="Три голосовых отзыва в интерфейсе чата Telegram">
-      <div class="telegram-chat__header" aria-hidden="true">
-        <svg class="telegram-chat__icon" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>
-        <div class="telegram-chat__avatar">О</div>
-        <div class="telegram-chat__identity">
-          <div class="telegram-chat__title">Голосовые отзывы</div>
-          <div class="telegram-chat__status">3 голосовых сообщения</div>
+  <section class="reviews-voice" aria-label="Голосовой отзыв" data-homepage-block="reviews-voice" data-block-width="visual">
+    <article class="voice-widget" data-voice-widget data-state="paused">
+      <input id="voice-review-file" type="file" accept="audio/*" data-voice-file hidden>
+      <button class="voice-widget__avatar" type="button" data-voice-upload aria-label="Загрузить другой аудиофайл" title="Загрузить другой аудиофайл">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 16.2a6.3 6.3 0 1 0 0-12.6 6.3 6.3 0 0 0 0 12.6Zm0 2.9c-7.1 0-11.2 3.7-11.2 7.4 0 1 .8 1.9 1.9 1.9h18.6c1 0 1.9-.8 1.9-1.9 0-3.7-4.1-7.4-11.2-7.4Z"/></svg>
+        <span class="voice-widget__upload-badge"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 9V2M3.5 4.5 6 2l2.5 2.5"/></svg></span>
+      </button>
+      <div class="voice-widget__bubble">
+        <svg class="voice-widget__tail" viewBox="0 0 9 20" aria-hidden="true"><path fill="#fff" d="M8 1h1v19H7v-2c-.2-2.8-.9-5.8-2-8.8A19 19 0 0 0 1.3 2.7 1 1 0 0 1 2 1h6Z"/><path fill="#d7e3ec" d="M9 0H2A2 2 0 0 0 .6 3.5 18 18 0 0 1 5 9.6 25 25 0 0 1 7 18v2h2V0Zm-1 1v18h-.1v-1a26 26 0 0 0-2-8.8 19 19 0 0 0-4-6.9A1 1 0 0 1 2 1h6Z"/></svg>
+        <svg class="voice-widget__telegram" viewBox="0 0 24 24" aria-hidden="true"><path d="M21.6 3.4 18.4 19c-.2 1.1-.9 1.4-1.8.9l-4.9-3.6-2.4 2.3c-.3.3-.5.5-1 .5l.4-5 9-8.1c.4-.4-.1-.6-.6-.2L6 12.8l-4.8-1.5c-1-.3-1.1-1 .2-1.5L20 2.7c.9-.3 1.7.2 1.4 1.5Z"/></svg>
+        <div class="voice-widget__author">Голосовой отзыв</div>
+        <div class="voice-widget__kind" data-voice-kind role="status" aria-live="polite">тестовое аудио · нажмите на аватар, чтобы заменить</div>
+        <div class="voice-widget__player">
+          <button class="voice-widget__play" type="button" data-voice-play aria-label="Воспроизвести голосовой отзыв">
+            <svg class="voice-widget__play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 5.8v12.4c0 .8.9 1.3 1.6.8l8.6-6.2a1 1 0 0 0 0-1.6L9.8 5c-.7-.5-1.6 0-1.6.8Z"/></svg>
+            <svg class="voice-widget__pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM14 5h4v14h-4z"/></svg>
+          </button>
+          <div class="voice-widget__wave">
+            <svg viewBox="0 0 184 30" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="12" width="3" height="7" rx="1.5"/><rect x="6" y="8" width="3" height="15" rx="1.5"/><rect x="12" y="5" width="3" height="21" rx="1.5"/><rect x="18" y="10" width="3" height="11" rx="1.5"/><rect x="24" y="3" width="3" height="25" rx="1.5"/><rect x="30" y="7" width="3" height="17" rx="1.5"/><rect x="36" y="11" width="3" height="9" rx="1.5"/><rect x="42" y="6" width="3" height="19" rx="1.5"/><rect x="48" y="2" width="3" height="27" rx="1.5"/><rect x="54" y="9" width="3" height="13" rx="1.5"/><rect x="60" y="12" width="3" height="7" rx="1.5"/><rect x="66" y="5" width="3" height="21" rx="1.5"/><rect x="72" y="8" width="3" height="15" rx="1.5"/><rect x="78" y="4" width="3" height="23" rx="1.5"/><rect x="84" y="10" width="3" height="11" rx="1.5"/><rect x="90" y="7" width="3" height="17" rx="1.5"/><rect x="96" y="12" width="3" height="7" rx="1.5"/><rect x="102" y="4" width="3" height="23" rx="1.5"/><rect x="108" y="7" width="3" height="17" rx="1.5"/><rect x="114" y="10" width="3" height="11" rx="1.5"/><rect x="120" y="6" width="3" height="19" rx="1.5"/><rect x="126" y="2" width="3" height="27" rx="1.5"/><rect x="132" y="9" width="3" height="13" rx="1.5"/><rect x="138" y="5" width="3" height="21" rx="1.5"/><rect x="144" y="11" width="3" height="9" rx="1.5"/><rect x="150" y="7" width="3" height="17" rx="1.5"/><rect x="156" y="4" width="3" height="23" rx="1.5"/><rect x="162" y="9" width="3" height="13" rx="1.5"/><rect x="168" y="12" width="3" height="7" rx="1.5"/><rect x="174" y="8" width="3" height="15" rx="1.5"/><rect x="180" y="11" width="3" height="9" rx="1.5"/></svg>
+            <svg class="voice-widget__wave-played" viewBox="0 0 184 30" preserveAspectRatio="none" aria-hidden="true"><rect x="0" y="12" width="3" height="7" rx="1.5"/><rect x="6" y="8" width="3" height="15" rx="1.5"/><rect x="12" y="5" width="3" height="21" rx="1.5"/><rect x="18" y="10" width="3" height="11" rx="1.5"/><rect x="24" y="3" width="3" height="25" rx="1.5"/><rect x="30" y="7" width="3" height="17" rx="1.5"/><rect x="36" y="11" width="3" height="9" rx="1.5"/><rect x="42" y="6" width="3" height="19" rx="1.5"/><rect x="48" y="2" width="3" height="27" rx="1.5"/><rect x="54" y="9" width="3" height="13" rx="1.5"/><rect x="60" y="12" width="3" height="7" rx="1.5"/><rect x="66" y="5" width="3" height="21" rx="1.5"/><rect x="72" y="8" width="3" height="15" rx="1.5"/><rect x="78" y="4" width="3" height="23" rx="1.5"/><rect x="84" y="10" width="3" height="11" rx="1.5"/><rect x="90" y="7" width="3" height="17" rx="1.5"/><rect x="96" y="12" width="3" height="7" rx="1.5"/><rect x="102" y="4" width="3" height="23" rx="1.5"/><rect x="108" y="7" width="3" height="17" rx="1.5"/><rect x="114" y="10" width="3" height="11" rx="1.5"/><rect x="120" y="6" width="3" height="19" rx="1.5"/><rect x="126" y="2" width="3" height="27" rx="1.5"/><rect x="132" y="9" width="3" height="13" rx="1.5"/><rect x="138" y="5" width="3" height="21" rx="1.5"/><rect x="144" y="11" width="3" height="9" rx="1.5"/><rect x="150" y="7" width="3" height="17" rx="1.5"/><rect x="156" y="4" width="3" height="23" rx="1.5"/><rect x="162" y="9" width="3" height="13" rx="1.5"/><rect x="168" y="12" width="3" height="7" rx="1.5"/><rect x="174" y="8" width="3" height="15" rx="1.5"/><rect x="180" y="11" width="3" height="9" rx="1.5"/></svg>
+            <input class="voice-widget__seek" type="range" min="0" max="1000" value="0" step="78" data-voice-seek aria-label="Позиция воспроизведения" aria-valuetext="0:00 из 0:13" disabled>
+          </div>
+          <div class="voice-widget__meta"><span data-voice-current>0:00</span><span class="voice-widget__meta-separator">/</span><span data-voice-duration>0:13</span></div>
         </div>
-        <svg class="telegram-chat__icon" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="19" r="1" fill="currentColor" stroke="none"/></svg>
       </div>
-      <div class="telegram-chat__body" aria-hidden="true">
-        <div class="telegram-chat__date">Сегодня</div>
-        <article class="telegram-voice">
-          <div class="telegram-voice__avatar">1</div>
-          <div class="telegram-voice__bubble">
-            <div class="telegram-voice__play"><svg viewBox="0 0 24 24"><path d="M8.5 6.2v11.6c0 .8.9 1.2 1.5.8l8.1-5.8a1 1 0 0 0 0-1.6L10 5.4c-.6-.4-1.5 0-1.5.8z"/></svg></div>
-            <svg class="telegram-voice__wave" viewBox="0 0 184 30" preserveAspectRatio="none"><rect x="0" y="12" width="3" height="7" rx="1.5"/><rect x="6" y="8" width="3" height="15" rx="1.5"/><rect x="12" y="5" width="3" height="21" rx="1.5"/><rect x="18" y="10" width="3" height="11" rx="1.5"/><rect x="24" y="3" width="3" height="25" rx="1.5"/><rect x="30" y="7" width="3" height="17" rx="1.5"/><rect x="36" y="11" width="3" height="9" rx="1.5"/><rect x="42" y="6" width="3" height="19" rx="1.5"/><rect x="48" y="2" width="3" height="27" rx="1.5"/><rect x="54" y="9" width="3" height="13" rx="1.5"/><rect x="60" y="12" width="3" height="7" rx="1.5"/><rect x="66" y="5" width="3" height="21" rx="1.5"/><rect x="72" y="8" width="3" height="15" rx="1.5"/><rect x="78" y="4" width="3" height="23" rx="1.5"/><rect x="84" y="10" width="3" height="11" rx="1.5"/><rect x="90" y="7" width="3" height="17" rx="1.5"/><rect x="96" y="12" width="3" height="7" rx="1.5"/><rect x="102" y="4" width="3" height="23" rx="1.5"/><rect x="108" y="7" width="3" height="17" rx="1.5"/><rect x="114" y="10" width="3" height="11" rx="1.5"/><rect x="120" y="6" width="3" height="19" rx="1.5"/><rect x="126" y="2" width="3" height="27" rx="1.5"/><rect x="132" y="9" width="3" height="13" rx="1.5"/><rect x="138" y="5" width="3" height="21" rx="1.5"/><rect x="144" y="11" width="3" height="9" rx="1.5"/><rect x="150" y="7" width="3" height="17" rx="1.5"/><rect x="156" y="4" width="3" height="23" rx="1.5"/><rect x="162" y="9" width="3" height="13" rx="1.5"/><rect x="168" y="12" width="3" height="7" rx="1.5"/><rect x="174" y="8" width="3" height="15" rx="1.5"/><rect x="180" y="11" width="3" height="9" rx="1.5"/></svg>
-            <div class="telegram-voice__meta"><span>0:47</span><time>14:31</time></div>
-          </div>
-        </article>
-        <article class="telegram-voice telegram-voice--blue">
-          <div class="telegram-voice__avatar">2</div>
-          <div class="telegram-voice__bubble">
-            <div class="telegram-voice__play"><svg viewBox="0 0 24 24"><path d="M8.5 6.2v11.6c0 .8.9 1.2 1.5.8l8.1-5.8a1 1 0 0 0 0-1.6L10 5.4c-.6-.4-1.5 0-1.5.8z"/></svg></div>
-            <svg class="telegram-voice__wave" viewBox="0 0 184 30" preserveAspectRatio="none"><rect x="0" y="8" width="3" height="15" rx="1.5"/><rect x="6" y="4" width="3" height="23" rx="1.5"/><rect x="12" y="11" width="3" height="9" rx="1.5"/><rect x="18" y="6" width="3" height="19" rx="1.5"/><rect x="24" y="9" width="3" height="13" rx="1.5"/><rect x="30" y="2" width="3" height="27" rx="1.5"/><rect x="36" y="7" width="3" height="17" rx="1.5"/><rect x="42" y="12" width="3" height="7" rx="1.5"/><rect x="48" y="5" width="3" height="21" rx="1.5"/><rect x="54" y="10" width="3" height="11" rx="1.5"/><rect x="60" y="6" width="3" height="19" rx="1.5"/><rect x="66" y="3" width="3" height="25" rx="1.5"/><rect x="72" y="9" width="3" height="13" rx="1.5"/><rect x="78" y="12" width="3" height="7" rx="1.5"/><rect x="84" y="7" width="3" height="17" rx="1.5"/><rect x="90" y="4" width="3" height="23" rx="1.5"/><rect x="96" y="10" width="3" height="11" rx="1.5"/><rect x="102" y="5" width="3" height="21" rx="1.5"/><rect x="108" y="8" width="3" height="15" rx="1.5"/><rect x="114" y="2" width="3" height="27" rx="1.5"/><rect x="120" y="7" width="3" height="17" rx="1.5"/><rect x="126" y="11" width="3" height="9" rx="1.5"/><rect x="132" y="4" width="3" height="23" rx="1.5"/><rect x="138" y="9" width="3" height="13" rx="1.5"/><rect x="144" y="6" width="3" height="19" rx="1.5"/><rect x="150" y="12" width="3" height="7" rx="1.5"/><rect x="156" y="8" width="3" height="15" rx="1.5"/><rect x="162" y="3" width="3" height="25" rx="1.5"/><rect x="168" y="10" width="3" height="11" rx="1.5"/><rect x="174" y="6" width="3" height="19" rx="1.5"/><rect x="180" y="12" width="3" height="7" rx="1.5"/></svg>
-            <div class="telegram-voice__meta"><span>1:12</span><time>18:04</time></div>
-          </div>
-        </article>
-        <article class="telegram-voice telegram-voice--green">
-          <div class="telegram-voice__avatar">3</div>
-          <div class="telegram-voice__bubble">
-            <div class="telegram-voice__play"><svg viewBox="0 0 24 24"><path d="M8.5 6.2v11.6c0 .8.9 1.2 1.5.8l8.1-5.8a1 1 0 0 0 0-1.6L10 5.4c-.6-.4-1.5 0-1.5.8z"/></svg></div>
-            <svg class="telegram-voice__wave" viewBox="0 0 184 30" preserveAspectRatio="none"><rect x="0" y="11" width="3" height="9" rx="1.5"/><rect x="6" y="7" width="3" height="17" rx="1.5"/><rect x="12" y="3" width="3" height="25" rx="1.5"/><rect x="18" y="9" width="3" height="13" rx="1.5"/><rect x="24" y="5" width="3" height="21" rx="1.5"/><rect x="30" y="12" width="3" height="7" rx="1.5"/><rect x="36" y="8" width="3" height="15" rx="1.5"/><rect x="42" y="2" width="3" height="27" rx="1.5"/><rect x="48" y="6" width="3" height="19" rx="1.5"/><rect x="54" y="10" width="3" height="11" rx="1.5"/><rect x="60" y="4" width="3" height="23" rx="1.5"/><rect x="66" y="9" width="3" height="13" rx="1.5"/><rect x="72" y="7" width="3" height="17" rx="1.5"/><rect x="78" y="12" width="3" height="7" rx="1.5"/><rect x="84" y="5" width="3" height="21" rx="1.5"/><rect x="90" y="3" width="3" height="25" rx="1.5"/><rect x="96" y="8" width="3" height="15" rx="1.5"/><rect x="102" y="11" width="3" height="9" rx="1.5"/><rect x="108" y="6" width="3" height="19" rx="1.5"/><rect x="114" y="2" width="3" height="27" rx="1.5"/><rect x="120" y="9" width="3" height="13" rx="1.5"/><rect x="126" y="5" width="3" height="21" rx="1.5"/><rect x="132" y="12" width="3" height="7" rx="1.5"/><rect x="138" y="7" width="3" height="17" rx="1.5"/><rect x="144" y="4" width="3" height="23" rx="1.5"/><rect x="150" y="10" width="3" height="11" rx="1.5"/><rect x="156" y="6" width="3" height="19" rx="1.5"/><rect x="162" y="8" width="3" height="15" rx="1.5"/><rect x="168" y="3" width="3" height="25" rx="1.5"/><rect x="174" y="9" width="3" height="13" rx="1.5"/><rect x="180" y="12" width="3" height="7" rx="1.5"/></svg>
-            <div class="telegram-voice__meta"><span>0:36</span><time>20:17</time></div>
-          </div>
-        </article>
-      </div>
-      <div class="telegram-chat__composer" aria-hidden="true">
-        <svg class="telegram-chat__icon" viewBox="0 0 24 24"><path d="M9.5 12.5l5.4-5.4a3.2 3.2 0 0 1 4.5 4.5l-7.2 7.2a5 5 0 0 1-7.1-7.1l7.2-7.2"/></svg>
-        <span>Сообщение</span>
-        <svg class="telegram-chat__icon" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg>
-      </div>
-    </div>
+      <audio class="voice-widget__audio" preload="metadata" data-voice-audio></audio>
+    </article>
   </section>
   <section class="reviews-featured" aria-label="Избранные отзывы участников" data-homepage-block="reviews-featured" data-block-width="visual">
     <button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть избранный отзыв 1 из 4"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Избранный отзыв участницы 1"></button>
@@ -527,6 +516,140 @@
     </div>
   </div>
   <script>
+    (() => {
+      const widget = document.querySelector('[data-voice-widget]');
+      const audio = widget.querySelector('[data-voice-audio]');
+      const playButton = widget.querySelector('[data-voice-play]');
+      const uploadButton = widget.querySelector('[data-voice-upload]');
+      const fileInput = widget.querySelector('[data-voice-file]');
+      const seek = widget.querySelector('[data-voice-seek]');
+      const current = widget.querySelector('[data-voice-current]');
+      const duration = widget.querySelector('[data-voice-duration]');
+      const kind = widget.querySelector('[data-voice-kind]');
+      let activeObjectUrl = null;
+
+      const formatTime = (seconds) => {
+        const safeSeconds = Number.isFinite(seconds) ? Math.max(0, Math.round(seconds)) : 0;
+        return `${Math.floor(safeSeconds / 60)}:${String(safeSeconds % 60).padStart(2, '0')}`;
+      };
+
+      const createDemoAudio = () => {
+        const seconds = 12.8;
+        const sampleRate = 8000;
+        const sampleCount = Math.floor(seconds * sampleRate);
+        const buffer = new ArrayBuffer(44 + sampleCount * 2);
+        const view = new DataView(buffer);
+        const writeText = (offset, value) => [...value].forEach((character, index) => view.setUint8(offset + index, character.charCodeAt(0)));
+        writeText(0, 'RIFF');
+        view.setUint32(4, 36 + sampleCount * 2, true);
+        writeText(8, 'WAVE');
+        writeText(12, 'fmt ');
+        view.setUint32(16, 16, true);
+        view.setUint16(20, 1, true);
+        view.setUint16(22, 1, true);
+        view.setUint32(24, sampleRate, true);
+        view.setUint32(28, sampleRate * 2, true);
+        view.setUint16(32, 2, true);
+        view.setUint16(34, 16, true);
+        writeText(36, 'data');
+        view.setUint32(40, sampleCount * 2, true);
+        for (let index = 0; index < sampleCount; index += 1) {
+          const time = index / sampleRate;
+          const fade = Math.min(1, time * 5, (seconds - time) * 5);
+          const syllable = .22 + .78 * Math.pow(Math.max(0, Math.sin(Math.PI * 2 * 2.15 * time)), 2);
+          const pitch = 154 + 15 * Math.sin(Math.PI * 2 * .19 * time) + 8 * Math.sin(Math.PI * 2 * .43 * time);
+          const voice = Math.sin(Math.PI * 2 * pitch * time)
+            + .42 * Math.sin(Math.PI * 4 * pitch * time + .3)
+            + .18 * Math.sin(Math.PI * 6 * pitch * time + .7);
+          const sample = Math.max(-1, Math.min(1, voice * syllable * fade * .13));
+          view.setInt16(44 + index * 2, sample * 0x7fff, true);
+        }
+        return new Blob([buffer], { type: 'audio/wav' });
+      };
+
+      const setSource = (blob, label) => {
+        audio.pause();
+        if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
+        activeObjectUrl = URL.createObjectURL(blob);
+        audio.src = activeObjectUrl;
+        kind.textContent = label;
+        widget.dataset.state = 'paused';
+        widget.style.setProperty('--voice-progress', '0%');
+        seek.value = '0';
+        current.textContent = '0:00';
+        duration.textContent = '—:—';
+        seek.setAttribute('aria-valuetext', '0:00');
+        seek.disabled = true;
+        playButton.disabled = true;
+        playButton.setAttribute('aria-label', 'Воспроизвести голосовой отзыв');
+        audio.load();
+      };
+
+      const updateProgress = () => {
+        const total = Number.isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0;
+        const progress = total ? Math.min(100, Math.max(0, audio.currentTime / total * 100)) : 0;
+        widget.style.setProperty('--voice-progress', `${progress}%`);
+        seek.value = total ? String(Math.round(audio.currentTime / total * 1000)) : '0';
+        current.textContent = formatTime(audio.currentTime);
+        if (total) {
+          duration.textContent = formatTime(total);
+          seek.step = String(Math.max(1, Math.round(1000 / total)));
+          seek.setAttribute('aria-valuetext', `${formatTime(audio.currentTime)} из ${formatTime(total)}`);
+        }
+      };
+
+      setSource(createDemoAudio(), 'тестовое аудио · нажмите на аватар, чтобы заменить');
+
+      playButton.addEventListener('click', async () => {
+        if (audio.paused) {
+          if (audio.ended) audio.currentTime = 0;
+          try { await audio.play(); } catch { widget.dataset.state = 'paused'; }
+          return;
+        }
+        audio.pause();
+      });
+      uploadButton.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        const [file] = fileInput.files;
+        if (!file) return;
+        setSource(file, file.name);
+      });
+      seek.addEventListener('input', () => {
+        if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+        audio.currentTime = Number(seek.value) / 1000 * audio.duration;
+        updateProgress();
+      });
+      audio.addEventListener('loadedmetadata', () => {
+        seek.disabled = false;
+        playButton.disabled = false;
+        updateProgress();
+      });
+      audio.addEventListener('timeupdate', updateProgress);
+      audio.addEventListener('play', () => {
+        widget.dataset.state = 'playing';
+        playButton.setAttribute('aria-label', 'Приостановить голосовой отзыв');
+      });
+      audio.addEventListener('pause', () => {
+        widget.dataset.state = 'paused';
+        playButton.setAttribute('aria-label', 'Воспроизвести голосовой отзыв');
+      });
+      audio.addEventListener('ended', updateProgress);
+      audio.addEventListener('error', () => {
+        widget.dataset.state = 'paused';
+        widget.style.setProperty('--voice-progress', '0%');
+        seek.value = '0';
+        current.textContent = '0:00';
+        duration.textContent = '—:—';
+        seek.setAttribute('aria-valuetext', 'Аудиофайл не поддерживается');
+        seek.disabled = true;
+        playButton.disabled = true;
+        kind.textContent = 'Не удалось открыть аудио · нажмите на аватар и выберите другой файл';
+      });
+      addEventListener('beforeunload', () => {
+        if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
+      }, { once: true });
+    })();
+
     (() => {
       const groups = {
         featured: [...document.querySelectorAll('.reviews-featured__item')],

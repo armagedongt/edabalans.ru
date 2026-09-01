@@ -488,7 +488,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
 
 
-def test_homepage_reviews_preview_uses_voice_mockup_featured_order_and_21_wall_reviews() -> None:
+def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 
     assert response.status_code == 200
@@ -537,12 +537,25 @@ def test_homepage_reviews_preview_uses_voice_mockup_featured_order_and_21_wall_r
     assert response.text.count('class="reviews-featured__item"') == 4
     assert response.text.count('class="reviews-wall__item"') == 21
     assert 'data-homepage-block="reviews-voice"' in response.text
-    assert 'data-voice-placeholder' in response.text
-    assert response.text.count('class="telegram-voice ') == 2
-    assert response.text.count('class="telegram-voice"') == 1
-    assert response.text.count('class="telegram-voice__play"') == 3
-    assert response.text.count('class="telegram-voice__wave"') == 3
-    assert "3 голосовых сообщения" in response.text
+    assert response.text.count('class="voice-widget"') == 1
+    assert 'data-voice-audio' in response.text
+    assert 'data-voice-play' in response.text
+    assert 'data-voice-upload' in response.text
+    assert 'data-voice-file' in response.text
+    assert 'data-voice-seek' in response.text
+    assert 'accept="audio/*"' in response.text
+    assert "const seconds = 12.8" in response.text
+    assert "URL.createObjectURL" in response.text
+    assert "audio.play()" in response.text
+    assert "fileInput.addEventListener('change'" in response.text
+    assert "audio.addEventListener('error'" in response.text
+    assert 'aria-valuetext="0:00 из 0:13"' in response.text
+    assert 'aria-live="polite"' in response.text
+    assert "seek.disabled = true" in response.text
+    assert "seek.disabled = false" in response.text
+    assert "border:1px solid #d7e3ec" in response.text
+    assert "border-radius:0 15px 15px 15px" in response.text
+    assert 'class="telegram-chat"' not in response.text
     assert 'data-homepage-block="reviews-featured"' in response.text
     assert 'data-review-index="1"' in response.text
     assert 'data-review-index="21"' in response.text
