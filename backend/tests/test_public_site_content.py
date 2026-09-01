@@ -38,6 +38,7 @@ def test_public_markdown_document_is_seeded_and_rendered() -> None:
     assert payload["slug"] == "program"
     assert payload["version"] == 1
     assert payload["html"].strip()
+    assert payload["description"].startswith("Как")
     assert "public-site-version" not in payload["html"]
     assert "markdown" not in payload
     assert "updated_by" not in payload
@@ -45,6 +46,14 @@ def test_public_markdown_document_is_seeded_and_rendered() -> None:
     editor = client.get("/admin/api/public-site/content/program").json()["active"]
     assert editor["markdown"].startswith("<!-- public-site-version: 1 -->")
     assert editor["updated_by"]
+
+
+def test_all_product_windows_have_how_descriptions() -> None:
+    client = make_client()
+    for slug in ("program", "recipes", "consultation", "calories", "training"):
+        response = client.get(f"/api/public-site/content/{slug}")
+        assert response.status_code == 200
+        assert response.json()["description"].startswith("Как")
 
 
 def test_faq_is_returned_as_structured_items() -> None:
