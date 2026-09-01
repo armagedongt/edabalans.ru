@@ -84,7 +84,8 @@ Google Doc: [«Карта продуктовой линейки и маркет�
 | --- | --- |
 | Авторская позиция и категоричность | [01-owner-position.md](01-owner-position.md) |
 | Программа v1, сохранённая история | [03-course-program.md](03-course-program.md) |
-| Текущая рабочая программа и оценка объёма | [11-course-program-v2.md](11-course-program-v2.md) |
+| Подробное содержание актуальной программы | [15-course-program-v3.md](15-course-program-v3.md) |
+| Принятая форма прохождения | [17-course-program-v3.1-tree.md](17-course-program-v3.1-tree.md) |
 | Маршрутизация | [04-starting-point-goal-matrix.md](04-starting-point-goal-matrix.md) |
 | Граница с Калорийным курсом | [05-calorie-boundary-and-links.md](05-calorie-boundary-and-links.md) |
 | Дословная фактура стрима | `content/training/reference/transcripts/`; служебный raw и заметки — `sources/transcripts/` |
@@ -97,3 +98,6 @@ Google Doc: [«Карта продуктовой линейки и маркет�
 - [Полная тезисная карта обеих записей и судьба тем](analysis/stream-thesis-map-v2.md).
 - [Авторская пересборка задачи](13-owner-rebuild-2026-09-01.md).
 - [Программа v3](15-course-program-v3.md).
+- [Авторские пометки после чтения дерева](16-owner-notes-2026-09-01-round2.md).
+- [Дерево программы v3.1](17-course-program-v3.1-tree.md).
+- [Исследование спора «десять лет в зале»](analysis/gym-years-vs-effective-training-research.md).
