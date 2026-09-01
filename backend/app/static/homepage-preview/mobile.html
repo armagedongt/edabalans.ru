@@ -2334,6 +2334,7 @@
       async function openProduct(code) {
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
+        overlayCopy.hidden = true;
         overlayPoints.replaceChildren();
         overlayCta.hidden = true;
         overlay.classList.add('is-open');
@@ -2344,6 +2345,8 @@
           if (!response.ok) throw new Error(`public content ${response.status}`);
           const product = await response.json();
           overlayTitle.textContent = product.title;
+          overlayCopy.textContent = product.description || '';
+          overlayCopy.hidden = !product.description;
           overlayPoints.innerHTML = product.html;
           overlayCta.textContent = 'Выбрать тариф';
           overlayCta.dataset.target = String(productTargets[code] || 0);
@@ -2351,6 +2354,7 @@
         } catch (error) {
           overlayTitle.textContent = 'Не удалось открыть страницу';
           overlayCopy.textContent = 'Обновите страницу и попробуйте ещё раз.';
+          overlayCopy.hidden = false;
         }
       }
 
