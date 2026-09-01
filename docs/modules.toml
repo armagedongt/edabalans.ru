@@ -250,6 +250,7 @@ owns_files = [
   "backend/tests/test_public_video_analytics.py",
   "backend/migrations/versions/20260831_0033_public_video_analytics.py",
   "content/public-site/homepage/**", "tools/publish_public_site_content.ps1",
+  "tools/serve_public_homepage_preview.mjs",
   "docs/knowledge-base/PUBLIC_SITE.md", "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md",
   "work/public-homepage-redesign/**",
 ]

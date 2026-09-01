@@ -1,5 +1,7 @@
+import json
 import os
 from html.parser import HTMLParser
+from pathlib import Path
 
 os.environ.setdefault(
     "DATABASE_URL",
@@ -15,6 +17,11 @@ client = TestClient(app)
 
 
 class RobotsMetaParser(HTMLParser):
+    VOID_TAGS = {
+        "area", "base", "br", "col", "embed", "hr", "img", "input",
+        "link", "meta", "param", "source", "track", "wbr",
+    }
+
     def __init__(self) -> None:
         super().__init__()
         self.content: str | None = None
@@ -22,9 +29,25 @@ class RobotsMetaParser(HTMLParser):
         self.iframe_sources: set[str] = set()
         self.ids: list[str] = []
         self.main_count = 0
+        self.block_order: list[str] = []
+        self.block_fields: dict[str, set[str]] = {}
+        self.block_widths: dict[str, str | None] = {}
+        self._block_stack: list[str | None] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
+        parent_block = self._block_stack[-1] if self._block_stack else None
+        block_id = attributes.get("data-homepage-block") or parent_block
+        declared_block = attributes.get("data-homepage-block")
+        field_id = attributes.get("data-homepage-field")
+        if declared_block:
+            self.block_order.append(declared_block)
+            self.block_fields.setdefault(declared_block, set())
+            self.block_widths[declared_block] = attributes.get("data-block-width")
+        if block_id and field_id:
+            self.block_fields.setdefault(block_id, set()).add(field_id)
+        if tag not in self.VOID_TAGS:
+            self._block_stack.append(block_id)
         if tag == "meta" and attributes.get("name") == "robots":
             self.content = attributes.get("content")
         if tag == "img" and attributes.get("src"):
@@ -35,6 +58,27 @@ class RobotsMetaParser(HTMLParser):
             self.ids.append(attributes["id"])
         if tag == "main":
             self.main_count += 1
+
+    def handle_startendtag(
+        self, tag: str, attrs: list[tuple[str, str | None]]
+    ) -> None:
+        attributes = dict(attrs)
+        block_id = attributes.get("data-homepage-block") or (
+            self._block_stack[-1] if self._block_stack else None
+        )
+        field_id = attributes.get("data-homepage-field")
+        if attributes.get("data-homepage-block"):
+            self.block_order.append(attributes["data-homepage-block"])
+            self.block_fields.setdefault(attributes["data-homepage-block"], set())
+            self.block_widths[attributes["data-homepage-block"]] = attributes.get(
+                "data-block-width"
+            )
+        if block_id and field_id:
+            self.block_fields.setdefault(block_id, set()).add(field_id)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag not in self.VOID_TAGS and self._block_stack:
+            self._block_stack.pop()
 
 
 def test_homepage_recognition_preview_is_public_and_noindex() -> None:
@@ -119,14 +163,18 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
+    assert 'class="anya-story__controls"' not in response.text
     assert "Видео Ани — временная медиазаглушка" not in response.text
     assert "Временное видео для проверки механики" not in response.text
     assert "document.body.dataset.anyaHint" not in response.text
     assert "document.body.dataset.anyaControls" not in response.text
     assert "document.body.dataset.playerFrame" not in response.text
-    assert '<span class="site-title__plain">По изменению</span>' in response.text
-    assert '<span class="site-title__plain">Питания <small>и</small></span>' in response.text
-    assert '<span class="site-title__accent">Пищевых привычек</span>' in response.text
+    block_map_path = Path(__file__).parents[2] / "content/public-site/homepage/block-map.json"
+    block_map = json.loads(block_map_path.read_text(encoding="utf-8"))
+    assert parser.block_order == [block["id"] for block in block_map["blocks"]]
+    for block in block_map["blocks"]:
+        assert parser.block_fields[block["id"]] == set(block["fields"])
+        assert parser.block_widths[block["id"]] == block["width"]
     assert "document.body.dataset.pricingTimer" not in response.text
     assert "document.body.dataset.pricingFill" not in response.text
     assert "document.body.dataset.supportTone" in response.text

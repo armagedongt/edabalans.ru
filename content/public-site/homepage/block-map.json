@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "page": "homepage",
+  "description": "Каноническая карта блоков главной для точной передачи текстов и медиа между дизайн-потоком, писательским потоком и runtime.",
+  "boundaryMeasurement": {
+    "selector": "[data-homepage-block=\"{id}\"]",
+    "top": "element.getBoundingClientRect().top",
+    "bottom": "element.getBoundingClientRect().bottom",
+    "gapToNext": "next.getBoundingClientRect().top - element.getBoundingClientRect().bottom"
+  },
+  "widthModes": {
+    "intrinsic": "Ширина определяется содержимым плашки.",
+    "hero": "Отдельная композиция первого экрана.",
+    "video-main": "Главное видео: рабочая область занимает 90% высоты окна; ширина выводится из формата 3:4 и дополнительно ограничивается контейнером и 760 px.",
+    "content": "Основной стандарт: окно минус 40 px; затем 600/620/760 px, максимум 760 px.",
+    "visual": "Визуальный блок до/после: не шире основного стандарта и 760 px.",
+    "feature": "Акцентная сцена с человечком: адаптивно шире основного текста на 15%, максимум 874 px.",
+    "story": "История Ани: заголовок и текст идут по общей колонке; слайдер начинается на той же левой линии, тянется вправо максимум до 760 px, карточка занимает 80% окна, но не больше 608 px.",
+    "wide": "Единственное широкое исключение: сетка тарифов до 1180 px.",
+    "shared": "Общий компонент проекта, не локальная копия главной."
+  },
+  "blocks": [
+    {
+      "order": 10,
+      "id": "hero-label",
+      "label": "Плашка «Мастер-класс · 21 день»",
+      "selector": "[data-homepage-block=\"hero-label\"]",
+      "width": "intrinsic",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 20,
+      "id": "hero-title",
+      "label": "Хиро-заголовок",
+      "selector": "[data-homepage-block=\"hero-title\"]",
+      "width": "hero",
+      "fields": ["line-1", "line-2", "accent"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 30,
+      "id": "hero-intro",
+      "label": "Текст над видео",
+      "selector": "[data-homepage-block=\"hero-intro\"]",
+      "width": "content",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 40,
+      "id": "hero-video",
+      "label": "Продажное видео",
+      "selector": "[data-homepage-block=\"hero-video\"]",
+      "width": "video-main",
+      "fields": [],
+      "source": "backend/app/static/homepage-preview/vsl-player.html"
+    },
+    {
+      "order": 50,
+      "id": "hero-outro",
+      "label": "Текст под видео",
+      "selector": "[data-homepage-block=\"hero-outro\"]",
+      "width": "content",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html",
+      "status": "placeholder"
+    },
+    {
+      "order": 60,
+      "id": "recognition-title",
+      "label": "Заголовок «Чтобы похудеть…»",
+      "selector": "[data-homepage-block=\"recognition-title\"]",
+      "width": "content",
+      "fields": ["html"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 70,
+      "id": "recognition-intro",
+      "label": "Текст над человечком",
+      "selector": "[data-homepage-block=\"recognition-intro\"]",
+      "width": "content",
+      "fields": ["html"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 80,
+      "id": "recognition-scene",
+      "label": "Человечек и облачка",
+      "selector": "[data-homepage-block=\"recognition-scene\"]",
+      "width": "feature",
+      "fields": [],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 90,
+      "id": "approach",
+      "label": "«Значит, пора менять подход»",
+      "selector": "[data-homepage-block=\"approach\"]",
+      "width": "content",
+      "fields": ["html"],
+      "source": "content/public-site/homepage/approach.md",
+      "api": "/api/public-site/content/approach"
+    },
+    {
+      "order": 100,
+      "id": "before-after",
+      "label": "До и после Мастер-класса",
+      "selector": "[data-homepage-block=\"before-after\"]",
+      "width": "visual",
+      "fields": ["visual"],
+      "source": [
+        "backend/app/static/homepage-preview/weight-loss-before-masterclass.svg",
+        "backend/app/static/homepage-preview/weight-loss-after-masterclass.svg"
+      ]
+    },
+    {
+      "order": 110,
+      "id": "anya-heading",
+      "label": "История: что случилось с Аней",
+      "selector": "[data-homepage-block=\"anya-heading\"]",
+      "width": "story",
+      "fields": ["kicker", "title"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 120,
+      "id": "anya-intro",
+      "label": "Текст перед историей Ани",
+      "selector": "[data-homepage-block=\"anya-intro\"]",
+      "width": "story",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 130,
+      "id": "anya-slider",
+      "label": "Слайдер истории Ани",
+      "selector": "[data-homepage-block=\"anya-slider\"]",
+      "width": "story",
+      "fields": ["media"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 140,
+      "id": "anya-outro",
+      "label": "Текст после истории Ани",
+      "selector": "[data-homepage-block=\"anya-outro\"]",
+      "width": "story",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html",
+      "status": "placeholder"
+    },
+    {
+      "order": 150,
+      "id": "pricing-heading",
+      "label": "Плашка «Выберите тариф»",
+      "selector": "[data-homepage-block=\"pricing-heading\"]",
+      "width": "wide",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 160,
+      "id": "pricing-cards",
+      "label": "Тарифы",
+      "selector": "[data-homepage-block=\"pricing-cards\"]",
+      "width": "wide",
+      "fields": ["catalog"],
+      "source": "platform.commerce",
+      "api": "/api/pricing/site/preview"
+    },
+    {
+      "order": 170,
+      "id": "pricing-trust",
+      "label": "Доступ и гарантия",
+      "selector": "[data-homepage-block=\"pricing-trust\"]",
+      "width": "content",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 180,
+      "id": "pricing-program",
+      "label": "Программа по дням",
+      "selector": "[data-homepage-block=\"pricing-program\"]",
+      "width": "content",
+      "fields": ["links"],
+      "source": "content/public-site/homepage/*.md"
+    },
+    {
+      "order": 190,
+      "id": "faq",
+      "label": "Частые вопросы",
+      "selector": "[data-homepage-block=\"faq\"]",
+      "width": "content",
+      "fields": ["items"],
+      "source": "content/public-site/homepage/faq.md",
+      "api": "/api/public-site/content/faq"
+    },
+    {
+      "order": 200,
+      "id": "final-cta",
+      "label": "Финальный призыв",
+      "selector": "[data-homepage-block=\"final-cta\"]",
+      "width": "content",
+      "fields": ["sticker", "line-1", "line-2", "line-3", "contact-copy"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 210,
+      "id": "footer",
+      "label": "Общий публичный подвал",
+      "selector": "[data-homepage-block=\"footer\"]",
+      "width": "shared",
+      "fields": [],
+      "source": "backend/app/static/site-footer.js"
+    }
+  ]
+}

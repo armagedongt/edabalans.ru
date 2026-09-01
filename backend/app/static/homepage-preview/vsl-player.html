@@ -1,4 +1,4 @@
-<style>html,body{margin:0;background:transparent}body{padding:0}</style>
+<style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent!important}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
   <video class="mvp__video" data-default-source="https://cdn-g.boomstream.com/adaptive/hash:98609678c7955619312bd27a720770e6/data:eyJ1c2VfZGlyZWN0X2xpbmtzIjoieWVzIiwiaXNfZW5jcnlwdCI6Im5vIn0=/0JL9wxur/playlist.m3u8" data-default-poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
 
@@ -209,7 +209,8 @@
 
 <style>
 /* Визуальная тема по референсу */
-#modular-video-player{border-radius:16px;box-shadow:none;background:#000}
+#modular-video-player{width:100%;height:100%;aspect-ratio:auto;border-radius:16px;box-shadow:none;background:transparent!important;clip-path:inset(0 round 16px);transform:translateZ(0)}
+#modular-video-player .mvp__video{inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);background:transparent!important}
 #modular-video-player .mvp__shade{background:linear-gradient(to bottom,transparent 82%,rgba(0,0,0,.22) 100%)}
 #modular-video-player .mvp__controls{padding:0 27px 13px;z-index:8}
 #modular-video-player .mvp__progress{height:4px;margin-bottom:10px;border-radius:999px;background:rgba(207,215,215,.52);overflow:hidden;cursor:default;pointer-events:none}
@@ -224,6 +225,14 @@
 #modular-video-player .mvp__time{margin-left:6px;font-size:16px;font-weight:650}
 #modular-video-player .mvp__mute{padding:2px}
 #modular-video-player .mvp__volume{width:94px;height:4px;margin:0 8px 0 -2px;accent-color:#fff;cursor:pointer}
+#modular-video-player .mvp__play:hover,
+#modular-video-player .mvp__play:focus-visible,
+#modular-video-player .mvp__mute:hover,
+#modular-video-player .mvp__mute:focus-visible,
+#modular-video-player .mvp__speed-inline:hover,
+#modular-video-player .mvp__speed-inline:focus-visible,
+#modular-video-player .mvp__fullscreen:hover,
+#modular-video-player .mvp__fullscreen:focus-visible{background:rgba(97,92,245,.56)}
 #modular-video-player .mvp__captions span{display:block;padding:1px 3px;border-radius:4px;background:#fff;color:#222;font-size:17px;font-weight:900;line-height:20px}
 #modular-video-player .mvp__captions.is-active span{background:var(--accent);color:#fff}
 #modular-video-player .mvp__settings,#modular-video-player .mvp__speed-panel,#modular-video-player .mvp__quality-panel{left:36px;right:auto;bottom:86px;width:420px;max-height:calc(100% - 112px);overflow:auto;border:0;border-radius:9px;background:#111;box-shadow:0 10px 32px rgba(0,0,0,.28);backdrop-filter:none}
@@ -282,7 +291,7 @@
 #modular-video-player .mvp__speed-option.is-active{background:rgba(255,255,255,.10)}
 #modular-video-player .mvp__speed-option.is-active::after{margin-left:9px;font-size:13px}
 @media(max-width:700px){
-  #modular-video-player{border-radius:12px}
+  #modular-video-player{border-radius:12px;clip-path:inset(0 round 12px)}
   #modular-video-player .mvp__controls{padding:0 9px 7px}
   #modular-video-player .mvp__progress{height:3px;margin-bottom:7px}
   #modular-video-player .mvp__left,#modular-video-player .mvp__right{gap:2px}

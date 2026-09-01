@@ -338,9 +338,18 @@
       --site-ink: #17191e;
       --site-text: #4f555e;
       --page-gutter: clamp(18px, 3vw, 32px);
+      --content-standard-max: 760px;
       --content-wide: 1180px;
+      --content-frame: min(calc(100vw - 40px), 600px);
       --content-copy: 940px;
-      --content-reading: 790px;
+      --content-reading: 680px;
+      --content-panel: var(--content-frame);
+      --content-video-frame: min(calc(90svh * 3 / 4), var(--content-standard-max));
+      --content-inline-start: calc((100vw - var(--content-frame)) / 2);
+      --content-story-frame: min(calc(100vw - var(--content-inline-start)), var(--content-standard-max));
+      --content-story-edge-space: max(0px, calc(100vw - var(--content-inline-start) - var(--content-story-frame)));
+      --content-visual-frame: min(var(--content-frame), var(--content-standard-max));
+      --content-feature-frame: min(calc(100vw - 20px), 690px);
       --type-display: clamp(31px, 6vw, 58px);
       --type-section: clamp(28px, 4.6vw, 48px);
       --type-body: clamp(17px, 1.4vw, 20px);
@@ -350,6 +359,20 @@
       --crying-blue: var(--site-blue);
       --crying-blue-dark: var(--site-blue-deep);
       --crying-font: Manrope, Arial, sans-serif;
+    }
+
+    @media (min-width: 980px) and (max-width: 1200px) {
+      :root {
+        --content-frame: 620px;
+        --content-feature-frame: 713px;
+      }
+    }
+
+    @media (min-width: 1201px) {
+      :root {
+        --content-frame: var(--content-standard-max);
+        --content-feature-frame: 874px;
+      }
     }
 
     body { background: #fff; font-family: Manrope, Arial, sans-serif; }
@@ -412,14 +435,49 @@
     .site-title__plain + .site-title__plain { margin-top: 3px; }
     .site-title__plain small { display: inline; width: auto; margin: 0; font-size: .82em; font-weight: 800; line-height: 1; text-transform: lowercase; vertical-align: baseline; }
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(17px,5.45vw,58px); line-height: 1.02; letter-spacing: -.015em; transform: rotate(-.8deg); }
-    .site-lead { max-width: var(--content-reading); margin: 31px 0 0; color: var(--site-text); font-size: var(--type-body); font-weight: 500; line-height: 1.6; }
-    .site-player { position: relative; width: min(100%,540px); margin: 25px auto 0; border-radius: 16px; }
-    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: none; }
+    .site-lead { width: var(--content-frame); max-width: 100%; margin: 31px auto 0; color: var(--site-text); font-size: var(--type-body); font-weight: 500; line-height: 1.6; }
+    .site-player {
+      --site-player-radius: 16px;
+      position: relative;
+      width: min(var(--content-video-frame),calc(100% - 24px));
+      margin: 25px auto 0;
+      border-radius: var(--site-player-radius);
+      box-shadow:
+        -11px 10px 27px -9px rgba(97, 92, 245, .27),
+         11px 10px 27px -9px rgba(21, 151, 232, .25),
+         0 13px 32px -5px rgba(44, 124, 238, .20);
+    }
+    .site-player__mask {
+      position: relative;
+      width: 100%;
+      height: 90svh;
+      overflow: hidden;
+      border-radius: var(--site-player-radius);
+      background: transparent;
+      clip-path: inset(0 round var(--site-player-radius));
+      isolation: isolate;
+      transform: translateZ(0);
+    }
+    .site-player iframe {
+      display: block;
+      width: calc(100% + 4px);
+      height: calc(100% + 4px);
+      margin: -2px;
+      border: 0;
+      background: transparent;
+    }
+    @media (max-width: 600px) {
+      .site-player {
+        --site-player-radius: 12px;
+        width: min(var(--content-video-frame),calc(100% - 24px));
+      }
+    }
+    .site-outro { width:var(--content-frame);max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.6;text-align:left }
 
     .argument-intro { padding: 42px var(--page-gutter) 46px; background: #fff; }
-    .argument-intro__inner, .method-transition__inner { width: min(100%,var(--content-copy)); margin: 0 auto; }
+    .argument-intro__inner, .method-transition__inner { width: min(100%,var(--content-frame)); margin: 0 auto; }
     .argument-intro h2 { max-width: 890px; margin: 0; font-size: var(--type-display); font-weight: 800; line-height: 1.06; letter-spacing: -.052em; text-wrap: balance; }
-    .argument-copy { max-width: 760px; margin-top: 24px; }
+    .argument-copy { max-width: var(--content-frame); margin-top: 24px; }
     .argument-intro p { margin: 0; color: #3f444c; font-size: var(--type-body); font-weight: 500; line-height: 1.62; }
     .argument-intro p + p { margin-top: 10px; }
     .crossed-rule { padding-inline: .03em; color: rgba(24,26,31,.56); background: linear-gradient(-1.2deg, transparent 43%, var(--site-red) 44% 54%, transparent 55%); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
@@ -480,39 +538,39 @@
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:#fff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
-    .argument{padding:clamp(24px,4vw,52px) max(0px,calc(var(--page-gutter) - clamp(14px,2vw,24px))) 8px;background:#fff}
-    .argument__inner{width:min(100%,var(--content-copy));margin:0 auto}
+    .argument{padding:clamp(24px,4vw,52px) 0 8px;background:#fff}
+    .argument__inner{width:min(100%,var(--content-frame));margin:0 auto}
     .argument h1{max-width:900px;margin:0;font-size:var(--type-display);font-weight:800;line-height:1.07;letter-spacing:-.052em;text-wrap:balance}
     .old-formula__line{position:relative;display:inline-block;white-space:nowrap}
     .strike-svg{position:absolute;z-index:2;right:-.08em;left:-.08em;top:42%;display:block;width:calc(100% + .16em);height:28%;overflow:visible;pointer-events:none}
     .strike-svg path{fill:none;stroke:var(--red);stroke-width:clamp(3.6px,.09em,5.4px);stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
     .old-formula__line:last-child .strike-svg{top:52%}
-    .argument__copy{max-width:780px;margin-top:24px}
+    .argument__copy{max-width:var(--content-frame);margin-top:24px}
     .argument__copy p{margin:0;color:var(--text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .argument__copy p+p{margin-top:10px}
 
-    .recognition{--scene-height:540px;--step-height:clamp(125px,24svh,180px);--field-width:100%;position:relative;display:grid;width:min(100%,1180px);max-width:100%;height:auto;margin:0 auto;padding:0 clamp(14px,2vw,24px);grid-template:minmax(0,1fr)/minmax(0,1fr)}
+    .recognition{--scene-height:621px;--step-height:clamp(144px,27.6svh,207px);--field-width:100%;position:relative;display:grid;width:var(--content-feature-frame);max-width:100%;height:auto;margin:0 auto;padding:0;grid-template:minmax(0,1fr)/minmax(0,1fr)}
     .recognition__scene{position:sticky;z-index:2;top:6px;min-width:0;align-self:start;grid-area:1/1;height:auto;overflow:visible;border:0;border-radius:0;background:#fff;box-shadow:none;isolation:isolate}
     .recognition__steps{display:grid;grid-area:1/1;visibility:hidden;pointer-events:none}
     .recognition__steps::after{height:max(0px,calc(var(--scene-height) - 60px));content:""}
     .recognition__step{height:var(--step-height)}
     .recognition__person-wrap{position:relative;z-index:2;display:grid;width:var(--field-width);margin:0 auto;padding-bottom:28px;overflow:visible;align-items:start;justify-items:center;pointer-events:none}
     .recognition__person{display:block;width:96%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
-    .recognition__pains{position:absolute;z-index:8;right:0;bottom:0;left:0;height:min(100%,340px);clip-path:inset(0 -60px -60px -60px);pointer-events:none}
-    .pain{position:absolute;top:0;width:min(84vw,450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 7px 16px rgba(22,89,124,.10);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
+    .recognition__pains{position:absolute;z-index:8;right:0;bottom:0;left:0;height:min(100%,391px);clip-path:inset(0 -60px -60px -60px);pointer-events:none}
+    .pain{position:absolute;top:0;width:min(calc(100% - 24px),450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 7px 16px rgba(22,89,124,.10);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
     .pain::after{position:absolute;right:22px;bottom:-9px;width:18px;height:14px;border-radius:0 0 4px 0;background:inherit;clip-path:polygon(0 0,100% 0,100% 100%);content:""}
-    .pain:nth-child(odd){left:5vw}
+    .pain:nth-child(odd){left:12px}
     .pain:nth-child(odd)::after{right:auto;left:22px;border-radius:0 0 0 4px;clip-path:polygon(0 0,100% 0,0 100%)}
-    .pain:nth-child(even){right:5vw}
-    .pain--final{left:50%!important;width:min(88vw,390px);background:var(--final);color:#fff;font-weight:800;text-align:center;box-shadow:0 7px 16px rgba(51,43,59,.16)}
+    .pain:nth-child(even){right:12px}
+    .pain--final{left:50%!important;width:min(calc(100% - 24px),390px);background:var(--final);color:#fff;font-weight:800;text-align:center;box-shadow:0 7px 16px rgba(51,43,59,.16)}
     .final-old{position:relative;display:inline-block}
     .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
     .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
 
     .method-transition{position:relative;z-index:12;margin-top:0;padding:52px var(--page-gutter) 48px;background:#fff}
-    .method-transition__inner{width:min(100%,var(--content-copy));margin:0 auto}
+    .method-transition__inner{width:min(100%,var(--content-frame));margin:0 auto}
     .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
-    .method-list{display:grid;gap:13px;max-width:var(--content-reading);margin:28px 0 0;padding:0;list-style:none}
+    .method-list{display:grid;gap:13px;max-width:var(--content-frame);margin:28px 0 0;padding:0;list-style:none}
     .method-list li{display:grid;grid-template-columns:27px 1fr;gap:11px;align-items:start;font-size:var(--type-body);font-weight:500;line-height:1.45}
     .method-checks{display:flex}
     .method-check{display:grid;width:27px;height:27px;flex:none;place-items:center;font-size:15px;font-style:normal;font-weight:900}
@@ -533,7 +591,7 @@
     }
     @media(min-width:1100px){
       .argument{padding-top:40px;padding-bottom:14px}
-      .argument__copy{max-width:940px;margin-top:20px}
+      .argument__copy{max-width:var(--content-frame);margin-top:20px}
     }
     @media(prefers-reduced-motion:reduce){
       .recognition{height:auto}
@@ -546,7 +604,7 @@
 
   .wl-masterclass-story {
     --wl-ink: #171717;
-    --wl-max-width: 1180px;
+    --wl-max-width: var(--content-frame);
     --wl-side-padding: clamp(16px, 4vw, 44px);
     --wl-reveal-distance: clamp(54px, 11vw, 150px);
     --wl-reveal-duration: 850ms;
@@ -639,9 +697,9 @@
     *{box-sizing:border-box}
     .chain-block--faq{margin:0;color:var(--ink);background:var(--page);font-family:Manrope,Arial,sans-serif;-webkit-font-smoothing:antialiased}
     .faq-section{min-height:100vh;padding:64px var(--page-gutter) 88px}
-    .faq-shell{width:min(100%,var(--content-wide));margin:0 auto}
-    .chain-block--faq h1{max-width:880px;margin:0;font-size:var(--type-section);font-weight:800;line-height:1.1;letter-spacing:-1px;text-wrap:balance}
-    .faq-list{display:flex;flex-direction:column;gap:12px;max-width:var(--content-copy);margin-top:36px}
+    .faq-shell{width:min(100%,var(--content-panel));margin:0 auto}
+    .chain-block--faq h1{max-width:var(--content-panel);margin:0 auto;font-size:var(--type-section);font-weight:800;line-height:1.1;letter-spacing:-1px;text-align:center;text-wrap:balance}
+    .faq-list{display:flex;width:100%;flex-direction:column;gap:12px;margin:36px auto 0}
     .faq-item{overflow:clip;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 24px -22px rgba(20,30,60,.5);transition:border-color .18s ease,box-shadow .18s ease}
     .faq-item:hover,.faq-item:focus-within{border-color:rgba(38,175,255,.42);box-shadow:0 14px 34px -28px rgba(18,115,180,.55)}
     .faq-item[data-open="true"]{background:linear-gradient(145deg,rgba(255,250,248,.96) 0%,var(--support-surface) 100%);border-color:var(--support-border);box-shadow:0 16px 34px -27px rgba(143,54,39,.38)}
@@ -673,7 +731,7 @@
     .chain-block--final a:focus-visible{outline:3px solid #fff;outline-offset:4px}
     .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
     .final-section{padding:34px var(--page-gutter) 54px}
-    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,var(--content-wide));margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 28px 54px -27px rgba(3,94,151,.68),0 10px 24px -18px rgba(3,70,114,.62)}
+    .final-card{position:relative;isolation:isolate;overflow:hidden;width:min(100%,var(--content-panel));margin:0 auto;background:linear-gradient(145deg,var(--blue) 0%,var(--blue-deep) 100%);border-radius:24px;box-shadow:0 28px 54px -27px rgba(3,94,151,.68),0 10px 24px -18px rgba(3,70,114,.62)}
     .final-card::before,.final-card::after{position:absolute;z-index:-1;border-radius:50%;content:"";pointer-events:none}
     .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
     .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
@@ -746,10 +804,10 @@
     }
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:transparent}
     .chain-block{position:relative;z-index:1;min-width:0}
-    .chain-block--before-after{padding:0 0 68px;background:transparent}
-    .chain-block--anya{padding:30px 0 72px;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
-    .anya-story{width:min(100%,var(--content-wide));margin:0 auto;padding:0 var(--page-gutter)}
-    .anya-story__header{max-width:var(--content-reading)}
+    .chain-block--before-after{padding:0;background:transparent}
+    .chain-block--anya{padding:24px 0 72px;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
+    .anya-story{width:100%;max-width:none;margin:0;padding:0}
+    .anya-story__header{width:var(--content-frame);max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:var(--type-body);font-weight:600;line-height:1.55}
@@ -774,11 +832,11 @@
     @keyframes anya-cards{0%,15%,85%,100%{transform:translateX(-5px)}45%,60%{transform:translateX(10px)}}
     @keyframes anya-finger{0%,15%,85%,100%{transform:translateX(8px)}45%,60%{transform:translateX(-8px)}}
     @keyframes anya-nudge{0%,18%,82%,100%{transform:translateX(0)}45%,60%{transform:translateX(12px)}}
-    .anya-story__slider{position:relative}
-    .anya-story__viewport{margin:14px -18px 0 0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
+    .anya-story__slider{position:relative;width:var(--content-story-frame);max-width:100%;margin-left:var(--content-inline-start)}
+    .anya-story__viewport{margin:14px 0 0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
     .anya-story__viewport::-webkit-scrollbar{display:none}
-    .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 18px 42px}
-    .anya-slide{position:relative;display:flex;width:min(78vw,350px);height:min(110vw,488px);flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 38px -24px rgba(18,55,86,.44)}
+    .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 0 42px}
+    .anya-slide{position:relative;display:flex;width:min(80vw,608px);height:auto;aspect-ratio:350/488;flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 38px -24px rgba(18,55,86,.44)}
     .anya-slide--video{background:#121018}
     .anya-slide--video iframe{width:100%;height:100%;border:0}
     .anya-slide--image{flex-direction:column;margin:0;background:linear-gradient(150deg,#fff,#edf8ff)}
@@ -789,33 +847,39 @@
     .anya-slide--ending span{font-size:12px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
     .anya-slide--ending strong{margin-top:12px;font-family:Unbounded,Manrope,sans-serif;font-size:24px;line-height:1.15}
     .anya-slide--ending p{margin:18px 0 0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
-    .anya-story__after{max-width:620px;margin:22px 0 0;color:#55616d;font-size:var(--type-body);line-height:1.6}
-    .anya-story__controls{display:flex;justify-content:center;gap:12px;margin:2px 0 0}
+    .anya-story__after{width:var(--content-frame);max-width:100%;margin:22px auto 0;color:#55616d;font-size:var(--type-body);line-height:1.6}
+    .anya-story__controls{display:none}
     .anya-story__arrow{display:grid;width:58px;height:42px;place-items:center;border:0;border-radius:14px;background:#615cf5;color:#fff;cursor:pointer;box-shadow:0 13px 25px -17px rgba(37,28,116,.85);transition:transform .18s ease,box-shadow .18s ease}
     .anya-story__arrow::before{width:10px;height:10px;border-top:3px solid currentColor;border-right:3px solid currentColor;content:"";transform:rotate(45deg)}
     .anya-story__arrow--prev::before{transform:rotate(-135deg)}
     .anya-story__arrow:hover,.anya-story__arrow:focus-visible{box-shadow:0 17px 28px -15px rgba(37,28,116,.9);transform:translateY(-2px)}
     .anya-story__arrow:disabled{opacity:.34;cursor:default;box-shadow:none;transform:none}
-    .anya-story__side-controls{position:absolute;z-index:12;top:14px;right:-10px;bottom:42px;left:-10px;pointer-events:none}
+    .anya-story__side-controls{position:absolute;z-index:12;top:14px;right:0;bottom:42px;left:0;pointer-events:none}
     .anya-story__side-arrow{position:absolute;top:50%;width:46px;height:46px;border-radius:50%;background:rgba(97,92,245,.78);pointer-events:auto;transform:translateY(-50%);box-shadow:0 14px 28px -15px rgba(37,28,116,.72)}
-    .anya-story__side-arrow--prev{left:0}
-    .anya-story__side-arrow--next{right:0}
+    .anya-story__side-arrow--prev{left:clamp(-60px,calc(-1 * var(--content-inline-start)),0px)}
+    .anya-story__side-arrow--next{right:clamp(-60px,calc(-1 * var(--content-story-edge-space)),0px)}
     .anya-story__side-arrow:hover,.anya-story__side-arrow:focus-visible{background:rgba(97,92,245,.9);transform:translateY(calc(-50% - 2px))}
     .anya-story__side-arrow:disabled{opacity:0;pointer-events:none;transform:translateY(-50%)}
+    @media(max-width:719px){.anya-story__side-arrow{width:40px;height:40px}.anya-story__side-arrow--prev{left:8px}.anya-story__side-arrow--next{right:8px}}
+    @media(max-width:380px){.anya-story__side-arrow{width:34px;height:34px}.anya-story__side-arrow--prev{left:7px}.anya-story__side-arrow--next{right:7px}}
     .chain-block--pricing{padding:20px 0 74px;background:transparent}
     .chain-block--faq{padding:0 0 54px;background:transparent}
     .chain-block--final{background:transparent;color:#fff}
     .site-hero,.argument-intro,.argument,.method-transition,.recognition__scene{background:transparent}
     #edb-pricing-neurozeh-v1 .edb-preview-toolbar{display:none!important}
     #edb-pricing-neurozeh-v1{padding-top:0!important}
-    .chain-block--before-after .wl-masterclass-story{padding-top:8px}
+    .chain-block--before-after .wl-masterclass-story{padding:8px 0 24px}
     [data-edabalans-site-footer]{position:relative;z-index:1;background:transparent;color:#17212b}
     @media(max-width:719px){
       .desktop-header{display:none!important}
-      .chain-block--before-after{padding-top:0;padding-bottom:50px}
-      .chain-block--anya{padding-top:22px;padding-bottom:54px}
+      .chain-block--before-after{padding:0}
+      .chain-block--before-after .wl-masterclass-story{padding-bottom:18px}
+      .chain-block--anya{padding-top:16px;padding-bottom:54px}
       .chain-block--pricing{padding-top:6px;padding-bottom:54px}
       .chain-block--faq{padding-bottom:32px}
+    }
+    @media(max-width:899px){
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:center}
     }
   </style>
 </head>
@@ -859,10 +923,11 @@
   <main class="homepage-chain">
     <div class="chain-block chain-block--hero"><section class="site-hero" id="top">
       <div class="site-hero__inner">
-        <p class="site-eyebrow">Мастер-класс · 21 день</p>
-        <h1 class="site-title"><span class="site-title__plain">По изменению</span><span class="site-title__plain">Питания <small>и</small></span><span class="site-title__accent">Пищевых привычек</span></h1>
-        <p class="site-lead">Вы перестанете делить еду на «можно» и «нельзя», разберётесь в своём питании и научитесь менять его без очередной диеты.</p>
-        <div class="site-player"><iframe src="/preview/homepage-mobile/vsl-player.html?v=2" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div>
+        <p class="site-eyebrow" data-homepage-block="hero-label" data-homepage-field="text" data-block-width="intrinsic">Мастер-класс · 21 день</p>
+        <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
+        <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">Вы перестанете делить еду на «можно» и «нельзя», разберётесь в своём питании и научитесь менять его без очередной диеты.</p>
+        <div class="site-player" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=2" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div>
+        <p class="site-outro" data-homepage-block="hero-outro" data-homepage-field="text" data-block-width="content">В этом видео я объясняю, почему привычные попытки похудеть раз за разом приводят в ту же точку. Ниже разберём, что именно стоит поменять, чтобы питание перестало быть постоянной борьбой.</p>
       </div>
     </section>
 
@@ -871,14 +936,14 @@
       <div class="recognition__scene">
         <section class="argument">
           <div class="argument__inner">
-            <h1>Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
-            <div class="argument__copy">
+            <h1 data-homepage-block="recognition-title" data-homepage-field="html" data-block-width="content">Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
+            <div class="argument__copy" data-homepage-block="recognition-intro" data-homepage-field="html" data-block-width="content">
               <p>Пожалуй, все хоть раз слышали эту фразу. И вообще-то похудение так и работает.</p>
               <p>Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается?</p>
             </div>
           </div>
         </section>
-        <div class="recognition__person-wrap" data-person>
+        <div class="recognition__person-wrap" data-person data-homepage-block="recognition-scene" data-block-width="feature">
           <img class="recognition__person" src="/preview/homepage-mobile/crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
           <div class="recognition__pains" aria-label="Трудности с похудением">
             <p class="pain">Весь день держалась. Вечером сорвалась</p>
@@ -900,11 +965,11 @@
       </div>
     </section>
 
-    <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach">
+    <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach" data-homepage-block="approach" data-homepage-field="html" data-block-width="content">
       <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
     </section>
   </div>
-    <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
+    <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
   <div
     class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
     data-wl-reveal="from-right"
@@ -944,16 +1009,16 @@
 
     <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
       <div class="anya-story">
-        <header class="anya-story__header">
-          <span class="anya-story__kicker">ИСТОРИЯ</span>
-          <h2 id="anya-story-title">Что случилось с Аней?<span class="anya-story__gesture" aria-label="Листайте историю вбок">
+        <header class="anya-story__header" data-homepage-block="anya-heading" data-block-width="story">
+          <span class="anya-story__kicker" data-homepage-field="kicker">ИСТОРИЯ</span>
+          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок">
             <span class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true"><span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span></span>
             <span class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true"><span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span></span>
             <span class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i></span></span>
           </span></h2>
-          <p>Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
+          <p data-homepage-block="anya-intro" data-homepage-field="text" data-block-width="story">Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
         </header>
-        <div class="anya-story__slider">
+        <div class="anya-story__slider" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="story">
           <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
             <div class="anya-story__track">
             <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
@@ -983,11 +1048,7 @@
             <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
           </div>
         </div>
-        <div class="anya-story__controls" aria-label="Переключение слайдов">
-          <button class="anya-story__arrow anya-story__arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
-          <button class="anya-story__arrow anya-story__arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
-        </div>
-        <p class="anya-story__after">Здесь будет короткий итог истории Ани.</p>
+        <p class="anya-story__after" data-homepage-block="anya-outro" data-homepage-field="text" data-block-width="story">Здесь будет короткий итог истории Ани.</p>
       </div>
     </section>
 
@@ -1040,18 +1101,23 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-phone {
-      width: 100%;
-      max-width: 430px;
+      width: min(100%, calc(var(--content-panel) + 2 * var(--page-gutter)));
+      max-width: none;
       margin-inline: auto;
       overflow: visible;
       background: transparent;
       padding: 16px var(--page-gutter) 68px;
     }
 
-    #edb-pricing-neurozeh-v1 .edb-pricing-intro {
-      width: min(100%, var(--content-wide));
+    #edb-pricing-neurozeh-v1 .edb-pricing-list {
+      width: min(100%, 430px);
       margin-inline: auto;
-      padding: 28px var(--page-gutter) 0;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-intro {
+      width: 100%;
+      margin-inline: auto;
+      padding: 0 0 24px;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
@@ -1557,8 +1623,9 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-assurances {
       display: grid;
+      width: min(100%, var(--content-panel));
       gap: 10px;
-      margin: 42px 0 0;
+      margin: 42px auto 0;
       padding: 0;
       list-style: none;
     }
@@ -1609,7 +1676,8 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-details {
-      margin-top: 26px;
+      width: min(100%, var(--content-panel));
+      margin: 26px auto 0;
       padding: 22px 0 0;
       border-top: 1px solid #dfe5eb;
     }
@@ -1617,9 +1685,10 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-details-title {
       margin: 0;
       font-family: 'Unbounded', sans-serif;
-      font-size: 17px;
+      font-size: var(--type-section);
       font-weight: 800;
-      line-height: 1.2;
+      line-height: 1.06;
+      letter-spacing: -.045em;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-details-links {
@@ -1635,8 +1704,8 @@
       gap: 12px;
       align-items: center;
       width: 100%;
-      min-height: 54px;
-      padding: 13px 12px 13px 15px;
+      min-height: 60px;
+      padding: 16px 12px 16px 15px;
       border: 1px solid transparent;
       border-radius: 15px;
       background: #ffffff;
@@ -1839,7 +1908,7 @@
       gap: 10px;
       margin-top: 24px;
     }
-    @media(min-width:720px){.anya-story__viewport{margin-left:0;margin-right:-32px}.anya-story__track{padding:18px 32px 42px}.anya-slide{width:min(48vw,430px);height:min(68vw,590px)}}
+    @media(min-width:720px){.anya-story__viewport{margin-right:0;margin-left:0}.anya-story__track{padding:18px 0 42px}}
     @media(prefers-reduced-motion:reduce){.anya-swipe-tilda__cards,.anya-swipe-tilda__hand,.anya-swipe-finger svg,.anya-swipe-nudge i{animation:none}}
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-points > p {
@@ -1962,7 +2031,7 @@
     }
 
     @media (min-width: 760px) {
-      #edb-pricing-neurozeh-v1 .edb-pricing-intro { padding-top: 62px; padding-bottom: 8px; }
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro { padding-top: 0; padding-bottom: 24px; }
     }
 
     @media (min-width: 900px) {
@@ -1974,6 +2043,8 @@
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-list {
+        width: 100%;
+        max-width: none;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         align-items: start;
@@ -1986,23 +2057,20 @@
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-assurances {
-        width: min(100%, 680px);
+        width: min(100%, var(--content-panel));
         margin-right: auto;
         margin-left: auto;
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-details {
-        width: min(100%, var(--content-copy));
+        width: min(100%, var(--content-panel));
         margin-right: auto;
         margin-left: auto;
       }
 
-      #edb-pricing-neurozeh-v1 .edb-pricing-details-links {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-
+      #edb-pricing-neurozeh-v1 .edb-pricing-details-links,
       #edb-pricing-neurozeh-v1 .edb-pricing-followups {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: minmax(0, 1fr);
       }
 
       #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
@@ -2021,6 +2089,29 @@
         grid-column: auto;
       }
     }
+
+    /* Единая читаемая колонка: шире неё бывает только сетка тарифных карточек. */
+    .argument__inner,
+    .method-transition__inner,
+    .wl-masterclass-story__visual,
+    .wl-masterclass-story__divider,
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances,
+    #edb-pricing-neurozeh-v1 .edb-pricing-details,
+    .faq-shell,
+    .final-card {
+      width: var(--content-frame);
+      max-width: 100%;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .recognition { width: var(--content-feature-frame); }
+    .anya-story { width: 100%; }
+
+    .wl-masterclass-story__visual,
+    .wl-masterclass-story__divider {
+      width: var(--content-visual-frame);
+    }
   </style>
 
   <div class="edb-preview-toolbar" aria-label="Варианты оформления">
@@ -2029,14 +2120,13 @@
     <button class="edb-preview-switch" type="button" data-variant-button="zigzag" aria-pressed="false">Зигзаг</button>
   </div>
 
-  <header class="edb-pricing-intro">
-    <div class="edb-pricing-kicker" id="edb-pricing-title">Выберите тариф</div>
-  </header>
-
   <section class="edb-pricing-phone" aria-labelledby="edb-pricing-title">
+    <header class="edb-pricing-intro" data-homepage-block="pricing-heading" data-block-width="wide">
+      <div class="edb-pricing-kicker" id="edb-pricing-title" data-homepage-field="text">Выберите тариф</div>
+    </header>
     <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
 
-    <div class="edb-pricing-list">
+    <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide">
       <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
         <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
         <ul>
@@ -2083,7 +2173,7 @@
       </article>
     </div>
 
-    <ul class="edb-pricing-assurances">
+    <ul class="edb-pricing-assurances" data-homepage-block="pricing-trust" data-homepage-field="text" data-block-width="content">
       <li>
         <span class="edb-assurance-icon">
           <span class="edb-fire-emoji" aria-hidden="true">🔥</span>
@@ -2098,8 +2188,8 @@
       </li>
     </ul>
 
-    <div class="edb-pricing-details">
-      <h3 class="edb-pricing-details-title">Что входит в программу</h3>
+    <div class="edb-pricing-details" data-homepage-block="pricing-program" data-homepage-field="links" data-block-width="content">
+      <h3 class="edb-pricing-details-title">Программа по дням</h3>
       <div class="edb-pricing-details-links">
         <button class="edb-pricing-detail-link" type="button" data-product="program"><span>Основная программа</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
         <button class="edb-pricing-detail-link" type="button" data-product="recipes"><span>Система рецептов</span><span class="edb-detail-open-icon"><svg aria-hidden="true"><use href="#edb-icon-open"></use></svg></span></button>
@@ -2301,27 +2391,27 @@
   </script>
 </div>
 </section>
-    <section class="chain-block chain-block--faq" id="faq" aria-label="Частые вопросы"><div class="faq-section">
+    <section class="chain-block chain-block--faq" id="faq" aria-label="Частые вопросы" data-homepage-block="faq" data-homepage-field="items" data-block-width="content"><div class="faq-section">
     <section class="faq-shell" aria-labelledby="faq-title">
       <h1 id="faq-title">Частые вопросы</h1>
       <div class="faq-list" data-public-faq aria-live="polite">Загружаю вопросы…</div>
     </section>
   </div>
   </section>
-    <section class="chain-block chain-block--final" id="contacts" aria-label="Финальный выбор"><div class="final-section">
+    <section class="chain-block chain-block--final" id="contacts" aria-label="Финальный выбор" data-homepage-block="final-cta" data-block-width="content"><div class="final-section">
     <section class="final-card" aria-labelledby="final-title">
       <div class="final-main">
-        <div class="sign-sticker">ПУ-ПУ-ПУ…</div>
+        <div class="sign-sticker" data-homepage-field="sticker">ПУ-ПУ-ПУ…</div>
         <h1 id="final-title">
-          <span>Вы долистали сайт до конца…</span>
-          <span class="question-line">Ждёте какой-то особый знак?</span>
-          <span class="final-sign">Вот вам знак!</span>
+          <span data-homepage-field="line-1">Вы долистали сайт до конца…</span>
+          <span class="question-line" data-homepage-field="line-2">Ждёте какой-то особый знак?</span>
+          <span class="final-sign" data-homepage-field="line-3">Вот вам знак!</span>
         </h1>
         <figure class="meme-card">
           <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет">
         </figure>
         <div class="action-group">
-          <p class="contact-copy">Сомневаетесь → напишите мне в личные сообщения, расскажите о ваших трудностях и задайте любой вопрос. <strong>Всем отвечаю лично.</strong></p>
+          <p class="contact-copy" data-homepage-field="contact-copy">Сомневаетесь → напишите мне в личные сообщения, расскажите о ваших трудностях и задайте любой вопрос. <strong>Всем отвечаю лично.</strong></p>
           <div class="social-row">
             <a class="social-button social-button--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer">
               <span class="social-icon" aria-hidden="true"><svg viewBox="0 0 1000 1000"><defs><linearGradient id="tg-gradient" x1="50%" y1="0%" x2="50%" y2="99.258%"><stop stop-color="#2aabee"/><stop offset="1" stop-color="#229ed9"/></linearGradient></defs><circle cx="500" cy="500" r="500" fill="url(#tg-gradient)"/><path d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z" fill="#fff"/></svg></span>
@@ -2338,7 +2428,7 @@
   </div>
 </section>
   </main>
-  <div id="site-footer" data-edabalans-site-footer="public"></div>
+  <div id="site-footer" data-edabalans-site-footer="public" data-homepage-block="footer" data-block-width="shared"></div>
   <script>
 
     (() => {
@@ -2380,7 +2470,7 @@
         const availableWidth=root.clientWidth-(window.innerWidth>=720?48:28);
         const aspect=(Number(person.getAttribute('width'))||1280)/(Number(person.getAttribute('height'))||639);
         const viewportHeight=window.visualViewport?.height||window.innerHeight;
-        const availableHeight=Math.max(180,viewportHeight-argument.offsetHeight-42);
+        const availableHeight=Math.max(180,(viewportHeight-argument.offsetHeight-42)*1.15);
         const heightLimitedWidth=availableHeight*aspect;
         const width=Math.max(0,Math.min(availableWidth,heightLimitedWidth));
         root.style.setProperty('--field-width',`${Math.round(width)}px`);
