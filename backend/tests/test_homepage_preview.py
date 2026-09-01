@@ -166,9 +166,9 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     }
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
-    assert "/preview/homepage-mobile/vsl-player.html?v=2" in parser.iframe_sources
+    assert "/preview/homepage-mobile/vsl-player.html?v=4" in parser.iframe_sources
     assert (
-        "/preview/homepage-mobile/vsl-player.html?v=3&context=anya-review"
+        "/preview/homepage-mobile/vsl-player.html?v=4&context=anya-review"
         in parser.iframe_sources
     )
     assert {
