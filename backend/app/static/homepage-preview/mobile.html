@@ -397,8 +397,8 @@
 
     .site-hero { padding: 28px 18px 58px; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
     .site-hero__inner { width: min(100%, 940px); margin: 0 auto; }
-    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 36px; align-items: center; margin: 0 auto 20px; padding: 8px 12px; border: 1px solid rgba(33,85,121,.14); border-radius: 13px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
-    .site-eyebrow::before { width: 9px; height: 9px; flex: 0 0 9px; margin-right: 9px; border-radius: 50%; background: #ff6738; content: ""; }
+    .site-eyebrow { display: flex; width: max-content; max-width: 100%; min-height: 31px; align-items: center; margin: 0 auto 18px; padding: 6px 9px; border: 1px solid rgba(33,85,121,.14); border-radius: 11px; background: rgba(255,255,255,.92); box-shadow: 0 7px 18px -13px rgba(28,67,94,.48); color: #168fe3; font-family: Manrope, sans-serif; font-size: clamp(9px,2.8vw,13px); font-weight: 800; line-height: 1.2; letter-spacing: .02em; text-transform: uppercase; backdrop-filter: blur(10px); }
+    .site-eyebrow::before { width: 7px; height: 7px; flex: 0 0 7px; margin-right: 7px; border-radius: 50%; background: #ff6738; content: ""; }
     .site-title { margin: 18px 0 0; font-family: Unbounded, Manrope, sans-serif; font-style: italic; font-weight: 800; line-height: .98; letter-spacing: -.068em; text-align: center; text-transform: uppercase; word-spacing: .08em; }
     .site-title span { display: block; width: max-content; max-width: 100%; margin-inline: auto; white-space: nowrap; }
     .site-title__plain { font-size: clamp(25px,7.6vw,58px); }
@@ -407,12 +407,7 @@
     .site-title__accent { margin-top: 8px; padding: 5px 10px 7px; border-radius: 10px; background: var(--site-orange); color: #fff; font-size: clamp(17px,5.45vw,58px); line-height: 1.02; letter-spacing: -.015em; transform: rotate(-.8deg); }
     .site-lead { max-width: 790px; margin: 31px 0 0; color: var(--site-text); font-size: 17px; font-weight: 500; line-height: 1.6; }
     .site-player { position: relative; width: min(100%,540px); margin: 25px auto 0; border-radius: 16px; }
-    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: 0 18px 34px -26px rgba(13,25,35,.7); }
-    body[data-player-frame="outline"] .site-player { padding: 1px; background: rgba(25,139,205,.26); }
-    body[data-player-frame="outline"] .site-player iframe { border-radius: 15px; box-shadow: 0 16px 30px -24px rgba(13,25,35,.62); }
-    body[data-player-frame="lift"] .site-player iframe { box-shadow: 0 24px 42px -25px rgba(13,25,35,.78); }
-    body[data-player-frame="glass"] .site-player { padding: 4px; border: 1px solid rgba(255,255,255,.72); background: rgba(255,255,255,.42); box-shadow: 0 16px 30px -26px rgba(13,25,35,.7); }
-    body[data-player-frame="glass"] .site-player iframe { border-radius: 12px; box-shadow: none; }
+    .site-player iframe { display: block; width: 100%; aspect-ratio: 3/4; border: 0; border-radius: 16px; background: #000; box-shadow: none; }
 
     .argument-intro { padding: 42px 18px 46px; background: #fff; }
     .argument-intro__inner, .method-transition__inner { width: min(100%,940px); margin: 0 auto; }
@@ -450,8 +445,8 @@
       .desktop-nav a:hover, .desktop-nav a:focus-visible { background: rgba(255,255,255,.16); }
       .desktop-account { margin-left: 6px; padding: 12px 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 23px; background: rgba(255,255,255,.16); color: #fff; font-size: 13px; font-weight: 800; text-decoration: none; }
       .site-hero { padding: 54px 32px 72px; }
-      .site-eyebrow { min-height: 42px; padding: 10px 15px; font-size: 13px; }
-      .site-eyebrow::before { width: 10px; height: 10px; flex-basis: 10px; margin-right: 11px; }
+      .site-eyebrow { min-height: 36px; padding: 8px 12px; font-size: 13px; }
+      .site-eyebrow::before { width: 8px; height: 8px; flex-basis: 8px; margin-right: 8px; }
       .site-lead { font-size: 21px; }
       .site-player { margin-top: 31px; }
       .argument-intro { padding: 58px 32px 62px; }
@@ -682,9 +677,9 @@
     .social-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
     .social-button,.primary-cta{min-height:66px;border:0;border-radius:16px;font:800 17px/1 Manrope,sans-serif;text-decoration:none;transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease,filter .18s ease}
     .social-button{display:flex;align-items:center;justify-content:center;gap:12px;color:#fff;box-shadow:0 16px 28px -22px rgba(0,48,80,.75)}
-    .social-button:hover,.social-button:focus-visible{filter:saturate(1.08) brightness(1.04);box-shadow:0 19px 30px -20px rgba(0,48,80,.9)}
+    .social-button:hover,.social-button:focus-visible{filter:none;box-shadow:0 19px 30px -20px rgba(0,48,80,.9);transform:rotate(-1deg) translateY(-2px)}
     .social-button--telegram{color:var(--telegram);background:#fff}
-    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:var(--telegram);background:#fff;filter:none;transform:translateY(-2px)}
+    .social-button--telegram:hover,.social-button--telegram:focus-visible{color:var(--telegram);background:#fff}
     .social-button--max{color:#0d001a;background:#fff;border:1px solid rgba(71,26,255,.14)}
     .social-icon{display:grid;width:39px;height:39px;flex:none;place-items:center}
     .social-icon svg{display:block;width:37px;height:37px}
@@ -715,9 +710,9 @@
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(28px,7.8vw,64px);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:16px;font-weight:600;line-height:1.55}
-    .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:9px;vertical-align:-.3em;color:#168fd3;place-items:center}
+    .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:15px;vertical-align:-.3em;color:#168fd3;place-items:center}
     .anya-swipe-option{display:none;align-items:center;justify-content:center;color:#168fd3;font-size:12px;font-weight:800}
-    body[data-anya-hint="tilda"] .anya-swipe-option--tilda,body[data-anya-hint="finger"] .anya-swipe-option--finger,body[data-anya-hint="nudge"] .anya-swipe-option--nudge{display:flex}
+    .anya-swipe-option--tilda{display:flex}
     .anya-swipe-tilda{position:relative;width:62px;height:34px}
     .anya-swipe-tilda__cards{position:absolute;inset:3px auto auto 2px;display:flex;gap:4px;animation:anya-cards 2s ease-in-out infinite}
     .anya-swipe-tilda__cards i{display:block;width:21px;height:26px;border:1.5px solid currentColor;border-radius:5px;background:rgba(255,255,255,.64)}
@@ -738,15 +733,10 @@
     @keyframes anya-nudge{0%,18%,82%,100%{transform:translateX(0)}45%,60%{transform:translateX(12px)}}
     .anya-story__viewport{margin:14px -18px 0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
     .anya-story__viewport::-webkit-scrollbar{display:none}
-    .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 18px 42px}
+    .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 18px 42px 30px}
     .anya-slide{position:relative;display:flex;width:min(78vw,350px);height:min(110vw,488px);flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 38px -24px rgba(18,55,86,.44)}
     .anya-slide--video{background:#121018}
     .anya-slide--video iframe{width:100%;height:100%;border:0}
-    .anya-slide__play{position:absolute;z-index:8;top:50%;left:50%;display:none;width:70px;height:70px;place-items:center;border:1px solid rgba(255,255,255,.72);border-radius:50%;background:#615cf5;color:#fff;cursor:pointer;box-shadow:0 15px 34px -15px rgba(37,28,116,.82);transform:translate(-50%,-50%);transition:transform .18s ease,box-shadow .18s ease}
-    .anya-slide__play::before{width:0;height:0;margin-left:5px;border-top:11px solid transparent;border-bottom:11px solid transparent;border-left:17px solid currentColor;content:""}
-    .anya-slide__play:hover,.anya-slide__play:focus-visible{box-shadow:0 19px 38px -13px rgba(37,28,116,.9);transform:translate(-50%,-53%) rotate(-2deg)}
-    body[data-anya-controls="arrows"] .anya-slide__play{display:grid}
-    .anya-slide__play.is-started{display:none!important}
     .anya-placeholder-note{position:absolute;z-index:5;right:10px;bottom:10px;left:10px;padding:8px 10px;border-radius:10px;background:rgba(18,16,24,.72);color:rgba(255,255,255,.82);font-size:10px;font-weight:800;line-height:1.25;text-align:center;pointer-events:none;backdrop-filter:blur(8px)}
     .anya-slide--image{flex-direction:column;margin:0;background:linear-gradient(150deg,#fff,#edf8ff)}
     .anya-slide--image img{width:100%;height:calc(100% - 70px);object-fit:contain;background:#fff}
@@ -757,8 +747,7 @@
     .anya-slide--ending strong{margin-top:12px;font-family:Unbounded,Manrope,sans-serif;font-size:24px;line-height:1.15}
     .anya-slide--ending p{margin:18px 0 0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
     .anya-story__after{max-width:620px;margin:22px 0 0;color:#55616d;font-size:15px;line-height:1.6}
-    .anya-story__controls{display:none;justify-content:center;gap:12px;margin:2px 0 0}
-    body[data-anya-controls="arrows"] .anya-story__controls{display:flex}
+    .anya-story__controls{display:flex;justify-content:center;gap:12px;margin:2px 0 0}
     .anya-story__arrow{display:grid;width:58px;height:42px;place-items:center;border:0;border-radius:14px;background:#615cf5;color:#fff;cursor:pointer;box-shadow:0 13px 25px -17px rgba(37,28,116,.85);transition:transform .18s ease,box-shadow .18s ease}
     .anya-story__arrow::before{width:10px;height:10px;border-top:3px solid currentColor;border-right:3px solid currentColor;content:"";transform:rotate(45deg)}
     .anya-story__arrow--prev::before{transform:rotate(-135deg)}
@@ -785,15 +774,6 @@
   <script>
     (() => {
       const params = new URLSearchParams(location.search);
-      const hint = params.get('anya-hint');
-      document.body.dataset.anyaHint = ['tilda', 'finger', 'nudge'].includes(hint) ? hint : 'tilda';
-      document.body.dataset.anyaControls = params.get('anya-controls') === 'arrows' ? 'arrows' : 'swipe';
-      const playerFrame = params.get('player-frame');
-      document.body.dataset.playerFrame = ['outline', 'lift', 'glass'].includes(playerFrame) ? playerFrame : 'clean';
-      const timer = params.get('timer');
-      document.body.dataset.pricingTimer = ['tag', 'bubble', 'flag', 'stamp'].includes(timer) ? timer : 'none';
-      const fill = params.get('pricing-fill');
-      document.body.dataset.pricingFill = ['min-blue', 'min-sky'].includes(fill) ? fill : 'base';
       document.body.dataset.supportTone = params.get('support') === 'green' ? 'green' : 'warm';
     })();
   </script>
@@ -918,7 +898,6 @@
           <div class="anya-story__track">
             <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
               <iframe src="/preview/homepage-mobile/vsl-player.html?v=2&context=anya-placeholder" title="Видео Ани — временная медиазаглушка" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-              <button class="anya-slide__play" type="button" aria-label="Включить видео Ани"></button>
               <span class="anya-placeholder-note">Временное видео для проверки механики</span>
             </article>
             <figure class="anya-slide anya-slide--image">
@@ -997,10 +976,10 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-phone {
-      width: min(100%, 390px);
+      width: min(100%, 430px);
       overflow: visible;
       background: transparent;
-      padding: 16px 18px 68px;
+      padding: 16px 12px 68px;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intro {
@@ -1180,22 +1159,6 @@
       margin-bottom: 5px;
       overflow: visible;
     }
-
-    #edb-pricing-neurozeh-v1 .edb-pricing-timer { display: none; }
-    body:not([data-pricing-timer="none"]) #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket.is-visible + .edb-pricing-timer { position: relative; display: inline-grid; align-content: center; margin-left: -5px; padding: 4px 8px 5px; color: #1c2530; font-family: Manrope,sans-serif; line-height: 1; transform: rotate(2deg); }
-    #edb-pricing-neurozeh-v1 .edb-pricing-timer small { font-size: 7px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
-    #edb-pricing-neurozeh-v1 .edb-pricing-timer strong { margin-top: 2px; font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .02em; }
-    body[data-pricing-timer="tag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { border: 1px dashed rgba(22,143,211,.42); border-radius: 7px; background: rgba(235,248,255,.96); box-shadow: 0 8px 16px -13px rgba(16,91,136,.65); }
-    body[data-pricing-timer="bubble"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left: -7px; border: 1px solid rgba(255,103,56,.24); border-radius: 999px; background: #fff7f2; color: #b84623; box-shadow: 0 8px 16px -13px rgba(116,34,10,.55); transform: rotate(-1deg); }
-    body[data-pricing-timer="flag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left: -8px; padding-right: 13px; background: #252933; clip-path: polygon(0 0,100% 0,88% 50%,100% 100%,0 100%); color: #fff; transform: rotate(1deg); }
-
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child { border: 0; background: radial-gradient(circle at 94% 1%,rgba(255,255,255,.2),transparent 29%),linear-gradient(150deg,#36bdff 0%,#168fe8 100%); color:#fff; box-shadow:0 30px 60px -32px rgba(21,145,232,.72); }
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child li { color:#fff; }
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-check { background:#fff;color:#1391e8; }
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-bottom { border-top-color:rgba(255,255,255,.23); }
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-old { color:rgba(255,255,255,.7); }
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-button { background:#fff;color:#0d7fc7;box-shadow:0 16px 30px -17px rgba(4,63,103,.38); }
-    body[data-pricing-fill="min-sky"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child { border-color:rgba(31,157,227,.22); background:linear-gradient(150deg,rgba(246,252,255,.98),rgba(216,243,255,.96)); box-shadow:0 28px 54px -32px rgba(20,126,188,.38); }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-price-row[hidden] {
       display: none;
@@ -1809,7 +1772,7 @@
       gap: 10px;
       margin-top: 24px;
     }
-    @media(min-width:720px){.anya-story{padding-inline:32px}.anya-story__viewport{margin-inline:-32px}.anya-story__track{padding-inline:32px}.anya-slide{width:min(48vw,430px);height:min(68vw,590px)}}
+    @media(min-width:720px){.anya-story{padding-inline:32px}.anya-story__viewport{margin-inline:-32px}.anya-story__track{padding:18px 32px 42px 44px}.anya-slide{width:min(48vw,430px);height:min(68vw,590px)}}
     @media(prefers-reduced-motion:reduce){.anya-swipe-tilda__cards,.anya-swipe-tilda__hand,.anya-swipe-finger svg,.anya-swipe-nudge i{animation:none}}
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-points > p {
@@ -1891,42 +1854,19 @@
       cursor: pointer;
     }
 
-    /* Компактная скидка: фактическое значение приходит из API, декоративный таймер — только fork превью. */
-    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket,
-    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-discount-ticket,
-    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-discount-ticket {
-      min-height:0;
-      gap:0;
-      padding:0;
-      background:none;
-      box-shadow:none;
-      clip-path:none;
-      color:#f04f43;
-      font-size:13px;
-      letter-spacing:-.02em;
-      text-transform:none;
-      transform:rotate(-2deg);
-    }
-    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket::before,
+    /* В билетике остаётся только каноническое значение скидки из pricing API. */
     #edb-pricing-neurozeh-v1 .edb-pricing-discount-icon,
     #edb-pricing-neurozeh-v1 .edb-pricing-discount-label,
     #edb-pricing-neurozeh-v1 .edb-pricing-discount-saving { display:none!important; }
-    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket strong { font-size:16px; line-height:1; white-space:nowrap; }
-    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-discount-ticket,
-    body[data-pricing-fill="min-blue"] #edb-pricing-neurozeh-v1 .edb-pricing-plan:first-child .edb-pricing-discount-ticket { color:#3b1010; }
-    #edb-pricing-neurozeh-v1 .edb-pricing-timer small { font-size:7px; }
-    #edb-pricing-neurozeh-v1 .edb-pricing-timer strong { font-size:13px; }
-    body[data-pricing-timer="tag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { border:1px solid rgba(240,79,67,.32);border-radius:6px;background:#fff7f5;color:#bb3e35;box-shadow:none;transform:rotate(1deg); }
-    body[data-pricing-timer="bubble"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { border:0;border-radius:999px;background:#ffede9;color:#b53d33;box-shadow:0 7px 13px -12px rgba(141,45,37,.62);transform:rotate(-1deg); }
-    body[data-pricing-timer="flag"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left:-7px;padding:4px 12px 5px 8px;border:0;border-radius:3px;background:#ee5145;color:#fff;clip-path:polygon(0 0,100% 0,88% 50%,100% 100%,0 100%);transform:rotate(1deg); }
-    body[data-pricing-timer="stamp"] #edb-pricing-neurozeh-v1 .edb-pricing-timer { margin-left:-5px;padding:5px 8px;border:1px dashed #ef5c50;border-radius:8px;background:rgba(255,255,255,.82);color:#bf4137;box-shadow:inset 0 0 0 2px rgba(239,92,80,.08);transform:rotate(-3deg); }
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket { gap:0; padding-inline:10px; }
+    #edb-pricing-neurozeh-v1 .edb-pricing-discount-ticket strong { white-space:nowrap; }
     #edb-pricing-neurozeh-v1 .edb-pricing-button:hover,
     #edb-pricing-neurozeh-v1 .edb-pricing-button:focus-visible { transform:rotate(-1deg) translateY(-2px); }
 
     @media (max-width: 350px) {
       #edb-pricing-neurozeh-v1 .edb-pricing-phone {
-        padding-right: 14px;
-        padding-left: 14px;
+        padding-right: 10px;
+        padding-left: 10px;
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-plan {
@@ -1945,10 +1885,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .anya-slide__play,
       .anya-story__arrow { transition: none; }
-      .anya-slide__play:hover,
-      .anya-slide__play:focus-visible,
       .anya-story__arrow:hover,
       .anya-story__arrow:focus-visible { transform: none; }
     }
@@ -1980,7 +1917,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-book"></use></svg></span><span>Основная программа Мастер-класса</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -1995,7 +1932,7 @@
           <li><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-grid"></use></svg></span><span>Каталог приёмов пищи</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -2013,7 +1950,7 @@
           <li class="edb-pricing-premium-item"><span class="edb-pricing-check"><svg aria-hidden="true"><use href="#edb-icon-gift"></use></svg></span><span>Теплые слова поддержки в подарок</span></li>
         </ul>
         <div class="edb-pricing-bottom">
-          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div><span class="edb-pricing-timer"><small>до повышения</small><strong>02:14:36</strong></span></div>
+          <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
           <div class="edb-pricing-price" data-price-field="sale"></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
@@ -2450,14 +2387,6 @@
         if (controlsFrame) return;
         controlsFrame = requestAnimationFrame(syncControls);
       }, {passive:true});
-      viewport.querySelectorAll('.anya-slide--video').forEach((slide) => {
-        const frame = slide.querySelector('iframe');
-        const play = slide.querySelector('.anya-slide__play');
-        play?.addEventListener('click', () => {
-          frame?.contentWindow?.postMessage({ type:'edabalans:video-play' }, location.origin);
-          play.classList.add('is-started');
-        });
-      });
       viewport.addEventListener('keydown', (event) => {
         if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
         event.preventDefault();

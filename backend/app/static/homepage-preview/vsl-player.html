@@ -245,7 +245,7 @@
 #modular-video-player .mvp__sound-card[hidden]{display:none}
 #modular-video-player .mvp__sound-card::before,
 #modular-video-player .mvp__sound-card::after{
-  position:absolute;z-index:-1;inset:-13px;border:2px solid rgba(151,147,255,.72);border-radius:16px;
+  position:absolute;z-index:-1;inset:-13px;border:2.5px solid rgba(151,147,255,.72);border-radius:16px;
   content:"";pointer-events:none;animation:mvp-card-wave 2.15s ease-out infinite;
 }
 #modular-video-player .mvp__sound-card::after{animation-delay:1.05s}
@@ -508,12 +508,6 @@
     else togglePlay();
   });
   soundCard.addEventListener('click', enableSoundAndWatch);
-  window.addEventListener('message', (event)=>{
-    if (event.origin !== location.origin || event.data?.type !== 'edabalans:video-play') return;
-    if (!soundEngaged) enableSoundAndWatch();
-    else video.play().catch(()=>{});
-  });
-
   video.addEventListener('play', ()=>{ updatePlayUI(); if (soundEngaged) showControls(true); });
   video.addEventListener('pause', ()=>{ updatePlayUI(); showControls(false); });
   video.addEventListener('ended', ()=>{ updatePlayUI(); showControls(false); });

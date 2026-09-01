@@ -115,19 +115,16 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
-    assert "document.body.dataset.anyaHint" in response.text
-    assert "? hint : 'tilda'" in response.text
-    assert "document.body.dataset.anyaControls" in response.text
-    assert "document.body.dataset.playerFrame" in response.text
+    assert "document.body.dataset.anyaHint" not in response.text
+    assert "document.body.dataset.anyaControls" not in response.text
+    assert "document.body.dataset.playerFrame" not in response.text
     assert '<span class="site-title__plain">По изменению</span>' in response.text
     assert '<span class="site-title__plain">Питания <small>и</small></span>' in response.text
     assert '<span class="site-title__accent">Пищевых привычек</span>' in response.text
-    assert "document.body.dataset.pricingTimer" in response.text
-    assert "? timer : 'none'" in response.text
-    assert "document.body.dataset.pricingFill" in response.text
-    assert "? fill : 'base'" in response.text
+    assert "document.body.dataset.pricingTimer" not in response.text
+    assert "document.body.dataset.pricingFill" not in response.text
     assert "document.body.dataset.supportTone" in response.text
-    assert 'class="edb-pricing-timer"' in response.text
+    assert 'class="edb-pricing-timer"' not in response.text
 
 
 def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
@@ -141,7 +138,7 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "mvp--controls-hidden" in response.text
     assert "mvp-card-wave" in response.text
     assert "setTimeout(()=>root.classList.add('mvp--controls-hidden'), 2000)" in response.text
-    assert "edabalans:video-play" in response.text
+    assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text
 
