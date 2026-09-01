@@ -539,6 +539,16 @@ def test_homepage_reviews_wall_preview_uses_first_22_tilda_reviews() -> None:
     assert min(tilts) < 0 < max(tilts)
     assert "tild6131-3266-4736-b265-396265366664" not in response.text
     assert "tild6338-3130-4939-a335-653164356231" not in response.text
+    assert response.text.count('aria-label="Открыть отзыв ') == 22
+    assert 'data-review-lightbox role="dialog" aria-modal="true"' in response.text
+    assert 'data-review-stage' in response.text
+    assert 'data-review-prev' in response.text
+    assert 'data-review-next' in response.text
+    assert "stage.addEventListener('pointerdown'" in response.text
+    assert "stage.addEventListener('pointerup'" in response.text
+    assert "event.key === 'Escape'" in response.text
+    assert "event.key === 'ArrowLeft'" in response.text
+    assert "event.key === 'ArrowRight'" in response.text
 
 
 def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:

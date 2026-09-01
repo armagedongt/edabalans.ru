@@ -34,6 +34,7 @@
         radial-gradient(ellipse 62% 8% at -4% 96%,rgba(105,204,255,.24),transparent 68%),
         linear-gradient(180deg,#fbfdff 0%,#f4fbff 30%,#eef9ff 61%,#eaf7ff 100%);
     }
+    body.reviews-wall--locked{overflow:hidden}
     .reviews-wall{
       width:min(100%,800px);
       margin:0 auto;
@@ -45,10 +46,19 @@
       display:block;
       width:100%;
       margin:0 0 clamp(10px,3vw,17px);
+      padding:0;
+      border:0;
       break-inside:avoid;
+      appearance:none;
+      background:transparent;
+      cursor:zoom-in;
       transform:rotate(var(--tilt));
       transform-origin:50% 50%;
       filter:drop-shadow(0 7px 13px rgba(25,73,108,.18));
+    }
+    .reviews-wall__item:focus-visible{
+      outline:3px solid #247fd3;
+      outline-offset:4px;
     }
     .reviews-wall__item img{
       display:block;
@@ -57,39 +67,227 @@
       border-radius:clamp(7px,2vw,12px);
       background:#fff;
     }
+    .review-lightbox[hidden]{display:none}
+    .review-lightbox{
+      position:fixed;
+      inset:0;
+      z-index:1000;
+      display:grid;
+      place-items:center;
+      padding:max(12px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+      background:rgba(6,22,35,.94);
+    }
+    .review-lightbox__panel{
+      position:relative;
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      display:grid;
+      place-items:center;
+    }
+    .review-lightbox__stage{
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      display:grid;
+      place-items:center;
+      padding:52px 44px 48px;
+      overflow:hidden;
+      touch-action:pan-y;
+      user-select:none;
+      cursor:grab;
+    }
+    .review-lightbox__stage:active{cursor:grabbing}
+    .review-lightbox__image{
+      display:block;
+      width:100%;
+      height:100%;
+      min-width:0;
+      min-height:0;
+      object-fit:contain;
+      filter:drop-shadow(0 18px 28px rgba(0,0,0,.28));
+      pointer-events:none;
+    }
+    .review-lightbox__control{
+      position:absolute;
+      z-index:2;
+      width:46px;
+      height:46px;
+      display:grid;
+      place-items:center;
+      padding:0;
+      border:1px solid rgba(255,255,255,.28);
+      border-radius:50%;
+      color:#fff;
+      background:rgba(255,255,255,.14);
+      cursor:pointer;
+      backdrop-filter:blur(8px);
+    }
+    .review-lightbox__control:hover{background:rgba(255,255,255,.24)}
+    .review-lightbox__control:focus-visible{
+      outline:3px solid #65c7ff;
+      outline-offset:3px;
+    }
+    .review-lightbox__control svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+    .review-lightbox__close{top:4px;right:4px}
+    .review-lightbox__prev{left:2px;top:50%;transform:translateY(-50%)}
+    .review-lightbox__next{right:2px;top:50%;transform:translateY(-50%)}
+    .review-lightbox__counter{
+      position:absolute;
+      z-index:2;
+      left:50%;
+      bottom:6px;
+      transform:translateX(-50%);
+      min-width:66px;
+      padding:7px 12px;
+      border-radius:999px;
+      color:#fff;
+      background:rgba(255,255,255,.14);
+      font-size:13px;
+      font-weight:700;
+      line-height:1;
+      text-align:center;
+      letter-spacing:.03em;
+      backdrop-filter:blur(8px);
+    }
     @media (min-width:768px){
       .reviews-wall{padding:38px 28px 52px}
       .reviews-wall__item{filter:drop-shadow(0 10px 18px rgba(25,73,108,.17))}
-    }
-    @media (prefers-reduced-motion:reduce){
-      .reviews-wall__item{scroll-behavior:auto}
+      .review-lightbox__stage{padding:58px 78px 52px}
+      .review-lightbox__prev{left:14px}
+      .review-lightbox__next{right:14px}
     }
   </style>
 </head>
 <body>
   <main class="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-block-width="visual">
-    <figure class="reviews-wall__item" style="--tilt:-1.2deg" data-review-index="1"><img src="https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 1"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.8deg" data-review-index="2"><img src="https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 2"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-.5deg" data-review-index="3"><img src="https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 3"></figure>
-    <figure class="reviews-wall__item" style="--tilt:1.3deg" data-review-index="4"><img src="https://optim.tildacdn.com/tild3763-3332-4166-b234-326266323263/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 4"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.4deg" data-review-index="5"><img src="https://optim.tildacdn.com/tild3438-6466-4063-b435-336239383962/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 5"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-1.5deg" data-review-index="6"><img src="https://optim.tildacdn.com/tild3562-3438-4937-a663-386133663562/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 6"></figure>
-    <figure class="reviews-wall__item" style="--tilt:1deg" data-review-index="7"><img src="https://optim.tildacdn.com/tild3038-3638-4630-b132-616433356430/-/resize/600x600/-/format/webp/__7.jpg.webp" alt="Отзыв участницы 7"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-.8deg" data-review-index="8"><img src="https://optim.tildacdn.com/tild3635-3435-4565-b535-313163343663/-/resize/600x600/-/format/webp/__8.jpg.webp" alt="Отзыв участницы 8"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.6deg" data-review-index="9"><img src="https://optim.tildacdn.com/tild6630-6530-4236-a638-343130303032/-/resize/600x600/-/format/webp/__28.jpg.webp" alt="Отзыв участницы 9"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-1.1deg" data-review-index="10"><img src="https://optim.tildacdn.com/tild3363-3531-4861-b430-383064316239/-/resize/600x600/-/format/webp/__21.jpg.webp" alt="Отзыв участницы 10"></figure>
-    <figure class="reviews-wall__item" style="--tilt:1.5deg" data-review-index="11"><img src="https://optim.tildacdn.com/tild6339-3131-4637-b335-623438313365/-/resize/600x600/-/format/webp/__22.jpg.webp" alt="Отзыв участницы 11"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-.3deg" data-review-index="12"><img src="https://optim.tildacdn.com/tild3566-3132-4161-b964-666430616538/-/resize/600x600/-/format/webp/__23.jpg.webp" alt="Отзыв участницы 12"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.9deg" data-review-index="13"><img src="https://optim.tildacdn.com/tild6538-6330-4538-b766-343366643330/-/resize/600x600/-/format/webp/__24.jpg.webp" alt="Отзыв участницы 13"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-1.4deg" data-review-index="14"><img src="https://optim.tildacdn.com/tild3734-3437-4164-b265-326365313164/-/resize/600x600/-/format/webp/__25.jpg.webp" alt="Отзыв участницы 14"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.3deg" data-review-index="15"><img src="https://optim.tildacdn.com/tild3962-6238-4435-b935-326636626263/-/resize/600x600/-/format/webp/__26.jpg.webp" alt="Отзыв участницы 15"></figure>
-    <figure class="reviews-wall__item" style="--tilt:1.2deg" data-review-index="16"><img src="https://optim.tildacdn.com/tild6635-3630-4165-a332-373434623264/-/resize/600x600/-/format/webp/__27.jpg.webp" alt="Отзыв участницы 16"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-.7deg" data-review-index="17"><img src="https://optim.tildacdn.com/tild3264-3637-4930-b066-613665343762/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 17"></figure>
-    <figure class="reviews-wall__item" style="--tilt:1.6deg" data-review-index="18"><img src="https://optim.tildacdn.com/tild6661-3731-4966-a466-316131393864/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 18"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-1deg" data-review-index="19"><img src="https://optim.tildacdn.com/tild3065-6139-4561-b334-643739396331/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 19"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.5deg" data-review-index="20"><img src="https://optim.tildacdn.com/tild3861-3865-4437-b330-313263383230/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 20"></figure>
-    <figure class="reviews-wall__item" style="--tilt:-1.3deg" data-review-index="21"><img src="https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 21"></figure>
-    <figure class="reviews-wall__item" style="--tilt:.7deg" data-review-index="22"><img src="https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 22"></figure>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв 1 из 22"><img src="https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 1"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.8deg" data-review-index="2" aria-label="Открыть отзыв 2 из 22"><img src="https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 2"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-.5deg" data-review-index="3" aria-label="Открыть отзыв 3 из 22"><img src="https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 3"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:1.3deg" data-review-index="4" aria-label="Открыть отзыв 4 из 22"><img src="https://optim.tildacdn.com/tild3763-3332-4166-b234-326266323263/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 4"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.4deg" data-review-index="5" aria-label="Открыть отзыв 5 из 22"><img src="https://optim.tildacdn.com/tild3438-6466-4063-b435-336239383962/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 5"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1.5deg" data-review-index="6" aria-label="Открыть отзыв 6 из 22"><img src="https://optim.tildacdn.com/tild3562-3438-4937-a663-386133663562/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 6"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:1deg" data-review-index="7" aria-label="Открыть отзыв 7 из 22"><img src="https://optim.tildacdn.com/tild3038-3638-4630-b132-616433356430/-/resize/600x600/-/format/webp/__7.jpg.webp" alt="Отзыв участницы 7"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-.8deg" data-review-index="8" aria-label="Открыть отзыв 8 из 22"><img src="https://optim.tildacdn.com/tild3635-3435-4565-b535-313163343663/-/resize/600x600/-/format/webp/__8.jpg.webp" alt="Отзыв участницы 8"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.6deg" data-review-index="9" aria-label="Открыть отзыв 9 из 22"><img src="https://optim.tildacdn.com/tild6630-6530-4236-a638-343130303032/-/resize/600x600/-/format/webp/__28.jpg.webp" alt="Отзыв участницы 9"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1.1deg" data-review-index="10" aria-label="Открыть отзыв 10 из 22"><img src="https://optim.tildacdn.com/tild3363-3531-4861-b430-383064316239/-/resize/600x600/-/format/webp/__21.jpg.webp" alt="Отзыв участницы 10"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:1.5deg" data-review-index="11" aria-label="Открыть отзыв 11 из 22"><img src="https://optim.tildacdn.com/tild6339-3131-4637-b335-623438313365/-/resize/600x600/-/format/webp/__22.jpg.webp" alt="Отзыв участницы 11"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-.3deg" data-review-index="12" aria-label="Открыть отзыв 12 из 22"><img src="https://optim.tildacdn.com/tild3566-3132-4161-b964-666430616538/-/resize/600x600/-/format/webp/__23.jpg.webp" alt="Отзыв участницы 12"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.9deg" data-review-index="13" aria-label="Открыть отзыв 13 из 22"><img src="https://optim.tildacdn.com/tild6538-6330-4538-b766-343366643330/-/resize/600x600/-/format/webp/__24.jpg.webp" alt="Отзыв участницы 13"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1.4deg" data-review-index="14" aria-label="Открыть отзыв 14 из 22"><img src="https://optim.tildacdn.com/tild3734-3437-4164-b265-326365313164/-/resize/600x600/-/format/webp/__25.jpg.webp" alt="Отзыв участницы 14"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.3deg" data-review-index="15" aria-label="Открыть отзыв 15 из 22"><img src="https://optim.tildacdn.com/tild3962-6238-4435-b935-326636626263/-/resize/600x600/-/format/webp/__26.jpg.webp" alt="Отзыв участницы 15"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:1.2deg" data-review-index="16" aria-label="Открыть отзыв 16 из 22"><img src="https://optim.tildacdn.com/tild6635-3630-4165-a332-373434623264/-/resize/600x600/-/format/webp/__27.jpg.webp" alt="Отзыв участницы 16"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-.7deg" data-review-index="17" aria-label="Открыть отзыв 17 из 22"><img src="https://optim.tildacdn.com/tild3264-3637-4930-b066-613665343762/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 17"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:1.6deg" data-review-index="18" aria-label="Открыть отзыв 18 из 22"><img src="https://optim.tildacdn.com/tild6661-3731-4966-a466-316131393864/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 18"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1deg" data-review-index="19" aria-label="Открыть отзыв 19 из 22"><img src="https://optim.tildacdn.com/tild3065-6139-4561-b334-643739396331/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 19"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.5deg" data-review-index="20" aria-label="Открыть отзыв 20 из 22"><img src="https://optim.tildacdn.com/tild3861-3865-4437-b330-313263383230/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 20"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:-1.3deg" data-review-index="21" aria-label="Открыть отзыв 21 из 22"><img src="https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 21"></button>
+    <button class="reviews-wall__item" type="button" style="--tilt:.7deg" data-review-index="22" aria-label="Открыть отзыв 22 из 22"><img src="https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 22"></button>
   </main>
+  <div class="review-lightbox" data-review-lightbox role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр отзывов" hidden>
+    <div class="review-lightbox__panel">
+      <button class="review-lightbox__control review-lightbox__close" type="button" data-review-close aria-label="Закрыть полноэкранный просмотр">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+      <button class="review-lightbox__control review-lightbox__prev" type="button" data-review-prev aria-label="Предыдущий отзыв">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="review-lightbox__stage" data-review-stage>
+        <img class="review-lightbox__image" data-review-image src="" alt="">
+      </div>
+      <button class="review-lightbox__control review-lightbox__next" type="button" data-review-next aria-label="Следующий отзыв">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+      <div class="review-lightbox__counter" data-review-counter aria-live="polite">1 / 22</div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const triggers = [...document.querySelectorAll('[data-review-index]')];
+      const lightbox = document.querySelector('[data-review-lightbox]');
+      const stage = lightbox.querySelector('[data-review-stage]');
+      const activeImage = lightbox.querySelector('[data-review-image]');
+      const counter = lightbox.querySelector('[data-review-counter]');
+      const closeButton = lightbox.querySelector('[data-review-close]');
+      const previousButton = lightbox.querySelector('[data-review-prev]');
+      const nextButton = lightbox.querySelector('[data-review-next]');
+      let activeIndex = 0;
+      let previousFocus = null;
+      let pointerStart = null;
+
+      const show = (index) => {
+        activeIndex = (index + triggers.length) % triggers.length;
+        const sourceImage = triggers[activeIndex].querySelector('img');
+        activeImage.src = sourceImage.currentSrc || sourceImage.src;
+        activeImage.alt = sourceImage.alt;
+        counter.textContent = `${activeIndex + 1} / ${triggers.length}`;
+        [activeIndex - 1, activeIndex + 1].forEach((neighbor) => {
+          const image = triggers[(neighbor + triggers.length) % triggers.length].querySelector('img');
+          image.decode?.().catch(() => {});
+        });
+      };
+
+      const open = (index) => {
+        previousFocus = document.activeElement;
+        show(index);
+        lightbox.hidden = false;
+        document.body.classList.add('reviews-wall--locked');
+        closeButton.focus();
+      };
+
+      const close = () => {
+        lightbox.hidden = true;
+        activeImage.removeAttribute('src');
+        document.body.classList.remove('reviews-wall--locked');
+        previousFocus?.focus();
+      };
+
+      triggers.forEach((trigger, index) => trigger.addEventListener('click', () => open(index)));
+      closeButton.addEventListener('click', close);
+      previousButton.addEventListener('click', () => show(activeIndex - 1));
+      nextButton.addEventListener('click', () => show(activeIndex + 1));
+      stage.addEventListener('pointerdown', (event) => {
+        if (event.pointerType === 'mouse' && event.button !== 0) return;
+        pointerStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        try { stage.setPointerCapture(event.pointerId); } catch {}
+      });
+      stage.addEventListener('pointerup', (event) => {
+        if (!pointerStart || pointerStart.id !== event.pointerId) return;
+        const deltaX = event.clientX - pointerStart.x;
+        const deltaY = event.clientY - pointerStart.y;
+        pointerStart = null;
+        if (Math.abs(deltaX) < 48 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+        show(activeIndex + (deltaX < 0 ? 1 : -1));
+      });
+      stage.addEventListener('pointercancel', () => { pointerStart = null; });
+
+      document.addEventListener('keydown', (event) => {
+        if (lightbox.hidden) return;
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          close();
+        }
+        if (event.key === 'ArrowLeft') {
+          event.preventDefault();
+          show(activeIndex - 1);
+        }
+        if (event.key === 'ArrowRight') {
+          event.preventDefault();
+          show(activeIndex + 1);
+        }
+        if (event.key !== 'Tab') return;
+        const controls = [closeButton, previousButton, nextButton];
+        const current = controls.indexOf(document.activeElement);
+        event.preventDefault();
+        if (current === -1) {
+          controls[event.shiftKey ? controls.length - 1 : 0].focus();
+          return;
+        }
+        controls[(current + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
+      });
+    })();
+  </script>
 </body>
 </html>
