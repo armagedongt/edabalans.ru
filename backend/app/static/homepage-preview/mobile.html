@@ -849,7 +849,7 @@
     .chain-block--before-after{padding:0;background:transparent}
     .chain-block--anya{padding:24px 0 72px;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
     .anya-story{width:100%;max-width:none;margin:0;padding:0}
-    .anya-story__header{width:var(--content-frame);max-width:100%;margin-right:auto;margin-left:auto}
+    .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:var(--type-body);font-weight:600;line-height:1.55}
@@ -874,7 +874,7 @@
     @keyframes anya-cards{0%,15%,85%,100%{transform:translateX(-5px)}45%,60%{transform:translateX(10px)}}
     @keyframes anya-finger{0%,15%,85%,100%{transform:translateX(8px)}45%,60%{transform:translateX(-8px)}}
     @keyframes anya-nudge{0%,18%,82%,100%{transform:translateX(0)}45%,60%{transform:translateX(12px)}}
-    .anya-story__slider{position:relative;width:var(--content-story-frame);max-width:100%;margin-left:var(--content-inline-start)}
+    .anya-story__slider{position:relative;width:min(calc(100% - max(var(--page-gutter),calc((100% - var(--content-frame))/2))),var(--content-standard-max));max-width:100%;margin-left:max(var(--page-gutter),calc((100% - var(--content-frame))/2))}
     .anya-story__viewport{margin:14px 0 0;overflow-x:auto;overflow-y:visible;overscroll-behavior-inline:contain;scroll-snap-type:x mandatory;scrollbar-width:none;touch-action:pan-x pan-y}
     .anya-story__viewport::-webkit-scrollbar{display:none}
     .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 0 42px}
@@ -889,7 +889,7 @@
     .anya-slide--ending span{font-size:12px;font-weight:900;letter-spacing:.07em;text-transform:uppercase}
     .anya-slide--ending strong{margin-top:12px;font-family:Unbounded,Manrope,sans-serif;font-size:24px;line-height:1.15}
     .anya-slide--ending p{margin:18px 0 0;color:rgba(255,255,255,.82);font-size:14px;line-height:1.5}
-    .anya-story__after{width:var(--content-frame);max-width:100%;margin:22px auto 0;color:#55616d;font-size:var(--type-body);line-height:1.6}
+    .anya-story__after{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:22px auto 0;color:#55616d;font-size:var(--type-body);line-height:1.6}
     .anya-story__after p{margin:0}
     .anya-story__after p+p{margin-top:14px}
     .anya-story__controls{display:none}

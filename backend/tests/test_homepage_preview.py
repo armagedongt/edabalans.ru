@@ -237,6 +237,22 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         in response.text
     )
     assert (
+        ".anya-story__header{width:min(var(--content-frame),"
+        "calc(100% - var(--page-gutter) - var(--page-gutter)))"
+        in response.text
+    )
+    assert (
+        ".anya-story__slider{position:relative;width:min(calc(100% - "
+        "max(var(--page-gutter),calc((100% - var(--content-frame))/2))),"
+        "var(--content-standard-max))"
+        in response.text
+    )
+    assert (
+        ".anya-story__after{width:min(var(--content-frame),"
+        "calc(100% - var(--page-gutter) - var(--page-gutter)))"
+        in response.text
+    )
+    assert (
         ".pain:not(.pain--final){background:rgba(255,255,255,.85);"
         "color:rgb(31,34,38);font-weight:700}"
         in response.text
