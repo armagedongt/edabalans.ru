@@ -298,20 +298,6 @@ DESIGN-ID: before-after-method | EXISTING-ACCEPTED-COMPONENT}}
 
 ---
 
-<a id="all-reviews"></a>
-
-{{BLOCK: reviews-wall | DESIGN-ID: reviews-wall | FUTURE-INSERT}}
-
-# Больше отзывов
-
-{{REVIEWS-PREVIEW: 4–6 реальных отзывов}}
-
-{{REVIEWS-COUNT: фактическое количество остальных отзывов}}
-
-{{CONTROL: «Показать ещё отзывы» | по умолчанию остальные отзывы свёрнуты}}
-
----
-
 {{BLOCK: final-cta | DESIGN-ID: final-cta | EXISTING-ACCEPTED-BLOCK}}
 
 # **Сомневаетесь? А вы сравните...**
@@ -319,6 +305,18 @@ DESIGN-ID: before-after-method | EXISTING-ACCEPTED-COMPONENT}}
 {{VISUAL: кот с часами}}
 
 {{COPY: принятый финальный текст и возврат к тарифам}}
+
+---
+
+<a id="all-reviews"></a>
+
+{{BLOCK: reviews-wall | DESIGN-ID: reviews-wall | FUTURE-INSERT-AFTER-CAT}}
+
+# Больше отзывов
+
+Всего через 3 недели здесь может быть ваш отзыв о том, как вы приобрели комфорт в похудении и сменили пару размеров одежды. Присоединяйтесь!
+
+{{REVIEWS-WALL: дополнительные реальные отзывы идут полным полотном, без сворачивания}}
 
 {{CONTACTS: Telegram и MAX}}
 
