@@ -761,6 +761,11 @@
     @media(max-width:430px){.final-main{padding-inline:14px}.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.meme-card{border-radius:18px}.contact-copy{font-size:15px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.social-button,.primary-cta{transition:none}}
 
+    .reviews-after-cat{width:var(--content-frame);max-width:100%;margin:0 auto;padding:18px 0 66px;color:#16181d}
+    .reviews-after-cat h2{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
+    .reviews-after-cat h2 span{display:block}
+    .reviews-after-cat h2 span+span{margin-top:8px}
+
     html{scroll-behavior:smooth;background:#e7f7ff}
     body{
       overflow-x:hidden;
@@ -1871,14 +1876,17 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-bar {
-      position: sticky;
+      position: fixed;
       z-index: 2;
-      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
       display: flex;
       justify-content: center;
-      padding: 12px 18px;
-      border-bottom: 1px solid #e0e5ea;
+      padding: 12px 18px max(12px, env(safe-area-inset-bottom));
+      border-top: 1px solid #e0e5ea;
       background: rgba(245, 247, 250, .94);
+      box-shadow: 0 -14px 32px -28px rgba(25, 42, 58, .7);
       backdrop-filter: blur(12px);
     }
 
@@ -1897,7 +1905,7 @@
     #edb-pricing-neurozeh-v1 .edb-product-overlay-content {
       width: min(100%, 390px);
       margin: 0 auto;
-      padding: 48px 18px 72px;
+      padding: 48px 18px 128px;
     }
 
     #edb-pricing-neurozeh-v1 .edb-product-overlay-title {
@@ -2441,6 +2449,9 @@
     </section>
   </div>
 </section>
+  <section class="chain-block reviews-after-cat" aria-label="Больше отзывов" data-homepage-block="reviews-after-cat" data-block-width="content">
+    <h2><span>Лаааааадно...</span><span>Вот вам еще отзывов!</span></h2>
+  </section>
   </main>
   <div id="site-footer" data-edabalans-site-footer="public" data-homepage-block="footer" data-block-width="shared"></div>
   <script>

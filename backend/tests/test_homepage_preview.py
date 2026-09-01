@@ -146,6 +146,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Что случилось с Аней?",
         "Частые вопросы",
         "Вы долистали сайт до конца…",
+        "Лаааааадно...",
+        "Вот вам еще отзывов!",
     ):
         assert marker in response.text
     assert '<body data-page-theme="blue-mist">' in response.text
@@ -179,6 +181,12 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "document.body.dataset.pricingFill" not in response.text
     assert "document.body.dataset.supportTone" in response.text
     assert 'class="edb-pricing-timer"' not in response.text
+    overlay_bar_rule = response.text.split(
+        "#edb-pricing-neurozeh-v1 .edb-product-overlay-bar {", 1
+    )[1].split("}", 1)[0]
+    assert "position: fixed;" in overlay_bar_rule
+    assert "bottom: 0;" in overlay_bar_rule
+    assert "env(safe-area-inset-bottom)" in overlay_bar_rule
 
 
 def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
@@ -191,7 +199,17 @@ def test_homepage_vsl_uses_first_engagement_and_server_analytics() -> None:
     assert "analyticsApi.markEngaged()" in response.text
     assert "mvp--controls-hidden" in response.text
     assert "mvp-card-wave" in response.text
-    assert "setTimeout(()=>root.classList.add('mvp--controls-hidden'), 2000)" in response.text
+    assert "setTimeout(()=>root.classList.add('mvp--controls-hidden'), 1000)" in response.text
+    assert "Рассказываю кое-что интересное" not in response.text
+    assert response.text.count("Нажмите, чтобы включить звук") == 1
+    sound_engagement = response.text.split("function enableSoundAndWatch(){", 1)[1].split(
+        "\n  }", 1
+    )[0]
+    assert "soundEngaged = true;" in sound_engagement
+    assert "soundCard.hidden = true;" in sound_engagement
+    assert "video.play().catch(()=>{});" in sound_engagement
+    assert "showControls(true);" in sound_engagement
+    assert "soundCard.addEventListener('click', enableSoundAndWatch);" in response.text
     assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text

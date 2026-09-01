@@ -210,6 +210,15 @@
     },
     {
       "order": 210,
+      "id": "reviews-after-cat",
+      "label": "Переход к дополнительным отзывам после кота",
+      "selector": "[data-homepage-block=\"reviews-after-cat\"]",
+      "width": "content",
+      "fields": [],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 220,
       "id": "footer",
       "label": "Общий публичный подвал",
       "selector": "[data-homepage-block=\"footer\"]",
