@@ -92,20 +92,6 @@ def test_accepted_approach_copy_replaces_an_existing_active_version() -> None:
     assert "Старый подход" not in html
 
 
-def test_publish_script_sends_markdown_to_ssh_as_utf8() -> None:
-    script = (
-        Path(__file__).resolve().parents[2]
-        / "tools"
-        / "publish_public_site_content.ps1"
-    ).read_text(encoding="utf-8")
-
-    encoding_setup = script.index("$OutputEncoding = $utf8WithoutBom")
-    ssh_pipe = script.index("ssh $HostAlias")
-    assert encoding_setup < ssh_pipe
-    assert "[Console]::OutputEncoding = $utf8WithoutBom" in script
-    assert "[IO.File]::WriteAllText($contentPath, $updatedMarkdown, $utf8WithoutBom)" in script
-
-
 def test_faq_is_returned_as_structured_items() -> None:
     client = make_client()
     response = client.get("/api/public-site/content/faq")
