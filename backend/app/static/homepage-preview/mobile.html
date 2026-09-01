@@ -467,7 +467,8 @@
     @media (max-width: 600px) {
       .site-player {
         --site-player-radius: 12px;
-        width: min(var(--content-video-frame),calc(100% - 24px));
+        width: var(--content-frame);
+        max-width: 100%;
       }
     }
     .site-outro { width:var(--content-frame);max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.6;text-align:left }
