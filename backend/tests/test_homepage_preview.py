@@ -220,6 +220,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Как проходит Мастер-класс",
         "Больше отзывов",
         "Всего через 3 недели здесь может быть ваш отзыв",
+        "Сайт использует cookie. Продолжая, вы принимаете",
+        "обработки ПД.",
     ):
         assert marker in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
@@ -318,7 +320,17 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     ) < parser.block_order.index("anya-heading")
     assert parser.block_order.index("reviews-after-cat") < parser.block_order.index(
         "reviews-wall"
-    ) < parser.block_order.index("footer")
+    ) < parser.block_order.index("footer") < parser.block_order.index("cookie-notice")
+    assert 'data-cookie-notice' in response.text
+    assert 'data-cookie-dismiss' in response.text
+    assert '>Приемлемо</button>' in response.text
+    assert '>Политику</a> обработки ПД.' in response.text
+    assert "notice.hidden = true;" in response.text
+    assert (
+        "background: linear-gradient(135deg,#49c5ff 0%,var(--site-blue) "
+        "52%,#6f82f4 100%);"
+        in response.text
+    )
     assert parser.block_image_source_order["reviews-featured"] == [
         "https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp",
         "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",

@@ -381,6 +381,61 @@
     body { background: #fff; font-family: Manrope, Arial, sans-serif; }
     button, a { font: inherit; }
 
+    .cookie-notice {
+      position: fixed;
+      z-index: 40;
+      right: auto;
+      bottom: max(10px, env(safe-area-inset-bottom));
+      left: 50%;
+      display: grid;
+      width: min(calc(100% - 20px), 560px);
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 10px 10px 14px;
+      border: 1px solid rgba(255,255,255,.92);
+      border-radius: 15px;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 6px 16px rgba(22,104,157,.13);
+      color: #1d2b38;
+      transform: translateX(-50%);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+    .cookie-notice[hidden] { display: none; }
+    .cookie-notice__copy { margin: 0; font-size: 12px; font-weight: 500; line-height: 1.36; }
+    .cookie-notice__copy a { color: inherit; font-weight: 800; text-underline-offset: 2px; }
+    .cookie-notice__accept {
+      min-height: 40px;
+      padding: 0 13px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg,#49c5ff 0%,var(--site-blue) 52%,#6f82f4 100%);
+      box-shadow: 0 4px 11px rgba(19,125,205,.2);
+      color: #fff;
+      font-family: Manrope,Arial,sans-serif;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: transform .18s ease,box-shadow .18s ease,filter .18s ease;
+    }
+    .cookie-notice__accept:hover,.cookie-notice__accept:focus-visible { box-shadow: 0 7px 15px rgba(19,125,205,.25); filter: brightness(1.04); transform: translateY(-1px); }
+    @media (min-width: 820px) {
+      .cookie-notice {
+        left: max(var(--page-gutter),calc((100vw - var(--content-wide))/2));
+        width: min(560px,calc(50vw - 24px));
+        transform: none;
+      }
+    }
+    @media (max-width: 350px) {
+      .cookie-notice { gap: 8px; padding-left: 12px; }
+      .cookie-notice__copy { font-size: 11.5px; }
+      .cookie-notice__accept { padding-inline: 10px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .cookie-notice__accept { transition: none; } }
+
     .desktop-header { display: none; }
     .mobile-toggle {
       position: fixed;
@@ -2669,6 +2724,10 @@
     </div>
   </div>
   <div id="site-footer" data-edabalans-site-footer="public" data-homepage-block="footer" data-block-width="shared"></div>
+  <aside class="cookie-notice" data-cookie-notice data-homepage-block="cookie-notice" data-block-width="overlay" aria-label="Уведомление об использовании cookie">
+    <p class="cookie-notice__copy" data-homepage-field="copy">Сайт использует cookie. Продолжая, вы принимаете <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" data-homepage-field="policy">Политику</a> обработки ПД.</p>
+    <button class="cookie-notice__accept" type="button" data-cookie-dismiss data-homepage-field="action">Приемлемо</button>
+  </aside>
   <script>
 
     (() => {
@@ -2687,6 +2746,13 @@
       toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
       sheet.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
       document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
+    })();
+
+    (() => {
+      const notice = document.querySelector('[data-cookie-notice]');
+      const dismiss = notice?.querySelector('[data-cookie-dismiss]');
+      if (!notice || !dismiss) return;
+      dismiss.addEventListener('click', () => { notice.hidden = true; });
     })();
 
   </script>
