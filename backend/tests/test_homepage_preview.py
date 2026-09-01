@@ -161,6 +161,26 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "const productData" not in response.text
     assert "fetch('/api/public-site/content/faq'" in response.text
     assert "fetch('/api/public-site/content/approach'" in response.text
+    assert (
+        'data-homepage-block="recognition-scene" data-block-width="content"'
+        in response.text
+    )
+    assert "data-recognition-followup" in response.text
+    assert "--recognition-media-gap:clamp(40px,6vw,56px)" in response.text
+    assert (
+        "height:calc(var(--scene-height) + var(--animation-distance))"
+        in response.text
+    )
+    assert (
+        "Math.max(maxPainHeight+18,((laneHeight+maxPainHeight)/2)+8)"
+        in response.text
+    )
+    assert (
+        "(viewportHeight/2)-(field.offsetTop+(field.offsetHeight/2))"
+        in response.text
+    )
+    assert ".pain:not(.pain--final){width:1px;height:1px" in response.text
+    assert "transform:translate3d(-50%,0,0)!important" in response.text
     assert 'data-anya-slider' in response.text
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text

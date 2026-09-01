@@ -349,7 +349,6 @@
       --content-story-frame: min(calc(100vw - var(--content-inline-start)), var(--content-standard-max));
       --content-story-edge-space: max(0px, calc(100vw - var(--content-inline-start) - var(--content-story-frame)));
       --content-visual-frame: min(var(--content-frame), var(--content-standard-max));
-      --content-feature-frame: min(calc(100vw - 20px), 690px);
       --type-display: clamp(31px, 6vw, 58px);
       --type-section: clamp(28px, 4.6vw, 48px);
       --type-body: clamp(17px, 1.4vw, 20px);
@@ -364,14 +363,12 @@
     @media (min-width: 980px) and (max-width: 1200px) {
       :root {
         --content-frame: 620px;
-        --content-feature-frame: 713px;
       }
     }
 
     @media (min-width: 1201px) {
       :root {
         --content-frame: var(--content-standard-max);
-        --content-feature-frame: 874px;
       }
     }
 
@@ -539,7 +536,7 @@
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:#fff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
-    .argument{padding:clamp(24px,4vw,52px) 0 8px;background:#fff}
+    .argument{padding:clamp(24px,4vw,52px) 0 0;background:#fff}
     .argument__inner{width:min(100%,var(--content-frame));margin:0 auto}
     .argument h1{max-width:900px;margin:0;font-size:var(--type-display);font-weight:800;line-height:1.07;letter-spacing:-.052em;text-wrap:balance}
     .old-formula__line{position:relative;display:inline-block;white-space:nowrap}
@@ -550,14 +547,12 @@
     .argument__copy p{margin:0;color:var(--text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .argument__copy p+p{margin-top:10px}
 
-    .recognition{--scene-height:621px;--step-height:clamp(144px,27.6svh,207px);--field-width:100%;position:relative;display:grid;width:var(--content-feature-frame);max-width:100%;height:auto;margin:0 auto;padding:0;grid-template:minmax(0,1fr)/minmax(0,1fr)}
-    .recognition__scene{position:sticky;z-index:2;top:6px;min-width:0;align-self:start;grid-area:1/1;height:auto;overflow:visible;border:0;border-radius:0;background:#fff;box-shadow:none;isolation:isolate}
-    .recognition__steps{display:grid;grid-area:1/1;visibility:hidden;pointer-events:none}
-    .recognition__steps::after{height:max(0px,calc(var(--scene-height) - 60px));content:""}
-    .recognition__step{height:var(--step-height)}
-    .recognition__person-wrap{position:relative;z-index:2;display:grid;width:var(--field-width);margin:0 auto;padding-bottom:28px;overflow:visible;align-items:start;justify-items:center;pointer-events:none}
-    .recognition__person{display:block;width:96%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
-    .recognition__pains{position:absolute;z-index:8;right:0;bottom:0;left:0;height:min(100%,391px);clip-path:inset(0 -60px -60px -60px);pointer-events:none}
+    .recognition{--scene-height:0px;--animation-distance:0px;--recognition-media-gap:clamp(40px,6vw,56px);--sticky-top:6px;position:relative;display:grid;width:var(--content-frame);max-width:100%;height:auto;margin:0 auto;padding:0;grid-template:minmax(0,1fr)/minmax(0,1fr)}
+    .recognition__scene{position:sticky;z-index:2;top:var(--sticky-top);min-width:0;align-self:start;grid-area:1/1;height:auto;overflow:visible;border:0;border-radius:0;background:#fff;box-shadow:none;isolation:isolate}
+    .recognition__spacer{height:calc(var(--scene-height) + var(--animation-distance));grid-area:1/1;visibility:hidden;pointer-events:none}
+    .recognition__person-wrap{position:relative;z-index:2;display:grid;width:100%;margin:var(--recognition-media-gap) auto 0;overflow:visible;align-items:start;justify-items:center;pointer-events:none}
+    .recognition__person{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
+    .recognition__pains{position:absolute;z-index:8;inset:0;height:auto;clip-path:inset(0 -60px -60px -60px);pointer-events:none}
     .pain{position:absolute;top:0;width:min(calc(100% - 24px),450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 7px 16px rgba(22,89,124,.10);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
     .pain::after{position:absolute;right:22px;bottom:-9px;width:18px;height:14px;border-radius:0 0 4px 0;background:inherit;clip-path:polygon(0 0,100% 0,100% 100%);content:""}
     .pain:nth-child(odd){left:12px}
@@ -568,7 +563,7 @@
     .final-old::after{position:absolute;top:52%;right:-.08em;left:-.08em;height:4px;border-radius:4px;background:#ff665b;content:"";transform:rotate(-5deg)}
     .final-new{display:inline-block;margin-left:.35em;color:#ff665b;font-family:"Segoe Print","Comic Sans MS",cursive;font-size:1.14em;transform:rotate(-4deg)}
 
-    .method-transition{position:relative;z-index:12;margin-top:0;padding:52px var(--page-gutter) 48px;background:#fff}
+    .method-transition{position:relative;z-index:12;margin-top:0;padding:var(--recognition-media-gap) 0 48px;background:#fff}
     .method-transition__inner{width:min(100%,var(--content-frame));margin:0 auto}
     .method-kicker{display:block;max-width:760px;margin:0;padding:0;background:none;color:var(--ink);font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;transform:none}
     .method-list{display:grid;gap:13px;max-width:var(--content-frame);margin:28px 0 0;padding:0;list-style:none}
@@ -585,21 +580,22 @@
       .old-formula__line{letter-spacing:clamp(-.078em,calc(-16.926px + 4.03vw),-.052em)}
     }
     @media(min-width:720px){
-      .recognition__person{width:100%}
       .pain{width:min(84vw,clamp(450px,42vw,470px));padding:19px 23px;font-size:20px}
       .pain:nth-child(odd){left:max(5vw,calc(50% - 520px))}
       .pain:nth-child(even){right:max(5vw,calc(50% - 520px))}
     }
     @media(min-width:1100px){
-      .argument{padding-top:40px;padding-bottom:14px}
+      .argument{padding-top:40px;padding-bottom:0}
       .argument__copy{max-width:var(--content-frame);margin-top:20px}
     }
     @media(prefers-reduced-motion:reduce){
       .recognition{height:auto}
-      .recognition__scene{position:relative;top:auto;height:auto;min-height:0;overflow:visible;padding:28px 0 44px}
-      .recognition__steps{display:none}
-      .recognition__pains{position:relative;display:grid;gap:11px;padding:0 16px}
-      .pain,.pain:nth-child(odd),.pain:nth-child(even),.pain--final{position:relative;top:auto;right:auto;left:auto!important;width:min(100%,620px);margin-inline:auto;opacity:1!important;transform:none!important}
+      .recognition__scene{position:relative;top:auto;height:auto;min-height:0;overflow:visible;padding:28px 0 0}
+      .recognition__spacer{display:none}
+      .recognition__pains{position:absolute;inset:0;margin:0;padding:0}
+      .pain:not(.pain--final){width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;opacity:1!important;transform:none!important}
+      .pain:not(.pain--final)::after{display:none}
+      .pain--final{position:absolute;top:auto;right:auto;bottom:14px;left:50%!important;width:min(calc(100% - 24px),390px);margin:0;opacity:1!important;transform:translate3d(-50%,0,0)!important}
     }
 
 
@@ -963,7 +959,7 @@
             </div>
           </div>
         </section>
-        <div class="recognition__person-wrap" data-person data-homepage-block="recognition-scene" data-block-width="feature">
+        <div class="recognition__person-wrap" data-person data-homepage-block="recognition-scene" data-block-width="content">
           <img class="recognition__person" src="/preview/homepage-mobile/crying-character.png" width="1280" height="639" alt="Плачущий человечек лежит в луже слёз">
           <div class="recognition__pains" aria-label="Трудности с похудением">
             <p class="pain">Весь день держалась. Вечером сорвалась</p>
@@ -974,19 +970,11 @@
             <p class="pain pain--final">Я так больше <span class="final-old">не могу</span><span class="final-new">не хочу</span></p>
           </div>
         </div>
+        <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach" data-homepage-block="approach" data-homepage-field="html" data-block-width="content" data-recognition-followup>
+          <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
+        </section>
       </div>
-      <div class="recognition__steps" aria-hidden="true">
-        <i class="recognition__step"></i>
-        <i class="recognition__step"></i>
-        <i class="recognition__step"></i>
-        <i class="recognition__step"></i>
-        <i class="recognition__step"></i>
-        <i class="recognition__step"></i>
-      </div>
-    </section>
-
-    <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach" data-homepage-block="approach" data-homepage-field="html" data-block-width="content">
-      <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
+      <div class="recognition__spacer" aria-hidden="true"></div>
     </section>
   </div>
     <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
@@ -2128,7 +2116,7 @@
       margin-left: auto;
     }
 
-    .recognition { width: var(--content-feature-frame); }
+    .recognition { width: var(--content-frame); }
     .anya-story { width: 100%; }
 
     .wl-masterclass-story__visual,
@@ -2488,69 +2476,59 @@
       const scene=root.querySelector('.recognition__scene');
       const field=root.querySelector('.recognition__person-wrap');
       const lane=root.querySelector('.recognition__pains');
-      const argument=root.querySelector('.argument');
       const person=root.querySelector('.recognition__person');
       const pains=[...root.querySelectorAll('.pain')];
-      const steps=[...root.querySelectorAll('.recognition__step')];
       const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
       const clamp=(v,min=0,max=1)=>Math.min(max,Math.max(min,v));
+      let geometry={spacing:0,animationDistance:0};
       let ticking=false;
 
       const syncGeometry=()=>{
-        const availableWidth=root.clientWidth-(window.innerWidth>=720?48:28);
-        const aspect=(Number(person.getAttribute('width'))||1280)/(Number(person.getAttribute('height'))||639);
         const viewportHeight=window.visualViewport?.height||window.innerHeight;
-        const availableHeight=Math.max(180,(viewportHeight-argument.offsetHeight-42)*1.15);
-        const heightLimitedWidth=availableHeight*aspect;
-        const width=Math.max(0,Math.min(availableWidth,heightLimitedWidth));
-        root.style.setProperty('--field-width',`${Math.round(width)}px`);
-        root.style.setProperty('--scene-height',`${argument.offsetHeight+field.offsetHeight}px`);
-      };
-
-      const setPain=(pain,index)=>{
-        const step=steps[index];
-        if(!step)return;
-        const stepRect=step.getBoundingClientRect();
-        const triggerLine=parseFloat(getComputedStyle(scene).top)||0;
-        const local=(triggerLine-stepRect.top)/Math.max(1,stepRect.height);
-        const fieldHeight=lane.clientHeight;
-        const enterY=fieldHeight+18;
-        const exitY=-pain.offsetHeight-18;
-        const stepHeight=Math.max(1,stepRect.height);
-        const targetSpeed=.80;
-        const motionDuration=(enterY-exitY)/(targetSpeed*stepHeight);
-        const final=pain.classList.contains('pain--final');
-        let y;
-        let opacity;
-        if(final){
-          const targetY=fieldHeight-pain.offsetHeight-14;
-          const arrivalDuration=Math.max(.58,(enterY-targetY)/(targetSpeed*stepHeight));
-          const arrival=clamp(local/arrivalDuration);
-          const eased=1-Math.pow(1-arrival,3);
-          y=enterY+((targetY-enterY)*eased);
-          opacity=clamp(local/.12);
-        }else{
-          const travel=clamp(local/motionDuration);
-          y=enterY+((exitY-enterY)*travel);
-          opacity=clamp(local/.12)*clamp((motionDuration-.18-local)/.24);
-        }
-        pain.style.opacity=opacity.toFixed(3);
-        pain.style.transform=final
-          ?`translate3d(-50%,${y}px,0)`
-          :`translate3d(0,${y}px,0)`;
+        const laneHeight=lane.clientHeight;
+        const maxPainHeight=Math.max(...pains.map((pain)=>pain.offsetHeight));
+        const spacing=Math.max(maxPainHeight+18,((laneHeight+maxPainHeight)/2)+8);
+        const stickyTop=Math.min(6,Math.round((viewportHeight/2)-(field.offsetTop+(field.offsetHeight/2))));
+        const final=pains.at(-1);
+        const enterY=laneHeight+18;
+        const finalTargetY=laneHeight-final.offsetHeight-14;
+        const finalArrival=enterY+((pains.length-1)*spacing)-finalTargetY;
+        const animationDistance=Math.ceil(finalArrival+spacing);
+        root.style.setProperty('--sticky-top',`${stickyTop}px`);
+        root.style.setProperty('--scene-height',`${scene.offsetHeight}px`);
+        root.style.setProperty('--animation-distance',`${animationDistance}px`);
+        geometry={spacing,animationDistance};
       };
 
       const render=()=>{
         ticking=false;
         if(reduced.matches)return;
         syncGeometry();
-        pains.forEach((pain,index)=>setPain(pain,index));
+        const triggerLine=parseFloat(getComputedStyle(scene).top)||0;
+        const scrollOffset=clamp(triggerLine-root.getBoundingClientRect().top,0,geometry.animationDistance);
+        const laneHeight=lane.clientHeight;
+        const enterY=laneHeight+18;
+        pains.forEach((pain,index)=>{
+          const rawY=enterY+(index*geometry.spacing)-scrollOffset;
+          const final=pain.classList.contains('pain--final');
+          const targetY=laneHeight-pain.offsetHeight-14;
+          const y=final?Math.max(targetY,rawY):rawY;
+          const opacity=clamp((laneHeight+8-y)/22)*clamp((y+pain.offsetHeight+8)/22);
+          pain.style.opacity=opacity.toFixed(3);
+          pain.style.transform=final
+            ?`translate3d(-50%,${y}px,0)`
+            :`translate3d(0,${y}px,0)`;
+        });
       };
       const request=()=>{if(ticking)return;ticking=true;requestAnimationFrame(render)};
       addEventListener('scroll',request,{passive:true});
       addEventListener('resize',request);
       window.visualViewport?.addEventListener('resize',request,{passive:true});
       reduced.addEventListener?.('change',request);
+      if('ResizeObserver' in window){
+        new ResizeObserver(request).observe(scene);
+        new ResizeObserver(request).observe(person);
+      }
       if(person.complete)request();
       else person.addEventListener('load',request,{once:true});
     })();
