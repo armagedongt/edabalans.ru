@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Визуальный каталог · edabalans.ru</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --page: #f3f6fb;
+      --surface: #ffffff;
+      --surface-2: #f7f9fc;
+      --surface-3: #eef3fb;
+      --ink: #111c35;
+      --muted: #596985;
+      --line: #d8e0ec;
+      --line-strong: #c4cfdf;
+      --blue: #4f6fe8;
+      --blue-strong: #3f5ed2;
+      --blue-soft: #edf2ff;
+      --blue-text: #3554c7;
+      --button-blue: #3f5ed2;
+      --on-blue: #ffffff;
+      --sky: #2298e6;
+      --sky-soft: #edf8ff;
+      --sky-text: #0a6da9;
+      --violet: #6f3de8;
+      --violet-soft: #f3efff;
+      --violet-text: #5c2ec9;
+      --button-violet: #6f3de8;
+      --on-violet: #ffffff;
+      --orange: #f47a42;
+      --orange-soft: #fff3ec;
+      --orange-text: #9b3e16;
+      --button-orange: #f47a42;
+      --on-orange: #111c35;
+      --green: #23845a;
+      --green-soft: #edf9f2;
+      --green-text: #176c47;
+      --gold: #9a6b0f;
+      --gold-soft: #fff8e7;
+      --gold-text: #7d5205;
+      --danger: #b64a41;
+      --danger-soft: #fff1ef;
+      --danger-text: #95352e;
+      --shadow-1: 0 8px 22px rgba(30, 55, 92, .06);
+      --shadow-2: 0 18px 44px rgba(30, 55, 92, .10);
+      --radius-control: 10px;
+      --radius-card: 18px;
+      --radius-panel: 24px;
+      --shell: 1180px;
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --page: #0c1322;
+      --surface: #141e32;
+      --surface-2: #18243a;
+      --surface-3: #1d2b45;
+      --ink: #f5f8ff;
+      --muted: #aab6ca;
+      --line: #2b3a57;
+      --line-strong: #3a4c6e;
+      --blue: #7793ff;
+      --blue-strong: #9aafff;
+      --blue-soft: #1d2d5d;
+      --blue-text: #aebcff;
+      --button-blue: #7793ff;
+      --on-blue: #0c1322;
+      --sky: #53b9fa;
+      --sky-soft: #15314a;
+      --sky-text: #78c9ff;
+      --violet: #a78bfa;
+      --violet-soft: #2c2354;
+      --violet-text: #c4b5fd;
+      --button-violet: #a78bfa;
+      --on-violet: #0c1322;
+      --orange: #ff955e;
+      --orange-soft: #48271f;
+      --orange-text: #ffb18a;
+      --button-orange: #ff955e;
+      --on-orange: #0c1322;
+      --green: #62d39c;
+      --green-soft: #173c31;
+      --green-text: #80e0b2;
+      --gold: #e1bb62;
+      --gold-soft: #3d321d;
+      --gold-text: #f0cb76;
+      --danger: #ff8e84;
+      --danger-soft: #472725;
+      --danger-text: #ffa8a1;
+      --shadow-1: 0 10px 28px rgba(0, 0, 0, .20);
+      --shadow-2: 0 22px 54px rgba(0, 0, 0, .30);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.5 var(--font); transition: background .2s, color .2s; }
+    button, input, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .shell { width: min(calc(100% - 32px), var(--shell)); margin-inline: auto; }
+    .visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    .catalog-header { position: sticky; z-index: 30; top: 0; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--page) 90%, transparent); backdrop-filter: blur(18px); }
+    .catalog-header__row { display: flex; align-items: center; gap: 14px; min-height: 72px; }
+    .brand { display: flex; align-items: center; gap: 11px; min-width: 0; margin-right: auto; color: var(--ink); text-decoration: none; }
+    .brand-mark { display: grid; flex: 0 0 auto; place-items: center; width: 42px; height: 42px; border-radius: 13px; background: linear-gradient(145deg, var(--blue), var(--violet)); color: #fff; box-shadow: var(--shadow-1); }
+    .brand-mark svg { width: 23px; height: 23px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy strong, .brand-copy span { display: block; }
+    .brand-copy strong { font-size: 15px; line-height: 1.15; }
+    .brand-copy span { color: var(--muted); font-size: 12px; }
+    .header-index { display: flex; gap: 5px; }
+    .header-index a { display: grid; place-items: center; width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--muted); text-decoration: none; font-size: 11px; font-weight: 800; }
+    .header-index a:hover { border-color: var(--blue); color: var(--blue); }
+    .theme-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 4px; border: 1px solid var(--line); border-radius: 13px; background: var(--surface); }
+    .theme-toggle button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 38px; border: 0; border-radius: 9px; padding: 7px 11px; background: transparent; color: var(--muted); cursor: pointer; font-size: 12px; font-weight: 800; }
+    .theme-toggle button[aria-pressed="true"] { background: var(--ink); color: var(--surface); }
+
+    .hero { padding: 72px 0 36px; }
+    .hero-card { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 30px; padding: clamp(26px, 6vw, 62px); background: var(--surface); box-shadow: var(--shadow-2); }
+    .hero-card::after { content: ""; position: absolute; right: -110px; top: -120px; width: 330px; height: 330px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, color-mix(in srgb, var(--sky) 34%, transparent), color-mix(in srgb, var(--violet) 12%, transparent) 55%, transparent 71%); pointer-events: none; }
+    .kicker, .source-tag { display: inline-flex; align-items: center; width: max-content; border-radius: 999px; font-size: 12px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+    .kicker { padding: 7px 11px; background: var(--blue-soft); color: var(--blue-text); }
+    .hero h1 { position: relative; z-index: 1; max-width: 860px; margin: 18px 0 16px; font-size: clamp(40px, 7.4vw, 82px); line-height: .98; letter-spacing: -.055em; }
+    .hero p { max-width: 720px; margin: 0; color: var(--muted); font-size: clamp(17px, 2.2vw, 22px); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 27px; }
+    .hero-actions a { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; border: 1px solid var(--line); border-radius: var(--radius-control); padding: 10px 15px; background: var(--surface-2); color: var(--ink); text-decoration: none; font-weight: 800; }
+    .hero-actions a:first-child { border-color: var(--button-blue); background: var(--button-blue); color: var(--on-blue); }
+
+    .catalog-section { scroll-margin-top: 90px; padding: 26px 0; }
+    .section-head { display: grid; grid-template-columns: 64px minmax(0, 1fr) auto; gap: 14px; align-items: center; margin-bottom: 14px; }
+    .section-number { display: grid; place-items: center; width: 58px; height: 58px; border-radius: 17px; background: var(--ink); color: var(--surface); font-size: 17px; font-weight: 900; }
+    .section-title h2 { margin: 0; font-size: clamp(25px, 4vw, 36px); line-height: 1.05; letter-spacing: -.035em; }
+    .section-title p { margin: 5px 0 0; color: var(--muted); font-size: 13px; }
+    .source-tag { padding: 6px 9px; background: var(--surface-3); color: var(--muted); }
+    .showcase { border: 1px solid var(--line); border-radius: var(--radius-panel); padding: clamp(16px, 3vw, 28px); background: var(--surface); box-shadow: var(--shadow-1); }
+    .showcase-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .showcase-grid.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .item-label { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+    .item-label span { display: grid; place-items: center; min-width: 24px; height: 24px; border-radius: 8px; background: var(--surface-3); color: var(--blue-text); }
+
+    .palette { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 9px; }
+    .swatch { overflow: hidden; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); }
+    .swatch-color { height: 76px; background: var(--swatch); }
+    .swatch-copy { padding: 9px; }
+    .swatch-copy strong, .swatch-copy span { display: block; }
+    .swatch-copy strong { font-size: 12px; }
+    .swatch-copy span { margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .radius-row { display: flex; flex-wrap: wrap; align-items: end; gap: 14px; margin-top: 18px; }
+    .radius-demo { display: grid; place-items: center; height: 64px; border: 1px solid var(--line); background: var(--surface-2); color: var(--muted); font-size: 12px; font-weight: 800; }
+    .radius-demo.control { width: 120px; border-radius: var(--radius-control); }
+    .radius-demo.card { width: 150px; border-radius: var(--radius-card); }
+    .radius-demo.panel { width: 180px; border-radius: var(--radius-panel); }
+    .radius-demo.pill { width: 120px; border-radius: 999px; }
+
+    .icon-catalog { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 10px; }
+    .icon-sample { display: grid; justify-items: center; gap: 8px; padding: 13px 7px; border: 1px solid var(--line); border-radius: 15px; background: var(--surface-2); color: var(--muted); font-size: 10px; font-weight: 750; text-align: center; }
+    .icon-box { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--tone-soft); color: var(--tone-text); }
+    .icon-box svg { width: 23px; height: 23px; }
+    .tone-blue { --tone: var(--blue); --tone-soft: var(--blue-soft); --tone-text: var(--blue-text); }
+    .tone-sky { --tone: var(--sky); --tone-soft: var(--sky-soft); --tone-text: var(--sky-text); }
+    .tone-violet { --tone: var(--violet); --tone-soft: var(--violet-soft); --tone-text: var(--violet-text); }
+    .tone-orange { --tone: var(--orange); --tone-soft: var(--orange-soft); --tone-text: var(--orange-text); }
+    .tone-green { --tone: var(--green); --tone-soft: var(--green-soft); --tone-text: var(--green-text); }
+    .tone-gold { --tone: var(--gold); --tone-soft: var(--gold-soft); --tone-text: var(--gold-text); }
+
+    .button-row { display: flex; flex-wrap: wrap; gap: 9px; align-items: end; }
+    .button-sample { display: grid; gap: 5px; }
+    .button-sample > span { color: var(--muted); font-size: 11px; font-weight: 850; letter-spacing: .05em; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 46px; border: 1px solid var(--line-strong); border-radius: var(--radius-control); padding: 10px 16px; background: var(--surface); color: var(--ink); cursor: pointer; font-weight: 850; }
+    .btn.primary { border-color: var(--button-blue); background: var(--button-blue); color: var(--on-blue); }
+    .btn.violet { border-color: var(--button-violet); background: var(--button-violet); color: var(--on-violet); }
+    .btn.orange { border-color: var(--button-orange); background: var(--button-orange); color: var(--on-orange); }
+    .btn.soft { border-color: transparent; background: var(--blue-soft); color: var(--blue-text); }
+    .btn.icon-only { width: 46px; padding: 0; }
+    .btn:disabled { border-color: var(--line); background: var(--surface-3); color: var(--muted); cursor: not-allowed; }
+    .btn:not(:disabled):hover { transform: translateY(-1px); box-shadow: var(--shadow-1); }
+    .btn:focus-visible, .theme-toggle button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--sky) 42%, transparent); outline-offset: 2px; }
+
+    .tabs { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 8px; min-height: 44px; border: 1px solid var(--line); border-radius: 11px; padding: 9px 13px; background: var(--surface-2); color: var(--muted); font-weight: 850; }
+    .tab.blue { border-color: color-mix(in srgb, var(--blue) 30%, var(--line)); background: var(--blue-soft); color: var(--blue-text); }
+    .tab.green { border-color: color-mix(in srgb, var(--green) 30%, var(--line)); background: var(--green-soft); color: var(--green-text); }
+    .tab.gold { border-color: color-mix(in srgb, var(--gold) 30%, var(--line)); background: var(--gold-soft); color: var(--gold-text); }
+    .tab.violet { border-color: color-mix(in srgb, var(--violet) 30%, var(--line)); background: var(--violet-soft); color: var(--violet-text); }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 11px; background: var(--surface); color: var(--muted); font-size: 12px; font-weight: 800; }
+    .pill.active { border-color: var(--button-blue); background: var(--button-blue); color: var(--on-blue); }
+
+    .nav-demo { display: grid; grid-template-columns: 250px minmax(0, 1fr); min-height: 330px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface-2); }
+    .side-nav { padding: 14px; border-right: 1px solid var(--line); background: var(--surface); }
+    .side-nav strong { display: block; padding: 8px 10px; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; }
+    .side-nav a { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 8px; min-height: 46px; border-radius: 11px; padding: 6px 9px; color: var(--muted); text-decoration: none; }
+    .side-nav a.active { background: var(--blue-soft); color: var(--blue); font-weight: 850; }
+    .side-nav a span:last-child { color: var(--muted); font-size: 11px; }
+    .nav-main { padding: 22px; }
+    .nav-main h3 { margin: 0; font-size: 27px; letter-spacing: -.03em; }
+    .nav-main p { max-width: 560px; margin: 9px 0 0; color: var(--muted); }
+    .mini-toolbar { display: flex; gap: 8px; margin-top: 18px; }
+
+    .quick-card, .decision-card, .destination-card, .application-card { border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface-2); }
+    .quick-card { display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 12px; min-height: 104px; padding: 15px; }
+    .quick-card strong, .quick-card span { display: block; }
+    .quick-card span { margin-top: 3px; color: var(--muted); font-size: 13px; }
+    .quick-card.blue { border-color: color-mix(in srgb, var(--blue) 28%, var(--line)); background: var(--blue-soft); }
+    .quick-card.violet { border-color: color-mix(in srgb, var(--violet) 28%, var(--line)); background: var(--violet-soft); }
+    .quick-card.orange { border-color: color-mix(in srgb, var(--orange) 28%, var(--line)); background: var(--orange-soft); }
+
+    .decision-panel { border: 1px solid color-mix(in srgb, var(--blue) 22%, var(--line)); border-radius: 22px; padding: 18px; background: linear-gradient(135deg, var(--surface-2), var(--surface)); box-shadow: var(--shadow-1); }
+    .decision-panel h3 { margin: 11px 0 15px; font-size: 24px; letter-spacing: -.03em; }
+    .decision-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .decision-card { display: grid; grid-template-columns: 42px 1fr; align-items: center; gap: 11px; min-height: 100px; padding: 14px; text-align: left; }
+    .decision-card strong, .decision-card span { display: block; }
+    .decision-card span { margin-top: 3px; color: var(--muted); font-size: 13px; }
+
+    .destination-card { display: grid; gap: 14px; padding: 20px; background: var(--blue-soft); }
+    .destination-card .logo-tile { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 14px; background: var(--surface); color: var(--blue); box-shadow: var(--shadow-1); }
+    .destination-card small, .destination-card strong { display: block; }
+    .destination-card small { color: var(--muted); font-weight: 750; }
+    .destination-card strong { margin-top: 4px; font-size: 22px; }
+    .trust-list { display: grid; gap: 9px; padding-top: 14px; border-top: 1px solid color-mix(in srgb, var(--blue) 22%, var(--line)); color: var(--muted); font-size: 13px; }
+    .trust-list span { display: flex; align-items: center; gap: 8px; }
+    .trust-list svg { color: var(--blue); }
+
+    .notice-list { display: grid; gap: 10px; }
+    .notice { display: grid; grid-template-columns: 38px 1fr; align-items: center; gap: 12px; min-height: 64px; border-left: 4px solid var(--green); padding: 12px 15px; background: var(--surface-2); }
+    .notice .icon-box { width: 38px; height: 38px; border-radius: 50%; }
+    .notice strong, .notice span { display: block; }
+    .notice span { color: var(--muted); font-size: 12px; }
+
+    .form-demo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+    .field { display: grid; gap: 6px; }
+    .field > span { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .field input, .field textarea { width: 100%; min-height: 48px; border: 1px solid var(--line-strong); border-radius: var(--radius-control); padding: 11px 13px; background: var(--surface); color: var(--ink); }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field input:focus, .field textarea:focus { border-color: var(--blue); }
+    .rating { display: grid; grid-template-columns: repeat(5, 1fr); overflow: hidden; border: 1px solid var(--line-strong); border-radius: var(--radius-control); }
+    .rating button { min-height: 52px; border: 0; border-right: 1px solid var(--line-strong); background: var(--surface); color: var(--muted); font-weight: 850; cursor: pointer; }
+    .rating button:last-child { border-right: 0; }
+    .rating button.active { background: var(--green-soft); color: var(--green); box-shadow: inset 0 -4px var(--green); }
+    .form-span { grid-column: 1 / -1; }
+
+    .data-table { overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-card); }
+    .data-row { display: grid; grid-template-columns: 48px minmax(130px, .8fr) minmax(0, 1.2fr); align-items: center; gap: 12px; min-height: 68px; padding: 12px 15px; background: var(--surface); }
+    .data-row + .data-row { border-top: 1px solid var(--line); }
+    .data-row dt { color: var(--muted); }
+    .data-row dd { margin: 0; font-weight: 850; }
+    .result-strip { display: grid; grid-template-columns: repeat(4, 1fr); margin-top: 14px; overflow: hidden; border: 1px solid var(--line); border-radius: var(--radius-card); background: var(--surface-2); }
+    .result-strip div { padding: 14px; text-align: center; }
+    .result-strip div + div { border-left: 1px solid var(--line); }
+    .result-strip strong, .result-strip span { display: block; }
+    .result-strip strong { font-size: 22px; }
+    .result-strip span { color: var(--muted); font-size: 11px; }
+
+    .search-hero { padding: clamp(24px, 5vw, 48px); border: 1px solid var(--line); border-radius: var(--radius-panel); background: var(--surface-2); text-align: center; }
+    .search-hero h3 { max-width: 820px; margin: 12px auto; font-size: clamp(34px, 6vw, 66px); line-height: 1.02; letter-spacing: -.05em; }
+    .search-hero > p { max-width: 680px; margin: 0 auto; color: var(--muted); font-size: 18px; }
+    .search-box { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 10px; max-width: 900px; min-height: 66px; margin: 26px auto 0; border: 1px solid var(--line-strong); border-radius: 14px; padding: 7px; background: var(--surface); box-shadow: var(--shadow-1); text-align: left; }
+    .search-box > svg { margin-left: 9px; color: var(--muted); }
+    .search-box input { min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 17px; }
+    .search-box .btn { min-height: 50px; }
+
+    .application-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .application-card { padding: 16px; background: var(--surface); }
+    .application-card__head { display: grid; grid-template-columns: 46px 1fr auto; align-items: center; gap: 11px; }
+    .application-card h3 { margin: 0; font-size: 18px; }
+    .application-card p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+    .application-card .ref { align-self: start; border-radius: 999px; padding: 4px 7px; background: var(--surface-3); color: var(--muted); font-size: 10px; font-weight: 850; }
+    .application-preview { display: grid; gap: 7px; margin-top: 15px; padding: 12px; border-radius: 14px; background: var(--surface-2); }
+    .preview-row { display: grid; grid-template-columns: 30px 1fr auto; align-items: center; gap: 8px; min-height: 38px; border: 1px solid var(--line); border-radius: 10px; padding: 5px 8px; background: var(--surface); }
+    .preview-row i { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 8px; background: var(--tone-soft); color: var(--tone-text); font-style: normal; font-size: 11px; font-weight: 900; }
+    .preview-row b { font-size: 11px; }
+    .preview-row span { color: var(--muted); font-size: 10px; }
+    .score-chips { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+    .score-chips span { display: grid; place-items: center; min-height: 34px; border-radius: 9px; background: var(--tone-soft); color: var(--tone-text); font-size: 11px; font-weight: 900; }
+    .mini-form { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .mini-form span { min-height: 36px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); }
+    .mini-form span:last-child { grid-column: 1 / -1; border-color: var(--blue); background: var(--blue); }
+    .mini-checks { display: grid; gap: 6px; }
+    .mini-checks span { position: relative; min-height: 34px; border-left: 3px solid var(--green); padding: 8px 8px 8px 31px; background: var(--surface); color: var(--muted); font-size: 10px; }
+    .mini-checks span::before { content: "✓"; position: absolute; left: 9px; color: var(--green); font-weight: 900; }
+    .application-note { margin-top: 10px; color: var(--muted); font-size: 11px; }
+
+    .footer { padding: 36px 0 70px; color: var(--muted); font-size: 12px; text-align: center; }
+
+    @media (max-width: 900px) {
+      .header-index { display: none; }
+      .showcase-grid.three, .palette { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .icon-catalog { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .application-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 660px) {
+      .shell { width: min(calc(100% - 22px), var(--shell)); }
+      .catalog-header__row { min-height: 64px; }
+      .brand-copy span { display: none; }
+      .theme-toggle button { width: 40px; padding: 0; }
+      .theme-toggle button span { display: none; }
+      .hero { padding-top: 34px; }
+      .hero-card { border-radius: 23px; }
+      .section-head { grid-template-columns: 48px 1fr; gap: 10px; }
+      .section-number { width: 46px; height: 46px; border-radius: 14px; }
+      .source-tag { grid-column: 2; }
+      .showcase-grid, .showcase-grid.three, .form-demo, .decision-grid { grid-template-columns: 1fr; }
+      .palette { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .icon-catalog { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .nav-demo { grid-template-columns: 1fr; }
+      .side-nav { display: flex; gap: 6px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .side-nav > strong { display: none; }
+      .side-nav a { flex: 0 0 auto; grid-template-columns: 30px auto; }
+      .side-nav a span:last-child { display: none; }
+      .form-span { grid-column: auto; }
+      .result-strip { grid-template-columns: repeat(2, 1fr); }
+      .result-strip div:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .result-strip div:nth-child(4) { border-top: 1px solid var(--line); }
+      .search-box { grid-template-columns: 25px 1fr; }
+      .search-box .btn { grid-column: 1 / -1; width: 100%; }
+      .data-row { grid-template-columns: 42px 1fr; }
+      .data-row dd { grid-column: 2; }
+    }
+  </style>
+</head>
+<body>
+  <svg class="visually-hidden" aria-hidden="true">
+    <symbol id="i-mark" viewBox="0 0 24 24"><path d="M5 12.5 9.2 17 19 7"/><path d="M4 4h16v16H4z"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.5"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.2A8 8 0 0 1 8.8 4 8.2 8.2 0 1 0 20 15.2Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4.5" cy="6" r="1"/><circle cx="4.5" cy="12" r="1"/><circle cx="4.5" cy="18" r="1"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+    <symbol id="i-fire" viewBox="0 0 24 24"><path d="M13.5 3.5c.7 3-1.6 4.2-2.6 6.2-.8 1.6-.2 3.1 1.1 4.1-.1-2 1.3-3 2.8-4.4 1.5 1.6 2.2 3.4 2.2 5.2A5 5 0 0 1 7 14c0-3.5 2.1-6.3 6.5-10.5Z"/></symbol>
+    <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M4 10h16v2a8 8 0 0 1-16 0v-2ZM7 20h10"/><path d="M8 7c0-1 1-1.5 1-3M12 7c0-1 1-1.5 1-3M16 7c0-1 1-1.5 1-3"/></symbol>
+    <symbol id="i-form" viewBox="0 0 24 24"><path d="M7 4h13v16H7zM4 7H2v13h14v-2"/><path d="M10 9h7M10 13h7M10 17h4"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M14 7l5 5-5 5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m4 12 5 5L20 6"/></symbol>
+    <symbol id="i-db" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 4V5Z"/><path d="M8 9h8M8 13h5"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4 11 13"/><path d="M18 13v7H4V6h7"/></symbol>
+  </svg>
+
+  <header class="catalog-header">
+    <div class="shell catalog-header__row">
+      <a class="brand" href="#top">
+        <span class="brand-mark"><svg><use href="#i-mark"/></svg></span>
+        <span class="brand-copy"><strong>Визуальный каталог</strong><span>МК · ЛК · приложения</span></span>
+      </a>
+      <nav class="header-index" aria-label="Блоки каталога">
+        <a href="#block-01">01</a><a href="#block-02">02</a><a href="#block-03">03</a><a href="#block-04">04</a><a href="#block-05">05</a><a href="#block-06">06</a><a href="#block-07">07</a><a href="#block-08">08</a><a href="#block-09">09</a><a href="#block-10">10</a><a href="#block-11">11</a>
+      </nav>
+      <div class="theme-toggle" id="theme-toggle" aria-label="Тема страницы">
+        <button type="button" data-theme="light" aria-pressed="true" title="Светлая тема"><svg><use href="#i-sun"/></svg><span>Светлая</span></button>
+        <button type="button" data-theme="dark" aria-pressed="false" title="Тёмная тема"><svg><use href="#i-moon"/></svg><span>Тёмная</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-card">
+        <span class="kicker">Рабочая библиотека v1</span>
+        <h1>Визуальный код для личного кабинета и приложений</h1>
+        <p>Не копия референса, а разобранная система: цвета, иконки, кнопки, плашки, формы, карточки и варианты применения.</p>
+        <div class="hero-actions"><a href="#block-01"><svg><use href="#i-grid"/></svg> Смотреть каталог</a><a href="#block-11"><svg><use href="#i-arrow"/></svg> Применение к продуктам</a></div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-01">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">01</span><div class="section-title"><h2>Палитра и геометрия</h2><p>База двух тем и четыре постоянных продуктовых акцента</p></div><span class="source-tag">Скриншоты 3–11</span></header>
+        <div class="showcase">
+          <div class="palette">
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--blue)"></div><div class="swatch-copy"><strong>01.1 Синий</strong><span>Основное действие</span></div></div>
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--sky)"></div><div class="swatch-copy"><strong>01.2 Голубой</strong><span>Информация</span></div></div>
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--violet)"></div><div class="swatch-copy"><strong>01.3 Фиолетовый</strong><span>Продукт / режим</span></div></div>
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--orange)"></div><div class="swatch-copy"><strong>01.4 Оранжевый</strong><span>Акцент / внимание</span></div></div>
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--green)"></div><div class="swatch-copy"><strong>01.5 Зелёный</strong><span>Готово / успех</span></div></div>
+            <div class="swatch"><div class="swatch-color" style="--swatch:var(--surface-3)"></div><div class="swatch-copy"><strong>01.6 Нейтральный</strong><span>Фон / разделение</span></div></div>
+          </div>
+          <div class="radius-row"><div class="radius-demo control">01.7 · 10 px</div><div class="radius-demo card">01.8 · 18 px</div><div class="radius-demo panel">01.9 · 24 px</div><div class="radius-demo pill">01.10 · pill</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-02">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">02</span><div class="section-title"><h2>Иконки и знаки</h2><p>Линейные SVG без emoji, внутри мягкого цветного контейнера</p></div><span class="source-tag">Скриншоты 2–8</span></header>
+        <div class="showcase icon-catalog">
+          <div class="icon-sample"><span class="icon-box tone-blue"><svg><use href="#i-grid"/></svg></span><span>02.1 Каталог</span></div>
+          <div class="icon-sample"><span class="icon-box tone-sky"><svg><use href="#i-chart"/></svg></span><span>02.2 DQS</span></div>
+          <div class="icon-sample"><span class="icon-box tone-violet"><svg><use href="#i-fire"/></svg></span><span>02.3 Метаболизм</span></div>
+          <div class="icon-sample"><span class="icon-box tone-orange"><svg><use href="#i-bowl"/></svg></span><span>02.4 Рецепты</span></div>
+          <div class="icon-sample"><span class="icon-box tone-green"><svg><use href="#i-check"/></svg></span><span>02.5 Готово</span></div>
+          <div class="icon-sample"><span class="icon-box tone-gold"><svg><use href="#i-form"/></svg></span><span>02.6 Анкета</span></div>
+          <div class="icon-sample"><span class="icon-box tone-blue"><svg><use href="#i-user"/></svg></span><span>02.7 Профиль</span></div>
+          <div class="icon-sample"><span class="icon-box tone-violet"><svg><use href="#i-message"/></svg></span><span>02.8 Сообщение</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-03">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">03</span><div class="section-title"><h2>Кнопки</h2><p>Одна геометрия, разная функция цвета</p></div><span class="source-tag">Скриншоты 2, 6, 7, 9, 11</span></header>
+        <div class="showcase showcase-grid">
+          <div><div class="item-label">Основные действия</div><div class="button-row"><div class="button-sample"><span>03.1</span><button class="btn primary"><svg><use href="#i-arrow"/></svg> Продолжить</button></div><div class="button-sample"><span>03.2</span><button class="btn violet">Открыть приложение</button></div><div class="button-sample"><span>03.3</span><button class="btn orange">Важное действие</button></div></div></div>
+          <div><div class="item-label">Вторичные состояния</div><div class="button-row"><div class="button-sample"><span>03.4</span><button class="btn"><svg><use href="#i-list"/></svg> Оглавление</button></div><div class="button-sample"><span>03.5</span><button class="btn soft">Подробнее</button></div><div class="button-sample"><span>03.6</span><button class="btn icon-only" aria-label="Поиск"><svg><use href="#i-search"/></svg></button></div><div class="button-sample"><span>03.7</span><button class="btn" disabled>Пока закрыто</button></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-04">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">04</span><div class="section-title"><h2>Табы и плашки</h2><p>Компактная навигация и статусы без тяжёлых панелей</p></div><span class="source-tag">Скриншоты 3, 8, 11</span></header>
+        <div class="showcase">
+          <div class="tabs"><span class="tab blue"><svg><use href="#i-list"/></svg>04.1 Описание</span><span class="tab green"><svg><use href="#i-check"/></svg>04.2 Результаты</span><span class="tab gold"><svg><use href="#i-db"/></svg>04.3 Показатели</span><span class="tab violet"><svg><use href="#i-message"/></svg>04.4 Вопросы</span></div>
+          <div class="pill-row"><span class="pill active">04.5 Активно</span><span class="pill">04.6 Доступ открыт</span><span class="pill">04.7 12 минут</span><span class="pill">04.8 День 4</span><span class="pill">04.9 Сохранено</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-05">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">05</span><div class="section-title"><h2>Навигация ЛК и курса</h2><p>Левая колонка на компьютере, горизонтальная лента на телефоне</p></div><span class="source-tag">Скриншоты 2, 8</span></header>
+        <div class="showcase nav-demo">
+          <nav class="side-nav" aria-label="Пример навигации"><strong>Личный кабинет</strong><a class="active" href="#block-05"><span class="icon-box tone-blue"><svg><use href="#i-grid"/></svg></span>Обзор<span>5</span></a><a href="#block-11"><span class="icon-box tone-sky"><svg><use href="#i-chart"/></svg></span>DQS<span>30</span></a><a href="#block-11"><span class="icon-box tone-violet"><svg><use href="#i-fire"/></svg></span>Калории<span>2</span></a><a href="#block-11"><span class="icon-box tone-orange"><svg><use href="#i-bowl"/></svg></span>Рецепты<span>8</span></a></nav>
+          <div class="nav-main"><span class="kicker">05.1 Оболочка</span><h3>Сегодня в программе</h3><p>Навигация становится частью общей системы, но каждый продукт сохраняет собственный цветовой акцент.</p><div class="mini-toolbar"><button class="btn primary">Продолжить</button><button class="btn">Оглавление</button></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-06">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">06</span><div class="section-title"><h2>Карточки</h2><p>Быстрый выбор, решение и отдельное целевое действие</p></div><span class="source-tag">Скриншоты 5–7</span></header>
+        <div class="showcase showcase-grid three">
+          <div><div class="item-label"><span>06.1</span>Быстрая карточка</div><div class="quick-card blue"><span class="icon-box tone-blue"><svg><use href="#i-chart"/></svg></span><div><strong>Баланс категорий</strong><span>Ключевые показатели дня</span></div></div></div>
+          <div><div class="item-label"><span>06.2</span>Акцентная карточка</div><div class="quick-card orange"><span class="icon-box tone-orange"><svg><use href="#i-bowl"/></svg></span><div><strong>Собрать рецепт</strong><span>Продукты и итог на порцию</span></div></div></div>
+          <div><div class="item-label"><span>06.3</span>Целевой переход</div><div class="destination-card"><span class="logo-tile"><svg><use href="#i-external"/></svg></span><div><small>Личный инструмент</small><strong>Калькулятор</strong></div><button class="btn primary">Перейти</button><div class="trust-list"><span><svg><use href="#i-check"/></svg>Данные сохранены</span><span><svg><use href="#i-user"/></svg>Только ваш профиль</span></div></div></div>
+          <div style="grid-column:1/-1"><div class="item-label"><span>06.4</span>Проверка перед действием</div><div class="decision-panel"><span class="kicker">Перед началом</span><h3>Короткая проверка</h3><div class="decision-grid"><div class="decision-card"><span class="icon-box tone-sky"><svg><use href="#i-search"/></svg></span><div><strong>Что проверить</strong><span>Данные, которые влияют на результат</span></div></div><div class="decision-card"><span class="icon-box tone-violet"><svg><use href="#i-arrow"/></svg></span><div><strong>Что будет дальше</strong><span>Понятный следующий шаг</span></div></div></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-07">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">07</span><div class="section-title"><h2>Информационные блоки</h2><p>Список действий, подсказок и состояний</p></div><span class="source-tag">Скриншоты 3, 10</span></header>
+        <div class="showcase notice-list">
+          <div class="notice"><span class="icon-box tone-green"><svg><use href="#i-check"/></svg></span><div><strong>07.1 Результат сохраняется автоматически</strong><span>Служебный факт без отдельной большой карточки</span></div></div>
+          <div class="notice"><span class="icon-box tone-sky"><svg><use href="#i-chart"/></svg></span><div><strong>07.2 Сравнивайте одинаковые периоды</strong><span>Методическая подсказка внутри приложения</span></div></div>
+          <div class="notice"><span class="icon-box tone-orange"><svg><use href="#i-form"/></svg></span><div><strong>07.3 Заполните обязательные поля</strong><span>Мягкое предупреждение перед действием</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-08">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">08</span><div class="section-title"><h2>Формы и оценка</h2><p>Две колонки на компьютере, одна на телефоне, заметный контур активного поля</p></div><span class="source-tag">Скриншоты 1, 9</span></header>
+        <div class="showcase form-demo">
+          <label class="field"><span>08.1 Показатель</span><input value="72" inputmode="decimal"></label><label class="field"><span>08.2 Единица</span><input value="кг"></label>
+          <div class="field form-span"><span>08.3 Самооценка</span><div class="rating"><button>1</button><button>2</button><button>3</button><button>4</button><button class="active">5</button></div></div>
+          <label class="field"><span>08.4 Что получилось</span><textarea placeholder="Короткий ответ"></textarea></label><label class="field"><span>08.5 Что было сложно</span><textarea placeholder="Короткий ответ"></textarea></label>
+          <button class="btn primary">08.6 Сохранить</button><button class="btn">08.7 Очистить</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-09">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">09</span><div class="section-title"><h2>Показатели и результаты</h2><p>Иконка, название и значение в одной читаемой строке</p></div><span class="source-tag">Скриншоты 4, 11</span></header>
+        <div class="showcase">
+          <dl class="data-table"><div class="data-row"><span class="icon-box tone-sky"><svg><use href="#i-fire"/></svg></span><dt>09.1 Основной обмен</dt><dd>1 580 ккал</dd></div><div class="data-row"><span class="icon-box tone-violet"><svg><use href="#i-chart"/></svg></span><dt>09.2 Поддержание</dt><dd>2 210 ккал</dd></div><div class="data-row"><span class="icon-box tone-orange"><svg><use href="#i-arrow"/></svg></span><dt>09.3 Рабочий диапазон</dt><dd>1 880–2 050 ккал</dd></div></dl>
+          <div class="result-strip"><div><strong>24</strong><span>заполнено дней</span></div><div><strong>7,8</strong><span>средний DQS</span></div><div><strong>12</strong><span>сохранено блюд</span></div><div><strong>68%</strong><span>пройдено МК</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-10">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">10</span><div class="section-title"><h2>Поиск и стартовый экран</h2><p>Крупная типографика, один понятный ввод, короткая статистика</p></div><span class="source-tag">Скриншот 11</span></header>
+        <div class="search-hero"><span class="kicker">10.1 Каталог инструментов</span><h3>Найдите нужный расчёт или материал</h3><p>Один вход в приложения, курс и сохранённые результаты.</p><div class="search-box"><svg><use href="#i-search"/></svg><input aria-label="Поиск" placeholder="DQS, калории, рецепт…"><button class="btn primary">Найти</button></div></div>
+      </div>
+    </section>
+
+    <section class="catalog-section" id="block-11">
+      <div class="shell">
+        <header class="section-head"><span class="section-number">11</span><div class="section-title"><h2>Применение к продуктам</h2><p>Не редизайн, а карта подходящих элементов для следующего шага</p></div><span class="source-tag">Текущие МК · ЛК · приложения</span></header>
+        <div class="showcase application-grid">
+          <article class="application-card" data-application="account"><div class="application-card__head"><span class="icon-box tone-blue"><svg><use href="#i-user"/></svg></span><div><h3>11.1 Личный кабинет</h3><p>Общая оболочка</p></div><span class="ref">02 + 05 + 06</span></div><div class="application-preview"><div class="preview-row tone-blue"><i>ЛК</i><b>Мои продукты</b><span>5</span></div><div class="preview-row tone-violet"><i>МК</i><b>Мастер-класс</b><span>68%</span></div><div class="preview-row tone-orange"><i>Р</i><b>Рецепты</b><span>12</span></div></div><p class="application-note">Заменить разрозненные карточки единым списком с цветными иконками; статусы оставить отдельными плашками.</p></article>
+          <article class="application-card" data-application="dqs"><div class="application-card__head"><span class="icon-box tone-sky"><svg><use href="#i-chart"/></svg></span><div><h3>11.2 DQS</h3><p>Оценка и категории</p></div><span class="ref">04 + 07 + 09</span></div><div class="application-preview"><div class="score-chips"><span class="tone-green">+2</span><span class="tone-green">+1</span><span class="tone-gold">0</span><span class="tone-orange">−1</span><span style="--tone:var(--danger);--tone-soft:var(--danger-soft);--tone-text:var(--danger-text)">−2</span></div><div class="preview-row tone-sky"><i>01</i><b>Овощи и зелень</b><span>+2</span></div><div class="preview-row tone-violet"><i>02</i><b>Белковые продукты</b><span>+1</span></div></div><p class="application-note">Сохранить смысловые цвета шкалы, но оформить категории строками 09 и вынести подсказки в 07.</p></article>
+          <article class="application-card" data-application="metabolism"><div class="application-card__head"><span class="icon-box tone-violet"><svg><use href="#i-fire"/></svg></span><div><h3>11.3 Метаболизм</h3><p>Расчёт и сравнение</p></div><span class="ref">04 + 08 + 09</span></div><div class="application-preview"><div class="tabs"><span class="tab violet">Вариант 1</span><span class="tab">Вариант 2</span></div><div class="mini-form"><span></span><span></span><span></span><span></span><span></span></div></div><p class="application-note">Режимы — табами 04, ввод — формой 08, результат — таблицей 09; фиолетовый остаётся цветом продукта.</p></article>
+          <article class="application-card" data-application="recipes"><div class="application-card__head"><span class="icon-box tone-orange"><svg><use href="#i-bowl"/></svg></span><div><h3>11.4 Рецепты</h3><p>Строки продуктов</p></div><span class="ref">03 + 08 + 09</span></div><div class="application-preview"><div class="preview-row tone-orange"><i>01</i><b>Творог</b><span>200 г</span></div><div class="preview-row tone-orange"><i>02</i><b>Ягоды</b><span>100 г</span></div><button class="btn orange">Добавить продукт</button></div><p class="application-note">Каждый продукт — компактная строка, итог — полоса результатов, оранжевый используется только для добавления и активного блюда.</p></article>
+          <article class="application-card" data-application="questionnaire"><div class="application-card__head"><span class="icon-box tone-gold"><svg><use href="#i-form"/></svg></span><div><h3>11.5 Анкеты</h3><p>Вопросы и автосохранение</p></div><span class="ref">07 + 08</span></div><div class="application-preview"><div class="mini-form"><span></span><span></span><span></span></div><div class="notice"><span class="icon-box tone-green"><svg><use href="#i-check"/></svg></span><div><strong>Ответ сохранён</strong></div></div></div><p class="application-note">Нумерованные вопросы остаются карточками; поля получают единый контур активного поля, автосохранение показывается тихой плашкой 07.</p></article>
+          <article class="application-card" data-application="masterclass"><div class="application-card__head"><span class="icon-box tone-blue"><svg><use href="#i-list"/></svg></span><div><h3>11.6 Мастер-класс</h3><p>Дни, материалы, задания</p></div><span class="ref">02 + 05 + 06 + 07</span></div><div class="application-preview"><div class="preview-row tone-blue"><i>04</i><b>Материал дня</b><span>12 мин</span></div><div class="preview-row tone-violet"><i>05</i><b>Приложение</b><span>→</span></div><div class="mini-checks"><span>Изучен материал</span><span>Заполнено приложение</span></div></div><p class="application-note">Светлая основа + тёмная навигация допустимы; дни и материалы объединяет геометрия, а тип шага различает цвет иконки.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="shell">Тестовый каталог · noindex · не меняет боевые интерфейсы</div></footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var buttons = document.querySelectorAll('#theme-toggle [data-theme]');
+      function setTheme(theme) {
+        root.dataset.theme = theme;
+        buttons.forEach(function (button) {
+          button.setAttribute('aria-pressed', String(button.dataset.theme === theme));
+        });
+        try { localStorage.setItem('edabalans-visual-catalog-theme', theme); } catch (error) {}
+      }
+      buttons.forEach(function (button) {
+        button.addEventListener('click', function () { setTheme(button.dataset.theme); });
+      });
+      var saved = null;
+      try { saved = localStorage.getItem('edabalans-visual-catalog-theme'); } catch (error) {}
+      var requested = new URLSearchParams(window.location.search).get('theme');
+      setTheme(requested === 'dark' || (requested !== 'light' && saved === 'dark') ? 'dark' : 'light');
+    }());
+  </script>
+</body>
+</html>

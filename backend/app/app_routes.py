@@ -82,6 +82,16 @@ def homepage_recognition_preview() -> FileResponse:
     return response
 
 
+@router.get("/preview/app-visual-catalog", include_in_schema=False)
+def app_visual_catalog_preview() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "app-visual-catalog" / "index.html",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 @router.get(
     "/preview/homepage-recognition/crying-character.png",
     include_in_schema=False,

@@ -215,7 +215,11 @@ id = "platform.web_design"
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.web_design.md"
 depends_on = ["platform.content"]
-owns_files = ["content/design-workflow/**"]
+owns_files = [
+  "content/design-workflow/**",
+  "backend/app/static/app-visual-catalog/**",
+]
+owns_routes = ["*/preview/app-visual-catalog*"]
 
 [[modules]]
 id = "products"

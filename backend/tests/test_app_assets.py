@@ -305,6 +305,60 @@ def test_unknown_application_fragment_is_404() -> None:
     assert client.get("/apps/unknown.html").status_code == 404
 
 
+def test_app_visual_catalog_is_public_noindex_preview() -> None:
+    response = client.get("/preview/app-visual-catalog")
+    assert response.status_code == 200
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert response.headers["cache-control"] == "no-cache"
+    assert '<meta name="robots" content="noindex,nofollow">' in response.text
+    assert 'id="theme-toggle"' in response.text
+    assert 'data-theme="light"' in response.text
+    assert 'data-theme="dark"' in response.text
+    assert 'html[data-theme="dark"]' in response.text
+    assert "root.dataset.theme = theme" in response.text
+    assert "button.addEventListener('click'" in response.text
+    assert "localStorage.setItem('edabalans-visual-catalog-theme'" in response.text
+    assert "URLSearchParams(window.location.search).get('theme')" in response.text
+    for number in range(1, 12):
+        assert f'id="block-{number:02d}"' in response.text
+    numbered_items = {
+        1: 10,
+        2: 8,
+        3: 7,
+        4: 9,
+        5: 1,
+        6: 4,
+        7: 3,
+        8: 7,
+        9: 3,
+        10: 1,
+        11: 6,
+    }
+    for block, last_item in numbered_items.items():
+        for item in range(1, last_item + 1):
+            assert f"{block:02d}.{item}" in response.text
+    for application in (
+        "account",
+        "dqs",
+        "metabolism",
+        "recipes",
+        "questionnaire",
+        "masterclass",
+    ):
+        assert f'data-application="{application}"' in response.text
+        article = re.search(
+            rf'<article[^>]+data-application="{application}".*?</article>',
+            response.text,
+            re.DOTALL,
+        )
+        assert article is not None
+        assert re.search(
+            r'<p class="application-note">[^<]{40,}</p>',
+            article.group(0),
+        )
+    assert client.get("/preview/app-visual-catalog/").status_code == 200
+
+
 def test_shared_content_gallery_asset_is_public_without_captions() -> None:
     response = client.get("/assets/content-gallery.js")
 
