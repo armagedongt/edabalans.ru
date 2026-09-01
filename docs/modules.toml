@@ -369,7 +369,7 @@ owns_files = [
   "telegram-bot/service/app/web_login.py", "telegram-bot/service/tests/test_web_login.py",
 ]
 owns_tables = ["telegram_login_attempts"]
-owns_routes = ["*/intensive/telegram-login*", "*/api/intensive/telegram-login*"]
+owns_routes = ["*/telegram-login*", "*/api/intensive/telegram-login*"]
 
 [[modules]]
 id = "products.masterclass"
