@@ -6,6 +6,9 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$utf8WithoutBom = New-Object System.Text.UTF8Encoding($false)
+$OutputEncoding = $utf8WithoutBom
+[Console]::OutputEncoding = $utf8WithoutBom
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $contentPath = Join-Path $repositoryRoot "content/public-site/homepage/$Slug.md"
 if (-not (Test-Path -LiteralPath $contentPath)) {
@@ -30,5 +33,5 @@ $updatedMarkdown = [regex]::Replace(
     "<!-- public-site-version: $publishedVersion -->",
     1
 )
-Set-Content -LiteralPath $contentPath -Value $updatedMarkdown -Encoding UTF8 -NoNewline
+[IO.File]::WriteAllText($contentPath, $updatedMarkdown, $utf8WithoutBom)
 Write-Output "Опубликована редакция $publishedVersion документа $Slug"

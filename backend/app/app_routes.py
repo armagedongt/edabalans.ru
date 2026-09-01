@@ -23,6 +23,7 @@ from app.app_service import (
 from app.auth import require_admin, session_admin
 from app.database import get_db
 from app.legal_service import legal_status_payload
+from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
 from app.models import (
     AdminAppEdit,
     DqsState,
@@ -130,11 +131,18 @@ def homepage_recognition_preview_image() -> FileResponse:
 
 @router.get("/preview/homepage-mobile", include_in_schema=False)
 @router.get("/preview/homepage-mobile/", include_in_schema=False)
-def homepage_mobile_preview() -> FileResponse:
-    response = public_asset(
-        STATIC_DIR / "homepage-preview" / "mobile.html",
-        stable_loader=True,
+def homepage_mobile_preview() -> HTMLResponse:
+    template = (STATIC_DIR / "homepage-preview" / "mobile.html").read_text(
+        encoding="utf-8"
     )
+    template = template.replace(
+        "{{INTENSIVE_PUBLIC_CTA_DESTINATION}}",
+        INTENSIVE_PUBLIC_CTA["destination"],
+    ).replace(
+        "{{INTENSIVE_PUBLIC_CTA_LABEL}}",
+        INTENSIVE_PUBLIC_CTA["button_label"],
+    )
+    response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
 

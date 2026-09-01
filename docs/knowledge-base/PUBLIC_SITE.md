@@ -79,6 +79,18 @@ Hero сохраняет собственную композицию и не оп
 `platform.commerce`, FAQ и подход — управляемыми Markdown/API, видео — плеером,
 а общий подвал — общим renderer проекта.
 
+Принятые тексты VSL-структуры переносятся по этой карте из
+`work/marketing-funnel-copy/handoff/2026-09-01-homepage-copy-master.md`. На
+странице уже размещены готовые блоки `hero-outro`, `recognition-intro`,
+`recognition-scene`, `main-argument`, `inside`, `anya-outro`,
+`pricing-experience`, `free-intensive`, дополнительный тезис `final-cta` и
+`reviews-after-cat`. Неразрешённый вариант `hero-intro`, черновые COPY SLOT и
+неподготовленные медиа в runtime не переносятся.
+
+CTA бесплатного интенсива не хранит локальную копию адреса или подписи. Preview
+подставляет эти факты из `backend/app/intensive_public_cta.py`, которым владеет
+модуль `products.intensive`.
+
 ## Контур публичного VSL
 
 На светлом фоне основной VSL не получает белую или чёрную рамку. Внешняя

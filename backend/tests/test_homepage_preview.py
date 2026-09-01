@@ -10,6 +10,7 @@ os.environ.setdefault(
 
 from fastapi.testclient import TestClient  # noqa: E402
 
+from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA  # noqa: E402
 from app.main import app  # noqa: E402
 
 
@@ -31,23 +32,31 @@ class RobotsMetaParser(HTMLParser):
         self.main_count = 0
         self.block_order: list[str] = []
         self.block_fields: dict[str, set[str]] = {}
+        self.block_field_counts: dict[str, dict[str, int]] = {}
+        self.block_field_text: dict[str, dict[str, str]] = {}
         self.block_widths: dict[str, str | None] = {}
         self._block_stack: list[str | None] = []
+        self._field_stack: list[str | None] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attributes = dict(attrs)
         parent_block = self._block_stack[-1] if self._block_stack else None
+        parent_field = self._field_stack[-1] if self._field_stack else None
         block_id = attributes.get("data-homepage-block") or parent_block
         declared_block = attributes.get("data-homepage-block")
-        field_id = attributes.get("data-homepage-field")
+        declared_field = attributes.get("data-homepage-field")
+        field_id = declared_field or parent_field
         if declared_block:
             self.block_order.append(declared_block)
             self.block_fields.setdefault(declared_block, set())
             self.block_widths[declared_block] = attributes.get("data-block-width")
-        if block_id and field_id:
+        if block_id and declared_field:
             self.block_fields.setdefault(block_id, set()).add(field_id)
+            counts = self.block_field_counts.setdefault(block_id, {})
+            counts[field_id] = counts.get(field_id, 0) + 1
         if tag not in self.VOID_TAGS:
             self._block_stack.append(block_id)
+            self._field_stack.append(field_id)
         if tag == "meta" and attributes.get("name") == "robots":
             self.content = attributes.get("content")
         if tag == "img" and attributes.get("src"):
@@ -79,6 +88,14 @@ class RobotsMetaParser(HTMLParser):
     def handle_endtag(self, tag: str) -> None:
         if tag not in self.VOID_TAGS and self._block_stack:
             self._block_stack.pop()
+            self._field_stack.pop()
+
+    def handle_data(self, data: str) -> None:
+        block_id = self._block_stack[-1] if self._block_stack else None
+        field_id = self._field_stack[-1] if self._field_stack else None
+        if block_id and field_id:
+            fields = self.block_field_text.setdefault(block_id, {})
+            fields[field_id] = fields.get(field_id, "") + data
 
 
 def test_homepage_recognition_preview_is_public_and_noindex() -> None:
@@ -194,10 +211,15 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Что случилось с Аней?",
         "Частые вопросы",
         "Вы долистали сайт до конца…",
-        "Лаааааадно...",
-        "Вот вам еще отзывов!",
+        "Вместо случайных попыток — понятная последовательность действий",
+        "Как проходит Мастер-класс",
+        "Больше отзывов",
+        "Всего через 3 недели здесь может быть ваш отзыв",
     ):
         assert marker in response.text
+    assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
+    assert INTENSIVE_PUBLIC_CTA["button_label"] in response.text
+    assert "{{INTENSIVE_PUBLIC_CTA_" not in response.text
     assert '<body data-page-theme="blue-mist">' in response.text
     assert "page-theme-toolbar" not in response.text
     assert 'id="site-footer" data-edabalans-site-footer="public"' in response.text
@@ -244,7 +266,14 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert parser.block_order == [block["id"] for block in block_map["blocks"]]
     for block in block_map["blocks"]:
         assert parser.block_fields[block["id"]] == set(block["fields"])
+        assert parser.block_field_counts.get(block["id"], {}) == {
+            field: 1 for field in block["fields"]
+        }
         assert parser.block_widths[block["id"]] == block["width"]
+        assert block["selector"] == f'[data-homepage-block="{block["id"]}"]'
+    assert [block["order"] for block in block_map["blocks"]] == list(
+        range(10, 10 * (len(block_map["blocks"]) + 1), 10)
+    )
     assert "document.body.dataset.pricingTimer" not in response.text
     assert "document.body.dataset.pricingFill" not in response.text
     assert "document.body.dataset.supportTone" in response.text
@@ -345,6 +374,94 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4"
         in response.text
     )
+
+
+def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> None:
+    response = client.get("/preview/homepage-mobile")
+    parser = RobotsMetaParser()
+    parser.feed(response.text)
+
+    for marker in (
+        "Перестаньте тратить силы, чтобы бороться с похудением.",
+        "А худеть как-то надо...",
+        "Весь день держалась — вечером сорвалась",
+        "Еда — единственное удовольствие",
+        "Вместо случайных попыток — понятная последовательность действий",
+        "Как проходит Мастер-класс",
+        "Не ждите идеального момента или идеальных условий",
+        "За моими плечами 600+ разобранных дневников питания",
+        "Хотите сначала познакомиться с моим подходом поближе?",
+        "Сомневаетесь? А вы сравните...",
+        "Всего через 3 недели здесь может быть ваш отзыв",
+    ):
+        assert marker in response.text
+    for forbidden in (
+        "Здесь будет короткий итог истории Ани.",
+        "Лаааааадно...",
+        "Вот вам еще отзывов!",
+        "COPY SLOT",
+        "DECISION",
+        "DESIGN-QUESTION",
+        "OFF-PAGE",
+        "NOTE:",
+    ):
+        assert forbidden not in response.text
+
+    expected_fields = {
+        "hero-outro": {
+            "paragraph-1": "Перестаньте тратить силы, чтобы бороться с похудением. Уделите немного времени, чтобы сделать похудение проще и не нужно было с ним бороться.",
+            "paragraph-2": "Я расскажу, какие для этого понадобятся навыки, научу, как их освоить, покажу как применять и создам вокруг вас обстановку, чтобы эти навыки прижились!",
+        },
+        "recognition-intro": {
+            "html": "Пожалуй, все хоть раз слышали эту фразу. И вообще-то похудение так и работает. Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается? А худеть как-то надо...",
+        },
+        "recognition-scene": {
+            "pain-1": "Весь день держалась — вечером сорвалась",
+            "pain-2": "Ем и так мало — вес стоит",
+            "pain-3": "Вроде похудела — вес опять вернулся",
+            "pain-4": "Еда — единственное удовольствие",
+            "pain-5": "Всё знаю — ничего не делаю...",
+        },
+        "main-argument": {
+            "title": "Вместо случайных попыток — понятная последовательность действий",
+            "text": "Одинаковая жалоба не означает одинаковую проблему. За вечерней тягой к сладкому может стоять маленький обед, привычка награждать себя после тяжёлого дня или запрет, который сам сделал сладкое навязчивым. Поэтому готовый совет без дневника может попасть вообще не туда.",
+        },
+        "inside": {
+            "title": "Как проходит Мастер-класс",
+            "steps": "Разбираете один конкретный вопрос. Смотрите не на идеальное чужое меню, а на собственное питание. Проверяете рацион с помощью инструментов Мастер-класса. Фиксируете вывод, применяете его и переходите к следующему шагу.",
+            "callout": "Вы не просто смотрите уроки. Каждый материал заканчивается действием, которое вы применяете к своему питанию.",
+        },
+        "anya-outro": {
+            "paragraph-1": "Не ждите идеального момента или идеальных условий, когда и на работе вдруг не будет стресса, и дома куда-то пропадут все домашние дела.",
+            "paragraph-2": "Мы оба знаем, что этого не произойдет в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.",
+        },
+        "free-intensive": {
+            "title": "Хотите сначала познакомиться с моим подходом поближе?",
+            "text": "Я записал бесплатный интенсив в четырёх частях. В нём мы начинаем с дневника питания и последовательно разбираемся, какие изменения действительно нужны вам.",
+            "cta": INTENSIVE_PUBLIC_CTA["button_label"],
+        },
+        "pricing-experience": {
+            "text": "За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций. Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!",
+        },
+        "final-cta": {
+            "comparison-title": "Сомневаетесь? А вы сравните...",
+        },
+        "reviews-after-cat": {
+            "title": "Больше отзывов",
+            "text": "Всего через 3 недели здесь может быть ваш отзыв о том, как вы приобрели комфорт в похудении и сменили пару размеров одежды. Присоединяйтесь!",
+        },
+    }
+    for block_id, fields in expected_fields.items():
+        actual = parser.block_field_text[block_id]
+        for field_id, expected in fields.items():
+            assert " ".join(actual[field_id].split()) == expected
+    assert 'data-homepage-field="pain-6" aria-label="Я так больше не хочу."' in response.text
+
+    approach_path = Path(__file__).parents[2] / "content/public-site/homepage/approach.md"
+    approach = approach_path.read_text(encoding="utf-8")
+    assert "Вместо ПП — **пищевые привычки**" in approach
+    assert "Вместо подсчета калорий — **дневник по фото**" in approach
+    assert "ПП-рецептов" not in approach
 
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:

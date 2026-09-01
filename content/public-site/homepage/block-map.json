@@ -61,9 +61,9 @@
       "label": "Текст под видео",
       "selector": "[data-homepage-block=\"hero-outro\"]",
       "width": "content",
-      "fields": ["text"],
+      "fields": ["paragraph-1", "paragraph-2"],
       "source": "backend/app/static/homepage-preview/mobile.html",
-      "status": "placeholder"
+      "status": "accepted"
     },
     {
       "order": 60,
@@ -89,7 +89,7 @@
       "label": "Человечек и облачка",
       "selector": "[data-homepage-block=\"recognition-scene\"]",
       "width": "content",
-      "fields": [],
+      "fields": ["pain-1", "pain-2", "pain-3", "pain-4", "pain-5", "pain-6"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
@@ -104,6 +104,15 @@
     },
     {
       "order": 100,
+      "id": "main-argument",
+      "label": "Основной аргумент о последовательности действий",
+      "selector": "[data-homepage-block=\"main-argument\"]",
+      "width": "content",
+      "fields": ["title", "text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 110,
       "id": "before-after",
       "label": "До и после Мастер-класса",
       "selector": "[data-homepage-block=\"before-after\"]",
@@ -115,7 +124,16 @@
       ]
     },
     {
-      "order": 110,
+      "order": 120,
+      "id": "inside",
+      "label": "Как проходит Мастер-класс",
+      "selector": "[data-homepage-block=\"inside\"]",
+      "width": "content",
+      "fields": ["title", "steps", "callout"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 130,
       "id": "anya-heading",
       "label": "История: что случилось с Аней",
       "selector": "[data-homepage-block=\"anya-heading\"]",
@@ -124,7 +142,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 120,
+      "order": 140,
       "id": "anya-intro",
       "label": "Текст перед историей Ани",
       "selector": "[data-homepage-block=\"anya-intro\"]",
@@ -133,7 +151,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 130,
+      "order": 150,
       "id": "anya-slider",
       "label": "Слайдер истории Ани",
       "selector": "[data-homepage-block=\"anya-slider\"]",
@@ -142,17 +160,17 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 140,
+      "order": 160,
       "id": "anya-outro",
       "label": "Текст после истории Ани",
       "selector": "[data-homepage-block=\"anya-outro\"]",
       "width": "story",
-      "fields": ["text"],
+      "fields": ["paragraph-1", "paragraph-2"],
       "source": "backend/app/static/homepage-preview/mobile.html",
-      "status": "placeholder"
+      "status": "accepted"
     },
     {
-      "order": 150,
+      "order": 170,
       "id": "pricing-heading",
       "label": "Плашка «Выберите тариф»",
       "selector": "[data-homepage-block=\"pricing-heading\"]",
@@ -161,7 +179,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 160,
+      "order": 180,
       "id": "pricing-cards",
       "label": "Тарифы",
       "selector": "[data-homepage-block=\"pricing-cards\"]",
@@ -171,7 +189,16 @@
       "api": "/api/pricing/site/preview"
     },
     {
-      "order": 170,
+      "order": 190,
+      "id": "pricing-experience",
+      "label": "Опыт внутри тарифного блока",
+      "selector": "[data-homepage-block=\"pricing-experience\"]",
+      "width": "content",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 200,
       "id": "pricing-trust",
       "label": "Доступ и гарантия",
       "selector": "[data-homepage-block=\"pricing-trust\"]",
@@ -180,7 +207,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 180,
+      "order": 210,
       "id": "pricing-program",
       "label": "Программа по дням",
       "selector": "[data-homepage-block=\"pricing-program\"]",
@@ -189,7 +216,19 @@
       "source": "content/public-site/homepage/*.md"
     },
     {
-      "order": 190,
+      "order": 220,
+      "id": "free-intensive",
+      "label": "Переход к бесплатному интенсиву",
+      "selector": "[data-homepage-block=\"free-intensive\"]",
+      "width": "content",
+      "fields": ["title", "text", "cta"],
+      "source": [
+        "backend/app/static/homepage-preview/mobile.html",
+        "backend/app/intensive_public_cta.py"
+      ]
+    },
+    {
+      "order": 230,
       "id": "faq",
       "label": "Частые вопросы",
       "selector": "[data-homepage-block=\"faq\"]",
@@ -199,25 +238,25 @@
       "api": "/api/public-site/content/faq"
     },
     {
-      "order": 200,
+      "order": 240,
       "id": "final-cta",
       "label": "Финальный призыв",
       "selector": "[data-homepage-block=\"final-cta\"]",
       "width": "content",
-      "fields": ["sticker", "line-1", "line-2", "line-3", "contact-copy"],
+      "fields": ["sticker", "line-1", "line-2", "line-3", "comparison-title", "contact-copy"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 210,
+      "order": 250,
       "id": "reviews-after-cat",
       "label": "Переход к дополнительным отзывам после кота",
       "selector": "[data-homepage-block=\"reviews-after-cat\"]",
       "width": "content",
-      "fields": [],
+      "fields": ["title", "text"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 220,
+      "order": 260,
       "id": "footer",
       "label": "Общий публичный подвал",
       "selector": "[data-homepage-block=\"footer\"]",
