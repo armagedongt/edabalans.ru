@@ -83,6 +83,14 @@ class RobotsMetaParser(HTMLParser):
 
 def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     response = client.get("/preview/homepage-recognition")
+    source_path = (
+        Path(__file__).resolve().parents[1]
+        / "app"
+        / "static"
+        / "homepage-preview"
+        / "mobile.html"
+    )
+    source = source_path.read_text(encoding="utf-8")
 
     assert response.status_code == 200
     assert response.headers["content-type"].startswith("text/html")
@@ -95,8 +103,35 @@ def test_homepage_recognition_preview_is_public_and_noindex() -> None:
         "noindex",
         "nofollow",
     }
-    assert "/preview/homepage-recognition/crying-character.png" in parser.image_sources
+    assert "/preview/homepage-mobile/crying-character.png" in parser.image_sources
+    assert parser.main_count == 1
+    assert parser.iframe_sources == set()
+    assert parser.image_sources == {
+        "/preview/homepage-mobile/crying-character.png"
+    }
+    assert "data-public-faq" not in response.text
+    assert 'id="site-footer"' not in response.text
+    assert 'data-price-code=' not in response.text
     assert "data-recognition" in response.text
+    assert 'data-library-block="recognition"' in response.text
+    assert 'data-library-status="accepted"' in response.text
+    assert "data-recognition-followup" in response.text
+    assert "--recognition-media-gap:clamp(40px,6vw,56px)" in response.text
+    assert "height:calc(var(--scene-height) + var(--animation-distance))" in response.text
+    assert "Math.max(maxPainHeight+18,((laneHeight+maxPainHeight)/2)+8)" in response.text
+    assert "(viewportHeight/2)-(field.offsetTop+(field.offsetHeight/2))" in response.text
+    assert ".pain:not(.pain--final){width:1px;height:1px" in response.text
+    assert "fetch('/api/public-site/content/approach'" in response.text
+    for fragment_name in (
+        "recognition",
+        "recognition-script",
+        "public-content-script",
+    ):
+        start_marker = f"<!-- library:{fragment_name}:start -->"
+        end_marker = f"<!-- library:{fragment_name}:end -->"
+        canonical_fragment = source.split(start_marker, 1)[1].split(end_marker, 1)[0]
+        assert canonical_fragment.strip() in response.text
+    assert not source_path.with_name("recognition.html").exists()
 
 
 def test_homepage_recognition_preview_image_is_public_and_noindex() -> None:

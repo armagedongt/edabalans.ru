@@ -319,7 +319,7 @@ def test_app_visual_catalog_is_public_noindex_preview() -> None:
     assert "button.addEventListener('click'" in response.text
     assert "localStorage.setItem('edabalans-visual-catalog-theme'" in response.text
     assert "URLSearchParams(window.location.search).get('theme')" in response.text
-    for number in range(1, 12):
+    for number in range(1, 13):
         assert f'id="block-{number:02d}"' in response.text
     numbered_items = {
         1: 10,
@@ -333,6 +333,7 @@ def test_app_visual_catalog_is_public_noindex_preview() -> None:
         9: 3,
         10: 1,
         11: 6,
+        12: 1,
     }
     for block, last_item in numbered_items.items():
         for item in range(1, last_item + 1):
@@ -356,6 +357,8 @@ def test_app_visual_catalog_is_public_noindex_preview() -> None:
             r'<p class="application-note">[^<]{40,}</p>',
             article.group(0),
         )
+    assert 'data-library-pattern="homepage-recognition"' in response.text
+    assert 'href="/preview/homepage-recognition"' in response.text
     assert client.get("/preview/app-visual-catalog/").status_code == 200
 
 

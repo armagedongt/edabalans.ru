@@ -949,6 +949,7 @@
     </section>
 
     </div>
+    <!-- library:recognition:start -->
     <div class="chain-block chain-block--recognition"><section class="recognition" data-recognition>
       <div class="recognition__scene">
         <section class="argument">
@@ -978,6 +979,7 @@
       <div class="recognition__spacer" aria-hidden="true"></div>
     </section>
   </div>
+    <!-- library:recognition:end -->
     <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
   <div
     class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
@@ -2469,6 +2471,7 @@
     })();
 
   </script>
+  <!-- library:recognition-script:start -->
   <script>
 
     (()=>{
@@ -2535,6 +2538,7 @@
     })();
 
   </script>
+  <!-- library:recognition-script:end -->
   <script>
 
   (() => {
@@ -2629,12 +2633,9 @@
       syncControls();
     })();
   </script>
+  <!-- library:public-content-script:start -->
   <script>
     (() => {
-      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      })[character]);
-
       async function loadApproach() {
         const shell = document.querySelector('[data-public-content="approach"] .method-transition__inner');
         if (!shell) return;
@@ -2670,6 +2671,16 @@
           shell.textContent = 'Текст временно недоступен.';
         }
       }
+
+      loadApproach();
+    })();
+  </script>
+  <!-- library:public-content-script:end -->
+  <script>
+    (() => {
+      const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      })[character]);
 
       function bindFaq(list) {
         list.querySelectorAll('.faq-question').forEach((button) => button.addEventListener('click', () => {
@@ -2709,7 +2720,6 @@
         }
       }
 
-      loadApproach();
       loadFaq();
     })();
   </script>
