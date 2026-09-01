@@ -714,6 +714,36 @@
         linear-gradient(180deg,#fbfdff 0%,#f3faff 45%,#e7f7ff 100%);
       color:#17212b;
     }
+    body[data-bg-theme="orange-whisper"]{
+      background:
+        radial-gradient(ellipse 68% 11% at 2% 8%,rgba(63,179,247,.18),transparent 70%),
+        radial-gradient(ellipse 72% 12% at 102% 20%,rgba(255,121,64,.28),transparent 68%),
+        radial-gradient(ellipse 76% 12% at -2% 43%,rgba(255,170,97,.23),transparent 69%),
+        radial-gradient(ellipse 76% 12% at 102% 63%,rgba(58,176,241,.15),transparent 70%),
+        radial-gradient(ellipse 76% 12% at -2% 83%,rgba(255,117,60,.26),transparent 69%),
+        linear-gradient(180deg,#fffdfb 0%,#fff8f4 24%,#f7fcff 48%,#fff9f5 73%,#f2faff 100%);
+    }
+    body[data-bg-theme="orange-balance"]{
+      background:
+        radial-gradient(ellipse 70% 11% at -2% 7%,rgba(38,171,246,.22),transparent 68%),
+        radial-gradient(ellipse 66% 10% at 103% 17%,rgba(255,104,47,.38),transparent 66%),
+        radial-gradient(ellipse 70% 11% at -3% 37%,rgba(255,155,79,.3),transparent 68%),
+        radial-gradient(ellipse 72% 11% at 103% 54%,rgba(45,174,241,.18),transparent 69%),
+        radial-gradient(ellipse 72% 11% at -3% 72%,rgba(255,126,61,.3),transparent 68%),
+        radial-gradient(ellipse 72% 11% at 103% 91%,rgba(255,97,43,.35),transparent 67%),
+        linear-gradient(180deg,#fffdfa 0%,#fff6f0 23%,#f6fbff 47%,#fff7f1 72%,#f0f9ff 100%);
+    }
+    body[data-bg-theme="orange-flare"]{
+      background:
+        radial-gradient(ellipse 62% 9% at -4% 7%,rgba(30,168,246,.24),transparent 65%),
+        radial-gradient(ellipse 54% 8% at 106% 16%,rgba(255,91,35,.48),transparent 63%),
+        radial-gradient(ellipse 58% 9% at -5% 34%,rgba(255,143,67,.38),transparent 65%),
+        radial-gradient(ellipse 61% 9% at 105% 49%,rgba(39,174,242,.21),transparent 66%),
+        radial-gradient(ellipse 57% 8% at -5% 67%,rgba(255,101,39,.43),transparent 64%),
+        radial-gradient(ellipse 59% 9% at 106% 84%,rgba(255,85,31,.46),transparent 64%),
+        radial-gradient(ellipse 54% 8% at -4% 97%,rgba(255,174,91,.31),transparent 65%),
+        linear-gradient(180deg,#fffdfa 0%,#fff5ee 22%,#f6fbff 45%,#fff5ee 70%,#eff9ff 100%);
+    }
     .homepage-chain{position:relative;display:block;min-width:0;overflow:clip;background:transparent}
     .chain-block{position:relative;z-index:1;min-width:0}
     .chain-block--before-after{padding:0 0 68px;background:transparent}
@@ -794,6 +824,16 @@
     (() => {
       const params = new URLSearchParams(location.search);
       document.body.dataset.supportTone = params.get('support') === 'green' ? 'green' : 'warm';
+      const backgroundThemes = {
+        'orange-whisper': 'Фон 1 — нежный оранжевый',
+        'orange-balance': 'Фон 2 — ярче и сбалансированно',
+        'orange-flare': 'Фон 3 — оранжевые вспышки',
+      };
+      const backgroundTheme = params.get('bg');
+      if (backgroundThemes[backgroundTheme]) {
+        document.body.dataset.bgTheme = backgroundTheme;
+        document.title = backgroundThemes[backgroundTheme];
+      }
     })();
   </script>
   <header class="desktop-header">
