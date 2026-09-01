@@ -923,7 +923,7 @@
       .chain-block--faq{padding-bottom:32px}
     }
     @media(max-width:899px){
-      #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:center}
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:left}
     }
   </style>
 </head>
@@ -1172,9 +1172,10 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intro {
-      width: 100%;
+      width: min(100%, 430px);
       margin-inline: auto;
       padding: 0 0 24px;
+      text-align: left;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
@@ -2108,6 +2109,11 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
         align-items: start;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-intro {
+        width: 100%;
+        max-width: none;
       }
 
       #edb-pricing-neurozeh-v1 .edb-pricing-plan:last-child {

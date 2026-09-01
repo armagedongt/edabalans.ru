@@ -253,6 +253,16 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         in response.text
     )
     assert (
+        "#edb-pricing-neurozeh-v1 .edb-pricing-intro {\n"
+        "      width: min(100%, 430px);"
+        in response.text
+    )
+    assert (
+        "#edb-pricing-neurozeh-v1 .edb-pricing-intro {\n"
+        "        width: 100%;\n        max-width: none;"
+        in response.text
+    )
+    assert (
         ".pain:not(.pain--final){background:rgba(255,255,255,.85);"
         "color:rgb(31,34,38);font-weight:700}"
         in response.text
