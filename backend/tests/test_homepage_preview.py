@@ -232,6 +232,17 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "fetch('/api/public-site/content/faq'" in response.text
     assert "fetch('/api/public-site/content/approach'" in response.text
     assert (
+        ".reviews-after-cat{width:min(var(--content-frame),"
+        "calc(100% - var(--page-gutter) - var(--page-gutter)))"
+        in response.text
+    )
+    assert (
+        ".pain:not(.pain--final){background:rgba(255,255,255,.85);"
+        "color:rgb(31,34,38);font-weight:700}"
+        in response.text
+    )
+    assert "box-shadow:0 2px 6px rgba(22,89,124,.31)" in response.text
+    assert (
         'data-homepage-block="recognition-scene" data-block-width="content"'
         in response.text
     )
