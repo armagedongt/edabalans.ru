@@ -221,7 +221,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Больше отзывов",
         "Всего через 3 недели здесь может быть ваш отзыв",
         "Сайт использует cookie. Продолжая, вы принимаете",
-        "обработки ПД.",
+        "обработки персональных данных.",
     ):
         assert marker in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
@@ -324,7 +324,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-cookie-notice' in response.text
     assert 'data-cookie-dismiss' in response.text
     assert '>Приемлемо</button>' in response.text
-    assert '>Политику</a> обработки ПД.' in response.text
+    assert '>Политику</a> обработки персональных данных.' in response.text
     assert "notice.hidden = true;" in response.text
     assert "background: var(--site-blue);" in response.text
     assert "background: rgba(255,255,255,.83);" in response.text
