@@ -668,7 +668,7 @@
     .recognition__person{display:block;width:100%;height:auto;filter:drop-shadow(0 18px 26px rgba(20,75,106,.11));user-select:none}
     .recognition__pains{position:absolute;z-index:8;inset:0;height:auto;clip-path:inset(0 -60px -60px -60px);pointer-events:none}
     .pain{position:absolute;top:0;width:min(calc(100% - 24px),450px);margin:0;padding:15px 18px;border:0;border-radius:19px;background:rgba(255,255,255,.94);color:rgba(31,34,38,.86);box-shadow:0 7px 16px rgba(22,89,124,.10);backdrop-filter:blur(10px);font-size:18px;font-weight:500;line-height:1.45;letter-spacing:-.018em;opacity:0;will-change:transform,opacity}
-    .pain:not(.pain--final){background:rgba(255,255,255,.90);color:rgb(31,34,38);font-weight:700}
+    .pain:not(.pain--final){background:rgba(255,255,255,1);color:rgb(31,34,38);font-weight:700}
     html[data-cloud-shadow="hard"] .pain:not(.pain--final){box-shadow:0 2px 6px rgba(22,89,124,.31)}
     .pain::after{position:absolute;right:22px;bottom:-9px;width:18px;height:14px;border-radius:0 0 4px 0;background:inherit;clip-path:polygon(0 0,100% 0,100% 100%);content:""}
     .pain:nth-child(odd){left:12px}
@@ -896,6 +896,17 @@
     .inside-gallery__item:hover,.inside-gallery__item:focus-visible{box-shadow:0 20px 34px -22px rgba(20,92,138,.62);transform:translateY(-2px);outline:3px solid rgba(38,175,255,.42);outline-offset:3px}
     .inside-gallery__item img{display:block;width:100%;height:auto;background:#fff}
     .method-proof{padding-top:var(--space-section);padding-bottom:0}
+    .method-proof__link{display:inline;padding:0;border:0;background:transparent;color:var(--site-blue);font:inherit;font-weight:800;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+    html.method-overlay--locked,html.method-overlay--locked body{overflow:hidden}
+    .method-overlay{position:fixed;z-index:1200;inset:0;display:grid;place-items:center;padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
+    .method-overlay[hidden]{display:none}
+    .method-overlay__backdrop{position:absolute;inset:0;background:rgba(14,35,51,.48);backdrop-filter:blur(7px)}
+    .method-overlay__panel{position:relative;width:min(100%,760px);max-height:calc(100dvh - 28px);overflow:auto;padding:clamp(28px,5vw,48px);border:1px solid rgba(74,159,209,.2);border-radius:clamp(20px,3vw,28px);background:#fff;box-shadow:0 22px 54px -24px rgba(20,73,108,.52);color:var(--site-ink)}
+    .method-overlay__panel h2{margin:0 0 var(--space-element);font-size:var(--type-section);line-height:1.08}
+    .method-overlay__panel h3{margin:var(--space-related) 0 var(--space-element);font-size:var(--type-subhead);line-height:1.2}
+    .method-overlay__panel p{margin:var(--space-element) 0 0;font-size:var(--type-body);line-height:1.55}
+    .method-overlay__close{position:sticky;z-index:2;top:0;float:right;width:42px;height:42px;margin:-12px -12px 4px 12px;border:0;border-radius:50%;background:#edf8fe;color:#198fd4;font-size:29px;line-height:1;cursor:pointer}
+    .method-overlay__image{display:block;width:100%;height:auto;margin:0 0 var(--space-related);border-radius:16px}
     .proof-list{display:grid;gap:18px;max-width:var(--content-reading);margin:30px 0 0;padding:0;list-style:none}
     .proof-list li{display:grid;grid-template-columns:29px minmax(0,1fr);gap:12px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58}
     .proof-list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#d7f2e0;color:#299b57;font-weight:900;content:"✓"}
@@ -909,6 +920,9 @@
     .free-intensive{padding-top:var(--space-section);padding-bottom:0}
     .free-intensive__cta{display:inline-flex;min-height:58px;align-items:center;justify-content:center;margin-top:28px;padding:0 26px;border-radius:15px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
     .free-intensive__cta:hover,.free-intensive__cta:focus-visible{box-shadow:0 20px 32px -17px rgba(17,142,216,.72);transform:translateY(-2px)}
+    .reviews-featured-heading{padding-top:var(--space-section);padding-bottom:0}
+    .reviews-voice .voice-widget + .voice-widget{margin-top:var(--space-element)}
+    .anya-story__cta{width:fit-content;margin:var(--space-related) 0 0 max(var(--page-gutter),calc((100% - var(--content-frame))/2))}
     .reviews-after-cat{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:0 auto;padding:var(--space-block) 0 0;color:#16181d}
     .reviews-after-cat h2{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
@@ -1299,22 +1313,55 @@
       </div>
     </section>
 
-    <section class="chain-block copy-section method-proof" data-homepage-block="method-proof" data-block-width="content" aria-labelledby="method-proof-title">
-      <div class="copy-section__inner">
-        <h2 id="method-proof-title" data-homepage-field="title">Мой подход</h2>
-        <p data-homepage-field="intro">Имею образование с правом ведения проф. деятельности по консультированию всех возрастных групп по вопросам здорового образа жизни, рационального и сбалансированного питания (документы и подробности). Но при этом я не являюсь медицинским специалистом и не прикидываюсь им!</p>
-        <ul class="proof-list" data-homepage-field="points">
-          <li>Не продаю БАДы, не гадаю по анализам, не навязываю промокоды и дополнительные покупки. Только польза, навыки, поддержка и ничего больше!</li>
-          <li>Все материалы основаны на рекомендациях ведущих международных организаций в области питания: USDA, СDC, NCBI, Harvard University, Health Canada, ну и наших Роспотребнадзора с Минздравом тоже. Есть ссылки и на источники и на научные исследования.</li>
-          <li>Над курсом работал методолог. Поэтому внутри не "поток сознания", а полноценная обучающая программа. Только самое необходимое и понятным человеческим языком. Тексты с навигацией, видео-уроки с тайм-кодами, без пауз и ненужных отвлечений.</li>
-        </ul>
+    <section class="chain-block copy-section experience-proof" data-homepage-block="experience-proof" data-block-width="content">
+      <div class="copy-section__inner" data-homepage-field="text">
+        <p>За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций.</p>
+        <p>Мы с вами хоть еще и не знакомы, но я уже точно встречал и решил проблемы которые вам сейчас мучают или только ждут впереди!</p>
+        <p>Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!</p>
       </div>
     </section>
 
+    <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
+      <div class="copy-section__inner">
+        <h2 id="free-intensive-title" data-homepage-field="title">Есть сомнения?</h2>
+        <p data-homepage-field="paragraph-1">Если вы ещё не понимаете, почему это именно то, что нужно вам для успешного похудения, и хотите познакомиться с моим подходом поближе — я записал бесплатный интенсив в четырёх частях «Последнее похудение».</p>
+        <p data-homepage-field="paragraph-2"><strong>Там я рассказываю, как должна выглядеть история адекватного похудения от А до Я!</strong></p>
+        <a class="free-intensive__cta" data-homepage-field="cta" href="{{INTENSIVE_PUBLIC_CTA_DESTINATION}}">Открыть бесплатный интенсив</a>
+      </div>
+    </section>
+    <section class="chain-block copy-section reviews-featured-heading" data-homepage-block="reviews-featured-heading" data-block-width="content">
+      <div class="copy-section__inner"><h2 data-homepage-field="title">Почитайте, что пишут те, кто уже прошёл Мастер-класс</h2></div>
+    </section>
     <!-- library:reviews-voice:start -->
-    <section class="reviews-voice" aria-label="Голосовой отзыв" data-homepage-block="reviews-voice" data-block-width="content">
-      <article class="voice-widget" data-voice-widget data-state="paused">
+    <section class="reviews-voice" aria-label="Голосовые отзывы" data-block-width="content">
+      <article class="voice-widget" data-homepage-block="reviews-voice-1" data-block-width="content" data-voice-widget data-state="paused">
         <input id="voice-review-file" type="file" accept="audio/*" data-voice-file hidden>
+        <button class="voice-widget__avatar" type="button" data-voice-upload aria-label="Загрузить другой аудиофайл" title="Загрузить другой аудиофайл">
+          <img src="/blog/assets/favicon-test-face.png" alt="" data-homepage-field="avatar">
+        </button>
+        <div class="voice-widget__bubble-shadow">
+          <div class="voice-widget__bubble">
+            <div class="voice-widget__author" data-homepage-field="author">Анна К.</div>
+            <div class="voice-widget__kind" data-voice-kind data-homepage-field="description" role="status" aria-live="polite">О том, что изменилось в питании и что стало проще в обычной жизни</div>
+            <div class="voice-widget__player">
+              <button class="voice-widget__play" type="button" data-voice-play aria-label="Воспроизвести голосовой отзыв">
+                <svg class="voice-widget__play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.2 5.8v12.4c0 .8.9 1.3 1.6.8l8.6-6.2a1 1 0 0 0 0-1.6L9.8 5c-.7-.5-1.6 0-1.6.8Z"/></svg>
+                <svg class="voice-widget__pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM14 5h4v14h-4z"/></svg>
+              </button>
+              <div class="voice-widget__wave" data-voice-wave>
+                <svg preserveAspectRatio="none" aria-hidden="true"></svg>
+                <svg class="voice-widget__wave-played" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <input class="voice-widget__seek" type="range" min="0" max="1000" value="0" step="78" data-voice-seek aria-label="Позиция воспроизведения" aria-valuetext="0:00 из 0:13" disabled>
+              </div>
+              <div class="voice-widget__meta"><span data-voice-current>0:00</span><span class="voice-widget__meta-separator">/</span><span data-voice-duration>0:13</span></div>
+            </div>
+          </div>
+        </div>
+        <audio class="voice-widget__audio" preload="metadata" data-voice-audio></audio>
+      </article>
+
+      <article class="voice-widget" data-homepage-block="reviews-voice-2" data-block-width="content" data-voice-widget data-state="paused">
+        <input id="voice-review-file-2" type="file" accept="audio/*" data-voice-file hidden>
         <button class="voice-widget__avatar" type="button" data-voice-upload aria-label="Загрузить другой аудиофайл" title="Загрузить другой аудиофайл">
           <img src="/blog/assets/favicon-test-face.png" alt="" data-homepage-field="avatar">
         </button>
@@ -1350,59 +1397,41 @@
     </section>
     <!-- library:reviews-featured:end -->
 
-    <section class="chain-block copy-section experience-proof" data-homepage-block="experience-proof" data-block-width="content">
-      <div class="copy-section__inner" data-homepage-field="text">
-        <p>За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций.</p>
-        <p>Мы с вами хоть еще и не знакомы, но я уже точно встречал и решил проблемы которые вам сейчас мучают или только ждут впереди!</p>
-        <p>Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!</p>
+    <section class="chain-block copy-section method-proof" data-homepage-block="method-proof" data-block-width="content" aria-labelledby="method-proof-title">
+      <div class="copy-section__inner">
+        <h2 id="method-proof-title" data-homepage-field="title">О моём подходе</h2>
+        <ul class="proof-list" data-homepage-field="points">
+          <li><span><strong>Я не являюсь медицинским специалистом и не прикидываюсь им!</strong> Не ставлю диагнозы, не лечу заболевания, не продаю БАДы, не гадаю по анализам и не навязываю промокоды на всякую ерунду.</span></li>
+          <li><span>Я — тренер по питанию. Моя задача — помочь вам сделать питание сбалансированным в условиях вашей повседневности и навести порядок в пищевых привычках, а также в поведении вокруг еды. Соответствующее образование — имеется. <button class="method-proof__link" type="button" data-method-overlay-open="education">Подробнее</button></span></li>
+          <li><span>В материалах Мастер-класса я не несу отсебятину. В них есть ссылки на научные исследования и современные рекомендации профильных организаций в сфере питания. <button class="method-proof__link" type="button" data-method-overlay-open="sources">Каких? ↗</button></span></li>
+          <li><span>Моя основная задача во время Мастер-класса — сделать так, чтобы вы перешли от чтения полезных материалов к их применению.</span></li>
+        </ul>
       </div>
     </section>
-
-    <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
-      <div class="anya-story">
-        <header class="anya-story__header" data-homepage-block="anya-heading" data-block-width="story">
-          <span class="anya-story__kicker" data-homepage-field="kicker">ИСТОРИЯ</span>
-          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок">
-            <span class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true"><span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span></span>
-            <span class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true"><span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span></span>
-            <span class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i></span></span>
-          </span></h2>
-          <p data-homepage-block="anya-intro" data-homepage-field="text" data-block-width="story">Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
-        </header>
-        <div class="anya-story__slider" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="story">
-          <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
-            <div class="anya-story__track">
-            <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
-              <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-            </article>
-            <figure class="anya-slide anya-slide--image">
-              <img src="/preview/homepage-mobile/weight-loss-before-masterclass.svg" alt="Временная заглушка для фотографии Ани до участия">
-              <figcaption>Фото до — заменить исходным материалом</figcaption>
-            </figure>
-            <figure class="anya-slide anya-slide--image">
-              <img src="/preview/homepage-mobile/weight-loss-after-masterclass.svg" alt="Временная заглушка для фотографии Ани после участия">
-              <figcaption>Фото после — заменить исходным материалом</figcaption>
-            </figure>
-            <figure class="anya-slide anya-slide--image">
-              <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Временная заглушка для скриншота или фотографии">
-              <figcaption>Здесь будет переписка, тарелка или соревнование</figcaption>
-            </figure>
-            <article class="anya-slide anya-slide--ending">
-              <span>Продолжение истории</span>
-              <strong>Бег, соревнования и тот самый триатлон</strong>
-              <p>Финальный текст появится после редакторской сборки реальных материалов.</p>
-            </article>
-            </div>
-          </div>
-          <div class="anya-story__side-controls" aria-label="Переключение слайдов по краям">
-            <button class="anya-story__arrow anya-story__arrow--prev anya-story__side-arrow anya-story__side-arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
-            <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
-          </div>
-        </div>
-        <div class="anya-story__after" data-homepage-block="anya-outro" data-block-width="story"><p data-homepage-field="paragraph-1">Не ждите идеального момента или идеальных условий, когда и на работе вдруг не будет стресса, и дома куда-то пропадут все домашние дела.</p><p data-homepage-field="paragraph-2">Мы оба знаем, что этого не произойдет в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.</p></div>
-      </div>
-    </section>
-
+    <div class="method-overlay" data-method-overlay="education" hidden>
+      <div class="method-overlay__backdrop" data-method-overlay-close></div>
+      <section class="method-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="education-overlay-title" tabindex="-1">
+        <button class="method-overlay__close" type="button" data-method-overlay-close aria-label="Закрыть">×</button>
+        <img class="method-overlay__image" src="https://optim.tildacdn.com/tild3465-3863-4736-a239-383937356632/-/format/webp/image.png.webp" alt="Документы об образовании Сергея Воронцова">
+        <h2 id="education-overlay-title">Моё образование</h2>
+        <p>У меня есть дополнительное профессиональное образование. Я прошёл профессиональную переподготовку по программе «Фитнес-нутрициолог» объёмом 340 часов.</p>
+        <p>Диплом № 342419695163, регистрационный номер 1092, предоставляет право на профессиональную деятельность в сфере консультирования по вопросам здорового образа жизни, рационального и сбалансированного питания людей разных возрастных групп.</p>
+        <p>Сертификат № 10900 подтверждает компетенции в области планирования и реализации мероприятий по физическому воспитанию населения.</p>
+        <h3>Чем медицинский специалист в сфере питания отличается от немедицинского?</h3>
+        <p>Медицинский специалист работает с людьми с заболеваниями: диагностирует и лечит заболевания, назначает лечение и даёт медицинские рекомендации.</p>
+        <p>Немедицинский специалист помогает с поведенческими аспектами реализации уже имеющихся рекомендаций врача и консультирует относительно здоровых людей по вопросам питания и здорового образа жизни — так, чтобы им потом не пришлось обращаться уже к медицинским специалистам.</p>
+        <p>Если какой-то ваш вопрос требует врача или другого специалиста — я так прямо об этом и говорю.</p>
+      </section>
+    </div>
+    <div class="method-overlay" data-method-overlay="sources" hidden>
+      <div class="method-overlay__backdrop" data-method-overlay-close></div>
+      <section class="method-overlay__panel" role="dialog" aria-modal="true" aria-labelledby="sources-overlay-title" tabindex="-1">
+        <button class="method-overlay__close" type="button" data-method-overlay-close aria-label="Закрыть">×</button>
+        <h2 id="sources-overlay-title">Источники материалов</h2>
+        <p>Среди источников — рекомендации USDA, CDC, Health Canada, Роспотребнадзора и Минздрава, образовательные материалы Harvard University, а также научные публикации, доступные через PubMed/NCBI.</p>
+        <p>В конце большинства материалов внутри Мастер-класса есть список использованных источников, с которым вы можете ознакомиться.</p>
+      </section>
+    </div>
     <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/pricing/site/preview-checkout" data-tilda-cart-url="https://похудение-это-есть.рф/">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
@@ -2805,13 +2834,52 @@
   </script>
 </div>
 </section>
-    <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
-      <div class="copy-section__inner">
-        <h2 id="free-intensive-title" data-homepage-field="title">Хотите познакомиться с моим подходом поближе?</h2>
-        <p data-homepage-field="text">Я записал бесплатный интенсив в четырёх частях «Последнее похудение», где я рассказываю как должна выглядеть история адекватного и успешного похудения от А до Я!</p>
-        <a class="free-intensive__cta" data-homepage-field="cta" href="{{INTENSIVE_PUBLIC_CTA_DESTINATION}}">{{INTENSIVE_PUBLIC_CTA_LABEL}}</a>
+    <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
+      <div class="anya-story">
+        <header class="anya-story__header" data-homepage-block="anya-heading" data-block-width="story">
+          <span class="anya-story__kicker" data-homepage-field="kicker">ИСТОРИЯ</span>
+          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок">
+            <span class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true"><span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span></span>
+            <span class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true"><span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span></span>
+            <span class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i></span></span>
+          </span></h2>
+          <p data-homepage-block="anya-intro" data-homepage-field="text" data-block-width="story">Листайте вбок — видео продолжит идти, пока вы смотрите историю.</p>
+        </header>
+        <div class="anya-story__slider" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="story">
+          <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
+            <div class="anya-story__track">
+            <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
+              <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </article>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/weight-loss-before-masterclass.svg" alt="Временная заглушка для фотографии Ани до участия">
+              <figcaption>Фото до — заменить исходным материалом</figcaption>
+            </figure>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/weight-loss-after-masterclass.svg" alt="Временная заглушка для фотографии Ани после участия">
+              <figcaption>Фото после — заменить исходным материалом</figcaption>
+            </figure>
+            <figure class="anya-slide anya-slide--image">
+              <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Временная заглушка для скриншота или фотографии">
+              <figcaption>Здесь будет переписка, тарелка или соревнование</figcaption>
+            </figure>
+            <article class="anya-slide anya-slide--ending">
+              <span>Продолжение истории</span>
+              <strong>Бег, соревнования и тот самый триатлон</strong>
+              <p>Финальный текст появится после редакторской сборки реальных материалов.</p>
+            </article>
+            </div>
+          </div>
+          <div class="anya-story__side-controls" aria-label="Переключение слайдов по краям">
+            <button class="anya-story__arrow anya-story__arrow--prev anya-story__side-arrow anya-story__side-arrow--prev" type="button" data-anya-prev aria-label="Предыдущий слайд"></button>
+            <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
+          </div>
+        </div>
+        <div class="anya-story__after" data-homepage-block="anya-outro" data-block-width="story"><p data-homepage-field="paragraph-1">Не ждите идеального момента или идеальных условий, когда и на работе вдруг не будет стресса, и дома куда-то пропадут все домашние дела.</p><p data-homepage-field="paragraph-2">Мы оба знаем, что этого не произойдет в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.</p></div>
+        <a class="free-intensive__cta anya-story__cta" data-homepage-block="anya-cta" data-homepage-field="cta" data-block-width="story" href="#pricing">Начать прямо сейчас</a>
       </div>
     </section>
+
     <section class="chain-block copy-section author-section" data-homepage-block="author" data-block-width="content" aria-labelledby="author-title">
       <div class="copy-section__inner author-section__layout">
         <figure class="author-section__image" data-homepage-field="media"><img src="/blog/assets/sergey-author.png" alt="Сергей Воронцов: изменение веса и занятия спортом" loading="lazy"></figure>
@@ -3379,8 +3447,52 @@
     })();
 
     (() => {
-      const widget = document.querySelector('[data-voice-widget]');
-      if (!widget) return;
+      const overlays = [...document.querySelectorAll('[data-method-overlay]')];
+      const triggers = [...document.querySelectorAll('[data-method-overlay-open]')];
+      if (!overlays.length || !triggers.length) return;
+      let activeOverlay = null;
+      let previousFocus = null;
+      const close = () => {
+        if (!activeOverlay) return;
+        activeOverlay.hidden = true;
+        activeOverlay = null;
+        document.documentElement.classList.remove('method-overlay--locked');
+        previousFocus?.focus();
+      };
+      triggers.forEach((trigger) => trigger.addEventListener('click', () => {
+        const overlay = overlays.find((item) => item.dataset.methodOverlay === trigger.dataset.methodOverlayOpen);
+        if (!overlay) return;
+        previousFocus = trigger;
+        activeOverlay = overlay;
+        overlay.hidden = false;
+        document.documentElement.classList.add('method-overlay--locked');
+        overlay.querySelector('.method-overlay__panel')?.focus();
+      }));
+      overlays.forEach((overlay) => overlay.querySelectorAll('[data-method-overlay-close]').forEach((control) => control.addEventListener('click', close)));
+      document.addEventListener('keydown', (event) => {
+        if (!activeOverlay) return;
+        if (event.key === 'Escape') {
+          close();
+          return;
+        }
+        if (event.key !== 'Tab') return;
+        const controls = [...activeOverlay.querySelectorAll('a[href],button:not([disabled]),[tabindex]:not([tabindex="-1"])')]
+          .filter((control) => control.offsetParent !== null);
+        if (!controls.length) return;
+        const current = controls.indexOf(document.activeElement);
+        event.preventDefault();
+        if (current === -1) {
+          controls[event.shiftKey ? controls.length - 1 : 0].focus();
+          return;
+        }
+        controls[(current + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
+      });
+    })();
+
+    (() => {
+      const widgets = [...document.querySelectorAll('[data-voice-widget]')];
+      if (!widgets.length) return;
+      widgets.forEach((widget) => {
       const audio = widget.querySelector('[data-voice-audio]');
       const playButton = widget.querySelector('[data-voice-play]');
       const uploadButton = widget.querySelector('[data-voice-upload]');
@@ -3515,6 +3627,9 @@
       });
       audio.addEventListener('timeupdate', updateProgress);
       audio.addEventListener('play', () => {
+        document.querySelectorAll('[data-voice-audio]').forEach((otherAudio) => {
+          if (otherAudio !== audio && !otherAudio.paused) otherAudio.pause();
+        });
         widget.dataset.state = 'playing';
         playButton.setAttribute('aria-label', 'Приостановить голосовой отзыв');
       });
@@ -3536,6 +3651,7 @@
       addEventListener('beforeunload', () => {
         if (activeObjectUrl) URL.revokeObjectURL(activeObjectUrl);
       }, { once: true });
+      });
     })();
 
     (() => {

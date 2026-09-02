@@ -239,7 +239,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         in response.text
     )
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
-    assert INTENSIVE_PUBLIC_CTA["button_label"] in response.text
+    assert "Открыть бесплатный интенсив" in response.text
     assert "{{INTENSIVE_PUBLIC_CTA_" not in response.text
     assert '<body data-page-theme="blue-mist">' in response.text
     assert "page-theme-toolbar" not in response.text
@@ -294,7 +294,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     )
     assert "grid-column: auto;\n        grid-row: auto;" in response.text
     assert (
-        ".pain:not(.pain--final){background:rgba(255,255,255,.90);"
+        ".pain:not(.pain--final){background:rgba(255,255,255,1);"
         "color:rgb(31,34,38);font-weight:700}"
         in response.text
     )
@@ -329,11 +329,31 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "document.body.dataset.anyaHint" not in response.text
     assert "document.body.dataset.anyaControls" not in response.text
     assert "document.body.dataset.playerFrame" not in response.text
-    assert parser.block_order.index("reviews-voice") < parser.block_order.index(
-        "reviews-featured"
-    ) < parser.block_order.index("experience-proof") < parser.block_order.index(
-        "anya-heading"
-    )
+    expected_flow = [
+        "inside-gallery",
+        "experience-proof",
+        "free-intensive",
+        "reviews-featured-heading",
+        "reviews-voice-1",
+        "reviews-voice-2",
+        "reviews-featured",
+        "method-proof",
+        "pricing-heading",
+        "pricing-cards",
+        "pricing-trust",
+        "pricing-program",
+        "anya-heading",
+        "anya-intro",
+        "anya-slider",
+        "anya-outro",
+        "anya-cta",
+        "author",
+    ]
+    assert [block for block in parser.block_order if block in expected_flow] == expected_flow
+    assert response.text.count('data-voice-widget data-state="paused"') == 2
+    assert 'data-method-overlay="education"' in response.text
+    assert 'data-method-overlay="sources"' in response.text
+    assert 'href="#pricing">Начать прямо сейчас</a>' in response.text
     assert parser.block_order.index("reviews-after-cat") < parser.block_order.index(
         "reviews-wall"
     ) < parser.block_order.index("footer") < parser.block_order.index("cookie-notice")
@@ -585,6 +605,37 @@ def test_homepage_uses_one_shared_vertical_rhythm_without_stacked_section_gaps()
     assert "min-height:100vh;padding:64px var(--page-gutter) 88px" not in response.text
 
 
+def test_homepage_method_overlays_and_post_anya_cta_keep_their_public_contract() -> None:
+    response = client.get("/preview/homepage-mobile")
+
+    assert response.status_code == 200
+    for marker in (
+        "Я не являюсь медицинским специалистом и не прикидываюсь им!",
+        "Я — тренер по питанию.",
+        "USDA, CDC, Health Canada, Роспотребнадзора и Минздрава",
+        "Моё образование",
+        "Фитнес-нутрициолог",
+        "Диплом № 342419695163",
+        "Сертификат № 10900",
+    ):
+        assert marker in response.text
+    assert response.text.count('class="voice-widget"') == 2
+    assert "const widgets = [...document.querySelectorAll('[data-voice-widget]')];" in response.text
+    assert "widgets.forEach((widget) =>" in response.text
+    assert "document.documentElement.classList.add('method-overlay--locked');" in response.text
+    assert "document.documentElement.classList.remove('method-overlay--locked');" in response.text
+    assert "if (event.key !== 'Tab') return;" in response.text
+    assert "[tabindex]:not([tabindex=\"-1\"])" in response.text
+    assert "document.querySelectorAll('[data-voice-audio]').forEach((otherAudio) =>" in response.text
+    assert "if (otherAudio !== audio && !otherAudio.paused) otherAudio.pause();" in response.text
+    assert re.search(
+        r'<a class="[^"]*anya-story__cta[^"]*" '
+        r'data-homepage-block="anya-cta"[^>]*href="#pricing">'
+        r'Начать прямо сейчас</a>',
+        response.text,
+    )
+
+
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 
@@ -719,8 +770,9 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert "box-shadow:0 8px 12px -6px rgba(25,73,108,.4)" in response.text
     assert "background:linear-gradient(135deg,#ffd47d,#e8ae45)" in response.text
     assert "background:linear-gradient(135deg,#ff934f,#ffd47d)" in response.text
-    assert 'data-homepage-block="reviews-voice"' in response.text
-    assert response.text.count('class="voice-widget"') == 1
+    assert 'data-homepage-block="reviews-voice-1"' in response.text
+    assert 'data-homepage-block="reviews-voice-2"' in response.text
+    assert response.text.count('class="voice-widget"') == 2
     assert 'data-voice-audio' in response.text
     assert 'data-voice-play' in response.text
     assert 'data-voice-upload' in response.text
@@ -962,10 +1014,10 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         "Еда — единственное удовольствие",
         "Да, для похудения — нужен дефицит калорий.",
         "Вы будете вести дневник питания по фотографиям",
-        "Мой подход",
+        "О моём подходе",
         "Не ждите идеального момента или идеальных условий",
         "За моими плечами 600+ разобранных дневников питания",
-        "Хотите познакомиться с моим подходом поближе?",
+        "Есть сомнения?",
         "Обо мне",
         "Всего через три недели у вас может быть повод написать что-то подобное",
     ):
@@ -1013,9 +1065,10 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
             "paragraph-2": "Мы оба знаем, что этого не произойдет в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.",
         },
         "free-intensive": {
-            "title": "Хотите познакомиться с моим подходом поближе?",
-            "text": "Я записал бесплатный интенсив в четырёх частях «Последнее похудение», где я рассказываю как должна выглядеть история адекватного и успешного похудения от А до Я!",
-            "cta": INTENSIVE_PUBLIC_CTA["button_label"],
+            "title": "Есть сомнения?",
+            "paragraph-1": "Если вы ещё не понимаете, почему это именно то, что нужно вам для успешного похудения, и хотите познакомиться с моим подходом поближе — я записал бесплатный интенсив в четырёх частях «Последнее похудение».",
+            "paragraph-2": "Там я рассказываю, как должна выглядеть история адекватного похудения от А до Я!",
+            "cta": "Открыть бесплатный интенсив",
         },
         "author": {
             "title": "Обо мне",
