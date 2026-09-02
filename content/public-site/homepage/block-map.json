@@ -138,7 +138,7 @@
       "id": "reviews-voice",
       "label": "Голосовой отзыв перед историей Ани",
       "selector": "[data-homepage-block=\"reviews-voice\"]",
-      "width": "visual",
+      "width": "content",
       "fields": ["avatar", "author", "description"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
