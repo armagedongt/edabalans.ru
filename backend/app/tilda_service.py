@@ -31,12 +31,11 @@ from app.models import (
     PersonalAccessLink,
 )
 from app.access_service import complete_review, grant_resources
+from app.checkout_reference import checkout_reference_from_product
 
 MOSCOW = ZoneInfo("Europe/Moscow")
 SOURCE = "tilda_webhook"
 LEGACY_ALIAS_SOURCE = "google_payments_legacy"
-OFFER_CODE = re.compile(r"^EB-([0-9a-fA-F]{32})(?:\s|$)")
-SHORT_OFFER_CODE = re.compile(r"(?:^|\s)№([0-9a-fA-F]{8})(?:\s|$)")
 OFFER_RESOURCES = {
     "recipes": "ACCESS_RECIPES",
     "calories": "ACCESS_CALORIES",
@@ -75,23 +74,27 @@ def checkout_resource_codes(items: list[str], configured_codes: set[str]) -> lis
 def find_offer_checkout(
     db: Session, raw_product: str, user: User | None
 ) -> tuple[OfferCheckout | None, bool]:
-    legacy_match = OFFER_CODE.match(raw_product)
-    if legacy_match:
-        return db.get(OfferCheckout, uuid.UUID(hex=legacy_match.group(1))), True
-
-    short_match = SHORT_OFFER_CODE.search(raw_product)
-    if not short_match:
+    parsed_reference = checkout_reference_from_product(raw_product)
+    if parsed_reference is None:
         return None, False
-    if user is None:
-        return None, True
+    reference_kind, reference = parsed_reference
+    if reference_kind == "full":
+        return db.get(OfferCheckout, uuid.UUID(hex=reference)), True
 
-    prefix = short_match.group(1).lower()
+    candidate_scopes = [
+        and_(
+            OfferCheckout.user_id.is_(None),
+            OfferCheckout.checkout_kind == "public_site",
+        )
+    ]
+    if user is not None:
+        candidate_scopes.append(OfferCheckout.user_id == user.id)
     matches = [
         checkout
         for checkout in db.scalars(
-            select(OfferCheckout).where(OfferCheckout.user_id == user.id)
+            select(OfferCheckout).where(or_(*candidate_scopes))
         ).all()
-        if checkout.id.hex.startswith(prefix)
+        if checkout.id.hex.startswith(reference)
     ]
     return (matches[0] if len(matches) == 1 else None), True
 

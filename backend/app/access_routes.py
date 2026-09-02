@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-import re
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -23,6 +22,7 @@ from app.access_service import (
 )
 from app.auth import require_admin
 from app.config import Settings, get_settings
+from app.checkout_reference import tilda_order_command
 from app.database import get_db
 from app.legal_service import (
     accept_current_legal_documents,
@@ -64,10 +64,6 @@ def aware_utc(value: datetime | None) -> datetime | None:
     if value is None:
         return None
     return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
-
-
-def clean_order_name(value: str) -> str:
-    return re.sub(r"[\r\n=:]+", " ", value).strip()
 
 
 def matching_link(
@@ -349,7 +345,9 @@ def personal_link_checkout(token: str, body: LinkActionIn, db: Session = Depends
         db.add(checkout)
         db.flush()
         link.checkout_id = checkout.id
-    command = f"#order:{clean_order_name(f'EB-{checkout.id.hex} Персональное предложение')}={amount_number(checkout.amount)}"
+    command = tilda_order_command(
+        "Персональное предложение", checkout.id, checkout.amount
+    )
     db.commit()
     return {"ok": True, "cart_command": command, "expires_at": checkout.expires_at.isoformat()}
 

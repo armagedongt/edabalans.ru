@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import require_admin
 from app.config import Settings, get_settings
+from app.checkout_reference import tilda_order_command
 from app.database import get_db
 from app.models import OfferCheckout, PricingVersion
 from app.pricing_service import (
@@ -96,10 +97,6 @@ def enforce_preview_checkout_origin(request: Request) -> None:
     request_host = (request.headers.get("host") or "").split(":", 1)[0].lower()
     if origin_host != request_host:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "preview checkout origin rejected")
-
-
-def safe_order_name(value: str) -> str:
-    return re.sub(r"[\r\n=:]+", " ", value).strip()
 
 
 @router.get("/admin/api/pricing")
@@ -280,8 +277,7 @@ def create_site_checkout(
     )
     db.add(checkout)
     db.flush()
-    amount_text = format(entry.sale_amount, "f").rstrip("0").rstrip(".")
-    command = f"#order:{safe_order_name(f'EB-{checkout.id.hex} {display_name}')}={amount_text}"
+    command = tilda_order_command(display_name, checkout.id, entry.sale_amount)
     db.commit()
     return {
         "ok": True,

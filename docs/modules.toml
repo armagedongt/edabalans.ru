@@ -43,6 +43,7 @@ depends_on = ["platform.crm"]
 events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/access_routes.py", "backend/app/access_service.py",
+  "backend/app/checkout_reference.py",
   "backend/app/legal_service.py", "backend/app/pricing_routes.py",
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",

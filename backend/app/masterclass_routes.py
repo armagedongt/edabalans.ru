@@ -19,6 +19,7 @@ from app.app_service import AppAccessError, primary_email, resolve_user_for_reso
 from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
+from app.checkout_reference import tilda_order_command
 from app.database import get_db
 from app.course_material_service import published_materials
 from app.models import (
@@ -1390,14 +1391,8 @@ def offer_stage(db: Session, user: User, placement: str, *, readonly: bool = Fal
     return configured_offer_stage(db, code), current_offer
 
 
-def safe_order(name: str, price: int) -> str:
-    clean = re.sub(r"[\r\n=:]+", " ", name).strip()
-    return f"#order:{clean}={price}"
-
-
 def offer_checkout_order(checkout: OfferCheckout, price: int) -> str:
-    reference = checkout.id.hex[:8].upper()
-    return safe_order(f"{checkout.title} · №{reference}", price)
+    return tilda_order_command(checkout.title, checkout.id, price)
 
 
 def build_offers(

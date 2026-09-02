@@ -339,6 +339,32 @@ def test_short_offer_reference_rejects_ambiguous_user_checkouts() -> None:
     app.dependency_overrides.clear()
 
 
+def test_short_offer_reference_finds_unbound_public_site_checkout() -> None:
+    _, session_factory = make_client()
+    with session_factory() as db:
+        checkout = OfferCheckout(
+            id=uuid.UUID("87654321-0000-0000-0000-000000000001"),
+            user_id=None,
+            checkout_kind="public_site",
+            offer_code="site.masterclass.standard",
+            title="Стандартный",
+            items=["ACCESS_MASTERCLASS"],
+            amount=Decimal("8900"),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
+        db.add(checkout)
+        db.flush()
+
+        found, has_reference = find_offer_checkout(
+            db, "Стандартный · №87654321", None
+        )
+
+        assert has_reference is True
+        assert found is not None
+        assert found.id == checkout.id
+    app.dependency_overrides.clear()
+
+
 def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
     client, session_factory = make_client()
     with session_factory() as db:

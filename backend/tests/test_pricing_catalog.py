@@ -273,7 +273,8 @@ def test_preview_reads_prices_and_preview_checkout_requires_published_version() 
     )
     assert checkout.status_code == 200
     assert checkout.json()["pricing_version"] == version_id
-    assert checkout.json()["cart_command"].startswith("#order:EB-")
+    assert checkout.json()["cart_command"].startswith("#order:С консультацией · №")
+    assert "EB-" not in checkout.json()["cart_command"]
     with factory() as db:
         assert db.scalar(select(func.count(OfferCheckout.id))) == 1
     app.dependency_overrides.clear()
@@ -293,8 +294,8 @@ def test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot() -> No
     )
     assert checkout_response.status_code == 200
     command = checkout_response.json()["cart_command"]
-    assert command.startswith("#order:EB-")
-    assert " С консультацией=" in command
+    assert command.startswith("#order:С консультацией · №")
+    assert "EB-" not in command
     raw_product = command.split(":", 1)[1].rsplit("=", 1)[0]
 
     payment = client.post(

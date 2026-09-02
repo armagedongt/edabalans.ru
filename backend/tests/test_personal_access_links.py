@@ -16,6 +16,7 @@ from app.access_routes import account_applications  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
+    OfferCheckout,
     PersonalAccessLink,
     Resource,
     User,
@@ -116,6 +117,36 @@ def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
         user = db.get(User, user_id)
         assert user.access_review_status == "completed"
         assert db.scalar(select(PersonalAccessLink.status)) == "claimed"
+    app.dependency_overrides.clear()
+
+
+def test_paid_personal_link_uses_shared_short_checkout_reference():
+    client, factory, user_id = setup()
+    login(client)
+    created = client.post(
+        f"/admin/api/users/{user_id}/personal-access-links",
+        json={
+            "resource_codes": ["ACCESS_MASTERCLASS"],
+            "final_amount": 1500,
+            "standard_amount": 6900,
+            "expires_days": 14,
+        },
+    )
+    assert created.status_code == 200
+    token = parse_qs(urlparse(created.json()["url"]).query)["access_token"][0]
+
+    response = client.post(
+        f"/api/access-links/{token}/checkout",
+        json={"email": "client@example.test"},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["cart_command"].startswith(
+        "#order:Персональное предложение · №"
+    )
+    assert "EB-" not in response.json()["cart_command"]
+    with factory() as db:
+        assert db.scalar(select(func.count(OfferCheckout.id))) == 1
     app.dependency_overrides.clear()
 
 
