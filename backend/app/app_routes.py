@@ -73,6 +73,14 @@ def public_asset(path: Path, stable_loader: bool = False) -> FileResponse:
     return response
 
 
+def homepage_library_fragment(source: str, name: str) -> str:
+    start_marker = f"<!-- library:{name}:start -->"
+    end_marker = f"<!-- library:{name}:end -->"
+    start = source.index(start_marker) + len(start_marker)
+    end = source.index(end_marker, start)
+    return source[start:end].strip()
+
+
 @router.get("/embed.js", include_in_schema=False)
 def embed_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "embed.js", stable_loader=True)
@@ -90,13 +98,6 @@ def homepage_recognition_preview() -> HTMLResponse:
     )
     head = source[: source.index('<body data-page-theme="blue-mist">')]
 
-    def library_fragment(name: str) -> str:
-        start_marker = f"<!-- library:{name}:start -->"
-        end_marker = f"<!-- library:{name}:end -->"
-        start = source.index(start_marker) + len(start_marker)
-        end = source.index(end_marker, start)
-        return source[start:end].strip()
-
     template = head.replace(
         "<title>Новая главная — мобильная цепочка принятых блоков</title>",
         "<title>Библиотека блоков · Человечек и облачка</title>",
@@ -105,10 +106,10 @@ def homepage_recognition_preview() -> HTMLResponse:
         '<body data-page-theme="blue-mist" data-library-block="recognition" '
         'data-library-status="accepted">\n'
         '<main class="homepage-chain">\n'
-        f'{library_fragment("recognition")}\n'
+        f'{homepage_library_fragment(source, "recognition")}\n'
         '</main>\n'
-        f'{library_fragment("recognition-script")}\n'
-        f'{library_fragment("public-content-script")}\n'
+        f'{homepage_library_fragment(source, "recognition-script")}\n'
+        f'{homepage_library_fragment(source, "public-content-script")}\n'
         '</body>\n</html>\n'
     )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
@@ -159,11 +160,31 @@ def homepage_mobile_preview() -> HTMLResponse:
 
 @router.get("/preview/homepage-reviews-wall", include_in_schema=False)
 @router.get("/preview/homepage-reviews-wall/", include_in_schema=False)
-def homepage_reviews_wall_preview() -> FileResponse:
-    response = public_asset(
-        STATIC_DIR / "homepage-preview" / "reviews-wall.html",
-        stable_loader=True,
+def homepage_reviews_wall_preview() -> HTMLResponse:
+    source = (STATIC_DIR / "homepage-preview" / "mobile.html").read_text(
+        encoding="utf-8"
     )
+    head = source[: source.index('<body data-page-theme="blue-mist">')]
+    wall = homepage_library_fragment(source, "reviews-wall").replace(
+        'href="#pricing"', 'href="/preview/homepage-mobile#pricing"'
+    )
+    template = head.replace(
+        "<title>Новая главная — мобильная цепочка принятых блоков</title>",
+        "<title>Отзывы — голосовые и скриншоты</title>",
+        1,
+    ) + (
+        '<body data-page-theme="blue-mist" data-library-block="reviews-wall" '
+        'data-library-status="accepted">\n'
+        '<main class="homepage-chain">\n'
+        f'{homepage_library_fragment(source, "reviews-voice")}\n'
+        f'{homepage_library_fragment(source, "reviews-featured")}\n'
+        f'{wall}\n'
+        '</main>\n'
+        f'{homepage_library_fragment(source, "reviews-lightbox")}\n'
+        f'{homepage_library_fragment(source, "reviews-script")}\n'
+        '</body>\n</html>\n'
+    )
+    response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
 

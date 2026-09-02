@@ -1065,52 +1065,61 @@
     .voice-widget__meta-separator{opacity:.6}
     .voice-widget__audio{display:none}
     .reviews-featured{width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px 0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:calc(clamp(10px,3vw,18px) + 5px)}
-    .reviews-wall{width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px var(--space-related);columns:2;column-gap:calc(clamp(10px,3vw,18px) + 5px)}
+    .reviews-wall{--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px);position:relative;width:min(calc(100% + 5px),805px);margin:0 auto;padding:var(--space-related) 20px var(--space-related);column-gap:var(--reviews-wall-gap)}
     .reviews-featured__item,.reviews-wall__item{display:block;width:100%;padding:0;border:0;break-inside:avoid;appearance:none;background:transparent;cursor:zoom-in;transform:rotate(var(--tilt));transform-origin:50% 50%;filter:drop-shadow(0 5px 5px rgba(25,73,108,.23))}
     .reviews-featured__item{margin:0}
     .reviews-featured__item:nth-child(4){transform:translateY(-33%) rotate(var(--tilt))}
-    .reviews-wall__item{margin:0 0 calc(clamp(10px,3vw,17px) + 5px)}
-    .reviews-featured__item:focus-visible,.reviews-wall__item:focus-visible{outline:3px solid #247fd3;outline-offset:4px}
+    .reviews-wall__item{margin:0}
+    .reviews-wall__promo{--promo-blue:#279fe3;position:relative;isolation:isolate;overflow:hidden;width:100%;display:flex;flex-direction:column;break-inside:avoid;margin:0;padding:clamp(7px,2vw,13px) clamp(7px,2vw,13px) clamp(13px,3.5vw,21px);color:#52a9d8;background:radial-gradient(circle at 88% 4%,rgba(86,199,248,.18),rgba(86,199,248,0) 34%),radial-gradient(circle at 3% 96%,rgba(168,226,251,.22),rgba(168,226,251,0) 40%),linear-gradient(145deg,#fff 0%,#fbfeff 55%,#f3fbff 100%);border:1px solid rgba(132,205,239,.22);border-radius:clamp(7px,2vw,12px);box-shadow:0 8px 12px -6px rgba(25,73,108,.4);transform:rotate(var(--tilt));transform-origin:50% 50%}
+    .reviews-wall__promo::before{position:absolute;z-index:-1;top:-70px;right:-70px;width:220px;height:220px;border-radius:50%;background:rgba(109,207,249,.07);content:"";pointer-events:none}
+    .reviews-wall__promo-media{width:100%;margin:0 auto;padding:0;overflow:visible;background:transparent;border:0;border-radius:0;box-shadow:none}
+    .reviews-wall__promo-media img{display:block;width:100%;height:auto;border-radius:clamp(4px,1.2vw,7px)}
+    .reviews-wall__promo-copy{margin:clamp(14px,4vw,24px) 0 clamp(12px,3.5vw,20px);color:#52a9d8;font-size:clamp(19px,5vw,34px);font-weight:900;line-height:1.04;text-align:center;letter-spacing:-.045em}
+    .reviews-wall__promo-copy--long{font-size:clamp(15px,3.8vw,25px);line-height:1.08;letter-spacing:-.035em}
+    .reviews-wall__promo-copy--xlong{font-size:clamp(14px,3.4vw,23px);line-height:1.1;letter-spacing:-.025em}
+    .reviews-wall__promo-button{width:min(86%,190px);min-height:clamp(40px,10vw,50px);display:flex;align-items:center;justify-content:center;margin:0 auto;padding:0 10px;border-radius:clamp(12px,3.5vw,16px);color:#16181d;background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 9px 15px -8px rgba(244,197,106,.8);font-size:clamp(11px,2.9vw,14px);font-weight:900;line-height:1;text-align:center;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+    .reviews-wall__promo-button:hover,.reviews-wall__promo-button:focus-visible{color:#16181d;background:linear-gradient(135deg,#ff934f,#ffd47d);box-shadow:0 12px 18px -8px rgba(255,147,79,.78);transform:rotate(-1deg) translateY(-2px)}
+    .reviews-wall__promo-button:focus-visible{outline:3px solid #ffd47d;outline-offset:3px}
+    .reviews-featured__item:focus-visible,.reviews-wall__item:focus-visible,.reviews-wall__promo:focus-visible{outline:3px solid #247fd3;outline-offset:4px}
     .reviews-featured__item img,.reviews-wall__item img{display:block;width:100%;height:auto;border-radius:clamp(7px,2vw,12px);background:#fff}
     .review-lightbox[hidden]{display:none}
-    .review-lightbox{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:max(12px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));background:rgba(6,22,35,.94)}
+    .review-lightbox{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:0;background:rgba(6,22,35,.94)}
     .review-lightbox__panel{position:relative;width:100%;height:100%;min-width:0;min-height:0;display:grid;place-items:center}
-    .review-lightbox__stage{width:100%;height:100%;min-width:0;min-height:0;display:grid;place-items:center;padding:52px 44px 48px;overflow:hidden;touch-action:pan-y;user-select:none;cursor:grab}
+    .review-lightbox__stage{width:100%;height:100%;min-width:0;min-height:0;display:grid;place-items:center;padding:max(54px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(52px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));overflow:hidden;touch-action:pan-y;user-select:none;cursor:grab}
     .review-lightbox__stage:active{cursor:grabbing}
     .review-lightbox__image{display:block;width:100%;height:100%;min-width:0;min-height:0;object-fit:contain;filter:drop-shadow(0 18px 28px rgba(0,0,0,.28));pointer-events:none}
-    .review-lightbox__image[hidden],.review-lightbox__control[hidden],.review-lightbox__counter[hidden],.review-lightbox__cta[hidden]{display:none}
-    .review-lightbox__cta{width:min(100%,480px,calc((100svh - 300px) * 1.03));height:auto;max-height:100%;min-width:0;min-height:0;display:grid;grid-template-rows:auto auto auto;gap:14px;padding:16px;overflow:hidden;border-radius:24px;background:linear-gradient(145deg,#16a9f2 0%,#087bc7 100%);box-shadow:0 24px 56px rgba(0,87,145,.42);user-select:none}
-    .review-lightbox__cta img{display:block;width:100%;height:auto;min-height:0;aspect-ratio:800/776;object-fit:cover;border:2px solid rgba(255,255,255,.82);border-radius:17px;pointer-events:none;-webkit-user-drag:none}
-    .review-lightbox__cta-copy{margin:0;color:#fff;font-size:clamp(32px,9vw,54px);font-weight:900;line-height:1;text-align:center;letter-spacing:-.04em}
-    .review-lightbox__cta-button{min-height:58px;display:flex;align-items:center;justify-content:center;padding:0 22px;border-radius:16px;color:#fff;background:#ff684b;box-shadow:0 16px 30px -17px rgba(255,104,75,.72);font-size:16px;font-weight:900;text-decoration:none;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
-    .review-lightbox__cta-button:hover,.review-lightbox__cta-button:focus-visible{background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 20px 32px -15px rgba(232,174,69,.82);transform:rotate(-1deg) translateY(-2px);outline:3px solid #fff;outline-offset:3px}
-    .review-lightbox__control{position:absolute;z-index:2;width:46px;height:46px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.28);border-radius:50%;color:#fff;background:rgba(255,255,255,.14);cursor:pointer;backdrop-filter:blur(8px)}
-    .review-lightbox__control:hover{background:rgba(255,255,255,.24)}
-    .review-lightbox__control:disabled{opacity:.28;cursor:default}
-    .review-lightbox__control:disabled:hover{background:rgba(255,255,255,.14)}
+    .review-lightbox__image[hidden],.review-lightbox__promo[hidden],.review-lightbox__control[hidden],.review-lightbox__counter[hidden]{display:none}
+    .review-lightbox__promo{width:min(82vw,520px);max-height:calc(100dvh - 100px);display:grid;place-items:center}
+    .review-lightbox__promo .reviews-wall__promo{--tilt:0deg;width:100%;max-height:calc(100dvh - 100px);cursor:default;transform:none}
+    .review-lightbox__promo .reviews-wall__promo-media{display:grid;min-height:0;place-items:center}
+    .review-lightbox__promo .reviews-wall__promo-media img{width:auto;max-width:100%;max-height:55dvh;object-fit:contain}
+    .review-lightbox__control{position:absolute;z-index:4;width:48px;height:48px;display:grid;place-items:center;padding:0;border:1px solid rgba(255,255,255,.68);border-radius:50%;color:#fff;background:linear-gradient(135deg,#39b9f3,#1687cf);box-shadow:0 8px 16px -7px rgba(18,103,163,.72);cursor:pointer;backdrop-filter:blur(5px)}
+    .review-lightbox__control:hover{background:linear-gradient(135deg,#229fe2,#0f72bc)}
+    .review-lightbox__control:disabled{opacity:.38;cursor:default}
+    .review-lightbox__control:disabled:hover{background:linear-gradient(135deg,#39b9f3,#1687cf)}
     .review-lightbox__control:focus-visible{outline:3px solid #65c7ff;outline-offset:3px}
     .review-lightbox__control svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
-    .review-lightbox__close{top:4px;right:4px}
-    .review-lightbox__prev{left:2px;top:50%;transform:translateY(-50%)}
-    .review-lightbox__next{right:2px;top:50%;transform:translateY(-50%)}
+    .review-lightbox__close{top:max(8px,env(safe-area-inset-top));right:max(8px,env(safe-area-inset-right))}
+    .review-lightbox__prev{left:max(calc(50% - min(41vw,260px) + 8px),env(safe-area-inset-left));top:50%;transform:translateY(-50%)}
+    .review-lightbox__next{right:max(calc(50% - min(41vw,260px) + 8px),env(safe-area-inset-right));top:50%;transform:translateY(-50%)}
     .review-lightbox__counter{position:absolute;z-index:2;left:50%;bottom:6px;transform:translateX(-50%);min-width:66px;padding:7px 12px;border-radius:999px;color:#fff;background:rgba(255,255,255,.14);font-size:13px;font-weight:700;line-height:1;text-align:center;letter-spacing:.03em;backdrop-filter:blur(8px)}
     @media (min-width:768px){
       .reviews-voice{padding:var(--space-block) 0 0}
       .reviews-featured{padding:var(--space-related) 28px 0}
       .reviews-wall{padding:var(--space-related) 28px var(--space-related)}
       .reviews-featured__item,.reviews-wall__item{filter:drop-shadow(0 7px 7px rgba(25,73,108,.21))}
-      .review-lightbox__stage{padding:58px 78px 52px}
-      .review-lightbox__prev{left:14px}
-      .review-lightbox__next{right:14px}
+      .review-lightbox__stage{padding:58px 20px 52px}
+      .review-lightbox__prev{left:calc(50% - min(41vw,260px) + 12px)}
+      .review-lightbox__next{right:calc(50% - min(41vw,260px) + 12px)}
     }
     @media (max-height:520px) and (orientation:landscape){
-      .review-lightbox__stage{padding:44px 58px 12px}
-      .review-lightbox__cta{width:min(100%,560px);height:100%;max-height:280px;grid-template-columns:minmax(0,1fr) minmax(180px,.9fr);grid-template-rows:minmax(0,1fr) auto;gap:10px;padding:12px}
-      .review-lightbox__cta img{grid-column:1;grid-row:1 / 3;width:100%;height:100%;aspect-ratio:auto;object-fit:cover}
-      .review-lightbox__cta-copy{align-self:end;font-size:clamp(28px,7vh,42px)}
-      .review-lightbox__cta-button{min-height:50px;padding-inline:14px;font-size:14px}
+      .review-lightbox__stage{padding:44px 12px 12px}
+      .review-lightbox__promo{width:min(78vw,560px);max-height:calc(100dvh - 56px)}
+      .review-lightbox__promo .reviews-wall__promo{max-height:calc(100dvh - 56px);display:grid;grid-template-columns:minmax(0,1fr) minmax(150px,.72fr);grid-template-rows:auto auto;gap:8px 12px}
+      .review-lightbox__promo .reviews-wall__promo-media{grid-row:1 / 3}
+      .review-lightbox__promo .reviews-wall__promo-media img{max-height:calc(100dvh - 82px)}
     }
-    @media (prefers-reduced-motion:reduce){.review-lightbox__cta-button{transition:none}}
+    @media (prefers-reduced-motion:reduce){.reviews-wall__promo-button{transition:none}}
     @media(max-width:719px){
       .desktop-header{display:none!important}
       .chain-block--before-after{padding:0}
@@ -1302,6 +1311,7 @@
       </div>
     </section>
 
+    <!-- library:reviews-voice:start -->
     <section class="reviews-voice" aria-label="Голосовой отзыв" data-homepage-block="reviews-voice" data-block-width="content">
       <article class="voice-widget" data-voice-widget data-state="paused">
         <input id="voice-review-file" type="file" accept="audio/*" data-voice-file hidden>
@@ -1329,13 +1339,16 @@
         <audio class="voice-widget__audio" preload="metadata" data-voice-audio></audio>
       </article>
     </section>
+    <!-- library:reviews-voice:end -->
 
+    <!-- library:reviews-featured:start -->
     <section class="reviews-featured" aria-label="Избранные отзывы участников" data-homepage-block="reviews-featured" data-homepage-field="media" data-block-width="visual">
       <button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть избранный отзыв 1 из 4"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Избранный отзыв участницы 1"></button>
       <button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть избранный отзыв 2 из 4"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Избранный отзыв участницы 2"></button>
       <button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="3" aria-label="Открыть избранный отзыв 3 из 4"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Избранный отзыв участницы 3"></button>
       <button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="4" aria-label="Открыть избранный отзыв 4 из 4"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Избранный отзыв участницы 4"></button>
     </section>
+    <!-- library:reviews-featured:end -->
 
     <section class="chain-block copy-section experience-proof" data-homepage-block="experience-proof" data-block-width="content">
       <div class="copy-section__inner" data-homepage-field="text">
@@ -2849,46 +2862,81 @@
     <h2 data-homepage-field="title">Больше отзывов</h2>
     <p data-homepage-field="text">Всего через три недели у вас может быть повод написать что-то подобное 👇</p>
   </section>
+  <!-- library:reviews-wall:start -->
   <section class="reviews-wall" id="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-homepage-field="media" data-block-width="visual">
     <button class="reviews-wall__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв 1 из 21"><img src="https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 1"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.8deg" data-review-index="2" aria-label="Открыть отзыв 2 из 21"><img src="https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 2"></button>
+    <article class="reviews-wall__promo" id="reviews-promo-preview" style="--tilt:-.9deg" tabindex="0" aria-label="Открыть карточку: Давай не как в прошлый раз?">
+      <figure class="reviews-wall__promo-media">
+        <img src="/preview/homepage-mobile/reviews-promo-before-after.jpg?v=1" data-promo-preview-image data-static-src="./reviews-promo-before-after.jpg?v=1" alt="Схема: до, после и после после">
+      </figure>
+      <p class="reviews-wall__promo-copy reviews-wall__promo-copy--xlong">Давай не как в прошлый раз?</p>
+      <a class="reviews-wall__promo-button" href="#pricing">Начать прямо сейчас</a>
+    </article>
     <button class="reviews-wall__item" type="button" style="--tilt:-.5deg" data-review-index="3" aria-label="Открыть отзыв 3 из 21"><img src="https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 3"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:1.3deg" data-review-index="4" aria-label="Открыть отзыв 4 из 21"><img src="https://optim.tildacdn.com/tild3763-3332-4166-b234-326266323263/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 4"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1.5deg" data-review-index="5" aria-label="Открыть отзыв 5 из 21"><img src="https://optim.tildacdn.com/tild3562-3438-4937-a663-386133663562/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 5"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:1deg" data-review-index="6" aria-label="Открыть отзыв 6 из 21"><img src="https://optim.tildacdn.com/tild3038-3638-4630-b132-616433356430/-/resize/600x600/-/format/webp/__7.jpg.webp" alt="Отзыв участницы 6"></button>
+    <article class="reviews-wall__promo" style="--tilt:1.1deg" tabindex="0" aria-label="Открыть карточку: Точно не хочешь?">
+      <figure class="reviews-wall__promo-media">
+        <img src="/preview/homepage-mobile/reviews-promo-can-dont-want.jpg?v=1" data-promo-preview-image data-static-src="./reviews-promo-can-dont-want.jpg?v=1" alt="Кот говорит: Я тоже так могу, просто не хочу">
+      </figure>
+      <p class="reviews-wall__promo-copy reviews-wall__promo-copy--long">Точно не хочешь?</p>
+      <a class="reviews-wall__promo-button" href="#pricing">Начать прямо сейчас</a>
+    </article>
     <button class="reviews-wall__item" type="button" style="--tilt:-.8deg" data-review-index="7" aria-label="Открыть отзыв 7 из 21"><img src="https://optim.tildacdn.com/tild3635-3435-4565-b535-313163343663/-/resize/600x600/-/format/webp/__8.jpg.webp" alt="Отзыв участницы 7"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.6deg" data-review-index="8" aria-label="Открыть отзыв 8 из 21"><img src="https://optim.tildacdn.com/tild6630-6530-4236-a638-343130303032/-/resize/600x600/-/format/webp/__28.jpg.webp" alt="Отзыв участницы 8"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1.1deg" data-review-index="9" aria-label="Открыть отзыв 9 из 21"><img src="https://optim.tildacdn.com/tild3363-3531-4861-b430-383064316239/-/resize/600x600/-/format/webp/__21.jpg.webp" alt="Отзыв участницы 9"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:1.5deg" data-review-index="10" aria-label="Открыть отзыв 10 из 21"><img src="https://optim.tildacdn.com/tild6339-3131-4637-b335-623438313365/-/resize/600x600/-/format/webp/__22.jpg.webp" alt="Отзыв участницы 10"></button>
+    <article class="reviews-wall__promo" style="--tilt:-1.2deg" tabindex="0" aria-label="Открыть карточку: Давай помогу!">
+      <figure class="reviews-wall__promo-media">
+        <img src="/preview/homepage-mobile/reviews-promo-cant-do.jpg?v=1" data-promo-preview-image data-static-src="./reviews-promo-cant-do.jpg?v=1" alt="Котёнок с бубликом говорит: Ничего не могу с этим поделать">
+      </figure>
+      <p class="reviews-wall__promo-copy reviews-wall__promo-copy--long">Давай помогу!</p>
+      <a class="reviews-wall__promo-button" href="#pricing">Начать прямо сейчас</a>
+    </article>
     <button class="reviews-wall__item" type="button" style="--tilt:-.3deg" data-review-index="11" aria-label="Открыть отзыв 11 из 21"><img src="https://optim.tildacdn.com/tild3566-3132-4161-b964-666430616538/-/resize/600x600/-/format/webp/__23.jpg.webp" alt="Отзыв участницы 11"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.9deg" data-review-index="12" aria-label="Открыть отзыв 12 из 21"><img src="https://optim.tildacdn.com/tild6538-6330-4538-b766-343366643330/-/resize/600x600/-/format/webp/__24.jpg.webp" alt="Отзыв участницы 12"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1.4deg" data-review-index="13" aria-label="Открыть отзыв 13 из 21"><img src="https://optim.tildacdn.com/tild3734-3437-4164-b265-326365313164/-/resize/600x600/-/format/webp/__25.jpg.webp" alt="Отзыв участницы 13"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.3deg" data-review-index="14" aria-label="Открыть отзыв 14 из 21"><img src="https://optim.tildacdn.com/tild3962-6238-4435-b935-326636626263/-/resize/600x600/-/format/webp/__26.jpg.webp" alt="Отзыв участницы 14"></button>
+    <article class="reviews-wall__promo" style="--tilt:.7deg" tabindex="0" aria-label="Открыть карточку: Ну... да!">
+      <figure class="reviews-wall__promo-media">
+        <img src="/preview/homepage-mobile/reviews-promo-hudet-budem.jpg?v=1" data-promo-preview-image data-static-src="./reviews-promo-hudet-budem.jpg?v=1" alt="Кот спрашивает: Худеть будем?">
+      </figure>
+      <p class="reviews-wall__promo-copy">Ну... да!</p>
+      <a class="reviews-wall__promo-button" href="#pricing">Начать прямо сейчас</a>
+    </article>
     <button class="reviews-wall__item" type="button" style="--tilt:1.2deg" data-review-index="15" aria-label="Открыть отзыв 15 из 21"><img src="https://optim.tildacdn.com/tild6635-3630-4165-a332-373434623264/-/resize/600x600/-/format/webp/__27.jpg.webp" alt="Отзыв участницы 15"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-.7deg" data-review-index="16" aria-label="Открыть отзыв 16 из 21"><img src="https://optim.tildacdn.com/tild3264-3637-4930-b066-613665343762/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 16"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:1.6deg" data-review-index="17" aria-label="Открыть отзыв 17 из 21"><img src="https://optim.tildacdn.com/tild6661-3731-4966-a466-316131393864/-/resize/600x600/-/format/webp/__2.jpg.webp" alt="Отзыв участницы 17"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1deg" data-review-index="18" aria-label="Открыть отзыв 18 из 21"><img src="https://optim.tildacdn.com/tild3065-6139-4561-b334-643739396331/-/resize/600x600/-/format/webp/__3.jpg.webp" alt="Отзыв участницы 18"></button>
+    <article class="reviews-wall__promo" style="--tilt:-.5deg" tabindex="0" aria-label="Открыть карточку: ПОРА!!!">
+      <figure class="reviews-wall__promo-media">
+        <img src="/preview/homepage-mobile/reviews-promo-time-cat.png?v=1" data-promo-preview-image data-static-src="./reviews-promo-time-cat.png?v=1" alt="Кот смотрит на часы">
+      </figure>
+      <p class="reviews-wall__promo-copy">ПОРА!!!</p>
+      <a class="reviews-wall__promo-button" href="#pricing">Начать прямо сейчас</a>
+    </article>
     <button class="reviews-wall__item" type="button" style="--tilt:.5deg" data-review-index="19" aria-label="Открыть отзыв 19 из 21"><img src="https://optim.tildacdn.com/tild3861-3865-4437-b330-313263383230/-/resize/600x600/-/format/webp/__4.jpg.webp" alt="Отзыв участницы 19"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:-1.3deg" data-review-index="20" aria-label="Открыть отзыв 20 из 21"><img src="https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp" alt="Отзыв участницы 20"></button>
     <button class="reviews-wall__item" type="button" style="--tilt:.7deg" data-review-index="21" aria-label="Открыть отзыв 21 из 21"><img src="https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp" alt="Отзыв участницы 21"></button>
   </section>
+  <!-- library:reviews-wall:end -->
   </main>
+  <!-- library:reviews-lightbox:start -->
   <div class="review-lightbox" data-review-lightbox role="dialog" aria-modal="true" aria-label="Полноэкранный просмотр отзывов" hidden>
     <div class="review-lightbox__panel">
       <button class="review-lightbox__control review-lightbox__close" type="button" data-review-close aria-label="Закрыть полноэкранный просмотр"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       <button class="review-lightbox__control review-lightbox__prev" type="button" data-review-prev aria-label="Предыдущий отзыв"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
       <div class="review-lightbox__stage" data-review-stage>
         <img class="review-lightbox__image" data-review-image src="" alt="">
-        <article class="review-lightbox__cta" data-review-cta hidden>
-          <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет">
-          <p class="review-lightbox__cta-copy">ПОРА!!</p>
-          <a class="review-lightbox__cta-button" href="#pricing">Выбрать тариф</a>
-        </article>
+        <div class="review-lightbox__promo" data-review-promo hidden></div>
       </div>
       <button class="review-lightbox__control review-lightbox__next" type="button" data-review-next aria-label="Следующий отзыв"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-      <div class="review-lightbox__counter" data-review-counter aria-live="polite">1 / 21</div>
+      <div class="review-lightbox__counter" data-review-counter aria-live="polite">1 / 4</div>
     </div>
   </div>
+  <!-- library:reviews-lightbox:end -->
   <div id="site-footer" data-edabalans-site-footer="public" data-homepage-block="footer" data-block-width="shared"></div>
   <aside class="cookie-notice" data-cookie-notice data-homepage-block="cookie-notice" data-block-width="overlay" aria-label="Уведомление об использовании cookie">
     <p class="cookie-notice__copy" data-homepage-field="copy">Сайт использует cookie. Продолжая, вы принимаете <a href="https://go.похудение-это-есть.рф/legal/privacy" target="_blank" rel="noopener" data-homepage-field="policy">политику обработки персональных данных</a>.</p>
@@ -3240,7 +3288,96 @@
       loadFaq();
     })();
   </script>
+  <!-- library:reviews-script:start -->
   <script>
+    (() => {
+      if (location.pathname.includes('/homepage-preview/')) {
+        document.querySelectorAll('[data-promo-preview-image]').forEach((promoImage) => {
+          promoImage.src = promoImage.dataset.staticSrc;
+        });
+        document.querySelectorAll('.reviews-wall__promo-button').forEach((promoButton) => {
+          promoButton.href = './mobile.html#pricing';
+        });
+      }
+    })();
+
+    (() => {
+      const wall = document.querySelector('[data-homepage-block="reviews-wall"]');
+      if (!wall) return;
+      const items = [...wall.children];
+      let scheduledFrame = 0;
+      let observedWidth = 0;
+      const observedHeights = new WeakMap();
+
+      const layout = () => {
+        const styles = getComputedStyle(wall);
+        const paddingLeft = Number.parseFloat(styles.paddingLeft);
+        const paddingRight = Number.parseFloat(styles.paddingRight);
+        const paddingTop = Number.parseFloat(styles.paddingTop);
+        const paddingBottom = Number.parseFloat(styles.paddingBottom);
+        const gap = Number.parseFloat(styles.columnGap) || 12;
+        const availableWidth = wall.clientWidth - paddingLeft - paddingRight;
+        const columnWidth = (availableWidth - gap) / 2;
+        const columnHeights = [paddingTop, paddingTop];
+        const firstPromoIndex = items.findIndex((item) => item.classList.contains('reviews-wall__promo'));
+
+        items.forEach((item) => {
+          item.style.position = 'absolute';
+          item.style.width = `${columnWidth}px`;
+        });
+        let promoIndex = 0;
+        let previousTop = paddingTop;
+        items.forEach((item, itemIndex) => {
+          let column;
+          if (itemIndex < 2) {
+            column = itemIndex;
+          } else if (item.classList.contains('reviews-wall__promo')) {
+            column = promoIndex % 2;
+            promoIndex += 1;
+          } else {
+            column = columnHeights[0] <= columnHeights[1] ? 0 : 1;
+          }
+          const locksPromoOrder = itemIndex === firstPromoIndex || itemIndex === firstPromoIndex + 1;
+          const orderFloor = locksPromoOrder ? previousTop + Math.min(gap, 8) : paddingTop;
+          const itemTop = Math.max(columnHeights[column], orderFloor);
+          item.style.left = `${paddingLeft + column * (columnWidth + gap)}px`;
+          item.style.top = `${itemTop}px`;
+          item.dataset.masonryColumn = String(column + 1);
+          columnHeights[column] = itemTop + item.offsetHeight + gap;
+          previousTop = itemTop;
+        });
+        wall.style.height = `${Math.max(...columnHeights) - gap + paddingBottom}px`;
+        wall.dataset.layout = 'ordered-masonry';
+      };
+
+      const scheduleLayout = () => {
+        cancelAnimationFrame(scheduledFrame);
+        scheduledFrame = requestAnimationFrame(layout);
+      };
+
+      items.forEach((item) => item.querySelectorAll('img').forEach((image) => {
+        if (!image.complete) image.addEventListener('load', scheduleLayout, { once: true });
+      }));
+      const resizeObserver = new ResizeObserver((entries) => {
+        const geometryChanged = entries.some((entry) => {
+          if (entry.target === wall) {
+            if (Math.abs(entry.contentRect.width - observedWidth) < .5) return false;
+            observedWidth = entry.contentRect.width;
+            return true;
+          }
+          const previousHeight = observedHeights.get(entry.target) ?? 0;
+          observedHeights.set(entry.target, entry.contentRect.height);
+          return Math.abs(entry.contentRect.height - previousHeight) >= .5;
+        });
+        if (geometryChanged) scheduleLayout();
+      });
+      resizeObserver.observe(wall);
+      items.forEach((item) => resizeObserver.observe(item));
+      document.fonts?.ready.then(scheduleLayout);
+      addEventListener('resize', scheduleLayout, { passive: true });
+      scheduleLayout();
+    })();
+
     (() => {
       const widget = document.querySelector('[data-voice-widget]');
       if (!widget) return;
@@ -3404,77 +3541,108 @@
     (() => {
       const groups = {
         featured: [...document.querySelectorAll('.reviews-featured__item')],
-        wall: [...document.querySelectorAll('.reviews-wall__item')],
+        wall: [...document.querySelector('[data-homepage-block="reviews-wall"]').children],
       };
       const wallSection = document.querySelector('[data-homepage-block="reviews-wall"]');
       const lightbox = document.querySelector('[data-review-lightbox]');
       if (!lightbox || !wallSection || !groups.featured.length || !groups.wall.length) return;
       const stage = lightbox.querySelector('[data-review-stage]');
       const activeImage = lightbox.querySelector('[data-review-image]');
-      const cta = lightbox.querySelector('[data-review-cta]');
-      const ctaButton = cta.querySelector('.review-lightbox__cta-button');
+      const promoHost = lightbox.querySelector('[data-review-promo]');
       const counter = lightbox.querySelector('[data-review-counter]');
       const closeButton = lightbox.querySelector('[data-review-close]');
       const previousButton = lightbox.querySelector('[data-review-prev]');
       const nextButton = lightbox.querySelector('[data-review-next]');
       let activeGroup = 'featured';
       let activeIndex = 0;
-      let activeMode = 'image';
       let previousFocus = null;
       let pointerStart = null;
 
+      const reusableImageSource = (sourceImage) => {
+        if (!sourceImage.complete || !sourceImage.naturalWidth) {
+          return sourceImage.currentSrc || sourceImage.src;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = sourceImage.naturalWidth;
+        canvas.height = sourceImage.naturalHeight;
+        try {
+          canvas.getContext('2d').drawImage(sourceImage, 0, 0);
+          const source = sourceImage.currentSrc || sourceImage.src;
+          const type = /\.png(?:$|\?)/i.test(source) ? 'image/png' : 'image/jpeg';
+          return canvas.toDataURL(type, .94);
+        } catch {
+          return sourceImage.currentSrc || sourceImage.src;
+        }
+      };
+
       const updateControls = () => {
         const triggers = groups[activeGroup];
-        const onCta = activeMode === 'cta';
-        previousButton.disabled = !onCta && activeIndex === 0;
+        previousButton.disabled = activeIndex === 0;
         previousButton.hidden = false;
-        nextButton.hidden = onCta;
-        if (onCta) return;
+        nextButton.hidden = false;
         const onLast = activeIndex === triggers.length - 1;
         nextButton.setAttribute('aria-label', onLast
-          ? activeGroup === 'featured' ? 'Продолжить к следующим отзывам' : 'Показать финальную карточку'
+          ? activeGroup === 'featured'
+            ? 'Продолжить к следующим отзывам'
+            : 'Закрыть и продолжить ниже'
           : 'Следующий отзыв');
       };
-      const showImage = (index) => {
+
+      const showSlide = (index) => {
         const triggers = groups[activeGroup];
-        activeMode = 'image';
         activeIndex = Math.max(0, Math.min(index, triggers.length - 1));
-        const sourceImage = triggers[activeIndex].querySelector('img');
-        activeImage.src = sourceImage.currentSrc || sourceImage.src;
-        activeImage.alt = sourceImage.alt;
-        activeImage.hidden = false;
-        cta.hidden = true;
-        counter.hidden = false;
+        const trigger = triggers[activeIndex];
+        const isPromo = trigger.classList.contains('reviews-wall__promo');
+        if (isPromo) {
+          const promo = trigger.cloneNode(true);
+          promo.removeAttribute('id');
+          promo.removeAttribute('tabindex');
+          promo.removeAttribute('data-masonry-column');
+          ['position', 'width', 'left', 'top'].forEach((property) => promo.style.removeProperty(property));
+          promo.style.setProperty('--tilt', '0deg');
+          const sourceImage = trigger.querySelector('img');
+          const promoImage = promo.querySelector('img');
+          promoImage.src = reusableImageSource(sourceImage);
+          promoImage.removeAttribute('data-static-src');
+          promoImage.removeAttribute('data-promo-preview-image');
+          promoHost.replaceChildren(promo);
+          promoHost.hidden = false;
+          activeImage.hidden = true;
+          activeImage.removeAttribute('src');
+        } else {
+          const sourceImage = trigger.querySelector('img');
+          activeImage.src = sourceImage.currentSrc || sourceImage.src;
+          activeImage.alt = sourceImage.alt;
+          activeImage.hidden = false;
+          promoHost.hidden = true;
+          promoHost.replaceChildren();
+        }
         counter.textContent = `${activeIndex + 1} / ${triggers.length}`;
         [activeIndex - 1, activeIndex + 1].forEach((neighborIndex) => {
-          groups[activeGroup][neighborIndex]?.querySelector('img')?.decode?.().catch(() => {});
+          const image = triggers[neighborIndex]?.querySelector('img');
+          image?.decode?.().catch(() => {});
         });
         updateControls();
       };
-      const showCta = () => {
-        const moveFocusToCta = document.activeElement === nextButton;
-        activeMode = 'cta';
-        activeImage.hidden = true;
-        activeImage.removeAttribute('src');
-        cta.hidden = false;
-        counter.hidden = true;
-        updateControls();
-        if (moveFocusToCta) ctaButton.focus();
-      };
+
       const open = (group, index) => {
         previousFocus = document.activeElement;
         activeGroup = group;
-        showImage(index);
+        showSlide(index);
         lightbox.hidden = false;
         document.body.classList.add('reviews-wall--locked');
         closeButton.focus();
       };
+
       const close = ({ restoreFocus = true } = {}) => {
         lightbox.hidden = true;
         activeImage.removeAttribute('src');
+        promoHost.hidden = true;
+        promoHost.replaceChildren();
         document.body.classList.remove('reviews-wall--locked');
         if (restoreFocus) previousFocus?.focus();
       };
+
       const continueBelow = () => {
         close({ restoreFocus: false });
         wallSection.scrollIntoView({
@@ -3483,30 +3651,65 @@
         });
         groups.wall[0].focus({ preventScroll: true });
       };
-      const step = (direction) => {
-        if (activeMode === 'cta') {
-          if (direction < 0) showImage(groups.wall.length - 1);
-          return;
+
+      const continueAfterWall = () => {
+        close({ restoreFocus: false });
+        const nextBlock = wallSection.nextElementSibling;
+        const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth';
+        if (nextBlock) {
+          nextBlock.scrollIntoView({ behavior, block: 'start' });
+        } else {
+          scrollTo({ top: document.documentElement.scrollHeight, behavior });
         }
+        groups.wall.at(-1)?.focus({ preventScroll: true });
+      };
+
+      const step = (direction) => {
         const triggers = groups[activeGroup];
         const targetIndex = activeIndex + direction;
         if (targetIndex < 0) return;
         if (targetIndex < triggers.length) {
-          showImage(targetIndex);
+          showSlide(targetIndex);
           return;
         }
         if (activeGroup === 'featured') {
           continueBelow();
           return;
         }
-        showCta();
+        continueAfterWall();
       };
 
       Object.entries(groups).forEach(([group, triggers]) => {
-        triggers.forEach((trigger, index) => trigger.addEventListener('click', () => open(group, index)));
+        triggers.forEach((trigger, index) => {
+          trigger.addEventListener('click', (event) => {
+            if (event.target.closest('a')) return;
+            open(group, index);
+          });
+          if (!trigger.classList.contains('reviews-wall__promo')) return;
+          trigger.addEventListener('keydown', (event) => {
+            if (event.target.closest('a') || !['Enter', ' '].includes(event.key)) return;
+            event.preventDefault();
+            open(group, index);
+          });
+        });
       });
       closeButton.addEventListener('click', close);
-      ctaButton.addEventListener('click', () => close({ restoreFocus: false }));
+      promoHost.addEventListener('click', (event) => {
+        const button = event.target.closest('.reviews-wall__promo-button');
+        if (!button) return;
+        event.preventDefault();
+        const target = document.querySelector(button.hash);
+        close({ restoreFocus: false });
+        if (target) {
+          target.scrollIntoView({
+            behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+            block: 'start',
+          });
+          history.pushState(null, '', button.hash);
+        } else {
+          location.href = button.href;
+        }
+      });
       previousButton.addEventListener('click', () => step(-1));
       nextButton.addEventListener('click', () => step(1));
       stage.addEventListener('pointerdown', (event) => {
@@ -3524,6 +3727,7 @@
         step(deltaX < 0 ? 1 : -1);
       });
       stage.addEventListener('pointercancel', () => { pointerStart = null; });
+
       document.addEventListener('keydown', (event) => {
         if (lightbox.hidden) return;
         if (event.key === 'Escape') {
@@ -3541,16 +3745,17 @@
         if (event.key !== 'Tab') return;
         const controls = [closeButton, previousButton, nextButton, ...lightbox.querySelectorAll('a')]
           .filter((control) => !control.hidden && !control.disabled && control.offsetParent !== null);
-        const activeControl = controls.indexOf(document.activeElement);
+        const current = controls.indexOf(document.activeElement);
         event.preventDefault();
-        if (activeControl === -1) {
+        if (current === -1) {
           controls[event.shiftKey ? controls.length - 1 : 0].focus();
           return;
         }
-        controls[(activeControl + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
+        controls[(current + (event.shiftKey ? -1 : 1) + controls.length) % controls.length].focus();
       });
     })();
   </script>
+  <!-- library:reviews-script:end -->
   <script src="/site-footer.js"></script>
 </body>
 </html>

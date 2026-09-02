@@ -426,7 +426,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
         "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
     ]
-    assert parser.block_image_source_order["reviews-wall"] == [
+    expected_wall_review_sources = [
         "https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp",
         "https://optim.tildacdn.com/tild3438-6233-4630-a533-336566346264/-/resize/600x600/-/format/webp/__2.jpg.webp",
         "https://optim.tildacdn.com/tild3537-6466-4733-a337-623831303937/-/resize/600x600/-/format/webp/__3.jpg.webp",
@@ -449,8 +449,52 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "https://optim.tildacdn.com/tild3263-3566-4161-a438-313262653237/-/resize/600x600/-/format/webp/__5.jpg.webp",
         "https://optim.tildacdn.com/tild3933-6339-4537-b036-656633366263/-/resize/600x600/-/format/webp/__6.jpg.webp",
     ]
+    wall_sources = parser.block_image_source_order["reviews-wall"]
+    promo_sources = [
+        "/preview/homepage-mobile/reviews-promo-before-after.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-can-dont-want.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-cant-do.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-hudet-budem.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-time-cat.png?v=1",
+    ]
+    assert [wall_sources[index] for index in (2, 7, 12, 17, 22)] == promo_sources
+    assert [
+        source for source in wall_sources if source.startswith("https://optim.tildacdn.com/")
+    ] == expected_wall_review_sources
     assert response.text.count('class="reviews-featured__item"') == 4
     assert response.text.count('class="reviews-wall__item"') == 21
+    assert response.text.count('class="reviews-wall__promo"') == 5
+    wall_start = response.text.index('<section class="reviews-wall"')
+    wall_end = response.text.index("</section>", wall_start)
+    wall_markup = response.text[wall_start:wall_end]
+    direct_child_tags = re.findall(r"^    <([a-z][\w-]*)\b", wall_markup, re.MULTILINE)
+    assert direct_child_tags == [
+        tag
+        for review_index in range(1, 22)
+        for tag in (
+            ["button", "article"]
+            if review_index in {2, 6, 10, 14, 18}
+            else ["button"]
+        )
+    ]
+    promo_cards = re.findall(
+        r'<article class="reviews-wall__promo".*?</article>', wall_markup, re.DOTALL
+    )
+    expected_promos = [
+        (promo_sources[0], "Давай не как в прошлый раз?"),
+        (promo_sources[1], "Точно не хочешь?"),
+        (promo_sources[2], "Давай помогу!"),
+        (promo_sources[3], "Ну... да!"),
+        (promo_sources[4], "ПОРА!!!"),
+    ]
+    assert len(promo_cards) == len(expected_promos)
+    for promo_card, (image_source, copy) in zip(
+        promo_cards, expected_promos, strict=True
+    ):
+        assert f'src="{image_source}"' in promo_card
+        assert f'aria-label="Открыть карточку: {copy}"' in promo_card
+        assert f">{copy}</p>" in promo_card
+        assert 'href="#pricing">Начать прямо сейчас</a>' in promo_card
     assert "const seconds = 12.8" in response.text
     assert "URL.createObjectURL" in response.text
     assert "const playButton = widget.querySelector('[data-voice-play]')" in response.text
@@ -465,8 +509,32 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "audio.addEventListener('pause', () =>" in response.text
     assert "pointerStart" in response.text
     assert "event.key === 'ArrowRight'" in response.text
-    assert 'class="review-lightbox__cta-button" href="#pricing"' in response.text
-    assert "ctaButton.addEventListener('click', () => close({ restoreFocus: false }))" in response.text
+    assert "wall.dataset.layout = 'ordered-masonry'" in response.text
+    assert "column = promoIndex % 2" in response.text
+    assert 'data-review-promo hidden' in response.text
+    assert (
+        "wall: [...document.querySelector('[data-homepage-block=\"reviews-wall\"]')"
+        ".children],"
+        in response.text
+    )
+    assert "trigger.classList.contains('reviews-wall__promo')" in response.text
+    assert "promoHost.replaceChildren(promo)" in response.text
+    assert "promoHost.addEventListener('click', (event) =>" in response.text
+    assert "const target = document.querySelector(button.hash)" in response.text
+    assert "history.pushState(null, '', button.hash)" in response.text
+    assert "location.href = button.href" in response.text
+    assert "const continueAfterWall" in response.text
+    assert re.search(
+        r"const step = \(direction\) => \{.*?"
+        r"if \(targetIndex < triggers\.length\) \{\s*showSlide\(targetIndex\);.*?"
+        r"if \(activeGroup === 'featured'\) \{\s*continueBelow\(\);.*?"
+        r"continueAfterWall\(\);\s*\};",
+        response.text,
+        re.DOTALL,
+    )
+    assert "review-lightbox__cta" not in response.text
+    assert "data-review-cta" not in response.text
+    assert "const showCta" not in response.text
     block_map_path = Path(__file__).parents[2] / "content/public-site/homepage/block-map.json"
     block_map = json.loads(block_map_path.read_text(encoding="utf-8"))
     assert parser.block_order == [block["id"] for block in block_map["blocks"]]
@@ -524,6 +592,29 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert response.headers["content-type"].startswith("text/html")
     assert response.headers["cache-control"] == "no-cache"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    preview_dir = Path(__file__).parents[1] / "app/static/homepage-preview"
+    mobile_source = (preview_dir / "mobile.html").read_text(encoding="utf-8")
+
+    def library_fragment(name: str) -> str:
+        start_marker = f"<!-- library:{name}:start -->"
+        end_marker = f"<!-- library:{name}:end -->"
+        start = mobile_source.index(start_marker) + len(start_marker)
+        end = mobile_source.index(end_marker, start)
+        return mobile_source[start:end].strip()
+
+    assert library_fragment("reviews-voice") in response.text
+    assert library_fragment("reviews-featured") in response.text
+    assert (
+        library_fragment("reviews-wall").replace(
+            'href="#pricing"', 'href="/preview/homepage-mobile#pricing"'
+        )
+        in response.text
+    )
+    assert library_fragment("reviews-lightbox") in response.text
+    assert library_fragment("reviews-script") in response.text
+    static_redirect = (preview_dir / "reviews-wall.html").read_text(encoding="utf-8")
+    assert 'class="reviews-wall__item"' not in static_redirect
+    assert 'href="./mobile.html#reviews-wall"' in static_redirect
     parser = RobotsMetaParser()
     parser.feed(response.text)
     expected_featured_sources = [
@@ -637,7 +728,10 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert 'data-voice-seek' in response.text
     assert 'accept="audio/*"' in response.text
     assert 'src="/blog/assets/favicon-test-face.png"' in response.text
-    assert '<div class="voice-widget__author">Анна К.</div>' in response.text
+    assert (
+        '<div class="voice-widget__author" data-homepage-field="author">Анна К.</div>'
+        in response.text
+    )
     assert 'О том, что изменилось в питании и что стало проще в обычной жизни' in response.text
     assert 'О том, что изменилось в питании<br>' not in response.text
     assert 'тестовое аудио · нажмите на аватар, чтобы заменить' not in response.text
@@ -660,16 +754,13 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert ".voice-widget__bubble::before" not in response.text
     assert "voice-widget__tail" not in response.text
     assert "viewBox='0 0 12 24'" in response.text
-    assert "max-width:600px" in response.text
-    assert "max-width:620px" in response.text
-    assert "max-width:760px" in response.text
     assert 'class="telegram-chat"' not in response.text
     assert 'data-homepage-block="reviews-featured"' in response.text
     assert 'data-review-index="1"' in response.text
     assert 'data-review-index="21"' in response.text
     assert 'data-review-index="22"' not in response.text
     assert "grid-template-columns:repeat(2,minmax(0,1fr))" in response.text
-    assert "--reviews-wall-gap:clamp(10px,3vw,18px)" in response.text
+    assert "--reviews-wall-gap:calc(clamp(10px,3vw,18px) + 5px)" in response.text
     assert "wall.dataset.layout = 'ordered-masonry'" in response.text
     assert "column = promoIndex % 2" in response.text
     assert "const itemTop = Math.max(columnHeights[column], orderFloor)" in response.text
@@ -708,6 +799,10 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert "trigger.classList.contains('reviews-wall__promo')" in response.text
     assert "promo.removeAttribute('data-masonry-column')" in response.text
     assert "promoHost.replaceChildren(promo)" in response.text
+    assert "promoHost.addEventListener('click', (event) =>" in response.text
+    assert "const target = document.querySelector(button.hash)" in response.text
+    assert "history.pushState(null, '', button.hash)" in response.text
+    assert "location.href = button.href" in response.text
     assert "review-lightbox__cta" not in response.text
     assert "data-review-cta" not in response.text
     assert "const showCta" not in response.text
