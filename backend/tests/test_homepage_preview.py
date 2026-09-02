@@ -336,7 +336,10 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'href="https://t.me/FitnessSergey"' in response.text
     assert 'href="https://t.me/Fitness_Talks"' in response.text
     assert 'aria-disabled="true" title="Адрес MAX-канала ещё не указан"' in response.text
-    assert "@media (min-width: 900px) and (max-width: 1099px)" in response.text
+    assert "@media (min-width: 900px) and (max-width: 1179px)" in response.text
+    assert 'class="mobile-contact__trigger"' in response.text
+    assert 'aria-controls="mobile-contact-panel"' in response.text
+    assert "contactTrigger.addEventListener('click'" in response.text
     assert "if (!contact.contains(event.target)) setOpen(false);" in response.text
     assert "if (event.key !== 'Escape' || panel.hidden) return;" in response.text
     assert '>Приемлемо</button>' in response.text

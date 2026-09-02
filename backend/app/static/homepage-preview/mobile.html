@@ -479,8 +479,16 @@
     .mobile-sheet.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
     .mobile-sheet__title { margin: 0 0 16px; color: var(--site-blue-deep); font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
     .mobile-links { display: grid; }
-    .mobile-links a { display: flex; justify-content: space-between; padding: 15px 3px; border-bottom: 1px solid #e5e9ec; color: var(--site-ink); font-size: 18px; font-weight: 800; text-decoration: none; }
-    .mobile-links a::after { color: #a7adb2; content: "→"; }
+    .mobile-links > a, .mobile-contact__trigger { display: flex; width: 100%; justify-content: space-between; padding: 15px 3px; border: 0; border-bottom: 1px solid #e5e9ec; color: var(--site-ink); font: 800 18px/1.25 Manrope,sans-serif; text-align: left; text-decoration: none; background: transparent; }
+    .mobile-links > a::after { color: #a7adb2; content: "→"; }
+    .mobile-contact__trigger::after { color: #a7adb2; content: "+"; font-size: 22px; font-weight: 500; line-height: 1; }
+    .mobile-contact__trigger[aria-expanded="true"]::after { content: "−"; }
+    .mobile-contact__panel { display: grid; padding: 7px 0 10px 13px; border-bottom: 1px solid #e5e9ec; }
+    .mobile-contact__panel[hidden] { display: none; }
+    .mobile-contact__panel a, .mobile-contact__panel span { display: flex; min-height: 42px; align-items: center; padding: 8px 10px; border-radius: 10px; color: #303a42; font-size: 14px; font-weight: 700; line-height: 1.3; text-decoration: none; }
+    .mobile-contact__panel a::after { content: none; }
+    .mobile-contact__panel a:focus-visible, .mobile-contact__panel a:hover { color: #118ed8; background: #edf8ff; }
+    .mobile-contact__panel span[aria-disabled="true"] { color: #8a949b; }
     .mobile-links .mobile-account { margin-top: 16px; padding: 14px 16px; border: 0; border-radius: 13px; background: #e9f7fe; color: #237fae; font-size: 15px; }
 
     .site-hero { padding: 28px var(--page-gutter) 58px; background: radial-gradient(circle at 48% 11%, rgba(39,175,245,.14), transparent 34%), #fff; }
@@ -594,10 +602,12 @@
       .method-list li { font-size: var(--type-body); }
     }
 
-    @media (min-width: 900px) and (max-width: 1099px) {
-      .desktop-header { display: none; }
-      .mobile-toggle { display: grid; }
-      .mobile-sheet { display: grid; }
+    @media (min-width: 900px) and (max-width: 1179px) {
+      .desktop-header__pill { grid-template-columns: minmax(175px,1fr) auto minmax(175px,1fr); gap: 8px; padding-inline: 10px; }
+      .desktop-wordmark { font-size: 12px; }
+      .desktop-nav { gap: 0; }
+      .desktop-nav > a, .desktop-contact__trigger { min-height: 36px; padding: 8px 7px; font-size: 11.5px; }
+      .desktop-account { padding: 10px 12px; font-size: 11px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -1117,7 +1127,17 @@
   </button>
   <aside class="mobile-sheet" id="mobile-menu" aria-hidden="true" inert>
     <nav class="mobile-links" aria-label="Мобильная навигация">
-      <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a><a href="#contacts">Контакты</a><a class="mobile-account" href="/lk">Личный кабинет</a>
+      <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a>
+      <div class="mobile-contact">
+        <button class="mobile-contact__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="mobile-contact-panel">Контакты</button>
+        <div class="mobile-contact__panel" id="mobile-contact-panel" hidden>
+          <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
+          <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
+          <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Открыть Telegram-канал</a>
+          <span aria-disabled="true">Открыть канал в MAX</span>
+        </div>
+      </div>
+      <a class="mobile-account" href="/lk">Личный кабинет</a>
     </nav>
   </aside>
 
@@ -2780,6 +2800,12 @@
       const toggle = document.querySelector('.mobile-toggle');
       const sheet = document.querySelector('.mobile-sheet');
       if (!toggle || !sheet) return;
+      const contactTrigger = sheet.querySelector('.mobile-contact__trigger');
+      const contactPanel = sheet.querySelector('.mobile-contact__panel');
+      const setContactOpen = (open) => {
+        contactTrigger.setAttribute('aria-expanded', String(open));
+        contactPanel.hidden = !open;
+      };
       const setOpen = (open) => {
         toggle.setAttribute('aria-expanded', String(open));
         toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
@@ -2787,9 +2813,13 @@
         sheet.setAttribute('aria-hidden', String(!open));
         sheet.inert = !open;
         document.body.classList.toggle('menu-open', open);
-        if (!open && sheet.contains(document.activeElement)) toggle.focus();
+        if (!open) {
+          setContactOpen(false);
+          if (sheet.contains(document.activeElement)) toggle.focus();
+        }
       };
       toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+      contactTrigger.addEventListener('click', () => setContactOpen(contactTrigger.getAttribute('aria-expanded') !== 'true'));
       sheet.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setOpen(false)));
       document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
     })();
