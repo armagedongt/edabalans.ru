@@ -221,11 +221,10 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Больше отзывов",
         "Всего через 3 недели здесь может быть ваш отзыв",
         "Сайт использует cookie. Продолжая, вы принимаете",
-        "обработки персональных данных.",
         "Написать в ЛС в Telegram",
         "Написать в ЛС в MAX",
-        "Открыть Telegram-канал",
-        "Открыть канал в MAX",
+        "Telegram-канал",
+        "Канал в MAX",
     ):
         assert marker in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
@@ -343,7 +342,15 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "if (!contact.contains(event.target)) setOpen(false);" in response.text
     assert "if (event.key !== 'Escape' || panel.hidden) return;" in response.text
     assert '>Приемлемо</button>' in response.text
-    assert '>Политику</a> обработки персональных данных.' in response.text
+    assert '>политику обработки персональных данных</a>.' in response.text
+    assert (
+        ".cookie-notice__copy a { color: inherit; font-weight: inherit; "
+        "text-decoration: underline;"
+        in response.text
+    )
+    assert "padding: 28px 0 24px;" in response.text
+    assert ".desktop-wordmark { padding-left: 12px;" in response.text
+    assert ".site-title { margin-top: 42px; }" in response.text
     assert "notice.hidden = true;" in response.text
     assert "background: var(--site-blue);" in response.text
     assert "background: rgba(255,255,255,.83);" in response.text
