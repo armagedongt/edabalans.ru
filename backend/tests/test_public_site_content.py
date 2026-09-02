@@ -61,10 +61,11 @@ def test_accepted_approach_copy_is_seeded_and_rendered() -> None:
     client = make_client()
     payload = client.get("/api/public-site/content/approach").json()
 
-    assert "Вместо ПП" in payload["html"]
+    assert "Вместо ПП еды" in payload["html"]
     assert "пищевые привычки" in payload["html"]
-    assert "Вместо подсчета калорий" in payload["html"]
+    assert "Вместо подсчета граммов" in payload["html"]
     assert "дневник по фото" in payload["html"]
+    assert "Вместо случайных попыток" in payload["html"]
     assert "ПП-рецептов" not in payload["html"]
 
 
@@ -87,8 +88,9 @@ def test_accepted_approach_copy_replaces_an_existing_active_version() -> None:
 
     assert published.status_code == 200
     html = client.get("/api/public-site/content/approach").json()["html"]
-    assert "Вместо ПП" in html
-    assert "Вместо подсчета калорий" in html
+    assert "Вместо ПП еды" in html
+    assert "Вместо подсчета граммов" in html
+    assert "Вместо случайных попыток" in html
     assert "Старый подход" not in html
 
 

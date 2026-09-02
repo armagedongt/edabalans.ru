@@ -62,7 +62,7 @@
       "label": "Текст под видео",
       "selector": "[data-homepage-block=\"hero-outro\"]",
       "width": "content",
-      "fields": ["paragraph-1", "paragraph-2"],
+      "fields": ["paragraph-1", "paragraph-2", "paragraph-3"],
       "source": "backend/app/static/homepage-preview/mobile.html",
       "status": "accepted"
     },
@@ -95,6 +95,15 @@
     },
     {
       "order": 90,
+      "id": "recognition-explanation",
+      "label": "Почему дефицит требует навыков",
+      "selector": "[data-homepage-block=\"recognition-explanation\"]",
+      "width": "content",
+      "fields": ["paragraph-1", "paragraph-2"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 100,
       "id": "approach",
       "label": "«Значит, пора менять подход»",
       "selector": "[data-homepage-block=\"approach\"]",
@@ -102,15 +111,6 @@
       "fields": ["html"],
       "source": "content/public-site/homepage/approach.md",
       "api": "/api/public-site/content/approach"
-    },
-    {
-      "order": 100,
-      "id": "main-argument",
-      "label": "Основной аргумент о последовательности действий",
-      "selector": "[data-homepage-block=\"main-argument\"]",
-      "width": "content",
-      "fields": ["title", "text"],
-      "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
       "order": 110,
@@ -130,11 +130,35 @@
       "label": "Как проходит Мастер-класс",
       "selector": "[data-homepage-block=\"inside\"]",
       "width": "content",
-      "fields": ["title", "steps", "callout"],
+      "fields": ["steps"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
       "order": 130,
+      "id": "inside-gallery",
+      "label": "Интерфейс и материалы Мастер-класса",
+      "selector": "[data-homepage-block=\"inside-gallery\"]",
+      "width": "visual",
+      "fields": ["media"],
+      "source": [
+        "backend/app/static/homepage-preview/mobile.html",
+        "backend/app/static/homepage-preview/masterclass-inside-01.webp",
+        "backend/app/static/homepage-preview/masterclass-inside-02.webp",
+        "backend/app/static/homepage-preview/masterclass-inside-03.webp",
+        "backend/app/static/homepage-preview/masterclass-inside-04.webp"
+      ]
+    },
+    {
+      "order": 140,
+      "id": "method-proof",
+      "label": "Мой подход",
+      "selector": "[data-homepage-block=\"method-proof\"]",
+      "width": "content",
+      "fields": ["title", "intro", "points"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 150,
       "id": "reviews-voice",
       "label": "Голосовой отзыв перед историей Ани",
       "selector": "[data-homepage-block=\"reviews-voice\"]",
@@ -143,7 +167,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 140,
+      "order": 160,
       "id": "reviews-featured",
       "label": "Четыре избранных фотоотзыва",
       "selector": "[data-homepage-block=\"reviews-featured\"]",
@@ -152,7 +176,16 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 150,
+      "order": 170,
+      "id": "experience-proof",
+      "label": "Опыт перед историей Ани",
+      "selector": "[data-homepage-block=\"experience-proof\"]",
+      "width": "content",
+      "fields": ["text"],
+      "source": "backend/app/static/homepage-preview/mobile.html"
+    },
+    {
+      "order": 180,
       "id": "anya-heading",
       "label": "История: что случилось с Аней",
       "selector": "[data-homepage-block=\"anya-heading\"]",
@@ -161,7 +194,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 160,
+      "order": 190,
       "id": "anya-intro",
       "label": "Текст перед историей Ани",
       "selector": "[data-homepage-block=\"anya-intro\"]",
@@ -170,7 +203,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 170,
+      "order": 200,
       "id": "anya-slider",
       "label": "Слайдер истории Ани",
       "selector": "[data-homepage-block=\"anya-slider\"]",
@@ -179,7 +212,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 180,
+      "order": 210,
       "id": "anya-outro",
       "label": "Текст после истории Ани",
       "selector": "[data-homepage-block=\"anya-outro\"]",
@@ -189,7 +222,7 @@
       "status": "accepted"
     },
     {
-      "order": 190,
+      "order": 220,
       "id": "pricing-heading",
       "label": "Плашка «Выберите тариф»",
       "selector": "[data-homepage-block=\"pricing-heading\"]",
@@ -198,7 +231,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 200,
+      "order": 230,
       "id": "pricing-cards",
       "label": "Тарифы",
       "selector": "[data-homepage-block=\"pricing-cards\"]",
@@ -208,16 +241,7 @@
       "api": "/api/pricing/site/preview"
     },
     {
-      "order": 210,
-      "id": "pricing-experience",
-      "label": "Опыт внутри тарифного блока",
-      "selector": "[data-homepage-block=\"pricing-experience\"]",
-      "width": "content",
-      "fields": ["text"],
-      "source": "backend/app/static/homepage-preview/mobile.html"
-    },
-    {
-      "order": 220,
+      "order": 240,
       "id": "pricing-trust",
       "label": "Доступ и гарантия",
       "selector": "[data-homepage-block=\"pricing-trust\"]",
@@ -226,7 +250,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 230,
+      "order": 250,
       "id": "pricing-program",
       "label": "Программа по дням",
       "selector": "[data-homepage-block=\"pricing-program\"]",
@@ -235,7 +259,7 @@
       "source": "content/public-site/homepage/*.md"
     },
     {
-      "order": 240,
+      "order": 260,
       "id": "free-intensive",
       "label": "Переход к бесплатному интенсиву",
       "selector": "[data-homepage-block=\"free-intensive\"]",
@@ -247,7 +271,19 @@
       ]
     },
     {
-      "order": 250,
+      "order": 270,
+      "id": "author",
+      "label": "Об авторе",
+      "selector": "[data-homepage-block=\"author\"]",
+      "width": "content",
+      "fields": ["title", "paragraph-1", "paragraph-2", "media"],
+      "source": [
+        "backend/app/static/homepage-preview/mobile.html",
+        "backend/app/static/blog/assets/sergey-author.png"
+      ]
+    },
+    {
+      "order": 280,
       "id": "faq",
       "label": "Частые вопросы",
       "selector": "[data-homepage-block=\"faq\"]",
@@ -257,7 +293,7 @@
       "api": "/api/public-site/content/faq"
     },
     {
-      "order": 260,
+      "order": 290,
       "id": "final-cta",
       "label": "Финальный призыв",
       "selector": "[data-homepage-block=\"final-cta\"]",
@@ -266,7 +302,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 270,
+      "order": 300,
       "id": "reviews-after-cat",
       "label": "Переход к дополнительным отзывам после кота",
       "selector": "[data-homepage-block=\"reviews-after-cat\"]",
@@ -275,7 +311,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 280,
+      "order": 310,
       "id": "reviews-wall",
       "label": "Длинное полотно дополнительных отзывов",
       "selector": "[data-homepage-block=\"reviews-wall\"]",
@@ -284,7 +320,7 @@
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {
-      "order": 290,
+      "order": 320,
       "id": "footer",
       "label": "Общий публичный подвал",
       "selector": "[data-homepage-block=\"footer\"]",
@@ -293,7 +329,7 @@
       "source": "backend/app/static/site-footer.js"
     },
     {
-      "order": 300,
+      "order": 330,
       "id": "cookie-notice",
       "label": "Уведомление об использовании cookie",
       "selector": "[data-homepage-block=\"cookie-notice\"]",

@@ -872,14 +872,32 @@
     .copy-section h2{max-width:var(--content-reading);margin:0;font-size:var(--type-section);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-wrap:balance}
     .copy-section p{max-width:var(--content-reading);margin:24px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
     .copy-section p+p{margin-top:14px}
-    .copy-section--argument{padding-top:18px}
-    .copy-section--inside{padding-top:36px;padding-bottom:clamp(50px,7vw,76px)}
+    .recognition-explanation{padding-top:clamp(42px,7vw,66px);padding-bottom:clamp(38px,6vw,58px)}
+    .copy-section--inside{padding-top:36px;padding-bottom:clamp(34px,5vw,50px)}
     .inside-steps{display:grid;gap:11px;max-width:var(--content-reading);margin:28px 0 0;padding:0;counter-reset:inside-step;list-style:none}
     .inside-steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:13px;align-items:start;padding:16px 0;border-bottom:1px solid rgba(22,143,211,.15);color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.5;counter-increment:inside-step}
     .inside-steps li::before{display:grid;width:34px;height:34px;place-items:center;border-radius:10px;background:#dff4ff;color:var(--site-blue-deep);font-weight:800;content:counter(inside-step)}
-    .inside-callout{padding:18px 20px;border:1px solid rgba(38,175,255,.2);border-radius:16px;background:rgba(255,255,255,.72);box-shadow:0 15px 34px -30px rgba(11,112,173,.45)}
-    .pricing-experience{width:var(--content-frame);max-width:100%;margin:clamp(34px,5vw,54px) auto 0;color:#3f444c;font-size:var(--type-body);font-weight:500;line-height:1.62}
-    .pricing-experience strong{color:var(--site-ink);font-weight:800}
+    .inside-steps--long{gap:0;margin-top:10px}
+    .inside-steps--long li{padding:clamp(24px,4vw,36px) 0;line-height:1.62}
+    .inside-step__copy h3{margin:2px 0 12px;color:var(--site-ink);font-size:clamp(19px,2.5vw,23px);font-weight:800;line-height:1.22;letter-spacing:-.025em}
+    .inside-step__copy p{margin:0}
+    .inside-step__copy p+p{margin-top:12px}
+    .inside-gallery{width:var(--content-frame);max-width:100%;margin:0 auto;padding:8px 0 clamp(68px,10vw,104px)}
+    .inside-gallery__grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(10px,2.4vw,18px)}
+    .inside-gallery__item{display:block;min-width:0;overflow:hidden;border-radius:clamp(12px,2vw,18px);background:#fff;box-shadow:0 15px 30px -24px rgba(20,92,138,.5);transition:transform .18s ease,box-shadow .18s ease}
+    .inside-gallery__item:hover,.inside-gallery__item:focus-visible{box-shadow:0 20px 34px -22px rgba(20,92,138,.62);transform:translateY(-2px);outline:3px solid rgba(38,175,255,.42);outline-offset:3px}
+    .inside-gallery__item img{display:block;width:100%;height:auto;background:#fff}
+    .method-proof{padding-top:clamp(62px,9vw,96px);padding-bottom:clamp(54px,8vw,84px)}
+    .proof-list{display:grid;gap:18px;max-width:var(--content-reading);margin:30px 0 0;padding:0;list-style:none}
+    .proof-list li{display:grid;grid-template-columns:29px minmax(0,1fr);gap:12px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58}
+    .proof-list li::before{display:grid;width:27px;height:27px;place-items:center;border-radius:8px;background:#d7f2e0;color:#299b57;font-weight:900;content:"✓"}
+    .experience-proof{padding-top:clamp(26px,4vw,42px);padding-bottom:clamp(58px,9vw,92px)}
+    .experience-proof p:first-child{margin-top:0;color:var(--site-ink);font-weight:800}
+    .author-section{padding-top:clamp(64px,9vw,104px);padding-bottom:clamp(70px,10vw,112px)}
+    .author-section__layout{display:grid;gap:clamp(24px,5vw,42px);align-items:start}
+    .author-section__image{display:block;width:100%;margin:0;overflow:hidden;border-radius:clamp(18px,3vw,28px);background:#fff;box-shadow:0 24px 44px -34px rgba(17,112,173,.52)}
+    .author-section__image img{display:block;width:100%;height:auto}
+    @media(min-width:720px){.author-section__layout{grid-template-columns:minmax(0,1fr) minmax(240px,.72fr)}.author-section__image{grid-column:2;grid-row:1}.author-section__copy{grid-column:1;grid-row:1}}
     .free-intensive{padding-top:clamp(62px,9vw,104px);padding-bottom:clamp(68px,9vw,110px)}
     .free-intensive__cta{display:inline-flex;min-height:58px;align-items:center;justify-content:center;margin-top:28px;padding:0 26px;border-radius:15px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
     .free-intensive__cta:hover,.free-intensive__cta:focus-visible{box-shadow:0 20px 32px -17px rgba(17,142,216,.72);transform:translateY(-2px)}
@@ -1162,9 +1180,9 @@
       <div class="site-hero__inner">
         <p class="site-eyebrow" data-homepage-block="hero-label" data-homepage-field="text" data-block-width="intrinsic">Мастер-класс · 21 день</p>
         <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
-        <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">Вы перестанете делить еду на «можно» и «нельзя», разберётесь в своём питании и научитесь менять его без очередной диеты.</p>
+        <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">За три недели научитесь делать ваше похудение — проще, а потом пользуйтесь этим всю жизнь!</p>
         <div class="site-player" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=7" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div>
-        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">Перестаньте тратить силы, чтобы бороться с похудением. Уделите немного времени, чтобы сделать похудение проще и не нужно было с ним бороться.</p><p data-homepage-field="paragraph-2">Я расскажу, какие для этого понадобятся навыки, научу, как их освоить, покажу как применять и создам вокруг вас обстановку, чтобы эти навыки прижились!</p></div>
+        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">Вместо очередной голодовки — я покажу вам со стороны ваше привычное питание и пищевые привычки.</p><p data-homepage-field="paragraph-2">Вы научитесь лучше насыщаться за те же калории и соберете свою систему питания, в которой не нужно будет так много силы воли ради простого похудения.</p><p data-homepage-field="paragraph-3">Я расскажу, что это за навыки, научу, как их освоить, покажу как применять и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p></div>
       </div>
     </section>
 
@@ -1176,7 +1194,7 @@
           <div class="argument__inner">
             <h1 data-homepage-block="recognition-title" data-homepage-field="html" data-block-width="content">Чтобы похудеть, нужно <span class="old-formula"><span class="old-formula__line">«меньше есть<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 11 C24 8, 46 13, 68 10 S88 9, 98 11"/></svg></span> <span class="old-formula__line">и больше двигаться»<svg class="strike-svg" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true"><path d="M2 10 C18 13, 39 8, 58 11 S83 14, 98 10"/></svg></span></span></h1>
             <div class="argument__copy" data-homepage-block="recognition-intro" data-homepage-field="html" data-block-width="content">
-              <p>Пожалуй, все хоть раз слышали эту фразу. И вообще-то похудение так и работает. Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается? А худеть как-то надо...</p>
+              <p>Казалось бы, слова вроде правильные... Но что если вы уже не можете есть ещё меньше, а двигаться больше — ну никак не получается? А худеть как-то надо...</p>
             </div>
           </div>
         </section>
@@ -1191,6 +1209,12 @@
             <p class="pain pain--final" data-homepage-field="pain-6" aria-label="Я так больше не хочу.">Я так больше <span class="final-old">не могу</span><span class="final-new">не хочу</span>.</p>
           </div>
         </div>
+        <section class="copy-section recognition-explanation" data-homepage-block="recognition-explanation" data-block-width="content">
+          <div class="copy-section__inner">
+            <p data-homepage-field="paragraph-1">Да, для похудения — нужен дефицит калорий. Но здоровое питание и пищевые привычки именно для того, чтобы у вас глаза на лоб не полезли от этого дефицита.</p>
+            <p data-homepage-field="paragraph-2">Тяга к сладкому, частым перекусам, постоянный голод, невозможность вовремя остановиться, срывы и прочие оказии — это не ваши характеристики как личности, а просто недостаток навыков, как жить в дефиците калорий.</p>
+          </div>
+        </section>
         <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach" data-homepage-block="approach" data-homepage-field="html" data-block-width="content" data-recognition-followup>
           <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
         </section>
@@ -1199,12 +1223,6 @@
     </section>
   </div>
     <!-- library:recognition:end -->
-    <section class="chain-block copy-section copy-section--argument" data-homepage-block="main-argument" data-block-width="content" aria-labelledby="main-argument-title">
-      <div class="copy-section__inner">
-        <h2 id="main-argument-title" data-homepage-field="title">Вместо случайных попыток — понятная последовательность действий</h2>
-        <p data-homepage-field="text">Одинаковая жалоба не означает одинаковую проблему. За вечерней тягой к сладкому может стоять маленький обед, привычка награждать себя после тяжёлого дня или запрет, который сам сделал сладкое навязчивым. Поэтому готовый совет без дневника может попасть вообще не туда.</p>
-      </div>
-    </section>
     <section class="chain-block chain-block--before-after" aria-label="Похудение до и после Мастер-класса" data-homepage-block="before-after" data-homepage-field="visual" data-block-width="visual"><section class="wl-masterclass-story" aria-label="Похудение до и после мастер-класса">
   <div
     class="wl-masterclass-story__visual wl-masterclass-story__visual--before"
@@ -1243,16 +1261,36 @@
 
 </section>
 
-    <section class="chain-block copy-section copy-section--inside" data-homepage-block="inside" data-block-width="content" aria-labelledby="inside-title">
+    <section class="chain-block copy-section copy-section--inside" data-homepage-block="inside" data-block-width="content" aria-label="Содержание Мастер-класса">
       <div class="copy-section__inner">
-        <h2 id="inside-title" data-homepage-field="title">Как проходит Мастер-класс</h2>
-        <ol class="inside-steps" data-homepage-field="steps">
-          <li>Разбираете один конкретный вопрос.</li>
-          <li>Смотрите не на идеальное чужое меню, а на собственное питание.</li>
-          <li>Проверяете рацион с помощью инструментов Мастер-класса.</li>
-          <li>Фиксируете вывод, применяете его и переходите к следующему шагу.</li>
+        <ol class="inside-steps inside-steps--long" data-homepage-field="steps">
+          <li><div class="inside-step__copy"><p>Вы будете вести дневник питания по фотографиям (не калории) и учиться разбивать любую еду на продуктовые категории, чтобы перестать шугаться от вредного или ПП-шного, а искать в тарелках баланс и насыщение.</p> <p>Перед вами как на ладони окажутся все мелкие косяки, которые отравляли вам жизнь, но вы о них даже не задумывались.</p></div></li>
+          <li><div class="inside-step__copy"><p>Каждй день с помощью миох текстов, видео и заданий в уроках вы будете смотреть на свое питание под новым углом — развидеть это потом не будет трудно.</p> <p>Сначала вы выйдете из автопилота, который привел вас к лишнему весу, а потом начнете менять пищевые привычки и строить здоровые отношения с едой.</p></div></li>
+          <li><div class="inside-step__copy"><p>Система рецептов и мой авторский конструктор питания помогут нормально собирать приемы пищи хоть из домашней еды, хоть из покупной!</p> <p>Я покажу как не просто повторять мои рецепты, а понимать принципы по которым они устроены, чтобы потом создавать что угодно под ваш вкус.</p></div></li>
+          <li><div class="inside-step__copy"><h3>Дополнительные материалы</h3> <p>Как побороть тягу к сладкому; как справляться с эмоцинальным голодом, как организовывать питание в гостях, поездках и на отдыхе; правила срывов и чит-милов, и много других статей на все случаи жизни (регулярно обновляется).</p> <p>Чтобы в каждой повторяющейся ситуации у вас был понятный порядок действий, а не очередная каша в голове.</p></div></li>
+          <li><div class="inside-step__copy"><h3>Индивидуальная консультация</h3> <p>Разберу ваш дневник питания в мельчайших подробностях, подсвечу слабые и сильные стороны, отвечу на любые вопросы, подскажу за что хвататься в первую очередь, а на что лично вам можно и подзабить.</p> <p>Учитывю не только свои сферические хотелки в вакууме, но и ваши возможности и ограничения. Искать золотую середину — мой конек. Главное сделать хоть какой-то шаг вперед!</p></div></li>
         </ol>
-        <p class="inside-callout" data-homepage-field="callout">Вы не просто смотрите уроки. Каждый материал заканчивается действием, которое вы применяете к своему питанию.</p>
+      </div>
+    </section>
+
+    <section class="chain-block inside-gallery" data-homepage-block="inside-gallery" data-homepage-field="media" data-block-width="visual" aria-label="Интерфейс и материалы Мастер-класса">
+      <div class="inside-gallery__grid">
+        <a class="inside-gallery__item" href="/preview/homepage-mobile/masterclass-inside-01.webp" target="_blank" rel="noreferrer"><img src="/preview/homepage-mobile/masterclass-inside-01.webp" alt="Пример интерфейса Мастер-класса 1" loading="lazy"></a>
+        <a class="inside-gallery__item" href="/preview/homepage-mobile/masterclass-inside-02.webp" target="_blank" rel="noreferrer"><img src="/preview/homepage-mobile/masterclass-inside-02.webp" alt="Пример интерфейса Мастер-класса 2" loading="lazy"></a>
+        <a class="inside-gallery__item" href="/preview/homepage-mobile/masterclass-inside-03.webp" target="_blank" rel="noreferrer"><img src="/preview/homepage-mobile/masterclass-inside-03.webp" alt="Пример интерфейса Мастер-класса 3" loading="lazy"></a>
+        <a class="inside-gallery__item" href="/preview/homepage-mobile/masterclass-inside-04.webp" target="_blank" rel="noreferrer"><img src="/preview/homepage-mobile/masterclass-inside-04.webp" alt="Пример интерфейса Мастер-класса 4" loading="lazy"></a>
+      </div>
+    </section>
+
+    <section class="chain-block copy-section method-proof" data-homepage-block="method-proof" data-block-width="content" aria-labelledby="method-proof-title">
+      <div class="copy-section__inner">
+        <h2 id="method-proof-title" data-homepage-field="title">Мой подход</h2>
+        <p data-homepage-field="intro">Имею образование с правом ведения проф. деятельности по консультированию всех возрастных групп по вопросам здорового образа жизни, рационального и сбалансированного питания (документы и подробности). Но при этом я не являюсь медицинским специалистом и не прикидываюсь им!</p>
+        <ul class="proof-list" data-homepage-field="points">
+          <li>Не продаю БАДы, не гадаю по анализам, не навязываю промокоды и дополнительные покупки. Только польза, навыки, поддержка и ничего больше!</li>
+          <li>Все материалы основаны на рекомендациях ведущих международных организаций в области питания: USDA, СDC, NCBI, Harvard University, Health Canada, ну и наших Роспотребнадзора с Минздравом тоже. Есть ссылки и на источники и на научные исследования.</li>
+          <li>Над курсом работал методолог. Поэтому внутри не "поток сознания", а полноценная обучающая программа. Только самое необходимое и понятным человеческим языком. Тексты с навигацией, видео-уроки с тайм-кодами, без пауз и ненужных отвлечений.</li>
+        </ul>
       </div>
     </section>
 
@@ -1289,6 +1327,14 @@
       <button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть избранный отзыв 2 из 4"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Избранный отзыв участницы 2"></button>
       <button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="3" aria-label="Открыть избранный отзыв 3 из 4"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Избранный отзыв участницы 3"></button>
       <button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="4" aria-label="Открыть избранный отзыв 4 из 4"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Избранный отзыв участницы 4"></button>
+    </section>
+
+    <section class="chain-block copy-section experience-proof" data-homepage-block="experience-proof" data-block-width="content">
+      <div class="copy-section__inner" data-homepage-field="text">
+        <p>За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций.</p>
+        <p>Мы с вами хоть еще и не знакомы, но я уже точно встречал и решил проблемы которые вам сейчас мучают или только ждут впереди!</p>
+        <p>Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!</p>
+      </div>
     </section>
 
     <section class="chain-block chain-block--anya" id="anya-story" aria-labelledby="anya-story-title">
@@ -2504,8 +2550,6 @@
       </article>
     </div>
 
-    <p class="pricing-experience" data-homepage-block="pricing-experience" data-homepage-field="text" data-block-width="content">За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций. Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!</p>
-
     <ul class="edb-pricing-assurances" data-homepage-block="pricing-trust" data-homepage-field="text" data-block-width="content">
       <li>
         <span class="edb-assurance-icon">
@@ -2742,9 +2786,19 @@
 </section>
     <section class="chain-block copy-section free-intensive" id="intensive" data-homepage-block="free-intensive" data-block-width="content" aria-labelledby="free-intensive-title">
       <div class="copy-section__inner">
-        <h2 id="free-intensive-title" data-homepage-field="title">Хотите сначала познакомиться с моим подходом поближе?</h2>
-        <p data-homepage-field="text">Я записал бесплатный интенсив в четырёх частях. В нём мы начинаем с дневника питания и последовательно разбираемся, какие изменения действительно нужны вам.</p>
+        <h2 id="free-intensive-title" data-homepage-field="title">Хотите познакомиться с моим подходом поближе?</h2>
+        <p data-homepage-field="text">Я записал бесплатный интенсив в четырёх частях «Последнее похудение», где я рассказываю как должна выглядеть история адекватного и успешного похудения от А до Я!</p>
         <a class="free-intensive__cta" data-homepage-field="cta" href="{{INTENSIVE_PUBLIC_CTA_DESTINATION}}">{{INTENSIVE_PUBLIC_CTA_LABEL}}</a>
+      </div>
+    </section>
+    <section class="chain-block copy-section author-section" data-homepage-block="author" data-block-width="content" aria-labelledby="author-title">
+      <div class="copy-section__inner author-section__layout">
+        <figure class="author-section__image" data-homepage-field="media"><img src="/blog/assets/sergey-author.png" alt="Сергей Воронцов: изменение веса и занятия спортом" loading="lazy"></figure>
+        <div class="author-section__copy">
+          <h2 id="author-title" data-homepage-field="title">Обо мне</h2>
+          <p data-homepage-field="paragraph-1">Топовый автор сообщества "Мы Худеем" на Pikabu.ru, велосипедист, триатлет (железный человек), путешественник, любитель тефтелей с чесноком и пюрешкой.</p>
+          <p data-homepage-field="paragraph-2">Разок меня тоже бес попутал — набрал до 95кг. Потом одумался, поменял образ жизни и похудел до 70кг ни дня не сидя на диете и даже не зная, что существует приложение по учету калорий. С того времени 10 лет спокойно живу в новом весе и радуюсь жизни.</p>
+        </div>
       </div>
     </section>
     <section class="chain-block chain-block--faq" id="faq" aria-label="Частые вопросы" data-homepage-block="faq" data-homepage-field="items" data-block-width="content"><div class="faq-section">
@@ -2785,7 +2839,7 @@
 </section>
   <section class="chain-block reviews-after-cat" aria-label="Больше отзывов" data-homepage-block="reviews-after-cat" data-block-width="content">
     <h2 data-homepage-field="title">Больше отзывов</h2>
-    <p data-homepage-field="text">Всего через 3 недели здесь может быть ваш отзыв о том, как вы приобрели комфорт в похудении и сменили пару размеров одежды. Присоединяйтесь!</p>
+    <p data-homepage-field="text">Всего через три недели у вас может быть повод написать что-то подобное 👇</p>
   </section>
   <section class="reviews-wall" id="reviews-wall" aria-label="Отзывы участников" data-homepage-block="reviews-wall" data-homepage-field="media" data-block-width="visual">
     <button class="reviews-wall__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть отзыв 1 из 21"><img src="https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp" alt="Отзыв участницы 1"></button>
