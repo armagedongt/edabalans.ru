@@ -118,7 +118,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|knowledge-base\\.css|knowledge-base\\.js|knowledge-library\\.css|knowledge-library\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.js|content-catalog\\.css|content-catalog\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin\\.css|admin\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|marketing\\.css|knowledge-base\\.css|knowledge-base\\.js|knowledge-library\\.css|knowledge-library\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.js|content-catalog\\.css|content-catalog\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     if not asset_name.startswith("admin-login") and not admin_identity(request, credentials):

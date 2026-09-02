@@ -797,9 +797,22 @@ telegram_status = "Запланировано"
 telegram_order = 80
 
 [[modules]]
-id = "planned.marketing-catalog"
-parent = "planned"
-card = "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md"
+id = "marketing"
+card = "docs/knowledge-base/modules/catalog/marketing.md"
+
+[[modules]]
+id = "marketing.analytics"
+admin_catalog = [{ category = "tools", order = 15, url = "/admin/marketing", label = "Путь лида", description = "Источники, кампании и воронка до прохождения бесплатного интенсива." }]
+parent = "marketing"
+card = "docs/knowledge-base/modules/catalog/marketing.analytics.md"
+owns_files = [
+  "backend/app/marketing_routes.py", "backend/app/marketing_service.py",
+  "backend/app/static/marketing.css", "backend/tests/test_marketing_analytics.py",
+  "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md",
+]
+owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*"]
+depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
+reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "products.intensive"]
 
 [[modules]]
 id = "planned.telegram-quiz"

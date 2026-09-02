@@ -15,6 +15,7 @@
 ├── /admin/strength
 ├── /admin/metabolism
 ├── /admin/pricing
+├── /admin/marketing
 ├── /admin/knowledge-base
 ├── /admin/courses
 │   └── /admin/courses/masterclass-21/structure
@@ -46,6 +47,12 @@ HTTP Basic временно поддерживается для совмести
 `admin_catalog` в `docs/modules.toml`; CI и production пересобирают inventory из
 целевого commit. Это меняет `/admin` без ручного списка в JavaScript и без
 отдельного commit производных файлов.
+
+`/admin/marketing` — read-only сводная воронка привлечения с декабря 2025 года.
+Она соединяет tracking-ссылки и события общей PostgreSQL по источникам и кампаниям,
+показывает технические разрывы отдельно от настоящих нулей и не управляет рекламой.
+Главная качественная конверсия — открытие первого дня бесплатного интенсива;
+расходы Яндекс Директа появляются после подключения разрешённого API.
 
 `/admin/masterclass-offers-preview` — не редактор, а интерактивный сценарный
 предпросмотр дополнительных предложений. Он показывает сочетание места в программе,

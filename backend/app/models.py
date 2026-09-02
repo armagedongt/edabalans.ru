@@ -392,6 +392,43 @@ class AttributionEvent(Base):
     )
 
 
+class TelegramTrackingLink(Base):
+    """Read model for the Telegram service link catalog in the shared database."""
+
+    __tablename__ = "tg_tracking_links"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    platform: Mapped[str] = mapped_column(String(80), nullable=False)
+    placement: Mapped[str] = mapped_column(String(255), nullable=False)
+    campaign: Mapped[str | None] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    target_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
+class TelegramTrackingEvent(Base):
+    """Read model for raw acquisition and bot journey events."""
+
+    __tablename__ = "tg_tracking_events"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    tracking_link_id: Mapped[str | None] = mapped_column(
+        ForeignKey("tg_tracking_links.id", ondelete="SET NULL"), index=True
+    )
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    telegram_user_id: Mapped[str | None] = mapped_column(String(64), index=True)
+    event_type: Mapped[str] = mapped_column(String(64), nullable=False)
+    metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class Tag(Base):
     __tablename__ = "tags"
 

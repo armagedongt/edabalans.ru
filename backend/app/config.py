@@ -24,6 +24,12 @@ class Settings(BaseSettings):
     personal_access_page_url: str = "https://похудение-это-есть.рф/personal-access"
     pricing_catalog_enabled: bool = False
     knowledge_mcp_token: str = ""
+    yandex_metrika_counter_id: str = "97331502"
+    yandex_direct_token: str = ""
+    yandex_direct_client_login: str = ""
+    marketing_day_one_events_enabled: bool = False
+    marketing_site_home_events_enabled: bool = False
+    marketing_later_day_events_enabled: bool = False
 
     @property
     def allowed_origins_list(self) -> list[str]:
