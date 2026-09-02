@@ -224,6 +224,12 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Канал в MAX",
     ):
         assert marker in response.text
+    assert "Сомневаетесь? А вы сравните..." not in response.text
+    assert (
+        ".meme-card{position:relative;align-self:center;width:min(calc(100% + "
+        "var(--final-inline) + var(--final-inline) - 28px),680px)"
+        in response.text
+    )
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
     assert INTENSIVE_PUBLIC_CTA["button_label"] in response.text
     assert "{{INTENSIVE_PUBLIC_CTA_" not in response.text
@@ -628,7 +634,6 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         "Не ждите идеального момента или идеальных условий",
         "За моими плечами 600+ разобранных дневников питания",
         "Хотите сначала познакомиться с моим подходом поближе?",
-        "Сомневаетесь? А вы сравните...",
         "Всего через 3 недели здесь может быть ваш отзыв",
     ):
         assert marker in response.text
@@ -679,9 +684,6 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         },
         "pricing-experience": {
             "text": "За моими плечами 600+ разобранных дневников питания, тысячи часов консультаций. Выбирая даже самостоятельный тариф, вы получаете весь этот опыт в удобной упаковке!",
-        },
-        "final-cta": {
-            "comparison-title": "Сомневаетесь? А вы сравните...",
         },
         "reviews-after-cat": {
             "title": "Больше отзывов",

@@ -262,7 +262,7 @@
       "label": "Финальный призыв",
       "selector": "[data-homepage-block=\"final-cta\"]",
       "width": "content",
-      "fields": ["sticker", "line-1", "line-2", "line-3", "comparison-title", "contact-copy"],
+      "fields": ["sticker", "line-1", "line-2", "line-3", "contact-copy"],
       "source": "backend/app/static/homepage-preview/mobile.html"
     },
     {

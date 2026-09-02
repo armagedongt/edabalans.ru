@@ -841,13 +841,13 @@
     .final-card::before,.final-card::after{position:absolute;z-index:-1;border-radius:50%;content:"";pointer-events:none}
     .final-card::before{top:-150px;right:-130px;width:380px;height:380px;background:radial-gradient(circle,rgba(255,255,255,.28),rgba(255,255,255,0) 68%)}
     .final-card::after{bottom:-180px;left:-120px;width:430px;height:430px;background:radial-gradient(circle,rgba(255,255,255,.15),rgba(255,255,255,0) 68%)}
-    .final-main{display:flex;max-width:860px;flex-direction:column;align-items:flex-start;padding:46px 18px 64px;text-align:left}
+    .final-main{--final-inline:18px;display:flex;max-width:860px;flex-direction:column;align-items:flex-start;padding:46px var(--final-inline) 64px;text-align:left}
     .sign-sticker{display:inline-block;margin:0 0 24px;padding:9px 16px;color:#fff;background:var(--orange);border:2px solid rgba(255,255,255,.82);border-radius:999px;box-shadow:0 9px 20px -13px rgba(70,20,10,.7);font-family:Unbounded,Manrope,sans-serif;font-size:11px;font-weight:800;letter-spacing:.04em;transform:rotate(-3deg)}
     .chain-block--final h1{display:grid;max-width:var(--content-reading);margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-display);font-weight:700;line-height:1.14;letter-spacing:-1.35px;text-wrap:balance}
     .chain-block--final h1 span+span{margin-top:24px}
     .chain-block--final h1 .final-sign{text-shadow:0 4px 0 rgba(5,104,164,.16)}
     .chain-block--final h1 .question-line{font-family:Manrope,Arial,sans-serif;font-size:.62em;font-weight:600;line-height:1.25;letter-spacing:0}
-    .meme-card{position:relative;width:min(100%,390px);aspect-ratio:800/776;margin:38px 0 0;border:3px solid rgba(255,255,255,.86);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 24px 48px -28px rgba(0,53,90,.72);transform:rotate(-1.25deg)}
+    .meme-card{position:relative;align-self:center;width:min(calc(100% + var(--final-inline) + var(--final-inline) - 28px),680px);aspect-ratio:800/776;margin:38px auto 0;border:3px solid rgba(255,255,255,.86);border-radius:22px;overflow:hidden;background:#fff;box-shadow:0 24px 48px -28px rgba(0,53,90,.72);transform:rotate(-1.25deg)}
     .meme-card img{display:block;width:100%;height:100%;object-fit:cover}
     .action-group{width:min(100%,680px);margin-top:42px}
     .contact-copy{max-width:640px;margin:0 0 22px;color:rgba(255,255,255,.9);font-size:17px;font-weight:400;line-height:1.55}
@@ -863,8 +863,8 @@
     .max-logo{display:block;width:102px;height:38px;object-fit:contain}
     .primary-cta{display:flex;align-items:center;justify-content:center;width:100%;margin-top:24px;padding:0 22px;color:#fff;background:#ff684b;box-shadow:0 16px 30px -17px rgba(255,104,75,.72);transition:transform .18s ease,background .18s ease,color .18s ease,box-shadow .18s ease}
     .primary-cta:hover,.primary-ct.chain-block--final a:focus-visible{color:#fff;background:linear-gradient(135deg,#ffd47d,#e8ae45);box-shadow:0 20px 32px -15px rgba(232,174,69,.82);transform:rotate(-1deg) translateY(-2px)}
-    @media(min-width:760px){.final-section{padding-top:64px;padding-bottom:90px}.final-main{padding:58px 72px 78px}.sign-sticker{margin-bottom:28px;font-size:12px}.action-group{margin-top:52px}}
-    @media(max-width:430px){.final-main{padding-inline:14px}.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.meme-card{border-radius:18px}.contact-copy{font-size:15px}}
+    @media(min-width:760px){.final-section{padding-top:64px;padding-bottom:90px}.final-main{--final-inline:72px;padding:58px var(--final-inline) 78px}.sign-sticker{margin-bottom:28px;font-size:12px}.action-group{margin-top:52px}}
+    @media(max-width:430px){.final-main{--final-inline:14px;padding-inline:var(--final-inline)}.social-row{gap:8px}.social-button,.primary-cta{min-height:62px;font-size:15px}.social-button{gap:7px}.social-icon{width:34px;height:34px}.social-icon svg{width:32px;height:32px}.max-logo{width:78px}.meme-card{border-radius:18px}.contact-copy{font-size:15px}}
     @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.social-button,.primary-cta{transition:none}}
 
     .copy-section{padding:clamp(54px,8vw,88px) var(--page-gutter);color:var(--site-ink);background:transparent}
@@ -883,7 +883,6 @@
     .free-intensive{padding-top:clamp(62px,9vw,104px);padding-bottom:clamp(68px,9vw,110px)}
     .free-intensive__cta{display:inline-flex;min-height:58px;align-items:center;justify-content:center;margin-top:28px;padding:0 26px;border-radius:15px;background:var(--site-blue);box-shadow:0 16px 28px -18px rgba(17,142,216,.58);color:#fff;font-size:17px;font-weight:800;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
     .free-intensive__cta:hover,.free-intensive__cta:focus-visible{box-shadow:0 20px 32px -17px rgba(17,142,216,.72);transform:translateY(-2px)}
-    .final-compare-title{max-width:var(--content-reading);margin:34px 0 0;color:#fff;font-size:clamp(23px,4.6vw,38px);font-weight:800;line-height:1.14;letter-spacing:-.035em;text-wrap:balance}
     .reviews-after-cat{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin:0 auto;padding:18px 0 66px;color:#16181d}
     .reviews-after-cat h2{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.14;letter-spacing:-.045em;text-wrap:balance}
     .reviews-after-cat p{max-width:var(--content-reading);margin:22px 0 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.62}
@@ -2764,7 +2763,6 @@
           <span class="question-line" data-homepage-field="line-2">Ждёте какой-то особый знак?</span>
           <span class="final-sign" data-homepage-field="line-3">Вот вам знак!</span>
         </h1>
-        <h2 class="final-compare-title" data-homepage-field="comparison-title">Сомневаетесь? А вы сравните...</h2>
         <figure class="meme-card">
           <img src="/preview/homepage-mobile/final-cta-cat-clock.webp?v=2" alt="Кот смотрит на часы: не до этого, не сейчас, ой — прошло 10 лет">
         </figure>
