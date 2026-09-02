@@ -196,6 +196,9 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         'v=7&context=anya-review"'
         in response.text
     )
+    assert ".anya-slide--video{width:min(80vw,var(--anya-video-width,275px));aspect-ratio:1080/1914" in response.text
+    assert "const anyaVideoAspect = 1080 / 1914;" in response.text
+    assert "slider.style.setProperty('--anya-video-width', `${height * anyaVideoAspect}px`);" in response.text
     assert "/preview/homepage-mobile/media-coordinator.js?v=2" in response.text
     assert "const preloadDistance = Math.max(window.innerHeight, 640);" in response.text
     assert "frame.src = frame.dataset.mediaSrc;" in response.text

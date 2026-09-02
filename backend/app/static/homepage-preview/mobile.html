@@ -976,7 +976,7 @@
     .anya-story__viewport::-webkit-scrollbar{display:none}
     .anya-story__track{display:flex;gap:14px;width:max-content;padding:18px 0 42px}
     .anya-slide{position:relative;display:flex;width:min(80vw,608px);height:var(--anya-slide-height,auto);aspect-ratio:350/488;flex:none;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#fff;box-shadow:0 20px 38px -24px rgba(18,55,86,.44)}
-    .anya-slide--video{background:#121018}
+    .anya-slide--video{width:min(80vw,var(--anya-video-width,275px));aspect-ratio:1080/1914;background:#121018}
     .anya-slide--video iframe{width:100%;height:100%;border:0}
     .anya-slide--image{flex-direction:column;margin:0;background:linear-gradient(150deg,#fff,#edf8ff)}
     .anya-slide--image img{width:100%;height:calc(100% - 70px);object-fit:contain;background:#fff}
@@ -3026,10 +3026,13 @@
       const slides = [...viewport.querySelectorAll('.anya-slide')];
       const slider = viewport.closest('.anya-story__slider');
       const heroVideo = document.querySelector('.site-player__mask');
+      const anyaVideoAspect = 1080 / 1914;
       const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       const syncSlideHeight = () => {
         const height = heroVideo?.getBoundingClientRect().height || 0;
-        if (height > 0) slider?.style.setProperty('--anya-slide-height', `${height}px`);
+        if (height <= 0 || !slider) return;
+        slider.style.setProperty('--anya-slide-height', `${height}px`);
+        slider.style.setProperty('--anya-video-width', `${height * anyaVideoAspect}px`);
       };
       const slideLeft = (slide) => {
         const slideBox = slide.getBoundingClientRect();
