@@ -802,7 +802,7 @@ card = "docs/knowledge-base/modules/catalog/marketing.md"
 
 [[modules]]
 id = "marketing.analytics"
-admin_catalog = [{ category = "tools", order = 15, url = "/admin/marketing", label = "Путь лида", description = "Источники, кампании и воронка до прохождения бесплатного интенсива." }]
+admin_catalog = [{ category = "tools", order = 15, url = "/admin/marketing", label = "Путь лида", description = "Таблица пользователей, источников, действий и конверсий бесплатного интенсива." }]
 parent = "marketing"
 card = "docs/knowledge-base/modules/catalog/marketing.analytics.md"
 owns_files = [

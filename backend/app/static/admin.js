@@ -441,21 +441,32 @@
     };
   }
 
-  function percent(value) {
-    return value === null || value === undefined ? "—" : `${value.toLocaleString("ru-RU")}%`;
-  }
-
-  function marketingStatus(status) {
-    const labels = { configured: "ПОДКЛЮЧЕНО", collecting: "СОБИРАЕТ", ready: "ГОТОВО", waiting_api: "ЖДЁТ API", not_configured: "НЕ НАСТРОЕНО" };
-    const tone = ["configured", "collecting"].includes(status) ? "" : status === "ready" ? "off" : "warn";
-    return `<span class="admin-badge ${tone}">${esc(labels[status] || status)}</span>`;
-  }
-
   function moscowToday() {
     const parts = new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Moscow", year: "numeric", month: "2-digit", day: "2-digit" })
       .formatToParts(new Date())
       .reduce((result, part) => { result[part.type] = part.value; return result; }, {});
     return `${parts.year}-${parts.month}-${parts.day}`;
+  }
+
+  function marketingDate(value) {
+    if (!value) return "—";
+    return new Intl.DateTimeFormat("ru-RU", {
+      timeZone: "Europe/Moscow", day: "2-digit", month: "2-digit", year: "2-digit", hour: "2-digit", minute: "2-digit"
+    }).format(new Date(value));
+  }
+
+  function marketingEvent(value, fallback = "—") {
+    if (!value) return `<span class="marketing-empty">${esc(fallback)}</span>`;
+    return `<b>${marketingDate(value.at)}</b>${value.detail ? `<small>${esc(value.detail)}</small>` : ""}${value.label ? `<small>${esc(value.label)}</small>` : ""}`;
+  }
+
+  function marketingEvents(values) {
+    if (!values || !values.length) return '<span class="marketing-empty">—</span>';
+    return values.map((value) => `<span class="marketing-event-list">${marketingEvent(value)}</span>`).join("");
+  }
+
+  function marketingOption(value, selected) {
+    return `<option value="${esc(value)}" ${value === selected ? "selected" : ""}>${esc(value)}</option>`;
   }
 
   async function marketingDashboard() {
@@ -464,36 +475,67 @@
     const params = new URLSearchParams(location.search);
     const from = params.get("from") || "2025-12-01";
     const to = params.get("to") || moscowToday();
-    const data = await api(`/admin/api/marketing/overview?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`);
-    const missing = (data.missing_events || []).filter((item) => item.needed);
-    const stageCards = (data.stages || []).map((stage, index) => `
-      <article class="marketing-stage ${stage.status === "pending" ? "pending" : ""}">
-        <div class="marketing-stage-index">${index + 1}</div><small>${esc(stage.label)}</small>
-        <b>${stage.status === "pending" ? "—" : stage.count.toLocaleString("ru-RU")}</b>
-        <span>${stage.status === "pending" ? "событие ещё не подключено" : index ? `${percent(stage.conversion)} от прошлого шага` : "за выбранный период"}</span>
-      </article>`).join("");
-    const integrationCards = (data.integrations || []).map((item) => `
-      <article class="admin-module marketing-integration"><div><h3>${esc(item.label)}</h3>${marketingStatus(item.status)}</div><p>${esc(item.detail)}</p></article>`).join("");
-    const rows = (data.breakdown || []).map((item) => `
-      <tr><td><b>${esc(item.source)}</b><small>${esc(item.placement)}</small></td><td><b>${esc(item.campaign)}</b><small>${esc(item.link_name)}</small></td>
-      <td>${item.clicks.toLocaleString("ru-RU")}</td><td>${item.bot_starts.toLocaleString("ru-RU")}<small>${percent(item.click_to_start)} от кликов</small></td>
-      <td>${item.day_one_opens.toLocaleString("ru-RU")}<small>${percent(item.start_to_day_one)} от стартов</small></td><td>${item.subscribers.toLocaleString("ru-RU")}</td>
-      <td>${item.later_day_users.toLocaleString("ru-RU")}</td><td>—<small>после Direct API</small></td></tr>`).join("");
+    const source = params.get("source") || "";
+    const campaign = params.get("campaign") || "";
+    const user = params.get("user") || "";
+    const request = new URLSearchParams({ from, to });
+    if (source) request.set("source", source);
+    if (campaign) request.set("campaign", campaign);
+    if (user) request.set("user", user);
+    const data = await api(`/admin/api/marketing/overview?${request}`);
+    const selected = data.filters.selected;
+    const missingStage = (code) => data.collection[code] ? "—" : "не подключено";
+    const rows = (data.rows || []).map((item) => {
+      const userName = item.user_id
+        ? `<a href="/admin/users?user=${encodeURIComponent(item.user_id)}">${esc(item.display_name)}</a>`
+        : `<b>${esc(item.display_name)}</b>`;
+      const other = (item.other_actions || []).map((action) => `<span><b>${marketingDate(action.at)}</b>${esc(action.label)}</span>`).join("");
+      return `<tr>
+        <td class="marketing-person">${userName}<small>${item.usernames.map(esc).join(" · ") || "без username"}</small></td>
+        <td><b>${esc(item.source)}</b><small>${esc(item.placement)}</small></td>
+        <td><b>${esc(item.campaign)}</b><small>${esc(item.link_name)}</small></td>
+        <td>${marketingEvent(item.start)}</td>
+        <td>${marketingEvents(item.check_before_day_one)}</td>
+        <td>${marketingEvent(item.day_one, missingStage("day_one"))}</td>
+        <td>${marketingEvent(item.subscription)}</td>
+        <td>${marketingEvents(item.check_after_day_one)}</td>
+        <td>${marketingEvent(item.site_home, missingStage("site_home"))}</td>
+        <td>${item.later_days ? `<b>${marketingDate(item.later_days.at)}</b><small>${item.later_days.max_day ? `дошёл до дня ${item.later_days.max_day}` : "открыл следующий день"}</small>` : `<span class="marketing-empty">${missingStage("later_days")}</span>`}</td>
+        <td class="marketing-other">${other || '<span class="marketing-empty">—</span>'}</td>
+        <td>${marketingEvent(item.last_action)}</td>
+      </tr>`;
+    }).join("");
+    const analytics = (data.analytics || []).map((item) => `<tr>
+      <td>${esc(item.label)}</td>
+      <td>${item.collection === "not_connected" ? '<span class="marketing-empty">не подключено</span>' : item.count.toLocaleString("ru-RU")}</td>
+      <td>${item.conversion_from_start === null ? "—" : `${item.conversion_from_start.toLocaleString("ru-RU")}%`}</td>
+    </tr>`).join("");
     root.innerHTML = `
-      <div class="marketing-toolbar"><div><strong>Сводим только данные с декабря 2025 года</strong><span>Часовой пояс отчёта: Москва</span></div>
-        <form id="marketing-period"><label>С<input name="from" type="date" min="2025-12-01" value="${esc(data.period.from)}"></label><label>По<input name="to" type="date" min="2025-12-01" value="${esc(data.period.to)}"></label><button class="admin-action">Показать</button></form></div>
-      <div class="marketing-gap"><strong>Переходы — технический ориентир</strong><span>Окончательные клики и расходы сверим с Метрикой и Директом после доступа к API.${data.data_quality?.truncated ? " Показана ограниченная выборка: данных больше безопасного лимита отчёта." : ""}</span></div>
-      <div class="admin-section-head"><div><h2>Главная воронка</h2><p>Победителя рекламы выбираем по открытию первого дня, а не по оплате.</p></div></div>
-      <div class="marketing-funnel">${stageCards}</div>
-      ${missing.length ? `<div class="marketing-gap"><strong>До полной воронки не хватает ${missing.length} ${missing.length === 1 ? "события" : "событий"}</strong><span>${missing.map((item) => esc(item.label)).join(" · ")}</span></div>` : ""}
-      <div class="admin-section-head"><div><h2>Источники данных</h2><p>Секреты не отображаются и не хранятся в интерфейсе.</p></div></div><div class="admin-module-grid">${integrationCards}</div>
-      <div class="admin-section-head"><div><h2>Кампании и связки</h2><p>Источник → размещение → кампания → tracking-ссылка.</p></div></div>
-      <div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Источник</th><th>Кампания / ссылка</th><th>Переходы</th><th>Старт бота</th><th>День 1</th><th>Подписка</th><th>Следующие дни</th><th>Расход</th></tr></thead><tbody>${rows || '<tr><td colspan="8"><div class="admin-empty">За этот период событий пока нет</div></td></tr>'}</tbody></table></div>
-      <div class="admin-footer">Оплаты остаются в CRM и не участвуют в выборе рекламного объявления при длинном цикле покупки.</div>`;
-    document.getElementById("marketing-period").addEventListener("submit", (event) => {
+      <form class="marketing-filters" id="marketing-filters">
+        <label>С<input name="from" type="date" min="2025-12-01" value="${esc(data.period.from)}"></label>
+        <label>По<input name="to" type="date" min="2025-12-01" value="${esc(data.period.to)}"></label>
+        <label>Источник<select name="source"><option value="">Все источники</option>${data.filters.sources.map((value) => marketingOption(value, selected.source)).join("")}</select></label>
+        <label>Кампания<select name="campaign"><option value="">Все кампании</option>${data.filters.campaigns.map((value) => marketingOption(value, selected.campaign)).join("")}</select></label>
+        <label class="marketing-user-filter">Пользователь<input name="user" value="${esc(selected.user)}" placeholder="Имя, username или ID"></label>
+        <button class="admin-action">Показать</button><a class="admin-action alt" href="/admin/marketing">Сбросить</a>
+      </form>
+      <div class="marketing-result-line">Найдено пользователей: <b>${data.totals.matching_rows.toLocaleString("ru-RU")}</b>${data.totals.rows < data.totals.matching_rows ? ` · в таблице первые ${data.totals.rows.toLocaleString("ru-RU")}, аналитика по всем` : ""}</div>
+      ${data.totals.events_truncated ? '<div class="marketing-note">Событий больше безопасного предела отчёта. Текущая таблица и аналитика неполные — сузьте период.</div>' : ""}
+      <div class="marketing-table-wrap"><table class="marketing-table marketing-leads"><thead><tr>
+        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Старт бота</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Главная</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
+      </tr></thead><tbody>${rows || '<tr><td colspan="12"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
+      <h2 class="marketing-analytics-title">Конверсии текущего среза</h2>
+      <div class="marketing-table-wrap marketing-analytics-wrap"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
+      ${data.totals.clicks_ignore_user_filter ? '<div class="marketing-note">Переходы считаются по источнику и кампании: технический клик пока нельзя надёжно привязать к поиску конкретного пользователя.</div>' : ""}`;
+    document.getElementById("marketing-filters").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
-      location.href = `/admin/marketing?from=${encodeURIComponent(form.get("from"))}&to=${encodeURIComponent(form.get("to"))}`;
+      const next = new URLSearchParams();
+      for (const key of ["from", "to", "source", "campaign", "user"]) {
+        const value = String(form.get(key) || "").trim();
+        if (value) next.set(key, value);
+      }
+      location.href = `/admin/marketing?${next}`;
     });
   }
 

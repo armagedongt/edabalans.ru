@@ -34,6 +34,9 @@ def marketing_page(
 def marketing_overview(
     date_from: date = Query(default=EARLIEST_REPORT_DATE, alias="from"),
     date_to: date | None = Query(default=None, alias="to"),
+    source: str | None = Query(default=None, max_length=255),
+    campaign: str | None = Query(default=None, max_length=255),
+    user: str | None = Query(default=None, max_length=255),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict:
@@ -49,4 +52,7 @@ def marketing_overview(
         get_settings(),
         date_from=date_from,
         date_to=date_to,
+        source_filter=source,
+        campaign_filter=campaign,
+        user_query=user,
     )
