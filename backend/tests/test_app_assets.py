@@ -1012,6 +1012,27 @@ def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
     assert "'masterclass-sales': 'masterclass-sales-app'" in loader
 
 
+def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
+    response = client.get("/homepage.js")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/javascript")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["access-control-allow-origin"] == "*"
+    assert "[data-edabalans-homepage]" in response.text
+    assert "/preview/homepage-mobile?theme=blue-mist&embed=tilda" in response.text
+    assert "DOMParser" in response.text
+    assert "createElement('iframe')" not in response.text
+    assert "/homepage.js" not in client.get("/openapi.json").json()["paths"]
+
+    shell = client.get("/preview/homepage-tilda-shell")
+    assert shell.status_code == 200
+    assert shell.headers["x-robots-tag"] == "noindex, nofollow"
+    assert 'data-edabalans-homepage' in shell.text
+    assert '<script src="/homepage.js" defer></script>' in shell.text
+    assert "/preview/homepage-tilda-shell" not in client.get("/openapi.json").json()["paths"]
+
+
 def test_dqs_notifies_course_only_after_server_save() -> None:
     response = client.get("/apps/dqs.html")
     rules = client.get("/apps/dqs-category-rules.js")

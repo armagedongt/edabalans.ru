@@ -12,6 +12,9 @@ implementation_status: implemented
 ## Функции
 
 - показывать `noindex`-предпросмотр принятой мобильной цепочки;
+- временно встраивать эту цепочку без `iframe` в один блок T123 тестовой страницы
+  Tilda через стабильный `/homepage.js`; в режиме Tilda брать реальные цены и
+  создавать реальные checkout-команды, сохраняя обычный preview безопасным;
 - показывать отдельный `noindex`-предпросмотр полотна реальных отзывов до его
   встраивания в принятую мобильную цепочку;
 - проверять в этом предпросмотре одиночный голосовой отзыв: воспроизводить
@@ -75,4 +78,6 @@ checkout, `platform.content` — Markdown-диалект и версиониро
 
 `docs/knowledge-base/PUBLIC_SITE.md`, `content/public-site/homepage/`, активные
 редакции `public-site-content` в `managed_document_versions` и runtime-компоненты
-`backend/app/static/homepage-preview/`.
+`backend/app/static/homepage-preview/`. Временный монтаж Tilda принадлежит
+`backend/app/static/homepage.js`; локальная проверочная оболочка —
+`backend/app/static/homepage-tilda-shell.html`.

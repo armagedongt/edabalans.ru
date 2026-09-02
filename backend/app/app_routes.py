@@ -86,6 +86,21 @@ def embed_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "embed.js", stable_loader=True)
 
 
+@router.get("/homepage.js", include_in_schema=False)
+def homepage_loader() -> FileResponse:
+    return public_asset(STATIC_DIR / "homepage.js", stable_loader=True)
+
+
+@router.get("/preview/homepage-tilda-shell", include_in_schema=False)
+def homepage_tilda_shell_preview() -> FileResponse:
+    response = public_asset(
+        STATIC_DIR / "homepage-tilda-shell.html",
+        stable_loader=True,
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 @router.get("/site-footer.js", include_in_schema=False)
 def site_footer_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-footer.js", stable_loader=True)
@@ -142,7 +157,7 @@ def homepage_recognition_preview_image() -> FileResponse:
 
 @router.get("/preview/homepage-mobile", include_in_schema=False)
 @router.get("/preview/homepage-mobile/", include_in_schema=False)
-def homepage_mobile_preview() -> HTMLResponse:
+def homepage_mobile_preview(embed: str | None = Query(default=None)) -> HTMLResponse:
     template = (STATIC_DIR / "homepage-preview" / "mobile.html").read_text(
         encoding="utf-8"
     )
@@ -153,6 +168,20 @@ def homepage_mobile_preview() -> HTMLResponse:
         "{{INTENSIVE_PUBLIC_CTA_LABEL}}",
         INTENSIVE_PUBLIC_CTA["button_label"],
     )
+    if embed == "tilda":
+        template = template.replace(
+            '<body data-page-theme="blue-mist">',
+            '<body data-page-theme="blue-mist" data-tilda-homepage-embed="true">',
+            1,
+        ).replace(
+            'data-pricing-endpoint="/api/pricing/site/preview"',
+            'data-pricing-endpoint="/api/pricing/site"',
+            1,
+        ).replace(
+            'data-checkout-endpoint="/api/pricing/site/preview-checkout"',
+            'data-checkout-endpoint="/api/pricing/site/checkout"',
+            1,
+        )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response

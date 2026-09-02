@@ -245,6 +245,7 @@ depends_on = ["platform.content", "platform.commerce", "platform.web_design"]
 owns_files = [
   "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
   "backend/app/public_site_content_cli.py", "backend/app/static/homepage-preview/**",
+  "backend/app/static/homepage.js", "backend/app/static/homepage-tilda-shell.html",
   "backend/app/public_video_analytics_routes.py",
   "backend/tests/test_homepage_preview.py", "backend/tests/test_public_site_content.py",
   "backend/tests/test_public_video_analytics.py",
@@ -255,7 +256,8 @@ owns_files = [
   "work/public-homepage-redesign/**",
 ]
 owns_routes = [
-  "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
   "*/api/public/video-analytics", "*/api/public-site/content/*",
   "*/admin/api/public-site/content*",

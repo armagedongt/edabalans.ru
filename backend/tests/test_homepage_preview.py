@@ -636,6 +636,17 @@ def test_homepage_method_overlays_and_post_anya_cta_keep_their_public_contract()
     )
 
 
+def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
+    response = client.get("/preview/homepage-mobile?embed=tilda")
+
+    assert response.status_code == 200
+    assert 'data-tilda-homepage-embed="true"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
+    assert 'data-checkout-endpoint="/api/pricing/site/checkout"' in response.text
+    assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
+    assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' not in response.text
+
+
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 
