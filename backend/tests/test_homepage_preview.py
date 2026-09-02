@@ -645,6 +645,8 @@ def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     assert 'data-checkout-endpoint="/api/pricing/site/checkout"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
     assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' not in response.text
+    assert "} finally {" in response.text
+    assert "button.disabled = false;" in response.text
 
 
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:

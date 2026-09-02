@@ -2825,6 +2825,7 @@
           } catch (error) {
             pricingStatus.textContent = 'Не удалось открыть корзину. Обновите страницу и попробуйте ещё раз.';
             pricingStatus.hidden = false;
+          } finally {
             button.disabled = false;
             button.textContent = original;
           }

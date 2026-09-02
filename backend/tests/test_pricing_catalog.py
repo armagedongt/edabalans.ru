@@ -293,6 +293,8 @@ def test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot() -> No
     )
     assert checkout_response.status_code == 200
     command = checkout_response.json()["cart_command"]
+    assert command.startswith("#order:EB-")
+    assert " С консультацией=" in command
     raw_product = command.split(":", 1)[1].rsplit("=", 1)[0]
 
     payment = client.post(

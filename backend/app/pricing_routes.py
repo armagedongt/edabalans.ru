@@ -257,6 +257,8 @@ def create_site_checkout(
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
         raise HTTPException(404, "Тариф недоступен")
+    catalog_tariff = tariff_public(db, entry.product_code or "")
+    display_name = catalog_tariff["name"] if catalog_tariff else entry.name
     now = datetime.now(timezone.utc)
     db.execute(
         delete(OfferCheckout).where(
@@ -271,7 +273,7 @@ def create_site_checkout(
         pricing_version_id=version.id,
         price_entry_code=entry.code,
         offer_code=entry.code,
-        title=entry.name,
+        title=display_name,
         items=list(entry.resource_codes or []),
         amount=entry.sale_amount,
         expires_at=now + timedelta(hours=2),
@@ -279,7 +281,7 @@ def create_site_checkout(
     db.add(checkout)
     db.flush()
     amount_text = format(entry.sale_amount, "f").rstrip("0").rstrip(".")
-    command = f"#order:{safe_order_name(f'EB-{checkout.id.hex} {entry.name}')}={amount_text}"
+    command = f"#order:{safe_order_name(f'EB-{checkout.id.hex} {display_name}')}={amount_text}"
     db.commit()
     return {
         "ok": True,
