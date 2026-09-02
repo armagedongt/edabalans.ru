@@ -1,9 +1,9 @@
 <style>html,body{width:100%;height:100%;margin:0;overflow:hidden;background:transparent!important}body{padding:0}</style>
 <div id="modular-video-player" class="mvp" tabindex="0">
-  <video class="mvp__video" data-default-source="https://cdn-g.boomstream.com/balancer/5wlZSJxs-9WmCBBoU.mp4" data-default-poster="https://cdn-g-img.boomstream.com/balancer/size:1280/0JL9wxur-a1.jpg" playsinline autoplay muted preload="metadata"></video>
+  <video class="mvp__video mvp__video--preview" playsinline autoplay muted preload="auto"></video>
+  <video class="mvp__video mvp__video--main" playsinline preload="none" aria-hidden="true"></video>
 
   <div class="mvp__shade"></div>
-  <div class="mvp__loader" hidden aria-label="Загрузка"></div>
 
   <button class="mvp__big-play" type="button" aria-label="Воспроизвести">
     <span class="mvp__play-triangle"></span>
@@ -100,8 +100,12 @@
 #modular-video-player .mvp__video{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#000;cursor:pointer;
 }
+#modular-video-player .mvp__video--preview{z-index:1}
+#modular-video-player .mvp__video--main{z-index:2;opacity:0;pointer-events:none;transition:opacity .12s linear}
+#modular-video-player.mvp--main-active .mvp__video--main{opacity:1;pointer-events:auto}
+#modular-video-player.mvp--main-active .mvp__video--preview{pointer-events:none}
 #modular-video-player .mvp__shade{
-  position:absolute;inset:0;pointer-events:none;
+  position:absolute;z-index:3;inset:0;pointer-events:none;
   background:linear-gradient(to bottom,rgba(0,0,0,.02) 45%,rgba(0,0,0,.58) 100%);
 }
 #modular-video-player .mvp__big-play{
@@ -132,7 +136,8 @@
 }
 #modular-video-player.mvp--controls-hidden .mvp__controls,
 #modular-video-player.mvp--controls-hidden .mvp__shade{opacity:0;pointer-events:none}
-#modular-video-player.mvp--awaiting-sound .mvp__controls{pointer-events:none}
+#modular-video-player.mvp--awaiting-sound .mvp__controls,
+#modular-video-player.mvp--awaiting-sound .mvp__shade{opacity:0;visibility:hidden;pointer-events:none}
 #modular-video-player .mvp__shade{transition:opacity .2s ease}
 #modular-video-player .mvp__progress{
   position:relative;width:100%;height:4px;margin:0 0 8px;border-radius:99px;overflow:hidden;
@@ -241,10 +246,6 @@
 #modular-video-player .mvp__speed-option.is-active,#modular-video-player .mvp__quality-option.is-active{color:#fff;background:transparent}
 #modular-video-player .mvp__speed-option.is-active::after,#modular-video-player .mvp__quality-option.is-active::after{color:#fff;font-size:24px}
 #modular-video-player .mvp__settings-value{opacity:1}
-#modular-video-player .mvp__loader{position:absolute;z-index:7;left:50%;top:50%;width:58px;height:58px;margin:-29px;border:10px solid rgba(255,255,255,.38);border-top-color:#fff;border-radius:50%;animation:mvp-spin .85s linear infinite}
-#modular-video-player .mvp__loader[hidden]{display:none}
-@keyframes mvp-spin{to{transform:rotate(360deg)}}
-
 /* Точечные настройки интерфейса */
 #modular-video-player .mvp__sound-card{
   left:50%;top:50%;display:flex;width:min(250px,56%);min-height:28%;flex-direction:column;align-items:center;
@@ -321,7 +322,6 @@
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js" integrity="sha384-z+tuLqMWl1/cPv7O+39RO0EURSNvorimpcCaMgeNwU+qFBx+AlUIl7jaAwg0cYil" crossorigin="anonymous"></script>
 <script>
 (function(){
   const root = document.getElementById('modular-video-player');
@@ -340,24 +340,25 @@
   const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard) };
   const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') || 'homepage-vsl';
   const MEDIA_PRESETS = {
+    'homepage-vsl': {
+      previewSource: 'https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4',
+      source: 'https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4',
+      videoId: 'homepage-vsl-2026-09-02',
+      volume: 0.85
+    },
     'anya-review': {
-      source: 'https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4',
-      poster: 'https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/243116__FFMPEG/thumb/thumbnail-5_0.jpg',
+      previewSource: 'https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4',
+      source: 'https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4',
       videoId: 'homepage-anya-review-2026-09-01'
     }
   };
-  const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || {
-    source: root.querySelector('.mvp__video')?.dataset.defaultSource || '',
-    poster: root.querySelector('.mvp__video')?.dataset.defaultPoster || '',
-    videoId: 'homepage-vsl-2026-02-13',
-    volume: 0.85
-  };
-  const video = root.querySelector('.mvp__video');
-  if (video) {
-    video.src = mediaPreset.source;
-    video.poster = mediaPreset.poster;
-    video.volume = mediaPreset.volume ?? 1;
-  }
+  const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];
+  const previewVideo = root.querySelector('.mvp__video--preview');
+  const mainVideo = root.querySelector('.mvp__video--main');
+  let video = previewVideo;
+  previewVideo.src = mediaPreset.previewSource;
+  previewVideo.volume = mediaPreset.volume ?? 1;
+  mainVideo.volume = 0;
 
   /* Внешний плеер показывает плавный опережающий прогресс. Видео при этом
      идёт с реальной скоростью и не перематывается. */
@@ -385,14 +386,6 @@
     heartbeatSec: 15
   };
 
-  if (video && /\.m3u8(?:[?#].*)?$/i.test(video.getAttribute('src') || '') && window.Hls && window.Hls.isSupported()) {
-    const source = video.getAttribute('src');
-    video.removeAttribute('src');
-    const hls = new window.Hls({ enableWorker:true, lowLatencyMode:false });
-    hls.loadSource(source);
-    hls.attachMedia(video);
-    root._hls = hls;
-  }
   const bigPlay = root.querySelector('.mvp__big-play');
   const soundCard = root.querySelector('.mvp__sound-card');
   const playBtn = root.querySelector('.mvp__play');
@@ -401,7 +394,6 @@
   volumeSlider.value = String(video.volume);
   const captionsBtn = root.querySelector('.mvp__captions');
   const pipBtn = root.querySelector('.mvp__pip');
-  const loader = root.querySelector('.mvp__loader');
   const speedInline = root.querySelector('.mvp__speed-inline');
   const settingsBtn = root.querySelector('.mvp__settings-btn');
   const settingsPanel = root.querySelector('.mvp__settings');
@@ -430,6 +422,17 @@
     return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
   }
 
+  const videos = [previewVideo, mainVideo];
+  let soundEngaged = false;
+  let mainPrepared = false;
+  let handoffPending = false;
+  let handoffAligning = false;
+
+  function logicalDuration(){
+    if (Number.isFinite(mainVideo.duration) && mainVideo.duration > 0) return mainVideo.duration;
+    return video === mainVideo && Number.isFinite(video.duration) ? video.duration : 0;
+  }
+
   function applyModules(){
     timeBox.hidden = false;
     if (MODULES.acceleratedProgress) {
@@ -441,22 +444,22 @@
     }
 
     if (MODULES.autoplay) {
-      video.muted = true;
-      video.loop = true;
+      previewVideo.muted = true;
+      previewVideo.loop = true;
       soundCard.hidden = false;
       bigPlay.hidden = true;
       root.classList.add('mvp--awaiting-sound');
 
       const start = () => {
         if (!passiveAutoplayAllowed || soundEngaged) return;
-        video.play().catch(()=>{});
+        previewVideo.play().catch(()=>{});
       };
       autoplayStart = start;
 
-      if (video.readyState >= 2) start();
-      else video.addEventListener('canplay', start, {once:true});
+      if (previewVideo.readyState >= 2) start();
+      else previewVideo.addEventListener('canplay', start, {once:true});
     } else {
-      video.loop = false;
+      previewVideo.loop = false;
       soundCard.hidden = true;
       bigPlay.hidden = false;
     }
@@ -489,24 +492,33 @@
     parent.postMessage({ type:'edabalans:player-active', context:PLAYER_CONTEXT }, location.origin);
   }
 
-  function playAndTakeFocus(){
-    const attempt = video.play();
+  function playAndTakeFocus(target = video, announce = true){
+    const attempt = target.play();
     if (attempt && typeof attempt.then === 'function') {
-      attempt.then(announceActivePlayer).catch(()=>{});
+      attempt.then(()=>{ if (announce) announceActivePlayer(); }).catch(()=>{});
       return;
     }
-    announceActivePlayer();
+    if (announce) announceActivePlayer();
   }
 
   function togglePlay(){
-    if(video.paused) playAndTakeFocus();
-    else video.pause();
+    if (video.paused) {
+      if (video === previewVideo && mainPrepared) {
+        if (previewVideo.ended) {
+          handoffPending = true;
+          tryMainHandoff();
+          return;
+        }
+        playAndTakeFocus(mainVideo, false);
+      }
+      playAndTakeFocus();
+      return;
+    }
+    videos.forEach(item=>item.pause());
   }
 
-  let soundEngaged = false;
-
   function updateProgress(){
-    const d = video.duration;
+    const d = logicalDuration();
     const t = video.currentTime || 0;
 
     current.textContent = formatTime(t);
@@ -520,7 +532,7 @@
 
   }
 
-  let analyticsApi = { markEngaged(){} };
+  let analyticsApi = { markEngaged(){}, trackTimeUpdate(){} };
   let controlsTimer = null;
 
   function showControls(scheduleHide = true){
@@ -531,17 +543,70 @@
     }
   }
 
+  function activateMainVideo(){
+    if (video === mainVideo || mainVideo.readyState < 3) return;
+    const selectedVolume = previewVideo.volume;
+    const selectedMuted = previewVideo.muted;
+    video = mainVideo;
+    mainVideo.volume = selectedVolume;
+    mainVideo.muted = selectedMuted;
+    previewVideo.muted = true;
+    previewVideo.pause();
+    root.classList.add('mvp--main-active');
+    volumeSlider.value = mainVideo.muted ? '0' : String(mainVideo.volume);
+    updatePlayUI();
+    updateProgress();
+    showControls(true);
+  }
+
+  function tryMainHandoff(){
+    if (!handoffPending || video === mainVideo || mainVideo.readyState < 3 || handoffAligning) return;
+    const targetTime = previewVideo.currentTime || 0;
+    if (Math.abs((mainVideo.currentTime || 0) - targetTime) > .45) {
+      handoffAligning = true;
+      mainVideo.currentTime = Math.min(targetTime, Number.isFinite(mainVideo.duration) ? mainVideo.duration : targetTime);
+      mainVideo.addEventListener('seeked', ()=>{
+        handoffAligning = false;
+        tryMainHandoff();
+      }, {once:true});
+      return;
+    }
+    if (mainVideo.paused) {
+      const attempt = mainVideo.play();
+      if (attempt && typeof attempt.then === 'function') {
+        attempt.then(activateMainVideo).catch(()=>{});
+        return;
+      }
+    }
+    activateMainVideo();
+  }
+
+  function prepareMainPlayback(){
+    if (mainPrepared) return;
+    mainPrepared = true;
+    mainVideo.src = mediaPreset.source;
+    mainVideo.loop = false;
+    mainVideo.muted = false;
+    mainVideo.volume = 0;
+    mainVideo.playbackRate = previewVideo.playbackRate;
+    mainVideo.load();
+    playAndTakeFocus(mainVideo, false);
+  }
+
   function enableSoundAndWatch(){
     if (soundEngaged) return;
     passiveAutoplayAllowed = false;
     soundEngaged = true;
-    video.loop = false;
-    video.currentTime = 0;
-    video.muted = false;
+    previewVideo.loop = false;
+    previewVideo.currentTime = 0;
+    previewVideo.muted = false;
+    previewVideo.volume = mediaPreset.volume ?? 1;
     soundCard.hidden = true;
     root.classList.remove('mvp--awaiting-sound');
     analyticsApi.markEngaged();
-    playAndTakeFocus();
+    announceActivePlayer();
+    prepareMainPlayback();
+    playAndTakeFocus(previewVideo, false);
     showControls(true);
   }
 
@@ -560,16 +625,51 @@
     if (!soundEngaged) return;
     togglePlay();
   });
-  video.addEventListener('click', ()=>{
-    if (!soundEngaged) return;
-    if (root.classList.contains('mvp--controls-hidden')) showControls(true);
-    else togglePlay();
+  videos.forEach(item=>{
+    item.addEventListener('click', ()=>{
+      if (!soundEngaged || item !== video) return;
+      if (root.classList.contains('mvp--controls-hidden')) showControls(true);
+      else togglePlay();
+    });
+    item.addEventListener('play', ()=>{
+      if (item !== video) return;
+      updatePlayUI();
+      if (soundEngaged) showControls(true);
+    });
+    item.addEventListener('pause', ()=>{
+      if (item !== video) return;
+      updatePlayUI();
+      showControls(false);
+      setTimeout(()=>{
+        if (soundEngaged && videos.every(candidate=>candidate.paused || candidate.ended)) {
+          parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+        }
+      }, 0);
+    });
+    item.addEventListener('ended', ()=>{
+      if (item !== video || item === previewVideo) return;
+      updatePlayUI();
+      showControls(false);
+      parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+    });
+    item.addEventListener('timeupdate', ()=>{
+      if (item !== video) return;
+      updateProgress();
+      analyticsApi.trackTimeUpdate(item);
+    });
+    item.addEventListener('loadedmetadata', ()=>{
+      if (item === video || item === mainVideo) updateProgress();
+    });
   });
-  video.addEventListener('play', ()=>{ updatePlayUI(); if (soundEngaged) showControls(true); });
-  video.addEventListener('pause', ()=>{ updatePlayUI(); showControls(false); });
-  video.addEventListener('ended', ()=>{ updatePlayUI(); showControls(false); });
-  video.addEventListener('timeupdate', updateProgress);
-  video.addEventListener('loadedmetadata', updateProgress);
+  previewVideo.addEventListener('ended', ()=>{
+    handoffPending = true;
+    tryMainHandoff();
+    if (video === previewVideo) {
+      updatePlayUI();
+      showControls(false);
+    }
+  });
+  ['canplay','playing'].forEach(eventName=>mainVideo.addEventListener(eventName, tryMainHandoff));
 
   root.addEventListener('pointermove', ()=>{ if (soundEngaged) showControls(true); });
   root.addEventListener('focusin', ()=>{ if (soundEngaged) showControls(true); });
@@ -619,8 +719,10 @@
     if (event.origin !== location.origin || event.source !== parent) return;
     if (event.data?.type !== 'edabalans:pause-player') return;
     passiveAutoplayAllowed = false;
-    if (autoplayStart) video.removeEventListener('canplay', autoplayStart);
-    if (!video.paused) video.pause();
+    handoffPending = false;
+    handoffAligning = false;
+    if (autoplayStart) previewVideo.removeEventListener('canplay', autoplayStart);
+    videos.forEach(item=>item.pause());
   });
 
   muteBtn.addEventListener('click', ()=>{
@@ -652,12 +754,6 @@
       if (document.pictureInPictureElement) await document.exitPictureInPicture();
       else if (document.pictureInPictureEnabled) await video.requestPictureInPicture();
     } catch(e) {}
-  });
-
-  video.addEventListener('waiting', ()=>{ loader.hidden = false; });
-  video.addEventListener('seeking', ()=>{ loader.hidden = false; });
-  ['playing','canplay','seeked','error'].forEach(eventName=>{
-    video.addEventListener(eventName, ()=>{ loader.hidden = true; });
   });
 
   const speedOptions = [
@@ -695,7 +791,7 @@
   }
 
   function setSpeed(value){
-    video.playbackRate = value;
+    videos.forEach(item=>{ item.playbackRate = value; });
     const item = speedOptions.find(s=>s.v===value) || speedOptions[0];
     speedValue.textContent = item.l + ' ›';
     speedInline.textContent = `x ${value}`;
@@ -848,10 +944,11 @@
       send('video_engaged');
     }
 
-    video.addEventListener('timeupdate', ()=>{
-      const t = video.currentTime || 0;
+    function trackTimeUpdate(source){
+      if (source !== video) return;
+      const t = source.currentTime || 0;
 
-      if (engaged && !video.paused && lastT !== null) {
+      if (engaged && !source.paused && lastT !== null) {
         const delta = t - lastT;
         if (delta > 0 && delta <= 2) {
           const from = Math.floor(lastT / ANALYTICS_CONFIG.bucketSizeSec);
@@ -868,19 +965,20 @@
         send('video_progress');
       }
 
-      if (engaged && Number.isFinite(video.duration) && video.duration > 0) {
-        if (!state.completed && t / video.duration >= ANALYTICS_CONFIG.completionThreshold) {
+      const fullDuration = logicalDuration();
+      if (engaged && source === mainVideo && Number.isFinite(fullDuration) && fullDuration > 0) {
+        if (!state.completed && t / fullDuration >= ANALYTICS_CONFIG.completionThreshold) {
           state.completed = true;
           send('video_complete');
         }
       }
-    });
+    }
 
     window.addEventListener('pagehide', ()=>{
       if (engaged) send('video_exit');
     });
 
-    return { markEngaged };
+    return { markEngaged, trackTimeUpdate };
   }
 
   applyModules();

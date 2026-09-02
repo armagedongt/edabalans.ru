@@ -188,21 +188,18 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     }
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
-    assert "/preview/homepage-mobile/vsl-player.html?v=5" in parser.iframe_sources
+    assert parser.iframe_sources == {
+        "/preview/homepage-mobile/vsl-player.html?v=6"
+    }
     assert (
-        "/preview/homepage-mobile/vsl-player.html?v=5&context=anya-review"
-        in parser.iframe_sources
+        'data-media-src="/preview/homepage-mobile/vsl-player.html?'
+        'v=6&context=anya-review"'
+        in response.text
     )
-    assert "edabalans:player-active" in response.text
-    assert "edabalans:pause-player" in response.text
-    assert "event.origin !== location.origin" in response.text
-    assert "event.source === frame.contentWindow" in response.text
-    player_coordination = response.text.split(
-        "const playerFrames = [...document.querySelectorAll", 1
-    )[1].split("<!-- library:public-content-script:start -->", 1)[0]
-    assert "if (activeFrame && frame !== activeFrame) pauseFrame(frame);" in player_coordination
-    assert "if (frame === activeFrame) return;" in player_coordination
-    assert "pauseFrame(frame);" in player_coordination
+    assert "/preview/homepage-mobile/media-coordinator.js?v=1" in response.text
+    assert "const preloadDistance = Math.max(window.innerHeight, 640);" in response.text
+    assert "frame.src = frame.dataset.mediaSrc;" in response.text
+    assert "rootMargin: `0px 0px ${preloadDistance}px 0px`" in response.text
     assert {
         "/preview/homepage-mobile/crying-character.png",
         "/preview/homepage-mobile/final-cta-cat-clock.webp?v=2",
@@ -444,7 +441,7 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert response.status_code == 200
     assert "boost: 7" in response.text
     assert "endpoint: '/api/public/video-analytics'" in response.text
-    assert "video.currentTime = 0" in response.text
+    assert "previewVideo.currentTime = 0" in response.text
     assert "analyticsApi.markEngaged()" in response.text
     assert "mvp--controls-hidden" in response.text
     assert "mvp-card-wave" in response.text
@@ -454,23 +451,27 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     autoplay_setup = response.text.split("if (MODULES.autoplay) {", 1)[1].split(
         "} else {", 1
     )[0]
-    assert "video.loop = true;" in autoplay_setup
+    assert "previewVideo.loop = true;" in autoplay_setup
     assert "if (!passiveAutoplayAllowed || soundEngaged) return;" in autoplay_setup
-    assert "video.play().catch(()=>{});" in autoplay_setup
+    assert "previewVideo.play().catch(()=>{});" in autoplay_setup
     assert "playAndTakeFocus" not in autoplay_setup
     sound_engagement = response.text.split("function enableSoundAndWatch(){", 1)[1].split(
         "\n  }", 1
     )[0]
     assert "soundEngaged = true;" in sound_engagement
-    assert "video.loop = false;" in sound_engagement
+    assert "previewVideo.loop = false;" in sound_engagement
     assert "soundCard.hidden = true;" in sound_engagement
-    assert "playAndTakeFocus();" in sound_engagement
+    assert "announceActivePlayer();" in sound_engagement
+    assert "prepareMainPlayback();" in sound_engagement
+    assert "playAndTakeFocus(previewVideo, false);" in sound_engagement
     assert "showControls(true);" in sound_engagement
-    active_player = response.text.split("function playAndTakeFocus(){", 1)[1].split(
+    active_player = response.text.split(
+        "function playAndTakeFocus(target = video, announce = true){", 1
+    )[1].split(
         "\n  }", 1
     )[0]
-    assert "video.play();" in active_player
-    assert "attempt.then(announceActivePlayer).catch(()=>{});" in active_player
+    assert "target.play();" in active_player
+    assert "if (announce) announceActivePlayer();" in active_player
     assert "edabalans:player-active" in response.text
     assert "edabalans:pause-player" in response.text
     assert "event.source !== parent" in response.text
@@ -478,8 +479,10 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "if (event.data?.type !== 'edabalans:pause-player') return;", 1
     )[1].split("\n  });", 1)[0]
     assert "passiveAutoplayAllowed = false;" in pause_handler
-    assert "video.removeEventListener('canplay', autoplayStart);" in pause_handler
-    assert "if (!video.paused) video.pause();" in pause_handler
+    assert "handoffPending = false;" in pause_handler
+    assert "handoffAligning = false;" in pause_handler
+    assert "previewVideo.removeEventListener('canplay', autoplayStart);" in pause_handler
+    assert "videos.forEach(item=>item.pause());" in pause_handler
     first_player_click = response.text.split(
         "function engageFromFirstPlayerClick(event){", 1
     )[1].split("\n  }", 1)[0]
@@ -495,37 +498,63 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text
+    anya_drag = response.text.split("if (PLAYER_CONTEXT === 'anya-review') {", 1)[1].split(
+        "root.addEventListener('click', engageFromFirstPlayerClick, true);", 1
+    )[0]
+    assert "enableSoundAndWatch" not in anya_drag
     assert "homepage-anya-review-2026-09-01" in response.text
+    assert "homepage-vsl-2026-09-02" in response.text
     assert "PLAYER_CONTEXT === 'anya-review'" in response.text
     assert (
         "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') "
         "|| 'homepage-vsl';"
         in response.text
     )
-    assert (
-        'data-default-source="https://cdn-g.boomstream.com/balancer/'
-        '5wlZSJxs-9WmCBBoU.mp4"'
-        in response.text
-    )
+    assert 'class="mvp__video mvp__video--preview"' in response.text
+    assert 'class="mvp__video mvp__video--main" playsinline preload="none"' in response.text
+    assert "mvp--awaiting-sound .mvp__controls" in response.text
+    assert "mvp__loader" not in response.text
     media_presets = response.text.split("const MEDIA_PRESETS = {", 1)[1].split(
         "\n  };\n  const mediaPreset", 1
     )[0]
-    assert "'homepage-vsl':" not in media_presets
+    assert "'homepage-vsl':" in media_presets
+    assert "https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4" in media_presets
+    assert "https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4" in media_presets
+    assert "https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4" in media_presets
+    assert "https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4" in media_presets
     anya_media_preset = media_presets.split("'anya-review': {", 1)[1].split(
         "\n    }", 1
     )[0]
     assert "volume:" not in anya_media_preset
-    main_media_preset = response.text.split(
-        "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || {", 1
-    )[1].split("\n  };", 1)[0]
+    main_media_preset = media_presets.split("'homepage-vsl': {", 1)[1].split(
+        "\n    }", 1
+    )[0]
     assert "volume: 0.85" in main_media_preset
-    assert "video.volume = mediaPreset.volume ?? 1;" in response.text
+    assert "previewVideo.volume = mediaPreset.volume ?? 1;" in response.text
     assert "volumeSlider.value = String(video.volume);" in response.text
-    assert (
-        "https://fast.vidalytics.com/video/x3JriQG2/JbSfK6ZK0K01YzRM/263820/"
-        "243116__FFMPEG/mp4/video/480x270_h264_1000000/video.mp4"
-        in response.text
-    )
+    assert "mainVideo.src = mediaPreset.source;" in response.text
+    assert "previewVideo.addEventListener('ended'" in response.text
+    assert "tryMainHandoff();" in response.text
+    assert "attempt.then(activateMainVideo)" in response.text
+    assert "const selectedVolume = previewVideo.volume;" in response.text
+    assert "mainVideo.volume = selectedVolume;" in response.text
+    assert "mainVideo.muted = selectedMuted;" in response.text
+    assert "volumeSlider.value = mainVideo.muted ? '0'" in response.text
+    assert "analyticsApi.trackTimeUpdate(item);" in response.text
+
+
+def test_homepage_media_coordinator_pauses_other_audio_and_video() -> None:
+    response = client.get("/preview/homepage-mobile/media-coordinator.js")
+
+    assert response.status_code == 200
+    assert "document.addEventListener('play'" in response.text
+    assert "pauseLocalMedia(media);" in response.text
+    assert "pauseOtherFrames();" in response.text
+    assert "event.data?.type !== 'edabalans:player-active'" in response.text
+    assert "event.data?.type === 'edabalans:player-idle'" in response.text
+    assert "if (activeFrame === frame) activeFrame = null;" in response.text
+    assert "pauseOtherFrames(frame);" in response.text
+    assert "window.EdaMediaCoordinator = Object.freeze" in response.text
 
 
 def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> None:
@@ -624,6 +653,7 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
         "money-bag-ruble-v1.webp",
         "montserrat-cyrillic.woff2",
         "montserrat-latin.woff2",
+        "media-coordinator.js",
         "vsl-player.html",
         "weight-loss-after-masterclass.svg",
         "weight-loss-before-masterclass.svg",

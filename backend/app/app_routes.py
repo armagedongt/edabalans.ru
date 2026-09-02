@@ -50,6 +50,7 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "money-bag-ruble-v1.webp",
     "montserrat-cyrillic.woff2",
     "montserrat-latin.woff2",
+    "media-coordinator.js",
     "vsl-player.html",
     "weight-loss-after-masterclass.svg",
     "weight-loss-before-masterclass.svg",
