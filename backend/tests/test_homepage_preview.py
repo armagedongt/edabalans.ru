@@ -361,7 +361,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "text-decoration: underline;"
         in response.text
     )
-    assert "padding: 28px 0 24px;" in response.text
+    assert "padding: var(--space-related) 0 0;" in response.text
     overlay_rule = response.text.split(
         "#edb-pricing-neurozeh-v1 .edb-product-overlay {", 1
     )[1].split("}", 1)[0]
@@ -490,6 +490,31 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "position: fixed;" in overlay_bar_rule
     assert "bottom: 0;" in overlay_bar_rule
     assert "env(safe-area-inset-bottom)" in overlay_bar_rule
+
+
+def test_homepage_uses_one_shared_vertical_rhythm_without_stacked_section_gaps() -> None:
+    response = client.get("/preview/homepage-mobile")
+
+    assert response.status_code == 200
+    for token in (
+        "--space-element: clamp(14px, 1.8vw, 18px)",
+        "--space-related: clamp(26px, 3vw, 34px)",
+        "--space-block: clamp(40px, 4.5vw, 52px)",
+        "--space-section: clamp(56px, 6vw, 72px)",
+        "--space-major: clamp(68px, 7.5vw, 88px)",
+    ):
+        assert token in response.text
+
+    assert ".inside-gallery{width:var(--content-frame);max-width:100%;margin:0 auto;padding:8px 0 0}" in response.text
+    assert ".method-proof{padding-top:var(--space-section);padding-bottom:0}" in response.text
+    assert ".reviews-voice{width:100%;margin:0 auto;padding:var(--space-block) 0 0}" in response.text
+    assert ".free-intensive{padding-top:var(--space-section);padding-bottom:0}" in response.text
+    assert ".author-section{padding-top:var(--space-section);padding-bottom:0}" in response.text
+    assert ".faq-section{min-height:0;padding:var(--space-section) var(--page-gutter) 0}" in response.text
+    assert ".chain-block--recognition{--recognition-scene-top:clamp(24px,4vw,52px);padding-top:calc(var(--space-section) - var(--recognition-scene-top))}" in response.text
+    assert ".argument{padding:var(--recognition-scene-top) 0 0;background:#fff}" in response.text
+    assert "padding:8px 0 clamp(68px,10vw,104px)" not in response.text
+    assert "min-height:100vh;padding:64px var(--page-gutter) 88px" not in response.text
 
 
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
