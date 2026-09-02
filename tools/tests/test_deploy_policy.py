@@ -48,6 +48,16 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertIn("/usr/local/sbin/edabalans-deploy\n", source)
         self.assertIn("/usr/local/sbin/edabalans-deploy-poll\n", source)
 
+    def test_server_git_fetches_use_reliable_http11_transport(self) -> None:
+        for script_name in ("edabalans-deploy", "edabalans-deploy-poll"):
+            source = (REPOSITORY_ROOT / "infra" / "deploy" / script_name).read_text(
+                encoding="utf-8"
+            )
+            self.assertIn(
+                "git -c http.version=HTTP/1.1 fetch --quiet origin main",
+                source,
+            )
+
     def test_routine_deploy_reuses_cached_base_images(self) -> None:
         source = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
         pull_pattern = r"docker compose build(?:[ \t]|\\\r?\n)*--pull"

@@ -14,6 +14,8 @@ implementation_status: implemented
 - классифицировать влияние commit на данные, backend, Telegram, Caddy и Compose;
 - строить, тестировать и перезапускать только затронутые сервисы;
 - блокировать автоматический deploy при migration или провале checks;
+- забирать публичный `main` через зафиксированный HTTP/1.1, не завися от
+  нестабильного HTTP/2 Git-транспорта текущей VM;
 
 Пока идёт выбор favicon, production smoke-check также проверяет три временные
 `/favicon-tests/{black|blue|face}` страницы и три их статических ресурса через

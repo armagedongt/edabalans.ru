@@ -5,7 +5,9 @@ readonly APP_DIR="/opt/edabalans"
 readonly REPOSITORY="armagedongt/edabalans.ru"
 
 cd "${APP_DIR}"
-git fetch --quiet origin main
+# Keep polling independent of the host's Git config. GitHub smart HTTP is
+# reliable from this VM over HTTP/1.1; the HTTP/2 path can end mid-advertisement.
+git -c http.version=HTTP/1.1 fetch --quiet origin main
 
 readonly CURRENT_SHA="$(git rev-parse HEAD)"
 readonly TARGET_SHA="$(git rev-parse origin/main)"

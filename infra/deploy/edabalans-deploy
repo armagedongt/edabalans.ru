@@ -18,7 +18,10 @@ if ! flock --nonblock 9; then
 fi
 
 cd "${APP_DIR}"
-git fetch --quiet origin main
+# GitHub's public smart-HTTP endpoint intermittently breaks the installed Git
+# client's HTTP/2 stream on this host. HTTP/1.1 is deterministic and needs no
+# credentials for this public repository.
+git -c http.version=HTTP/1.1 fetch --quiet origin main
 
 readonly REMOTE_SHA="$(git rev-parse origin/main)"
 if [[ "${TARGET_SHA}" != "${REMOTE_SHA}" ]]; then
