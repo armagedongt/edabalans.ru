@@ -331,7 +331,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     )
     assert 'href="https://t.me/FitnessSergey"' in response.text
     assert 'href="https://t.me/Fitness_Talks"' in response.text
-    assert 'aria-disabled="true" title="Адрес MAX-канала ещё не указан"' in response.text
+    assert response.text.count('href="https://max.ru/id230409966750_biz"') == 2
     assert "@media (min-width: 900px) and (max-width: 1179px)" in response.text
     assert 'class="mobile-contact__trigger"' in response.text
     assert 'aria-controls="mobile-contact-panel"' in response.text
@@ -346,6 +346,43 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         in response.text
     )
     assert "padding: 28px 0 24px;" in response.text
+    overlay_rule = response.text.split(
+        "#edb-pricing-neurozeh-v1 .edb-product-overlay {", 1
+    )[1].split("}", 1)[0]
+    overlay_lock_rule = response.text.split(
+        "html.edb-product-overlay--locked body {", 1
+    )[1].split("}", 1)[0]
+    overlay_layer_rule = response.text.split(
+        ".chain-block--pricing.has-open-overlay {", 1
+    )[1].split("}", 1)[0]
+    overlay_back_rule = response.text.split(
+        "#edb-pricing-neurozeh-v1 .edb-product-overlay-back {", 1
+    )[1].split("}", 1)[0]
+    assert "overflow-y: auto;" in overlay_rule
+    assert "overscroll-behavior: contain;" in overlay_rule
+    assert (
+        "html.edb-product-overlay--locked,\n"
+        "    html.edb-product-overlay--locked body {"
+        in response.text
+    )
+    assert "overflow: hidden;" in overlay_lock_rule
+    assert "z-index: 1200;" in overlay_layer_rule
+    assert "background: #26afff;" in overlay_back_rule
+    assert "document.documentElement.classList.add('edb-product-overlay--locked');" in response.text
+    assert "document.documentElement.classList.remove('edb-product-overlay--locked');" in response.text
+    assert "pricingSection.classList.add('has-open-overlay');" in response.text
+    assert "pricingSection.classList.remove('has-open-overlay');" in response.text
+    assert "button.addEventListener('click', () => openProduct(button.dataset.product));" in response.text
+    assert "root.querySelector('.edb-product-overlay-back').addEventListener('click', closeOverlay);" in response.text
+    assert "pricingStack.append(basicPlan, consultPlan);" in response.text
+    assert ".edb-pricing-plan:last-child" not in response.text
+    assert "width:min(calc(100% + 5px),805px)" in response.text
+    assert "gap:calc(clamp(10px,3vw,18px) + 5px)" in response.text
+    assert "scrollbar-color: #7ed2ff #eefaff;" in response.text
+    assert "scroll-behavior: smooth;" in response.text
+    assert "html { scroll-behavior: auto; }" in response.text
+    assert "html::-webkit-scrollbar-thumb" in response.text
+    assert "display: inline-flex; height: 40px; align-items: center; justify-content: center;" in response.text
     assert ".desktop-wordmark { padding-left: 12px;" in response.text
     assert ".site-title { margin-top: 42px; }" in response.text
     assert "notice.hidden = true;" in response.text
