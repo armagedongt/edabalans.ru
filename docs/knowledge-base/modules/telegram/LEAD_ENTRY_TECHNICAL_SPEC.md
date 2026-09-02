@@ -147,7 +147,7 @@ Unique: `(parameter_name, normalized_value)` среди active. Никаких f
 | `id` | UUID/text PK |
 | `start_token_hash` | уникальный hash, исходный token в БД не хранить |
 | `tracking_link_id`, `alias_id` | FK |
-| `raw_query` | JSON с исходными параметрами; без cookies/PII |
+| `raw_query` | JSON только с `utm_*` и техническим рекламным идентификатором `yclid`; cookies, email, телефон и произвольные query-параметры не принимать |
 | `resolved_tag_ids` | JSON snapshot только подтверждённых tag IDs на момент клика |
 | `created_at`, `expires_at`, `consumed_at` | timestamptz |
 
@@ -155,6 +155,11 @@ TTL по умолчанию 7 дней. Token одноразово помеча�
 повторная доставка одного Telegram update безопасно возвращает тот же результат за
 счёт `tg_update_receipts`. Истёкшая session ведёт в root без тегов и фиксируется как
 `expired_session`.
+
+`yclid` после Telegram Start переносится в закрытое событие атрибуции вместе с
+`raw_query`: это каноническая связка клика Яндекса с лидом и будущей подтверждённой
+конверсией. Публичные ответы и redirect его не отображают; доступ к событиям остаётся
+только в авторизованном административном контуре.
 
 ### 4.5. Отдельная таблица «неразобранных UTM» не создаётся
 
@@ -226,7 +231,7 @@ channel_attribution_linked
 ### 7.1. Новый публичный route
 
 ```text
-GET https://go.похудение-это-есть.рф/{token}[?utm_*]
+GET https://go.похудение-это-есть.рф/{token}[?utm_*&yclid=...]
 ```
 
 Caddy обслуживает отдельный `GO_DOMAIN` и reverse proxy в Telegram service. Backend
@@ -243,12 +248,13 @@ route внутри сервиса не конфликтует с `/r/{token}`. �
 
 ### 7.3. Bot link с UTM
 
-1. сохранить оригинальный query в `web_click`;
+1. сохранить UTM-параметры и `yclid` в `web_click`;
 2. применить только точные active `tg_utm_tag_rules`;
 3. создать `tg_tracking_sessions` с новым непрозрачным start token;
 4. перенаправить в `t.me?...start=<session_token>`;
 5. неизвестные UTM остаются raw и не создают теги;
-6. `/start` разрешает session обратно в rule/alias/подтверждённые tag IDs.
+6. `/start` разрешает session обратно в rule/alias/подтверждённые tag IDs и
+   сохранённый `yclid`; остальные query-параметры не переносятся.
 
 ### 7.4. Channel invite
 

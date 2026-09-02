@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import secrets
 import unicodedata
+from collections.abc import Iterable
 from datetime import UTC, datetime, timedelta
 from urllib.parse import parse_qsl, urlparse
 
@@ -27,6 +28,18 @@ from app.models import (
 
 CODE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ"
 UTM_PREFIX = "utm_"
+YANDEX_CLICK_ID = "yclid"
+
+
+def tracking_query_params(pairs: Iterable[tuple[str, str]]) -> dict[str, str]:
+    query: dict[str, str] = {}
+    for name, value in pairs:
+        normalized_name = name.casefold()
+        if normalized_name.startswith(UTM_PREFIX):
+            query[name] = value
+        elif normalized_name == YANDEX_CLICK_ID:
+            query[YANDEX_CLICK_ID] = value
+    return query
 
 
 def normalize_value(value: str) -> str:
@@ -106,12 +119,12 @@ def resolve_start_payload(
         row = session.scalar(
             select(TrackingSession).where(
                 TrackingSession.start_token_hash == hashlib.sha256(payload.encode()).hexdigest()
-            )
+            ).with_for_update()
         )
         expires_at = row.expires_at.replace(tzinfo=UTC) if row and row.expires_at.tzinfo is None else (row.expires_at if row else None)
-        if not row or expires_at < datetime.now(UTC):
+        if not row or row.consumed_at or expires_at < datetime.now(UTC):
             return None, None, [], {}, "expired_session"
-        row.consumed_at = row.consumed_at or datetime.now(UTC)
+        row.consumed_at = datetime.now(UTC)
         return (
             session.get(TrackingLink, row.tracking_link_id),
             session.get(TrackingLinkAlias, row.alias_id),

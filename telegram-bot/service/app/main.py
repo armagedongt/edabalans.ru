@@ -35,7 +35,7 @@ from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
-from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, unresolved_utm_groups
+from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, tracking_query_params, unresolved_utm_groups
 
 
 settings = get_settings()
@@ -447,7 +447,7 @@ def _go_response(token: str, request: Request, session: Session) -> Response:
     link = active_link(session, alias)
     if not link or not alias:
         raise HTTPException(404, "Ссылка не найдена или отключена")
-    query = {key: value for key, value in request.query_params.multi_items() if key.casefold().startswith("utm_")}
+    query = tracking_query_params(request.query_params.multi_items())
     start_payload = alias.token
     if query and link.target_kind == "bot_start":
         start_payload = create_tracking_session(session, link, alias, query)

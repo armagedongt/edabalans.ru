@@ -118,7 +118,10 @@ def test_go_utm_session_uses_only_saved_exact_mapping_and_v_is_web_only(tmp_path
     token = created["aliases"][0]["token"]
     client.post("/bot-api/utm/rules", json={"parameter_name": "utm_content", "raw_value": "speed", "tag_id": post_tag["id"]})
 
-    redirect = client.get(f"/go/{token}?utm_content=speed&utm_source=raw-source", follow_redirects=False)
+    redirect = client.get(
+        f"/go/{token}?utm_content=speed&utm_source=raw-source&YCLID=123456789&gclid=discard-me",
+        follow_redirects=False,
+    )
     assert redirect.status_code == 307
     payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
     assert payload.startswith("U")
@@ -133,8 +136,40 @@ def test_go_utm_session_uses_only_saved_exact_mapping_and_v_is_web_only(tmp_path
         direct_v = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "602"))
         mapped_names = list(session.scalars(select(CrmTag.name).join(CrmUserTag, CrmUserTag.tag_id == CrmTag.id).where(CrmUserTag.user_id == mapped.user_id)))
         assert mapped_names == ["Пост - Скорость похудения"]
+        web_click = session.scalar(select(TrackingEvent).where(TrackingEvent.tracking_link_id == created["id"], TrackingEvent.event_type == "web_click"))
+        start = session.scalar(select(TrackingEvent).where(TrackingEvent.telegram_user_id == "601", TrackingEvent.event_type == "start_first"))
+        expected_query = {"utm_content": "speed", "utm_source": "raw-source", "yclid": "123456789"}
+        assert web_click.metadata_json["raw_query"] == expected_query
+        assert start.metadata_json["raw_query"] == expected_query
         assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == direct_v.user_id)) == 0
         assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "602")) == "start_unknown"
+    app.dependency_overrides.clear()
+
+
+def test_go_preserves_yclid_without_utm_parameters(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    created = client.post("/bot-api/link-rules", json={"name": "Яндекс без UTM"}).json()
+    token = created["aliases"][0]["token"]
+
+    redirect = client.get(f"/go/{token}?yclid=987654321", follow_redirects=False)
+    payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
+
+    assert payload.startswith("U")
+    assert client.post("/telegram/webhook", json=start_update(12, 603, payload)).status_code == 200
+    assert client.post("/telegram/webhook", json=start_update(13, 604, payload)).status_code == 200
+    with Session(engine) as session:
+        start = session.scalar(
+            select(TrackingEvent).where(
+                TrackingEvent.telegram_user_id == "603",
+                TrackingEvent.event_type == "start_first",
+            )
+        )
+        assert start.metadata_json["raw_query"] == {"yclid": "987654321"}
+        replay = session.scalar(
+            select(TrackingEvent).where(TrackingEvent.telegram_user_id == "604")
+        )
+        assert replay.event_type == "start_expired_session"
+        assert replay.metadata_json["raw_query"] == {}
     app.dependency_overrides.clear()
 
 
