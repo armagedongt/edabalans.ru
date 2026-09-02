@@ -120,6 +120,7 @@
   transform:translateX(5px);
 }
 #modular-video-player.mvp--playing .mvp__big-play{opacity:0;pointer-events:none}
+#modular-video-player.mvp--handoff-pending .mvp__big-play{opacity:0;pointer-events:none}
 
 #modular-video-player .mvp__sound-card{
   position:absolute;z-index:5;left:50%;top:54%;transform:translate(-50%,-50%);
@@ -552,6 +553,7 @@
     mainVideo.muted = selectedMuted;
     previewVideo.muted = true;
     previewVideo.pause();
+    root.classList.remove('mvp--handoff-pending');
     root.classList.add('mvp--main-active');
     volumeSlider.value = mainVideo.muted ? '0' : String(mainVideo.volume);
     updatePlayUI();
@@ -663,11 +665,8 @@
   });
   previewVideo.addEventListener('ended', ()=>{
     handoffPending = true;
+    root.classList.add('mvp--handoff-pending');
     tryMainHandoff();
-    if (video === previewVideo) {
-      updatePlayUI();
-      showControls(false);
-    }
   });
   ['canplay','playing'].forEach(eventName=>mainVideo.addEventListener(eventName, tryMainHandoff));
 
@@ -721,8 +720,11 @@
     passiveAutoplayAllowed = false;
     handoffPending = false;
     handoffAligning = false;
+    root.classList.remove('mvp--handoff-pending');
     if (autoplayStart) previewVideo.removeEventListener('canplay', autoplayStart);
     videos.forEach(item=>item.pause());
+    updatePlayUI();
+    showControls(false);
   });
 
   muteBtn.addEventListener('click', ()=>{

@@ -189,14 +189,14 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert parser.main_count == 1
     assert len(parser.ids) == len(set(parser.ids))
     assert parser.iframe_sources == {
-        "/preview/homepage-mobile/vsl-player.html?v=6"
+        "/preview/homepage-mobile/vsl-player.html?v=7"
     }
     assert (
         'data-media-src="/preview/homepage-mobile/vsl-player.html?'
-        'v=6&context=anya-review"'
+        'v=7&context=anya-review"'
         in response.text
     )
-    assert "/preview/homepage-mobile/media-coordinator.js?v=1" in response.text
+    assert "/preview/homepage-mobile/media-coordinator.js?v=2" in response.text
     assert "const preloadDistance = Math.max(window.innerHeight, 640);" in response.text
     assert "frame.src = frame.dataset.mediaSrc;" in response.text
     assert "rootMargin: `0px 0px ${preloadDistance}px 0px`" in response.text
@@ -577,6 +577,14 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "mainVideo.volume = selectedVolume;" in response.text
     assert "mainVideo.muted = selectedMuted;" in response.text
     assert "volumeSlider.value = mainVideo.muted ? '0'" in response.text
+    assert "root.classList.add('mvp--handoff-pending');" in response.text
+    assert "root.classList.remove('mvp--handoff-pending');" in response.text
+    assert "mvp--handoff-pending .mvp__big-play" in response.text
+    preview_handoff = response.text.split("previewVideo.addEventListener('ended', ()=>{", 1)[1].split(
+        "});", 1
+    )[0]
+    assert "updatePlayUI();" not in preview_handoff
+    assert "showControls(false);" not in preview_handoff
     assert "analyticsApi.trackTimeUpdate(item);" in response.text
 
 
@@ -591,6 +599,11 @@ def test_homepage_media_coordinator_pauses_other_audio_and_video() -> None:
     assert "event.data?.type === 'edabalans:player-idle'" in response.text
     assert "if (activeFrame === frame) activeFrame = null;" in response.text
     assert "pauseOtherFrames(frame);" in response.text
+    anya_load = response.text.split("if (frame.dataset.mediaContext === 'anya-review') {", 1)[1].split(
+        "return;", 1
+    )[0]
+    assert "if (!activeFrame) pauseOtherFrames(frame);" in anya_load
+    assert "pauseFrame(frame);" not in anya_load
     assert "window.EdaMediaCoordinator = Object.freeze" in response.text
 
 

@@ -44,11 +44,15 @@
     const frame = event.target;
     if (!(frame instanceof HTMLIFrameElement) || !frame.matches(frameSelector)) return;
     const audibleLocalMedia = localMedia().some((media) => !media.paused && !media.muted);
-    if (audibleLocalMedia || (activeFrame && activeFrame !== frame)) {
+    if (audibleLocalMedia) {
       pauseFrame(frame);
       return;
     }
-    if (frame.dataset.mediaContext === 'anya-review') pauseOtherFrames(frame);
+    if (frame.dataset.mediaContext === 'anya-review') {
+      if (!activeFrame) pauseOtherFrames(frame);
+      return;
+    }
+    if (activeFrame && activeFrame !== frame) pauseFrame(frame);
   }, true);
 
   window.EdaMediaCoordinator = Object.freeze({
