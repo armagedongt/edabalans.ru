@@ -358,6 +358,9 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     overlay_back_rule = response.text.split(
         "#edb-pricing-neurozeh-v1 .edb-product-overlay-back {", 1
     )[1].split("}", 1)[0]
+    overlay_cta_rule = response.text.split(
+        "#edb-pricing-neurozeh-v1 .edb-product-overlay-cta {", 1
+    )[1].split("}", 1)[0]
     assert "overflow-y: auto;" in overlay_rule
     assert "overscroll-behavior: contain;" in overlay_rule
     assert (
@@ -368,6 +371,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "overflow: hidden;" in overlay_lock_rule
     assert "z-index: 1200;" in overlay_layer_rule
     assert "background: #26afff;" in overlay_back_rule
+    assert "background: var(--site-orange);" in overlay_cta_rule
     assert "document.documentElement.classList.add('edb-product-overlay--locked');" in response.text
     assert "document.documentElement.classList.remove('edb-product-overlay--locked');" in response.text
     assert "pricingSection.classList.add('has-open-overlay');" in response.text
