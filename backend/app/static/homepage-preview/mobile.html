@@ -568,12 +568,21 @@
     @media (min-width: 900px) {
       .mobile-toggle, .mobile-sheet { display: none; }
       .desktop-header { position: relative; z-index: 50; display: block; padding: 18px 12px 0; background: #fff; }
-      .desktop-header__pill { display: flex; width: min(100%,1390px); min-height: 68px; align-items: center; gap: 20px; margin: 0 auto; padding: 9px 13px 9px 25px; border-radius: 34px; background: var(--site-blue); box-shadow: 0 16px 34px -28px rgba(17,142,216,.8); }
+      .desktop-header__pill { display: grid; width: min(100%,1390px); min-height: 68px; grid-template-columns: minmax(210px,1fr) auto minmax(210px,1fr); align-items: center; gap: 20px; margin: 0 auto; padding: 9px 13px; border-radius: 34px; background: var(--site-blue); box-shadow: 0 16px 34px -28px rgba(17,142,216,.8); }
       .desktop-wordmark { color: #fff; font-family: Unbounded,Manrope,sans-serif; font-size: 17px; font-weight: 800; line-height: 1; letter-spacing: -.055em; text-decoration: none; white-space: nowrap; }
-      .desktop-nav { display: flex; align-items: center; justify-content: center; gap: 4px; margin-left: auto; }
-      .desktop-nav a { padding: 10px 12px; border-radius: 14px; color: #fff; font-size: 14px; font-weight: 800; text-decoration: none; transition: background .16s ease; }
-      .desktop-nav a:hover, .desktop-nav a:focus-visible { background: rgba(255,255,255,.16); }
-      .desktop-account { margin-left: 6px; padding: 12px 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 23px; background: rgba(255,255,255,.16); color: #fff; font-size: 13px; font-weight: 800; text-decoration: none; }
+      .desktop-nav { display: flex; align-items: center; justify-content: center; gap: 4px; }
+      .desktop-nav > a, .desktop-contact__trigger { min-height: 40px; padding: 10px 12px; border: 0; border-radius: 14px; color: #fff; font: 800 14px/1 Manrope,sans-serif; text-decoration: none; white-space: nowrap; background: transparent; transition: background .16s ease; }
+      .desktop-nav > a:hover, .desktop-nav > a:focus-visible, .desktop-contact__trigger:hover, .desktop-contact__trigger:focus-visible, .desktop-contact__trigger[aria-expanded="true"] { background: rgba(255,255,255,.16); }
+      .desktop-contact { position: relative; }
+      .desktop-contact__trigger { display: inline-flex; align-items: center; gap: 7px; cursor: pointer; }
+      .desktop-contact__chevron { width: 7px; height: 7px; border-right: 1.8px solid currentColor; border-bottom: 1.8px solid currentColor; transform: translateY(-2px) rotate(45deg); transition: transform .16s ease; }
+      .desktop-contact__trigger[aria-expanded="true"] .desktop-contact__chevron { transform: translateY(2px) rotate(225deg); }
+      .desktop-contact__panel { position: absolute; z-index: 70; top: calc(100% + 11px); left: 50%; display: grid; width: 270px; padding: 7px; border: 1px solid rgba(21,105,159,.13); border-radius: 17px; background: rgba(255,255,255,.97); box-shadow: 0 16px 32px -22px rgba(15,70,106,.55),0 5px 12px -8px rgba(15,70,106,.24); transform: translateX(-50%); backdrop-filter: blur(12px); }
+      .desktop-contact__panel[hidden] { display: none; }
+      .desktop-contact__panel a, .desktop-contact__panel span { display: flex; min-height: 41px; align-items: center; padding: 9px 12px; border-radius: 11px; color: #202a32; font-size: 13px; font-weight: 700; line-height: 1.25; text-decoration: none; }
+      .desktop-contact__panel a:hover, .desktop-contact__panel a:focus-visible { color: #118ed8; background: #edf8ff; }
+      .desktop-contact__panel span[aria-disabled="true"] { color: #7e8991; cursor: not-allowed; }
+      .desktop-account { justify-self: end; padding: 12px 18px; border: 1px solid rgba(255,255,255,.55); border-radius: 23px; background: rgba(255,255,255,.16); color: #fff; font-size: 13px; font-weight: 800; text-decoration: none; }
       .site-hero { padding-top: 54px; padding-bottom: 72px; }
       .site-eyebrow { min-height: 36px; padding: 8px 12px; font-size: 13px; }
       .site-eyebrow::before { width: 8px; height: 8px; flex-basis: 8px; margin-right: 8px; }
@@ -585,8 +594,14 @@
       .method-list li { font-size: var(--type-body); }
     }
 
+    @media (min-width: 900px) and (max-width: 1099px) {
+      .desktop-header { display: none; }
+      .mobile-toggle { display: grid; }
+      .mobile-sheet { display: grid; }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      .mobile-toggle, .mobile-bars span, .mobile-sheet, .desktop-nav a { transition: none; }
+      .mobile-toggle, .mobile-bars span, .mobile-sheet, .desktop-nav a, .desktop-contact__trigger, .desktop-contact__chevron { transition: none; }
     }
 
 
@@ -1080,7 +1095,18 @@
     <div class="desktop-header__pill">
       <a class="desktop-wordmark" href="#top">ПОХУДЕНИЕ — ЭТО ЕСТЬ<span>.РФ</span></a>
       <nav class="desktop-nav" aria-label="Основная навигация">
-        <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a><a href="#contacts">Контакты</a>
+        <a href="#blog">Блог</a><a href="#intensive">Бесплатный интенсив</a><a href="#masterclass">Мастер-класс</a>
+        <div class="desktop-contact">
+          <button class="desktop-contact__trigger" type="button" aria-expanded="false" aria-haspopup="true" aria-controls="desktop-contact-panel">
+            Контакты<span class="desktop-contact__chevron" aria-hidden="true"></span>
+          </button>
+          <div class="desktop-contact__panel" id="desktop-contact-panel" hidden>
+            <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Написать в ЛС в Telegram</a>
+            <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">Написать в ЛС в MAX</a>
+            <a href="https://t.me/Fitness_Talks" target="_blank" rel="noopener">Открыть Telegram-канал</a>
+            <span aria-disabled="true" title="Адрес MAX-канала ещё не указан">Открыть канал в MAX</span>
+          </div>
+        </div>
       </nav>
       <a class="desktop-account" href="/lk">Личный кабинет</a>
     </div>
@@ -2729,6 +2755,26 @@
     <button class="cookie-notice__accept" type="button" data-cookie-dismiss data-homepage-field="action">Приемлемо</button>
   </aside>
   <script>
+
+    (() => {
+      const contact = document.querySelector('.desktop-contact');
+      if (!contact) return;
+      const trigger = contact.querySelector('.desktop-contact__trigger');
+      const panel = contact.querySelector('.desktop-contact__panel');
+      const setOpen = (open) => {
+        trigger.setAttribute('aria-expanded', String(open));
+        panel.hidden = !open;
+      };
+      trigger.addEventListener('click', () => setOpen(trigger.getAttribute('aria-expanded') !== 'true'));
+      document.addEventListener('click', (event) => {
+        if (!contact.contains(event.target)) setOpen(false);
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || panel.hidden) return;
+        setOpen(false);
+        trigger.focus();
+      });
+    })();
 
     (() => {
       const toggle = document.querySelector('.mobile-toggle');

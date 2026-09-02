@@ -222,6 +222,10 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "Всего через 3 недели здесь может быть ваш отзыв",
         "Сайт использует cookie. Продолжая, вы принимаете",
         "обработки персональных данных.",
+        "Написать в ЛС в Telegram",
+        "Написать в ЛС в MAX",
+        "Открыть Telegram-канал",
+        "Открыть канал в MAX",
     ):
         assert marker in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
@@ -323,6 +327,18 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     ) < parser.block_order.index("footer") < parser.block_order.index("cookie-notice")
     assert 'data-cookie-notice' in response.text
     assert 'data-cookie-dismiss' in response.text
+    assert 'class="desktop-contact__trigger"' in response.text
+    assert (
+        'aria-expanded="false" aria-haspopup="true" '
+        'aria-controls="desktop-contact-panel"'
+        in response.text
+    )
+    assert 'href="https://t.me/FitnessSergey"' in response.text
+    assert 'href="https://t.me/Fitness_Talks"' in response.text
+    assert 'aria-disabled="true" title="Адрес MAX-канала ещё не указан"' in response.text
+    assert "@media (min-width: 900px) and (max-width: 1099px)" in response.text
+    assert "if (!contact.contains(event.target)) setOpen(false);" in response.text
+    assert "if (event.key !== 'Escape' || panel.hidden) return;" in response.text
     assert '>Приемлемо</button>' in response.text
     assert '>Политику</a> обработки персональных данных.' in response.text
     assert "notice.hidden = true;" in response.text
