@@ -217,6 +217,7 @@
 /* Визуальная тема по референсу */
 #modular-video-player{width:100%;height:100%;aspect-ratio:auto;border-radius:16px;box-shadow:none;background:transparent!important;clip-path:inset(0 round 16px);transform:translateZ(0)}
 #modular-video-player .mvp__video{inset:-2px;width:calc(100% + 4px);height:calc(100% + 4px);background:transparent!important}
+#modular-video-player.mvp--anya-review .mvp__video{inset:0;width:100%;height:100%;object-fit:contain}
 #modular-video-player .mvp__shade{background:linear-gradient(to bottom,transparent 82%,rgba(0,0,0,.22) 100%)}
 #modular-video-player .mvp__controls{padding:0 27px 13px;z-index:8}
 #modular-video-player .mvp__progress{height:4px;margin-bottom:10px;border-radius:999px;background:rgba(207,215,215,.52);overflow:hidden;cursor:default;pointer-events:none}
@@ -340,6 +341,7 @@
   };
   const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard) };
   const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') || 'homepage-vsl';
+  root.classList.toggle('mvp--anya-review', PLAYER_CONTEXT === 'anya-review');
   const MEDIA_PRESETS = {
     'homepage-vsl': {
       previewSource: 'https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4',

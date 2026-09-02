@@ -546,6 +546,8 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "homepage-anya-review-2026-09-01" in response.text
     assert "homepage-vsl-2026-09-02" in response.text
     assert "PLAYER_CONTEXT === 'anya-review'" in response.text
+    assert "root.classList.toggle('mvp--anya-review', PLAYER_CONTEXT === 'anya-review');" in response.text
+    assert "#modular-video-player.mvp--anya-review .mvp__video{inset:0;width:100%;height:100%;object-fit:contain}" in response.text
     assert (
         "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') "
         "|| 'homepage-vsl';"
