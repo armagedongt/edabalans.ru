@@ -10,6 +10,7 @@
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
   mount.setAttribute('aria-busy', 'true');
+  mount.innerHTML = '<div role="status" style="min-height:100vh;display:grid;place-items:center;text-align:center;color:#239fe9;font-family:Arial,sans-serif"><div><div aria-hidden="true" style="font-size:24px;line-height:1;letter-spacing:6px">•••</div><div style="margin-top:10px;font-size:14px">Загрузка</div></div></div>';
 
   function absolute(value, baseUrl) {
     if (!value || value.charAt(0) === '#') return value;
