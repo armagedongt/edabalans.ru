@@ -1,6 +1,8 @@
 import os
 import uuid
 
+import pytest
+
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
 from fastapi.testclient import TestClient  # noqa: E402
@@ -36,7 +38,7 @@ def payload(*, event: str = "video_engaged") -> dict:
         "event": event,
         "viewer_id": str(uuid.uuid4()),
         "session_id": str(uuid.uuid4()),
-        "video_id": "homepage-vsl-2026-02-13",
+        "video_id": "homepage-vsl-2026-09-02",
         "page_path": "/preview/homepage-mobile",
         "last_position_sec": 0,
         "max_position_sec": 0,
@@ -60,6 +62,28 @@ def test_engagement_creates_one_anonymous_session() -> None:
         assert len(row.viewer_key) == 64
         assert row.event_count == 1
         assert row.status == "engaged"
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize(
+    "video_id",
+    [
+        "homepage-vsl-2026-09-02",
+        "homepage-anya-review-2026-09-01",
+        "homepage-vsl-2026-02-13",
+    ],
+)
+def test_supported_homepage_videos_are_accepted(video_id: str) -> None:
+    client, factory = make_client()
+    body = {**payload(), "video_id": video_id}
+
+    response = client.post("/api/public/video-analytics", json=body)
+
+    assert response.status_code == 200
+    with factory() as db:
+        row = db.scalar(select(PublicVideoView))
+        assert row is not None
+        assert row.video_id == video_id
     app.dependency_overrides.clear()
 
 

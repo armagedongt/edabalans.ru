@@ -19,7 +19,9 @@ module_id: products
 - endpoint: `POST /api/public/video-analytics`;
 - таблица: `public_video_views`;
 - одна строка таблицы соответствует одной загрузке страницы и одному `session_id`;
-- поддерживаемый публичный ролик: `homepage-vsl-2026-02-13`.
+- текущие публичные ролики: главный VSL `homepage-vsl-2026-09-02` и видеоотзыв
+  Ани `homepage-anya-review-2026-09-01`; прежний `homepage-vsl-2026-02-13`
+  временно принимается для совместимости с уже открытыми страницами.
 
 Браузер отправляет события `video_engaged`, `video_progress`, `video_complete` и
 `video_exit`, текущую и максимальную позицию, а также просмотренные пятисекундные

@@ -17,7 +17,11 @@ from app.models import PublicVideoView
 
 
 router = APIRouter(tags=["public-video-analytics"])
-ALLOWED_VIDEO_IDS = {"homepage-vsl-2026-02-13"}
+ALLOWED_VIDEO_IDS = {
+    "homepage-vsl-2026-02-13",
+    "homepage-vsl-2026-09-02",
+    "homepage-anya-review-2026-09-01",
+}
 MAX_VIDEO_SECONDS = 7_200
 BUCKET_SIZE_SECONDS = 5
 RATE_WINDOW_SECONDS = 60
