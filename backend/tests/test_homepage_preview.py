@@ -326,11 +326,13 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert '>Приемлемо</button>' in response.text
     assert '>Политику</a> обработки ПД.' in response.text
     assert "notice.hidden = true;" in response.text
+    assert "background: var(--site-blue);" in response.text
     assert (
-        "background: linear-gradient(135deg,#49c5ff 0%,var(--site-blue) "
-        "52%,#6f82f4 100%);"
+        "width: min(560px,calc(100% - var(--page-gutter) - "
+        "var(--page-gutter)));"
         in response.text
     )
+    assert "background: linear-gradient(135deg,#49c5ff" not in response.text
     assert parser.block_image_source_order["reviews-featured"] == [
         "https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp",
         "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
