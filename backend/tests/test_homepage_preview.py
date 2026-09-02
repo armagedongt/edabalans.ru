@@ -280,7 +280,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     )
     assert "grid-column: auto;\n        grid-row: auto;" in response.text
     assert (
-        ".pain:not(.pain--final){background:rgba(255,255,255,.85);"
+        ".pain:not(.pain--final){background:rgba(255,255,255,.90);"
         "color:rgb(31,34,38);font-weight:700}"
         in response.text
     )
