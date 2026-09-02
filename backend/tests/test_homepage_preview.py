@@ -30,7 +30,6 @@ class RobotsMetaParser(HTMLParser):
         self.image_sources: set[str] = set()
         self.block_image_source_order: dict[str, list[str]] = {}
         self.image_source_order: list[str] = []
-        self.block_image_source_order: dict[str, list[str]] = {}
         self.iframe_sources: set[str] = set()
         self.ids: list[str] = []
         self.main_count = 0
@@ -70,10 +69,6 @@ class RobotsMetaParser(HTMLParser):
                     attributes["src"]
                 )
             self.image_source_order.append(attributes["src"])
-            if block_id:
-                self.block_image_source_order.setdefault(block_id, []).append(
-                    attributes["src"]
-                )
         if tag == "iframe" and attributes.get("src"):
             self.iframe_sources.add(attributes["src"])
         if attributes.get("id"):
@@ -533,10 +528,77 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     ]
     assert parser.block_image_source_order["reviews-featured"] == expected_featured_sources
     wall_sources = parser.block_image_source_order["reviews-wall"]
-    actual_tilda_asset_ids = [source.split("/")[3] for source in wall_sources]
+    promo_sources = [
+        "/preview/homepage-mobile/reviews-promo-before-after.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-can-dont-want.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-cant-do.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-hudet-budem.jpg?v=1",
+        "/preview/homepage-mobile/reviews-promo-time-cat.png?v=1",
+    ]
+    assert [wall_sources[index] for index in (2, 7, 12, 17, 22)] == promo_sources
+    actual_tilda_asset_ids = [
+        source.split("/")[3]
+        for source in wall_sources
+        if source.startswith("https://optim.tildacdn.com/")
+    ]
     assert actual_tilda_asset_ids == expected_tilda_asset_ids
     assert response.text.count('class="reviews-featured__item"') == 4
     assert response.text.count('class="reviews-wall__item"') == 21
+    assert response.text.count('class="reviews-wall__promo"') == 5
+    wall_start = response.text.index('<section class="reviews-wall"')
+    wall_end = response.text.index("</section>", wall_start)
+    wall_markup = response.text[wall_start:wall_end]
+    direct_child_tags = re.findall(r"^    <([a-z][\w-]*)\b", wall_markup, re.MULTILINE)
+    assert direct_child_tags == [
+        tag
+        for review_index in range(1, 22)
+        for tag in (
+            ["button", "article"]
+            if review_index in {2, 6, 10, 14, 18}
+            else ["button"]
+        )
+    ]
+    promo_positions = []
+    search_from = wall_start
+    for _ in range(5):
+        search_from = response.text.index('class="reviews-wall__promo"', search_from)
+        promo_positions.append(search_from)
+        search_from += 1
+    for promo_position, previous_review, next_review in zip(
+        promo_positions,
+        (2, 6, 10, 14, 18),
+        (3, 7, 11, 15, 19),
+        strict=True,
+    ):
+        assert response.text.index(
+            f'data-review-index="{previous_review}"', wall_start
+        ) < promo_position < response.text.index(
+            f'data-review-index="{next_review}"', wall_start
+        )
+    assert all(source in response.text for source in promo_sources)
+    assert "Давай не как в прошлый раз?" in response.text
+    assert "Точно не хочешь?" in response.text
+    assert "Давай помогу!" in response.text
+    assert '<p class="reviews-wall__promo-copy">Ну... да!</p>' in response.text
+    assert '<p class="reviews-wall__promo-copy">ПОРА!!!</p>' in response.text
+    assert (
+        '<a class="reviews-wall__promo-button" '
+        'href="/preview/homepage-mobile#pricing">Начать прямо сейчас</a>'
+        in response.text
+    )
+    assert response.text.count(
+        'href="/preview/homepage-mobile#pricing">Начать прямо сейчас</a>'
+    ) == 5
+    assert "promoButton.href = './mobile.html#pricing'" in response.text
+    assert "linear-gradient(145deg,#fff 0%,#fbfeff 55%,#f3fbff 100%)" in response.text
+    assert "border-radius:clamp(7px,2vw,12px)" in response.text
+    assert "border:1px solid rgba(132,205,239,.22)" in response.text
+    assert "font-size:clamp(19px,5vw,34px)" in response.text
+    assert "width:min(86%,190px)" in response.text
+    assert "color:#52a9d8" in response.text
+    assert "box-shadow:0 8px 12px -6px rgba(25,73,108,.4)" in response.text
+    assert "background:linear-gradient(135deg,#ffd47d,#e8ae45)" in response.text
+    assert "background:linear-gradient(135deg,#ff934f,#ffd47d)" in response.text
     assert 'data-homepage-block="reviews-voice"' in response.text
     assert response.text.count('class="voice-widget"') == 1
     assert 'data-voice-audio' in response.text
@@ -578,7 +640,12 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert 'data-review-index="21"' in response.text
     assert 'data-review-index="22"' not in response.text
     assert "grid-template-columns:repeat(2,minmax(0,1fr))" in response.text
-    assert "columns:2" in response.text
+    assert "--reviews-wall-gap:clamp(10px,3vw,18px)" in response.text
+    assert "wall.dataset.layout = 'ordered-masonry'" in response.text
+    assert "column = promoIndex % 2" in response.text
+    assert "const itemTop = Math.max(columnHeights[column], orderFloor)" in response.text
+    assert "item.dataset.masonryColumn = String(column + 1)" in response.text
+    assert "items.forEach((item) => resizeObserver.observe(item))" in response.text
     assert "transform:rotate(var(--tilt))" in response.text
     assert ".reviews-featured__item:nth-child(4){transform:translateY(-33%) rotate(var(--tilt))}" in response.text
     assert "filter:drop-shadow(0 5px 5px rgba(25,73,108,.23))" in response.text
@@ -587,7 +654,7 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
         float(value.removesuffix("deg"))
         for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
     ]
-    assert len(tilts) == 25
+    assert len(tilts) == 30
     assert all(0 < abs(tilt) <= 2 for tilt in tilts)
     assert min(tilts) < 0 < max(tilts)
     assert "tild6131-3266-4736-b265-396265366664" not in response.text
@@ -605,11 +672,20 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert "event.key === 'ArrowLeft'" in response.text
     assert "event.key === 'ArrowRight'" in response.text
     assert "wallSection.scrollIntoView" in response.text
-    assert "const showCta" in response.text
-    assert 'data-review-cta hidden' in response.text
-    assert ">ПОРА!!</p>" in response.text
-    assert 'href="/preview/homepage-mobile#pricing">Выбрать тариф</a>' in response.text
-    assert '/preview/homepage-mobile/final-cta-cat-clock.webp?v=2' in parser.image_sources
+    assert "const showSlide" in response.text
+    assert "const continueAfterWall" in response.text
+    assert 'data-review-promo hidden' in response.text
+    assert "wall: [...document.querySelector('[data-homepage-block=\"reviews-wall\"]')" in response.text
+    assert "trigger.classList.contains('reviews-wall__promo')" in response.text
+    assert "promo.removeAttribute('data-masonry-column')" in response.text
+    assert "promoHost.replaceChildren(promo)" in response.text
+    assert "review-lightbox__cta" not in response.text
+    assert "data-review-cta" not in response.text
+    assert "const showCta" not in response.text
+    assert '/preview/homepage-mobile/final-cta-cat-clock.webp?v=2' not in parser.image_sources
+    assert "width:min(82vw,520px)" in response.text
+    assert ".review-lightbox__prev{left:max(calc(50% - min(41vw,260px) + 8px)" in response.text
+    assert ".review-lightbox__next{right:max(calc(50% - min(41vw,260px) + 8px)" in response.text
 
 
 def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
@@ -842,6 +918,11 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
         "montserrat-cyrillic.woff2",
         "montserrat-latin.woff2",
         "media-coordinator.js",
+        "reviews-promo-before-after.jpg",
+        "reviews-promo-can-dont-want.jpg",
+        "reviews-promo-cant-do.jpg",
+        "reviews-promo-hudet-budem.jpg",
+        "reviews-promo-time-cat.png",
         "vsl-player.html",
         "weight-loss-after-masterclass.svg",
         "weight-loss-before-masterclass.svg",
