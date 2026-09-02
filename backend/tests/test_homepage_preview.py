@@ -327,6 +327,13 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert '>Политику</a> обработки ПД.' in response.text
     assert "notice.hidden = true;" in response.text
     assert "background: var(--site-blue);" in response.text
+    assert "background: rgba(255,255,255,.83);" in response.text
+    assert "box-shadow: 0 4px 8px -4px rgba(17,142,216,.55);" in response.text
+    assert (
+        "box-shadow: 0 6px 12px -6px rgba(22,104,157,.42), "
+        "0 2px 5px rgba(22,104,157,.1);"
+        in response.text
+    )
     assert (
         "width: min(560px,calc(100% - var(--page-gutter) - "
         "var(--page-gutter)));"

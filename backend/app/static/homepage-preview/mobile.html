@@ -395,8 +395,8 @@
       padding: 10px 10px 10px 14px;
       border: 1px solid rgba(255,255,255,.92);
       border-radius: 15px;
-      background: rgba(255,255,255,.88);
-      box-shadow: 0 6px 16px rgba(22,104,157,.13);
+      background: rgba(255,255,255,.83);
+      box-shadow: 0 6px 12px -6px rgba(22,104,157,.42), 0 2px 5px rgba(22,104,157,.1);
       color: #1d2b38;
       transform: translateX(-50%);
       backdrop-filter: blur(8px);
@@ -411,7 +411,7 @@
       border: 0;
       border-radius: 12px;
       background: var(--site-blue);
-      box-shadow: none;
+      box-shadow: 0 4px 8px -4px rgba(17,142,216,.55);
       color: #fff;
       font-family: Manrope,Arial,sans-serif;
       font-size: 12px;
@@ -419,9 +419,9 @@
       line-height: 1;
       white-space: nowrap;
       cursor: pointer;
-      transition: background-color .16s ease;
+      transition: background-color .16s ease,box-shadow .16s ease;
     }
-    .cookie-notice__accept:hover,.cookie-notice__accept:focus-visible { background: var(--site-blue-deep); }
+    .cookie-notice__accept:hover,.cookie-notice__accept:focus-visible { background: var(--site-blue-deep); box-shadow: 0 5px 9px -4px rgba(17,142,216,.62); }
     @media (min-width: 820px) {
       .cookie-notice {
         left: 50%;
