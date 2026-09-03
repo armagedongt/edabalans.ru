@@ -1181,7 +1181,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     assert 'id="edb-direct-intensive-v1"' in response.text
     assert "Три ошибки в начале похудения, которые сразу ставят на нём жирный крест!" in response.text
-    assert "Хватит откладывать — узнайте прямо сейчас 👇" in response.text
+    assert "Хватит откладывать — читайте и меняйтесь прямо сейчас 👇" in response.text
     assert "Не является медицинской услугой." in response.text
     assert "telegramUrl:'__REQUIRED_GO_ALIAS__'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot'" in response.text
