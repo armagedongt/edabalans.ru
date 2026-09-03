@@ -1218,3 +1218,12 @@ def test_direct_intensive_preview_has_local_section_lead_font_forks() -> None:
     assert 'data-font-variant="${key}"' in response.text
     assert '[data-font-variant="2"] .edb-di-section-lead' in response.text
     assert '[data-font-variant="3"] .edb-di-section-lead' in response.text
+
+
+def test_direct_intensive_preview_keeps_list_area_light_between_color_spots() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "at 88% -4%" in response.text
+    assert "at 10% 104%" in response.text
+    assert "at 50% 56%" in response.text
+    assert "#fbfeff 43%,#fff 61%" in response.text
