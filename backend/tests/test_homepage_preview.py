@@ -1092,7 +1092,8 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         "author": {
             "title": "Обо мне",
             "paragraph-1": "Топовый автор сообщества \"Мы Худеем\" на Pikabu.ru, велосипедист, триатлет (железный человек), путешественник, любитель тефтелей с чесноком и пюрешкой.",
-            "paragraph-2": "Разок меня тоже бес попутал — набрал до 95кг. Потом одумался, поменял образ жизни и похудел до 70кг ни дня не сидя на диете и даже не зная, что существует приложение по учету калорий. С того времени 10 лет спокойно живу в новом весе и радуюсь жизни.",
+            "paragraph-2": "Разок меня тоже бес попутал — набрал до 95кг. Потом одумался, поменял образ жизни и похудел до 70кг ни дня не сидя на диете и даже не зная, что существует приложение по учету калорий.",
+            "paragraph-3": "С того времени 10 лет спокойно живу в новом весе и радуюсь жизни.",
         },
         "reviews-after-cat": {
             "title": "Больше отзывов",
@@ -1109,6 +1110,13 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
     assert "Вот что пишут те, кто уже прошёл Мастер-класс" in response.text
     assert "Если долго находиться в моем информационном поле — могут быть последствия. Осторожно!" in response.text
     assert "font-size: var(--type-body);" in response.text
+    author_start = response.text.index('data-homepage-block="author"')
+    author_end = response.text.index('data-homepage-block="faq"', author_start)
+    author_html = response.text[author_start:author_end]
+    assert author_html.index('data-homepage-field="title"') < author_html.index('data-homepage-field="paragraph-1"')
+    assert author_html.index('data-homepage-field="paragraph-1"') < author_html.index('data-homepage-field="media"')
+    assert author_html.index('data-homepage-field="media"') < author_html.index('data-homepage-field="paragraph-2"')
+    assert author_html.index('data-homepage-field="paragraph-2"') < author_html.index('data-homepage-field="paragraph-3"')
 
     approach_path = Path(__file__).parents[2] / "content/public-site/homepage/approach.md"
     approach = approach_path.read_text(encoding="utf-8")

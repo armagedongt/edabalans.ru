@@ -386,8 +386,9 @@
       "fields": [
         "title",
         "paragraph-1",
+        "media",
         "paragraph-2",
-        "media"
+        "paragraph-3"
       ],
       "source": [
         "backend/app/static/homepage-preview/mobile.html",
