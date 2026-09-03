@@ -1209,3 +1209,12 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert "--edb-page-gutter:clamp(16px,4.16vw,32px)" in response.text
     assert "calc(100% - var(--edb-page-gutter) - var(--edb-page-gutter))" in response.text
     assert ".edb-di-actions{display:grid;width:100%" in response.text
+
+
+def test_direct_intensive_preview_has_local_section_lead_font_forks() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "const FONT_VARIANTS=['1','2','3']" in response.text
+    assert 'data-font-variant="${key}"' in response.text
+    assert '[data-font-variant="2"] .edb-di-section-lead' in response.text
+    assert '[data-font-variant="3"] .edb-di-section-lead' in response.text
