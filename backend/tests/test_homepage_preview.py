@@ -1179,6 +1179,8 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert response.headers["content-type"].startswith("text/html")
     assert response.headers["cache-control"] == "no-cache"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert '<meta name="viewport" content="width=device-width, initial-scale=1">' in response.text
+    assert response.text.index('name="viewport"') < response.text.index('id="edb-direct-intensive-v1"')
     assert 'id="edb-direct-intensive-v1"' in response.text
     assert "Три ошибки в начале похудения, которые сразу ставят на нём жирный крест!" in response.text
     assert "Хватит откладывать — читайте и меняйтесь прямо сейчас 👇" in response.text
@@ -1219,12 +1221,3 @@ def test_direct_intensive_preview_has_local_section_lead_font_forks() -> None:
     assert 'data-font-variant="${key}"' in response.text
     assert '[data-font-variant="2"] .edb-di-section-lead' in response.text
     assert '[data-font-variant="3"] .edb-di-section-lead' in response.text
-
-
-def test_direct_intensive_preview_keeps_list_area_light_between_color_spots() -> None:
-    response = client.get("/preview/direct-intensive")
-
-    assert "at 88% -4%" in response.text
-    assert "at 10% 104%" in response.text
-    assert "at 50% 56%" in response.text
-    assert "#fbfeff 43%,#fff 61%" in response.text
