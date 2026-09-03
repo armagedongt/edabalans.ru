@@ -1200,3 +1200,12 @@ def test_direct_intensive_preview_declares_measurable_events() -> None:
     assert "direct_intensive_max_click" in response.text
     assert "mc.yandex.ru/metrika/tag.js" not in response.text
     assert "edb_direct_intensive_attribution_v1" in response.text
+
+
+def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "--edb-content-max:650px" in response.text
+    assert "--edb-page-gutter:clamp(16px,4.16vw,32px)" in response.text
+    assert "calc(100% - var(--edb-page-gutter) - var(--edb-page-gutter))" in response.text
+    assert ".edb-di-actions{display:grid;width:100%" in response.text
