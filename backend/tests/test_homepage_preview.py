@@ -1172,3 +1172,31 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
 
     assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
     assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404
+def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/html")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert 'id="edb-direct-intensive-v1"' in response.text
+    assert "Три ошибки в начале похудения, которые сразу ставят на нём жирный крест!" in response.text
+    assert "Хватит откладывать — узнайте прямо сейчас 👇" in response.text
+    assert "telegramUrl:'__REQUIRED_GO_ALIAS__'" in response.text
+    assert "maxUrl:'https://max.ru/id230409966750_bot'" in response.text
+
+    source = client.get("/preview/direct-intensive/t123")
+    assert source.status_code == 200
+    assert source.headers["content-type"].startswith("text/plain")
+    assert source.headers["x-robots-tag"] == "noindex, nofollow"
+    assert source.text == response.text
+
+
+def test_direct_intensive_preview_declares_measurable_events() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "direct_intensive_view" in response.text
+    assert "direct_intensive_telegram_click" in response.text
+    assert "direct_intensive_max_click" in response.text
+    assert "mc.yandex.ru/metrika/tag.js" not in response.text
+    assert "edb_direct_intensive_attribution_v1" in response.text

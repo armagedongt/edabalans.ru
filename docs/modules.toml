@@ -261,6 +261,7 @@ owns_routes = [
   "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
   "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
+  "*/preview/direct-intensive*",
   "*/api/public/video-analytics", "*/api/public-site/content/*",
   "*/admin/api/public-site/content*",
 ]

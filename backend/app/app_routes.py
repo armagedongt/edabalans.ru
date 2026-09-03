@@ -9,7 +9,13 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Response
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    PlainTextResponse,
+    Response,
+)
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -47,6 +53,7 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "crying-character.png",
     "final-cta-cat-clock.webp",
     "max-full-colored-dark-official.png",
+    "max-full-colored-official.png",
     "money-bag-ruble-v1.webp",
     "montserrat-cyrillic.woff2",
     "montserrat-latin.woff2",
@@ -182,6 +189,27 @@ def homepage_mobile_preview(embed: str | None = Query(default=None)) -> HTMLResp
             1,
         )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/direct-intensive", include_in_schema=False)
+@router.get("/preview/direct-intensive/", include_in_schema=False)
+def direct_intensive_preview() -> HTMLResponse:
+    fragment = (
+        STATIC_DIR / "homepage-preview" / "direct-intensive.html"
+    ).read_text(encoding="utf-8")
+    response = HTMLResponse(fragment, headers={"Cache-Control": "no-cache"})
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/direct-intensive/t123", include_in_schema=False)
+def direct_intensive_t123_source() -> PlainTextResponse:
+    fragment = (
+        STATIC_DIR / "homepage-preview" / "direct-intensive.html"
+    ).read_text(encoding="utf-8")
+    response = PlainTextResponse(fragment, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
 
