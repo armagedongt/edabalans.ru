@@ -1182,11 +1182,15 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert '<meta name="viewport" content="width=device-width, initial-scale=1">' in response.text
     assert response.text.index('name="viewport"') < response.text.index('id="edb-direct-intensive-v1"')
     assert 'id="edb-direct-intensive-v1"' in response.text
-    assert "Три ошибки в начале похудения, которые сразу ставят на нём жирный крест!" in response.text
-    assert "Хватит откладывать — читайте и меняйтесь прямо сейчас 👇" in response.text
+    assert "Какие три ошибки в начале похудения, сразу ставят на нём жирный крест!" in response.text
+    assert "Хватит откладывать — читайте" in response.text
+    assert "👇 и меняйтесь прямо сейчас 👇" in response.text
+    assert "В нём вы узнаете:" in response.text
+    assert "Вы узнаете:" not in response.text
     assert "Не является медицинской услугой." in response.text
-    assert "telegramUrl:'__REQUIRED_GO_ALIAS__'" in response.text
-    assert "maxUrl:'https://max.ru/id230409966750_bot'" in response.text
+    assert "Политика обработки персональных данных" in response.text
+    assert "telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y'" in response.text
+    assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
 
     source = client.get("/preview/direct-intensive/t123")
     assert source.status_code == 200
@@ -1214,10 +1218,10 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert ".edb-di-actions{display:grid;width:min(calc(100% - 16px),520px)" in response.text
 
 
-def test_direct_intensive_preview_has_local_section_lead_font_forks() -> None:
+def test_direct_intensive_preview_has_one_accepted_visual_variant() -> None:
     response = client.get("/preview/direct-intensive")
 
-    assert "const FONT_VARIANTS=['1','2','3']" in response.text
-    assert 'data-font-variant="${key}"' in response.text
-    assert '[data-font-variant="2"] .edb-di-section-lead' in response.text
-    assert '[data-font-variant="3"] .edb-di-section-lead' in response.text
+    assert "FONT_VARIANTS" not in response.text
+    assert "DESIGN_VARIANTS" not in response.text
+    assert "data-font-variant" not in response.text
+    assert "data-design-variant" not in response.text
