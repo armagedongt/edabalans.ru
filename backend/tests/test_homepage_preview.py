@@ -1022,7 +1022,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
     parser.feed(response.text)
 
     for marker in (
-        "За три недели научитесь делать ваше похудение — проще",
+        "За три недели вы научитесь делать похудение проще",
         "Вместо очередной голодовки",
         "А худеть как-то надо...",
         "Весь день держалась — вечером сорвалась",
@@ -1032,6 +1032,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         "О моём подходе",
         "Не ждите идеального момента или идеальных условий",
         "За моими плечами 600+ разобранных дневников питания",
+        "И на все эти проблемы уже подбирал решения!",
         "Есть сомнения?",
         "Обо мне",
         "Всего через три недели у вас может быть повод написать что-то подобное",
@@ -1054,7 +1055,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
 
     expected_fields = {
         "hero-intro": {
-            "text": "За три недели научитесь делать ваше похудение — проще, а потом пользуйтесь этим всю жизнь!",
+            "text": "За три недели вы научитесь делать похудение проще, а пользоваться этим потом будете — всю жизнь!",
         },
         "hero-outro": {
             "paragraph-1": "Вместо очередной голодовки — я покажу вам со стороны ваше привычное питание и пищевые привычки.",
@@ -1072,7 +1073,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
             "pain-5": "Всё знаю — ничего не делаю...",
         },
         "recognition-explanation": {
-            "paragraph-1": "Да, для похудения — нужен дефицит калорий. Но здоровое питание и пищевые привычки именно для того, чтобы у вас глаза на лоб не полезли от этого дефицита.",
+            "paragraph-1": "Да, для похудения — нужен дефицит калорий. Но здоровое питание и пищевые привычки именно для того и нужны, чтобы у вас глаза на лоб не полезли от этого дефицита.",
             "paragraph-2": "Тяга к сладкому, частым перекусам, постоянный голод, невозможность вовремя остановиться, срывы и прочие оказии — это не ваши характеристики как личности, а просто недостаток навыков, как жить в дефиците калорий.",
         },
         "anya-outro": {
@@ -1084,6 +1085,9 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
             "paragraph-1": "Если вы ещё не понимаете, почему это именно то, что нужно вам для успешного похудения, и хотите познакомиться с моим подходом поближе — я записал бесплатный интенсив в четырёх частях «Последнее похудение».",
             "paragraph-2": "Там я рассказываю, как должна выглядеть история адекватного похудения от А до Я!",
             "cta": "Открыть бесплатный интенсив",
+        },
+        "anya-intro": {
+            "text": "Если долго находиться в моем информационном поле — могут быть последствия. Осторожно!",
         },
         "author": {
             "title": "Обо мне",
@@ -1100,6 +1104,11 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         for field_id, expected in fields.items():
             assert " ".join(actual[field_id].split()) == expected
     assert 'data-homepage-field="pain-6" aria-label="Я так больше не хочу."' in response.text
+    assert "<strong>Но здоровое питание и пищевые привычки именно для того</strong> и нужны" in response.text
+    assert "<strong>это не ваши характеристики как личности, а просто недостаток навыков,</strong>" in response.text
+    assert "Вот что пишут те, кто уже прошёл Мастер-класс" in response.text
+    assert "Если долго находиться в моем информационном поле — могут быть последствия. Осторожно!" in response.text
+    assert "font-size: var(--type-body);" in response.text
 
     approach_path = Path(__file__).parents[2] / "content/public-site/homepage/approach.md"
     approach = approach_path.read_text(encoding="utf-8")
