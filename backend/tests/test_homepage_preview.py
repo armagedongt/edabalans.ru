@@ -1209,7 +1209,7 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert "--edb-content-max:650px" in response.text
     assert "--edb-page-gutter:clamp(16px,4.16vw,32px)" in response.text
     assert "calc(100% - var(--edb-page-gutter) - var(--edb-page-gutter))" in response.text
-    assert ".edb-di-actions{display:grid;width:100%" in response.text
+    assert ".edb-di-actions{display:grid;width:min(calc(100% - 16px),520px)" in response.text
 
 
 def test_direct_intensive_preview_has_local_section_lead_font_forks() -> None:

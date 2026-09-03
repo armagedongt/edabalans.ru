@@ -36,13 +36,13 @@
   #edb-direct-intensive-v1[data-design-variant="3"] .edb-di-item{counter-increment:edb-di-point}
   #edb-direct-intensive-v1[data-design-variant="3"] .edb-di-item::before{background:#dff3ff;color:#159be4;content:counter(edb-di-point)}
   #edb-direct-intensive-v1 .edb-di-cta-lead{margin:21px 0 13px}
-  #edb-direct-intensive-v1 .edb-di-actions{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,2.4vw,12px);margin-inline:0}
+  #edb-direct-intensive-v1 .edb-di-actions{display:grid;width:min(calc(100% - 16px),520px);grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,2.4vw,11px);margin-inline:auto}
   #edb-direct-intensive-v1 .edb-di-action-wrap{min-width:0}
-  #edb-direct-intensive-v1 .edb-di-button{display:flex;min-width:0;align-items:center;justify-content:center;gap:clamp(7px,2.4vw,11px);width:100%;height:68px;padding:9px clamp(8px,2.8vw,13px);overflow:hidden;border:0;border-radius:16px;text-align:center;text-decoration:none;font:800 clamp(14px,4vw,18px)/1 Manrope,Montserrat,Arial,sans-serif;box-shadow:0 10px 18px -11px rgba(0,46,78,.78);transition:transform .18s ease,box-shadow .18s ease}
+  #edb-direct-intensive-v1 .edb-di-button{display:flex;min-width:0;align-items:center;justify-content:center;gap:clamp(6px,2vw,9px);width:100%;height:58px;padding:8px clamp(7px,2.4vw,11px);overflow:hidden;border:0;border-radius:14px;text-align:center;text-decoration:none;font:800 clamp(13px,3.7vw,17px)/1 Manrope,Montserrat,Arial,sans-serif;box-shadow:0 9px 16px -10px rgba(0,46,78,.76);transition:transform .18s ease,box-shadow .18s ease}
   #edb-direct-intensive-v1 .edb-di-button--telegram{background:linear-gradient(180deg,#2aabee,#229ed9);color:#fff}
   #edb-direct-intensive-v1 .edb-di-button--max{background:#0d001a;color:#fff}
-  #edb-direct-intensive-v1 .edb-di-telegram-icon{display:block;width:clamp(31px,9.5vw,39px);height:clamp(31px,9.5vw,39px);flex:0 0 auto}
-  #edb-direct-intensive-v1 .edb-di-max-logo{display:block;width:clamp(76px,24vw,104px);max-width:100%;height:38px;object-fit:contain}
+  #edb-direct-intensive-v1 .edb-di-telegram-icon{display:block;width:clamp(27px,8vw,34px);height:clamp(27px,8vw,34px);flex:0 0 auto}
+  #edb-direct-intensive-v1 .edb-di-max-logo{display:block;width:clamp(72px,21vw,94px);max-width:100%;height:32px;object-fit:contain}
   #edb-direct-intensive-v1 .edb-di-button:hover,#edb-direct-intensive-v1 .edb-di-button:focus-visible{box-shadow:0 13px 21px -10px rgba(0,46,78,.88);transform:translateY(-2px) rotate(-1deg)}
   #edb-direct-intensive-v1 .edb-di-button:active{transform:translateY(1px) rotate(0)}
   #edb-direct-intensive-v1 .edb-di-button:focus-visible{outline:3px solid rgba(255,107,54,.38);outline-offset:3px}
@@ -88,7 +88,7 @@
   const configured=value=>/^https:\/\//i.test(value)&&!value.includes('__REQUIRED_');
   const maxLogoUrl=location.protocol==='file:'?'./max-full-colored-official.png':'https://app.edabalans.ru/preview/homepage-mobile/max-full-colored-official.png?v=1';
   const icon=kind=>kind==='telegram'?'<svg class="edb-di-telegram-icon" viewBox="190 270 580 510" aria-hidden="true"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>':`<img class="edb-di-max-logo" src="${maxLogoUrl}" alt="MAX">`;
-  const button=(kind,label,url,note='')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="primary" href="${configured(url)?esc(url):'#'}" target="_blank" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}<span>${esc(label)}</span></a>${note?`<p class="edb-di-note">${esc(note)}</p>`:''}</div>`;
+  const button=(kind,label,url,note='')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="primary" aria-label="${esc(label)}" href="${configured(url)?esc(url):'#'}" target="_blank" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}${kind==='max'?'':`<span>${esc(label)}</span>`}</a>${note?`<p class="edb-di-note">${esc(note)}</p>`:''}</div>`;
   const selectedDesignKey=DESIGN_VARIANTS.includes(new URLSearchParams(location.search).get('variant'))?new URLSearchParams(location.search).get('variant'):'1';
   const selectedFontKey=FONT_VARIANTS.includes(new URLSearchParams(location.search).get('font'))?new URLSearchParams(location.search).get('font'):'1';
   const isLocalPreview=location.protocol==='file:'||location.hostname==='127.0.0.1'||location.hostname==='localhost';
