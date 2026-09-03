@@ -325,6 +325,11 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
+    assert response.text.count('class="anya-slide anya-slide--placeholder"') == 4
+    assert "Фото до — заменить исходным материалом" not in response.text
+    assert "Фото после — заменить исходным материалом" not in response.text
+    assert "Здесь будет переписка, тарелка или соревнование" not in response.text
+    assert "Финальный текст появится после редакторской сборки реальных материалов." not in response.text
     assert 'class="anya-story__controls"' not in response.text
     assert "Видео Ани — временная медиазаглушка" not in response.text
     assert "Временное видео для проверки механики" not in response.text
