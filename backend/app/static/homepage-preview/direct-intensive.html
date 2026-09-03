@@ -50,6 +50,7 @@
   #edb-direct-intensive-v1 .edb-di-note{margin:8px 0 0;color:var(--edb-muted);font-size:11px;line-height:1.35;text-align:center}
   #edb-direct-intensive-v1 .edb-di-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 9px;margin:22px 0 0;padding-top:15px;border-top:1px solid rgba(22,87,128,.11);color:#6b7a86;font-size:10px;line-height:1.4;text-align:center}
   #edb-direct-intensive-v1 .edb-di-legal a{color:inherit;text-underline-offset:2px}
+  #edb-direct-intensive-v1 .edb-di-legal-disclaimer{flex-basis:100%}
   @media (min-width:560px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:44px;padding-bottom:30px}#edb-direct-intensive-v1 .edb-di-actions{gap:12px;align-items:start}#edb-direct-intensive-v1 .edb-di-item{padding:15px 17px 15px 51px}#edb-direct-intensive-v1 .edb-di-item::before{left:16px;top:15px}}
   @media (min-width:900px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:58px;padding-bottom:34px}#edb-direct-intensive-v1 .edb-di-list{grid-template-columns:1fr 1fr}#edb-direct-intensive-v1 .edb-di-item{min-height:104px}}
   @media (prefers-reduced-motion:reduce){#edb-direct-intensive-v1 .edb-di-button{transition:none}}
@@ -74,7 +75,7 @@
     telegramLabel:'Telegram',
     maxLabel:'MAX',
     telegramNote:'Откроется только с VPN',
-    legal:{copyright:'© 2026 Сергей Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика обработки ПД',privacyUrl:'https://go.похудение-это-есть.рф/legal/privacy'},
+    legal:{copyright:'© 2026 Сергей Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика обработки ПД',privacyUrl:'https://go.похудение-это-есть.рф/legal/privacy',disclaimer:'Не является медицинской услугой.'},
     links:{telegramUrl:'__REQUIRED_GO_ALIAS__',maxUrl:'https://max.ru/id230409966750_bot'},
     analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'direct_intensive_telegram_click',maxClickEvent:'direct_intensive_max_click'}
   };
@@ -94,7 +95,7 @@
   const variantSwitcher=isLocalPreview?`<div class="edb-di-preview-controls"><nav class="edb-di-variant-switcher" aria-label="Локальные варианты страницы"><span>Вариант</span>${DESIGN_VARIANTS.map(key=>`<button class="edb-di-variant-button" type="button" data-design-variant="${key}" aria-pressed="${key===selectedDesignKey}">${key}</button>`).join('')}</nav><nav class="edb-di-variant-switcher" aria-label="Варианты шрифта акцентных строк"><span>Шрифт</span>${FONT_VARIANTS.map(key=>`<button class="edb-di-variant-button" type="button" data-font-variant="${key}" aria-pressed="${key===selectedFontKey}">${key}</button>`).join('')}</nav></div>`:'';
   root.dataset.designVariant=selectedDesignKey;
   root.dataset.fontVariant=selectedFontKey;
-  root.innerHTML=`<main class="edb-di-shell">${variantSwitcher}<section class="edb-di-hero-stage"><p class="edb-di-eyebrow">${esc(CONTENT.eyebrow)}</p><h1 class="edb-di-hero--main">${HERO_HTML}</h1><p class="edb-di-lead">${CONTENT.introHtml}</p></section><p class="edb-di-section-lead edb-di-list-lead">${esc(CONTENT.listLead)}</p><ul class="edb-di-list">${CONTENT.points.map(point=>`<li class="edb-di-item">${esc(point.replace(/^✅\s*/,''))}</li>`).join('')}</ul><p class="edb-di-section-lead edb-di-cta-lead">${esc(CONTENT.ctaLead)}</p><div class="edb-di-actions">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote)}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><footer class="edb-di-legal"><span>${esc(CONTENT.legal.copyright)}</span><span>${esc(CONTENT.legal.inn)}</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a></footer></main>`;
+  root.innerHTML=`<main class="edb-di-shell">${variantSwitcher}<section class="edb-di-hero-stage"><p class="edb-di-eyebrow">${esc(CONTENT.eyebrow)}</p><h1 class="edb-di-hero--main">${HERO_HTML}</h1><p class="edb-di-lead">${CONTENT.introHtml}</p></section><p class="edb-di-section-lead edb-di-list-lead">${esc(CONTENT.listLead)}</p><ul class="edb-di-list">${CONTENT.points.map(point=>`<li class="edb-di-item">${esc(point.replace(/^✅\s*/,''))}</li>`).join('')}</ul><p class="edb-di-section-lead edb-di-cta-lead">${esc(CONTENT.ctaLead)}</p><div class="edb-di-actions">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote)}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><footer class="edb-di-legal"><span>${esc(CONTENT.legal.copyright)}</span><span>${esc(CONTENT.legal.inn)}</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span class="edb-di-legal-disclaimer">${esc(CONTENT.legal.disclaimer)}</span></footer></main>`;
   root.querySelectorAll('[data-design-variant]').forEach(control=>control.addEventListener('click',()=>{
     const key=control.dataset.designVariant;
     root.dataset.designVariant=key;
