@@ -151,6 +151,7 @@ def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     assert ".pain:not(.pain--final){width:1px;height:1px" in response.text
     assert "Значит, пора менять подход!" in response.text
     assert "Вместо случайных попыток — понятный порядок действий" in response.text
+    assert response.text.count('class="method-check method-check--selected method-check--soft"') == 6
     assert "fetch('/api/public-site/content/approach'" not in response.text
     for fragment_name in (
         "recognition",
