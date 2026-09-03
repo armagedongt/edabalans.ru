@@ -1025,6 +1025,34 @@ def test_homepage_media_coordinator_pauses_other_audio_and_video() -> None:
     assert "window.EdaMediaCoordinator = Object.freeze" in response.text
 
 
+def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
+    response = client.get("/preview/homepage-mobile/vsl-player.html")
+
+    assert response.status_code == 200
+    assert "'intensive-day-1': {" in response.text
+    assert "https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4" in response.text
+    assert "videoId: 'intensive-day-1-2026-09-03'" in response.text
+    assert "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context')" in response.text
+    assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];" in response.text
+    assert "singleSource: true" in response.text
+    assert "allowSeek: true" in response.text
+    assert "acceleratedProgress: false" in response.text
+    assert "if (mediaPreset.singleSource) previewVideo.loop = false;" in response.text
+    assert "const videos = mediaPreset.singleSource ? [previewVideo]" in response.text
+    assert "if (!mediaPreset.singleSource) prepareMainPlayback();" in response.text
+    assert "const seekEnabled = mediaPreset.allowSeek ?? (PLAYER_MODE !== 'engagement');" in response.text
+    assert "if (!seekEnabled) return;" in response.text
+    assert ".mvp--seekable .mvp__progress{cursor:pointer;pointer-events:auto}" in response.text
+    assert "if (delta > 0 && delta <= 2)" in response.text
+    assert "const completionRatio = seekEnabled ? watchedDuration / fullDuration" in response.text
+    assert "const speedOptions = [" in response.text
+    assert "item.playbackRate = value" in response.text
+    assert "btn.addEventListener('click', ()=>setSpeed" in response.text
+    assert "endpoint: '/api/public/video-analytics'" in response.text
+    assert "session_id: sessionId" in response.text
+    assert "page_path:" in response.text
+
+
 def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> None:
     response = client.get("/preview/homepage-mobile")
     parser = RobotsMetaParser()

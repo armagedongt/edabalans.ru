@@ -71,9 +71,10 @@ def test_engagement_creates_one_anonymous_session() -> None:
         "homepage-vsl-2026-09-02",
         "homepage-anya-review-2026-09-01",
         "homepage-vsl-2026-02-13",
+        "intensive-day-1-2026-09-03",
     ],
 )
-def test_supported_homepage_videos_are_accepted(video_id: str) -> None:
+def test_supported_public_videos_are_accepted(video_id: str) -> None:
     client, factory = make_client()
     body = {**payload(), "video_id": video_id}
 

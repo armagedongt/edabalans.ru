@@ -21,6 +21,7 @@ ALLOWED_VIDEO_IDS = {
     "homepage-vsl-2026-02-13",
     "homepage-vsl-2026-09-02",
     "homepage-anya-review-2026-09-01",
+    "intensive-day-1-2026-09-03",
 }
 MAX_VIDEO_SECONDS = 7_200
 BUCKET_SIZE_SECONDS = 5

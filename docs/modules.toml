@@ -367,6 +367,7 @@ owns_files = [
 ]
 owns_routes = ["*/intensive*", "*/admin/api/intensive*"]
 depends_on = ["platform.content"]
+reads_from = ["products.public-site"]
 
 [[modules]]
 id = "products.intensive.telegram-login"

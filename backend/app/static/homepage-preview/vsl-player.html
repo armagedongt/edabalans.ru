@@ -221,6 +221,7 @@
 #modular-video-player .mvp__shade{background:linear-gradient(to bottom,transparent 82%,rgba(0,0,0,.22) 100%)}
 #modular-video-player .mvp__controls{padding:0 27px 13px;z-index:8}
 #modular-video-player .mvp__progress{height:4px;margin-bottom:10px;border-radius:999px;background:rgba(207,215,215,.52);overflow:hidden;cursor:default;pointer-events:none}
+#modular-video-player.mvp--seekable .mvp__progress{cursor:pointer;pointer-events:auto}
 #modular-video-player .mvp__progress-fill{border-radius:inherit;background:var(--accent);transition:none}
 #modular-video-player .mvp__controls-row{min-height:30px}
 #modular-video-player .mvp__left,#modular-video-player .mvp__right{gap:7px}
@@ -339,7 +340,7 @@
     engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
     standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
-  const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard) };
+  const modePreset = MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard;
   const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') || 'homepage-vsl';
   root.classList.toggle('mvp--anya-review', PLAYER_CONTEXT === 'anya-review');
   const MEDIA_PRESETS = {
@@ -353,9 +354,24 @@
       previewSource: 'https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4',
       source: 'https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4',
       videoId: 'homepage-anya-review-2026-09-01'
+    },
+    'intensive-day-1': {
+      previewSource: 'https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4',
+      source: 'https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4',
+      videoId: 'intensive-day-1-2026-09-03',
+      volume: 0.85,
+      singleSource: true,
+      allowSeek: true,
+      acceleratedProgress: false
     }
   };
   const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];
+  const seekEnabled = mediaPreset.allowSeek ?? (PLAYER_MODE !== 'engagement');
+  const MODULES = {
+    ...modePreset,
+    acceleratedProgress: mediaPreset.acceleratedProgress ?? modePreset.acceleratedProgress
+  };
+  root.classList.toggle('mvp--seekable', seekEnabled);
   const previewVideo = root.querySelector('.mvp__video--preview');
   const mainVideo = root.querySelector('.mvp__video--main');
   let video = previewVideo;
@@ -425,13 +441,14 @@
     return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
   }
 
-  const videos = [previewVideo, mainVideo];
+  const videos = mediaPreset.singleSource ? [previewVideo] : [previewVideo, mainVideo];
   let soundEngaged = false;
   let mainPrepared = false;
   let handoffPending = false;
   let handoffAligning = false;
 
   function logicalDuration(){
+    if (mediaPreset.singleSource && Number.isFinite(previewVideo.duration)) return previewVideo.duration;
     if (Number.isFinite(mainVideo.duration) && mainVideo.duration > 0) return mainVideo.duration;
     return video === mainVideo && Number.isFinite(video.duration) ? video.duration : 0;
   }
@@ -449,6 +466,7 @@
     if (MODULES.autoplay) {
       previewVideo.muted = true;
       previewVideo.loop = true;
+      if (mediaPreset.singleSource) previewVideo.loop = false;
       soundCard.hidden = false;
       bigPlay.hidden = true;
       root.classList.add('mvp--awaiting-sound');
@@ -586,7 +604,7 @@
   }
 
   function prepareMainPlayback(){
-    if (mainPrepared) return;
+    if (mediaPreset.singleSource || mainPrepared) return;
     mainPrepared = true;
     mainVideo.src = mediaPreset.source;
     mainVideo.loop = false;
@@ -609,7 +627,7 @@
     root.classList.remove('mvp--awaiting-sound');
     analyticsApi.markEngaged();
     announceActivePlayer();
-    prepareMainPlayback();
+    if (!mediaPreset.singleSource) prepareMainPlayback();
     playAndTakeFocus(previewVideo, false);
     showControls(true);
   }
@@ -665,7 +683,16 @@
       if (item === video || item === mainVideo) updateProgress();
     });
   });
+  if (mediaPreset.singleSource) {
+    const handleSingleSourceEnded = ()=>{
+      updatePlayUI();
+      showControls(false);
+      parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+    };
+    previewVideo.addEventListener('ended', handleSingleSourceEnded);
+  }
   previewVideo.addEventListener('ended', ()=>{
+    if (mediaPreset.singleSource) return;
     handoffPending = true;
     root.classList.add('mvp--handoff-pending');
     tryMainHandoff();
@@ -740,7 +767,7 @@
   });
 
   progress.addEventListener('click', event=>{
-    if (PLAYER_MODE === 'engagement') return;
+    if (!seekEnabled) return;
     if (!Number.isFinite(video.duration) || video.duration <= 0) return;
     const box = progress.getBoundingClientRect();
     video.currentTime = Math.max(0, Math.min(1, (event.clientX-box.left)/box.width)) * video.duration;
@@ -970,8 +997,12 @@
       }
 
       const fullDuration = logicalDuration();
-      if (engaged && source === mainVideo && Number.isFinite(fullDuration) && fullDuration > 0) {
-        if (!state.completed && t / fullDuration >= ANALYTICS_CONFIG.completionThreshold) {
+      if (engaged && (mediaPreset.singleSource || source === mainVideo) && Number.isFinite(fullDuration) && fullDuration > 0) {
+        const watchedDuration = [...watched].reduce((total, bucketStart)=>{
+          return total + Math.max(0, Math.min(ANALYTICS_CONFIG.bucketSizeSec, fullDuration - bucketStart));
+        }, 0);
+        const completionRatio = seekEnabled ? watchedDuration / fullDuration : t / fullDuration;
+        if (!state.completed && completionRatio >= ANALYTICS_CONFIG.completionThreshold) {
           state.completed = true;
           send('video_complete');
         }
