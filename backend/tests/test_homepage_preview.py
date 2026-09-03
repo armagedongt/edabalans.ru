@@ -422,6 +422,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "scroll-behavior: smooth;" in response.text
     assert "html { scroll-behavior: auto; }" in response.text
     assert "html::-webkit-scrollbar-thumb" in response.text
+    assert "min-height: 64px;" in response.text
     assert "display: inline-flex; height: 40px; align-items: center; justify-content: center;" in response.text
     assert ".desktop-wordmark { padding-left: 12px;" in response.text
     assert ".site-title { margin-top: 42px; }" in response.text
