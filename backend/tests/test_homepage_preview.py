@@ -1106,6 +1106,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
         for field_id, expected in fields.items():
             assert " ".join(actual[field_id].split()) == expected
     assert 'data-homepage-field="pain-6" aria-label="Я так больше не хочу."' in response.text
+    assert '<span class="final-old">не могу</span>. <span class="final-new">не хочу</span>' in response.text
     assert "<strong>Но здоровое питание и пищевые привычки именно для того</strong> и нужны" in response.text
     assert "<strong>это не ваши характеристики как личности, а просто недостаток навыков,</strong>" in response.text
     assert "Вот что пишут те, кто уже прошёл Мастер-класс" in response.text
