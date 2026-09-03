@@ -240,6 +240,9 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "var(--final-inline) + var(--final-inline) - 28px),680px)"
         in response.text
     )
+    assert "margin:38px auto 0;padding:0 10px;border:3px" in response.text
+    assert ".meme-card img{display:block;width:100%;height:auto;margin:0 auto}" in response.text
+    assert "aspect-ratio:800/776" not in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
     assert "Открыть бесплатный интенсив" in response.text
     assert "{{INTENSIVE_PUBLIC_CTA_" not in response.text
