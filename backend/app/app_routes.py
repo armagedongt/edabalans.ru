@@ -124,7 +124,6 @@ def homepage_recognition_preview() -> HTMLResponse:
         f'{homepage_library_fragment(source, "recognition")}\n'
         '</main>\n'
         f'{homepage_library_fragment(source, "recognition-script")}\n'
-        f'{homepage_library_fragment(source, "public-content-script")}\n'
         '</body>\n</html>\n'
     )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})

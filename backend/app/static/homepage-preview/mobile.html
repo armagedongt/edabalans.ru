@@ -1247,8 +1247,18 @@
             <p data-homepage-field="paragraph-2">Тяга к сладкому, частым перекусам, постоянный голод, невозможность вовремя остановиться, срывы и прочие оказии — это не ваши характеристики как личности, а просто недостаток навыков, как жить в дефиците калорий.</p>
           </div>
         </section>
-        <section class="method-transition" aria-label="Следующий блок страницы" data-public-content="approach" data-homepage-block="approach" data-homepage-field="html" data-block-width="content" data-recognition-followup>
-          <div class="method-transition__inner" aria-live="polite">Загружаю текст…</div>
+        <section class="method-transition" aria-label="Следующий блок страницы" data-homepage-block="approach" data-homepage-field="html" data-block-width="content" data-recognition-followup>
+          <div class="method-transition__inner">
+            <p class="method-kicker">Значит, пора менять подход!</p>
+            <ul class="method-list">
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо ограничений — </span><strong>баланс</strong></p></li>
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо ПП еды — </span><strong>пищевые привычки</strong></p></li>
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо уменьшения калорий — </span><strong>увеличение насыщения</strong></p></li>
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо подсчета граммов — </span><strong>дневник по фото</strong></p></li>
+              <li><span class="method-checks" aria-hidden="true"><i class="method-check method-check--selected method-check--soft">✓</i></span><p><span>Вместо погони за цифрами на весах — </span><strong>изменение образа жизни</strong></p></li>
+              <li>Вместо случайных попыток — понятный порядок действий</li>
+            </ul>
+          </div>
         </section>
       </div>
       <div class="recognition__spacer" aria-hidden="true"></div>
@@ -3268,49 +3278,6 @@
       syncControls();
     })();
   </script>
-  <!-- library:public-content-script:start -->
-  <script>
-    (() => {
-      async function loadApproach() {
-        const shell = document.querySelector('[data-public-content="approach"] .method-transition__inner');
-        if (!shell) return;
-        try {
-          const response = await fetch('/api/public-site/content/approach', { credentials: 'omit' });
-          if (!response.ok) throw new Error(`approach ${response.status}`);
-          const documentData = await response.json();
-          shell.innerHTML = documentData.html;
-          const kicker = shell.querySelector('p');
-          const list = shell.querySelector('ul');
-          if (kicker) kicker.className = 'method-kicker';
-          if (list) {
-            list.className = 'method-list';
-            list.querySelectorAll('li').forEach((item) => {
-              const emphasis = item.querySelector('strong');
-              if (!emphasis) return;
-              const plainText = [...item.childNodes]
-                .filter((node) => node !== emphasis)
-                .map((node) => node.textContent)
-                .join('');
-              const line = document.createElement('p');
-              const plain = document.createElement('span');
-              const checks = document.createElement('span');
-              checks.className = 'method-checks';
-              checks.setAttribute('aria-hidden', 'true');
-              checks.innerHTML = '<i class="method-check method-check--selected method-check--soft">✓</i>';
-              plain.textContent = plainText;
-              line.append(plain, emphasis);
-              item.replaceChildren(checks, line);
-            });
-          }
-        } catch (error) {
-          shell.textContent = 'Текст временно недоступен.';
-        }
-      }
-
-      loadApproach();
-    })();
-  </script>
-  <!-- library:public-content-script:end -->
   <script>
     (() => {
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (character) => ({

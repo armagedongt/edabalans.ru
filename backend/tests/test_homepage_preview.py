@@ -149,11 +149,12 @@ def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     assert "Math.max(maxPainHeight+18,((laneHeight+maxPainHeight)/2)+8)" in response.text
     assert "(viewportHeight/2)-(field.offsetTop+(field.offsetHeight/2))" in response.text
     assert ".pain:not(.pain--final){width:1px;height:1px" in response.text
-    assert "fetch('/api/public-site/content/approach'" in response.text
+    assert "Значит, пора менять подход!" in response.text
+    assert "Вместо случайных попыток — понятный порядок действий" in response.text
+    assert "fetch('/api/public-site/content/approach'" not in response.text
     for fragment_name in (
         "recognition",
         "recognition-script",
-        "public-content-script",
     ):
         start_marker = f"<!-- library:{fragment_name}:start -->"
         end_marker = f"<!-- library:{fragment_name}:end -->"
@@ -251,7 +252,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "previewPricingCatalog" not in response.text
     assert "const productData" not in response.text
     assert "fetch('/api/public-site/content/faq'" in response.text
-    assert "fetch('/api/public-site/content/approach'" in response.text
+    assert "fetch('/api/public-site/content/approach'" not in response.text
     assert (
         ".reviews-after-cat{width:min(var(--content-frame),"
         "calc(100% - var(--page-gutter) - var(--page-gutter)))"
@@ -1106,6 +1107,10 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
     assert "Вместо подсчета граммов — **дневник по фото**" in approach
     assert "Вместо случайных попыток — понятный порядок действий" in approach
     assert "ПП-рецептов" not in approach
+    assert "Значит, пора менять подход!" in response.text
+    assert "Вместо ПП еды — " in response.text
+    assert "Вместо подсчета граммов — " in response.text
+    assert "Вместо случайных попыток — понятный порядок действий" in response.text
 
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:
