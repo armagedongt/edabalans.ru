@@ -22,6 +22,8 @@ def create_intensive_access_link(
     platform: str,
     public_url: str,
     now: datetime | None = None,
+    token: str | None = None,
+    row_id: str | None = None,
 ) -> tuple[str, MessengerLinkToken]:
     if platform not in PLATFORMS:
         raise ValueError("unsupported intensive platform")
@@ -30,8 +32,11 @@ def create_intensive_access_link(
     current = now or datetime.now(timezone.utc)
     if current.tzinfo is None:
         current = current.replace(tzinfo=timezone.utc)
-    token = "E" + secrets.token_urlsafe(18)
+    token = token or ("E" + secrets.token_urlsafe(18))
+    if not token.startswith("E") or len(token) > 128:
+        raise ValueError("invalid intensive access token")
     row = MessengerLinkToken(
+        id=row_id,
         user_id=user_id,
         platform=platform,
         purpose=PURPOSE,

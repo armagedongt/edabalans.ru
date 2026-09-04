@@ -761,6 +761,7 @@ def max_webhook(
         session,
         update,
         bot_username=settings.max_bot_username,
+        intensive_public_url=settings.intensive_public_url,
         sender=max_client(),
     )
 

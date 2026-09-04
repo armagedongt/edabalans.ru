@@ -1,11 +1,9 @@
-"""Minimal MAX start adapter.
-
-This adapter deliberately stops after identity, attribution and the maintenance
-notice. It does not create a Telegram contact or start any Telegram sequence.
-"""
+"""MAX start adapter with identity, attribution and intensive access."""
 from __future__ import annotations
 
+import base64
 import hashlib
+import uuid
 from datetime import UTC, datetime
 from typing import Any
 
@@ -13,6 +11,7 @@ import httpx
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.intensive_access import create_intensive_access_link
 from app.models import (
     BotInstance,
     CrmAttributionEvent,
@@ -20,6 +19,7 @@ from app.models import (
     CrmTag,
     CrmUser,
     CrmUserTag,
+    MessengerLinkToken,
     TrackingLink,
     TrackingLinkAlias,
     TrackingLinkTag,
@@ -31,12 +31,9 @@ from app.tracking import canonical_tag, resolve_start_payload
 
 MAX_API_BASE = "https://platform-api2.max.ru"
 MAX_BOT_CODE = "max"
-MAX_MAINTENANCE_MESSAGE = (
-    "<b>Бот временно на небольшом ремонте</b> 🛠\n\n"
-    "Я сейчас переношу сюда материалы и обновляю программу. "
-    "Я уже сохранил, что вы заходили — повторно нажимать Start не нужно.\n\n"
-    "В ближайшие пару дней всё доделаю и сам пришлю вам сообщение, когда бот снова будет готов.\n\n"
-    "Если у вас есть вопрос или нужен доступ к уже купленным материалам, напишите мне."
+MAX_INTENSIVE_MESSAGE = (
+    "<b>Бесплатный интенсив «Последнее похудение»</b>\n\n"
+    "Нажмите кнопку ниже, чтобы открыть первый день."
 )
 
 
@@ -45,13 +42,30 @@ class MaxClient:
         self.token = token
         self.transport = transport
 
-    def send_html(self, user_id: str, text: str) -> str:
+    def send_html(
+        self,
+        user_id: str,
+        text: str,
+        *,
+        button_text: str | None = None,
+        button_url: str | None = None,
+    ) -> str:
+        body: dict[str, Any] = {"text": text, "format": "html", "disable_link_preview": True}
+        if button_text and button_url:
+            body["attachments"] = [{
+                "type": "inline_keyboard",
+                "payload": {"buttons": [[{
+                    "type": "link",
+                    "text": button_text,
+                    "url": button_url,
+                }]]},
+            }]
         with httpx.Client(timeout=20, transport=self.transport) as client:
             response = client.post(
                 f"{MAX_API_BASE}/messages",
                 params={"user_id": user_id},
                 headers={"Authorization": self.token},
-                json={"text": text, "format": "html", "disable_link_preview": True},
+                json=body,
             )
         response.raise_for_status()
         data = response.json()
@@ -86,6 +100,19 @@ def _receipt_id(update: dict[str, Any]) -> str:
         str(update.get("payload", "")),
     ))
     return f"max:{hashlib.sha256(raw.encode()).hexdigest()[:56]}"
+
+
+def _intensive_token(token_id: str) -> str:
+    return "E" + base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
+
+
+def _send_intensive(sender: MaxClient, user_id: str, intensive_url: str) -> str:
+    return sender.send_html(
+        user_id,
+        MAX_INTENSIVE_MESSAGE,
+        button_text="Открыть первый день",
+        button_url=intensive_url,
+    )
 
 
 def _ensure_identity(session: Session, user: dict[str, Any]) -> tuple[CrmMessengerAccount, bool]:
@@ -135,7 +162,8 @@ def _assign_first_touch(
     raw_query: dict[str, str],
     payload_status: str,
     receipt_id: str,
-) -> None:
+    intensive_token_id: str,
+) -> TrackingEvent:
     now = datetime.now(UTC)
     if created and link:
         tag_ids = list(session.scalars(select(TrackingLinkTag.tag_id).where(
@@ -164,12 +192,12 @@ def _assign_first_touch(
         ))
     session.add(CrmAttributionEvent(
         user_id=account.user_id,
-        event_type="max_start_maintenance" if payload_status != "unknown" else "max_start_unknown",
+        event_type="max_start" if payload_status != "unknown" else "max_start_unknown",
         source_raw=link.name if link else None,
         ref_code=alias.token if alias else None,
         occurred_at=now,
     ))
-    session.add(TrackingEvent(
+    tracking_event = TrackingEvent(
         tracking_link_id=link.id if link else None,
         alias_id=alias.id if alias else None,
         user_id=account.user_id,
@@ -179,14 +207,25 @@ def _assign_first_touch(
             "messenger": "max",
             "payload_status": payload_status,
             "raw_query": raw_query,
+            "max_delivery_status": "pending",
+            "max_intensive_token_id": intensive_token_id,
         },
         deduplication_key=f"{receipt_id}:tracking_start",
         occurred_at=now,
-    ))
+    )
+    session.add(tracking_event)
+    return tracking_event
 
 
-def process_max_update(session: Session, update: dict[str, Any], *, bot_username: str, sender: MaxClient) -> dict[str, Any]:
-    """Persist a MAX bot start and send only the temporary maintenance notice."""
+def process_max_update(
+    session: Session,
+    update: dict[str, Any],
+    *,
+    bot_username: str,
+    intensive_public_url: str,
+    sender: MaxClient,
+) -> dict[str, Any]:
+    """Persist a MAX bot start and send a platform-bound intensive link."""
     if update.get("update_type") != "bot_started":
         return {"ok": True, "ignored": True}
     user = update.get("user") or {}
@@ -196,12 +235,39 @@ def process_max_update(session: Session, update: dict[str, Any], *, bot_username
     bot = _max_bot(session, bot_username)
     receipt_id = _receipt_id(update)
     if session.get(UpdateReceipt, receipt_id):
-        return {"ok": True, "duplicate": True}
+        tracking_event = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start"
+        ).with_for_update())
+        if tracking_event is None or (tracking_event.metadata_json or {}).get("max_delivery_status") == "sent":
+            return {"ok": True, "duplicate": True}
+        token_id = (tracking_event.metadata_json or {}).get("max_intensive_token_id")
+        token_row = session.get(MessengerLinkToken, token_id) if token_id else None
+        if token_row is None or token_row.consumed_at is not None:
+            tracking_event.metadata_json = {
+                **(tracking_event.metadata_json or {}),
+                "max_delivery_status": "sent" if token_row is not None else "unrecoverable",
+                "max_delivery_confirmed_by": "token_consumed" if token_row is not None else "token_missing",
+            }
+            session.commit()
+            return {"ok": True, "duplicate": True}
+        token = _intensive_token(token_id)
+        separator = "&" if "?" in intensive_public_url else "?"
+        intensive_url = f"{intensive_public_url}{separator}i={token}"
+        message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
+        tracking_event.metadata_json = {
+            **(tracking_event.metadata_json or {}),
+            "max_delivery_status": "sent",
+            "max_message_id": message_id,
+        }
+        session.commit()
+        return {"ok": True, "retried": True}
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type="max_bot_started"))
 
     account, created = _ensure_identity(session, user)
     link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, str(update.get("payload") or ""))
-    _assign_first_touch(
+    intensive_token_id = str(uuid.uuid4())
+    token = _intensive_token(intensive_token_id)
+    tracking_event = _assign_first_touch(
         session,
         account,
         created,
@@ -211,10 +277,27 @@ def process_max_update(session: Session, update: dict[str, Any], *, bot_username
         raw_query,
         payload_status,
         receipt_id,
+        intensive_token_id,
     )
-    # A failed MAX delivery must make the webhook fail too, so MAX can retry it.
-    # Commit only after the send succeeded; the receipt then suppresses normal retries.
-    session.flush()
-    sender.send_html(str(user["user_id"]), MAX_MAINTENANCE_MESSAGE)
+    intensive_url, _ = create_intensive_access_link(
+        session,
+        user_id=account.user_id,
+        platform="max",
+        public_url=intensive_public_url,
+        token=token,
+        row_id=intensive_token_id,
+    )
+    # Persist the deterministic URL before the external call. If MAX accepts the
+    # message but its response is lost, a webhook retry sends the same valid URL.
     session.commit()
-    return {"ok": True, "maintenance": True, "first_start": created}
+    tracking_event = session.scalar(select(TrackingEvent).where(
+        TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start"
+    ).with_for_update())
+    message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
+    tracking_event.metadata_json = {
+        **(tracking_event.metadata_json or {}),
+        "max_delivery_status": "sent",
+        "max_message_id": message_id,
+    }
+    session.commit()
+    return {"ok": True, "intensive": True, "first_start": created}

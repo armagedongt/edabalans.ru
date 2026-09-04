@@ -102,6 +102,9 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
         assert event.utm_source == "yandex"
         assert event.ref_code == "click-1"
         assert "i=" not in (event.landing_url or "")
+
+    replay = TestClient(app).get(f"/intensive/start?i={token}", follow_redirects=False)
+    assert replay.status_code == 404
     app.dependency_overrides.clear()
 
 

@@ -37,7 +37,7 @@ from app.database import get_db
 from app.legal_service import legal_status_payload
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
 from app.intensive_web_access import (
-    access_token_row,
+    consume_access_token,
     attributed_path,
     create_offer_token,
     current_day,
@@ -521,7 +521,7 @@ def intensive_entry(
     identity = None
     supplied_token = request.query_params.get("i") or request.query_params.get("token")
     if supplied_token:
-        token_row = access_token_row(db, supplied_token)
+        token_row = consume_access_token(db, supplied_token)
         if token_row is None:
             raise HTTPException(status_code=404, detail="intensive link not found")
         identity = (token_row.user_id, token_row.platform)
