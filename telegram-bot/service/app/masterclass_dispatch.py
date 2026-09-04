@@ -11,9 +11,22 @@ import uuid
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.models import Contact, ContentItem, ManualMessage, MasterclassNotification
+from app.models import (
+    Contact,
+    ContentItem,
+    ManualMessage,
+    MasterclassNotification,
+    Sequence,
+    SequenceStep,
+    SequenceVersion,
+)
 from app.maintenance import allowed_telegram_ids as parse_allowed_telegram_ids
-from app.content_formatting import is_placeholder_text, replace_template_values, validate_telegram_html
+from app.content_formatting import (
+    is_placeholder_text,
+    replace_template_values,
+    telegram_html_links,
+    validate_telegram_html,
+)
 
 
 DIGITAL_ACCESS_CODES = {
@@ -482,6 +495,33 @@ def content_is_sendable(item: ContentItem, body: str) -> tuple[bool, str | None]
     return True, None
 
 
+def notification_configuration(
+    session: Session,
+    notification: MasterclassNotification,
+    body_source: str,
+) -> dict[str, object]:
+    if notification.notification_kind != "dqs_app_link":
+        return {}
+    configuration = session.scalar(
+        select(SequenceStep.configuration)
+        .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
+        .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
+        .where(
+            Sequence.code == "postpurchase_masterclass",
+            SequenceStep.step_key == "pp_dqs_app_link",
+        )
+        .order_by(SequenceVersion.version_no.desc())
+        .limit(1)
+    ) or {}
+    buttons = configuration.get("buttons") or []
+    if not buttons:
+        raise RuntimeError("DQS Web App button is missing from the runtime graph")
+    web_app_url = ((buttons[0].get("web_app") or {}).get("url"))
+    if not web_app_url or web_app_url not in telegram_html_links(body_source):
+        raise RuntimeError("DQS text link and Web App button destinations differ")
+    return {"buttons": buttons}
+
+
 def dispatch_due_masterclass_notifications(
     session: Session,
     sender,
@@ -562,7 +602,12 @@ def dispatch_due_masterclass_notifications(
         ))
         if stored_part_logs:
             try:
-                for log in stored_part_logs:
+                configuration = notification_configuration(
+                    session,
+                    notification,
+                    "".join(log.body_source for log in stored_part_logs),
+                )
+                for part_index, log in enumerate(stored_part_logs):
                     if log.status == "sent":
                         continue
                     log.status = "pending"
@@ -576,7 +621,10 @@ def dispatch_due_masterclass_notifications(
                         telegram_file_id=None,
                     )
                     try:
-                        log.platform_message_id = sender.send_content(contact.chat_id, saved_part, {})
+                        part_configuration = (
+                            configuration if part_index == len(stored_part_logs) - 1 else {}
+                        )
+                        log.platform_message_id = sender.send_content(contact.chat_id, saved_part, part_configuration)
                         log.status = "sent"
                         session.commit()
                         progress()
@@ -635,6 +683,11 @@ def dispatch_due_masterclass_notifications(
             counters["failed"] += 1
             continue
         try:
+            configuration = notification_configuration(
+                session,
+                notification,
+                content.body_source,
+            )
             if content.media_kind:
                 log = ManualMessage(
                     contact_id=contact.id,
@@ -644,7 +697,11 @@ def dispatch_due_masterclass_notifications(
                     operator_email="system:masterclass",
                 )
                 session.add(log)
-                log.platform_message_id = sender.send_content(contact.chat_id, content, {})
+                log.platform_message_id = sender.send_content(
+                    contact.chat_id,
+                    content,
+                    configuration,
+                )
                 log.status = "sent"
                 progress()
             else:
@@ -663,12 +720,15 @@ def dispatch_due_masterclass_notifications(
                     session.add(log)
                     part_logs.append(log)
                 session.commit()
-                for log in part_logs:
+                for part_index, log in enumerate(part_logs):
                     part_content = SimpleNamespace(**content.__dict__)
                     part_content.body_source = log.body_source
                     log.status = "pending"
                     try:
-                        log.platform_message_id = sender.send_content(contact.chat_id, part_content, {})
+                        part_configuration = (
+                            configuration if part_index == len(part_logs) - 1 else {}
+                        )
+                        log.platform_message_id = sender.send_content(contact.chat_id, part_content, part_configuration)
                         log.status = "sent"
                         session.commit()
                         progress()

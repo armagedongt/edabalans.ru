@@ -46,6 +46,39 @@ def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disable
         ))
         assert "pp_closing_review_copy" in keys
         assert not {"pp_review_week_day2", "pp_review_week_day4", "pp_review_week_day7"} & keys
+        dqs_step = session.scalar(
+            select(SequenceStep).where(
+                SequenceStep.sequence_version_id == post_version.id,
+                SequenceStep.step_key == "pp_dqs_app_link",
+            )
+        )
+        expected_button = [{
+            "text": "Открыть приложение",
+            "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+        }]
+        assert dqs_step.configuration["buttons"] == expected_button
+
+        dqs_step.configuration = {
+            key: value
+            for key, value in dqs_step.configuration.items()
+            if key != "buttons"
+        }
+        session.commit()
+        seed_defaults(session, "test_bot")
+        session.refresh(dqs_step)
+        assert dqs_step.configuration["buttons"] == expected_button
+
+        dqs_step.configuration = {
+            **dqs_step.configuration,
+            "buttons": [{
+                "text": "Открыть DQS",
+                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+            }],
+        }
+        session.commit()
+        seed_defaults(session, "test_bot")
+        session.refresh(dqs_step)
+        assert dqs_step.configuration["buttons"][0]["text"] == "Открыть DQS"
 
         future = session.scalar(select(Sequence).where(Sequence.code == POSTMASTERCLASS_CODE))
         assert future.status == "disabled"

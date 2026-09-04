@@ -95,6 +95,19 @@ class _TelegramHtmlValidator(HTMLParser):
         self.errors.append("HTML-комментарии разрешены только в служебной шапке файла, не в тексте сообщения")
 
 
+class _TelegramHtmlLinkCollector(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.links: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() != "a":
+            return
+        attributes = {key.lower(): value for key, value in attrs}
+        if attributes.get("href"):
+            self.links.append(str(attributes["href"]))
+
+
 def validate_telegram_html(source: str) -> None:
     if INVALID_HTML_ENTITY.search(source or ""):
         raise ValueError(
@@ -110,6 +123,13 @@ def validate_telegram_html(source: str) -> None:
         parser.errors.append(f"не закрыты теги: {', '.join(parser.stack)}")
     if parser.errors:
         raise ValueError("; ".join(parser.errors))
+
+
+def telegram_html_links(source: str) -> list[str]:
+    parser = _TelegramHtmlLinkCollector()
+    parser.feed(source or "")
+    parser.close()
+    return parser.links
 
 
 def template_value_for_source(value: str, source_format: str) -> str:

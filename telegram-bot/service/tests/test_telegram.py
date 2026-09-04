@@ -1,4 +1,5 @@
 from types import SimpleNamespace
+import json
 
 import httpx
 import pytest
@@ -52,6 +53,41 @@ def test_send_content_passes_validated_html_to_telegram_boundary():
     payload = seen[0].read()
     assert '"text":"<b>Готово</b>"'.encode() in payload
     assert b'"parse_mode":"HTML"' in payload
+
+
+def test_send_content_builds_web_app_button():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"message_id": 9}})
+
+    content = SimpleNamespace(
+        source_format="telegram_html",
+        media_kind=None,
+        media_path=None,
+        telegram_file_id=None,
+        body_source="Откройте приложение",
+        title="DQS",
+    )
+    TelegramClient("secret", httpx.MockTransport(handler)).send_content(
+        "42",
+        content,
+        {
+            "buttons": [{
+                "text": "Открыть приложение",
+                "web_app": {"url": "https://example.test/dqs"},
+            }]
+        },
+    )
+
+    payload = json.loads(seen[0].content)
+    assert payload["reply_markup"] == {
+        "inline_keyboard": [[{
+            "text": "Открыть приложение",
+            "web_app": {"url": "https://example.test/dqs"},
+        }]]
+    }
 
 
 def test_long_polling_sends_offset_and_returns_updates():

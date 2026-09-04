@@ -9,7 +9,17 @@ from sqlalchemy.orm import Session
 
 from app import content_authoring_cli
 from app.content_authoring import audit_content
-from app.content_formatting import template_value_for_source, validate_telegram_html
+from app.content_formatting import (
+    telegram_html_links,
+    template_value_for_source,
+    validate_telegram_html,
+)
+
+
+def test_telegram_html_links_accept_semantically_equivalent_href_quotes():
+    assert telegram_html_links("<A href='https://example.test/dqs'>DQS</A>") == [
+        "https://example.test/dqs"
+    ]
 from app.database import Base, get_db, make_engine
 from app.main import app
 from app.masterclass_dispatch import content_is_sendable, rendered

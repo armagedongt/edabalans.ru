@@ -62,10 +62,17 @@ class TelegramClient:
         buttons = configuration.get("buttons") or []
         reply_markup = None
         if buttons:
+            def button_action(button: dict[str, Any]) -> dict[str, Any]:
+                if button.get("web_app"):
+                    return {"web_app": button["web_app"]}
+                if button.get("url"):
+                    return {"url": button["url"]}
+                return {"callback_data": button["callback_data"]}
+
             reply_markup = {
                 "inline_keyboard": [[{
                     "text": button["text"],
-                    **({"url": button["url"]} if button.get("url") else {"callback_data": button["callback_data"]}),
+                    **button_action(button),
                 }] for button in buttons]
             }
         common: dict[str, Any] = {"chat_id": chat_id}

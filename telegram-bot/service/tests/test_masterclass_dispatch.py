@@ -14,15 +14,26 @@ from app.masterclass_dispatch import (
     dispatch_due_masterclass_notifications,
     telegram_text_parts,
 )
-from app.models import BotInstance, Contact, ContentItem, ManualMessage, MasterclassNotification
+from app.models import (
+    BotInstance,
+    Contact,
+    ContentItem,
+    ManualMessage,
+    MasterclassNotification,
+    Sequence,
+    SequenceStep,
+    SequenceVersion,
+)
 
 
 class FakeSender:
     def __init__(self):
         self.sent = []
+        self.configurations = []
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code, content.body_source))
+        self.configurations.append(configuration)
         return str(len(self.sent))
 
 
@@ -107,6 +118,34 @@ def add_contact_and_content(session):
             purpose="Тестовая цель",
             writer_brief="Тестовое ТЗ",
         ))
+    session.flush()
+    sequence = Sequence(
+        code="postpurchase_masterclass",
+        name="После покупки мастер-класса",
+        status="draft",
+    )
+    session.add(sequence)
+    session.flush()
+    version = SequenceVersion(sequence_id=sequence.id, version_no=1, status="draft")
+    session.add(version)
+    session.flush()
+    dqs_content = session.scalar(
+        select(ContentItem).where(ContentItem.code == "tpl_postpurchase_dqs_app_link")
+    )
+    session.add(SequenceStep(
+        sequence_version_id=version.id,
+        step_key="pp_dqs_app_link",
+        position=1,
+        kind="MESSAGE",
+        label="DQS — ссылка на приложение",
+        content_item_id=dqs_content.id,
+        configuration={
+            "buttons": [{
+                "text": "Открыть приложение",
+                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+            }]
+        },
+    ))
     session.flush()
     return contact
 
@@ -483,6 +522,103 @@ def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tm
             "tpl_postpurchase_dqs_app_link",
             'Ваша система оценки качества питания — <a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.',
         )]
+        assert sender.configurations == [{
+            "buttons": [{
+                "text": "Открыть приложение",
+                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+            }]
+        }]
+
+
+def test_dqs_retry_preserves_web_app_button(tmp_path):
+    class FailOnceSender(FakeSender):
+        def __init__(self):
+            super().__init__()
+            self.failed = False
+
+        def send_content(self, chat_id, content, configuration):
+            self.configurations.append(configuration)
+            if not self.failed:
+                self.failed = True
+                raise RuntimeError("temporary telegram failure")
+            self.sent.append((chat_id, content.code, content.body_source))
+            return "2"
+
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        session.add(MasterclassNotification(
+            id="acacacac-acac-acac-acac-acacacacacac",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:app-link:retry",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        ))
+        session.commit()
+        sender = FailOnceSender()
+
+        first = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+        second = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+
+        assert first["failed"] == 1
+        assert second["sent"] == 1
+        assert sender.configurations == [
+            {
+                "buttons": [{
+                    "text": "Открыть приложение",
+                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                }]
+            },
+            {
+                "buttons": [{
+                    "text": "Открыть приложение",
+                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                }]
+            },
+        ]
+
+
+def test_dqs_dispatch_fails_when_text_and_graph_destinations_differ(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        step = session.scalar(
+            select(SequenceStep).where(SequenceStep.step_key == "pp_dqs_app_link")
+        )
+        step.configuration = {
+            "buttons": [{
+                "text": "Открыть приложение",
+                "web_app": {"url": "https://example.test/other-dqs"},
+            }]
+        }
+        notification = MasterclassNotification(
+            id="adadadad-adad-adad-adad-adadadadadad",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="dqs_app_link",
+            content_code="tpl_postpurchase_dqs_app_link",
+            deduplication_key="dqs:app-link:mismatch",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        )
+        session.add(notification)
+        session.commit()
+
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+        )
+
+        assert result["failed"] == 1
+        assert sender.sent == []
+        assert notification.error_message == (
+            "DQS text link and Web App button destinations differ"
+        )
 
 
 def test_disabled_postpurchase_scheduler_dispatches_only_requested_service_deliveries(monkeypatch):

@@ -867,7 +867,7 @@ def seed_defaults(
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
             ("pp_current_diet_questionnaire", "MESSAGE", "postpurchase_current_diet", None, {"trigger": "current_diet_questionnaire_completed", "condition": "telegram_linked=true", "state": "editorial_slot"}),
-            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "dqs_app_link_requested", "condition": "telegram_linked=true AND masterclass_access=true", "state": "manual_request"}),
+            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "dqs_app_link_requested", "condition": "telegram_linked=true AND masterclass_access=true", "state": "manual_request", "buttons": [{"text": "Открыть приложение", "web_app": {"url": "https://похудение-это-есть.рф/dqs"}}]}),
             ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
@@ -896,6 +896,20 @@ def seed_defaults(
         help_data = editorial_help(step.step_key)
         if help_data:
             step.configuration = {**(step.configuration or {}), "editorial_help": help_data}
+        if step.step_key == "pp_dqs_app_link":
+            existing_buttons = (step.configuration or {}).get("buttons") or []
+            button_text = (
+                str(existing_buttons[0].get("text") or "Открыть приложение")
+                if existing_buttons
+                else "Открыть приложение"
+            )
+            step.configuration = {
+                **(step.configuration or {}),
+                "buttons": [{
+                    "text": button_text,
+                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                }],
+            }
 
     postmasterclass = session.scalar(select(Sequence).where(Sequence.code == POSTMASTERCLASS_CODE))
     if not postmasterclass:
