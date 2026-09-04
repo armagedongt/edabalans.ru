@@ -13,7 +13,7 @@ Cloudflare Worker раз в минуту проверяет общую гото�
 3. Через десять минут от первой ошибки Worker вызывает `Campaigns.suspend` для
    явно перечисленных кампаний.
 4. Alert, каждое аварийное действие и восстановление отправляются владельцу через
-   `sendMessage` существующего Telegram-бота.
+   `sendMessage` отдельного `@TetrisgfgfgfBot`.
 5. Реклама никогда не возобновляется автоматически.
 
 При отсутствии `ACTIONS_ENABLED` автоматические действия выключены. Реальное
@@ -28,9 +28,10 @@ Secrets:
 - `TIMEWEB_API_TOKEN`;
 - `TIMEWEB_RU_SERVER_ID`;
 - `TIMEWEB_EU_SERVER_ID`;
-- `YANDEX_DIRECT_TOKEN` — добавляется после готовности рекламного кабинета;
-- `YANDEX_DIRECT_CLIENT_LOGIN` — только для агентского доступа;
-- `YANDEX_CAMPAIGN_IDS` — ID через запятую.
+- `YANDEX_DIRECT_TOKEN` — уже сохранён в Cloudflare secrets;
+- `YANDEX_DIRECT_CLIENT_LOGIN` — только для агентского доступа; необходимость ещё
+  определяет рабочий поток «Я.Директ!»;
+- `YANDEX_CAMPAIGN_IDS` — ID через запятую; до подтверждения точного списка не задан.
 - `ACTIONS_ENABLED` — `true` только после alert drill и проверки остальных secrets.
 - `DRILL_TOKEN` — случайный secret для изолированного production-drill.
 
