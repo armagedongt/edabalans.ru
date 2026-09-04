@@ -8,6 +8,7 @@ from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 import app.main as main_module
+import app.telegram as telegram_module
 from app.database import Base, get_db, make_engine
 from app.main import app
 
@@ -32,13 +33,13 @@ def _client(tmp_path, monkeypatch) -> TestClient:
     return TestClient(app)
 
 
-def test_ready_confirms_database_polling_scheduler_and_proxy(tmp_path, monkeypatch):
+def test_ready_confirms_database_polling_scheduler_and_telegram_route(tmp_path, monkeypatch):
     client = _client(tmp_path, monkeypatch)
 
     response = client.get("/ready")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ready", "reasons": []}
+    assert response.json() == {"status": "ready", "reasons": [], "telegram_route": "proxy"}
     app.dependency_overrides.clear()
 
 
@@ -53,14 +54,14 @@ def test_ready_fails_when_telegram_polling_is_stale(tmp_path, monkeypatch):
     app.dependency_overrides.clear()
 
 
-def test_ready_fails_when_european_proxy_is_not_configured(tmp_path, monkeypatch):
+def test_ready_accepts_the_current_direct_telegram_route(tmp_path, monkeypatch):
     client = _client(tmp_path, monkeypatch)
     monkeypatch.setattr(main_module.settings, "telegram_proxy_url", "")
 
     response = client.get("/ready")
 
-    assert response.status_code == 503
-    assert "telegram_proxy_missing" in response.json()["reasons"]
+    assert response.status_code == 200
+    assert response.json()["telegram_route"] == "direct"
     app.dependency_overrides.clear()
 
 
@@ -93,6 +94,17 @@ def test_ready_fails_when_scheduler_is_stale(tmp_path, monkeypatch):
 
     assert response.status_code == 503
     assert "scheduler_stale" in response.json()["reasons"]
+    app.dependency_overrides.clear()
+
+
+def test_ready_fails_immediately_after_scheduler_error(tmp_path, monkeypatch):
+    client = _client(tmp_path, monkeypatch)
+    main_module.runtime_health.scheduler_failed = True
+
+    response = client.get("/ready")
+
+    assert response.status_code == 503
+    assert "scheduler_failed" in response.json()["reasons"]
     app.dependency_overrides.clear()
 
 
@@ -144,6 +156,24 @@ def test_polling_success_is_recorded_only_after_get_updates_through_proxy(monkey
     assert observed["proxy_url"] == "socks5://eu-gateway.example.test:1080"
     assert observed["webhook_removed"] is True
     assert main_module.runtime_health.last_poll_success is not None
+
+
+def test_real_telegram_client_applies_configured_proxy_to_httpx(monkeypatch):
+    observed: dict[str, object] = {}
+    sentinel = object()
+
+    def fake_httpx_client(**options):
+        observed.update(options)
+        return sentinel
+
+    monkeypatch.setattr(telegram_module.httpx, "Client", fake_httpx_client)
+    client = telegram_module.TelegramClient(
+        "test-token", proxy_url="socks5://eu-gateway.example.test:1080"
+    )
+
+    assert client._client(12) is sentinel
+    assert observed["proxy"] == "socks5://eu-gateway.example.test:1080"
+    assert observed["timeout"] == 12
 
 
 def test_polling_failure_does_not_record_success(monkeypatch):
@@ -218,3 +248,58 @@ def test_successful_scheduler_iteration_refreshes_activity(tmp_path, monkeypatch
 
     assert main_module.runtime_health.last_scheduler_activity > 123.0
     assert main_module.runtime_health.scheduler_failed is False
+
+
+def test_broadcast_refreshes_scheduler_activity_between_recipients():
+    recipients = [
+        type("Recipient", (), {"contact_id": 1, "status": "pending"})(),
+        type("Recipient", (), {"contact_id": 2, "status": "pending"})(),
+    ]
+    contacts = {
+        item_id: type(
+            "Contact",
+            (),
+            {"chat_id": str(item_id), "telegram_user_id": str(item_id), "status": "active"},
+        )()
+        for item_id in (1, 2)
+    }
+    content = type("Content", (), {"code": "test"})()
+    row = type(
+        "BroadcastRow",
+        (),
+        {
+            "id": 1,
+            "started_at": None,
+            "status": "pending",
+            "segment": {},
+            "content_item_id": 2,
+            "finished_at": None,
+        },
+    )()
+
+    class FakeSession:
+        def scalars(self, _query):
+            return recipients
+
+        def get(self, model, item_id):
+            return content if model is main_module.ContentItem else contacts[item_id]
+
+        def commit(self):
+            pass
+
+    class FakeTelegram:
+        calls = 0
+
+        def send_content(self, chat_id, sent_content, configuration):
+            self.calls += 1
+            if self.calls == 2:
+                assert main_module.runtime_health.last_scheduler_activity > 123.0
+            assert sent_content is content
+            return f"message-{self.calls}"
+
+    main_module.runtime_health.last_scheduler_activity = 123.0
+
+    sent, failed = main_module._deliver_broadcast(FakeSession(), row, FakeTelegram())
+
+    assert (sent, failed) == (2, 0)
+    assert main_module.runtime_health.last_scheduler_activity > 123.0

@@ -380,6 +380,39 @@ def test_dispatch_skips_recipe_upsell_when_everything_is_owned(tmp_path):
         assert sender.sent == []
 
 
+def test_dispatch_reports_progress_for_filtered_notification(tmp_path):
+    with session_factory(tmp_path) as session:
+        add_contact_and_content(session)
+        session.add(MasterclassNotification(
+            id="44444444-4444-4444-4444-444444444444",
+            user_id="11111111-1111-1111-1111-111111111111",
+            notification_kind="recipes_followup",
+            deduplication_key="recipes:progress",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={},
+        ))
+        session.commit()
+        progress_calls = []
+
+        result = dispatch_due_masterclass_notifications(
+            session,
+            FakeSender(),
+            "",
+            lambda *_: {
+                "ACCESS_MASTERCLASS",
+                "ACCESS_RECIPES",
+                "ACCESS_CALORIES",
+                "ACCESS_STRENGTH",
+                "ACCESS_CONSULTATION_RECORDINGS",
+            },
+            progress_callback=lambda: progress_calls.append(True),
+        )
+
+        assert result["skipped"] == 1
+        assert progress_calls
+
+
 def test_dispatch_skips_legacy_dqs_support_notification(tmp_path):
     with session_factory(tmp_path) as session:
         add_contact_and_content(session)

@@ -65,6 +65,11 @@ class RuntimeHealth:
 runtime_health = RuntimeHealth()
 
 
+def _record_scheduler_activity() -> None:
+    runtime_health.last_scheduler_activity = time.monotonic()
+    runtime_health.scheduler_failed = False
+
+
 def _runtime_failure_reasons(now: float | None = None) -> list[str]:
     current = time.monotonic() if now is None else now
     poll_max_age = max(60.0, float(settings.telegram_polling_timeout_seconds) + 35.0)
@@ -73,8 +78,6 @@ def _runtime_failure_reasons(now: float | None = None) -> list[str]:
     reasons: list[str] = []
     if not settings.telegram_test_bot_token:
         reasons.append("telegram_token_missing")
-    if not settings.telegram_proxy_url:
-        reasons.append("telegram_proxy_missing")
     if not settings.telegram_polling_enabled:
         reasons.append("polling_disabled")
     elif runtime_health.last_poll_success is None or current - runtime_health.last_poll_success > poll_max_age:
@@ -294,6 +297,7 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
     configuration = {"buttons": (row.segment or {}).get("_buttons", [])}
     sent = failed = 0
     for recipient in session.scalars(select(BroadcastRecipient).where(BroadcastRecipient.broadcast_id == row.id, BroadcastRecipient.status == "pending")):
+        _record_scheduler_activity()
         contact = session.get(Contact, recipient.contact_id)
         if not contact or not _maintenance_allows_contact(contact):
             recipient.status = "skipped_maintenance"
@@ -306,8 +310,7 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
             recipient.status = "failed"; recipient.error_message = message; failed += 1
             if "blocked by the user" in message.lower() or "chat not found" in message.lower():
                 contact.status = "blocked"
-        runtime_health.last_scheduler_activity = time.monotonic()
-        runtime_health.scheduler_failed = False
+        _record_scheduler_activity()
     row.status = "completed" if not failed else "completed_with_errors"; row.finished_at = datetime.now(UTC)
     session.commit()
     return sent, failed
@@ -322,6 +325,7 @@ def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> 
             if settings.telegram_maintenance_mode
             else None
         ),
+        "progress_callback": _record_scheduler_activity,
     }
     if settings.postpurchase_dispatch_enabled:
         return dispatch_due_masterclass_notifications(
@@ -353,20 +357,20 @@ def scheduler_iteration() -> None:
             if stopped_presale:
                 session.commit()
             for run in due_runs(session):
+                _record_scheduler_activity()
                 contact = session.get(Contact, run.contact_id)
                 if not contact or not _maintenance_allows_contact(contact):
                     continue
                 if run.status == "waiting":
                     resume_wait_timeout(session, run)
                 advance_run(session, run, tg)
-                runtime_health.last_scheduler_activity = time.monotonic()
+                _record_scheduler_activity()
             scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
             for broadcast in scheduled:
                 _deliver_broadcast(session, broadcast, tg)
             dispatch_masterclass_notifications(session, tg)
-            runtime_health.last_scheduler_activity = time.monotonic()
-        runtime_health.last_scheduler_activity = time.monotonic()
-        runtime_health.scheduler_failed = False
+            _record_scheduler_activity()
+        _record_scheduler_activity()
 
 
 async def scheduler_loop() -> None:
@@ -507,7 +511,11 @@ def ready(db: Session = Depends(get_db)) -> JSONResponse:
     is_ready = not reasons
     return JSONResponse(
         status_code=200 if is_ready else 503,
-        content={"status": "ready" if is_ready else "unavailable", "reasons": reasons},
+        content={
+            "status": "ready" if is_ready else "unavailable",
+            "reasons": reasons,
+            "telegram_route": "proxy" if settings.telegram_proxy_url else "direct",
+        },
     )
 
 

@@ -493,6 +493,7 @@ def dispatch_due_masterclass_notifications(
     test_only: bool = False,
     allowed_telegram_ids: str | None = None,
     notification_kinds: set[str] | None = None,
+    progress_callback: Callable[[], None] | None = None,
 ) -> dict[str, int]:
     counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "maintenance_filtered": 0, "failed": 0}
     allowed_ids = parse_allowed_telegram_ids(allowed_telegram_ids) if allowed_telegram_ids is not None else None
@@ -504,7 +505,9 @@ def dispatch_due_masterclass_notifications(
     if notification_kinds is not None:
         due_query = due_query.where(MasterclassNotification.notification_kind.in_(notification_kinds))
     due = list(session.scalars(due_query))
+    progress = progress_callback or (lambda: None)
     for notification in due:
+        progress()
         if test_only:
             enabled = session.execute(
                 text(
@@ -576,6 +579,7 @@ def dispatch_due_masterclass_notifications(
                         log.platform_message_id = sender.send_content(contact.chat_id, saved_part, {})
                         log.status = "sent"
                         session.commit()
+                        progress()
                     except Exception:
                         log.status = "failed"
                         session.commit()
@@ -642,6 +646,7 @@ def dispatch_due_masterclass_notifications(
                 session.add(log)
                 log.platform_message_id = sender.send_content(contact.chat_id, content, {})
                 log.status = "sent"
+                progress()
             else:
                 rendered_parts = telegram_text_parts(content.body_source)
                 part_logs = []
@@ -666,6 +671,7 @@ def dispatch_due_masterclass_notifications(
                         log.platform_message_id = sender.send_content(contact.chat_id, part_content, {})
                         log.status = "sent"
                         session.commit()
+                        progress()
                     except Exception:
                         log.status = "failed"
                         session.commit()
