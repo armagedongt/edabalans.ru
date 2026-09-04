@@ -212,6 +212,21 @@ class ModuleInventoryTests(unittest.TestCase):
         self.assertEqual([], built["plans"])
         self.assertEqual(["docs/plans/GENERAL.md"], [p["path"] for p in built["cross_project_plans"]])
 
+    def test_module_map_counts_module_and_cross_project_plans(self) -> None:
+        rendered = inventory.render_markdown(
+            {
+                "modules": [],
+                "files": [],
+                "routes": [],
+                "tables": [],
+                "symbols": [],
+                "plans": [{"path": "docs/plans/MODULE.md"}],
+                "cross_project_plans": [{"path": "docs/plans/GENERAL.md"}],
+            }
+        )
+
+        self.assertIn("- Явных планов: **2**", rendered)
+
     def test_current_quick_notes_exposes_only_valid_planned_rows(self) -> None:
         text = """# Notes
 

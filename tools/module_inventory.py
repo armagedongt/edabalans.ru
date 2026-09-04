@@ -834,7 +834,8 @@ def render_markdown(inventory: dict[str, Any]) -> str:
     lines.append(f"- API-маршрутов: **{len(inventory['routes'])}**")
     lines.append(f"- Объявлений таблиц: **{len(inventory['tables'])}**")
     lines.append(f"- Программных символов: **{len(inventory['symbols'])}**")
-    lines.append(f"- Явных планов: **{len(inventory['plans'])}**")
+    explicit_plan_count = len(inventory["plans"]) + len(inventory["cross_project_plans"])
+    lines.append(f"- Явных планов: **{explicit_plan_count}**")
     lines.append("")
     return "\n".join(lines)
 
