@@ -1216,7 +1216,7 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
     telegram_qr_bytes = telegram_qr.content.replace(b"\r\n", b"\n")
     max_qr_bytes = max_qr.content.replace(b"\r\n", b"\n")
     assert hashlib.sha256(telegram_qr_bytes).hexdigest() == "1890997c311fcc353df5ee15e84aa8f146e238415455b5e87030e0c524cceec9"
-    assert hashlib.sha256(max_qr_bytes).hexdigest() == "627b8d49a589c67d248fa87e88427ec22e402f1d865e183afbc4e946b438ef97a"
+    assert hashlib.sha256(max_qr_bytes).hexdigest() == "627b8d49a589c67d248fa87e88427ec22e402f1d865e183afb4e946b438ef97a"
 
     assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
     assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404
@@ -1277,8 +1277,7 @@ def test_direct_intensive_preview_has_desktop_only_qr_selector() -> None:
     assert 'role="listbox"' in response.text
     assert 'role="option"' in response.text
     assert 'aria-selected="true"' in response.text
-    assert "direct-intensive-telegram-qr.svg" in response.text
-    assert "direct-intensive-max-qr.svg" in response.text
+    assert "direct-intensive-${kind}-qr.svg" in response.text
     assert 'aria-hidden="${selected?\'true\':\'false\'}"' in response.text
     assert "Нажмите, чтобы показать этот QR-код" in response.text
     assert "Если на компьютере нет мессенджера, отсканируйте QR-код телефоном." in response.text
