@@ -1,0 +1,8 @@
+[Unit]
+Description=Restart an unhealthy edabalans Telegram container
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/edabalans-telegram-watchdog

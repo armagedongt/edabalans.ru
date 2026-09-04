@@ -736,7 +736,8 @@ depends_on = ["operations.database", "operations.backup", "operations.proxy"]
 owns_files = [
   ".github/workflows/production.yml", "backend/.dockerignore", "backend/Dockerfile",
   "backend/requirements*.txt", "infra/deploy/**", "infra/docker/**",
-  "infra/systemd/edabalans-deploy-poll.*", "docs/OPERATIONS.md",
+  "infra/monitoring/**", "infra/systemd/edabalans-deploy-poll.*",
+  "infra/systemd/edabalans-telegram-watchdog.*", "docs/OPERATIONS.md",
   "backend/app/__init__.py", "backend/app/config.py", "backend/app/main.py",
   "backend/tests/test_health.py", "tools/tests/test_deploy_policy.py",
   "infra/fail2ban/**", "infra/scripts/install-docker.sh",

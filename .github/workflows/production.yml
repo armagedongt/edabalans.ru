@@ -50,6 +50,11 @@ jobs:
       - name: Test module inventory
         run: python3 -m unittest discover -s tools/tests -v
 
+      - name: Test production watchdog
+        run: |
+          node --test infra/monitoring/cloudflare-watchdog/test/*.test.mjs
+          bash infra/monitoring/test-telegram-watchdog.sh
+
       - name: Build module inventory for tests
         shell: bash
         run: |

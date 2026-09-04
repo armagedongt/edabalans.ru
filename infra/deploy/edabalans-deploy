@@ -194,6 +194,20 @@ install -m 0755 "${APP_DIR}/infra/deploy/edabalans-deploy" \
     /usr/local/sbin/edabalans-deploy
 install -m 0755 "${APP_DIR}/infra/deploy/edabalans-deploy-poll" \
     /usr/local/sbin/edabalans-deploy-poll
+install -m 0755 "${APP_DIR}/infra/monitoring/edabalans-telegram-watchdog" \
+    /usr/local/sbin/edabalans-telegram-watchdog
+install -m 0644 "${APP_DIR}/infra/systemd/edabalans-telegram-watchdog.service" \
+    /etc/systemd/system/edabalans-telegram-watchdog.service
+install -m 0644 "${APP_DIR}/infra/systemd/edabalans-telegram-watchdog.timer" \
+    /etc/systemd/system/edabalans-telegram-watchdog.timer
+systemctl daemon-reload
+systemctl enable --now edabalans-telegram-watchdog.timer
+# The deploy lock is intentionally held here, so a normal oneshot would skip.
+# Use a separate verification lock to exercise the installed script against the
+# real Compose project before declaring this release healthy.
+EDABALANS_WATCHDOG_LOCK_FILE=/run/edabalans-telegram-watchdog-deploy-verify.lock \
+    /usr/local/sbin/edabalans-telegram-watchdog
+systemctl is-active --quiet edabalans-telegram-watchdog.timer
 
 deployment_succeeded=true
 echo "Production deployed successfully: ${TARGET_SHA}"

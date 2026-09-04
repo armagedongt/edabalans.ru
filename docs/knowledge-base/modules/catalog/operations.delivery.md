@@ -14,6 +14,8 @@ implementation_status: implemented
 - классифицировать влияние commit на данные, backend, Telegram, Caddy и Compose;
 - строить, тестировать и перезапускать только затронутые сервисы;
 - блокировать автоматический deploy при migration или провале checks;
+- локально перезапускать зависший Telegram-контейнер;
+- независимо проверять production с Cloudflare и запускать согласованное аварийное восстановление;
 - забирать публичный `main` через зафиксированный HTTP/1.1, не завися от
   нестабильного HTTP/2 Git-транспорта текущей VM;
 
@@ -27,7 +29,7 @@ Push, CI и deploy — разные технические этапы одног
 
 ## Источники истины
 
-GitHub workflow, deploy poll/script и `docs/OPERATIONS.md`.
+GitHub workflow, deploy poll/script, `infra/monitoring/` и `docs/OPERATIONS.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

@@ -1,0 +1,38 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "edabalans-watchdog",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-09-04",
+  "workers_dev": false,
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 0.1
+  },
+  "triggers": {
+    "crons": ["* * * * *"]
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "WATCHDOG",
+        "class_name": "WatchdogCoordinator"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["WatchdogCoordinator"]
+    }
+  ],
+  "vars": {
+    "PLATFORM_READY_URL": "https://api.edabalans.ru/ready",
+    "TELEGRAM_READY_URL": "https://api.edabalans.ru/telegram/ready",
+    "FAILURES_BEFORE_INCIDENT": "3",
+    "RU_REBOOT_AFTER_TELEGRAM_FAILURE_SECONDS": "300",
+    "ADS_PAUSE_AFTER_SECONDS": "600",
+    "ACTION_RETRY_SECONDS": "120",
+    "MAX_ACTION_ATTEMPTS": "3",
+    "CHECK_TIMEOUT_MS": "10000"
+  }
+}

@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+set -Eeuo pipefail
+
+readonly APP_DIR="${EDABALANS_WATCHDOG_APP_DIR:-/opt/edabalans}"
+readonly LOCK_FILE="${EDABALANS_WATCHDOG_LOCK_FILE:-/var/lock/edabalans-deploy.lock}"
+readonly RESTART_MARKER="${EDABALANS_WATCHDOG_RESTART_MARKER:-/run/edabalans-telegram-watchdog-restarted}"
+readonly RESTART_COOLDOWN_SECONDS="${EDABALANS_WATCHDOG_RESTART_COOLDOWN_SECONDS:-300}"
+readonly DOCKER_BIN="${EDABALANS_WATCHDOG_DOCKER_BIN:-docker}"
+
+exec 9>"${LOCK_FILE}"
+if ! flock --nonblock 9; then
+    echo "Deployment is active; Telegram watchdog skipped"
+    exit 0
+fi
+
+cd "${APP_DIR}"
+container_id="$("${DOCKER_BIN}" compose ps -q telegram-bot)"
+if [[ -z "${container_id}" ]]; then
+    echo "Telegram container is absent; starting it"
+    "${DOCKER_BIN}" compose up -d --no-deps telegram-bot
+    date +%s >"${RESTART_MARKER}"
+    exit 0
+fi
+
+health="$("${DOCKER_BIN}" inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}' "${container_id}")"
+if [[ "${health}" != "unhealthy" && "${health}" != "exited" && "${health}" != "dead" ]]; then
+    exit 0
+fi
+
+now="$(date +%s)"
+last_restart=0
+if [[ -r "${RESTART_MARKER}" ]]; then
+    read -r last_restart <"${RESTART_MARKER}" || last_restart=0
+fi
+if ((now - last_restart < RESTART_COOLDOWN_SECONDS)); then
+    echo "Telegram container is ${health}; restart cooldown is active"
+    exit 0
+fi
+
+echo "Telegram container is ${health}; restarting it"
+"${DOCKER_BIN}" compose restart telegram-bot
+printf '%s\n' "${now}" >"${RESTART_MARKER}"
