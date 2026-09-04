@@ -18,6 +18,11 @@
 		reverse_proxy telegram-bot:8001
 	}
 
+	handle /telegram/ready {
+		uri replace /telegram/ready /ready
+		reverse_proxy telegram-bot:8001
+	}
+
 	handle /r/* {
 		reverse_proxy telegram-bot:8001
 	}

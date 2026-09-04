@@ -8,13 +8,14 @@ import logging
 import secrets
 import time
 from contextlib import asynccontextmanager
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from types import SimpleNamespace
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, Response, UploadFile
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from sqlalchemy import case, delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
@@ -52,6 +53,41 @@ MEDIA_TYPES = {
     "audio/mpeg": ("voice", ".mp3"),
     "audio/ogg": ("voice", ".ogg"),
 }
+
+
+@dataclass
+class RuntimeHealth:
+    last_poll_success: float | None = None
+    last_scheduler_activity: float | None = None
+    scheduler_failed: bool = False
+
+
+runtime_health = RuntimeHealth()
+
+
+def _runtime_failure_reasons(now: float | None = None) -> list[str]:
+    current = time.monotonic() if now is None else now
+    poll_max_age = max(60.0, float(settings.telegram_polling_timeout_seconds) + 35.0)
+    # One scheduler pass can legitimately take minutes during a large broadcast.
+    scheduler_max_age = max(300.0, float(settings.scheduler_interval_seconds) * 10.0)
+    reasons: list[str] = []
+    if not settings.telegram_test_bot_token:
+        reasons.append("telegram_token_missing")
+    if not settings.telegram_proxy_url:
+        reasons.append("telegram_proxy_missing")
+    if not settings.telegram_polling_enabled:
+        reasons.append("polling_disabled")
+    elif runtime_health.last_poll_success is None or current - runtime_health.last_poll_success > poll_max_age:
+        reasons.append("polling_stale")
+    if not settings.scheduler_enabled:
+        reasons.append("scheduler_disabled")
+    elif runtime_health.scheduler_failed:
+        reasons.append("scheduler_failed")
+    elif runtime_health.last_scheduler_activity is None or current - runtime_health.last_scheduler_activity > scheduler_max_age:
+        reasons.append("scheduler_stale")
+    return reasons
+
+
 def client() -> TelegramClient:
     if not settings.telegram_test_bot_token:
         raise HTTPException(503, "Telegram token is not configured")
@@ -270,6 +306,8 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
             recipient.status = "failed"; recipient.error_message = message; failed += 1
             if "blocked by the user" in message.lower() or "chat not found" in message.lower():
                 contact.status = "blocked"
+        runtime_health.last_scheduler_activity = time.monotonic()
+        runtime_health.scheduler_failed = False
     row.status = "completed" if not failed else "completed_with_errors"; row.finished_at = datetime.now(UTC)
     session.commit()
     return sent, failed
@@ -302,33 +340,48 @@ def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> 
     )
 
 
+def scheduler_iteration() -> None:
+    with SessionLocal() as session:
+        tg = TelegramClient(
+            settings.telegram_test_bot_token,
+            proxy_url=settings.telegram_proxy_url,
+            channel_id=settings.telegram_channel_id,
+        ) if settings.telegram_test_bot_token else None
+        if tg:
+            stopped_presale = stop_presale_runs_from_purchase_events(session)
+            stopped_presale += reconcile_masterclass_presale_runs(session)
+            if stopped_presale:
+                session.commit()
+            for run in due_runs(session):
+                contact = session.get(Contact, run.contact_id)
+                if not contact or not _maintenance_allows_contact(contact):
+                    continue
+                if run.status == "waiting":
+                    resume_wait_timeout(session, run)
+                advance_run(session, run, tg)
+                runtime_health.last_scheduler_activity = time.monotonic()
+            scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
+            for broadcast in scheduled:
+                _deliver_broadcast(session, broadcast, tg)
+            dispatch_masterclass_notifications(session, tg)
+            runtime_health.last_scheduler_activity = time.monotonic()
+        runtime_health.last_scheduler_activity = time.monotonic()
+        runtime_health.scheduler_failed = False
+
+
 async def scheduler_loop() -> None:
     while True:
         try:
-            with SessionLocal() as session:
-                tg = TelegramClient(
-                    settings.telegram_test_bot_token,
-                    proxy_url=settings.telegram_proxy_url,
-                    channel_id=settings.telegram_channel_id,
-                ) if settings.telegram_test_bot_token else None
-                if tg:
-                    stopped_presale = stop_presale_runs_from_purchase_events(session)
-                    stopped_presale += reconcile_masterclass_presale_runs(session)
-                    if stopped_presale:
-                        session.commit()
-                    for run in due_runs(session):
-                        contact = session.get(Contact, run.contact_id)
-                        if not contact or not _maintenance_allows_contact(contact):
-                            continue
-                        if run.status == "waiting":
-                            resume_wait_timeout(session, run)
-                        advance_run(session, run, tg)
-                    scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
-                    for broadcast in scheduled:
-                        _deliver_broadcast(session, broadcast, tg)
-                    dispatch_masterclass_notifications(session, tg)
+            if runtime_health.last_scheduler_activity is None:
+                # Give the first real iteration its normal processing window.
+                # Subsequent freshness is recorded only after a successful pass.
+                runtime_health.last_scheduler_activity = time.monotonic()
+            # Telegram sends are synchronous and may take minutes for a broadcast.
+            # Keep them away from the event loop so readiness remains observable.
+            await asyncio.to_thread(scheduler_iteration)
         except Exception:
             # A run keeps its own error. A scheduler-level failure is retried next tick.
+            runtime_health.scheduler_failed = True
             logger.exception("Telegram scheduler iteration failed")
         await asyncio.sleep(settings.scheduler_interval_seconds)
 
@@ -355,6 +408,7 @@ async def polling_loop() -> None:
                 with SessionLocal() as session:
                     process_update(update, session)
                 offset = int(update["update_id"]) + 1
+            runtime_health.last_poll_success = time.monotonic()
         except asyncio.CancelledError:
             raise
         except Exception:
@@ -440,6 +494,21 @@ def health() -> dict:
         "bot": settings.telegram_test_bot_username,
         "maintenance": settings.telegram_maintenance_mode,
     }
+
+
+@app.get("/ready")
+def ready(db: Session = Depends(get_db)) -> JSONResponse:
+    reasons = _runtime_failure_reasons()
+    try:
+        db.execute(text("SELECT 1"))
+    except Exception:
+        logger.exception("Telegram readiness database check failed")
+        reasons.append("database_unavailable")
+    is_ready = not reasons
+    return JSONResponse(
+        status_code=200 if is_ready else 503,
+        content={"status": "ready" if is_ready else "unavailable", "reasons": reasons},
+    )
 
 
 def _go_response(token: str, request: Request, session: Session) -> Response:
