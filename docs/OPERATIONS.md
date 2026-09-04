@@ -29,6 +29,8 @@ cd /opt/edabalans
 docker compose ps
 curl -fsS https://api.edabalans.ru/health
 curl -fsS https://api.edabalans.ru/ready
+curl -fsS https://api.edabalans.ru/telegram/ready
+curl -fsS https://app.edabalans.ru/apps/dqs.html
 curl -fsS https://data.edabalans.ru/api/v1/health
 curl -fsS https://api.edabalans.ru/bot
 curl -fsS https://go.похудение-это-есть.рф/legal
@@ -44,6 +46,25 @@ systemctl status edabalans-backup.timer
 
 Ожидается: все пять контейнеров работают, перечисленные HTTP-проверки успешны,
 firewall разрешает только 22/80/443, backup timer активен.
+
+После подключения внешний Timeweb Monitoring должен проверять раз в пять минут
+три публичные точки:
+
+- `https://api.edabalans.ru/ready` — Caddy, основной backend и PostgreSQL;
+- `https://api.edabalans.ru/telegram/ready` — Telegram-сервис, PostgreSQL,
+  активность scheduler и свежий успешный long polling через обязательный европейский proxy;
+- `https://app.edabalans.ru/apps/dqs.html` — публичную доставку критичного DQS-приложения.
+
+Проверка Telegram возвращает `503`, если proxy не настроен, polling или scheduler
+выключен, scheduler завершился ошибкой либо рабочая активность давно не обновлялась.
+Поэтому одна эта точка покрывает и российский сервер, и его исходящий путь через
+европейский шлюз. Локальный `/health` остаётся простой проверкой процесса для
+Docker и не заменяет внешний контроль. Остальные веб-приложения используют те же
+Caddy, backend и PostgreSQL; отдельный платный монитор для конкретной страницы
+нужен, только если её доступность имеет самостоятельную рекламную или договорную
+критичность. Проверка DQS подтверждает доставку страницы, а общая `/ready` — backend
+и базу; она не имитирует нажатия человека в браузере и не заменяет функциональные
+тесты приложения перед выпуском.
 
 ## Резервные копии
 
@@ -434,11 +455,12 @@ Production сейчас использует прямое исходящее HTT
 прокси можно только после отдельного `getMe` smoke-check и полного polling-цикла
 без ошибок в логах.
 
-Проверка webhook без вывода токена:
+Проверки без вывода токена:
 
 ```bash
 docker compose ps telegram-bot
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
+curl -fsS https://api.edabalans.ru/telegram/ready
 ```
 
 Модуль после покупки Мастер-класса выпущен в безопасном тестовом режиме:
