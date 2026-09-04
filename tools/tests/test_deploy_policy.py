@@ -107,7 +107,7 @@ class DeployPolicyTests(unittest.TestCase):
 
         self.assertIn("id: impact", source)
         self.assertIn("bash infra/deploy/classify-deploy-impact", source)
-        self.assertEqual(source.count("if: steps.impact.outputs.backend == 'true'"), 2)
+        self.assertEqual(source.count("if: steps.impact.outputs.backend == 'true'"), 3)
         self.assertEqual(source.count("if: steps.impact.outputs.telegram == 'true'"), 2)
         self.assertIn("if: steps.impact.outputs.migration == 'true'", source)
 
