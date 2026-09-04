@@ -5,11 +5,12 @@
   const VERSION = "2026-09-04";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
-  const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/";
+  const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/#masterclass";
   const params = new URLSearchParams(location.search);
   const pathMatch = location.pathname.match(/\/intensive\/day-([1-4])/);
   const day = pathMatch ? Number(pathMatch[1]) : 0;
   const isLocalPreview = ["127.0.0.1", "localhost"].includes(location.hostname);
+  let trustedPlatform = null;
 
   function uuid() {
     return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -80,7 +81,8 @@
       page_id: day ? `intensive_day_${day}` : "intensive_menu",
       day: day || undefined,
       content_version: VERSION,
-      session_id: clientState.sessionId
+      session_id: clientState.sessionId,
+      platform: trustedPlatform || undefined
     }, clientState.attribution, extra || {});
     if (window.ym) window.ym(COUNTER_ID, "reachGoal", code, payload, callback);
     else if (callback) callback();
@@ -283,6 +285,7 @@
   async function init() {
     loadMetrika();
     const serverState = await loadServerState();
+    trustedPlatform = serverState.identified ? serverState.platform : null;
     setupView();
     setupMenu(serverState);
     setupChannels(serverState);
