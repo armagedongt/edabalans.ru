@@ -75,3 +75,13 @@ incident, поэтому откат к несовместимой версии �
 вручную копируются из `/opt/edabalans/infra`, запускаются, затем проверяются
 `systemctl is-active edabalans-telegram-watchdog.timer` и журнал oneshot. Все
 последующие выпуски обновляют и проверяют их штатным deployer.
+
+## Журнал выпуска
+
+- 05.09.2026 — Cloudflare account `253c4e986be90daca60abe0e21ae65f7`,
+  workers.dev subdomain `armagedongt`, Git SHA `ae63ee02ec1c71666db626dbde0b9cc8cf0948c9`.
+  Cron `* * * * *` активен; authenticated drill дал четыре ожидаемых `503`, затем
+  `200` на восстановлении; Cloudflare Observability показал 20 успешных событий и
+  0 ошибок. Постоянный workers.dev и preview URL выключены. Timeweb recovery включён;
+  Яндекс.Директ получит `YANDEX_CAMPAIGN_IDS` отдельно после подтверждения точного
+  списка кампаний из рекламного рабочего потока.
