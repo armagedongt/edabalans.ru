@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -1179,6 +1180,8 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:
     assets = {
         "crying-character.png",
+        "direct-intensive-max-qr.svg",
+        "direct-intensive-telegram-qr.svg",
         "final-cta-cat-clock.webp",
         "max-full-colored-dark-official.png",
         "money-bag-ruble-v1.webp",
@@ -1205,6 +1208,15 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
         assert response.headers["cache-control"] == "no-cache", asset_name
         assert response.headers["x-robots-tag"] == "noindex, nofollow", asset_name
         assert response.content, asset_name
+
+    telegram_qr = client.get("/preview/homepage-mobile/direct-intensive-telegram-qr.svg")
+    max_qr = client.get("/preview/homepage-mobile/direct-intensive-max-qr.svg")
+    assert "<metadata>https://go.похудение-это-есть.рф/BMB6Y</metadata>" in telegram_qr.text
+    assert "<metadata>https://max.ru/id230409966750_bot?start=BMB6Y</metadata>" in max_qr.text
+    telegram_qr_bytes = telegram_qr.content.replace(b"\r\n", b"\n")
+    max_qr_bytes = max_qr.content.replace(b"\r\n", b"\n")
+    assert hashlib.sha256(telegram_qr_bytes).hexdigest() == "1890997c311fcc353df5ee15e84aa8f146e238415455b5e87030e0c524cceec9"
+    assert hashlib.sha256(max_qr_bytes).hexdigest() == "627b8d49a589c67d248fa87e88427ec22e402f1d865e183afbc4e946b438ef97a"
 
     assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
     assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404
@@ -1241,6 +1253,8 @@ def test_direct_intensive_preview_declares_measurable_events() -> None:
     assert "direct_intensive_view" in response.text
     assert "direct_intensive_telegram_click" in response.text
     assert "direct_intensive_max_click" in response.text
+    assert "direct_intensive_qr_shown" in response.text
+    assert "direct_intensive_qr_selected" in response.text
     assert "mc.yandex.ru/metrika/tag.js" not in response.text
     assert "edb_direct_intensive_attribution_v1" in response.text
 
@@ -1252,6 +1266,29 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert "--edb-page-gutter:clamp(16px,4.16vw,32px)" in response.text
     assert "calc(100% - var(--edb-page-gutter) - var(--edb-page-gutter))" in response.text
     assert ".edb-di-actions{display:grid;width:min(calc(100% - 16px),520px)" in response.text
+    assert ".edb-di-qr{display:none" in response.text
+    assert "@media (min-width:900px)" in response.text
+    assert ".edb-di-qr{display:block" in response.text
+
+
+def test_direct_intensive_preview_has_desktop_only_qr_selector() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert 'role="listbox"' in response.text
+    assert 'role="option"' in response.text
+    assert 'aria-selected="true"' in response.text
+    assert "direct-intensive-telegram-qr.svg" in response.text
+    assert "direct-intensive-max-qr.svg" in response.text
+    assert 'aria-hidden="${selected?\'true\':\'false\'}"' in response.text
+    assert "Нажмите, чтобы показать этот QR-код" in response.text
+    assert "Если на компьютере нет мессенджера, отсканируйте QR-код телефоном." in response.text
+    assert "filter:blur(4px) grayscale(1) contrast(.72)" in response.text
+    assert "background:rgba(244,250,254,.36)" in response.text
+    assert "font:800 20px/1.25" in response.text
+    assert ".edb-di-item{padding:15px 17px 15px 64px}" in response.text
+    assert "desktopQr.addEventListener('change',trackQrVisibility)" in response.text
+    assert "if(option.getAttribute('aria-selected')==='true')return" in response.text
+    assert "emit(CONTENT.analytics.qrShownEvent,{channel:option.dataset.edbQr})" in response.text
 
 
 def test_direct_intensive_preview_has_one_accepted_visual_variant() -> None:

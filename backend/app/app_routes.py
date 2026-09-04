@@ -68,6 +68,8 @@ CATEGORY_COUNT = 17
 JSONP_CALLBACK = re.compile(r"^[A-Za-z_$][0-9A-Za-z_$]*$")
 HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "crying-character.png",
+    "direct-intensive-max-qr.svg",
+    "direct-intensive-telegram-qr.svg",
     "final-cta-cat-clock.webp",
     "max-full-colored-dark-official.png",
     "max-full-colored-official.png",

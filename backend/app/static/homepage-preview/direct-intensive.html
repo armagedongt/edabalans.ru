@@ -37,12 +37,26 @@
   #edb-direct-intensive-v1 .edb-di-button:focus-visible{outline:3px solid rgba(255,107,54,.38);outline-offset:3px}
   #edb-direct-intensive-v1 .edb-di-button[aria-disabled="true"]{cursor:not-allowed}
   #edb-direct-intensive-v1 .edb-di-note{margin:10px 0 0;color:var(--edb-muted);font-size:12px;line-height:1.35;text-align:center}
+  #edb-direct-intensive-v1 .edb-di-qr{display:none;margin:24px auto 0}
+  #edb-direct-intensive-v1 .edb-di-qr-intro{margin:0 0 12px;color:#334654;font:650 14px/1.45 Manrope,Montserrat,sans-serif;text-align:center}
+  #edb-direct-intensive-v1 .edb-di-qr-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
+  #edb-direct-intensive-v1 .edb-di-qr-option{position:relative;display:block;width:100%;padding:14px;border:1px solid rgba(22,87,128,.13);border-radius:18px;background:rgba(255,255,255,.62);box-shadow:0 14px 32px -25px rgba(13,77,115,.68);color:var(--edb-ink);cursor:pointer;transition:border-color .18s ease,background .18s ease,box-shadow .18s ease,transform .18s ease}
+  #edb-direct-intensive-v1 .edb-di-qr-option:hover{transform:translateY(-2px)}
+  #edb-direct-intensive-v1 .edb-di-qr-option:focus-visible{outline:3px solid rgba(255,107,54,.45);outline-offset:3px}
+  #edb-direct-intensive-v1 .edb-di-qr-option[aria-selected="true"]{border-color:rgba(38,168,239,.5);background:rgba(255,255,255,.94);box-shadow:0 17px 36px -24px rgba(0,94,151,.82)}
+  #edb-direct-intensive-v1 .edb-di-qr-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font:800 14px/1.2 Manrope,Montserrat,sans-serif}
+  #edb-direct-intensive-v1 .edb-di-qr-state{color:#168fe3;font-size:10px;letter-spacing:.04em;text-transform:uppercase}
+  #edb-direct-intensive-v1 .edb-di-qr-frame{position:relative;display:block;overflow:hidden;aspect-ratio:1;border-radius:13px;background:#fff}
+  #edb-direct-intensive-v1 .edb-di-qr-code{display:block;width:100%;height:100%;object-fit:contain;transition:filter .2s ease,opacity .2s ease}
+  #edb-direct-intensive-v1 .edb-di-qr-option:not([aria-selected="true"]) .edb-di-qr-code{filter:blur(4px) grayscale(1) contrast(.72);opacity:.68}
+  #edb-direct-intensive-v1 .edb-di-qr-cover{position:absolute;inset:0;display:grid;place-items:center;padding:28px;background:rgba(244,250,254,.36);color:#233947;font:800 20px/1.25 Manrope,Montserrat,sans-serif;text-align:center;text-wrap:balance;backdrop-filter:blur(.5px);transition:opacity .18s ease}
+  #edb-direct-intensive-v1 .edb-di-qr-option[aria-selected="true"] .edb-di-qr-cover{opacity:0;pointer-events:none}
   #edb-direct-intensive-v1 .edb-di-legal{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 9px;margin:22px 0 0;padding-top:15px;border-top:1px solid rgba(22,87,128,.11);color:#6b7a86;font-size:10px;line-height:1.4;text-align:center}
   #edb-direct-intensive-v1 .edb-di-legal a{color:inherit;text-underline-offset:2px}
   #edb-direct-intensive-v1 .edb-di-legal-disclaimer{flex-basis:100%}
-  @media (min-width:560px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:44px;padding-bottom:30px}#edb-direct-intensive-v1 .edb-di-actions{gap:12px;align-items:start}#edb-direct-intensive-v1 .edb-di-item{padding:15px 17px 15px 51px}#edb-direct-intensive-v1 .edb-di-item::before{left:16px}}
-  @media (min-width:900px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:58px;padding-bottom:34px}#edb-direct-intensive-v1 .edb-di-list{grid-template-columns:1fr 1fr}#edb-direct-intensive-v1 .edb-di-item{min-height:104px;padding-left:67px}#edb-direct-intensive-v1 .edb-di-item::before{top:16px;transform:none}}
-  @media (prefers-reduced-motion:reduce){#edb-direct-intensive-v1 .edb-di-button{transition:none}}
+  @media (min-width:560px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:44px;padding-bottom:30px}#edb-direct-intensive-v1 .edb-di-actions{gap:12px;align-items:start}#edb-direct-intensive-v1 .edb-di-item{padding:15px 17px 15px 64px}#edb-direct-intensive-v1 .edb-di-item::before{left:16px}}
+  @media (min-width:900px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:58px;padding-bottom:34px}#edb-direct-intensive-v1 .edb-di-list{grid-template-columns:1fr 1fr}#edb-direct-intensive-v1 .edb-di-item{min-height:104px;padding-left:67px}#edb-direct-intensive-v1 .edb-di-item::before{top:16px;transform:none}#edb-direct-intensive-v1 .edb-di-qr{display:block}}
+  @media (prefers-reduced-motion:reduce){#edb-direct-intensive-v1 .edb-di-button,#edb-direct-intensive-v1 .edb-di-qr-option,#edb-direct-intensive-v1 .edb-di-qr-code,#edb-direct-intensive-v1 .edb-di-qr-cover{transition:none}}
 </style>
 <script>
 (()=>{
@@ -66,17 +80,19 @@
     telegramNote:'Откроется только с VPN',
     legal:{copyright:'© 2026 Сергей Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика обработки персональных данных',privacyUrl:'https://go.похудение-это-есть.рф/legal/privacy',disclaimer:'Не является медицинской услугой.'},
     links:{telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y',maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'},
-    analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'direct_intensive_telegram_click',maxClickEvent:'direct_intensive_max_click'}
+    analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'direct_intensive_telegram_click',maxClickEvent:'direct_intensive_max_click',qrShownEvent:'direct_intensive_qr_shown',qrSelectedEvent:'direct_intensive_qr_selected'}
   };
 
   const HERO_HTML='<span class="edb-di-hero-line">Когда каждая попытка</span><span class="edb-di-hero-line edb-di-marker">взять себя в руки</span><span class="edb-di-hero-line">заканчивается срывом…</span><span class="edb-di-hero-accent">пора менять подход!</span>';
 
   const esc=value=>String(value).replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
   const configured=value=>/^https:\/\//i.test(value)&&!value.includes('__REQUIRED_');
-  const maxLogoUrl=location.protocol==='file:'?'./max-full-colored-official.png':'https://app.edabalans.ru/preview/homepage-mobile/max-full-colored-official.png?v=1';
+  const assetUrl=name=>location.protocol==='file:'?`./${name}`:(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname==='app.edabalans.ru'?`/preview/homepage-mobile/${name}`:`https://app.edabalans.ru/preview/homepage-mobile/${name}?v=1`);
+  const maxLogoUrl=assetUrl('max-full-colored-official.png');
   const icon=kind=>kind==='telegram'?'<svg class="edb-di-telegram-icon" viewBox="190 270 580 510" aria-hidden="true"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>':`<img class="edb-di-max-logo" src="${maxLogoUrl}" alt="MAX">`;
   const button=(kind,label,url,note='')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="primary" aria-label="${esc(label)}" href="${configured(url)?esc(url):'#'}" target="_blank" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}${kind==='max'?'':`<span>${esc(label)}</span>`}</a>${note?`<p class="edb-di-note">${esc(note)}</p>`:''}</div>`;
-  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage"><p class="edb-di-eyebrow">${esc(CONTENT.eyebrow)}</p><h1 class="edb-di-hero--main">${HERO_HTML}</h1><p class="edb-di-lead">${esc(CONTENT.intro)}</p></section><p class="edb-di-section-lead edb-di-list-lead">${esc(CONTENT.listLead)}</p><ul class="edb-di-list">${CONTENT.points.map(point=>`<li class="edb-di-item">${esc(point.replace(/^✅\s*/,''))}</li>`).join('')}</ul><p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}</p><div class="edb-di-actions">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote)}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><footer class="edb-di-legal"><span>${esc(CONTENT.legal.copyright)} ${esc(CONTENT.legal.inn)}</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span class="edb-di-legal-disclaimer">${esc(CONTENT.legal.disclaimer)}</span></footer></main>`;
+  const qrOption=(kind,label,selected)=>`<button class="edb-di-qr-option" type="button" role="option" data-edb-qr="${kind}" aria-selected="${selected}" tabindex="${selected?'0':'-1'}"><span class="edb-di-qr-heading"><span>${esc(label)}</span><span class="edb-di-qr-state">${selected?'QR открыт':'QR скрыт'}</span></span><span class="edb-di-qr-frame"><img class="edb-di-qr-code" src="${assetUrl(`direct-intensive-${kind}-qr.svg`)}" alt="QR-код для ${esc(label)}"><span class="edb-di-qr-cover" aria-hidden="${selected?'true':'false'}">Нажмите, чтобы показать этот QR-код</span></span></button>`;
+  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage"><p class="edb-di-eyebrow">${esc(CONTENT.eyebrow)}</p><h1 class="edb-di-hero--main">${HERO_HTML}</h1><p class="edb-di-lead">${esc(CONTENT.intro)}</p></section><p class="edb-di-section-lead edb-di-list-lead">${esc(CONTENT.listLead)}</p><ul class="edb-di-list">${CONTENT.points.map(point=>`<li class="edb-di-item">${esc(point.replace(/^✅\s*/,''))}</li>`).join('')}</ul><p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}</p><div class="edb-di-actions">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote)}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span>${esc(CONTENT.legal.copyright)} ${esc(CONTENT.legal.inn)}</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span class="edb-di-legal-disclaimer">${esc(CONTENT.legal.disclaimer)}</span></footer></main>`;
 
   let robots=document.head&&document.head.querySelector('meta[name="robots"]');
   if(!robots&&document.head){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}
@@ -113,6 +129,48 @@
       emit(channel==='telegram'?CONTENT.analytics.telegramClickEvent:CONTENT.analytics.maxClickEvent,{channel,cta_position:link.dataset.ctaPosition,destination_host:new URL(link.href).host});
     });
   });
+  const desktopQr=window.matchMedia('(min-width:900px)');
+  const qrOptions=[...root.querySelectorAll('[data-edb-qr]')];
+  const selectQr=(option,track=true)=>{
+    if(!desktopQr.matches)return;
+    if(option.getAttribute('aria-selected')==='true')return;
+    qrOptions.forEach(item=>{
+      const selected=item===option;
+      item.setAttribute('aria-selected',String(selected));
+      item.tabIndex=selected?0:-1;
+      item.querySelector('.edb-di-qr-state').textContent=selected?'QR открыт':'QR скрыт';
+      item.querySelector('.edb-di-qr-cover').setAttribute('aria-hidden',String(selected));
+    });
+    if(track){
+      emit(CONTENT.analytics.qrShownEvent,{channel:option.dataset.edbQr});
+      emit(CONTENT.analytics.qrSelectedEvent,{channel:option.dataset.edbQr});
+    }
+  };
+  qrOptions.forEach((option,index)=>{
+    option.addEventListener('click',()=>selectQr(option));
+    option.addEventListener('keydown',event=>{
+      let next=index;
+      if(event.key==='ArrowRight'||event.key==='ArrowDown')next=(index+1)%qrOptions.length;
+      else if(event.key==='ArrowLeft'||event.key==='ArrowUp')next=(index-1+qrOptions.length)%qrOptions.length;
+      else if(event.key==='Home')next=0;
+      else if(event.key==='End')next=qrOptions.length-1;
+      else return;
+      event.preventDefault();
+      selectQr(qrOptions[next]);
+      qrOptions[next].focus();
+    });
+  });
+  let qrWasVisible=false;
+  const trackQrVisibility=()=>{
+    if(desktopQr.matches&&!qrWasVisible){
+      const selected=root.querySelector('[data-edb-qr][aria-selected="true"]');
+      emit(CONTENT.analytics.qrShownEvent,{channel:selected?selected.dataset.edbQr:'telegram'});
+    }
+    qrWasVisible=desktopQr.matches;
+  };
+  if(typeof desktopQr.addEventListener==='function')desktopQr.addEventListener('change',trackQrVisibility);
+  else if(typeof desktopQr.addListener==='function')desktopQr.addListener(trackQrVisibility);
+  trackQrVisibility();
   emit(CONTENT.analytics.viewEvent);
 })();
 </script>

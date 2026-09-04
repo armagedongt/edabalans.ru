@@ -23,8 +23,11 @@ const allowedOrigins = new Set([`http://127.0.0.1:${port}`, `http://localhost:${
 
 const homepageAssets = new Set([
   'crying-character.png',
+  'direct-intensive-max-qr.svg',
+  'direct-intensive-telegram-qr.svg',
   'final-cta-cat-clock.webp',
   'max-full-colored-dark-official.png',
+  'max-full-colored-official.png',
   'money-bag-ruble-v1.webp',
   'montserrat-cyrillic.woff2',
   'montserrat-latin.woff2',
@@ -134,6 +137,11 @@ const server = createServer(async (request, response) => {
     if (url.pathname === '/preview/homepage-reviews-wall'
       || url.pathname === '/preview/homepage-reviews-wall/') {
       await sendFile(response, join(homepageRoot, 'reviews-wall.html'))
+      return
+    }
+    if (url.pathname === '/preview/direct-intensive'
+      || url.pathname === '/preview/direct-intensive/') {
+      await sendFile(response, join(homepageRoot, 'direct-intensive.html'))
       return
     }
     if (url.pathname === '/site-footer.js') {
