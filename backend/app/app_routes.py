@@ -46,6 +46,7 @@ from app.intensive_web_access import (
     offer_for_user,
     open_day,
     progress_rows,
+    record_client_event,
     record_entry_attribution,
     session_identity,
     set_session,
@@ -566,6 +567,37 @@ def intensive_state(
     return state_payload(db, user_id, platform)
 
 
+@router.post("/api/intensive/events")
+async def intensive_client_event(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, object]:
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None or db.get(User, identity[0]) is None:
+        raise HTTPException(status_code=401, detail="intensive identity required")
+    try:
+        body = await request.json()
+    except (ValueError, json.JSONDecodeError) as exc:
+        raise HTTPException(status_code=400, detail="invalid intensive event") from exc
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=400, detail="invalid intensive event")
+    user_id, platform = identity
+    try:
+        event = record_client_event(
+            db,
+            user_id,
+            platform,
+            str(body.get("event_type") or ""),
+            str(body.get("event_id") or ""),
+            body,
+        )
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    db.commit()
+    return {"ok": True, "event_id": str(event.id), "event_type": event.event_type}
+
+
 @router.get("/api/intensive/offer-token")
 def intensive_offer_token(
     request: Request,
@@ -608,16 +640,26 @@ def intensive_post_target(
     identity = session_identity(request, settings.app_auth_secret)
     if identity is None:
         raise HTTPException(status_code=401, detail="intensive identity required")
-    user_id, _ = identity
+    user_id, identity_platform = identity
+    if messenger != identity_platform:
+        raise HTTPException(
+            status_code=403,
+            detail="intensive messenger does not match personal link",
+        )
     rows = progress_rows(db, user_id)
     if not day_unlocked(rows, day_number):
         raise HTTPException(status_code=403, detail="intensive day is not open")
     targets = {
-        # Final per-day Telegram/MAX publication URLs are inserted from the VSL
-        # checkpoint before release. Generic channel roots must not masquerade as tasks.
+        (1, "telegram"): settings.intensive_day_1_telegram_post_url,
+        (1, "max"): settings.intensive_day_1_max_post_url,
+        (2, "telegram"): settings.intensive_day_2_telegram_post_url,
+        (2, "max"): settings.intensive_day_2_max_post_url,
+        (3, "telegram"): settings.intensive_day_3_telegram_post_url,
+        (3, "max"): settings.intensive_day_3_max_post_url,
     }
     target = targets.get((day_number, messenger))
-    if not target:
+    target_parts = urlsplit(target or "")
+    if target_parts.scheme != "https" or not target_parts.netloc:
         raise HTTPException(status_code=503, detail="intensive assignment is not published")
     if mark_assignment_opened(db, user_id, day_number, messenger) is None:
         raise HTTPException(status_code=409, detail="intensive day is not open")

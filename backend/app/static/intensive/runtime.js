@@ -2,10 +2,16 @@
   "use strict";
 
   const COUNTER_ID = 97331502;
-  const VERSION = "2026-09-04";
+  const VERSION = "2026-09-05";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
   const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/#masterclass";
+  const SERVER_EVENT_CODES = new Set([
+    "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
+    "intensive_max_click", "intensive_next_day_unlocked", "intensive_next_day_click",
+    "intensive_masterclass_click", "video_engaged", "video_progress",
+    "video_complete", "video_exit"
+  ]);
   const params = new URLSearchParams(location.search);
   const pathMatch = location.pathname.match(/\/intensive\/day-([1-4])/);
   const day = pathMatch ? Number(pathMatch[1]) : 0;
@@ -84,6 +90,15 @@
       session_id: clientState.sessionId,
       platform: trustedPlatform || undefined
     }, clientState.attribution, extra || {});
+    if (trustedPlatform && SERVER_EVENT_CODES.has(code)) {
+      fetch("/api/intensive/events", {
+        method: "POST",
+        credentials: "same-origin",
+        keepalive: true,
+        headers: {"Content-Type": "application/json", Accept: "application/json"},
+        body: JSON.stringify(Object.assign({event_type: code}, payload))
+      }).catch(() => {});
+    }
     if (window.ym) window.ym(COUNTER_ID, "reachGoal", code, payload, callback);
     else if (callback) callback();
   }

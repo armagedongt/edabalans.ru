@@ -45,6 +45,12 @@ class Settings(BaseSettings):
     marketing_day_one_events_enabled: bool = False
     marketing_site_home_events_enabled: bool = False
     marketing_later_day_events_enabled: bool = False
+    intensive_day_1_telegram_post_url: str = ""
+    intensive_day_1_max_post_url: str = ""
+    intensive_day_2_telegram_post_url: str = ""
+    intensive_day_2_max_post_url: str = ""
+    intensive_day_3_telegram_post_url: str = ""
+    intensive_day_3_max_post_url: str = ""
 
     @property
     def allowed_origins_list(self) -> list[str]:

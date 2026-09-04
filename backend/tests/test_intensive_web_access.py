@@ -35,7 +35,7 @@ from app.models import AttributionEvent, CourseEvent, CourseStageProgress, User 
 SECRET = "intensive-test-secret"
 
 
-def make_client() -> tuple[TestClient, sessionmaker[Session]]:
+def make_client(**settings_overrides: str) -> tuple[TestClient, sessionmaker[Session]]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -52,6 +52,7 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
     app.dependency_overrides[get_settings] = lambda: Settings(
         database_url="sqlite+pysqlite:///:memory:",
         app_auth_secret=SECRET,
+        **settings_overrides,
     )
     return TestClient(app), factory
 
@@ -272,4 +273,152 @@ def test_elapsed_time_does_not_unlock_next_day_without_assignment_open() -> None
         rows = progress_rows(db, user.id)
         assert day_unlocked(rows, 2, now=started + timedelta(days=2)) is False
         assert open_day(db, user.id, 2, now=started + timedelta(days=2)) is None
+    app.dependency_overrides.clear()
+
+
+def test_configured_assignment_uses_trusted_platform_and_marks_progress() -> None:
+    client, factory = make_client(
+        intensive_day_1_telegram_post_url="https://t.me/Fitness_Talks/1001",
+        intensive_day_1_max_post_url="https://max.ru/Fitness_Talks/1001",
+    )
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "telegram")
+        db.commit()
+
+    client.get(f"/intensive/start?i={token}", follow_redirects=False)
+    assert client.get("/intensive/day-1").status_code == 200
+    forged = client.post("/api/intensive/day-1/post/max")
+    assert forged.status_code == 403
+
+    response = client.post("/api/intensive/day-1/post/telegram")
+    assert response.status_code == 200
+    assert response.json()["target_url"] == "https://t.me/Fitness_Talks/1001"
+    state = client.get("/api/intensive/state").json()
+    assert state["assignment_days"] == [1]
+    with factory() as db:
+        event = db.scalar(
+            select(CourseEvent).where(
+                CourseEvent.event_type == "intensive_required_post_open"
+            )
+        )
+        assert event is not None
+        assert event.details == {"day": 1, "messenger": "telegram"}
+    app.dependency_overrides.clear()
+
+
+def test_invalid_assignment_url_stays_closed() -> None:
+    client, factory = make_client(
+        intensive_day_1_telegram_post_url="javascript:alert(1)",
+    )
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "telegram")
+        db.commit()
+    client.get(f"/intensive/start?i={token}", follow_redirects=False)
+    client.get("/intensive/day-1")
+
+    response = client.post("/api/intensive/day-1/post/telegram")
+    assert response.status_code == 503
+    assert client.get("/api/intensive/state").json()["assignment_days"] == []
+    app.dependency_overrides.clear()
+
+
+def test_personal_client_events_are_validated_and_idempotent() -> None:
+    client, factory = make_client()
+    assert client.post(
+        "/api/intensive/events",
+        json={"event_id": "anonymous", "event_type": "intensive_menu_open"},
+    ).status_code == 401
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "telegram")
+        db.commit()
+    client.get(f"/intensive/start?i={token}", follow_redirects=False)
+    client.get("/intensive/day-1")
+
+    payload = {
+        "event_id": "browser-event-1",
+        "event_type": "video_progress",
+        "day": 1,
+        "video_id": "intensive-day-1",
+        "progress_percent": 25,
+        "platform": "max",
+        "target_url": "https://untrusted.example/ignored",
+    }
+    first = client.post("/api/intensive/events", json=payload)
+    second = client.post("/api/intensive/events", json={**payload, "event_id": "browser-event-2"})
+    assert first.status_code == second.status_code == 200
+    assert first.json()["event_id"] == second.json()["event_id"]
+
+    forged = client.post(
+        "/api/intensive/events",
+        json={
+            "event_id": "browser-event-3",
+            "event_type": "intensive_max_click",
+            "day": 1,
+        },
+    )
+    assert forged.status_code == 422
+    invalid_progress = client.post(
+        "/api/intensive/events",
+        json={
+            "event_id": "browser-event-4",
+            "event_type": "video_progress",
+            "day": 1,
+            "video_id": "intensive-day-1",
+            "progress_percent": "Infinity",
+        },
+    )
+    assert invalid_progress.status_code == 422
+    with factory() as db:
+        event = db.scalar(
+            select(CourseEvent).where(CourseEvent.event_type == "video_progress")
+        )
+        assert event is not None
+        assert event.details["platform"] == "telegram"
+        assert "target_url" not in event.details
+        assert db.scalar(
+            select(func.count(CourseEvent.id)).where(
+                CourseEvent.event_type == "video_progress"
+            )
+        ) == 1
+    app.dependency_overrides.clear()
+
+
+def test_accelerated_http_journey_reaches_day_four_and_offer() -> None:
+    client, factory = make_client(
+        intensive_day_1_telegram_post_url="https://t.me/Fitness_Talks/1001",
+        intensive_day_2_telegram_post_url="https://t.me/Fitness_Talks/1002",
+        intensive_day_3_telegram_post_url="https://t.me/Fitness_Talks/1003",
+    )
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "telegram")
+        db.commit()
+    entry = client.get(f"/intensive/start?i={token}", follow_redirects=False)
+    assert entry.headers["location"] == "/intensive/day-1"
+
+    for day in range(1, 4):
+        assert client.get(f"/intensive/day-{day}").status_code == 200
+        assignment = client.post(f"/api/intensive/day-{day}/post/telegram")
+        assert assignment.status_code == 200
+        with factory() as db:
+            progress = db.scalar(
+                select(CourseStageProgress).where(
+                    CourseStageProgress.user_id == user.id,
+                    CourseStageProgress.course_code == "intensive",
+                    CourseStageProgress.stage_number == day,
+                )
+            )
+            assert progress is not None
+            progress.first_opened_at = datetime.now(timezone.utc) - DAY_DELAY
+            db.commit()
+        assert client.get(f"/intensive/day-{day + 1}").status_code == 200
+
+    state = client.get("/api/intensive/state").json()
+    assert state["opened_days"] == [1, 2, 3, 4]
+    assert state["assignment_days"] == [1, 2, 3]
+    assert state["offer"]["active"] is True
+    assert client.get("/api/intensive/offer-token").status_code == 200
     app.dependency_overrides.clear()

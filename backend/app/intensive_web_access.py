@@ -4,6 +4,7 @@ import base64
 import hashlib
 import hmac
 import json
+import math
 import secrets
 import time
 import uuid
@@ -37,6 +38,19 @@ OFFER_CODE = "intensive-day4-1000"
 OFFER_DISCOUNT = 1000
 OFFER_TOKEN_PURPOSE = "intensive_offer"
 PLATFORMS = {"telegram", "max"}
+CLIENT_EVENT_TYPES = {
+    "intensive_home_open",
+    "intensive_menu_open",
+    "intensive_telegram_click",
+    "intensive_max_click",
+    "intensive_next_day_unlocked",
+    "intensive_next_day_click",
+    "intensive_masterclass_click",
+    "video_engaged",
+    "video_progress",
+    "video_complete",
+    "video_exit",
+}
 ATTRIBUTION_KEYS = (
     "utm_source",
     "utm_medium",
@@ -236,6 +250,85 @@ def course_event(
         db.add(event)
         db.flush()
     return event
+
+
+def record_client_event(
+    db: Session,
+    user_id: uuid.UUID,
+    platform: str,
+    event_type: str,
+    event_id: str,
+    details: dict[str, Any],
+) -> CourseEvent:
+    if platform not in PLATFORMS or event_type not in CLIENT_EVENT_TYPES:
+        raise ValueError("unsupported intensive event")
+    if not event_id or len(event_id) > 100:
+        raise ValueError("invalid intensive event id")
+
+    def integer_detail(name: str) -> int:
+        value = details.get(name)
+        if value in (None, ""):
+            return 0
+        number = float(value)
+        if not math.isfinite(number) or not number.is_integer():
+            raise ValueError(f"invalid intensive {name}")
+        return int(number)
+
+    rows = progress_rows(db, user_id)
+    day = integer_detail("day")
+    next_day = integer_detail("next_day")
+    if day and day not in range(1, 5):
+        raise ValueError("invalid intensive day")
+    if event_type.startswith("video_"):
+        if day not in rows:
+            raise ValueError("intensive day is not open")
+        video_id = str(details.get("video_id") or "")[:120]
+        if not video_id:
+            raise ValueError("video id is required")
+        progress = integer_detail("progress_percent")
+        if progress not in range(0, 101):
+            raise ValueError("invalid intensive video progress")
+        suffix = f":{progress}" if event_type == "video_progress" else ""
+        event_key = f"video:{video_id}:{event_type}{suffix}"
+    elif event_type in {"intensive_next_day_unlocked", "intensive_next_day_click"}:
+        if next_day not in range(2, 5) or not day_unlocked(rows, next_day):
+            raise ValueError("next intensive day is not open")
+        event_key = f"day:{next_day}:{event_type}"
+    elif event_type in {"intensive_telegram_click", "intensive_max_click"}:
+        clicked_platform = event_type.removeprefix("intensive_").removesuffix("_click")
+        if clicked_platform != platform or day not in rows:
+            raise ValueError("intensive messenger does not match personal link")
+        event_key = f"day:{day}:messenger:{platform}:clicked"
+    elif event_type == "intensive_masterclass_click":
+        if day and day not in rows:
+            raise ValueError("intensive day is not open")
+        event_key = f"masterclass:clicked:{day or 'menu'}"
+    else:
+        event_key = f"web:{event_type}"
+
+    safe_details: dict[str, Any] = {
+        "client_event_id": event_id,
+        "platform": platform,
+    }
+    for key in (
+        "day",
+        "next_day",
+        "video_id",
+        "progress_percent",
+        "position_seconds",
+        "duration_seconds",
+        "offer_id",
+    ):
+        value = details.get(key)
+        if isinstance(value, (str, int, float, bool)):
+            safe_details[key] = value[:200] if isinstance(value, str) else value
+    return course_event(
+        db,
+        user_id,
+        event_key,
+        event_type,
+        details=safe_details,
+    )
 
 
 def progress_rows(db: Session, user_id: uuid.UUID) -> dict[int, CourseStageProgress]:
