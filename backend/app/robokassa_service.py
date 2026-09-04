@@ -225,7 +225,11 @@ def create_payment(
         expires_at=expires_at,
         payment_id=payment.id,
     )
-    db.add_all([payment, checkout])
+    # These models intentionally do not expose an ORM relationship. Flush the
+    # referenced payment first so PostgreSQL can satisfy the checkout FK.
+    db.add(payment)
+    db.flush()
+    db.add(checkout)
     db.flush()
     payment.raw_payload = {
         "test_mode": settings.robokassa_test_mode,
