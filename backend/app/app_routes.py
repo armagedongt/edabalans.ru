@@ -448,6 +448,8 @@ def intensive_entry(
         db.commit()
     if identity is None:
         identity = session_identity(request, settings.app_auth_secret)
+    if identity is not None and db.get(User, identity[0]) is None:
+        identity = None
     if identity is None:
         return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
     user_id, platform = identity
@@ -465,21 +467,22 @@ def intensive_state(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
+    public_state = {
+        "identified": False,
+        "platform": None,
+        "opened_days": [],
+        "assignment_days": [],
+        "current_day": 1,
+        "unlocked_days": [1, 2, 3, 4],
+        "unlock_at": {},
+        "offer": None,
+    }
     identity = session_identity(request, settings.app_auth_secret)
     if identity is None:
-        return {
-            "identified": False,
-            "platform": None,
-            "opened_days": [],
-            "assignment_days": [],
-            "current_day": 1,
-            "unlocked_days": [1],
-            "unlock_at": {},
-            "offer": None,
-        }
+        return public_state
     user_id, platform = identity
     if db.get(User, user_id) is None:
-        return {"identified": False, "platform": None}
+        return public_state
     return state_payload(db, user_id, platform)
 
 
@@ -552,10 +555,7 @@ def intensive_day_asset(
         raise HTTPException(status_code=404, detail="intensive day not found")
     day_number = int(day_code[-1])
     identity = session_identity(request, settings.app_auth_secret)
-    if identity is None:
-        if day_number > 1:
-            return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
-    else:
+    if identity is not None and db.get(User, identity[0]) is not None:
         user_id, _ = identity
         if open_day(db, user_id, day_number) is None:
             return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)

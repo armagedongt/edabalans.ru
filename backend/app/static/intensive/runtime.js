@@ -41,7 +41,7 @@
       const response = await fetch("/api/intensive/state", {credentials: "same-origin", headers: {Accept: "application/json"}});
       if (response.ok) return await response.json();
     } catch (_error) {}
-    return {identified: false, platform: null, opened_days: [], assignment_days: [], unlocked_days: [1], unlock_at: {}, offer: null};
+    return {identified: false, platform: null, opened_days: [], assignment_days: [], unlocked_days: [1, 2, 3, 4], unlock_at: {}, offer: null};
   }
 
   const clientState = readClientState();
@@ -147,6 +147,11 @@
 
   function setupChannels(serverState) {
     document.querySelectorAll("[data-channel-block]").forEach((block) => {
+      if (!serverState.identified) {
+        block.hidden = true;
+        return;
+      }
+      block.hidden = false;
       const actions = block.querySelector(".channel-actions");
       block.querySelectorAll("[data-channel]").forEach((link) => {
         const messenger = link.dataset.channel;
@@ -219,7 +224,7 @@
     }
     open.addEventListener("click", (event) => {
       event.preventDefault();
-      if (!(serverState.assignment_days || []).includes(day)) {
+      if (serverState.identified && !(serverState.assignment_days || []).includes(day)) {
         if (warning) warning.hidden = false;
         return;
       }

@@ -1,4 +1,6 @@
 import os
+import time
+import uuid
 from datetime import datetime, timedelta, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -13,6 +15,8 @@ from app.database import Base, get_db  # noqa: E402
 from app.intensive_web_access import (  # noqa: E402
     DAY_DELAY,
     OFFER_DISCOUNT,
+    SESSION_COOKIE,
+    _signed_value,
     access_token_row,
     create_offer_token,
     day_unlocked,
@@ -25,7 +29,7 @@ from app.intensive_web_access import (  # noqa: E402
     state_payload,
 )
 from app.main import app  # noqa: E402
-from app.models import AttributionEvent, CourseEvent, User  # noqa: E402
+from app.models import AttributionEvent, CourseEvent, CourseStageProgress, User  # noqa: E402
 
 
 SECRET = "intensive-test-secret"
@@ -82,6 +86,13 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
     assert state["identified"] is True
     assert state["platform"] == "telegram"
     assert state["opened_days"] == [1]
+    assert state["unlocked_days"] == [1]
+    assert state["current_day"] == 1
+
+    for day in range(2, 5):
+        locked = client.get(f"/intensive/day-{day}", follow_redirects=False)
+        assert locked.status_code == 307
+        assert locked.headers["location"] == "/intensive"
 
     with factory() as db:
         event = db.scalar(select(AttributionEvent))
@@ -117,6 +128,55 @@ def test_progress_is_durable_in_course_tables_and_day_four_starts_offer() -> Non
         assert payload["offer"]["active"] is True
         assert db.scalar(select(func.count(CourseEvent.id))) == 8
         db.commit()
+    app.dependency_overrides.clear()
+
+
+def test_public_entry_has_all_four_days_without_creating_progress() -> None:
+    client, factory = make_client()
+
+    entry = client.get("/intensive/start", follow_redirects=False)
+    assert entry.status_code == 307
+    assert entry.headers["location"] == "/intensive"
+    assert "edabalans_intensive_session" not in entry.headers
+
+    state = client.get("/api/intensive/state").json()
+    assert state["identified"] is False
+    assert state["unlocked_days"] == [1, 2, 3, 4]
+    assert state["current_day"] == 1
+
+    for day in range(1, 5):
+        assert client.get(f"/intensive/day-{day}").status_code == 200
+
+    state_after_browsing = client.get("/api/intensive/state").json()
+    assert state_after_browsing["identified"] is False
+    assert state_after_browsing["unlocked_days"] == [1, 2, 3, 4]
+    with factory() as db:
+        assert db.scalar(select(func.count(CourseEvent.id))) == 0
+        assert db.scalar(select(func.count(CourseStageProgress.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_stale_personal_cookie_falls_back_to_public_access() -> None:
+    client, factory = make_client()
+    client.cookies.set(
+        SESSION_COOKIE,
+        _signed_value(
+            SECRET,
+            {
+                "user_id": str(uuid.uuid4()),
+                "platform": "telegram",
+                "exp": int(time.time()) + 60,
+            },
+        ),
+    )
+
+    state = client.get("/api/intensive/state").json()
+    assert state["identified"] is False
+    assert state["unlocked_days"] == [1, 2, 3, 4]
+    for day in range(1, 5):
+        assert client.get(f"/intensive/day-{day}").status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(CourseStageProgress.id))) == 0
     app.dependency_overrides.clear()
 
 

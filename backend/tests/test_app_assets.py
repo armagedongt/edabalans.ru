@@ -974,12 +974,6 @@ def test_intensive_concept_pages_are_public() -> None:
     for day_code, title in expected_titles.items():
         friendly = client.get(f"/intensive/{day_code}", follow_redirects=False)
         html = client.get(f"/intensive/{day_code}.html", follow_redirects=False)
-        if day_code != "day-1":
-            assert friendly.status_code == 307
-            assert html.status_code == 307
-            assert friendly.headers["location"] == "/intensive"
-            assert html.headers["location"] == "/intensive"
-            continue
         assert friendly.status_code == 200
         assert html.status_code == 200
         assert html.text == friendly.text
@@ -987,6 +981,8 @@ def test_intensive_concept_pages_are_public() -> None:
         assert "Бесплатный интенсив" in friendly.text
         assert "data-edabalans-site-header" in friendly.text
         assert "data-edabalans-footer" in friendly.text
+        if day_code in {"day-1", "day-2", "day-3"}:
+            assert 'data-channel-block hidden' in friendly.text
         assert '/intensive/runtime.js?v=1' in friendly.text
         assert "EDITOR NOTE" not in friendly.text
     stylesheet = client.get("/intensive/intensive-components.css")
@@ -1002,6 +998,9 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "edabalans_intensive_progress" not in script.text
     assert "/api/intensive/state" in script.text
     assert "/api/intensive/offer-token" in script.text
+    assert "serverState.identified && !(serverState.assignment_days || []).includes(day)" in script.text
+    assert "if (!serverState.identified)" in script.text
+    assert "unlocked_days: [1, 2, 3, 4]" in script.text
     assert 'method: "POST"' in script.text
     assert "target_url: MASTERCLASS_URL" in script.text
     assert client.get("/intensive/day-1/post/telegram").status_code == 404
