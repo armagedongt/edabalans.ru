@@ -55,7 +55,8 @@ magic link и собственный клиентский вход относя�
 - `ROBOKASSA_MERCHANT_LOGIN`;
 - `ROBOKASSA_TEST_PASSWORD_1` и будущий `ROBOKASSA_PASSWORD_1`;
 - `ROBOKASSA_HASH_ALGORITHM` — должен совпадать с кабинетом магазина;
-- `ROBOKASSA_JWS_CERTIFICATE_BASE64` — DER-сертификат Robokassa в base64;
+- `ROBOKASSA_JWS_CERTIFICATE_BASE64` — официальный PEM- или DER-сертификат
+  Robokassa в base64;
 - `ROBOKASSA_RECEIPT_SNO`, `ROBOKASSA_RECEIPT_TAX`,
   `ROBOKASSA_RECEIPT_PAYMENT_METHOD`, `ROBOKASSA_RECEIPT_PAYMENT_OBJECT` —
   параметры чека, сверенные с действующим магазином.

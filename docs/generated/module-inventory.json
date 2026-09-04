@@ -26370,7 +26370,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 97,
+          "line": 100,
           "module_id": "platform.commerce",
           "name": "_receipt",
           "qualname": "_receipt"
@@ -26378,7 +26378,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 112,
+          "line": 115,
           "module_id": "platform.commerce",
           "name": "_payment_fields",
           "qualname": "_payment_fields"
@@ -26386,7 +26386,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 158,
+          "line": 161,
           "module_id": "platform.commerce",
           "name": "create_payment",
           "qualname": "create_payment"
@@ -26394,7 +26394,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 251,
+          "line": 254,
           "module_id": "platform.commerce",
           "name": "_b64url_decode",
           "qualname": "_b64url_decode"
@@ -26402,7 +26402,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 255,
+          "line": 258,
           "module_id": "platform.commerce",
           "name": "verify_result2",
           "qualname": "verify_result2"
@@ -26410,7 +26410,7 @@
         {
           "file": "backend/app/robokassa_service.py",
           "kind": "function",
-          "line": 282,
+          "line": 285,
           "module_id": "platform.commerce",
           "name": "confirm_payment",
           "qualname": "confirm_payment"
@@ -26898,7 +26898,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 56,
+          "line": 58,
           "module_id": "platform.commerce",
           "name": "make_client",
           "qualname": "make_client"
@@ -26906,7 +26906,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 81,
+          "line": 83,
           "module_id": "platform.commerce",
           "name": "override_db",
           "qualname": "make_client.override_db"
@@ -26914,7 +26914,15 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 90,
+          "line": 92,
+          "module_id": "platform.commerce",
+          "name": "test_official_pem_certificate_format_is_accepted",
+          "qualname": "test_official_pem_certificate_format_is_accepted"
+        },
+        {
+          "file": "backend/tests/test_robokassa_payments.py",
+          "kind": "function",
+          "line": 110,
           "module_id": "platform.commerce",
           "name": "seed_catalog",
           "qualname": "seed_catalog"
@@ -26922,7 +26930,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 121,
+          "line": 141,
           "module_id": "platform.commerce",
           "name": "signed_result",
           "qualname": "signed_result"
@@ -26930,7 +26938,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 147,
+          "line": 167,
           "module_id": "platform.commerce",
           "name": "encoded",
           "qualname": "signed_result.encoded"
@@ -26938,7 +26946,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 158,
+          "line": 178,
           "module_id": "platform.commerce",
           "name": "create_checkout",
           "qualname": "create_checkout"
@@ -26946,7 +26954,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 168,
+          "line": 188,
           "module_id": "platform.commerce",
           "name": "test_checkout_uses_database_price_and_does_not_create_user",
           "qualname": "test_checkout_uses_database_price_and_does_not_create_user"
@@ -26954,7 +26962,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 208,
+          "line": 228,
           "module_id": "platform.commerce",
           "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
           "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
@@ -26962,7 +26970,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 228,
+          "line": 248,
           "module_id": "platform.commerce",
           "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
           "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -26970,7 +26978,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 255,
+          "line": 275,
           "module_id": "platform.commerce",
           "name": "test_signed_production_result_grants_access",
           "qualname": "test_signed_production_result_grants_access"
@@ -26978,7 +26986,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 274,
+          "line": 294,
           "module_id": "platform.commerce",
           "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
           "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -26986,7 +26994,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 299,
+          "line": 319,
           "module_id": "platform.commerce",
           "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
           "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -26994,7 +27002,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 324,
+          "line": 344,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
           "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -27002,7 +27010,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 380,
+          "line": 400,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_rejects_another_email_before_payment",
           "qualname": "test_personal_offer_rejects_another_email_before_payment"
@@ -54785,7 +54793,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 97,
+      "line": 100,
       "module_id": "platform.commerce",
       "name": "_receipt",
       "qualname": "_receipt"
@@ -54793,7 +54801,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 112,
+      "line": 115,
       "module_id": "platform.commerce",
       "name": "_payment_fields",
       "qualname": "_payment_fields"
@@ -54801,7 +54809,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 158,
+      "line": 161,
       "module_id": "platform.commerce",
       "name": "create_payment",
       "qualname": "create_payment"
@@ -54809,7 +54817,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 251,
+      "line": 254,
       "module_id": "platform.commerce",
       "name": "_b64url_decode",
       "qualname": "_b64url_decode"
@@ -54817,7 +54825,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 255,
+      "line": 258,
       "module_id": "platform.commerce",
       "name": "verify_result2",
       "qualname": "verify_result2"
@@ -54825,7 +54833,7 @@
     {
       "file": "backend/app/robokassa_service.py",
       "kind": "function",
-      "line": 282,
+      "line": 285,
       "module_id": "platform.commerce",
       "name": "confirm_payment",
       "qualname": "confirm_payment"
@@ -61185,7 +61193,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 56,
+      "line": 58,
       "module_id": "platform.commerce",
       "name": "make_client",
       "qualname": "make_client"
@@ -61193,7 +61201,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 81,
+      "line": 83,
       "module_id": "platform.commerce",
       "name": "override_db",
       "qualname": "make_client.override_db"
@@ -61201,7 +61209,15 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 90,
+      "line": 92,
+      "module_id": "platform.commerce",
+      "name": "test_official_pem_certificate_format_is_accepted",
+      "qualname": "test_official_pem_certificate_format_is_accepted"
+    },
+    {
+      "file": "backend/tests/test_robokassa_payments.py",
+      "kind": "function",
+      "line": 110,
       "module_id": "platform.commerce",
       "name": "seed_catalog",
       "qualname": "seed_catalog"
@@ -61209,7 +61225,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 121,
+      "line": 141,
       "module_id": "platform.commerce",
       "name": "signed_result",
       "qualname": "signed_result"
@@ -61217,7 +61233,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 147,
+      "line": 167,
       "module_id": "platform.commerce",
       "name": "encoded",
       "qualname": "signed_result.encoded"
@@ -61225,7 +61241,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 158,
+      "line": 178,
       "module_id": "platform.commerce",
       "name": "create_checkout",
       "qualname": "create_checkout"
@@ -61233,7 +61249,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 168,
+      "line": 188,
       "module_id": "platform.commerce",
       "name": "test_checkout_uses_database_price_and_does_not_create_user",
       "qualname": "test_checkout_uses_database_price_and_does_not_create_user"
@@ -61241,7 +61257,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 208,
+      "line": 228,
       "module_id": "platform.commerce",
       "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
       "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
@@ -61249,7 +61265,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 228,
+      "line": 248,
       "module_id": "platform.commerce",
       "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
       "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -61257,7 +61273,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 255,
+      "line": 275,
       "module_id": "platform.commerce",
       "name": "test_signed_production_result_grants_access",
       "qualname": "test_signed_production_result_grants_access"
@@ -61265,7 +61281,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 274,
+      "line": 294,
       "module_id": "platform.commerce",
       "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
       "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -61273,7 +61289,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 299,
+      "line": 319,
       "module_id": "platform.commerce",
       "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
       "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -61281,7 +61297,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 324,
+      "line": 344,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
       "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -61289,7 +61305,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 380,
+      "line": 400,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_rejects_another_email_before_payment",
       "qualname": "test_personal_offer_rejects_another_email_before_payment"

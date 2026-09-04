@@ -33,9 +33,12 @@ from app.models import (  # noqa: E402
     UserEmail,
     UserOffer,
 )
+from app.robokassa_service import _result_public_key  # noqa: E402
 
 
-def certificate_pair() -> tuple[rsa.RSAPrivateKey, str]:
+def certificate_pair(
+    encoding: serialization.Encoding = serialization.Encoding.DER,
+) -> tuple[rsa.RSAPrivateKey, str]:
     key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "robokassa.test")])
     now = datetime.now(timezone.utc)
@@ -49,8 +52,8 @@ def certificate_pair() -> tuple[rsa.RSAPrivateKey, str]:
         .not_valid_after(now + timedelta(days=30))
         .sign(key, hashes.SHA256())
     )
-    der = certificate.public_bytes(serialization.Encoding.DER)
-    return key, base64.b64encode(der).decode("ascii")
+    certificate_bytes = certificate.public_bytes(encoding)
+    return key, base64.b64encode(certificate_bytes).decode("ascii")
 
 
 def make_client(
@@ -85,6 +88,17 @@ def make_client(
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[get_settings] = lambda: settings
     return TestClient(app, base_url="https://app.edabalans.ru"), factory, key
+
+
+def test_official_pem_certificate_format_is_accepted() -> None:
+    _, certificate = certificate_pair(serialization.Encoding.PEM)
+    settings = Settings(
+        database_url="sqlite+pysqlite:///:memory:",
+        app_auth_secret="robokassa-tests",
+        robokassa_jws_certificate_base64=certificate,
+    )
+
+    assert isinstance(_result_public_key(settings), rsa.RSAPublicKey)
 
 
 def seed_catalog(factory: sessionmaker[Session]) -> None:

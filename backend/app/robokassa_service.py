@@ -82,10 +82,13 @@ def _require_checkout_settings(settings: Settings) -> tuple[str, str]:
 
 def _result_public_key(settings: Settings) -> rsa.RSAPublicKey:
     try:
-        certificate_der = base64.b64decode(
+        certificate_bytes = base64.b64decode(
             settings.robokassa_jws_certificate_base64, validate=True
         )
-        certificate = x509.load_der_x509_certificate(certificate_der)
+        if certificate_bytes.lstrip().startswith(b"-----BEGIN CERTIFICATE-----"):
+            certificate = x509.load_pem_x509_certificate(certificate_bytes)
+        else:
+            certificate = x509.load_der_x509_certificate(certificate_bytes)
     except (ValueError, TypeError) as exc:
         raise RobokassaError("Не настроен сертификат ResultUrl2") from exc
     public_key = certificate.public_key()
