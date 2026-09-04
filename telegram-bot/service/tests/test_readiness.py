@@ -241,16 +241,18 @@ def test_successful_scheduler_iteration_refreshes_activity(tmp_path, monkeypatch
     Base.metadata.create_all(engine)
     monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
     monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "")
+    monkeypatch.setattr(main_module.time, "monotonic", lambda: 456.0)
     main_module.runtime_health.last_scheduler_activity = 123.0
     main_module.runtime_health.scheduler_failed = True
 
     main_module.scheduler_iteration()
 
-    assert main_module.runtime_health.last_scheduler_activity > 123.0
+    assert main_module.runtime_health.last_scheduler_activity == 456.0
     assert main_module.runtime_health.scheduler_failed is False
 
 
-def test_broadcast_refreshes_scheduler_activity_between_recipients():
+def test_broadcast_refreshes_scheduler_activity_between_recipients(monkeypatch):
+    monkeypatch.setattr(main_module.time, "monotonic", lambda: 456.0)
     recipients = [
         type("Recipient", (), {"contact_id": 1, "status": "pending"})(),
         type("Recipient", (), {"contact_id": 2, "status": "pending"})(),
@@ -293,7 +295,7 @@ def test_broadcast_refreshes_scheduler_activity_between_recipients():
         def send_content(self, chat_id, sent_content, configuration):
             self.calls += 1
             if self.calls == 2:
-                assert main_module.runtime_health.last_scheduler_activity > 123.0
+                assert main_module.runtime_health.last_scheduler_activity == 456.0
             assert sent_content is content
             return f"message-{self.calls}"
 
@@ -302,4 +304,4 @@ def test_broadcast_refreshes_scheduler_activity_between_recipients():
     sent, failed = main_module._deliver_broadcast(FakeSession(), row, FakeTelegram())
 
     assert (sent, failed) == (2, 0)
-    assert main_module.runtime_health.last_scheduler_activity > 123.0
+    assert main_module.runtime_health.last_scheduler_activity == 456.0
