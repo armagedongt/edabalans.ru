@@ -29,6 +29,7 @@ from app.models import (
     UserOffer,
     UserPhone,
     PersonalAccessLink,
+    TelegramTrackingEvent,
 )
 from app.access_service import complete_review, grant_resources
 from app.checkout_reference import checkout_reference_from_product
@@ -53,6 +54,72 @@ OFFER_RESOURCE_COMPANIONS = {
 
 class TildaPayloadError(ValueError):
     pass
+
+
+def _yclid_from_url(value: str | None) -> str | None:
+    if not value:
+        return None
+    query = parse_qs(urlparse(value).query)
+    for key, values in query.items():
+        if key.lower() == "yclid" and values and values[0].strip():
+            return values[0].strip()
+    return None
+
+
+def record_paid_tracking_event(
+    db: Session,
+    payment: Payment,
+    referer: str | None,
+    occurred_at: datetime,
+) -> None:
+    if payment.payment_status != "paid" or payment.user_id is None:
+        return
+    deduplication_key = f"metrika:purchase:{payment.id}"
+    if db.scalar(select(TelegramTrackingEvent.id).where(
+        TelegramTrackingEvent.deduplication_key == deduplication_key
+    )):
+        return
+
+    yclid = _yclid_from_url(referer)
+    source_event: TelegramTrackingEvent | None = None
+    if not yclid:
+        candidates = db.scalars(
+            select(TelegramTrackingEvent)
+            .where(
+                TelegramTrackingEvent.user_id == payment.user_id,
+                TelegramTrackingEvent.event_type.in_((
+                    "start_first", "start_repeat", "start_maintenance"
+                )),
+                TelegramTrackingEvent.occurred_at <= occurred_at,
+            )
+            .order_by(TelegramTrackingEvent.occurred_at.desc())
+        ).all()
+        for candidate in candidates:
+            raw_query = (candidate.metadata_json or {}).get("raw_query") or {}
+            candidate_yclid = str(raw_query.get("yclid") or "").strip()
+            if candidate_yclid:
+                yclid = candidate_yclid
+                source_event = candidate
+                break
+
+    raw_query = {"yclid": yclid} if yclid else {}
+    db.add(TelegramTrackingEvent(
+        id=str(uuid.uuid4()),
+        tracking_link_id=source_event.tracking_link_id if source_event else None,
+        user_id=payment.user_id,
+        event_type="purchase_paid",
+        metadata_json={
+            "raw_query": raw_query,
+            "payment_id": str(payment.id),
+            "price": str(payment.amount),
+            "currency": payment.currency,
+            "attribution_source": "payment_referer" if _yclid_from_url(referer) else (
+                "messenger_start" if yclid else "unattributed"
+            ),
+        },
+        deduplication_key=deduplication_key,
+        occurred_at=occurred_at,
+    ))
 
 
 def checkout_resource_codes(items: list[str], configured_codes: set[str]) -> list[str]:
@@ -647,6 +714,7 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
                     **attribution_from_url(referer),
                 )
             )
+        record_paid_tracking_event(db, existing, referer, event_at)
         try:
             db.commit()
         except IntegrityError:
@@ -708,6 +776,7 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         )
 
     access_granted = grant_payment_access(db, payment, checkout, event_at)
+    record_paid_tracking_event(db, payment, referer, event_at)
 
     try:
         db.commit()

@@ -652,6 +652,7 @@ owns_files = [
   "telegram-bot/service/app/engine.py", "telegram-bot/service/app/formatting.py",
   "telegram-bot/service/app/graph.py", "telegram-bot/service/app/main.py",
   "telegram-bot/service/app/maintenance.py", "telegram-bot/service/app/masterclass_dispatch.py",
+  "telegram-bot/service/app/metrika.py",
   "telegram-bot/service/app/masterclass_link.py", "telegram-bot/service/app/masterclass_triggers.py",
   "telegram-bot/service/app/models.py", "telegram-bot/service/app/schemas.py",
   "telegram-bot/service/app/seed.py", "telegram-bot/service/app/telegram.py",

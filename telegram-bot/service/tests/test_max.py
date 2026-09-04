@@ -1,11 +1,12 @@
 from fastapi.testclient import TestClient
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
+from urllib.parse import parse_qs, urlparse
 
 import app.main as main_module
 from app.database import Base, get_db, make_engine
 from app.main import app
-from app.models import CrmAttributionEvent, CrmMessengerAccount, CrmTag, CrmUserTag
+from app.models import CrmAttributionEvent, CrmMessengerAccount, CrmTag, CrmUserTag, TrackingEvent
 from app.seed import seed_defaults
 
 
@@ -67,6 +68,13 @@ def test_max_start_saves_identity_and_stops_at_maintenance(tmp_path, monkeypatch
         assert session.scalar(select(CrmAttributionEvent.event_type).where(
             CrmAttributionEvent.user_id == account.user_id
         )) == "max_start_maintenance"
+        tracking = session.scalar(select(TrackingEvent).where(TrackingEvent.user_id == account.user_id))
+        assert tracking.event_type == "start_first"
+        assert tracking.metadata_json == {
+            "messenger": "max",
+            "payload_status": "empty",
+            "raw_query": {},
+        }
     app.dependency_overrides.clear()
 
 
@@ -76,7 +84,12 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
     tags = client.get("/bot-api/tags").json()
     pikabu = next(tag for tag in tags if tag["name"] == "Пикабу")
     created = client.post("/bot-api/link-rules", json={"name": "MAX Пикабу", "tag_ids": [pikabu["id"]]}).json()
-    payload = created["aliases"][0]["token"]
+    alias_token = created["aliases"][0]["token"]
+    redirect = client.get(
+        f"/go/{alias_token}?to=max&utm_source=yandex&yclid=max-click-901",
+        follow_redirects=False,
+    )
+    payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
     response = client.post("/bot/max/webhook", json=max_start(payload=payload), headers=admin_headers)
     assert response.status_code == 200
     assert len(fake.sent) == 1
@@ -88,6 +101,15 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
             CrmAttributionEvent.user_id == account.user_id
         ).order_by(CrmAttributionEvent.created_at)))
         assert events == ["max_first_touch", "max_start_maintenance"]
+        tracking = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.user_id == account.user_id,
+            TrackingEvent.event_type == "start_first",
+        ))
+        assert tracking.metadata_json["messenger"] == "max"
+        assert tracking.metadata_json["raw_query"] == {
+            "utm_source": "yandex",
+            "yclid": "max-click-901",
+        }
     app.dependency_overrides.clear()
 
 
@@ -96,4 +118,25 @@ def test_max_webhook_rejects_missing_or_bad_secret(tmp_path, monkeypatch):
     assert client.post("/bot/max/webhook", json=max_start()).status_code == 403
     assert client.post("/bot/max/webhook", json=max_start(), headers={"X-Max-Bot-Api-Secret": "wrong"}).status_code == 403
     assert client.post("/bot/max/webhook", json={"update_type": "message_created"}, headers={"X-Max-Bot-Api-Secret": "test-secret"}).json() == {"ok": True, "ignored": True}
+    app.dependency_overrides.clear()
+
+
+def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+
+    assert client.post("/bot/max/webhook", json=max_start(), headers=headers).status_code == 200
+    assert client.post(
+        "/bot/max/webhook",
+        json=max_start(timestamp="2026-08-27T11:00:00Z"),
+        headers=headers,
+    ).status_code == 200
+
+    with Session(engine) as session:
+        events = list(session.scalars(select(TrackingEvent.event_type).order_by(
+            TrackingEvent.occurred_at,
+            TrackingEvent.id,
+        )))
+        assert events == ["start_first", "start_repeat"]
+    assert len(fake.sent) == 2
     app.dependency_overrides.clear()

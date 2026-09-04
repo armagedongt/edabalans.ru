@@ -152,6 +152,10 @@ activemq-data/
 .env
 .envrc
 .venv
+
+# Local factual advertising exports. Keep conclusions in README, never commit raw API data.
+work/yandex-search-20260904/*.json
+work/yandex-search-20260904/*.tsv
 env/
 venv/
 ENV/

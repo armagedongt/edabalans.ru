@@ -225,6 +225,14 @@ def assign_first_touch(
 ) -> tuple[bool, list[str]]:
     now = datetime.now(UTC)
     is_first = account.main_scenario_seen_at is None
+    prior_bot_start = session.scalar(select(TrackingEvent.id).where(
+        TrackingEvent.user_id == account.user_id,
+        TrackingEvent.event_type.in_((
+            "start_first", "start_repeat", "start_maintenance",
+            "start_unknown", "start_expired_session",
+        )),
+    ))
+    is_first_bot_visit = prior_bot_start is None
     if is_first and mark_scenario_seen:
         account.main_scenario_seen_at = now
     assigned: list[str] = []
@@ -243,7 +251,11 @@ def assign_first_touch(
             user_id=account.user_id,
             telegram_user_id=contact.telegram_user_id,
             event_type=event_type,
-            metadata_json={"payload_status": payload_status, "raw_query": raw_query},
+            metadata_json={
+                "payload_status": payload_status,
+                "raw_query": raw_query,
+                "is_first_bot_visit": is_first_bot_visit,
+            },
         )
     )
     if not is_first or not link or contact.first_source_token:

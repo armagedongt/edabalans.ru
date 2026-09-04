@@ -424,6 +424,7 @@ class TelegramTrackingEvent(Base):
     telegram_user_id: Mapped[str | None] = mapped_column(String(64), index=True)
     event_type: Mapped[str] = mapped_column(String(64), nullable=False)
     metadata_json: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    deduplication_key: Mapped[str | None] = mapped_column(String(255), unique=True)
     occurred_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

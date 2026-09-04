@@ -23,6 +23,7 @@ from app.models import (
     TrackingLink,
     TrackingLinkAlias,
     TrackingLinkTag,
+    TrackingEvent,
     UpdateReceipt,
 )
 from app.tracking import canonical_tag, resolve_start_payload
@@ -133,6 +134,7 @@ def _assign_first_touch(
     session_tag_ids: list[str],
     raw_query: dict[str, str],
     payload_status: str,
+    receipt_id: str,
 ) -> None:
     now = datetime.now(UTC)
     if created and link:
@@ -167,6 +169,20 @@ def _assign_first_touch(
         ref_code=alias.token if alias else None,
         occurred_at=now,
     ))
+    session.add(TrackingEvent(
+        tracking_link_id=link.id if link else None,
+        alias_id=alias.id if alias else None,
+        user_id=account.user_id,
+        telegram_user_id=account.platform_user_id,
+        event_type="start_first" if created else "start_repeat",
+        metadata_json={
+            "messenger": "max",
+            "payload_status": payload_status,
+            "raw_query": raw_query,
+        },
+        deduplication_key=f"{receipt_id}:tracking_start",
+        occurred_at=now,
+    ))
 
 
 def process_max_update(session: Session, update: dict[str, Any], *, bot_username: str, sender: MaxClient) -> dict[str, Any]:
@@ -185,7 +201,17 @@ def process_max_update(session: Session, update: dict[str, Any], *, bot_username
 
     account, created = _ensure_identity(session, user)
     link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, str(update.get("payload") or ""))
-    _assign_first_touch(session, account, created, link, alias, session_tag_ids, raw_query, payload_status)
+    _assign_first_touch(
+        session,
+        account,
+        created,
+        link,
+        alias,
+        session_tag_ids,
+        raw_query,
+        payload_status,
+        receipt_id,
+    )
     # A failed MAX delivery must make the webhook fail too, so MAX can retry it.
     # Commit only after the send succeeded; the receipt then suppresses normal retries.
     session.flush()

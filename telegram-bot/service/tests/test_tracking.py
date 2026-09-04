@@ -91,10 +91,29 @@ def test_maintenance_preserves_first_touch_without_marking_welcome_seen(tmp_path
         maintenance = session.scalar(select(TrackingEvent).where(TrackingEvent.contact_id == contact.id, TrackingEvent.event_type == "maintenance_contact"))
         assert maintenance.metadata_json["has_masterclass"] is False
         assert maintenance.metadata_json["tracking_link_id"] == created["id"]
-        assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id, TrackingEvent.event_type == "start_maintenance")) == "start_maintenance"
+        start_maintenance = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.contact_id == contact.id,
+            TrackingEvent.event_type == "start_maintenance",
+        ))
+        assert start_maintenance.metadata_json["is_first_bot_visit"] is True
+
+    assert client.post("/telegram/webhook", json=start_update(5, 503, token)).json() == {
+        "ok": True,
+        "maintenance": True,
+    }
+    with Session(engine) as session:
+        maintenance_starts = session.scalars(select(TrackingEvent).where(
+            TrackingEvent.telegram_user_id == "503",
+            TrackingEvent.event_type == "start_maintenance",
+        )).all()
+        assert len(maintenance_starts) == 2
+        assert sum(
+            event.metadata_json["is_first_bot_visit"] is True
+            for event in maintenance_starts
+        ) == 1
 
     monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", False)
-    assert client.post("/telegram/webhook", json=start_update(5, 503)).json() == {"ok": True}
+    assert client.post("/telegram/webhook", json=start_update(6, 503)).json() == {"ok": True}
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "503"))
         contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "503"))
@@ -170,6 +189,32 @@ def test_go_preserves_yclid_without_utm_parameters(tmp_path, monkeypatch):
         )
         assert replay.event_type == "start_expired_session"
         assert replay.metadata_json["raw_query"] == {}
+    app.dependency_overrides.clear()
+
+
+def test_go_can_open_max_with_same_one_time_attribution_payload(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    monkeypatch.setattr(main_module.settings, "max_bot_username", "id230409966750_bot")
+    created = client.post("/bot-api/link-rules", json={"name": "Яндекс → MAX"}).json()
+    token = created["aliases"][0]["token"]
+
+    redirect = client.get(
+        f"/go/{token}?to=max&utm_source=yandex&yclid=max-click-1",
+        follow_redirects=False,
+    )
+
+    assert redirect.status_code == 307
+    parsed = urlparse(redirect.headers["location"])
+    assert parsed.netloc == "max.ru"
+    assert parsed.path == "/id230409966750_bot"
+    payload = parse_qs(parsed.query)["start"][0]
+    assert payload.startswith("U")
+    with Session(engine) as session:
+        click = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "web_click"))
+        assert click.metadata_json["raw_query"] == {
+            "utm_source": "yandex",
+            "yclid": "max-click-1",
+        }
     app.dependency_overrides.clear()
 
 

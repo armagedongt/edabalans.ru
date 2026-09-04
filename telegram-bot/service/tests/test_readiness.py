@@ -251,6 +251,57 @@ def test_successful_scheduler_iteration_refreshes_activity(tmp_path, monkeypatch
     assert main_module.runtime_health.scheduler_failed is False
 
 
+def test_scheduler_runs_metrika_sync_at_configured_interval(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'scheduler-metrika.sqlite'}")
+    Base.metadata.create_all(engine)
+    monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "")
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_offline_enabled", True)
+    monkeypatch.setattr(main_module.settings, "yandex_oauth_token", "secret")
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_counter_id", 97331502)
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_offline_interval_seconds", 60)
+    monkeypatch.setattr(main_module.time, "monotonic", lambda: 500.0)
+    calls = []
+    monkeypatch.setattr(main_module, "MetrikaOfflineClient", lambda token, counter: (token, counter))
+    monkeypatch.setattr(main_module, "sync_offline_conversions", lambda session, client: calls.append(client))
+    main_module.last_metrika_sync_monotonic = None
+
+    main_module.scheduler_iteration()
+    main_module.scheduler_iteration()
+
+    assert calls == [("secret", 97331502)]
+    assert main_module.runtime_health.scheduler_failed is False
+
+
+def test_metrika_failure_is_isolated_and_retryable_next_interval(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'scheduler-metrika-failure.sqlite'}")
+    Base.metadata.create_all(engine)
+    monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "")
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_offline_enabled", True)
+    monkeypatch.setattr(main_module.settings, "yandex_oauth_token", "secret")
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_counter_id", 97331502)
+    monkeypatch.setattr(main_module.settings, "yandex_metrika_offline_interval_seconds", 60)
+    clock = {"value": 500.0}
+    monkeypatch.setattr(main_module.time, "monotonic", lambda: clock["value"])
+    attempts = []
+
+    def fail_sync(session, client):
+        attempts.append(clock["value"])
+        raise RuntimeError("temporary Yandex failure")
+
+    monkeypatch.setattr(main_module, "MetrikaOfflineClient", lambda token, counter: object())
+    monkeypatch.setattr(main_module, "sync_offline_conversions", fail_sync)
+    main_module.last_metrika_sync_monotonic = None
+
+    main_module.scheduler_iteration()
+    clock["value"] = 561.0
+    main_module.scheduler_iteration()
+
+    assert attempts == [500.0, 561.0]
+    assert main_module.runtime_health.scheduler_failed is False
+
+
 def test_broadcast_refreshes_scheduler_activity_between_recipients(monkeypatch):
     monkeypatch.setattr(main_module.time, "monotonic", lambda: 456.0)
     recipients = [

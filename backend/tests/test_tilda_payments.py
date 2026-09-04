@@ -34,6 +34,7 @@ from app.models import (  # noqa: E402
     UserOffer,
     PersonalAccessLink,
     UserCoursePolicy,
+    TelegramTrackingEvent,
 )
 
 TOKEN = "test-tilda-token"
@@ -144,8 +145,10 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
     client, session_factory = make_client()
     seed_catalog(session_factory)
 
+    payload = paid_payload()
+    payload["referer"] = "https://example.test/buy?utm_source=yandex&yclid=click-1001"
     response = client.post(
-        "/integrations/tilda/payments", data=paid_payload(), headers=HEADERS
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
     )
     assert response.status_code == 200
     assert response.json()["status"] == "saved"
@@ -170,17 +173,75 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert event is not None
         assert event.event_type == "masterclass_purchase_confirmed"
         assert event.details["payment_id"] == str(payment.id)
+        paid_tracking = db.scalar(select(TelegramTrackingEvent).where(
+            TelegramTrackingEvent.event_type == "purchase_paid"
+        ))
+        assert paid_tracking.metadata_json["raw_query"] == {"yclid": "click-1001"}
+        assert paid_tracking.metadata_json["price"] == "4990.00"
+        assert paid_tracking.metadata_json["currency"] == "RUB"
 
     duplicate = client.post(
-        "/integrations/tilda/payments", data=paid_payload(), headers=HEADERS
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
     )
     with session_factory() as db:
         assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
+        assert db.scalar(select(func.count(TelegramTrackingEvent.id))) == 1
     assert duplicate.status_code == 200
     assert duplicate.json()["status"] == "duplicate"
     with session_factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_paid_order_reuses_yclid_from_the_users_messenger_start() -> None:
+    client, session_factory = make_client()
+    seed_catalog(session_factory)
+    with session_factory() as db:
+        user = User(display_name="Тестовый клиент", status="active")
+        db.add(user)
+        db.flush()
+        db.add(UserEmail(
+            user_id=user.id,
+            email_original="Client@Example.Test",
+            email_normalized="client@example.test",
+            is_primary=True,
+            source="test",
+        ))
+        db.add(TelegramTrackingEvent(
+            id="messenger-start-with-old-yclid",
+            user_id=user.id,
+            event_type="start_first",
+            metadata_json={"raw_query": {"yclid": "older-click"}},
+            occurred_at=datetime(2026, 8, 19, 12, tzinfo=timezone.utc),
+        ))
+        db.add(TelegramTrackingEvent(
+            id="messenger-start-with-new-yclid",
+            user_id=user.id,
+            event_type="start_repeat",
+            metadata_json={"raw_query": {"yclid": "earlier-click-1"}},
+            occurred_at=datetime(2026, 8, 20, 12, tzinfo=timezone.utc),
+        ))
+        db.add(TelegramTrackingEvent(
+            id="messenger-start-after-payment",
+            user_id=user.id,
+            event_type="start_repeat",
+            metadata_json={"raw_query": {"yclid": "future-click-must-not-win"}},
+            occurred_at=datetime(2026, 8, 23, 12, tzinfo=timezone.utc),
+        ))
+        db.commit()
+
+    response = client.post(
+        "/integrations/tilda/payments", data=paid_payload(), headers=HEADERS
+    )
+
+    assert response.status_code == 200
+    with session_factory() as db:
+        event = db.scalar(select(TelegramTrackingEvent).where(
+            TelegramTrackingEvent.event_type == "purchase_paid"
+        ))
+        assert event.metadata_json["raw_query"] == {"yclid": "earlier-click-1"}
+        assert event.metadata_json["attribution_source"] == "messenger_start"
     app.dependency_overrides.clear()
 
 
@@ -468,6 +529,11 @@ def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 4
         assert db.scalar(select(OfferCheckout.status)) == "paid"
+        tracking = db.scalar(select(TelegramTrackingEvent).where(
+            TelegramTrackingEvent.event_type == "purchase_paid"
+        ))
+        assert Decimal(tracking.metadata_json["price"]) == Decimal("3900")
+        assert tracking.metadata_json["currency"] == "RUB"
 
     duplicate = client.post(
         "/integrations/tilda/payments", data=payload, headers=HEADERS
@@ -477,6 +543,7 @@ def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
     with session_factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 4
+        assert db.scalar(select(func.count(TelegramTrackingEvent.id))) == 1
     app.dependency_overrides.clear()
 
 

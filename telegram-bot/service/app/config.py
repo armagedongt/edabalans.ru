@@ -21,6 +21,10 @@ class Settings(BaseSettings):
     max_bot_username: str = ""
     max_bot_token: str = ""
     max_webhook_secret: str = ""
+    yandex_oauth_token: str = ""
+    yandex_metrika_counter_id: int = 97331502
+    yandex_metrika_offline_enabled: bool = False
+    yandex_metrika_offline_interval_seconds: float = 300.0
     admin_username: str = ""
     admin_password: str = ""
     scheduler_enabled: bool = False

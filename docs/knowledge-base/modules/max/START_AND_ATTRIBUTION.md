@@ -1,7 +1,7 @@
 ---
 title: "MAX: старт, идентификация и атрибуция"
 document_status: current
-implementation_status: in_development
+implementation_status: implemented
 ---
 
 # MAX: старт, идентификация и атрибуция
@@ -40,6 +40,9 @@ implementation_status: in_development
 6. Только при первом MAX-входе по известной ссылке назначить уже существующие
    канонические теги, создать `max_first_touch` в `attribution_events`.
 7. Сохранить факт каждого MAX-старта в `attribution_events`.
+   Одновременно записать совместимое событие `start_first`/`start_repeat` в
+   `tg_tracking_events`; UTM и `yclid` берутся из одноразовой session, созданной
+   переходом `/go/{code}?to=max`.
 8. Не отмечать `main_scenario_seen_at` и не запускать `tg_sequences`: ремонт не
    считается просмотром Welcome.
 9. Отправить фиксированную заглушку ремонта. Человек остаётся сохранён в CRM для
@@ -66,6 +69,7 @@ implementation_status: in_development
 | Первое касание | `attribution_events` |
 | Каталог коротких кодов | `tg_tracking_links`, aliases и связи тегов |
 | Идемпотентность webhook | `tg_update_receipts` |
+| Общая маркетинговая воронка и offline-конверсии | `tg_tracking_events` |
 
 ## Исполняемая схема
 
@@ -93,3 +97,5 @@ flowchart TD
 3. Повтор одного webhook не создаёт второе сообщение.
 4. Неверный и пустой секрет не принимаются.
 5. Неизвестный payload не создаёт новых тегов.
+6. Переход `go. → MAX` сохраняет `yclid`, а первый старт становится кандидатом
+   на цель Метрики `bot_start` без двойной отправки webhook.

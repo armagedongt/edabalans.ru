@@ -25,6 +25,7 @@ from app.database import Base, SessionLocal, engine, get_db
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
+from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
@@ -63,6 +64,7 @@ class RuntimeHealth:
 
 
 runtime_health = RuntimeHealth()
+last_metrika_sync_monotonic: float | None = None
 
 
 def _record_scheduler_activity() -> None:
@@ -345,6 +347,7 @@ def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> 
 
 
 def scheduler_iteration() -> None:
+    global last_metrika_sync_monotonic
     with SessionLocal() as session:
         tg = TelegramClient(
             settings.telegram_test_bot_token,
@@ -370,6 +373,27 @@ def scheduler_iteration() -> None:
                 _deliver_broadcast(session, broadcast, tg)
             dispatch_masterclass_notifications(session, tg)
             _record_scheduler_activity()
+        if (
+            settings.yandex_metrika_offline_enabled
+            and settings.yandex_oauth_token
+            and settings.yandex_metrika_counter_id
+            and (
+                last_metrika_sync_monotonic is None
+                or time.monotonic() - last_metrika_sync_monotonic
+                >= settings.yandex_metrika_offline_interval_seconds
+            )
+        ):
+            last_metrika_sync_monotonic = time.monotonic()
+            try:
+                sync_offline_conversions(
+                    session,
+                    MetrikaOfflineClient(
+                        settings.yandex_oauth_token,
+                        settings.yandex_metrika_counter_id,
+                    ),
+                )
+            except Exception:
+                logger.exception("Yandex Metrika offline conversion sync failed")
         _record_scheduler_activity()
 
 
@@ -528,7 +552,15 @@ def _go_response(token: str, request: Request, session: Session) -> Response:
     start_payload = alias.token
     if query and link.target_kind == "bot_start":
         start_payload = create_tracking_session(session, link, alias, query)
-    destination = alias.telegram_invite_url if link.target_kind == "channel_invite" else f"https://t.me/{settings.telegram_test_bot_username.lstrip('@')}?start={start_payload}"
+    requested_messenger = request.query_params.get("to", "").strip().lower()
+    if link.target_kind == "channel_invite":
+        destination = alias.telegram_invite_url
+    elif requested_messenger == "max":
+        if not settings.max_bot_username:
+            raise HTTPException(409, "MAX-бот ещё не настроен")
+        destination = f"https://max.ru/{settings.max_bot_username.lstrip('@')}?start={start_payload}"
+    else:
+        destination = f"https://t.me/{settings.telegram_test_bot_username.lstrip('@')}?start={start_payload}"
     if not destination:
         raise HTTPException(409, "Для ссылки на канал ещё не создан Telegram invite URL")
     session.add(TrackingEvent(tracking_link_id=link.id, alias_id=alias.id, event_type="web_click", metadata_json={"raw_query": query, "warning": suffix_warning, "path_token": token}))
