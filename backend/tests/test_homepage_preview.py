@@ -1037,7 +1037,15 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
     assert "singleSource: true" in response.text
     assert "allowSeek: true" in response.text
     assert "acceleratedProgress: false" in response.text
-    assert "if (mediaPreset.singleSource) previewVideo.loop = false;" in response.text
+    autoplay_setup = response.text.split("if (MODULES.autoplay) {", 1)[1].split(
+        "} else {", 1
+    )[0]
+    assert "previewVideo.loop = true;" in autoplay_setup
+    assert "mediaPreset.singleSource" not in autoplay_setup
+    sound_engagement = response.text.split("function enableSoundAndWatch(){", 1)[1].split(
+        "\n  }", 1
+    )[0]
+    assert "previewVideo.loop = false;" in sound_engagement
     assert "const videos = mediaPreset.singleSource ? [previewVideo]" in response.text
     assert "if (!mediaPreset.singleSource) prepareMainPlayback();" in response.text
     assert "const seekEnabled = mediaPreset.allowSeek ?? (PLAYER_MODE !== 'engagement');" in response.text
