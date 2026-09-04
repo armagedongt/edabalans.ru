@@ -114,19 +114,36 @@
     .menu-hero .intensive-title span{width:max-content;max-width:100%;margin-inline:auto}
     .menu-hero .intensive-title__accent{font-size:clamp(16px,4vw,34px)}
     .menu-copy{margin:27px 0 0;color:var(--text);font-size:clamp(17px,4.4vw,21px);font-weight:500;line-height:1.6;text-align:left}
+    .menu-links-hint{margin:14px 0 0;color:var(--ink);font-size:clamp(16px,4.05vw,19px);font-weight:750;line-height:1.5;text-align:left}
     .days-list{display:grid;gap:12px;width:min(100%,var(--reading));margin:32px auto 0}
     .day-card{position:relative;display:grid;grid-template-columns:48px minmax(0,1fr);gap:14px;align-items:center;min-height:118px;padding:18px;border:1px solid rgba(22,87,128,.12);border-radius:18px;background:rgba(255,255,255,.92);box-shadow:0 10px 28px -23px rgba(17,96,143,.55);color:var(--ink);text-decoration:none;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
     .day-card:hover,.day-card:focus-visible{border-color:rgba(38,168,239,.34);box-shadow:0 17px 34px -25px rgba(17,96,143,.65);transform:translateY(-2px)}
     .day-card__number{display:grid;width:44px;height:44px;place-items:center;border-radius:13px;background:#d9f4e3;color:var(--green);font-size:22px;font-weight:900}
     .day-card__text{font-size:clamp(15px,4vw,18px);font-weight:500;line-height:1.45}
     .day-card__text strong{font-weight:850}
+    [data-card-theme] .day-card{overflow:hidden;border-width:1px;box-shadow:0 15px 30px -23px rgba(18,74,110,.48);transition:transform .2s ease,background .2s ease,border-color .2s ease,color .2s ease,box-shadow .2s ease}
+    [data-card-theme] .day-card:hover,[data-card-theme] .day-card:focus-visible{box-shadow:0 20px 36px -22px rgba(18,74,110,.58);transform:translateY(-3px)}
+    [data-card-theme] .day-card:focus-visible{outline:3px solid rgba(255,255,255,.76);outline-offset:-5px}
+    [data-card-theme] .day-card__number{transition:background .2s ease,color .2s ease,transform .2s ease}
+    [data-card-theme] .day-card:hover .day-card__number,[data-card-theme] .day-card:focus-visible .day-card__number{transform:scale(1.06) rotate(-2deg)}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+1){border-color:#8bd4f7;background:#dff4ff;color:#174563}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+1) .day-card__number{background:#159ee7;color:#fff}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+2){border-color:#f0cc72;background:#fff0b6;color:#513b0d}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+2) .day-card__number{background:#efb82d;color:#fff}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+3){border-color:#97ddb4;background:#def6e8;color:#17452b}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+3) .day-card__number{background:#34aa66;color:#fff}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+4){border-color:#ffb499;background:#ffebe3;color:#63301e}
+    [data-card-theme="mixed"] .day-card:nth-child(4n+4) .day-card__number{background:#ff6b36;color:#fff}
+    [data-card-theme="mixed"] .day-card:hover,[data-card-theme="mixed"] .day-card:focus-visible{filter:saturate(1.12);border-color:rgba(19,93,138,.34)}
     [data-card-variant="plain"] .day-card{grid-template-columns:minmax(0,1fr);padding-left:21px}
     [data-card-variant="plain"] .day-card__number{display:none}
     [data-card-variant="numbers"] .day-card__part-label{display:none}
     .menu-outro{width:min(100%,var(--reading));margin:34px auto 0;color:var(--text);font-size:clamp(16px,4.15vw,19px);font-weight:500;line-height:1.62}
     .menu-outro p{margin:0}
     .menu-outro p + p{margin-top:17px}
-    .home-action{display:flex;width:min(100%,330px);min-height:54px;align-items:center;justify-content:center;margin:20px auto 0;padding:12px 18px;border-radius:14px;background:var(--blue);box-shadow:0 10px 18px -13px rgba(0,73,115,.75);color:#fff;font-size:16px;font-weight:800;text-decoration:none}
+    .home-action{display:flex;width:min(100%,360px);min-height:56px;align-items:center;justify-content:center;margin:20px auto 0;padding:12px 18px;border:1px solid rgba(216,63,26,.15);border-radius:14px;background:linear-gradient(135deg,#ff7a45 0%,#f04a2e 100%);box-shadow:0 13px 22px -14px rgba(176,53,21,.72);color:#fff;font-size:16px;font-weight:800;text-align:center;text-decoration:none;transition:transform .2s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease}
+    .home-action:hover,.home-action:focus-visible{border-color:#159bdc;background:linear-gradient(135deg,#36bdf3 0%,#159ddd 100%);box-shadow:0 17px 27px -15px rgba(0,102,156,.72);outline:none;transform:translateY(-3px) rotate(-.35deg)}
+    .home-action:active{box-shadow:0 10px 18px -14px rgba(0,83,128,.66);transform:translateY(-1px) scale(.985)}
     .preview-note{display:none}
     @media(max-width:620px){.intensive-shell{padding-top:74px}.intensive-page[data-active-view="day1"] .intensive-shell{padding-top:60px}.intensive-title{font-size:clamp(21px,6.2vw,28px)}.intensive-title__accent{font-size:clamp(17px,5.15vw,23px)}.menu-hero .intensive-title__accent{font-size:clamp(15px,4.05vw,18px)}.site-player{--site-player-radius:12px;width:var(--content-frame);max-width:100%}.intensive-article{margin-top:32px}.intensive-article h2{margin-top:43px}.article-image{margin-top:23px;margin-bottom:32px;border-radius:14px}.tomorrow-card{padding:18px}.day-card{grid-template-columns:42px minmax(0,1fr);gap:11px;min-height:126px;padding:16px 14px}.day-card__number{width:40px;height:40px;border-radius:12px;font-size:21px}.channel-actions{gap:8px}.channel-button{height:54px;font-size:14px}.channel-button svg{width:28px;height:28px}.channel-button img{width:clamp(72px,21vw,88px);height:31px}[data-day1-style="creative"] .intensive-skill-header{margin-top:52px}[data-day1-style="creative"] .mechanism-block{padding:18px;margin-inline:-2px}[data-day1-style="creative"] .mechanism-block h2{grid-template-columns:40px minmax(0,1fr);gap:11px}[data-day1-style="creative"] .mechanism-block h2:before{width:40px;height:40px;border-radius:12px;font-size:21px}}
     @media(max-width:380px){.menu-hero .intensive-title{font-size:clamp(23px,6.8vw,26px)}}
@@ -135,24 +152,25 @@
   </style>
 </head>
 <body>
-  <div class="intensive-page" data-card-variant="numbers">
+  <div class="intensive-page" data-card-variant="numbers" data-card-theme="mixed">
     <div data-edabalans-site-header data-nav='[{"href":"/intensive","label":"Меню интенсива"},{"href":"https://похудение-это-есть.рф/#masterclass","label":"Мастер-класс"},{"href":"https://blog.похудение-это-есть.рф/","label":"Блог"}]'></div>
     <main class="intensive-shell">
       <section class="intensive-view" data-view="menu">
         <header class="menu-hero">
           <h1 class="intensive-title"><span>Бесплатный интенсив</span><span class="intensive-title__accent">«Последнее похудение»</span></h1>
           <p class="menu-copy">Поменяйте ваш подход к похудению! Освойте необходимые навыки в питании, чтобы сделать похудение проще.</p>
+          <p class="menu-links-hint">Читайте все четыре части интенсива по ссылкам ниже 👇</p>
         </header>
         <div class="days-list" aria-label="Части бесплатного интенсива">
-          <a class="day-card" href="?view=day1&amp;day=1" data-day="1"><span class="day-card__number">1</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #1</strong> — </span>Как вести дневник питания без калорий так, чтобы это меняло ваши пищевые привычки.</span></a>
-          <a class="day-card" href="./intensive-day-2.html" data-day="2"><span class="day-card__number">2</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #2</strong> — </span>Какой метод позволит вам перестать делить еду на здоровую и вредную и научит искать в питании реальный баланс.</span></a>
-          <a class="day-card" href="?view=day1&amp;day=3" data-day="3"><span class="day-card__number">3</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #3</strong> — </span>Кому и когда реально нужен учёт калорий, а кому не очень. И насколько вам действительно нужны тренировки для похудения.</span></a>
-          <a class="day-card" href="?view=day1&amp;day=4" data-day="4"><span class="day-card__number">4</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #4</strong> — </span>Какие этапы похудения существуют и как выглядит пошаговый план, чтобы это похудение стало реально последним в жизни!</span></a>
+          <a class="day-card" href="/intensive/day-1" data-day="1"><span class="day-card__number">1</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #1</strong> — </span>Как вести дневник питания без калорий так, чтобы это меняло ваши пищевые привычки.</span></a>
+          <a class="day-card" href="/intensive/day-2" data-day="2"><span class="day-card__number">2</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #2</strong> — </span>Какой метод позволит вам перестать делить еду на здоровую и вредную и научит искать в питании реальный баланс.</span></a>
+          <a class="day-card" href="/intensive/day-3" data-day="3"><span class="day-card__number">3</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #3</strong> — </span>Кому и когда реально нужен учёт калорий, а кому не очень. И насколько вам действительно нужны тренировки для похудения.</span></a>
+          <a class="day-card" href="/intensive/day-4" data-day="4"><span class="day-card__number">4</span><span class="day-card__text"><span class="day-card__part-label"><strong>Часть #4</strong> — </span>Какие этапы похудения существуют и как выглядит пошаговый план, чтобы это похудение стало реально последним в жизни!</span></a>
         </div>
         <div class="menu-outro">
           <p>Вы уже прочитали (я надеюсь) все четыре части бесплатного интенсива.</p>
           <p>Если вам близок мой подход к похудению и вы готовы перейти от теории к практике — читайте программу моего трёхнедельного Мастер-класса по изменению питания и пищевых привычек.</p>
-          <a class="home-action" href="/" data-track-event="intensive_home_click">Мастер-класс</a>
+          <a class="home-action" href="https://похудение-это-есть.рф/#masterclass" data-track-event="intensive_home_click">Читайте программу Мастер-класса</a>
         </div>
       </section>
 
@@ -208,7 +226,7 @@
           <p>А теперь давайте расскажу, какие именно механизмы заложены в фотографировании еды.</p>
 
           <section class="mechanism-block">
-          <h2 data-number="1">1️⃣ Пауза между импульсом и действием</h2>
+          <h2 data-number="1">Пауза между импульсом и действием</h2>
           <p>В техниках самодисциплины и мотивации есть правило «пяти секунд».</p>
           <p>Обычно его формулируют так: если вы собрались сделать что-то полезное, лучше начать в первые 5 секунд, пока мозг не начал искать отговорки.</p>
           <p>Потому что стоит дать ему время — и он тут же включается: а зачем, а почему сейчас, а давай потом, а можно и не делать вовсе.</p>
@@ -222,7 +240,7 @@
           </section>
 
           <section class="mechanism-block">
-          <h2 data-number="2">2️⃣Внешний взгляд на порцию</h2>
+          <h2 data-number="2">Внешний взгляд на порцию</h2>
           <img class="article-image article-image--compact" src="https://static.tildacdn.com/tild6366-3432-4734-b431-666230386264/image.png" alt="Пример порции в дневнике питания">
           <p>Если вы разместили всю еду, которую собираетесь съесть, на одной фотографии, вы даёте себе шанс визуально оценить, сколько собираетесь съесть и адекватно ли это вообще, или надо немного доложить/отложить? Прочитайте пост про «Правило 1%», там как раз об этом. Это правило касается и основных приёмов пищи, и перекусов.</p>
           <p>➖ Может быть можно добавить немного зелени?<br>➖ Достаточно ли тут белка?<br>➖ Я действительно хочу всё это съесть или просто наложил «на всякий случай»<br>➖ Что я могу добавить или заменить, чтобы получить больше удовольствия от тарелки?</p>
@@ -232,7 +250,7 @@
           </section>
 
           <section class="mechanism-block">
-          <h2 data-number="3">3️⃣ Выключение автопилота</h2>
+          <h2 data-number="3">Выключение автопилота</h2>
           <p>Вот пример не очень здорового пищевого поведения, который я отследил на себе. Все мы не без греха.</p>
           <p>Однажды я купил гранолу. Ел её спокойно, без жадности: подсыпал хлопья, доливал молоко. Всё было вкусно, и казалось, что я ем ровно столько, сколько нужно по голоду. Остановился, когда чувствовал насыщение.</p>
           <p>На следующий день повторил. И только когда пачка закончилась, я такой: «Погодите-ка...» — и решил посмотреть, сколько там граммов-то в этой пачке. А калорий?</p>
