@@ -3,54 +3,207 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="robots" content="noindex,nofollow">
-  <title>День 2. Сделайте дефицит легче</title>
-  <link rel="stylesheet" href="/intensive/intensive.css?v=4">
+  <meta name="robots" content="noindex,follow">
+  <title>Как сбалансированное питание реально помогает худеть? — День 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Unbounded:wght@700;800&amp;display=swap" rel="stylesheet">
+  <link href="./intensive-components.css" rel="stylesheet">
+  <style>
+    :root{--ink:#151c24;--text:#334654;--muted:#617383;--blue:#26a8ef;--orange:#ff6b36;--green:#36a965;--reading:650px;--gutter:clamp(16px,4.16vw,32px)}
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;background:#e8f7ff}
+    body{min-width:0;margin:0;overflow-x:hidden;background:#e8f7ff;color:var(--ink);font-family:Manrope,Arial,sans-serif}
+    a,button{font:inherit}
+    .page{min-height:100vh;background:radial-gradient(ellipse 72% 20% at 88% -2%,rgba(67,183,245,.24),rgba(67,183,245,.1) 48%,transparent 80%),radial-gradient(ellipse 76% 23% at 8% 102%,rgba(67,183,245,.2),rgba(67,183,245,.08) 50%,transparent 81%),linear-gradient(180deg,#e8f7ff 0%,#f5fbff 22%,#fbfdff 48%,#f4fbff 76%,#e8f7ff 100%)}
+    .shell{width:min(calc(100% - var(--gutter) - var(--gutter)),760px);margin:0 auto;padding:28px 0 44px}
+    .hero,.article{width:min(100%,var(--reading));margin-inline:auto}
+    .eyebrow{display:flex;width:max-content;max-width:100%;min-height:31px;align-items:center;margin:0 0 24px;padding:6px 9px;border:1px solid rgba(33,85,121,.14);border-radius:11px;background:rgba(255,255,255,.92);box-shadow:0 7px 18px -13px rgba(28,67,94,.48);color:#168fe3;font:800 clamp(9px,2.8vw,13px)/1.2 Manrope,sans-serif;letter-spacing:.02em;text-transform:uppercase;backdrop-filter:blur(10px)}
+    .eyebrow:before{width:7px;height:7px;flex:0 0 7px;margin-right:7px;border-radius:50%;background:var(--orange);content:""}
+    h1{margin:0;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(24px,6vw,48px);font-weight:800;line-height:1.08;letter-spacing:-.05em;text-transform:uppercase}
+    h1 span{display:block}
+    h1 .accent{width:max-content;max-width:100%;margin-top:10px;padding:clamp(5px,1.8vw,8px) clamp(7px,2.2vw,11px) clamp(7px,2.2vw,11px);border-radius:clamp(8px,2.7vw,12px);background:var(--orange);color:#fff;font-size:.77em;line-height:1.05;letter-spacing:-.025em;white-space:nowrap;transform:rotate(-.7deg)}
+    .article{margin-top:34px;color:var(--text);font-size:clamp(16px,4.15vw,19px);font-weight:500;line-height:1.68}
+    .article p{margin:0 0 20px}
+    .article strong{color:var(--ink);font-weight:800}
+    .article h2{margin:54px 0 20px;color:var(--ink);font-family:Manrope,Arial,sans-serif;font-size:clamp(25px,6.2vw,36px);font-weight:800;line-height:1.16;letter-spacing:-.035em}
+    .article h2:first-child{margin-top:0}
+    .lead{color:#253b4a;font-size:clamp(18px,4.7vw,22px);line-height:1.55}
+    .prompt{margin:25px 0 28px;padding:18px 20px;border:1px solid rgba(38,168,239,.2);border-radius:17px;background:rgba(255,255,255,.78);box-shadow:0 13px 28px -25px rgba(17,96,143,.5);color:#253b4a}
+    .article ul{display:grid;gap:12px;margin:0 0 24px;padding:0;list-style:none}
+    .article li{position:relative;padding-left:28px}
+    .article li:before{position:absolute;left:2px;top:.72em;width:9px;height:9px;border-radius:3px;background:#bdebd0;content:"";transform:translateY(-50%) rotate(-5deg)}
+    blockquote{margin:28px 0;padding:18px 20px;border-left:5px solid var(--orange);border-radius:0 16px 16px 0;background:#fff3ee;color:#573528;font-size:clamp(17px,4.4vw,20px);font-weight:700;line-height:1.5}
+    .comparison{margin:28px 0 34px;padding:24px;border:1px solid rgba(22,87,128,.12);border-radius:20px;background:rgba(255,255,255,.85);box-shadow:0 14px 34px -28px rgba(17,96,143,.62)}
+    .comparison h2{margin:0 0 19px;font-size:clamp(24px,5.8vw,32px)}
+    .comparison--unbalanced{border-color:rgba(210,80,63,.3);background:rgba(255,232,228,.94);box-shadow:0 14px 34px -27px rgba(151,55,43,.46)}
+    .comparison--balanced{border-color:rgba(54,169,101,.34);background:rgba(226,249,234,.95);box-shadow:0 14px 34px -27px rgba(39,138,79,.4)}
+    .comparison p:last-child{margin-bottom:0}
+    .section-mark{display:inline-flex;align-items:center;min-height:33px;margin-bottom:13px;padding:6px 10px;border-radius:11px;background:#d9f4e3;color:var(--green);font-size:13px;font-weight:800;text-transform:uppercase}
+    .article .intensive-skill-header{margin:54px 0 20px}
+    .article .intensive-skill-header:first-child{margin-top:0}
+    .article .intensive-skill-header h2{margin:0}
+    .article-image{display:block;width:100%;height:auto;margin:27px auto 38px;border-radius:18px;box-shadow:0 13px 30px -24px rgba(20,78,113,.62)}
+    .article-image--meme{width:min(100%,520px)}
+    .punchline{margin:25px 0 26px;padding:17px 20px;border-radius:16px;background:var(--orange);color:#fff;font-size:clamp(22px,5.6vw,30px);font-weight:800;line-height:1.25;text-align:center;transform:rotate(-.5deg)}
+    .day-channel{width:min(100%,520px);margin:30px auto;text-align:center}
+    .next-part{margin:44px 0 0;padding:22px}
+    .next-part h2{margin:0 0 17px}
+    .next-timer{width:min(100%,420px);margin:24px auto 0;padding:13px 18px;border:1px solid #e5a28f;border-radius:16px;background:#fff3ee;color:#a23f28;text-align:center;box-shadow:0 8px 22px rgba(184,75,43,.07)}
+    .next-timer span,.next-timer strong{display:block}.next-timer span{font-size:13px;line-height:1.25}.next-timer strong{margin-top:4px;font-size:22px;font-weight:800}
+    .next-unlock{margin-top:24px;text-align:center}.next-unlock button{display:inline-flex;width:min(100%,330px);min-height:54px;align-items:center;justify-content:center;padding:12px 18px;border:0;border-radius:14px;background:var(--blue);box-shadow:0 10px 18px -13px rgba(0,73,115,.75);color:#fff;font-size:16px;font-weight:800;cursor:pointer}.next-unlock p{margin:14px auto 0;color:#a23f28;font-size:15px;line-height:1.5}
+    @media(max-width:620px){.shell{padding-top:60px}.eyebrow{margin-bottom:21px}h1{font-size:clamp(22px,6.25vw,28px)}h1 .accent{font-size:.72em}.article{margin-top:29px}.article h2{margin-top:43px}.prompt,.comparison{padding:18px}.article-image{margin-top:23px;margin-bottom:32px;border-radius:14px}}
+    @media(min-width:900px){.shell{padding-top:28px}.eyebrow{margin-left:0}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
 </head>
 <body>
-  <button class="edit-button" id="intensive-edit" type="button">Edit</button>
-  <article class="intensive-page" id="intensive-content" data-day="day-2">
-    <h1>День 2. Сделайте дефицит легче</h1>
-    <p>Одинаковая калорийность не означает одинаковую сытость. Второй день переводит наблюдения из дневника в понятную работу с составом питания и продуктовыми категориями.</p>
+  <div class="page">
+    <div data-edabalans-site-header data-nav='[{"href":"/intensive","label":"Меню интенсива"},{"href":"https://похудение-это-есть.рф/#masterclass","label":"Мастер-класс"},{"href":"https://blog.похудение-это-есть.рф/","label":"Блог"}]'></div>
+    <main class="shell">
+      <header class="hero">
+        <div class="intensive-meta">
+          <p class="intensive-meta__pill intensive-meta__pill--name">Бесплатный интенсив</p>
+          <p class="intensive-meta__pill intensive-meta__pill--part" data-part-number="2" aria-label="Часть 2"></p>
+        </div>
+        <h1><span>Как</span><span>Сбалансированное</span><span>питание реально</span><span class="accent">помогает худеть?</span></h1>
+      </header>
 
-    <h2>Текст для видео</h2>
-    <p>Вчера дневник помог увидеть, что происходит. Сегодня главный вопрос: что именно менять, чтобы снижение веса не превратилось в постоянную борьбу с голодом? Калорийность влияет на вес, но продукты одинаковой калорийности могут совершенно по-разному насыщать.</p>
-    <p>Поэтому нам не нужен примитивный список «хорошей» и «плохой» еды. Важнее увидеть пропорции всего рациона: хватает ли в нём овощей, фруктов, бобовых, цельных злаков, белковых продуктов и разнообразия. Иногда лучший первый шаг — не запретить любимую еду, а добавить то, чего систематически не хватает.</p>
-    <p>Для этого в Мастер-классе используется DQS: категории превращают хаотичный дневник в понятную картину качества питания. А сегодня попробуйте более лёгкую игровую практику — посчитайте, сколько разных растений вы съедаете за неделю. Не гонитесь за идеалом: задача в том, чтобы начать замечать разнообразие и найти одно реалистичное улучшение.</p>
+      <article class="article">
+        <p class="lead">А вы знаете, почему одни должны вечно ограничивать себя, чтобы хотя бы не толстеть дальше, а другие едят всё подряд — чипсики, пироженки, пиво и... ходят худые!</p>
 
-    <h2>Главные смыслы</h2>
-    <ul>
-      <li>Дефицит определяет снижение веса, а состав еды — насколько легко его соблюдать.</li>
-      <li>Не нужен список запретов: важны пропорции всего рациона.</li>
-      <li>Добавление полезного часто важнее охоты на отдельную сладость.</li>
-      <li>Категории и DQS превращают дневник в понятную картину качества питания.</li>
-      <li>Практика дня — посчитать разнообразие растений за неделю.</li>
-    </ul>
+        <p class="prompt"><strong>Предлагаю задуматься:</strong> А что если вы не можете держать дефицит калорий не потому, что вы тряпка, а потому что ваше питание недостаточно сбалансированное и качественное, чтобы позволить вам такую роскошь, как похудение?</p>
 
-    <h2>Что нужно дописать</h2>
-    <p>Авторское объяснение продуктовых категорий; два-три быстрых правила из актуального DQS; личный пример изменения рациона без снижения калорийности.</p>
+        <img class="article-image article-image--meme" src="./assets/intensive-day-2/intro-cat.png" alt="Мем с котом">
 
-    <h2>Короткий текст под видео</h2>
-    <p><strong>Почему на одной и той же калорийности можно либо голодать, либо нормально жить?</strong></p>
-    <p>Сначала посмотрите видео: в нём связаны дневник, насыщение и продуктовые категории. После — попробуйте игровое задание «30 растений».</p>
-    <p>Ниже будет одна статья с правилами, примерами и ссылкой на Мастер-класс.</p>
+        <section>
+          <div class="intensive-skill-header">
+            <span class="intensive-skill-label" data-skill-number="3"></span>
+            <h2>Закрывать базовые потребности!</h2>
+          </div>
 
-    <h2>Дополнительные материалы</h2>
-    <ul>
-      <li><a href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/a75rtx6go1-chto-nado-pomenyat-v-pitanii-chtobi-luc">Что поменять в питании, чтобы лучше насыщаться</a> — основная логика дня.</li>
-      <li><a href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/hbfozma3y1-pravilo-30-ti-rastenii">Правило 30 растений</a> — главное практическое продолжение; научные обещания обновить.</li>
-      <li><a href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/sgpfzdvvy1-vi-edite-31kg-sahara-v-god">Вы едите 31 кг сахара в год</a> — частный пример, формулировки проверить.</li>
-      <li><a href="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/intensiv/tpost/7siam7t8k1-kak-sokratit-tyagu-k-sladkomu-i-kak-est">Как сократить тягу к сладкому</a> — медицинские обещания обновить.</li>
-    </ul>
+          <p>В нашем питании есть два вида потребностей, которые мы закрываем с помощью еды:</p>
 
-    <h2>Переход к Мастер-классу</h2>
-    <p>На Мастер-классе дневник из первого дня соединяется с DQS, продуктовыми категориями и последовательной работой над качеством питания.</p>
-    <p><a href="https://похудение-это-есть.рф/?utm_source=free_intensive&amp;utm_content=day_2">Посмотреть программу Мастер-класса</a></p>
-    <hr>
-    <p><a href="/intensive/day-1">← День 1</a> · <a href="/intensive/day-3">Дальше: калории и реальность →</a></p>
-  </article>
-  <div data-edabalans-site-footer></div>
-  <script src="/site-footer.js" defer></script>
-  <script src="/intensive/intensive.js?v=4"></script>
+          <ul>
+            <li><strong>Базовые потребности организма</strong> во всяких полезных веществах и энергии, чтоб были силы и не было голода.</li>
+            <li><strong>Потребность в удовольствии</strong>, вкусах и эмоциональной разрядке. Это не прихоть и не слабость, а нормальное желание получать наслаждение от еды и от жизни.</li>
+          </ul>
+
+          <p>Если не закрыть базовые потребности — вам будет голодно, холодно и плохие анализы. А если не закрыть психологические потребности — то так может и кукуха поехать, нам такого не надо.</p>
+
+          <p>Чем качественней и сбалансированней питание, тем меньше калорий надо, чтобы удовлетворить базовые потребности организма. А значит больше калорий можно будет потратить на разные удовольствия.</p>
+
+          <blockquote>Допустим, ваш энергетический баланс (сколько вам надо есть для поддержания) = 2000 ккал.</blockquote>
+        </section>
+
+        <section class="comparison comparison--unbalanced">
+          <h2>Если вы питаетесь НЕсбалансированно</h2>
+
+          <p>Тогда каждый день вам нужны все эти 2000 ккал просто чтобы более-менее функционировать и не помирать с голоду. Из вашей привычной еды организм еле-еле закрывает свои базовые потребности «впритык».</p>
+
+          <p><strong>😞 Добавили сверху десерт</strong> — и это уже выход за пределы нормы, потому что базовую часть (2000 ккал кроме тортика) организм всё равно попросит сверху, не сегодня, так завтра.</p>
+
+          <p><strong>😞 Будете пытаться похудеть</strong> и питаться ниже 2000 ккал — сразу начнется слабость, тяга к сладкому, раздражительность и навязчивые мысли о еде, потому что на условные 1600 ккал из привычной еды вы не можете дать организму всё необходимое.</p>
+
+          <p><strong>В таком режиме даже поддержание веса — это постоянная борьба.</strong></p>
+        </section>
+
+        <section class="comparison comparison--balanced">
+          <h2>Если вы питаетесь сбалансированно</h2>
+
+          <p>Теперь представим ту же норму — 2000 ккал, но при сбалансированном питании. Тогда базовые потребности закрываются, условно, за 1600 ккал, а оставшиеся 400 ккал — это пространство для гибкости:</p>
+
+          <p><strong>😎</strong> В один день на эти калории будет лишний десерт. В другой день можно распустить руки в гостях за праздничным столом и не париться.</p>
+
+          <p><strong>😎</strong> А если захотите похудеть, то лишний голод, слабость и раздражительность вам мешать не будут. Потому что те 1600 ккал для вашего похудения — полностью закрывают все базовые потребности.</p>
+
+          <p><strong>В таком режиме даже похудение — лёгкая прогулка!</strong></p>
+        </section>
+
+        <p>Поэтому разница в лёгкости похудения заключается не в ограничении тортиков, чипсиков, а в том, как выглядит всё остальное питание, кроме тортиков и чипсов.</p>
+
+        <h2>Как сделать питание сбалансированным?</h2>
+
+        <p>Здоровое питание — это не список «полезных» продуктов. Это правильные ПРОПОРЦИИ между <strong>всеми</strong> продуктовыми категориями.</p>
+
+        <p>Всё, что попадает к нам в рот, можно разделить на продуктовые категории. Мясо, фрукты, сладости и так далее. У каждой категории и у каждого продукта есть своё место и своя задача в питании — даже у сладкого и «вредного» или фаст-фуда.</p>
+
+        <img class="article-image" src="./assets/intensive-day-2/product-categories.png" alt="Таблица продуктовых категорий">
+
+        <p><strong>Например:</strong></p>
+
+        <ul>
+          <li>Кусок говядины — добор белка, сытости и витамина B12</li>
+          <li>Здоровые гарниры — энергообеспечение организма</li>
+          <li>Болгарский перец — получение клетчатки</li>
+          <li>Карамельный чизкейк — получение удовольствия</li>
+        </ul>
+
+        <p>Да, вы правильно поняли, у привычных вредностей тоже есть важные задачи в питании. Поэтому нужно заниматься не ИСКЛЮЧЕНИЕМ «вредных» продуктов, а ВОЗВРАЩЕНИЕМ каждой категории её нормального места в питании.</p>
+
+        <p>Тогда вы сможете за минимум калорий закрыть все базовые потребности, а на сдачу можно либо без вреда закинуться лишним тортиком, либо устроить себе дефицит калорий, без голода и стресса.</p>
+
+        <h2>Три продуктовые категории</h2>
+
+        <p>Которые вы точно НЕДОЕДАЕТЕ! Даже если вам кажется, что доедаете.</p>
+
+        <p>Если меня поймают на улице хулиганы, окружат, прижмут к стене, упрутся кое-чем холодным и острым в районе горла и спросят: «Что нам съесть, чтобы похудеть?» Я не раздумывая отвечу:</p>
+
+        <p class="punchline">Бобовые, овощи, мясо!</p>
+
+        <p>А если меня сразу же после этого не прирежут, то скромно добавлю, что после того, как я разобрал уже 600+ дневников питания, могу уверенно советовать увеличить присутствие именно этих трёх категорий любому встречному поперечному почти без разбора. А теперь чуть подробнее...</p>
+
+        <ul>
+          <li><strong>Бобовые</strong> — тут стоит начать с того, что прикиньте, они существуют. На этом можно в принципе и закончить... большинству этого тайного знания уже будет достаточно. Просто вспомните о них!</li>
+          <li><strong>Овощи</strong> — да, я знаю, что вы и так стараетесь, но можно стараться лучше. Даже если в граммах овощей достаточно, то вот по разнообразию среди огурчиков и помидорчиков редко что-то удаётся разглядеть. Это не есть хорошо.</li>
+          <li><strong>Мясо</strong> — но не просто мясо, а вкусно приготовленные цельные куски мяса. Кстати, курица и рыба — это тоже мясо в моей системе ценностей. Из сотен моих клиентов я только двум сказал, что кажись, вы едите много мяса. Оба — мужчины. Но это редкость.</li>
+        </ul>
+
+        <p>Чтобы правильно настроить баланс продуктовых категорий индивидуально для каждого, я использую специальную <strong>систему оценки качества питания</strong>, которая даёт ответ, какой продуктовой категории вам не хватает в каждый конкретный момент времени, причём всё это без калорий и без взвешиваний!</p>
+
+        <p>Это моя авторская разработка, которой я очень горжусь, а недавно я запустил приложение на её основе, чтобы вам было ещё удобнее знакомиться со своим питанием!</p>
+
+        <img class="article-image" src="./assets/intensive-day-2/alexandra-review.jpg" alt="Отзыв Александры">
+
+        <p>Подробно эту систему я даю в моём трёхнедельном Мастер-классе по изменению питания и пищевых привычек. Но главная её фишка не в том, сколько баллов вы получите за день.</p>
+
+        <p>Заполняя дневник, вы очень быстро учитесь не просто видеть готовые блюда и продукты и вешать на них ярлыки «вредно» или «полезно», а понимать, из каких продуктовых категорий собрана каждая тарелка — и вообще весь ваш холодильник.</p>
+
+        <p>Со временем одного взгляда будет достаточно, чтобы понять, насколько сегодняшний день похож на что-то сбалансированное и чего именно не хватает. А если не хватает — у вас уже есть не один «правильный» рецепт на все случаи жизни, а сотня простых и доступных способов сделать питание более сбалансированным абсолютно в любой ситуации, опять-таки благодаря моей таблице.</p>
+
+        <p>Но всё это — уже внутри Мастер-класса. А пока к заданию на сегодня!</p>
+
+        <section>
+          <div class="intensive-skill-header">
+            <span class="intensive-skill-label" data-skill-number="4"></span>
+            <h2>Разнообразие</h2>
+          </div>
+
+          <p>Есть одна важная часть питания, с которой у россиян в среднем всё совсем грустно. Даже минимальную норму набирают всего 12% людей. Для сравнения: в Белгородской области справляются 26%, а в Петербурге — только 9%.</p>
+
+          <p>Но количество — это ещё цветочки. Есть другой, более важный показатель, и, по моим подсчётам, его выполняет меньше 1% россиян — это разнообразие!</p>
+
+          <p>Что это за показатель и как проверить себя — читайте в посте «Всего 12% россиян делают ЭТО!». Там же я дам увлекательное задание на ближайшие дни: если выполните — войдёте в ТОП 1% россиян. Ну а если не выполните, то одной лишь попыткой нанесёте непоправимую пользу себе и своим пищевым привычкам!</p>
+        </section>
+
+        <section class="day-channel" data-channel-block>
+          <div class="channel-actions">
+            <a class="channel-button channel-button--telegram" data-channel="telegram" data-assignment-link href="#day-2-post-telegram" aria-disabled="true"><svg viewBox="190 270 580 510" aria-hidden="true"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg><span>Telegram</span></a>
+            <a class="channel-button channel-button--max" data-channel="max" data-assignment-link href="#day-2-post-max" aria-disabled="true"><img src="./max-full-colored-official.png" alt="MAX"></a>
+          </div>
+        </section>
+        <section class="next-part intensive-next-part">
+          <h2>В следующей части</h2>
+          <p>Разберём, кому и когда реально нужен учёт калорий, а кому не очень. И насколько вам действительно нужны тренировки для похудения.</p>
+          <div class="next-timer" data-next-timer role="timer" aria-label="Таймер открытия следующей части"><span>До открытия следующей части осталось</span><strong>18:42:16</strong></div>
+          <div class="next-unlock" data-next-unlock hidden><button type="button" data-next-open>Открыть третий день</button><p data-next-warning hidden>Чтобы открыть следующую часть интенсива, сначала перейдите по ссылке выше и прочитайте пост с заданием в выбранном канале.</p></div>
+        </section>
+      </article>
+    </main>
+    <div data-edabalans-footer="private"></div>
+  </div>
+  <script src="../site-header.js"></script>
+  <script src="../site-footer.js"></script>
+  <script src="/intensive/runtime.js?v=1" defer></script>
 </body>
 </html>

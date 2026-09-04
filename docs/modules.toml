@@ -171,7 +171,10 @@ owns_routes = ["*/admin/api/content*"]
 id = "platform.blog"
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.blog.md"
-depends_on = ["platform.content"]
+depends_on = [
+  "platform.content", "platform.crm", "products.calories",
+  "products.masterclass.offers", "products.masterclass.messenger-links",
+]
 reads_from = ["products.intensive", "products.masterclass", "messaging.telegram.attribution", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
@@ -248,6 +251,7 @@ owns_files = [
   "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
   "backend/app/public_site_content_cli.py", "backend/app/static/homepage-preview/**",
   "backend/app/static/homepage.js", "backend/app/static/homepage-tilda-shell.html",
+  "backend/app/static/site-header.js",
   "backend/app/public_video_analytics_routes.py",
   "backend/tests/test_homepage_preview.py", "backend/tests/test_public_site_content.py",
   "backend/tests/test_public_video_analytics.py",
@@ -262,6 +266,7 @@ owns_routes = [
   "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
   "*/preview/direct-intensive*",
+  "*/site-header.js",
   "*/api/public/video-analytics", "*/api/public-site/content/*",
   "*/admin/api/public-site/content*",
 ]
@@ -361,8 +366,12 @@ parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
   "backend/app/intensive_public_cta.py",
-  "backend/app/intensive_routes.py", "backend/app/static/intensive/**",
-  "backend/tests/test_intensive_editor.py", "docs/INTENSIVE_PAGES.md",
+  "backend/app/intensive_routes.py", "backend/app/intensive_web_access.py",
+  "backend/app/static/intensive/**",
+  "backend/tests/test_intensive_editor.py", "backend/tests/test_intensive_web_access.py",
+  "telegram-bot/service/app/intensive_access.py",
+  "telegram-bot/service/tests/test_intensive_access.py",
+  "docs/INTENSIVE_PAGES.md",
   "backend/migrations/versions/20260822_0010_intensive_restart_guard.py",
 ]
 owns_routes = ["*/intensive*", "*/admin/api/intensive*"]

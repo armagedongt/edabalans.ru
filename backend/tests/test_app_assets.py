@@ -952,45 +952,73 @@ def test_legal_friendly_routes_are_public() -> None:
 
 
 def test_intensive_concept_pages_are_public() -> None:
+    client.cookies.clear()
+    menu = client.get("/intensive")
+    assert menu.status_code == 200
+    assert "Бесплатный интенсив" in menu.text
+    assert "«Последнее похудение»" in menu.text
+    assert 'data-view="menu"' in menu.text
+    assert 'href="/intensive/intensive-components.css"' in menu.text
+    assert 'src="/intensive/max-full-colored-official.png"' in menu.text
+    assert client.get("/intensive/menu").text == menu.text
+    entry = client.get("/intensive/start", follow_redirects=False)
+    assert entry.status_code == 307
+    assert entry.headers["location"] == "/intensive"
+
     expected_titles = {
-        "day-1": "Сначала увидьте своё питание",
-        "day-2": "Сделайте дефицит легче",
-        "day-3": "Калории и реальность похудения",
-        "day-4": "Полная карта похудения",
+        "day-1": "пищевые привычки",
+        "day-2": "помогает худеть",
+        "day-3": "КАЛОРИИ",
+        "day-4": "ЭТО МАРАФОН",
     }
     for day_code, title in expected_titles.items():
-        friendly = client.get(f"/intensive/{day_code}")
-        html = client.get(f"/intensive/{day_code}.html")
+        friendly = client.get(f"/intensive/{day_code}", follow_redirects=False)
+        html = client.get(f"/intensive/{day_code}.html", follow_redirects=False)
+        if day_code != "day-1":
+            assert friendly.status_code == 307
+            assert html.status_code == 307
+            assert friendly.headers["location"] == "/intensive"
+            assert html.headers["location"] == "/intensive"
+            continue
         assert friendly.status_code == 200
         assert html.status_code == 200
         assert html.text == friendly.text
         assert title in friendly.text
-        assert 'id="intensive-content"' in friendly.text
-        assert 'id="intensive-edit"' in friendly.text
-        assert ">Edit</button>" in friendly.text
-        assert "Текст для видео" in friendly.text
-        assert "Что нужно дописать" in friendly.text or "Что нужно дописать и обновить" in friendly.text
-        assert "Короткий текст под видео" in friendly.text
-        assert "/intensiv/tpost/" in friendly.text
-        assert "Переход к Мастер-классу" in friendly.text
-        assert "utm_source=free_intensive" in friendly.text
-        assert "data-edabalans-site-footer" in friendly.text
-        assert '<script src="/site-footer.js" defer></script>' in friendly.text
-        assert '<p><a href="/legal/disclaimer">' not in friendly.text
-        assert "video-script" not in friendly.text
-        assert "cards" not in friendly.text
-        assert "callout" not in friendly.text
-    stylesheet = client.get("/intensive/intensive.css")
+        assert "Бесплатный интенсив" in friendly.text
+        assert "data-edabalans-site-header" in friendly.text
+        assert "data-edabalans-footer" in friendly.text
+        assert '/intensive/runtime.js?v=1' in friendly.text
+        assert "EDITOR NOTE" not in friendly.text
+    stylesheet = client.get("/intensive/intensive-components.css")
     assert stylesheet.status_code == 200
-    assert ".edit-button" in stylesheet.text
-    assert ".cards" not in stylesheet.text
-    script = client.get("/intensive/intensive.js")
+    assert ".intensive-meta" in stylesheet.text
+    assert ".channel-button--telegram" in stylesheet.text
+    script = client.get("/intensive/runtime.js")
     assert script.status_code == 200
-    assert "contentEditable" in script.text
-    assert "localStorage" not in script.text
-    assert "/admin/api/intensive/" in script.text
+    assert "97331502" in script.text
+    assert "intensive_next_day_unlocked" in script.text
+    assert "intensive_required_post_open" in script.text
+    assert "localStorage" in script.text
+    assert "edabalans_intensive_progress" not in script.text
+    assert "/api/intensive/state" in script.text
+    assert "/api/intensive/offer-token" in script.text
+    assert 'method: "POST"' in script.text
+    assert "target_url: MASTERCLASS_URL" in script.text
+    assert client.get("/intensive/day-1/post/telegram").status_code == 404
+    assert client.post("/api/intensive/day-1/post/telegram").status_code == 401
+    assert client.get("/intensive/max-full-colored-official.png").status_code == 200
+    header_script = client.get("/site-header.js").text
+    assert "EdabalansSiteHeader" in header_script
+    assert "https://похудение-это-есть.рф/lk" in header_script
+    assert client.get("/intensive/assets/intensive-day-2/intro-cat.png").status_code == 200
+    assert client.get("/intensive/assets/intensive-day-2/not-found.png").status_code == 404
     assert client.get("/intensive/day-5").status_code == 404
     assert client.get("/intensive/day-5.html").status_code == 404
+
+    landing = client.get("/preview/homepage-mobile").text
+    assert "get('intensive_offer')" in landing
+    assert "pricingUrl.searchParams.set('intensive_offer', offerToken)" in landing
+    assert "intensive_offer: offerToken || null" in landing
 
 
 def test_removed_video_player_preview_routes_are_unavailable() -> None:

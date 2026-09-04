@@ -81,19 +81,18 @@ def find_offer_checkout(
     if reference_kind == "full":
         return db.get(OfferCheckout, uuid.UUID(hex=reference)), True
 
-    candidate_scopes = [
-        and_(
-            OfferCheckout.user_id.is_(None),
-            OfferCheckout.checkout_kind == "public_site",
-        )
-    ]
+    candidate_scopes = []
     if user is not None:
-        candidate_scopes.append(OfferCheckout.user_id == user.id)
+        candidate_scopes = [
+            OfferCheckout.checkout_kind == "public_site",
+            OfferCheckout.user_id == user.id,
+        ]
+    query = select(OfferCheckout)
+    if candidate_scopes:
+        query = query.where(or_(*candidate_scopes))
     matches = [
         checkout
-        for checkout in db.scalars(
-            select(OfferCheckout).where(or_(*candidate_scopes))
-        ).all()
+        for checkout in db.scalars(query).all()
         if checkout.id.hex.startswith(reference)
     ]
     return (matches[0] if len(matches) == 1 else None), True
@@ -301,17 +300,50 @@ def find_or_create_user(
         )
         db.add(user)
         db.flush()
-        db.add(
-            UserEmail(
-                user_id=user.id,
-                email_original=email_original,
-                email_normalized=email,
-                verification_status="tilda_unverified",
-                source=SOURCE,
-                first_seen_at=occurred_at,
-            )
+    return bind_user_contacts(
+        db,
+        user,
+        email_original,
+        display_name,
+        phone_original,
+        occurred_at,
+    )
+
+
+def bind_user_contacts(
+    db: Session,
+    user: User,
+    email_original: str,
+    display_name: str,
+    phone_original: str,
+    occurred_at: datetime,
+) -> User:
+    email = normalize_email(email_original)
+    if email:
+        bound_emails = set(
+            db.scalars(
+                select(UserEmail.email_normalized).where(UserEmail.user_id == user.id)
+            ).all()
         )
-    elif display_name and not user.display_name:
+        if bound_emails and email not in bound_emails:
+            raise TildaPayloadError("checkout email does not match offer recipient")
+        email_row = db.scalar(
+            select(UserEmail).where(UserEmail.email_normalized == email)
+        )
+        if email_row is not None and email_row.user_id != user.id:
+            raise TildaPayloadError("checkout email belongs to another user")
+        if email_row is None:
+            db.add(
+                UserEmail(
+                    user_id=user.id,
+                    email_original=email_original,
+                    email_normalized=email,
+                    verification_status="tilda_unverified",
+                    source=SOURCE,
+                    first_seen_at=occurred_at,
+                )
+            )
+    if display_name and not user.display_name:
         user.display_name = display_name
 
     normalized_phone = normalize_phone(phone_original)
@@ -508,9 +540,22 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     email = first(payload, "Email", "email", "ma_email")
     display_name = first(payload, "Name", "name", "ma_name")
     phone = first(payload, "Phone", "phone", "ma_phone")
-    user = find_or_create_user(db, email, display_name, phone, event_at)
+    checkout, has_checkout_reference = find_offer_checkout(db, raw_product, None)
+    if has_checkout_reference:
+        if checkout is None:
+            raise TildaPayloadError("offer checkout is unknown")
+    if checkout is not None and checkout.user_id is not None:
+        user = db.get(User, checkout.user_id)
+        if user is None:
+            raise TildaPayloadError("offer checkout user is missing")
+        user = bind_user_contacts(
+            db, user, email, display_name, phone, event_at
+        )
+    else:
+        user = find_or_create_user(db, email, display_name, phone, event_at)
     product = find_product(db, raw_product)
-    checkout, has_checkout_reference = find_offer_checkout(db, raw_product, user)
+    if not has_checkout_reference:
+        checkout, has_checkout_reference = find_offer_checkout(db, raw_product, user)
     if has_checkout_reference:
         if checkout is None:
             raise TildaPayloadError("offer checkout is unknown")

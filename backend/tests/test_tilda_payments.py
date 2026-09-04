@@ -365,6 +365,35 @@ def test_short_offer_reference_finds_unbound_public_site_checkout() -> None:
     app.dependency_overrides.clear()
 
 
+def test_short_offer_reference_finds_member_offer_before_email_resolution() -> None:
+    _, session_factory = make_client()
+    with session_factory() as db:
+        user = User(display_name="Тестовый клиент", status="active")
+        db.add(user)
+        db.flush()
+        checkout = OfferCheckout(
+            id=uuid.UUID("76543210-0000-0000-0000-000000000001"),
+            user_id=user.id,
+            checkout_kind="member_offer",
+            offer_code="single:recipes",
+            title="Система рецептов",
+            items=["recipes"],
+            amount=Decimal("2900"),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=1),
+        )
+        db.add(checkout)
+        db.flush()
+
+        found, has_reference = find_offer_checkout(
+            db, "Система рецептов · №76543210", None
+        )
+
+        assert has_reference is True
+        assert found is not None
+        assert found.id == checkout.id
+    app.dependency_overrides.clear()
+
+
 def test_processing_offer_is_promoted_to_paid_and_grants_access_once() -> None:
     client, session_factory = make_client()
     with session_factory() as db:

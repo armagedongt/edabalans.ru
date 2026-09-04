@@ -2722,7 +2722,12 @@
         pricingStatus.hidden = false;
         root.dataset.pricingSource = 'loading';
         try {
-          const response = await fetch(root.dataset.pricingEndpoint, { credentials: 'omit' });
+          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
+          const pricingUrl = new URL(root.dataset.pricingEndpoint, window.location.origin);
+          if (offerToken && !pricingUrl.pathname.endsWith('/preview')) {
+            pricingUrl.searchParams.set('intensive_offer', offerToken);
+          }
+          const response = await fetch(pricingUrl, { credentials: 'omit' });
           if (!response.ok) throw new Error(`pricing catalog ${response.status}`);
           const catalog = await response.json();
           renderPricingCatalog(catalog, 'database');
@@ -2815,11 +2820,15 @@
           button.disabled = true;
           button.textContent = 'Открываю корзину…';
           try {
+            const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
             const response = await fetch(root.dataset.checkoutEndpoint, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               credentials: 'omit',
-              body: JSON.stringify({ price_code: plan.dataset.priceCode })
+              body: JSON.stringify({
+                price_code: plan.dataset.priceCode,
+                intensive_offer: offerToken || null
+              })
             });
             if (!response.ok) throw new Error(`checkout ${response.status}`);
             const result = await response.json();

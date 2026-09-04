@@ -8,7 +8,7 @@ import time
 from urllib.parse import urlsplit
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
@@ -17,9 +17,16 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.checkout_reference import tilda_order_command
 from app.database import get_db
+from app.intensive_web_access import (
+    OFFER_CODE,
+    OFFER_DISCOUNT,
+    offer_for_user,
+    offer_user_id,
+)
 from app.models import OfferCheckout, PricingVersion
 from app.pricing_service import (
     active_pricing_version,
+    amount_value,
     create_draft,
     latest_pricing_version,
     pricing_entry_map,
@@ -62,6 +69,7 @@ class PricingDraftUpdate(BaseModel):
 
 class PublicCheckoutIn(BaseModel):
     price_code: str = Field(min_length=3, max_length=120)
+    intensive_offer: str | None = Field(default=None, max_length=1024)
 
 
 def enforce_preview_checkout_rate_limit(request: Request) -> None:
@@ -177,39 +185,66 @@ def admin_publish_pricing_version(
     }
 
 
-def site_pricing_payload(db: Session, version: PricingVersion) -> dict:
+def site_pricing_payload(
+    db: Session,
+    version: PricingVersion,
+    *,
+    user_id: uuid.UUID | None = None,
+) -> dict:
     entries = []
+    offer = offer_for_user(db, user_id) if user_id else None
+    discount = Decimal(OFFER_DISCOUNT) if offer else Decimal("0")
     for entry in pricing_entry_map(db, version).values():
         if entry.section != "site_tariffs" or not entry.enabled:
             continue
         catalog_tariff = tariff_public(db, entry.product_code or "")
+        serialized = serialize_entry(entry)
+        if discount:
+            serialized["compare_at_amount"] = serialized["sale_amount"]
+            serialized["sale_amount"] = amount_value(
+                max(Decimal("0"), entry.sale_amount - discount)
+            )
         entries.append(
             {
-                **serialize_entry(entry),
+                **serialized,
                 "name": catalog_tariff["name"] if catalog_tariff else entry.name,
                 "descriptor": catalog_tariff["description"] if catalog_tariff else "",
                 "products": catalog_tariff["products"] if catalog_tariff else [],
             }
         )
     entries.sort(key=lambda item: item["sort_order"])
-    return {
+    payload = {
         "ok": True,
         "version": version.version_number,
         "effective_from": version.effective_from.isoformat() if version.effective_from else None,
         "tariffs": entries,
     }
+    if offer and offer.expires_at:
+        payload["intensive_offer"] = {
+            "offer_id": OFFER_CODE,
+            "discount_amount": OFFER_DISCOUNT,
+            "expires_at": offer.expires_at.isoformat(),
+        }
+    return payload
 
 
 @router.get("/api/pricing/site")
 def public_site_pricing(
-    db: Session = Depends(get_db), settings: Settings = Depends(get_settings)
+    intensive_offer: str | None = Query(default=None, max_length=1024),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> dict:
     if not settings.pricing_catalog_enabled:
         raise HTTPException(503, "Новый серверный каталог цен ещё не включён")
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
-    return site_pricing_payload(db, version)
+    user_id = None
+    if intensive_offer:
+        user_id = offer_user_id(db, intensive_offer)
+        if user_id is None:
+            raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    return site_pricing_payload(db, version, user_id=user_id)
 
 
 @router.get("/api/pricing/site/preview")
@@ -232,7 +267,12 @@ def public_site_checkout(
     version = active_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Активная версия цен не опубликована")
-    return create_site_checkout(db, version, body.price_code)
+    user_id = None
+    if body.intensive_offer:
+        user_id = offer_user_id(db, body.intensive_offer)
+        if user_id is None:
+            raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    return create_site_checkout(db, version, body.price_code, user_id=user_id)
 
 
 @router.post("/api/pricing/site/preview-checkout", include_in_schema=False)
@@ -249,7 +289,11 @@ def public_site_preview_checkout(
 
 
 def create_site_checkout(
-    db: Session, version: PricingVersion, price_code: str
+    db: Session,
+    version: PricingVersion,
+    price_code: str,
+    *,
+    user_id: uuid.UUID | None = None,
 ) -> dict:
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
@@ -257,6 +301,18 @@ def create_site_checkout(
     catalog_tariff = tariff_public(db, entry.product_code or "")
     display_name = catalog_tariff["name"] if catalog_tariff else entry.name
     now = datetime.now(timezone.utc)
+    offer = offer_for_user(db, user_id) if user_id else None
+    amount = (
+        max(Decimal("0"), entry.sale_amount - Decimal(OFFER_DISCOUNT))
+        if offer
+        else entry.sale_amount
+    )
+    expires_at = now + timedelta(hours=2)
+    if offer and offer.expires_at:
+        offer_expires_at = offer.expires_at
+        if offer_expires_at.tzinfo is None:
+            offer_expires_at = offer_expires_at.replace(tzinfo=timezone.utc)
+        expires_at = min(expires_at, offer_expires_at)
     db.execute(
         delete(OfferCheckout).where(
             OfferCheckout.checkout_kind == "public_site",
@@ -265,24 +321,26 @@ def create_site_checkout(
         )
     )
     checkout = OfferCheckout(
-        user_id=None,
+        user_id=user_id,
         checkout_kind="public_site",
         pricing_version_id=version.id,
         price_entry_code=entry.code,
         offer_code=entry.code,
         title=display_name,
         items=list(entry.resource_codes or []),
-        amount=entry.sale_amount,
-        expires_at=now + timedelta(hours=2),
+        amount=amount,
+        expires_at=expires_at,
     )
     db.add(checkout)
     db.flush()
-    command = tilda_order_command(display_name, checkout.id, entry.sale_amount)
+    command = tilda_order_command(display_name, checkout.id, amount)
     db.commit()
     return {
         "ok": True,
         "price_code": entry.code,
         "pricing_version": version.version_number,
+        "intensive_offer": OFFER_CODE if offer else None,
+        "amount": int(amount) if amount == amount.to_integral() else float(amount),
         "cart_command": command,
         "expires_at": checkout.expires_at.isoformat(),
     }

@@ -952,10 +952,20 @@
         last_position_sec: state.lastPosition || 0,
         max_position_sec: state.maxPosition || 0,
         watched_buckets_5s: state.watchedBuckets || [],
+        duration_seconds: Math.round(logicalDuration() || 0),
+        progress_percent: Math.round(
+          (state.maxPosition || 0) / Math.max(1, logicalDuration() || 1) * 100
+        ),
         ...extra
       };
 
       root.dispatchEvent(new CustomEvent('mvp:analytics', {detail:payload}));
+      if (parent !== window) {
+        parent.postMessage(
+          {type:'edabalans:video-analytics', context:PLAYER_CONTEXT, payload},
+          location.origin
+        );
+      }
       if (ANALYTICS_CONFIG.endpoint) {
         fetch(ANALYTICS_CONFIG.endpoint, {
           method:'POST',

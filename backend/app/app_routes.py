@@ -14,6 +14,7 @@ from fastapi.responses import (
     HTMLResponse,
     JSONResponse,
     PlainTextResponse,
+    RedirectResponse,
     Response,
 )
 from sqlalchemy import select
@@ -30,6 +31,22 @@ from app.auth import require_admin, session_admin
 from app.database import get_db
 from app.legal_service import legal_status_payload
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
+from app.intensive_web_access import (
+    access_token_row,
+    attributed_path,
+    create_offer_token,
+    current_day,
+    day_unlocked,
+    mark_assignment_opened,
+    offer_for_user,
+    open_day,
+    progress_rows,
+    record_entry_attribution,
+    session_identity,
+    set_session,
+    state_payload,
+)
+from app.config import Settings, get_settings
 from app.models import (
     AdminAppEdit,
     DqsState,
@@ -111,6 +128,11 @@ def homepage_tilda_shell_preview() -> FileResponse:
 @router.get("/site-footer.js", include_in_schema=False)
 def site_footer_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-footer.js", stable_loader=True)
+
+
+@router.get("/site-header.js", include_in_schema=False)
+def site_header_loader() -> FileResponse:
+    return public_asset(STATIC_DIR / "site-header.js", stable_loader=True)
 
 
 @router.get("/preview/homepage-recognition", include_in_schema=False)
@@ -370,20 +392,197 @@ def intensive_script() -> FileResponse:
     return public_asset(STATIC_DIR / "intensive" / "intensive.js")
 
 
-def intensive_day_asset(day_code: str) -> FileResponse:
+@router.get("/intensive/runtime.js", include_in_schema=False)
+def intensive_runtime_script() -> FileResponse:
+    return public_asset(STATIC_DIR / "intensive" / "runtime.js")
+
+
+@router.get("/intensive/intensive-components.css", include_in_schema=False)
+def intensive_components_stylesheet() -> FileResponse:
+    return public_asset(STATIC_DIR / "intensive" / "intensive-components.css")
+
+
+@router.get("/intensive/max-full-colored-official.png", include_in_schema=False)
+def intensive_max_logo() -> FileResponse:
+    return public_asset(STATIC_DIR / "intensive" / "max-full-colored-official.png")
+
+
+@router.get("/intensive/assets/{day_code}/{asset_name}", include_in_schema=False)
+def intensive_content_asset(day_code: str, asset_name: str) -> FileResponse:
+    allowed = {
+        "intensive-day-2": {
+            "intro-cat.png",
+            "product-categories.png",
+            "alexandra-review.jpg",
+        }
+    }
+    if asset_name not in allowed.get(day_code, set()):
+        raise HTTPException(status_code=404, detail="intensive asset not found")
+    return public_asset(STATIC_DIR / "intensive" / "assets" / day_code / asset_name)
+
+
+@router.get("/intensive", include_in_schema=False)
+@router.get("/intensive/", include_in_schema=False)
+@router.get("/intensive/menu", include_in_schema=False)
+def intensive_menu(
+) -> FileResponse:
+    response = public_asset(STATIC_DIR / "intensive" / "index.html")
+    response.headers["Referrer-Policy"] = "no-referrer"
+    return response
+
+
+@router.get("/intensive/start", include_in_schema=False)
+def intensive_entry(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> RedirectResponse:
+    identity = None
+    supplied_token = request.query_params.get("i") or request.query_params.get("token")
+    if supplied_token:
+        token_row = access_token_row(db, supplied_token)
+        if token_row is None:
+            raise HTTPException(status_code=404, detail="intensive link not found")
+        identity = (token_row.user_id, token_row.platform)
+        record_entry_attribution(db, token_row.user_id, token_row.platform, request)
+        db.commit()
+    if identity is None:
+        identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
+    user_id, platform = identity
+    rows = progress_rows(db, user_id)
+    target = "/intensive" if 4 in rows else f"/intensive/day-{current_day(rows)}"
+    response = RedirectResponse(attributed_path(request, target), status_code=307)
+    response.headers["Referrer-Policy"] = "no-referrer"
+    set_session(response, request, settings.app_auth_secret, user_id, platform)
+    return response
+
+
+@router.get("/api/intensive/state")
+def intensive_state(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        return {
+            "identified": False,
+            "platform": None,
+            "opened_days": [],
+            "assignment_days": [],
+            "current_day": 1,
+            "unlocked_days": [1],
+            "unlock_at": {},
+            "offer": None,
+        }
+    user_id, platform = identity
+    if db.get(User, user_id) is None:
+        return {"identified": False, "platform": None}
+    return state_payload(db, user_id, platform)
+
+
+@router.get("/api/intensive/offer-token")
+def intensive_offer_token(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        raise HTTPException(status_code=401, detail="intensive identity required")
+    user_id, _ = identity
+    offer = offer_for_user(db, user_id)
+    if offer is None or offer.status != "active" or not offer.expires_at:
+        raise HTTPException(status_code=404, detail="intensive offer not found")
+    expires_at = offer.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at <= datetime.now(timezone.utc):
+        raise HTTPException(status_code=410, detail="intensive offer expired")
+    token = create_offer_token(db, user_id, expires_at)
+    db.commit()
+    return {
+        "ok": True,
+        "offer_id": "intensive-day4-1000",
+        "discount_amount": 1000,
+        "expires_at": expires_at.isoformat(),
+        "token": token,
+    }
+
+
+@router.post("/api/intensive/day-{day_number}/post/{messenger}")
+def intensive_post_target(
+    day_number: int,
+    messenger: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict[str, str]:
+    if day_number not in range(1, 4) or messenger not in {"telegram", "max"}:
+        raise HTTPException(status_code=404, detail="intensive post not found")
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        raise HTTPException(status_code=401, detail="intensive identity required")
+    user_id, _ = identity
+    rows = progress_rows(db, user_id)
+    if not day_unlocked(rows, day_number):
+        raise HTTPException(status_code=403, detail="intensive day is not open")
+    targets = {
+        # Final per-day Telegram/MAX publication URLs are inserted from the VSL
+        # checkpoint before release. Generic channel roots must not masquerade as tasks.
+    }
+    target = targets.get((day_number, messenger))
+    if not target:
+        raise HTTPException(status_code=503, detail="intensive assignment is not published")
+    if mark_assignment_opened(db, user_id, day_number, messenger) is None:
+        raise HTTPException(status_code=409, detail="intensive day is not open")
+    db.commit()
+    return {"target_url": target}
+
+
+def intensive_day_asset(
+    day_code: str,
+    request: Request,
+    settings: Settings,
+    db: Session,
+) -> Response:
     if day_code not in {"day-1", "day-2", "day-3", "day-4"}:
         raise HTTPException(status_code=404, detail="intensive day not found")
-    return public_asset(STATIC_DIR / "intensive" / f"{day_code}.html")
+    day_number = int(day_code[-1])
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        if day_number > 1:
+            return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
+    else:
+        user_id, _ = identity
+        if open_day(db, user_id, day_number) is None:
+            return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
+        db.commit()
+    response = public_asset(STATIC_DIR / "intensive" / f"{day_code}.html")
+    response.headers["Referrer-Policy"] = "no-referrer"
+    return response
 
 
 @router.get("/intensive/{day_code}.html", include_in_schema=False)
-def intensive_day_html(day_code: str) -> FileResponse:
-    return intensive_day_asset(day_code)
+def intensive_day_html(
+    day_code: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> Response:
+    return intensive_day_asset(day_code, request, settings, db)
 
 
 @router.get("/intensive/{day_code}", include_in_schema=False)
-def intensive_day_friendly(day_code: str) -> FileResponse:
-    return intensive_day_asset(day_code)
+def intensive_day_friendly(
+    day_code: str,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> Response:
+    return intensive_day_asset(day_code, request, settings, db)
 
 
 def error(message: str) -> dict[str, Any]:

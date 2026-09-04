@@ -14,6 +14,7 @@ from app.auth import require_admin  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
+from app.intensive_web_access import create_offer_token  # noqa: E402
 from app.models import (  # noqa: E402
     OfferCheckout,
     Payment,
@@ -21,7 +22,10 @@ from app.models import (  # noqa: E402
     PricingVersion,
     Product,
     Resource,
+    User,
     UserAccess,
+    UserEmail,
+    UserOffer,
 )
 from app.product_catalog_service import PRODUCT_CATALOG_SEED  # noqa: E402
 
@@ -68,6 +72,7 @@ def make_client(*, enabled: bool) -> tuple[TestClient, sessionmaker[Session]]:
         database_url="sqlite+pysqlite:///:memory:",
         tilda_webhook_token=TOKEN,
         pricing_catalog_enabled=enabled,
+        app_auth_secret="pricing-intensive-test-secret",
     )
     return TestClient(app), factory
 
@@ -358,4 +363,70 @@ def test_public_checkout_rejects_tampered_amount_without_creating_payment() -> N
     with factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 0
         assert db.scalar(select(func.count(UserAccess.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_intensive_offer_discounts_checkout_and_keeps_messenger_user_identity() -> None:
+    client, factory = make_client(enabled=True)
+    version_id = seed_draft(factory)
+    assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
+
+    with factory() as db:
+        user = User(display_name="Клиент из Telegram", data_origin="native")
+        db.add(user)
+        db.flush()
+        offer = UserOffer(
+            user_id=user.id,
+            stage_code="intensive_day4_discount",
+            started_at=datetime.now(timezone.utc),
+            expires_at=datetime.now(timezone.utc) + timedelta(hours=72),
+            status="active",
+            snapshot={"offer_id": "intensive-day4-1000", "discount_amount": 1000},
+        )
+        db.add(offer)
+        db.commit()
+        user_id = user.id
+        token = create_offer_token(db, user.id, offer.expires_at)
+        db.commit()
+
+    prices = client.get("/api/pricing/site", params={"intensive_offer": token})
+    assert prices.status_code == 200
+    assert prices.json()["tariffs"][0]["compare_at_amount"] == 15900
+    assert prices.json()["tariffs"][0]["sale_amount"] == 14900
+    assert prices.json()["intensive_offer"]["discount_amount"] == 1000
+
+    checkout_response = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": token,
+        },
+    )
+    assert checkout_response.status_code == 200
+    assert checkout_response.json()["amount"] == 14900
+    raw_product = checkout_response.json()["cart_command"].split(":", 1)[1].rsplit("=", 1)[0]
+
+    payment = client.post(
+        "/integrations/tilda/payments",
+        data={
+            "Name": "Клиент из Telegram",
+            "Email": "messenger-buyer@example.test",
+            "orderid": "pricing-intensive-order-1",
+            "paymentid": "pricing-intensive-payment-1",
+            "products": raw_product,
+            "price": "14900",
+            "Currency": "RUB",
+            "Payment status": "Paid",
+        },
+        headers={"X-Tilda-Webhook-Token": TOKEN},
+    )
+    assert payment.status_code == 200
+    with factory() as db:
+        checkout = db.scalar(select(OfferCheckout))
+        stored_payment = db.scalar(select(Payment))
+        email = db.scalar(select(UserEmail))
+        assert checkout is not None and checkout.user_id == user_id
+        assert stored_payment is not None and stored_payment.user_id == user_id
+        assert email is not None and email.user_id == user_id
+        assert db.scalar(select(func.count(User.id))) == 1
     app.dependency_overrides.clear()
