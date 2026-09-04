@@ -10,6 +10,13 @@ from sqlalchemy.orm import Session
 from app.models import PriceEntry, PricingVersion
 
 
+def site_tariff_amount(
+    entry: PriceEntry, *, personal_discount: Decimal = Decimal("0")
+) -> Decimal:
+    """Return the payable amount used by both the storefront and checkout."""
+    return max(Decimal("0"), entry.sale_amount - personal_discount)
+
+
 def amount_value(value: Decimal | None) -> int | float | None:
     if value is None:
         return None

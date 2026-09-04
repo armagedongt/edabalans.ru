@@ -46,11 +46,13 @@ owns_files = [
   "backend/app/checkout_reference.py",
   "backend/app/legal_service.py", "backend/app/pricing_routes.py",
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
+  "backend/app/robokassa_routes.py", "backend/app/robokassa_service.py",
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
   "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
   "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
-  "backend/tests/test_pricing_catalog.py", "backend/tests/test_tilda_payments.py",
-  "docs/TILDA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
+  "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
+  "backend/tests/test_tilda_payments.py",
+  "docs/TILDA_PAYMENTS.md", "docs/ROBOKASSA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
   "docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md",
   "docs/knowledge-base/ACCESS_RULES.md", "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md",
   "docs/knowledge-base/LEGAL_DOCUMENTS.md", "docs/knowledge-base/PRICING_CATALOG.md",
@@ -69,7 +71,7 @@ owns_tables = [
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
 ]
 owns_routes = [
-  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/tilda/*", "*/personal-access*",
+  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*",
   "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
 ]
 

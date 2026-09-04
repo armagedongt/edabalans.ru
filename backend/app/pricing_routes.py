@@ -33,6 +33,7 @@ from app.pricing_service import (
     publish_draft,
     serialize_entry,
     serialize_version,
+    site_tariff_amount,
 )
 from app.product_catalog_service import tariff_public
 
@@ -202,7 +203,7 @@ def site_pricing_payload(
         if discount:
             serialized["compare_at_amount"] = serialized["sale_amount"]
             serialized["sale_amount"] = amount_value(
-                max(Decimal("0"), entry.sale_amount - discount)
+                site_tariff_amount(entry, personal_discount=discount)
             )
         entries.append(
             {
@@ -248,12 +249,20 @@ def public_site_pricing(
 
 
 @router.get("/api/pricing/site/preview")
-def public_site_pricing_preview(db: Session = Depends(get_db)) -> dict:
+def public_site_pricing_preview(
+    intensive_offer: str | None = Query(default=None, max_length=1024),
+    db: Session = Depends(get_db),
+) -> dict:
     """Expose current display prices to noindex previews without enabling checkout."""
     version = active_pricing_version(db) or latest_pricing_version(db)
     if version is None:
         raise HTTPException(503, "Версия цен для preview не создана")
-    return site_pricing_payload(db, version)
+    user_id = None
+    if intensive_offer:
+        user_id = offer_user_id(db, intensive_offer)
+        if user_id is None:
+            raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    return site_pricing_payload(db, version, user_id=user_id)
 
 
 @router.post("/api/pricing/site/checkout")
@@ -302,10 +311,9 @@ def create_site_checkout(
     display_name = catalog_tariff["name"] if catalog_tariff else entry.name
     now = datetime.now(timezone.utc)
     offer = offer_for_user(db, user_id) if user_id else None
-    amount = (
-        max(Decimal("0"), entry.sale_amount - Decimal(OFFER_DISCOUNT))
-        if offer
-        else entry.sale_amount
+    amount = site_tariff_amount(
+        entry,
+        personal_discount=Decimal(OFFER_DISCOUNT) if offer else Decimal("0"),
     )
     expires_at = now + timedelta(hours=2)
     if offer and offer.expires_at:

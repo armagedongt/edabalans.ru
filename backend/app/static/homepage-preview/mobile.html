@@ -1434,7 +1434,7 @@
         <p>В конце большинства материалов внутри Мастер-класса есть список использованных источников, с которым вы можете ознакомиться.</p>
       </section>
     </div>
-    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/pricing/site/preview-checkout" data-tilda-cart-url="https://похудение-это-есть.рф/">
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/checkout">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
 
@@ -2403,6 +2403,130 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-button:hover,
     #edb-pricing-neurozeh-v1 .edb-pricing-button:focus-visible { transform:rotate(-1deg) translateY(-2px); }
 
+    #edb-pricing-neurozeh-v1 .edb-checkout-modal[hidden] { display:none; }
+    html.edb-checkout--locked .cookie-notice { display:none; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-modal {
+      position:fixed;
+      z-index:100000;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding:20px;
+      font-family:'Manrope',sans-serif;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-backdrop {
+      position:absolute;
+      inset:0;
+      border:0;
+      background:rgba(10,35,64,.56);
+      backdrop-filter:blur(5px);
+      cursor:pointer;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-dialog {
+      position:relative;
+      width:min(100%,460px);
+      padding:30px;
+      border:1px solid rgba(22,143,211,.16);
+      border-radius:24px;
+      background:#fff;
+      box-shadow:0 28px 80px rgba(14,54,87,.28);
+      color:#173f70;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-close {
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:40px;
+      height:40px;
+      border:0;
+      border-radius:999px;
+      background:#edf7fd;
+      color:#176ba3;
+      font:600 25px/1 'Manrope',sans-serif;
+      cursor:pointer;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-dialog h2 {
+      margin:0 42px 8px 0;
+      font:800 clamp(22px,6vw,28px)/1.16 'Manrope',sans-serif;
+      letter-spacing:-.03em;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-summary {
+      margin:0 0 22px;
+      color:#536b7f;
+      font-size:15px;
+      line-height:1.5;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-label {
+      display:block;
+      margin-bottom:8px;
+      color:#173f70;
+      font-size:14px;
+      font-weight:800;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-email {
+      width:100%;
+      min-height:52px;
+      padding:0 15px;
+      border:1px solid #bdd8ea;
+      border-radius:13px;
+      background:#fbfdff;
+      color:#162838;
+      font:600 16px 'Manrope',sans-serif;
+      outline:none;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-email:focus {
+      border-color:#168fe8;
+      box-shadow:0 0 0 4px rgba(22,143,232,.14);
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-error {
+      margin:8px 0 0;
+      color:#ba3713;
+      font-size:13px;
+      font-weight:700;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-submit {
+      width:100%;
+      min-height:56px;
+      margin-top:18px;
+      border:0;
+      border-radius:15px;
+      background:#ff6a2a;
+      color:#fff;
+      font:800 16px 'Manrope',sans-serif;
+      cursor:pointer;
+      box-shadow:0 14px 28px rgba(255,106,42,.24);
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-submit:disabled { opacity:.62; cursor:wait; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-note {
+      margin:13px 0 0;
+      color:#687b8c;
+      font-size:12px;
+      line-height:1.45;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-note a { color:#176ba3; }
+    #edb-pricing-neurozeh-v1 .edb-checkout-consent {
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+      color:#536b7f;
+      font-size:12px;
+      line-height:1.45;
+      cursor:pointer;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-consent input {
+      flex:0 0 auto;
+      width:18px;
+      height:18px;
+      margin:1px 0 0;
+      accent-color:#168fe8;
+    }
+    #edb-pricing-neurozeh-v1 .edb-checkout-consent a { color:#176ba3; }
+
+    @media (max-width: 480px) {
+      #edb-pricing-neurozeh-v1 .edb-checkout-modal { align-items:end; padding:10px; }
+      #edb-pricing-neurozeh-v1 .edb-checkout-dialog { padding:26px 20px 22px; border-radius:22px; }
+    }
+
     @media (max-width: 350px) {
       #edb-pricing-neurozeh-v1 .edb-pricing-phone {
         padding-right: 10px;
@@ -2645,6 +2769,26 @@
     </div>
   </section>
 
+  <div class="edb-checkout-modal" hidden>
+    <button class="edb-checkout-backdrop" type="button" aria-label="Закрыть окно оплаты"></button>
+    <section class="edb-checkout-dialog" role="dialog" aria-modal="true" aria-labelledby="edb-checkout-title">
+      <button class="edb-checkout-close" type="button" aria-label="Закрыть">×</button>
+      <h2 id="edb-checkout-title">Переход к оплате</h2>
+      <p class="edb-checkout-summary"></p>
+      <form class="edb-checkout-form" novalidate>
+        <label class="edb-checkout-label" for="edb-checkout-email">Email</label>
+        <input class="edb-checkout-email" id="edb-checkout-email" name="email" type="email" inputmode="email" autocomplete="email" maxlength="320" required placeholder="name@example.ru">
+        <p class="edb-checkout-error" role="alert" hidden></p>
+        <label class="edb-checkout-consent">
+          <input name="consent" type="checkbox" required>
+          <span>Я принимаю <a href="https://go.похудение-это-есть.рф/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="https://go.похудение-это-есть.рф/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span>
+        </label>
+        <button class="edb-checkout-submit" type="submit">Перейти к оплате</button>
+        <p class="edb-checkout-note">Сумму сформирует сервер. Оплата откроется на защищённой странице Robokassa.</p>
+      </form>
+    </section>
+  </div>
+
   <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute">
     <symbol id="edb-icon-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"/></symbol>
     <symbol id="edb-icon-pot" viewBox="0 0 24 24"><path d="M5 10h14v5a5 5 0 0 1-5 5h-4a5 5 0 0 1-5-5zM3 10h18M8 6c0-1 1-1.5 1-2.5M12 6c0-1 1-1.5 1-2.5M16 6c0-1 1-1.5 1-2.5"/></symbol>
@@ -2674,6 +2818,16 @@
       const pricingSection = root.closest('.chain-block--pricing');
       const plans = root.querySelectorAll('.edb-pricing-plan');
       const pricingStatus = root.querySelector('.edb-pricing-status');
+      const checkoutModal = root.querySelector('.edb-checkout-modal');
+      const checkoutDialog = root.querySelector('.edb-checkout-dialog');
+      const checkoutForm = root.querySelector('.edb-checkout-form');
+      const checkoutEmail = root.querySelector('.edb-checkout-email');
+      const checkoutConsent = checkoutForm.elements.consent;
+      const checkoutSummary = root.querySelector('.edb-checkout-summary');
+      const checkoutError = root.querySelector('.edb-checkout-error');
+      const checkoutSubmit = root.querySelector('.edb-checkout-submit');
+      let selectedPlan = null;
+      let checkoutTrigger = null;
       const formatPrice = (amount) => {
         const numericAmount = Number(amount);
         const hasKopecks = !Number.isInteger(numericAmount);
@@ -2724,7 +2878,7 @@
         try {
           const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
           const pricingUrl = new URL(root.dataset.pricingEndpoint, window.location.origin);
-          if (offerToken && !pricingUrl.pathname.endsWith('/preview')) {
+          if (offerToken) {
             pricingUrl.searchParams.set('intensive_offer', offerToken);
           }
           const response = await fetch(pricingUrl, { credentials: 'omit' });
@@ -2800,46 +2954,104 @@
         target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       });
 
-      function openTildaCart(command) {
-        const match = /^#order:([^=]+)=(\d+(?:\.\d+)?)$/.exec(String(command || ''));
-        if (match && typeof window.tcart__addProduct === 'function' && typeof window.tcart__openCart === 'function') {
-          window.tcart__addProduct({ name: match[1], price: Number(match[2]), quantity: 1 });
-          window.tcart__openCart();
+      function closeCheckout() {
+        checkoutModal.hidden = true;
+        document.documentElement.classList.remove('edb-product-overlay--locked');
+        document.documentElement.classList.remove('edb-checkout--locked');
+        checkoutError.hidden = true;
+        selectedPlan = null;
+        if (checkoutTrigger) checkoutTrigger.focus();
+      }
+
+      function openCheckout(plan, trigger) {
+        selectedPlan = plan;
+        checkoutTrigger = trigger;
+        const name = plan.querySelector('[data-price-field="name"]').textContent;
+        const price = plan.querySelector('[data-price-field="sale"]').textContent;
+        checkoutSummary.textContent = `${name} · ${price}. Укажите email, к которому будет привязана покупка после подтверждения оплаты.`;
+        checkoutError.hidden = true;
+        checkoutModal.hidden = false;
+        document.documentElement.classList.add('edb-product-overlay--locked');
+        document.documentElement.classList.add('edb-checkout--locked');
+        window.setTimeout(() => checkoutEmail.focus(), 0);
+      }
+
+      function submitPaymentForm(paymentForm) {
+        const form = document.createElement('form');
+        form.method = paymentForm.method || 'POST';
+        form.action = paymentForm.action;
+        Object.entries(paymentForm.fields || {}).forEach(([name, value]) => {
+          const input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = name;
+          input.value = String(value);
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      root.querySelector('.edb-checkout-close').addEventListener('click', closeCheckout);
+      root.querySelector('.edb-checkout-backdrop').addEventListener('click', closeCheckout);
+      checkoutDialog.addEventListener('keydown', (event) => {
+        if (event.key !== 'Tab') return;
+        const focusable = [...checkoutDialog.querySelectorAll('button,input,a[href]')].filter((item) => !item.disabled);
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      });
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !checkoutModal.hidden) closeCheckout();
+      });
+
+      checkoutForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        checkoutError.hidden = true;
+        if (!checkoutEmail.validity.valid) {
+          checkoutError.textContent = 'Укажите корректный email.';
+          checkoutError.hidden = false;
+          checkoutEmail.focus();
           return;
         }
-        const destination = new URL(root.dataset.tildaCartUrl);
-        destination.hash = String(command || '').replace(/^#/, '');
-        window.location.assign(destination.toString());
-      }
+        if (!checkoutConsent.checked) {
+          checkoutError.textContent = 'Подтвердите согласие, чтобы перейти к оплате.';
+          checkoutError.hidden = false;
+          checkoutConsent.focus();
+          return;
+        }
+        checkoutSubmit.disabled = true;
+        checkoutSubmit.textContent = 'Создаю счёт…';
+        try {
+          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
+          const response = await fetch(root.dataset.checkoutEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'omit',
+            body: JSON.stringify({
+              price_code: selectedPlan.dataset.priceCode,
+              email: checkoutEmail.value,
+              intensive_offer: offerToken || null
+            })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.detail || `checkout ${response.status}`);
+          checkoutSubmit.textContent = 'Открываю Robokassa…';
+          submitPaymentForm(result.payment_form);
+        } catch (error) {
+          checkoutError.textContent = error.message || 'Не удалось создать счёт. Попробуйте ещё раз.';
+          checkoutError.hidden = false;
+          checkoutSubmit.disabled = false;
+          checkoutSubmit.textContent = 'Перейти к оплате';
+        }
+      });
 
       plans.forEach((plan) => {
         const button = plan.querySelector('.edb-pricing-button');
-        button.addEventListener('click', async () => {
+        button.addEventListener('click', () => {
           if (button.disabled) return;
-          const original = button.textContent;
-          button.disabled = true;
-          button.textContent = 'Открываю корзину…';
-          try {
-            const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
-            const response = await fetch(root.dataset.checkoutEndpoint, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              credentials: 'omit',
-              body: JSON.stringify({
-                price_code: plan.dataset.priceCode,
-                intensive_offer: offerToken || null
-              })
-            });
-            if (!response.ok) throw new Error(`checkout ${response.status}`);
-            const result = await response.json();
-            openTildaCart(result.cart_command);
-          } catch (error) {
-            pricingStatus.textContent = 'Не удалось открыть корзину. Обновите страницу и попробуйте ещё раз.';
-            pricingStatus.hidden = false;
-          } finally {
-            button.disabled = false;
-            button.textContent = original;
-          }
+          openCheckout(plan, button);
         });
       });
     })();

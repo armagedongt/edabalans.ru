@@ -192,7 +192,9 @@ def record_masterclass_purchase_event(
             user_id=payment.user_id,
             event_key=event_key,
             event_type="masterclass_purchase_confirmed",
-            placement="tilda-payment",
+            placement=(
+                "robokassa-payment" if payment.source == "robokassa" else "tilda-payment"
+            ),
             occurred_at=occurred_at,
             details={"payment_id": str(payment.id)},
         )
@@ -229,7 +231,9 @@ def record_offer_purchase_event_and_cancel_reminder(
                 user_id=payment.user_id,
                 event_key=event_key,
                 event_type="offer_purchase_confirmed",
-                placement="tilda-payment",
+                placement=(
+                    "robokassa-payment" if payment.source == "robokassa" else "tilda-payment"
+                ),
                 occurred_at=occurred_at,
                 details={
                     "payment_id": str(payment.id),
@@ -350,6 +354,9 @@ def find_or_create_user(
     display_name: str,
     phone_original: str,
     occurred_at: datetime,
+    *,
+    source: str = SOURCE,
+    verification_status: str = "tilda_unverified",
 ) -> User | None:
     email = normalize_email(email_original)
     if not email:
@@ -374,6 +381,8 @@ def find_or_create_user(
         display_name,
         phone_original,
         occurred_at,
+        source=source,
+        verification_status=verification_status,
     )
 
 
@@ -384,29 +393,21 @@ def bind_user_contacts(
     display_name: str,
     phone_original: str,
     occurred_at: datetime,
+    *,
+    source: str = SOURCE,
+    verification_status: str = "tilda_unverified",
 ) -> User:
     email = normalize_email(email_original)
     if email:
-        bound_emails = set(
-            db.scalars(
-                select(UserEmail.email_normalized).where(UserEmail.user_id == user.id)
-            ).all()
-        )
-        if bound_emails and email not in bound_emails:
-            raise TildaPayloadError("checkout email does not match offer recipient")
-        email_row = db.scalar(
-            select(UserEmail).where(UserEmail.email_normalized == email)
-        )
-        if email_row is not None and email_row.user_id != user.id:
-            raise TildaPayloadError("checkout email belongs to another user")
+        email_row = validate_user_email_binding(db, user, email)
         if email_row is None:
             db.add(
                 UserEmail(
                     user_id=user.id,
                     email_original=email_original,
                     email_normalized=email,
-                    verification_status="tilda_unverified",
-                    source=SOURCE,
+                    verification_status=verification_status,
+                    source=source,
                     first_seen_at=occurred_at,
                 )
             )
@@ -427,10 +428,28 @@ def bind_user_contacts(
                     user_id=user.id,
                     phone_original=phone_original,
                     phone_normalized=normalized_phone,
-                    source=SOURCE,
+                    source=source,
                 )
             )
     return user
+
+
+def validate_user_email_binding(
+    db: Session, user: User, email_original: str
+) -> UserEmail | None:
+    """Reject an email that cannot be safely attached to the selected user."""
+    email = normalize_email(email_original)
+    bound_emails = set(
+        db.scalars(
+            select(UserEmail.email_normalized).where(UserEmail.user_id == user.id)
+        ).all()
+    )
+    if bound_emails and email not in bound_emails:
+        raise TildaPayloadError("checkout email does not match offer recipient")
+    email_row = db.scalar(select(UserEmail).where(UserEmail.email_normalized == email))
+    if email_row is not None and email_row.user_id != user.id:
+        raise TildaPayloadError("checkout email belongs to another user")
+    return email_row
 
 
 def find_product(db: Session, raw_name: str) -> Product | None:

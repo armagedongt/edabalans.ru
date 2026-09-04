@@ -15,6 +15,7 @@ from app.masterclass_routes import router as masterclass_router
 from app.app_auth import router as app_auth_router
 from app.access_routes import router as access_router
 from app.pricing_routes import router as pricing_router
+from app.robokassa_routes import router as robokassa_router
 from app.intensive_routes import router as intensive_router
 from app.intensive_login_routes import router as intensive_login_router
 from app.knowledge_routes import router as knowledge_router
@@ -57,6 +58,7 @@ app.include_router(masterclass_router)
 app.include_router(app_auth_router)
 app.include_router(access_router)
 app.include_router(pricing_router)
+app.include_router(robokassa_router)
 app.include_router(intensive_login_router)
 app.include_router(intensive_router)
 app.include_router(knowledge_router)

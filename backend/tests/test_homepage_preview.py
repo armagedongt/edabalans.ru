@@ -252,8 +252,9 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'id="site-footer" data-edabalans-site-footer="public"' in response.text
     assert '[data-edabalans-site-footer]{position:relative;z-index:1;background:transparent;color:#17212b}' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' in response.text
-    assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' in response.text
-    assert 'data-tilda-cart-url="https://похудение-это-есть.рф/"' in response.text
+    assert 'data-checkout-endpoint="/api/payments/robokassa/checkout"' in response.text
+    assert 'class="edb-checkout-modal" hidden' in response.text
+    assert "submitPaymentForm(result.payment_form)" in response.text
     assert "previewPricingCatalog" not in response.text
     assert "const productData" not in response.text
     assert "fetch('/api/public-site/content/faq'" in response.text
@@ -654,11 +655,10 @@ def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     assert response.status_code == 200
     assert 'data-tilda-homepage-embed="true"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
-    assert 'data-checkout-endpoint="/api/pricing/site/checkout"' in response.text
+    assert 'data-checkout-endpoint="/api/payments/robokassa/checkout"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
-    assert 'data-checkout-endpoint="/api/pricing/site/preview-checkout"' not in response.text
-    assert "} finally {" in response.text
-    assert "button.disabled = false;" in response.text
+    assert 'data-checkout-endpoint="/api/pricing/site/checkout"' not in response.text
+    assert "openTildaCart" not in response.text
 
 
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
