@@ -1,9 +1,11 @@
 import hashlib
+import xml.etree.ElementTree as ET
 import json
 import os
 import re
 from html.parser import HTMLParser
 from pathlib import Path
+from urllib.parse import parse_qs, urlsplit
 
 os.environ.setdefault(
     "DATABASE_URL",
@@ -1212,11 +1214,11 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
     telegram_qr = client.get("/preview/homepage-mobile/direct-intensive-telegram-qr.svg")
     max_qr = client.get("/preview/homepage-mobile/direct-intensive-max-qr.svg")
     assert "<metadata>https://go.похудение-это-есть.рф/BMB6Y</metadata>" in telegram_qr.text
-    assert "<metadata>https://max.ru/id230409966750_bot?start=BMB6Y</metadata>" in max_qr.text
+    assert "<metadata>https://go.похудение-это-есть.рф/BMB6Y?to=max</metadata>" in max_qr.text
     telegram_qr_bytes = telegram_qr.content.replace(b"\r\n", b"\n")
     max_qr_bytes = max_qr.content.replace(b"\r\n", b"\n")
     assert hashlib.sha256(telegram_qr_bytes).hexdigest() == "1890997c311fcc353df5ee15e84aa8f146e238415455b5e87030e0c524cceec9"
-    assert hashlib.sha256(max_qr_bytes).hexdigest() == "627b8d49a589c67d248fa87e88427ec22e402f1d865e183afb4e946b438ef97a"
+    assert hashlib.sha256(max_qr_bytes).hexdigest() == "1222a4cd47a151ce344f78199beb514910c6d7a9a5c4ad9416f5f4c89e0f0bb9"
 
     assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
     assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404
@@ -1238,7 +1240,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "Не является медицинской услугой." in response.text
     assert "Политика обработки персональных данных" in response.text
     assert "telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y'" in response.text
-    assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
+    assert "maxUrl:'https://go.похудение-это-есть.рф/BMB6Y?to=max'" in response.text
 
     source = client.get("/preview/direct-intensive/t123")
     assert source.status_code == 200
@@ -1251,12 +1253,74 @@ def test_direct_intensive_preview_declares_measurable_events() -> None:
     response = client.get("/preview/direct-intensive")
 
     assert "direct_intensive_view" in response.text
-    assert "direct_intensive_telegram_click" in response.text
-    assert "direct_intensive_max_click" in response.text
+    assert "telegramClickEvent:'intensive_telegram_click'" in response.text
+    assert "maxClickEvent:'intensive_max_click'" in response.text
+    assert "direct_intensive_telegram_click" not in response.text
+    assert "direct_intensive_max_click" not in response.text
     assert "direct_intensive_qr_shown" in response.text
     assert "direct_intensive_qr_selected" in response.text
     assert "mc.yandex.ru/metrika/tag.js" not in response.text
     assert "edb_direct_intensive_attribution_v1" in response.text
+    assert "if(configured(rawUrl)){" in response.text
+    assert "`/preview/direct-intensive/qr/${option.dataset.edbQr}`" in response.text
+
+
+def test_direct_intensive_dynamic_qr_preserves_safe_attribution() -> None:
+    telegram = client.get(
+        "/preview/direct-intensive/qr/telegram"
+        "?utm_source=yandex&utm_medium=cpc&utm_campaign=search&utm_content=cat"
+        "&utm_term=start&utm_id=campaign-77&yclid=click-901&ignored=secret"
+    )
+    max_qr = client.get(
+        "/preview/direct-intensive/qr/max"
+        "?utm_source=yandex&utm_medium=cpc&utm_campaign=search&utm_content=cat"
+        "&utm_term=start&utm_id=campaign-77&yclid=click-901&ignored=secret"
+    )
+
+    assert telegram.status_code == 200
+    assert max_qr.status_code == 200
+    assert telegram.headers["content-type"].startswith("image/svg+xml")
+    assert telegram.headers["cache-control"] == "no-cache"
+    assert telegram.headers["x-robots-tag"] == "noindex, nofollow"
+    assert telegram.headers["access-control-allow-origin"] == "*"
+    telegram_destination = ET.fromstring(telegram.content).findtext(
+        "{http://www.w3.org/2000/svg}metadata"
+    )
+    max_destination = ET.fromstring(max_qr.content).findtext(
+        "{http://www.w3.org/2000/svg}metadata"
+    )
+    expected_attribution = {
+        "utm_source": ["yandex"],
+        "utm_medium": ["cpc"],
+        "utm_campaign": ["search"],
+        "utm_content": ["cat"],
+        "utm_term": ["start"],
+        "utm_id": ["campaign-77"],
+        "yclid": ["click-901"],
+    }
+    assert telegram_destination is not None
+    assert max_destination is not None
+    assert parse_qs(urlsplit(telegram_destination).query) == expected_attribution
+    assert parse_qs(urlsplit(max_destination).query) == {
+        "to": ["max"],
+        **expected_attribution,
+    }
+    assert "ignored" not in telegram.text
+    assert telegram.content != max_qr.content
+    assert client.get("/preview/direct-intensive/qr/unknown").status_code == 404
+
+
+def test_direct_intensive_dynamic_qr_handles_oversized_attribution() -> None:
+    query = "&".join(
+        [f"utm_custom_{index}={'x' * 500}" for index in range(10)]
+        + ["yclid=priority-click"]
+    )
+
+    response = client.get(f"/preview/direct-intensive/qr/telegram?{query}")
+
+    assert response.status_code == 200
+    ET.fromstring(response.content)
+    assert "yclid=priority-click" in response.text
 
 
 def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:

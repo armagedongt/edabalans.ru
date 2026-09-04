@@ -101,6 +101,29 @@ jobs:
           echo "::error title=Backend pytest failed::$message"
           exit 1
 
+      - name: Run direct intensive browser test
+        if: steps.impact.outputs.backend == 'true'
+        shell: bash
+        run: |
+          docker run --detach --rm --name edabalans-browser-backend \
+            --publish 8790:8000 \
+            --env DATABASE_URL=sqlite:////tmp/direct-intensive-e2e.sqlite \
+            edabalans-backend-test \
+            uvicorn app.main:app --host 0.0.0.0 --port 8000
+          for _ in {1..20}; do
+            if curl --fail --silent http://127.0.0.1:8790/health >/dev/null; then
+              break
+            fi
+            sleep 1
+          done
+          npm --prefix backend/tests/browser install --ignore-scripts
+          npm --prefix backend/tests/browser exec -- playwright install chromium
+          npm --prefix backend/tests/browser run test:direct-intensive
+
+      - name: Stop browser-test backend
+        if: always() && steps.impact.outputs.backend == 'true'
+        run: docker stop edabalans-browser-backend || true
+
       - name: Build Telegram service
         if: steps.impact.outputs.telegram == 'true'
         run: docker build --file ./telegram-bot/service/Dockerfile --tag edabalans-telegram-test ./telegram-bot

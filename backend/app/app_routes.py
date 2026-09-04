@@ -5,9 +5,14 @@ import math
 import re
 import uuid
 from datetime import date, datetime, timezone
+from io import BytesIO
 from pathlib import Path
 from typing import Any
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+from xml.sax.saxutils import escape
 
+import qrcode
+import qrcode.image.svg
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from fastapi.responses import (
     FileResponse,
@@ -89,6 +94,19 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "vsl-player.html",
     "weight-loss-after-masterclass.svg",
     "weight-loss-before-masterclass.svg",
+}
+DIRECT_INTENSIVE_DESTINATIONS = {
+    "telegram": "https://go.похудение-это-есть.рф/BMB6Y",
+    "max": "https://go.похудение-это-есть.рф/BMB6Y?to=max",
+}
+DIRECT_INTENSIVE_QR_MAX_DESTINATION_BYTES = 1000
+DIRECT_INTENSIVE_ATTRIBUTION_PRIORITY = {
+    "yclid": 0,
+    "utm_source": 1,
+    "utm_medium": 2,
+    "utm_campaign": 3,
+    "utm_content": 4,
+    "utm_term": 5,
 }
 
 
@@ -236,6 +254,66 @@ def direct_intensive_t123_source() -> PlainTextResponse:
     response = PlainTextResponse(fragment, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
+
+
+def direct_intensive_destination(channel: str, request: Request) -> str:
+    base = DIRECT_INTENSIVE_DESTINATIONS.get(channel)
+    if base is None:
+        raise HTTPException(status_code=404, detail="Unknown messenger")
+    parts = urlsplit(base)
+    query = list(parse_qsl(parts.query, keep_blank_values=True))
+    attribution: dict[str, str] = {}
+    for key, value in request.query_params.multi_items():
+        normalized_key = key.casefold()
+        if normalized_key.startswith("utm_") and len(normalized_key) <= 100:
+            attribution[normalized_key] = value[:500]
+        elif normalized_key == "yclid":
+            attribution["yclid"] = value[:500]
+    ordered_attribution = sorted(
+        attribution.items(),
+        key=lambda item: (
+            DIRECT_INTENSIVE_ATTRIBUTION_PRIORITY.get(item[0], 6),
+            item[0],
+        ),
+    )
+    for item in ordered_attribution:
+        candidate_query = [*query, item]
+        candidate = urlunsplit(
+            (parts.scheme, parts.netloc, parts.path, urlencode(candidate_query), parts.fragment)
+        )
+        if len(candidate.encode("utf-8")) <= DIRECT_INTENSIVE_QR_MAX_DESTINATION_BYTES:
+            query = candidate_query
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
+@router.get("/preview/direct-intensive/qr/{channel}", include_in_schema=False)
+def direct_intensive_qr(channel: str, request: Request) -> Response:
+    destination = direct_intensive_destination(channel, request)
+    image = qrcode.make(
+        destination,
+        image_factory=qrcode.image.svg.SvgPathImage,
+        error_correction=qrcode.constants.ERROR_CORRECT_H,
+        border=4,
+        box_size=10,
+    )
+    output = BytesIO()
+    image.save(output)
+    svg = output.getvalue().decode("utf-8")
+    svg_tag_end = svg.index(">", svg.index("<svg")) + 1
+    svg = (
+        svg[:svg_tag_end]
+        + f"<metadata>{escape(destination)}</metadata>"
+        + svg[svg_tag_end:]
+    )
+    return Response(
+        svg,
+        media_type="image/svg+xml",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Robots-Tag": "noindex, nofollow",
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
 
 
 @router.get("/preview/homepage-reviews-wall", include_in_schema=False)

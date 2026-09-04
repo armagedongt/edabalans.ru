@@ -79,8 +79,8 @@
     maxLabel:'MAX',
     telegramNote:'Откроется только с VPN',
     legal:{copyright:'© 2026 Сергей Воронцов',inn:'ИНН 230409966750',privacyLabel:'Политика обработки персональных данных',privacyUrl:'https://go.похудение-это-есть.рф/legal/privacy',disclaimer:'Не является медицинской услугой.'},
-    links:{telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y',maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'},
-    analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'direct_intensive_telegram_click',maxClickEvent:'direct_intensive_max_click',qrShownEvent:'direct_intensive_qr_shown',qrSelectedEvent:'direct_intensive_qr_selected'}
+    links:{telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y',maxUrl:'https://go.похудение-это-есть.рф/BMB6Y?to=max'},
+    analytics:{counterId:97331502,viewEvent:'direct_intensive_view',telegramClickEvent:'intensive_telegram_click',maxClickEvent:'intensive_max_click',qrShownEvent:'direct_intensive_qr_shown',qrSelectedEvent:'direct_intensive_qr_selected'}
   };
 
   const HERO_HTML='<span class="edb-di-hero-line">Когда каждая попытка</span><span class="edb-di-hero-line edb-di-marker">взять себя в руки</span><span class="edb-di-hero-line">заканчивается срывом…</span><span class="edb-di-hero-accent">пора менять подход!</span>';
@@ -98,13 +98,23 @@
   if(!robots&&document.head){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}
   if(robots)robots.content='noindex, nofollow';
 
-  const allowed=['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'];
+  const attributionKey=key=>key.toLowerCase()==='yclid'||key.toLowerCase().startsWith('utm_');
   const storageKey='edb_direct_intensive_attribution_v1';
   let attribution={};
-  try{attribution=JSON.parse(sessionStorage.getItem(storageKey)||'{}')||{}}catch(_){attribution={}}
+  try{
+    const stored=JSON.parse(sessionStorage.getItem(storageKey)||'{}')||{};
+    Object.entries(stored).forEach(([key,value])=>{if(attributionKey(key)&&value)attribution[key]=String(value).slice(0,500)});
+  }catch(_){attribution={}}
   const query=new URLSearchParams(location.search);
-  allowed.forEach(key=>{const value=query.get(key);if(value)attribution[key]=value.slice(0,500)});
+  query.forEach((value,key)=>{if(attributionKey(key)&&value)attribution[key.toLowerCase()==='yclid'?'yclid':key]=value.slice(0,500)});
   try{if(Object.keys(attribution).length)sessionStorage.setItem(storageKey,JSON.stringify(attribution))}catch(_){}
+
+  root.querySelectorAll('[data-edb-qr]').forEach(option=>{
+    const qrOrigin=location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname==='app.edabalans.ru'?location.origin:'https://app.edabalans.ru';
+    const destination=new URL(`/preview/direct-intensive/qr/${option.dataset.edbQr}`,qrOrigin);
+    Object.entries(attribution).forEach(([key,value])=>destination.searchParams.set(key,value));
+    option.querySelector('.edb-di-qr-code').src=destination.toString();
+  });
 
   const eventReady=name=>name&&!name.includes('__REQUIRED_');
   const emit=(name,details={})=>{
@@ -119,9 +129,9 @@
   root.querySelectorAll('[data-edb-channel]').forEach(link=>{
     const channel=link.dataset.edbChannel;
     const rawUrl=CONTENT.links[`${channel}Url`];
-    if(configured(rawUrl)&&channel==='telegram'){
+    if(configured(rawUrl)){
       const destination=new URL(rawUrl);
-      if(destination.hostname.toLowerCase()==='go.похудение-это-есть.рф')allowed.forEach(key=>{if(attribution[key])destination.searchParams.set(key,attribution[key])});
+      Object.entries(attribution).forEach(([key,value])=>destination.searchParams.set(key,value));
       link.href=destination.toString();
     }
     link.addEventListener('click',event=>{

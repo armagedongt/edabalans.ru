@@ -1,0 +1,11 @@
+{
+  "name": "edabalans-browser-tests",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:direct-intensive": "node direct-intensive.e2e.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}
