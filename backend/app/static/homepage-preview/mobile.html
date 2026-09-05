@@ -986,11 +986,13 @@
     .chain-block--before-after{padding:0;background:transparent}
     .chain-block--anya{padding:var(--space-section) 0 0;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
     .anya-story{width:100%;max-width:none;margin:0;padding:0}
+    .anya-story__player-shell{padding:0 var(--page-gutter)}
     .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
     .anya-story__header p{max-width:580px;margin:18px 0 0;color:#55616d;font-size:var(--type-body);font-weight:600;line-height:1.55}
     .anya-story__gesture{display:inline-grid;width:64px;height:36px;margin-left:15px;vertical-align:-.3em;color:#168fd3;place-items:center}
+    .anya-story__gesture[hidden]{display:none}
     .anya-swipe-option{display:none;align-items:center;justify-content:center;color:#168fd3;font-size:12px;font-weight:800}
     .anya-swipe-option--tilda{display:flex}
     .anya-swipe-tilda{position:relative;width:62px;height:34px}
@@ -1334,6 +1336,7 @@
     <section class="chain-block copy-section reviews-featured-heading" data-homepage-block="reviews-featured-heading" data-block-width="content">
       <div class="copy-section__inner"><h2 data-homepage-field="title">Вот что пишут те, кто уже прошёл Мастер-класс</h2></div>
     </section>
+    <template data-temporarily-disabled="reviews-voice">
     <!-- library:reviews-voice:start -->
     <section class="reviews-voice" aria-label="Голосовые отзывы" data-block-width="content">
       <article class="voice-widget" data-homepage-block="reviews-voice-1" data-block-width="content" data-voice-widget data-state="paused">
@@ -1389,13 +1392,15 @@
       </article>
     </section>
     <!-- library:reviews-voice:end -->
+    </template>
 
     <!-- library:reviews-featured:start -->
     <section class="reviews-featured" aria-label="Избранные отзывы участников" data-homepage-block="reviews-featured" data-homepage-field="media" data-block-width="visual">
-      <button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть избранный отзыв 1 из 4"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Избранный отзыв участницы 1"></button>
-      <button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть избранный отзыв 2 из 4"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Избранный отзыв участницы 2"></button>
-      <button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="3" aria-label="Открыть избранный отзыв 3 из 4"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Избранный отзыв участницы 3"></button>
-      <button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="4" aria-label="Открыть избранный отзыв 4 из 4"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Избранный отзыв участницы 4"></button>
+      <button class="reviews-featured__item" type="button" style="--tilt:-1.2deg" data-review-index="1" aria-label="Открыть избранный отзыв 1 из 5"><img src="https://optim.tildacdn.com/tild3462-3461-4633-b639-613964313736/-/format/webp/Frame_492445363_1.jpg.webp" alt="Избранный отзыв участницы 1"></button>
+      <button class="reviews-featured__item" type="button" style="--tilt:.9deg" data-review-index="2" aria-label="Открыть избранный отзыв 2 из 5"><img src="https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp" alt="Избранный отзыв участницы 2"></button>
+      <button class="reviews-featured__item" type="button" style="--tilt:.6deg" data-review-index="3" aria-label="Открыть избранный отзыв 3 из 5"><img src="https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp" alt="Избранный отзыв участницы 3"></button>
+      <button class="reviews-featured__item" type="button" style="--tilt:-1deg" data-review-index="4" aria-label="Открыть избранный отзыв 4 из 5"><img src="https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp" alt="Избранный отзыв участницы 4"></button>
+      <button class="reviews-featured__item" type="button" style="--tilt:.7deg" data-review-index="5" aria-label="Открыть избранный отзыв 5 из 5"><img src="/preview/homepage-mobile/anya-before-after.webp?v=1" alt="Аня до и после похудения" loading="lazy" decoding="async"></button>
     </section>
     <!-- library:reviews-featured:end -->
 
@@ -3103,18 +3108,28 @@
       <div class="anya-story">
         <header class="anya-story__header" data-homepage-block="anya-heading" data-block-width="story">
           <span class="anya-story__kicker" data-homepage-field="kicker">ИСТОРИЯ</span>
-          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок">
+          <h2 id="anya-story-title"><span data-homepage-field="title">Что случилось с Аней?</span><span class="anya-story__gesture" aria-label="Листайте историю вбок" hidden>
             <span class="anya-swipe-option anya-swipe-option--tilda" aria-hidden="true"><span class="anya-swipe-tilda"><span class="anya-swipe-tilda__cards"><i></i><i></i></span><svg class="anya-swipe-tilda__hand" viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg></span></span>
             <span class="anya-swipe-option anya-swipe-option--finger" aria-hidden="true"><span class="anya-swipe-finger"><svg viewBox="0 0 28 34"><path d="M8 29c-2-4-4-7-3-9 1-2 3-1 5 1V8c0-2 1-3 3-3s3 1 3 3v7-3c0-2 1-3 3-3s3 1 3 3v4-2c0-2 1-3 3-3s3 1 3 3v8c0 7-4 10-10 10h-2c-4 0-6-1-8-3Z"/></svg><i class="anya-swipe-track"></i></span></span>
             <span class="anya-swipe-option anya-swipe-option--nudge" aria-hidden="true"><span class="anya-swipe-nudge"><i></i></span></span>
           </span></h2>
           <p data-homepage-block="anya-intro" data-homepage-field="text" data-block-width="story">Если долго находиться в моем информационном поле — могут быть последствия. Осторожно!</p>
         </header>
-        <div class="anya-story__slider" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="story">
+        <div class="anya-story__player-shell">
+          <div class="site-hero__inner">
+            <div class="site-player" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-main">
+              <div class="site-player__mask">
+                <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+        <template data-temporarily-disabled="anya-slider">
+        <div class="anya-story__slider" data-disabled-homepage-block="anya-slider" data-homepage-field="media" data-block-width="story">
           <div class="anya-story__viewport" data-anya-slider tabindex="0" role="region" aria-label="История Ани. Листайте вбок или используйте стрелки влево и вправо">
             <div class="anya-story__track">
             <article class="anya-slide anya-slide--video" aria-label="Видео Ани">
-              <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+              <iframe data-disabled-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
             </article>
             <article class="anya-slide anya-slide--placeholder" aria-label="Плейсхолдер карточки истории Ани 1"></article>
             <article class="anya-slide anya-slide--placeholder" aria-label="Плейсхолдер карточки истории Ани 2"></article>
@@ -3127,6 +3142,7 @@
             <button class="anya-story__arrow anya-story__side-arrow anya-story__side-arrow--next" type="button" data-anya-next aria-label="Следующий слайд"></button>
           </div>
         </div>
+        </template>
         <div class="anya-story__after" data-homepage-block="anya-outro" data-block-width="story"><p data-homepage-field="paragraph-1">Не ждите идеального момента или идеальных условий, когда и на работе вдруг не будет стресса, и дома куда-то пропадут все домашние дела.</p><p data-homepage-field="paragraph-2">Мы оба знаем, что этого не произойдет в обозримом будущем. И мы оба знаем, что с каждым годом худеть будет только тяжелее.</p></div>
         <a class="free-intensive__cta anya-story__cta" data-homepage-block="anya-cta" data-homepage-field="cta" data-block-width="story" href="#pricing">Начать прямо сейчас</a>
       </div>

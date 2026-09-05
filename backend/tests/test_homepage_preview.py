@@ -109,6 +109,57 @@ class RobotsMetaParser(HTMLParser):
             fields[field_id] = fields.get(field_id, "") + data
 
 
+class LiveHomepageParser(HTMLParser):
+    VOID_TAGS = RobotsMetaParser.VOID_TAGS
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.template_depth = 0
+        self.live_voice_widgets = 0
+        self.live_slider_viewports = 0
+        self.live_featured_items = 0
+        self.live_anya_iframes = 0
+        self.anya_iframe_in_player_mask = False
+        self._stack: list[tuple[str, set[str]]] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "template":
+            self.template_depth += 1
+            return
+        if self.template_depth:
+            return
+        attributes = dict(attrs)
+        classes = set((attributes.get("class") or "").split())
+        if "data-voice-widget" in attributes:
+            self.live_voice_widgets += 1
+        if "data-anya-slider" in attributes:
+            self.live_slider_viewports += 1
+        if "reviews-featured__item" in classes:
+            self.live_featured_items += 1
+        if tag == "iframe" and attributes.get("data-media-context") == "anya-review":
+            self.live_anya_iframes += 1
+            ancestor_classes = [item_classes for _, item_classes in self._stack]
+            self.anya_iframe_in_player_mask = any(
+                "site-player" in item_classes for item_classes in ancestor_classes
+            ) and any(
+                "site-player__mask" in item_classes
+                for item_classes in ancestor_classes
+            )
+        if tag not in self.VOID_TAGS:
+            self._stack.append((tag, classes))
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "template":
+            self.template_depth -= 1
+            return
+        if self.template_depth or tag in self.VOID_TAGS:
+            return
+        for index in range(len(self._stack) - 1, -1, -1):
+            if self._stack[index][0] == tag:
+                del self._stack[index:]
+                break
+
+
 def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     response = client.get("/preview/homepage-recognition")
     source_path = (
@@ -189,6 +240,14 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
 
     parser = RobotsMetaParser()
     parser.feed(response.text)
+    live_parser = LiveHomepageParser()
+    live_parser.feed(response.text)
+    assert live_parser.template_depth == 0
+    assert live_parser.live_voice_widgets == 0
+    assert live_parser.live_slider_viewports == 0
+    assert live_parser.live_featured_items == 5
+    assert live_parser.live_anya_iframes == 1
+    assert live_parser.anya_iframe_in_player_mask
     assert parser.content is not None
     assert {value.strip() for value in parser.content.split(",")} == {
         "noindex",
@@ -210,6 +269,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "/preview/homepage-mobile/media-coordinator.js?v=2" in response.text
     assert "const preloadDistance = Math.max(window.innerHeight, 640);" in response.text
     assert "frame.src = frame.dataset.mediaSrc;" in response.text
+    assert "observer.observe(block);" in response.text
     assert "rootMargin: `0px 0px ${preloadDistance}px 0px`" in response.text
     assert {
         "/preview/homepage-mobile/crying-character.png",
@@ -329,6 +389,23 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert ".pain:not(.pain--final){width:1px;height:1px" in response.text
     assert "transform:translate3d(-50%,0,0)!important" in response.text
     assert 'data-anya-slider' in response.text
+    assert '<template data-temporarily-disabled="anya-slider">' in response.text
+    assert response.text.count('data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"') == 1
+    assert 'data-disabled-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"' in response.text
+    assert '<div class="anya-story__player-shell">' in response.text
+    assert ".anya-story__player-shell{padding:0 var(--page-gutter)}" in response.text
+    assert '<div class="site-player" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-main">' in response.text
+    anya_slider_template = response.text.split(
+        '<template data-temporarily-disabled="anya-slider">', 1
+    )[1].split("</template>", 1)[0]
+    anya_live_markup = response.text.replace(anya_slider_template, "")
+    slider_viewport_marker = (
+        '<div class="anya-story__viewport" data-anya-slider'
+    )
+    assert slider_viewport_marker in anya_slider_template
+    assert slider_viewport_marker not in anya_live_markup
+    assert 'data-disabled-media-src=' in anya_slider_template
+    assert 'data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"' in anya_live_markup
     assert 'data-anya-counter' not in response.text
     assert 'data-anya-prev' in response.text
     assert 'data-anya-next' in response.text
@@ -365,6 +442,13 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     ]
     assert [block for block in parser.block_order if block in expected_flow] == expected_flow
     assert response.text.count('data-voice-widget data-state="paused"') == 2
+    voice_template = response.text.split(
+        '<template data-temporarily-disabled="reviews-voice">', 1
+    )[1].split("</template>", 1)[0]
+    assert voice_template.count('data-voice-widget data-state="paused"') == 2
+    assert 'data-voice-widget data-state="paused"' not in response.text.replace(
+        voice_template, ""
+    )
     assert 'data-method-overlay="education"' in response.text
     assert 'data-method-overlay="sources"' in response.text
     assert 'href="#pricing">Начать прямо сейчас</a>' in response.text
@@ -460,6 +544,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
         "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
         "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
         "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
+        "/preview/homepage-mobile/anya-before-after.webp?v=1",
     ]
     expected_wall_review_sources = [
         "https://optim.tildacdn.com/tild3133-3832-4464-b037-623236633763/-/resize/600x600/-/format/webp/__1.jpg.webp",
@@ -496,7 +581,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert [
         source for source in wall_sources if source.startswith("https://optim.tildacdn.com/")
     ] == expected_wall_review_sources
-    assert response.text.count('class="reviews-featured__item"') == 4
+    assert response.text.count('class="reviews-featured__item"') == 5
     assert response.text.count('class="reviews-wall__item"') == 21
     assert response.text.count('class="reviews-wall__promo"') == 5
     wall_start = response.text.index('<section class="reviews-wall"')
@@ -673,6 +758,7 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
     assert response.headers["content-type"].startswith("text/html")
     assert response.headers["cache-control"] == "no-cache"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert '<template data-temporarily-disabled="reviews-voice">' not in response.text
     preview_dir = Path(__file__).parents[1] / "app/static/homepage-preview"
     mobile_source = (preview_dir / "mobile.html").read_text(encoding="utf-8")
 
@@ -703,6 +789,7 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
         "https://optim.tildacdn.com/tild6336-3032-4033-b434-613563326139/-/format/webp/Frame_492445372_1.jpg.webp",
         "https://optim.tildacdn.com/tild6238-3062-4138-b234-336662303539/-/contain/758x1058/center/center/-/format/webp/Frame_492445364_2.jpg.webp",
         "https://optim.tildacdn.com/tild6634-6636-4463-b361-663039303138/-/format/webp/__29_1.jpg.webp",
+        "/preview/homepage-mobile/anya-before-after.webp?v=1",
     ]
     expected_tilda_asset_ids = [
         "tild3133-3832-4464-b037-623236633763",
@@ -743,7 +830,7 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
         if source.startswith("https://optim.tildacdn.com/")
     ]
     assert actual_tilda_asset_ids == expected_tilda_asset_ids
-    assert response.text.count('class="reviews-featured__item"') == 4
+    assert response.text.count('class="reviews-featured__item"') == 5
     assert response.text.count('class="reviews-wall__item"') == 21
     assert response.text.count('class="reviews-wall__promo"') == 5
     wall_start = response.text.index('<section class="reviews-wall"')
@@ -856,14 +943,15 @@ def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall
         float(value.removesuffix("deg"))
         for value in re.findall(r'style="--tilt:(-?\d*\.?\d+deg)"', response.text)
     ]
-    assert len(tilts) == 30
+    assert len(tilts) == 31
     assert all(0 < abs(tilt) <= 2 for tilt in tilts)
     assert min(tilts) < 0 < max(tilts)
     assert "tild6131-3266-4736-b265-396265366664" not in response.text
     assert "tild6338-3130-4939-a335-653164356231" not in response.text
     assert "tild3438-6466-4063-b435-336239383962" not in response.text
     assert response.text.count('aria-label="Открыть отзыв ') == 21
-    assert response.text.count('aria-label="Открыть избранный отзыв ') == 4
+    assert response.text.count('aria-label="Открыть избранный отзыв ') == 5
+    assert "featured: [...document.querySelectorAll('.reviews-featured__item')]" in response.text
     assert 'data-review-lightbox role="dialog" aria-modal="true"' in response.text
     assert 'data-review-stage' in response.text
     assert 'data-review-prev' in response.text
@@ -1184,6 +1272,7 @@ def test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders() -> Non
 
 def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> None:
     assets = {
+        "anya-before-after.webp",
         "crying-character.png",
         "direct-intensive-max-qr.svg",
         "direct-intensive-telegram-qr.svg",

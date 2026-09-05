@@ -22,6 +22,7 @@ const allowedHosts = new Set([`127.0.0.1:${port}`, `localhost:${port}`])
 const allowedOrigins = new Set([`http://127.0.0.1:${port}`, `http://localhost:${port}`])
 
 const homepageAssets = new Set([
+  'anya-before-after.webp',
   'crying-character.png',
   'direct-intensive-max-qr.svg',
   'direct-intensive-telegram-qr.svg',

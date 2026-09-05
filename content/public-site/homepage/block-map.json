@@ -250,7 +250,7 @@
     {
       "order": 190,
       "id": "reviews-featured",
-      "label": "Четыре избранных фотоотзыва",
+      "label": "Пять избранных фотоотзывов",
       "selector": "[data-homepage-block=\"reviews-featured\"]",
       "width": "visual",
       "fields": [
@@ -345,9 +345,9 @@
     {
       "order": 270,
       "id": "anya-slider",
-      "label": "Слайдер истории Ани",
+      "label": "Видео истории Ани",
       "selector": "[data-homepage-block=\"anya-slider\"]",
-      "width": "story",
+      "width": "video-main",
       "fields": [
         "media"
       ],

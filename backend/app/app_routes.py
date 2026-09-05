@@ -73,6 +73,7 @@ DAY_COUNT = 30
 CATEGORY_COUNT = 17
 JSONP_CALLBACK = re.compile(r"^[A-Za-z_$][0-9A-Za-z_$]*$")
 HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
+    "anya-before-after.webp",
     "crying-character.png",
     "direct-intensive-max-qr.svg",
     "direct-intensive-telegram-qr.svg",
