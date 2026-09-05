@@ -8,8 +8,8 @@ source_channel: telegram
 source_post_url: "https://t.me/Fitness_Talks/392"
 source_text_policy: exact_copy_without_rewrite
 max_bot_name: "id230409966750_bot"
-max_deep_link_payload_alias: "intensive-day-2-assignment"
-max_deep_link_url: "{{MAX_DEEP_LINK_DAY2}}"
+max_deep_link_payload_alias: "iz2"
+max_deep_link_url: "https://max.ru/id230409966750_bot?start=iz2"
 entry_behavior: MAX-кнопка задания дня 2 открывает MAX-бота; бот выдаёт эту точную копию в текущем чате.
 tracking_event: "intensive_day_2_assignment_opened"
 link_preview: false
@@ -83,4 +83,3 @@ max_delivery_parts: 1
 Приходите на мой трехнедельный Мастер-класс и я покажу, как вы можете изменить свое питание, без ощущения, что вы сидите на диете!
 
 Подробности на сайте: [похудение-это-есть.рф]({{PERSONAL_MASTERCLASS_URL}})
-

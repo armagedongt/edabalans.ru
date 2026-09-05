@@ -14,16 +14,19 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.account_credentials import generate_password, password_hash
+from app.content_formatting import replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user
 from app.intensive_access import (
     create_intensive_access_link,
     intensive_access_url,
     intensive_token,
+    personal_tracking_values,
 )
 from app.models import (
     AccountCredential,
     AccountOnboarding,
     BotInstance,
+    ContentItem,
     CrmAttributionEvent,
     CrmMessengerAccount,
     CrmTag,
@@ -42,10 +45,16 @@ from app.tracking import canonical_tag, resolve_start_payload
 MAX_API_BASE = "https://platform-api2.max.ru"
 MAX_CA_BUNDLE = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_ca.pem"
 MAX_BOT_CODE = "max"
+MAX_MESSAGE_TEXT_LIMIT = 4000
 MAX_INTENSIVE_MESSAGE = (
     "<b>Бесплатный интенсив «Последнее похудение»</b>\n\n"
     "Нажмите кнопку ниже, чтобы открыть первый день."
 )
+MAX_ASSIGNMENT_ROUTES = {
+    "iz1": (1, "tpl_max_forwarded_assignment_day1"),
+    "iz2": (2, "tpl_max_forwarded_assignment_day2"),
+    "iz3": (3, "tpl_max_forwarded_assignment_day3"),
+}
 
 
 class MaxClient:
@@ -127,6 +136,85 @@ def _send_intensive(sender: MaxClient, user_id: str, intensive_url: str) -> str:
         button_text="Открыть первый день",
         button_url=intensive_url,
     )
+
+
+def _max_assignment_body(
+    session: Session,
+    *,
+    content_code: str,
+    user_id: str,
+    intensive_public_url: str,
+) -> str:
+    item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
+    if (
+        item is None
+        or item.status != "published"
+        or item.editorial_status != "approved"
+        or not (item.body_source or "").strip()
+    ):
+        raise RuntimeError(f"MAX assignment content is unavailable: {content_code}")
+    body = item.body_source or ""
+    if "{{personal_" in body:
+        values = personal_tracking_values(
+            session,
+            user_id=user_id,
+            platform="max",
+            public_url=intensive_public_url,
+        )
+        body = replace_template_values(body, values)
+    if "{{" in body:
+        raise RuntimeError(f"MAX assignment has unresolved variables: {content_code}")
+    if len(body) > MAX_MESSAGE_TEXT_LIMIT:
+        raise RuntimeError(
+            f"MAX assignment exceeds {MAX_MESSAGE_TEXT_LIMIT} characters: "
+            f"{content_code} ({len(body)})"
+        )
+    return body
+
+
+def _max_assignment_failure_status(exc: httpx.HTTPError) -> str:
+    """Separate safe retries from calls whose delivery result is unknown."""
+    if isinstance(exc, (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout)):
+        return "retryable"
+    if isinstance(exc, httpx.HTTPStatusError):
+        status_code = exc.response.status_code
+        if status_code == 429:
+            return "retryable"
+        if 400 <= status_code < 500:
+            return "failed"
+        return "uncertain"
+    return "uncertain"
+
+
+def _record_max_assignment_failure(
+    session: Session,
+    delivery: TrackingEvent,
+    exc: httpx.HTTPError,
+) -> None:
+    delivery.metadata_json = {
+        **(delivery.metadata_json or {}),
+        "max_delivery_status": _max_assignment_failure_status(exc),
+        "max_delivery_error_type": type(exc).__name__,
+    }
+    session.commit()
+
+
+def _send_max_assignment(
+    session: Session,
+    sender: MaxClient,
+    *,
+    platform_user_id: str,
+    crm_user_id: str,
+    content_code: str,
+    intensive_public_url: str,
+) -> str:
+    body = _max_assignment_body(
+        session,
+        content_code=content_code,
+        user_id=crm_user_id,
+        intensive_public_url=intensive_public_url,
+    )
+    return sender.send_html(platform_user_id, body)
 
 
 def _ensure_identity(session: Session, user: dict[str, Any]) -> tuple[CrmMessengerAccount, bool]:
@@ -357,8 +445,51 @@ def process_max_update(
         tracking_event = session.scalar(select(TrackingEvent).where(
             TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start"
         ).with_for_update())
-        if tracking_event is None or (tracking_event.metadata_json or {}).get("max_delivery_status") == "sent":
+        metadata = dict(tracking_event.metadata_json or {}) if tracking_event else {}
+        if tracking_event is None or metadata.get("max_delivery_status") == "sent":
             return {"ok": True, "duplicate": True}
+        if metadata.get("max_delivery_kind") == "assignment":
+            assignment_day = int(metadata["assignment_day"])
+            if metadata.get("max_delivery_status") == "retryable":
+                try:
+                    message_id = _send_max_assignment(
+                        session,
+                        sender,
+                        platform_user_id=str(user["user_id"]),
+                        crm_user_id=tracking_event.user_id,
+                        content_code=str(metadata["content_code"]),
+                        intensive_public_url=intensive_public_url,
+                    )
+                except httpx.HTTPError as exc:
+                    _record_max_assignment_failure(session, tracking_event, exc)
+                    raise
+                metadata.pop("max_delivery_kind", None)
+                metadata.pop("max_delivery_error_type", None)
+                tracking_event.metadata_json = {
+                    **metadata,
+                    "max_delivery_status": "sent",
+                    "max_message_id": message_id,
+                }
+                session.commit()
+                return {"ok": True, "retried": True, "assignment_day": assignment_day}
+            if metadata.get("max_delivery_status") == "failed":
+                return {
+                    "ok": True,
+                    "duplicate": True,
+                    "delivery_status": "failed",
+                    "assignment_day": assignment_day,
+                }
+            tracking_event.metadata_json = {
+                **metadata,
+                "max_delivery_status": "uncertain",
+            }
+            session.commit()
+            return {
+                "ok": True,
+                "duplicate": True,
+                "delivery_status": "uncertain",
+                "assignment_day": assignment_day,
+            }
         token_id = (tracking_event.metadata_json or {}).get("max_intensive_token_id")
         token_row = session.get(MessengerLinkToken, token_id) if token_id else None
         if token_row is None or token_row.consumed_at is not None:
@@ -400,6 +531,65 @@ def process_max_update(
         sender.send_html(str(user["user_id"]), reply)
         session.commit()
         return {"ok": True, "account_credentials": True}
+
+    assignment = MAX_ASSIGNMENT_ROUTES.get(payload)
+    if assignment is not None:
+        day_number, content_code = assignment
+        session.add(
+            UpdateReceipt(
+                update_id=receipt_id,
+                bot_instance_id=bot.id,
+                update_type="max_assignment_started",
+            )
+        )
+        account, _ = _ensure_identity(session, user)
+        # Render before committing the receipt so a personalized day-3 link is
+        # persisted together with the pending delivery and is recoverable.
+        body = _max_assignment_body(
+            session,
+            content_code=content_code,
+            user_id=account.user_id,
+            intensive_public_url=intensive_public_url,
+        )
+        delivery = TrackingEvent(
+            user_id=account.user_id,
+            telegram_user_id=account.platform_user_id,
+            event_type="intensive_assignment_delivery",
+            deduplication_key=f"{receipt_id}:tracking_start",
+            metadata_json={
+                "messenger": "max",
+                "assignment_day": day_number,
+                "content_code": content_code,
+                "max_delivery_kind": "assignment",
+                "max_delivery_status": "pending",
+            },
+        )
+        session.add(delivery)
+        session.commit()
+        try:
+            message_id = sender.send_html(str(user["user_id"]), body)
+        except httpx.HTTPError as exc:
+            delivery = session.scalar(
+                select(TrackingEvent)
+                .where(TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start")
+                .with_for_update()
+            )
+            _record_max_assignment_failure(session, delivery, exc)
+            raise
+        delivery = session.scalar(
+            select(TrackingEvent)
+            .where(TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start")
+            .with_for_update()
+        )
+        metadata = dict(delivery.metadata_json or {})
+        metadata.pop("max_delivery_kind", None)
+        delivery.metadata_json = {
+            **metadata,
+            "max_delivery_status": "sent",
+            "max_message_id": message_id,
+        }
+        session.commit()
+        return {"ok": True, "assignment_day": day_number}
 
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type="max_bot_started"))
 

@@ -80,14 +80,14 @@ def session_factory(tmp_path):
 def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
     with session_factory(tmp_path) as session:
         result = seed_defaults(session, "TetrisgfgfgfBot")
-        assert result == {"messages": 50, "sequences": 4}
+        assert result == {"messages": 53, "sequences": 4}
         counts = {}
         for code in (WELCOME_CODE, PREPURCHASE_CODE):
             sequence = session.scalar(select(Sequence).where(Sequence.code == code))
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
             counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "PHOTO", "VIDEO_NOTE"])))
         assert counts == {WELCOME_CODE: 20, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 80
+        assert session.scalar(select(func.count(ContentItem.id))) == 83
         day_unopened_content = session.scalar(
             select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
         )

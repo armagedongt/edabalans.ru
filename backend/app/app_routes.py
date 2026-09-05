@@ -637,18 +637,6 @@ def intensive_post_target(
 ) -> dict[str, str]:
     if day_number not in range(1, 4) or messenger not in {"telegram", "max"}:
         raise HTTPException(status_code=404, detail="intensive post not found")
-    identity = session_identity(request, settings.app_auth_secret)
-    if identity is None:
-        raise HTTPException(status_code=401, detail="intensive identity required")
-    user_id, identity_platform = identity
-    if messenger != identity_platform:
-        raise HTTPException(
-            status_code=403,
-            detail="intensive messenger does not match personal link",
-        )
-    rows = progress_rows(db, user_id)
-    if not day_unlocked(rows, day_number):
-        raise HTTPException(status_code=403, detail="intensive day is not open")
     targets = {
         (1, "telegram"): settings.intensive_day_1_telegram_post_url,
         (1, "max"): settings.intensive_day_1_max_post_url,
@@ -661,6 +649,18 @@ def intensive_post_target(
     target_parts = urlsplit(target or "")
     if target_parts.scheme != "https" or not target_parts.netloc:
         raise HTTPException(status_code=503, detail="intensive assignment is not published")
+    identity = session_identity(request, settings.app_auth_secret)
+    if identity is None:
+        return {"target_url": target}
+    user_id, identity_platform = identity
+    if messenger != identity_platform:
+        raise HTTPException(
+            status_code=403,
+            detail="intensive messenger does not match personal link",
+        )
+    rows = progress_rows(db, user_id)
+    if not day_unlocked(rows, day_number):
+        raise HTTPException(status_code=403, detail="intensive day is not open")
     if mark_assignment_opened(db, user_id, day_number, messenger) is None:
         raise HTTPException(status_code=409, detail="intensive day is not open")
     db.commit()

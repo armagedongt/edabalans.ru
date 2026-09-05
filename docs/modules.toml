@@ -586,7 +586,13 @@ telegram_code = "welcome_intensive"
 telegram_name = "Welcome: запуск и первые четыре дня"
 telegram_status = "Исполняемая редактируемая цепочка"
 telegram_order = 20
-owns_files = ["docs/knowledge-base/modules/telegram/WELCOME_INTENSIVE.md"]
+owns_files = [
+  "docs/knowledge-base/modules/telegram/WELCOME_INTENSIVE.md",
+  "telegram-bot/runtime/media/intensive-masterclass-followup-waiting-cat.jpg",
+  "telegram-bot/service/app/generated_intensive_content.py",
+  "tools/build_intensive_bot_content.py",
+  "tools/tests/test_build_intensive_bot_content.py",
+]
 
 [[modules]]
 id = "messaging.telegram.prepurchase"

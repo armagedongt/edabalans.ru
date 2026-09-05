@@ -55,12 +55,12 @@ class Settings(BaseSettings):
     marketing_day_one_events_enabled: bool = False
     marketing_site_home_events_enabled: bool = False
     marketing_later_day_events_enabled: bool = False
-    intensive_day_1_telegram_post_url: str = ""
-    intensive_day_1_max_post_url: str = ""
-    intensive_day_2_telegram_post_url: str = ""
-    intensive_day_2_max_post_url: str = ""
-    intensive_day_3_telegram_post_url: str = ""
-    intensive_day_3_max_post_url: str = ""
+    intensive_day_1_telegram_post_url: str = "https://t.me/Fitness_Talks/310"
+    intensive_day_1_max_post_url: str = "https://max.ru/id230409966750_bot?start=iz1"
+    intensive_day_2_telegram_post_url: str = "https://t.me/Fitness_Talks/392"
+    intensive_day_2_max_post_url: str = "https://max.ru/id230409966750_bot?start=iz2"
+    intensive_day_3_telegram_post_url: str = "https://t.me/Fitness_Talks/701"
+    intensive_day_3_max_post_url: str = "https://max.ru/id230409966750_bot?start=iz3"
     personal_masterclass_target_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
     telegram_channel_post_base_url: str = "https://t.me/Fitness_Talks"
 

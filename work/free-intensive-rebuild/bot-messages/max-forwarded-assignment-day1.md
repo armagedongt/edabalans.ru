@@ -9,8 +9,8 @@ source_post_url: "https://t.me/Fitness_Talks/310"
 source_draft_file: assignment-day1-spoon-telegram.md
 source_text_policy: exact_copy_without_rewrite
 max_bot_name: "id230409966750_bot"
-max_deep_link_payload_alias: "intensive-day-1-assignment"
-max_deep_link_url: "{{MAX_DEEP_LINK_DAY1}}"
+max_deep_link_payload_alias: "iz1"
+max_deep_link_url: "https://max.ru/id230409966750_bot?start=iz1"
 entry_behavior: MAX-кнопка задания дня 1 открывает MAX-бота; бот выдаёт эту точную копию в текущем чате.
 tracking_event: "intensive_day_1_assignment_opened"
 link_preview: false

@@ -7,6 +7,7 @@ from datetime import UTC, datetime, timedelta
 
 from fastapi.testclient import TestClient
 import httpx
+import pytest
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 from urllib.parse import parse_qs, urlparse
@@ -18,6 +19,7 @@ from app.max import MAX_CA_BUNDLE, MaxClient
 from app.models import (
     AccountCredential,
     AccountOnboarding,
+    ContentItem,
     CrmAttributionEvent,
     CrmMessengerAccount,
     CrmTag,
@@ -232,6 +234,282 @@ def test_max_account_link_rejects_second_messenger_after_telegram_claim(tmp_path
     assert "уже выданы" in fake.sent[0][1]
     with Session(engine) as session:
         assert session.get(AccountCredential, target_user_id) is None
+    app.dependency_overrides.clear()
+
+
+@pytest.mark.parametrize(
+    ("payload", "day_number", "body_marker", "expects_personal_link"),
+    [
+        ("iz1", 1, "Просто кладите ложку на стол", False),
+        ("iz2", 2, "Правило 30-ти растений", True),
+        ("iz3", 3, "Сколько времени нужно на похудение", True),
+    ],
+)
+def test_max_assignment_route_sends_approved_post_without_an_extra_web_hop(
+    tmp_path,
+    monkeypatch,
+    payload,
+    day_number,
+    body_marker,
+    expects_personal_link,
+):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+
+    response = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=payload),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+
+    assert response.json() == {"ok": True, "assignment_day": day_number}
+    assert len(fake.sent) == 1
+    assert fake.sent[0][0] == "901"
+    assert "Переслано из основного Telegram-канала" in fake.sent[0][1]
+    assert body_marker in fake.sent[0][1]
+    assert "{{" not in fake.sent[0][1]
+    assert fake.sent[0][2] == {}
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery is not None
+        assert delivery.metadata_json == {
+            "messenger": "max",
+            "assignment_day": day_number,
+            "content_code": f"tpl_max_forwarded_assignment_day{day_number}",
+            "max_delivery_status": "sent",
+            "max_message_id": "1",
+        }
+        personal_link = session.scalar(select(MessengerLinkToken))
+        assert (personal_link is not None) is expects_personal_link
+        if personal_link is not None:
+            assert personal_link.platform == "max"
+            assert personal_link.purpose == "intensive_access"
+    assert client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=payload),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    ).json() == {"ok": True, "duplicate": True}
+    assert len(fake.sent) == 1
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_uncertain_delivery_is_not_duplicated_by_webhook_retry(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    original_send = fake.send_html
+
+    accepted_calls = []
+
+    def fail_send(*args, **kwargs):
+        accepted_calls.append((args, kwargs))
+        raise httpx.ReadTimeout("MAX accepted the message but the response was lost")
+
+    fake.send_html = fail_send
+    with pytest.raises(httpx.HTTPError):
+        client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery is not None
+        assert delivery.metadata_json["max_delivery_kind"] == "assignment"
+        assert delivery.metadata_json["max_delivery_status"] == "uncertain"
+        assert delivery.metadata_json["max_delivery_error_type"] == "ReadTimeout"
+
+    response = client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+    assert response.json() == {
+        "ok": True,
+        "duplicate": True,
+        "delivery_status": "uncertain",
+        "assignment_day": 1,
+    }
+    assert fake.sent == []
+    assert len(accepted_calls) == 1
+
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery.metadata_json["max_delivery_status"] == "uncertain"
+
+    fake.send_html = original_send
+    second_click = max_start(timestamp="2026-08-27T10:01:00Z", payload="iz1")
+    assert client.post("/bot/max/webhook", json=second_click, headers=headers).json() == {
+        "ok": True,
+        "assignment_day": 1,
+    }
+    assert len(fake.sent) == 1
+    assert "Просто кладите ложку на стол" in fake.sent[0][1]
+    assert client.post(
+        "/bot/max/webhook",
+        json=second_click,
+        headers=headers,
+    ).json() == {"ok": True, "duplicate": True}
+    assert len(fake.sent) == 1
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_retries_after_connect_failure(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    original_send = fake.send_html
+
+    def fail_before_request(*_args, **_kwargs):
+        raise httpx.ConnectError("MAX connection unavailable")
+
+    fake.send_html = fail_before_request
+    with pytest.raises(httpx.ConnectError):
+        client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery.metadata_json["max_delivery_status"] == "retryable"
+        assert delivery.metadata_json["max_delivery_error_type"] == "ConnectError"
+
+    fake.send_html = original_send
+    assert client.post(
+        "/bot/max/webhook",
+        json=max_start(payload="iz1"),
+        headers=headers,
+    ).json() == {"ok": True, "retried": True, "assignment_day": 1}
+    assert len(fake.sent) == 1
+    assert "Просто кладите ложку на стол" in fake.sent[0][1]
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_does_not_retry_after_ambiguous_server_error(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    request = httpx.Request("POST", "https://platform-api2.max.ru/messages")
+    response = httpx.Response(503, request=request)
+
+    def fail_after_server_received_request(*_args, **_kwargs):
+        raise httpx.HTTPStatusError("MAX internal error", request=request, response=response)
+
+    fake.send_html = fail_after_server_received_request
+    with pytest.raises(httpx.HTTPStatusError):
+        client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery.metadata_json["max_delivery_status"] == "uncertain"
+
+    result = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload="iz1"),
+        headers=headers,
+    ).json()
+    assert result == {
+        "ok": True,
+        "duplicate": True,
+        "delivery_status": "uncertain",
+        "assignment_day": 1,
+    }
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_refuses_unapproved_content(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    with Session(engine) as session:
+        item = session.scalar(select(ContentItem).where(
+            ContentItem.code == "tpl_max_forwarded_assignment_day1"
+        ))
+        item.editorial_status = "draft"
+        session.commit()
+
+    with pytest.raises(RuntimeError, match="MAX assignment content is unavailable"):
+        client.post(
+            "/bot/max/webhook",
+            json=max_start(payload="iz1"),
+            headers={"X-Max-Bot-Api-Secret": "test-secret"},
+        )
+    assert fake.sent == []
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_refuses_oversized_approved_runtime_content(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    with Session(engine) as session:
+        item = session.scalar(select(ContentItem).where(
+            ContentItem.code == "tpl_max_forwarded_assignment_day1"
+        ))
+        item.body_source = "x" * 4001
+        session.commit()
+
+    with pytest.raises(RuntimeError, match="MAX assignment exceeds 4000 characters"):
+        client.post(
+            "/bot/max/webhook",
+            json=max_start(payload="iz1"),
+            headers={"X-Max-Bot-Api-Secret": "test-secret"},
+        )
+    assert fake.sent == []
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_retries_after_rate_limit_response(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    original_send = fake.send_html
+    request = httpx.Request("POST", "https://platform-api2.max.ru/messages")
+    response = httpx.Response(429, request=request)
+
+    def rate_limited(*_args, **_kwargs):
+        raise httpx.HTTPStatusError("MAX rate limit", request=request, response=response)
+
+    fake.send_html = rate_limited
+    with pytest.raises(httpx.HTTPStatusError):
+        client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+
+    fake.send_html = original_send
+    assert client.post(
+        "/bot/max/webhook",
+        json=max_start(payload="iz1"),
+        headers=headers,
+    ).json() == {"ok": True, "retried": True, "assignment_day": 1}
+    assert len(fake.sent) == 1
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery.metadata_json["max_delivery_status"] == "sent"
+    app.dependency_overrides.clear()
+
+
+def test_max_assignment_does_not_retry_after_terminal_client_response(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    request = httpx.Request("POST", "https://platform-api2.max.ru/messages")
+    response = httpx.Response(400, request=request)
+
+    def rejected(*_args, **_kwargs):
+        raise httpx.HTTPStatusError("MAX rejected message", request=request, response=response)
+
+    fake.send_html = rejected
+    with pytest.raises(httpx.HTTPStatusError):
+        client.post("/bot/max/webhook", json=max_start(payload="iz1"), headers=headers)
+
+    assert client.post(
+        "/bot/max/webhook",
+        json=max_start(payload="iz1"),
+        headers=headers,
+    ).json() == {
+        "ok": True,
+        "duplicate": True,
+        "delivery_status": "failed",
+        "assignment_day": 1,
+    }
+    assert fake.sent == []
+    with Session(engine) as session:
+        delivery = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "intensive_assignment_delivery"
+        ))
+        assert delivery.metadata_json["max_delivery_status"] == "failed"
     app.dependency_overrides.clear()
 
 

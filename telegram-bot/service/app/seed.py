@@ -267,6 +267,9 @@ def _messages() -> list[dict]:
         ("intensive_mid3_subscribed", "Пирамида похудения — подписан", "промежуточный"),
         ("intensive_mid3_unsubscribed", "Пирамида похудения — не подписан", "промежуточный"),
         ("intensive_masterclass_pin", "Навигация и предложение Мастер-класса", "финал"),
+        ("max_forwarded_assignment_day1", "Задание дня 1 для MAX", "задание"),
+        ("max_forwarded_assignment_day2", "Задание дня 2 для MAX", "задание"),
+        ("max_forwarded_assignment_day3", "Задание дня 3 для MAX", "задание"),
     ]
     by_code = {row[0]: row for row in rows}
     for code, title, label in approved_rows:

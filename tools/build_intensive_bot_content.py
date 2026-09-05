@@ -34,12 +34,19 @@ SOURCES = {
     "intensive_mid3_subscribed": "intensive-mid3-subscribed.md",
     "intensive_mid3_unsubscribed": "intensive-mid3-unsubscribed.md",
     "intensive_masterclass_pin": "intensive-masterclass-pin.md",
+    "max_forwarded_assignment_day1": "max-forwarded-assignment-day1.md",
+    "max_forwarded_assignment_day2": "max-forwarded-assignment-day2.md",
+    "max_forwarded_assignment_day3": "max-forwarded-assignment-day3.md",
 }
 
-VARIABLE_ALIASES: dict[str, str] = {}
+VARIABLE_ALIASES = {
+    "PERSONAL_INTENSIVE_URL": "personal_intensive_url",
+    "PERSONAL_MASTERCLASS_URL": "personal_masterclass_url",
+}
 LITERAL_REPLACEMENTS = {
     "{{personal_max_url}}": "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw",
 }
+MAX_ASSIGNMENT_TEXT_LIMIT = 4000
 
 
 def source_body(path: Path) -> str:
@@ -79,7 +86,13 @@ def compiled_items() -> dict[str, str]:
             body = body.replace("{{" + old + "}}", "{{" + new + "}}")
         for old, new in LITERAL_REPLACEMENTS.items():
             body = body.replace(old, new)
-        result[content_id] = markdown_to_telegram_html(body)
+        rendered = markdown_to_telegram_html(body)
+        if content_id.startswith("max_forwarded_assignment_") and len(rendered) > MAX_ASSIGNMENT_TEXT_LIMIT:
+            raise ValueError(
+                f"MAX assignment exceeds {MAX_ASSIGNMENT_TEXT_LIMIT} characters: "
+                f"{content_id} ({len(rendered)})"
+            )
+        result[content_id] = rendered
     return result
 
 

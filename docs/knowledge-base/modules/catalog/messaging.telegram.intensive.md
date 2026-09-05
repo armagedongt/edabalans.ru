@@ -22,7 +22,8 @@ implementation_status: in_development
 
 ## Источники истины
 
-`WELCOME_INTENSIVE.md`, runtime sequence graph и content items.
+`WELCOME_INTENSIVE.md`, runtime sequence graph, content items и собираемый модулем
+каталог утверждённых сообщений интенсива.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

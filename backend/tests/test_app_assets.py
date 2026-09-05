@@ -1000,12 +1000,12 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "/api/intensive/state" in script.text
     assert "/api/intensive/offer-token" in script.text
     assert "serverState.identified && !(serverState.assignment_days || []).includes(day)" in script.text
-    assert "if (!serverState.identified)" in script.text
+    assert 'block.hidden = false' in script.text
     assert "unlocked_days: [1, 2, 3, 4]" in script.text
     assert 'method: "POST"' in script.text
     assert "target_url: MASTERCLASS_URL" in script.text
     assert client.get("/intensive/day-1/post/telegram").status_code == 404
-    assert client.post("/api/intensive/day-1/post/telegram").status_code == 401
+    assert client.post("/api/intensive/day-1/post/telegram").status_code == 200
     assert client.get("/intensive/max-full-colored-official.png").status_code == 200
     header_script = client.get("/site-header.js").text
     assert "EdabalansSiteHeader" in header_script

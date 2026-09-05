@@ -318,6 +318,60 @@ def test_configured_assignment_uses_trusted_platform_and_marks_progress() -> Non
     app.dependency_overrides.clear()
 
 
+def test_final_assignment_targets_are_safe_direct_messenger_links() -> None:
+    settings = Settings(database_url="sqlite+pysqlite:///:memory:")
+
+    assert settings.intensive_day_1_telegram_post_url == "https://t.me/Fitness_Talks/310"
+    assert settings.intensive_day_2_telegram_post_url == "https://t.me/Fitness_Talks/392"
+    assert settings.intensive_day_3_telegram_post_url == "https://t.me/Fitness_Talks/701"
+    assert settings.intensive_day_1_max_post_url == "https://max.ru/id230409966750_bot?start=iz1"
+    assert settings.intensive_day_2_max_post_url == "https://max.ru/id230409966750_bot?start=iz2"
+    assert settings.intensive_day_3_max_post_url == "https://max.ru/id230409966750_bot?start=iz3"
+
+
+def test_anonymous_public_day_returns_both_direct_assignments_without_progress() -> None:
+    client, factory = make_client(
+        intensive_day_1_telegram_post_url="https://t.me/Fitness_Talks/310",
+        intensive_day_1_max_post_url="https://max.ru/id230409966750_bot?start=iz1",
+    )
+
+    assert client.post("/api/intensive/day-1/post/telegram").json() == {
+        "target_url": "https://t.me/Fitness_Talks/310"
+    }
+    assert client.post("/api/intensive/day-1/post/max").json() == {
+        "target_url": "https://max.ru/id230409966750_bot?start=iz1"
+    }
+    with factory() as db:
+        assert db.scalar(select(func.count(CourseStageProgress.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_configured_max_assignment_marks_max_progress() -> None:
+    client, factory = make_client(
+        intensive_day_1_max_post_url="https://max.ru/id230409966750_bot?start=iz1",
+    )
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "max")
+        db.commit()
+
+    client.get(f"/intensive/start?i={token}", follow_redirects=False)
+    client.get("/intensive/day-1")
+    response = client.post("/api/intensive/day-1/post/max")
+
+    assert response.json() == {
+        "target_url": "https://max.ru/id230409966750_bot?start=iz1"
+    }
+    assert client.get("/api/intensive/state").json()["assignment_days"] == [1]
+    with factory() as db:
+        event = db.scalar(select(CourseEvent).where(
+            CourseEvent.event_type == "intensive_required_post_open"
+        ))
+        assert event is not None
+        assert event.details == {"day": 1, "messenger": "max"}
+    app.dependency_overrides.clear()
+
+
 def test_invalid_assignment_url_stays_closed() -> None:
     client, factory = make_client(
         intensive_day_1_telegram_post_url="javascript:alert(1)",

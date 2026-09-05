@@ -8,8 +8,8 @@ source_channel: telegram
 source_post_url: "https://t.me/Fitness_Talks/701"
 source_text_policy: source_copy_with_minimal_max_length_trim_and_source_aware_link
 max_bot_name: "id230409966750_bot"
-max_deep_link_payload_alias: "intensive-day-3-assignment"
-max_deep_link_url: "{{MAX_DEEP_LINK_DAY3}}"
+max_deep_link_payload_alias: "iz3"
+max_deep_link_url: "https://max.ru/id230409966750_bot?start=iz3"
 entry_behavior: MAX-кнопка задания дня 3 открывает MAX-бота; бот выдаёт эту копию в текущем чате.
 tracking_event: "intensive_day_3_assignment_opened"
 link_preview: false

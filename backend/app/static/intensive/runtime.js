@@ -164,10 +164,6 @@
 
   function setupChannels(serverState) {
     document.querySelectorAll("[data-channel-block]").forEach((block) => {
-      if (!serverState.identified) {
-        block.hidden = true;
-        return;
-      }
       block.hidden = false;
       const actions = block.querySelector(".channel-actions");
       block.querySelectorAll("[data-channel]").forEach((link) => {
