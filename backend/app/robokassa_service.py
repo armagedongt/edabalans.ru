@@ -122,17 +122,16 @@ def _payment_fields(
     merchant, password = _require_checkout_settings(settings)
     if payment.amount is None or payment.external_order_id is None:
         raise RobokassaError("Заказ Robokassa сформирован не полностью")
-    receipt_raw = _receipt(settings, title, payment.amount)
-    receipt = _encoded(receipt_raw)
+    receipt = _encoded(_receipt(settings, title, payment.amount))
     values = [
         merchant,
         _amount_text(payment.amount),
         payment.external_order_id,
         receipt,
-        _encoded(settings.robokassa_result_url_2),
-        _encoded(settings.robokassa_success_url_2),
+        settings.robokassa_result_url_2,
+        settings.robokassa_success_url_2,
         "GET",
-        _encoded(settings.robokassa_fail_url_2),
+        settings.robokassa_fail_url_2,
         "GET",
         password,
     ]
@@ -148,10 +147,9 @@ def _payment_fields(
         "Culture": "ru",
         "Encoding": "utf-8",
         "ExpirationDate": expires_at.astimezone(MOSCOW).strftime("%Y-%m-%dT%H:%M"),
-        # The browser form encoder performs the transport encoding. Sending the
-        # pre-encoded value here would encode every percent sign a second time,
-        # while SignatureValue contains only the single-encoded receipt.
-        "Receipt": receipt_raw,
+        # Robokassa signs and receives Receipt as URL-encoded JSON. The outer
+        # form/query transport therefore encodes the percent signs once more.
+        "Receipt": receipt,
         "ResultUrl2": settings.robokassa_result_url_2,
         "SuccessUrl2": settings.robokassa_success_url_2,
         "SuccessUrl2Method": "GET",

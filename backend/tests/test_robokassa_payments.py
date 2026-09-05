@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from urllib.parse import parse_qs, quote_plus, urlsplit
+from urllib.parse import parse_qs, unquote_plus, urlsplit
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -198,19 +198,19 @@ def test_checkout_uses_database_price_and_does_not_create_user() -> None:
     assert fields["IsTest"] == "1"
     assert fields["ExpirationDate"]
     assert fields["ResultUrl2"].endswith("/integrations/robokassa/result2")
-    receipt = json.loads(fields["Receipt"])
+    receipt = json.loads(unquote_plus(fields["Receipt"]))
     assert receipt["items"][0]["sum"] == 5900
-    assert not fields["Receipt"].startswith("%7B")
+    assert fields["Receipt"].startswith("%7B")
     signature_source = ":".join(
         [
             "edabalans-test",
             "5900.00",
             result["invoice_id"],
-            quote_plus(fields["Receipt"], safe=""),
-            quote_plus(fields["ResultUrl2"], safe=""),
-            quote_plus(fields["SuccessUrl2"], safe=""),
+            fields["Receipt"],
+            fields["ResultUrl2"],
+            fields["SuccessUrl2"],
             "GET",
-            quote_plus(fields["FailUrl2"], safe=""),
+            fields["FailUrl2"],
             "GET",
             "test-password-1",
         ]
@@ -266,7 +266,7 @@ def test_go_test_button_redirects_to_classic_interface_with_go_callbacks() -> No
         "https://auth.robokassa.ru/Merchant/Index.aspx"
     )
     assert fields["IsTest"] == ["1"]
-    assert json.loads(fields["Receipt"][0])["items"][0]["sum"] == 5900
+    assert json.loads(unquote_plus(fields["Receipt"][0]))["items"][0]["sum"] == 5900
     assert fields["ResultUrl2"][0].startswith(
         "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/"
     )
