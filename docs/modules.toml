@@ -534,6 +534,7 @@ card = "docs/knowledge-base/modules/catalog/messaging.max.md"
 depends_on = ["platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine"]
 owns_files = [
   "telegram-bot/service/app/max.py", "telegram-bot/service/tests/test_max.py",
+  "telegram-bot/service/certs/**",
   "docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md",
 ]
 owns_routes = ["*/bot/max/webhook"]

@@ -3293,6 +3293,10 @@
       "path": "telegram-bot/service/app/web_login.py"
     },
     {
+      "module_id": "messaging.max",
+      "path": "telegram-bot/service/certs/russian_trusted_ca.pem"
+    },
+    {
       "module_id": "messaging.telegram.engine",
       "path": "telegram-bot/service/import_catalog.py"
     },
@@ -9660,6 +9664,10 @@
         },
         {
           "module_id": "messaging.max",
+          "path": "telegram-bot/service/certs/russian_trusted_ca.pem"
+        },
+        {
+          "module_id": "messaging.max",
           "path": "telegram-bot/service/tests/test_max.py"
         }
       ],
@@ -9708,7 +9716,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "class",
-          "line": 40,
+          "line": 43,
           "module_id": "messaging.max",
           "name": "MaxClient",
           "qualname": "MaxClient"
@@ -9716,7 +9724,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "method",
-          "line": 41,
+          "line": 44,
           "module_id": "messaging.max",
           "name": "__init__",
           "qualname": "MaxClient.__init__"
@@ -9724,7 +9732,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "method",
-          "line": 45,
+          "line": 48,
           "module_id": "messaging.max",
           "name": "send_html",
           "qualname": "MaxClient.send_html"
@@ -9732,7 +9740,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 75,
+          "line": 85,
           "module_id": "messaging.max",
           "name": "_max_bot",
           "qualname": "_max_bot"
@@ -9740,7 +9748,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 94,
+          "line": 104,
           "module_id": "messaging.max",
           "name": "_receipt_id",
           "qualname": "_receipt_id"
@@ -9748,7 +9756,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 105,
+          "line": 115,
           "module_id": "messaging.max",
           "name": "_intensive_token",
           "qualname": "_intensive_token"
@@ -9756,7 +9764,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 109,
+          "line": 119,
           "module_id": "messaging.max",
           "name": "_send_intensive",
           "qualname": "_send_intensive"
@@ -9764,7 +9772,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 118,
+          "line": 128,
           "module_id": "messaging.max",
           "name": "_ensure_identity",
           "qualname": "_ensure_identity"
@@ -9772,7 +9780,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 155,
+          "line": 165,
           "module_id": "messaging.max",
           "name": "_assign_first_touch",
           "qualname": "_assign_first_touch"
@@ -9780,7 +9788,7 @@
         {
           "file": "telegram-bot/service/app/max.py",
           "kind": "function",
-          "line": 220,
+          "line": 230,
           "module_id": "messaging.max",
           "name": "process_max_update",
           "qualname": "process_max_update"
@@ -9788,7 +9796,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "class",
-          "line": 28,
+          "line": 29,
           "module_id": "messaging.max",
           "name": "FakeMax",
           "qualname": "FakeMax"
@@ -9796,7 +9804,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "method",
-          "line": 29,
+          "line": 30,
           "module_id": "messaging.max",
           "name": "__init__",
           "qualname": "FakeMax.__init__"
@@ -9804,7 +9812,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "method",
-          "line": 32,
+          "line": 33,
           "module_id": "messaging.max",
           "name": "send_html",
           "qualname": "FakeMax.send_html"
@@ -9812,7 +9820,15 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 37,
+          "line": 38,
+          "module_id": "messaging.max",
+          "name": "test_max_ca_bundle_loads_without_changing_system_trust",
+          "qualname": "test_max_ca_bundle_loads_without_changing_system_trust"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_max.py",
+          "kind": "function",
+          "line": 44,
           "module_id": "messaging.max",
           "name": "test_max_client_sends_link_button",
           "qualname": "test_max_client_sends_link_button"
@@ -9820,7 +9836,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 40,
+          "line": 47,
           "module_id": "messaging.max",
           "name": "handler",
           "qualname": "test_max_client_sends_link_button.handler"
@@ -9828,7 +9844,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 66,
+          "line": 73,
           "module_id": "messaging.max",
           "name": "max_start",
           "qualname": "max_start"
@@ -9836,7 +9852,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 75,
+          "line": 82,
           "module_id": "messaging.max",
           "name": "make_client",
           "qualname": "make_client"
@@ -9844,7 +9860,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 83,
+          "line": 90,
           "module_id": "messaging.max",
           "name": "db_override",
           "qualname": "make_client.db_override"
@@ -9852,7 +9868,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 96,
+          "line": 103,
           "module_id": "messaging.max",
           "name": "test_max_start_saves_identity_and_sends_intensive_link",
           "qualname": "test_max_start_saves_identity_and_sends_intensive_link"
@@ -9860,7 +9876,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 136,
+          "line": 143,
           "module_id": "messaging.max",
           "name": "test_max_start_uses_existing_link_catalog_once",
           "qualname": "test_max_start_uses_existing_link_catalog_once"
@@ -9868,7 +9884,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 171,
+          "line": 178,
           "module_id": "messaging.max",
           "name": "test_max_delivery_failure_persists_same_link_for_webhook_retry",
           "qualname": "test_max_delivery_failure_persists_same_link_for_webhook_retry"
@@ -9876,7 +9892,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 178,
+          "line": 185,
           "module_id": "messaging.max",
           "name": "fail_send",
           "qualname": "test_max_delivery_failure_persists_same_link_for_webhook_retry.fail_send"
@@ -9884,7 +9900,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 212,
+          "line": 219,
           "module_id": "messaging.max",
           "name": "test_retry_does_not_resend_link_consumed_after_lost_max_response",
           "qualname": "test_retry_does_not_resend_link_consumed_after_lost_max_response"
@@ -9892,7 +9908,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 216,
+          "line": 223,
           "module_id": "messaging.max",
           "name": "response_lost",
           "qualname": "test_retry_does_not_resend_link_consumed_after_lost_max_response.response_lost"
@@ -9900,7 +9916,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 241,
+          "line": 248,
           "module_id": "messaging.max",
           "name": "test_unknown_max_payload_keeps_identity_without_inventing_attribution",
           "qualname": "test_unknown_max_payload_keeps_identity_without_inventing_attribution"
@@ -9908,7 +9924,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 260,
+          "line": 267,
           "module_id": "messaging.max",
           "name": "test_max_webhook_rejects_missing_or_bad_secret",
           "qualname": "test_max_webhook_rejects_missing_or_bad_secret"
@@ -9916,7 +9932,7 @@
         {
           "file": "telegram-bot/service/tests/test_max.py",
           "kind": "function",
-          "line": 268,
+          "line": 275,
           "module_id": "messaging.max",
           "name": "test_distinct_later_max_start_is_recorded_as_repeat",
           "qualname": "test_distinct_later_max_start_is_recorded_as_repeat"
@@ -65203,7 +65219,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "class",
-      "line": 40,
+      "line": 43,
       "module_id": "messaging.max",
       "name": "MaxClient",
       "qualname": "MaxClient"
@@ -65211,7 +65227,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "method",
-      "line": 41,
+      "line": 44,
       "module_id": "messaging.max",
       "name": "__init__",
       "qualname": "MaxClient.__init__"
@@ -65219,7 +65235,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "method",
-      "line": 45,
+      "line": 48,
       "module_id": "messaging.max",
       "name": "send_html",
       "qualname": "MaxClient.send_html"
@@ -65227,7 +65243,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 75,
+      "line": 85,
       "module_id": "messaging.max",
       "name": "_max_bot",
       "qualname": "_max_bot"
@@ -65235,7 +65251,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 94,
+      "line": 104,
       "module_id": "messaging.max",
       "name": "_receipt_id",
       "qualname": "_receipt_id"
@@ -65243,7 +65259,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 105,
+      "line": 115,
       "module_id": "messaging.max",
       "name": "_intensive_token",
       "qualname": "_intensive_token"
@@ -65251,7 +65267,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 109,
+      "line": 119,
       "module_id": "messaging.max",
       "name": "_send_intensive",
       "qualname": "_send_intensive"
@@ -65259,7 +65275,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 118,
+      "line": 128,
       "module_id": "messaging.max",
       "name": "_ensure_identity",
       "qualname": "_ensure_identity"
@@ -65267,7 +65283,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 155,
+      "line": 165,
       "module_id": "messaging.max",
       "name": "_assign_first_touch",
       "qualname": "_assign_first_touch"
@@ -65275,7 +65291,7 @@
     {
       "file": "telegram-bot/service/app/max.py",
       "kind": "function",
-      "line": 220,
+      "line": 230,
       "module_id": "messaging.max",
       "name": "process_max_update",
       "qualname": "process_max_update"
@@ -67403,7 +67419,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "class",
-      "line": 28,
+      "line": 29,
       "module_id": "messaging.max",
       "name": "FakeMax",
       "qualname": "FakeMax"
@@ -67411,7 +67427,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "method",
-      "line": 29,
+      "line": 30,
       "module_id": "messaging.max",
       "name": "__init__",
       "qualname": "FakeMax.__init__"
@@ -67419,7 +67435,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "method",
-      "line": 32,
+      "line": 33,
       "module_id": "messaging.max",
       "name": "send_html",
       "qualname": "FakeMax.send_html"
@@ -67427,7 +67443,15 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 37,
+      "line": 38,
+      "module_id": "messaging.max",
+      "name": "test_max_ca_bundle_loads_without_changing_system_trust",
+      "qualname": "test_max_ca_bundle_loads_without_changing_system_trust"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_max.py",
+      "kind": "function",
+      "line": 44,
       "module_id": "messaging.max",
       "name": "test_max_client_sends_link_button",
       "qualname": "test_max_client_sends_link_button"
@@ -67435,7 +67459,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 40,
+      "line": 47,
       "module_id": "messaging.max",
       "name": "handler",
       "qualname": "test_max_client_sends_link_button.handler"
@@ -67443,7 +67467,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 66,
+      "line": 73,
       "module_id": "messaging.max",
       "name": "max_start",
       "qualname": "max_start"
@@ -67451,7 +67475,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 75,
+      "line": 82,
       "module_id": "messaging.max",
       "name": "make_client",
       "qualname": "make_client"
@@ -67459,7 +67483,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 83,
+      "line": 90,
       "module_id": "messaging.max",
       "name": "db_override",
       "qualname": "make_client.db_override"
@@ -67467,7 +67491,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 96,
+      "line": 103,
       "module_id": "messaging.max",
       "name": "test_max_start_saves_identity_and_sends_intensive_link",
       "qualname": "test_max_start_saves_identity_and_sends_intensive_link"
@@ -67475,7 +67499,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 136,
+      "line": 143,
       "module_id": "messaging.max",
       "name": "test_max_start_uses_existing_link_catalog_once",
       "qualname": "test_max_start_uses_existing_link_catalog_once"
@@ -67483,7 +67507,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 171,
+      "line": 178,
       "module_id": "messaging.max",
       "name": "test_max_delivery_failure_persists_same_link_for_webhook_retry",
       "qualname": "test_max_delivery_failure_persists_same_link_for_webhook_retry"
@@ -67491,7 +67515,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 178,
+      "line": 185,
       "module_id": "messaging.max",
       "name": "fail_send",
       "qualname": "test_max_delivery_failure_persists_same_link_for_webhook_retry.fail_send"
@@ -67499,7 +67523,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 212,
+      "line": 219,
       "module_id": "messaging.max",
       "name": "test_retry_does_not_resend_link_consumed_after_lost_max_response",
       "qualname": "test_retry_does_not_resend_link_consumed_after_lost_max_response"
@@ -67507,7 +67531,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 216,
+      "line": 223,
       "module_id": "messaging.max",
       "name": "response_lost",
       "qualname": "test_retry_does_not_resend_link_consumed_after_lost_max_response.response_lost"
@@ -67515,7 +67539,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 241,
+      "line": 248,
       "module_id": "messaging.max",
       "name": "test_unknown_max_payload_keeps_identity_without_inventing_attribution",
       "qualname": "test_unknown_max_payload_keeps_identity_without_inventing_attribution"
@@ -67523,7 +67547,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 260,
+      "line": 267,
       "module_id": "messaging.max",
       "name": "test_max_webhook_rejects_missing_or_bad_secret",
       "qualname": "test_max_webhook_rejects_missing_or_bad_secret"
@@ -67531,7 +67555,7 @@
     {
       "file": "telegram-bot/service/tests/test_max.py",
       "kind": "function",
-      "line": 268,
+      "line": 275,
       "module_id": "messaging.max",
       "name": "test_distinct_later_max_start_is_recorded_as_repeat",
       "qualname": "test_distinct_later_max_start_is_recorded_as_repeat"
