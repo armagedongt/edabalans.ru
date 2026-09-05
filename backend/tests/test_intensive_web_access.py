@@ -21,6 +21,7 @@ from app.intensive_web_access import (  # noqa: E402
     access_token_row,
     create_offer_token,
     day_unlocked,
+    ensure_offer_for_user,
     issue_access_token,
     mark_assignment_opened,
     offer_for_user,
@@ -116,7 +117,7 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
     app.dependency_overrides.clear()
 
 
-def test_progress_is_durable_in_course_tables_and_day_four_starts_offer() -> None:
+def test_progress_is_durable_and_offer_starts_only_at_day_four_cta() -> None:
     _, factory = make_client()
     user = create_user(factory)
     started = datetime(2026, 9, 4, 8, 0, tzinfo=timezone.utc)
@@ -131,6 +132,9 @@ def test_progress_is_durable_in_course_tables_and_day_four_starts_offer() -> Non
         assert open_day(db, user.id, 3, now=started + timedelta(hours=46)) is not None
         assert mark_assignment_opened(db, user.id, 3, "telegram", now=started + timedelta(hours=46)) is not None
         assert open_day(db, user.id, 4, now=started + timedelta(hours=69)) is not None
+        assert offer_for_user(db, user.id) is None
+        assert db.scalar(select(func.count(CourseEvent.id))) == 7
+        assert ensure_offer_for_user(db, user.id, now=started + timedelta(hours=69)) is not None
         offer = offer_for_user(db, user.id)
         assert offer is not None
         assert offer.snapshot["discount_amount"] == OFFER_DISCOUNT
@@ -204,7 +208,7 @@ def test_offer_token_is_opaque_and_bound_to_active_database_offer() -> None:
         open_day(db, user.id, 3, now=started - DAY_DELAY)
         mark_assignment_opened(db, user.id, 3, "telegram", now=started - DAY_DELAY)
         open_day(db, user.id, 4, now=started)
-        offer = offer_for_user(db, user.id)
+        offer = ensure_offer_for_user(db, user.id, now=started)
         assert offer is not None and offer.expires_at is not None
         token = create_offer_token(db, user.id, offer.expires_at)
         assert str(user.id) not in token
@@ -252,12 +256,12 @@ def test_reopening_day_four_does_not_restart_offer_window() -> None:
             open_day(db, user.id, day, now=opened_at)
             mark_assignment_opened(db, user.id, day, "telegram", now=opened_at)
         open_day(db, user.id, 4, now=started + timedelta(hours=69))
-        first_offer = offer_for_user(db, user.id)
+        first_offer = ensure_offer_for_user(db, user.id, now=started + timedelta(hours=69))
         assert first_offer is not None
         first_started_at = first_offer.started_at
         first_expires_at = first_offer.expires_at
         open_day(db, user.id, 4, now=started + timedelta(hours=70))
-        second_offer = offer_for_user(db, user.id)
+        second_offer = ensure_offer_for_user(db, user.id, now=started + timedelta(hours=70))
         assert second_offer is not None
         assert second_offer.started_at == first_started_at
         assert second_offer.expires_at == first_expires_at
@@ -484,6 +488,7 @@ def test_accelerated_http_journey_reaches_day_four_and_offer() -> None:
     state = client.get("/api/intensive/state").json()
     assert state["opened_days"] == [1, 2, 3, 4]
     assert state["assignment_days"] == [1, 2, 3]
-    assert state["offer"]["active"] is True
+    assert state["offer"] is None
     assert client.get("/api/intensive/offer-token").status_code == 200
+    assert client.get("/api/intensive/state").json()["offer"]["active"] is True
     app.dependency_overrides.clear()

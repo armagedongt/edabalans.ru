@@ -24,6 +24,7 @@ const catalog = {
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 900 } })
   let checkoutBody = null
+  let failNextStoredOfferValidation = false
   await page.addInitScript(() => {
     window.__cartProducts = []
     window.__cartOpenCount = 0
@@ -46,12 +47,23 @@ try {
     const url = new URL(request.url())
     if (url.pathname.startsWith('/api/pricing/site')) {
       if (request.method() === 'POST') checkoutBody = request.postDataJSON()
+      if (request.method() === 'GET' && url.searchParams.get('intensive_offer') === 'offer-test' && failNextStoredOfferValidation) {
+        failNextStoredOfferValidation = false
+        await route.fulfill({status: 503, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{}'})
+        return
+      }
+      if (request.method() === 'GET' && url.searchParams.get('intensive_offer') === 'expired-test') {
+        await route.fulfill({status: 403, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{}'})
+        return
+      }
       await route.fulfill({
         contentType: 'application/json',
         headers: { 'access-control-allow-origin': '*' },
         body: JSON.stringify(request.method() === 'POST'
           ? { cart_command: '#order:Самостоятельный · №12345678=2900' }
-          : catalog),
+          : (url.searchParams.get('intensive_offer')
+            ? {...catalog, intensive_offer: {offer_id: 'intensive-day4-1000', discount_amount: 1000, expires_at: '2099-01-01T00:00:00Z'}}
+            : catalog)),
       })
       return
     }
@@ -66,6 +78,9 @@ try {
   await page.goto(`${tildaUrl}?intensive_offer=offer-test`, {
     waitUntil: 'domcontentloaded',
   })
+  await page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button').waitFor({ state: 'visible' })
+  failNextStoredOfferValidation = true
+  await page.goto(tildaUrl, { waitUntil: 'domcontentloaded' })
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await tildaButton.waitFor({ state: 'visible' })
   const checkoutEndpoint = await page.locator('#edb-pricing-neurozeh-v1').getAttribute('data-checkout-endpoint')
@@ -76,7 +91,7 @@ try {
   await page.waitForFunction(() => window.__cartOpenCount === 1)
 
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
-    throw new Error(`Wrong Tilda checkout body: ${JSON.stringify(checkoutBody)}`)
+    throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
   }
   const cart = await page.evaluate(() => ({ products: window.__cartProducts, opens: window.__cartOpenCount }))
   if (
@@ -90,6 +105,19 @@ try {
   }
   if (await page.locator('.edb-checkout-modal').isVisible()) {
     throw new Error('Direct Robokassa email modal opened in Tilda embed mode')
+  }
+
+  await page.goto(`${tildaUrl}?intensive_offer=expired-test`, { waitUntil: 'domcontentloaded' })
+  const regularButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
+  await regularButton.waitFor({ state: 'visible' })
+  if (new URL(page.url()).searchParams.has('intensive_offer')) {
+    throw new Error('Expired intensive offer was left in the Tilda page URL')
+  }
+  checkoutBody = null
+  await regularButton.click()
+  await page.waitForFunction(() => window.__cartOpenCount === 1)
+  if (checkoutBody?.intensive_offer) {
+    throw new Error(`Expired intensive offer reached checkout: ${JSON.stringify(checkoutBody)}`)
   }
 
   await page.route('**/api/pricing/site/preview**', route => route.fulfill({

@@ -5,7 +5,7 @@
   const VERSION = "2026-09-05";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
-  const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/#masterclass";
+  const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/mk1#masterclass";
   const SERVER_EVENT_CODES = new Set([
     "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
     "intensive_max_click", "intensive_next_day_unlocked", "intensive_next_day_click",
@@ -248,22 +248,55 @@
   }
 
   async function setupDayOffer(serverState) {
-    if (day !== 4 || !serverState.offer?.active) return;
-    try {
-      const response = await fetch("/api/intensive/offer-token", {credentials: "same-origin", headers: {Accept: "application/json"}});
-      if (!response.ok) return;
-      const offer = await response.json();
-      document.querySelectorAll(".masterclass-cta").forEach((link) => {
+    if (day !== 4 || !serverState.identified) return;
+    const links = Array.from(document.querySelectorAll(".masterclass-cta"));
+    if (!links.length) return;
+    let activationPromise = null;
+    let offerTarget = null;
+    async function activate() {
+      if (offerTarget) return offerTarget;
+      if (activationPromise) return activationPromise;
+      activationPromise = (async () => {
+        const response = await fetch("/api/intensive/offer-token", {credentials: "same-origin", headers: {Accept: "application/json"}});
+        if (!response.ok) throw new Error(`offer ${response.status}`);
+        const offer = await response.json();
         const target = new URL(MASTERCLASS_URL);
         target.searchParams.set("intensive_offer", offer.token);
-        link.removeAttribute("aria-disabled");
-        link.href = addAttribution(target.href);
-        link.addEventListener("click", (event) => {
-          event.preventDefault();
-          navigateAfterGoal(link.href, "intensive_masterclass_click", {offer_id: offer.offer_id, target_url: MASTERCLASS_URL});
+        offerTarget = addAttribution(target.href);
+        links.forEach((link) => {
+          link.removeAttribute("aria-disabled");
+          link.href = offerTarget;
         });
+        return offerTarget;
+      })();
+      try {
+        return await activationPromise;
+      } finally {
+        activationPromise = null;
+      }
+    }
+    links.forEach((link) => {
+      link.href = addAttribution(MASTERCLASS_URL);
+      link.addEventListener("click", async (event) => {
+        event.preventDefault();
+        link.setAttribute("aria-disabled", "true");
+        try {
+          const target = await activate();
+          navigateAfterGoal(target, "intensive_masterclass_click", {offer_id: "intensive-day4-1000", target_url: MASTERCLASS_URL});
+        } catch (_error) {
+          link.removeAttribute("aria-disabled");
+        }
       });
-    } catch (_error) {}
+    });
+    if (!("IntersectionObserver" in window)) {
+      activate().catch(() => {});
+      return;
+    }
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      activate().then(() => observer.disconnect()).catch(() => {});
+    }, {rootMargin: "0px", threshold: 0.01});
+    links.forEach((link) => observer.observe(link));
   }
 
   function setupVideoAnalytics() {

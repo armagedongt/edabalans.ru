@@ -40,10 +40,10 @@ from app.intensive_web_access import (
     consume_access_token,
     attributed_path,
     create_offer_token,
+    ensure_offer_for_user,
     current_day,
     day_unlocked,
     mark_assignment_opened,
-    offer_for_user,
     open_day,
     progress_rows,
     record_client_event,
@@ -617,7 +617,7 @@ def intensive_offer_token(
     if identity is None:
         raise HTTPException(status_code=401, detail="intensive identity required")
     user_id, _ = identity
-    offer = offer_for_user(db, user_id)
+    offer = ensure_offer_for_user(db, user_id)
     if offer is None or offer.status != "active" or not offer.expires_at:
         raise HTTPException(status_code=404, detail="intensive offer not found")
     expires_at = offer.expires_at

@@ -366,7 +366,7 @@ def test_public_checkout_rejects_tampered_amount_without_creating_payment() -> N
     app.dependency_overrides.clear()
 
 
-def test_intensive_offer_discounts_checkout_and_keeps_messenger_user_identity() -> None:
+def test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email() -> None:
     client, factory = make_client(enabled=True)
     version_id = seed_draft(factory)
     assert client.post(f"/admin/api/pricing/versions/{version_id}/publish").status_code == 200
@@ -387,6 +387,7 @@ def test_intensive_offer_discounts_checkout_and_keeps_messenger_user_identity() 
         db.commit()
         user_id = user.id
         token = create_offer_token(db, user.id, offer.expires_at)
+        second_token = create_offer_token(db, user.id, offer.expires_at)
         db.commit()
 
     prices = client.get("/api/pricing/site", params={"intensive_offer": token})
@@ -404,20 +405,65 @@ def test_intensive_offer_discounts_checkout_and_keeps_messenger_user_identity() 
     )
     assert checkout_response.status_code == 200
     assert checkout_response.json()["amount"] == 14900
-    raw_product = checkout_response.json()["cart_command"].split(":", 1)[1].rsplit("=", 1)[0]
+    repeated_checkout = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": token,
+        },
+    )
+    assert repeated_checkout.status_code == 409
+    repeated_with_fresh_link = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": second_token,
+        },
+    )
+    assert repeated_with_fresh_link.status_code == 409
+    with factory() as db:
+        pending_checkout = db.scalar(select(OfferCheckout))
+        assert pending_checkout is not None
+        pending_checkout.expires_at = datetime.now(timezone.utc) - timedelta(seconds=1)
+        db.commit()
+    renewed_checkout = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": token,
+        },
+    )
+    assert renewed_checkout.status_code == 200
+    assert renewed_checkout.json()["cart_command"] != checkout_response.json()["cart_command"]
+    raw_product = renewed_checkout.json()["cart_command"].split(":", 1)[1].rsplit("=", 1)[0]
 
+    payment_payload = {
+        "Name": "Клиент из Telegram",
+        "Email": "messenger-buyer@example.test",
+        "orderid": "pricing-intensive-order-1",
+        "paymentid": "pricing-intensive-payment-1",
+        "products": raw_product,
+        "price": "14900",
+        "Currency": "RUB",
+        "Payment status": "Processing",
+    }
+    processing = client.post(
+        "/integrations/tilda/payments",
+        data=payment_payload,
+        headers={"X-Tilda-Webhook-Token": TOKEN},
+    )
+    assert processing.status_code == 200
+    processing_offer = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": token,
+        },
+    )
+    assert processing_offer.status_code == 409
     payment = client.post(
         "/integrations/tilda/payments",
-        data={
-            "Name": "Клиент из Telegram",
-            "Email": "messenger-buyer@example.test",
-            "orderid": "pricing-intensive-order-1",
-            "paymentid": "pricing-intensive-payment-1",
-            "products": raw_product,
-            "price": "14900",
-            "Currency": "RUB",
-            "Payment status": "Paid",
-        },
+        data={**payment_payload, "Payment status": "Paid"},
         headers={"X-Tilda-Webhook-Token": TOKEN},
     )
     assert payment.status_code == 200
@@ -425,8 +471,18 @@ def test_intensive_offer_discounts_checkout_and_keeps_messenger_user_identity() 
         checkout = db.scalar(select(OfferCheckout))
         stored_payment = db.scalar(select(Payment))
         email = db.scalar(select(UserEmail))
-        assert checkout is not None and checkout.user_id == user_id
-        assert stored_payment is not None and stored_payment.user_id == user_id
-        assert email is not None and email.user_id == user_id
-        assert db.scalar(select(func.count(User.id))) == 1
+        assert stored_payment is not None
+        assert checkout is not None and checkout.user_id == stored_payment.user_id
+        assert checkout.offer_code.startswith("intensive-day4-1000:")
+        assert stored_payment.user_id != user_id
+        assert email is not None and email.user_id == stored_payment.user_id
+        assert db.scalar(select(func.count(User.id))) == 2
+    used_offer = client.post(
+        "/api/pricing/site/checkout",
+        json={
+            "price_code": "site.masterclass.consult",
+            "intensive_offer": token,
+        },
+    )
+    assert used_offer.status_code == 409
     app.dependency_overrides.clear()

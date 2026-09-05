@@ -382,6 +382,41 @@ def offer_for_user(db: Session, user_id: uuid.UUID) -> UserOffer | None:
     )
 
 
+def ensure_offer_for_user(
+    db: Session,
+    user_id: uuid.UUID,
+    *,
+    now: datetime | None = None,
+) -> UserOffer | None:
+    """Start the day-four offer only after the participant reaches its CTA."""
+    if db.get(User, user_id, with_for_update=True) is None:
+        return None
+    if 4 not in progress_rows(db, user_id):
+        return None
+    offer = offer_for_user(db, user_id)
+    if offer is not None:
+        return offer
+    current = aware_utc(now or datetime.now(timezone.utc))
+    offer = UserOffer(
+        user_id=user_id,
+        stage_code=OFFER_STAGE_CODE,
+        started_at=current,
+        expires_at=current + OFFER_DURATION,
+        status="active",
+        snapshot={"offer_id": OFFER_CODE, "discount_amount": OFFER_DISCOUNT},
+    )
+    db.add(offer)
+    db.flush()
+    course_event(
+        db,
+        user_id,
+        "offer:day4:received",
+        "intensive_discount_received",
+        details={"offer_id": OFFER_CODE, "discount_amount": OFFER_DISCOUNT},
+    )
+    return offer
+
+
 def open_day(
     db: Session,
     user_id: uuid.UUID,
@@ -415,24 +450,6 @@ def open_day(
             f"day:{day}:opened",
             f"intensive_day_{day}_open",
             details={"day": day},
-        )
-    if day == 4 and offer_for_user(db, user_id) is None:
-        db.add(
-            UserOffer(
-                user_id=user_id,
-                stage_code=OFFER_STAGE_CODE,
-                started_at=current,
-                expires_at=current + OFFER_DURATION,
-                status="active",
-                snapshot={"offer_id": OFFER_CODE, "discount_amount": OFFER_DISCOUNT},
-            )
-        )
-        course_event(
-            db,
-            user_id,
-            "offer:day4:received",
-            "intensive_discount_received",
-            details={"offer_id": OFFER_CODE, "discount_amount": OFFER_DISCOUNT},
         )
     return progress
 
@@ -525,17 +542,22 @@ def create_offer_token(
     return token
 
 
-def offer_user_id(db: Session, token: str | None) -> uuid.UUID | None:
+def offer_token_row(
+    db: Session,
+    token: str | None,
+    *,
+    lock: bool = False,
+) -> MessengerLinkToken | None:
     if not token or len(token) > 128:
         return None
-    row = db.scalar(
-        select(MessengerLinkToken).where(
-            MessengerLinkToken.token_hash
-            == hashlib.sha256(token.encode("utf-8")).hexdigest(),
-            MessengerLinkToken.purpose == OFFER_TOKEN_PURPOSE,
-            MessengerLinkToken.consumed_at.is_(None),
-        )
+    statement = select(MessengerLinkToken).where(
+        MessengerLinkToken.token_hash
+        == hashlib.sha256(token.encode("utf-8")).hexdigest(),
+        MessengerLinkToken.purpose == OFFER_TOKEN_PURPOSE,
     )
+    if lock:
+        statement = statement.with_for_update()
+    row = db.scalar(statement)
     if row is None or aware_utc(row.expires_at) <= datetime.now(timezone.utc):
         return None
     offer = offer_for_user(db, row.user_id)
@@ -546,7 +568,12 @@ def offer_user_id(db: Session, token: str | None) -> uuid.UUID | None:
         or aware_utc(offer.expires_at) <= datetime.now(timezone.utc)
     ):
         return None
-    return row.user_id
+    return row
+
+
+def offer_user_id(db: Session, token: str | None) -> uuid.UUID | None:
+    row = offer_token_row(db, token)
+    return row.user_id if row is not None else None
 
 
 def attributed_path(request: Request, path: str) -> str:

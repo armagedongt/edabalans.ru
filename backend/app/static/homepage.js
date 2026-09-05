@@ -6,6 +6,7 @@
     ? new URL(script.src, window.location.href).origin
     : 'https://app.edabalans.ru';
   var mount = document.querySelector('[data-edabalans-homepage]');
+  var offerStorageKey = 'edabalans_intensive_offer_v1';
 
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
@@ -115,12 +116,86 @@
     if (window.console && console.error) console.error('[edabalans homepage]', error);
   }
 
+  function storedOffer() {
+    try {
+      var value = JSON.parse(window.localStorage.getItem(offerStorageKey) || 'null');
+      if (!value || !value.token) return null;
+      if (value.expiresAt && Date.parse(value.expiresAt) <= Date.now()) {
+        window.localStorage.removeItem(offerStorageKey);
+        return null;
+      }
+      return value;
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  function saveOffer(token, expiresAt) {
+    try {
+      window.localStorage.setItem(offerStorageKey, JSON.stringify({
+        token: token,
+        expiresAt: expiresAt || null
+      }));
+    } catch (_error) {}
+  }
+
+  function forgetOffer() {
+    try { window.localStorage.removeItem(offerStorageKey); } catch (_error) {}
+  }
+
+  function putOfferInLocation(token) {
+    var url = new URL(window.location.href);
+    if (url.searchParams.get('intensive_offer') === token) return;
+    url.searchParams.set('intensive_offer', token);
+    window.history.replaceState(window.history.state, '', url.href);
+  }
+
+  function removeOfferFromLocation() {
+    var url = new URL(window.location.href);
+    if (!url.searchParams.has('intensive_offer')) return;
+    url.searchParams.delete('intensive_offer');
+    window.history.replaceState(window.history.state, '', url.href);
+  }
+
+  function restoreOffer() {
+    var queryToken = new URLSearchParams(window.location.search).get('intensive_offer');
+    var saved = storedOffer();
+    var token = queryToken || (saved && saved.token);
+    if (!token) return Promise.resolve();
+    if (queryToken) saveOffer(queryToken, saved && saved.token === queryToken ? saved.expiresAt : null);
+    var pricingUrl = new URL('/api/pricing/site', appHost);
+    pricingUrl.searchParams.set('intensive_offer', token);
+    return fetch(pricingUrl.href, {credentials: 'omit', mode: 'cors', cache: 'no-store'}).then(function (response) {
+      if (response.status === 403 || response.status === 410) {
+        forgetOffer();
+        removeOfferFromLocation();
+        return;
+      }
+      if (!response.ok) {
+        if (!queryToken && saved && saved.expiresAt) putOfferInLocation(token);
+        return;
+      }
+      return response.json().then(function (payload) {
+        var offer = payload && payload.intensive_offer;
+        if (!offer || !offer.expires_at) {
+          forgetOffer();
+          removeOfferFromLocation();
+          return;
+        }
+        saveOffer(token, offer.expires_at);
+        putOfferInLocation(token);
+      });
+    }).catch(function () {
+      if (!queryToken && saved && saved.expiresAt) putOfferInLocation(token);
+    });
+  }
+
   prepareTildaShell();
-  fetch(appHost + '/preview/homepage-mobile?theme=blue-mist&embed=tilda', {
+  restoreOffer().then(function () { return fetch(appHost + '/preview/homepage-mobile?theme=blue-mist&embed=tilda', {
     credentials: 'omit',
     mode: 'cors',
     cache: 'no-store'
-  }).then(function (response) {
+  }); }).then(function (response) {
     if (!response.ok) throw new Error('homepage ' + response.status);
     return response.text().then(function (html) {
       return {html: html, baseUrl: response.url};

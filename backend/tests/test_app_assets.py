@@ -999,6 +999,8 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "edabalans_intensive_progress" not in script.text
     assert "/api/intensive/state" in script.text
     assert "/api/intensive/offer-token" in script.text
+    assert "IntersectionObserver" in script.text
+    assert "/mk1#masterclass" in script.text
     assert "serverState.identified && !(serverState.assignment_days || []).includes(day)" in script.text
     assert 'block.hidden = false' in script.text
     assert "unlocked_days: [1, 2, 3, 4]" in script.text
@@ -1064,6 +1066,9 @@ def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     assert "[data-edabalans-homepage]" in response.text
     assert "/preview/homepage-mobile?theme=blue-mist&embed=tilda" in response.text
     assert "DOMParser" in response.text
+    assert "edabalans_intensive_offer_v1" in response.text
+    assert "window.localStorage" in response.text
+    assert "history.replaceState" in response.text
     assert "createElement('iframe')" not in response.text
     assert "/homepage.js" not in client.get("/openapi.json").json()["paths"]
 

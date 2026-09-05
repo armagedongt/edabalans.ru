@@ -20,10 +20,12 @@ from app.database import get_db
 from app.intensive_web_access import (
     OFFER_CODE,
     OFFER_DISCOUNT,
+    aware_utc,
     offer_for_user,
+    offer_token_row,
     offer_user_id,
 )
-from app.models import OfferCheckout, PricingVersion
+from app.models import OfferCheckout, PricingVersion, User
 from app.pricing_service import (
     active_pricing_version,
     amount_value,
@@ -278,10 +280,21 @@ def public_site_checkout(
         raise HTTPException(503, "Активная версия цен не опубликована")
     user_id = None
     if body.intensive_offer:
-        user_id = offer_user_id(db, body.intensive_offer)
-        if user_id is None:
+        token_row = offer_token_row(db, body.intensive_offer, lock=True)
+        if token_row is None:
             raise HTTPException(403, "Персональная скидка истекла или недействительна")
-    return create_site_checkout(db, version, body.price_code, user_id=user_id)
+        user_id = token_row.user_id
+        # A participant may receive several signed links for the same offer.
+        # Lock the stable identity, not an individual link, so concurrent
+        # requests cannot open several discounted checkouts.
+        if db.get(User, user_id, with_for_update=True) is None:
+            raise HTTPException(403, "Персональная скидка истекла или недействительна")
+    return create_site_checkout(
+        db,
+        version,
+        body.price_code,
+        discount_user_id=user_id,
+    )
 
 
 @router.post("/api/pricing/site/preview-checkout", include_in_schema=False)
@@ -302,7 +315,7 @@ def create_site_checkout(
     version: PricingVersion,
     price_code: str,
     *,
-    user_id: uuid.UUID | None = None,
+    discount_user_id: uuid.UUID | None = None,
 ) -> dict:
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
@@ -310,7 +323,12 @@ def create_site_checkout(
     catalog_tariff = tariff_public(db, entry.product_code or "")
     display_name = catalog_tariff["name"] if catalog_tariff else entry.name
     now = datetime.now(timezone.utc)
-    offer = offer_for_user(db, user_id) if user_id else None
+    offer = offer_for_user(db, discount_user_id) if discount_user_id else None
+    offer_checkout_code = (
+        f"{OFFER_CODE}:{discount_user_id}"
+        if offer and discount_user_id
+        else entry.code
+    )
     amount = site_tariff_amount(
         entry,
         personal_discount=Decimal(OFFER_DISCOUNT) if offer else Decimal("0"),
@@ -321,19 +339,44 @@ def create_site_checkout(
         if offer_expires_at.tzinfo is None:
             offer_expires_at = offer_expires_at.replace(tzinfo=timezone.utc)
         expires_at = min(expires_at, offer_expires_at)
+    if offer and discount_user_id:
+        token_checkouts = list(
+            db.scalars(
+                select(OfferCheckout)
+                .where(OfferCheckout.offer_code == offer_checkout_code)
+                .order_by(OfferCheckout.created_at.desc())
+            )
+        )
+        if any(row.status in {"paid", "test_paid"} for row in token_checkouts):
+            raise HTTPException(409, "Персональная скидка уже использована")
+        if any(row.payment_id is not None for row in token_checkouts):
+            raise HTTPException(409, "Оплата по персональной скидке уже обрабатывается")
+        existing_checkout = next(
+            (
+                row
+                for row in token_checkouts
+                if row.status == "pending" and aware_utc(row.expires_at) > now
+            ),
+            None,
+        )
+        if existing_checkout is not None:
+            raise HTTPException(409, "Корзина по персональной скидке уже открыта")
     db.execute(
         delete(OfferCheckout).where(
             OfferCheckout.checkout_kind == "public_site",
             OfferCheckout.status == "pending",
             OfferCheckout.expires_at <= now,
-        )
+        ).execution_options(synchronize_session=False)
     )
     checkout = OfferCheckout(
-        user_id=user_id,
+        # A browser-carried discount is a price entitlement, not proof that the
+        # eventual payer owns the intensive identity. Tilda binds the checkout
+        # to the email entered in its cart after payment.
+        user_id=None,
         checkout_kind="public_site",
         pricing_version_id=version.id,
         price_entry_code=entry.code,
-        offer_code=entry.code,
+        offer_code=offer_checkout_code,
         title=display_name,
         items=list(entry.resource_codes or []),
         amount=amount,
