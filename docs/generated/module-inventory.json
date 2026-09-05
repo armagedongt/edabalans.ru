@@ -17492,13 +17492,21 @@
           "kind": "method",
           "line": 105,
           "module_id": "operations.delivery",
+          "name": "test_go_robokassa_probe_does_not_publish_general_checkout",
+          "qualname": "DeployPolicyTests.test_go_robokassa_probe_does_not_publish_general_checkout"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 136,
+          "module_id": "operations.delivery",
           "name": "test_ci_builds_and_tests_only_changed_application_services",
           "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
         },
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 115,
+          "line": 146,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -17506,7 +17514,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 193,
+          "line": 224,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -17514,7 +17522,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 203,
+          "line": 234,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -17522,7 +17530,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 209,
+          "line": 240,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -25749,7 +25757,7 @@
         },
         {
           "file": "backend/app/robokassa_routes.py",
-          "line": 45,
+          "line": 162,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/api/payments/robokassa/checkout",
@@ -25757,7 +25765,7 @@
         },
         {
           "file": "backend/app/robokassa_routes.py",
-          "line": 93,
+          "line": 210,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/api/payments/robokassa/{invoice_id}/status",
@@ -25765,7 +25773,7 @@
         },
         {
           "file": "backend/app/robokassa_routes.py",
-          "line": 76,
+          "line": 193,
           "method": "POST",
           "module_id": "platform.commerce",
           "path": "/integrations/robokassa/result2",
@@ -25773,7 +25781,7 @@
         },
         {
           "file": "backend/app/robokassa_routes.py",
-          "line": 128,
+          "line": 259,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/payments/robokassa/fail",
@@ -25781,11 +25789,27 @@
         },
         {
           "file": "backend/app/robokassa_routes.py",
-          "line": 119,
+          "line": 242,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/payments/robokassa/success",
           "symbol": "robokassa_success"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "line": 87,
+          "method": "GET",
+          "module_id": "platform.commerce",
+          "path": "/robokassa-test",
+          "symbol": "robokassa_go_test_page"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "line": 121,
+          "method": "POST",
+          "module_id": "platform.commerce",
+          "path": "/robokassa-test/start",
+          "symbol": "robokassa_go_test_start"
         },
         {
           "file": "backend/app/tilda_routes.py",
@@ -26379,7 +26403,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "class",
-          "line": 24,
+          "line": 35,
           "module_id": "platform.commerce",
           "name": "RobokassaCheckoutIn",
           "qualname": "RobokassaCheckoutIn"
@@ -26387,7 +26411,55 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 30,
+          "line": 41,
+          "module_id": "platform.commerce",
+          "name": "_require_go_test_host",
+          "qualname": "_require_go_test_host"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 47,
+          "module_id": "platform.commerce",
+          "name": "_go_origin",
+          "qualname": "_go_origin"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 51,
+          "module_id": "platform.commerce",
+          "name": "_go_test_settings",
+          "qualname": "_go_test_settings"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 62,
+          "module_id": "platform.commerce",
+          "name": "_robokassa_submit_page",
+          "qualname": "_robokassa_submit_page"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 87,
+          "module_id": "platform.commerce",
+          "name": "robokassa_go_test_page",
+          "qualname": "robokassa_go_test_page"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 121,
+          "module_id": "platform.commerce",
+          "name": "robokassa_go_test_start",
+          "qualname": "robokassa_go_test_start"
+        },
+        {
+          "file": "backend/app/robokassa_routes.py",
+          "kind": "function",
+          "line": 147,
           "module_id": "platform.commerce",
           "name": "_enforce_checkout_origin",
           "qualname": "_enforce_checkout_origin"
@@ -26395,7 +26467,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 45,
+          "line": 162,
           "module_id": "platform.commerce",
           "name": "robokassa_checkout",
           "qualname": "robokassa_checkout"
@@ -26403,7 +26475,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 76,
+          "line": 193,
           "module_id": "platform.commerce",
           "name": "robokassa_result2",
           "qualname": "robokassa_result2"
@@ -26411,7 +26483,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 93,
+          "line": 210,
           "module_id": "platform.commerce",
           "name": "robokassa_status",
           "qualname": "robokassa_status"
@@ -26419,7 +26491,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 108,
+          "line": 225,
           "module_id": "platform.commerce",
           "name": "_return_page",
           "qualname": "_return_page"
@@ -26427,7 +26499,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 119,
+          "line": 242,
           "module_id": "platform.commerce",
           "name": "robokassa_success",
           "qualname": "robokassa_success"
@@ -26435,7 +26507,7 @@
         {
           "file": "backend/app/robokassa_routes.py",
           "kind": "function",
-          "line": 128,
+          "line": 259,
           "module_id": "platform.commerce",
           "name": "robokassa_fail",
           "qualname": "robokassa_fail"
@@ -27101,13 +27173,45 @@
           "kind": "function",
           "line": 229,
           "module_id": "platform.commerce",
+          "name": "test_go_test_page_is_one_button_with_database_price",
+          "qualname": "test_go_test_page_is_one_button_with_database_price"
+        },
+        {
+          "file": "backend/tests/test_robokassa_payments.py",
+          "kind": "function",
+          "line": 249,
+          "module_id": "platform.commerce",
+          "name": "test_go_test_button_builds_classic_form_with_go_callbacks",
+          "qualname": "test_go_test_button_builds_classic_form_with_go_callbacks"
+        },
+        {
+          "file": "backend/tests/test_robokassa_payments.py",
+          "kind": "function",
+          "line": 275,
+          "module_id": "platform.commerce",
+          "name": "test_go_test_page_is_disabled_outside_robokassa_test_mode",
+          "qualname": "test_go_test_page_is_disabled_outside_robokassa_test_mode"
+        },
+        {
+          "file": "backend/tests/test_robokassa_payments.py",
+          "kind": "function",
+          "line": 289,
+          "module_id": "platform.commerce",
+          "name": "test_go_payment_returns_link_back_to_test_page",
+          "qualname": "test_go_payment_returns_link_back_to_test_page"
+        },
+        {
+          "file": "backend/tests/test_robokassa_payments.py",
+          "kind": "function",
+          "line": 305,
+          "module_id": "platform.commerce",
           "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
           "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
         },
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 249,
+          "line": 325,
           "module_id": "platform.commerce",
           "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
           "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -27115,7 +27219,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 276,
+          "line": 352,
           "module_id": "platform.commerce",
           "name": "test_signed_production_result_grants_access",
           "qualname": "test_signed_production_result_grants_access"
@@ -27123,7 +27227,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 295,
+          "line": 371,
           "module_id": "platform.commerce",
           "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
           "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -27131,7 +27235,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 320,
+          "line": 396,
           "module_id": "platform.commerce",
           "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
           "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -27139,7 +27243,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 345,
+          "line": 421,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
           "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -27147,7 +27251,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 401,
+          "line": 477,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_rejects_another_email_before_payment",
           "qualname": "test_personal_offer_rejects_another_email_before_payment"
@@ -46602,7 +46706,7 @@
     },
     {
       "file": "backend/app/robokassa_routes.py",
-      "line": 45,
+      "line": 162,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/api/payments/robokassa/checkout",
@@ -46610,7 +46714,7 @@
     },
     {
       "file": "backend/app/robokassa_routes.py",
-      "line": 93,
+      "line": 210,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/api/payments/robokassa/{invoice_id}/status",
@@ -47298,7 +47402,7 @@
     },
     {
       "file": "backend/app/robokassa_routes.py",
-      "line": 76,
+      "line": 193,
       "method": "POST",
       "module_id": "platform.commerce",
       "path": "/integrations/robokassa/result2",
@@ -47450,7 +47554,7 @@
     },
     {
       "file": "backend/app/robokassa_routes.py",
-      "line": 128,
+      "line": 259,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/payments/robokassa/fail",
@@ -47458,7 +47562,7 @@
     },
     {
       "file": "backend/app/robokassa_routes.py",
-      "line": 119,
+      "line": 242,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/payments/robokassa/success",
@@ -47591,6 +47695,22 @@
       "module_id": "operations.delivery",
       "path": "/ready",
       "symbol": "ready"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "line": 87,
+      "method": "GET",
+      "module_id": "platform.commerce",
+      "path": "/robokassa-test",
+      "symbol": "robokassa_go_test_page"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "line": 121,
+      "method": "POST",
+      "module_id": "platform.commerce",
+      "path": "/robokassa-test/start",
+      "symbol": "robokassa_go_test_start"
     },
     {
       "file": "backend/app/app_routes.py",
@@ -55030,7 +55150,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "class",
-      "line": 24,
+      "line": 35,
       "module_id": "platform.commerce",
       "name": "RobokassaCheckoutIn",
       "qualname": "RobokassaCheckoutIn"
@@ -55038,7 +55158,55 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 30,
+      "line": 41,
+      "module_id": "platform.commerce",
+      "name": "_require_go_test_host",
+      "qualname": "_require_go_test_host"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 47,
+      "module_id": "platform.commerce",
+      "name": "_go_origin",
+      "qualname": "_go_origin"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 51,
+      "module_id": "platform.commerce",
+      "name": "_go_test_settings",
+      "qualname": "_go_test_settings"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 62,
+      "module_id": "platform.commerce",
+      "name": "_robokassa_submit_page",
+      "qualname": "_robokassa_submit_page"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 87,
+      "module_id": "platform.commerce",
+      "name": "robokassa_go_test_page",
+      "qualname": "robokassa_go_test_page"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 121,
+      "module_id": "platform.commerce",
+      "name": "robokassa_go_test_start",
+      "qualname": "robokassa_go_test_start"
+    },
+    {
+      "file": "backend/app/robokassa_routes.py",
+      "kind": "function",
+      "line": 147,
       "module_id": "platform.commerce",
       "name": "_enforce_checkout_origin",
       "qualname": "_enforce_checkout_origin"
@@ -55046,7 +55214,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 45,
+      "line": 162,
       "module_id": "platform.commerce",
       "name": "robokassa_checkout",
       "qualname": "robokassa_checkout"
@@ -55054,7 +55222,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 76,
+      "line": 193,
       "module_id": "platform.commerce",
       "name": "robokassa_result2",
       "qualname": "robokassa_result2"
@@ -55062,7 +55230,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 93,
+      "line": 210,
       "module_id": "platform.commerce",
       "name": "robokassa_status",
       "qualname": "robokassa_status"
@@ -55070,7 +55238,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 108,
+      "line": 225,
       "module_id": "platform.commerce",
       "name": "_return_page",
       "qualname": "_return_page"
@@ -55078,7 +55246,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 119,
+      "line": 242,
       "module_id": "platform.commerce",
       "name": "robokassa_success",
       "qualname": "robokassa_success"
@@ -55086,7 +55254,7 @@
     {
       "file": "backend/app/robokassa_routes.py",
       "kind": "function",
-      "line": 128,
+      "line": 259,
       "module_id": "platform.commerce",
       "name": "robokassa_fail",
       "qualname": "robokassa_fail"
@@ -61672,13 +61840,45 @@
       "kind": "function",
       "line": 229,
       "module_id": "platform.commerce",
+      "name": "test_go_test_page_is_one_button_with_database_price",
+      "qualname": "test_go_test_page_is_one_button_with_database_price"
+    },
+    {
+      "file": "backend/tests/test_robokassa_payments.py",
+      "kind": "function",
+      "line": 249,
+      "module_id": "platform.commerce",
+      "name": "test_go_test_button_builds_classic_form_with_go_callbacks",
+      "qualname": "test_go_test_button_builds_classic_form_with_go_callbacks"
+    },
+    {
+      "file": "backend/tests/test_robokassa_payments.py",
+      "kind": "function",
+      "line": 275,
+      "module_id": "platform.commerce",
+      "name": "test_go_test_page_is_disabled_outside_robokassa_test_mode",
+      "qualname": "test_go_test_page_is_disabled_outside_robokassa_test_mode"
+    },
+    {
+      "file": "backend/tests/test_robokassa_payments.py",
+      "kind": "function",
+      "line": 289,
+      "module_id": "platform.commerce",
+      "name": "test_go_payment_returns_link_back_to_test_page",
+      "qualname": "test_go_payment_returns_link_back_to_test_page"
+    },
+    {
+      "file": "backend/tests/test_robokassa_payments.py",
+      "kind": "function",
+      "line": 305,
+      "module_id": "platform.commerce",
       "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
       "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
     },
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 249,
+      "line": 325,
       "module_id": "platform.commerce",
       "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
       "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -61686,7 +61886,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 276,
+      "line": 352,
       "module_id": "platform.commerce",
       "name": "test_signed_production_result_grants_access",
       "qualname": "test_signed_production_result_grants_access"
@@ -61694,7 +61894,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 295,
+      "line": 371,
       "module_id": "platform.commerce",
       "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
       "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -61702,7 +61902,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 320,
+      "line": 396,
       "module_id": "platform.commerce",
       "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
       "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -61710,7 +61910,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 345,
+      "line": 421,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
       "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -61718,7 +61918,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 401,
+      "line": 477,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_rejects_another_email_before_payment",
       "qualname": "test_personal_offer_rejects_another_email_before_payment"
@@ -72320,13 +72520,21 @@
       "kind": "method",
       "line": 105,
       "module_id": "operations.delivery",
+      "name": "test_go_robokassa_probe_does_not_publish_general_checkout",
+      "qualname": "DeployPolicyTests.test_go_robokassa_probe_does_not_publish_general_checkout"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 136,
+      "module_id": "operations.delivery",
       "name": "test_ci_builds_and_tests_only_changed_application_services",
       "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
     },
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 115,
+      "line": 146,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -72334,7 +72542,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 193,
+      "line": 224,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -72342,7 +72550,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 203,
+      "line": 234,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -72350,7 +72558,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 209,
+      "line": 240,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"
