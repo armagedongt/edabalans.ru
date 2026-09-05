@@ -1,4 +1,5 @@
 import json
+import ssl
 import uuid
 from datetime import UTC, datetime
 
@@ -11,7 +12,7 @@ from urllib.parse import parse_qs, urlparse
 import app.main as main_module
 from app.database import Base, get_db, make_engine
 from app.main import app
-from app.max import MaxClient
+from app.max import MAX_CA_BUNDLE, MaxClient
 from app.models import (
     CrmAttributionEvent,
     CrmMessengerAccount,
@@ -32,6 +33,12 @@ class FakeMax:
     def send_html(self, user_id, text, **kwargs):
         self.sent.append((user_id, text, kwargs))
         return "1"
+
+
+def test_max_ca_bundle_loads_without_changing_system_trust():
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=str(MAX_CA_BUNDLE))
+    assert MAX_CA_BUNDLE.is_file()
 
 
 def test_max_client_sends_link_button():

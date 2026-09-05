@@ -3,8 +3,10 @@ from __future__ import annotations
 
 import base64
 import hashlib
+import ssl
 import uuid
 from datetime import UTC, datetime
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -30,6 +32,7 @@ from app.tracking import canonical_tag, resolve_start_payload
 
 
 MAX_API_BASE = "https://platform-api2.max.ru"
+MAX_CA_BUNDLE = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_ca.pem"
 MAX_BOT_CODE = "max"
 MAX_INTENSIVE_MESSAGE = (
     "<b>Бесплатный интенсив «Последнее похудение»</b>\n\n"
@@ -60,7 +63,14 @@ class MaxClient:
                     "url": button_url,
                 }]]},
             }]
-        with httpx.Client(timeout=20, transport=self.transport) as client:
+        client_options: dict[str, Any] = {"timeout": 20}
+        if self.transport is not None:
+            client_options["transport"] = self.transport
+        else:
+            tls_context = ssl.create_default_context()
+            tls_context.load_verify_locations(cafile=str(MAX_CA_BUNDLE))
+            client_options["verify"] = tls_context
+        with httpx.Client(**client_options) as client:
             response = client.post(
                 f"{MAX_API_BASE}/messages",
                 params={"user_id": user_id},

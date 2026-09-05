@@ -21,6 +21,10 @@ implementation_status: implemented
 
 - MAX отправляет HTTPS webhook `bot_started` на `/bot/max/webhook`.
 - Сервер принимает запрос только с точным `X-Max-Bot-Api-Secret`.
+- Исходящие запросы идут только на `https://platform-api2.max.ru`. Для этого
+  клиента используется отдельный CA-bundle Минцифры из официального источника
+  Госуслуг; системное хранилище доверия сервера и остальных интеграций не
+  расширяется.
 - Из события используются `user.user_id`, имя и username, `payload`, timestamp.
 - Код `payload` читается тем же каталогом `tg_tracking_links` и aliases, что и
   Telegram. Это не второй каталог: физическое имя таблицы пока историческое,
