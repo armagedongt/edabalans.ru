@@ -1,28 +1,32 @@
 ---
 content_id: intensive_mid1_unsubscribed
-runtime_content_code: tpl_intensive_mid1_one_percent_unsubscribed
-status: ready_for_review
-surface: telegram_bot
-topic: На 1% лучше!
-audience: not_subscribed_to_channel
-read_tag: "Пост - На 1% лучше!"
-read_tag_code: clean_пост_на_1_лучше_aa2bda49
-read_tag_aliases:
-  - "Пост: На 1% лучше!"
-channel_post_target: "https://t.me/Fitness_Talks/732"
-channel_post_url: "{{personal_channel_post_732_url}}"
+status: accepted
+surface: messenger
+delivery_channels:
+  - telegram
+  - max
+topic: Второй живот в подарок!
+content_tag: "Пост - Висцеральный жир"
+content_tag_id: "bb40957b-f598-4562-a096-7e06a4479058"
+content_family: visceral_fat
+audience: not_subscribed_to_source_channel
+source_reference_telegram_url: "https://t.me/Fitness_Talks/698"
+source_knowledge_uri: "content://item/6198c7bd-5eb2-4388-8f15-6bb4ed78c838"
+channel_post_alias_telegram: telegram_intensive_mid1_visceral
+channel_post_url_telegram: "https://t.me/Fitness_Talks/698"
+channel_post_alias_max: max_intensive_mid1_visceral
+channel_post_url_max: "{{personal_max_intensive_mid1_post_url}}"
+channel_post_url: "https://t.me/Fitness_Talks/698"
+variables:
+  - wait_interval
 ---
 
-**На 1% лучше!**
+**Второй живот в подарок!**
 
-Часто помехой в похудении оказываются не тупые диеты или слабая сила воли, а банальное желание сделать всё и сразу.
+Каждый раз, когда вы худеете на 4–5 кг, а потом наедаете их обратно через несколько месяцев, вы не просто тратите время и нервы впустую, вы ещё и копите висцеральный жир.
 
-В моих постах я пытаюсь показать, что похудение — это не только «меньше ешь и больше двигайся»: у вас есть гораздо больше рычагов влияния на свой вес!
+Как это происходит и как сделать так, чтобы это больше не происходило, — [написал в недавнем посте в канале](https://t.me/Fitness_Talks/698).
 
-Не вешайте на себя груз ответственности а-ля «завтра я начинаю худеть» или «с сегодняшнего дня я откажусь от сладкого».
+**Потому что это — уже не смехуёчки! 😱**
 
-Начните с чего-нибудь простого, например с «Правила 1%» в изменении ваших тарелок. Подробнее об этом принципе написал [в отдельном посте в канале]({{personal_channel_post_732_url}}).
-
-**И не забывайте:** в жизни почти не бывает нейтральных событий. Если вы сегодня не приблизились к вашей цели на 1%, скорее всего, вы не остались на месте, а лишь отдалились от неё.
-
-**Не упускайте время!**
+Вторая часть бесплатного интенсива откроется сегодня. Пост придёт сюда, в этого бота, через {{wait_interval}}. А первая часть уже открыта, листайте выше, если недочитали!

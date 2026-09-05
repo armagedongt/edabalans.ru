@@ -33,7 +33,7 @@ from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
-from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables
+from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables, variable_is_allowed
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
@@ -761,6 +761,16 @@ def process_update(update: dict, session: Session) -> dict:
                 public_url=settings.intensive_public_url,
             )
             tg.set_chat_menu_web_app(contact.chat_id, "Интенсив", intensive_url)
+            yandex_entry = any(
+                marker in " ".join([
+                    str((raw_query or {}).get("utm_source") or ""),
+                    str((raw_query or {}).get("utm_medium") or ""),
+                    str(link.campaign if link else ""),
+                    str(link.placement if link else ""),
+                    str(link.name if link else ""),
+                ]).casefold()
+                for marker in ("yandex", "яндекс", "direct", "директ")
+            )
             run = execute_start_decision(
                 session,
                 contact,
@@ -770,6 +780,7 @@ def process_update(update: dict, session: Session) -> dict:
                 sequence_code,
                 link.target_step_key if link and link.route_kind == "published_step" else None,
                 update_id,
+                "tpl_intensive_entry_yandex" if yandex_entry else "tpl_intensive_entry_default",
             )
             session.commit()
             if run:
@@ -900,7 +911,11 @@ def _validate_content_publication(item: ContentItem, body: ContentValidateIn) ->
     media_only = item.media_kind == "video_note" and bool(item.media_path or item.telegram_file_id)
     if is_placeholder_text(body.body_source) and not media_only:
         raise HTTPException(422, "Нельзя опубликовать пустой текст или техническую заглушку")
-    unknown_variables = sorted(set(template_variables(body.body_source)) - set(allowed_variables(item.code)))
+    unknown_variables = sorted(
+        variable
+        for variable in set(template_variables(body.body_source))
+        if not variable_is_allowed(item.code, variable)
+    )
     if unknown_variables:
         raise HTTPException(422, f"Неизвестные переменные: {', '.join(unknown_variables)}")
     try:
@@ -946,8 +961,8 @@ def publish_content(content_code: str, body: ContentPublishIn, session: Session 
 def _sequence_rule(code: str) -> dict:
     if code == WELCOME_CODE:
         return {
-            "start": "Начинается для нового пользователя после завершения модуля Start и атрибуции.",
-            "stop": "После Дня 4 ждёт 12 часов; покупка внутри Welcome не проверяется.",
+            "start": "После первого входа отправляет кружок и персональный вход; День 1 уже доступен на сайте.",
+            "stop": "Через 24 часа после Дня 4 отправляет закрепляемое предложение и финальную картинку.",
             "next": "Передаёт в 25-дневную основную рассылку. Покупка останавливает presale централизованным lifecycle-событием.",
         }
     if code == PREPURCHASE_CODE:
@@ -1012,7 +1027,11 @@ def update_content(content_id: str, body: ContentUpdateIn, session: Session = De
     if "body_source" in values and candidate_status != "approved":
         raise HTTPException(422, "Черновик хранится в рабочем Telegram HTML-файле; в живой слот сохраняется только подтверждённый текст")
     if "body_source" in values or candidate_status == "approved":
-        unknown_variables = sorted(set(template_variables(candidate_body)) - set(allowed_variables(item.code)))
+        unknown_variables = sorted(
+            variable
+            for variable in set(template_variables(candidate_body))
+            if not variable_is_allowed(item.code, variable)
+        )
         if unknown_variables:
             raise HTTPException(422, f"Неизвестные переменные: {', '.join(unknown_variables)}")
         candidate_format = values.get("source_format", item.source_format)
@@ -1290,7 +1309,11 @@ def _link_payload(session: Session, link: TrackingLink) -> dict:
         alias_clicks = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, TrackingEvent.event_type.in_(["click", "web_click"]))) or 0
         alias_starts = session.scalar(select(func.count(TrackingEvent.id)).where(TrackingEvent.alias_id == alias.id, or_(TrackingEvent.event_type == "start", TrackingEvent.event_type.like("start_%")))) or 0
         alias_data.append({"id": alias.id, "token": alias.token, "kind": alias.alias_kind, "status": alias.status, "direct_url": direct, "go_url": f"{go_base}/{alias.token}" if go_base else None, "warning_url": f"{go_base}/{alias.token}V" if go_base and alias.alias_kind == "short" else None, "clicks": alias_clicks, "starts": alias_starts})
-    return {"id": link.id, "name": link.name, "token": link.token, "platform": link.platform, "placement": link.placement, "campaign": link.campaign, "target_kind": link.target_kind, "route_kind": link.route_kind, "target_sequence_code": link.target_sequence_code, "target_step_key": link.target_step_key, "status": link.status, "is_active": link.is_active, "created_at": link.created_at, "tags": [{"id": tag_id, "name": name} for tag_id, name in tag_rows], "aliases": alias_data, "clicks": clicks, "starts": starts, "unique_starts": unique_starts, "conversion": round(unique_starts / clicks * 100, 1) if clicks else 0, "url": alias_data[0]["go_url"] if alias_data and alias_data[0]["go_url"] else (alias_data[0]["direct_url"] if alias_data else None), "deep_link": alias_data[0]["direct_url"] if alias_data else None}
+    # Messenger-to-messenger links are direct by default. ``go_url`` remains an
+    # explicit legacy/advertising option, but the API must not promote it as the
+    # canonical public URL for bot starts or channel invites.
+    primary_url = alias_data[0]["direct_url"] if alias_data else None
+    return {"id": link.id, "name": link.name, "token": link.token, "platform": link.platform, "placement": link.placement, "campaign": link.campaign, "target_kind": link.target_kind, "route_kind": link.route_kind, "target_sequence_code": link.target_sequence_code, "target_step_key": link.target_step_key, "status": link.status, "is_active": link.is_active, "created_at": link.created_at, "tags": [{"id": tag_id, "name": name} for tag_id, name in tag_rows], "aliases": alias_data, "clicks": clicks, "starts": starts, "unique_starts": unique_starts, "conversion": round(unique_starts / clicks * 100, 1) if clicks else 0, "url": primary_url, "deep_link": primary_url}
 
 
 @app.post("/bot-api/link-rules", dependencies=[Depends(require_admin)])

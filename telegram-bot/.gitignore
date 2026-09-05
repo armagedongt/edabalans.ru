@@ -1,4 +1,7 @@
-runtime/
+runtime/*
+!runtime/media/
+runtime/media/*
+!runtime/media/intensive-masterclass-followup-waiting-cat.jpg
 __pycache__/
 *.pyc
 !schema/

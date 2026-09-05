@@ -90,21 +90,21 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     update = {"update_id": 100, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=update).json() == {"ok": True}
     assert client.post("/telegram/webhook", json=update).json()["duplicate"] is True
-    assert [x[1] for x in fake.sent] == ["tpl_start_navigation_pin", "tpl_entry_circle", "tpl_start_welcome_offer"]
+    assert [x[1] for x in fake.sent] == ["tpl_entry_circle", "tpl_intensive_entry_default"]
     assert len(fake.menu_apps) == 1
     assert fake.menu_apps[0][0:2] == ("42", "Интенсив")
     assert fake.menu_apps[0][2].startswith("https://go.похудение-это-есть.рф/i/E")
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
-    assert contacts[0]["run_status"] == "waiting"
+    assert contacts[0]["run_status"] == "active"
     callback = {"update_id": 101, "callback_query": {"id": "cb-1", "from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "message": {"chat": {"id": 42}}, "data": "start_intensive"}}
     assert client.post("/telegram/webhook", json=callback).json() == {"ok": True}
     repeat = {"update_id": 102, "message": {"from": {"id": 42, "first_name": "Sergey", "username": "tester"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
-    assert len(fake.sent) == 5
-    assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
+    assert len(fake.sent) == 3
+    assert fake.sent[-1][1] == "tpl_intensive_entry_continue"
     assert fake.menu_apps[-1][2] == fake.menu_apps[0][2]
-    assert "tpl_day1" in [item[1] for item in fake.sent]
+    assert "tpl_day1" not in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"
     assert any(node["id"] == "module:start_attribution" for node in overview["nodes"])
@@ -114,20 +114,20 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     module = client.get("/bot-api/map?module_code=start_attribution").json()
     assert module["level"] == "module"
     assert any(node["id"] == "exit_welcome" and node["kind"] == "module_exit" for node in module["nodes"])
-    assert any(node["id"] == "exit_error" and node["kind"] == "error" for node in module["nodes"])
+    assert any(node["id"] == "send_legacy" and node["kind"] == "message" for node in module["nodes"])
     assert any(edge["source"] == "welcome_run_active" and edge["target"] == "welcome_ever_started" and edge["branch"] == "false" for edge in module["edges"])
     assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_welcome" and edge["branch"] == "false" for edge in module["edges"])
-    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "exit_error" and edge["branch"] == "true" for edge in module["edges"])
+    assert any(edge["source"] == "welcome_ever_started" and edge["target"] == "send_legacy" and edge["branch"] == "true" for edge in module["edges"])
     detail = client.get("/bot-api/map?sequence_code=welcome_intensive").json()
     assert detail["level"] == "sequence"
-    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 12
-    offer_node = next(node for node in detail["nodes"] if node["id"] == "welcome_offer")
-    assert offer_node["content"]["code"] == "tpl_start_welcome_offer"
-    old_callback = offer_node["configuration"]["buttons"][0]["callback_data"]
-    edited_button = client.patch(f"/bot-api/steps/{offer_node['step_id']}/presentation", json={"button_text": "Поехали"})
+    assert len([node for node in detail["nodes"] if node["kind"] in {"message", "video_note"}]) == 14
+    day2_node = next(node for node in detail["nodes"] if node["id"] == "welcome_day2")
+    assert day2_node["content"]["code"] == "tpl_intensive_day2"
+    old_url = day2_node["configuration"]["buttons"][0]["url"]
+    edited_button = client.patch(f"/bot-api/steps/{day2_node['step_id']}/presentation", json={"button_text": "Открыть часть #2"})
     assert edited_button.status_code == 200
-    assert edited_button.json()["configuration"]["buttons"][0]["text"] == "Поехали"
-    assert edited_button.json()["configuration"]["buttons"][0]["callback_data"] == old_callback
+    assert edited_button.json()["configuration"]["buttons"][0]["text"] == "Открыть часть #2"
+    assert edited_button.json()["configuration"]["buttons"][0]["url"] == old_url
     assert any(edge["branch"] == "true" for edge in detail["edges"])
     postpurchase_map = client.get("/bot-api/map?module_code=postpurchase_masterclass").json()
     assert postpurchase_map["level"] == "module"
@@ -146,7 +146,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
         assert session.scalar(select(func.count(Contact.id))) == 1
         assert session.scalar(select(CrmMessengerAccount.main_scenario_seen_at)) is not None
         assert session.scalar(select(func.count(SequenceRun.id))) == 1
-        assert session.scalar(select(func.count(StepDelivery.id))) == 4
+        assert session.scalar(select(func.count(StepDelivery.id))) == 0
         assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 3
     state = client.get(f"/bot-api/users/{crm_user_id}").json()
     assert state["run_status"] == "active"
@@ -197,18 +197,16 @@ def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypa
 
     owner = {"update_id": 201, "message": {"from": {"id": 42, "first_name": "Owner"}, "chat": {"id": 42}, "text": "/start"}}
     assert client.post("/telegram/webhook", json=owner).json() == {"ok": True}
-    assert fake.sent[-3:] == [
-        ("42", "tpl_start_navigation_pin"),
+    assert fake.sent[-2:] == [
         ("42", "tpl_entry_circle"),
-        ("42", "tpl_start_welcome_offer"),
+        ("42", "tpl_intensive_entry_default"),
     ]
 
     plain_start = {"update_id": 203, "message": {"from": {"id": 84, "first_name": "Work owner"}, "chat": {"id": 84}, "text": "старт"}}
     assert client.post("/telegram/webhook", json=plain_start).json() == {"ok": True}
-    assert fake.sent[-3:] == [
-        ("84", "tpl_start_navigation_pin"),
+    assert fake.sent[-2:] == [
         ("84", "tpl_entry_circle"),
-        ("84", "tpl_start_welcome_offer"),
+        ("84", "tpl_intensive_entry_default"),
     ]
     outsider_callback = {"update_id": 202, "callback_query": {"id": "repair-cb", "from": {"id": 99, "first_name": "Visitor"}, "message": {"chat": {"id": 99}}, "data": "start_intensive"}}
     assert client.post("/telegram/webhook", json=outsider_callback).json() == {"ok": True, "maintenance": True}

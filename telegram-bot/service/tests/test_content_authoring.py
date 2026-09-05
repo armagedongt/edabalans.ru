@@ -26,8 +26,8 @@ def test_personal_link_variables_are_available_to_every_message():
     variables = allowed_variables("tpl_any_owner_approved_message")
     assert "personal_intensive_url" in variables
     assert "personal_masterclass_url" in variables
-    assert variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_260_url")
-    assert variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_734_url")
+    assert not variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_260_url")
+    assert not variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_734_url")
     assert not variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_0_url")
 from app.database import Base, get_db, make_engine
 from app.main import app
@@ -45,15 +45,15 @@ def test_seed_gives_every_working_message_a_brief_and_writer_queue(tmp_path):
         seed_defaults(session, "Fitness_Talks_bot")
         report = audit_content(session)
 
-    assert report["total"] == 43
+    assert report["total"] == 51
     assert not [item for item in report["items"] if "missing_brief" in item["issues"]]
     assert not [item for item in report["items"] if item["editorial_status"] == "missing_content"]
-    assert report["counts"]["placeholder"] == 24
-    assert report["counts"]["approved"] == 19
-    assert len(report["writer_queue"]) == 24
-    assert report["approved_skipped"] == 19
-    assert report["runtime_blocked"] == 24
-    start_item = next(item for item in report["items"] if item.get("code") == "tpl_start_has_masterclass")
+    assert report["counts"]["placeholder"] == 17
+    assert report["counts"]["approved"] == 34
+    assert len(report["writer_queue"]) == 17
+    assert report["approved_skipped"] == 34
+    assert report["runtime_blocked"] == 17
+    start_item = next(item for item in report["items"] if item.get("code") == "tpl_start_masterclass_owned")
     assert start_item["usages"][0]["previous"]
     assert start_item["usages"][0]["next"]
 
@@ -144,7 +144,7 @@ def test_confirmed_publish_is_versioned_and_skipped_by_writer(tmp_path, monkeypa
     assert conflict.status_code == 409
     report = client.get("/bot-api/content-audit").json()
     assert "tpl_day1" not in {item["code"] for item in report["writer_queue"]}
-    assert report["approved_skipped"] == 20
+    assert report["approved_skipped"] == 34
     app.dependency_overrides.clear()
 
 

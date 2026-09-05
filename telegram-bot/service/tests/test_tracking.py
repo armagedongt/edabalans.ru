@@ -59,6 +59,8 @@ def test_first_touch_assigns_tags_once_and_unknown_code_is_safe(tmp_path, monkey
     pikabu = next(tag for tag in tags if tag["name"] == "Пикабу")
     created = client.post("/bot-api/link-rules", json={"name": "Главная Пикабу", "tag_ids": [pikabu["id"]]}).json()
     token = created["aliases"][0]["token"]
+    assert created["url"] == f"https://t.me/TetrisgfgfgfBot?start={token}"
+    assert created["aliases"][0]["go_url"] == f"https://go.example.test/{token}"
 
     assert client.post("/telegram/webhook", json=start_update(1, 501, token)).status_code == 200
     assert client.post("/telegram/webhook", json=start_update(2, 501, token)).status_code == 200
@@ -69,7 +71,14 @@ def test_first_touch_assigns_tags_once_and_unknown_code_is_safe(tmp_path, monkey
         second_account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "502"))
         assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == first_account.user_id)) == 1
         assert session.scalar(select(func.count(CrmUserTag.id)).where(CrmUserTag.user_id == second_account.user_id)) == 0
-        event_types = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "501").order_by(TrackingEvent.occurred_at)))
+        event_types = list(session.scalars(
+            select(TrackingEvent.event_type)
+            .where(
+                TrackingEvent.telegram_user_id == "501",
+                TrackingEvent.event_type.like("start_%"),
+            )
+            .order_by(TrackingEvent.occurred_at)
+        ))
         assert event_types == ["start_first", "start_repeat"]
         assert session.scalar(select(TrackingEvent.event_type).where(TrackingEvent.telegram_user_id == "502")) == "start_unknown"
     app.dependency_overrides.clear()

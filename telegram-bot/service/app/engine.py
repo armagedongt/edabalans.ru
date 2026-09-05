@@ -7,6 +7,7 @@ from types import SimpleNamespace
 from typing import Any, Protocol
 
 from sqlalchemy import delete, or_, select, text
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.models import ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
@@ -133,6 +134,80 @@ def _write_variable(session: Session, contact_id: str, key: str, value: Any) -> 
         row.value = {"value": value}
     else:
         session.add(UserVariable(contact_id=contact_id, key=key, value={"value": value}))
+
+
+def _has_content_tag(session: Session, contact: Contact, tag_id: str) -> bool:
+    if not contact.user_id or not tag_id:
+        return False
+    return bool(session.scalar(select(CrmUserTag.id).where(
+        CrmUserTag.user_id == contact.user_id,
+        CrmUserTag.tag_id == tag_id,
+    )))
+
+
+def _assign_content_tag(session: Session, contact: Contact, tag_id: str) -> None:
+    """Assign a canonical content tag once, preserving its first-received date."""
+    if not tag_id:
+        return
+    if not contact.user_id:
+        raise RuntimeError("Content tag requires a CRM user")
+    tag = session.get(CrmTag, tag_id)
+    if not tag or tag.status != "active":
+        raise RuntimeError(f"Canonical content tag is unavailable: {tag_id}")
+    if not _has_content_tag(session, contact, tag_id):
+        session.add(CrmUserTag(
+            user_id=contact.user_id,
+            tag_id=tag_id,
+            source="telegram_content_delivery",
+        ))
+
+
+def _intensive_day_opened(session: Session, contact: Contact, day: int) -> bool:
+    """Read the intensive progress owned by the backend without duplicating it."""
+    if not contact.user_id:
+        return False
+    try:
+        return bool(session.execute(
+            text("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM course_stage_progress
+                    WHERE user_id = :user_id
+                      AND course_code = 'intensive'
+                      AND stage_number = :day
+                )
+            """),
+            {"user_id": contact.user_id, "day": day},
+        ).scalar_one())
+    except SQLAlchemyError:
+        # Unit-test SQLite databases and a partially migrated environment may not
+        # contain the backend-owned table yet. Fail closed: no open is recorded.
+        return False
+
+
+def _delay_anchor(session: Session, run: SequenceRun, config: dict[str, Any]) -> datetime:
+    anchor_step = str(config.get("anchor_step") or "")
+    if not anchor_step or anchor_step == "run_started_at":
+        return run.started_at
+    delivery = session.scalar(select(StepDelivery).where(
+        StepDelivery.run_id == run.id,
+        StepDelivery.step_key == anchor_step,
+        StepDelivery.status == "sent",
+    ))
+    if not delivery or not delivery.sent_at:
+        raise RuntimeError(f"Delay anchor was not delivered: {anchor_step}")
+    return delivery.sent_at
+
+
+def _runtime_template_values(run: SequenceRun, config: dict[str, Any]) -> dict[str, str]:
+    values = {
+        str(key): str(value)
+        for key, value in (config.get("template_values") or {}).items()
+    }
+    for key in ("unopened_day_number", "wait_interval"):
+        if run.context.get(key) is not None:
+            values[key] = str(run.context[key])
+    return values
 
 
 def _record_subscription_check(
@@ -297,6 +372,12 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
             key = f"{run.id}:{step.step_key}"
             delivery = session.scalar(select(StepDelivery).where(StepDelivery.idempotency_key == key))
             if delivery and delivery.status == "sent":
+                try:
+                    _assign_content_tag(session, contact, str(config.get("assign_content_tag_id") or ""))
+                except RuntimeError as exc:
+                    run.status = "error"
+                    run.last_error = str(exc)
+                    break
                 _set_next(session, run, step); continue
             content = session.get(ContentItem, step.content_item_id)
             if not delivery:
@@ -311,9 +392,22 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 break
             try:
                 delivery.attempt_count += 1
+                template_values = _runtime_template_values(run, config)
+                if template_values:
+                    content = SimpleNamespace(
+                        code=content.code,
+                        title=content.title,
+                        body_source=replace_template_values(content.body_source or "", template_values),
+                        media_kind=content.media_kind,
+                        media_path=content.media_path,
+                        telegram_file_id=content.telegram_file_id,
+                    )
+                    config = _replace_configuration_values(config, template_values)
                 rendered_content, rendered_config = personalized_delivery(
                     session, contact, content, config
                 )
+                if "{{" in (rendered_content.body_source or "") or "{{" in str(rendered_config):
+                    raise RuntimeError(f"Unresolved delivery template: {rendered_content.code}")
                 delivery.platform_message_id = sender.send_content(
                     contact.chat_id, rendered_content, rendered_config
                 )
@@ -331,10 +425,32 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 if "blocked by the user" in message.lower() or "chat not found" in message.lower():
                     contact.status = "blocked"
                 break
+            try:
+                _assign_content_tag(
+                    session,
+                    contact,
+                    str(config.get("assign_content_tag_id") or ""),
+                )
+            except RuntimeError as exc:
+                # Telegram already accepted the message. Keep the delivery sent so
+                # a later repair can attach the tag without sending a duplicate.
+                run.status = "error"
+                run.last_error = str(exc)
+                break
             _set_next(session, run, step)
         elif step.kind == "DELAY":
             _set_next(session, run, step)
-            run.next_action_at = utcnow() + timedelta(seconds=max(0, step.delay_seconds or 0) * max(run.time_scale, 0.0001))
+            try:
+                anchor = _delay_anchor(session, run, config)
+            except RuntimeError as exc:
+                run.status = "error"
+                run.last_error = str(exc)
+                break
+            run.next_action_at = anchor + timedelta(
+                seconds=max(0, step.delay_seconds or 0) * max(run.time_scale, 0.0001)
+            )
+            if config.get("context_values"):
+                run.context = {**run.context, **config["context_values"]}
             break
         elif step.kind == "WAIT_BUTTON":
             timeout_seconds = config.get("timeout_seconds")
@@ -370,6 +486,14 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 variable_key = config.get("product_code", "masterclass")
                 product_codes = config.get("product_codes") or [variable_key]
                 result = bool(run.context.get(f"has_product:{variable_key}") or has_paid_product(session, contact, product_codes, variable_key))
+            elif condition == "has_content_tag":
+                result = _has_content_tag(session, contact, str(config.get("tag_id") or ""))
+            elif condition == "needs_intensive_reminder":
+                day = int(config.get("day") or 0)
+                tag_id = str(config.get("tag_id") or "")
+                result = bool(day and not _has_content_tag(session, contact, tag_id) and not _intensive_day_opened(session, contact, day))
+                if result:
+                    run.context = {**run.context, "unopened_day_number": day}
             else:
                 result = bool(_variable(session, run.contact_id, condition))
             branch_key = "true" if result else "false"

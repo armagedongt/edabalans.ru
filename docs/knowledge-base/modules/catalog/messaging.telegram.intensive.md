@@ -2,7 +2,7 @@
 title: "Welcome и интенсив Telegram"
 summary: "Приветствует нового подписчика, проверяет нужные условия и проводит первые шаги интенсива."
 document_status: current
-implementation_status: implemented
+implementation_status: in_development
 ---
 
 # Welcome и интенсив Telegram

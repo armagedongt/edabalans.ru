@@ -5,6 +5,7 @@ surface: telegram_bot
 button_label: Открыть интенсив
 button_target: intensive_cabinet
 button_url: "{{personal_intensive_url}}"
+button_fallback_url: "https://похудение-это-есть.рф/intensiv"
 secondary_links: false
 ---
 

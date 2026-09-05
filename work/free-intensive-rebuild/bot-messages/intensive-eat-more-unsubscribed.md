@@ -10,7 +10,7 @@ read_tag_code: clean_пост_ешьте_больше_18b17a50
 read_tag_aliases:
   - "Пост: Ешьте больше"
 channel_post_target: "https://t.me/Fitness_Talks/415"
-channel_post_url: "{{personal_channel_post_415_url}}"
+channel_post_url: "https://t.me/Fitness_Talks/415"
 source_content_code: leadteh_d328567bdc76c501022b44d4
 source_conflict: channel_tail_differs_from_owner_paste
 ---
@@ -27,4 +27,4 @@ source_conflict: channel_tail_differs_from_owner_paste
 
 Мой подход обычно такой: первую неделю вы МАКСИМАЛЬНО следите за питанием, но МИНИМАЛЬНО его меняете.
 
-**[Почему сначала стоит есть больше и наблюдать, а не немедленно зашивать рот — читайте в канале →]({{personal_channel_post_415_url}})**
+**[Почему сначала стоит есть больше и наблюдать, а не немедленно зашивать рот — читайте в канале →](https://t.me/Fitness_Talks/415)**

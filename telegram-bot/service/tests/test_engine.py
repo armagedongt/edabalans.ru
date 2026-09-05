@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
@@ -15,12 +15,14 @@ from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, WELCOME_CODE, seed_def
 class FakeSender:
     def __init__(self, fail_pin=False, subscription=None):
         self.sent = []
+        self.bodies = []
         self.pinned = []
         self.fail_pin = fail_pin
         self.subscription = subscription
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code, configuration))
+        self.bodies.append(content.body_source or "")
         return str(len(self.sent))
 
     def pin_message(self, chat_id, message_id):
@@ -48,10 +50,7 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         content = ContentItem(
             code="tpl_personal_links",
             title="Personal links",
-            body_source=(
-                "Интенсив: {{personal_intensive_url}}\n"
-                "Завтраки: {{personal_channel_post_734_url}}"
-            ),
+            body_source="Интенсив: {{personal_intensive_url}}",
             source_format="telegram_html",
             status="published",
             editorial_status="approved",
@@ -69,7 +68,7 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         intensive_code = rendered.body_source.rsplit("/", 1)[-1]
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
-        assert f"/p/734/{intensive_code}" in rendered.body_source
+        assert len(intensive_code) == 9
 
 
 def session_factory(tmp_path):
@@ -81,14 +80,14 @@ def session_factory(tmp_path):
 def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
     with session_factory(tmp_path) as session:
         result = seed_defaults(session, "TetrisgfgfgfBot")
-        assert result == {"messages": 30, "sequences": 4}
+        assert result == {"messages": 50, "sequences": 4}
         counts = {}
         for code in (WELCOME_CODE, PREPURCHASE_CODE):
             sequence = session.scalar(select(Sequence).where(Sequence.code == code))
             version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id))
-            counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "VIDEO_NOTE"])))
-        assert counts == {WELCOME_CODE: 12, PREPURCHASE_CODE: 17}
-        assert session.scalar(select(func.count(ContentItem.id))) == 60
+            counts[code] = session.scalar(select(func.count(SequenceStep.id)).where(SequenceStep.sequence_version_id == version.id, SequenceStep.kind.in_(["MESSAGE", "PHOTO", "VIDEO_NOTE"])))
+        assert counts == {WELCOME_CODE: 20, PREPURCHASE_CODE: 17}
+        assert session.scalar(select(func.count(ContentItem.id))) == 80
         day_unopened_content = session.scalar(
             select(ContentItem).where(ContentItem.code == "tpl_postpurchase_day_unopened")
         )
@@ -102,16 +101,16 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
         circle = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_entry_circle"))
         assert circle.media_kind == "video_note"
         assert circle.media_path == "/app/media/welcome-intro-circle.mp4"
-        navigation_step = session.scalar(select(SequenceStep).where(SequenceStep.step_key == "welcome_navigation"))
-        assert navigation_step.configuration["pin_after_send"] is True
-        assert navigation_step.configuration["buttons"][0]["url"] == "https://t.me/Fitness_Talks"
-        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_has_masterclass")).startswith("Привет! У вас уже есть мой Мастер-класс")
-        waiting = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_waiting"))
-        assert waiting.startswith("Посты интенсива приходят вам по расписанию")
+        final_pin = session.scalar(select(SequenceStep).where(SequenceStep.step_key == "welcome_final_pin"))
+        assert final_pin.configuration["pin_after_send"] is True
+        assert final_pin.configuration["buttons"][0]["url"] == "{{personal_masterclass_url}}"
+        assert session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_masterclass_owned")).startswith("<b>Привет!</b>")
+        waiting = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_intensive_entry_continue"))
+        assert waiting.startswith("<b>Спокойно!")
         assert "{{next_message_at}}" in waiting
-        complete = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_start_intensive_complete"))
+        complete = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_intensive_entry_delivered"))
         assert complete.startswith("<b>Сделайте похудение проще</b>")
-        assert complete.count("похудение-это-есть.рф/intensiv#rec") == 4
+        assert complete.count("{{personal_intensive_url}}") == 4
         assert session.scalar(select(func.count(SequenceEdge.id))) > 0
         assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == WELCOME_CODE
 
@@ -133,7 +132,7 @@ def test_seed_upgrades_intermediate_combined_layout_with_new_versions(tmp_path):
         latest_welcome = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == welcome.id).order_by(SequenceVersion.version_no.desc()))
         latest_nurture = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == nurture.id).order_by(SequenceVersion.version_no.desc()))
         assert latest_welcome.version_no == 2
-        assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_welcome.id, SequenceStep.step_key == "welcome_navigation"))
+        assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_welcome.id, SequenceStep.step_key == "welcome_final_image"))
         assert latest_nurture.version_no == 2
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_nurture.id, SequenceStep.step_key == "nurture_delay_hard_sale_1")) is None
 
@@ -167,7 +166,12 @@ def test_seed_publishes_new_welcome_version_when_channel_check_is_enabled(tmp_pa
             )
         ).all()
         assert checks
-        assert all(step.configuration["enabled"] is True for step in checks)
+        subscription_checks = [
+            step for step in checks
+            if step.configuration.get("condition") == "subscription_check"
+        ]
+        assert subscription_checks
+        assert all(step.configuration["enabled"] is True for step in subscription_checks)
 
         seed_defaults(
             session,
@@ -229,79 +233,108 @@ def test_seed_adds_editable_disabled_postpurchase_module(tmp_path):
         assert session.scalar(select(func.count(SequenceVersion.id)).where(SequenceVersion.sequence_id == post.id)) == 2
 
 
-def test_start_is_idempotent_and_waits_for_button(tmp_path):
+def test_start_is_idempotent_and_schedules_day1_reminder_from_run_start(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
         bot = session.scalar(select(BotInstance))
-        contact = Contact(bot_instance_id=bot.id, telegram_user_id="42", chat_id="42")
+        user = CrmUser(display_name="Получатель")
+        session.add(user); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="42", chat_id="42")
         session.add(contact); session.commit()
         run = start_run(session, contact.id, WELCOME_CODE)
         assert start_run(session, contact.id, WELCOME_CODE).id == run.id
         sender = FakeSender()
         advance_run(session, run, sender)
-        assert [item[1] for item in sender.sent] == ["tpl_start_navigation_pin", "tpl_entry_circle", "tpl_start_welcome_offer"]
-        assert sender.pinned == [("42", "1")]
-        assert run.status == "waiting"
-        assert resume_callback(session, contact.id, "wrong") is None
-        resumed = resume_callback(session, contact.id, "start_intensive")
-        assert resumed.status == "active"
+        assert sender.sent == []
+        assert run.status == "active"
+        assert run.current_step_key == "welcome_reminder_check_day1"
+        assert run.next_action_at == run.started_at + timedelta(minutes=15)
 
 
-def test_pin_error_does_not_stop_welcome(tmp_path):
+def test_final_pin_error_does_not_stop_welcome(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
         bot = session.scalar(select(BotInstance))
-        contact = Contact(bot_instance_id=bot.id, telegram_user_id="pin", chat_id="pin")
+        user = CrmUser(display_name="Получатель")
+        session.add(user); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="pin", chat_id="pin")
         session.add(contact); session.commit()
         run = start_run(session, contact.id, WELCOME_CODE)
+        run.current_step_key = "welcome_final_pin"
         advance_run(session, run, FakeSender(fail_pin=True))
-        assert run.status == "waiting"
-        delivery = session.scalar(select(StepDelivery).where(StepDelivery.step_key == "welcome_navigation"))
+        delivery = session.scalar(select(StepDelivery).where(StepDelivery.step_key == "welcome_final_pin"))
         assert delivery.status == "sent"
         assert delivery.payload_snapshot["pin_error"] == "pin is unavailable"
 
 
-def test_subscription_failure_retries_and_fails_open_to_day1(tmp_path):
+def test_unopened_day_reminder_is_sent_only_once_and_sets_canonical_tag(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
-        day1 = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_day1"))
-        day1.status = "published"; day1.editorial_status = "approved"
-        for step in session.scalars(select(SequenceStep).where(SequenceStep.step_key.in_(["welcome_subscription", "welcome_subscription_recheck"]))):
-            step.configuration = {**step.configuration, "enabled": True}
         bot = session.scalar(select(BotInstance))
-        contact = Contact(bot_instance_id=bot.id, telegram_user_id="sub", chat_id="sub")
+        user = CrmUser(display_name="Получатель")
+        reminder_tag = CrmTag(
+            id="5f56aba0-74be-49af-bec9-c2799b260411",
+            code="post_small_steps",
+            name="Пост - Маленькие шаги",
+            category="content",
+        )
+        session.add_all([user, reminder_tag]); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="sub", chat_id="sub")
         session.add(contact); session.commit()
         run = start_run(session, contact.id, WELCOME_CODE)
-        sender = FakeSender(subscription=False)
+        sender = FakeSender(subscription=True)
         advance_run(session, run, sender)
-        resume_callback(session, contact.id, "start_intensive")
         advance_run(session, run, sender)
-        assert sender.sent[-1][1] == "tpl_start_subscription_reminder"
-        assert run.status == "waiting"
-        assert run.context["waiting_callback"] == "check_subscription"
+        assert [item[1] for item in sender.sent] == [
+            "tpl_intensive_reminder_photo",
+            "tpl_intensive_day1_reminder",
+        ]
+        assert session.scalar(select(CrmUserTag.id).where(
+            CrmUserTag.user_id == user.id,
+            CrmUserTag.tag_id == reminder_tag.id,
+        ))
 
-        # A retry has its own visible prompt, then waits on the same callback.
-        resume_callback(session, contact.id, "check_subscription")
+        run.current_step_key = "welcome_reminder_check_day2"
         advance_run(session, run, sender)
-        assert run.status == "waiting"
-        assert sender.sent[-1][1] == "tpl_start_subscription_retry_reminder"
+        assert len(sender.sent) == 2
+        assert run.current_step_key == "welcome_mid2_tag_check"
 
-        # The repeated prompt still rechecks the channel; it cannot skip to Day 1.
-        resume_callback(session, contact.id, "check_subscription")
-        advance_run(session, run, sender)
-        assert run.status == "waiting"
-        assert sender.sent[-1][1] == "tpl_start_subscription_retry_reminder"
 
-        # Five minutes from the first prompt is fail-open: Day 1 arrives directly.
-        run.next_action_at = datetime.now(UTC) - timedelta(seconds=1)
-        resume_wait_timeout(session, run)
+def test_opened_day_suppresses_reminder(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель")
+        reminder_tag = CrmTag(
+            id="5f56aba0-74be-49af-bec9-c2799b260411",
+            code="post_small_steps",
+            name="Пост - Маленькие шаги",
+            category="content",
+        )
+        session.add_all([user, reminder_tag]); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="opened", chat_id="opened")
+        session.add(contact)
+        session.execute(text("""
+            CREATE TABLE course_stage_progress (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                course_code TEXT NOT NULL,
+                stage_number INTEGER NOT NULL
+            )
+        """))
+        session.execute(
+            text("INSERT INTO course_stage_progress VALUES ('p1', :user_id, 'intensive', 1)"),
+            {"user_id": user.id},
+        )
+        session.commit()
+        run = start_run(session, contact.id, WELCOME_CODE)
+        run.current_step_key = "welcome_reminder_check_day1"
+        sender = FakeSender(subscription=True)
+
         advance_run(session, run, sender)
-        assert sender.sent[-1][1] == "tpl_day1"
-        assert "tpl_subscription_passed" not in [item[1] for item in sender.sent]
-        assert "tpl_subscription_fail_open" not in [item[1] for item in sender.sent]
-        outcomes = list(session.scalars(select(TrackingEvent.event_type).where(TrackingEvent.contact_id == contact.id)))
-        assert outcomes.count("subscription_check") >= 3
-        assert "subscription_fail_open" in outcomes
+
+        assert sender.sent == []
+        assert run.current_step_key == "welcome_mid1_tag_check"
 
 
 def test_real_subscription_check_updates_account_and_canonical_tag(tmp_path):
@@ -339,8 +372,6 @@ def test_real_subscription_check_updates_account_and_canonical_tag(tmp_path):
         run = start_run(session, contact.id, WELCOME_CODE)
         sender = FakeSender(subscription=False)
         advance_run(session, run, sender)
-        resume_callback(session, contact.id, "start_intensive")
-        advance_run(session, run, sender)
 
         assert account.subscription_status == "not_subscribed"
         names = list(session.scalars(
@@ -354,20 +385,8 @@ def test_real_subscription_check_updates_account_and_canonical_tag(tmp_path):
 def test_welcome_does_not_check_purchase(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
-        day1 = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_day1"))
-        day1.status = "published"; day1.editorial_status = "approved"
-        bot = session.scalar(select(BotInstance))
-        contact = Contact(bot_instance_id=bot.id, telegram_user_id="77", chat_id="77")
-        session.add(contact); session.flush()
-        session.add(UserVariable(contact_id=contact.id, key="has_product:masterclass", value={"value": True}))
-        session.commit()
-        run = start_run(session, contact.id, WELCOME_CODE)
-        sender = FakeSender(); advance_run(session, run, sender)
-        resume_callback(session, contact.id, "start_intensive")
-        advance_run(session, run, sender)
-        assert sender.sent[-1][1] == "tpl_day1"
-        assert run.status == "active"
-        version = session.get(SequenceVersion, run.sequence_version_id)
+        sequence = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+        version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id, SequenceVersion.status == "published"))
         welcome_steps = session.scalars(select(SequenceStep).where(SequenceStep.sequence_version_id == version.id)).all()
         assert not any(step.configuration.get("condition") == "has_product" for step in welcome_steps)
 
@@ -375,18 +394,21 @@ def test_welcome_does_not_check_purchase(tmp_path):
 def test_sequence_stops_before_unapproved_message(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")
+        item = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_intensive_day2"))
+        item.editorial_status = "draft"
         bot = session.scalar(select(BotInstance))
-        contact = Contact(bot_instance_id=bot.id, telegram_user_id="draft", chat_id="draft")
+        user = CrmUser(display_name="Получатель")
+        session.add(user); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="draft", chat_id="draft")
         session.add(contact); session.commit()
         run = start_run(session, contact.id, WELCOME_CODE)
+        run.current_step_key = "welcome_day2"
         sender = FakeSender()
-        advance_run(session, run, sender)
-        resume_callback(session, contact.id, "start_intensive")
         advance_run(session, run, sender)
 
         assert run.status == "error"
-        assert run.last_error == "Content is not owner-approved: tpl_day1"
-        assert "tpl_day1" not in [item[1] for item in sender.sent]
+        assert run.last_error == "Content is not owner-approved: tpl_intensive_day2"
+        assert "tpl_intensive_day2" not in [item[1] for item in sender.sent]
 
 
 def test_welcome_timing_and_subscription_observation_steps(tmp_path):
@@ -395,15 +417,94 @@ def test_welcome_timing_and_subscription_observation_steps(tmp_path):
         sequence = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
         version = session.scalar(select(SequenceVersion).where(SequenceVersion.sequence_id == sequence.id).order_by(SequenceVersion.version_no.desc()))
         steps = {step.step_key: step for step in session.scalars(select(SequenceStep).where(SequenceStep.sequence_version_id == version.id))}
-        assert steps["welcome_delay_mid1"].delay_seconds == 11 * 3600
-        for key in ("welcome_delay_day2", "welcome_delay_mid2", "welcome_delay_day3", "welcome_delay_mid3", "welcome_delay_day4", "welcome_delay_exit"):
-            assert steps[key].delay_seconds == 12 * 3600
+        assert steps["welcome_reminder_delay_day1"].delay_seconds == 15 * 60
+        assert steps["welcome_mid1_delay"].delay_seconds == 12 * 3600
+        assert steps["welcome_day2_delay"].delay_seconds == 24 * 3600
+        assert steps["welcome_day3_delay"].delay_seconds == 24 * 3600
+        assert steps["welcome_day4_delay"].delay_seconds == 24 * 3600
+        assert steps["welcome_final_delay"].delay_seconds == 24 * 3600
+        assert steps["welcome_mid2_delay_late"].delay_seconds == 14 * 3600
+        assert steps["welcome_mid3_delay_late"].delay_seconds == 14 * 3600
         stages = {step.configuration.get("stage") for step in steps.values() if step.configuration.get("condition") == "subscription_check"}
-        assert {"before_day1", "after_prompt", "after_day1", "after_mid1", "after_day2", "after_mid2", "after_day3", "after_mid3", "after_day4"} <= stages
-        timeout_edge = session.scalar(select(SequenceEdge).where(
-            SequenceEdge.sequence_version_id == version.id,
-            SequenceEdge.from_step_key == "welcome_subscription_retry_wait",
-            SequenceEdge.branch_key == "timeout",
-        ))
-        assert timeout_edge.to_step_key == "welcome_day1"
+        assert {"after_day1", "after_mid1", "after_day2", "after_mid2", "after_day3", "after_mid3", "after_day4"} <= stages
         assert not [issue for issue in graph_issues(session, version) if issue["severity"] == "error"]
+
+
+def test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription_branches(tmp_path):
+    for subscribed, suffix in ((True, "subscribed"), (False, "unsubscribed")):
+        branch_path = tmp_path / suffix
+        branch_path.mkdir()
+        with session_factory(branch_path) as session:
+            seed_defaults(
+                session,
+                "Fitness_Talks_bot",
+                enable_subscription_checks=True,
+            )
+            bot = session.scalar(select(BotInstance))
+            user = CrmUser(display_name=f"Получатель {suffix}")
+            tags = [
+                CrmTag(
+                    id=tag_id,
+                    code=f"content_{index}_{suffix}",
+                    name=name,
+                    category="content",
+                )
+                for index, (tag_id, name) in enumerate(
+                    (
+                        ("5f56aba0-74be-49af-bec9-c2799b260411", "Пост - Маленькие шаги"),
+                        ("bb40957b-f598-4562-a096-7e06a4479058", "Пост - Висцеральный жир"),
+                        ("e602d751-7ecf-4d75-9dac-d62c88276845", "Пост - На 1% лучше!"),
+                        ("c767ab6a-45d6-41bc-808e-d0d11f0ef358", "Пост - Пирамида похудения"),
+                    ),
+                    1,
+                )
+            ]
+            session.add_all([user, *tags])
+            session.flush()
+            contact = Contact(
+                bot_instance_id=bot.id,
+                user_id=user.id,
+                telegram_user_id=f"flow-{suffix}",
+                chat_id=f"flow-{suffix}",
+            )
+            session.add(contact)
+            session.execute(text("""
+                CREATE TABLE course_stage_progress (
+                    id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    course_code TEXT NOT NULL,
+                    stage_number INTEGER NOT NULL
+                )
+            """))
+            for day in range(1, 5):
+                session.execute(
+                    text("INSERT INTO course_stage_progress VALUES (:id, :user_id, 'intensive', :day)"),
+                    {"id": f"{suffix}-{day}", "user_id": user.id, "day": day},
+                )
+            session.commit()
+
+            run = start_run(session, contact.id, WELCOME_CODE)
+            sender = FakeSender(subscription=subscribed)
+            for _ in range(20):
+                if run.status != "active":
+                    break
+                advance_run(session, run, sender)
+
+            assert run.status == "completed"
+            sent_codes = [item[1] for item in sender.sent]
+            assert f"tpl_intensive_mid1_{suffix}" in sent_codes
+            assert f"tpl_intensive_mid2_{suffix}" in sent_codes
+            assert f"tpl_intensive_mid3_{suffix}" in sent_codes
+            assert "tpl_intensive_day4" in sent_codes
+            assert sent_codes[-2:] == [
+                "tpl_intensive_masterclass_pin",
+                "tpl_intensive_masterclass_followup_image",
+            ]
+            assert sender.pinned
+            assert all("{{" not in body for body in sender.bodies)
+            assert all("{{" not in str(item[2]) for item in sender.sent)
+            assert any("https://t.me/Fitness_Talks/734" in str(item[2]) for item in sender.sent) == subscribed
+            if not subscribed:
+                assert any("https://t.me/Fitness_Talks/328" in body for body in sender.bodies)
+            assert not any("/p/" in body for body in sender.bodies)
+            assert not any("/p/" in str(item[2]) for item in sender.sent)

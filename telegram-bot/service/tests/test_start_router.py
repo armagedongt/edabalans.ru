@@ -15,7 +15,7 @@ class FakeSender:
         self.sent = []
 
     def send_content(self, chat_id, content, configuration):
-        self.sent.append((chat_id, content.code, content.body_source))
+        self.sent.append((chat_id, content.code, content.body_source, configuration))
         return str(len(self.sent))
 
 
@@ -25,7 +25,10 @@ def prepared(tmp_path, suffix: str = ""):
     session = Session(engine)
     seed_defaults(session, "TetrisgfgfgfBot")
     bot = session.scalar(select(BotInstance))
-    contact = Contact(bot_instance_id=bot.id, telegram_user_id=f"42{suffix}", chat_id=f"42{suffix}")
+    user = CrmUser(display_name="Получатель", status="active", data_origin="native")
+    session.add(user)
+    session.flush()
+    contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id=f"42{suffix}", chat_id=f"42{suffix}")
     session.add(contact)
     session.commit()
     return session, contact
@@ -42,7 +45,7 @@ def test_pure_router_covers_every_exit():
     assert decide(day_four_sent=True).code == "intensive_complete"
     assert decide(has_active_welcome_run=True).code == "intensive_waiting"
     assert decide(welcome_ever_started=False).code == "launch_welcome"
-    assert decide(welcome_ever_started=True).code == "welcome_state_error"
+    assert decide(welcome_ever_started=True).code == "legacy_update"
     assert decide(has_masterclass=True, day_four_sent=True).code == "masterclass_owned"
 
 
@@ -82,13 +85,13 @@ def test_buyer_stops_presale_and_gets_editable_template(tmp_path):
         assert decision.code == "masterclass_owned"
         assert run.status == "completed"
         assert run.context["stopped_reason"] == "masterclass_owned"
-        assert sender.sent[0][1] == "tpl_start_has_masterclass"
+        assert sender.sent[0][1] == "tpl_start_masterclass_owned"
         assert session.scalar(select(ManualMessage.status)) == "sent"
     finally:
         session.close()
 
 
-def test_lost_welcome_state_is_logged_without_message(tmp_path):
+def test_lost_welcome_state_gets_legacy_open_intensive_message(tmp_path):
     session, contact = prepared(tmp_path, "error")
     try:
         run = start_run(session, contact.id, WELCOME_CODE)
@@ -98,10 +101,42 @@ def test_lost_welcome_state_is_logged_without_message(tmp_path):
         sender = FakeSender()
         execute_start_decision(session, contact, decision, current, sender, WELCOME_CODE, update_id="error-1")
         session.commit()
-        assert decision.code == "welcome_state_error"
-        assert sender.sent == []
-        event = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "start_routing_error"))
-        assert event.metadata_json["reason"] == "welcome_started_without_run_or_day_four"
+        assert decision.code == "legacy_update"
+        assert sender.sent[0][1] == "tpl_intensive_entry_legacy_update"
+        assert "{{personal_" not in sender.sent[0][2]
+    finally:
+        session.close()
+
+
+def test_first_visit_sends_circle_and_selected_personal_entry_then_starts_schedule(tmp_path):
+    session, contact = prepared(tmp_path, "launch")
+    try:
+        decision = decision_from_facts(StartFacts(
+            is_first_visit=True,
+            has_masterclass=False,
+            day_four_sent=False,
+            has_active_welcome_run=False,
+            welcome_ever_started=False,
+        ))
+        sender = FakeSender()
+
+        run = execute_start_decision(
+            session,
+            contact,
+            decision,
+            None,
+            sender,
+            WELCOME_CODE,
+            entry_content_code="tpl_intensive_entry_yandex",
+        )
+
+        assert run is not None
+        assert [item[1] for item in sender.sent] == [
+            "tpl_entry_circle",
+            "tpl_intensive_entry_yandex",
+        ]
+        assert "{{personal_" not in sender.sent[1][2]
+        assert "/i/" in sender.sent[1][3]["buttons"][0]["url"]
     finally:
         session.close()
 

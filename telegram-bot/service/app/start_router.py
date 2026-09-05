@@ -44,11 +44,11 @@ class StartDecision:
 
 
 DECISIONS = {
-    "masterclass_owned": StartDecision("masterclass_owned", "Мастер-класс куплен: остановить сообщения до покупки и отправить памятку", "tpl_start_has_masterclass", sends_message=True),
-    "launch_welcome": StartDecision("launch_welcome", "Продолжить первый Start: навигация, кружок и приветствие", starts_welcome=True),
-    "intensive_complete": StartDecision("intensive_complete", "Интенсив завершён: отправить навигацию", "tpl_start_intensive_complete", sends_message=True),
-    "intensive_waiting": StartDecision("intensive_waiting", "Welcome идёт: сообщить время следующего материала", "tpl_start_intensive_waiting", sends_message=True),
-    "welcome_state_error": StartDecision("welcome_state_error", "Welcome запускался, но активный run и День 4 отсутствуют: ручная проверка", manual_review=True),
+    "masterclass_owned": StartDecision("masterclass_owned", "Мастер-класс куплен: остановить сообщения до покупки и отправить памятку", "tpl_start_masterclass_owned", sends_message=True),
+    "launch_welcome": StartDecision("launch_welcome", "Первый вход: кружок, персональный вход в интенсив и расписание", starts_welcome=True, sends_message=True),
+    "intensive_complete": StartDecision("intensive_complete", "Интенсив завершён: отправить оглавление", "tpl_intensive_entry_delivered", sends_message=True),
+    "intensive_waiting": StartDecision("intensive_waiting", "Интенсив идёт: сообщить время следующего материала", "tpl_intensive_entry_continue", sends_message=True),
+    "legacy_update": StartDecision("legacy_update", "Старому участнику показать обновлённый открытый интенсив", "tpl_intensive_entry_legacy_update", sends_message=True),
 }
 
 
@@ -121,14 +121,21 @@ def _render_content(item: ContentItem, values: dict[str, str]) -> SimpleNamespac
     return SimpleNamespace(code=item.code, title=item.title, body_source=body, source_format=item.source_format, media_kind=item.media_kind, media_path=item.media_path, telegram_file_id=item.telegram_file_id)
 
 
-def send_system_content(session: Session, contact: Contact, content_code: str, sender, values: dict[str, str] | None = None) -> str:
+def send_system_content(
+    session: Session,
+    contact: Contact,
+    content_code: str,
+    sender,
+    values: dict[str, str] | None = None,
+    configuration: dict | None = None,
+) -> str:
     item = session.scalar(select(ContentItem).where(ContentItem.code == content_code))
     if not item:
         raise RuntimeError(f"Missing start content: {content_code}")
     if not content_is_runtime_ready(item):
         raise RuntimeError(f"Start content is not owner-approved: {content_code}")
     rendered = _render_content(item, values or {})
-    rendered, configuration = personalized_delivery(session, contact, rendered, {})
+    rendered, configuration = personalized_delivery(session, contact, rendered, configuration or {})
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=rendered.body_source, status="pending", operator_email="system:start_router")
     session.add(log)
     try:
@@ -149,12 +156,23 @@ def execute_start_decision(
     sequence_code: str,
     target_step_key: str | None = None,
     update_id: str | None = None,
+    entry_content_code: str = "tpl_intensive_entry_default",
 ) -> SequenceRun | None:
     if decision.code == "masterclass_owned":
         stop_presale_runs_for_user(session, contact.user_id, reason="masterclass_owned")
         send_system_content(session, contact, decision.content_code, sender)
         return None
     if decision.code == "launch_welcome":
+        send_system_content(session, contact, "tpl_entry_circle", sender)
+        send_system_content(
+            session,
+            contact,
+            entry_content_code,
+            sender,
+            configuration={
+                "buttons": [{"text": "Открыть интенсив", "url": "{{personal_intensive_url}}"}],
+            },
+        )
         run = start_run(session, contact.id, sequence_code)
         if target_step_key:
             run.current_step_key = target_step_key
@@ -165,12 +183,17 @@ def execute_start_decision(
     if decision.code == "intensive_waiting":
         send_system_content(session, contact, decision.content_code, sender, _wait_values(welcome_run))
         return None
-    session.add(TrackingEvent(
-        contact_id=contact.id,
-        user_id=contact.user_id,
-        telegram_user_id=contact.telegram_user_id,
-        event_type="start_routing_error",
-        deduplication_key=f"start-routing:{update_id}" if update_id else None,
-        metadata_json={"reason": "welcome_started_without_run_or_day_four", "decision": decision.code},
-    ))
+    if decision.code == "legacy_update":
+        send_system_content(
+            session,
+            contact,
+            decision.content_code,
+            sender,
+            configuration={
+                "buttons": [
+                    {"text": "Открыть интенсив", "url": "{{personal_intensive_url}}"},
+                    {"text": "Читать программу Мастер-класса", "url": "{{personal_masterclass_url}}"},
+                ],
+            },
+        )
     return None

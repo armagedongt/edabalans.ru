@@ -34,6 +34,7 @@ def test_intensive_link_is_personal_platform_bound_and_long_lived(tmp_path):
         parsed = urlparse(telegram_url)
         query = parse_qs(parsed.query)
         token = parsed.path.rsplit("/", 1)[-1]
+        assert len(token) == 9
         assert "from" not in query
         assert parsed.path == f"/i/{token}"
         assert row.user_id == user.id

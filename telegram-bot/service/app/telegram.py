@@ -98,7 +98,15 @@ class TelegramClient:
                 content.telegram_file_id = telegram_media["file_id"]
         else:
             text = rendered_body or f"📎 Медиа будет добавлено позже: {content.title}"
-            result = self.call("sendMessage", {**common, "text": text, "parse_mode": "HTML", "disable_web_page_preview": False})
+            result = self.call(
+                "sendMessage",
+                {
+                    **common,
+                    "text": text,
+                    "parse_mode": "HTML",
+                    "disable_web_page_preview": not bool(configuration.get("link_preview", False)),
+                },
+            )
         return str(result["message_id"])
 
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:

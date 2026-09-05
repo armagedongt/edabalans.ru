@@ -16,10 +16,14 @@ from .models import MessengerLinkToken
 PURPOSE = "intensive_access"
 TOKEN_TTL = timedelta(days=100 * 365)
 PLATFORMS = {"telegram", "max"}
+SHORT_TOKEN_BODY_LENGTH = 8
 
 
 def intensive_token(token_id: str) -> str:
-    return "E" + base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
+    # This is an identity/progress link, not an authentication secret. Keep new
+    # public codes short while old long token hashes remain resolvable forever.
+    body = base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
+    return "E" + body[:SHORT_TOKEN_BODY_LENGTH]
 
 
 def intensive_access_url(public_url: str, token: str) -> str:

@@ -16,12 +16,24 @@ START_ONLY_CONTENT_CODES = {
     "tpl_start_has_masterclass",
     "tpl_start_intensive_waiting",
     "tpl_start_intensive_complete",
+    "tpl_start_masterclass_owned",
+    "tpl_intensive_entry_default",
+    "tpl_intensive_entry_yandex",
+    "tpl_intensive_entry_continue",
+    "tpl_intensive_entry_delivered",
+    "tpl_intensive_entry_legacy_update",
 }
 START_CONTEXT = {
     "tpl_maintenance_notice": ("Источник и факт покупки определены", "Стоп до окончания ремонта"),
     "tpl_start_has_masterclass": ("Подтверждён доступ к мастер-классу", "Стоп; Welcome не запускается"),
     "tpl_start_intensive_waiting": ("Найден активный Welcome run", "Стоп; расписание продолжает работать"),
     "tpl_start_intensive_complete": ("Доставлен четвёртый день интенсива", "Стоп; интенсив не перезапускается"),
+    "tpl_start_masterclass_owned": ("Подтверждён доступ к мастер-классу", "Стоп; интенсив не запускается"),
+    "tpl_intensive_entry_default": ("Первый обычный вход", "Запустить расписание интенсива"),
+    "tpl_intensive_entry_yandex": ("Первый вход из Яндекс.Директа", "Запустить расписание интенсива"),
+    "tpl_intensive_entry_continue": ("Найден активный run", "Показать доступные части; расписание не двигать"),
+    "tpl_intensive_entry_delivered": ("Выданы все четыре части", "Показать оглавление и Мастер-класс"),
+    "tpl_intensive_entry_legacy_update": ("Найден старый участник", "Показать полностью открытый обновлённый интенсив"),
 }
 SILENT_EVENTS = {
     "owner_closing_review": "Архивное событие: итоговое саморевью сохраняется в CRM, а копия отправляется участнику.",
@@ -29,6 +41,13 @@ SILENT_EVENTS = {
 }
 ALLOWED_VARIABLES_BY_CONTENT_CODE = {
     "tpl_start_intensive_waiting": {"next_message_at", "wait_interval", "channel_link"},
+    "tpl_intensive_entry_continue": {"next_message_at"},
+    "tpl_intensive_mid1_subscribed": {"wait_interval"},
+    "tpl_intensive_mid1_unsubscribed": {"wait_interval"},
+    "tpl_intensive_mid2_subscribed": {"wait_interval"},
+    "tpl_intensive_mid2_unsubscribed": {"wait_interval"},
+    "tpl_intensive_mid3_subscribed": {"wait_interval"},
+    "tpl_intensive_mid3_unsubscribed": {"wait_interval"},
     "tpl_postpurchase_identity": {"email", "telegram_username", "masterclass_tariff", "purchase_date", "account_url", "questionnaire_formatted"},
     "tpl_postpurchase_current_diet": {"current_diet_formatted"},
     "tpl_postpurchase_closing_review_copy": {
@@ -46,9 +65,6 @@ GLOBAL_ALLOWED_VARIABLES = {
     "personal_intensive_url",
     "personal_masterclass_url",
 }
-PERSONAL_CHANNEL_POST_VARIABLE = re.compile(
-    r"personal_channel_post_[1-9][0-9]{0,6}_url"
-)
 
 
 def template_variables(body: str) -> list[str]:
@@ -63,10 +79,7 @@ def allowed_variables(content_code: str) -> list[str]:
 
 
 def variable_is_allowed(content_code: str, variable: str) -> bool:
-    return (
-        variable in allowed_variables(content_code)
-        or PERSONAL_CHANNEL_POST_VARIABLE.fullmatch(variable) is not None
-    )
+    return variable in allowed_variables(content_code)
 
 
 def content_usages(session: Session) -> dict[str, list[dict]]:
@@ -142,7 +155,11 @@ def readiness(item: ContentItem, usages: list[dict] | None = None) -> tuple[str,
             validate_telegram_html(item.body_source or "")
         except ValueError:
             issues.append("invalid_html")
-    media_only = bool(item.media_kind == "video_note" and (item.media_path or item.telegram_file_id))
+    media_only = bool(
+        item.media_kind in {"photo", "video", "video_note", "voice"}
+        and (item.media_path or item.telegram_file_id)
+        and not (item.body_source or "").strip()
+    )
     if is_placeholder_text(item.body_source) and not media_only:
         issues.append("placeholder")
     unknown = {

@@ -9,6 +9,7 @@ from app.models import BotInstance, BotRoute, ContentItem, Sequence, SequenceEdg
 from app.masterclass_triggers import TRIGGERS, editorial_help
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE
 from app.content_formatting import is_placeholder_text
+from app.generated_intensive_content import APPROVED_INTENSIVE_CONTENT
 
 
 START_ENTRY_CODE = "start_attribution_entry"
@@ -18,6 +19,10 @@ LEGACY_PREPURCHASE_CODE = "prepurchase_masterclass"
 POSTPURCHASE_CODE = "postpurchase_masterclass"
 POSTMASTERCLASS_CODE = "postmasterclass_nurture"
 WELCOME_CIRCLE_MEDIA_PATH = "/app/media/welcome-intro-circle.mp4"
+SMALL_STEPS_TAG_ID = "5f56aba0-74be-49af-bec9-c2799b260411"
+VISCERAL_FAT_TAG_ID = "bb40957b-f598-4562-a096-7e06a4479058"
+ONE_PERCENT_TAG_ID = "e602d751-7ecf-4d75-9dac-d62c88276845"
+PYRAMID_TAG_ID = "c767ab6a-45d6-41bc-808e-d0d11f0ef358"
 
 
 POSTPURCHASE_TRIGGER_BY_CONTENT = {item["content_code"].removeprefix("tpl_"): item for item in TRIGGERS}
@@ -31,6 +36,10 @@ OWNER_APPROVED_SEED_CODES = {
     "start_has_masterclass",
     "start_intensive_waiting",
     "start_intensive_complete",
+    *APPROVED_INTENSIVE_CONTENT,
+    "intensive_reminder_photo",
+    "intensive_mid2_photo",
+    "intensive_masterclass_followup_image",
 }
 
 
@@ -240,6 +249,35 @@ def _messages() -> list[dict]:
         ("hard_sale_1", "Мотивационная продажа 1", "Здесь будет первый авторский пост основной рассылки с предложением мастер-класса.", None, ["продажа", "жёсткая"]),
         ("hard_sale_2", "Мотивационная продажа 2", "Здесь будет второй авторский пост: работа с возражениями и следующий шаг.", None, ["продажа", "жёсткая"]),
     ]
+    approved_rows = [
+        ("intensive_entry_default", "Базовый вход в интенсив", "вход"),
+        ("intensive_entry_yandex", "Вход в интенсив из Яндекс.Директа", "вход"),
+        ("intensive_entry_continue", "Продолжить новый интенсив", "вход"),
+        ("intensive_entry_delivered", "Все части нового интенсива доступны", "вход"),
+        ("intensive_entry_legacy_update", "Интенсив полностью обновлён", "вход"),
+        ("start_masterclass_owned", "Мастер-класс уже куплен", "вход"),
+        ("intensive_day1_reminder", "Одно напоминание открыть день", "напоминание"),
+        ("intensive_day2", "Интенсив — день 2", "день-2"),
+        ("intensive_day3", "Интенсив — день 3", "день-3"),
+        ("intensive_day4", "Интенсив — день 4", "день-4"),
+        ("intensive_mid1_subscribed", "Второй живот в подарок! — подписан", "промежуточный"),
+        ("intensive_mid1_unsubscribed", "Второй живот в подарок! — не подписан", "промежуточный"),
+        ("intensive_mid2_subscribed", "На 1% лучше! — подписан", "промежуточный"),
+        ("intensive_mid2_unsubscribed", "На 1% лучше! — не подписан", "промежуточный"),
+        ("intensive_mid3_subscribed", "Пирамида похудения — подписан", "промежуточный"),
+        ("intensive_mid3_unsubscribed", "Пирамида похудения — не подписан", "промежуточный"),
+        ("intensive_masterclass_pin", "Навигация и предложение Мастер-класса", "финал"),
+    ]
+    by_code = {row[0]: row for row in rows}
+    for code, title, label in approved_rows:
+        row = (code, title, APPROVED_INTENSIVE_CONTENT[code], None, ["интенсив", label])
+        by_code[code] = row
+    rows = list(by_code.values())
+    rows.extend([
+        ("intensive_reminder_photo", "Картинка к напоминанию «Маленькие шаги»", "", "photo", ["интенсив", "напоминание", "медиа"]),
+        ("intensive_mid2_photo", "Картинка к посту «На 1% лучше!»", "", "photo", ["интенсив", "промежуточный", "медиа"]),
+        ("intensive_masterclass_followup_image", "Картинка «Худеть будем?»", "", "photo", ["интенсив", "финал", "медиа"]),
+    ])
     for n in range(13, 31):
         kind = "польза" if n % 2 else "мягкая продажа"
         rows.append((f"nurture_{n:02d}", f"Пост {n}: {kind}", f"Здесь будет авторский пост {n}: {kind}.", None, [kind, "дожим"] ))
@@ -617,6 +655,21 @@ def seed_defaults(
         if row["code"] == "entry_circle" and not item.media_path:
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH
+        media_paths = {
+            "intensive_reminder_photo": "https://cdn4.telesco.pe/file/eMtVgVZ2Xkr-xFQCBqPoBtPiMfdyX9idG6D4AbvJYUgxjcOJmE7bnKWP53IBz9g_9tztdCAb44CpSDiKWVTMFcNoMwRwh3V5H7MUQFsqMxlKHtCzoVyuGftig0zGf_H5i2Ltby6DU9f3Zu2UaDBzJJcc822PxG2YrU-g2_Ba0XoMT_aQdjAdnTpKy0zwuGHb83DP6q3yjUvjo_qmd0IBUtA-mCPrdJfYEoPSRJVxYDjuDtsVokmLXeyI6TQ2oRBp9K_gZErdrf3aq1TDHPWILyNyh8FA1xssN-EUpkFPjk14sVdGhoBtA69CPUK7TIlIWWvMvaQhuV3unf4iW1l_tw.jpg",
+            "intensive_mid2_photo": "https://cdn4.telesco.pe/file/XberDMWLtXpLBQuV9TKU3NTRFvHz6zqkjzSNMtBCfRhaw79N9YlUyT57yUAwWrZyFFvddOw-E_xPteAX7DKvMAMWReuaiAMV5b-A0iVkaSp_pUMv9jawTBCL8Va7k1pNVYIAWm7ij2NNEDGDjqntdC3tZU0QZVfddORpi7hmMpEi4Rl6zBb5lo8N3ekLQnQoU73FRIgN8BIh7nYr_cz51Bzo26nSIWq1b0V711EylLq7OSyG_uIYP3jCukkOagtD_n5buMHqDjWzj0f11OG6EomZv4PhABcd_OEE3WwixjttYbOcedPdzaNjY_O-72bgB-L65QlVUJJ-b_gw_1I31g.jpg",
+            "intensive_masterclass_followup_image": "/app/media/intensive-masterclass-followup-waiting-cat.jpg",
+        }
+        if row["code"] in media_paths:
+            item.media_kind = "photo"
+            item.media_path = media_paths[row["code"]]
+            item.body_source = ""
+            item.editorial_status = "approved"
+            item.status = "published"
+        if row["code"] in APPROVED_INTENSIVE_CONTENT:
+            item.body_source = APPROVED_INTENSIVE_CONTENT[row["code"]]
+            item.editorial_status = "approved"
+            item.status = "published"
         if not (item.purpose or "").strip():
             item.purpose = purpose
         if not (item.writer_brief or "").strip():
@@ -683,15 +736,15 @@ def seed_defaults(
             )
         )
         for step_key in (
-            "welcome_subscription_retry_wait",
-            "welcome_subscription_retry_failed",
-            "welcome_subscription_retry_wait_again",
+            "welcome_reminder_check_day1",
+            "welcome_mid2_delay_late",
+            "welcome_final_image",
         )
     )
     current_subscription_step = session.scalar(
         select(SequenceStep).where(
             SequenceStep.sequence_version_id == current_welcome_version.id,
-            SequenceStep.step_key == "welcome_subscription",
+            SequenceStep.step_key == "welcome_subscription_after_day1",
         )
     ) if current_welcome_version else None
     current_welcome_has_live_subscription = bool(
@@ -712,37 +765,56 @@ def seed_defaults(
         version = SequenceVersion(sequence_id=welcome.id, version_no=last_version + 1, status="published", published_at=datetime.now(UTC))
         session.add(version); session.flush()
         specs = [
-            ("welcome_navigation", "MESSAGE", "start_navigation_pin", None, {"pin_after_send": True, "buttons": [{"text": "Перейти в канал", "url": "https://t.me/Fitness_Talks"}]}, None),
-            ("welcome_circle", "VIDEO_NOTE", "entry_circle", None, {}, None),
-            ("welcome_offer", "MESSAGE", "start_welcome_offer", None, {"buttons": [{"text": "Начать интенсив", "callback_data": "start_intensive"}]}, None),
-            ("welcome_wait_button", "WAIT_BUTTON", None, None, {"callback_data": "start_intensive"}, None),
-            ("welcome_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_day1", "true_step": "welcome_day1", "false_step": "welcome_subscription_failed"}, None),
-            ("welcome_subscription_failed", "MESSAGE", "start_subscription_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
-            ("welcome_subscription_retry_wait", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, None),
-            ("welcome_subscription_recheck", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_prompt", "true_step": "welcome_day1", "false_step": "welcome_subscription_retry_failed", "allow_false_cycle": True}, None),
-            ("welcome_subscription_retry_failed", "MESSAGE", "start_subscription_retry_reminder", None, {"buttons": [{"text": "Проверить ещё раз", "callback_data": "check_subscription"}]}, None),
-            ("welcome_subscription_retry_wait_again", "WAIT_BUTTON", None, None, {"callback_data": "check_subscription", "timeout_seconds": 300, "timeout_step": "welcome_day1"}, "welcome_subscription_recheck"),
-            ("welcome_day1", "MESSAGE", "day1", None, {}, None),
             ("welcome_subscription_after_day1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day1"}, None),
-            ("welcome_delay_mid1", "DELAY", None, 39600, {}, None),
-            ("welcome_mid1", "MESSAGE", "day1_mid", None, {}, None),
-            ("welcome_subscription_after_mid1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid1"}, None),
-            ("welcome_delay_day2", "DELAY", None, 43200, {}, None),
-            ("welcome_day2", "MESSAGE", "day2", None, {}, None),
+            ("welcome_reminder_delay_day1", "DELAY", None, 900, {"anchor_step": "run_started_at"}, None),
+            ("welcome_reminder_check_day1", "CONDITION", None, None, {"condition": "needs_intensive_reminder", "day": 1, "tag_id": SMALL_STEPS_TAG_ID, "true_step": "welcome_reminder_photo_day1", "false_step": "welcome_mid1_delay"}, None),
+            ("welcome_reminder_photo_day1", "PHOTO", "intensive_reminder_photo", None, {}, None),
+            ("welcome_reminder_day1", "MESSAGE", "intensive_day1_reminder", None, {"assign_content_tag_id": SMALL_STEPS_TAG_ID, "buttons": [{"text": "Открыть часть #{{unopened_day_number}}", "url": "{{personal_intensive_url}}"}]}, "welcome_mid1_delay"),
+            ("welcome_mid1_delay", "DELAY", None, 43200, {"anchor_step": "run_started_at", "context_values": {"wait_interval": "12 часов"}}, None),
+            ("welcome_mid1_tag_check", "CONDITION", None, None, {"condition": "has_content_tag", "tag_id": VISCERAL_FAT_TAG_ID, "true_step": "welcome_day2_delay", "false_step": "welcome_mid1_subscription"}, None),
+            ("welcome_mid1_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_mid1", "true_step": "welcome_mid1_subscribed", "false_step": "welcome_mid1_unsubscribed"}, None),
+            ("welcome_mid1_subscribed", "MESSAGE", "intensive_mid1_subscribed", None, {"assign_content_tag_id": VISCERAL_FAT_TAG_ID, "template_values": {"wait_interval": "12 часов"}}, "welcome_subscription_after_mid1"),
+            ("welcome_mid1_unsubscribed", "MESSAGE", "intensive_mid1_unsubscribed", None, {"assign_content_tag_id": VISCERAL_FAT_TAG_ID, "template_values": {"wait_interval": "12 часов"}}, "welcome_subscription_after_mid1"),
+            ("welcome_subscription_after_mid1", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid1"}, "welcome_day2_delay"),
+            ("welcome_day2_delay", "DELAY", None, 86400, {"anchor_step": "run_started_at"}, None),
+            ("welcome_day2", "MESSAGE", "intensive_day2", None, {"buttons": [{"text": "Открыть часть #2", "url": "{{personal_intensive_url}}"}]}, None),
             ("welcome_subscription_after_day2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day2"}, None),
-            ("welcome_delay_mid2", "DELAY", None, 43200, {}, None),
-            ("welcome_mid2", "MESSAGE", "day2_mid", None, {}, None),
-            ("welcome_subscription_after_mid2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid2"}, None),
-            ("welcome_delay_day3", "DELAY", None, 43200, {}, None),
-            ("welcome_day3", "MESSAGE", "day3", None, {}, None),
+            ("welcome_reminder_delay_day2", "DELAY", None, 28800, {"anchor_step": "welcome_day2"}, None),
+            ("welcome_reminder_check_day2", "CONDITION", None, None, {"condition": "needs_intensive_reminder", "day": 2, "tag_id": SMALL_STEPS_TAG_ID, "true_step": "welcome_reminder_photo_day2", "false_step": "welcome_mid2_delay"}, None),
+            ("welcome_reminder_photo_day2", "PHOTO", "intensive_reminder_photo", None, {}, None),
+            ("welcome_reminder_day2", "MESSAGE", "intensive_day1_reminder", None, {"assign_content_tag_id": SMALL_STEPS_TAG_ID, "buttons": [{"text": "Открыть часть #{{unopened_day_number}}", "url": "{{personal_intensive_url}}"}]}, "welcome_mid2_delay_late"),
+            ("welcome_mid2_delay", "DELAY", None, 43200, {"anchor_step": "welcome_day2", "context_values": {"wait_interval": "12 часов"}}, "welcome_mid2_tag_check"),
+            ("welcome_mid2_delay_late", "DELAY", None, 50400, {"anchor_step": "welcome_day2", "context_values": {"wait_interval": "10 часов"}}, "welcome_mid2_tag_check"),
+            ("welcome_mid2_tag_check", "CONDITION", None, None, {"condition": "has_content_tag", "tag_id": ONE_PERCENT_TAG_ID, "true_step": "welcome_day3_delay", "false_step": "welcome_mid2_subscription"}, None),
+            ("welcome_mid2_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_mid2", "true_step": "welcome_mid2_photo", "false_step": "welcome_mid2_unsubscribed"}, None),
+            ("welcome_mid2_photo", "PHOTO", "intensive_mid2_photo", None, {}, None),
+            ("welcome_mid2_subscribed", "MESSAGE", "intensive_mid2_subscribed", None, {"assign_content_tag_id": ONE_PERCENT_TAG_ID, "buttons": [{"text": "Посмотреть разбор завтраков", "url": "https://t.me/Fitness_Talks/734"}]}, "welcome_subscription_after_mid2"),
+            ("welcome_mid2_unsubscribed", "MESSAGE", "intensive_mid2_unsubscribed", None, {"assign_content_tag_id": ONE_PERCENT_TAG_ID}, "welcome_subscription_after_mid2"),
+            ("welcome_subscription_after_mid2", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid2"}, "welcome_day3_delay"),
+            ("welcome_day3_delay", "DELAY", None, 86400, {"anchor_step": "welcome_day2"}, None),
+            ("welcome_day3", "MESSAGE", "intensive_day3", None, {"buttons": [{"text": "Открыть часть #3", "url": "{{personal_intensive_url}}"}]}, None),
             ("welcome_subscription_after_day3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day3"}, None),
-            ("welcome_delay_mid3", "DELAY", None, 43200, {}, None),
-            ("welcome_mid3", "MESSAGE", "day3_mid", None, {}, None),
-            ("welcome_subscription_after_mid3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid3"}, None),
-            ("welcome_delay_day4", "DELAY", None, 43200, {}, None),
-            ("welcome_day4", "MESSAGE", "day4", None, {}, None),
+            ("welcome_reminder_delay_day3", "DELAY", None, 28800, {"anchor_step": "welcome_day3"}, None),
+            ("welcome_reminder_check_day3", "CONDITION", None, None, {"condition": "needs_intensive_reminder", "day": 3, "tag_id": SMALL_STEPS_TAG_ID, "true_step": "welcome_reminder_photo_day3", "false_step": "welcome_mid3_delay"}, None),
+            ("welcome_reminder_photo_day3", "PHOTO", "intensive_reminder_photo", None, {}, None),
+            ("welcome_reminder_day3", "MESSAGE", "intensive_day1_reminder", None, {"assign_content_tag_id": SMALL_STEPS_TAG_ID, "buttons": [{"text": "Открыть часть #{{unopened_day_number}}", "url": "{{personal_intensive_url}}"}]}, "welcome_mid3_delay_late"),
+            ("welcome_mid3_delay", "DELAY", None, 43200, {"anchor_step": "welcome_day3", "context_values": {"wait_interval": "12 часов"}}, "welcome_mid3_tag_check"),
+            ("welcome_mid3_delay_late", "DELAY", None, 50400, {"anchor_step": "welcome_day3", "context_values": {"wait_interval": "10 часов"}}, "welcome_mid3_tag_check"),
+            ("welcome_mid3_tag_check", "CONDITION", None, None, {"condition": "has_content_tag", "tag_id": PYRAMID_TAG_ID, "true_step": "welcome_day4_delay", "false_step": "welcome_mid3_subscription"}, None),
+            ("welcome_mid3_subscription", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "before_mid3", "true_step": "welcome_mid3_subscribed", "false_step": "welcome_mid3_unsubscribed"}, None),
+            ("welcome_mid3_subscribed", "MESSAGE", "intensive_mid3_subscribed", None, {"assign_content_tag_id": PYRAMID_TAG_ID}, "welcome_subscription_after_mid3"),
+            ("welcome_mid3_unsubscribed", "MESSAGE", "intensive_mid3_unsubscribed", None, {"assign_content_tag_id": PYRAMID_TAG_ID}, "welcome_subscription_after_mid3"),
+            ("welcome_subscription_after_mid3", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_mid3"}, "welcome_day4_delay"),
+            ("welcome_day4_delay", "DELAY", None, 86400, {"anchor_step": "welcome_day3"}, None),
+            ("welcome_day4", "MESSAGE", "intensive_day4", None, {"buttons": [{"text": "Открыть часть #4", "url": "{{personal_intensive_url}}"}]}, None),
             ("welcome_subscription_after_day4", "CONDITION", None, None, {"condition": "subscription_check", "enabled": enable_subscription_checks, "stage": "after_day4"}, None),
-            ("welcome_delay_exit", "DELAY", None, 43200, {}, None),
+            ("welcome_reminder_delay_day4", "DELAY", None, 28800, {"anchor_step": "welcome_day4"}, None),
+            ("welcome_reminder_check_day4", "CONDITION", None, None, {"condition": "needs_intensive_reminder", "day": 4, "tag_id": SMALL_STEPS_TAG_ID, "true_step": "welcome_reminder_photo_day4", "false_step": "welcome_final_delay"}, None),
+            ("welcome_reminder_photo_day4", "PHOTO", "intensive_reminder_photo", None, {}, None),
+            ("welcome_reminder_day4", "MESSAGE", "intensive_day1_reminder", None, {"assign_content_tag_id": SMALL_STEPS_TAG_ID, "buttons": [{"text": "Открыть часть #{{unopened_day_number}}", "url": "{{personal_intensive_url}}"}]}, "welcome_final_delay"),
+            ("welcome_final_delay", "DELAY", None, 86400, {"anchor_step": "welcome_day4"}, None),
+            ("welcome_final_pin", "MESSAGE", "intensive_masterclass_pin", None, {"pin_after_send": True, "buttons": [{"text": "🔥 Мастер-класс", "url": "{{personal_masterclass_url}}"}]}, None),
+            ("welcome_final_image", "PHOTO", "intensive_masterclass_followup_image", None, {}, None),
             ("welcome_to_nurture", "GOTO", None, None, {"target_sequence": PREPURCHASE_CODE}, None),
         ]
         for position, (key, kind, content_code, delay, config, next_key) in enumerate(specs, 1):

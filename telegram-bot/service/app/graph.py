@@ -87,7 +87,7 @@ START_ROUTER_RULES: tuple[tuple[str, bool, str], ...] = (
     ("day_four_sent", True, "intensive_complete"),
     ("has_active_welcome_run", True, "intensive_waiting"),
     ("welcome_ever_started", False, "launch_welcome"),
-    ("__default__", True, "welcome_state_error"),
+    ("__default__", True, "legacy_update"),
 )
 
 
@@ -136,18 +136,19 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         node("maintenance_notice", "message", "Сообщить о ремонте и сохранить в лист ожидания", "Нажмите, чтобы изменить текст", 9, "tpl_maintenance_notice", Хранение="tg_contacts.status / tg_tracking_events"),
         node("exit_maintenance", "module_exit", "Стоп до окончания ремонта", "Источник и покупка определены; Welcome ещё не начат", 10, Результат="maintenance_waitlist"),
         node("has_masterclass", "condition", "По сохранённому результату мастер-класс куплен?", "Решение после maintenance gate", 11, Исполнение="app/start_router.py"),
-        node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "Нажмите, чтобы изменить текст", 12, "tpl_start_has_masterclass", Контент="tg_content_items"),
+        node("send_buyer", "message", "Отправить пост: мастер-класс куплен", "Нажмите, чтобы изменить текст", 12, "tpl_start_masterclass_owned", Контент="tg_content_items"),
         node("exit_buyer", "module_exit", "Стоп", "Остановить Welcome/pre-purchase; нового не запускать", 13, Результат="Существующие post-purchase процессы не меняются"),
         node("first_visit", "condition", "Первое полноценное посещение бота?", "main_scenario_seen_at; заглушка его не выставляет", 14, Хранение="messenger_accounts"),
         node("day_four_sent", "condition", "Четвёртый материал отправлен?", "Успешная доставка обязательного шага", 15, Хранение="tg_step_deliveries"),
-        node("send_complete", "message", "Отправить оглавление завершённого интенсива", "Только после Дня 4; нажмите, чтобы изменить текст", 16, "tpl_start_intensive_complete", Контент="tg_content_items"),
+        node("send_complete", "message", "Отправить оглавление завершённого интенсива", "Только после Дня 4; нажмите, чтобы изменить текст", 16, "tpl_intensive_entry_delivered", Контент="tg_content_items"),
         node("exit_complete", "module_exit", "Стоп", "Интенсив не перезапускать", 17, Результат="Текущие другие цепочки не меняются"),
         node("welcome_run_active", "condition", "Есть active/waiting Welcome run?", "Только welcome_intensive", 18, Хранение="tg_sequence_runs"),
-        node("send_waiting", "message", "Сообщить, что посты идут по расписанию", "Показать фактическое время следующего материала", 19, "tpl_start_intensive_waiting", Источник_времени="tg_sequence_runs.next_action_at"),
+        node("send_waiting", "message", "Сообщить, что посты идут по расписанию", "Показать фактическое время следующего материала", 19, "tpl_intensive_entry_continue", Источник_времени="tg_sequence_runs.next_action_at"),
         node("exit_waiting", "module_exit", "Стоп", "Welcome run продолжает расписание", 20, Запрещено="Не менять current_step_key и next_action_at"),
         node("welcome_ever_started", "condition", "Новый Welcome когда-либо запускался?", "Run текущей версии; старый LeadTeh не считается", 21, Хранение="tg_sequence_runs / tg_sequence_versions"),
-        node("exit_welcome", "module_exit", "Перейти в Welcome", "Общий закреп → кружок → превью → кнопка → подписка → День 1", 22, Следующий_модуль="welcome_intensive"),
-        node("exit_error", "error", "Ошибка: Welcome потерял состояние", "Ручная проверка; пользователю ничего не отправлять", 23, Причина="Welcome был, но run нет и День 4 не отправлен"),
+        node("exit_welcome", "module_exit", "Перейти в Welcome", "Кружок → персональный вход в интенсив → расписание", 22, Следующий_модуль="welcome_intensive"),
+        node("send_legacy", "message", "Показать старому участнику обновлённый интенсив", "Все четыре части открыты; отдельный run не создаётся", 23, "tpl_intensive_entry_legacy_update", Контент="tg_content_items"),
+        node("exit_legacy", "module_exit", "Стоп", "Старый участник получил актуальные ссылки", 24, Результат="Открытый интенсив и программа мастер-класса"),
     ]
     edges = [
         {"id": "e01", "source": "entry_rule", "target": "entry_link", "label": "Опубликовать", "branch": "default"},
@@ -172,7 +173,8 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
         {"id": "e16", "source": "send_waiting", "target": "exit_waiting", "label": "Отправлено", "branch": "default"},
         {"id": "e17", "source": "welcome_run_active", "target": "welcome_ever_started", "label": "Нет", "branch": "false"},
         {"id": "e18", "source": "welcome_ever_started", "target": "exit_welcome", "label": "Нет", "branch": "false"},
-        {"id": "e19", "source": "welcome_ever_started", "target": "exit_error", "label": "Да", "branch": "true"},
+        {"id": "e19", "source": "welcome_ever_started", "target": "send_legacy", "label": "Да", "branch": "true"},
+        {"id": "e20", "source": "send_legacy", "target": "exit_legacy", "label": "Отправлено", "branch": "default"},
     ]
     return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Основной бот · временный режим ремонта", "description": "Источник и факт покупки определяются до временной заглушки. Пользовательские ответы и цепочки после неё доступны только двум аккаунтам владельца; остальные сохраняются в лист ожидания без отметки о начале Welcome.", "nodes": nodes, "edges": edges, "issues": []}
 
@@ -302,7 +304,10 @@ def graph_issues(session: Session, version: SequenceVersion) -> list[dict[str, s
             content = session.get(ContentItem, step.content_item_id)
             if content and (not (content.purpose or "").strip() or not (content.writer_brief or "").strip()):
                 issues.append({"severity": "warning", "code": "missing_content_brief", "message": f"Для сообщения «{step.label}» не заполнены цель и ТЗ писателю."})
-            if content and is_placeholder_text(content.body_source) and not (content.media_kind == "video_note" and (content.media_path or content.telegram_file_id)):
+            if content and is_placeholder_text(content.body_source) and not (
+                content.media_kind in {"photo", "video", "video_note", "voice"}
+                and (content.media_path or content.telegram_file_id)
+            ):
                 issues.append({"severity": "warning", "code": "content_placeholder", "message": f"В сообщении «{step.label}» пока стоит текстовая заглушка."})
         if step.kind == "DELAY" and step.delay_seconds is None:
             issues.append({"severity": "error", "code": "missing_delay", "message": f"В блоке «{step.label}» не указана задержка."})
