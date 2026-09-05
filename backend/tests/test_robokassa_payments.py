@@ -226,6 +226,82 @@ def test_checkout_uses_database_price_and_does_not_create_user() -> None:
     app.dependency_overrides.clear()
 
 
+def test_go_test_page_is_one_button_with_database_price() -> None:
+    _, factory, _ = make_client()
+    seed_catalog(factory)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-test-page", 50000),
+    )
+
+    response = client.get("/robokassa-test")
+
+    assert response.status_code == 200
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert response.text.count("<button") == 1
+    assert "Проверить оплату · 5 900 ₽" in response.text
+    assert "app.edabalans.ru" not in response.text
+    assert 'action="/robokassa-test/start"' in response.text
+    app.dependency_overrides.clear()
+
+
+def test_go_test_button_builds_classic_form_with_go_callbacks() -> None:
+    _, factory, _ = make_client()
+    seed_catalog(factory)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-test-start", 50000),
+    )
+
+    response = client.post("/robokassa-test/start")
+
+    assert response.status_code == 200
+    assert 'action="https://auth.robokassa.ru/Merchant/Index.aspx"' in response.text
+    assert 'name="IsTest" value="1"' in response.text
+    assert "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/" in response.text
+    assert "app.edabalans.ru" not in response.text
+    assert 'document.getElementById("payment").submit()' in response.text
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        assert payment is not None
+        assert payment.amount == Decimal("5900")
+        assert payment.payment_status == "pending"
+        assert db.scalar(select(func.count(User.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_go_test_page_is_disabled_outside_robokassa_test_mode() -> None:
+    _, factory, _ = make_client(test_mode=False)
+    seed_catalog(factory)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-test-disabled", 50000),
+    )
+
+    assert client.get("/robokassa-test").status_code == 404
+    assert client.post("/robokassa-test/start").status_code == 404
+    app.dependency_overrides.clear()
+
+
+def test_go_payment_returns_link_back_to_test_page() -> None:
+    _, _, _ = make_client()
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-test-return", 50000),
+    )
+
+    success = client.get("/payments/robokassa/success?InvId=123")
+    failure = client.get("/payments/robokassa/fail")
+
+    assert 'href="/robokassa-test"' in success.text
+    assert 'href="/robokassa-test"' in failure.text
+    app.dependency_overrides.clear()
+
+
 def test_checkout_fails_before_redirect_when_result2_certificate_is_missing() -> None:
     client, factory, _ = make_client()
     seed_catalog(factory)

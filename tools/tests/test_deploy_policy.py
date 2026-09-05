@@ -102,6 +102,37 @@ class DeployPolicyTests(unittest.TestCase):
         )
         self.assertIn("/blog/assets/${favicon_asset}", deploy)
 
+    def test_go_robokassa_probe_does_not_publish_general_checkout(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(
+            encoding="utf-8"
+        )
+        deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn(
+            "@robokassa_test_pages path /robokassa-test /robokassa-test/start",
+            source,
+        )
+        self.assertIn("handle /integrations/robokassa/result2", source)
+        self.assertIn(
+            "@robokassa_test_returns path /payments/robokassa/success "
+            "/payments/robokassa/fail",
+            source,
+        )
+        self.assertIn("method GET", source)
+        self.assertIn(
+            "^/api/payments/robokassa/[0-9]+/status$",
+            source,
+        )
+        self.assertNotIn("handle /api/payments/robokassa/*", source)
+        self.assertNotIn("handle /robokassa-test*", source)
+        self.assertNotIn("handle /payments/robokassa/*", source)
+        self.assertIn(
+            "https://go.похудение-это-есть.рф/robokassa-test",
+            deploy,
+        )
+
     def test_ci_builds_and_tests_only_changed_application_services(self) -> None:
         source = (REPOSITORY_ROOT / ".github/workflows/production.yml").read_text(encoding="utf-8")
 

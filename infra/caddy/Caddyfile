@@ -112,6 +112,28 @@
 		reverse_proxy backend:8000
 	}
 
+	@robokassa_test_pages path /robokassa-test /robokassa-test/start
+	handle @robokassa_test_pages {
+		reverse_proxy backend:8000
+	}
+
+	handle /integrations/robokassa/result2 {
+		reverse_proxy backend:8000
+	}
+
+	@robokassa_test_returns path /payments/robokassa/success /payments/robokassa/fail
+	handle @robokassa_test_returns {
+		reverse_proxy backend:8000
+	}
+
+	@robokassa_test_status {
+		method GET
+		path_regexp robokassa_test_status ^/api/payments/robokassa/[0-9]+/status$
+	}
+	handle @robokassa_test_status {
+		reverse_proxy backend:8000
+	}
+
 	@short path_regexp short ^/([^/]+)$
 	handle @short {
 		rewrite * /go/{re.short.1}
