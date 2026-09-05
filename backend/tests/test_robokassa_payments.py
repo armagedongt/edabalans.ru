@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from urllib.parse import quote_plus, unquote_plus
+from urllib.parse import quote_plus
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -198,14 +198,15 @@ def test_checkout_uses_database_price_and_does_not_create_user() -> None:
     assert fields["IsTest"] == "1"
     assert fields["ExpirationDate"]
     assert fields["ResultUrl2"].endswith("/integrations/robokassa/result2")
-    receipt = json.loads(unquote_plus(fields["Receipt"]))
+    receipt = json.loads(fields["Receipt"])
     assert receipt["items"][0]["sum"] == 5900
+    assert not fields["Receipt"].startswith("%7B")
     signature_source = ":".join(
         [
             "edabalans-test",
             "5900.00",
             result["invoice_id"],
-            fields["Receipt"],
+            quote_plus(fields["Receipt"], safe=""),
             quote_plus(fields["ResultUrl2"], safe=""),
             quote_plus(fields["SuccessUrl2"], safe=""),
             "GET",
@@ -260,6 +261,8 @@ def test_go_test_button_builds_classic_form_with_go_callbacks() -> None:
     assert response.status_code == 200
     assert 'action="https://auth.robokassa.ru/Merchant/Index.aspx"' in response.text
     assert 'name="IsTest" value="1"' in response.text
+    assert 'name="Receipt" value="{&quot;items&quot;:' in response.text
+    assert 'name="Receipt" value="%7B' not in response.text
     assert "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/" in response.text
     assert "app.edabalans.ru" not in response.text
     assert 'document.getElementById("payment").submit()' in response.text

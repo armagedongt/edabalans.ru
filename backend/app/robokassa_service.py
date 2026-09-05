@@ -122,7 +122,8 @@ def _payment_fields(
     merchant, password = _require_checkout_settings(settings)
     if payment.amount is None or payment.external_order_id is None:
         raise RobokassaError("Заказ Robokassa сформирован не полностью")
-    receipt = _encoded(_receipt(settings, title, payment.amount))
+    receipt_raw = _receipt(settings, title, payment.amount)
+    receipt = _encoded(receipt_raw)
     values = [
         merchant,
         _amount_text(payment.amount),
@@ -147,7 +148,10 @@ def _payment_fields(
         "Culture": "ru",
         "Encoding": "utf-8",
         "ExpirationDate": expires_at.astimezone(MOSCOW).strftime("%Y-%m-%dT%H:%M"),
-        "Receipt": receipt,
+        # The browser form encoder performs the transport encoding. Sending the
+        # pre-encoded value here would encode every percent sign a second time,
+        # while SignatureValue contains only the single-encoded receipt.
+        "Receipt": receipt_raw,
         "ResultUrl2": settings.robokassa_result_url_2,
         "SuccessUrl2": settings.robokassa_success_url_2,
         "SuccessUrl2Method": "GET",
