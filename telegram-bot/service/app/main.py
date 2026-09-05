@@ -250,7 +250,11 @@ def _validate_media_reference(media_path: str | None) -> None:
 
 def _broadcast_contacts(session: Session, row: Broadcast) -> list[Contact]:
     segment = row.segment or {}
-    query = select(Contact).where(Contact.status == segment.get("status", "active"))
+    telegram_bot_ids = select(BotInstance.id).where(BotInstance.code != "max")
+    query = select(Contact).where(
+        Contact.status == segment.get("status", "active"),
+        Contact.bot_instance_id.in_(telegram_bot_ids),
+    )
     telegram_ids = [str(value) for value in segment.get("telegram_user_ids", []) if str(value).strip()]
     if telegram_ids:
         query = query.where(Contact.telegram_user_id.in_(telegram_ids))
@@ -347,6 +351,22 @@ def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> 
     )
 
 
+def _sequence_sender(
+    session: Session,
+    contact: Contact,
+    telegram_sender: TelegramClient | None,
+    max_sender: MaxClient | None,
+):
+    bot_code = session.scalar(select(BotInstance.code).where(BotInstance.id == contact.bot_instance_id))
+    return max_sender if bot_code == "max" else telegram_sender
+
+
+def _is_max_contact(session: Session, contact: Contact) -> bool:
+    return session.scalar(
+        select(BotInstance.code).where(BotInstance.id == contact.bot_instance_id)
+    ) == "max"
+
+
 def scheduler_iteration() -> None:
     with SessionLocal() as session:
         tg = TelegramClient(
@@ -354,7 +374,8 @@ def scheduler_iteration() -> None:
             proxy_url=settings.telegram_proxy_url,
             channel_id=settings.telegram_channel_id,
         ) if settings.telegram_test_bot_token else None
-        if tg:
+        max_sender = MaxClient(settings.max_bot_token) if settings.max_bot_token else None
+        if tg or max_sender:
             stopped_presale = stop_presale_runs_from_purchase_events(session)
             stopped_presale += reconcile_masterclass_presale_runs(session)
             if stopped_presale:
@@ -362,16 +383,22 @@ def scheduler_iteration() -> None:
             for run in due_runs(session):
                 _record_scheduler_activity()
                 contact = session.get(Contact, run.contact_id)
-                if not contact or not _maintenance_allows_contact(contact):
+                if not contact:
+                    continue
+                sender = _sequence_sender(session, contact, tg, max_sender)
+                if sender is None:
+                    continue
+                if sender is tg and not _maintenance_allows_contact(contact):
                     continue
                 if run.status == "waiting":
                     resume_wait_timeout(session, run)
-                advance_run(session, run, tg)
+                advance_run(session, run, sender)
                 _record_scheduler_activity()
-            scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
-            for broadcast in scheduled:
-                _deliver_broadcast(session, broadcast, tg)
-            dispatch_masterclass_notifications(session, tg)
+            if tg:
+                scheduled = session.scalars(select(Broadcast).where(Broadcast.status == "scheduled", Broadcast.scheduled_at <= datetime.now(UTC))).all()
+                for broadcast in scheduled:
+                    _deliver_broadcast(session, broadcast, tg)
+                dispatch_masterclass_notifications(session, tg)
             _record_scheduler_activity()
         _record_scheduler_activity()
 
@@ -1218,7 +1245,10 @@ def accelerated_run(contact_id: str, body: AcceleratedRunIn, session: Session = 
     contact = session.get(Contact, contact_id)
     if not contact:
         raise HTTPException(404, "Contact not found")
-    if not _maintenance_allows_contact(contact):
+    sender = _sequence_sender(session, contact, client(), max_client() if settings.max_bot_token else None)
+    if sender is None:
+        raise HTTPException(503, "Для этого канала не настроена отправка")
+    if not _is_max_contact(session, contact) and not _maintenance_allows_contact(contact):
         raise HTTPException(409, "Пользователь находится в листе ожидания режима ремонта")
     runs = list(session.scalars(select(SequenceRun).where(SequenceRun.contact_id == contact_id)))
     if body.reset_technical_state and runs:
@@ -1226,7 +1256,7 @@ def accelerated_run(contact_id: str, body: AcceleratedRunIn, session: Session = 
         session.execute(delete(SequenceRun).where(SequenceRun.contact_id == contact_id))
     run = start_run(session, contact_id, body.sequence_code, body.time_scale)
     session.commit()
-    advance_run(session, run, client())
+    advance_run(session, run, sender)
     return {"run_id": run.id, "time_scale": run.time_scale, "status": run.status, "current_step": run.current_step_key}
 
 
@@ -1235,13 +1265,16 @@ def manual_message(contact_id: str, body: ManualMessageIn, admin: str = Depends(
     contact = session.get(Contact, contact_id)
     if not contact:
         raise HTTPException(404, "Contact not found")
-    if not _maintenance_allows_contact(contact):
+    sender = _sequence_sender(session, contact, client(), max_client() if settings.max_bot_token else None)
+    if sender is None:
+        raise HTTPException(503, "Для этого канала не настроена отправка")
+    if not _is_max_contact(session, contact) and not _maintenance_allows_contact(contact):
         raise HTTPException(409, "Во время ремонта сообщения разрешены только тестовым аккаунтам")
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=body.text, status="pending", operator_email=admin)
     session.add(log); session.flush()
     content = SimpleNamespace(body_source=body.text, title="Ручное сообщение", media_kind=None, media_path=None, telegram_file_id=None)
     try:
-        log.platform_message_id = client().send_content(contact.chat_id, content, {})
+        log.platform_message_id = sender.send_content(contact.chat_id, content, {})
         log.status = "sent"
     except Exception as exc:
         log.status = "failed"; session.commit(); raise HTTPException(502, str(exc))

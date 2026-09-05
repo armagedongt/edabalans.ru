@@ -157,13 +157,15 @@ def execute_start_decision(
     target_step_key: str | None = None,
     update_id: str | None = None,
     entry_content_code: str = "tpl_intensive_entry_default",
+    send_entry_circle: bool = True,
 ) -> SequenceRun | None:
     if decision.code == "masterclass_owned":
         stop_presale_runs_for_user(session, contact.user_id, reason="masterclass_owned")
         send_system_content(session, contact, decision.content_code, sender)
         return None
     if decision.code == "launch_welcome":
-        send_system_content(session, contact, "tpl_entry_circle", sender)
+        if send_entry_circle:
+            send_system_content(session, contact, "tpl_entry_circle", sender)
         send_system_content(
             session,
             contact,

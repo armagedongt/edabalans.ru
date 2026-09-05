@@ -10,7 +10,7 @@ from sqlalchemy import delete, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from app.models import ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.models import BotInstance, ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.config import get_settings
 from app.content_formatting import content_is_runtime_ready, replace_template_values
 from app.intensive_access import personal_tracking_values
@@ -246,9 +246,10 @@ def _record_subscription_check(
         },
     ))
     if contact.user_id:
+        platform = _contact_platform(session, contact)
         account = session.scalar(select(CrmMessengerAccount).where(
             CrmMessengerAccount.user_id == contact.user_id,
-            CrmMessengerAccount.platform == "telegram",
+            CrmMessengerAccount.platform == platform,
         ))
         if account:
             previous_status = account.subscription_status
@@ -325,6 +326,11 @@ def _replace_configuration_values(value: Any, values: dict[str, str]) -> Any:
     return value
 
 
+def _contact_platform(session: Session, contact: Contact) -> str:
+    bot_code = session.scalar(select(BotInstance.code).where(BotInstance.id == contact.bot_instance_id))
+    return "max" if bot_code == "max" else "telegram"
+
+
 def personalized_delivery(
     session: Session,
     contact: Contact,
@@ -344,7 +350,7 @@ def personalized_delivery(
     values = personal_tracking_values(
         session,
         user_id=contact.user_id,
-        platform="telegram",
+        platform=_contact_platform(session, contact),
         public_url=get_settings().intensive_public_url,
         channel_post_numbers=channel_post_numbers,
     )

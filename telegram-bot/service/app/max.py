@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import html
+import re
 import ssl
 import uuid
 from datetime import UTC, datetime
@@ -14,11 +15,10 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.account_credentials import generate_password, password_hash
-from app.content_formatting import replace_template_values
+from app.content_formatting import content_body_for_telegram, replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user
 from app.intensive_access import (
     create_intensive_access_link,
-    intensive_access_url,
     intensive_token,
     personal_tracking_values,
 )
@@ -26,12 +26,14 @@ from app.models import (
     AccountCredential,
     AccountOnboarding,
     BotInstance,
+    Contact,
     ContentItem,
     CrmAttributionEvent,
     CrmMessengerAccount,
     CrmTag,
     CrmUser,
     CrmUserTag,
+    ManualMessage,
     MessengerLinkToken,
     TrackingLink,
     TrackingLinkAlias,
@@ -39,6 +41,9 @@ from app.models import (
     TrackingEvent,
     UpdateReceipt,
 )
+from app.engine import advance_run
+from app.seed import WELCOME_CODE
+from app.start_router import execute_start_decision, inspect_start
 from app.tracking import canonical_tag, resolve_start_payload
 
 
@@ -46,10 +51,6 @@ MAX_API_BASE = "https://platform-api2.max.ru"
 MAX_CA_BUNDLE = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_ca.pem"
 MAX_BOT_CODE = "max"
 MAX_MESSAGE_TEXT_LIMIT = 4000
-MAX_INTENSIVE_MESSAGE = (
-    "<b>Бесплатный интенсив «Последнее похудение»</b>\n\n"
-    "Нажмите кнопку ниже, чтобы открыть первый день."
-)
 MAX_ASSIGNMENT_ROUTES = {
     "iz1": (1, "tpl_max_forwarded_assignment_day1"),
     "iz2": (2, "tpl_max_forwarded_assignment_day2"),
@@ -62,6 +63,53 @@ class MaxClient:
         self.token = token
         self.transport = transport
 
+    def _client(self, timeout: float = 20) -> httpx.Client:
+        client_options: dict[str, Any] = {"timeout": timeout}
+        if self.transport is not None:
+            client_options["transport"] = self.transport
+        else:
+            tls_context = ssl.create_default_context()
+            tls_context.load_verify_locations(cafile=str(MAX_CA_BUNDLE))
+            client_options["verify"] = tls_context
+        return httpx.Client(**client_options)
+
+    @staticmethod
+    def _compact_html(text: str) -> str:
+        text = re.sub(r"</?tg-spoiler>", "", text)
+        text = re.sub(r"<tg-emoji[^>]*>|</tg-emoji>", "", text)
+        for tag in ("blockquote", "b", "i", "u", "s"):
+            if len(text) <= MAX_MESSAGE_TEXT_LIMIT:
+                break
+            text = re.sub(fr"</?{tag}(?:\s[^>]*)?>", "", text, count=2)
+        if len(text) > MAX_MESSAGE_TEXT_LIMIT:
+            raise RuntimeError(
+                f"MAX message exceeds {MAX_MESSAGE_TEXT_LIMIT} characters ({len(text)})"
+            )
+        return text
+
+    def _upload_media(self, media_type: str, path: Path) -> dict[str, Any]:
+        with self._client(120) as client:
+            upload = client.post(
+                f"{MAX_API_BASE}/uploads",
+                params={"type": media_type},
+                headers={"Authorization": self.token},
+            )
+            upload.raise_for_status()
+            upload_payload = upload.json()
+            upload_url = str(upload_payload.get("url") or "")
+            if not upload_url.startswith("https://"):
+                raise RuntimeError("MAX did not return a media upload URL")
+            with path.open("rb") as stream:
+                result = client.post(upload_url, files={"data": (path.name, stream)})
+            result.raise_for_status()
+            result_payload = result.json()
+        payload = dict(result_payload or {})
+        if not payload.get("token") and upload_payload.get("token"):
+            payload["token"] = upload_payload["token"]
+        if not payload.get("token"):
+            raise RuntimeError("MAX did not return a media token")
+        return payload
+
     def send_html(
         self,
         user_id: str,
@@ -70,7 +118,11 @@ class MaxClient:
         button_text: str | None = None,
         button_url: str | None = None,
     ) -> str:
-        body: dict[str, Any] = {"text": text, "format": "html", "disable_link_preview": True}
+        body: dict[str, Any] = {
+            "text": self._compact_html(text),
+            "format": "html",
+            "disable_link_preview": True,
+        }
         if button_text and button_url:
             body["attachments"] = [{
                 "type": "inline_keyboard",
@@ -80,14 +132,7 @@ class MaxClient:
                     "url": button_url,
                 }]]},
             }]
-        client_options: dict[str, Any] = {"timeout": 20}
-        if self.transport is not None:
-            client_options["transport"] = self.transport
-        else:
-            tls_context = ssl.create_default_context()
-            tls_context.load_verify_locations(cafile=str(MAX_CA_BUNDLE))
-            client_options["verify"] = tls_context
-        with httpx.Client(**client_options) as client:
+        with self._client() as client:
             response = client.post(
                 f"{MAX_API_BASE}/messages",
                 params={"user_id": user_id},
@@ -97,6 +142,53 @@ class MaxClient:
         response.raise_for_status()
         data = response.json()
         return str(data.get("message", {}).get("body", {}).get("mid", ""))
+
+    def send_content(self, user_id: str, content: Any, configuration: dict[str, Any]) -> str:
+        text_value = self._compact_html(content_body_for_telegram(content))
+        attachments: list[dict[str, Any]] = []
+        media_path = str(getattr(content, "media_path", "") or "")
+        media_kind = str(getattr(content, "media_kind", "") or "")
+        if media_kind in {"photo", "video", "video_note"} and media_path:
+            max_type = "image" if media_kind == "photo" else "video"
+            if max_type == "image" and media_path.startswith(("https://", "http://")):
+                payload = {"url": media_path}
+            else:
+                local_path = Path(media_path)
+                if not local_path.is_file():
+                    raise RuntimeError(f"MAX media file is unavailable: {media_path}")
+                payload = self._upload_media(max_type, local_path)
+            attachments.append({"type": max_type, "payload": payload})
+        buttons = configuration.get("buttons") or []
+        if buttons:
+            rows = []
+            for button in buttons:
+                url = button.get("url") or (button.get("web_app") or {}).get("url")
+                if not url:
+                    raise RuntimeError("MAX sequence supports only link buttons")
+                rows.append([{"type": "link", "text": button["text"], "url": url}])
+            attachments.append({"type": "inline_keyboard", "payload": {"buttons": rows}})
+        body: dict[str, Any] = {
+            "text": text_value,
+            "format": "html",
+            "disable_link_preview": bool(not configuration.get("link_preview", False)),
+        }
+        if attachments:
+            body["attachments"] = attachments
+        with self._client(120 if media_path else 20) as client:
+            response = client.post(
+                f"{MAX_API_BASE}/messages",
+                params={"user_id": user_id},
+                headers={"Authorization": self.token},
+                json=body,
+            )
+        response.raise_for_status()
+        data = response.json()
+        return str(data.get("message", {}).get("body", {}).get("mid", ""))
+
+    def subscription_status(self, _user_id: str) -> None:
+        # MAX has no Telegram-channel membership to check. Returning unknown
+        # selects the full in-bot material without creating subscription tags.
+        return None
 
 
 def _max_bot(session: Session, username: str) -> BotInstance:
@@ -129,13 +221,32 @@ def _receipt_id(update: dict[str, Any]) -> str:
     return f"max:{hashlib.sha256(raw.encode()).hexdigest()[:56]}"
 
 
-def _send_intensive(sender: MaxClient, user_id: str, intensive_url: str) -> str:
-    return sender.send_html(
-        user_id,
-        MAX_INTENSIVE_MESSAGE,
-        button_text="Открыть первый день",
-        button_url=intensive_url,
-    )
+def _ensure_contact(
+    session: Session,
+    bot: BotInstance,
+    account: CrmMessengerAccount,
+    user: dict[str, Any],
+) -> Contact:
+    platform_user_id = str(user["user_id"])
+    contact = session.scalar(select(Contact).where(
+        Contact.bot_instance_id == bot.id,
+        Contact.telegram_user_id == platform_user_id,
+    ))
+    if contact is None:
+        contact = Contact(
+            bot_instance_id=bot.id,
+            telegram_user_id=platform_user_id,
+            chat_id=platform_user_id,
+        )
+        session.add(contact)
+    contact.user_id = account.user_id
+    contact.chat_id = platform_user_id
+    contact.username = user.get("username")
+    contact.first_name = user.get("name")
+    contact.last_seen_at = datetime.now(UTC)
+    contact.status = "active"
+    session.flush()
+    return contact
 
 
 def _max_assignment_body(
@@ -360,7 +471,8 @@ def _consume_account_link(
 def _assign_first_touch(
     session: Session,
     account: CrmMessengerAccount,
-    created: bool,
+    contact: Contact,
+    is_first: bool,
     link: TrackingLink | None,
     alias: TrackingLinkAlias | None,
     session_tag_ids: list[str],
@@ -370,7 +482,9 @@ def _assign_first_touch(
     intensive_token_id: str,
 ) -> TrackingEvent:
     now = datetime.now(UTC)
-    if created and link:
+    if is_first:
+        account.main_scenario_seen_at = now
+    if is_first and link:
         tag_ids = list(session.scalars(select(TrackingLinkTag.tag_id).where(
             TrackingLinkTag.tracking_link_id == link.id
         ))) + session_tag_ids
@@ -404,10 +518,11 @@ def _assign_first_touch(
     ))
     tracking_event = TrackingEvent(
         tracking_link_id=link.id if link else None,
+        contact_id=contact.id,
         alias_id=alias.id if alias else None,
         user_id=account.user_id,
         telegram_user_id=account.platform_user_id,
-        event_type="start_first" if created else "start_repeat",
+        event_type="start_first" if is_first else "start_repeat",
         metadata_json={
             "messenger": "max",
             "payload_status": payload_status,
@@ -420,6 +535,54 @@ def _assign_first_touch(
     )
     session.add(tracking_event)
     return tracking_event
+
+
+def _deliver_welcome(
+    session: Session,
+    *,
+    contact: Contact,
+    is_first: bool,
+    sender: MaxClient,
+    link: TrackingLink | None,
+    raw_query: dict[str, str],
+) -> tuple[str, str]:
+    _, decision, welcome_run = inspect_start(session, contact, is_first)
+    yandex_entry = any(
+        marker in " ".join([
+            str((raw_query or {}).get("utm_source") or ""),
+            str((raw_query or {}).get("utm_medium") or ""),
+            str(link.campaign if link else ""),
+            str(link.placement if link else ""),
+            str(link.name if link else ""),
+        ]).casefold()
+        for marker in ("yandex", "яндекс", "direct", "директ")
+    )
+    run = execute_start_decision(
+        session,
+        contact,
+        decision,
+        welcome_run,
+        sender,
+        WELCOME_CODE,
+        link.target_step_key if link and link.route_kind == "published_step" else None,
+        entry_content_code=(
+            "tpl_intensive_entry_yandex" if yandex_entry else "tpl_intensive_entry_default"
+        ),
+        send_entry_circle=True,
+    )
+    if run:
+        advance_run(session, run, sender)
+    message_id = session.scalar(
+        select(ManualMessage.platform_message_id)
+        .where(
+            ManualMessage.contact_id == contact.id,
+            ManualMessage.direction == "out",
+            ManualMessage.status == "sent",
+        )
+        .order_by(ManualMessage.created_at.desc(), ManualMessage.id.desc())
+        .limit(1)
+    ) or ""
+    return str(message_id), decision.code
 
 
 def process_max_update(
@@ -490,23 +653,42 @@ def process_max_update(
                 "delivery_status": "uncertain",
                 "assignment_day": assignment_day,
             }
-        token_id = (tracking_event.metadata_json or {}).get("max_intensive_token_id")
+        token_id = metadata.get("max_intensive_token_id")
         token_row = session.get(MessengerLinkToken, token_id) if token_id else None
         if token_row is None or token_row.consumed_at is not None:
             tracking_event.metadata_json = {
-                **(tracking_event.metadata_json or {}),
+                **metadata,
                 "max_delivery_status": "sent" if token_row is not None else "unrecoverable",
                 "max_delivery_confirmed_by": "token_consumed" if token_row is not None else "token_missing",
             }
             session.commit()
             return {"ok": True, "duplicate": True}
-        token = intensive_token(token_id)
-        intensive_url = intensive_access_url(intensive_public_url, token)
-        message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
+        contact = session.get(Contact, tracking_event.contact_id) if tracking_event.contact_id else None
+        if contact is None:
+            tracking_event.metadata_json = {
+                **(tracking_event.metadata_json or {}),
+                "max_delivery_status": "unrecoverable",
+                "max_delivery_error_type": "contact_missing",
+            }
+            session.commit()
+            return {"ok": True, "duplicate": True}
+        message_id, decision_code = _deliver_welcome(
+            session,
+            contact=contact,
+            is_first=bool(metadata.get("is_first_scenario", True)),
+            sender=sender,
+            link=(
+                session.get(TrackingLink, tracking_event.tracking_link_id)
+                if tracking_event.tracking_link_id
+                else None
+            ),
+            raw_query=dict(metadata.get("raw_query") or {}),
+        )
         tracking_event.metadata_json = {
             **(tracking_event.metadata_json or {}),
             "max_delivery_status": "sent",
             "max_message_id": message_id,
+            "max_start_decision": decision_code,
         }
         session.commit()
         return {"ok": True, "retried": True}
@@ -593,14 +775,17 @@ def process_max_update(
 
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type="max_bot_started"))
 
-    account, created = _ensure_identity(session, user)
+    account, _ = _ensure_identity(session, user)
+    contact = _ensure_contact(session, bot, account, user)
+    is_first_scenario = account.main_scenario_seen_at is None
     link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, str(update.get("payload") or ""))
     intensive_token_id = str(uuid.uuid4())
     token = intensive_token(intensive_token_id)
     tracking_event = _assign_first_touch(
         session,
         account,
-        created,
+        contact,
+        is_first_scenario,
         link,
         alias,
         session_tag_ids,
@@ -609,7 +794,7 @@ def process_max_update(
         receipt_id,
         intensive_token_id,
     )
-    intensive_url, _ = create_intensive_access_link(
+    create_intensive_access_link(
         session,
         user_id=account.user_id,
         platform="max",
@@ -623,11 +808,20 @@ def process_max_update(
     tracking_event = session.scalar(select(TrackingEvent).where(
         TrackingEvent.deduplication_key == f"{receipt_id}:tracking_start"
     ).with_for_update())
-    message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
+    message_id, decision_code = _deliver_welcome(
+        session,
+        contact=contact,
+        is_first=is_first_scenario,
+        sender=sender,
+        link=link,
+        raw_query=raw_query,
+    )
     tracking_event.metadata_json = {
         **(tracking_event.metadata_json or {}),
         "max_delivery_status": "sent",
         "max_message_id": message_id,
+        "max_start_decision": decision_code,
+        "is_first_scenario": is_first_scenario,
     }
     session.commit()
-    return {"ok": True, "intensive": True, "first_start": created}
+    return {"ok": True, "intensive": True, "first_start": is_first_scenario}

@@ -4,6 +4,7 @@ import re
 import ssl
 import uuid
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 import httpx
@@ -25,9 +26,11 @@ from app.models import (
     CrmTag,
     CrmUser,
     CrmUserTag,
+    Contact,
     MessengerLinkToken,
     TrackingEvent,
     UpdateReceipt,
+    SequenceRun,
 )
 from app.seed import seed_defaults
 
@@ -39,6 +42,13 @@ class FakeMax:
     def send_html(self, user_id, text, **kwargs):
         self.sent.append((user_id, text, kwargs))
         return "1"
+
+    def send_content(self, user_id, content, configuration):
+        self.sent.append((user_id, content.body_source or "", configuration))
+        return str(len(self.sent))
+
+    def subscription_status(self, _user_id):
+        return None
 
 
 def test_max_ca_bundle_loads_without_changing_system_trust():
@@ -74,6 +84,75 @@ def test_max_client_sends_link_button():
             "url": "https://app.edabalans.ru/intensive/start?i=Etoken",
         }]]},
     }]
+
+
+def test_max_client_sends_sequence_photo_and_link_button():
+    captured = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["request"] = request
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-sequence-1"}}})
+
+    content = SimpleNamespace(
+        body_source="<b>Напоминание</b>",
+        media_kind="photo",
+        media_path="https://cdn.example.test/reminder.jpg",
+    )
+    message_id = MaxClient("max-secret", httpx.MockTransport(handler)).send_content(
+        "901",
+        content,
+        {"buttons": [{"text": "Открыть часть #1", "url": "https://example.test/i/Ecode"}]},
+    )
+
+    assert message_id == "max-sequence-1"
+    payload = json.loads(captured["request"].content)
+    assert payload["text"] == "<b>Напоминание</b>"
+    assert payload["attachments"][0] == {
+        "type": "image",
+        "payload": {"url": "https://cdn.example.test/reminder.jpg"},
+    }
+    assert payload["attachments"][1]["type"] == "inline_keyboard"
+
+
+def test_max_upload_uses_video_token_returned_before_file_upload(tmp_path):
+    video = tmp_path / "intro.mp4"
+    video.write_bytes(b"video")
+    requests = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        if request.url.path == "/uploads":
+            return httpx.Response(200, json={
+                "url": "https://upload.example.test/video",
+                "token": "video-token",
+            })
+        if request.url.host == "upload.example.test":
+            return httpx.Response(200, json={"retval": 1})
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-video-1"}}})
+
+    content = SimpleNamespace(
+        body_source="",
+        media_kind="video_note",
+        media_path=str(video),
+    )
+    message_id = MaxClient("max-secret", httpx.MockTransport(handler)).send_content(
+        "901", content, {},
+    )
+
+    assert message_id == "max-video-1"
+    payload = json.loads(requests[-1].content)
+    assert payload["attachments"] == [{
+        "type": "video",
+        "payload": {"retval": 1, "token": "video-token"},
+    }]
+
+
+def test_max_html_compaction_keeps_visible_text_and_respects_limit():
+    source = "<b>" + ("x" * 3994) + "</b>"
+    result = MaxClient._compact_html(source)
+
+    assert result == "x" * 3994
+    assert len(result) <= 4000
 
 
 def max_start(timestamp="2026-08-27T10:00:00Z", payload=""):
@@ -112,18 +191,19 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
     response = client.post("/bot/max/webhook", json=max_start(), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
     assert client.post("/bot/max/webhook", json=max_start(), headers=headers).json() == {"ok": True, "duplicate": True}
-    assert len(fake.sent) == 1
+    assert len(fake.sent) == 2
     assert fake.sent[0][0] == "901"
-    assert "Бесплатный интенсив" in fake.sent[0][1]
-    assert fake.sent[0][2]["button_text"] == "Открыть первый день"
-    assert fake.sent[0][2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[0][1] == ""
+    assert "Бесплатный интенсив" in fake.sent[1][1]
+    assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(
             CrmMessengerAccount.platform == "max", CrmMessengerAccount.platform_user_id == "901"
         ))
         assert account is not None
-        assert account.main_scenario_seen_at is None
+        assert account.main_scenario_seen_at is not None
         assert account.source == "max_bot"
         assert session.scalar(select(CrmAttributionEvent.event_type).where(
             CrmAttributionEvent.user_id == account.user_id
@@ -141,8 +221,16 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
             "payload_status": "empty",
             "raw_query": {},
             "max_delivery_status": "sent",
-            "max_message_id": "1",
+            "max_message_id": "2",
+            "max_start_decision": "launch_welcome",
+            "is_first_scenario": True,
         }
+        contact = session.scalar(select(Contact).where(Contact.user_id == account.user_id))
+        assert contact is not None
+        run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id))
+        assert run is not None
+        assert run.status == "active"
+        assert run.current_step_key == "welcome_reminder_check_day1"
     app.dependency_overrides.clear()
 
 
@@ -527,7 +615,7 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
     payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
     response = client.post("/bot/max/webhook", json=max_start(payload=payload), headers=admin_headers)
     assert response.status_code == 200
-    assert len(fake.sent) == 1
+    assert len(fake.sent) == 2
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "901"))
@@ -551,15 +639,12 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
 def test_max_delivery_failure_persists_same_link_for_webhook_retry(tmp_path, monkeypatch):
     client, engine, fake = make_client(tmp_path, monkeypatch)
     headers = {"X-Max-Bot-Api-Secret": "test-secret"}
-    original_send = fake.send_html
-
-    failed_call = {}
+    original_send = fake.send_content
 
     def fail_send(*args, **kwargs):
-        failed_call["button_url"] = kwargs["button_url"]
         raise httpx.HTTPError("MAX unavailable")
 
-    fake.send_html = fail_send
+    fake.send_content = fail_send
     try:
         client.post("/bot/max/webhook", json=max_start(), headers=headers)
         raise AssertionError("delivery error was not raised")
@@ -576,16 +661,16 @@ def test_max_delivery_failure_persists_same_link_for_webhook_retry(tmp_path, mon
         tracking = session.scalar(select(TrackingEvent))
         assert tracking.metadata_json["max_delivery_status"] == "pending"
 
-    fake.send_html = original_send
+    fake.send_content = original_send
     response = client.post("/bot/max/webhook", json=max_start(), headers=headers)
     assert response.json() == {"ok": True, "retried": True}
-    assert len(fake.sent) == 1
-    assert fake.sent[0][2]["button_url"] == failed_call["button_url"]
+    assert len(fake.sent) == 2
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
     assert client.post("/bot/max/webhook", json=max_start(), headers=headers).json() == {
         "ok": True,
         "duplicate": True,
     }
-    assert len(fake.sent) == 1
+    assert len(fake.sent) == 2
     app.dependency_overrides.clear()
 
 
@@ -596,7 +681,7 @@ def test_retry_does_not_resend_link_consumed_after_lost_max_response(tmp_path, m
     def response_lost(*_args, **_kwargs):
         raise httpx.ReadTimeout("MAX response lost")
 
-    fake.send_html = response_lost
+    fake.send_content = response_lost
     try:
         client.post("/bot/max/webhook", json=max_start(), headers=headers)
         raise AssertionError("delivery error was not raised")
@@ -624,7 +709,7 @@ def test_unknown_max_payload_keeps_identity_without_inventing_attribution(tmp_pa
 
     response = client.post("/bot/max/webhook", json=max_start(payload="obsolete-link"), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
-    assert fake.sent[0][2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "901"))
@@ -657,12 +742,14 @@ def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
     ).status_code == 200
 
     with Session(engine) as session:
-        events = list(session.scalars(select(TrackingEvent.event_type).order_by(
+        events = list(session.scalars(select(TrackingEvent.event_type).where(
+            TrackingEvent.event_type.in_(["start_first", "start_repeat"])
+        ).order_by(
             TrackingEvent.occurred_at,
             TrackingEvent.id,
         )))
         assert events == ["start_first", "start_repeat"]
-    assert len(fake.sent) == 2
-    assert all(message[2]["button_text"] == "Открыть первый день" for message in fake.sent)
-    assert all(message[2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E") for message in fake.sent)
+    assert len(fake.sent) == 3
+    assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
     app.dependency_overrides.clear()

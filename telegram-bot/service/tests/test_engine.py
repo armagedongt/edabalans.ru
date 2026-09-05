@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, make_engine
 from app.engine import advance_run, personalized_delivery, resume_callback, resume_wait_timeout, start_run
 from app.graph import graph_issues
-from app.models import BotInstance, BotRoute, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUser, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
+from app.models import BotInstance, BotRoute, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUser, CrmUserTag, MessengerLinkToken, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, WELCOME_CODE, seed_defaults
 
 
@@ -69,6 +69,48 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
         assert len(intensive_code) == 9
+
+
+def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        max_bot = BotInstance(
+            code="max",
+            username="id230409966750_bot",
+            display_name="MAX-бот",
+            token_env_name="MAX_BOT_TOKEN",
+            is_active=True,
+        )
+        user = CrmUser(display_name="MAX recipient", status="active", data_origin="native")
+        session.add_all([max_bot, user])
+        session.flush()
+        contact = Contact(
+            bot_instance_id=max_bot.id,
+            user_id=user.id,
+            telegram_user_id="max-personal-links",
+            chat_id="max-personal-links",
+        )
+        content = ContentItem(
+            code="tpl_max_personal_links",
+            title="MAX personal links",
+            body_source="Интенсив: {{personal_intensive_url}}",
+            source_format="telegram_html",
+            status="published",
+            editorial_status="approved",
+        )
+
+        rendered, configuration = personalized_delivery(
+            session,
+            contact,
+            content,
+            {"buttons": [{"text": "Мастер-класс", "url": "{{personal_masterclass_url}}"}]},
+        )
+
+        assert "{{personal_" not in rendered.body_source
+        token = session.scalar(select(MessengerLinkToken))
+        assert token is not None
+        assert token.platform == "max"
+        assert configuration["buttons"][0]["url"].endswith(rendered.body_source.rsplit("/", 1)[-1])
 
 
 def session_factory(tmp_path):

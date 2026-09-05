@@ -12,6 +12,7 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.models import (
+    BotInstance,
     Contact,
     ContentItem,
     ManualMessage,
@@ -561,7 +562,13 @@ def dispatch_due_masterclass_notifications(
                 continue
         contact = session.scalar(
             select(Contact)
-            .where(Contact.user_id == notification.user_id, Contact.status == "active")
+            .where(
+                Contact.user_id == notification.user_id,
+                Contact.status == "active",
+                Contact.bot_instance_id.in_(
+                    select(BotInstance.id).where(BotInstance.code != "max")
+                ),
+            )
             .order_by(Contact.last_seen_at.desc())
         )
         if not contact:
