@@ -114,6 +114,10 @@ Tilda или подписанного `ResultUrl2` Robokassa backend:
 `api.samotpravil.ru:1127` с шифрованием сразу при подключении
 (`SMTP_USE_SSL=true`, `SMTP_STARTTLS=false`). Домен отправителя должен быть
 добавлен к SMTP-ключу и пройти его DNS-проверки до включения onboarding.
+На 05.09.2026 домен `похудение-это-есть.рф` добавлен к SMTP-доступу в формате
+IDN/punycode; в REG.RU сохранены выданные провайдером DNS-ключ, SPF, DKIM и
+DMARC. SMTP-пароль хранится только в production `.env` и в документацию не
+попадает.
 
 ## Tilda setup
 
