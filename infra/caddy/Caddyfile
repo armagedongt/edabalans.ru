@@ -139,6 +139,11 @@
 		reverse_proxy backend:8000
 	}
 
+	@intensive_entry path_regexp intensive_entry ^/i/([A-Za-z0-9_-]+)$
+	handle @intensive_entry {
+		redir https://app.edabalans.ru/intensive/start?i={re.intensive_entry.1} 307
+	}
+
 	@short path_regexp short ^/([^/]+)$
 	handle @short {
 		rewrite * /go/{re.short.1}

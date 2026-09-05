@@ -30,7 +30,7 @@ COURSE_CODE = "intensive"
 ACCESS_PURPOSE = "intensive_access"
 SESSION_COOKIE = "edabalans_intensive_session"
 SESSION_MAX_AGE = 2 * 365 * 24 * 60 * 60
-ACCESS_TOKEN_TTL = timedelta(days=2 * 365)
+ACCESS_TOKEN_TTL = timedelta(days=100 * 365)
 DAY_DELAY = timedelta(hours=23)
 OFFER_DURATION = timedelta(hours=72)
 OFFER_STAGE_CODE = "intensive_day4_discount"

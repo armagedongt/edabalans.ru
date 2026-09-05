@@ -114,7 +114,7 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
     assert fake.sent[0][0] == "901"
     assert "Бесплатный интенсив" in fake.sent[0][1]
     assert fake.sent[0][2]["button_text"] == "Открыть первый день"
-    assert fake.sent[0][2]["button_url"].startswith("https://app.edabalans.ru/intensive/start?i=E")
+    assert fake.sent[0][2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E")
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(
@@ -346,7 +346,7 @@ def test_unknown_max_payload_keeps_identity_without_inventing_attribution(tmp_pa
 
     response = client.post("/bot/max/webhook", json=max_start(payload="obsolete-link"), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
-    assert fake.sent[0][2]["button_url"].startswith("https://app.edabalans.ru/intensive/start?i=E")
+    assert fake.sent[0][2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E")
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "901"))
@@ -386,5 +386,5 @@ def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
         assert events == ["start_first", "start_repeat"]
     assert len(fake.sent) == 2
     assert all(message[2]["button_text"] == "Открыть первый день" for message in fake.sent)
-    assert all(message[2]["button_url"].startswith("https://app.edabalans.ru/intensive/start?i=E") for message in fake.sent)
+    assert all(message[2]["button_url"].startswith("https://go.похудение-это-есть.рф/i/E") for message in fake.sent)
     app.dependency_overrides.clear()

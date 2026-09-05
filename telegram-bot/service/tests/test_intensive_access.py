@@ -25,20 +25,22 @@ def test_intensive_link_is_personal_platform_bound_and_long_lived(tmp_path):
             session,
             user_id=user.id,
             platform="telegram",
-            public_url="https://app.edabalans.ru/intensive/start",
+            public_url="https://go.похудение-это-есть.рф/i",
             now=issued,
         )
         session.commit()
 
-        query = parse_qs(urlparse(telegram_url).query)
-        token = query["i"][0]
+        parsed = urlparse(telegram_url)
+        query = parse_qs(parsed.query)
+        token = parsed.path.rsplit("/", 1)[-1]
         assert "from" not in query
+        assert parsed.path == f"/i/{token}"
         assert row.user_id == user.id
         assert row.platform == "telegram"
         assert row.purpose == PURPOSE
         assert row.consumed_at is None
         assert row.token_hash == hashlib.sha256(token.encode("ascii")).hexdigest()
-        assert row.expires_at.year == 2028
+        assert row.expires_at.year == 2126
 
 
 def test_max_link_uses_same_contract_with_max_source(tmp_path):
@@ -52,7 +54,7 @@ def test_max_link_uses_same_contract_with_max_source(tmp_path):
             session,
             user_id=user.id,
             platform="max",
-            public_url="https://app.edabalans.ru/intensive/start",
+            public_url="https://go.похудение-это-есть.рф/i",
         )
         assert "from" not in parse_qs(urlparse(max_url).query)
         assert row.platform == "max"
@@ -70,13 +72,13 @@ def test_reuses_same_recoverable_link_for_telegram_menu(tmp_path):
             session,
             user_id=user.id,
             platform="telegram",
-            public_url="https://app.edabalans.ru/intensive/start",
+            public_url="https://go.похудение-это-есть.рф/i",
         )
         second_url, second_row = get_or_create_intensive_access_link(
             session,
             user_id=user.id,
             platform="telegram",
-            public_url="https://app.edabalans.ru/intensive/start",
+            public_url="https://go.похудение-это-есть.рф/i",
         )
 
         assert first_url == second_url

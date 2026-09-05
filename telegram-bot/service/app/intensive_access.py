@@ -4,7 +4,7 @@ import base64
 import hashlib
 import uuid
 from datetime import datetime, timedelta, timezone
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode, urlsplit, urlunsplit
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -13,7 +13,7 @@ from .models import MessengerLinkToken
 
 
 PURPOSE = "intensive_access"
-TOKEN_TTL = timedelta(days=2 * 365)
+TOKEN_TTL = timedelta(days=100 * 365)
 PLATFORMS = {"telegram", "max"}
 
 
@@ -21,7 +21,11 @@ def intensive_token(token_id: str) -> str:
     return "E" + base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
 
 
-def _access_url(public_url: str, token: str) -> str:
+def intensive_access_url(public_url: str, token: str) -> str:
+    parts = urlsplit(public_url)
+    if parts.path.rstrip("/").endswith("/i") and not parts.query:
+        path = f"{parts.path.rstrip('/')}/{quote(token, safe='')}"
+        return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
     separator = "&" if "?" in public_url else "?"
     return f"{public_url}{separator}{urlencode({'i': token})}"
 
@@ -57,7 +61,7 @@ def create_intensive_access_link(
     )
     session.add(row)
     session.flush()
-    return _access_url(public_url, token), row
+    return intensive_access_url(public_url, token), row
 
 
 def get_or_create_intensive_access_link(
@@ -88,7 +92,7 @@ def get_or_create_intensive_access_link(
     for row in rows:
         token = intensive_token(row.id)
         if row.token_hash == hashlib.sha256(token.encode("ascii")).hexdigest():
-            return _access_url(public_url, token), row
+            return intensive_access_url(public_url, token), row
     return create_intensive_access_link(
         session,
         user_id=user_id,

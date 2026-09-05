@@ -15,7 +15,11 @@ from sqlalchemy.orm import Session
 
 from app.account_credentials import generate_password, password_hash
 from app.customer_lifecycle import stop_presale_runs_for_user
-from app.intensive_access import create_intensive_access_link, intensive_token
+from app.intensive_access import (
+    create_intensive_access_link,
+    intensive_access_url,
+    intensive_token,
+)
 from app.models import (
     AccountCredential,
     AccountOnboarding,
@@ -366,8 +370,7 @@ def process_max_update(
             session.commit()
             return {"ok": True, "duplicate": True}
         token = intensive_token(token_id)
-        separator = "&" if "?" in intensive_public_url else "?"
-        intensive_url = f"{intensive_public_url}{separator}i={token}"
+        intensive_url = intensive_access_url(intensive_public_url, token)
         message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
         tracking_event.metadata_json = {
             **(tracking_event.metadata_json or {}),

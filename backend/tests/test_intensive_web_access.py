@@ -13,6 +13,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.intensive_web_access import (  # noqa: E402
+    ACCESS_TOKEN_TTL,
     DAY_DELAY,
     OFFER_DISCOUNT,
     SESSION_COOKIE,
@@ -270,7 +271,7 @@ def test_expired_personal_token_is_rejected() -> None:
     with factory() as db:
         token, _ = issue_access_token(db, user.id, "max", now=issued)
         db.commit()
-        assert access_token_row(db, token, now=issued + timedelta(days=800)) is None
+        assert access_token_row(db, token, now=issued + ACCESS_TOKEN_TTL + timedelta(seconds=1)) is None
     app.dependency_overrides.clear()
 
 

@@ -93,7 +93,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert [x[1] for x in fake.sent] == ["tpl_start_navigation_pin", "tpl_entry_circle", "tpl_start_welcome_offer"]
     assert len(fake.menu_apps) == 1
     assert fake.menu_apps[0][0:2] == ("42", "Интенсив")
-    assert fake.menu_apps[0][2].startswith("https://app.edabalans.ru/intensive/start?i=E")
+    assert fake.menu_apps[0][2].startswith("https://go.похудение-это-есть.рф/i/E")
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
     assert contacts[0]["run_status"] == "waiting"
