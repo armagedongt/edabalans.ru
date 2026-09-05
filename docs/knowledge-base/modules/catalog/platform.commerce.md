@@ -13,12 +13,9 @@ implementation_status: implemented
 
 - вести продукты, тарифы и опубликованные версии цен;
 - принимать оплаты и выдавать/проверять продуктовые права;
-- создавать прямой счёт Robokassa по цене PostgreSQL и подтверждать его через
-  подписанный `ResultUrl2`, не создавая пользователя до подтверждённой оплаты;
-- формировать единый короткий номер checkout для Tilda и бессрочно распознавать
-  старый полный формат уже созданных заказов;
-- показывать в общем личном кабинете курсы, приложения и их фактическую
-  доступность без отдельного клиентского входа;
+- создавать прямой счёт Robokassa по цене PostgreSQL и подтверждать его через подписанный `ResultUrl2`, не создавая пользователя до подтверждённой оплаты;
+- формировать единый короткий номер checkout для Tilda и бессрочно распознавать старый полный формат уже созданных заказов;
+- показывать в общем личном кабинете курсы, приложения и их фактическую доступность без отдельного клиентского входа;
 
 ## Граница
 
@@ -26,7 +23,9 @@ implementation_status: implemented
 
 ## Источники истины
 
-PostgreSQL pricing/payments/access tables, `docs/TILDA_PAYMENTS.md`, `docs/knowledge-base/PRICING_CATALOG.md`, `ACCESS_RULES.md`.
+PostgreSQL pricing/payments/access tables, `docs/TILDA_PAYMENTS.md`,
+`docs/ROBOKASSA_PAYMENTS.md`, `docs/knowledge-base/PRICING_CATALOG.md`,
+`ACCESS_RULES.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
