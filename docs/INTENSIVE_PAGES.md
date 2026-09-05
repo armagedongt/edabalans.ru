@@ -6,6 +6,27 @@
 `/intensive/day-1` — `/intensive/day-4`. Страницы закрыты от поисковой индексации и
 используют единый визуальный язык интенсива, общую шапку и общий подвал.
 
+Публичная Tilda-страница `/intensiv` встраивает это меню без `iframe` через один
+пустой блок T123. В Tilda хранится только стабильная короткая вставка:
+
+```html
+<div data-edabalans-intensive>
+  <div role="status" style="min-height:100vh;display:grid;place-items:center;text-align:center;color:#239fe9;font-family:Arial,sans-serif">
+    <div>
+      <div aria-hidden="true" style="font-size:24px;line-height:1;letter-spacing:6px">•••</div>
+      <div style="margin-top:10px;font-size:14px">Загрузка</div>
+    </div>
+  </div>
+</div>
+<script src="https://app.edabalans.ru/intensive/tilda-loader.js" defer></script>
+```
+
+Загрузчик получает актуальную главную с `/intensive`, переносит внутрь Tilda только
+меню и его общие шапку/подвал, а ссылки на четыре части оставляет серверными. В
+ссылки частей и Мастер-класса он переносит `utm_*`, `yclid` и `alias`. Персональный
+вход из Telegram/MAX не проходит через Tilda: для него каноническим остаётся
+брендированный `go`-адрес с непрозрачным кодом.
+
 Ссылка из бота имеет брендированный вид
 `https://go.похудение-это-есть.рф/i/<непрозрачный-код>` и через
 `/intensive/start` открывает текущую доступную часть,

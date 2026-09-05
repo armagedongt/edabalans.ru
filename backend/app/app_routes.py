@@ -479,6 +479,14 @@ def intensive_runtime_script() -> FileResponse:
     return public_asset(STATIC_DIR / "intensive" / "runtime.js")
 
 
+@router.get("/intensive/tilda-loader.js", include_in_schema=False)
+def intensive_tilda_loader() -> FileResponse:
+    return public_asset(
+        STATIC_DIR / "intensive" / "tilda-loader.js",
+        stable_loader=True,
+    )
+
+
 @router.get("/intensive/intensive-components.css", include_in_schema=False)
 def intensive_components_stylesheet() -> FileResponse:
     return public_asset(STATIC_DIR / "intensive" / "intensive-components.css")

@@ -1004,6 +1004,20 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "unlocked_days: [1, 2, 3, 4]" in script.text
     assert 'method: "POST"' in script.text
     assert "target_url: MASTERCLASS_URL" in script.text
+    loader = client.get("/intensive/tilda-loader.js")
+    assert loader.status_code == 200
+    assert loader.headers["content-type"].startswith("text/javascript")
+    assert loader.headers["cache-control"] == "no-cache"
+    assert loader.headers["access-control-allow-origin"] == "*"
+    assert "[data-edabalans-intensive]" in loader.text
+    assert "appHost + '/intensive'" in loader.text
+    assert "DOMParser" in loader.text
+    assert "intensive_home_open" in loader.text
+    assert "intensive_menu_open" in loader.text
+    assert "intensive_masterclass_click" in loader.text
+    assert "mc.yandex.ru/metrika/tag.js" in loader.text
+    assert "createElement('iframe')" not in loader.text
+    assert "/intensive/tilda-loader.js" not in client.get("/openapi.json").json()["paths"]
     assert client.get("/intensive/day-1/post/telegram").status_code == 404
     assert client.post("/api/intensive/day-1/post/telegram").status_code == 200
     assert client.get("/intensive/max-full-colored-official.png").status_code == 200
