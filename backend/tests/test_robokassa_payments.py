@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
-from urllib.parse import quote_plus
+from urllib.parse import parse_qs, quote_plus, urlsplit
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -247,7 +247,7 @@ def test_go_test_page_is_one_button_with_database_price() -> None:
     app.dependency_overrides.clear()
 
 
-def test_go_test_button_builds_classic_form_with_go_callbacks() -> None:
+def test_go_test_button_redirects_to_classic_interface_with_go_callbacks() -> None:
     _, factory, _ = make_client()
     seed_catalog(factory)
     client = TestClient(
@@ -256,16 +256,21 @@ def test_go_test_button_builds_classic_form_with_go_callbacks() -> None:
         client=("go-test-start", 50000),
     )
 
-    response = client.post("/robokassa-test/start")
+    response = client.post("/robokassa-test/start", follow_redirects=False)
 
-    assert response.status_code == 200
-    assert 'action="https://auth.robokassa.ru/Merchant/Index.aspx"' in response.text
-    assert 'name="IsTest" value="1"' in response.text
-    assert 'name="Receipt" value="{&quot;items&quot;:' in response.text
-    assert 'name="Receipt" value="%7B' not in response.text
-    assert "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/" in response.text
-    assert "app.edabalans.ru" not in response.text
-    assert 'document.getElementById("payment").submit()' in response.text
+    assert response.status_code == 303
+    location = response.headers["location"]
+    parsed = urlsplit(location)
+    fields = parse_qs(parsed.query)
+    assert f"{parsed.scheme}://{parsed.netloc}{parsed.path}" == (
+        "https://auth.robokassa.ru/Merchant/Index.aspx"
+    )
+    assert fields["IsTest"] == ["1"]
+    assert json.loads(fields["Receipt"][0])["items"][0]["sum"] == 5900
+    assert fields["ResultUrl2"][0].startswith(
+        "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/"
+    )
+    assert "app.edabalans.ru" not in location
     with factory() as db:
         payment = db.scalar(select(Payment))
         assert payment is not None

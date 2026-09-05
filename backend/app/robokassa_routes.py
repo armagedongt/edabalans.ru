@@ -2,10 +2,10 @@ from __future__ import annotations
 
 from html import escape
 import uuid
-from urllib.parse import urlsplit
+from urllib.parse import urlencode, urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -59,28 +59,11 @@ def _go_test_settings(request: Request, settings: Settings) -> Settings:
     )
 
 
-def _robokassa_submit_page(payment_form: dict) -> HTMLResponse:
-    fields = "".join(
-        f'<input type="hidden" name="{escape(str(name), quote=True)}" '
-        f'value="{escape(str(value), quote=True)}">'
-        for name, value in payment_form["fields"].items()
-    )
-    action = escape(str(payment_form["action"]), quote=True)
-    return HTMLResponse(
-        "<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\">"
-        '<meta name="viewport" content="width=device-width,initial-scale=1">'
-        '<meta name="robots" content="noindex,nofollow">'
-        "<title>Переход к оплате</title>"
-        "<style>body{margin:0;min-height:100svh;display:grid;place-items:center;"
-        "background:#f1f9ff;color:#173f70;font:16px/1.5 Arial,sans-serif}"
-        "main{text-align:center}button{padding:15px 24px;border:0;border-radius:14px;"
-        "background:#159ee4;color:#fff;font-weight:700;cursor:pointer}</style>"
-        '<main><p>Переходим к защищённой оплате…</p>'
-        f'<form id="payment" action="{action}" method="POST">{fields}'
-        '<button type="submit">Продолжить</button></form></main>'
-        '<script>document.getElementById("payment").submit();</script></html>',
-        headers={"X-Robots-Tag": "noindex, nofollow"},
-    )
+def _robokassa_redirect(payment_form: dict) -> RedirectResponse:
+    action = str(payment_form["action"])
+    separator = "&" if "?" in action else "?"
+    payment_url = f'{action}{separator}{urlencode(payment_form["fields"])}'
+    return RedirectResponse(payment_url, status_code=status.HTTP_303_SEE_OTHER)
 
 
 @router.get("/robokassa-test", include_in_schema=False)
@@ -122,7 +105,7 @@ def robokassa_go_test_start(
     request: Request,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
-) -> HTMLResponse:
+) -> RedirectResponse:
     _require_go_test_host(request)
     if not settings.robokassa_test_mode:
         raise HTTPException(status.HTTP_404_NOT_FOUND)
@@ -141,7 +124,7 @@ def robokassa_go_test_start(
     except RobokassaError as exc:
         db.rollback()
         raise HTTPException(422, str(exc)) from exc
-    return _robokassa_submit_page(checkout["payment_form"])
+    return _robokassa_redirect(checkout["payment_form"])
 
 
 def _enforce_checkout_origin(request: Request, settings: Settings) -> None:
