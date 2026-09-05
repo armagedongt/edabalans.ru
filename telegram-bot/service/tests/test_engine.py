@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
-from app.engine import advance_run, resume_callback, resume_wait_timeout, start_run
+from app.engine import advance_run, personalized_delivery, resume_callback, resume_wait_timeout, start_run
 from app.graph import graph_issues
 from app.models import BotInstance, BotRoute, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUser, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.seed import POSTPURCHASE_CODE, PREPURCHASE_CODE, WELCOME_CODE, seed_defaults
@@ -30,6 +30,46 @@ class FakeSender:
 
     def subscription_status(self, user_id):
         return self.subscription
+
+
+def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=user.id,
+            telegram_user_id="personal-links",
+            chat_id="personal-links",
+        )
+        content = ContentItem(
+            code="tpl_personal_links",
+            title="Personal links",
+            body_source=(
+                "Интенсив: {{personal_intensive_url}}\n"
+                "Завтраки: {{personal_channel_post_734_url}}"
+            ),
+            source_format="telegram_html",
+            status="published",
+            editorial_status="approved",
+        )
+
+        rendered, configuration = personalized_delivery(
+            session,
+            contact,
+            content,
+            {"buttons": [{"text": "Мастер-класс", "url": "{{personal_masterclass_url}}"}]},
+        )
+
+        assert "{{personal_" not in rendered.body_source
+        assert "{{personal_" not in str(configuration)
+        intensive_code = rendered.body_source.rsplit("/", 1)[-1]
+        masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
+        assert intensive_code == masterclass_code
+        assert f"/p/734/{intensive_code}" in rendered.body_source
 
 
 def session_factory(tmp_path):

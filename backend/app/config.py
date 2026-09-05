@@ -61,6 +61,8 @@ class Settings(BaseSettings):
     intensive_day_2_max_post_url: str = ""
     intensive_day_3_telegram_post_url: str = ""
     intensive_day_3_max_post_url: str = ""
+    personal_masterclass_target_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    telegram_channel_post_base_url: str = "https://t.me/Fitness_Talks"
 
     @property
     def allowed_origins_list(self) -> list[str]:

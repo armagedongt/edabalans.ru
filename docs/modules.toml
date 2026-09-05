@@ -552,13 +552,14 @@ reads_from = ["platform.crm", "messaging.telegram.attribution", "messaging.teleg
 id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"
-depends_on = ["platform.crm", "messaging.telegram.engine"]
+depends_on = ["platform.crm", "messaging.telegram.engine", "products.intensive"]
 telegram_code = "start_attribution"
 telegram_name = "Старт и атрибуция"
 telegram_status = "Исполняемый модуль · временно включён режим ремонта"
 telegram_order = 10
 owns_files = [
   "backend/app/telegram_public_cta.py",
+  "backend/app/personal_tracking_routes.py", "backend/tests/test_personal_tracking_routes.py",
   "telegram-bot/service/app/start_router.py", "telegram-bot/service/app/tracking.py",
   "telegram-bot/service/tests/test_start_router.py", "telegram-bot/service/tests/test_tracking.py",
   "docs/knowledge-base/modules/telegram/LEAD_ENTRY_OWNER_REQUIREMENTS.md",
@@ -573,7 +574,7 @@ owns_tables = [
 ]
 owns_routes = [
   "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
-  "*/go/*", "*/r/*",
+  "*/go/*", "*/r/*", "*/m/*", "*/p/*",
 ]
 
 [[modules]]

@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
 from app.engine import advance_run, start_run
-from app.models import BotInstance, Contact, ManualMessage, SequenceRun, StepDelivery, TrackingEvent, UserVariable
+from app.models import BotInstance, Contact, ContentItem, CrmUser, ManualMessage, MessengerLinkToken, SequenceRun, StepDelivery, TrackingEvent, UserVariable
 from app.seed import WELCOME_CODE, seed_defaults
-from app.start_router import StartDecision, StartFacts, decision_from_facts, execute_start_decision, inspect_start
+from app.start_router import StartDecision, StartFacts, decision_from_facts, execute_start_decision, inspect_start, send_system_content
 
 
 class FakeSender:
@@ -102,5 +102,28 @@ def test_lost_welcome_state_is_logged_without_message(tmp_path):
         assert sender.sent == []
         event = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "start_routing_error"))
         assert event.metadata_json["reason"] == "welcome_started_without_run_or_day_four"
+    finally:
+        session.close()
+
+
+def test_system_content_resolves_personal_link(tmp_path):
+    session, contact = prepared(tmp_path, "personal")
+    try:
+        user = CrmUser(display_name="Получатель", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+        contact.user_id = user.id
+        item = session.scalar(
+            select(ContentItem).where(ContentItem.code == "tpl_start_intensive_complete")
+        )
+        item.body_source = "Ваш интенсив: {{personal_intensive_url}}"
+        session.commit()
+
+        sender = FakeSender()
+        send_system_content(session, contact, item.code, sender)
+
+        assert "{{personal_" not in sender.sent[0][2]
+        assert "/i/" in sender.sent[0][2]
+        assert session.query(MessengerLinkToken).count() == 1
     finally:
         session.close()

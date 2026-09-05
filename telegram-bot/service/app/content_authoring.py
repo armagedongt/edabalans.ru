@@ -42,6 +42,13 @@ ALLOWED_VARIABLES_BY_CONTENT_CODE = {
     "tpl_postpurchase_review_no_consultation": {"offers_url", "offer_expires_at"},
     "tpl_postpurchase_final_offer": {"offers_url"},
 }
+GLOBAL_ALLOWED_VARIABLES = {
+    "personal_intensive_url",
+    "personal_masterclass_url",
+}
+PERSONAL_CHANNEL_POST_VARIABLE = re.compile(
+    r"personal_channel_post_[1-9][0-9]{0,6}_url"
+)
 
 
 def template_variables(body: str) -> list[str]:
@@ -49,7 +56,17 @@ def template_variables(body: str) -> list[str]:
 
 
 def allowed_variables(content_code: str) -> list[str]:
-    return sorted(ALLOWED_VARIABLES_BY_CONTENT_CODE.get(content_code, set()))
+    return sorted(
+        GLOBAL_ALLOWED_VARIABLES
+        | ALLOWED_VARIABLES_BY_CONTENT_CODE.get(content_code, set())
+    )
+
+
+def variable_is_allowed(content_code: str, variable: str) -> bool:
+    return (
+        variable in allowed_variables(content_code)
+        or PERSONAL_CHANNEL_POST_VARIABLE.fullmatch(variable) is not None
+    )
 
 
 def content_usages(session: Session) -> dict[str, list[dict]]:
@@ -128,7 +145,11 @@ def readiness(item: ContentItem, usages: list[dict] | None = None) -> tuple[str,
     media_only = bool(item.media_kind == "video_note" and (item.media_path or item.telegram_file_id))
     if is_placeholder_text(item.body_source) and not media_only:
         issues.append("placeholder")
-    unknown = set(template_variables(item.body_source)) - set(allowed_variables(item.code))
+    unknown = {
+        variable
+        for variable in template_variables(item.body_source)
+        if not variable_is_allowed(item.code, variable)
+    }
     if unknown:
         issues.append("unknown_variables")
     media_step_required = any(

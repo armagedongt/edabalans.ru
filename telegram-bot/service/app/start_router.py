@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.engine import has_paid_product, start_run
+from app.engine import has_paid_product, personalized_delivery, start_run
 from app.graph import START_ROUTER_RULES
 from app.customer_lifecycle import stop_presale_runs_for_user
 from app.content_formatting import content_is_runtime_ready, replace_template_values
@@ -128,10 +128,11 @@ def send_system_content(session: Session, contact: Contact, content_code: str, s
     if not content_is_runtime_ready(item):
         raise RuntimeError(f"Start content is not owner-approved: {content_code}")
     rendered = _render_content(item, values or {})
+    rendered, configuration = personalized_delivery(session, contact, rendered, {})
     log = ManualMessage(contact_id=contact.id, direction="out", body_source=rendered.body_source, status="pending", operator_email="system:start_router")
     session.add(log)
     try:
-        log.platform_message_id = sender.send_content(contact.chat_id, rendered, {})
+        log.platform_message_id = sender.send_content(contact.chat_id, rendered, configuration)
         log.status = "sent"
     except Exception:
         log.status = "failed"

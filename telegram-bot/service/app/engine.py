@@ -1,17 +1,25 @@
 from __future__ import annotations
 
 import logging
+import re
 from datetime import UTC, datetime, timedelta
+from types import SimpleNamespace
 from typing import Any, Protocol
 
 from sqlalchemy import delete, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.models import ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
-from app.content_formatting import content_is_runtime_ready
+from app.config import get_settings
+from app.content_formatting import content_is_runtime_ready, replace_template_values
+from app.intensive_access import personal_tracking_values
 
 
 logger = logging.getLogger(__name__)
+PERSONAL_TEMPLATE_MARKER = "{{personal_"
+PERSONAL_CHANNEL_POST_TEMPLATE = re.compile(
+    r"{{\s*personal_channel_post_([1-9][0-9]{0,6})_url\s*}}"
+)
 
 
 class Sender(Protocol):
@@ -229,6 +237,53 @@ def has_paid_product(session: Session, contact: Contact, product_codes: list[str
     return bool(_variable(session, contact.id, f"has_product:{variable_key}"))
 
 
+def _replace_configuration_values(value: Any, values: dict[str, str]) -> Any:
+    if isinstance(value, str):
+        return replace_template_values(value, values)
+    if isinstance(value, list):
+        return [_replace_configuration_values(item, values) for item in value]
+    if isinstance(value, dict):
+        return {
+            key: _replace_configuration_values(item, values)
+            for key, item in value.items()
+        }
+    return value
+
+
+def personalized_delivery(
+    session: Session,
+    contact: Contact,
+    content: ContentItem,
+    configuration: dict[str, Any],
+) -> tuple[Any, dict[str, Any]]:
+    body = content.body_source or ""
+    if PERSONAL_TEMPLATE_MARKER not in body and PERSONAL_TEMPLATE_MARKER not in str(configuration):
+        return content, configuration
+    if not contact.user_id:
+        raise RuntimeError("Personal link requires a CRM user")
+    source = f"{body}\n{configuration}"
+    channel_post_numbers = {
+        int(match.group(1))
+        for match in PERSONAL_CHANNEL_POST_TEMPLATE.finditer(source)
+    }
+    values = personal_tracking_values(
+        session,
+        user_id=contact.user_id,
+        platform="telegram",
+        public_url=get_settings().intensive_public_url,
+        channel_post_numbers=channel_post_numbers,
+    )
+    rendered = SimpleNamespace(
+        code=content.code,
+        title=content.title,
+        body_source=replace_template_values(body, values),
+        media_kind=content.media_kind,
+        media_path=content.media_path,
+        telegram_file_id=content.telegram_file_id,
+    )
+    return rendered, _replace_configuration_values(configuration, values)
+
+
 def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: int = 100) -> SequenceRun:
     contact = session.get(Contact, run.contact_id)
     for _ in range(max_steps):
@@ -256,7 +311,14 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 break
             try:
                 delivery.attempt_count += 1
-                delivery.platform_message_id = sender.send_content(contact.chat_id, content, config)
+                rendered_content, rendered_config = personalized_delivery(
+                    session, contact, content, config
+                )
+                delivery.platform_message_id = sender.send_content(
+                    contact.chat_id, rendered_content, rendered_config
+                )
+                if rendered_content is not content and rendered_content.telegram_file_id:
+                    content.telegram_file_id = rendered_content.telegram_file_id
                 if config.get("pin_after_send") and hasattr(sender, "pin_message"):
                     try:
                         sender.pin_message(contact.chat_id, delivery.platform_message_id)

@@ -42,6 +42,7 @@ from app.blog_routes import router as blog_router
 from app.public_video_analytics_routes import router as public_video_analytics_router
 from app.public_site_routes import router as public_site_router
 from app.marketing_routes import router as marketing_router
+from app.personal_tracking_routes import router as personal_tracking_router
 from app.database import SessionLocal, get_db
 
 settings = get_settings()
@@ -106,6 +107,7 @@ async def protect_native_account_host(request: Request, call_next):
                 )
     return await call_next(request)
 app.include_router(marketing_router)
+app.include_router(personal_tracking_router)
 app.include_router(crm_router)
 app.include_router(content_router)
 app.include_router(app_router)

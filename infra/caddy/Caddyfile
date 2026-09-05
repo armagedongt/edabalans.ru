@@ -144,6 +144,11 @@
 		redir https://app.edabalans.ru/intensive/start?i={re.intensive_entry.1} 307
 	}
 
+	@personal_outbound path_regexp personal_outbound ^/(m|p)/.*$
+	handle @personal_outbound {
+		reverse_proxy backend:8000
+	}
+
 	@short path_regexp short ^/([^/]+)$
 	handle @short {
 		rewrite * /go/{re.short.1}

@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app import content_authoring_cli
-from app.content_authoring import audit_content
+from app.content_authoring import allowed_variables, audit_content, variable_is_allowed
 from app.content_formatting import (
     telegram_html_links,
     template_value_for_source,
@@ -20,6 +20,15 @@ def test_telegram_html_links_accept_semantically_equivalent_href_quotes():
     assert telegram_html_links("<A href='https://example.test/dqs'>DQS</A>") == [
         "https://example.test/dqs"
     ]
+
+
+def test_personal_link_variables_are_available_to_every_message():
+    variables = allowed_variables("tpl_any_owner_approved_message")
+    assert "personal_intensive_url" in variables
+    assert "personal_masterclass_url" in variables
+    assert variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_260_url")
+    assert variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_734_url")
+    assert not variable_is_allowed("tpl_any_owner_approved_message", "personal_channel_post_0_url")
 from app.database import Base, get_db, make_engine
 from app.main import app
 from app.masterclass_dispatch import content_is_sendable, rendered

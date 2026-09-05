@@ -9,6 +9,7 @@ from app.intensive_access import (
     PURPOSE,
     create_intensive_access_link,
     get_or_create_intensive_access_link,
+    personal_tracking_values,
 )
 from app.models import CrmUser, MessengerLinkToken
 
@@ -83,4 +84,29 @@ def test_reuses_same_recoverable_link_for_telegram_menu(tmp_path):
 
         assert first_url == second_url
         assert first_row.id == second_row.id
+        assert session.query(MessengerLinkToken).count() == 1
+
+
+def test_personal_destinations_reuse_one_opaque_code(tmp_path):
+    engine = make_engine(f"sqlite:///{tmp_path / 'personal-destinations.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        user = CrmUser(display_name="Участник", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+
+        values = personal_tracking_values(
+            session,
+            user_id=user.id,
+            platform="telegram",
+            public_url="https://go.похудение-это-есть.рф/i",
+            channel_post_numbers={260, 732, 734},
+        )
+
+        intensive_code = urlparse(values["personal_intensive_url"]).path.rsplit("/", 1)[-1]
+        masterclass_code = urlparse(values["personal_masterclass_url"]).path.rsplit("/", 1)[-1]
+        post_code = urlparse(values["personal_channel_post_260_url"]).path.rsplit("/", 1)[-1]
+        assert intensive_code == masterclass_code == post_code
+        assert values["personal_channel_post_732_url"].endswith(f"/p/732/{intensive_code}")
+        assert values["personal_channel_post_734_url"].endswith(f"/p/734/{intensive_code}")
         assert session.query(MessengerLinkToken).count() == 1

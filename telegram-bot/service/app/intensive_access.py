@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import hashlib
 import uuid
+from collections.abc import Iterable
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote, urlencode, urlsplit, urlunsplit
 
@@ -28,6 +29,37 @@ def intensive_access_url(public_url: str, token: str) -> str:
         return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
     separator = "&" if "?" in public_url else "?"
     return f"{public_url}{separator}{urlencode({'i': token})}"
+
+
+def personal_tracking_values(
+    session: Session,
+    *,
+    user_id: str,
+    platform: str,
+    public_url: str,
+    channel_post_numbers: Iterable[int] = (),
+) -> dict[str, str]:
+    intensive_url, row = get_or_create_intensive_access_link(
+        session,
+        user_id=user_id,
+        platform=platform,
+        public_url=public_url,
+    )
+    token = intensive_token(str(row.id))
+    parts = urlsplit(public_url)
+    root = urlunsplit((parts.scheme, parts.netloc, "", "", "")).rstrip("/")
+    encoded = quote(token, safe="")
+    values = {
+        "personal_intensive_url": intensive_url,
+        "personal_masterclass_url": f"{root}/m/{encoded}",
+    }
+    for post_number in channel_post_numbers:
+        if post_number < 1 or post_number > 9_999_999:
+            raise ValueError("invalid Telegram channel post number")
+        values[f"personal_channel_post_{post_number}_url"] = (
+            f"{root}/p/{post_number}/{encoded}"
+        )
+    return values
 
 
 def create_intensive_access_link(
