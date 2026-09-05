@@ -116,6 +116,22 @@ def test_sets_personal_chat_menu_web_app():
     }
 
 
+def test_resets_personal_chat_menu_to_default():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": True})
+
+    TelegramClient("secret", httpx.MockTransport(handler)).reset_chat_menu_button("42")
+
+    assert seen[0].url.path.endswith("/setChatMenuButton")
+    assert json.loads(seen[0].content) == {
+        "chat_id": 42,
+        "menu_button": {"type": "default"},
+    }
+
+
 def test_long_polling_sends_offset_and_returns_updates():
     seen = []
 

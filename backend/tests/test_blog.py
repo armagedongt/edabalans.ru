@@ -92,6 +92,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "В этом материале" in response.text
     assert 'data-component="blog-cta"' in response.text
     assert 'data-tracking-key="blog_intensive"' in response.text
+    assert 'href="https://go.похудение-это-есть.рф/intensiv"' in response.text
     assert "Как сделать похудение проще" in response.text
     assert "Читать бесплатно" in response.text
     assert '<header class="article-hero">' in response.text

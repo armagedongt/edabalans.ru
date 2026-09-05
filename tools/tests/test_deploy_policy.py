@@ -133,6 +133,32 @@ class DeployPolicyTests(unittest.TestCase):
             deploy,
         )
 
+    def test_go_public_intensive_redirect_preserves_attribution(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(
+            encoding="utf-8"
+        )
+        deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("@intensive_public path /intensiv /intensiv/", source)
+        self.assertIn(
+            "redir https://app.edabalans.ru/intensive{?query} 307",
+            source,
+        )
+        self.assertLess(
+            source.index("@intensive_public"),
+            source.index("@short path_regexp"),
+        )
+        self.assertIn(
+            "https://go.похудение-это-есть.рф/intensiv?utm_source=deploy-smoke&yclid=deploy-smoke",
+            deploy,
+        )
+        self.assertIn(
+            "location: https://app.edabalans.ru/intensive?utm_source=deploy-smoke&yclid=deploy-smoke",
+            deploy,
+        )
+
     def test_ci_builds_and_tests_only_changed_application_services(self) -> None:
         source = (REPOSITORY_ROOT / ".github/workflows/production.yml").read_text(encoding="utf-8")
 

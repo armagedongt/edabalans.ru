@@ -177,6 +177,15 @@ for favicon_asset in favicon-test-black.svg favicon-test-blue.svg favicon-test-f
 done
 
 if [[ "${caddy_changed}" == "true" ]]; then
+    intensive_headers="$(curl --fail --silent --show-error --max-time 15 \
+        --dump-header - --output /dev/null \
+        'https://go.похудение-это-есть.рф/intensiv?utm_source=deploy-smoke&yclid=deploy-smoke' | tr -d '\r')"
+    if ! grep -Fqi \
+        'location: https://app.edabalans.ru/intensive?utm_source=deploy-smoke&yclid=deploy-smoke' \
+        <<<"${intensive_headers}"; then
+        echo "Caddy did not apply the public intensive redirect with attribution" >&2
+        exit 1
+    fi
     app_headers="$(curl --fail --silent --show-error --max-time 15 \
         --dump-header - --output /dev/null \
         https://app.edabalans.ru/apps/masterclass-course.html | tr -d '\r')"

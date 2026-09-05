@@ -760,7 +760,7 @@ def process_update(update: dict, session: Session) -> dict:
                 platform="telegram",
                 public_url=settings.intensive_public_url,
             )
-            tg.set_chat_menu_web_app(contact.chat_id, "Интенсив", intensive_url)
+            tg.reset_chat_menu_button(contact.chat_id)
             yandex_entry = any(
                 marker in " ".join([
                     str((raw_query or {}).get("utm_source") or ""),

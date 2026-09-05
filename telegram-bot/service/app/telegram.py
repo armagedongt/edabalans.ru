@@ -125,6 +125,15 @@ class TelegramClient:
             },
         )
 
+    def reset_chat_menu_button(self, chat_id: str) -> None:
+        self.call(
+            "setChatMenuButton",
+            {
+                "chat_id": int(chat_id),
+                "menu_button": {"type": "default"},
+            },
+        )
+
     def pin_message(self, chat_id: str, message_id: str) -> None:
         self.call("pinChatMessage", {"chat_id": chat_id, "message_id": message_id, "disable_notification": True})
 
