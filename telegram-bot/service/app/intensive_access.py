@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import base64
 import hashlib
-import secrets
+import uuid
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlencode
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from .models import MessengerLinkToken
@@ -13,6 +15,15 @@ from .models import MessengerLinkToken
 PURPOSE = "intensive_access"
 TOKEN_TTL = timedelta(days=2 * 365)
 PLATFORMS = {"telegram", "max"}
+
+
+def intensive_token(token_id: str) -> str:
+    return "E" + base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
+
+
+def _access_url(public_url: str, token: str) -> str:
+    separator = "&" if "?" in public_url else "?"
+    return f"{public_url}{separator}{urlencode({'i': token})}"
 
 
 def create_intensive_access_link(
@@ -32,7 +43,8 @@ def create_intensive_access_link(
     current = now or datetime.now(timezone.utc)
     if current.tzinfo is None:
         current = current.replace(tzinfo=timezone.utc)
-    token = token or ("E" + secrets.token_urlsafe(18))
+    row_id = row_id or str(uuid.uuid4())
+    token = token or intensive_token(row_id)
     if not token.startswith("E") or len(token) > 128:
         raise ValueError("invalid intensive access token")
     row = MessengerLinkToken(
@@ -45,6 +57,42 @@ def create_intensive_access_link(
     )
     session.add(row)
     session.flush()
-    separator = "&" if "?" in public_url else "?"
-    query = urlencode({"i": token})
-    return f"{public_url}{separator}{query}", row
+    return _access_url(public_url, token), row
+
+
+def get_or_create_intensive_access_link(
+    session: Session,
+    *,
+    user_id: str,
+    platform: str,
+    public_url: str,
+    now: datetime | None = None,
+) -> tuple[str, MessengerLinkToken]:
+    if platform not in PLATFORMS:
+        raise ValueError("unsupported intensive platform")
+    if not public_url.startswith("https://"):
+        raise ValueError("intensive public URL must use HTTPS")
+    current = now or datetime.now(timezone.utc)
+    if current.tzinfo is None:
+        current = current.replace(tzinfo=timezone.utc)
+    rows = session.scalars(
+        select(MessengerLinkToken)
+        .where(
+            MessengerLinkToken.user_id == user_id,
+            MessengerLinkToken.platform == platform,
+            MessengerLinkToken.purpose == PURPOSE,
+            MessengerLinkToken.expires_at > current,
+        )
+        .order_by(MessengerLinkToken.created_at.desc())
+    )
+    for row in rows:
+        token = intensive_token(row.id)
+        if row.token_hash == hashlib.sha256(token.encode("ascii")).hexdigest():
+            return _access_url(public_url, token), row
+    return create_intensive_access_link(
+        session,
+        user_id=user_id,
+        platform=platform,
+        public_url=public_url,
+        now=current,
+    )

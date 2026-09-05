@@ -16,6 +16,7 @@ class FakeTelegram:
         self.sent = []
         self.callbacks = []
         self.configurations = []
+        self.menu_apps = []
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code if hasattr(content, "code") else content.body_source))
@@ -24,6 +25,9 @@ class FakeTelegram:
 
     def answer_callback(self, callback_query_id, text=""):
         self.callbacks.append((callback_query_id, text))
+
+    def set_chat_menu_web_app(self, chat_id, text, url):
+        self.menu_apps.append((chat_id, text, url))
 
 
 def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
@@ -87,6 +91,9 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=update).json() == {"ok": True}
     assert client.post("/telegram/webhook", json=update).json()["duplicate"] is True
     assert [x[1] for x in fake.sent] == ["tpl_start_navigation_pin", "tpl_entry_circle", "tpl_start_welcome_offer"]
+    assert len(fake.menu_apps) == 1
+    assert fake.menu_apps[0][0:2] == ("42", "Интенсив")
+    assert fake.menu_apps[0][2].startswith("https://app.edabalans.ru/intensive/start?i=E")
     contacts = client.get("/bot-api/contacts").json()
     assert len(contacts) == 1
     assert contacts[0]["run_status"] == "waiting"
@@ -96,6 +103,7 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     assert client.post("/telegram/webhook", json=repeat).json() == {"ok": True}
     assert len(fake.sent) == 5
     assert fake.sent[-1][1] == "tpl_start_intensive_waiting"
+    assert fake.menu_apps[-1][2] == fake.menu_apps[0][2]
     assert "tpl_day1" in [item[1] for item in fake.sent]
     overview = client.get("/bot-api/map").json()
     assert overview["level"] == "overview"

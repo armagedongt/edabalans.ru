@@ -90,6 +90,32 @@ def test_send_content_builds_web_app_button():
     }
 
 
+def test_sets_personal_chat_menu_web_app():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": True})
+
+    TelegramClient("secret", httpx.MockTransport(handler)).set_chat_menu_web_app(
+        "42",
+        "Интенсив",
+        "https://app.edabalans.ru/intensive/start?i=Epersonal",
+    )
+
+    assert seen[0].url.path.endswith("/setChatMenuButton")
+    assert json.loads(seen[0].content) == {
+        "chat_id": 42,
+        "menu_button": {
+            "type": "web_app",
+            "text": "Интенсив",
+            "web_app": {
+                "url": "https://app.edabalans.ru/intensive/start?i=Epersonal"
+            },
+        },
+    }
+
+
 def test_long_polling_sends_offset_and_returns_updates():
     seen = []
 

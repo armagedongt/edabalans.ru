@@ -29,6 +29,7 @@ from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
 from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
+from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
@@ -711,6 +712,13 @@ def process_update(update: dict, session: Session) -> dict:
                 session.commit()
                 return {"ok": True, "maintenance": True}
             tg = client()
+            intensive_url, _ = get_or_create_intensive_access_link(
+                session,
+                user_id=contact.user_id,
+                platform="telegram",
+                public_url=settings.intensive_public_url,
+            )
+            tg.set_chat_menu_web_app(contact.chat_id, "Интенсив", intensive_url)
             run = execute_start_decision(
                 session,
                 contact,

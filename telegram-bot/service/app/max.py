@@ -1,7 +1,6 @@
 """MAX start adapter with identity, attribution and intensive access."""
 from __future__ import annotations
 
-import base64
 import hashlib
 import ssl
 import uuid
@@ -13,7 +12,7 @@ import httpx
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.intensive_access import create_intensive_access_link
+from app.intensive_access import create_intensive_access_link, intensive_token
 from app.models import (
     BotInstance,
     CrmAttributionEvent,
@@ -110,10 +109,6 @@ def _receipt_id(update: dict[str, Any]) -> str:
         str(update.get("payload", "")),
     ))
     return f"max:{hashlib.sha256(raw.encode()).hexdigest()[:56]}"
-
-
-def _intensive_token(token_id: str) -> str:
-    return "E" + base64.urlsafe_b64encode(uuid.UUID(token_id).bytes).decode().rstrip("=")
 
 
 def _send_intensive(sender: MaxClient, user_id: str, intensive_url: str) -> str:
@@ -260,7 +255,7 @@ def process_max_update(
             }
             session.commit()
             return {"ok": True, "duplicate": True}
-        token = _intensive_token(token_id)
+        token = intensive_token(token_id)
         separator = "&" if "?" in intensive_public_url else "?"
         intensive_url = f"{intensive_public_url}{separator}i={token}"
         message_id = _send_intensive(sender, str(user["user_id"]), intensive_url)
@@ -276,7 +271,7 @@ def process_max_update(
     account, created = _ensure_identity(session, user)
     link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, str(update.get("payload") or ""))
     intensive_token_id = str(uuid.uuid4())
-    token = _intensive_token(intensive_token_id)
+    token = intensive_token(intensive_token_id)
     tracking_event = _assign_first_touch(
         session,
         account,

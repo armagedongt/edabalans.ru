@@ -5,8 +5,12 @@ from urllib.parse import parse_qs, urlparse
 from sqlalchemy.orm import Session
 
 from app.database import Base, make_engine
-from app.intensive_access import PURPOSE, create_intensive_access_link
-from app.models import CrmUser
+from app.intensive_access import (
+    PURPOSE,
+    create_intensive_access_link,
+    get_or_create_intensive_access_link,
+)
+from app.models import CrmUser, MessengerLinkToken
 
 
 def test_intensive_link_is_personal_platform_bound_and_long_lived(tmp_path):
@@ -52,3 +56,29 @@ def test_max_link_uses_same_contract_with_max_source(tmp_path):
         )
         assert "from" not in parse_qs(urlparse(max_url).query)
         assert row.platform == "max"
+
+
+def test_reuses_same_recoverable_link_for_telegram_menu(tmp_path):
+    engine = make_engine(f"sqlite:///{tmp_path / 'intensive-menu.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        user = CrmUser(display_name="Участник", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+
+        first_url, first_row = get_or_create_intensive_access_link(
+            session,
+            user_id=user.id,
+            platform="telegram",
+            public_url="https://app.edabalans.ru/intensive/start",
+        )
+        second_url, second_row = get_or_create_intensive_access_link(
+            session,
+            user_id=user.id,
+            platform="telegram",
+            public_url="https://app.edabalans.ru/intensive/start",
+        )
+
+        assert first_url == second_url
+        assert first_row.id == second_row.id
+        assert session.query(MessengerLinkToken).count() == 1

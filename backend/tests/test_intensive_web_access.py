@@ -103,8 +103,15 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
         assert event.ref_code == "click-1"
         assert "i=" not in (event.landing_url or "")
 
-    replay = TestClient(app).get(f"/intensive/start?i={token}", follow_redirects=False)
-    assert replay.status_code == 404
+    second_device = TestClient(app)
+    replay = second_device.get(f"/intensive/start?i={token}", follow_redirects=False)
+    assert replay.status_code == 307
+    assert replay.headers["location"].startswith("/intensive/day-1")
+    assert second_device.get("/api/intensive/state").json()["platform"] == "telegram"
+    with factory() as db:
+        row = access_token_row(db, token)
+        assert row is not None
+        assert row.consumed_at is None
     app.dependency_overrides.clear()
 
 

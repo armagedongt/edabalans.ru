@@ -13,7 +13,7 @@ from typing import Any
 from urllib.parse import urlencode, urlsplit, urlunsplit
 
 from fastapi import Request, Response
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -141,7 +141,7 @@ def access_token_row(
             MessengerLinkToken.purpose == ACCESS_PURPOSE,
         )
     )
-    if row is None or row.platform not in PLATFORMS or row.consumed_at is not None:
+    if row is None or row.platform not in PLATFORMS:
         return None
     current = aware_utc(now or datetime.now(timezone.utc))
     return row if aware_utc(row.expires_at) > current else None
@@ -150,23 +150,8 @@ def access_token_row(
 def consume_access_token(
     db: Session, token: str, *, now: datetime | None = None
 ) -> MessengerLinkToken | None:
-    """Atomically exchange a valid bearer token for a web session."""
-    if not token or len(token) > 128:
-        return None
-    current = aware_utc(now or datetime.now(timezone.utc))
-    digest = hashlib.sha256(token.encode("utf-8")).hexdigest()
-    return db.scalar(
-        update(MessengerLinkToken)
-        .where(
-            MessengerLinkToken.token_hash == digest,
-            MessengerLinkToken.purpose == ACCESS_PURPOSE,
-            MessengerLinkToken.platform.in_(PLATFORMS),
-            MessengerLinkToken.consumed_at.is_(None),
-            MessengerLinkToken.expires_at > current,
-        )
-        .values(consumed_at=current)
-        .returning(MessengerLinkToken)
-    )
+    """Resolve the reusable free-intensive entry code into a web session."""
+    return access_token_row(db, token, now=now)
 
 
 def session_identity(

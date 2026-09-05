@@ -16,10 +16,14 @@ from app.seed import seed_defaults
 class FakeTelegram:
     def __init__(self):
         self.sent = []
+        self.menu_apps = []
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, getattr(content, "code", None) or content.body_source))
         return str(len(self.sent))
+
+    def set_chat_menu_web_app(self, chat_id, text, url):
+        self.menu_apps.append((chat_id, text, url))
 
 
 def make_client(tmp_path, monkeypatch):

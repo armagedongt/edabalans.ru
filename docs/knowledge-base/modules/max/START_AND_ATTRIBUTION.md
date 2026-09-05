@@ -47,10 +47,10 @@ implementation_status: implemented
    Одновременно записать совместимое событие `start_first`/`start_repeat` в
    `tg_tracking_events`; UTM и `yclid` берутся из одноразовой session, созданной
    переходом `/go/{code}?to=max`.
-8. Создать access token с максимальным сроком предъявления два года и
-   `platform=max`, затем персональную ссылку `/intensive/start?i=...`. При первом
-   открытии web-runtime атомарно погашает bearer token и заменяет его HttpOnly
-   session cookie; повторное предъявление ссылки отклоняется.
+8. Создать access token со сроком предъявления два года и `platform=max`, затем
+   персональную ссылку `/intensive/start?i=...`. Web-runtime обменивает её на
+   HttpOnly session cookie, но не погашает: повторное открытие на другом устройстве
+   восстанавливает тот же бесплатный путь и прогресс.
 9. Не отмечать `main_scenario_seen_at` и не запускать Telegram sequence.
 10. До внешнего вызова сохранить receipt, пользователя, событие и
     детерминированный access token со статусом доставки `pending`.

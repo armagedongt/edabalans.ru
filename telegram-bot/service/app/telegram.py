@@ -104,6 +104,19 @@ class TelegramClient:
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:
         self.call("answerCallbackQuery", {"callback_query_id": callback_query_id, "text": text})
 
+    def set_chat_menu_web_app(self, chat_id: str, text: str, url: str) -> None:
+        self.call(
+            "setChatMenuButton",
+            {
+                "chat_id": int(chat_id),
+                "menu_button": {
+                    "type": "web_app",
+                    "text": text,
+                    "web_app": {"url": url},
+                },
+            },
+        )
+
     def pin_message(self, chat_id: str, message_id: str) -> None:
         self.call("pinChatMessage", {"chat_id": chat_id, "message_id": message_id, "disable_notification": True})
 
