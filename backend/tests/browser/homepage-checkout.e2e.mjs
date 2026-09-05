@@ -1,7 +1,9 @@
 const playwrightModule = process.env.PLAYWRIGHT_MODULE_URL || 'playwright'
 const { chromium } = await import(playwrightModule)
 
-const baseUrl = process.env.HOMEPAGE_BASE_URL || 'http://127.0.0.1:8791'
+const baseUrl = process.env.HOMEPAGE_BASE_URL || 'http://127.0.0.1:8790'
+const appUrl = 'https://app.edabalans.test'
+const tildaUrl = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/mk1'
 const browser = await chromium.launch({
   headless: true,
   executablePath: process.env.CHROME_EXECUTABLE_PATH || undefined,
@@ -21,6 +23,7 @@ const catalog = {
 
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 900 } })
+  let checkoutBody = null
   await page.addInitScript(() => {
     window.__cartProducts = []
     window.__cartOpenCount = 0
@@ -28,25 +31,47 @@ try {
     window.tcart__openCart = () => { window.__cartOpenCount += 1 }
   })
 
-  let checkoutBody = null
-  await page.route('**/api/pricing/site**', async route => {
+  await page.route(`${tildaUrl}**`, route => route.fulfill({
+    contentType: 'text/html',
+    body: `<!doctype html><html><head></head><body>
+      <div class="t-rec"><div class="t123__centeredContainer">
+        <div data-edabalans-homepage></div>
+      </div></div>
+      <script src="${appUrl}/homepage.js"></script>
+    </body></html>`,
+  }))
+
+  await page.route(`${appUrl}/**`, async route => {
     const request = route.request()
-    if (request.method() === 'POST') {
-      checkoutBody = request.postDataJSON()
+    const url = new URL(request.url())
+    if (url.pathname.startsWith('/api/pricing/site')) {
+      if (request.method() === 'POST') checkoutBody = request.postDataJSON()
       await route.fulfill({
         contentType: 'application/json',
-        body: JSON.stringify({ cart_command: '#order:Самостоятельный · №12345678=2900' }),
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify(request.method() === 'POST'
+          ? { cart_command: '#order:Самостоятельный · №12345678=2900' }
+          : catalog),
       })
       return
     }
-    await route.fulfill({ contentType: 'application/json', body: JSON.stringify(catalog) })
+    const upstream = await page.request.fetch(`${baseUrl}${url.pathname}${url.search}`)
+    await route.fulfill({
+      status: upstream.status(),
+      headers: { ...upstream.headers(), 'access-control-allow-origin': '*' },
+      body: await upstream.body(),
+    })
   })
 
-  await page.goto(`${baseUrl}/preview/homepage-tilda-shell?intensive_offer=offer-test`, {
+  await page.goto(`${tildaUrl}?intensive_offer=offer-test`, {
     waitUntil: 'domcontentloaded',
   })
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await tildaButton.waitFor({ state: 'visible' })
+  const checkoutEndpoint = await page.locator('#edb-pricing-neurozeh-v1').getAttribute('data-checkout-endpoint')
+  if (checkoutEndpoint !== `${appUrl}/api/pricing/site/checkout`) {
+    throw new Error(`Loader did not rewrite cross-origin checkout endpoint: ${checkoutEndpoint}`)
+  }
   await tildaButton.click()
   await page.waitForFunction(() => window.__cartOpenCount === 1)
 
@@ -67,7 +92,6 @@ try {
     throw new Error('Direct Robokassa email modal opened in Tilda embed mode')
   }
 
-  await page.unroute('**/api/pricing/site**')
   await page.route('**/api/pricing/site/preview**', route => route.fulfill({
     contentType: 'application/json',
     body: JSON.stringify(catalog),
