@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Личный кабинет · Похудение — это есть!</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,Arial,sans-serif;color:#17172b;background:#f5f5f7}
+    .auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px}.auth-card{width:min(430px,100%);padding:30px;border:1px solid #e7e7ef;border-radius:20px;background:#fff;box-shadow:0 16px 50px rgba(20,20,40,.09)}
+    .auth-kicker{margin:0 0 10px;color:#6f3de8;font-size:12px;font-weight:850;letter-spacing:.1em;text-transform:uppercase}.auth-card h1{margin:0;font-size:38px;line-height:1}.auth-lead{margin:13px 0 24px;color:#696e81;line-height:1.5}.auth-field{display:block;margin-top:14px;font-size:14px;font-weight:800}.auth-field input{display:block;width:100%;height:50px;margin-top:7px;padding:0 14px;border:1px solid #d9d9e3;border-radius:10px;background:#fff;color:#17172b;font:16px Inter,Arial,sans-serif}.auth-field input:focus{outline:3px solid #d9cff8;border-color:#6f3de8}.auth-submit{width:100%;min-height:50px;margin-top:20px;border:0;border-radius:10px;background:#6f3de8;color:#fff;font-size:16px;font-weight:850;cursor:pointer}.auth-submit:disabled{opacity:.65}.auth-error{min-height:22px;margin:12px 0 0;color:#a33325;font-size:14px;text-align:center}.auth-help{margin:18px 0 0;color:#696e81;font-size:14px;text-align:center}.auth-help a{color:#17172b;font-weight:800}.loading{padding:40px;text-align:center}
+    @media(max-width:520px){.auth-shell{padding:14px}.auth-card{padding:24px 18px}.auth-card h1{font-size:34px}}
+  </style>
+</head>
+<body>
+  <main id="portal"><div class="loading">Проверяю вход…</div></main>
+  <script src="/embed.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    var portal=document.getElementById('portal');
+    function esc(value){return String(value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+    function login(){
+      portal.innerHTML='<section class="auth-shell"><form class="auth-card" id="login-form"><p class="auth-kicker">Похудение — это есть!</p><h1>Личный кабинет</h1><p class="auth-lead">Введите email, который указывали при покупке, и пароль из сообщения бота.</p><label class="auth-field">Email<input name="email" type="email" autocomplete="username" required></label><label class="auth-field">Пароль<input name="password" type="password" autocomplete="current-password" required minlength="8"></label><button class="auth-submit" type="submit">Войти</button><p class="auth-error" aria-live="polite"></p><p class="auth-help">Не получается войти? <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Напишите Сергею</a></p></form></section>';
+      var form=document.getElementById('login-form'),button=form.querySelector('button'),error=form.querySelector('.auth-error');
+      form.onsubmit=function(event){event.preventDefault();button.disabled=true;error.textContent='Проверяю…';fetch('/api/account-auth/login',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value,password:form.password.value})}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw new Error(payload.detail||'Не удалось войти');return payload})}).then(openAccount).catch(function(cause){error.textContent=String(cause.message||cause);button.disabled=false})};
+    }
+    function openAccount(session){
+      window.EdabalansIdentity={email:session.email,source:'native'};
+      window.EdabalansAppHost=location.origin;
+      portal.innerHTML='<div data-edabalans-app="account"></div>';
+      window.EdabalansEmbed.load(portal.firstElementChild);
+    }
+    fetch('/api/account-auth/session',{credentials:'same-origin'}).then(function(response){return response.json()}).then(function(session){if(session.authenticated)openAccount(session);else login()}).catch(login);
+  }());
+  </script>
+</body>
+</html>

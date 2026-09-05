@@ -132,7 +132,7 @@
           "label": "Привязать мессенджер",
           "summary": "Подключите уведомления о новых материалах в Мастер-классе",
           "durationMinutes": 3,
-          "hidden": false
+          "hidden": true
         },
         {
           "id": "day-01-offer",

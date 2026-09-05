@@ -32,7 +32,9 @@ from app.models import (
     TelegramTrackingEvent,
 )
 from app.access_service import complete_review, grant_resources
+from app.account_onboarding_service import ensure_paid_account_onboarding
 from app.checkout_reference import checkout_reference_from_product
+from app.config import Settings, get_settings
 
 MOSCOW = ZoneInfo("Europe/Moscow")
 SOURCE = "tilda_webhook"
@@ -609,7 +611,12 @@ def grant_payment_access(
     return access_granted
 
 
-def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str]:
+def process_tilda_payment(
+    db: Session,
+    payload: dict[str, Any],
+    settings: Settings | None = None,
+) -> dict[str, str]:
+    settings = settings or get_settings()
     external_order_id = first(payload, "orderid", "order_id") or None
     external_payment_id = first(payload, "paymentid", "payment_id") or None
     if not external_order_id and not external_payment_id:
@@ -663,7 +670,11 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
     existing = find_existing_payment(db, external_order_id, external_payment_id)
     if existing is not None:
         if payment_status != "paid" or existing.payment_status == "paid":
-            db.rollback()
+            if existing.payment_status == "paid" and settings.account_onboarding_enabled:
+                ensure_paid_account_onboarding(db, existing, settings)
+                db.commit()
+            else:
+                db.rollback()
             return {"status": "duplicate", "payment_id": str(existing.id)}
         if (
             existing.external_order_id
@@ -723,6 +734,8 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         if checkout is not None:
             checkout.status = "paid"
         access_granted = grant_payment_access(db, existing, checkout, event_at)
+        if settings.account_onboarding_enabled:
+            ensure_paid_account_onboarding(db, existing, settings)
         if existing.user_id is not None and referer:
             db.add(
                 AttributionEvent(
@@ -795,6 +808,8 @@ def process_tilda_payment(db: Session, payload: dict[str, Any]) -> dict[str, str
         )
 
     access_granted = grant_payment_access(db, payment, checkout, event_at)
+    if settings.account_onboarding_enabled:
+        ensure_paid_account_onboarding(db, payment, settings)
     record_paid_tracking_event(db, payment, referer, event_at)
 
     try:

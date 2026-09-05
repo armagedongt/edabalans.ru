@@ -134,6 +134,11 @@
 		reverse_proxy backend:8000
 	}
 
+	@account_app path /lk /lk/ /embed.js /site-footer.js /site-header.js /apps/* /assets/* /content/* /api/*
+	handle @account_app {
+		reverse_proxy backend:8000
+	}
+
 	@short path_regexp short ^/([^/]+)$
 	handle @short {
 		rewrite * /go/{re.short.1}

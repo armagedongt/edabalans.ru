@@ -87,6 +87,34 @@ An exact order or payment ID is idempotent. A paid mapped product grants its
 configured `user_accesses`. An unknown product is saved without access for manual
 review.
 
+## Действия после подтверждённой оплаты
+
+Источник подтверждения не меняет дальнейший сценарий. После оплаченного webhook
+Tilda или подписанного `ResultUrl2` Robokassa backend:
+
+1. сопоставляет покупку с единым `user_id` по нормализованному email;
+2. выдаёт права по каталогу продукта;
+3. один раз создаёт `account_onboardings` для конкретного `payment_id`;
+4. ставит в PostgreSQL-очередь письмо с 24-часовыми ссылками Telegram и MAX;
+5. выбранный мессенджер выдаёт логин и восьмизначный буквенно-цифровой пароль.
+
+Страница успешной оплаты не участвует в выдаче доступа. Она сообщает проверить
+почту и может открыться раньше, чем будет обработан webhook. Повтор одного webhook
+не создаёт второго пользователя, второго права или второго onboarding.
+
+Новый сценарий отделён от действующей продажи флагом
+`ACCOUNT_ONBOARDING_ENABLED=false`. Пока он выключен, старые Tilda-оплаты
+продолжают работать без писем и новых паролей. Флаг включается только после
+настройки SMTP, проверки Telegram/MAX-ссылок и полной контрольной оплаты на новой
+странице. Для ссылок выдачи используются отдельные переменные
+`ACCOUNT_TELEGRAM_BOT_USERNAME` и `ACCOUNT_MAX_BOT_USERNAME`: тестовый username
+бота не должен случайно попасть в письмо покупателю.
+
+Для выбранного SMTP Mailganer/SaM oTPravil используется
+`api.samotpravil.ru:1127` с шифрованием сразу при подключении
+(`SMTP_USE_SSL=true`, `SMTP_STARTTLS=false`). Домен отправителя должен быть
+добавлен к SMTP-ключу и пройти его DNS-проверки до включения onboarding.
+
 ## Tilda setup
 
 1. Site settings → Forms → Webhook.
@@ -97,6 +125,11 @@ review.
 6. Site settings → Payment systems → Robokassa → enable sending to
    receivers only after successful payment.
 7. Republish every page containing a changed ST100 cart.
+8. Set the existing Tilda success page in the connected payment system. Its text
+   is informational only; it must not contain email, password or claim tokens.
+9. On the future replacement landing, do not enable the Tilda Members Area data
+   receiver: new buyers use the server account flow after the end-to-end payment
+   test passes.
 
 Robokassa `Result URL` remains Tilda's URL and must not be replaced by this
 endpoint.

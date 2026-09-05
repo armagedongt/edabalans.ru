@@ -55,7 +55,7 @@ async def tilda_payment(
     if payload.get("test") == "test":
         return {"status": "ok"}
     try:
-        return process_tilda_payment(db, payload)
+        return process_tilda_payment(db, payload, settings)
     except TildaPayloadError as exc:
         db.rollback()
         raise HTTPException(status_code=422, detail=str(exc)) from exc

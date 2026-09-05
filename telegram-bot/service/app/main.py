@@ -27,7 +27,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
-from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
@@ -645,6 +645,16 @@ def process_update(update: dict, session: Session) -> dict:
             text = "/start"
         if text.startswith("/start"):
             token = text.partition(" ")[2].strip() or None
+            account_credentials_link = bool(
+                token
+                and session.scalar(
+                    select(MessengerLinkToken.purpose).where(
+                        MessengerLinkToken.token_hash
+                        == hashlib.sha256(token.encode("ascii", errors="ignore")).hexdigest()
+                    )
+                )
+                == "account_credentials"
+            )
             if token and token.startswith("I") and not _maintenance_allows_contact(contact):
                 _handle_maintenance_contact(session, contact, receipt_id, "start", {"web_login": True})
                 session.commit()
@@ -664,9 +674,16 @@ def process_update(update: dict, session: Session) -> dict:
                 client().send_content(contact.chat_id, rendered_content, {})
                 session.commit()
                 return {"ok": True, "web_login": True}
-            handled, reply = consume_masterclass_link(session, contact, message["from"], token or "")
+            handled, reply = consume_masterclass_link(
+                session,
+                contact,
+                message["from"],
+                token or "",
+                settings.app_auth_secret,
+                settings.masterclass_account_url,
+            )
             if handled:
-                if not _maintenance_allows_contact(contact):
+                if not account_credentials_link and not _maintenance_allows_contact(contact):
                     _handle_maintenance_contact(
                         session,
                         contact,
@@ -676,7 +693,6 @@ def process_update(update: dict, session: Session) -> dict:
                     )
                     session.commit()
                     return {"ok": True, "maintenance": True, "masterclass_link": True}
-                session.commit()
                 client().send_content(
                     contact.chat_id,
                     SimpleNamespace(
@@ -687,6 +703,10 @@ def process_update(update: dict, session: Session) -> dict:
                     ),
                     {},
                 )
+                # Commit the one-time claim only after Telegram accepted the
+                # credentials message. A transient send failure can then be
+                # retried without losing the only copy of the generated password.
+                session.commit()
                 return {"ok": True, "masterclass_link": True}
             route = session.scalar(
                 select(BotRoute)
@@ -793,6 +813,8 @@ def max_webhook(
         bot_username=settings.max_bot_username,
         intensive_public_url=settings.intensive_public_url,
         sender=max_client(),
+        app_auth_secret=settings.app_auth_secret,
+        account_url=settings.masterclass_account_url,
     )
 
 

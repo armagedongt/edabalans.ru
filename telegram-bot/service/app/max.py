@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import html
 import ssl
 import uuid
 from datetime import UTC, datetime
@@ -9,11 +10,15 @@ from pathlib import Path
 from typing import Any
 
 import httpx
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
+from app.account_credentials import generate_password, password_hash
+from app.customer_lifecycle import stop_presale_runs_for_user
 from app.intensive_access import create_intensive_access_link, intensive_token
 from app.models import (
+    AccountCredential,
+    AccountOnboarding,
     BotInstance,
     CrmAttributionEvent,
     CrmMessengerAccount,
@@ -157,6 +162,109 @@ def _ensure_identity(session: Session, user: dict[str, Any]) -> tuple[CrmMesseng
     return account, created
 
 
+def _is_disposable_identity(session: Session, user_id: str) -> bool:
+    counts = session.execute(
+        text(
+            "SELECT "
+            "(SELECT count(*) FROM user_emails WHERE user_id=:user_id) + "
+            "(SELECT count(*) FROM user_accesses WHERE user_id=:user_id) + "
+            "(SELECT count(*) FROM payments WHERE user_id=:user_id)"
+        ),
+        {"user_id": user_id},
+    ).scalar_one()
+    return int(counts or 0) == 0
+
+
+def _consume_account_link(
+    session: Session,
+    account: CrmMessengerAccount,
+    payload: str,
+    *,
+    app_auth_secret: str,
+    account_url: str,
+) -> str:
+    digest = hashlib.sha256(payload.encode("ascii", errors="ignore")).hexdigest()
+    token = session.scalar(
+        select(MessengerLinkToken)
+        .where(MessengerLinkToken.token_hash == digest)
+        .with_for_update()
+    )
+    now = datetime.now(UTC)
+    if token is None or token.platform != "max" or token.purpose != "account_credentials":
+        return "Ссылка не найдена. Проверьте письмо или напишите Сергею."
+    if token.consumed_at is not None:
+        return "Эта ссылка уже использована. Если доступ не получен, напишите Сергею."
+    expires_at = token.expires_at.replace(tzinfo=token.expires_at.tzinfo or UTC)
+    if expires_at <= now:
+        return "Срок действия ссылки истёк. Напишите Сергею, чтобы получить новую."
+    onboarding = (
+        session.scalar(
+            select(AccountOnboarding)
+            .where(AccountOnboarding.id == token.account_onboarding_id)
+            .with_for_update()
+        )
+        if token.account_onboarding_id
+        else None
+    )
+    if onboarding is not None and onboarding.claimed_at is not None:
+        return "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите Сергею."
+    if account.user_id != token.user_id and not _is_disposable_identity(session, account.user_id):
+        return "Этот аккаунт уже связан с другим личным кабинетом. Если это ошибка, напишите Сергею."
+
+    account.user_id = token.user_id
+    account.linked_at = now
+    account.last_seen_at = now
+    account.source = "account_onboarding"
+    token.consumed_at = now
+    if onboarding is not None:
+        onboarding.status = "claimed"
+        onboarding.claimed_platform = "max"
+        onboarding.claimed_at = now
+    session.add(
+        TrackingEvent(
+            user_id=token.user_id,
+            telegram_user_id=account.platform_user_id,
+            event_type="messenger_link_confirmed",
+            deduplication_key=f"messenger-link-confirmed:{token.id}",
+            metadata_json={"platform": "max", "purpose": token.purpose},
+        )
+    )
+    stop_presale_runs_for_user(session, token.user_id, reason="messenger_link_confirmed")
+    email = session.execute(
+        text(
+            "SELECT email_normalized FROM user_emails "
+            "WHERE user_id=:user_id ORDER BY is_primary DESC, created_at LIMIT 1"
+        ),
+        {"user_id": token.user_id},
+    ).scalar_one_or_none() or ""
+    credential = session.get(AccountCredential, token.user_id)
+    raw_password = None
+    if credential is None:
+        raw_password = generate_password()
+        session.add(
+            AccountCredential(
+                user_id=token.user_id,
+                password_hash=password_hash(raw_password, app_auth_secret),
+                password_version=1,
+                issued_via="max",
+            )
+        )
+    if raw_password:
+        return (
+            "<b>Добро пожаловать! Доступ в личный кабинет готов.</b>\n\n"
+            f"Логин: <code>{html.escape(email)}</code>\n"
+            f"Пароль: <code>{raw_password}</code>\n\n"
+            f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
+            "После первого входа сайт запомнит вас на этом устройстве."
+        )
+    return (
+        "<b>Покупка добавлена в ваш личный кабинет.</b>\n\n"
+        f"Логин: <code>{html.escape(email)}</code>\n"
+        f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
+        "Пароль не менялся. Если вы его потеряли, напишите Сергею."
+    )
+
+
 def _assign_first_touch(
     session: Session,
     account: CrmMessengerAccount,
@@ -229,6 +337,8 @@ def process_max_update(
     bot_username: str,
     intensive_public_url: str,
     sender: MaxClient,
+    app_auth_secret: str = "",
+    account_url: str = "https://go.похудение-это-есть.рф/lk",
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
     if update.get("update_type") != "bot_started":
@@ -266,6 +376,28 @@ def process_max_update(
         }
         session.commit()
         return {"ok": True, "retried": True}
+
+    payload = str(update.get("payload") or "")
+    if payload.startswith("M"):
+        session.add(
+            UpdateReceipt(
+                update_id=receipt_id,
+                bot_instance_id=bot.id,
+                update_type="max_account_started",
+            )
+        )
+        account, _ = _ensure_identity(session, user)
+        reply = _consume_account_link(
+            session,
+            account,
+            payload,
+            app_auth_secret=app_auth_secret,
+            account_url=account_url,
+        )
+        sender.send_html(str(user["user_id"]), reply)
+        session.commit()
+        return {"ok": True, "account_credentials": True}
+
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type="max_bot_started"))
 
     account, created = _ensure_identity(session, user)

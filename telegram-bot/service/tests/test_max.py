@@ -1,11 +1,13 @@
 import json
+import hashlib
+import re
 import ssl
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 
 from fastapi.testclient import TestClient
 import httpx
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 from urllib.parse import parse_qs, urlparse
 
@@ -14,6 +16,8 @@ from app.database import Base, get_db, make_engine
 from app.main import app
 from app.max import MAX_CA_BUNDLE, MaxClient
 from app.models import (
+    AccountCredential,
+    AccountOnboarding,
     CrmAttributionEvent,
     CrmMessengerAccount,
     CrmTag,
@@ -137,6 +141,97 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
             "max_delivery_status": "sent",
             "max_message_id": "1",
         }
+    app.dependency_overrides.clear()
+
+
+def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    raw_token = "Mmax-account-token"
+    target_user_id = str(uuid.uuid4())
+    with Session(engine) as session:
+        session.execute(text("CREATE TABLE user_emails (user_id TEXT, email_normalized TEXT, is_primary BOOLEAN, created_at DATETIME)"))
+        session.execute(text("CREATE TABLE user_accesses (user_id TEXT)"))
+        session.execute(text("CREATE TABLE payments (user_id TEXT)"))
+        session.add(CrmUser(id=target_user_id, status="active", data_origin="native"))
+        session.flush()
+        session.execute(
+            text("INSERT INTO user_emails VALUES (:user_id, 'member@example.test', 1, CURRENT_TIMESTAMP)"),
+            {"user_id": target_user_id},
+        )
+        session.add(
+            MessengerLinkToken(
+                user_id=target_user_id,
+                platform="max",
+                purpose="account_credentials",
+                token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+                expires_at=datetime.now(UTC) + timedelta(hours=1),
+            )
+        )
+        session.commit()
+
+    response = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=raw_token),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+    assert response.json() == {"ok": True, "account_credentials": True}
+    assert len(fake.sent) == 1
+    message = fake.sent[0][1]
+    match = re.search(r"Пароль: <code>([A-Za-z0-9]{8})</code>", message)
+    assert match is not None
+    assert not set(match.group(1)) & set("O0Il1")
+    assert "member@example.test" in message
+    assert "https://go.похудение-это-есть.рф/lk" in message
+    with Session(engine) as session:
+        credential = session.get(AccountCredential, target_user_id)
+        assert credential is not None
+        assert credential.issued_via == "max"
+    app.dependency_overrides.clear()
+
+
+def test_max_account_link_rejects_second_messenger_after_telegram_claim(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    raw_token = "Mmax-already-claimed"
+    target_user_id = str(uuid.uuid4())
+    with Session(engine) as session:
+        session.execute(text("CREATE TABLE user_emails (user_id TEXT, email_normalized TEXT, is_primary BOOLEAN, created_at DATETIME)"))
+        session.execute(text("CREATE TABLE user_accesses (user_id TEXT)"))
+        session.execute(text("CREATE TABLE payments (user_id TEXT)"))
+        session.add(CrmUser(id=target_user_id, status="active", data_origin="native"))
+        onboarding = AccountOnboarding(
+            user_id=target_user_id,
+            payment_id=str(uuid.uuid4()),
+            claim_bundle_encrypted="test-bundle",
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
+            status="claimed",
+            claimed_platform="telegram",
+            claimed_at=datetime.now(UTC),
+        )
+        session.add(onboarding)
+        session.flush()
+        session.add(
+            MessengerLinkToken(
+                user_id=target_user_id,
+                account_onboarding_id=onboarding.id,
+                platform="max",
+                purpose="account_credentials",
+                token_hash=hashlib.sha256(raw_token.encode()).hexdigest(),
+                expires_at=datetime.now(UTC) + timedelta(hours=1),
+            )
+        )
+        session.commit()
+
+    response = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload=raw_token),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+
+    assert response.json() == {"ok": True, "account_credentials": True}
+    assert len(fake.sent) == 1
+    assert "уже выданы" in fake.sent[0][1]
+    with Session(engine) as session:
+        assert session.get(AccountCredential, target_user_id) is None
     app.dependency_overrides.clear()
 
 

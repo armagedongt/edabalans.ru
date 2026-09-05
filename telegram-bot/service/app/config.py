@@ -35,7 +35,7 @@ class Settings(BaseSettings):
     media_root: str = "./telegram-bot/runtime/media"
     masterclass_offers_url: str = "https://похудение-это-есть.рф/lk"
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
-    masterclass_account_url: str = "https://похудение-это-есть.рф/lk"
+    masterclass_account_url: str = "https://go.похудение-это-есть.рф/lk"
     intensive_public_url: str = "https://app.edabalans.ru/intensive/start"
 
     model_config = SettingsConfigDict(

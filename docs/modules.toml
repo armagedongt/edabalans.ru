@@ -48,6 +48,7 @@ owns_files = [
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
   "backend/app/robokassa_routes.py", "backend/app/robokassa_service.py",
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
+  "backend/app/account_onboarding_service.py",
   "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
   "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
@@ -64,11 +65,13 @@ owns_files = [
   "backend/migrations/versions/20260823_0020_pricing_catalog.py",
   "backend/migrations/versions/20260824_0022_user_legal_acceptances.py",
   "backend/migrations/versions/20260831_0032_application_preview_access.py",
+  "backend/migrations/versions/20260905_0036_account_onboarding.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
   "pricing_versions", "price_entries", "payments", "user_accesses",
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
+  "account_onboardings",
 ]
 owns_routes = [
   "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*",
@@ -80,12 +83,17 @@ id = "platform.auth"
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.auth.md"
 owns_files = [
+  "backend/app/account_auth_routes.py", "backend/app/account_security.py",
+  "backend/app/static/account-portal.html",
   "backend/app/app_auth.py", "backend/app/auth.py", "backend/app/static/admin-login.*",
   "backend/app/static/admin-session.css", "backend/tests/test_app_auth.py",
-  "backend/tests/test_crm_auth.py",
+  "backend/tests/test_account_password_auth.py", "backend/tests/test_crm_auth.py",
+  "backend/migrations/versions/20260905_0035_account_credentials.py",
 ]
-owns_routes = ["*/app-auth/*", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
+owns_tables = ["account_credentials", "account_sessions"]
+owns_routes = ["*/account-auth/*", "*/app-auth/*", "*/lk", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]
 depends_on = ["platform.crm"]
+reads_from = ["platform.commerce"]
 
 [[modules]]
 id = "platform.content"
@@ -509,7 +517,7 @@ card = "docs/knowledge-base/modules/catalog/products.masterclass.messenger-links
 owns_files = ["backend/migrations/versions/20260823_0016_messenger_link_tokens.py"]
 owns_tables = ["messenger_link_tokens"]
 owns_routes = ["*/api/masterclass/*messenger*", "*/api/masterclass/*telegram*"]
-depends_on = ["messaging.telegram.engine"]
+depends_on = ["messaging.telegram.engine", "platform.auth", "platform.commerce"]
 
 [[modules]]
 id = "messaging"

@@ -477,7 +477,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
         '<strong class="account-session-email">'
     ) in account
     assert "Вы вошли как" not in account
-    assert 'class="account-logout" href="/members/login?exit=y">Выйти</a>' in account
+    assert "identity.source==='native'?'/lk':'/members/login?exit=y'" in account
+    assert "host+'/api/account-auth/logout'" in account
     assert "Курсы и программы" in account
     assert "Приложения" in account
     assert "Курсы, программы и приложения собраны в одном месте." not in account

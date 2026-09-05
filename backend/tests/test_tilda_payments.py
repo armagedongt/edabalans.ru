@@ -19,6 +19,7 @@ from app.main import app  # noqa: E402
 from app.masterclass_routes import offer_checkout_order  # noqa: E402
 from app.tilda_service import checkout_resource_codes, find_offer_checkout  # noqa: E402
 from app.models import (  # noqa: E402
+    AccountOnboarding,
     MasterclassEvent,
     MasterclassNotification,
     Payment,
@@ -62,7 +63,7 @@ def test_checkout_resource_codes_require_the_primary_resource() -> None:
         checkout_resource_codes(["ACCESS_MASTERCLASS"], {"dqs"})
 
 
-def make_client() -> tuple[TestClient, sessionmaker[Session]]:
+def make_client(*, account_onboarding_enabled: bool = False) -> tuple[TestClient, sessionmaker[Session]]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -79,6 +80,9 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
         return Settings(
             database_url="sqlite+pysqlite:///:memory:",
             tilda_webhook_token=TOKEN,
+            app_auth_secret="test-account-secret",
+            account_onboarding_enabled=account_onboarding_enabled,
+            account_email_worker_enabled=False,
         )
 
     app.dependency_overrides[get_db] = override_db
@@ -142,7 +146,7 @@ def test_tilda_handshake_requires_secret_and_does_not_write() -> None:
 
 
 def test_paid_order_is_written_to_client_payment_and_access() -> None:
-    client, session_factory = make_client()
+    client, session_factory = make_client(account_onboarding_enabled=True)
     seed_catalog(session_factory)
 
     payload = paid_payload()
@@ -169,6 +173,7 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert db.scalar(select(UserEmail.email_normalized)) == "client@example.test"
         assert db.scalar(select(UserPhone.phone_normalized)) == "+79991234567"
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 1
         event = db.scalar(select(MasterclassEvent))
         assert event is not None
         assert event.event_type == "masterclass_purchase_confirmed"
@@ -191,6 +196,7 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
     with session_factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 1
     app.dependency_overrides.clear()
 
 

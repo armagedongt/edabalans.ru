@@ -1904,7 +1904,9 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     assert state.json()["masterclass_tariff"] == "Стандартный"
     day = state.json()["days"][0]
     assert day["opened"] is True
-    assert day["steps_total"] == len(day_steps)
+    assert day["steps_total"] == len(
+        [step for step in day_steps if not step.get("hidden", False)]
+    )
     assert day["completed_steps"] == []
     assert day["task_unlocked"] is False
     assert day["offer"] is None
@@ -1916,7 +1918,12 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     assert skipped.status_code == 409
     assert skipped.json()["detail"]["reason"] == "previous_step_not_completed"
 
-    for index in range(offer_index):
+    visible_before_offer = [
+        index
+        for index, step in enumerate(day_steps[:offer_index])
+        if not step.get("hidden", False)
+    ]
+    for index in visible_before_offer:
         completed = client.post(
             f"/api/masterclass/course/days/1/steps/{index}/complete",
             json={"email": "member@example.test"},

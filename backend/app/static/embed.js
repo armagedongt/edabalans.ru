@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname)
+  var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.hostname.indexOf('go.') === 0
     ? location.origin
     : 'https://app.edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';

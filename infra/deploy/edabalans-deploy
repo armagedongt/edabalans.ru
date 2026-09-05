@@ -155,6 +155,8 @@ curl --fail --silent --show-error --max-time 15 \
     https://app.edabalans.ru/api/pricing/site/preview >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://go.похудение-это-есть.рф/robokassa-test >/dev/null
+  curl -fsS --retry 5 --retry-delay 2 \
+    https://go.похудение-это-есть.рф/lk >/dev/null
 curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
     https://blog.похудение-это-есть.рф/ >/dev/null
 curl --fail --silent --show-error --max-time 20 \

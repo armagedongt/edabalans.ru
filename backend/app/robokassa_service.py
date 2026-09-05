@@ -29,6 +29,7 @@ from app.tilda_service import (
     grant_payment_access,
     validate_user_email_binding,
 )
+from app.account_onboarding_service import ensure_paid_account_onboarding
 
 
 SOURCE = "robokassa"
@@ -373,5 +374,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     checkout.status = payment.payment_status
     if not is_test_payment:
         grant_payment_access(db, payment, checkout, occurred_at)
+        if settings.account_onboarding_enabled:
+            ensure_paid_account_onboarding(db, payment, settings)
     db.commit()
     return invoice_id
