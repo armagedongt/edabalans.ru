@@ -12,6 +12,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.account_auth_routes import _attempts  # noqa: E402
 from app.account_onboarding_service import (  # noqa: E402
     account_access_email,
+    account_onboarding_configuration_error,
     ensure_paid_account_onboarding,
     onboarding_links,
 )
@@ -192,3 +193,27 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
     assert "https://max.ru/test_max_bot?start=Mmax" in plain
     assert "Пароль:" not in plain
     assert "Mtelegram" in html and "Mmax" in html
+
+
+def test_enabled_onboarding_requires_complete_delivery_configuration():
+    incomplete = Settings(
+        database_url="sqlite+pysqlite:///:memory:",
+        app_auth_secret="test-account-secret",
+        account_onboarding_enabled=True,
+    )
+    error = account_onboarding_configuration_error(incomplete)
+
+    assert error is not None
+    assert "SMTP_HOST" in error
+    assert "SMTP_PASSWORD" in error
+
+    complete = settings().model_copy(
+        update={
+            "account_email_worker_enabled": True,
+            "smtp_host": "smtp.example.test",
+            "smtp_username": "smtp-user",
+            "smtp_password": "smtp-secret",
+            "smtp_from_email": "cabinet@example.test",
+        }
+    )
+    assert account_onboarding_configuration_error(complete) is None

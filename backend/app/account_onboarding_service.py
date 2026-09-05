@@ -27,6 +27,28 @@ CLAIM_TTL = timedelta(hours=24)
 MAX_EMAIL_ATTEMPTS = 8
 
 
+def account_onboarding_configuration_error(settings: Settings) -> str | None:
+    """Return a launch-blocking configuration error for the paid-account flow."""
+    if not settings.account_onboarding_enabled:
+        return None
+    required = {
+        "APP_AUTH_SECRET": settings.app_auth_secret,
+        "SMTP_HOST": settings.smtp_host,
+        "SMTP_USERNAME": settings.smtp_username,
+        "SMTP_PASSWORD": settings.smtp_password,
+        "SMTP_FROM_EMAIL": settings.smtp_from_email,
+        "ACCOUNT_TELEGRAM_BOT_USERNAME": settings.account_telegram_bot_username,
+        "ACCOUNT_MAX_BOT_USERNAME": settings.account_max_bot_username,
+        "ACCOUNT_PUBLIC_URL": settings.account_public_url,
+    }
+    missing = [name for name, value in required.items() if not str(value).strip()]
+    if missing:
+        return f"account onboarding is missing: {', '.join(missing)}"
+    if not settings.account_email_worker_enabled:
+        return "account onboarding email worker is disabled"
+    return None
+
+
 def _fernet(settings: Settings) -> Fernet:
     if not settings.app_auth_secret:
         raise RuntimeError("APP_AUTH_SECRET is required")

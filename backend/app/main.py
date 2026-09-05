@@ -21,7 +21,10 @@ from app.account_auth_routes import (
     router as account_auth_router,
 )
 from app.app_service import normalize_email
-from app.account_onboarding_service import account_email_worker
+from app.account_onboarding_service import (
+    account_email_worker,
+    account_onboarding_configuration_error,
+)
 from app.access_routes import router as access_router
 from app.pricing_routes import router as pricing_router
 from app.robokassa_routes import router as robokassa_router
@@ -136,7 +139,7 @@ def health() -> dict[str, str]:
 
 @app.get("/ready", tags=["system"])
 def ready(db: Session = Depends(get_db)) -> dict[str, str]:
-    """Confirm that the API can reach PostgreSQL."""
+    """Confirm that PostgreSQL and enabled launch-critical flows are ready."""
     try:
         db.execute(text("SELECT 1"))
     except SQLAlchemyError as exc:
@@ -144,4 +147,10 @@ def ready(db: Session = Depends(get_db)) -> dict[str, str]:
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="database unavailable",
         ) from exc
+    onboarding_error = account_onboarding_configuration_error(settings)
+    if onboarding_error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=onboarding_error,
+        )
     return {"status": "ready"}
