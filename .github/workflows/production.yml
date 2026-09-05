@@ -119,6 +119,7 @@ jobs:
           npm --prefix backend/tests/browser install --ignore-scripts
           npm --prefix backend/tests/browser exec -- playwright install chromium
           npm --prefix backend/tests/browser run test:direct-intensive
+          npm --prefix backend/tests/browser run test:homepage-checkout
 
       - name: Stop browser-test backend
         if: always() && steps.impact.outputs.backend == 'true'

@@ -42,7 +42,7 @@ try {
     await route.fulfill({ contentType: 'application/json', body: JSON.stringify(catalog) })
   })
 
-  await page.goto(`${baseUrl}/preview/homepage-mobile?embed=tilda&intensive_offer=offer-test`, {
+  await page.goto(`${baseUrl}/preview/homepage-tilda-shell?intensive_offer=offer-test`, {
     waitUntil: 'domcontentloaded',
   })
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
@@ -54,7 +54,13 @@ try {
     throw new Error(`Wrong Tilda checkout body: ${JSON.stringify(checkoutBody)}`)
   }
   const cart = await page.evaluate(() => ({ products: window.__cartProducts, opens: window.__cartOpenCount }))
-  if (cart.opens !== 1 || cart.products.length !== 1 || cart.products[0].price !== 2900) {
+  if (
+    cart.opens !== 1
+    || cart.products.length !== 1
+    || cart.products[0].name !== 'Самостоятельный · №12345678'
+    || cart.products[0].price !== 2900
+    || cart.products[0].quantity !== 1
+  ) {
     throw new Error(`Native Tilda cart was not opened correctly: ${JSON.stringify(cart)}`)
   }
   if (await page.locator('.edb-checkout-modal').isVisible()) {

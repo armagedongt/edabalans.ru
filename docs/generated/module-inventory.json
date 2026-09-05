@@ -1058,6 +1058,10 @@
     },
     {
       "module_id": "products.public-site",
+      "path": "backend/tests/browser/homepage-checkout.e2e.mjs"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "backend/tests/browser/package.json"
     },
     {
@@ -43855,6 +43859,10 @@
         {
           "module_id": "products.public-site",
           "path": "backend/tests/browser/direct-intensive.e2e.mjs"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/tests/browser/homepage-checkout.e2e.mjs"
         },
         {
           "module_id": "products.public-site",
