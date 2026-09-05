@@ -251,7 +251,7 @@ def test_successful_scheduler_iteration_refreshes_activity(tmp_path, monkeypatch
     assert main_module.runtime_health.scheduler_failed is False
 
 
-def test_scheduler_runs_metrika_sync_at_configured_interval(tmp_path, monkeypatch):
+def test_metrika_sync_runs_at_configured_interval(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'scheduler-metrika.sqlite'}")
     Base.metadata.create_all(engine)
     monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
@@ -266,14 +266,14 @@ def test_scheduler_runs_metrika_sync_at_configured_interval(tmp_path, monkeypatc
     monkeypatch.setattr(main_module, "sync_offline_conversions", lambda session, client: calls.append(client))
     main_module.last_metrika_sync_monotonic = None
 
-    main_module.scheduler_iteration()
-    main_module.scheduler_iteration()
+    main_module.metrika_sync_iteration()
+    main_module.metrika_sync_iteration()
 
     assert calls == [("secret", 97331502)]
     assert main_module.runtime_health.scheduler_failed is False
 
 
-def test_metrika_failure_is_isolated_and_retryable_next_interval(tmp_path, monkeypatch):
+def test_metrika_failure_is_retryable_next_interval(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'scheduler-metrika-failure.sqlite'}")
     Base.metadata.create_all(engine)
     monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
@@ -294,12 +294,30 @@ def test_metrika_failure_is_isolated_and_retryable_next_interval(tmp_path, monke
     monkeypatch.setattr(main_module, "sync_offline_conversions", fail_sync)
     main_module.last_metrika_sync_monotonic = None
 
-    main_module.scheduler_iteration()
+    with pytest.raises(RuntimeError, match="temporary Yandex failure"):
+        main_module.metrika_sync_iteration()
     clock["value"] = 561.0
-    main_module.scheduler_iteration()
+    with pytest.raises(RuntimeError, match="temporary Yandex failure"):
+        main_module.metrika_sync_iteration()
 
     assert attempts == [500.0, 561.0]
     assert main_module.runtime_health.scheduler_failed is False
+
+
+def test_metrika_loop_is_independent_from_message_scheduler(monkeypatch):
+    calls = []
+
+    def stop_iteration():
+        calls.append("metrika")
+        raise asyncio.CancelledError
+
+    monkeypatch.setattr(main_module.settings, "scheduler_enabled", False)
+    monkeypatch.setattr(main_module, "metrika_sync_iteration", stop_iteration)
+
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(main_module.metrika_sync_loop())
+
+    assert calls == ["metrika"]
 
 
 def test_broadcast_refreshes_scheduler_activity_between_recipients(monkeypatch):

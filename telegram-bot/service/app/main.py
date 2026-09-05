@@ -348,7 +348,6 @@ def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> 
 
 
 def scheduler_iteration() -> None:
-    global last_metrika_sync_monotonic
     with SessionLocal() as session:
         tg = TelegramClient(
             settings.telegram_test_bot_token,
@@ -374,28 +373,31 @@ def scheduler_iteration() -> None:
                 _deliver_broadcast(session, broadcast, tg)
             dispatch_masterclass_notifications(session, tg)
             _record_scheduler_activity()
-        if (
-            settings.yandex_metrika_offline_enabled
-            and settings.yandex_oauth_token
-            and settings.yandex_metrika_counter_id
-            and (
-                last_metrika_sync_monotonic is None
-                or time.monotonic() - last_metrika_sync_monotonic
-                >= settings.yandex_metrika_offline_interval_seconds
-            )
-        ):
-            last_metrika_sync_monotonic = time.monotonic()
-            try:
-                sync_offline_conversions(
-                    session,
-                    MetrikaOfflineClient(
-                        settings.yandex_oauth_token,
-                        settings.yandex_metrika_counter_id,
-                    ),
-                )
-            except Exception:
-                logger.exception("Yandex Metrika offline conversion sync failed")
         _record_scheduler_activity()
+
+
+def metrika_sync_iteration() -> None:
+    global last_metrika_sync_monotonic
+    if (
+        not settings.yandex_metrika_offline_enabled
+        or not settings.yandex_oauth_token
+        or not settings.yandex_metrika_counter_id
+        or (
+            last_metrika_sync_monotonic is not None
+            and time.monotonic() - last_metrika_sync_monotonic
+            < settings.yandex_metrika_offline_interval_seconds
+        )
+    ):
+        return
+    last_metrika_sync_monotonic = time.monotonic()
+    with SessionLocal() as session:
+        sync_offline_conversions(
+            session,
+            MetrikaOfflineClient(
+                settings.yandex_oauth_token,
+                settings.yandex_metrika_counter_id,
+            ),
+        )
 
 
 async def scheduler_loop() -> None:
@@ -413,6 +415,20 @@ async def scheduler_loop() -> None:
             runtime_health.scheduler_failed = True
             logger.exception("Telegram scheduler iteration failed")
         await asyncio.sleep(settings.scheduler_interval_seconds)
+
+
+async def metrika_sync_loop() -> None:
+    while True:
+        try:
+            await asyncio.to_thread(metrika_sync_iteration)
+        except Exception:
+            logger.exception("Yandex Metrika offline conversion sync failed")
+        await asyncio.sleep(
+            min(
+                settings.scheduler_interval_seconds,
+                settings.yandex_metrika_offline_interval_seconds,
+            )
+        )
 
 
 async def polling_loop() -> None:
@@ -459,6 +475,12 @@ async def lifespan(_: FastAPI):
     tasks = []
     if settings.scheduler_enabled:
         tasks.append(asyncio.create_task(scheduler_loop()))
+    if (
+        settings.yandex_metrika_offline_enabled
+        and settings.yandex_oauth_token
+        and settings.yandex_metrika_counter_id
+    ):
+        tasks.append(asyncio.create_task(metrika_sync_loop()))
     if settings.telegram_polling_enabled and settings.telegram_test_bot_token:
         tasks.append(asyncio.create_task(polling_loop()))
     yield
