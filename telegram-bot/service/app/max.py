@@ -578,6 +578,7 @@ def _deliver_welcome(
             ManualMessage.contact_id == contact.id,
             ManualMessage.direction == "out",
             ManualMessage.status == "sent",
+            ManualMessage.body_source != "",
         )
         .order_by(ManualMessage.created_at.desc(), ManualMessage.id.desc())
         .limit(1)
