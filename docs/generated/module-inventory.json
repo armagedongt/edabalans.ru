@@ -43699,7 +43699,7 @@
         "хранить часто изменяемый текст продуктовых мини-страниц, FAQ и содержательных",
         "безопасно рендерить Markdown через общий редакционный renderer;",
         "читать тарифы только из канонического pricing catalog;",
-        "открывать прямой checkout Robokassa через серверную платёжную форму, не",
+        "во временной Tilda-вставке открывать штатную корзину Tilda по серверной",
         "обезличенно учитывать осознанный просмотр публичного VSL;",
         "переиспользовать принятые блоки на других публичных страницах без копирования",
         "продолжать принятую общую подложку страницы под каноническим публичным",
@@ -44878,7 +44878,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 666,
+          "line": 669,
           "module_id": "products.public-site",
           "name": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews",
           "qualname": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews"
@@ -44886,7 +44886,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 676,
+          "line": 679,
           "module_id": "products.public-site",
           "name": "library_fragment",
           "qualname": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews.library_fragment"
@@ -44894,7 +44894,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 894,
+          "line": 897,
           "module_id": "products.public-site",
           "name": "test_homepage_vsl_uses_first_player_click_and_server_analytics",
           "qualname": "test_homepage_vsl_uses_first_player_click_and_server_analytics"
@@ -44902,7 +44902,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1012,
+          "line": 1015,
           "module_id": "products.public-site",
           "name": "test_homepage_media_coordinator_pauses_other_audio_and_video",
           "qualname": "test_homepage_media_coordinator_pauses_other_audio_and_video"
@@ -44910,7 +44910,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1031,
+          "line": 1034,
           "module_id": "products.public-site",
           "name": "test_public_player_supports_intensive_single_source_seekable_mode",
           "qualname": "test_public_player_supports_intensive_single_source_seekable_mode"
@@ -44918,7 +44918,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1067,
+          "line": 1070,
           "module_id": "products.public-site",
           "name": "test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders",
           "qualname": "test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders"
@@ -44926,7 +44926,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1182,
+          "line": 1185,
           "module_id": "products.public-site",
           "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
           "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
@@ -44934,7 +44934,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1225,
+          "line": 1228,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_preview_is_a_t123_ready_noindex_landing",
           "qualname": "test_direct_intensive_preview_is_a_t123_ready_noindex_landing"
@@ -44942,7 +44942,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1252,
+          "line": 1255,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_preview_declares_measurable_events",
           "qualname": "test_direct_intensive_preview_declares_measurable_events"
@@ -44950,7 +44950,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1268,
+          "line": 1271,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_dynamic_qr_preserves_safe_attribution",
           "qualname": "test_direct_intensive_dynamic_qr_preserves_safe_attribution"
@@ -44958,7 +44958,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1313,
+          "line": 1316,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_dynamic_qr_handles_oversized_attribution",
           "qualname": "test_direct_intensive_dynamic_qr_handles_oversized_attribution"
@@ -44966,7 +44966,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1326,
+          "line": 1329,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_preview_uses_one_responsive_content_grid",
           "qualname": "test_direct_intensive_preview_uses_one_responsive_content_grid"
@@ -44974,7 +44974,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1338,
+          "line": 1341,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_preview_has_desktop_only_qr_selector",
           "qualname": "test_direct_intensive_preview_has_desktop_only_qr_selector"
@@ -44982,7 +44982,7 @@
         {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "function",
-          "line": 1357,
+          "line": 1360,
           "module_id": "products.public-site",
           "name": "test_direct_intensive_preview_has_one_accepted_visual_variant",
           "qualname": "test_direct_intensive_preview_has_one_accepted_visual_variant"
@@ -61583,7 +61583,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 666,
+      "line": 669,
       "module_id": "products.public-site",
       "name": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews",
       "qualname": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews"
@@ -61591,7 +61591,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 676,
+      "line": 679,
       "module_id": "products.public-site",
       "name": "library_fragment",
       "qualname": "test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews.library_fragment"
@@ -61599,7 +61599,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 894,
+      "line": 897,
       "module_id": "products.public-site",
       "name": "test_homepage_vsl_uses_first_player_click_and_server_analytics",
       "qualname": "test_homepage_vsl_uses_first_player_click_and_server_analytics"
@@ -61607,7 +61607,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1012,
+      "line": 1015,
       "module_id": "products.public-site",
       "name": "test_homepage_media_coordinator_pauses_other_audio_and_video",
       "qualname": "test_homepage_media_coordinator_pauses_other_audio_and_video"
@@ -61615,7 +61615,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1031,
+      "line": 1034,
       "module_id": "products.public-site",
       "name": "test_public_player_supports_intensive_single_source_seekable_mode",
       "qualname": "test_public_player_supports_intensive_single_source_seekable_mode"
@@ -61623,7 +61623,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1067,
+      "line": 1070,
       "module_id": "products.public-site",
       "name": "test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders",
       "qualname": "test_homepage_uses_accepted_vsl_copy_without_editorial_placeholders"
@@ -61631,7 +61631,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1182,
+      "line": 1185,
       "module_id": "products.public-site",
       "name": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted",
       "qualname": "test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted"
@@ -61639,7 +61639,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1225,
+      "line": 1228,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_preview_is_a_t123_ready_noindex_landing",
       "qualname": "test_direct_intensive_preview_is_a_t123_ready_noindex_landing"
@@ -61647,7 +61647,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1252,
+      "line": 1255,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_preview_declares_measurable_events",
       "qualname": "test_direct_intensive_preview_declares_measurable_events"
@@ -61655,7 +61655,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1268,
+      "line": 1271,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_dynamic_qr_preserves_safe_attribution",
       "qualname": "test_direct_intensive_dynamic_qr_preserves_safe_attribution"
@@ -61663,7 +61663,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1313,
+      "line": 1316,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_dynamic_qr_handles_oversized_attribution",
       "qualname": "test_direct_intensive_dynamic_qr_handles_oversized_attribution"
@@ -61671,7 +61671,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1326,
+      "line": 1329,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_preview_uses_one_responsive_content_grid",
       "qualname": "test_direct_intensive_preview_uses_one_responsive_content_grid"
@@ -61679,7 +61679,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1338,
+      "line": 1341,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_preview_has_desktop_only_qr_selector",
       "qualname": "test_direct_intensive_preview_has_desktop_only_qr_selector"
@@ -61687,7 +61687,7 @@
     {
       "file": "backend/tests/test_homepage_preview.py",
       "kind": "function",
-      "line": 1357,
+      "line": 1360,
       "module_id": "products.public-site",
       "name": "test_direct_intensive_preview_has_one_accepted_visual_variant",
       "qualname": "test_direct_intensive_preview_has_one_accepted_visual_variant"

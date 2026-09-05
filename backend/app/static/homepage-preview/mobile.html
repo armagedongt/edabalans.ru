@@ -1434,7 +1434,7 @@
         <p>В конце большинства материалов внутри Мастер-класса есть список использованных источников, с которым вы можете ознакомиться.</p>
       </section>
     </div>
-    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/checkout">
+    <section class="chain-block chain-block--pricing" id="pricing" aria-label="Тарифы"><div id="edb-pricing-neurozeh-v1" data-variant="vip" data-pricing-endpoint="/api/pricing/site/preview" data-checkout-endpoint="/api/payments/robokassa/checkout" data-checkout-mode="robokassa">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Noto+Color+Emoji&family=Unbounded:wght@700;800&display=swap');
 
@@ -2991,6 +2991,43 @@
         form.submit();
       }
 
+      function openTildaCart(command) {
+        const match = /^#order:([^=]+)=(\d+(?:\.\d+)?)$/.exec(String(command || ''));
+        if (match && typeof window.tcart__addProduct === 'function' && typeof window.tcart__openCart === 'function') {
+          window.tcart__addProduct({ name: match[1], price: Number(match[2]), quantity: 1 });
+          window.tcart__openCart();
+          return;
+        }
+        window.location.hash = command;
+      }
+
+      async function openTildaCheckout(plan, button) {
+        const initialLabel = button.textContent;
+        button.disabled = true;
+        button.textContent = 'Открываю корзину…';
+        try {
+          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
+          const response = await fetch(root.dataset.checkoutEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'omit',
+            body: JSON.stringify({
+              price_code: plan.dataset.priceCode,
+              intensive_offer: offerToken || null
+            })
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.detail || `checkout ${response.status}`);
+          openTildaCart(result.cart_command);
+        } catch (error) {
+          pricingStatus.textContent = error.message || 'Не удалось открыть корзину. Попробуйте ещё раз.';
+          pricingStatus.hidden = false;
+        } finally {
+          button.disabled = false;
+          button.textContent = initialLabel;
+        }
+      }
+
       root.querySelector('.edb-checkout-close').addEventListener('click', closeCheckout);
       root.querySelector('.edb-checkout-backdrop').addEventListener('click', closeCheckout);
       checkoutDialog.addEventListener('keydown', (event) => {
@@ -3051,6 +3088,10 @@
         const button = plan.querySelector('.edb-pricing-button');
         button.addEventListener('click', () => {
           if (button.disabled) return;
+          if (root.dataset.checkoutMode === 'tilda') {
+            openTildaCheckout(plan, button);
+            return;
+          }
           openCheckout(plan, button);
         });
       });
