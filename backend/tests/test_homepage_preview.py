@@ -1306,12 +1306,12 @@ def test_homepage_mobile_preview_assets_are_public_noindex_and_allowlisted() -> 
 
     telegram_qr = client.get("/preview/homepage-mobile/direct-intensive-telegram-qr.svg")
     max_qr = client.get("/preview/homepage-mobile/direct-intensive-max-qr.svg")
-    assert "<metadata>https://go.похудение-это-есть.рф/BMB6Y</metadata>" in telegram_qr.text
-    assert "<metadata>https://go.похудение-это-есть.рф/BMB6Y?to=max</metadata>" in max_qr.text
+    assert "<metadata>https://t.me/Fitness_Talks_bot?start=BMB6Y</metadata>" in telegram_qr.text
+    assert "<metadata>https://max.ru/id230409966750_bot?start=BMB6Y</metadata>" in max_qr.text
     telegram_qr_bytes = telegram_qr.content.replace(b"\r\n", b"\n")
     max_qr_bytes = max_qr.content.replace(b"\r\n", b"\n")
-    assert hashlib.sha256(telegram_qr_bytes).hexdigest() == "1890997c311fcc353df5ee15e84aa8f146e238415455b5e87030e0c524cceec9"
-    assert hashlib.sha256(max_qr_bytes).hexdigest() == "1222a4cd47a151ce344f78199beb514910c6d7a9a5c4ad9416f5f4c89e0f0bb9"
+    assert hashlib.sha256(telegram_qr_bytes).hexdigest() == "41751d439caf0f379e8288807564935dd92e3c19b48d6d4fd395687e565150ef"
+    assert hashlib.sha256(max_qr_bytes).hexdigest() == "8c9c8acf23ed04f80479ad345efb6c532189ee78505e312cff5c1c2a433e141f"
 
     assert client.get("/preview/homepage-mobile/../app_routes.py").status_code == 404
     assert client.get("/preview/homepage-mobile/not-allowlisted.svg").status_code == 404
@@ -1332,8 +1332,9 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "Вы узнаете:" not in response.text
     assert "Не является медицинской услугой." in response.text
     assert "Политика обработки персональных данных" in response.text
-    assert "telegramUrl:'https://go.похудение-это-есть.рф/BMB6Y'" in response.text
-    assert "maxUrl:'https://go.похудение-это-есть.рф/BMB6Y?to=max'" in response.text
+    assert "apiUrl:'https://edabalans.ru/api/messaging/start-link'" in response.text
+    assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
+    assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
 
     source = client.get("/preview/direct-intensive/t123")
     assert source.status_code == 200
@@ -1354,8 +1355,22 @@ def test_direct_intensive_preview_declares_measurable_events() -> None:
     assert "direct_intensive_qr_selected" in response.text
     assert "mc.yandex.ru/metrika/tag.js" not in response.text
     assert "edb_direct_intensive_attribution_v1" in response.text
-    assert "if(configured(rawUrl)){" in response.text
-    assert "`/preview/direct-intensive/qr/${option.dataset.edbQr}`" in response.text
+    assert "method:'POST'" in response.text
+    assert "credentials:'omit'" in response.text
+    assert "setTimeout(()=>resolve(channelConfig[channel].fallbackUrl),500)" in response.text
+    assert "`/preview/direct-intensive/qr/${option.dataset.edbQr}`" not in response.text
+
+
+def test_direct_intensive_prefetch_contract_is_allowlisted_and_fail_open() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "new Set(['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'])" in response.text
+    assert "body:JSON.stringify({messenger:config.apiMessenger,alias:CONTENT.links.alias,...attribution})" in response.text
+    assert "if(!response.ok)throw new Error(`start-link ${response.status}`)" in response.text
+    assert ".catch(()=>config.fallbackUrl)" in response.text
+    assert "location.assign(destination)" in response.text
+    assert "window.qrcode(0,'M')" in response.text
+    assert "image.dataset.edbDestination=url" in response.text
 
 
 def test_direct_intensive_dynamic_qr_preserves_safe_attribution() -> None:
