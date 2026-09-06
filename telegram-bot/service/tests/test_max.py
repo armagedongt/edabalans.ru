@@ -313,7 +313,8 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
     assert fake.sent[0][1] == ""
     assert "Бесплатный интенсив" in fake.sent[1][1]
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(
@@ -725,11 +726,17 @@ def test_max_start_uses_existing_link_catalog_once(tmp_path, monkeypatch):
     pikabu = next(tag for tag in tags if tag["name"] == "Пикабу")
     created = client.post("/bot-api/link-rules", json={"name": "MAX Пикабу", "tag_ids": [pikabu["id"]]}).json()
     alias_token = created["aliases"][0]["token"]
-    redirect = client.get(
-        f"/go/{alias_token}?to=max&utm_source=yandex&yclid=max-click-901",
-        follow_redirects=False,
+    issued = client.post(
+        "/bot/public/start-link",
+        json={
+            "messenger": "max",
+            "alias": alias_token,
+            "utm_source": "yandex",
+            "yclid": "max-click-901",
+        },
     )
-    payload = parse_qs(urlparse(redirect.headers["location"]).query)["start"][0]
+    assert issued.status_code == 200
+    payload = parse_qs(urlparse(issued.json()["deep_link"]).query)["start"][0]
     response = client.post("/bot/max/webhook", json=max_start(payload=payload), headers=admin_headers)
     assert response.status_code == 200
     assert len(fake.sent) == 2
@@ -782,7 +789,8 @@ def test_max_delivery_failure_persists_same_link_for_webhook_retry(tmp_path, mon
     response = client.post("/bot/max/webhook", json=max_start(), headers=headers)
     assert response.json() == {"ok": True, "retried": True}
     assert len(fake.sent) == 2
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     assert client.post("/bot/max/webhook", json=max_start(), headers=headers).json() == {
         "ok": True,
         "duplicate": True,
@@ -826,7 +834,8 @@ def test_unknown_max_payload_keeps_identity_without_inventing_attribution(tmp_pa
 
     response = client.post("/bot/max/webhook", json=max_start(payload="obsolete-link"), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
         account = session.scalar(select(CrmMessengerAccount).where(CrmMessengerAccount.platform_user_id == "901"))
@@ -868,5 +877,6 @@ def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
         assert events == ["start_first", "start_repeat"]
     assert len(fake.sent) == 3
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://go.похудение-это-есть.рф/i/E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     app.dependency_overrides.clear()

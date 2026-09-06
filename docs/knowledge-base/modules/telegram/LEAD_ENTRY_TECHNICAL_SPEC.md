@@ -256,6 +256,30 @@ route внутри сервиса не конфликтует с `/r/{token}`. �
 6. `/start` разрешает session обратно в rule/alias/подтверждённые tag IDs и
    сохранённый `yclid`; остальные query-параметры не переносятся.
 
+### 7.3.1. Прямая ссылка для рекламной посадки
+
+Посадка не обязана вести пользователя через `/go`. Она вызывает:
+
+```text
+POST https://api.edabalans.ru/bot/public/start-link
+```
+
+JSON принимает `messenger=tg|max`, ровно одно из `alias`/`rule_id` и только
+`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `yclid`.
+Лишние поля отклоняются. Ответ содержит прямой deep link выбранного бота с
+одноразовым `U...` payload, его TTL 604800 секунд и постоянный fallback deep link
+с исходным `B...` alias. Redirect и промежуточная web-страница отсутствуют.
+
+Если API недоступен, T123 через 2–3 секунды использует заранее встроенную `B...`
+ссылку. Пользователь всё равно запускает нужный сценарий; теряются только UTM и
+точная связь с `yclid` этого перехода. API доступен через CORS для основного
+публичного домена проекта, без credentials.
+
+Выдача `U...` создаёт `web_click` с `entry=public_start_link_api`, выбранным
+`messenger`, `path_token` и `raw_query`. При старте Telegram и MAX используют один
+`resolve_start_payload()`, поэтому одинаково получают исходный rule/alias, точные
+UTM, `yclid` и snapshot подтверждённых тегов.
+
 ### 7.4. Channel invite
 
 Active `C...` перенаправляет в сохранённый `telegram_invite_url`. До создания live
@@ -516,6 +540,7 @@ GET    /bot-api/tracking-events
 GET    /bot-api/tracking-links             # обратная совместимость старой админки
 POST   /bot-api/tracking-links             # обратная совместимость старой админки
 
+POST   /bot/public/start-link        # публичная выдача direct U deep link
 GET    /go/{token}                   # внутренний route за GO_DOMAIN
 ```
 
@@ -534,6 +559,8 @@ allow-list.
 - неизвестные payload не отражаются пользователю без escaping;
 - IP/User-Agent в первую версию не сохраняются;
 - Tilda cookies/browser ID не включаются;
+- публичный JSON выдачи ссылки принимает только allowlisted attribution fields,
+  не возвращает `yclid` и запрещает extra fields;
 - destructive delete для links/aliases отсутствует;
 - channel controls disabled до конфигурации chat/permissions.
 

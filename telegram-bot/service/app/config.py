@@ -37,6 +37,22 @@ class Settings(BaseSettings):
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
     masterclass_account_url: str = "https://edabalans.ru/lk"
     intensive_public_url: str = "https://edabalans.ru/intensive"
+    public_link_allowed_origins: str = (
+        "https://edabalans.ru,https://www.edabalans.ru,"
+        "https://похудение-это-есть.рф,https://www.похудение-это-есть.рф"
+    )
+    @property
+    def public_link_allowed_origins_list(self) -> list[str]:
+        values = [item.strip() for item in self.public_link_allowed_origins.split(",") if item.strip()]
+        expanded: list[str] = []
+        for value in values:
+            expanded.append(value)
+            try:
+                scheme, host = value.split("://", 1)
+                expanded.append(f"{scheme}://{host.encode('idna').decode('ascii')}")
+            except (UnicodeError, ValueError):
+                pass
+        return list(dict.fromkeys(expanded))
 
     model_config = SettingsConfigDict(
         env_file=("telegram-bot/.env", ".env"),

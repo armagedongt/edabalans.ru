@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from urllib.parse import parse_qs, urlparse
 
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -65,10 +66,12 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
 
         assert "{{personal_" not in rendered.body_source
         assert "{{personal_" not in str(configuration)
-        intensive_code = rendered.body_source.rsplit("/", 1)[-1]
+        intensive_url = rendered.body_source.removeprefix("Интенсив: ")
+        intensive_code = parse_qs(urlparse(intensive_url).query)["i"][0]
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
         assert len(intensive_code) == 9
+        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
 
 
 def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
@@ -110,7 +113,10 @@ def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
         token = session.scalar(select(MessengerLinkToken))
         assert token is not None
         assert token.platform == "max"
-        assert configuration["buttons"][0]["url"].endswith(rendered.body_source.rsplit("/", 1)[-1])
+        intensive_url = rendered.body_source.removeprefix("Интенсив: ")
+        intensive_code = parse_qs(urlparse(intensive_url).query)["i"][0]
+        assert configuration["buttons"][0]["url"].endswith(intensive_code)
+        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=max&entry=bot"
 
 
 def session_factory(tmp_path):

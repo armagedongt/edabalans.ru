@@ -26,13 +26,11 @@ def intensive_token(token_id: str) -> str:
     return "E" + body[:SHORT_TOKEN_BODY_LENGTH]
 
 
-def intensive_access_url(public_url: str, token: str) -> str:
+def intensive_access_url(public_url: str, token: str, platform: str) -> str:
     parts = urlsplit(public_url)
-    if parts.path.rstrip("/").endswith("/i") and not parts.query:
-        path = f"{parts.path.rstrip('/')}/{quote(token, safe='')}"
-        return urlunsplit((parts.scheme, parts.netloc, path, "", ""))
-    separator = "&" if "?" in public_url else "?"
-    return f"{public_url}{separator}{urlencode({'i': token})}"
+    source = "tg" if platform == "telegram" else "max"
+    query = urlencode({"i": token, "from": source, "entry": "bot"})
+    return urlunsplit((parts.scheme, parts.netloc, parts.path.rstrip("/"), query, ""))
 
 
 def personal_tracking_values(
@@ -41,6 +39,7 @@ def personal_tracking_values(
     user_id: str,
     platform: str,
     public_url: str,
+    tracking_base_url: str = "https://go.похудение-это-есть.рф",
     channel_post_numbers: Iterable[int] = (),
 ) -> dict[str, str]:
     intensive_url, row = get_or_create_intensive_access_link(
@@ -50,7 +49,7 @@ def personal_tracking_values(
         public_url=public_url,
     )
     token = intensive_token(str(row.id))
-    parts = urlsplit(public_url)
+    parts = urlsplit(tracking_base_url)
     root = urlunsplit((parts.scheme, parts.netloc, "", "", "")).rstrip("/")
     encoded = quote(token, safe="")
     values = {
@@ -97,7 +96,7 @@ def create_intensive_access_link(
     )
     session.add(row)
     session.flush()
-    return intensive_access_url(public_url, token), row
+    return intensive_access_url(public_url, token, platform), row
 
 
 def get_or_create_intensive_access_link(
@@ -128,7 +127,7 @@ def get_or_create_intensive_access_link(
     for row in rows:
         token = intensive_token(row.id)
         if row.token_hash == hashlib.sha256(token.encode("ascii")).hexdigest():
-            return intensive_access_url(public_url, token), row
+            return intensive_access_url(public_url, token, platform), row
     return create_intensive_access_link(
         session,
         user_id=user_id,

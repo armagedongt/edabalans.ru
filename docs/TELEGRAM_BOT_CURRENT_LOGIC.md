@@ -114,6 +114,17 @@ https://go.похудение-это-есть.рф/B7K4PV
 `tg_tracking_sessions`; наружу уходит непрозрачный start payload. Неразобранные UTM
 вычисляются из сырых событий и не получают отдельную дублирующую таблицу.
 
+Для T123 рекламной посадки `POST /bot/public/start-link` создаёт ту же
+`tg_tracking_sessions` без redirect и возвращает прямой Telegram/MAX deep link с
+`U...` payload. Запрос принимает только `utm_source`, `utm_medium`, `utm_campaign`,
+`utm_content`, `utm_term` и `yclid`; fallback остаётся прямой ссылкой того же бота
+с постоянным `B...` alias. Telegram и MAX погашают `U...` одним resolver.
+
+Персональная кнопка интенсива из бота ведёт прямо на
+`https://edabalans.ru/intensive?i=<code>&from=tg&entry=bot` либо с `from=max`.
+Redirect в этой ссылке отсутствует;
+персональный код и источник сохраняются в query string.
+
 Связь правила с существующими CRM-тегами хранится в `tg_tracking_link_tags`.
 Новый тег не создаётся при переходе. Администратор отдельно выбирает существующий
 тег либо явно подтверждает создание нового. При merged tag функция

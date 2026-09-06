@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class ManualMessageIn(BaseModel):
@@ -20,6 +20,28 @@ class TrackingLinkIn(BaseModel):
     placement: str = Field(min_length=1, max_length=255)
     campaign: str | None = Field(default=None, max_length=255)
     target_sequence_code: str = "welcome_intensive"
+
+
+class PublicMessengerStartLinkIn(BaseModel):
+    """Browser-safe input for issuing an attributed direct bot deep link."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    messenger: Literal["tg", "max"]
+    alias: str | None = Field(default=None, min_length=2, max_length=64)
+    rule_id: str | None = Field(default=None, min_length=1, max_length=36)
+    utm_source: str | None = Field(default=None, max_length=500)
+    utm_medium: str | None = Field(default=None, max_length=500)
+    utm_campaign: str | None = Field(default=None, max_length=500)
+    utm_content: str | None = Field(default=None, max_length=500)
+    utm_term: str | None = Field(default=None, max_length=500)
+    yclid: str | None = Field(default=None, max_length=500)
+
+    @model_validator(mode="after")
+    def select_exactly_one_campaign_reference(self):
+        if bool(self.alias) == bool(self.rule_id):
+            raise ValueError("provide exactly one of alias or rule_id")
+        return self
 
 
 class LinkRuleIn(BaseModel):

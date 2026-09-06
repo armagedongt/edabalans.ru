@@ -14,6 +14,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 from fastapi import Depends, FastAPI, File, Header, HTTPException, Request, Response, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from sqlalchemy import case, delete, func, or_, select, text
@@ -32,7 +33,7 @@ from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
-from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, PublicMessengerStartLinkIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables, variable_is_allowed
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
@@ -516,6 +517,95 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="edabalans Telegram service", version="0.1.0", lifespan=lifespan)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.public_link_allowed_origins_list,
+    allow_credentials=False,
+    allow_methods=["POST", "OPTIONS"],
+    allow_headers=["Content-Type"],
+)
+
+
+def _public_start_alias(
+    session: Session,
+    body: PublicMessengerStartLinkIn,
+) -> tuple[TrackingLink, TrackingLinkAlias]:
+    if body.alias:
+        alias, warning_suffix = resolve_alias(session, body.alias)
+        link = active_link(session, alias)
+        if warning_suffix or not alias or not link:
+            raise HTTPException(404, "Campaign alias not found")
+    else:
+        link = session.get(TrackingLink, body.rule_id)
+        if not link or link.status != "active" or not link.is_active:
+            raise HTTPException(404, "Campaign rule not found")
+        alias = session.scalar(
+            select(TrackingLinkAlias)
+            .where(
+                TrackingLinkAlias.tracking_link_id == link.id,
+                TrackingLinkAlias.status == "active",
+            )
+            .order_by(TrackingLinkAlias.created_at)
+        )
+        if not alias:
+            raise HTTPException(409, "Campaign rule has no active alias")
+    if link.target_kind != "bot_start":
+        raise HTTPException(422, "Campaign must target bot start")
+    return link, alias
+
+
+@app.post("/bot/public/start-link")
+def public_messenger_start_link(
+    body: PublicMessengerStartLinkIn,
+    response: Response,
+    session: Session = Depends(get_db),
+) -> dict:
+    link, alias = _public_start_alias(session, body)
+    raw_query = {
+        key: value
+        for key in (
+            "utm_source",
+            "utm_medium",
+            "utm_campaign",
+            "utm_content",
+            "utm_term",
+            "yclid",
+        )
+        if (value := getattr(body, key)) is not None
+    }
+    payload = create_tracking_session(session, link, alias, raw_query)
+    if body.messenger == "max":
+        username = settings.max_bot_username.lstrip("@")
+        if not username:
+            raise HTTPException(503, "MAX bot is not configured")
+        base = f"https://max.ru/{username}?start="
+    else:
+        username = settings.telegram_test_bot_username.lstrip("@")
+        if not username:
+            raise HTTPException(503, "Telegram bot is not configured")
+        base = f"https://t.me/{username}?start="
+    session.add(
+        TrackingEvent(
+            tracking_link_id=link.id,
+            alias_id=alias.id,
+            event_type="web_click",
+            metadata_json={
+                "raw_query": raw_query,
+                "path_token": alias.token,
+                "entry": "public_start_link_api",
+                "messenger": body.messenger,
+            },
+        )
+    )
+    session.commit()
+    response.headers["Cache-Control"] = "no-store"
+    return {
+        "messenger": body.messenger,
+        "deep_link": f"{base}{payload}",
+        "fallback_url": f"{base}{alias.token}",
+        "payload": payload,
+        "expires_in_seconds": 7 * 24 * 60 * 60,
+    }
 
 
 @app.get("/bot", include_in_schema=False)

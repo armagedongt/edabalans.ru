@@ -235,6 +235,85 @@ def test_go_can_open_max_with_same_one_time_attribution_payload(tmp_path, monkey
     app.dependency_overrides.clear()
 
 
+def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallback(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    created = client.post("/bot-api/link-rules", json={"name": "Яндекс → Telegram"}).json()
+    alias = created["aliases"][0]["token"]
+
+    response = client.post(
+        "/bot/public/start-link",
+        headers={"Origin": "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"},
+        json={
+            "messenger": "tg",
+            "alias": alias,
+            "utm_source": "yandex",
+            "yclid": "click-public-1",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    assert response.headers["access-control-allow-origin"] == (
+        "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    )
+    result = response.json()
+    assert result["messenger"] == "tg"
+    assert result["deep_link"].startswith("https://t.me/TetrisgfgfgfBot?start=U")
+    assert result["fallback_url"] == f"https://t.me/TetrisgfgfgfBot?start={alias}"
+    assert result["payload"].startswith("U")
+    assert result["expires_in_seconds"] == 604800
+    assert "yclid" not in result["deep_link"]
+
+    assert client.post("/telegram/webhook", json=start_update(14, 605, result["payload"])).status_code == 200
+    with Session(engine) as session:
+        click = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "web_click"))
+        start = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.telegram_user_id == "605",
+            TrackingEvent.event_type == "start_first",
+        ))
+        assert click.metadata_json == {
+            "raw_query": {"utm_source": "yandex", "yclid": "click-public-1"},
+            "path_token": alias,
+            "entry": "public_start_link_api",
+            "messenger": "tg",
+        }
+        assert start.metadata_json["raw_query"] == {
+            "utm_source": "yandex",
+            "yclid": "click-public-1",
+        }
+    app.dependency_overrides.clear()
+
+
+def test_public_start_link_supports_rule_id_max_and_rejects_unlisted_input(tmp_path, monkeypatch):
+    client, _ = make_client(tmp_path, monkeypatch)
+    monkeypatch.setattr(main_module.settings, "max_bot_username", "id230409966750_bot")
+    created = client.post("/bot-api/link-rules", json={"name": "Яндекс → MAX"}).json()
+    alias = created["aliases"][0]["token"]
+
+    response = client.post(
+        "/bot/public/start-link",
+        json={"messenger": "max", "rule_id": created["id"], "utm_campaign": "search"},
+    )
+    assert response.status_code == 200
+    result = response.json()
+    assert result["deep_link"].startswith("https://max.ru/id230409966750_bot?start=U")
+    assert result["fallback_url"] == f"https://max.ru/id230409966750_bot?start={alias}"
+
+    assert client.post(
+        "/bot/public/start-link",
+        json={"messenger": "tg", "alias": alias, "gclid": "must-not-be-accepted"},
+    ).status_code == 422
+    assert client.post(
+        "/bot/public/start-link",
+        json={"messenger": "tg", "alias": alias, "rule_id": created["id"]},
+    ).status_code == 422
+    assert client.post(
+        "/bot/public/start-link",
+        json={"messenger": "tg"},
+    ).status_code == 422
+    app.dependency_overrides.clear()
+
+
 def test_channel_invite_touch_is_claimed_on_first_bot_start(tmp_path, monkeypatch):
     client, engine = make_client(tmp_path, monkeypatch)
     pikabu = next(tag for tag in client.get("/bot-api/tags").json() if tag["name"] == "Пикабу")
