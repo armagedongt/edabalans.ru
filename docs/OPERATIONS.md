@@ -2,6 +2,9 @@
 
 Статус: `current`
 
+Повторяемая смена единого публичного домена, включая границу автоматических и
+ручных действий, описана в [`DOMAIN_CUTOVER_RUNBOOK.md`](DOMAIN_CUTOVER_RUNBOOK.md).
+
 ## Развёрнутые компоненты
 
 | Компонент | Назначение | Публичный доступ |
@@ -576,8 +579,8 @@ Migration `20260822_0015` добавляет только новые табли�
 обычный backup и настоящее тестовое восстановление. После выпуска проверить:
 
 ```bash
-curl -fsS https://api.edabalans.ru/health
-curl -fsS https://api.edabalans.ru/ready
+curl -fsS https://edabalans.ru/health
+curl -fsS https://edabalans.ru/ready
 docker compose exec backend alembic current
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
 ```

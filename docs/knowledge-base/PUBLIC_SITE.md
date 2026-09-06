@@ -55,7 +55,7 @@ preview уже встроена тестовая дорожка длиной 12,
 
 ```html
 <div data-edabalans-homepage>Загружаю новую главную…</div>
-<script src="https://app.edabalans.ru/homepage.js" defer></script>
+<script src="https://edabalans.ru/homepage.js" defer></script>
 ```
 
 `/homepage.js` запрашивает каноническое полотно с
@@ -154,8 +154,10 @@ Hero сохраняет собственную композицию и не оп
 CTA бесплатного интенсива получает адрес из `backend/app/intensive_public_cta.py`,
 которым владеет модуль `products.intensive`; подпись кнопки главной относится к
 локальному тексту блока и сейчас равна «Открыть бесплатный интенсив». Каноническое
-назначение CTA — обычная web-ссылка
-`https://go.похудение-это-есть.рф/intensiv`, а не Telegram UUID.
+назначение CTA пока берётся из `backend/app/intensive_public_cta.py` и ведёт через
+legacy-совместимость `https://go.похудение-это-есть.рф/intensiv`, а не Telegram
+UUID. Это оставшийся потребитель старого домена; при следующем переносе его нужно
+заменить на прямой `/intensive` с query-атрибуцией.
 
 Отдельная посадочная Яндекс.Директа сохраняет обычные кнопки Telegram/MAX на всех
 экранах. Начиная с 900 px под ними дополнительно показываются две переключаемые

@@ -5,7 +5,7 @@
 Production endpoint:
 
 ```text
-POST https://api.edabalans.ru/integrations/tilda/payments
+POST https://edabalans.ru/api/integrations/tilda/payments
 ```
 
 ## Новый серверный checkout
@@ -49,7 +49,7 @@ preview-исключение заменяется обычным `/api/pricing/s
 
 ```html
 <div data-edabalans-app="masterclass-sales"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 На той же странице остаётся один штатный блок корзины Tilda `ST100`. Стабильные

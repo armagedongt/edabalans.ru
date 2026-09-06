@@ -11,7 +11,7 @@
 
 ```html
 <div data-edabalans-app="personal-access"></div>
-<script src="https://app.edabalans.ru/embed.js" defer></script>
+<script src="https://edabalans.ru/embed.js" defer></script>
 ```
 
 CRM добавляет к адресу параметр `access_token`. Загрузчик автоматически берёт

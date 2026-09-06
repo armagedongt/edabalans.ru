@@ -28,6 +28,7 @@
 | Что явно отложено | `plans/README.md` | plan-файл с module id |
 | Что сейчас исследуется/реализуется | `../work/` | временные feature artifacts |
 | Production, backup, restore, deploy | `OPERATIONS.md` | операционный документ и infra config |
+| Перенос публичного домена | `DOMAIN_CUTOVER_RUNBOOK.md` | повторяемый cutover, ручные действия и приёмка |
 | Как выбирать глубину разработки и tests | `AI_DEVELOPMENT_WORKFLOW.md` | рабочий процесс |
 | Как создавать, менять и удалять модули | `knowledge-base/MODULE_DEVELOPMENT_STANDARD.md` | общий стандарт модулей |
 | Как разводить параллельные чаты | `CHAT_WORKSTREAMS.md` | правила потоков |

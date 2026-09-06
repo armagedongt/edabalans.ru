@@ -28,7 +28,7 @@
     </div>
   </div>
 </div>
-<script src="https://app.edabalans.ru/intensive/tilda-loader.js" defer></script>
+<script src="https://edabalans.ru/intensive/tilda-loader.js" defer></script>
 ```
 
 Загрузчик получает актуальную главную с `/intensive`, переносит внутрь Tilda только
@@ -126,12 +126,12 @@ Git, чтобы сложная блочная разметка и механик
 
 API:
 
-- `GET https://go.похудение-это-есть.рф/i/<opaque-code>` — брендированный вход из
-  Telegram или MAX без открытого параметра источника;
-- `GET https://go.похудение-это-есть.рф/m/<opaque-code>` — измеряемый персональный
-  переход на Мастер-класс;
-- `GET https://go.похудение-это-есть.рф/p/<post-number>/<opaque-code>` — измеряемый
-  Telegram-переход к конкретной публикации канала;
+- legacy `GET https://go.похудение-это-есть.рф/i/<opaque-code>` — совместимость с
+  уже отправленным входом из Telegram или MAX;
+- legacy `GET https://go.похудение-это-есть.рф/m/<opaque-code>` — совместимость с
+  уже отправленным переходом на Мастер-класс;
+- legacy `GET https://go.похудение-это-есть.рф/p/<post-number>/<opaque-code>` —
+  совместимость с уже опубликованным переходом к публикации канала;
 - `GET /intensive?i=<opaque-code>&from=tg|max&entry=bot|channel` — канонический
   персональный вход: восстановить session и вернуть главное меню с HTTP 200;
 - `GET /intensive/start?i=<opaque-code>` — legacy-вход для уже отправленных ссылок;

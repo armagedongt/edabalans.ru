@@ -52,7 +52,7 @@ Tilda. Единое приложение получает нужный марк�
   [class*=" tlk-userbar"] { display: none !important; }
 </style>
 <div data-edabalans-app="account"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 На этой же физической странице должен находиться один стандартный блок корзины
@@ -81,7 +81,7 @@ Members Area и штатный `ST100` на странице. Саму вста�
 
 ```html
 <div data-edabalans-app="onboarding-questionnaire"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 ### Предложение второго дня
@@ -90,7 +90,7 @@ Members Area и штатный `ST100` на странице. Саму вста�
 
 ```html
 <div data-edabalans-app="masterclass-offers" data-edabalans-placement="day-2-offer" data-edabalans-placement-token="ВСТАВИТЬ_МАРКЕР_DAY_2"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 ### Первая часть рецептов
@@ -99,14 +99,14 @@ Members Area и штатный `ST100` на странице. Саму вста�
 
 ```html
 <div data-edabalans-app="recipes-part-1" data-edabalans-placement="recipes-part-1-gate" data-edabalans-placement-token="ВСТАВИТЬ_МАРКЕР_RECIPES_1"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 ### Постоянный блок допматериалов после первой части
 
 ```html
 <div data-edabalans-app="masterclass-offers" data-edabalans-placement="offers-hub" data-edabalans-placement-token="ВСТАВИТЬ_МАРКЕР_OFFERS_HUB"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 ### Вторая часть рецептов
@@ -115,14 +115,14 @@ Members Area и штатный `ST100` на странице. Саму вста�
 
 ```html
 <div data-edabalans-app="recipes-part-2" data-edabalans-placement="recipes-part-2-gate" data-edabalans-placement-token="ВСТАВИТЬ_МАРКЕР_RECIPES_2"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 ### Итоговое саморевью
 
 ```html
 <div data-edabalans-app="closing-review" data-edabalans-placement="closing-review" data-edabalans-placement-token="ВСТАВИТЬ_МАРКЕР_CLOSING_REVIEW"></div>
-<script src="https://app.edabalans.ru/embed.js"></script>
+<script src="https://edabalans.ru/embed.js"></script>
 ```
 
 Если на странице после анкеты показывается предложение, ниже добавить второй

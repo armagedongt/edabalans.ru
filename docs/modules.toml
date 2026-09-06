@@ -780,7 +780,10 @@ owns_routes = ["*/health", "*/ready"]
 id = "operations.proxy"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.proxy.md"
-owns_files = ["infra/caddy/**", "infra/telegram-proxy/**"]
+owns_files = [
+  "infra/caddy/**", "infra/telegram-proxy/**",
+  "docs/DOMAIN_CUTOVER_RUNBOOK.md",
+]
 
 [[modules]]
 id = "operations.backup"

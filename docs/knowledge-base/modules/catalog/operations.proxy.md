@@ -16,8 +16,8 @@ implementation_status: implemented
 - не публиковать NocoDB в интернет; доступ оставлять только через loopback и SSH-туннель;
 - публиковать глубокую Telegram readiness-проверку для внешнего мониторинга
   российского сервера и фактически настроенного исходящего маршрута к Telegram;
-- принимать канонический публичный вход интенсива `/intensiv` на `go`-домене и
-  перенаправлять его на web-страницу приложения с сохранением query-атрибуции;
+- принимать канонический публичный вход интенсива `/intensive` на едином origin
+  без промежуточного HTTP-редиректа и с сохранением query-атрибуции;
 
 Для временной проверки favicon блог-домен пропускает только три явно разрешённых
 пути `/favicon-tests/{black|blue|face}` к одноимённым `noindex`-страницам модуля
@@ -35,7 +35,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-Caddyfile, compose/network config и `docs/OPERATIONS.md`.
+Caddyfile, compose/network config и `docs/OPERATIONS.md`. Повторяемый порядок
+смены единого публичного origin хранится в `docs/DOMAIN_CUTOVER_RUNBOOK.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
