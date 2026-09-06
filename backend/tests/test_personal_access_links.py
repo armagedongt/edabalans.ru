@@ -46,7 +46,10 @@ def setup():
         admin_username="admin@example.com",
         admin_password="test-admin-password",
     )
-    client = TestClient(app, base_url="https://edabalans.ru")
+    # These tests exercise the temporary legacy email-bound adapter. The root
+    # domain is covered by test_account_password_auth and requires a native
+    # authenticated session.
+    client = TestClient(app, base_url="https://app.edabalans.ru")
     with factory() as db:
         user = User(
             display_name="Исторический клиент",
