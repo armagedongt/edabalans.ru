@@ -251,6 +251,23 @@ def create_payment(
         "offer_code": OFFER_CODE if offer else None,
         "account_purchase": account_user is not None,
     }
+    fields = _payment_fields(settings, payment, title, email, expires_at)
+    db.commit()
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "amount": amount_value(amount),
+        "price_code": entry.code,
+        "pricing_version": version.version_number,
+        "intensive_offer": OFFER_CODE if offer else None,
+        "test_mode": settings.robokassa_test_mode,
+        "expires_at": expires_at.isoformat(),
+        "payment_form": {
+            "action": settings.robokassa_payment_url,
+            "method": "POST",
+            "fields": fields,
+        },
+    }
 
 
 def create_member_offer_payment(
@@ -319,25 +336,6 @@ def create_member_offer_payment(
         "expires_at": expires_at.isoformat(),
         "payment_form": {"action": settings.robokassa_payment_url, "method": "POST", "fields": fields},
     }
-    fields = _payment_fields(settings, payment, title, email, expires_at)
-    db.commit()
-    return {
-        "ok": True,
-        "invoice_id": invoice_id,
-        "amount": amount_value(amount),
-        "price_code": entry.code,
-        "pricing_version": version.version_number,
-        "intensive_offer": OFFER_CODE if offer else None,
-        "test_mode": settings.robokassa_test_mode,
-        "expires_at": expires_at.isoformat(),
-        "payment_form": {
-            "action": settings.robokassa_payment_url,
-            "method": "POST",
-            "fields": fields,
-        },
-    }
-
-
 def create_live_probe_payment(
     db: Session,
     settings: Settings,
