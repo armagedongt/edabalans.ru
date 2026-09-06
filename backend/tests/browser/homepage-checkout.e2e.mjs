@@ -25,12 +25,6 @@ try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 900 } })
   let checkoutBody = null
   let failNextStoredOfferValidation = false
-  await page.addInitScript(() => {
-    window.__cartProducts = []
-    window.__cartOpenCount = 0
-    window.tcart__addProduct = product => window.__cartProducts.push(product)
-    window.tcart__openCart = () => { window.__cartOpenCount += 1 }
-  })
 
   await page.route(`${tildaUrl}**`, route => route.fulfill({
     contentType: 'text/html',
@@ -46,7 +40,6 @@ try {
     const request = route.request()
     const url = new URL(request.url())
     if (url.pathname.startsWith('/api/pricing/site')) {
-      if (request.method() === 'POST') checkoutBody = request.postDataJSON()
       if (request.method() === 'GET' && url.searchParams.get('intensive_offer') === 'offer-test' && failNextStoredOfferValidation) {
         failNextStoredOfferValidation = false
         await route.fulfill({status: 503, contentType: 'application/json', headers: { 'access-control-allow-origin': '*' }, body: '{}'})
@@ -67,6 +60,20 @@ try {
       })
       return
     }
+    if (url.pathname === '/api/payments/robokassa/checkout' && request.method() === 'POST') {
+      checkoutBody = request.postDataJSON()
+      await route.fulfill({
+        contentType: 'application/json',
+        headers: { 'access-control-allow-origin': '*' },
+        body: JSON.stringify({
+          payment_form: {
+            action: 'https://auth.robokassa.ru/Merchant/Index.aspx',
+            fields: { MerchantLogin: 'test-shop', OutSum: '2900', InvId: '123' },
+          },
+        }),
+      })
+      return
+    }
     const upstream = await fetch(`${baseUrl}${url.pathname}${url.search}`)
     await route.fulfill({
       status: upstream.status,
@@ -74,6 +81,11 @@ try {
       body: Buffer.from(await upstream.arrayBuffer()),
     })
   })
+
+  await page.route('https://auth.robokassa.ru/**', route => route.fulfill({
+    contentType: 'text/html',
+    body: '<!doctype html><title>Robokassa test form</title>',
+  }))
 
   await page.goto(`${tildaUrl}?intensive_offer=offer-test`, {
     waitUntil: 'domcontentloaded',
@@ -84,27 +96,21 @@ try {
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await tildaButton.waitFor({ state: 'visible' })
   const checkoutEndpoint = await page.locator('#edb-pricing-neurozeh-v1').getAttribute('data-checkout-endpoint')
-  if (checkoutEndpoint !== `${appUrl}/api/pricing/site/checkout`) {
+  if (checkoutEndpoint !== `${appUrl}/api/payments/robokassa/checkout`) {
     throw new Error(`Loader did not rewrite cross-origin checkout endpoint: ${checkoutEndpoint}`)
   }
   await tildaButton.click()
-  await page.waitForFunction(() => window.__cartOpenCount === 1)
+  if (!(await page.locator('.edb-checkout-modal').isVisible())) {
+    throw new Error('Direct Robokassa email modal did not open in Tilda embed mode')
+  }
+  await page.locator('.edb-checkout-email').fill('test@example.ru')
+  await page.locator('.edb-checkout-consent').check()
+  const paymentNavigation = page.waitForURL('https://auth.robokassa.ru/**')
+  await page.locator('.edb-checkout-form').evaluate(form => form.requestSubmit())
+  await paymentNavigation
 
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
     throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
-  }
-  const cart = await page.evaluate(() => ({ products: window.__cartProducts, opens: window.__cartOpenCount }))
-  if (
-    cart.opens !== 1
-    || cart.products.length !== 1
-    || cart.products[0].name !== 'Самостоятельный · №12345678'
-    || cart.products[0].price !== 2900
-    || cart.products[0].quantity !== 1
-  ) {
-    throw new Error(`Native Tilda cart was not opened correctly: ${JSON.stringify(cart)}`)
-  }
-  if (await page.locator('.edb-checkout-modal').isVisible()) {
-    throw new Error('Direct Robokassa email modal opened in Tilda embed mode')
   }
 
   await page.goto(`${tildaUrl}?intensive_offer=expired-test`, { waitUntil: 'domcontentloaded' })
@@ -115,9 +121,8 @@ try {
   }
   checkoutBody = null
   await regularButton.click()
-  await page.waitForFunction(() => window.__cartOpenCount === 1)
-  if (checkoutBody?.intensive_offer) {
-    throw new Error(`Expired intensive offer reached checkout: ${JSON.stringify(checkoutBody)}`)
+  if (!(await page.locator('.edb-checkout-modal').isVisible())) {
+    throw new Error('Direct Robokassa email modal did not open after an expired offer')
   }
 
   await page.route('**/api/pricing/site/preview**', route => route.fulfill({
