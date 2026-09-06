@@ -123,6 +123,19 @@ class MaxClient:
                     raise RuntimeError("MAX returned an unsupported media upload response") from exc
                 result_payload = {}
         payload = dict(result_payload or {})
+        if media_type == "image" and not payload.get("token"):
+            photos = payload.get("photos")
+            if isinstance(photos, dict):
+                photo_token = next(
+                    (
+                        photo.get("token")
+                        for photo in photos.values()
+                        if isinstance(photo, dict) and photo.get("token")
+                    ),
+                    None,
+                )
+                if photo_token:
+                    payload = {"token": photo_token}
         if not payload.get("token") and upload_payload.get("token"):
             payload["token"] = upload_payload["token"]
         if not payload.get("token"):

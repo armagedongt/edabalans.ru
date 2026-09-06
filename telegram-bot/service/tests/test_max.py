@@ -187,6 +187,40 @@ def test_max_upload_uses_video_token_returned_before_file_upload(tmp_path):
     }]
 
 
+def test_max_upload_extracts_image_token_from_photos_response(tmp_path):
+    image = tmp_path / "reminder.jpg"
+    image.write_bytes(b"image")
+    requests = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        if request.url.path == "/uploads":
+            return httpx.Response(200, json={
+                "url": "https://upload.example.test/uploadImage?photoIds=photo-1",
+            })
+        if request.url.host == "upload.example.test":
+            return httpx.Response(200, json={
+                "photos": {"photo-1": {"token": "image-token"}},
+            })
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-image-1"}}})
+
+    content = SimpleNamespace(
+        body_source="",
+        media_kind="photo",
+        media_path=str(image),
+    )
+    message_id = MaxClient("max-secret", httpx.MockTransport(handler)).send_content(
+        "901", content, {},
+    )
+
+    assert message_id == "max-image-1"
+    payload = json.loads(requests[-1].content)
+    assert payload["attachments"] == [{
+        "type": "image",
+        "payload": {"token": "image-token"},
+    }]
+
+
 def test_max_upload_uses_initial_video_token_when_file_upload_response_is_xml(tmp_path):
     video = tmp_path / "intro.mp4"
     video.write_bytes(b"video")
