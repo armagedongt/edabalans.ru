@@ -127,13 +127,13 @@ build_changed_services
 start_changed_services
 
 curl --fail --silent --show-error --max-time 15 \
-    https://api.edabalans.ru/health >/dev/null
+    https://edabalans.ru/health >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://api.edabalans.ru/ready >/dev/null
+    https://edabalans.ru/ready >/dev/null
 telegram_ready=false
 for _ in {1..8}; do
     if curl --fail --silent --show-error --max-time 15 \
-        https://api.edabalans.ru/telegram/ready >/dev/null; then
+        https://edabalans.ru/api/health/telegram >/dev/null; then
         telegram_ready=true
         break
     fi
@@ -143,16 +143,20 @@ if [[ "${telegram_ready}" != "true" ]]; then
     echo "Telegram readiness did not become healthy" >&2
     exit 1
 fi
-curl --fail --silent --show-error --max-time 20 \
-    https://data.edabalans.ru/api/v1/health >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://app.edabalans.ru/apps/masterclass-course.html >/dev/null
+    https://edabalans.ru/apps/masterclass-course.html >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://app.edabalans.ru/preview/homepage-mobile?theme=blue-rhythm >/dev/null
+    https://edabalans.ru/preview/homepage-mobile?theme=blue-rhythm >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://app.edabalans.ru/api/public-site/content/approach >/dev/null
+    https://edabalans.ru/api/public-site/content/approach >/dev/null
 curl --fail --silent --show-error --max-time 15 \
-    https://app.edabalans.ru/api/pricing/site/preview >/dev/null
+    https://edabalans.ru/api/pricing/site/preview >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://edabalans.ru/lk >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://edabalans.ru/intensive >/dev/null
+curl --fail --silent --show-error --max-time 15 \
+    https://edabalans.ru/intensive/day-1 >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://go.похудение-это-есть.рф/robokassa-test >/dev/null
   curl -fsS --retry 5 --retry-delay 2 \

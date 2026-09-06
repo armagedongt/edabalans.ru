@@ -7,10 +7,10 @@
 | Компонент | Назначение | Публичный доступ |
 | --- | --- | --- |
 | Caddy | HTTPS и маршрутизация | 80/443 |
-| FastAPI | API приложений, публичные документы и блог | `api.edabalans.ru`, приложения через `app.edabalans.ru`, документы через `go.похудение-это-есть.рф/legal`, временная тестовая оплата через `go.похудение-это-есть.рф/robokassa-test`, блог через `blog.похудение-это-есть.рф` |
-| Telegram-бот | Polling, scheduler, цепочки и админка сообщений | `api.edabalans.ru/bot`, API только после входа администратора |
+| FastAPI | API приложений, публичные документы и блог | `edabalans.ru`; временные старые `app/api/go` адреса обслуживаются только для совместимости, блог остаётся на `blog.похудение-это-есть.рф` |
+| Telegram-бот | Polling, scheduler, цепочки и админка сообщений | `edabalans.ru/admin/messaging`, API только после входа администратора |
 | PostgreSQL 17 | источник структурированных данных | нет |
-| NocoDB 2026.08.0 | человекочитаемый просмотр таблиц | `data.edabalans.ru`, вход обязателен |
+| NocoDB 2026.08.0 | технический просмотр таблиц | только `127.0.0.1:8080` на сервере или через SSH-туннель |
 
 Каталог production: `/opt/edabalans`.
 
@@ -27,20 +27,19 @@
 ```bash
 cd /opt/edabalans
 docker compose ps
-curl -fsS https://api.edabalans.ru/health
-curl -fsS https://api.edabalans.ru/ready
-curl -fsS https://api.edabalans.ru/telegram/ready
-curl -fsS https://app.edabalans.ru/apps/dqs.html
-curl -fsS https://data.edabalans.ru/api/v1/health
-curl -fsS https://api.edabalans.ru/bot
-curl -fsS https://go.похудение-это-есть.рф/legal
-curl -fsS https://go.похудение-это-есть.рф/legal/disclaimer
-curl -fsS https://go.похудение-это-есть.рф/legal/privacy
-curl -fsS https://go.похудение-это-есть.рф/legal/consent
-curl -fsS https://go.похудение-это-есть.рф/legal/offer
+curl -fsS https://edabalans.ru/health
+curl -fsS https://edabalans.ru/ready
+curl -fsS https://edabalans.ru/api/health/telegram
+curl -fsS https://edabalans.ru/apps/dqs.html
+curl -fsS https://edabalans.ru/admin/messaging
+curl -fsS https://edabalans.ru/legal
+curl -fsS https://edabalans.ru/legal/disclaimer
+curl -fsS https://edabalans.ru/legal/privacy
+curl -fsS https://edabalans.ru/legal/consent
+curl -fsS https://edabalans.ru/legal/offer
 curl -fsS https://go.похудение-это-есть.рф/robokassa-test
-curl -fsSL 'https://go.похудение-это-есть.рф/intensiv?utm_source=operations-smoke&yclid=operations-smoke'
-curl -fsS https://app.edabalans.ru/intensive/day-1
+curl -fsS 'https://edabalans.ru/intensive?utm_source=operations-smoke&yclid=operations-smoke'
+curl -fsS https://edabalans.ru/intensive/day-1
 curl -fsS https://blog.похудение-это-есть.рф/
 ufw status
 systemctl status edabalans-backup.timer
@@ -65,8 +64,8 @@ go-домене не опубликован. После завершения э�
 Внешний `edabalans-watchdog` в Cloudflare Workers проверяет каждую минуту две
 публичные точки:
 
-- `https://api.edabalans.ru/ready` — Caddy, основной backend и PostgreSQL;
-- `https://api.edabalans.ru/telegram/ready` — Telegram-сервис, PostgreSQL,
+- `https://edabalans.ru/ready` — Caddy, основной backend и PostgreSQL;
+- `https://edabalans.ru/api/health/telegram` — Telegram-сервис, PostgreSQL,
   активность scheduler и свежий успешный long polling по фактическому исходящему маршруту.
 
 Проверка Telegram возвращает `503`, если polling или scheduler выключен, scheduler
@@ -410,7 +409,7 @@ docker compose run --rm --no-deps --user 0 \
 
 ```toml
 [mcp_servers.edabalans_knowledge]
-url = "https://api.edabalans.ru/mcp/"
+url = "https://edabalans.ru/mcp/"
 bearer_token_env_var = "EDABALANS_KNOWLEDGE_TOKEN"
 ```
 
@@ -519,9 +518,10 @@ downgrade базы не выполняется.
 ## Тестовый Telegram-бот
 
 Контейнер `telegram-bot` доступен снаружи только через Caddy. Публичны маршруты
-`/telegram/webhook`, `/bot` и `/bot-api/*`; PostgreSQL по-прежнему не публикуется.
+`/api/messaging/telegram/webhook`, `/admin/messaging` и `/admin/messaging-api/*`;
+PostgreSQL и NocoDB по-прежнему не публикуются.
 Админка использует ту же подписанную admin-сессию и пароль, что `/admin` и CRM;
-повторный вход на `api.edabalans.ru/bot` после общего логина не требуется.
+повторный вход на `edabalans.ru/admin/messaging` после общего логина не требуется.
 
 Production сейчас использует настроенный в `TELEGRAM_PROXY_URL` исходящий proxy;
 публичная `/telegram/ready` после выпуска 04.09.2026 подтверждает успешный polling
@@ -533,7 +533,7 @@ Production сейчас использует настроенный в `TELEGRAM
 ```bash
 docker compose ps telegram-bot
 docker compose exec telegram-bot python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8001/health').read().decode())"
-curl -fsS https://api.edabalans.ru/telegram/ready
+curl -fsS https://edabalans.ru/api/health/telegram
 ```
 
 Модуль после покупки Мастер-класса выпущен в безопасном тестовом режиме:
@@ -615,8 +615,8 @@ Migration `20260824_0021` добавляет в прогресс дня толь
 После выпуска проверить:
 
 ```bash
-curl -fsS https://app.edabalans.ru/embed.js
-curl -fsS https://app.edabalans.ru/apps/masterclass-course.html
+curl -fsS https://edabalans.ru/embed.js
+curl -fsS https://edabalans.ru/apps/masterclass-course.html
 docker compose exec backend alembic current
 ```
 

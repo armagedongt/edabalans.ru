@@ -372,7 +372,7 @@ depends_on = ["platform.auth", "platform.commerce", "operations.imports"]
 
 [[modules]]
 id = "products.intensive"
-admin_catalog = [{ category = "tools", order = 70, url = "https://app.edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", description = "Страницы и редактура четырёх дней интенсива." }]
+admin_catalog = [{ category = "tools", order = 70, url = "https://edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", description = "Страницы и редактура четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
@@ -658,7 +658,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 
 [[modules]]
 id = "messaging.telegram.engine"
-admin_catalog = [{ category = "services", order = 10, url = "https://api.edabalans.ru/bot", label = "Telegram-бот", description = "Цепочки, контакты, рассылки и связанные данные." }]
+admin_catalog = [{ category = "services", order = 10, url = "https://edabalans.ru/admin/messaging", label = "Telegram-бот", description = "Цепочки, контакты, рассылки и связанные данные." }]
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
@@ -738,7 +738,7 @@ owns_routes = ["*/admin/knowledge-base", "*/admin/api/knowledge-base*", "*/admin
 
 [[modules]]
 id = "admin.nocodb"
-admin_catalog = [{ category = "services", order = 20, url = "https://data.edabalans.ru", label = "Таблицы PostgreSQL", description = "Технический просмотр данных в NocoDB." }]
+admin_catalog = []
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.nocodb.md"
 depends_on = ["operations.database", "operations.proxy"]

@@ -27,8 +27,8 @@
     }
   ],
   "vars": {
-    "PLATFORM_READY_URL": "https://api.edabalans.ru/ready",
-    "TELEGRAM_READY_URL": "https://api.edabalans.ru/telegram/ready",
+    "PLATFORM_READY_URL": "https://edabalans.ru/ready",
+    "TELEGRAM_READY_URL": "https://edabalans.ru/api/health/telegram",
     "FAILURES_BEFORE_INCIDENT": "3",
     "RU_REBOOT_AFTER_TELEGRAM_FAILURE_SECONDS": "300",
     "ADS_PAUSE_AFTER_SECONDS": "600",
