@@ -588,6 +588,8 @@ telegram_status = "Исполняемая редактируемая цепоч�
 telegram_order = 20
 owns_files = [
   "docs/knowledge-base/modules/telegram/WELCOME_INTENSIVE.md",
+  "telegram-bot/runtime/media/intensive-one-percent-photo.jpg",
+  "telegram-bot/runtime/media/intensive-small-steps-reminder.jpg",
   "telegram-bot/runtime/media/intensive-masterclass-followup-waiting-cat.jpg",
   "telegram-bot/service/app/generated_intensive_content.py",
   "tools/build_intensive_bot_content.py",
