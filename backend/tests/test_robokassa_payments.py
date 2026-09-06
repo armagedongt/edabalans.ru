@@ -325,7 +325,7 @@ def test_public_payment_success_shows_account_next_step_when_onboarding_enabled(
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert "Спасибо за оплату! Доступ готов." in response.text
+    assert "Письмо с данными для входа придёт" in response.text
     assert 'id="account-link"' in response.text
     assert 'const paidUrl="https://edabalans.ru/lk"' in response.text
     app.dependency_overrides.clear()

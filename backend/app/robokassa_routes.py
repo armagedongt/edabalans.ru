@@ -327,7 +327,7 @@ def robokassa_success(
             else "/preview/homepage-mobile#pricing"
         ),
         paid_message=(
-            "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате."
+            "Спасибо за оплату! Доступ готов. Письмо с данными для входа придёт на email, который вы указали при оплате, в течение нескольких минут."
             if settings.account_onboarding_enabled
             else "Оплата подтверждена."
         ),
