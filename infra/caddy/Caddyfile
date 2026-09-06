@@ -75,7 +75,9 @@
 
 	log {
 		output stdout
-		format json
+		format filter {
+			request>headers>X-Tilda-Webhook-Token delete
+		}
 	}
 }
 
@@ -117,7 +119,9 @@ www.{$PUBLIC_DOMAIN} {
 
 	log {
 		output stdout
-		format json
+		format filter {
+			request>headers>X-Tilda-Webhook-Token delete
+		}
 	}
 }
 
@@ -142,7 +146,9 @@ www.{$PUBLIC_DOMAIN} {
 
 	log {
 		output stdout
-		format json
+		format filter {
+			request>headers>X-Tilda-Webhook-Token delete
+		}
 	}
 }
 
@@ -279,6 +285,8 @@ www.{$PUBLIC_DOMAIN} {
 
 	log {
 		output stdout
-		format json
+		format filter {
+			request>headers>X-Tilda-Webhook-Token delete
+		}
 	}
 }
