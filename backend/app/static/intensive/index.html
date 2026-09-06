@@ -4,6 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex,follow">
+  <script>
+    (function () {
+      var url = new URL(window.location.href);
+      if (!url.searchParams.has("i") && !url.searchParams.has("token")) return;
+      url.searchParams.delete("i");
+      url.searchParams.delete("token");
+      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+    }());
+  </script>
   <title>Бесплатный интенсив «Последнее похудение» </title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -333,7 +342,7 @@
   </div>
   <script src="../site-header.js"></script>
   <script src="../site-footer.js"></script>
-  <script src="https://app.edabalans.ru/preview/homepage-mobile/media-coordinator.js?v=2" defer></script>
+  <script src="https://edabalans.ru/preview/homepage-mobile/media-coordinator.js?v=2" defer></script>
   <script src="/intensive/runtime.js?v=1" defer></script>
 </body>
 </html>

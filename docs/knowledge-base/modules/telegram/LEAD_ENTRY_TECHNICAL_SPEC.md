@@ -261,7 +261,7 @@ route внутри сервиса не конфликтует с `/r/{token}`. �
 Посадка не обязана вести пользователя через `/go`. Она вызывает:
 
 ```text
-POST https://api.edabalans.ru/bot/public/start-link
+POST https://edabalans.ru/api/messaging/start-link
 ```
 
 JSON принимает `messenger=tg|max`, ровно одно из `alias`/`rule_id` и только

@@ -132,6 +132,9 @@ def test_canonical_personal_entry_serves_menu_without_redirect_and_keeps_query()
     assert entry.status_code == 200
     assert "location" not in entry.headers
     assert "Бесплатный интенсив" in entry.text
+    assert 'url.searchParams.delete("i")' in entry.text
+    assert 'url.searchParams.delete("token")' in entry.text
+    assert "history.replaceState" in entry.text
     assert "edabalans_intensive_session" in entry.headers["set-cookie"]
     assert client.get("/api/intensive/state").json() == {
         "identified": True,

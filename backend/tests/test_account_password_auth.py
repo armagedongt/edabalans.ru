@@ -52,7 +52,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
     app.dependency_overrides[get_settings] = settings
     main_module.SessionLocal = factory
     _attempts.clear()
-    return TestClient(app, base_url="https://go.example.test"), factory
+    return TestClient(app, base_url="https://edabalans.ru"), factory
 
 
 def seed_credential(factory: sessionmaker[Session]) -> None:
