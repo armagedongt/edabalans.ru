@@ -7,6 +7,7 @@ import re
 import ssl
 import uuid
 from datetime import UTC, datetime
+from json import JSONDecodeError
 from pathlib import Path
 from typing import Any
 
@@ -102,7 +103,12 @@ class MaxClient:
             with path.open("rb") as stream:
                 result = client.post(upload_url, files={"data": (path.name, stream)})
             result.raise_for_status()
-            result_payload = result.json() if result.content.strip() else {}
+            try:
+                result_payload = result.json() if result.content.strip() else {}
+            except JSONDecodeError as exc:
+                if not upload_payload.get("token"):
+                    raise RuntimeError("MAX returned an unsupported media upload response") from exc
+                result_payload = {}
         payload = dict(result_payload or {})
         if not payload.get("token") and upload_payload.get("token"):
             payload["token"] = upload_payload["token"]

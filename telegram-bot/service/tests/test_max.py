@@ -147,7 +147,7 @@ def test_max_upload_uses_video_token_returned_before_file_upload(tmp_path):
     }]
 
 
-def test_max_upload_uses_initial_video_token_when_file_upload_response_is_empty(tmp_path):
+def test_max_upload_uses_initial_video_token_when_file_upload_response_is_xml(tmp_path):
     video = tmp_path / "intro.mp4"
     video.write_bytes(b"video")
     requests = []
@@ -160,7 +160,7 @@ def test_max_upload_uses_initial_video_token_when_file_upload_response_is_empty(
                 "token": "video-token",
             })
         if request.url.host == "upload.example.test":
-            return httpx.Response(200, content=b"")
+            return httpx.Response(200, content=b"<retval>1</retval>")
         return httpx.Response(200, json={"message": {"body": {"mid": "max-video-1"}}})
 
     content = SimpleNamespace(
