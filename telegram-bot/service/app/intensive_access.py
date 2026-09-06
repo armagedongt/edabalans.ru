@@ -39,7 +39,7 @@ def personal_tracking_values(
     user_id: str,
     platform: str,
     public_url: str,
-    tracking_base_url: str = "https://go.похудение-это-есть.рф",
+    tracking_base_url: str = "https://edabalans.ru",
     channel_post_numbers: Iterable[int] = (),
 ) -> dict[str, str]:
     intensive_url, row = get_or_create_intensive_access_link(

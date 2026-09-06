@@ -119,14 +119,14 @@ def save_intensive_page(
                     platform=SOURCE_PLATFORM,
                     account_key=SOURCE_ACCOUNT_KEY,
                     display_name="Бесплатный интенсив «Последнее похудение»",
-                    canonical_url="https://app.edabalans.ru/intensive/day-1",
+                    canonical_url="https://edabalans.ru/intensive/day-1",
                 )
                 db.add(source)
                 db.flush()
             item = ContentItem(
                 source_id=source.id,
                 external_id=day_code,
-                canonical_url=f"https://app.edabalans.ru/intensive/{day_code}",
+                canonical_url=f"https://edabalans.ru/intensive/{day_code}",
                 title=DAY_TITLES[day_code],
                 author_name=admin_username,
                 status="published",

@@ -7,9 +7,9 @@
     telegram: 'https://t.me/FitnessSergey',
     max: 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw',
     telegramChannel: 'https://t.me/Fitness_Talks',
-    offer: 'https://go.похудение-это-есть.рф/legal/offer',
-    privacy: 'https://go.похудение-это-есть.рф/legal/privacy',
-    disclaimer: 'https://go.похудение-это-есть.рф/legal/disclaimer'
+    offer: 'https://edabalans.ru/legal/offer',
+    privacy: 'https://edabalans.ru/legal/privacy',
+    disclaimer: 'https://edabalans.ru/legal/disclaimer'
   };
 
   var CSS = [

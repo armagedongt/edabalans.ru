@@ -86,7 +86,7 @@ def consume_masterclass_link(
     telegram: dict,
     payload: str,
     app_auth_secret: str = "",
-    account_url: str = "https://go.похудение-это-есть.рф/lk",
+    account_url: str = "https://edabalans.ru/lk",
 ) -> tuple[bool, str]:
     """Consume an M-prefixed one-time link without allowing account takeover."""
     if not payload.startswith("M"):

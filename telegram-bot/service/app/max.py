@@ -651,7 +651,7 @@ def process_max_update(
     intensive_public_url: str,
     sender: MaxClient,
     app_auth_secret: str = "",
-    account_url: str = "https://go.похудение-это-есть.рф/lk",
+    account_url: str = "https://edabalans.ru/lk",
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
     if update.get("update_type") != "bot_started":

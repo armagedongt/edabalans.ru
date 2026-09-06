@@ -61,7 +61,7 @@ def material_source(db: Session, *, create: bool = False) -> ContentSource | Non
             platform=SOURCE_PLATFORM,
             account_key=SOURCE_ACCOUNT_KEY,
             display_name="Материалы Мастер-класса",
-            canonical_url="https://app.edabalans.ru/apps/masterclass-course.html",
+            canonical_url="https://edabalans.ru/apps/masterclass-course.html",
         )
         db.add(source)
         db.flush()
@@ -240,7 +240,7 @@ def publish_material(
                 source_id=source.id,
                 external_id=step_id,
                 canonical_url=(
-                    "https://app.edabalans.ru/apps/masterclass-course.html"
+                    "https://edabalans.ru/apps/masterclass-course.html"
                     f"?course_day={day_number}&course_material={step_id}"
                 ),
                 title=step.get("title") or step.get("label") or step_id,

@@ -42,7 +42,7 @@ def material_source(db: Session, *, create: bool = False) -> ContentSource | Non
             platform=SOURCE_PLATFORM,
             account_key=SOURCE_ACCOUNT_KEY,
             display_name="Материалы Калорийного курса",
-            canonical_url="https://app.edabalans.ru/apps/calories-course.html",
+            canonical_url="https://edabalans.ru/apps/calories-course.html",
         )
         db.add(source)
         db.flush()
@@ -195,7 +195,7 @@ def publish_material(
                 source_id=source.id,
                 external_id=step_id,
                 canonical_url=(
-                    "https://app.edabalans.ru/apps/calories-course.html"
+                    "https://edabalans.ru/apps/calories-course.html"
                     f"?calories_stage={stage_number}&calories_material={step_id}"
                 ),
                 title=step.get("title") or step_id,
