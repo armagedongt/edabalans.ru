@@ -173,9 +173,15 @@ def create_payment(
     email_original: str,
     *,
     offer_user_id: uuid.UUID | None = None,
+    account_user: User | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
+    if account_user is not None:
+        try:
+            validate_user_email_binding(db, account_user, email)
+        except TildaPayloadError as exc:
+            raise RobokassaError(str(exc)) from exc
     if offer_user_id is not None:
         offer_user = db.get(User, offer_user_id)
         if offer_user is None:
@@ -218,10 +224,11 @@ def create_payment(
         currency=entry.currency,
         payment_status="pending",
         payment_system="robokassa",
-        raw_payload={"test_mode": settings.robokassa_test_mode},
+        user_id=account_user.id if account_user is not None else None,
+        raw_payload={"test_mode": settings.robokassa_test_mode, "account_purchase": account_user is not None},
     )
     checkout = OfferCheckout(
-        user_id=offer_user_id,
+        user_id=account_user.id if account_user is not None else offer_user_id,
         checkout_kind="public_site_robokassa",
         pricing_version_id=version.id,
         price_entry_code=entry.code,
@@ -242,6 +249,75 @@ def create_payment(
         "test_mode": settings.robokassa_test_mode,
         "checkout_id": str(checkout.id),
         "offer_code": OFFER_CODE if offer else None,
+        "account_purchase": account_user is not None,
+    }
+
+
+def create_member_offer_payment(
+    db: Session,
+    settings: Settings,
+    checkout: OfferCheckout,
+    user: User,
+    email_original: str,
+) -> dict:
+    """Create a Robokassa invoice for an offer already recomputed for one signed-in user."""
+    _require_checkout_settings(settings)
+    email = normalize_checkout_email(email_original)
+    if checkout.user_id != user.id:
+        raise RobokassaError("Предложение принадлежит другому пользователю")
+    now = datetime.now(timezone.utc)
+    expires_at = checkout.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if checkout.status != "pending" or expires_at <= now:
+        raise RobokassaError("Предложение больше не доступно")
+    try:
+        validate_user_email_binding(db, user, email)
+    except TildaPayloadError as exc:
+        raise RobokassaError(str(exc)) from exc
+    if checkout.payment_id is not None:
+        existing = db.get(Payment, checkout.payment_id)
+        if existing is not None and existing.payment_status == "pending":
+            fields = _payment_fields(settings, existing, checkout.title, email, expires_at)
+            return {
+                "ok": True,
+                "invoice_id": existing.external_order_id,
+                "amount": amount_value(existing.amount),
+                "test_mode": settings.robokassa_test_mode,
+                "expires_at": expires_at.isoformat(),
+                "payment_form": {"action": settings.robokassa_payment_url, "method": "POST", "fields": fields},
+            }
+        raise RobokassaError("Предложение уже используется в другом счёте")
+    payment_id = uuid.uuid4()
+    invoice_id = str(_invoice_id(payment_id))
+    payment = Payment(
+        id=payment_id,
+        user_id=user.id,
+        pricing_version_id=checkout.pricing_version_id,
+        price_entry_code=checkout.price_entry_code,
+        source=SOURCE,
+        external_order_id=invoice_id,
+        email_at_purchase=email,
+        product_name_raw=checkout.title,
+        amount=checkout.amount,
+        amount_is_estimated=False,
+        currency="RUB",
+        payment_status="pending",
+        payment_system="robokassa",
+        raw_payload={"test_mode": settings.robokassa_test_mode, "account_purchase": True, "checkout_id": str(checkout.id)},
+    )
+    db.add(payment)
+    db.flush()
+    checkout.payment_id = payment.id
+    fields = _payment_fields(settings, payment, checkout.title, email, expires_at)
+    db.commit()
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "amount": amount_value(checkout.amount),
+        "test_mode": settings.robokassa_test_mode,
+        "expires_at": expires_at.isoformat(),
+        "payment_form": {"action": settings.robokassa_payment_url, "method": "POST", "fields": fields},
     }
     fields = _payment_fields(settings, payment, title, email, expires_at)
     db.commit()
@@ -454,7 +530,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     checkout.status = payment.payment_status
     if not is_test_payment:
         grant_payment_access(db, payment, checkout, occurred_at)
-        if settings.account_onboarding_enabled:
+        if settings.account_onboarding_enabled and not bool((payment.raw_payload or {}).get("account_purchase")):
             ensure_paid_account_onboarding(db, payment, settings)
     db.commit()
     return invoice_id

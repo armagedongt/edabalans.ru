@@ -1848,6 +1848,13 @@ def account_offer_checkout(
 def create_offer_checkout(
     db: Session, user: User, payload: dict, card: dict
 ) -> tuple[str, datetime]:
+    checkout = create_offer_checkout_record(db, user, payload, card)
+    return offer_checkout_order(checkout, int(checkout.amount)), aware_utc(checkout.expires_at)
+
+
+def create_offer_checkout_record(
+    db: Session, user: User, payload: dict, card: dict
+) -> OfferCheckout:
     """Persist one recomputed checkout for an offer card already authorised by build_offers."""
     now = datetime.now(timezone.utc)
     # Serialise pending checkout creation for one member without introducing a
@@ -1868,10 +1875,7 @@ def create_offer_checkout(
     )
     if existing is not None and list(existing.items or []) == list(card["items"]):
         if Decimal(existing.amount) == Decimal(card["price"]):
-            return (
-                offer_checkout_order(existing, card["price"]),
-                aware_utc(existing.expires_at),
-            )
+            return existing
     checkout = OfferCheckout(
         user_id=user.id,
         checkout_kind="member_offer",
@@ -1889,7 +1893,7 @@ def create_offer_checkout(
     )
     db.add(checkout)
     db.flush()
-    return offer_checkout_order(checkout, card["price"]), checkout_expires
+    return checkout
 
 
 @router.get("/gate/{part}")

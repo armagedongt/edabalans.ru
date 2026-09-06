@@ -13,8 +13,10 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
 from app.database import get_db
+from app.account_auth_routes import primary_email, require_native_user
 from app.intensive_web_access import offer_user_id
-from app.models import Payment
+from app.masterclass_routes import build_offers, create_offer_checkout_record
+from app.models import Payment, Resource, UserAccess
 from app.pricing_routes import enforce_preview_checkout_rate_limit
 from app.pricing_service import (
     active_pricing_version,
@@ -25,6 +27,7 @@ from app.robokassa_service import (
     RobokassaError,
     confirm_payment,
     create_live_probe_payment,
+    create_member_offer_payment,
     create_payment,
 )
 
@@ -42,6 +45,15 @@ class RobokassaCheckoutIn(BaseModel):
     price_code: str = Field(min_length=3, max_length=120)
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
+
+
+class NativeOfferCheckoutIn(BaseModel):
+    offer_code: str = Field(min_length=3, max_length=120)
+    focus_product_code: str | None = Field(default=None, max_length=40)
+
+
+class NativeTariffCheckoutIn(BaseModel):
+    price_code: str = Field(min_length=3, max_length=120)
 
 
 def _require_go_test_host(request: Request) -> None:
@@ -257,6 +269,60 @@ def robokassa_checkout(
         raise HTTPException(422, str(exc)) from exc
 
 
+@router.post("/api/payments/robokassa/account-tariffs/checkout")
+def robokassa_account_tariff_checkout(
+    body: NativeTariffCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    user = require_native_user(request, db)
+    already_owned = db.scalar(
+        select(UserAccess.id)
+        .join(Resource, Resource.id == UserAccess.resource_id)
+        .where(UserAccess.user_id == user.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None))
+    )
+    if already_owned is not None:
+        raise HTTPException(409, "Мастер-класс уже доступен в личном кабинете")
+    version = active_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Активная версия цен не опубликована")
+    try:
+        return create_payment(
+            db, settings, version, body.price_code, primary_email(db, user.id), account_user=user
+        )
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/api/payments/robokassa/account-offers/checkout")
+def robokassa_account_offer_checkout(
+    body: NativeOfferCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    user = require_native_user(request, db)
+    payload = build_offers(
+        db, user, "offers-hub", use_pricing_catalog=settings.pricing_catalog_enabled,
+        focus_product_code=body.focus_product_code, readonly=True,
+    )
+    card = next((item for item in payload["offers"] if item["code"] == body.offer_code), None)
+    if card is None:
+        raise HTTPException(409, "Предложение больше не доступно")
+    try:
+        checkout = create_offer_checkout_record(db, user, payload, card)
+        return create_member_offer_payment(db, settings, checkout, user, primary_email(db, user.id))
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+
+
 @router.post("/integrations/robokassa/result2", include_in_schema=False)
 async def robokassa_result2(
     request: Request,
@@ -278,6 +344,7 @@ async def robokassa_result2(
 def robokassa_status(
     invoice_id: str,
     db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> dict:
     payment = db.scalar(
         select(Payment).where(
@@ -287,7 +354,18 @@ def robokassa_status(
     )
     if payment is None:
         raise HTTPException(404, "Счёт не найден")
-    return {"ok": True, "invoice_id": invoice_id, "status": payment.payment_status}
+    account_purchase = bool((payment.raw_payload or {}).get("account_purchase"))
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "status": payment.payment_status,
+        "paid_message": (
+            "Спасибо за оплату! Курс появится в личном кабинете в течение минуты."
+            if account_purchase and payment.payment_status == "paid"
+            else None
+        ),
+        "account_url": settings.account_public_url if account_purchase else None,
+    }
 
 
 def _return_page(
@@ -305,7 +383,7 @@ def _return_page(
 const statusUrl='/api/payments/robokassa/{invoice_id}/status';
 const paidMessage={json.dumps(paid_message, ensure_ascii=False)};
 const paidUrl={json.dumps(paid_url, ensure_ascii=False)};
-async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{document.getElementById('state').textContent=paidMessage;if(paidUrl){{const link=document.getElementById('account-link');link.href=paidUrl;link.hidden=false;}}return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
+async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{document.getElementById('state').textContent=d.paid_message||paidMessage;const destination=d.account_url||paidUrl;if(destination){{const link=document.getElementById('account-link');link.href=destination;link.hidden=false;}}return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
 </script>"""
     account_link = '<p><a id="account-link" hidden>Открыть личный кабинет</a></p>'
     return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}</style><main><h1>{title}</h1><p id=\"state\">{message}</p>{account_link}<p><a href=\"{escape(return_url, quote=True)}\">Вернуться на сайт</a></p></main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
