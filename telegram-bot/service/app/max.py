@@ -76,15 +76,23 @@ class MaxClient:
 
     @staticmethod
     def _compact_html(text: str) -> str:
+        def max_text_units(value: str) -> int:
+            return len(value.encode("utf-16-le")) // 2
+
         text = re.sub(r"</?tg-spoiler>", "", text)
         text = re.sub(r"<tg-emoji[^>]*>|</tg-emoji>", "", text)
-        for tag in ("blockquote", "b", "i", "u", "s"):
-            if len(text) <= MAX_MESSAGE_TEXT_LIMIT:
+        while max_text_units(text) > MAX_MESSAGE_TEXT_LIMIT:
+            before = text
+            for tag in ("blockquote", "b", "i", "u", "s"):
+                if max_text_units(text) <= MAX_MESSAGE_TEXT_LIMIT:
+                    break
+                text = re.sub(fr"</?{tag}(?:\s[^>]*)?>", "", text, count=2)
+            if text == before:
                 break
-            text = re.sub(fr"</?{tag}(?:\s[^>]*)?>", "", text, count=2)
-        if len(text) > MAX_MESSAGE_TEXT_LIMIT:
+        if max_text_units(text) > MAX_MESSAGE_TEXT_LIMIT:
             raise RuntimeError(
-                f"MAX message exceeds {MAX_MESSAGE_TEXT_LIMIT} characters ({len(text)})"
+                f"MAX message exceeds {MAX_MESSAGE_TEXT_LIMIT} UTF-16 units "
+                f"({max_text_units(text)})"
             )
         return text
 

@@ -188,6 +188,16 @@ def test_max_html_compaction_keeps_visible_text_and_respects_limit():
     assert len(result) <= 4000
 
 
+def test_max_html_compaction_counts_emoji_as_two_utf16_units():
+    visible = "first" + ("x" * 3983) + ("😱" * 5)
+    source = f"<b>first</b><b>{'x' * 3983}{'😱' * 5}</b>"
+
+    result = MaxClient._compact_html(source)
+
+    assert result == visible
+    assert len(result.encode("utf-16-le")) // 2 <= 4000
+
+
 def max_start(timestamp="2026-08-27T10:00:00Z", payload=""):
     return {
         "update_type": "bot_started",
