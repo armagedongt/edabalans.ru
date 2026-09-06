@@ -10,6 +10,7 @@ from datetime import UTC, datetime
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 from sqlalchemy import select, text
@@ -96,7 +97,12 @@ class MaxClient:
             )
         return text
 
-    def _upload_media(self, media_type: str, path: Path) -> dict[str, Any]:
+    def _upload_media_value(
+        self,
+        media_type: str,
+        filename: str,
+        value: Any,
+    ) -> dict[str, Any]:
         with self._client(120) as client:
             upload = client.post(
                 f"{MAX_API_BASE}/uploads",
@@ -108,8 +114,7 @@ class MaxClient:
             upload_url = str(upload_payload.get("url") or "")
             if not upload_url.startswith("https://"):
                 raise RuntimeError("MAX did not return a media upload URL")
-            with path.open("rb") as stream:
-                result = client.post(upload_url, files={"data": (path.name, stream)})
+            result = client.post(upload_url, files={"data": (filename, value)})
             result.raise_for_status()
             try:
                 result_payload = result.json() if result.content.strip() else {}
@@ -123,6 +128,17 @@ class MaxClient:
         if not payload.get("token"):
             raise RuntimeError("MAX did not return a media token")
         return payload
+
+    def _upload_media(self, media_type: str, path: Path) -> dict[str, Any]:
+        with path.open("rb") as stream:
+            return self._upload_media_value(media_type, path.name, stream)
+
+    def _upload_remote_image(self, url: str) -> dict[str, Any]:
+        with self._client(120) as client:
+            source = client.get(url)
+            source.raise_for_status()
+        filename = Path(urlparse(url).path).name or "image.jpg"
+        return self._upload_media_value("image", filename, source.content)
 
     def send_html(
         self,
@@ -160,11 +176,13 @@ class MaxClient:
     def send_content(self, user_id: str, content: Any, configuration: dict[str, Any]) -> str:
         text_value = self._compact_html(content_body_for_telegram(content))
         attachments: list[dict[str, Any]] = []
+        remote_image_url: str | None = None
         media_path = str(getattr(content, "media_path", "") or "")
         media_kind = str(getattr(content, "media_kind", "") or "")
         if media_kind in {"photo", "video", "video_note"} and media_path:
             max_type = "image" if media_kind == "photo" else "video"
             if max_type == "image" and media_path.startswith(("https://", "http://")):
+                remote_image_url = media_path
                 payload = {"url": media_path}
             else:
                 local_path = Path(media_path)
@@ -195,6 +213,18 @@ class MaxClient:
                 headers={"Authorization": self.token},
                 json=body,
             )
+            if (
+                remote_image_url
+                and response.status_code == 400
+                and "Failed to upload image" in response.text
+            ):
+                attachments[0]["payload"] = self._upload_remote_image(remote_image_url)
+                response = client.post(
+                    f"{MAX_API_BASE}/messages",
+                    params={"user_id": user_id},
+                    headers={"Authorization": self.token},
+                    json=body,
+                )
         response.raise_for_status()
         data = response.json()
         return str(data.get("message", {}).get("body", {}).get("mid", ""))

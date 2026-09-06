@@ -114,6 +114,46 @@ def test_max_client_sends_sequence_photo_and_link_button():
     assert payload["attachments"][1]["type"] == "inline_keyboard"
 
 
+def test_max_client_uploads_remote_image_when_max_cannot_fetch_it():
+    requests = []
+    message_attempts = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal message_attempts
+        requests.append(request)
+        if request.url.host == "cdn.example.test":
+            return httpx.Response(200, content=b"image")
+        if request.url.path == "/uploads":
+            return httpx.Response(200, json={"url": "https://upload.example.test/image"})
+        if request.url.host == "upload.example.test":
+            return httpx.Response(200, json={"token": "image-token"})
+        message_attempts += 1
+        if message_attempts == 1:
+            return httpx.Response(400, json={
+                "code": "proto.payload",
+                "message": "Failed to upload image.",
+            })
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-image-1"}}})
+
+    content = SimpleNamespace(
+        body_source="",
+        media_kind="photo",
+        media_path="https://cdn.example.test/reminder.jpg",
+    )
+    message_id = MaxClient("max-secret", httpx.MockTransport(handler)).send_content(
+        "901", content, {},
+    )
+
+    assert message_id == "max-image-1"
+    message_requests = [request for request in requests if request.url.path == "/messages"]
+    assert len(message_requests) == 2
+    payload = json.loads(message_requests[-1].content)
+    assert payload["attachments"] == [{
+        "type": "image",
+        "payload": {"token": "image-token"},
+    }]
+
+
 def test_max_upload_uses_video_token_returned_before_file_upload(tmp_path):
     video = tmp_path / "intro.mp4"
     video.write_bytes(b"video")
