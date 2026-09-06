@@ -127,12 +127,15 @@ build_changed_services
 start_changed_services
 
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/health >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/ready >/dev/null
 telegram_ready=false
 for _ in {1..8}; do
     if curl --fail --silent --show-error --max-time 15 \
+        --resolve edabalans.ru:443:127.0.0.1 \
         https://edabalans.ru/api/health/telegram >/dev/null; then
         telegram_ready=true
         break
@@ -144,18 +147,25 @@ if [[ "${telegram_ready}" != "true" ]]; then
     exit 1
 fi
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/apps/masterclass-course.html >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/preview/homepage-mobile?theme=blue-rhythm >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/api/public-site/content/approach >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/api/pricing/site/preview >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/lk >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/intensive >/dev/null
 curl --fail --silent --show-error --max-time 15 \
+    --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/intensive/day-1 >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://go.похудение-это-есть.рф/robokassa-test >/dev/null
