@@ -1025,7 +1025,8 @@ def test_intensive_concept_pages_are_public() -> None:
     assert client.get("/intensive/max-full-colored-official.png").status_code == 200
     header_script = client.get("/site-header.js").text
     assert "EdabalansSiteHeader" in header_script
-    assert "https://похудение-это-есть.рф/lk" in header_script
+    assert "https://go.похудение-это-есть.рф/lk" in header_script
+    assert "Зарегистрироваться" in header_script
     assert client.get("/intensive/assets/intensive-day-2/intro-cat.png").status_code == 200
     assert client.get("/intensive/assets/intensive-day-2/not-found.png").status_code == 404
     assert client.get("/intensive/day-5").status_code == 404

@@ -224,8 +224,8 @@ class AccountOnboarding(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False
     )
-    payment_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("payments.id", ondelete="CASCADE"), unique=True, nullable=False
+    payment_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("payments.id", ondelete="CASCADE"), unique=True
     )
     claim_bundle_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(

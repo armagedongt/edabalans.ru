@@ -164,6 +164,9 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
             "ready": definition["ready"],
             "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
             "app": definition["app"] if has_access and definition["ready"] and not legal_required else None,
+            # This is a first purchase, so it must open the three public
+            # Masterclass tariffs rather than the add-on offers for participants.
+            "purchase_mode": "public_masterclass_tariffs" if code == "masterclass" and not has_access else None,
         })
     return courses
 
@@ -213,7 +216,6 @@ def account_payload(email: str, db: Session) -> dict:
             "legacy_portal": {"available": False, "url": "/members/"},
         }
 
-    legal = legal_status_payload(db, user.id)
     now = datetime.now(timezone.utc)
     owned = set(
         db.scalars(
@@ -228,6 +230,10 @@ def account_payload(email: str, db: Session) -> dict:
         )
     )
     purchases = purchased_products(db, user.id)
+    legal = legal_status_payload(db, user.id)
+    # There is no personal data inside an empty showcase account. Ask for the
+    # two confirmations when a product actually becomes available, not before.
+    legal["required"] = bool(owned) and legal["required"]
     masterclass_purchase = next(
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,

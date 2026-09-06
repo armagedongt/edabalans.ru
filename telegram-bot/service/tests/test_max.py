@@ -16,7 +16,7 @@ from urllib.parse import parse_qs, urlparse
 import app.main as main_module
 from app.database import Base, get_db, make_engine
 from app.main import app
-from app.max import MAX_CA_BUNDLE, MaxClient
+from app.max import MAX_CA_BUNDLE, MaxClient, _existing_password_hint
 from app.models import (
     AccountCredential,
     AccountOnboarding,
@@ -394,7 +394,56 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
         credential = session.get(AccountCredential, target_user_id)
         assert credential is not None
         assert credential.issued_via == "max"
+        credential.created_at = datetime(2026, 9, 5, 21, 30, tzinfo=UTC)
+        onboarding = AccountOnboarding(
+            user_id=target_user_id,
+            payment_id=str(uuid.uuid4()),
+            claim_bundle_encrypted="test-bundle-repeat",
+            expires_at=datetime.now(UTC) + timedelta(hours=1),
+        )
+        session.add(onboarding)
+        session.flush()
+        session.add(
+            MessengerLinkToken(
+                user_id=target_user_id,
+                account_onboarding_id=onboarding.id,
+                platform="max",
+                purpose="account_credentials",
+                token_hash=hashlib.sha256(b"Mmax-account-repeat").hexdigest(),
+                expires_at=datetime.now(UTC) + timedelta(hours=1),
+            )
+        )
+        session.commit()
+
+    repeat = client.post(
+        "/bot/max/webhook",
+        json=max_start(payload="Mmax-account-repeat"),
+        headers={"X-Max-Bot-Api-Secret": "test-secret"},
+    )
+
+    assert repeat.json() == {"ok": True, "account_credentials": True}
+    repeat_message = fake.sent[-1][1]
+    assert "https://go.похудение-это-есть.рф/lk" in repeat_message
+    assert "Пароль:" not in repeat_message
+    assert "Пароль уже приходил" in repeat_message
+    assert "06.09.2026" in repeat_message
     app.dependency_overrides.clear()
+
+
+def test_max_existing_password_hint_points_to_the_original_issue_date():
+    credential = AccountCredential(
+        user_id="00000000-0000-0000-0000-000000000001",
+        password_hash="hash",
+        password_version=1,
+        issued_via="max",
+    )
+    credential.created_at = datetime(2026, 9, 5, 21, 30, tzinfo=UTC)
+
+    reply = _existing_password_hint(credential)
+
+    assert "Пароль уже приходил" in reply
+    assert "06.09.2026" in reply
+    assert "Пароль:" not in reply
 
 
 def test_max_account_link_rejects_second_messenger_after_telegram_claim(tmp_path, monkeypatch):

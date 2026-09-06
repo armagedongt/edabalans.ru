@@ -431,7 +431,7 @@ class AccountOnboarding(Base):
 
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=uuid_text)
     user_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), nullable=False, index=True)
-    payment_id: Mapped[str] = mapped_column(Uuid(as_uuid=False), unique=True, nullable=False)
+    payment_id: Mapped[str | None] = mapped_column(Uuid(as_uuid=False), unique=True)
     claim_bundle_encrypted: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(String(32), default="ready", nullable=False)
     expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)

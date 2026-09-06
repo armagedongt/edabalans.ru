@@ -73,6 +73,7 @@
 .mc-offers .offer-saving{margin-top:6px;color:#287747;font-size:14px;font-weight:600}
 .mc-offer-terms>[data-offer]{min-width:112px;margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600}
 .mc-offer-empty{margin-top:0}
+.mc-public-program{margin-top:24px;text-align:center}.mc-public-program p{margin:0 0 12px;color:var(--muted)}
 .mc-product-page>h1,.mc-product-page>.lead{display:none}
 .mc-product-sheet{max-width:720px;margin:0 auto;padding:4px 0 40px}
 .mc-product-back{margin:0 0 28px;padding:0!important;border:0!important;background:transparent!important;color:var(--muted)!important;font-size:14px!important;font-weight:600!important}

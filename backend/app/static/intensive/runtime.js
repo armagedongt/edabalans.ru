@@ -18,7 +18,11 @@
   const pathMatch = location.pathname.match(/\/intensive\/day-([1-4])/);
   const day = pathMatch ? Number(pathMatch[1]) : 0;
   const isLocalPreview = ["127.0.0.1", "localhost"].includes(location.hostname);
+  const isStaticFilePreview = location.protocol === "file:";
+  const localMenuPreview = isStaticFilePreview ? params.get("preview") : null;
   let trustedPlatform = null;
+  let menuTimerInterval = null;
+  let menuTimerRefresh = null;
 
   function uuid() {
     return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -43,7 +47,16 @@
   }
 
   async function loadServerState() {
-    if (isLocalPreview && location.protocol === "file:") {
+    if (isStaticFilePreview) {
+      if (localMenuPreview === "next-open") {
+        return {identified: true, platform: "telegram", opened_days: [1], assignment_days: [1], unlocked_days: [1, 2], unlock_at: {}, offer: null};
+      }
+      if (localMenuPreview === "timer") {
+        return {identified: true, platform: "telegram", opened_days: [1, 2], assignment_days: [1, 2], unlocked_days: [1, 2], unlock_at: {3: new Date(Date.now() + 23 * 60 * 60 * 1000).toISOString()}, offer: null};
+      }
+      if (localMenuPreview === "assignment") {
+        return {identified: true, platform: "telegram", opened_days: [1], assignment_days: [], unlocked_days: [1], unlock_at: {}, offer: null};
+      }
       return {identified: false, platform: null, opened_days: [], assignment_days: [], unlocked_days: [1, 2, 3, 4], unlock_at: {}, offer: null};
     }
     try {
@@ -56,7 +69,10 @@
   const clientState = readClientState();
 
   function addAttribution(url) {
-    const target = new URL(url, location.origin);
+    const localDay = isStaticFilePreview && /^\/intensive\/day-[1-4]$/.test(url)
+      ? `./${url.slice("/intensive/".length)}.html`
+      : url;
+    const target = new URL(localDay, isStaticFilePreview ? location.href : location.origin);
     Object.entries(clientState.attribution).forEach(([key, value]) => {
       if (value && !target.searchParams.has(key)) target.searchParams.set(key, value);
     });
@@ -146,25 +162,108 @@
   }
 
   function isUnlocked(serverState, number) {
-    return isLocalPreview || (serverState.unlocked_days || []).includes(number);
+    return (isStaticFilePreview && !localMenuPreview) || (serverState.unlocked_days || []).includes(number);
+  }
+
+  function cardStatus(card) {
+    let status = card.querySelector("[data-day-status]");
+    if (status) return status;
+    status = document.createElement("span");
+    status.className = "day-card__status";
+    status.dataset.dayStatus = "true";
+    card.querySelector(".day-card__text")?.appendChild(status);
+    return status;
+  }
+
+  function setCardStatus(card, text, tone, timerEndsAt) {
+    const status = cardStatus(card);
+    status.className = `day-card__status day-card__status--${tone}`;
+    status.replaceChildren(document.createTextNode(text));
+    if (timerEndsAt) {
+      const timer = document.createElement("strong");
+      timer.dataset.menuUnlockTimer = String(timerEndsAt);
+      status.append(" ", timer);
+    }
+  }
+
+  function renderMenuTimers() {
+    if (menuTimerInterval !== null) window.clearInterval(menuTimerInterval);
+    if (menuTimerRefresh !== null) window.clearTimeout(menuTimerRefresh);
+    menuTimerInterval = null;
+    menuTimerRefresh = null;
+
+    const timers = Array.from(document.querySelectorAll("[data-menu-unlock-timer]"));
+    const refreshAt = timers.reduce((earliest, timer) => {
+      const unlockAt = Number(timer.dataset.menuUnlockTimer);
+      return Number.isFinite(unlockAt) && (earliest === null || unlockAt < earliest)
+        ? unlockAt
+        : earliest;
+    }, null);
+    if (refreshAt === null) return;
+
+    const update = () => {
+      timers.forEach((timer) => {
+        const remaining = Number(timer.dataset.menuUnlockTimer) - Date.now();
+        timer.textContent = remaining > 0 ? formatRemaining(remaining) : "сейчас";
+      });
+    };
+    update();
+    menuTimerInterval = window.setInterval(update, 1000);
+    menuTimerRefresh = window.setTimeout(async () => {
+      window.clearInterval(menuTimerInterval);
+      menuTimerInterval = null;
+      menuTimerRefresh = null;
+      const refreshedState = await loadServerState();
+      setupMenu(refreshedState);
+    }, Math.max(500, refreshAt - Date.now() + 500));
   }
 
   function setupMenu(serverState) {
+    const openedDays = new Set(serverState.opened_days || []);
+    const unlockedDays = new Set(serverState.unlocked_days || []);
+    const assignmentDays = new Set(serverState.assignment_days || []);
+    const nextReadableDay = serverState.identified
+      ? [1, 2, 3, 4].find((number) => unlockedDays.has(number) && !openedDays.has(number))
+      : null;
+    const nextLockedDay = serverState.identified
+      ? [1, 2, 3, 4].find((number) => !unlockedDays.has(number))
+      : null;
+
     document.querySelectorAll(".day-card[data-day]").forEach((card) => {
       const number = Number(card.dataset.day);
       card.href = addAttribution(`/intensive/day-${number}`);
+      card.classList.remove("is-locked", "is-read", "is-next-open", "is-next-locked");
+      card.removeAttribute("aria-disabled");
+      card.onclick = null;
+      card.querySelector("[data-day-status]")?.remove();
       if (!isUnlocked(serverState, number)) {
         card.classList.add("is-locked");
         card.setAttribute("aria-disabled", "true");
-        card.addEventListener("click", (event) => event.preventDefault());
+        card.onclick = (event) => event.preventDefault();
+        if (number === nextLockedDay) {
+          card.classList.add("is-next-locked");
+          const previousDay = number - 1;
+          const unlockAt = Date.parse((serverState.unlock_at || {})[String(number)] || "");
+          if (openedDays.has(previousDay) && assignmentDays.has(previousDay) && Number.isFinite(unlockAt) && unlockAt > Date.now()) {
+            setCardStatus(card, "Следующая часть откроется через", "timer", unlockAt);
+          } else {
+            setCardStatus(card, "Сначала прочитайте предыдущую часть", "blocked");
+          }
+        }
+      } else if (number === nextReadableDay) {
+        card.classList.add("is-next-open");
+      } else if (serverState.identified && openedDays.has(number)) {
+        card.classList.add("is-read");
+        setCardStatus(card, "Прочитано", "read");
       }
     });
+    renderMenuTimers();
     document.querySelectorAll(".home-action").forEach((link) => {
       link.href = addAttribution(MASTERCLASS_URL);
-      link.addEventListener("click", (event) => {
+      link.onclick = (event) => {
         event.preventDefault();
         navigateAfterGoal(link.href, "intensive_masterclass_click", {target_url: link.href});
-      });
+      };
     });
   }
 

@@ -17,9 +17,10 @@ from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.account_security import token_hash
+from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings
 from app.database import SessionLocal
-from app.models import AccountOnboarding, MessengerLinkToken, Payment, UserEmail
+from app.models import AccountCredential, AccountOnboarding, MessengerLinkToken, Payment, User, UserEmail
 
 
 logger = logging.getLogger(__name__)
@@ -73,6 +74,44 @@ def _claim_token() -> str:
     return "M" + secrets.token_urlsafe(31)
 
 
+def _create_onboarding(
+    db: Session,
+    *,
+    user_id,
+    settings: Settings,
+    payment_id=None,
+) -> AccountOnboarding:
+    now = datetime.now(UTC)
+    expires_at = now + CLAIM_TTL
+    tokens = {"telegram": _claim_token(), "max": _claim_token()}
+    bundle = {
+        "telegram": tokens["telegram"],
+        "max": tokens["max"],
+        "payment_id": str(payment_id) if payment_id else None,
+    }
+    row = AccountOnboarding(
+        user_id=user_id,
+        payment_id=payment_id,
+        claim_bundle_encrypted=_encrypt_bundle(bundle, settings),
+        expires_at=expires_at,
+        next_email_attempt_at=now,
+    )
+    db.add(row)
+    db.flush()
+    for platform, raw_token in tokens.items():
+        db.add(
+            MessengerLinkToken(
+                user_id=user_id,
+                account_onboarding_id=row.id,
+                platform=platform,
+                purpose="account_credentials",
+                token_hash=token_hash(raw_token),
+                expires_at=expires_at,
+            )
+        )
+    return row
+
+
 def ensure_paid_account_onboarding(
     db: Session,
     payment: Payment,
@@ -86,35 +125,70 @@ def ensure_paid_account_onboarding(
     if existing is not None:
         return existing
 
-    now = datetime.now(UTC)
-    expires_at = now + CLAIM_TTL
-    tokens = {"telegram": _claim_token(), "max": _claim_token()}
-    bundle = {
-        "telegram": tokens["telegram"],
-        "max": tokens["max"],
-        "payment_id": str(payment.id),
-    }
-    row = AccountOnboarding(
+    return _create_onboarding(
+        db,
         user_id=payment.user_id,
         payment_id=payment.id,
-        claim_bundle_encrypted=_encrypt_bundle(bundle, settings),
-        expires_at=expires_at,
-        next_email_attempt_at=now,
+        settings=settings,
     )
-    db.add(row)
-    db.flush()
-    for platform, raw_token in tokens.items():
+
+
+def ensure_free_account_onboarding(
+    db: Session, email_original: str, settings: Settings
+) -> AccountOnboarding | None:
+    """Start voluntary registration without inventing a payment or product right.
+
+    The email link is the ownership check: until its Telegram/MAX claim is consumed,
+    no credential exists and the new user cannot sign in.
+    """
+    email = normalize_email(email_original)
+    if not EMAIL_RE.match(email):
+        raise ValueError("Введите корректный email")
+
+    email_row = db.scalar(
+        select(UserEmail).where(UserEmail.email_normalized == email).with_for_update()
+    )
+    now = datetime.now(UTC)
+    if email_row is None:
+        user = User(
+            status="active",
+            data_origin="native",
+            first_seen_at=now,
+        )
+        db.add(user)
+        db.flush()
         db.add(
-            MessengerLinkToken(
-                user_id=payment.user_id,
-                account_onboarding_id=row.id,
-                platform=platform,
-                purpose="account_credentials",
-                token_hash=token_hash(raw_token),
-                expires_at=expires_at,
+            UserEmail(
+                user_id=user.id,
+                email_original=email_original.strip(),
+                email_normalized=email,
+                is_primary=True,
+                verification_status="email_link_pending",
+                source="self_registration",
+                first_seen_at=now,
             )
         )
-    return row
+    else:
+        user = db.get(User, email_row.user_id)
+        if user is None or user.status != "active" or user.merged_into_user_id is not None:
+            return None
+
+    if db.get(AccountCredential, user.id) is not None:
+        return None
+
+    active = db.scalar(
+        select(AccountOnboarding)
+        .where(
+            AccountOnboarding.user_id == user.id,
+            AccountOnboarding.status == "ready",
+            AccountOnboarding.expires_at > now,
+        )
+        .order_by(AccountOnboarding.created_at.desc())
+        .limit(1)
+    )
+    if active is not None:
+        return active
+    return _create_onboarding(db, user_id=user.id, settings=settings)
 
 
 def onboarding_links(row: AccountOnboarding, settings: Settings) -> dict[str, str]:
@@ -136,20 +210,28 @@ def onboarding_links(row: AccountOnboarding, settings: Settings) -> dict[str, st
 
 
 def account_access_email(
-    *, email: str, links: dict[str, str], expires_at: datetime, settings: Settings
+    *,
+    email: str,
+    links: dict[str, str],
+    expires_at: datetime,
+    settings: Settings,
+    payment_completed: bool,
 ) -> EmailMessage:
     message = EmailMessage()
-    message["Subject"] = "Доступ в личный кабинет"
+    message["Subject"] = (
+        "Доступ в личный кабинет" if payment_completed else "Регистрация в личном кабинете"
+    )
     sender = settings.smtp_from_email
     message["From"] = f"{settings.smtp_from_name} <{sender}>" if settings.smtp_from_name else sender
     message["To"] = email
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
-    lines = [
-        "Оплата прошла. Доступ к материалам уже добавлен.",
-        "",
-        "Чтобы получить логин и пароль от личного кабинета, откройте удобный мессенджер:",
-    ]
+    intro = (
+        "Оплата прошла. Доступ к материалам уже добавлен."
+        if payment_completed
+        else "Регистрация почти готова."
+    )
+    lines = [intro, "", "Чтобы получить логин и пароль от личного кабинета, откройте удобный мессенджер:"]
     if links.get("telegram"):
         lines.append(f"Telegram: {links['telegram']}")
     if links.get("max"):
@@ -172,8 +254,8 @@ def account_access_email(
     message.add_alternative(
         f"""<!doctype html><html><body style="font:16px/1.55 Arial,sans-serif;color:#17172b">
         <div style="max-width:620px;margin:auto;padding:28px 20px">
-        <h1 style="font-size:28px">Доступ в личный кабинет</h1>
-        <p>Оплата прошла. Доступ к материалам уже добавлен.</p>
+        <h1 style="font-size:28px">{"Доступ в личный кабинет" if payment_completed else "Регистрация в личном кабинете"}</h1>
+        <p>{intro}</p>
         <p>Чтобы получить логин и пароль, откройте удобный мессенджер:</p>
         {buttons}
         <p>Ссылки действуют 24 часа. После первой авторизации сайт запомнит вас на этом устройстве.</p>
@@ -234,6 +316,7 @@ def process_due_account_email(settings: Settings) -> bool:
                 links=onboarding_links(row, settings),
                 expires_at=row.expires_at,
                 settings=settings,
+                payment_completed=row.payment_id is not None,
             )
             _send_message(message, settings)
             row.email_status = "sent"

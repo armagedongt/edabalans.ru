@@ -7,6 +7,7 @@ import re
 import ssl
 import uuid
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 from json import JSONDecodeError
 from pathlib import Path
 from typing import Any
@@ -435,6 +436,17 @@ def _is_disposable_identity(session: Session, user_id: str) -> bool:
     return int(counts or 0) == 0
 
 
+def _existing_password_hint(credential: AccountCredential) -> str:
+    created_at = credential.created_at or datetime.now(UTC)
+    if created_at.tzinfo is None:
+        created_at = created_at.replace(tzinfo=UTC)
+    issued_on = created_at.astimezone(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y")
+    return (
+        f"Пароль уже приходил в этом чате при регистрации на сайте {issued_on}. "
+        "Если не можете его найти, напишите Сергею."
+    )
+
+
 def _consume_account_link(
     session: Session,
     account: CrmMessengerAccount,
@@ -521,7 +533,7 @@ def _consume_account_link(
         "<b>Покупка добавлена в ваш личный кабинет.</b>\n\n"
         f"Логин: <code>{html.escape(email)}</code>\n"
         f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
-        "Пароль не менялся. Если вы его потеряли, напишите Сергею."
+        + _existing_password_hint(credential)
     )
 
 

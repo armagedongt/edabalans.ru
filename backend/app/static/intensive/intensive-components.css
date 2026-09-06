@@ -29,6 +29,5 @@
 .channel-button svg{width:31px;height:31px;flex:none}
 .channel-button img{display:block;width:clamp(72px,21vw,94px);max-width:100%;height:32px;object-fit:contain}
 .day-card.is-locked{cursor:not-allowed;filter:saturate(.35);opacity:.58}
-.day-card.is-locked:after{position:absolute;right:16px;top:12px;color:#617383;font-size:12px;font-weight:800;content:"Откроется позже"}
 .intensive-next-part{border:1px solid rgba(38,168,239,.18);border-radius:18px;background:rgba(255,255,255,.78);box-shadow:0 13px 28px -25px rgba(17,96,143,.5)}
 @media(max-width:620px){.intensive-meta{gap:6px;margin-bottom:21px}.intensive-meta__pill{padding-inline:8px;font-size:clamp(9px,2.65vw,12px)}.intensive-skill-label{min-height:36px;font-size:15px}.intensive-media-pair{gap:9px;margin-top:23px;margin-bottom:32px}.intensive-callout-red,.intensive-soft-card{padding:17px 18px}.channel-actions{gap:8px}.channel-button{height:54px;font-size:14px}.channel-button svg{width:28px;height:28px}.channel-button img{width:clamp(72px,21vw,88px);height:31px}}

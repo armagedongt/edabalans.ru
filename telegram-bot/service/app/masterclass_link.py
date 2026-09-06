@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import html
 from datetime import UTC, datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
@@ -77,6 +78,17 @@ def _queue_account_questionnaire(session: Session, user_id: str, token_id: str) 
             due_at=datetime.now(UTC) + timedelta(seconds=1),
             payload={"messenger_link_token_id": token_id, "source": "account_onboarding"},
         )
+    )
+
+
+def _existing_password_hint(credential: AccountCredential) -> str:
+    created_at = credential.created_at or datetime.now(UTC)
+    if created_at.tzinfo is None:
+        created_at = created_at.replace(tzinfo=UTC)
+    issued_on = created_at.astimezone(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y")
+    return (
+        f"Пароль уже приходил в этом чате при регистрации на сайте {issued_on}. "
+        "Если не можете его найти, напишите Сергею."
     )
 
 
@@ -183,7 +195,10 @@ def consume_masterclass_link(
                 issued_via="telegram",
             )
             session.add(credential)
-        _queue_account_questionnaire(session, token.user_id, token.id)
+        # The questionnaire belongs to a paid Masterclass start, not to a
+        # voluntary empty account created from the registration form.
+        if onboarding is None or onboarding.payment_id is not None:
+            _queue_account_questionnaire(session, token.user_id, token.id)
         if raw_password:
             return True, (
                 "<b>Добро пожаловать! Доступ в личный кабинет готов.</b>\n\n"
@@ -196,7 +211,7 @@ def consume_masterclass_link(
             "<b>Покупка добавлена в ваш личный кабинет.</b>\n\n"
             f"Логин: <code>{html.escape(email)}</code>\n"
             f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
-            "Пароль не менялся. Если вы его потеряли, напишите Сергею."
+            + _existing_password_hint(credential)
         )
     _queue_link_messages(session, token.user_id, token.id)
     return True, "Telegram привязан. Сейчас пришлю ваши данные и анкету, а затем коротко напишу, что сделать дальше."

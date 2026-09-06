@@ -10,11 +10,16 @@ from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.access_routes import account_payload
+from app.account_onboarding_service import (
+    account_onboarding_configuration_error,
+    ensure_free_account_onboarding,
+)
 from app.account_security import token_hash, verify_password
-from app.app_service import normalize_email
+from app.app_service import EMAIL_RE, normalize_email
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.legal_service import accept_current_legal_documents
@@ -26,13 +31,19 @@ STATIC_DIR = Path(__file__).resolve().parent / "static"
 COOKIE_NAME = "edabalans_account_session"
 MAX_LOGIN_ATTEMPTS = 5
 LOGIN_WINDOW_SECONDS = 15 * 60
+MAX_REGISTRATION_ATTEMPTS = 5
 _attempt_lock = threading.Lock()
 _attempts: dict[str, tuple[int, float]] = {}
+_registration_attempts: dict[str, tuple[int, float]] = {}
 
 
 class PasswordLoginIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     password: str = Field(min_length=8, max_length=128)
+
+
+class EmailRegistrationIn(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
 
 
 class NativeLegalIn(BaseModel):
@@ -71,6 +82,32 @@ def _record_attempt(key: str, *, success: bool) -> None:
             key, (0, time.monotonic() + LOGIN_WINDOW_SECONDS)
         )
         _attempts[key] = (count + 1, expires)
+
+
+def _registration_key(request: Request) -> str:
+    return request.client.host if request.client else "unknown"
+
+
+def _check_registration_attempts(key: str) -> None:
+    now = time.monotonic()
+    with _attempt_lock:
+        count, expires = _registration_attempts.get(key, (0, now + LOGIN_WINDOW_SECONDS))
+        if expires <= now:
+            _registration_attempts.pop(key, None)
+            return
+        if count >= MAX_REGISTRATION_ATTEMPTS:
+            raise HTTPException(
+                status.HTTP_429_TOO_MANY_REQUESTS,
+                "Слишком много попыток. Попробуйте снова через 15 минут.",
+            )
+
+
+def _record_registration_attempt(key: str) -> None:
+    with _attempt_lock:
+        count, expires = _registration_attempts.get(
+            key, (0, time.monotonic() + LOGIN_WINDOW_SECONDS)
+        )
+        _registration_attempts[key] = (count + 1, expires)
 
 
 def native_session_user(request: Request, db: Session) -> User | None:
@@ -126,6 +163,49 @@ def account_portal() -> FileResponse:
     response.headers["Cache-Control"] = "no-cache"
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
+
+
+@router.post("/api/account-auth/register")
+def register_account(
+    body: EmailRegistrationIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    """Create a no-access account and queue the existing email-to-messenger flow."""
+    key = _registration_key(request)
+    _check_registration_attempts(key)
+    email = normalize_email(body.email)
+    if not EMAIL_RE.match(email):
+        _record_registration_attempt(key)
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, "Введите корректный email")
+    if not settings.account_onboarding_enabled:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Регистрация временно недоступна. Попробуйте немного позже.",
+        )
+    configuration_error = account_onboarding_configuration_error(settings)
+    if configuration_error is not None:
+        raise HTTPException(
+            status.HTTP_503_SERVICE_UNAVAILABLE,
+            "Регистрация временно недоступна. Попробуйте немного позже.",
+        )
+    try:
+        _record_registration_attempt(key)
+        ensure_free_account_onboarding(db, body.email, settings)
+        db.commit()
+    except ValueError as exc:
+        db.rollback()
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY, str(exc)) from exc
+    except IntegrityError:
+        # Two identical first registrations can race before either email row
+        # exists. The other transaction has created the same safe empty account.
+        db.rollback()
+    # The same message for an existing address avoids disclosing who already has an account.
+    return {
+        "ok": True,
+        "message": "Проверьте почту: письмо со следующим шагом придёт в течение нескольких минут. Если его нет, загляните в «Спам».",
+    }
 
 
 @router.post("/api/account-auth/login")
