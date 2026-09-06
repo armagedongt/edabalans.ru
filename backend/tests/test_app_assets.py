@@ -90,9 +90,9 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
-    assert "https://go.похудение-это-есть.рф/legal/offer" in response.text
-    assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
-    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in response.text
+    assert "https://edabalans.ru/legal/offer" in response.text
+    assert "https://edabalans.ru/legal/privacy" in response.text
+    assert "https://edabalans.ru/legal/disclaimer" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
@@ -124,7 +124,7 @@ def test_application_fragments_use_server_api() -> None:
     for app_code in ("dqs", "strength", "metabolism"):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
-        assert "api.edabalans.ru/api/apps/" in response.text
+        assert "edabalans.ru/api/apps/" in response.text
         assert "REDACTED_LEGACY_APPS_SCRIPT_URL" not in response.text
         lowered = response.text.lower()
         assert "google" not in lowered
@@ -574,7 +574,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "№ 273-ФЗ" in disclaimer
     assert "Пользователь отвечает за достоверность" not in disclaimer
     footer_renderer = client.get("/site-footer.js").text
-    assert "https://go.похудение-это-есть.рф/legal/disclaimer" in footer_renderer
+    assert "https://edabalans.ru/legal/disclaimer" in footer_renderer
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass

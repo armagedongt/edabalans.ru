@@ -56,10 +56,10 @@ def test_sync_script_bootstraps_backend_path(tmp_path: Path) -> None:
 def test_mcp_transport_security_has_an_exact_production_allowlist() -> None:
     assert knowledge_mcp_transport_security.enable_dns_rebinding_protection is True
     assert knowledge_mcp_transport_security.allowed_hosts == [
-        "api.edabalans.ru",
-        "api.edabalans.ru:443",
+        "edabalans.ru",
+        "edabalans.ru:443",
     ]
-    assert knowledge_mcp_transport_security.allowed_origins == ["https://api.edabalans.ru"]
+    assert knowledge_mcp_transport_security.allowed_origins == ["https://edabalans.ru"]
 
 
 def test_librarian_review_tools_are_registered_in_mcp() -> None:
