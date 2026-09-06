@@ -659,8 +659,8 @@ def seed_defaults(
             item.media_kind = "video_note"
             item.media_path = WELCOME_CIRCLE_MEDIA_PATH
         media_paths = {
-            "intensive_reminder_photo": "https://cdn4.telesco.pe/file/eMtVgVZ2Xkr-xFQCBqPoBtPiMfdyX9idG6D4AbvJYUgxjcOJmE7bnKWP53IBz9g_9tztdCAb44CpSDiKWVTMFcNoMwRwh3V5H7MUQFsqMxlKHtCzoVyuGftig0zGf_H5i2Ltby6DU9f3Zu2UaDBzJJcc822PxG2YrU-g2_Ba0XoMT_aQdjAdnTpKy0zwuGHb83DP6q3yjUvjo_qmd0IBUtA-mCPrdJfYEoPSRJVxYDjuDtsVokmLXeyI6TQ2oRBp9K_gZErdrf3aq1TDHPWILyNyh8FA1xssN-EUpkFPjk14sVdGhoBtA69CPUK7TIlIWWvMvaQhuV3unf4iW1l_tw.jpg",
-            "intensive_mid2_photo": "https://cdn4.telesco.pe/file/XberDMWLtXpLBQuV9TKU3NTRFvHz6zqkjzSNMtBCfRhaw79N9YlUyT57yUAwWrZyFFvddOw-E_xPteAX7DKvMAMWReuaiAMV5b-A0iVkaSp_pUMv9jawTBCL8Va7k1pNVYIAWm7ij2NNEDGDjqntdC3tZU0QZVfddORpi7hmMpEi4Rl6zBb5lo8N3ekLQnQoU73FRIgN8BIh7nYr_cz51Bzo26nSIWq1b0V711EylLq7OSyG_uIYP3jCukkOagtD_n5buMHqDjWzj0f11OG6EomZv4PhABcd_OEE3WwixjttYbOcedPdzaNjY_O-72bgB-L65QlVUJJ-b_gw_1I31g.jpg",
+            "intensive_reminder_photo": "/app/media/intensive-small-steps-reminder.jpg",
+            "intensive_mid2_photo": "/app/media/intensive-one-percent-photo.jpg",
             "intensive_masterclass_followup_image": "/app/media/intensive-masterclass-followup-waiting-cat.jpg",
         }
         if row["code"] in media_paths:

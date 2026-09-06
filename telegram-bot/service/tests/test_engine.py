@@ -143,6 +143,10 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
         circle = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_entry_circle"))
         assert circle.media_kind == "video_note"
         assert circle.media_path == "/app/media/welcome-intro-circle.mp4"
+        reminder_photo = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_intensive_reminder_photo"))
+        assert reminder_photo.media_path == "/app/media/intensive-small-steps-reminder.jpg"
+        mid2_photo = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_intensive_mid2_photo"))
+        assert mid2_photo.media_path == "/app/media/intensive-one-percent-photo.jpg"
         final_pin = session.scalar(select(SequenceStep).where(SequenceStep.step_key == "welcome_final_pin"))
         assert final_pin.configuration["pin_after_send"] is True
         assert final_pin.configuration["buttons"][0]["url"] == "{{personal_masterclass_url}}"
