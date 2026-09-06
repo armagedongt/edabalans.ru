@@ -67,11 +67,11 @@ try {
       })
       return
     }
-    const upstream = await page.request.fetch(`${baseUrl}${url.pathname}${url.search}`)
+    const upstream = await fetch(`${baseUrl}${url.pathname}${url.search}`)
     await route.fulfill({
-      status: upstream.status(),
-      headers: { ...upstream.headers(), 'access-control-allow-origin': '*' },
-      body: await upstream.body(),
+      status: upstream.status,
+      headers: { ...Object.fromEntries(upstream.headers), 'access-control-allow-origin': '*' },
+      body: Buffer.from(await upstream.arrayBuffer()),
     })
   })
 
