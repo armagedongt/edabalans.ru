@@ -293,6 +293,36 @@ def test_start_is_idempotent_and_schedules_day1_reminder_from_run_start(tmp_path
         assert run.next_action_at == run.started_at + timedelta(minutes=15)
 
 
+def test_message_and_anchored_delay_can_run_in_one_advance_call(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель")
+        session.add(user)
+        session.flush()
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=user.id,
+            telegram_user_id="anchored-delay",
+            chat_id="anchored-delay",
+        )
+        session.add(contact)
+        session.commit()
+        run = start_run(session, contact.id, WELCOME_CODE)
+        run.current_step_key = "welcome_day2"
+
+        advance_run(session, run, FakeSender())
+
+        delivery = session.scalar(select(StepDelivery).where(
+            StepDelivery.run_id == run.id,
+            StepDelivery.step_key == "welcome_day2",
+        ))
+        assert delivery.status == "sent"
+        assert run.status == "active"
+        assert run.current_step_key == "welcome_reminder_check_day2"
+        assert run.next_action_at == delivery.sent_at + timedelta(hours=8)
+
+
 def test_final_pin_error_does_not_stop_welcome(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "TetrisgfgfgfBot")

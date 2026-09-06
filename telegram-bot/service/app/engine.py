@@ -189,6 +189,9 @@ def _delay_anchor(session: Session, run: SequenceRun, config: dict[str, Any]) ->
     anchor_step = str(config.get("anchor_step") or "")
     if not anchor_step or anchor_step == "run_started_at":
         return run.started_at
+    # SessionLocal deliberately disables autoflush. An anchored delay can follow
+    # a message in the same advance_run call, so persist its sent status first.
+    session.flush()
     delivery = session.scalar(select(StepDelivery).where(
         StepDelivery.run_id == run.id,
         StepDelivery.step_key == anchor_step,
