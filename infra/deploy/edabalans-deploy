@@ -184,7 +184,7 @@ robokassa_test_mode="$(awk -F= '
     }
     END { if (!found) print "true" }
 ' "${APP_DIR}/.env")"
-if [[ -z "${robokassa_test_mode}" || "${robokassa_test_mode}" == "true" ]]; then
+if [[ ! "${robokassa_test_mode}" =~ ^(false|0|no|off)$ ]]; then
     curl --fail --silent --show-error --max-time 15 \
         https://go.похудение-это-есть.рф/robokassa-test >/dev/null
 fi
