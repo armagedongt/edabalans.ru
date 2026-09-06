@@ -847,7 +847,10 @@ card = "docs/knowledge-base/modules/catalog/marketing.analytics.md"
 owns_files = [
   "backend/app/marketing_routes.py", "backend/app/marketing_service.py",
   "backend/app/static/marketing.css", "backend/tests/test_marketing_analytics.py",
+  ".codex/skills/yandex-direct-operations/SKILL.md",
   "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md",
+  "tools/yandex_direct_apply_safe_fixes.py", "tools/yandex_direct_audit.py",
+  "tools/yandex_direct_stats.py",
 ]
 owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*"]
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
