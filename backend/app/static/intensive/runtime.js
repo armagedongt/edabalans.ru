@@ -2,17 +2,19 @@
   "use strict";
 
   const COUNTER_ID = 97331502;
-  const VERSION = "2026-09-05";
+  const VERSION = "2026-09-06";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
   const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/mk1#masterclass";
   const SERVER_EVENT_CODES = new Set([
-    "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
+    "intensive_main_open", "intensive_day_open", "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
     "intensive_max_click", "intensive_next_day_unlocked", "intensive_next_day_click",
     "intensive_masterclass_click", "video_engaged", "video_progress",
     "video_complete", "video_exit"
   ]);
   const params = new URLSearchParams(location.search);
+  const requestedMessenger = ({tg: "telegram", max: "max"})[params.get("from")] || null;
+  const entrySource = (["bot", "channel"].includes(params.get("entry")) ? params.get("entry") : "direct");
   const pathMatch = location.pathname.match(/\/intensive\/day-([1-4])/);
   const day = pathMatch ? Number(pathMatch[1]) : 0;
   const isLocalPreview = ["127.0.0.1", "localhost"].includes(location.hostname);
@@ -56,6 +58,10 @@
   function addAttribution(url) {
     const target = new URL(url, location.origin);
     Object.entries(clientState.attribution).forEach(([key, value]) => {
+      if (value && !target.searchParams.has(key)) target.searchParams.set(key, value);
+    });
+    ["from", "entry"].forEach((key) => {
+      const value = params.get(key);
       if (value && !target.searchParams.has(key)) target.searchParams.set(key, value);
     });
     return target.href;
@@ -168,7 +174,7 @@
       const actions = block.querySelector(".channel-actions");
       block.querySelectorAll("[data-channel]").forEach((link) => {
         const messenger = link.dataset.channel;
-        if (serverState.identified && serverState.platform && messenger !== serverState.platform) link.hidden = true;
+        if (requestedMessenger && messenger !== requestedMessenger) link.hidden = true;
         link.removeAttribute("aria-disabled");
         link.href = "#";
         let clickLocked = false;
@@ -203,7 +209,7 @@
           }
         });
       });
-      if (serverState.identified && serverState.platform) actions?.classList.add("is-single");
+      if (requestedMessenger) actions?.classList.add("is-single");
     });
   }
 
@@ -337,11 +343,10 @@
     setupVideoAnalytics();
     await setupDayOffer(serverState);
     if (day) {
-      goal(`intensive_day_${day}_open`);
+      goal("intensive_day_open", {day, entry: entrySource});
       clientState.lastPage = `day-${day}`;
     } else {
-      goal("intensive_home_open");
-      if (clientState.lastPage !== "menu") goal("intensive_menu_open");
+      goal("intensive_main_open", {entry: entrySource});
       clientState.lastPage = "menu";
     }
     saveClientState(clientState);

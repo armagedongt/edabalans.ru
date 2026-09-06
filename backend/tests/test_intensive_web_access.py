@@ -117,6 +117,45 @@ def test_personal_link_restores_server_identity_and_ignores_forged_source() -> N
     app.dependency_overrides.clear()
 
 
+def test_canonical_personal_entry_serves_menu_without_redirect_and_keeps_query() -> None:
+    client, factory = make_client()
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "telegram")
+        db.commit()
+
+    entry = client.get(
+        f"/intensive?i={token}&from=tg&entry=bot&utm_source=yandex",
+        follow_redirects=False,
+    )
+
+    assert entry.status_code == 200
+    assert "location" not in entry.headers
+    assert "Бесплатный интенсив" in entry.text
+    assert "edabalans_intensive_session" in entry.headers["set-cookie"]
+    assert client.get("/api/intensive/state").json() == {
+        "identified": True,
+        "platform": "telegram",
+        "opened_days": [],
+        "assignment_days": [],
+        "current_day": 1,
+        "unlocked_days": [1],
+        "unlock_at": {},
+        "offer": None,
+    }
+    assert client.get("/intensive/day-1").status_code == 200
+    assert client.get("/api/intensive/state").json()["opened_days"] == [1]
+    with factory() as db:
+        event = db.scalar(select(AttributionEvent))
+        assert event is not None
+        assert event.source_raw == "telegram"
+        assert event.landing_url is not None
+        assert "from=tg" in event.landing_url
+        assert "entry=bot" in event.landing_url
+        assert "i=" not in event.landing_url
+    app.dependency_overrides.clear()
+
+
 def test_progress_is_durable_and_offer_starts_only_at_day_four_cta() -> None:
     _, factory = make_client()
     user = create_user(factory)
@@ -406,6 +445,22 @@ def test_personal_client_events_are_validated_and_idempotent() -> None:
     client.get(f"/intensive/start?i={token}", follow_redirects=False)
     client.get("/intensive/day-1")
 
+    assert client.post(
+        "/api/intensive/events",
+        json={
+            "event_id": "menu-open-1",
+            "event_type": "intensive_main_open",
+        },
+    ).status_code == 200
+    assert client.post(
+        "/api/intensive/events",
+        json={
+            "event_id": "day-open-1",
+            "event_type": "intensive_day_open",
+            "day": 1,
+        },
+    ).status_code == 200
+
     payload = {
         "event_id": "browser-event-1",
         "event_type": "video_progress",
@@ -450,6 +505,16 @@ def test_personal_client_events_are_validated_and_idempotent() -> None:
         assert db.scalar(
             select(func.count(CourseEvent.id)).where(
                 CourseEvent.event_type == "video_progress"
+            )
+        ) == 1
+        assert db.scalar(
+            select(func.count(CourseEvent.id)).where(
+                CourseEvent.event_type == "intensive_main_open"
+            )
+        ) == 1
+        assert db.scalar(
+            select(func.count(CourseEvent.id)).where(
+                CourseEvent.event_type == "intensive_day_open"
             )
         ) == 1
     app.dependency_overrides.clear()

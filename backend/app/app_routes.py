@@ -515,9 +515,31 @@ def intensive_content_asset(day_code: str, asset_name: str) -> FileResponse:
 @router.get("/intensive/", include_in_schema=False)
 @router.get("/intensive/menu", include_in_schema=False)
 def intensive_menu(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
 ) -> FileResponse:
+    """Serve the menu directly, optionally restoring a personal intensive session.
+
+    New personal links intentionally use this 200 response rather than a redirect so
+    messenger source parameters remain visible to the browser runtime.
+    """
     response = public_asset(STATIC_DIR / "intensive" / "index.html")
     response.headers["Referrer-Policy"] = "no-referrer"
+    supplied_token = request.query_params.get("i") or request.query_params.get("token")
+    if supplied_token:
+        token_row = consume_access_token(db, supplied_token)
+        if token_row is None:
+            raise HTTPException(status_code=404, detail="intensive link not found")
+        record_entry_attribution(db, token_row.user_id, token_row.platform, request)
+        db.commit()
+        set_session(
+            response,
+            request,
+            settings.app_auth_secret,
+            token_row.user_id,
+            token_row.platform,
+        )
     return response
 
 

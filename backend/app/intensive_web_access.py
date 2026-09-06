@@ -39,6 +39,8 @@ OFFER_DISCOUNT = 1000
 OFFER_TOKEN_PURPOSE = "intensive_offer"
 PLATFORMS = {"telegram", "max"}
 CLIENT_EVENT_TYPES = {
+    "intensive_main_open",
+    "intensive_day_open",
     "intensive_home_open",
     "intensive_menu_open",
     "intensive_telegram_click",
@@ -297,6 +299,10 @@ def record_client_event(
             raise ValueError("invalid intensive video progress")
         suffix = f":{progress}" if event_type == "video_progress" else ""
         event_key = f"video:{video_id}:{event_type}{suffix}"
+    elif event_type == "intensive_day_open":
+        if day not in rows:
+            raise ValueError("intensive day is not open")
+        event_key = f"web:intensive_day_open:{day}"
     elif event_type in {"intensive_next_day_unlocked", "intensive_next_day_click"}:
         if next_day not in range(2, 5) or not day_unlocked(rows, next_day):
             raise ValueError("next intensive day is not open")
