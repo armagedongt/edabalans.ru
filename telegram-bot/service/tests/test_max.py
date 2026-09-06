@@ -147,6 +147,39 @@ def test_max_upload_uses_video_token_returned_before_file_upload(tmp_path):
     }]
 
 
+def test_max_upload_uses_initial_video_token_when_file_upload_response_is_empty(tmp_path):
+    video = tmp_path / "intro.mp4"
+    video.write_bytes(b"video")
+    requests = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        if request.url.path == "/uploads":
+            return httpx.Response(200, json={
+                "url": "https://upload.example.test/video",
+                "token": "video-token",
+            })
+        if request.url.host == "upload.example.test":
+            return httpx.Response(200, content=b"")
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-video-1"}}})
+
+    content = SimpleNamespace(
+        body_source="",
+        media_kind="video_note",
+        media_path=str(video),
+    )
+    message_id = MaxClient("max-secret", httpx.MockTransport(handler)).send_content(
+        "901", content, {},
+    )
+
+    assert message_id == "max-video-1"
+    payload = json.loads(requests[-1].content)
+    assert payload["attachments"] == [{
+        "type": "video",
+        "payload": {"token": "video-token"},
+    }]
+
+
 def test_max_html_compaction_keeps_visible_text_and_respects_limit():
     source = "<b>" + ("x" * 3994) + "</b>"
     result = MaxClient._compact_html(source)

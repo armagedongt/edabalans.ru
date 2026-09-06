@@ -102,7 +102,7 @@ class MaxClient:
             with path.open("rb") as stream:
                 result = client.post(upload_url, files={"data": (path.name, stream)})
             result.raise_for_status()
-            result_payload = result.json()
+            result_payload = result.json() if result.content.strip() else {}
         payload = dict(result_payload or {})
         if not payload.get("token") and upload_payload.get("token"):
             payload["token"] = upload_payload["token"]
