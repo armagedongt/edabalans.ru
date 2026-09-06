@@ -743,13 +743,15 @@ def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     assert response.status_code == 200
     assert 'data-tilda-homepage-embed="true"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site"' in response.text
-    assert 'data-checkout-endpoint="/api/pricing/site/checkout"' in response.text
-    assert 'data-checkout-mode="tilda"' in response.text
+    assert 'data-checkout-endpoint="/api/payments/robokassa/checkout"' in response.text
+    assert 'data-checkout-mode="robokassa"' in response.text
     assert 'data-pricing-endpoint="/api/pricing/site/preview"' not in response.text
-    assert 'data-checkout-endpoint="/api/payments/robokassa/checkout"' not in response.text
-    assert "function openTildaCart(command)" in response.text
+    assert 'data-checkout-endpoint="/api/pricing/site/checkout"' not in response.text
+    assert "function submitPaymentForm(paymentForm)" in response.text
     assert "root.dataset.checkoutMode === 'tilda'" in response.text
-    assert "window.tcart__addProduct" in response.text
+    assert 'class="edb-pricing-intensive-offer"' in response.text
+    assert "function renderIntensiveOffer(offer)" in response.text
+    assert 'class="edb-checkout-amount"' in response.text
 
 
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:

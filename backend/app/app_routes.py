@@ -227,10 +227,6 @@ def homepage_mobile_preview(embed: str | None = Query(default=None)) -> HTMLResp
             'data-pricing-endpoint="/api/pricing/site/preview"',
             'data-pricing-endpoint="/api/pricing/site"',
             1,
-        ).replace(
-            'data-checkout-endpoint="/api/payments/robokassa/checkout" data-checkout-mode="robokassa"',
-            'data-checkout-endpoint="/api/pricing/site/checkout" data-checkout-mode="tilda"',
-            1,
         )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"

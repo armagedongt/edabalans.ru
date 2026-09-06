@@ -318,6 +318,19 @@ def test_go_payment_returns_link_back_to_test_page() -> None:
     app.dependency_overrides.clear()
 
 
+def test_public_payment_success_shows_account_next_step_when_onboarding_enabled() -> None:
+    _, _, _ = make_client(account_onboarding_enabled=True)
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+
+    response = client.get("/payments/robokassa/success?InvId=123")
+
+    assert response.status_code == 200
+    assert "Спасибо за оплату! Доступ готов." in response.text
+    assert 'id="account-link"' in response.text
+    assert 'const paidUrl="https://edabalans.ru/lk"' in response.text
+    app.dependency_overrides.clear()
+
+
 def test_live_probe_page_is_explicitly_enabled_and_noindex() -> None:
     _, _, _ = make_client(live_probe_enabled=True)
     client = TestClient(

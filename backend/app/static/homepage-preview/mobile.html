@@ -1508,6 +1508,32 @@
       text-align: left;
     }
 
+    #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer {
+      display: grid;
+      gap: 5px;
+      width: min(100%, 430px);
+      margin: -8px auto 24px;
+      padding: 15px 17px;
+      border: 1px solid rgba(50, 161, 94, .34);
+      border-radius: 17px;
+      background: linear-gradient(135deg, #eaffef 0%, #f7fff9 100%);
+      box-shadow: 0 14px 28px -26px rgba(32, 130, 70, .65);
+      color: #21683d;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer strong {
+      color: #16763d;
+      font-size: 15px;
+      line-height: 1.25;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer span {
+      color: #4d765c;
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
       display: inline-flex;
       align-items: center;
@@ -2461,6 +2487,15 @@
       font-size:15px;
       line-height:1.5;
     }
+    #edb-pricing-neurozeh-v1 .edb-checkout-amount {
+      display:inline-block;
+      padding:1px 6px 2px;
+      border-radius:7px;
+      background:#dff8e7;
+      color:#18733a;
+      font-weight:800;
+      white-space:nowrap;
+    }
     #edb-pricing-neurozeh-v1 .edb-checkout-label {
       display:block;
       margin-bottom:8px;
@@ -2682,6 +2717,10 @@
     <header class="edb-pricing-intro" data-homepage-block="pricing-heading" data-block-width="wide">
       <div class="edb-pricing-kicker" id="edb-pricing-title" data-homepage-field="text">Выберите тариф</div>
     </header>
+    <aside class="edb-pricing-intensive-offer" hidden aria-live="polite">
+      <strong>Ваша скидка за интенсив — 1 000 ₽</strong>
+      <span></span>
+    </aside>
     <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
 
     <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide">
@@ -2823,6 +2862,8 @@
       const pricingSection = root.closest('.chain-block--pricing');
       const plans = root.querySelectorAll('.edb-pricing-plan');
       const pricingStatus = root.querySelector('.edb-pricing-status');
+      const intensiveOffer = root.querySelector('.edb-pricing-intensive-offer');
+      const intensiveOfferTimer = intensiveOffer.querySelector('span');
       const checkoutModal = root.querySelector('.edb-checkout-modal');
       const checkoutDialog = root.querySelector('.edb-checkout-dialog');
       const checkoutForm = root.querySelector('.edb-checkout-form');
@@ -2833,6 +2874,7 @@
       const checkoutSubmit = root.querySelector('.edb-checkout-submit');
       let selectedPlan = null;
       let checkoutTrigger = null;
+      let intensiveOfferTimerId = null;
       const formatPrice = (amount) => {
         const numericAmount = Number(amount);
         const hasKopecks = !Number.isInteger(numericAmount);
@@ -2873,6 +2915,36 @@
         root.dataset.pricingSource = source;
         root.dataset.pricingVersion = String(catalog.version || 'preview');
         pricingStatus.hidden = Object.keys(byCode).length > 0;
+        renderIntensiveOffer(catalog.intensive_offer || null);
+      }
+
+      function renderIntensiveOffer(offer) {
+        if (intensiveOfferTimerId) {
+          window.clearInterval(intensiveOfferTimerId);
+          intensiveOfferTimerId = null;
+        }
+        const expiresAt = offer && offer.expires_at ? Date.parse(offer.expires_at) : NaN;
+        if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+          intensiveOffer.hidden = true;
+          return;
+        }
+        const update = () => {
+          const remainingSeconds = Math.max(0, Math.ceil((expiresAt - Date.now()) / 1000));
+          if (!remainingSeconds) {
+            intensiveOffer.hidden = true;
+            if (intensiveOfferTimerId) window.clearInterval(intensiveOfferTimerId);
+            intensiveOfferTimerId = null;
+            window.setTimeout(() => window.location.reload(), 500);
+            return;
+          }
+          const hours = Math.floor(remainingSeconds / 3600);
+          const minutes = Math.floor((remainingSeconds % 3600) / 60);
+          const seconds = remainingSeconds % 60;
+          intensiveOfferTimer.textContent = `Действует ещё ${hours}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+          intensiveOffer.hidden = false;
+        };
+        update();
+        intensiveOfferTimerId = window.setInterval(update, 1000);
       }
 
       async function loadPricingCatalog() {
@@ -2973,7 +3045,14 @@
         checkoutTrigger = trigger;
         const name = plan.querySelector('[data-price-field="name"]').textContent;
         const price = plan.querySelector('[data-price-field="sale"]').textContent;
-        checkoutSummary.textContent = `${name} · ${price}. Укажите email, к которому будет привязана покупка после подтверждения оплаты.`;
+        const amount = document.createElement('span');
+        amount.className = 'edb-checkout-amount';
+        amount.textContent = price;
+        checkoutSummary.replaceChildren(
+          document.createTextNode(`${name} · `),
+          amount,
+          document.createTextNode('. Укажите email, к которому будет привязана покупка после подтверждения оплаты.')
+        );
         checkoutError.hidden = true;
         checkoutModal.hidden = false;
         document.documentElement.classList.add('edb-product-overlay--locked');
