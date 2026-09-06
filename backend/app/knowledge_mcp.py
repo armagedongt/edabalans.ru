@@ -25,8 +25,8 @@ from app.knowledge_library_service import (
 
 knowledge_mcp_transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
-    allowed_hosts=["api.edabalans.ru", "api.edabalans.ru:443"],
-    allowed_origins=["https://api.edabalans.ru"],
+    allowed_hosts=["edabalans.ru", "edabalans.ru:443"],
+    allowed_origins=["https://edabalans.ru"],
 )
 
 

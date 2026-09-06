@@ -1,8 +1,8 @@
 (function(){
   'use strict';
   var ctx=window.EdabalansAppContext||{}, identity=window.EdabalansIdentity||{}, email=identity.email||'', sessionToken=identity.sessionToken||'', purchasePoll=null;
-  var API=/^(localhost|127\.0\.0\.1|app\.edabalans\.ru)$/.test(location.hostname)?location.origin:'https://api.edabalans.ru';
-  if(!document.getElementById('edabalans-masterclass-css')){var css=document.createElement('link');css.id='edabalans-masterclass-css';css.rel='stylesheet';css.href=(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?location.origin:'https://app.edabalans.ru')+'/assets/masterclass.css';document.head.appendChild(css);}
+  var API=/^(localhost|127\.0\.0\.1|edabalans\.ru|app\.edabalans\.ru)$/.test(location.hostname)?location.origin:'https://edabalans.ru';
+  if(!document.getElementById('edabalans-masterclass-css')){var css=document.createElement('link');css.id='edabalans-masterclass-css';css.rel='stylesheet';css.href=(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?location.origin:'https://edabalans.ru')+'/assets/masterclass.css';document.head.appendChild(css);}
   function root(){return document.getElementById(ctx.app+'-app');}
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   async function api(path,options){options=options||{};options.headers=options.headers||{};if(sessionToken)options.headers.Authorization='Bearer '+sessionToken;var r=await fetch(API+path,options);var j=await r.json();if(r.status===401&&sessionToken){try{localStorage.removeItem('edabalans_identity_v1');}catch(e){}throw new Error('Сессия входа закончилась. Обновите страницу и подтвердите email ещё раз.');}if(!r.ok){var error=new Error(j.detail||j.error||'Ошибка сервера');error.status=r.status;throw error;}return j;}

@@ -3,7 +3,7 @@
 
   var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.hostname.indexOf('go.') === 0
     ? location.origin
-    : 'https://app.edabalans.ru';
+    : 'https://edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var STORAGE_RETURN_PATH = 'edabalans_return_path_v1';
   var PUBLIC_ACCOUNT_URL = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk';

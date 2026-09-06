@@ -9,7 +9,7 @@
 <script>
 (function(){
   'use strict';
-  var root=document.getElementById('account-app'),host=window.EdabalansAppHost||'https://app.edabalans.ru',identity=window.EdabalansIdentity||{};
+  var root=document.getElementById('account-app'),host=window.EdabalansAppHost||'https://edabalans.ru',identity=window.EdabalansIdentity||{};
   function esc(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
   function accountBaseUrl(){var url=new URL(location.href);url.searchParams.delete('course_day');url.searchParams.delete('course_material');url.searchParams.delete('calories_stage');url.searchParams.delete('calories_material');url.hash='';return url.toString()}
   function accountHeader(){var exit=identity.source==='native'?'/lk':'/members/login?exit=y';return '<header class="account-head"><p class="account-kicker">Похудение — это есть!</p><h1>Личный кабинет</h1><p class="account-session"><strong class="account-session-email">'+esc(identity.email)+'</strong> · <a class="account-logout" href="'+exit+'">Выйти</a></p></header>'}

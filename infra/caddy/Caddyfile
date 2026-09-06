@@ -3,6 +3,77 @@
 	email {$ACME_EMAIL}
 }
 
+{$PUBLIC_DOMAIN} {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Content-Security-Policy "frame-ancestors 'self' https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	handle /api/messaging/telegram/webhook {
+		rewrite * /telegram/webhook
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /api/messaging/max/webhook {
+		rewrite * /bot/max/webhook
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /api/health/telegram {
+		rewrite * /ready
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /api/integrations/tilda/payments {
+		rewrite * /integrations/tilda/payments
+		reverse_proxy backend:8000
+	}
+
+	handle /admin/messaging {
+		rewrite * /bot
+		reverse_proxy telegram-bot:8001
+	}
+
+	@messaging_admin_assets path_regexp messaging_admin_assets ^/admin/messaging/(.*)$
+	handle @messaging_admin_assets {
+		rewrite * /bot/{re.messaging_admin_assets.1}
+		reverse_proxy telegram-bot:8001
+	}
+
+	@messaging_admin_api path_regexp messaging_admin_api ^/admin/messaging-api/(.*)$
+	handle @messaging_admin_api {
+		rewrite * /bot-api/{re.messaging_admin_api.1}
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /r/* {
+		reverse_proxy telegram-bot:8001
+	}
+
+	# Internal asset/API paths used by the existing messaging admin HTML.
+	handle /bot* {
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /bot-api/* {
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle {
+		reverse_proxy backend:8000
+	}
+
+	log {
+		output stdout
+		format json
+	}
+}
+
 {$API_DOMAIN} {
 	encode zstd gzip
 

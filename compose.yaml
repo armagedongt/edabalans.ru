@@ -5,6 +5,7 @@ services:
     image: caddy:2.10.2-alpine
     restart: unless-stopped
     environment:
+      PUBLIC_DOMAIN: "${PUBLIC_DOMAIN:-edabalans.ru}"
       API_DOMAIN: "${API_DOMAIN}"
       DATA_DOMAIN: "${DATA_DOMAIN}"
       APP_DOMAIN: "${APP_DOMAIN}"
@@ -111,7 +112,7 @@ services:
       TELEGRAM_TEST_BOT_TOKEN: "${TELEGRAM_TEST_BOT_TOKEN}"
       APP_AUTH_SECRET: "${APP_AUTH_SECRET}"
       TELEGRAM_WEBHOOK_SECRET: "${TELEGRAM_WEBHOOK_SECRET}"
-      TELEGRAM_PUBLIC_BASE_URL: "https://${GO_DOMAIN}"
+      TELEGRAM_PUBLIC_BASE_URL: "https://${PUBLIC_DOMAIN:-edabalans.ru}"
       TELEGRAM_PROXY_URL: "${TELEGRAM_PROXY_URL:-}"
       TELEGRAM_CHANNEL_ID: "${TELEGRAM_CHANNEL_ID:-}"
       TELEGRAM_POLLING_ENABLED: "${TELEGRAM_POLLING_ENABLED:-false}"

@@ -13,7 +13,7 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 
-DEFAULT_API_URL = "https://api.edabalans.ru"
+DEFAULT_API_URL = "https://edabalans.ru"
 DEFAULT_COURSE = "masterclass-21"
 
 

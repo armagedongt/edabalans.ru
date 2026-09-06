@@ -12,7 +12,7 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 
-DEFAULT_API_URL = "https://api.edabalans.ru"
+DEFAULT_API_URL = "https://edabalans.ru"
 
 
 def credentials(args: argparse.Namespace) -> tuple[str, str]:

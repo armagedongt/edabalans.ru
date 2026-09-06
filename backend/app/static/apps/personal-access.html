@@ -11,7 +11,7 @@
 (function(){
   'use strict';
   var root=document.getElementById('personal-access-app'),ctx=window.EdabalansAppContext||{},identity=window.EdabalansIdentity||{};
-  var API=/^(localhost|127\.0\.0\.1|app\.edabalans\.ru)$/.test(location.hostname)?location.origin:'https://api.edabalans.ru';
+  var API=/^(localhost|127\.0\.0\.1|edabalans\.ru|app\.edabalans\.ru)$/.test(location.hostname)?location.origin:'https://edabalans.ru';
   var token=ctx.linkToken||'',email=identity.email||'';
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function money(v){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(v||0))+' ₽';}
