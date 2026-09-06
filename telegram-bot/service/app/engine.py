@@ -99,6 +99,9 @@ def _set_next(session: Session, run: SequenceRun, step: SequenceStep, branch_key
         run.finished_at = utcnow() if target else None
         run.next_action_at = None
         if target:
+            # SessionLocal disables autoflush. Persist the completed source run
+            # before start_run checks for another active run on this contact.
+            session.flush()
             start_run(session, run.contact_id, edge.target_sequence_code, run.time_scale)
         else:
             run.context = {**run.context, "pending_sequence": edge.target_sequence_code}

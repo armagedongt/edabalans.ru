@@ -116,7 +116,7 @@ def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
 def session_factory(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'service.sqlite'}")
     Base.metadata.create_all(engine)
-    return Session(engine)
+    return Session(engine, autoflush=False)
 
 
 def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
@@ -567,6 +567,17 @@ def test_complete_welcome_flow_resolves_all_personal_links_for_both_subscription
                 advance_run(session, run, sender)
 
             assert run.status == "completed"
+            nurture_run = session.scalar(
+                select(SequenceRun)
+                .join(SequenceVersion, SequenceVersion.id == SequenceRun.sequence_version_id)
+                .join(Sequence, Sequence.id == SequenceVersion.sequence_id)
+                .where(
+                    SequenceRun.contact_id == contact.id,
+                    Sequence.code == PREPURCHASE_CODE,
+                )
+            )
+            assert nurture_run is not None
+            assert nurture_run.status == "active"
             sent_codes = [item[1] for item in sender.sent]
             assert f"tpl_intensive_mid1_{suffix}" in sent_codes
             assert f"tpl_intensive_mid2_{suffix}" in sent_codes
