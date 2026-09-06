@@ -40,6 +40,8 @@ curl -fsS https://edabalans.ru/legal/disclaimer
 curl -fsS https://edabalans.ru/legal/privacy
 curl -fsS https://edabalans.ru/legal/consent
 curl -fsS https://edabalans.ru/legal/offer
+# Пока включён ROBOKASSA_TEST_MODE; после переключения в боевой режим эту
+# проверку пропустить, потому что ожидаемый ответ — 404:
 curl -fsS https://go.похудение-это-есть.рф/robokassa-test
 curl -fsS 'https://edabalans.ru/intensive?utm_source=operations-smoke&yclid=operations-smoke'
 curl -fsS https://edabalans.ru/intensive/day-1
@@ -61,8 +63,9 @@ firewall разрешает только 22/80/443, backup timer активен.
 обычной формы Robokassa без Tilda. Она доступна только при
 `ROBOKASSA_TEST_MODE=true`; её стартовый маршрут, ResultUrl2, страницы возврата и
 чтение статуса проходят через тот же backend и PostgreSQL. Общий checkout API на
-go-домене не опубликован. После завершения эксперимента страницу, Caddy-маршруты и
-обязательную deploy-проверку нужно удалить одним выпуском.
+go-домене не опубликован. Сейчас тестовый флаг включён и страница отвечает `200`.
+В боевом режиме она штатно отвечает `404`, поэтому deploy проверяет её только при
+включённом тестовом флаге.
 
 `/robokassa-live-probe` — ещё более узкая временная страница реальной оплаты
 10 ₽ для проверки доставки `ResultUrl2` в боевом контуре. Она открывается только

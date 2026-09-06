@@ -167,8 +167,27 @@ curl --fail --silent --show-error --max-time 15 \
 curl --fail --silent --show-error --max-time 15 \
     --resolve edabalans.ru:443:127.0.0.1 \
     https://edabalans.ru/intensive/day-1 >/dev/null
-curl --fail --silent --show-error --max-time 15 \
-    https://go.похудение-это-есть.рф/robokassa-test >/dev/null
+# The isolated Robokassa test page is deliberately 404 in live mode.  The
+# backend's Compose default is test mode, so an absent or empty .env value must
+# keep the smoke check too.  Quotes and whitespace are normalised without ever
+# printing the environment file.
+robokassa_test_mode="$(awk -F= '
+    $1 == "ROBOKASSA_TEST_MODE" {
+        value = $2
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", value)
+        if ((substr(value, 1, 1) == "\"" && substr(value, length(value), 1) == "\"") || (substr(value, 1, 1) == sprintf("%c", 39) && substr(value, length(value), 1) == sprintf("%c", 39))) {
+            value = substr(value, 2, length(value) - 2)
+        }
+        print tolower(value)
+        found = 1
+        exit
+    }
+    END { if (!found) print "true" }
+' "${APP_DIR}/.env")"
+if [[ -z "${robokassa_test_mode}" || "${robokassa_test_mode}" == "true" ]]; then
+    curl --fail --silent --show-error --max-time 15 \
+        https://go.похудение-это-есть.рф/robokassa-test >/dev/null
+fi
   curl -fsS --retry 5 --retry-delay 2 \
     https://go.похудение-это-есть.рф/lk >/dev/null
 curl --fail --silent --show-error --retry 5 --retry-all-errors --retry-delay 3 --max-time 20 \
