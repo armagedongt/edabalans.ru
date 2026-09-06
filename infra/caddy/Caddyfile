@@ -179,7 +179,7 @@ www.{$PUBLIC_DOMAIN} {
 		reverse_proxy backend:8000
 	}
 
-	@robokassa_test_pages path /robokassa-test /robokassa-test/start
+	@robokassa_test_pages path /robokassa-test /robokassa-test/start /robokassa-live-probe /robokassa-live-probe/start
 	handle @robokassa_test_pages {
 		reverse_proxy backend:8000
 	}
@@ -188,7 +188,7 @@ www.{$PUBLIC_DOMAIN} {
 		reverse_proxy backend:8000
 	}
 
-	@robokassa_test_returns path /payments/robokassa/success /payments/robokassa/fail
+	@robokassa_test_returns path /payments/robokassa/success /payments/robokassa/fail /payments/robokassa/live-probe-success /payments/robokassa/live-probe-fail
 	handle @robokassa_test_returns {
 		reverse_proxy backend:8000
 	}

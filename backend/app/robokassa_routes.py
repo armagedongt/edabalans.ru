@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from html import escape
 import uuid
-from urllib.parse import urlencode, urlsplit
+from urllib.parse import parse_qs, urlencode, urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
@@ -20,7 +20,12 @@ from app.pricing_service import (
     pricing_entry_map,
     site_tariff_amount,
 )
-from app.robokassa_service import RobokassaError, confirm_payment, create_payment
+from app.robokassa_service import (
+    RobokassaError,
+    confirm_payment,
+    create_live_probe_payment,
+    create_payment,
+)
 
 
 router = APIRouter(tags=["payments"])
@@ -55,6 +60,18 @@ def _go_test_settings(request: Request, settings: Settings) -> Settings:
             "robokassa_result_url_2": f"{origin}/integrations/robokassa/result2",
             "robokassa_success_url_2": f"{origin}/payments/robokassa/success",
             "robokassa_fail_url_2": f"{origin}/payments/robokassa/fail",
+        }
+    )
+
+
+def _go_live_probe_settings(request: Request, settings: Settings) -> Settings:
+    origin = _go_origin(request)
+    return settings.model_copy(
+        update={
+            "robokassa_test_mode": False,
+            "robokassa_result_url_2": f"{origin}/integrations/robokassa/result2",
+            "robokassa_success_url_2": f"{origin}/payments/robokassa/live-probe-success",
+            "robokassa_fail_url_2": f"{origin}/payments/robokassa/live-probe-fail",
         }
     )
 
@@ -122,6 +139,73 @@ def robokassa_go_test_start(
             GO_TEST_EMAIL,
         )
     except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+    return _robokassa_redirect(checkout["payment_form"])
+
+
+@router.get("/robokassa-live-probe", include_in_schema=False)
+def robokassa_live_probe_page(
+    request: Request,
+    settings: Settings = Depends(get_settings),
+) -> HTMLResponse:
+    _require_go_test_host(request)
+    if not settings.robokassa_live_probe_enabled:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    return HTMLResponse(
+        "<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\">"
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta name="robots" content="noindex,nofollow">'
+        "<title>Реальная проверка Robokassa</title>"
+        "<style>body{margin:0;min-height:100svh;display:grid;place-items:center;"
+        "background:#f1f9ff;color:#173f70;font:16px/1.5 Arial,sans-serif}"
+        "main{width:min(440px,calc(100% - 40px));padding:30px;box-sizing:border-box;"
+        "border-radius:24px;background:#fff;box-shadow:0 20px 60px #176ba326}"
+        "h1{font-size:25px;line-height:1.15;margin:0 0 12px}p{margin:0 0 18px}"
+        "label{display:block;font-weight:700;margin-bottom:6px}input{width:100%;"
+        "box-sizing:border-box;padding:14px;border:1px solid #9bc7e3;border-radius:12px;"
+        "font:inherit;margin-bottom:14px}button{width:100%;padding:16px;border:0;"
+        "border-radius:14px;background:#159ee4;color:#fff;font-size:18px;font-weight:700;"
+        "cursor:pointer;box-shadow:0 12px 30px #159ee444}.note{font-size:14px;color:#526f8f}"
+        "</style><main><h1>Реальная оплата 10 ₽</h1>"
+        "<p>Отдельная техническая проверка прямой связи с Robokassa. Это настоящий платёж.</p>"
+        '<form action="/robokassa-live-probe/start" method="POST">'
+        '<label for="email">Email для чека</label>'
+        '<input id="email" name="email" type="email" autocomplete="email" required '
+        'maxlength="320" placeholder="name@example.ru">'
+        '<button type="submit">Перейти к оплате · 10 ₽</button></form>'
+        '<p class="note">Покупательский аккаунт, доступ к курсу и письмо этой проверкой не создаются.</p>'
+        "</main></html>",
+        headers={"X-Robots-Tag": "noindex, nofollow"},
+    )
+
+
+@router.post("/robokassa-live-probe/start", include_in_schema=False)
+async def robokassa_live_probe_start(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> RedirectResponse:
+    _require_go_test_host(request)
+    if not settings.robokassa_live_probe_enabled:
+        raise HTTPException(status.HTTP_404_NOT_FOUND)
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    if not request.headers.get("content-type", "").lower().startswith(
+        "application/x-www-form-urlencoded"
+    ):
+        raise HTTPException(415, "Ожидается форма оплаты")
+    body = await request.body()
+    if len(body) > 4096:
+        raise HTTPException(413, "Форма оплаты слишком большая")
+    try:
+        email = parse_qs(body.decode("utf-8"), keep_blank_values=True).get("email", [""])[0]
+        checkout = create_live_probe_payment(
+            db,
+            _go_live_probe_settings(request, settings),
+            email,
+        )
+    except (UnicodeDecodeError, RobokassaError) as exc:
         db.rollback()
         raise HTTPException(422, str(exc)) from exc
     return _robokassa_redirect(checkout["payment_form"])
@@ -248,4 +332,28 @@ def robokassa_fail(request: Request) -> HTMLResponse:
             if (request.url.hostname or "").lower() in GO_PAYMENT_HOSTS
             else "/preview/homepage-mobile#pricing"
         ),
+    )
+
+
+@router.get("/payments/robokassa/live-probe-success", include_in_schema=False)
+def robokassa_live_probe_success(
+    request: Request,
+    InvId: str | None = Query(default=None),
+) -> HTMLResponse:
+    _require_go_test_host(request)
+    return _return_page(
+        "Проверяем реальную оплату",
+        "Robokassa приняла платёж. Ждём серверное подтверждение ResultUrl2…",
+        invoice_id=InvId,
+        return_url="/robokassa-live-probe",
+    )
+
+
+@router.get("/payments/robokassa/live-probe-fail", include_in_schema=False)
+def robokassa_live_probe_fail(request: Request) -> HTMLResponse:
+    _require_go_test_host(request)
+    return _return_page(
+        "Оплата не завершена",
+        "Деньги не списаны. Можно вернуться и попробовать ещё раз.",
+        return_url="/robokassa-live-probe",
     )

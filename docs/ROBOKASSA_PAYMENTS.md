@@ -54,9 +54,11 @@ magic link и собственный клиентский вход относя�
 Секреты хранятся только в production `.env`, не в Git:
 
 - `ROBOKASSA_CHECKOUT_ENABLED` — отдельный рубильник прямого checkout;
+- `ROBOKASSA_LIVE_PROBE_ENABLED` — временный отдельный рубильник реальной
+  технической оплаты 10 ₽; обычный checkout и Tilda от него не зависят;
 - `ROBOKASSA_TEST_MODE` — `true` на первом этапе;
 - `ROBOKASSA_MERCHANT_LOGIN`;
-- `ROBOKASSA_TEST_PASSWORD_1` и будущий `ROBOKASSA_PASSWORD_1`;
+- `ROBOKASSA_TEST_PASSWORD_1` и боевой `ROBOKASSA_PASSWORD_1`;
 - `ROBOKASSA_HASH_ALGORITHM` — должен совпадать с кабинетом магазина;
 - `ROBOKASSA_JWS_CERTIFICATE_BASE64` — официальный PEM- или DER-сертификат
   Robokassa в base64;
@@ -64,7 +66,7 @@ magic link и собственный клиентский вход относя�
   `ROBOKASSA_RECEIPT_PAYMENT_METHOD`, `ROBOKASSA_RECEIPT_PAYMENT_OBJECT` —
   параметры чека, сверенные с действующим магазином.
 
-Значения по умолчанию для callback и возврата ведут на `app.edabalans.ru`.
+Значения по умолчанию для callback и возврата ведут на `edabalans.ru`.
 Боевой пароль не используется, пока включён тестовый режим.
 
 ## Изолированная проверка через go-поддомен
@@ -80,6 +82,23 @@ checkout и отвечает серверным `303`-редиректом с п
 том же go-поддомене. Caddy передаёт их существующему backend и той же PostgreSQL;
 отдельный сервер или копия базы не создаются. Маршрут возвращает `404`, если
 `ROBOKASSA_TEST_MODE=false`.
+
+## Изолированная реальная проверка ResultUrl2
+
+Временная `noindex`-страница
+`https://go.похудение-это-есть.рф/robokassa-live-probe` создаёт только после
+ввода email настоящий счёт на 10 ₽. Сумма фиксирована на сервере и не принимается
+из браузера. Только этот маршрут принудительно использует боевой пароль № 1 и
+`IsTest=0`; глобальный `ROBOKASSA_TEST_MODE` остаётся включённым, поэтому обычный
+прямой checkout не становится боевым.
+
+Счёт помечается `checkout_kind=robokassa_live_probe`, не связан с товаром и не
+содержит ресурсов. Подписанный `ResultUrl2` фиксирует реальную оплату в
+`payments` и `offer_checkouts`, но намеренно не создаёт пользователя, доступ,
+post-paid onboarding или письмо. Основные Result URL магазина, Tilda и её
+действующие продажи не меняются. Страница доступна только при
+`ROBOKASSA_LIVE_PROBE_ENABLED=true`; после диагностической оплаты рубильник нужно
+выключить.
 
 ## Контроль перед боевым включением
 

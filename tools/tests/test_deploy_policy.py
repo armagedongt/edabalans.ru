@@ -109,15 +109,18 @@ class DeployPolicyTests(unittest.TestCase):
         deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(
             encoding="utf-8"
         )
+        compose = (REPOSITORY_ROOT / "compose.yaml").read_text(encoding="utf-8")
 
         self.assertIn(
-            "@robokassa_test_pages path /robokassa-test /robokassa-test/start",
+            "@robokassa_test_pages path /robokassa-test /robokassa-test/start "
+            "/robokassa-live-probe /robokassa-live-probe/start",
             source,
         )
         self.assertIn("handle /integrations/robokassa/result2", source)
         self.assertIn(
             "@robokassa_test_returns path /payments/robokassa/success "
-            "/payments/robokassa/fail",
+            "/payments/robokassa/fail /payments/robokassa/live-probe-success "
+            "/payments/robokassa/live-probe-fail",
             source,
         )
         self.assertIn("method GET", source)
@@ -131,6 +134,10 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertIn(
             "https://go.похудение-это-есть.рф/robokassa-test",
             deploy,
+        )
+        self.assertIn(
+            'ROBOKASSA_LIVE_PROBE_ENABLED: "${ROBOKASSA_LIVE_PROBE_ENABLED:-false}"',
+            compose,
         )
 
     def test_go_public_intensive_redirect_preserves_attribution(self) -> None:

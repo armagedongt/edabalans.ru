@@ -22,6 +22,9 @@ from app.database import Base, get_db  # noqa: E402
 from app.intensive_web_access import create_offer_token  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
+    AccountCredential,
+    AccountOnboarding,
+    MessengerLinkToken,
     OfferCheckout,
     Payment,
     PriceEntry,
@@ -57,7 +60,10 @@ def certificate_pair(
 
 
 def make_client(
-    *, test_mode: bool = True
+    *,
+    test_mode: bool = True,
+    live_probe_enabled: bool = False,
+    account_onboarding_enabled: bool = False,
 ) -> tuple[TestClient, sessionmaker[Session], rsa.RSAPrivateKey]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
@@ -78,7 +84,9 @@ def make_client(
         database_url="sqlite+pysqlite:///:memory:",
         app_auth_secret="robokassa-tests",
         allowed_origins="https://похудение-это-есть.рф",
+        account_onboarding_enabled=account_onboarding_enabled,
         robokassa_checkout_enabled=True,
+        robokassa_live_probe_enabled=live_probe_enabled,
         robokassa_test_mode=test_mode,
         robokassa_merchant_login="edabalans-test",
         robokassa_password_1="production-password-1",
@@ -307,6 +315,190 @@ def test_go_payment_returns_link_back_to_test_page() -> None:
 
     assert 'href="/robokassa-test"' in success.text
     assert 'href="/robokassa-test"' in failure.text
+    app.dependency_overrides.clear()
+
+
+def test_live_probe_page_is_explicitly_enabled_and_noindex() -> None:
+    _, _, _ = make_client(live_probe_enabled=True)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-live-probe-page", 50000),
+    )
+
+    response = client.get("/robokassa-live-probe")
+
+    assert response.status_code == 200
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert "Реальная оплата 10 ₽" in response.text
+    assert 'action="/robokassa-live-probe/start"' in response.text
+    assert 'name="email"' in response.text
+    app.dependency_overrides.clear()
+
+
+def test_live_probe_is_hidden_when_disabled() -> None:
+    _, _, _ = make_client(live_probe_enabled=False)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-live-probe-disabled", 50000),
+    )
+
+    assert client.get("/robokassa-live-probe").status_code == 404
+    assert (
+        client.post(
+            "/robokassa-live-probe/start",
+            data={"email": "owner@example.test"},
+            headers={"Origin": "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"},
+        ).status_code
+        == 404
+    )
+    app.dependency_overrides.clear()
+
+
+def test_live_probe_creates_real_ten_ruble_invoice_with_production_password() -> None:
+    _, factory, _ = make_client(live_probe_enabled=True)
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-live-probe-start", 50000),
+    )
+
+    response = client.post(
+        "/robokassa-live-probe/start",
+        data={
+            "email": "owner@example.test",
+            "amount": "99999.99",
+            "price_code": "site.masterclass.consultation",
+        },
+        headers={"Origin": "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"},
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    parsed = urlsplit(response.headers["location"])
+    fields = parse_qs(parsed.query)
+    assert fields["OutSum"] == ["10.00"]
+    assert fields["IsTest"] == ["0"]
+    assert fields["ResultUrl2"] == [
+        "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/integrations/robokassa/result2"
+    ]
+    assert fields["SuccessUrl2"] == [
+        "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/payments/robokassa/live-probe-success"
+    ]
+    receipt = json.loads(unquote_plus(fields["Receipt"][0]))
+    assert receipt["items"][0]["sum"] == 10
+    signature_source = ":".join(
+        [
+            "edabalans-test",
+            "10.00",
+            fields["InvId"][0],
+            fields["Receipt"][0],
+            fields["ResultUrl2"][0],
+            fields["SuccessUrl2"][0],
+            "GET",
+            fields["FailUrl2"][0],
+            "GET",
+            "production-password-1",
+        ]
+    )
+    assert fields["SignatureValue"] == [
+        hashlib.sha256(signature_source.encode("utf-8")).hexdigest()
+    ]
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        checkout = db.scalar(select(OfferCheckout))
+        assert payment is not None and payment.amount == Decimal("10.00")
+        assert payment.raw_payload["live_probe"] is True
+        assert checkout is not None and checkout.checkout_kind == "robokassa_live_probe"
+        assert checkout.items == []
+        assert db.scalar(select(func.count(User.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_live_probe_result_records_payment_without_user_access_or_onboarding() -> None:
+    _, factory, key = make_client(
+        live_probe_enabled=True,
+        account_onboarding_enabled=True,
+    )
+    client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("go-live-probe-result", 50000),
+    )
+    start = client.post(
+        "/robokassa-live-probe/start",
+        data={"email": "owner@example.test"},
+        headers={"Origin": "https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"},
+        follow_redirects=False,
+    )
+    invoice_id = parse_qs(urlsplit(start.headers["location"]).query)["InvId"][0]
+    notification = signed_result(key, invoice_id, "10.00", operation_id="live-operation")
+
+    first = client.post("/integrations/robokassa/result2", content=notification)
+    second = client.post("/integrations/robokassa/result2", content=notification)
+
+    assert first.status_code == 200
+    assert first.text == f"OK{invoice_id}"
+    assert second.status_code == 200
+    assert second.text == f"OK{invoice_id}"
+    assert client.get(f"/api/payments/robokassa/{invoice_id}/status").json()["status"] == "paid"
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        checkout = db.scalar(select(OfferCheckout))
+        assert payment is not None and payment.payment_status == "paid"
+        assert payment.user_id is None
+        assert payment.raw_payload["integration"]["live_probe"] is True
+        assert checkout is not None and checkout.status == "paid"
+        assert checkout.user_id is None
+        assert db.scalar(select(func.count(User.id))) == 0
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
+        assert db.scalar(select(func.count(AccountCredential.user_id))) == 0
+        assert db.scalar(select(func.count(MessengerLinkToken.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_live_probe_rejects_wrong_host_and_cross_origin_requests() -> None:
+    _, factory, _ = make_client(live_probe_enabled=True)
+    app_client = TestClient(
+        app,
+        base_url="https://app.edabalans.ru",
+        client=("live-probe-wrong-host", 50000),
+    )
+    go_client = TestClient(
+        app,
+        base_url="https://go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        client=("live-probe-cross-origin", 50000),
+    )
+
+    assert app_client.get("/robokassa-live-probe").status_code == 404
+    assert (
+        app_client.post(
+            "/robokassa-live-probe/start",
+            data={"email": "owner@example.test"},
+            headers={"Origin": "https://app.edabalans.ru"},
+        ).status_code
+        == 404
+    )
+    assert (
+        go_client.post(
+            "/robokassa-live-probe/start",
+            data={"email": "owner@example.test"},
+            headers={"Origin": "https://attacker.example"},
+        ).status_code
+        == 403
+    )
+    assert (
+        go_client.post(
+            "/robokassa-live-probe/start",
+            data={"email": "owner@example.test"},
+        ).status_code
+        == 403
+    )
+    with factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 0
+        assert db.scalar(select(func.count(OfferCheckout.id))) == 0
     app.dependency_overrides.clear()
 
 

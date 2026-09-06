@@ -33,6 +33,10 @@ from app.account_onboarding_service import ensure_paid_account_onboarding
 
 
 SOURCE = "robokassa"
+LIVE_PROBE_CHECKOUT_KIND = "robokassa_live_probe"
+LIVE_PROBE_OFFER_CODE = "robokassa.live.probe"
+LIVE_PROBE_TITLE = "Техническая проверка прямой оплаты"
+LIVE_PROBE_AMOUNT = Decimal("10.00")
 MOSCOW = ZoneInfo("Europe/Moscow")
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 HASH_ALGORITHMS = {"md5", "sha1", "sha256", "sha384", "sha512"}
@@ -258,6 +262,69 @@ def create_payment(
     }
 
 
+def create_live_probe_payment(
+    db: Session,
+    settings: Settings,
+    email_original: str,
+) -> dict:
+    """Create a real 10 RUB invoice without attaching product access or onboarding."""
+    if settings.robokassa_test_mode:
+        raise RobokassaError("Технический боевой счёт не может быть тестовым")
+    _require_checkout_settings(settings)
+    email = normalize_checkout_email(email_original)
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(hours=2)
+    payment_id = uuid.uuid4()
+    invoice_id = str(_invoice_id(payment_id))
+    payment = Payment(
+        id=payment_id,
+        price_entry_code=LIVE_PROBE_OFFER_CODE,
+        source=SOURCE,
+        external_order_id=invoice_id,
+        email_at_purchase=email,
+        product_name_raw=LIVE_PROBE_TITLE,
+        amount=LIVE_PROBE_AMOUNT,
+        amount_is_estimated=False,
+        currency="RUB",
+        payment_status="pending",
+        payment_system="robokassa",
+        raw_payload={"test_mode": False, "live_probe": True},
+    )
+    checkout = OfferCheckout(
+        checkout_kind=LIVE_PROBE_CHECKOUT_KIND,
+        price_entry_code=LIVE_PROBE_OFFER_CODE,
+        offer_code=LIVE_PROBE_OFFER_CODE,
+        title=LIVE_PROBE_TITLE,
+        items=[],
+        amount=LIVE_PROBE_AMOUNT,
+        expires_at=expires_at,
+        payment_id=payment.id,
+    )
+    db.add(payment)
+    db.flush()
+    db.add(checkout)
+    db.flush()
+    payment.raw_payload = {
+        "test_mode": False,
+        "live_probe": True,
+        "checkout_id": str(checkout.id),
+    }
+    fields = _payment_fields(settings, payment, LIVE_PROBE_TITLE, email, expires_at)
+    db.commit()
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "amount": amount_value(LIVE_PROBE_AMOUNT),
+        "test_mode": False,
+        "expires_at": expires_at.isoformat(),
+        "payment_form": {
+            "action": settings.robokassa_payment_url,
+            "method": "POST",
+            "fields": fields,
+        },
+    }
+
+
 def _b64url_decode(value: str) -> bytes:
     return base64.urlsafe_b64decode(value + "=" * (-len(value) % 4))
 
@@ -327,6 +394,19 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         occurred_at = datetime.fromtimestamp(int(timestamp), tz=timezone.utc)
     except (TypeError, ValueError, OSError):
         occurred_at = datetime.now(timezone.utc)
+    if checkout.checkout_kind == LIVE_PROBE_CHECKOUT_KIND:
+        payment.external_payment_id = operation_id
+        payment.payment_status = "paid"
+        payment.payment_system = str(data.get("paymentMethod") or "robokassa")[:64]
+        payment.source_event_at = occurred_at
+        payment.paid_at = occurred_at
+        payment.raw_payload = {
+            "integration": {"test_mode": False, "live_probe": True},
+            "notification": payload,
+        }
+        checkout.status = "paid"
+        db.commit()
+        return invoice_id
     if checkout.user_id is not None:
         user = db.get(User, checkout.user_id)
         if user is None:

@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     personal_access_page_url: str = "https://похудение-это-есть.рф/personal-access"
     pricing_catalog_enabled: bool = False
     robokassa_checkout_enabled: bool = False
+    robokassa_live_probe_enabled: bool = False
     robokassa_test_mode: bool = True
     robokassa_merchant_login: str = ""
     robokassa_password_1: str = ""
