@@ -530,6 +530,43 @@ def test_max_start_appears_as_user_row() -> None:
     assert payload["rows"][0]["campaign"] == "max-campaign"
 
 
+def test_max_start_is_not_counted_until_welcome_is_sent() -> None:
+    client, factory = make_client()
+    with factory() as db:
+        user = User(display_name="MAX pending", status="active")
+        db.add(user)
+        db.flush()
+        db.add_all(
+            [
+                TelegramTrackingEvent(
+                    id="max-pending-tracking",
+                    user_id=user.id,
+                    telegram_user_id="max-42",
+                    event_type="start_first",
+                    metadata_json={
+                        "messenger": "max",
+                        "max_delivery_status": "pending",
+                    },
+                    occurred_at=datetime(2026, 1, 16, 9, 0, tzinfo=timezone.utc),
+                ),
+                AttributionEvent(
+                    user_id=user.id,
+                    event_type="max_first_touch",
+                    source_raw="MAX pending",
+                    utm_source="max",
+                    occurred_at=datetime(2026, 1, 16, 9, 0, tzinfo=timezone.utc),
+                ),
+            ]
+        )
+        db.commit()
+    payload = client.get(
+        "/admin/api/marketing/overview?from=2026-01-16&to=2026-01-16",
+        auth=ADMIN_AUTH,
+    ).json()
+    assert payload["rows"] == []
+    assert {item["code"]: item["count"] for item in payload["analytics"]}["bot_start"] == 0
+
+
 def test_period_uses_moscow_day_and_rejects_pre_december() -> None:
     client, factory = make_client()
     with factory() as db:

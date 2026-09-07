@@ -193,6 +193,17 @@ def _is_legacy_real_click(event: TelegramTrackingEvent) -> bool:
     return metadata.get("entry") != "public_start_link_api"
 
 
+def _is_confirmed_bot_start(event: Any) -> bool:
+    if event.event_type not in START_EVENTS:
+        return False
+    if not isinstance(event, TelegramTrackingEvent):
+        return True
+    metadata = event.metadata_json if isinstance(event.metadata_json, dict) else {}
+    if metadata.get("messenger") != "max":
+        return True
+    return metadata.get("max_delivery_status") == "sent"
+
+
 def _event_detail(event: Any) -> str | None:
     if not isinstance(event, TelegramTrackingEvent) or not isinstance(event.metadata_json, dict):
         return None
@@ -308,6 +319,18 @@ def marketing_dashboard(
         if event.telegram_user_id and event.user_id:
             user_id = str(event.user_id)
             telegram_user_map[str(event.telegram_user_id)] = canonical_user_map.get(user_id, user_id)
+    max_tracking_identities = {
+        _identity(event, telegram_user_map, canonical_user_map)
+        for event in telegram_events
+        if isinstance(event.metadata_json, dict)
+        and event.metadata_json.get("messenger") == "max"
+        and event.event_type in START_EVENTS
+    }
+    max_events = [
+        event
+        for event in max_events
+        if _identity(event, telegram_user_map, canonical_user_map) not in max_tracking_identities
+    ]
     events: list[Any] = [*telegram_events, *max_events]
     events.sort(key=lambda event: event.occurred_at or datetime.min.replace(tzinfo=timezone.utc))
 
@@ -376,7 +399,7 @@ def marketing_dashboard(
 
     starts: dict[str, Any] = {}
     for event in events:
-        if event.event_type not in START_EVENTS:
+        if not _is_confirmed_bot_start(event):
             continue
         identity = _identity(event, telegram_user_map, canonical_user_map)
         starts.setdefault(identity, event)
@@ -389,7 +412,7 @@ def marketing_dashboard(
 
     started_journeys: dict[str, Any] = {}
     for event in events:
-        if event.event_type not in START_EVENTS:
+        if not _is_confirmed_bot_start(event):
             continue
         journey_id = _journey_context(event).get("journey_id")
         if journey_id:
