@@ -699,6 +699,12 @@ def marketing_dashboard(
         ("bot_start", "Запустили бота", started_count, True),
         ("new_lead", "Новые лиды", new_lead_count, True),
         (
+            "site_home",
+            "Открыли главную интенсива",
+            sum(bool(row["site_home"]) for row in started_rows),
+            collection["site_home"],
+        ),
+        (
             "check_before_day_one",
             "Проверка подписки до дня 1",
             sum(bool(row["check_before_day_one"]) for row in started_rows),
@@ -723,12 +729,6 @@ def marketing_dashboard(
             True,
         ),
         (
-            "site_home",
-            "Открыли главную",
-            sum(bool(row["site_home"]) for row in started_rows),
-            collection["site_home"],
-        ),
-        (
             "later_days",
             "Открыли дни 2+",
             sum(bool(row["later_days"]) for row in started_rows),
@@ -737,7 +737,7 @@ def marketing_dashboard(
     ]
     analytics = []
     previous_count: int | None = None
-    linear_codes = {"web_click", "bot_start", "day_one", "subscribed", "site_home", "later_days"}
+    linear_codes = {"web_click", "bot_start", "site_home", "day_one", "later_days"}
     for code, label, count, enabled in metric_specs:
         is_linear = code in linear_codes
         analytics.append(

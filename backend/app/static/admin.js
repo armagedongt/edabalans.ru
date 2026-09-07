@@ -500,11 +500,11 @@
         <td>${item.landing_entry ? `${marketingEvent(item.landing_entry)}<small>${esc(item.landing_entry.messenger || item.messenger)} · ${item.landing_entry.method === "qr" ? "QR" : "кнопка"}</small>` : '<span class="marketing-empty">не зафиксирован</span>'}</td>
         <td>${marketingEvent(item.start)}</td>
         <td><b>${item.status === "blocked" ? "Заблокировал бота" : item.status === "lost_before_start" ? "Потерян до старта" : item.is_new_lead ? "Новый" : "Повторный"}</b></td>
+        <td>${marketingEvent(item.site_home, missingStage("site_home"))}</td>
         <td>${marketingEvents(item.check_before_day_one)}</td>
         <td>${marketingEvent(item.day_one, missingStage("day_one"))}</td>
         <td>${marketingEvent(item.subscription)}</td>
         <td>${marketingEvents(item.check_after_day_one)}</td>
-        <td>${marketingEvent(item.site_home, missingStage("site_home"))}</td>
         <td>${item.later_days ? `<b>${marketingDate(item.later_days.at)}</b><small>${item.later_days.max_day ? `дошёл до дня ${item.later_days.max_day}` : "открыл следующий день"}</small>` : `<span class="marketing-empty">${missingStage("later_days")}</span>`}</td>
         <td class="marketing-other">${other || '<span class="marketing-empty">—</span>'}</td>
         <td>${marketingEvent(item.last_action)}</td>
@@ -536,7 +536,7 @@
       <div class="marketing-result-line">Найдено пользователей: <b>${data.totals.matching_rows.toLocaleString("ru-RU")}</b>${data.totals.rows < data.totals.matching_rows ? ` · в таблице первые ${data.totals.rows.toLocaleString("ru-RU")}, аналитика по всем` : ""}</div>
       ${data.totals.events_truncated ? '<div class="marketing-note">Событий больше безопасного предела отчёта. Текущая таблица и аналитика неполные — сузьте период.</div>' : ""}
       <div class="marketing-table-wrap"><table class="marketing-table marketing-leads"><thead><tr>
-        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Вход с посадки</th><th>Старт бота</th><th>Статус</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Главная</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
+        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Вход с посадки</th><th>Старт бота</th><th>Статус</th><th>Главная интенсива</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
       </tr></thead><tbody>${rows || '<tr><td colspan="15"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
       <h2 class="marketing-analytics-title">Конверсии текущего среза</h2>
       <div class="marketing-table-wrap marketing-analytics-wrap"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
