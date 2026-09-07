@@ -18,6 +18,7 @@ from app import marketing_service  # noqa: E402
 from app.marketing_routes import router as marketing_router  # noqa: E402
 from app.models import (  # noqa: E402
     AttributionEvent,
+    CourseEvent,
     MessengerAccount,
     TelegramTrackingEvent,
     TelegramTrackingLink,
@@ -678,3 +679,56 @@ def test_marketing_page_uses_protected_unified_admin_shell() -> None:
     assert response.status_code == 200
     assert 'id="admin-content"' in response.text
     assert "/admin/static/marketing.css" in response.text
+
+
+def test_real_intensive_course_events_appear_in_lead_path() -> None:
+    client, factory = make_client()
+    with factory() as db:
+        user = User(display_name="Читатель", status="active")
+        db.add(user)
+        db.flush()
+        db.add_all(
+            [
+                TelegramTrackingEvent(
+                    id="course-start",
+                    user_id=user.id,
+                    event_type="start_first",
+                    metadata_json={},
+                    occurred_at=datetime(2026, 1, 11, 9, 0, tzinfo=timezone.utc),
+                ),
+                CourseEvent(
+                    user_id=user.id,
+                    course_code="intensive",
+                    event_key="web:intensive_main_open",
+                    event_type="intensive_main_open",
+                    details={},
+                    occurred_at=datetime(2026, 1, 11, 9, 5, tzinfo=timezone.utc),
+                ),
+                CourseEvent(
+                    user_id=user.id,
+                    course_code="intensive",
+                    event_key="web:intensive_day_open:1",
+                    event_type="intensive_day_open",
+                    details={"day": 1},
+                    occurred_at=datetime(2026, 1, 11, 9, 10, tzinfo=timezone.utc),
+                ),
+                CourseEvent(
+                    user_id=user.id,
+                    course_code="intensive",
+                    event_key="video:day1:video_progress:50",
+                    event_type="video_progress",
+                    details={"day": 1, "progress_percent": 50},
+                    occurred_at=datetime(2026, 1, 11, 9, 15, tzinfo=timezone.utc),
+                ),
+            ]
+        )
+        db.commit()
+    payload = client.get(
+        "/admin/api/marketing/overview?from=2026-01-11&to=2026-01-11",
+        auth=ADMIN_AUTH,
+    ).json()
+    row = payload["rows"][0]
+    assert row["site_home"] is not None
+    assert row["day_one"] is not None
+    assert row["other_actions"][-1]["label"] == "Смотрел видео"
+    assert row["other_actions"][-1]["detail"] == "день 1, 50%"

@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from app.config import Settings
 from app.models import (
     AttributionEvent,
+    CourseEvent,
     MessengerAccount,
     TelegramTrackingEvent,
     TelegramTrackingLink,
@@ -32,7 +33,12 @@ START_EVENTS = {
 MAX_START_EVENTS = {"max_first_touch", "max_start_maintenance", "max_start_unknown"}
 FIRST_START_EVENTS = {"start_first", "max_first_touch"}
 DAY_ONE_EVENTS = {"intensive_day_1_open", "day_1_open"}
-SITE_HOME_EVENTS = {"site_home_open", "intensive_home_open"}
+SITE_HOME_EVENTS = {
+    "site_home_open",
+    "intensive_main_open",
+    "intensive_home_open",
+    "intensive_menu_open",
+}
 EVENT_LIMIT = 100_000
 ROW_LIMIT = 2_000
 DEFAULT_SOURCES = ["Яндекс", "Пикабу", "Telegram", "MAX", "Не определён"]
@@ -57,7 +63,16 @@ EVENT_LABELS = {
     "start_routing_error": "Ошибка стартового маршрута",
     "subscription_fail_open": "Проверка подписки недоступна",
     "site_home_open": "Открыл главную",
+    "intensive_main_open": "Открыл главную интенсива",
     "intensive_home_open": "Открыл главную",
+    "intensive_menu_open": "Открыл меню интенсива",
+    "intensive_masterclass_click": "Перешёл к мастер-классу",
+    "intensive_telegram_click": "Нажал Telegram в интенсиве",
+    "intensive_max_click": "Нажал MAX в интенсиве",
+    "video_engaged": "Начал смотреть видео",
+    "video_progress": "Смотрел видео",
+    "video_complete": "Досмотрел видео",
+    "video_exit": "Закрыл видео",
 }
 LANDING_ENTRY_EVENTS = {"landing_button_click", "landing_qr_scan"}
 
@@ -99,7 +114,10 @@ def _normalize_source(value: str | None) -> str:
 
 def _day_number(event: Any) -> int | None:
     if event.event_type == "intensive_day_open":
-        metadata = event.metadata_json if isinstance(event.metadata_json, dict) else {}
+        metadata = getattr(event, "metadata_json", None)
+        if not isinstance(metadata, dict):
+            metadata = getattr(event, "details", None)
+        metadata = metadata if isinstance(metadata, dict) else {}
         try:
             return int(metadata.get("day"))
         except (TypeError, ValueError):
@@ -205,6 +223,17 @@ def _is_confirmed_bot_start(event: Any) -> bool:
 
 
 def _event_detail(event: Any) -> str | None:
+    if isinstance(event, CourseEvent):
+        details = event.details if isinstance(event.details, dict) else {}
+        if event.event_type.startswith("video_"):
+            day = details.get("day")
+            progress = details.get("progress_percent")
+            parts = [
+                f"день {day}" if day else None,
+                f"{progress}%" if progress is not None else None,
+            ]
+            return ", ".join(part for part in parts if part) or None
+        return None
     if not isinstance(event, TelegramTrackingEvent) or not isinstance(event.metadata_json, dict):
         return None
     metadata = event.metadata_json
@@ -308,13 +337,27 @@ def marketing_dashboard(
             .limit(EVENT_LIMIT + 1)
         )
     )
+    course_events = list(
+        db.scalars(
+            select(CourseEvent)
+            .where(
+                CourseEvent.occurred_at >= start,
+                CourseEvent.occurred_at < end,
+                CourseEvent.course_code == "intensive",
+            )
+            .order_by(CourseEvent.occurred_at.desc())
+            .limit(EVENT_LIMIT + 1)
+        )
+    )
     events_truncated = (
         entry_events_truncated
         or len(telegram_events) > EVENT_LIMIT
         or len(max_events) > EVENT_LIMIT
+        or len(course_events) > EVENT_LIMIT
     )
     telegram_events = telegram_events[:EVENT_LIMIT]
     max_events = max_events[:EVENT_LIMIT]
+    course_events = course_events[:EVENT_LIMIT]
     for event in telegram_events:
         if event.telegram_user_id and event.user_id:
             user_id = str(event.user_id)
@@ -331,7 +374,7 @@ def marketing_dashboard(
         for event in max_events
         if _identity(event, telegram_user_map, canonical_user_map) not in max_tracking_identities
     ]
-    events: list[Any] = [*telegram_events, *max_events]
+    events: list[Any] = [*telegram_events, *max_events, *course_events]
     events.sort(key=lambda event: event.occurred_at or datetime.min.replace(tzinfo=timezone.utc))
 
     attribution_start = datetime(2025, 12, 1, tzinfo=MOSCOW_TZ).astimezone(timezone.utc)
