@@ -8,7 +8,7 @@ os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi import FastAPI  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import create_engine  # noqa: E402
+from sqlalchemy import create_engine, text  # noqa: E402
 from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
@@ -21,7 +21,6 @@ from app.models import (  # noqa: E402
     MessengerAccount,
     TelegramTrackingEvent,
     TelegramTrackingLink,
-    TelegramContact,
     User,
 )
 
@@ -263,13 +262,24 @@ def test_landing_button_and_qr_are_linked_to_bot_start_and_show_exact_losses() -
         )
         db.add_all([started, link])
         db.flush()
-        db.add(
-            TelegramContact(
-                id="blocked-contact",
-                user_id=started.id,
-                telegram_user_id="606",
-                status="blocked",
+        db.execute(
+            text(
+                "CREATE TABLE tg_contacts ("
+                "id VARCHAR(36) PRIMARY KEY, user_id VARCHAR(36), "
+                "telegram_user_id VARCHAR(64) NOT NULL, status VARCHAR(32) NOT NULL)"
             )
+        )
+        db.execute(
+            text(
+                "INSERT INTO tg_contacts (id, user_id, telegram_user_id, status) "
+                "VALUES (:id, :user_id, :telegram_user_id, :status)"
+            ),
+            {
+                "id": "blocked-contact",
+                "user_id": str(started.id),
+                "telegram_user_id": "606",
+                "status": "blocked",
+            },
         )
         common_query = {
             "utm_source": "yandex",

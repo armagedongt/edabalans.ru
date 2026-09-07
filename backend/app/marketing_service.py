@@ -5,14 +5,13 @@ from datetime import date, datetime, time, timedelta, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import select
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.models import (
     AttributionEvent,
     MessengerAccount,
-    TelegramContact,
     TelegramTrackingEvent,
     TelegramTrackingLink,
     User,
@@ -61,6 +60,19 @@ EVENT_LABELS = {
     "intensive_home_open": "Открыл главную",
 }
 LANDING_ENTRY_EVENTS = {"landing_button_click", "landing_qr_scan"}
+
+
+def _telegram_contact_statuses(db: Session) -> list[tuple[str, str]]:
+    """Read the messaging-owned table without registering it in backend metadata."""
+
+    if not inspect(db.get_bind()).has_table("tg_contacts"):
+        return []
+    return [
+        (str(row.user_id), str(row.status))
+        for row in db.execute(
+            text("SELECT user_id, status FROM tg_contacts WHERE user_id IS NOT NULL")
+        )
+    ]
 
 
 def _period_bounds(date_from: date, date_to: date) -> tuple[datetime, datetime]:
@@ -232,7 +244,7 @@ def marketing_dashboard(
     links = {item.id: item for item in db.scalars(select(TelegramTrackingLink)).all()}
     users = list(db.scalars(select(User)).all())
     accounts = list(db.scalars(select(MessengerAccount)).all())
-    contacts = list(db.scalars(select(TelegramContact)).all())
+    contacts = _telegram_contact_statuses(db)
     canonical_user_map = _canonical_user_map(users)
 
     telegram_user_map: dict[str, str] = {}
@@ -352,14 +364,11 @@ def marketing_dashboard(
         user_id = str(account.user_id)
         accounts_by_user[canonical_user_map.get(user_id, user_id)].append(account)
     contact_status_by_user: dict[str, str] = {}
-    for contact in contacts:
-        if not contact.user_id:
-            continue
-        user_id = str(contact.user_id)
+    for user_id, status in contacts:
         canonical_id = canonical_user_map.get(user_id, user_id)
         current = contact_status_by_user.get(canonical_id)
-        if current != "blocked" or contact.status == "blocked":
-            contact_status_by_user[canonical_id] = contact.status
+        if current != "blocked" or status == "blocked":
+            contact_status_by_user[canonical_id] = status
 
     events_by_identity: dict[str, list[Any]] = defaultdict(list)
     for event in events:
