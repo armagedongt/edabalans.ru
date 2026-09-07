@@ -24,8 +24,17 @@
 		reverse_proxy telegram-bot:8001
 	}
 
+	handle /api/messaging/start-link/click {
+		rewrite * /bot/public/start-link/click
+		reverse_proxy telegram-bot:8001
+	}
+
 	handle /api/messaging/start-link {
 		rewrite * /bot/public/start-link
+		reverse_proxy telegram-bot:8001
+	}
+
+	handle /q/* {
 		reverse_proxy telegram-bot:8001
 	}
 

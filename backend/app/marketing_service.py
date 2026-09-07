@@ -5,13 +5,14 @@ from datetime import date, datetime, time, timedelta, timezone
 from typing import Any
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import func, select
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.models import (
     AttributionEvent,
     MessengerAccount,
+    TelegramContact,
     TelegramTrackingEvent,
     TelegramTrackingLink,
     User,
@@ -30,6 +31,7 @@ START_EVENTS = {
     "max_start_unknown",
 }
 MAX_START_EVENTS = {"max_first_touch", "max_start_maintenance", "max_start_unknown"}
+FIRST_START_EVENTS = {"start_first", "max_first_touch"}
 DAY_ONE_EVENTS = {"intensive_day_1_open", "day_1_open"}
 SITE_HOME_EVENTS = {"site_home_open", "intensive_home_open"}
 EVENT_LIMIT = 100_000
@@ -37,6 +39,9 @@ ROW_LIMIT = 2_000
 DEFAULT_SOURCES = ["Яндекс", "Пикабу", "Telegram", "MAX", "Не определён"]
 
 EVENT_LABELS = {
+    "landing_button_click": "Нажал кнопку на посадке",
+    "landing_qr_scan": "Отсканировал QR-код",
+    "link_prepared": "Ссылка подготовлена",
     "start_first": "Первый старт бота",
     "start_repeat": "Повторный старт бота",
     "start_maintenance": "Старт в техническом режиме",
@@ -55,6 +60,7 @@ EVENT_LABELS = {
     "site_home_open": "Открыл главную",
     "intensive_home_open": "Открыл главную",
 }
+LANDING_ENTRY_EVENTS = {"landing_button_click", "landing_qr_scan"}
 
 
 def _period_bounds(date_from: date, date_to: date) -> tuple[datetime, datetime]:
@@ -147,6 +153,34 @@ def _raw_query(event: Any) -> dict[str, str]:
     return {str(key): str(value) for key, value in raw.items()}
 
 
+def _journey_context(event: Any) -> dict[str, str]:
+    metadata = event.metadata_json if isinstance(event, TelegramTrackingEvent) and isinstance(event.metadata_json, dict) else {}
+    return {
+        key: str(metadata[key])
+        for key in ("journey_id", "entry", "messenger")
+        if metadata.get(key)
+    }
+
+
+def _attribution_values(event: Any, link: TelegramTrackingLink | None) -> dict[str, str]:
+    query = _raw_query(event)
+    return {
+        "source": _normalize_source(query.get("utm_source") or (link.platform if link else None)),
+        "placement": query.get("utm_medium") or (link.placement if link else None) or "—",
+        "campaign": query.get("utm_campaign") or (link.campaign if link else None) or "Без кампании",
+        "creative": query.get("utm_content") or "—",
+        "term": query.get("utm_term") or "—",
+        "link_name": (link.name if link else None) or getattr(event, "source_raw", None) or "Без tracking-ссылки",
+    }
+
+
+def _is_legacy_real_click(event: TelegramTrackingEvent) -> bool:
+    if event.event_type != "web_click":
+        return False
+    metadata = event.metadata_json if isinstance(event.metadata_json, dict) else {}
+    return metadata.get("entry") != "public_start_link_api"
+
+
 def _event_detail(event: Any) -> str | None:
     if not isinstance(event, TelegramTrackingEvent) or not isinstance(event.metadata_json, dict):
         return None
@@ -191,12 +225,14 @@ def marketing_dashboard(
     date_to: date,
     source_filter: str | None = None,
     campaign_filter: str | None = None,
+    creative_filter: str | None = None,
     user_query: str | None = None,
 ) -> dict[str, Any]:
     start, end = _period_bounds(date_from, date_to)
     links = {item.id: item for item in db.scalars(select(TelegramTrackingLink)).all()}
     users = list(db.scalars(select(User)).all())
     accounts = list(db.scalars(select(MessengerAccount)).all())
+    contacts = list(db.scalars(select(TelegramContact)).all())
     canonical_user_map = _canonical_user_map(users)
 
     telegram_user_map: dict[str, str] = {}
@@ -205,22 +241,33 @@ def marketing_dashboard(
             user_id = str(account.user_id)
             telegram_user_map[str(account.platform_user_id)] = canonical_user_map.get(user_id, user_id)
 
-    click_rows = db.execute(
-        select(TelegramTrackingEvent.tracking_link_id, func.count(TelegramTrackingEvent.id))
-        .where(
-            TelegramTrackingEvent.occurred_at >= start,
-            TelegramTrackingEvent.occurred_at < end,
-            TelegramTrackingEvent.event_type == "web_click",
+    raw_entry_events = list(
+        db.scalars(
+            select(TelegramTrackingEvent)
+            .where(
+                TelegramTrackingEvent.occurred_at >= start,
+                TelegramTrackingEvent.occurred_at < end,
+                TelegramTrackingEvent.event_type.in_([*LANDING_ENTRY_EVENTS, "web_click"]),
+            )
+            .order_by(TelegramTrackingEvent.occurred_at.asc())
+            .limit(EVENT_LIMIT + 1)
         )
-        .group_by(TelegramTrackingEvent.tracking_link_id)
-    ).all()
+    )
+    entry_events_truncated = len(raw_entry_events) > EVENT_LIMIT
+    entry_events = [
+        event
+        for event in raw_entry_events[:EVENT_LIMIT]
+        if event.event_type in LANDING_ENTRY_EVENTS or _is_legacy_real_click(event)
+    ]
     telegram_events = list(
         db.scalars(
             select(TelegramTrackingEvent)
             .where(
                 TelegramTrackingEvent.occurred_at >= start,
                 TelegramTrackingEvent.occurred_at < end,
-                TelegramTrackingEvent.event_type != "web_click",
+                TelegramTrackingEvent.event_type.not_in(
+                    ["web_click", "link_prepared", *LANDING_ENTRY_EVENTS]
+                ),
             )
             .order_by(TelegramTrackingEvent.occurred_at.desc())
             .limit(EVENT_LIMIT + 1)
@@ -238,7 +285,11 @@ def marketing_dashboard(
             .limit(EVENT_LIMIT + 1)
         )
     )
-    events_truncated = len(telegram_events) > EVENT_LIMIT or len(max_events) > EVENT_LIMIT
+    events_truncated = (
+        entry_events_truncated
+        or len(telegram_events) > EVENT_LIMIT
+        or len(max_events) > EVENT_LIMIT
+    )
     telegram_events = telegram_events[:EVENT_LIMIT]
     max_events = max_events[:EVENT_LIMIT]
     for event in telegram_events:
@@ -288,13 +339,7 @@ def marketing_dashboard(
         identity = _identity(event, telegram_user_map, canonical_user_map)
         tracking_link_id = getattr(event, "tracking_link_id", None)
         link = links.get(tracking_link_id or "")
-        query = _raw_query(event)
-        candidate = {
-            "source": _normalize_source((link.platform if link else None) or query.get("utm_source")),
-            "placement": (link.placement if link else None) or query.get("utm_medium") or "—",
-            "campaign": (link.campaign if link else None) or query.get("utm_campaign") or "Без кампании",
-            "link_name": (link.name if link else None) or getattr(event, "source_raw", None) or "Без tracking-ссылки",
-        }
+        candidate = _attribution_values(event, link)
         existing = first_touch.get(identity)
         if existing is None or (
             existing["source"] == "Не определён" and candidate["source"] != "Не определён"
@@ -306,6 +351,15 @@ def marketing_dashboard(
     for account in accounts:
         user_id = str(account.user_id)
         accounts_by_user[canonical_user_map.get(user_id, user_id)].append(account)
+    contact_status_by_user: dict[str, str] = {}
+    for contact in contacts:
+        if not contact.user_id:
+            continue
+        user_id = str(contact.user_id)
+        canonical_id = canonical_user_map.get(user_id, user_id)
+        current = contact_status_by_user.get(canonical_id)
+        if current != "blocked" or contact.status == "blocked":
+            contact_status_by_user[canonical_id] = contact.status
 
     events_by_identity: dict[str, list[Any]] = defaultdict(list)
     for event in events:
@@ -318,6 +372,20 @@ def marketing_dashboard(
         identity = _identity(event, telegram_user_map, canonical_user_map)
         starts.setdefault(identity, event)
 
+    entry_by_journey: dict[str, TelegramTrackingEvent] = {}
+    for event in entry_events:
+        journey_id = _journey_context(event).get("journey_id")
+        if journey_id:
+            entry_by_journey.setdefault(journey_id, event)
+
+    started_journeys: dict[str, Any] = {}
+    for event in events:
+        if event.event_type not in START_EVENTS:
+            continue
+        journey_id = _journey_context(event).get("journey_id")
+        if journey_id:
+            started_journeys.setdefault(journey_id, event)
+
     rows: list[dict[str, Any]] = []
     for identity, start_event in starts.items():
         identity_events = [
@@ -327,18 +395,19 @@ def marketing_dashboard(
         ]
         tracking_link_id = getattr(start_event, "tracking_link_id", None)
         link = links.get(tracking_link_id or "")
-        query = _raw_query(start_event)
-        attribution = {
-            "source": _normalize_source((link.platform if link else None) or query.get("utm_source")),
-            "placement": (link.placement if link else None) or query.get("utm_medium") or "—",
-            "campaign": (link.campaign if link else None) or query.get("utm_campaign") or "Без кампании",
-            "link_name": (link.name if link else None) or getattr(start_event, "source_raw", None) or "Без tracking-ссылки",
-        }
-        if identity in first_touch:
-            attribution = first_touch[identity]
-
+        attribution = _attribution_values(start_event, link)
         user_id = identity.removeprefix("user:") if identity.startswith("user:") else None
         user = user_by_id.get(user_id or "")
+        journey = _journey_context(start_event)
+        journey_id = journey.get("journey_id")
+        landing_event = entry_by_journey.get(journey_id or "")
+        landing_context = _journey_context(landing_event) if landing_event else journey
+        if landing_event:
+            attribution = _attribution_values(
+                landing_event, links.get(landing_event.tracking_link_id or "")
+            )
+        elif identity in first_touch:
+            attribution = first_touch[identity]
         user_accounts = accounts_by_user.get(user_id or "", [])
         preferred_account = next((account for account in user_accounts if account.platform == "telegram"), None)
         preferred_account = preferred_account or next(iter(user_accounts), None)
@@ -394,7 +463,23 @@ def marketing_dashboard(
                 "user_id": user_id,
                 "display_name": display_name,
                 "usernames": usernames,
+                "status": contact_status_by_user.get(user_id or "")
+                or (user.status if user else "unknown"),
+                "is_new_lead": start_event.event_type in FIRST_START_EVENTS,
                 **attribution,
+                "journey_id": journey_id,
+                "messenger": landing_context.get("messenger") or (
+                    "max" if start_event.event_type.startswith("max_") else "telegram"
+                ),
+                "landing_entry": {
+                    "at": _iso(landing_event.occurred_at),
+                    "label": _event_label(landing_event),
+                    "method": landing_context.get("entry")
+                    or ("qr" if landing_event and landing_event.event_type == "landing_qr_scan" else "button"),
+                    "messenger": landing_context.get("messenger"),
+                }
+                if landing_event
+                else None,
                 "start": {"at": _iso(start_event.occurred_at), "label": _event_label(start_event)},
                 "check_before_day_one": [
                     {"at": _iso(event.occurred_at), "detail": _event_detail(event)}
@@ -427,6 +512,46 @@ def marketing_dashboard(
             }
         )
 
+    for journey_id, landing_event in entry_by_journey.items():
+        if journey_id in started_journeys:
+            continue
+        attribution = _attribution_values(
+            landing_event, links.get(landing_event.tracking_link_id or "")
+        )
+        landing_context = _journey_context(landing_event)
+        rows.append(
+            {
+                "user_id": None,
+                "display_name": "Не запустил бота",
+                "usernames": [],
+                "status": "lost_before_start",
+                "is_new_lead": False,
+                **attribution,
+                "journey_id": journey_id,
+                "messenger": landing_context.get("messenger") or "—",
+                "landing_entry": {
+                    "at": _iso(landing_event.occurred_at),
+                    "label": _event_label(landing_event),
+                    "method": landing_context.get("entry")
+                    or ("qr" if landing_event.event_type == "landing_qr_scan" else "button"),
+                    "messenger": landing_context.get("messenger"),
+                },
+                "start": None,
+                "check_before_day_one": [],
+                "day_one": None,
+                "subscription": None,
+                "check_after_day_one": [],
+                "site_home": None,
+                "later_days": None,
+                "other_actions": [],
+                "last_action": {
+                    "at": _iso(landing_event.occurred_at),
+                    "label": _event_label(landing_event),
+                    "detail": None,
+                },
+            }
+        )
+
     all_sources = {
         *DEFAULT_SOURCES,
         *(_normalize_source(link.platform) for link in links.values()),
@@ -435,9 +560,11 @@ def marketing_dashboard(
     all_campaigns = {link.campaign or "Без кампании" for link in links.values()} | {
         row["campaign"] for row in rows
     }
+    all_creatives = {row["creative"] for row in rows if row["creative"] != "—"}
 
     normalized_source_filter = _normalize_source(source_filter) if source_filter else None
     campaign_needle = (campaign_filter or "").strip().casefold()
+    creative_needle = (creative_filter or "").strip().casefold()
     user_needle = (user_query or "").strip().casefold()
     filtered_rows = []
     for row in rows:
@@ -445,88 +572,146 @@ def marketing_dashboard(
             continue
         if campaign_needle and campaign_needle not in row["campaign"].casefold():
             continue
+        if creative_needle and creative_needle not in row["creative"].casefold():
+            continue
         user_haystack = " ".join(
             [row["display_name"], row.get("user_id") or "", *row["usernames"]]
         ).casefold()
         if user_needle and user_needle not in user_haystack:
             continue
         filtered_rows.append(row)
-    filtered_rows.sort(key=lambda row: row["start"]["at"] or "", reverse=True)
+    filtered_rows.sort(key=lambda row: row["last_action"]["at"] or "", reverse=True)
     rows_truncated = len(filtered_rows) > ROW_LIMIT
     visible_rows = filtered_rows[:ROW_LIMIT]
 
-    click_count = 0
-    for tracking_link_id, count in click_rows:
-        link = links.get(tracking_link_id or "")
-        click_source = _normalize_source(link.platform if link else None)
-        click_campaign = (link.campaign if link else None) or "Без кампании"
-        if normalized_source_filter and click_source != normalized_source_filter:
-            continue
-        if campaign_needle and campaign_needle not in click_campaign.casefold():
-            continue
-        click_count += int(count)
+    def event_matches_filters(event: TelegramTrackingEvent) -> bool:
+        values = _attribution_values(event, links.get(event.tracking_link_id or ""))
+        return not (
+            (normalized_source_filter and values["source"] != normalized_source_filter)
+            or (campaign_needle and campaign_needle not in values["campaign"].casefold())
+            or (creative_needle and creative_needle not in values["creative"].casefold())
+        )
 
-    started_count = len(filtered_rows)
+    filtered_entries = [event for event in entry_events if event_matches_filters(event)]
+    if user_needle:
+        user_journeys = {
+            row["journey_id"] for row in filtered_rows if row.get("journey_id")
+        }
+        filtered_entries = [
+            event
+            for event in filtered_entries
+            if _journey_context(event).get("journey_id") in user_journeys
+        ]
+    button_count = sum(event.event_type == "landing_button_click" for event in filtered_entries)
+    qr_count = sum(event.event_type == "landing_qr_scan" for event in filtered_entries)
+    legacy_click_count = sum(event.event_type == "web_click" for event in filtered_entries)
+    entry_count = button_count + qr_count + legacy_click_count
+    started_rows = [row for row in filtered_rows if row["start"]]
+    started_count = len(started_rows)
+    new_lead_count = sum(row["is_new_lead"] for row in started_rows)
     collection = {
         "day_one": settings.marketing_day_one_events_enabled
-        or any(bool(row["day_one"]) for row in rows),
+        or any(bool(row["day_one"]) for row in started_rows),
         "site_home": settings.marketing_site_home_events_enabled
-        or any(bool(row["site_home"]) for row in rows),
+        or any(bool(row["site_home"]) for row in started_rows),
         "later_days": settings.marketing_later_day_events_enabled
-        or any(bool(row["later_days"]) for row in rows),
+        or any(bool(row["later_days"]) for row in started_rows),
     }
     metric_specs = [
-        ("web_click", "Переходы", click_count, True),
+        ("web_click", "Перешли с посадки в мессенджер", entry_count, True),
+        ("landing_button_click", "Нажали кнопку", button_count, True),
+        ("landing_qr_scan", "Отсканировали QR-код", qr_count, True),
         ("bot_start", "Запустили бота", started_count, True),
+        ("new_lead", "Новые лиды", new_lead_count, True),
         (
             "check_before_day_one",
             "Проверка подписки до дня 1",
-            sum(bool(row["check_before_day_one"]) for row in filtered_rows),
+            sum(bool(row["check_before_day_one"]) for row in started_rows),
             True,
         ),
         (
             "day_one",
             "Открыли день 1",
-            sum(bool(row["day_one"]) for row in filtered_rows),
+            sum(bool(row["day_one"]) for row in started_rows),
             collection["day_one"],
         ),
         (
             "subscribed",
             "Подписка подтверждена",
-            sum(bool(row["subscription"]) for row in filtered_rows),
+            sum(bool(row["subscription"]) for row in started_rows),
             True,
         ),
         (
             "check_after_day_one",
             "Проверка подписки после дня 1",
-            sum(bool(row["check_after_day_one"]) for row in filtered_rows),
+            sum(bool(row["check_after_day_one"]) for row in started_rows),
             True,
         ),
         (
             "site_home",
             "Открыли главную",
-            sum(bool(row["site_home"]) for row in filtered_rows),
+            sum(bool(row["site_home"]) for row in started_rows),
             collection["site_home"],
         ),
         (
             "later_days",
             "Открыли дни 2+",
-            sum(bool(row["later_days"]) for row in filtered_rows),
+            sum(bool(row["later_days"]) for row in started_rows),
             collection["later_days"],
         ),
     ]
-    analytics = [
-        {
-            "code": code,
-            "label": label,
-            "count": count,
-            "conversion_from_start": None
-            if code in {"web_click", "bot_start"}
-            else _percent(count, started_count),
-            "collection": "collecting" if enabled else "not_connected",
-        }
-        for code, label, count, enabled in metric_specs
-    ]
+    analytics = []
+    previous_count: int | None = None
+    linear_codes = {"web_click", "bot_start", "day_one", "subscribed", "site_home", "later_days"}
+    for code, label, count, enabled in metric_specs:
+        is_linear = code in linear_codes
+        analytics.append(
+            {
+                "code": code,
+                "label": label,
+                "count": count,
+                "conversion_from_previous": _percent(count, previous_count)
+                if is_linear and previous_count is not None
+                else None,
+                "lost_from_previous": max(previous_count - count, 0)
+                if is_linear and previous_count is not None
+                else None,
+                "conversion_from_start": None
+                if code in {"web_click", "landing_button_click", "landing_qr_scan", "bot_start", "new_lead"}
+                else _percent(count, started_count),
+                "collection": "collecting" if enabled else "not_connected",
+            }
+        )
+        if is_linear:
+            previous_count = count
+
+    breakdown: dict[tuple[str, str, str, str, str], set[str]] = defaultdict(set)
+    for event in filtered_entries:
+        values = _attribution_values(event, links.get(event.tracking_link_id or ""))
+        context = _journey_context(event)
+        journey_id = context.get("journey_id") or f"legacy:{event.id}"
+        method = context.get("entry") or (
+            "qr" if event.event_type == "landing_qr_scan" else "button"
+        )
+        messenger = context.get("messenger") or "не определён"
+        breakdown[(values["source"], values["campaign"], values["creative"], messenger, method)].add(journey_id)
+    entry_breakdown = []
+    for key, journey_ids in breakdown.items():
+        matched = sum(journey_id in started_journeys for journey_id in journey_ids)
+        entry_breakdown.append(
+            {
+                "source": key[0],
+                "campaign": key[1],
+                "creative": key[2],
+                "messenger": key[3],
+                "entry": key[4],
+                "entries": len(journey_ids),
+                "starts": matched,
+                "lost": len(journey_ids) - matched,
+                "conversion": _percent(matched, len(journey_ids)),
+            }
+        )
+    entry_breakdown.sort(key=lambda item: (-item["entries"], item["campaign"], item["creative"]))
 
     return {
         "period": {
@@ -537,14 +722,17 @@ def marketing_dashboard(
         "filters": {
             "sources": sorted(all_sources, key=lambda value: (value == "Не определён", value)),
             "campaigns": sorted(all_campaigns),
+            "creatives": sorted(all_creatives),
             "selected": {
                 "source": normalized_source_filter or "",
                 "campaign": campaign_filter or "",
+                "creative": creative_filter or "",
                 "user": user_query or "",
             },
         },
         "rows": visible_rows,
         "analytics": analytics,
+        "entry_breakdown": entry_breakdown,
         "collection": collection,
         "totals": {
             "rows": len(visible_rows),
@@ -552,6 +740,8 @@ def marketing_dashboard(
             "all_rows_before_filters": len(rows),
             "truncated": rows_truncated,
             "events_truncated": events_truncated or history_truncated,
-            "clicks_ignore_user_filter": bool(user_needle),
+            "clicks_ignore_user_filter": bool(
+                user_needle and any(event.event_type == "web_click" for event in entry_events)
+            ),
         },
     }

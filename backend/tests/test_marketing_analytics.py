@@ -21,6 +21,7 @@ from app.models import (  # noqa: E402
     MessengerAccount,
     TelegramTrackingEvent,
     TelegramTrackingLink,
+    TelegramContact,
     User,
 )
 
@@ -245,6 +246,109 @@ def test_filters_cover_source_campaign_user_and_all_sources() -> None:
     missing = client.get(f"{base}&user=другой", auth=ADMIN_AUTH).json()
     assert missing["totals"]["rows"] == 0
     assert missing["totals"]["clicks_ignore_user_filter"] is True
+
+
+def test_landing_button_and_qr_are_linked_to_bot_start_and_show_exact_losses() -> None:
+    client, factory = make_client()
+    with factory() as db:
+        started = User(display_name="Лид с кнопки", status="active")
+        link = TelegramTrackingLink(
+            id="journey-yandex",
+            platform="Яндекс",
+            placement="РСЯ",
+            campaign="Интенсив сентябрь",
+            name="РСЯ · интенсив",
+            target_kind="bot_start",
+            status="active",
+        )
+        db.add_all([started, link])
+        db.flush()
+        db.add(
+            TelegramContact(
+                id="blocked-contact",
+                user_id=started.id,
+                telegram_user_id="606",
+                status="blocked",
+            )
+        )
+        common_query = {
+            "utm_source": "yandex",
+            "utm_medium": "rsya",
+            "utm_campaign": "intensive_sep",
+            "utm_content": "cat_hudey",
+        }
+        db.add_all(
+            [
+                TelegramTrackingEvent(
+                    id="entry-button",
+                    tracking_link_id=link.id,
+                    event_type="landing_button_click",
+                    metadata_json={
+                        "raw_query": common_query,
+                        "journey_id": "journey-button",
+                        "entry": "button",
+                        "messenger": "tg",
+                    },
+                    occurred_at=datetime(2026, 1, 10, 9, 0, tzinfo=timezone.utc),
+                ),
+                TelegramTrackingEvent(
+                    id="start-button",
+                    tracking_link_id=link.id,
+                    user_id=started.id,
+                    event_type="start_first",
+                    metadata_json={
+                        "raw_query": common_query,
+                        "journey_id": "journey-button",
+                        "entry": "button",
+                        "messenger": "tg",
+                    },
+                    occurred_at=datetime(2026, 1, 10, 9, 1, tzinfo=timezone.utc),
+                ),
+                TelegramTrackingEvent(
+                    id="entry-qr-lost",
+                    tracking_link_id=link.id,
+                    event_type="landing_qr_scan",
+                    metadata_json={
+                        "raw_query": {**common_query, "utm_content": "control_cakes"},
+                        "journey_id": "journey-qr-lost",
+                        "entry": "qr",
+                        "messenger": "max",
+                    },
+                    occurred_at=datetime(2026, 1, 10, 9, 2, tzinfo=timezone.utc),
+                ),
+            ]
+        )
+        db.commit()
+
+    payload = client.get(
+        "/admin/api/marketing/overview?from=2026-01-10&to=2026-01-10",
+        auth=ADMIN_AUTH,
+    ).json()
+    assert payload["totals"]["matching_rows"] == 2
+    by_name = {row["display_name"]: row for row in payload["rows"]}
+    assert by_name["Лид с кнопки"]["landing_entry"]["method"] == "button"
+    assert by_name["Лид с кнопки"]["messenger"] == "tg"
+    assert by_name["Лид с кнопки"]["status"] == "blocked"
+    assert by_name["Не запустил бота"]["landing_entry"]["method"] == "qr"
+    assert by_name["Не запустил бота"]["start"] is None
+    assert by_name["Не запустил бота"]["status"] == "lost_before_start"
+    metrics = {item["code"]: item for item in payload["analytics"]}
+    assert metrics["web_click"]["count"] == 2
+    assert metrics["landing_button_click"]["count"] == 1
+    assert metrics["landing_qr_scan"]["count"] == 1
+    assert metrics["bot_start"]["count"] == 1
+    assert metrics["bot_start"]["conversion_from_previous"] == 50.0
+    assert metrics["bot_start"]["lost_from_previous"] == 1
+    breakdown = {(item["creative"], item["entry"]): item for item in payload["entry_breakdown"]}
+    assert breakdown[("cat_hudey", "button")]["conversion"] == 100.0
+    assert breakdown[("control_cakes", "qr")]["lost"] == 1
+
+    filtered = client.get(
+        "/admin/api/marketing/overview?from=2026-01-10&to=2026-01-10&creative=control_cakes",
+        auth=ADMIN_AUTH,
+    ).json()
+    assert filtered["totals"]["matching_rows"] == 1
+    assert filtered["rows"][0]["display_name"] == "Не запустил бота"
 
 
 def test_repeat_start_keeps_first_known_source_and_skips_initial_unknown() -> None:

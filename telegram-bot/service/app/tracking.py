@@ -95,26 +95,49 @@ def exact_utm_matches(session: Session, query: dict[str, str]) -> list[str]:
 
 def create_tracking_session(
     session: Session, link: TrackingLink, alias: TrackingLinkAlias, query: dict[str, str]
-) -> str:
+) -> tuple[str, TrackingSession]:
     public_token = "U" + secrets.token_urlsafe(18).replace("-", "").replace("_", "")
-    session.add(
-        TrackingSession(
-            start_token_hash=hashlib.sha256(public_token.encode()).hexdigest(),
-            tracking_link_id=link.id,
-            alias_id=alias.id,
-            raw_query=query,
-            resolved_tag_ids=exact_utm_matches(session, query),
-            expires_at=datetime.now(UTC) + timedelta(days=7),
+    row = TrackingSession(
+        start_token_hash=hashlib.sha256(public_token.encode()).hexdigest(),
+        tracking_link_id=link.id,
+        alias_id=alias.id,
+        raw_query=query,
+        resolved_tag_ids=exact_utm_matches(session, query),
+        expires_at=datetime.now(UTC) + timedelta(days=7),
+    )
+    session.add(row)
+    return public_token, row
+
+
+def tracking_session_by_payload(session: Session, payload: str) -> TrackingSession | None:
+    if not payload.startswith("U"):
+        return None
+    return session.scalar(
+        select(TrackingSession).where(
+            TrackingSession.start_token_hash == hashlib.sha256(payload.encode()).hexdigest()
         )
     )
-    return public_token
+
+
+def tracking_session_context(session: Session, row: TrackingSession) -> dict[str, str]:
+    prepared = session.scalar(
+        select(TrackingEvent).where(
+            TrackingEvent.deduplication_key == f"link_prepared:{row.id}"
+        )
+    )
+    metadata = prepared.metadata_json if prepared and isinstance(prepared.metadata_json, dict) else {}
+    return {
+        key: str(metadata[key])
+        for key in ("journey_id", "entry", "messenger")
+        if metadata.get(key)
+    }
 
 
 def resolve_start_payload(
     session: Session, payload: str | None
-) -> tuple[TrackingLink | None, TrackingLinkAlias | None, list[str], dict[str, str], str]:
+) -> tuple[TrackingLink | None, TrackingLinkAlias | None, list[str], dict[str, str], str, dict[str, str]]:
     if not payload:
-        return None, None, [], {}, "empty"
+        return None, None, [], {}, "empty", {}
     if payload.startswith("U"):
         row = session.scalar(
             select(TrackingSession).where(
@@ -123,7 +146,7 @@ def resolve_start_payload(
         )
         expires_at = row.expires_at.replace(tzinfo=UTC) if row and row.expires_at.tzinfo is None else (row.expires_at if row else None)
         if not row or row.consumed_at or expires_at < datetime.now(UTC):
-            return None, None, [], {}, "expired_session"
+            return None, None, [], {}, "expired_session", {}
         row.consumed_at = datetime.now(UTC)
         return (
             session.get(TrackingLink, row.tracking_link_id),
@@ -131,12 +154,13 @@ def resolve_start_payload(
             list(row.resolved_tag_ids or []),
             dict(row.raw_query or {}),
             "known",
+            tracking_session_context(session, row),
         )
     alias, warning_suffix = resolve_alias(session, payload)
     if warning_suffix:
-        return None, None, [], {}, "unknown"
+        return None, None, [], {}, "unknown", {}
     link = active_link(session, alias)
-    return (link, alias, [], {}, "known") if link else (None, None, [], {}, "unknown")
+    return (link, alias, [], {}, "known", {}) if link else (None, None, [], {}, "unknown", {})
 
 
 def resolve_pending_channel_touch(
@@ -220,6 +244,7 @@ def assign_first_touch(
     session_tag_ids: list[str],
     raw_query: dict[str, str],
     payload_status: str,
+    journey_context: dict[str, str] | None = None,
     *,
     mark_scenario_seen: bool = True,
 ) -> tuple[bool, list[str]]:
@@ -255,6 +280,7 @@ def assign_first_touch(
                 "payload_status": payload_status,
                 "raw_query": raw_query,
                 "is_first_bot_visit": is_first_bot_visit,
+                **(journey_context or {}),
             },
         )
     )

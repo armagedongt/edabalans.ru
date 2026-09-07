@@ -547,6 +547,7 @@ def _assign_first_touch(
     session_tag_ids: list[str],
     raw_query: dict[str, str],
     payload_status: str,
+    journey_context: dict[str, str],
     receipt_id: str,
     intensive_token_id: str,
 ) -> TrackingEvent:
@@ -596,6 +597,7 @@ def _assign_first_touch(
             "messenger": "max",
             "payload_status": payload_status,
             "raw_query": raw_query,
+            **journey_context,
             "max_delivery_status": "pending",
             "max_intensive_token_id": intensive_token_id,
         },
@@ -848,7 +850,7 @@ def process_max_update(
     account, _ = _ensure_identity(session, user)
     contact = _ensure_contact(session, bot, account, user)
     is_first_scenario = account.main_scenario_seen_at is None
-    link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, str(update.get("payload") or ""))
+    link, alias, session_tag_ids, raw_query, payload_status, journey_context = resolve_start_payload(session, str(update.get("payload") or ""))
     intensive_token_id = str(uuid.uuid4())
     token = intensive_token(intensive_token_id)
     tracking_event = _assign_first_touch(
@@ -861,6 +863,7 @@ def process_max_update(
         session_tag_ids,
         raw_query,
         payload_status,
+        journey_context,
         receipt_id,
         intensive_token_id,
     )

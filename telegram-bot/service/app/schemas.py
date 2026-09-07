@@ -28,6 +28,7 @@ class PublicMessengerStartLinkIn(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     messenger: Literal["tg", "max"]
+    entry: Literal["button", "qr"] = "button"
     alias: str | None = Field(default=None, min_length=2, max_length=64)
     rule_id: str | None = Field(default=None, min_length=1, max_length=36)
     utm_source: str | None = Field(default=None, max_length=500)
@@ -42,6 +43,14 @@ class PublicMessengerStartLinkIn(BaseModel):
         if bool(self.alias) == bool(self.rule_id):
             raise ValueError("provide exactly one of alias or rule_id")
         return self
+
+
+class PublicMessengerTouchIn(BaseModel):
+    """Browser-safe acknowledgement that a prepared button link was clicked."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    payload: str = Field(pattern=r"^U[A-Za-z0-9_-]+$", min_length=2, max_length=64)
 
 
 class LinkRuleIn(BaseModel):

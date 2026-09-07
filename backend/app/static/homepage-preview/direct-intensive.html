@@ -139,32 +139,48 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       return url.protocol==='https:'&&url.hostname===expected.allowedHost&&url.pathname===expected.pathPrefix&&/^U[A-Za-z0-9_-]+$/.test(url.searchParams.get('start')||'');
     }catch(_){return false}
   };
-  const states={};
-  Object.entries(channelConfig).forEach(([channel,config])=>{
-    states[channel]={status:'pending',url:config.fallbackUrl,promise:null};
-    const link=root.querySelector(`[data-edb-channel="${channel}"]`);
-    link.href=config.fallbackUrl;
-    qrImage(channel,config.fallbackUrl);
+  const validQrLink=value=>{
+    if(typeof value!=='string')return false;
+    try{
+      const url=new URL(value);
+      return url.protocol==='https:'&&url.hostname==='edabalans.ru'&&/^\/q\/U[A-Za-z0-9_-]+$/.test(url.pathname);
+    }catch(_){return false}
+  };
+  const prepare=(channel,entry)=>{
+    const config=channelConfig[channel];
+    const state={status:'pending',url:config.fallbackUrl,payload:null,clickUrl:null,promise:null};
     const controller=new AbortController();
     const timer=setTimeout(()=>controller.abort(),2500);
-    states[channel].promise=fetch(CONTENT.links.apiUrl,{
+    state.promise=fetch(CONTENT.links.apiUrl,{
       method:'POST',
       mode:'cors',
       credentials:'omit',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messenger:config.apiMessenger,alias:CONTENT.links.alias,...attribution}),
+      body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,...attribution}),
       signal:controller.signal
     }).then(response=>{
       if(!response.ok)throw new Error(`start-link ${response.status}`);
       return response.json();
     }).then(payload=>{
-      if(payload.messenger!==config.apiMessenger||!validDeepLink(channel,payload.deep_link))throw new Error('invalid start-link response');
-      states[channel].status='ready';
-      states[channel].url=payload.deep_link;
-      link.href=payload.deep_link;
-      qrImage(channel,payload.deep_link);
-      return payload.deep_link;
+      const destination=entry==='qr'?payload.qr_url:payload.deep_link;
+      const valid=entry==='qr'?validQrLink(destination):validDeepLink(channel,destination);
+      if(payload.messenger!==config.apiMessenger||payload.entry!==entry||!valid)throw new Error('invalid start-link response');
+      state.status='ready';
+      state.url=destination;
+      state.payload=payload.payload;
+      state.clickUrl=payload.click_url;
+      return destination;
     }).catch(()=>config.fallbackUrl).finally(()=>clearTimeout(timer));
+    return state;
+  };
+  const states={};
+  Object.entries(channelConfig).forEach(([channel,config])=>{
+    const link=root.querySelector(`[data-edb-channel="${channel}"]`);
+    link.href=config.fallbackUrl;
+    qrImage(channel,config.fallbackUrl);
+    states[channel]={button:prepare(channel,'button'),qr:prepare(channel,'qr')};
+    states[channel].button.promise.then(destination=>{link.href=destination});
+    states[channel].qr.promise.then(destination=>{qrImage(channel,destination)});
   });
 
   const eventReady=name=>name&&!name.includes('__REQUIRED_');
@@ -181,10 +197,16 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     const channel=link.dataset.edbChannel;
     link.addEventListener('click',async event=>{
       event.preventDefault();
-      const state=states[channel];
+      const state=states[channel].button;
       let destination=state.url;
       if(state.status==='pending')destination=await Promise.race([state.promise,new Promise(resolve=>setTimeout(()=>resolve(channelConfig[channel].fallbackUrl),500))]);
       if(!validDeepLink(channel,destination))destination=channelConfig[channel].fallbackUrl;
+      if(state.payload&&state.clickUrl){
+        fetch(state.clickUrl,{
+          method:'POST',mode:'cors',credentials:'omit',keepalive:true,
+          headers:{'Content-Type':'application/json'},body:JSON.stringify({payload:state.payload})
+        }).catch(()=>{});
+      }
       emit(channel==='telegram'?CONTENT.analytics.telegramClickEvent:CONTENT.analytics.maxClickEvent,{channel,cta_position:link.dataset.ctaPosition,destination_host:new URL(destination).host,link_kind:destination.includes('?start=U')?'prepared':'fallback'});
       location.assign(destination);
     });

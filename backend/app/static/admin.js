@@ -477,10 +477,12 @@
     const to = params.get("to") || moscowToday();
     const source = params.get("source") || "";
     const campaign = params.get("campaign") || "";
+    const creative = params.get("creative") || "";
     const user = params.get("user") || "";
     const request = new URLSearchParams({ from, to });
     if (source) request.set("source", source);
     if (campaign) request.set("campaign", campaign);
+    if (creative) request.set("creative", creative);
     if (user) request.set("user", user);
     const data = await api(`/admin/api/marketing/overview?${request}`);
     const selected = data.filters.selected;
@@ -494,7 +496,10 @@
         <td class="marketing-person">${userName}<small>${item.usernames.map(esc).join(" · ") || "без username"}</small></td>
         <td><b>${esc(item.source)}</b><small>${esc(item.placement)}</small></td>
         <td><b>${esc(item.campaign)}</b><small>${esc(item.link_name)}</small></td>
+        <td><b>${esc(item.creative)}</b><small>${esc(item.term)}</small></td>
+        <td>${item.landing_entry ? `${marketingEvent(item.landing_entry)}<small>${esc(item.landing_entry.messenger || item.messenger)} · ${item.landing_entry.method === "qr" ? "QR" : "кнопка"}</small>` : '<span class="marketing-empty">не зафиксирован</span>'}</td>
         <td>${marketingEvent(item.start)}</td>
+        <td><b>${item.status === "blocked" ? "Заблокировал бота" : item.status === "lost_before_start" ? "Потерян до старта" : item.is_new_lead ? "Новый" : "Повторный"}</b></td>
         <td>${marketingEvents(item.check_before_day_one)}</td>
         <td>${marketingEvent(item.day_one, missingStage("day_one"))}</td>
         <td>${marketingEvent(item.subscription)}</td>
@@ -508,7 +513,15 @@
     const analytics = (data.analytics || []).map((item) => `<tr>
       <td>${esc(item.label)}</td>
       <td>${item.collection === "not_connected" ? '<span class="marketing-empty">не подключено</span>' : item.count.toLocaleString("ru-RU")}</td>
+      <td>${item.conversion_from_previous === null ? "—" : `${item.conversion_from_previous.toLocaleString("ru-RU")}%`}</td>
+      <td>${item.lost_from_previous === null ? "—" : item.lost_from_previous.toLocaleString("ru-RU")}</td>
       <td>${item.conversion_from_start === null ? "—" : `${item.conversion_from_start.toLocaleString("ru-RU")}%`}</td>
+    </tr>`).join("");
+    const entryBreakdown = (data.entry_breakdown || []).map((item) => `<tr>
+      <td>${esc(item.source)}</td><td>${esc(item.campaign)}</td><td>${esc(item.creative)}</td>
+      <td>${esc(item.messenger)}</td><td>${item.entry === "qr" ? "QR-код" : "Кнопка"}</td>
+      <td>${item.entries.toLocaleString("ru-RU")}</td><td>${item.starts.toLocaleString("ru-RU")}</td>
+      <td>${item.lost.toLocaleString("ru-RU")}</td><td>${item.conversion === null ? "—" : `${item.conversion.toLocaleString("ru-RU")}%`}</td>
     </tr>`).join("");
     root.innerHTML = `
       <form class="marketing-filters" id="marketing-filters">
@@ -516,22 +529,25 @@
         <label>По<input name="to" type="date" min="2025-12-01" value="${esc(data.period.to)}"></label>
         <label>Источник<select name="source"><option value="">Все источники</option>${data.filters.sources.map((value) => marketingOption(value, selected.source)).join("")}</select></label>
         <label>Кампания<select name="campaign"><option value="">Все кампании</option>${data.filters.campaigns.map((value) => marketingOption(value, selected.campaign)).join("")}</select></label>
+        <label>Объявление<select name="creative"><option value="">Все объявления</option>${data.filters.creatives.map((value) => marketingOption(value, selected.creative)).join("")}</select></label>
         <label class="marketing-user-filter">Пользователь<input name="user" value="${esc(selected.user)}" placeholder="Имя, username или ID"></label>
         <button class="admin-action">Показать</button><a class="admin-action alt" href="/admin/marketing">Сбросить</a>
       </form>
       <div class="marketing-result-line">Найдено пользователей: <b>${data.totals.matching_rows.toLocaleString("ru-RU")}</b>${data.totals.rows < data.totals.matching_rows ? ` · в таблице первые ${data.totals.rows.toLocaleString("ru-RU")}, аналитика по всем` : ""}</div>
       ${data.totals.events_truncated ? '<div class="marketing-note">Событий больше безопасного предела отчёта. Текущая таблица и аналитика неполные — сузьте период.</div>' : ""}
       <div class="marketing-table-wrap"><table class="marketing-table marketing-leads"><thead><tr>
-        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Старт бота</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Главная</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
-      </tr></thead><tbody>${rows || '<tr><td colspan="12"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
+        <th>Пользователь</th><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Вход с посадки</th><th>Старт бота</th><th>Статус</th><th>Проверка до дня 1</th><th>День 1</th><th>Подписка</th><th>Проверка после дня 1</th><th>Главная</th><th>Дни 2+</th><th>Другие действия</th><th>Последнее действие</th>
+      </tr></thead><tbody>${rows || '<tr><td colspan="15"><div class="admin-empty">По выбранным фильтрам пользователей нет</div></td></tr>'}</tbody></table></div>
       <h2 class="marketing-analytics-title">Конверсии текущего среза</h2>
-      <div class="marketing-table-wrap marketing-analytics-wrap"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
+      <div class="marketing-table-wrap marketing-analytics-wrap"><table class="marketing-table marketing-analytics"><thead><tr><th>Действие</th><th>Количество</th><th>От прошлого шага</th><th>Потеряно</th><th>От стартовавших</th></tr></thead><tbody>${analytics}</tbody></table></div>
+      <h2 class="marketing-analytics-title">Потери до старта по объявлениям</h2>
+      <div class="marketing-table-wrap"><table class="marketing-table"><thead><tr><th>Источник</th><th>Кампания</th><th>Объявление</th><th>Мессенджер</th><th>Способ</th><th>Переходы</th><th>Старты</th><th>Потеряно</th><th>Конверсия</th></tr></thead><tbody>${entryBreakdown || '<tr><td colspan="9"><div class="admin-empty">Новые точные данные появятся после публикации обновлённой посадки</div></td></tr>'}</tbody></table></div>
       ${data.totals.clicks_ignore_user_filter ? '<div class="marketing-note">Переходы считаются по источнику и кампании: технический клик пока нельзя надёжно привязать к поиску конкретного пользователя.</div>' : ""}`;
     document.getElementById("marketing-filters").addEventListener("submit", (event) => {
       event.preventDefault();
       const form = new FormData(event.currentTarget);
       const next = new URLSearchParams();
-      for (const key of ["from", "to", "source", "campaign", "user"]) {
+      for (const key of ["from", "to", "source", "campaign", "creative", "user"]) {
         const value = String(form.get(key) || "").trim();
         if (value) next.set(key, value);
       }

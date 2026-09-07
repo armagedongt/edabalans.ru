@@ -8,8 +8,14 @@ const fallbacks = {
   max: 'https://max.ru/id230409966750_bot?start=BMB6Y',
 }
 const prepared = {
-  telegram: 'https://t.me/Fitness_Talks_bot?start=UtgPrepared123',
-  max: 'https://max.ru/id230409966750_bot?start=UmaxPrepared123',
+  telegram: {
+    button: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgButton123', payload: 'UtgButton123' },
+    qr: { deep: 'https://t.me/Fitness_Talks_bot?start=UtgQr123', payload: 'UtgQr123', qr: 'https://edabalans.ru/q/UtgQr123' },
+  },
+  max: {
+    button: { deep: 'https://max.ru/id230409966750_bot?start=UmaxButton123', payload: 'UmaxButton123' },
+    qr: { deep: 'https://max.ru/id230409966750_bot?start=UmaxQr123', payload: 'UmaxQr123', qr: 'https://edabalans.ru/q/UmaxQr123' },
+  },
 }
 const browser = await chromium.launch({ headless: true })
 const pause = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds))
@@ -18,6 +24,7 @@ async function landing({ api = 'success', delay = 0, viewport = { width: 1200, h
   const context = await browser.newContext({ viewport })
   const page = await context.newPage()
   const requests = []
+  const clickRequests = []
   const events = []
   await page.exposeFunction('__edbRecordEvent', payload => events.push({ payload, at: Date.now() }))
   await page.addInitScript(() => {
@@ -76,23 +83,28 @@ async function landing({ api = 'success', delay = 0, viewport = { width: 1200, h
       return
     }
     const channel = body.messenger === 'tg' ? 'telegram' : 'max'
+    const issued = prepared[channel][body.entry]
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
       headers: { 'Access-Control-Allow-Origin': origin },
-      body: JSON.stringify({ messenger: body.messenger, deep_link: prepared[channel], fallback_url: fallbacks[channel], payload: channel === 'telegram' ? 'UtgPrepared123' : 'UmaxPrepared123', expires_in_seconds: 604800 }),
+      body: JSON.stringify({ messenger: body.messenger, entry: body.entry, deep_link: issued.deep, fallback_url: fallbacks[channel], payload: issued.payload, click_url: 'https://edabalans.ru/api/messaging/start-link/click', qr_url: issued.qr || `https://edabalans.ru/q/${issued.payload}`, expires_in_seconds: 604800 }),
     })
+  })
+  await page.route('https://edabalans.ru/api/messaging/start-link/click', async route => {
+    clickRequests.push(route.request().postDataJSON())
+    await route.fulfill({ status: 204, headers: { 'Access-Control-Allow-Origin': baseUrl } })
   })
   await page.route('https://t.me/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: '<title>Telegram direct</title>' }))
   await page.route('https://max.ru/**', route => route.fulfill({ status: 200, contentType: 'text/html', body: '<title>MAX direct</title>' }))
   await page.goto(url, { waitUntil: 'domcontentloaded' })
-  return { context, page, requests, events }
+  return { context, page, requests, clickRequests, events }
 }
 
 async function waitForRequests(requests) {
   const deadline = Date.now() + 3000
-  while (requests.length < 2 && Date.now() < deadline) await pause(20)
-  if (requests.length !== 2) throw new Error(`Expected two prefetch calls, got ${requests.length}`)
+  while (requests.length < 4 && Date.now() < deadline) await pause(20)
+  if (requests.length !== 4) throw new Error(`Expected four prefetch calls, got ${requests.length}`)
 }
 
 try {
@@ -101,9 +113,11 @@ try {
     await waitForRequests(requests)
     await page.waitForFunction(() => [...document.querySelectorAll('[data-edb-channel]')].every(link => link.href.includes('?start=U')))
     const expectedAttribution = { alias: 'BMB6Y', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
-    const byMessenger = Object.fromEntries(requests.map(body => [body.messenger, body]))
-    if (JSON.stringify(byMessenger.tg) !== JSON.stringify({ messenger: 'tg', ...expectedAttribution })) throw new Error(`Bad TG request: ${JSON.stringify(byMessenger.tg)}`)
-    if (JSON.stringify(byMessenger.max) !== JSON.stringify({ messenger: 'max', ...expectedAttribution })) throw new Error(`Bad MAX request: ${JSON.stringify(byMessenger.max)}`)
+    const byKey = Object.fromEntries(requests.map(body => [`${body.messenger}:${body.entry}`, body]))
+    for (const messenger of ['tg', 'max']) for (const entry of ['button', 'qr']) {
+      const expected = { messenger, entry, ...expectedAttribution }
+      if (JSON.stringify(byKey[`${messenger}:${entry}`]) !== JSON.stringify(expected)) throw new Error(`Bad ${messenger}:${entry} request: ${JSON.stringify(byKey[`${messenger}:${entry}`])}`)
+    }
 
     const snapshot = await page.evaluate(() => ({
       links: Object.fromEntries([...document.querySelectorAll('[data-edb-channel]')].map(link => [link.dataset.edbChannel, link.href])),
@@ -115,13 +129,13 @@ try {
       })),
     }))
     for (const channel of ['telegram', 'max']) {
-      if (snapshot.links[channel] !== prepared[channel]) throw new Error(`Wrong ${channel} link`)
-      if (snapshot.qr[channel].destination !== prepared[channel]) throw new Error(`Wrong ${channel} QR destination`)
+      if (snapshot.links[channel] !== prepared[channel].button.deep) throw new Error(`Wrong ${channel} link`)
+      if (snapshot.qr[channel].destination !== prepared[channel].qr.qr) throw new Error(`Wrong ${channel} QR destination`)
       if (!snapshot.qr[channel].src.startsWith('data:image/svg+xml')) throw new Error(`Wrong ${channel} QR image`)
-      const expectedQr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(snapshot.renderedQr[prepared[channel]])}`
+      const expectedQr = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(snapshot.renderedQr[prepared[channel].qr.qr])}`
       if (snapshot.qr[channel].src !== expectedQr) throw new Error(`${channel} image does not contain its prepared QR`)
     }
-    for (const url of Object.values(prepared)) if (!snapshot.encodedQrPayloads.includes(url)) throw new Error(`QR did not encode ${url}`)
+    for (const channel of ['telegram', 'max']) if (!snapshot.encodedQrPayloads.includes(prepared[channel].qr.qr)) throw new Error(`QR did not encode tracked ${channel} URL`)
     await page.locator('[data-edb-qr=max]').click()
     if (await page.locator('[data-edb-qr=max]').getAttribute('aria-selected') !== 'true') throw new Error('MAX QR was not selected')
 
@@ -133,9 +147,12 @@ try {
   }
 
   for (const channel of ['telegram', 'max']) {
-    const { context, page } = await landing({ delay: 120 })
+    const { context, page, clickRequests } = await landing({ delay: 120 })
     await page.locator(`[data-edb-channel=${channel}]`).click()
-    await page.waitForURL(prepared[channel])
+    await page.waitForURL(prepared[channel].button.deep)
+    const deadline = Date.now() + 1000
+    while (!clickRequests.length && Date.now() < deadline) await pause(10)
+    if (clickRequests[0]?.payload !== prepared[channel].button.payload) throw new Error(`Missing ${channel} server click acknowledgement`)
     await context.close()
   }
 
@@ -177,7 +194,7 @@ try {
     const { context, page } = await landing({ viewport: { width: 390, height: 844 } })
     await page.waitForFunction(kind => document.querySelector(`[data-edb-channel="${kind}"]`).href.includes('?start=U'), channel)
     await page.locator(`[data-edb-channel=${channel}]`).click()
-    await page.waitForURL(prepared[channel])
+    await page.waitForURL(prepared[channel].button.deep)
     await context.close()
   }
 

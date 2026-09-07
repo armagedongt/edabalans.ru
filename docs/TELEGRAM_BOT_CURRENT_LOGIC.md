@@ -119,6 +119,10 @@ https://go.похудение-это-есть.рф/B7K4PV
 `U...` payload. Запрос принимает только `utm_source`, `utm_medium`, `utm_campaign`,
 `utm_content`, `utm_term` и `yclid`; fallback остаётся прямой ссылкой того же бота
 с постоянным `B...` alias. Telegram и MAX погашают `U...` одним resolver.
+Посадка готовит четыре независимых journey: кнопка и QR для Telegram и MAX.
+`link_prepared` не является кликом. Нажатие кнопки создаёт
+`landing_button_click`, сканирование `/q/<U...>` — `landing_qr_scan`; тот же
+`journey_id` затем записывается в настоящий `start_first`/`start_repeat`.
 
 Персональная кнопка интенсива из бота ведёт прямо на
 `https://edabalans.ru/intensive?i=<code>&from=tg&entry=bot` либо с `from=max`.

@@ -481,6 +481,17 @@ class TelegramTrackingLink(Base):
     )
 
 
+class TelegramContact(Base):
+    """Read model for delivery status maintained by the messaging service."""
+
+    __tablename__ = "tg_contacts"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    user_id: Mapped[uuid.UUID | None] = mapped_column(index=True)
+    telegram_user_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False)
+
+
 class TelegramTrackingEvent(Base):
     """Read model for raw acquisition and bot journey events."""
 

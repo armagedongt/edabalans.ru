@@ -575,7 +575,8 @@ owns_tables = [
 ]
 owns_routes = [
   "*/telegram/webhook", "*/bot-api/*tracking*", "*/bot-api/*link*", "*/bot-api/*utm*",
-  "*/bot/public/start-link", "*/go/*", "*/r/*", "*/m/*", "*/p/*",
+  "*/bot/public/start-link", "*/bot/public/start-link/click", "*/q/*",
+  "*/go/*", "*/r/*", "*/m/*", "*/p/*",
 ]
 
 [[modules]]

@@ -33,13 +33,13 @@ from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
-from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, PublicMessengerStartLinkIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
+from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, PublicMessengerStartLinkIn, PublicMessengerTouchIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables, variable_is_allowed
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
 from app.telegram import TelegramClient
-from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, tracking_query_params, unresolved_utm_groups
+from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, tracking_query_params, tracking_session_by_payload, tracking_session_context, unresolved_utm_groups
 
 
 settings = get_settings()
@@ -554,6 +554,51 @@ def _public_start_alias(
     return link, alias
 
 
+def _messenger_start_base(messenger: str) -> str:
+    if messenger == "max":
+        username = settings.max_bot_username.lstrip("@")
+        if not username:
+            raise HTTPException(503, "MAX bot is not configured")
+        return f"https://max.ru/{username}?start="
+    username = settings.telegram_test_bot_username.lstrip("@")
+    if not username:
+        raise HTTPException(503, "Telegram bot is not configured")
+    return f"https://t.me/{username}?start="
+
+
+def _record_landing_entry(
+    session: Session,
+    payload: str,
+    *,
+    expected_entry: str,
+    event_type: str,
+) -> tuple[TrackingEvent, str]:
+    row = tracking_session_by_payload(session, payload)
+    if not row:
+        raise HTTPException(404, "Prepared messenger link not found")
+    context = tracking_session_context(session, row)
+    if context.get("entry") != expected_entry or context.get("messenger") not in {"tg", "max"}:
+        raise HTTPException(409, "Prepared messenger link has another entry method")
+    event = session.scalar(
+        select(TrackingEvent).where(
+            TrackingEvent.deduplication_key == f"{event_type}:{row.id}"
+        )
+    )
+    if not event:
+        event = TrackingEvent(
+            tracking_link_id=row.tracking_link_id,
+            alias_id=row.alias_id,
+            event_type=event_type,
+            metadata_json={
+                "raw_query": dict(row.raw_query or {}),
+                **context,
+            },
+            deduplication_key=f"{event_type}:{row.id}",
+        )
+        session.add(event)
+    return event, context["messenger"]
+
+
 @app.post("/bot/public/start-link")
 def public_messenger_start_link(
     body: PublicMessengerStartLinkIn,
@@ -573,39 +618,72 @@ def public_messenger_start_link(
         )
         if (value := getattr(body, key)) is not None
     }
-    payload = create_tracking_session(session, link, alias, raw_query)
-    if body.messenger == "max":
-        username = settings.max_bot_username.lstrip("@")
-        if not username:
-            raise HTTPException(503, "MAX bot is not configured")
-        base = f"https://max.ru/{username}?start="
-    else:
-        username = settings.telegram_test_bot_username.lstrip("@")
-        if not username:
-            raise HTTPException(503, "Telegram bot is not configured")
-        base = f"https://t.me/{username}?start="
+    payload, tracking_row = create_tracking_session(session, link, alias, raw_query)
+    session.flush()
+    base = _messenger_start_base(body.messenger)
     session.add(
         TrackingEvent(
             tracking_link_id=link.id,
             alias_id=alias.id,
-            event_type="web_click",
+            event_type="link_prepared",
             metadata_json={
                 "raw_query": raw_query,
                 "path_token": alias.token,
-                "entry": "public_start_link_api",
+                "journey_id": tracking_row.id,
+                "entry": body.entry,
                 "messenger": body.messenger,
             },
+            deduplication_key=f"link_prepared:{tracking_row.id}",
         )
     )
     session.commit()
     response.headers["Cache-Control"] = "no-store"
     return {
         "messenger": body.messenger,
+        "entry": body.entry,
         "deep_link": f"{base}{payload}",
         "fallback_url": f"{base}{alias.token}",
         "payload": payload,
+        "click_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://edabalans.ru'}/api/messaging/start-link/click",
+        "qr_url": f"{settings.telegram_public_base_url.rstrip('/') or 'https://edabalans.ru'}/q/{payload}",
         "expires_in_seconds": 7 * 24 * 60 * 60,
     }
+
+
+@app.post("/bot/public/start-link/click", status_code=204)
+def public_messenger_button_click(
+    body: PublicMessengerTouchIn,
+    session: Session = Depends(get_db),
+) -> Response:
+    _record_landing_entry(
+        session,
+        body.payload,
+        expected_entry="button",
+        event_type="landing_button_click",
+    )
+    session.commit()
+    return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+
+@app.get("/q/{payload}", include_in_schema=False)
+def public_messenger_qr_scan(
+    payload: str,
+    session: Session = Depends(get_db),
+) -> Response:
+    if len(payload) > 64:
+        raise HTTPException(404, "Prepared messenger link not found")
+    _, messenger = _record_landing_entry(
+        session,
+        payload,
+        expected_entry="qr",
+        event_type="landing_qr_scan",
+    )
+    session.commit()
+    return RedirectResponse(
+        f"{_messenger_start_base(messenger)}{payload}",
+        status_code=307,
+        headers={"Cache-Control": "no-store"},
+    )
 
 
 @app.get("/bot", include_in_schema=False)
@@ -691,7 +769,7 @@ def _go_response(token: str, request: Request, session: Session) -> Response:
     query = tracking_query_params(request.query_params.multi_items())
     start_payload = alias.token
     if query and link.target_kind == "bot_start":
-        start_payload = create_tracking_session(session, link, alias, query)
+        start_payload, _ = create_tracking_session(session, link, alias, query)
     requested_messenger = request.query_params.get("to", "").strip().lower()
     if link.target_kind == "channel_invite":
         destination = alias.telegram_invite_url
@@ -835,7 +913,7 @@ def process_update(update: dict, session: Session) -> dict:
                 .order_by(BotRoute.priority)
             )
             sequence_code = route.target_sequence_code if route else WELCOME_CODE
-            link, alias, session_tag_ids, raw_query, payload_status = resolve_start_payload(session, token)
+            link, alias, session_tag_ids, raw_query, payload_status, journey_context = resolve_start_payload(session, token)
             if not link:
                 pending_link, pending_alias, pending_query = resolve_pending_channel_touch(session, contact.telegram_user_id)
                 if pending_link:
@@ -851,6 +929,7 @@ def process_update(update: dict, session: Session) -> dict:
                 session_tag_ids,
                 raw_query,
                 payload_status,
+                journey_context,
                 mark_scenario_seen=maintenance_allowed,
             )
             if link and link.route_kind == "published_step":
@@ -1454,7 +1533,7 @@ def list_link_rules(session: Session = Depends(get_db)) -> list[dict]:
 @app.post("/bot-api/link-rules/resolve-preview", dependencies=[Depends(require_admin)])
 def resolve_link_preview(body: dict, session: Session = Depends(get_db)) -> dict:
     token = str(body.get("token", "")).strip()
-    link, alias, tag_ids, raw_query, status = resolve_start_payload(session, token)
+    link, alias, tag_ids, raw_query, status, _ = resolve_start_payload(session, token)
     if link:
         tag_ids = list(dict.fromkeys([*list(session.scalars(select(TrackingLinkTag.tag_id).where(TrackingLinkTag.tracking_link_id == link.id))), *tag_ids]))
     tags = list(session.scalars(select(CrmTag).where(CrmTag.id.in_(tag_ids)))) if tag_ids else []

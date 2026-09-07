@@ -261,26 +261,77 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
     assert result["deep_link"].startswith("https://t.me/TetrisgfgfgfBot?start=U")
     assert result["fallback_url"] == f"https://t.me/TetrisgfgfgfBot?start={alias}"
     assert result["payload"].startswith("U")
+    assert result["entry"] == "button"
+    assert result["click_url"].endswith("/api/messaging/start-link/click")
+    assert result["qr_url"].endswith(f"/q/{result['payload']}")
     assert result["expires_in_seconds"] == 604800
     assert "yclid" not in result["deep_link"]
 
+    assert client.post(
+        "/bot/public/start-link/click", json={"payload": result["payload"]}
+    ).status_code == 204
+    assert client.post(
+        "/bot/public/start-link/click", json={"payload": result["payload"]}
+    ).status_code == 204
     assert client.post("/telegram/webhook", json=start_update(14, 605, result["payload"])).status_code == 200
     with Session(engine) as session:
-        click = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "web_click"))
+        prepared = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "link_prepared"))
+        clicks = list(session.scalars(select(TrackingEvent).where(TrackingEvent.event_type == "landing_button_click")))
         start = session.scalar(select(TrackingEvent).where(
             TrackingEvent.telegram_user_id == "605",
             TrackingEvent.event_type == "start_first",
         ))
-        assert click.metadata_json == {
+        assert prepared.metadata_json == {
             "raw_query": {"utm_source": "yandex", "yclid": "click-public-1"},
             "path_token": alias,
-            "entry": "public_start_link_api",
+            "journey_id": prepared.metadata_json["journey_id"],
+            "entry": "button",
             "messenger": "tg",
         }
+        assert len(clicks) == 1
+        assert clicks[0].metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
         assert start.metadata_json["raw_query"] == {
             "utm_source": "yandex",
             "yclid": "click-public-1",
         }
+        assert start.metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
+        assert start.metadata_json["entry"] == "button"
+        assert start.metadata_json["messenger"] == "tg"
+    app.dependency_overrides.clear()
+
+
+def test_public_qr_scan_is_counted_and_linked_to_real_start(tmp_path, monkeypatch):
+    client, engine = make_client(tmp_path, monkeypatch)
+    created = client.post("/bot-api/link-rules", json={"name": "Яндекс → Telegram QR"}).json()
+    alias = created["aliases"][0]["token"]
+
+    result = client.post(
+        "/bot/public/start-link",
+        json={
+            "messenger": "tg",
+            "entry": "qr",
+            "alias": alias,
+            "utm_source": "yandex",
+            "utm_content": "creative-17",
+        },
+    ).json()
+    redirect = client.get(f"/q/{result['payload']}", follow_redirects=False)
+    assert redirect.status_code == 307
+    assert redirect.headers["location"] == result["deep_link"]
+    assert client.get(f"/q/{result['payload']}", follow_redirects=False).status_code == 307
+    assert client.post(
+        "/bot/public/start-link/click", json={"payload": result["payload"]}
+    ).status_code == 409
+
+    assert client.post("/telegram/webhook", json=start_update(15, 606, result["payload"])).status_code == 200
+    with Session(engine) as session:
+        scans = list(session.scalars(select(TrackingEvent).where(TrackingEvent.event_type == "landing_qr_scan")))
+        assert len(scans) == 1
+        assert scans[0].metadata_json["entry"] == "qr"
+        assert scans[0].metadata_json["messenger"] == "tg"
+        start = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "start_first", TrackingEvent.telegram_user_id == "606"))
+        assert start.metadata_json["journey_id"] == scans[0].metadata_json["journey_id"]
+        assert start.metadata_json["entry"] == "qr"
     app.dependency_overrides.clear()
 
 

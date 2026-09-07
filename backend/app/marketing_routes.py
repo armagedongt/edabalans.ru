@@ -36,6 +36,7 @@ def marketing_overview(
     date_to: date | None = Query(default=None, alias="to"),
     source: str | None = Query(default=None, max_length=255),
     campaign: str | None = Query(default=None, max_length=255),
+    creative: str | None = Query(default=None, max_length=255),
     user: str | None = Query(default=None, max_length=255),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
@@ -54,5 +55,6 @@ def marketing_overview(
         date_to=date_to,
         source_filter=source,
         campaign_filter=campaign,
+        creative_filter=creative,
         user_query=user,
     )
