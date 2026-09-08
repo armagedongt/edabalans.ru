@@ -105,9 +105,8 @@ class ArticleSanitizer(HTMLParser):
             rendered_attrs = (
                 f' src="{escape(src.strip(), quote=True)}"'
                 f' alt="{escape(alt[:500], quote=True)}"'
+                ' loading="lazy" decoding="async"'
             )
-            if self.course_semantics:
-                rendered_attrs += ' loading="lazy"'
         elif tag == "aside" and self.course_semantics:
             rendered_attrs = ' class="editorial-note"'
         elif self.course_semantics:
@@ -348,7 +347,7 @@ def markdown_to_article_html(
             alt, src, caption = image.groups()
             figure = (
                 f'<figure><img src="{escape(src, quote=True)}" '
-                f'alt="{escape(alt, quote=True)}" loading="lazy">'
+                f'alt="{escape(alt, quote=True)}" loading="lazy" decoding="async">'
             )
             if caption:
                 figure += f"<figcaption>{escape(caption)}</figcaption>"

@@ -23,12 +23,12 @@
       (images.length > 1 ? '<button class="eb-content-gallery__slider-previous" type="button" aria-label="Назад">‹</button>' : '') +
       '<div class="eb-content-gallery__slider"><div class="eb-content-gallery__track">' +
       images.map(function (item) {
-        return '<img src="' + escapeHtml(item.src) + '" alt="' + escapeHtml(item.alt) + '">';
+        return '<img src="' + escapeHtml(item.src) + '" alt="' + escapeHtml(item.alt) + '" loading="lazy" decoding="async">';
       }).join('') +
       '</div></div>' +
       (images.length > 1 ? '<button class="eb-content-gallery__slider-next" type="button" aria-label="Вперёд">›</button>' : '') +
       '</div><div class="eb-content-gallery__counter">Листайте → 1 / ' + images.length + '</div>' +
-      '<div class="eb-content-gallery__lightbox" aria-hidden="true"><button class="eb-content-gallery__lightbox-close" type="button" aria-label="Закрыть">×</button><button class="eb-content-gallery__lightbox-previous" type="button" aria-label="Назад">‹</button><img class="eb-content-gallery__lightbox-image" src="" alt=""><button class="eb-content-gallery__lightbox-next" type="button" aria-label="Вперёд">›</button></div></section>';
+      '<div class="eb-content-gallery__lightbox" aria-hidden="true"><button class="eb-content-gallery__lightbox-close" type="button" aria-label="Закрыть">×</button><button class="eb-content-gallery__lightbox-previous" type="button" aria-label="Назад">‹</button><img class="eb-content-gallery__lightbox-image" src="" alt="" loading="eager" decoding="async"><button class="eb-content-gallery__lightbox-next" type="button" aria-label="Вперёд">›</button></div></section>';
   }
 
   function bind(root) {

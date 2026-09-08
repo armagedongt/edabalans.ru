@@ -269,7 +269,7 @@ def card_html(article: BlogArticle, *, heading_level: int = 2) -> str:
         f'<a class="card-link" href="/articles/{escape(article.slug, quote=True)}">'
         '<div class="card-visual">'
         f'<img src="/blog/media/{escape(article.card.file, quote=True)}" '
-        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy"></div>'
+        f'alt="{escape(article.card.alt, quote=True)}" loading="lazy" decoding="async"></div>'
         f'<div class="card-body"><span class="card-tag">{escape(article.category)}</span>'
         f'<h{heading_level} class="card-title">{escape(article.title)}</h{heading_level}>'
         f'<p class="card-copy">{escape(article.excerpt)}</p></div></a></article>'

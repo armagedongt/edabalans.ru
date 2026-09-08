@@ -218,6 +218,17 @@ def test_homepage_recognition_preview_is_public_and_noindex() -> None:
     assert not source_path.with_name("recognition.html").exists()
 
 
+def test_homepage_embed_assigns_media_loading_before_mount() -> None:
+    loader = client.get("/homepage.js").text
+    homepage = client.get("/preview/homepage-mobile").text
+
+    assert "element.tagName === 'IMG'" in loader
+    assert "element.setAttribute('loading', 'lazy')" in loader
+    assert "element.setAttribute('decoding', 'async')" in loader
+    assert "element.tagName === 'IFRAME'" in loader
+    assert 'loading="eager" data-media-player data-media-context="homepage-vsl"' in homepage
+
+
 def test_homepage_recognition_preview_image_is_public_and_noindex() -> None:
     response = client.get("/preview/homepage-recognition/crying-character.png")
 

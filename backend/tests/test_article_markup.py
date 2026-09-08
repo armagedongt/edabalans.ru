@@ -66,6 +66,11 @@ class ArticleMarkupTests(unittest.TestCase):
             'Источник</a></p>',
         )
 
+    def test_markdown_images_are_lazy_and_decode_asynchronously(self) -> None:
+        rendered = markdown_to_article_html("![Подпись](/media/example.webp)")
+
+        self.assertIn('loading="lazy" decoding="async"', rendered)
+
     def test_network_path_disguised_with_backslash_is_rejected(self) -> None:
         self.assertFalse(safe_image_src(r"/\evil.example/pixel", allow_relative=True))
         self.assertFalse(safe_image_src("/%5cevil.example/pixel", allow_relative=True))

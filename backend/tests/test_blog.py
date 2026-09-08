@@ -48,6 +48,8 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'id="articles-title"' not in response.text
     assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
     assert '/blog/media/13277231/02.png' in response.text
+    assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
+    assert response.text.count('loading="lazy" decoding="async"') >= 6
     assert "site-footer.js" in response.text
     assert "/blog/assets/blog.css" in response.text
 
@@ -101,6 +103,8 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "blog_cta(" not in response.text
     assert response.text.count('class="article-card"') == 3
     assert '<meta property="og:type" content="article">' in response.text
+    assert 'loading="eager" decoding="async" fetchpriority="high"' in article_hero
+    assert 'loading="lazy" decoding="async"' in response.text
 
 
 def test_unknown_blog_article_returns_404() -> None:

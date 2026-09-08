@@ -66,6 +66,18 @@
         element.setAttribute('href', absolute(href, baseUrl));
       }
     }
+    if (element.tagName === 'IMG') {
+      if (!element.hasAttribute('loading')) element.setAttribute('loading', 'lazy');
+      if (!element.hasAttribute('decoding')) element.setAttribute('decoding', 'async');
+    }
+    if (
+      element.tagName === 'IFRAME' &&
+      element.hasAttribute('src') &&
+      element.getAttribute('src') !== 'about:blank' &&
+      !element.hasAttribute('loading')
+    ) {
+      element.setAttribute('loading', 'lazy');
+    }
   }
 
   function appendScript(sourceScript, baseUrl) {

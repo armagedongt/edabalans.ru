@@ -102,8 +102,11 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "requestedMode === 'private'" in text
     assert "requestedMode === 'public'" in text
     assert "root.getAttribute('data-edabalans-footer') === 'private' ? 'private' : 'public'" in text
-    assert "window.EdabalansFooter = {boot: boot, mount: mount}" in text
+    assert "window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia}" in text
     assert "window.EdabalansSiteFooter = window.EdabalansFooter" in text
+    assert "function prepareMedia(scope)" in text
+    assert "prepareMedia(root);" in text
+    assert "prepareMedia: prepareMedia" in text
     assert "new MutationObserver" in text
     assert "new Date().getFullYear()" in text
     assert "ИП Воронцов Сергей Сергеевич" in text
@@ -141,6 +144,20 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "link(LINKS.max, 'MAX')" in private
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in private
     assert "cookie-settings" not in private
+
+
+def test_intensive_and_blog_templates_declare_image_loading_strategy() -> None:
+    static_root = Path(__file__).resolve().parents[1] / "app" / "static"
+    templates = [
+        *sorted((static_root / "intensive").glob("*.html")),
+        *sorted((static_root / "blog").glob("*.html")),
+    ]
+
+    for template in templates:
+        source = template.read_text(encoding="utf-8")
+        for image in re.findall(r"<img\b[^>]*>", source, flags=re.IGNORECASE):
+            assert 'loading="' in image, f"{template.name}: {image}"
+            assert 'decoding="async"' in image, f"{template.name}: {image}"
 
 
 def test_application_fragments_use_server_api() -> None:

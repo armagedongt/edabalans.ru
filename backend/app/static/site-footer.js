@@ -101,8 +101,32 @@
     root.innerHTML = mode === 'private' ? privateMarkup() : publicMarkup();
   }
 
+  function prepareMedia(scope) {
+    var root = scope && scope.querySelectorAll ? scope : document;
+    var images = [];
+    var frames = [];
+    if (root.matches && root.matches('img')) images.push(root);
+    if (root.matches && root.matches('iframe')) frames.push(root);
+    images = images.concat(Array.prototype.slice.call(root.querySelectorAll('img')));
+    frames = frames.concat(Array.prototype.slice.call(root.querySelectorAll('iframe')));
+    images.forEach(function (image) {
+      if (!image.hasAttribute('loading')) image.setAttribute('loading', 'lazy');
+      if (!image.hasAttribute('decoding')) image.setAttribute('decoding', 'async');
+    });
+    frames.forEach(function (frame) {
+      if (
+        frame.hasAttribute('src') &&
+        frame.getAttribute('src') !== 'about:blank' &&
+        !frame.hasAttribute('loading')
+      ) {
+        frame.setAttribute('loading', 'lazy');
+      }
+    });
+  }
+
   function boot(scope) {
     var root = scope && scope.querySelectorAll ? scope : document;
+    prepareMedia(root);
     if (root.matches && root.matches(MOUNT_SELECTOR)) mount(root);
     Array.prototype.forEach.call(root.querySelectorAll(MOUNT_SELECTOR), function (item) {
       mount(item);
@@ -121,7 +145,7 @@
     window.EdabalansFooterObserver.observe(document.documentElement, {childList: true, subtree: true});
   }
 
-  window.EdabalansFooter = {boot: boot, mount: mount};
+  window.EdabalansFooter = {boot: boot, mount: mount, prepareMedia: prepareMedia};
   window.EdabalansSiteFooter = window.EdabalansFooter;
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function () { boot(); observe(); });
