@@ -97,9 +97,7 @@ function renderDaily() {
     button.setAttribute('aria-pressed', String(date === selectedDate))
     button.setAttribute('aria-label', `${details.weekday}, ${details.calendarDate}: осадки ${precipitationText(totals[index])} мм`)
     button.innerHTML = `
-      <span class="weekday ${details.weekend ? 'weekend' : ''}">${details.weekday}</span>
-      <span class="calendar-date ${details.weekend ? 'weekend' : ''}">${details.calendarDate}</span>
-      ${iconMarkup(forecast.hourly.weather_code[midpoint], forecast.hourly.is_day[midpoint])}
+      <span class="day-heading"><span><span class="weekday ${details.weekend ? 'weekend' : ''}">${details.weekday}</span><span class="calendar-date ${details.weekend ? 'weekend' : ''}">${details.calendarDate}</span></span>${iconMarkup(forecast.hourly.weather_code[midpoint], forecast.hourly.is_day[midpoint])}</span>
       <span class="temperatures"><span class="temperature max">${signedTemperature(forecast.daily.temperature_2m_max[index])}</span><span class="temperature min">${signedTemperature(forecast.daily.temperature_2m_min[index])}</span></span>
       <span class="rain-area"><span class="daily-total">${precipitationText(totals[index])}</span><span class="mini-rain" style="height:${dailyHeight}px">${hourlyRain.map((value) => `<i style="height:${Math.max(2, value / maxHourly * 100)}%"></i>`).join('')}</span></span>`
     button.addEventListener('click', () => selectDay(date))
@@ -108,7 +106,7 @@ function renderDaily() {
 }
 
 function windArrow(degrees) {
-  return ['↑', '↗', '→', '↘', '↓', '↙', '←', '↖'][Math.round(degrees / 45) % 8]
+  return `<span class="wind-arrow" style="--wind-turn:${Math.round(degrees) - 90}deg">➤</span>`
 }
 
 function createLabel(text, field) {
@@ -294,7 +292,6 @@ document.querySelectorAll('[data-field]').forEach((input) => input.addEventListe
   updateVisibility()
 }))
 document.querySelectorAll('.tab-button').forEach((button) => button.addEventListener('click', () => switchView(button.dataset.view)))
-document.querySelector('#today-button').addEventListener('click', () => selectDay(forecast.daily.time[0]))
 document.querySelector('#history-controls').addEventListener('submit', (event) => {
   event.preventDefault()
   loadHistory()

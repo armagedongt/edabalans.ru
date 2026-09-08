@@ -33,12 +33,13 @@ button { cursor: pointer; }
 .day-button { display: flex; min-width: 0; flex-direction: column; align-items: stretch; border: 0; border-radius: 9px 9px 0 0; padding: 5px 2px 0; color: inherit; background: transparent; text-align: center; }
 .day-button:hover, .day-button:focus-visible { background: #f6f9fb; outline: none; }
 .day-button[aria-pressed="true"] { background: #eff8ff; box-shadow: inset 0 3px #0788f8; }
+.day-heading { display: flex; align-items: center; justify-content: center; gap: 3px; min-height: 35px; }
 .weekday, .calendar-date { display: block; color: #0088ff; }
 .weekday { font-size: 15px; }
 .calendar-date { margin-top: 1px; font-size: 12px; }
 .weekend { color: #e60000; }
 .weather-icon { display: inline-flex; align-items: center; justify-content: center; font-family: "Segoe UI Symbol", sans-serif; font-weight: 400; line-height: 1; }
-.day-button > .weather-icon { height: 37px; margin: 3px 0; font-size: 31px; }
+.day-heading .weather-icon { flex: 0 0 auto; font-size: 25px; }
 .weather-icon.sun { color: #f4b400; }.weather-icon.cloud { color: #9ca8b1; }.weather-icon.rain { color: #258fcf; }.weather-icon.snow { color: #6e9ed3; }.weather-icon.moon { color: #788aa1; }
 .temperatures { display: flex; flex-direction: column; gap: 3px; }
 .temperature { width: 100%; padding: 3px 0; font-size: 17px; line-height: 1; }
@@ -49,19 +50,18 @@ button { cursor: pointer; }
 .mini-rain::before { position: absolute; inset: 0; content: ""; opacity: .48; pointer-events: none; background: repeating-linear-gradient(to right, transparent 0 calc(4.166% - 1px), #fff 4.166%); }
 .mini-rain i { display: block; min-height: 2px; background: #7fc1ed; }
 
-.hourly-card { min-height: 0; padding-top: 25px; }
-.today-button { position: absolute; z-index: 1; top: 4px; right: 10px; }
-.hourly-grid { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); }
+.hourly-card { min-height: 0; }
+.hourly-grid { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); column-gap: 2px; row-gap: 2px; background: #f4f6f7; }
 .hour { min-width: 0; min-height: 49px; padding-top: 1px; text-align: center; }
-.hour-time { display: block; font-size: 12px; }
+.hour-time { display: block; font-size: 12px; font-variant-numeric: tabular-nums; }
 .hour .weather-icon { height: 31px; font-size: 24px; }
 .field-label { grid-column: 1 / -1; padding: 5px 10px 3px; font-size: 12px; color: #59636b; background: #fff; }
 .cell { display: grid; min-width: 0; min-height: 29px; place-items: center; font-size: 13px; }
-.temperature-cell, .feels-cell { align-items: end; background: var(--temp-color); }
+.temperature-cell, .feels-cell { align-items: start; overflow: hidden; background: var(--temp-color); }
 .temperature-cell span, .feels-cell span { display: block; width: 100%; transform: translateY(var(--temp-offset)); text-align: center; }
 .temperature-cell { border-bottom: 1px solid #c4d400; }.feels-cell { border-bottom: 1px solid #d2d481; }
 .wind-cell { min-height: 43px; grid-template-rows: auto auto; border-right: 1px solid #e8eaeb; border-bottom: 1px solid #e8eaeb; }
-.wind-pair { font-weight: 600; font-size: 12px; }.gust { color: #9da5aa; font-size: 12px; }
+.wind-pair { font-weight: 600; font-size: 12px; }.gust { display: grid; min-height: 16px; place-items: center; }.wind-arrow { display: block; color: #365b72; font-size: 18px; font-weight: 900; line-height: 1; transform: rotate(var(--wind-turn)); text-shadow: 0 0 .25px currentColor; }
 .precipitation-cell { position: relative; min-height: 44px; align-items: end; padding-bottom: 3px; color: #008af1; overflow: hidden; font-size: 12px; }
 .rain-fill { position: absolute; right: 0; bottom: 0; left: 0; z-index: 0; height: var(--rain-height); background: #9bd1f4; }.precipitation-cell span { position: relative; z-index: 1; }
 .snow-cell { min-height: 26px; border-bottom: 1px solid #eee; color: #73777a; font-size: 12px; }
@@ -91,10 +91,18 @@ button { cursor: pointer; }
   .daily-scroll { overflow-x: auto; scrollbar-width: none; }.daily-scroll::-webkit-scrollbar, .hourly-card::-webkit-scrollbar { display: none; }
   .daily-grid { grid-template-columns: repeat(12, minmax(55px, 1fr)); gap: 3px; padding: 5px 6px; }
   .daily-grid { min-width: 720px; }
-  .day-button { border-radius: 6px 6px 0 0; }.weekday { font-size: 12px; }.calendar-date { font-size: 10px; }.day-button > .weather-icon { height: 27px; margin: 2px 0; font-size: 23px; }.temperature { padding: 2px 0; font-size: 13px; }.daily-total { font-size: 12px; line-height: 13px; }
-  .hourly-card { overflow-x: auto; padding-top: 20px; scrollbar-width: none; }
+  .day-button { border-radius: 6px 6px 0 0; }.day-heading { min-height: 27px; gap: 1px; }.weekday { font-size: 12px; }.calendar-date { font-size: 10px; }.day-heading .weather-icon { font-size: 19px; }.temperature { padding: 2px 0; font-size: 13px; }.daily-total { font-size: 12px; line-height: 13px; }
+  .hourly-card { overflow-x: auto; scrollbar-width: none; }
   .hourly-grid { min-width: 912px; grid-template-columns: repeat(24, 38px); }
-  .today-button { top: 5px; right: 5px; padding: 4px 6px; font-size: 11px; }.hour { min-height: 38px; }.hour-time { font-size: 10px; }.hour .weather-icon { height: 25px; font-size: 20px; }.field-label { padding: 3px 5px 2px; font-size: 10px; }.cell { min-height: 23px; font-size: 11px; }.temperature-cell span, .feels-cell span { transform: translateY(calc(var(--temp-offset) * .6)); }.wind-cell { min-height: 35px; }.wind-pair, .gust, .precipitation-cell, .snow-cell { font-size: 10px; }.precipitation-cell { min-height: 35px; }.snow-cell { min-height: 20px; }
+  .hour { min-height: 38px; }.hour-time { font-size: 10px; }.hour .weather-icon { height: 25px; font-size: 20px; }.field-label { padding: 3px 5px 2px; font-size: 10px; }.cell { min-height: 23px; font-size: 11px; }.temperature-cell span, .feels-cell span { transform: translateY(calc(var(--temp-offset) * .6)); }.wind-cell { min-height: 35px; }.wind-pair, .precipitation-cell, .snow-cell { font-size: 10px; }.gust { font-size: 13px; }.precipitation-cell { min-height: 35px; }.snow-cell { min-height: 20px; }
   .history-controls { margin: 8px 10px; }.history-day { grid-template-columns: 88px 23px 80px 1fr; gap: 4px; font-size: 11px; }.history-grid { padding-inline: 8px; }
   .source-note { margin: 7px 10px 10px; }
+}
+
+@media (min-width: 681px) and (max-width: 900px) {
+  .day-heading { gap: 1px; min-height: 30px; }
+  .weekday { font-size: 12px; }
+  .calendar-date { font-size: 10px; }
+  .day-heading .weather-icon { font-size: 16px; }
+  .hour-time { font-size: 10px; letter-spacing: -.45px; }
 }
