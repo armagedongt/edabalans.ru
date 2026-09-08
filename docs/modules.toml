@@ -11,8 +11,11 @@ derived_outputs = [
 [[modules]]
 id = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.md"
-owns_files = ["README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md"]
+owns_files = ["README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md", "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md"]
 owns_routes = ["*/embed.js", "*/site-footer.js"]
+sources = [
+  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "contract", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
+]
 
 [[modules]]
 id = "platform.crm"

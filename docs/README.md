@@ -40,6 +40,7 @@
 |---|---|
 | CRM, единый клиент и импорт | `CRM_CORE_DESIGN.md`, `CRM_DATA_MODEL.md` |
 | Клиентские приложения DQS/силовые/метаболизм | `APPLICATION_PLATFORM.md` |
+| Создание и загрузка приложений курсов | `knowledge-base/COURSE_APPLICATION_STANDARD.md` |
 | Платежи и доступы | `TILDA_PAYMENTS.md`, `ROBOKASSA_PAYMENTS.md`, `knowledge-base/ACCESS_RULES.md` |
 | Цены | `knowledge-base/PRICING_CATALOG.md` |
 | Мастер-класс | `knowledge-base/modules/masterclass/README.md` |

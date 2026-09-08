@@ -18,6 +18,8 @@ implementation_status: implemented
   компонента.
 - общий контракт загрузки медиа: первый экран помечается явно, изображения и
   iframe ниже него получают lazy load в разметке или общем renderer.
+- общий технический стандарт приложений курсов: минимальная первая отрисовка,
+  отложенная загрузка текстов, кеширование и навигация без повторного frontend-входа.
 
 ## Граница
 
@@ -27,7 +29,8 @@ implementation_status: implemented
 
 ## Источники истины
 
-`ARCHITECTURE.md`, PostgreSQL, backend config и дочерние карточки.
+`ARCHITECTURE.md`, `docs/knowledge-base/COURSE_APPLICATION_STANDARD.md`, PostgreSQL,
+backend config и дочерние карточки.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
