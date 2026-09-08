@@ -145,6 +145,17 @@ www.{$PUBLIC_DOMAIN} {
 		-Server
 	}
 
+	@SherbakovaPreviewNoSlash path /sherbakova
+	redir @SherbakovaPreviewNoSlash /sherbakova/ 308
+
+	@SherbakovaPreviewRoot path /sherbakova/
+	redir @SherbakovaPreviewRoot /sherbakova/v2/burgundy/ 307
+
+	handle_path /sherbakova/* {
+		root * /srv/sherbakova
+		file_server
+	}
+
 	handle /docs {
 		redir https://go.похудение-это-есть.рф/legal/privacy 302
 	}

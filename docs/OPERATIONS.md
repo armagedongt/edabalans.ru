@@ -155,6 +155,18 @@ health только контейнера `telegram-bot`. Состояние `unh
 в Git и документацию не записываются. Функциональные тесты приложений выполняются
 перед выпуском, а не каждую минуту.
 
+## Статический preview Щербаковой
+
+`app.edabalans.ru/sherbakova/` — изолированный `noindex,nofollow` preview сайта
+Щербаковой, а не часть платформы EDA Balance. Caddy отдаёт только статический каталог
+`/opt/sherbakova-preview` read-only; маршрут `/sherbakova/` перенаправляет на
+`/sherbakova/v2/burgundy/`. Подварианты `v2/burgundy`, `v2/forest` и `v2/graphite`
+не используют backend, PostgreSQL, авторизацию, оплату, формы, аналитику или секреты.
+
+Артефакт собирается и версионируется в отдельном репозитории `sherbakova-site`, затем
+копируется на сервер в `/opt/sherbakova-preview`. Откат ограничен заменой этого каталога
+либо удалением трёх Caddy handlers и read-only mount; остальные app routes не меняются.
+
 ## Резервные копии
 
 Бакет: `edabalans-postgres-backups-ajessi9majsb7glatojn`.
