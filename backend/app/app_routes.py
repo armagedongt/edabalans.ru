@@ -123,6 +123,10 @@ WEATHER_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-weat
 
 
 @router.get("/weather", include_in_schema=False)
+def private_weather_redirect(_: str = Depends(require_admin)) -> RedirectResponse:
+    return RedirectResponse("/weather/", status_code=307)
+
+
 @router.get("/weather/", include_in_schema=False)
 def private_weather(_: str = Depends(require_admin)) -> FileResponse:
     return FileResponse(WEATHER_DIR / "index.html", headers={"Cache-Control": "no-cache"})

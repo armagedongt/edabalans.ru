@@ -21,7 +21,13 @@ def test_weather_page_requires_admin_access() -> None:
 def test_weather_page_and_assets_are_available_to_admin() -> None:
     client = TestClient(app)
     auth = ("admin@example.com", "test-admin-password")
-    page = client.get("/weather", auth=auth)
+    redirect = client.get("/weather", auth=auth, follow_redirects=False)
+    assert redirect.status_code == 307
+    assert redirect.headers["location"] == "/weather/"
+    page = client.get("/weather/", auth=auth)
     assert page.status_code == 200
     assert 'id="weather-app"' in page.text
+    assert 'href="styles.css"' in page.text
+    assert 'src="app.js"' in page.text
+    assert client.get("/weather/styles.css", auth=auth).status_code == 200
     assert client.get("/weather/app.js", auth=auth).status_code == 200
