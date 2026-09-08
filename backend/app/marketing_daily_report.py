@@ -9,7 +9,7 @@ import urllib.request
 from collections import defaultdict
 from datetime import date, datetime, time as dt_time, timedelta, timezone
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
@@ -17,7 +17,7 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.marketing_service import marketing_dashboard
-from app.models import MarketingDailyReport
+from app.models import CourseEvent, MarketingDailyReport
 
 
 MOSCOW = ZoneInfo("Europe/Moscow")
@@ -127,12 +127,80 @@ def _moscow_date(value: str | None) -> date | None:
     return parsed.astimezone(MOSCOW).date()
 
 
+def _aware_utc(value: datetime) -> datetime:
+    return (value if value.tzinfo else value.replace(tzinfo=timezone.utc)).astimezone(timezone.utc)
+
+
+def _course_depth_snapshot(db: Session, starts: list[dict], cutoff: datetime) -> dict[str, dict[str, int]]:
+    """Count unique Start-cohort users reaching day-one reading/video milestones."""
+
+    start_by_user: dict[UUID, datetime] = {}
+    for row in starts:
+        raw_user_id = row.get("user_id")
+        raw_started_at = (row.get("start") or {}).get("at")
+        if not raw_user_id or not raw_started_at:
+            continue
+        try:
+            user_id = UUID(str(raw_user_id))
+            started_at = _aware_utc(datetime.fromisoformat(raw_started_at))
+        except (TypeError, ValueError):
+            continue
+        start_by_user[user_id] = min(start_by_user.get(user_id, started_at), started_at)
+
+    buckets: dict[str, dict[int, set[UUID]]] = {
+        "page": {value: set() for value in (25, 50, 75, 100)},
+        "video": {value: set() for value in (25, 50, 75, 100)},
+    }
+    if not start_by_user:
+        return {kind: {str(value): 0 for value in values} for kind, values in buckets.items()}
+
+    events = db.scalars(
+        select(CourseEvent).where(
+            CourseEvent.user_id.in_(list(start_by_user)),
+            CourseEvent.course_code == "intensive",
+            CourseEvent.event_type.in_(("page_progress", "video_progress", "video_complete")),
+            CourseEvent.occurred_at < _aware_utc(cutoff),
+        )
+    )
+    for event in events:
+        if _aware_utc(event.occurred_at) < start_by_user[event.user_id]:
+            continue
+        details = event.details if isinstance(event.details, dict) else {}
+        try:
+            day = int(details.get("day") or 0)
+        except (TypeError, ValueError):
+            continue
+        if day != 1:
+            continue
+        if event.event_type == "video_complete":
+            buckets["video"][100].add(event.user_id)
+            continue
+        try:
+            progress = int(details.get("progress_percent") or 0)
+        except (TypeError, ValueError):
+            continue
+        kind = "page" if event.event_type == "page_progress" else "video"
+        if progress in buckets[kind]:
+            buckets[kind][progress].add(event.user_id)
+
+    return {
+        kind: {str(value): len(user_ids) for value, user_ids in values.items()}
+        for kind, values in buckets.items()
+    }
+
+
 def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> dict:
     dashboard = marketing_dashboard(
         db,
         settings,
         date_from=report_date,
         date_to=report_date + timedelta(days=1),
+    )
+    entry_dashboard = marketing_dashboard(
+        db,
+        settings,
+        date_from=report_date,
+        date_to=report_date,
     )
     rows = dashboard["rows"]
     cutoff = datetime.combine(report_date + timedelta(days=1), dt_time(hour=3), tzinfo=MOSCOW)
@@ -145,39 +213,135 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
             parsed = parsed.replace(tzinfo=timezone.utc)
         return parsed.astimezone(MOSCOW) < cutoff
 
-    starts = [row for row in rows if row.get("start") and _moscow_date(row["start"]["at"]) == report_date]
-    entries = [row for row in rows if row.get("landing_entry") and _moscow_date(row["landing_entry"]["at"]) == report_date]
+    starts = [
+        row
+        for row in rows
+        if row.get("start")
+        and row.get("is_new_lead")
+        and row.get("source") == "Яндекс"
+        and _moscow_date(row["start"]["at"]) == report_date
+    ]
+    attributed_starts = [
+        row
+        for row in rows
+        if row.get("start")
+        and row.get("is_new_lead")
+        and row.get("source") == "Яндекс"
+        and row.get("landing_entry")
+        and _moscow_date(row["landing_entry"]["at"]) == report_date
+        and before_cutoff(row["start"].get("at"))
+    ]
+    entry_breakdown = [
+        item
+        for item in entry_dashboard.get("entry_breakdown", [])
+        if item.get("source") == "Яндекс"
+    ]
+    entry_count = sum(int(item.get("entries") or 0) for item in entry_breakdown)
 
     by_creative: dict[str, int] = defaultdict(int)
     by_messenger: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
     by_method: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
     by_device: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
-    for row in starts:
+    for row in attributed_starts:
         by_creative[row.get("creative") or "—"] += 1
-    for row in entries:
-        messenger = row.get("messenger") or "не определён"
-        method = (row.get("landing_entry") or {}).get("method") or "не определён"
-        device = row.get("device") or "не определён"
-        for bucket, key in ((by_messenger, messenger), (by_method, method), (by_device, device)):
-            bucket[key]["entries"] += 1
-    for row in starts:
+    for item in entry_breakdown:
+        messenger = item.get("messenger") or "не определён"
+        method = item.get("entry") or "не определён"
+        entries = int(item.get("entries") or 0)
+        by_messenger[messenger]["entries"] += entries
+        by_method[method]["entries"] += entries
+    seen_entry_journeys: set[str] = set()
+    for row in entry_dashboard.get("rows", []):
+        journey_id = str(row.get("journey_id") or "")
+        if (
+            row.get("source") != "Яндекс"
+            or not row.get("landing_entry")
+            or not journey_id
+            or journey_id in seen_entry_journeys
+        ):
+            continue
+        seen_entry_journeys.add(journey_id)
+        by_device[row.get("device") or "не определён"]["entries"] += 1
+    for row in attributed_starts:
         messenger = row.get("messenger") or "не определён"
         method = row.get("entry_method") or "не определён"
         device = row.get("device") or "не определён"
         for bucket, key in ((by_messenger, messenger), (by_method, method), (by_device, device)):
             bucket[key]["starts"] += 1
 
-    def count(predicate) -> int:
-        return sum(bool(predicate(row)) for row in starts)
+    def count(cohort: list[dict], predicate) -> int:
+        return sum(bool(predicate(row)) for row in cohort)
+
+    def cohort_metrics(cohort: list[dict]) -> dict[str, int]:
+        return {
+            "starts": len(cohort),
+            "personal_or_main_open": count(
+                cohort,
+                lambda row: (
+                    row.get("site_home") and before_cutoff(row["site_home"].get("at"))
+                )
+                or any(
+                    action.get("label") == "Открыл персональную ссылку интенсива"
+                    and before_cutoff(action.get("at"))
+                    for action in row.get("other_actions", [])
+                ),
+            ),
+            "day_one": count(
+                cohort,
+                lambda row: row.get("day_one") and before_cutoff(row["day_one"].get("at")),
+            ),
+            "video_engaged": count(
+                cohort,
+                lambda row: any(
+                    action.get("label") == "Начал смотреть видео"
+                    and before_cutoff(action.get("at"))
+                    for action in row.get("other_actions", [])
+                ),
+            ),
+            "end_day_cta": count(
+                cohort,
+                lambda row: any(
+                    action.get("label") in {"Нажал Telegram в интенсиве", "Нажал MAX в интенсиве"}
+                    and before_cutoff(action.get("at"))
+                    for action in row.get("other_actions", [])
+                ),
+            ),
+        }
+
+    depth = _course_depth_snapshot(db, starts, cutoff)
+    start_cohort = cohort_metrics(starts)
+    acquisition_cohort = cohort_metrics(attributed_starts)
+
+    try:
+        entry_tracking_from = date.fromisoformat(settings.marketing_report_entry_tracking_from)
+        depth_tracking_from = date.fromisoformat(settings.marketing_report_depth_tracking_from)
+    except ValueError as error:
+        raise RuntimeError("marketing report tracking dates must be YYYY-MM-DD") from error
+
+    entry_tracking_available = report_date >= entry_tracking_from
+    tracking_errors = []
+    unlinked_starts = sum(not row.get("landing_entry") for row in starts)
+    if entry_tracking_available and unlinked_starts:
+        tracking_errors.append(f"У {unlinked_starts} реальных Start нет связанного CTA/QR на посадке")
 
     return {
-        "entries": len(entries),
-        "starts": len(starts),
+        "entries": entry_count,
+        "entry_tracking_available": entry_tracking_available,
+        "tracking_errors": tracking_errors,
+        "starts": start_cohort["starts"],
+        "acquisition_starts": acquisition_cohort["starts"],
         "new_leads": sum(bool(row.get("is_new_lead")) for row in starts),
-        "personal_or_main_open": count(lambda row: (row.get("site_home") and before_cutoff(row["site_home"].get("at"))) or any(action.get("label") == "Открыл персональную ссылку интенсива" and before_cutoff(action.get("at")) for action in row.get("other_actions", []))),
-        "day_one": count(lambda row: row.get("day_one") and before_cutoff(row["day_one"].get("at"))),
-        "video_engaged": count(lambda row: any(action.get("label") == "Начал смотреть видео" and before_cutoff(action.get("at")) for action in row.get("other_actions", []))),
-        "end_day_cta": count(lambda row: any(action.get("label") in {"Нажал Telegram в интенсиве", "Нажал MAX в интенсиве"} and before_cutoff(action.get("at")) for action in row.get("other_actions", []))),
+        "personal_or_main_open": start_cohort["personal_or_main_open"],
+        "day_one": start_cohort["day_one"],
+        "video_engaged": start_cohort["video_engaged"],
+        "acquisition_personal_or_main_open": acquisition_cohort["personal_or_main_open"],
+        "acquisition_day_one": acquisition_cohort["day_one"],
+        "acquisition_video_engaged": acquisition_cohort["video_engaged"],
+        "page_depth": depth["page"],
+        "video_depth": depth["video"],
+        "depth_tracking_available": report_date >= depth_tracking_from,
+        "end_day_cta": start_cohort["end_day_cta"],
+        "acquisition_end_day_cta": acquisition_cohort["end_day_cta"],
         "by_creative": dict(by_creative),
         "by_messenger": dict(by_messenger),
         "by_method": dict(by_method),
@@ -234,12 +398,20 @@ def _table(headers: list[str], rows: list[list[Any]], caption: str) -> dict:
         "is_striped": True,
         "is_compact": True,
         "cells": [
-            [_table_cell(value, header=True, align="left" if index == 0 else "right") for index, value in enumerate(headers)],
+            [_table_cell(value, header=True, align="left" if index == 0 else "center") for index, value in enumerate(headers)],
             *[
-                [_table_cell(value, align="left" if index == 0 else "right") for index, value in enumerate(row)]
+                [_table_cell(value, align="left" if index == 0 else "center") for index, value in enumerate(row)]
                 for row in rows
             ],
         ],
+    }
+
+
+def _details(lines: list[str]) -> dict:
+    return {
+        "type": "details",
+        "summary": "Что значат показатели",
+        "blocks": [{"type": "paragraph", "text": f"• {line}"} for line in lines],
     }
 
 
@@ -261,64 +433,77 @@ def render_messages(payload: dict) -> list[str]:
     previous = payload["comparison_previous"]
     total_clicks = sum(item["total"]["clicks"] for item in channels.values())
     total_cost = sum(item["total"]["cost_rub"] for item in channels.values())
-    messages = [
-        f"📊 Реклама · {payload['report_date']} · срез 03:00 МСК\n"
-        f"Расход: {_money(total_cost)} · клики: {total_clicks} · реальные Start: {internal['starts']} · цена Start: {_money(total_cost / internal['starts'] if internal['starts'] else None)}\n"
-        "Остаток: Direct API v5 не отдаёт баланс счёта; проверяется отдельно в кабинете.\n"
-        f"Ошибок нет",
+    lines = [
+        f"📊 ДИРЕКТ · {payload['report_date']} · СРЕЗ 03:00 МСК",
+        f"Всего: {total_clicks} кликов · {_money(total_cost)} · Реальный Start бота: {internal['acquisition_starts']} · CPA {_money(total_cost / internal['acquisition_starts'] if internal['acquisition_starts'] else None)}",
     ]
-    lines = ["КАНАЛЫ ДО START"]
     for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         total = channels[key]["total"]
         prior = previous[key]["total"]
         lines.append(
-            f"{label}\nПоказы: {total['impressions']} · клики: {total['clicks']} · CTR: {total['ctr_percent']:.2f}%\n"
-            f"Расход: {_money(total['cost_rub'])} · Start: {total['starts']} · CPA: {_money(total['cpa_start_rub'])}\n"
-            f"Изменение CPA: {_delta(total['cpa_start_rub'], prior.get('cpa_start_rub'))}"
+            f"{label}: {total['clicks']} кл. · CTR {total['ctr_percent']:.2f}% · {_money(total['cost_rub'])} · "
+            f"Start {total['starts']} · К→S {_pct(total['starts'], total['clicks'])} · CPA {_money(total['cpa_start_rub'])}\n"
+            f"Вчера: {prior['clicks']} кл. · {_money(prior['cost_rub'])} · Start {prior['starts']} · CPA {_money(prior.get('cpa_start_rub'))}"
         )
-    messages.append("\n".join(lines))
+    if internal.get("tracking_errors"):
+        lines.extend(f"⚠️ {error}" for error in internal["tracking_errors"])
+    lines.append("Остаток: Direct API не отдаёт")
+    messages = ["\n".join(lines)]
 
     ad_lines = ["ОБЪЯВЛЕНИЯ"]
-    for key in ("rsya", "search"):
+    for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         for ad in channels[key]["ads"]:
             ad_lines.append(
-                f"{ad['name']}\nКлики: {ad['clicks']} · расход: {_money(ad['cost_rub'])} · Start: {ad['starts']}\n"
-                f"Клик→Start: {_pct(ad['starts'], ad['clicks'])} · CPA: {_money(ad['cpa_start_rub'])}"
+                f"{label} · {ad['name']}: {ad['clicks']} кл. · {_money(ad['cost_rub'])} · "
+                f"Start {ad['starts']} · К→S {_pct(ad['starts'], ad['clicks'])} · CPA {_money(ad['cpa_start_rub'])}"
             )
     messages.append("\n".join(ad_lines))
 
-    stages = [
-        ("Клик по рекламе", total_clicks),
-        ("CTA/QR на посадке", internal["entries"]),
-        ("Реальный Start бота", internal["starts"]),
-        ("Открыли интенсив", internal["personal_or_main_open"]),
-        ("Открыли день 1", internal["day_one"]),
-        ("Включили видео", internal["video_engaged"]),
-        ("Кнопка в конце дня", internal["end_day_cta"]),
+    entry_count: int | None = internal["entries"] if internal.get("entry_tracking_available") else None
+    stages: list[tuple[str, int | None]] = [
+        ("Клик", total_clicks),
+        ("CTA / QR", entry_count),
+        ("Реальный Start бота", internal["acquisition_starts"]),
+        ("Интенсив", internal["acquisition_personal_or_main_open"]),
+        ("День 1", internal["acquisition_day_one"]),
+        ("Видео старт", internal["acquisition_video_engaged"]),
+        ("Кнопка в конце", internal["acquisition_end_day_cta"]),
     ]
     funnel = ["ВОРОНКА (РСЯ + ПОИСК)"]
-    previous_count = total_clicks
+    previous_count: int | None = total_clicks
     for label, value in stages:
-        funnel.append(f"{label}: {value} чел. · от прошлого {_pct(value, previous_count)} · от клика {_pct(value, total_clicks)}")
+        if value is None:
+            funnel.append(f"{label}: НД · с пред. НД · с клика НД")
+        else:
+            from_previous = _pct(value, previous_count) if previous_count is not None else "НД"
+            funnel.append(f"{label}: {value} · с пред. {from_previous} · с клика {_pct(value, total_clicks)}")
         previous_count = value
     messages.append("\n".join(funnel))
 
-    segment = ["СЕГМЕНТЫ: входы → реальные Start"]
-    direct_devices: dict[str, dict] = defaultdict(lambda: {"clicks": 0, "cost_rub": 0.0})
-    for channel in channels.values():
-        for name, data in channel["devices"].items():
-            direct_devices[name]["clicks"] += data["clicks"]
-            direct_devices[name]["cost_rub"] += data["cost_rub"]
-    segment.append("Устройства Direct")
-    segment.extend(f"• {name}: {data['clicks']} кликов · {_money(data['cost_rub'])}" for name, data in sorted(direct_devices.items()))
-    for title, key in (("Мессенджер", "by_messenger"), ("Способ", "by_method"), ("Устройство посадки", "by_device")):
-        values = internal[key]
-        segment.append(title)
-        segment.extend(
-            [f"• {name}: {data['entries']} → {data['starts']} ({_pct(data['starts'], data['entries'])})" for name, data in sorted(values.items())]
-            or ["• данных нет"]
-        )
-    messages.append("\n".join(segment))
+    depth_available = bool(internal.get("depth_tracking_available"))
+    page_depth = internal.get("page_depth") or {}
+    video_depth = internal.get("video_depth") or {}
+    depth = [
+        "ГЛУБИНА ДНЯ 1",
+        f"Start бота: {internal['starts']}",
+        f"Интенсив: {internal['personal_or_main_open']}",
+        f"Открыли день 1: {internal['day_one']}",
+    ]
+    depth.extend(f"Текст {milestone}%: {page_depth.get(str(milestone), 0) if depth_available else 'НД'}" for milestone in (25, 50, 75, 100))
+    depth.append(f"Видео старт: {internal['video_engaged']}")
+    depth.extend(f"Видео {milestone}%: {video_depth.get(str(milestone), 0) if depth_available else 'НД'}" for milestone in (25, 50, 75, 100))
+    messages.append("\n".join(depth))
+
+    methods = ["СПОСОБ ВХОДА"]
+    for key, label in (("button", "Кнопка"), ("qr", "QR")):
+        data = internal["by_method"].get(key, {})
+        if internal.get("entry_tracking_available"):
+            entries = int(data.get("entries") or 0)
+            starts = int(data.get("starts") or 0)
+            methods.append(f"{label}: {entries} входов · {starts} Start · В→S {_pct(starts, entries)}")
+        else:
+            methods.append(f"{label}: НД")
+    messages.append("\n".join(methods))
 
     return messages
 
@@ -331,87 +516,137 @@ def render_rich_messages(payload: dict) -> list[dict]:
     total_cost = sum(item["total"]["cost_rub"] for item in channels.values())
     fallbacks = render_messages(payload)
 
-    channel_traffic_rows = []
-    channel_comparison_rows = []
+    channel_rows = []
+    prior_rows = []
     for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         total = channels[key]["total"]
         prior = previous[key]["total"]
-        channel_traffic_rows.append([label, total["impressions"], total["clicks"], f"{total['ctr_percent']:.2f}%"])
-        channel_comparison_rows.extend([
-            [f"{label} · отчёт", total["clicks"], _money(total["cost_rub"]), total["starts"], _money(total["cpa_start_rub"])],
-            [f"{label} · вчера", prior["clicks"], _money(prior["cost_rub"]), prior["starts"], _money(prior.get("cpa_start_rub"))],
+        channel_rows.append([
+            label,
+            total["clicks"],
+            f"{total['ctr_percent']:.2f}%",
+            _money(total["cost_rub"]),
+            total["starts"],
+            _pct(total["starts"], total["clicks"]),
+            _money(total["cpa_start_rub"]),
         ])
+        prior_rows.append([label, prior["clicks"], _money(prior["cost_rub"]), prior["starts"], _money(prior.get("cpa_start_rub"))])
     summary = _rich_message(
-        f"📊 Реклама · {payload['report_date']}",
+        f"📊 Директ · {payload['report_date']}",
         [
-            {"type": "paragraph", "text": "Срез: 03:00 МСК"},
-            _table(
-                ["Показатель", "Значение"],
-                [
-                    ["Расход", _money(total_cost)],
-                    ["Клики", total_clicks],
-                    ["Реальные Start", internal["starts"]],
-                    ["Цена Start", _money(total_cost / internal["starts"] if internal["starts"] else None)],
-                    ["Ошибки", "Нет"],
-                ],
-                "Общий итог",
+            {"type": "paragraph", "text": "Срез 03:00 МСК"},
+            _table(["Канал", "Кл.", "CTR", "Расход", "Start", "К→S", "CPA"], channel_rows, "Каналы до Start"),
+            _table(["Вчера", "Кл.", "Расход", "Start", "CPA"], prior_rows, "Сравнение"),
+            {"type": "footer", "text": f"Всего: {total_clicks} кликов · {_money(total_cost)} · {internal['acquisition_starts']} Start · CPA {_money(total_cost / internal['acquisition_starts'] if internal['acquisition_starts'] else None)}. Остаток Direct API не отдаёт."},
+            *(
+                [{"type": "paragraph", "text": "⚠️ " + "\n⚠️ ".join(internal.get("tracking_errors") or [])}]
+                if internal.get("tracking_errors")
+                else []
             ),
-            {"type": "footer", "text": "Остаток недоступен в Direct API v5 — проверяется в кабинете."},
+            _details([
+                "Кл. — рекламные клики.",
+                "К→S — доля кликов, закончившихся реальным Start бота.",
+                "CPA — рекламный расход на один реальный Start.",
+            ]),
         ],
         fallbacks[0],
     )
-    channel_message = _rich_message(
-        "Каналы до Start",
-        [
-            _table(["Канал", "Показы", "Клики", "CTR"], channel_traffic_rows, "Трафик"),
-            _table(["Канал и период", "Клики", "Расход", "Start", "CPA"], channel_comparison_rows, "Сравнение со вчера"),
-        ],
-        fallbacks[1],
-    )
 
     ad_rows = []
-    for key in ("rsya", "search"):
+    for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         for ad in channels[key]["ads"]:
             ad_rows.append([
-                ad["name"], ad["clicks"], _money(ad["cost_rub"]), ad["starts"],
+                f"{label} · {ad['name']}", ad["clicks"], _money(ad["cost_rub"]), ad["starts"],
                 _pct(ad["starts"], ad["clicks"]), _money(ad["cpa_start_rub"]),
             ])
     ads_message = _rich_message(
         "Объявления",
-        [_table(["Объявление", "Клики", "Расход", "Start", "К→S", "CPA"], ad_rows, "РСЯ и поиск")],
-        fallbacks[2],
+        [
+            _table(["Объявление", "Кл.", "Расход", "Start", "К→S", "CPA"], ad_rows, "РСЯ и поиск"),
+            _details([
+                "Здесь сравниваются конкретные креативы РСЯ и поисковые объявления.",
+                "Решение о победителе принимается не по одному CTR, а по Start, CPA и достаточности данных.",
+            ]),
+        ],
+        fallbacks[1],
     )
 
-    stages = [
-        ("Клик по рекламе", total_clicks),
-        ("CTA/QR", internal["entries"]),
-        ("Start бота", internal["starts"]),
-        ("Открыли интенсив", internal["personal_or_main_open"]),
-        ("Открыли день 1", internal["day_one"]),
-        ("Включили видео", internal["video_engaged"]),
-        ("Кнопка в конце дня", internal["end_day_cta"]),
+    entry_count: int | None = internal["entries"] if internal.get("entry_tracking_available") else None
+    stages: list[tuple[str, int | None]] = [
+        ("Клик", total_clicks),
+        ("CTA / QR", entry_count),
+        ("Start бота", internal["acquisition_starts"]),
+        ("Интенсив", internal["acquisition_personal_or_main_open"]),
+        ("День 1", internal["acquisition_day_one"]),
+        ("Видео старт", internal["acquisition_video_engaged"]),
+        ("Кнопка в конце", internal["acquisition_end_day_cta"]),
     ]
     funnel_rows = []
-    previous_count = total_clicks
+    previous_count: int | None = total_clicks
     for label, value in stages:
-        funnel_rows.append([label, value, _pct(value, previous_count), _pct(value, total_clicks)])
+        shown_value: int | str = value if value is not None else "НД"
+        from_previous = _pct(value, previous_count) if value is not None and previous_count is not None else "НД"
+        from_click = _pct(value, total_clicks) if value is not None else "НД"
+        funnel_rows.append([label, shown_value, from_previous, from_click])
         previous_count = value
     funnel_message = _rich_message(
         "Воронка · РСЯ + поиск",
-        [_table(["Этап", "Людей", "От прошлого", "От клика"], funnel_rows, "Когорта реального Start")],
+        [
+            _table(["Этап", "Людей", "С пред.", "С клика"], funnel_rows, "Когорта CTA/QR отчётного дня"),
+            _details([
+                "С пред. — конверсия от предыдущего этапа.",
+                "С клика — общая конверсия от рекламного клика.",
+                "НД — сигнал не был связан или ещё не был инструментирован; это не ноль.",
+            ]),
+        ],
+        fallbacks[2],
+    )
+
+    depth_available = bool(internal.get("depth_tracking_available"))
+    page_depth = internal.get("page_depth") or {}
+    video_depth = internal.get("video_depth") or {}
+    depth_rows = [
+        ["Start бота", internal["starts"]],
+        ["Интенсив", internal["personal_or_main_open"]],
+        ["День 1", internal["day_one"]],
+    ]
+    depth_rows.extend([f"Текст {milestone}%", page_depth.get(str(milestone), 0) if depth_available else "НД"] for milestone in (25, 50, 75, 100))
+    depth_rows.append(["Видео старт", internal["video_engaged"]])
+    depth_rows.extend([f"Видео {milestone}%", video_depth.get(str(milestone), 0) if depth_available else "НД"] for milestone in (25, 50, 75, 100))
+    depth_message = _rich_message(
+        "Глубина дня 1",
+        [
+            _table(["Этап", "Людей"], depth_rows, "Когорта first Start отчётного дня"),
+            _details([
+                "Каждый человек учитывается в каждом достигнутом пороге только один раз.",
+                "Глубина считается для когорты людей, впервые нажавших Start в отчётные сутки, до среза 03:00 МСК.",
+            ]),
+        ],
         fallbacks[3],
     )
 
-    segment_rows = []
-    for title, key in (("Мессенджер", "by_messenger"), ("Способ", "by_method"), ("Устройство", "by_device")):
-        for name, data in sorted(internal[key].items()):
-            segment_rows.append([title, name, data["entries"], data["starts"], _pct(data["starts"], data["entries"])])
-    segment_message = _rich_message(
-        "Сегменты",
-        [_table(["Разрез", "Значение", "Входы", "Start", "Конверсия"], segment_rows or [["—", "Данных нет", 0, 0, "—"]], "Посадка → бот")],
+    method_rows = []
+    for key, label in (("button", "Кнопка"), ("qr", "QR")):
+        data = internal["by_method"].get(key, {})
+        if internal.get("entry_tracking_available"):
+            entries = int(data.get("entries") or 0)
+            starts = int(data.get("starts") or 0)
+            method_rows.append([label, entries, starts, _pct(starts, entries)])
+        else:
+            method_rows.append([label, "НД", "НД", "НД"])
+    method_message = _rich_message(
+        "Способ входа",
+        [
+            _table(["Вход", "Людей", "Start", "В→S"], method_rows, "Кнопка или QR"),
+            _details([
+                "Вход — зафиксированное нажатие кнопки или открытие QR-кода на посадке.",
+                "В→S — доля входов, закончившихся реальным Start бота.",
+                "Мессенджер и устройство сохраняются в базе для анализа, но не перегружают ежедневную сводку.",
+            ]),
+        ],
         fallbacks[4],
     )
-    return [summary, channel_message, ads_message, funnel_message, segment_message]
+    return [summary, ads_message, funnel_message, depth_message, method_message]
 
 
 def build_daily_report(db: Session, settings: Settings, report_date: date) -> dict:

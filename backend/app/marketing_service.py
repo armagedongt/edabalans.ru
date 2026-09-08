@@ -70,6 +70,7 @@ EVENT_LABELS = {
     "intensive_masterclass_click": "Перешёл к мастер-классу",
     "intensive_telegram_click": "Нажал Telegram в интенсиве",
     "intensive_max_click": "Нажал MAX в интенсиве",
+    "page_progress": "Читал страницу",
     "video_engaged": "Начал смотреть видео",
     "video_progress": "Смотрел видео",
     "video_complete": "Досмотрел видео",

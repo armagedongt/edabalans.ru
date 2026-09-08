@@ -867,6 +867,7 @@ owns_files = [
   "backend/migrations/versions/20260908_0038_marketing_daily_reports.py",
   "backend/tests/test_marketing_daily_report.py",
   "docs/knowledge-base/YANDEX_DIRECT_OPERATIONS.md",
+  "docs/knowledge-base/YANDEX_DIRECT_CREATIVE_TESTING.md",
 ]
 owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*", "*/api/internal/marketing/*"]
 owns_tables = ["marketing_daily_reports"]

@@ -56,6 +56,8 @@ class Settings(BaseSettings):
     marketing_report_token: str = ""
     marketing_report_campaigns: str = "search:714152601,rsya:714157420"
     marketing_report_baseline_date: str = "2026-09-08"
+    marketing_report_entry_tracking_from: str = "2026-09-08"
+    marketing_report_depth_tracking_from: str = "2026-09-09"
     marketing_day_one_events_enabled: bool = False
     marketing_site_home_events_enabled: bool = False
     marketing_later_day_events_enabled: bool = False

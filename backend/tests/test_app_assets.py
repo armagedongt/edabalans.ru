@@ -1052,7 +1052,7 @@ def test_intensive_concept_pages_are_public() -> None:
         assert "data-edabalans-footer" in friendly.text
         if day_code in {"day-1", "day-2", "day-3"}:
             assert 'data-channel-block hidden' in friendly.text
-        assert '/intensive/runtime.js?v=1' in friendly.text
+        assert '/intensive/runtime.js?v=2' in friendly.text
         assert "EDITOR NOTE" not in friendly.text
     stylesheet = client.get("/intensive/intensive-components.css")
     assert stylesheet.status_code == 200
@@ -1074,6 +1074,8 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "unlocked_days: [1, 2, 3, 4]" in script.text
     assert 'method: "POST"' in script.text
     assert "target_url: MASTERCLASS_URL" in script.text
+    assert 'goal("page_progress", {day: 1, progress_percent: milestone})' in script.text
+    assert "window.requestAnimationFrame(measure)" in script.text
     loader = client.get("/intensive/tilda-loader.js")
     assert loader.status_code == 200
     assert loader.headers["content-type"].startswith("text/javascript")

@@ -33,6 +33,8 @@ Before broad preparation, extract decisions already made in the current task and
 - budget, strategy, payment model, and any bid or CPA limit;
 - geography, schedule, age, gender, and device corrections;
 - Metrika counter, optimization goal, and goal value;
+- if the strategy optimizes conversions, a recent Direct report row proving that the
+  selected goal actually receives attributed conversions;
 - UTM template and preservation of `yclid`;
 - targeting mechanism for every group;
 - campaign and group minus phrases;
@@ -114,6 +116,7 @@ Then produce an acceptance matrix with `PASS`, `FAIL`, or `N/A` for:
 - strategy, payment model, budget, and limits;
 - account funding or usable credit;
 - counter and goal;
+- optimization signal reaches Direct for conversion-based strategies;
 - geography, timezone, schedule, and start/end dates;
 - corrections;
 - UTM and attribution;
@@ -131,15 +134,39 @@ If any item is `FAIL` or unknown, the campaign is not ready.
 
 ## Phase 6: experiment protocol
 
-Record the hypothesis, primary metric, guardrails, and decision threshold before launch. Do not improvise the test after seeing early results.
+Before preparing an experiment, read
+[`YANDEX_DIRECT_CREATIVE_TESTING.md`](../../../docs/knowledge-base/YANDEX_DIRECT_CREATIVE_TESTING.md).
+It owns the research model, historical benchmarks, evidence thresholds, owner preferences,
+and decision log. Record the hypothesis, primary metric, guardrails, and stopping rule before
+launch; do not redefine the test after seeing early results.
 
-- Use `bot_start` as the primary early decision metric. Use landing-to-bot conversion, CTR, and CPC to diagnose the funnel. Treat payments as delayed confirmation because the sales cycle is 30+ days.
-- Change one variable at a time. For the first RSYA stage, keep one landing, headline, body, extensions, audience, placements, budget, and goal fixed; vary only the image across three separate ad IDs.
-- Prefer simultaneous variants in one group so weekday and market conditions match. Before launch, record a fallback for allocation starvation: either extend the test within its fixed budget/time cap or move the under-served variant to a comparable sequential window and label the result lower-confidence.
-- Do not choose a winner from one day, a trivial spend, or impressions alone. Derive the evidence threshold from the campaign's baseline CTR, landing-to-bot rate, target CPA, affordable maximum spend, and detectable effect. If those inputs are unavailable, pre-authorize a finite exploratory budget and label the outcome provisional rather than presenting a universal click or conversion quota as statistically final.
-- Record both a maximum experiment spend and a calendar end date. Define stop-loss rules for zero conversions and for nonzero conversions that remain above the affordable CPA. A technically healthy variant may continue only within those caps; reaching either cap forces stop, extension approval, or a provisional no-decision result.
-- After the image winner, test two or three headline/body packages while keeping the winning image and all campaign settings fixed. Test another landing only after the ad package has a stable signal.
-- Record every material edit with timestamp, object IDs, old value, new value, reason, and test version. Never overwrite a historical creative inside an existing ad when comparison matters.
+- Use `bot_start` as the primary early decision metric. Use landing-to-bot conversion, CTR,
+  and CPC to diagnose the funnel. Treat payments as delayed confirmation because the sales
+  cycle is 30+ days.
+- Distinguish optimization from causal learning. Several ads in one group let Direct allocate
+  traffic toward predicted performance, but do not provide equal exposure or isolate causes.
+- With a limited budget, use a controlled tournament: pre-moderate separate immutable ad IDs,
+  keep the campaign and strategy active, and alternate one control and one challenger in complete
+  time blocks defined by the canonical document. This guarantees spend to both variants but is
+  still sequential screening, not causal proof. Confirm only the best two through Direct's A/B
+  experiment with comparable campaigns and one changed variable.
+- For an isolated test, change only one layer: creative (image plus its native meme text),
+  headline, landing, or supporting description. Use two variants at a time. Keep targeting,
+  strategy, budget allocation, extensions, and every other layer fixed.
+- Derive the evidence threshold from the baseline and smallest useful improvement. Use the
+  canonical document's operational thresholds only as economy-oriented gates, not universal
+  statistical proof. A large difference can support an early provisional decision; a small
+  difference needs substantially more data.
+- Record both a maximum experiment spend and a calendar end date. Define stop-loss rules for
+  zero conversions and for nonzero conversions above the affordable CPA. Reaching either cap
+  forces stop, extension approval, or a provisional no-decision result.
+- Do not start a CPA Start experiment merely because the goal ID is configured. A recent Direct
+  report must contain attributed `bot_start` conversions with the expected ad IDs. Internal Start
+  rows with zero Direct conversions are a hard blocker until delivery is repaired or the owner
+  explicitly chooses a CTR-only strategy and accepts its learning reset.
+- Record every material edit with timestamp, `test_id`, object IDs, old value, new value, reason,
+  and test version. Never overwrite a historical creative inside an existing ad when comparison
+  matters.
 
 ## Phase 7: moderation and launch boundary
 
@@ -149,6 +176,25 @@ Record the hypothesis, primary metric, guardrails, and decision threshold before
 - Immediately before an authorized launch, re-read budget, status, goal, and the Phase 6 experiment contract once more.
 - After launch, confirm the campaign and intended groups are serving; do not assume the button succeeded.
 - In the first monitoring window, inspect search terms or RSYA placements, spend, clicks, `bot_start`, first-day-open events, and attribution continuity. Add new exclusions only from evidence, not from unexplained bulk guesses.
+
+## Phase 8: reporting acceptance
+
+Do not treat a dashboard column as implemented because its label exists. For every new
+funnel stage, prove the entire chain on one test participant: browser or bot action, one
+idempotent database event, aggregation into the correct Start cohort, internal report payload,
+and final Telegram table. Repeat the action and verify that unique-user counts do not grow.
+
+Use `НД` when the signal was not instrumented or linked for that reporting date. Use `0` only
+after the production event path is known to be active. Keep detailed dimensions such as
+messenger and device in storage even when the compact daily Telegram report intentionally
+shows only button versus QR.
+
+For edabalans.ru, day-one reading depth is `page_progress` at 25/50/75/100. Video depth is
+`video_engaged`, `video_progress` at 25/50/75, and `video_complete` as 100. Keep two cohorts
+explicit. The acquisition funnel uses CTA/QR from the report date and accepts its first real
+Start plus later actions only before the next 03:00 Moscow cutoff. The depth table overlaps at
+Start but uses users whose first real Start occurred on the report date. Never place the
+calendar-Start count next to the CTA-day count in one conversion chain.
 
 ## Current edabalans.ru defaults
 

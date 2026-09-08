@@ -2,14 +2,14 @@
   "use strict";
 
   const COUNTER_ID = 97331502;
-  const VERSION = "2026-09-06";
+  const VERSION = "2026-09-08-depth";
   const LOCAL_KEY = "edabalans:intensive:client:v2";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "yclid", "alias"];
   const MASTERCLASS_URL = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/mk1#masterclass";
   const SERVER_EVENT_CODES = new Set([
     "intensive_main_open", "intensive_day_open", "intensive_home_open", "intensive_menu_open", "intensive_telegram_click",
     "intensive_max_click", "intensive_next_day_unlocked", "intensive_next_day_click",
-    "intensive_masterclass_click", "video_engaged", "video_progress",
+    "intensive_masterclass_click", "page_progress", "video_engaged", "video_progress",
     "video_complete", "video_exit"
   ]);
   const params = new URLSearchParams(location.search);
@@ -431,6 +431,36 @@
     });
   }
 
+  function setupPageProgress() {
+    if (day !== 1) return;
+    const article = document.querySelector('[data-view="day1"] .intensive-article, .intensive-article, .article');
+    if (!article) return;
+    const milestones = new Set();
+    let scheduled = false;
+    const measure = () => {
+      scheduled = false;
+      const rect = article.getBoundingClientRect();
+      const articleTop = window.scrollY + rect.top;
+      const articleHeight = Math.max(article.scrollHeight, rect.height, 1);
+      const visibleThrough = Math.max(0, window.scrollY + window.innerHeight - articleTop);
+      const progress = Math.min(100, visibleThrough * 100 / articleHeight);
+      [25, 50, 75, 100].forEach((milestone) => {
+        if (progress >= milestone && !milestones.has(milestone)) {
+          milestones.add(milestone);
+          goal("page_progress", {day: 1, progress_percent: milestone});
+        }
+      });
+    };
+    const scheduleMeasure = () => {
+      if (scheduled) return;
+      scheduled = true;
+      window.requestAnimationFrame(measure);
+    };
+    window.addEventListener("scroll", scheduleMeasure, {passive: true});
+    window.addEventListener("resize", scheduleMeasure, {passive: true});
+    scheduleMeasure();
+  }
+
   async function init() {
     loadMetrika();
     const serverState = await loadServerState();
@@ -440,6 +470,7 @@
     setupChannels(serverState);
     setupNextDay(serverState);
     setupVideoAnalytics();
+    setupPageProgress();
     await setupDayOffer(serverState);
     if (day) {
       goal("intensive_day_open", {day, entry: entrySource});

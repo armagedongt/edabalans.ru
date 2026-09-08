@@ -10,6 +10,9 @@ implementation_status: implemented
 Полный операционный канон Директа, отчётов и аварийного восстановления:
 [`docs/knowledge-base/YANDEX_DIRECT_OPERATIONS.md`](../../YANDEX_DIRECT_OPERATIONS.md).
 
+Рабочий канон исследования офферов, креативов и посадочных, исторические связки и журнал
+решений: [`docs/knowledge-base/YANDEX_DIRECT_CREATIVE_TESTING.md`](../../YANDEX_DIRECT_CREATIVE_TESTING.md).
+
 Экран `/admin/marketing` сводит данные с декабря 2025 года в три обычные таблицы:
 
 - по одной строке на путь с источником, кампанией, объявлением и действиями по колонкам;

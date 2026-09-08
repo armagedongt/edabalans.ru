@@ -475,6 +475,17 @@ def test_personal_client_events_are_validated_and_idempotent() -> None:
     assert first.status_code == second.status_code == 200
     assert first.json()["event_id"] == second.json()["event_id"]
 
+    page_payload = {
+        "event_id": "page-event-1",
+        "event_type": "page_progress",
+        "day": 1,
+        "progress_percent": 25,
+    }
+    page_first = client.post("/api/intensive/events", json=page_payload)
+    page_second = client.post("/api/intensive/events", json={**page_payload, "event_id": "page-event-2"})
+    assert page_first.status_code == page_second.status_code == 200
+    assert page_first.json()["event_id"] == page_second.json()["event_id"]
+
     forged = client.post(
         "/api/intensive/events",
         json={
@@ -495,6 +506,16 @@ def test_personal_client_events_are_validated_and_idempotent() -> None:
         },
     )
     assert invalid_progress.status_code == 422
+    invalid_page_progress = client.post(
+        "/api/intensive/events",
+        json={
+            "event_id": "page-event-invalid",
+            "event_type": "page_progress",
+            "day": 1,
+            "progress_percent": 30,
+        },
+    )
+    assert invalid_page_progress.status_code == 422
     with factory() as db:
         event = db.scalar(
             select(CourseEvent).where(CourseEvent.event_type == "video_progress")
@@ -505,6 +526,11 @@ def test_personal_client_events_are_validated_and_idempotent() -> None:
         assert db.scalar(
             select(func.count(CourseEvent.id)).where(
                 CourseEvent.event_type == "video_progress"
+            )
+        ) == 1
+        assert db.scalar(
+            select(func.count(CourseEvent.id)).where(
+                CourseEvent.event_type == "page_progress"
             )
         ) == 1
         assert db.scalar(

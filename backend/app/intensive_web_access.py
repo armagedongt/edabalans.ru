@@ -48,6 +48,7 @@ CLIENT_EVENT_TYPES = {
     "intensive_next_day_unlocked",
     "intensive_next_day_click",
     "intensive_masterclass_click",
+    "page_progress",
     "video_engaged",
     "video_progress",
     "video_complete",
@@ -288,7 +289,14 @@ def record_client_event(
     next_day = integer_detail("next_day")
     if day and day not in range(1, 5):
         raise ValueError("invalid intensive day")
-    if event_type.startswith("video_"):
+    if event_type == "page_progress":
+        if day not in rows:
+            raise ValueError("intensive day is not open")
+        progress = integer_detail("progress_percent")
+        if progress not in {25, 50, 75, 100}:
+            raise ValueError("invalid intensive page progress")
+        event_key = f"page:{day}:page_progress:{progress}"
+    elif event_type.startswith("video_"):
         if day not in rows:
             raise ValueError("intensive day is not open")
         video_id = str(details.get("video_id") or "")[:120]
