@@ -357,9 +357,8 @@ def test_empty_account_routes_masterclass_to_the_common_purchase_view():
     assert "publicMasterclass: publicMasterclass" in embed_script
 
 
-def test_empty_account_masterclass_card_opens_public_tariffs_not_addon_offers():
-    courses = account_courses(
-        [
+def test_empty_account_any_closed_product_opens_public_masterclass_tariffs():
+    definitions = [
             {
                 "account_code": "masterclass",
                 "code": "MASTERCLASS",
@@ -380,16 +379,20 @@ def test_empty_account_masterclass_card_opens_public_tariffs_not_addon_offers():
                 "ready": True,
                 "app": "recipes",
             },
-        ],
-        set(),
-        False,
-    )
+    ]
+    courses = account_courses(definitions, set(), False)
 
     masterclass = next(item for item in courses if item["code"] == "masterclass")
     recipes = next(item for item in courses if item["code"] == "recipes")
     assert masterclass["owned"] is False
     assert masterclass["purchase_mode"] == "public_masterclass_tariffs"
-    assert recipes["purchase_mode"] is None
+    assert recipes["purchase_mode"] == "public_masterclass_tariffs"
+
+    owned_masterclass = account_courses(definitions, {"ACCESS_MASTERCLASS"}, False)
+    recipes_after_masterclass = next(
+        item for item in owned_masterclass if item["code"] == "recipes"
+    )
+    assert recipes_after_masterclass["purchase_mode"] is None
 
 
 def test_account_registration_migration_makes_payment_optional():

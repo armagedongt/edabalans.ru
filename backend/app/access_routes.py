@@ -150,6 +150,7 @@ def account_product_definitions(db: Session) -> list[dict]:
 
 def account_courses(definitions: list[dict], owned: set[str], legal_required: bool) -> list[dict]:
     courses = []
+    has_masterclass = "ACCESS_MASTERCLASS" in owned
     for definition in definitions:
         code = definition["account_code"]
         has_access = definition["resource"] in owned
@@ -164,9 +165,14 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
             "ready": definition["ready"],
             "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
             "app": definition["app"] if has_access and definition["ready"] and not legal_required else None,
-            # This is a first purchase, so it must open the three public
-            # Masterclass tariffs rather than the add-on offers for participants.
-            "purchase_mode": "public_masterclass_tariffs" if code == "masterclass" and not has_access else None,
+            # Before the first Masterclass purchase every closed product is an
+            # entry point to the three base tariffs. Once it is owned, the
+            # participant sees the focused add-on offer for the product instead.
+            "purchase_mode": (
+                "public_masterclass_tariffs"
+                if not has_masterclass and not has_access
+                else None
+            ),
         })
     return courses
 
