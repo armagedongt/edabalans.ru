@@ -33,6 +33,18 @@ def test_masterclass_article_tables_keep_mobile_scroll_contract() -> None:
     assert "min-width:620px" in table.group("rules")
 
 
+def test_hidden_masterclass_step_cannot_open_from_a_direct_url() -> None:
+    source = (
+        Path(__file__).resolve().parents[1]
+        / "app"
+        / "static"
+        / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+
+    assert "!stepNavigable(d,stepIndex)||!stepUnlocked(d,stepIndex)" in source
+    assert "stepNavigable(d,stepIndex)&&stepUnlocked(d,stepIndex)?route.material:null" in source
+
+
 def test_stable_embed_loader_is_public() -> None:
     response = client.get("/embed.js")
     assert response.status_code == 200
