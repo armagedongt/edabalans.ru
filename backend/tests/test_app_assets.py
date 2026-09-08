@@ -527,7 +527,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data.state!=='ready'" in account
     assert "tma__userbar__sendLogout" in account
     assert "/members/login?exit=y" in account
-    assert "identity.source==='tilda'" in course.text
+    assert "identity.source==='tilda'||identity.source==='native'" in course.text
     assert "function authHeaders()" in course.text
     assert "Мастер-класс по изменению питания и пищевых привычек" in course.text
     assert ".tlk-userbar{display:none!important}" in course.text
