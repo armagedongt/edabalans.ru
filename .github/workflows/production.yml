@@ -35,6 +35,12 @@ jobs:
           if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
             before="HEAD^"
           fi
+          # A force-push can make the webhook's previous SHA unreachable by the
+          # time checkout completes.  Classify the current commit in that case
+          # instead of failing before the test suite has a chance to run.
+          if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
+            before="HEAD^"
+          fi
 
           read -r migration startup_data backend telegram caddy compose < <(
             bash infra/deploy/classify-deploy-impact "$PWD" "$before" "$GITHUB_SHA"
@@ -60,6 +66,9 @@ jobs:
         run: |
           before="${{ github.event.before }}"
           if [[ -z "$before" || "$before" =~ ^0+$ ]]; then
+            before="HEAD^"
+          fi
+          if ! git cat-file -e "${before}^{commit}" 2>/dev/null; then
             before="HEAD^"
           fi
           # The map is a build output, not a second source of truth. Recreate it from
