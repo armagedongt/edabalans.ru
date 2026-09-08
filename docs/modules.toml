@@ -713,10 +713,10 @@ owns_files = [
   "backend/app/crm_routes.py",
   "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js",
   "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
-  "backend/app/static/max-logo.png",
+  "backend/app/static/max-logo.png", "prototypes/private-weather/**", "backend/tests/test_weather_page.py",
 ]
 owns_routes = [
-  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/admin/api/crm*", "*/admin/api/users*",
+  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/weather*", "*/admin/api/crm*", "*/admin/api/users*",
   "*/admin/api/summary", "*/admin/api/tags*", "*/admin/api/audit/*",
 ]
 depends_on = ["platform.auth", "platform.crm"]
