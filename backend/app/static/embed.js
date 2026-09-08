@@ -66,10 +66,50 @@
     window.top.location.replace(destination);
   }
 
+  function showStandaloneAccessError(mount, message) {
+    mount.innerHTML = '<div style="box-sizing:border-box;min-height:100vh;display:grid;place-items:center;padding:22px;background:#f4f4f6;font:16px/1.5 Arial,sans-serif;color:#17172b">' +
+      '<div style="width:min(520px,100%);padding:26px;border-radius:22px;background:#fff;box-shadow:0 16px 50px rgba(15,23,42,.12)">' +
+      '<h1 style="margin:0 0 12px;font-size:24px">Приложение не открылось</h1>' +
+      '<p style="margin:0 0 18px">' + escapeHtml(message) + '</p>' +
+      '<a href="' + escapeHtml(PUBLIC_ACCOUNT_URL) + '" style="display:block;padding:13px 18px;border-radius:12px;background:#239fe9;color:#fff;text-align:center;text-decoration:none;font-weight:700">Войти в личный кабинет</a>' +
+      '</div></div>';
+  }
+
   function nativeSession() {
     return fetch(APP_HOST + '/api/account-auth/session', {credentials: 'include'})
       .then(function (response) { return response.ok ? response.json() : {authenticated: false}; })
       .catch(function () { return {authenticated: false}; });
+  }
+
+  function prefetchAppHtml(appCode) {
+    if (!roots[appCode] || appHtmlCache[appCode]) return;
+    fetch(APP_HOST + '/apps/' + appCode + '.html', {cache: 'no-cache'})
+      .then(function (response) { return response.ok ? response.text() : ''; })
+      .then(function (html) { if (html) appHtmlCache[appCode] = html; })
+      .catch(function () {});
+  }
+
+  function telegramMiniAppSession(appCode) {
+    var telegram = window.Telegram && window.Telegram.WebApp;
+    var initData = telegram && String(telegram.initData || '');
+    if (!initData) return Promise.resolve(null);
+    try {
+      telegram.ready();
+      telegram.expand();
+    } catch (error) {}
+    return fetch(APP_HOST + '/api/account-auth/telegram-miniapp', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({init_data: initData, app_code: appCode})
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (payload) {
+        if (!response.ok) {
+          throw new Error(payload.detail || 'Не удалось войти через Telegram');
+        }
+        return payload;
+      });
+    });
   }
 
   function ensureAppShellStylesheet() {
@@ -332,14 +372,31 @@
       redirectToAccountLogin();
       return;
     }
+    var appCode = String(mounts[0].getAttribute('data-edabalans-app') || '').toLowerCase();
+    var telegram = window.Telegram && window.Telegram.WebApp;
+    var hasTelegramInitData = Boolean(telegram && telegram.initData);
+    prefetchAppHtml(appCode);
+    if (hasTelegramInitData) {
+      telegramMiniAppSession(appCode).then(function (telegramSession) {
+        if (!telegramSession || !validEmail(telegramSession.email)) {
+          showStandaloneAccessError(mounts[0], 'Telegram не привязан к личному кабинету');
+          return;
+        }
+        rememberNative(normalizeEmail(telegramSession.email));
+        start(mounts);
+      }).catch(function (error) {
+        showStandaloneAccessError(mounts[0], error.message || String(error));
+      });
+      return;
+    }
     nativeSession().then(function (session) {
-      if (!session.authenticated || !validEmail(session.email)) {
-        redirectToAccountLogin();
-        return;
-      }
-      rememberNative(normalizeEmail(session.email));
-      start(mounts);
-    });
+        if (!session.authenticated || !validEmail(session.email)) {
+          redirectToAccountLogin();
+          return;
+        }
+        rememberNative(normalizeEmail(session.email));
+        start(mounts);
+      });
   }
 
   window.EdabalansEmbed = {load: load, boot: boot};

@@ -252,6 +252,8 @@ owns_files = [
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
+  "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",
+  "legacy/google/SOURCES.md",
 ]
 owns_routes = [
   "*/apps/*", "*/assets/*",
@@ -325,6 +327,7 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
+  "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",
   "content/training/reference/**",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
@@ -341,7 +344,7 @@ owns_files = [
   "tools/import_calorizator_products.py", "tools/tests/test_import_calorizator_products.py",
 ]
 owns_tables = ["metabolism_states"]
-owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*"]
+owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*", "*/metabolism"]
 
 [[modules]]
 id = "products.calories"
@@ -373,7 +376,7 @@ owns_files = [
   "backend/tests/test_recipe_calculator.py", "backend/migrations/versions/20260827_0027_recipe_calculator.py",
 ]
 owns_tables = ["nutrition_products", "recipe_books", "recipe_ingredients"]
-owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*"]
+owns_routes = ["*/apps/recipes*", "*/api/apps/recipes*", "*/recipes", "*/recipe-calculator"]
 depends_on = ["platform.auth", "platform.commerce", "operations.imports"]
 
 [[modules]]

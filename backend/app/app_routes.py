@@ -459,6 +459,20 @@ def dqs_standalone() -> HTMLResponse:
     return standalone_app_page("dqs", "DQS · Дневник качества рациона")
 
 
+@router.get("/metabolism", include_in_schema=False)
+@router.get("/metabolism/", include_in_schema=False)
+def metabolism_standalone() -> HTMLResponse:
+    return standalone_app_page("metabolism", "\u041a\u0430\u043b\u044c\u043a\u0443\u043b\u044f\u0442\u043e\u0440 \u043c\u0435\u0442\u0430\u0431\u043e\u043b\u0438\u0437\u043c\u0430")
+
+
+@router.get("/recipes", include_in_schema=False)
+@router.get("/recipes/", include_in_schema=False)
+@router.get("/recipe-calculator", include_in_schema=False)
+@router.get("/recipe-calculator/", include_in_schema=False)
+def recipes_standalone() -> HTMLResponse:
+    return standalone_app_page("recipes", "\u041a\u0430\u043b\u044c\u043a\u0443\u043b\u044f\u0442\u043e\u0440 \u0440\u0435\u0446\u0435\u043f\u0442\u043e\u0432")
+
+
 def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
     template = (STATIC_DIR / "standalone-app.html").read_text(encoding="utf-8")
     template = template.replace("{{APP_CODE}}", app_code).replace("{{APP_TITLE}}", title)

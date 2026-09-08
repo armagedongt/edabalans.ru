@@ -22,6 +22,7 @@ class Settings(BaseSettings):
     smtp_use_ssl: bool = True
     smtp_starttls: bool = False
     telegram_test_bot_username: str = "Fitness_Talks_bot"
+    telegram_test_bot_token: str = ""
     max_bot_username: str = "id230409966750_bot"
     account_telegram_bot_username: str = "Fitness_Talks_bot"
     account_max_bot_username: str = "id230409966750_bot"

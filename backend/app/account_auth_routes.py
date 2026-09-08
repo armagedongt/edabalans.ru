@@ -1,10 +1,14 @@
 from __future__ import annotations
 
+import hashlib
+import hmac
+import json
 import secrets
 import threading
 import time
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
+from urllib.parse import parse_qsl
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.responses import FileResponse
@@ -19,11 +23,11 @@ from app.account_onboarding_service import (
     ensure_free_account_onboarding,
 )
 from app.account_security import token_hash, verify_password
-from app.app_service import EMAIL_RE, normalize_email
+from app.app_service import AppAccessError, EMAIL_RE, normalize_email, require_user_resource
 from app.config import Settings, get_settings
 from app.database import get_db
 from app.legal_service import accept_current_legal_documents
-from app.models import AccountCredential, AccountSession, User, UserEmail
+from app.models import AccountCredential, AccountSession, MessengerAccount, User, UserEmail
 
 
 router = APIRouter(tags=["account-auth"])
@@ -48,6 +52,11 @@ class EmailRegistrationIn(BaseModel):
 
 class NativeLegalIn(BaseModel):
     document_codes: list[str] = Field(min_length=2, max_length=2)
+
+
+class TelegramMiniAppLoginIn(BaseModel):
+    init_data: str = Field(min_length=20, max_length=8192)
+    app_code: str = Field(pattern="^(dqs|strength|metabolism|recipes)$")
 
 
 def _aware(value: datetime) -> datetime:
@@ -156,6 +165,65 @@ def primary_email(db: Session, user_id) -> str:
     ) or ""
 
 
+def telegram_init_user_id(init_data: str, bot_token: str, *, max_age_seconds: int = 900) -> str | None:
+    if not bot_token:
+        return None
+    try:
+        values = dict(parse_qsl(init_data, keep_blank_values=True, strict_parsing=True))
+    except ValueError:
+        return None
+    supplied_hash = values.pop("hash", "")
+    if not supplied_hash:
+        return None
+    data_check = "\n".join(f"{key}={values[key]}" for key in sorted(values))
+    secret = hmac.new(b"WebAppData", bot_token.encode(), hashlib.sha256).digest()
+    expected_hash = hmac.new(secret, data_check.encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(supplied_hash, expected_hash):
+        return None
+    try:
+        auth_date = int(values.get("auth_date") or 0)
+        user = json.loads(values.get("user") or "{}")
+    except (TypeError, ValueError, json.JSONDecodeError):
+        return None
+    age_seconds = int(time.time()) - auth_date
+    if auth_date <= 0 or age_seconds < -30 or age_seconds > max_age_seconds:
+        return None
+    if not isinstance(user, dict):
+        return None
+    user_id = str(user.get("id") or "")
+    return user_id if user_id.isdigit() else None
+
+
+def set_native_session(response: Response, db: Session, user: User, settings: Settings) -> str:
+    credential = db.get(AccountCredential, user.id)
+    if credential is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "Для аккаунта ещё не создан пароль")
+    raw_token = secrets.token_urlsafe(32)
+    now = datetime.now(UTC)
+    expires_at = now + timedelta(days=settings.account_session_days)
+    db.add(
+        AccountSession(
+            user_id=user.id,
+            token_hash=token_hash(raw_token),
+            password_version=credential.password_version,
+            expires_at=expires_at,
+            last_seen_at=now,
+        )
+    )
+    db.commit()
+    response.set_cookie(
+        COOKIE_NAME,
+        raw_token,
+        max_age=settings.account_session_days * 24 * 60 * 60,
+        expires=expires_at,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        path="/",
+    )
+    return expires_at.isoformat()
+
+
 @router.get("/lk", include_in_schema=False)
 @router.get("/lk/", include_in_schema=False)
 def account_portal() -> FileResponse:
@@ -241,30 +309,46 @@ def password_login(
             status.HTTP_401_UNAUTHORIZED,
             "Неверный email или пароль",
         )
-    raw_token = secrets.token_urlsafe(32)
-    now = datetime.now(UTC)
-    expires_at = now + timedelta(days=settings.account_session_days)
-    db.add(
-        AccountSession(
-            user_id=match.User.id,
-            token_hash=token_hash(raw_token),
-            password_version=match.AccountCredential.password_version,
-            expires_at=expires_at,
-            last_seen_at=now,
+    expires_at = set_native_session(response, db, match.User, settings)
+    return {"ok": True, "email": email, "expires_at": expires_at}
+
+
+@router.post("/api/account-auth/telegram-miniapp")
+def telegram_miniapp_login(
+    body: TelegramMiniAppLoginIn,
+    response: Response,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    telegram_user_id = telegram_init_user_id(body.init_data, settings.telegram_test_bot_token)
+    if not telegram_user_id:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Не удалось подтвердить вход через Telegram")
+    messenger = db.scalar(
+        select(MessengerAccount).where(
+            MessengerAccount.platform == "telegram",
+            MessengerAccount.platform_user_id == telegram_user_id,
         )
     )
-    db.commit()
-    response.set_cookie(
-        COOKIE_NAME,
-        raw_token,
-        max_age=settings.account_session_days * 24 * 60 * 60,
-        expires=expires_at,
-        httponly=True,
-        secure=True,
-        samesite="lax",
-        path="/",
-    )
-    return {"ok": True, "email": email, "expires_at": expires_at.isoformat()}
+    user = db.get(User, messenger.user_id) if messenger else None
+    if user is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "Telegram не привязан к личному кабинету")
+    resource_codes: str | tuple[str, ...] = {
+        "dqs": "dqs",
+        "strength": "strength",
+        "metabolism": ("metabolism", "ACCESS_CALORIES"),
+        "recipes": "recipes",
+    }[body.app_code]
+    try:
+        require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
+    except AppAccessError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
+    expires_at = set_native_session(response, db, user, settings)
+    return {
+        "ok": True,
+        "email": primary_email(db, user.id),
+        "expires_at": expires_at,
+        "app_code": body.app_code,
+    }
 
 
 @router.get("/api/account-auth/session")

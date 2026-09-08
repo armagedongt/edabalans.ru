@@ -1,6 +1,6 @@
 # Реестр источников legacy-приложений
 
-Проверено 22.08.2026. Даты изменения ниже получены из Google Drive.
+Проверено 08.09.2026. Даты изменения ниже получены из Google Drive.
 
 | Источник | Изменён | Решение в репозитории |
 |---|---:|---|
@@ -15,7 +15,8 @@
 | [Силовые — структура и логика](https://docs.google.com/document/d/1xqybBOMvFvW3cmXmGvWeuyW7sIkUYASi4YDjsTG0E-8/edit) | 21.08.2026 | Сохранён как требования к миграции |
 | [Силовые — Apps Script](https://docs.google.com/document/d/19hg4s1Vpcq4CqgLkM9vuOay29oI84IRHmT98aj7Qybo/edit) | 21.08.2026 | Код сохранён с обезличенным admin-email |
 | [DQS — рабочая база](https://docs.google.com/spreadsheets/d/13Ms00YmGP_IPW3FgzagMlx6rsuNFHV-aNxDkt1IkwqE/edit) | — | Сохранена только схема вкладок/заголовков |
-| [Силовые — база](https://docs.google.com/spreadsheets/d/1lcuFzG8T4aHhctCE5PXPjc3IjVnXhzUptrX_silrVIE/edit) | — | Сохранена только схема вкладок/заголовков |
+| [Силовые — нормализованный снимок](https://docs.google.com/spreadsheets/d/1lcuFzG8T4aHhctCE5PXPjc3IjVnXhzUptrX_silrVIE/edit) | 21.08.2026 | Старая схема миграции; не использовать как источник последних тренировок |
+| [Силовые Валентины — актуальная рабочая таблица](https://docs.google.com/spreadsheets/d/1iOy9BV-FeB9tXqQTgRgysGOFl3G9IAUQY2tcoU-Eqzs/edit) | 08.09.2026 | Канонический источник текущего порядка и последних тренировок; вкладка `Силовые Версия 2! (актуальная)` читается только при контролируемом импорте |
 
 Google-файлы не удалялись и не изменялись.
 

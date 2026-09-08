@@ -57,6 +57,12 @@ def as_bool(value: Any, default: bool = True) -> bool:
 def json_value(value: Any) -> Any:
     if value in (None, ""):
         return None
+    if isinstance(value, (dict, list)):
+        return value
+    try:
+        return json.loads(str(value))
+    except json.JSONDecodeError:
+        return None
 
 
 def sheet_date(value: Any) -> str | None:
@@ -69,12 +75,34 @@ def sheet_date(value: Any) -> str | None:
         return datetime.fromisoformat(text.replace("Z", "+00:00")).date().isoformat()
     except ValueError:
         return text[:10] if len(text) >= 10 else None
-    if isinstance(value, (dict, list)):
-        return value
-    try:
-        return json.loads(str(value))
-    except json.JSONDecodeError:
+
+
+def json_timestamp(value: Any) -> datetime | None:
+    if not isinstance(value, dict) or not value.get("updated"):
         return None
+    try:
+        parsed = datetime.fromisoformat(str(value["updated"]).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return parsed.replace(tzinfo=timezone.utc) if parsed.tzinfo is None else parsed.astimezone(timezone.utc)
+
+
+def merge_dqs_days(existing: dict[str, Any] | None, incoming: dict[str, Any]) -> tuple[dict[str, Any], int]:
+    """Merge a legacy sheet without erasing newer entries saved in the native app."""
+    merged = dict(existing or {})
+    changed = 0
+    for day, source_value in incoming.items():
+        current_value = merged.get(day)
+        if current_value is None:
+            merged[day] = source_value
+            changed += 1
+            continue
+        source_time = json_timestamp(source_value)
+        current_time = json_timestamp(current_value)
+        if source_time is not None and (current_time is None or source_time > current_time):
+            merged[day] = source_value
+            changed += int(current_value != source_value)
+    return merged, changed
 
 
 def user_for_email(db, email: str, display_name: str = "") -> User:
@@ -152,14 +180,21 @@ def import_dqs(db, payload: dict[str, Any], summary: dict[str, int]) -> None:
             if value is not None:
                 days[str(number)] = value
         state = db.scalar(select(DqsState).where(DqsState.user_id == user.id))
-        if not state:
+        created = state is None
+        if created:
             state = DqsState(user_id=user.id, source="google_dqs")
             db.add(state)
-        state.start_date = sheet_date(row.get("start_date"))
-        state.days = days
-        state.source = "google_dqs"
-        state.version = max(1, state.version or 1)
+        incoming_start_date = sheet_date(row.get("start_date"))
+        merged_days, changed = merge_dqs_days(state.days, days)
+        if not state.start_date and incoming_start_date:
+            state.start_date = incoming_start_date
+            changed += 1
+        if changed:
+            state.days = merged_days
+            state.version = max(1, state.version or 1) + (0 if created else 1)
+        state.source = "google_dqs_merged"
         summary["dqs_states"] += 1
+        summary["dqs_days_merged"] += changed
 
 
 def import_strength(db, payload: dict[str, Any], summary: dict[str, int]) -> None:

@@ -1,7 +1,10 @@
+import hashlib
+import hmac
+import json
 import os
 from datetime import UTC, datetime
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import parse_qs, urlencode, urlparse
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("APP_AUTH_SECRET", "test-account-secret")
@@ -34,8 +37,10 @@ from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     AccountCredential,
     AccountOnboarding,
+    MessengerAccount,
     MessengerLinkToken,
     Payment,
+    Resource,
     User,
     UserAccess,
     UserEmail,
@@ -55,6 +60,7 @@ def settings() -> Settings:
         smtp_username="smtp-user",
         smtp_password="smtp-secret",
         smtp_from_email="cabinet@example.test",
+        telegram_test_bot_token="telegram-test-token",
     )
 
 
@@ -98,6 +104,47 @@ def seed_credential(factory: sessionmaker[Session]) -> None:
                     password_hash=password_hash("Test-Password-9", "test-account-secret"),
                     password_version=1,
                     issued_via="telegram",
+                ),
+            ]
+        )
+        db.commit()
+
+
+def telegram_init_data(user_id: int, auth_date: int | None = None) -> str:
+    values = {
+        "auth_date": str(auth_date or int(datetime.now(UTC).timestamp())),
+        "query_id": "test-query",
+        "signature": "telegram-signature-field",
+        "user": json.dumps({"id": user_id, "first_name": "Test"}, separators=(",", ":")),
+    }
+    check = "\n".join(f"{key}={values[key]}" for key in sorted(values))
+    secret = hmac.new(b"WebAppData", b"telegram-test-token", hashlib.sha256).digest()
+    values["hash"] = hmac.new(secret, check.encode(), hashlib.sha256).hexdigest()
+    return urlencode(values)
+
+
+def seed_telegram_strength_access(factory: sessionmaker[Session]) -> None:
+    seed_credential(factory)
+    with factory() as db:
+        user = db.scalar(
+            select(User).join(UserEmail).where(UserEmail.email_normalized == "member@example.test")
+        )
+        resource = Resource(code="strength", name="Strength", status="active")
+        db.add(resource)
+        db.flush()
+        db.add_all(
+            [
+                UserAccess(
+                    user_id=user.id,
+                    resource_id=resource.id,
+                    source="test",
+                    granted_at=datetime.now(UTC),
+                ),
+                MessengerAccount(
+                    user_id=user.id,
+                    platform="telegram",
+                    platform_user_id="123456",
+                    source="test",
                 ),
             ]
         )
@@ -154,6 +201,45 @@ def test_login_sets_remembered_http_only_session_and_logout_revokes_it():
 
     assert client.post("/api/account-auth/logout").status_code == 200
     assert client.get("/api/account-auth/session").json()["authenticated"] is False
+
+
+def test_telegram_miniapp_creates_same_native_session_only_for_linked_entitled_user():
+    client, factory = setup()
+    seed_telegram_strength_access(factory)
+
+    accepted = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": telegram_init_data(123456), "app_code": "strength"},
+    )
+    assert accepted.status_code == 200
+    assert accepted.json()["email"] == "member@example.test"
+    assert accepted.cookies.get("edabalans_account_session")
+    assert client.get("/api/account-auth/session").json()["authenticated"] is True
+
+    rejected = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": telegram_init_data(999999), "app_code": "strength"},
+    )
+    assert rejected.status_code == 403
+
+    tampered = telegram_init_data(123456).replace("123456", "654321")
+    invalid = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": tampered, "app_code": "strength"},
+    )
+    assert invalid.status_code == 401
+
+    expired = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": telegram_init_data(123456, int(datetime.now(UTC).timestamp()) - 901), "app_code": "strength"},
+    )
+    assert expired.status_code == 401
+
+    future = client.post(
+        "/api/account-auth/telegram-miniapp",
+        json={"init_data": telegram_init_data(123456, int(datetime.now(UTC).timestamp()) + 31), "app_code": "strength"},
+    )
+    assert future.status_code == 401
     app.dependency_overrides.clear()
 
 

@@ -54,11 +54,19 @@ def test_stable_embed_loader_is_public() -> None:
 
 
 def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
-    for path, app_code in (("/dqs", "dqs"), ("/training", "strength"), ("/strength", "strength")):
+    for path, app_code in (
+        ("/dqs", "dqs"),
+        ("/training", "strength"),
+        ("/strength", "strength"),
+        ("/metabolism", "metabolism"),
+        ("/recipes", "recipes"),
+        ("/recipe-calculator", "recipes"),
+    ):
         response = client.get(path)
         assert response.status_code == 200
         assert f'data-edabalans-app="{app_code}"' in response.text
         assert '<script src="/embed.js" defer></script>' in response.text
+        assert "telegram-web-app.js" in response.text
         assert response.headers["x-robots-tag"] == "noindex, nofollow"
 
     loader = client.get("/embed.js").text
