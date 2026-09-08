@@ -167,6 +167,10 @@ health только контейнера `telegram-bot`. Состояние `unh
 копируется на сервер в `/opt/sherbakova-preview`. Откат ограничен заменой этого каталога
 либо удалением трёх Caddy handlers и read-only mount; остальные app routes не меняются.
 
+После выпуска проверяются публичные HTTP-границы: `/sherbakova/` должен перенаправить на
+`/sherbakova/v2/burgundy/`, а три главные страницы, три `/blog/`, демонстрационная статья и
+один локальный static asset должны вернуть `200`. Проверка не требует обращения к backend.
+
 ## Резервные копии
 
 Бакет: `edabalans-postgres-backups-ajessi9majsb7glatojn`.
