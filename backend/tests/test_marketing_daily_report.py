@@ -78,15 +78,11 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert payload["cumulative"]["rsya"]["total"]["clicks"] == 0
     assert any("6 Start" in message for message in payload["telegram_messages"])
     assert all("АВТОРАЗБОР БЕЗ ИИ" not in message for message in payload["telegram_messages"])
-    assert [message.splitlines()[0] for message in payload["telegram_messages"]] == [
-        "📊 ДИРЕКТ · 07.09.2026 00:00–23:59 МСК",
-        "🧭 ПУТЬ ЛИДА · входы 07.09.2026, действия до 08.09.2026 03:00 МСК",
-    ]
-    assert len(payload["telegram_rich_messages"]) == 2
-    assert [message["rich_message"]["blocks"][0]["text"] for message in payload["telegram_rich_messages"]] == [
-        "📊 Директ · 07.09.2026",
-        "🧭 Путь лида · 07.09.2026",
-    ]
+    assert len(payload["telegram_messages"]) == 1
+    assert payload["telegram_messages"][0].splitlines()[0] == "📊 ДИРЕКТ · 07.09.2026 00:00–23:59 МСК"
+    assert "🧭 ПУТЬ ЛИДА · входы 07.09.2026, действия до 08.09.2026 03:00 МСК" in payload["telegram_messages"][0]
+    assert len(payload["telegram_rich_messages"]) == 1
+    assert payload["telegram_rich_messages"][0]["rich_message"]["blocks"][0]["text"] == "📊 Директ и путь лида · 07.09.2026"
     assert [message["fallback_text"] for message in payload["telegram_rich_messages"]] == payload["telegram_messages"]
     first_blocks = payload["telegram_rich_messages"][0]["rich_message"]["blocks"]
     rsya_table = next(block for block in first_blocks if block.get("type") == "table" and block.get("caption") == "РСЯ")
@@ -94,7 +90,12 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert [cell["text"] for cell in rsya_table["cells"][0]] == ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"]
     assert rsya_table["cells"][1][0]["text"] == "ИТОГО"
     assert search_table["is_bordered"] is True
-    funnel_table = next(block for block in payload["telegram_rich_messages"][1]["rich_message"]["blocks"] if block.get("type") == "table")
+    for key, table in (("rsya", rsya_table), ("search", search_table)):
+        assert [row[0]["text"] for row in table["cells"][1:]] == [
+            "ИТОГО",
+            *[ad["name"] for ad in payload["channels"][key]["ads"]],
+        ]
+    funnel_table = next(block for block in first_blocks if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск")
     assert [cell["text"] for cell in funnel_table["cells"][0]] == ["Этап", "Кол-во", "От шага", "От клика"]
     labels = [row[0]["text"] for row in funnel_table["cells"][1:]]
     assert labels == [
@@ -104,6 +105,14 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
         "Видео старт", "Видео 25%", "Видео 50%", "Видео 75%", "Видео 100%",
         "Кнопка в конце", "Подписались",
     ]
+    fallback = payload["telegram_messages"][0]
+    assert "РСЯ ИТОГО:" in fallback
+    assert "Поиск ИТОГО:" in fallback
+    for channel in ("rsya", "search"):
+        for ad in payload["channels"][channel]["ads"]:
+            assert ad["name"] in fallback
+    for label in labels:
+        assert f"{label}:" in fallback
     assert funnel_table["cells"][2][1]["text"] == "101"
     assert funnel_table["cells"][2][2]["text"] == "91.8%"
     assert funnel_table["cells"][12][1]["text"] == "4"
@@ -117,8 +126,8 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert len(payload["channels"]["rsya"]["ads"]) == 3
     assert len(payload["channels"]["search"]["ads"]) == 3
     assert next(ad for ad in payload["channels"]["rsya"]["ads"] if ad["ad_id"] == 1920472171246211822)["clicks"] == 0
-    assert "Видео 100%" in payload["telegram_messages"][1]
-    assert "от шага" in payload["telegram_messages"][1]
+    assert "Видео 100%" in payload["telegram_messages"][0]
+    assert "от шага" in payload["telegram_messages"][0]
 
 
 def test_course_depth_snapshot_counts_unique_day_one_milestones_after_start():
@@ -315,8 +324,8 @@ def test_missing_sessions_is_no_data_instead_of_zero_or_error():
 
     assert rsya["total"]["sessions_available"] is False
     cells = next(
-        block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"]
-        if block.get("type") == "table"
+        block for block in reports.render_rich_messages(payload)[0]["rich_message"]["blocks"]
+        if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск"
     )["cells"]
     assert cells[2][0]["text"] == "Посетили посадку"
     assert cells[2][1]["text"] == "НД"
@@ -341,7 +350,7 @@ def test_rich_report_marks_unlinked_landing_signal_as_no_data():
     }
 
     rich = reports.render_rich_messages(payload)
-    funnel_cells = next(block for block in rich[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    funnel_cells = next(block for block in rich[0]["rich_message"]["blocks"] if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск")["cells"]
     assert funnel_cells[5][1]["text"] == "НД"
     assert funnel_cells[6][1]["text"] == "НД"
     assert funnel_cells[7][1]["text"] == "НД"
@@ -486,8 +495,8 @@ def test_acquisition_cohort_drives_reminder_subscription_and_funnel_rows(monkeyp
         "internal": result,
     }
     cells = next(
-        block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"]
-        if block.get("type") == "table"
+        block for block in reports.render_rich_messages(payload)[0]["rich_message"]["blocks"]
+        if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск"
     )["cells"]
     rows_by_label = {row[0]["text"]: row for row in cells[1:]}
     assert [cell["text"] for cell in rows_by_label["↳ Напоминание"][1:]] == ["1", "100.0%", "1.0%"]
@@ -603,10 +612,10 @@ def test_depth_tracking_availability_has_independent_rollout_boundary(monkeypatc
         },
         "internal": before,
     }
-    before_cells = next(block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    before_cells = next(block for block in reports.render_rich_messages(payload)[0]["rich_message"]["blocks"] if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск")["cells"]
     assert before_cells[12][1]["text"] == "НД"
     payload["internal"] = after
-    after_cells = next(block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    after_cells = next(block for block in reports.render_rich_messages(payload)[0]["rich_message"]["blocks"] if block.get("type") == "table" and block.get("caption") == "РСЯ + поиск")["cells"]
     assert after_cells[12][1]["text"] == "0"
 
 

@@ -191,8 +191,8 @@ as button/QR directly under their parent stages in the daily funnel.
 
 For edabalans.ru, day-one reading depth is `page_progress` at 25/50/75/100. Video depth is
 `video_engaged`, `video_progress` at 25/50/75, and `video_complete` as 100. The daily Telegram
-report has exactly two messages: (1) one Direct message with an RSYA table and a Search table,
-each containing its total and ad rows; (2) one complete acquisition path. The acquisition path
+report has exactly one message with three tables: RSYA, Search, and one complete acquisition path.
+The first two tables contain their total and ad rows. The acquisition path
 uses CTA/QR from the report date and accepts its first real Start plus later actions only before
 the next 03:00 Moscow cutoff. Do not mix in a separate calendar-Start cohort.
 
