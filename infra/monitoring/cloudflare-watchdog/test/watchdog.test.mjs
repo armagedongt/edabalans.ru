@@ -336,6 +336,43 @@ test("daily report is generated, delivered as native rich tables after 06:00 Mos
   assert.equal(storage.value.report.richPreviewSent, true);
 });
 
+test("daily report snapshot waits for 03:00 Moscow and delivery waits for 06:00", async () => {
+  const calls = [];
+  const fetchImpl = async (url) => {
+    const value = String(url);
+    calls.push(value);
+    if (value.includes("/daily-report/generate")) return response(200, { status: "pending" });
+    if (value.includes("/daily-report/delivered")) return response(200, { status: "sent" });
+    if (value.includes("/daily-report?")) return response(200, { messages: ["report"], payload: {} });
+    if (value.includes("api.telegram.org")) return response(200, { ok: true });
+    return response(200, { status: "ready" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    MARKETING_REPORT_URL: "https://api.example/daily-report",
+    MARKETING_REPORT_TOKEN: "report-secret",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+  };
+  const storage = new MemoryStorage();
+
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 7, 23, 59, 0) });
+  assert.equal(calls.filter((url) => url.includes("/daily-report/")).length, 0);
+
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 0, 0, 0) });
+  assert.equal(calls.filter((url) => url.includes("/generate?")).length, 1);
+  assert.equal(calls.filter((url) => url.includes("/delivered?")).length, 0);
+  assert.equal(calls.filter((url) => url.includes("api.telegram.org")).length, 0);
+
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 3, 0, 0) });
+  assert.equal(calls.filter((url) => url.includes("/generate?")).length, 1);
+  assert.equal(calls.filter((url) => url.includes("/delivered?")).length, 1);
+  assert.equal(calls.filter((url) => url.includes("api.telegram.org")).length, 1);
+  assert.equal(storage.value.report.generatedDate, "2026-09-07");
+  assert.equal(storage.value.report.sentDate, "2026-09-07");
+});
+
 test("rich report falls back to readable cards when Telegram rejects native tables", async () => {
   const telegramCalls = [];
   const fetchImpl = async (url, options = {}) => {

@@ -529,14 +529,15 @@ async function runDailyReport(state, env, fetchImpl, storage, now) {
   const moscowNow = new Date(now + 3 * 60 * 60 * 1000);
   const target = new Date(Date.UTC(moscowNow.getUTCFullYear(), moscowNow.getUTCMonth(), moscowNow.getUTCDate() - 1));
   const reportDate = target.toISOString().slice(0, 10);
+  const snapshotReady = moscowNow.getUTCHours() >= 3;
   try {
-    if (state.report.generatedDate !== reportDate) {
+    if (snapshotReady && state.report.generatedDate !== reportDate) {
       await reportRequest(`${env.MARKETING_REPORT_URL}/generate?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
       state.report.generatedDate = reportDate;
       state.report.lastError = null;
       await persist(storage, state);
     }
-    if (instant.getUTCHours() >= 3 && state.report.sentDate !== reportDate) {
+    if (snapshotReady && instant.getUTCHours() >= 3 && state.report.sentDate !== reportDate) {
       const report = await reportRequest(`${env.MARKETING_REPORT_URL}?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "GET", fetchImpl);
       const usedRichMessages = await deliverDailyReport(report, env, fetchImpl);
       if (usedRichMessages) state.report.richPreviewSent = true;
