@@ -1,3 +1,4 @@
+import json
 import os
 from datetime import date, datetime, timezone
 from types import SimpleNamespace
@@ -26,9 +27,9 @@ def settings():
 
 def direct_rows():
     return [
-        {"Date": "2026-09-07", "CampaignId": "714157420", "AdGroupId": "1", "AdId": "1920472171246211821", "Device": "MOBILE", "Impressions": "1000", "Clicks": "100", "Cost": "1000"},
-        {"Date": "2026-09-07", "CampaignId": "714152601", "AdGroupId": "2", "AdId": "1920469239931549227", "Device": "DESKTOP", "Impressions": "100", "Clicks": "10", "Cost": "500"},
-        {"Date": "2026-09-06", "CampaignId": "714157420", "AdGroupId": "1", "AdId": "1920472171246211821", "Device": "MOBILE", "Impressions": "500", "Clicks": "50", "Cost": "400"},
+        {"Date": "2026-09-07", "CampaignId": "714157420", "AdGroupId": "1", "AdId": "1920472171246211821", "Device": "MOBILE", "Impressions": "1000", "Clicks": "100", "Sessions": "92", "Cost": "1000"},
+        {"Date": "2026-09-07", "CampaignId": "714152601", "AdGroupId": "2", "AdId": "1920469239931549227", "Device": "DESKTOP", "Impressions": "100", "Clicks": "10", "Sessions": "9", "Cost": "500"},
+        {"Date": "2026-09-06", "CampaignId": "714157420", "AdGroupId": "1", "AdId": "1920472171246211821", "Device": "MOBILE", "Impressions": "500", "Clicks": "50", "Sessions": "48", "Cost": "400"},
     ]
 
 
@@ -48,9 +49,16 @@ def internal_snapshot():
         "acquisition_video_engaged": 3,
         "page_depth": {"25": 4, "50": 3, "75": 2, "100": 1},
         "video_depth": {"25": 3, "50": 2, "75": 1, "100": 1},
+        "acquisition_page_depth": {"25": 4, "50": 3, "75": 2, "100": 1},
+        "acquisition_video_depth": {"25": 3, "50": 2, "75": 1, "100": 1},
         "depth_tracking_available": True,
         "end_day_cta": 2,
         "acquisition_end_day_cta": 2,
+        "subscribed": 1,
+        "acquisition_subscribed": 1,
+        "reminder_tracking_available": True,
+        "acquisition_reminders_sent": 2,
+        "acquisition_opened_within_3h_after_reminder": 1,
         "by_creative": {"control_cakes": 4, "1920469239931549227": 2},
         "by_messenger": {"tg": {"entries": 8, "starts": 5}, "max": {"entries": 4, "starts": 1}},
         "by_method": {"button": {"entries": 10, "starts": 5}, "qr": {"entries": 2, "starts": 1}},
@@ -60,6 +68,7 @@ def internal_snapshot():
 
 def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     monkeypatch.setattr(reports, "_direct_report", lambda *_args, **_kwargs: direct_rows())
+    monkeypatch.setattr(reports, "_direct_campaign_budgets", lambda *_args, **_kwargs: {714152601: 3500.0, 714157420: 10000.0})
     monkeypatch.setattr(reports, "_internal_snapshot", lambda *_args, **_kwargs: internal_snapshot())
     payload = reports.build_daily_report(None, settings(), date(2026, 9, 7))
 
@@ -67,37 +76,49 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert payload["channels"]["search"]["total"]["starts"] == 2
     assert payload["comparison_previous"]["rsya"]["total"]["clicks"] == 50
     assert payload["cumulative"]["rsya"]["total"]["clicks"] == 0
-    assert any("Реальный Start бота: 6" in message for message in payload["telegram_messages"])
+    assert any("6 Start" in message for message in payload["telegram_messages"])
     assert all("АВТОРАЗБОР БЕЗ ИИ" not in message for message in payload["telegram_messages"])
     assert [message.splitlines()[0] for message in payload["telegram_messages"]] == [
-        "📊 ДИРЕКТ · 2026-09-07 · СРЕЗ 03:00 МСК",
-        "ОБЪЯВЛЕНИЯ",
-        "ВОРОНКА (РСЯ + ПОИСК)",
-        "ГЛУБИНА ДНЯ 1",
-        "СПОСОБ ВХОДА",
+        "📊 ДИРЕКТ · 07.09.2026 00:00–23:59 МСК",
+        "🧭 ПУТЬ ЛИДА · входы 07.09.2026, действия до 08.09.2026 03:00 МСК",
     ]
-    assert len(payload["telegram_rich_messages"]) == 5
+    assert len(payload["telegram_rich_messages"]) == 2
     assert [message["rich_message"]["blocks"][0]["text"] for message in payload["telegram_rich_messages"]] == [
-        "📊 Директ · 2026-09-07",
-        "Объявления",
-        "Воронка · РСЯ + поиск",
-        "Глубина дня 1",
-        "Способ входа",
+        "📊 Директ · 07.09.2026",
+        "🧭 Путь лида · 07.09.2026",
     ]
     assert [message["fallback_text"] for message in payload["telegram_rich_messages"]] == payload["telegram_messages"]
-    summary_headers = [cell["text"] for cell in payload["telegram_rich_messages"][0]["rich_message"]["blocks"][2]["cells"][0]]
-    assert summary_headers == ["Канал", "Кл.", "CTR", "Расход", "Start", "К→S", "CPA"]
-    assert payload["telegram_rich_messages"][1]["rich_message"]["blocks"][1]["type"] == "table"
-    assert payload["telegram_rich_messages"][1]["rich_message"]["blocks"][1]["is_bordered"] is True
-    assert payload["telegram_rich_messages"][2]["rich_message"]["blocks"][1]["cells"][0][2]["text"] == "С пред."
-    assert payload["telegram_rich_messages"][2]["rich_message"]["blocks"][1]["cells"][1][1]["align"] == "center"
-    assert payload["telegram_rich_messages"][2]["rich_message"]["blocks"][2]["type"] == "details"
-    depth_cells = payload["telegram_rich_messages"][3]["rich_message"]["blocks"][1]["cells"]
-    assert depth_cells[4][0]["text"] == "Текст 25%"
-    assert depth_cells[4][1]["text"] == "4"
-    assert depth_cells[-1][0]["text"] == "Видео 100%"
-    assert "ИМИТАЦИЯ" in payload["demo_ai_message"]
-    assert "\n\nЛучший канал" in payload["demo_ai_message"]
+    first_blocks = payload["telegram_rich_messages"][0]["rich_message"]["blocks"]
+    rsya_table = next(block for block in first_blocks if block.get("type") == "table" and block.get("caption") == "РСЯ")
+    search_table = next(block for block in first_blocks if block.get("type") == "table" and block.get("caption") == "Поиск")
+    assert [cell["text"] for cell in rsya_table["cells"][0]] == ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"]
+    assert rsya_table["cells"][1][0]["text"] == "ИТОГО"
+    assert search_table["is_bordered"] is True
+    funnel_table = next(block for block in payload["telegram_rich_messages"][1]["rich_message"]["blocks"] if block.get("type") == "table")
+    assert [cell["text"] for cell in funnel_table["cells"][0]] == ["Этап", "Кол-во", "От шага", "От клика"]
+    labels = [row[0]["text"] for row in funnel_table["cells"][1:]]
+    assert labels == [
+        "Клики рекламы", "Посетили посадку", "↳ Телефон", "↳ ПК", "Перешли в бот",
+        "↳ Кнопка", "↳ QR", "Нажали Start", "Открыли день 1", "↳ Напоминание",
+        "↳ Открыли ≤3ч", "Текст 25%", "Текст 50%", "Текст 75%", "Текст 100%",
+        "Видео старт", "Видео 25%", "Видео 50%", "Видео 75%", "Видео 100%",
+        "Кнопка в конце", "Подписались",
+    ]
+    assert funnel_table["cells"][2][1]["text"] == "101"
+    assert funnel_table["cells"][2][2]["text"] == "91.8%"
+    assert funnel_table["cells"][12][1]["text"] == "4"
+    assert funnel_table["cells"][21][0]["text"] == "Кнопка в конце"
+    assert payload["channels"]["search"]["total"]["weekly_budget_rub"] == 3500.0
+    assert payload["channels"]["search"]["total"]["week_remaining_rub"] == 3000.0
+    footer = next(block for block in first_blocks if block.get("type") == "footer")
+    assert "Поиск: неделя 500 ₽ из 3 500 ₽ · осталось 3 000 ₽" in footer["text"]
+    assert "РСЯ: неделя 1 000 ₽ из 10 000 ₽ · осталось 9 000 ₽" in footer["text"]
+    assert "demo_ai_message" not in payload
+    assert len(payload["channels"]["rsya"]["ads"]) == 3
+    assert len(payload["channels"]["search"]["ads"]) == 3
+    assert next(ad for ad in payload["channels"]["rsya"]["ads"] if ad["ad_id"] == 1920472171246211822)["clicks"] == 0
+    assert "Видео 100%" in payload["telegram_messages"][1]
+    assert "от шага" in payload["telegram_messages"][1]
 
 
 def test_course_depth_snapshot_counts_unique_day_one_milestones_after_start():
@@ -176,6 +197,133 @@ def test_course_depth_snapshot_counts_unique_day_one_milestones_after_start():
     assert result["video"] == {"25": 0, "50": 1, "75": 0, "100": 1}
 
 
+def test_reminder_snapshot_counts_sent_and_opened_during_next_three_hours():
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.exec_driver_sql("CREATE TABLE tg_contacts (id TEXT PRIMARY KEY, user_id TEXT)")
+        connection.exec_driver_sql("CREATE TABLE tg_sequence_runs (id TEXT PRIMARY KEY, contact_id TEXT)")
+        connection.exec_driver_sql(
+            "CREATE TABLE tg_step_deliveries (id TEXT PRIMARY KEY, run_id TEXT, step_key TEXT, status TEXT, sent_at TIMESTAMP)"
+        )
+        connection.exec_driver_sql("INSERT INTO tg_contacts VALUES ('c1', 'u1'), ('c2', 'u2')")
+        connection.exec_driver_sql("INSERT INTO tg_sequence_runs VALUES ('r1', 'c1'), ('r2', 'c2')")
+        connection.exec_driver_sql(
+            "INSERT INTO tg_step_deliveries VALUES "
+            "('d1', 'r1', 'welcome_reminder_day1', 'sent', '2026-09-07 09:15:00'), "
+            "('d2', 'r2', 'welcome_reminder_day1', 'sent', '2026-09-07 09:20:00')"
+        )
+    starts = [
+        {"user_id": "u1", "start": {"at": "2026-09-07T09:00:00+00:00"}, "day_one": {"at": "2026-09-07T11:00:00+00:00"}},
+        {"user_id": "u2", "start": {"at": "2026-09-07T09:00:00+00:00"}, "day_one": {"at": "2026-09-07T13:00:00+00:00"}},
+    ]
+    with Session(engine) as db:
+        result = reports._reminder_snapshot(db, starts, datetime(2026, 9, 8, tzinfo=timezone.utc))
+
+    assert result == {"available": True, "sent": 2, "opened_within_3h": 1}
+
+
+def test_reminder_snapshot_does_not_count_open_after_report_cutoff():
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    with engine.begin() as connection:
+        connection.exec_driver_sql("CREATE TABLE tg_contacts (id TEXT PRIMARY KEY, user_id TEXT)")
+        connection.exec_driver_sql("CREATE TABLE tg_sequence_runs (id TEXT PRIMARY KEY, contact_id TEXT)")
+        connection.exec_driver_sql(
+            "CREATE TABLE tg_step_deliveries (id TEXT PRIMARY KEY, run_id TEXT, step_key TEXT, status TEXT, sent_at TIMESTAMP)"
+        )
+        connection.exec_driver_sql("INSERT INTO tg_contacts VALUES ('c1', 'u1')")
+        connection.exec_driver_sql("INSERT INTO tg_sequence_runs VALUES ('r1', 'c1')")
+        connection.exec_driver_sql(
+            "INSERT INTO tg_step_deliveries VALUES "
+            "('d1', 'r1', 'welcome_reminder_day1', 'sent', '2026-09-08 23:50:00')"
+        )
+    starts = [{
+        "user_id": "u1",
+        "start": {"at": "2026-09-08T23:30:00+00:00"},
+        "day_one": {"at": "2026-09-09T00:10:00+00:00"},
+    }]
+    with Session(engine) as db:
+        result = reports._reminder_snapshot(db, starts, datetime(2026, 9, 9, tzinfo=timezone.utc))
+
+    assert result == {"available": True, "sent": 1, "opened_within_3h": 0}
+
+
+def test_weekly_spend_limit_is_read_from_active_nested_strategy():
+    assert reports._weekly_spend_limit({
+        "BiddingStrategy": {
+            "Search": {"WbMaximumClicks": {"WeeklySpendLimit": 3_500_000_000}},
+            "Network": {"BiddingStrategyType": "SERVING_OFF"},
+        }
+    }) == 3500.0
+
+
+def test_direct_campaign_budgets_requests_and_maps_both_campaigns(monkeypatch):
+    captured = {}
+
+    class Response:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self):
+            return json.dumps({
+                "result": {
+                    "Campaigns": [
+                        {
+                            "Id": 714152601,
+                            "TextCampaign": {"BiddingStrategy": {"Search": {"WbMaximumClicks": {"WeeklySpendLimit": 3_500_000_000}}}},
+                        },
+                        {
+                            "Id": 714157420,
+                            "TextCampaign": {"BiddingStrategy": {"Network": {"WbMaximumConversionRate": {"WeeklySpendLimit": 10_000_000_000}}}},
+                        },
+                    ]
+                }
+            }).encode("utf-8")
+
+    def urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["body"] = json.loads(request.data.decode("utf-8"))
+        captured["timeout"] = timeout
+        return Response()
+
+    monkeypatch.setattr(reports.urllib.request, "urlopen", urlopen)
+    result = reports._direct_campaign_budgets(settings(), [714152601, 714157420])
+
+    assert captured["url"] == reports.DIRECT_CAMPAIGNS_URL
+    assert captured["body"]["params"]["SelectionCriteria"]["Ids"] == [714152601, 714157420]
+    assert captured["body"]["params"]["TextCampaignFieldNames"] == ["BiddingStrategy"]
+    assert captured["timeout"] == 30
+    assert result == {714152601: 3500.0, 714157420: 10000.0}
+
+
+def test_missing_sessions_is_no_data_instead_of_zero_or_error():
+    rows = [{
+        "Date": "2026-09-07", "CampaignId": "714157420", "AdGroupId": "1",
+        "AdId": "1920472171246211821", "Device": "MOBILE", "Impressions": "100",
+        "Clicks": "10", "Sessions": "--", "Cost": "100",
+    }]
+    rsya = reports._with_starts(reports._summarize_direct(rows), {})
+    search = reports._with_starts(reports._summarize_direct([]), {})
+    payload = {
+        "report_date": "2026-09-07",
+        "channels": {"rsya": rsya, "search": search},
+        "comparison_previous": {"rsya": reports._with_starts(reports._summarize_direct([]), {}), "search": search},
+        "internal": internal_snapshot(),
+    }
+
+    assert rsya["total"]["sessions_available"] is False
+    cells = next(
+        block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"]
+        if block.get("type") == "table"
+    )["cells"]
+    assert cells[2][0]["text"] == "Посетили посадку"
+    assert cells[2][1]["text"] == "НД"
+    assert cells[3][1]["text"] == "НД"
+    assert cells[4][1]["text"] == "НД"
+
+
 def test_rich_report_marks_unlinked_landing_signal_as_no_data():
     snapshot = internal_snapshot()
     snapshot.update({"entries": 0, "entry_tracking_available": False})
@@ -193,10 +341,10 @@ def test_rich_report_marks_unlinked_landing_signal_as_no_data():
     }
 
     rich = reports.render_rich_messages(payload)
-    funnel_cells = rich[2]["rich_message"]["blocks"][1]["cells"]
-    assert funnel_cells[2][1]["text"] == "НД"
-    method_cells = rich[4]["rich_message"]["blocks"][1]["cells"]
-    assert method_cells[1][1]["text"] == "НД"
+    funnel_cells = next(block for block in rich[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    assert funnel_cells[5][1]["text"] == "НД"
+    assert funnel_cells[6][1]["text"] == "НД"
+    assert funnel_cells[7][1]["text"] == "НД"
 
 
 def test_entry_tracking_availability_comes_from_rollout_date_not_event_count(monkeypatch):
@@ -267,6 +415,84 @@ def test_internal_snapshot_separates_first_start_cohort_from_click_day_attributi
     assert result["entries"] == 3
     assert result["by_creative"] == {"control_cakes": 1, "cat_hudey": 1}
     assert result["by_method"]["button"] == {"entries": 3, "starts": 2}
+
+
+def test_acquisition_cohort_drives_reminder_subscription_and_funnel_rows(monkeypatch):
+    report_day = date(2026, 9, 8)
+    attributed = {
+        "user_id": str(uuid4()),
+        "journey_id": "journey-attributed",
+        "source": "Яндекс",
+        "is_new_lead": True,
+        "creative": "control_cakes",
+        "messenger": "tg",
+        "entry_method": "button",
+        "device": "mobile",
+        "landing_entry": {"at": "2026-09-08T18:00:00+03:00", "method": "button"},
+        "start": {"at": "2026-09-08T18:01:00+03:00"},
+        "day_one": {"at": "2026-09-08T18:02:00+03:00"},
+        "subscription": {"at": "2026-09-08T19:00:00+03:00"},
+        "other_actions": [{"label": "Нажал Telegram в интенсиве", "at": "2026-09-08T18:55:00+03:00"}],
+    }
+    organic = {
+        **attributed,
+        "user_id": str(uuid4()),
+        "journey_id": "journey-organic",
+        "source": "Telegram",
+        "landing_entry": None,
+    }
+
+    def dashboard(*_args, **kwargs):
+        if kwargs["date_from"] == report_day:
+            return {
+                "rows": [attributed],
+                "entry_breakdown": [{"source": "Яндекс", "messenger": "tg", "entry": "button", "entries": 1}],
+            }
+        return {"rows": [attributed, organic], "entry_breakdown": []}
+
+    reminder_cohorts = []
+    monkeypatch.setattr(reports, "marketing_dashboard", dashboard)
+    monkeypatch.setattr(
+        reports,
+        "_course_depth_snapshot",
+        lambda _db, starts, _cutoff: {
+            "page": {"25": len(starts), "50": 0, "75": 0, "100": 0},
+            "video": {"25": 0, "50": 0, "75": 0, "100": 0},
+        },
+    )
+
+    def reminder(_db, starts, _cutoff):
+        reminder_cohorts.append(starts)
+        return {"available": True, "sent": 1, "opened_within_3h": 1}
+
+    monkeypatch.setattr(reports, "_reminder_snapshot", reminder)
+    result = reports._internal_snapshot(None, settings(), report_day)
+
+    assert [row["journey_id"] for row in reminder_cohorts[0]] == ["journey-attributed"]
+    assert result["acquisition_reminders_sent"] == 1
+    assert result["acquisition_opened_within_3h_after_reminder"] == 1
+    assert result["acquisition_subscribed"] == 1
+
+    payload = {
+        "report_date": report_day.isoformat(),
+        "channels": {
+            "rsya": reports._with_starts(reports._summarize_direct([direct_rows()[0]]), {"control_cakes": 1}),
+            "search": reports._with_starts(reports._summarize_direct([]), {}),
+        },
+        "comparison_previous": {
+            "rsya": reports._with_starts(reports._summarize_direct([]), {}),
+            "search": reports._with_starts(reports._summarize_direct([]), {}),
+        },
+        "internal": result,
+    }
+    cells = next(
+        block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"]
+        if block.get("type") == "table"
+    )["cells"]
+    rows_by_label = {row[0]["text"]: row for row in cells[1:]}
+    assert [cell["text"] for cell in rows_by_label["↳ Напоминание"][1:]] == ["1", "100.0%", "1.0%"]
+    assert [cell["text"] for cell in rows_by_label["↳ Открыли ≤3ч"][1:]] == ["1", "100.0%", "1.0%"]
+    assert [cell["text"] for cell in rows_by_label["Подписались"][1:]] == ["1", "100.0%", "1.0%"]
 
 
 def test_calendar_start_cohort_keeps_previous_evening_landing_link(monkeypatch):
@@ -377,11 +603,11 @@ def test_depth_tracking_availability_has_independent_rollout_boundary(monkeypatc
         },
         "internal": before,
     }
-    before_cells = reports.render_rich_messages(payload)[3]["rich_message"]["blocks"][1]["cells"]
-    assert before_cells[4][1]["text"] == "НД"
+    before_cells = next(block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    assert before_cells[12][1]["text"] == "НД"
     payload["internal"] = after
-    after_cells = reports.render_rich_messages(payload)[3]["rich_message"]["blocks"][1]["cells"]
-    assert after_cells[4][1]["text"] == "0"
+    after_cells = next(block for block in reports.render_rich_messages(payload)[1]["rich_message"]["blocks"] if block.get("type") == "table")["cells"]
+    assert after_cells[12][1]["text"] == "0"
 
 
 def test_generate_and_store_replaces_same_daily_snapshot(monkeypatch):

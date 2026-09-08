@@ -185,16 +185,28 @@ idempotent database event, aggregation into the correct Start cohort, internal r
 and final Telegram table. Repeat the action and verify that unique-user counts do not grow.
 
 Use `НД` when the signal was not instrumented or linked for that reporting date. Use `0` only
-after the production event path is known to be active. Keep detailed dimensions such as
-messenger and device in storage even when the compact daily Telegram report intentionally
-shows only button versus QR.
+after the production event path is known to be active. Never silently omit an agreed stage.
+Keep messenger in storage for detailed analysis. Show device as phone/desktop and entry method
+as button/QR directly under their parent stages in the daily funnel.
 
 For edabalans.ru, day-one reading depth is `page_progress` at 25/50/75/100. Video depth is
-`video_engaged`, `video_progress` at 25/50/75, and `video_complete` as 100. Keep two cohorts
-explicit. The acquisition funnel uses CTA/QR from the report date and accepts its first real
-Start plus later actions only before the next 03:00 Moscow cutoff. The depth table overlaps at
-Start but uses users whose first real Start occurred on the report date. Never place the
-calendar-Start count next to the CTA-day count in one conversion chain.
+`video_engaged`, `video_progress` at 25/50/75, and `video_complete` as 100. The daily Telegram
+report has exactly two messages: (1) one Direct message with an RSYA table and a Search table,
+each containing its total and ad rows; (2) one complete acquisition path. The acquisition path
+uses CTA/QR from the report date and accepts its first real Start plus later actions only before
+the next 03:00 Moscow cutoff. Do not mix in a separate calendar-Start cohort.
+
+The complete path must retain this registry in order: Direct clicks; Direct/Metric sessions on
+the landing; phone and desktop session subrows; total recorded messenger entries; button and QR
+subrows; confirmed Start; day-one open; day-one reminder sent; open within three hours after the
+reminder; page 25/50/75/100; video start and 25/50/75/100; end-of-day CTA; confirmed subscription.
+Columns are count, conversion from the logical parent stage, and conversion from the ad click.
+Call the first two values clicks and visits, not people: they are not unique persons.
+
+Show the exact period in every title. Direct spend/clicks cover 00:00–23:59 Moscow; attributed
+Start and subsequent actions are accepted until 03:00 the next day. Show daily spend separately
+from the current calendar week's configured budget, spend, and remaining amount, all read through
+the Direct API. A combined daily expense must never be presented as one campaign's budget.
 
 ## Current edabalans.ru defaults
 
