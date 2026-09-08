@@ -655,6 +655,11 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "var next=nextVisibleStep(d,step)" in course_html
     assert "if(next>=0)openCourseStep(d,next)" in course_html
     assert "if(!step.hidden&&step.contentAsset)" in course_html
+    assert "if(SERVER_MODE)loadPublishedMaterials();" in course_html
+    assert "var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(result[0])" in course_html
+    assert "function ensureStepContent(step)" in course_html
+    assert "if(contentRequests[asset])return contentRequests[asset]" in course_html
+    assert "Загружаю материал…" in course_html
     assert "return!step.hidden&&['messenger','offer']" in course_html
     assert "day.shortTitle||day.title" not in course_html
     assert "return day.tocSummary||generated" in course_html
