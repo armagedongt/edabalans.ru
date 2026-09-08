@@ -9,58 +9,56 @@
   </head>
   <body>
     <main class="weather-page" id="weather-app" aria-busy="true">
-      <header class="page-header">
-        <div>
-          <p class="eyebrow">Санкт-Петербург</p>
-          <h1>Погода и осадки</h1>
-        </div>
-        <div class="header-actions">
+      <header class="topbar">
+        <div class="topbar-line">
+          <button class="city-trigger" id="city-trigger" type="button" aria-expanded="false" aria-controls="city-panel">Санкт-Петербург</button>
           <p class="updated-at" id="updated-at">Загружаю прогноз…</p>
+          <nav class="view-tabs" aria-label="Раздел погоды">
+            <button type="button" class="tab-button" data-view="forecast" aria-current="page">Прогноз</button>
+            <button type="button" class="tab-button" data-view="history">Дневник</button>
+          </nav>
           <button class="icon-button" id="settings-button" type="button" aria-expanded="false" aria-controls="settings-panel">⚙ <span>Поля</span></button>
+          <button class="mobile-menu-button" id="mobile-menu-button" type="button" aria-expanded="false" aria-controls="city-panel">☰</button>
+        </div>
+        <div class="topbar-panel city-panel" id="city-panel" hidden>
+          <nav class="mobile-tabs" aria-label="Раздел погоды">
+            <button type="button" class="tab-button" data-view="forecast" aria-current="page">Прогноз</button>
+            <button type="button" class="tab-button" data-view="history">Дневник</button>
+          </nav>
+          <nav class="city-list" id="city-list" aria-label="Избранные города"></nav>
+        </div>
+        <div class="topbar-panel settings-panel" id="settings-panel" hidden aria-label="Отображаемые поля">
+          <label><input type="checkbox" data-field="air" checked /> Температура воздуха</label>
+          <label><input type="checkbox" data-field="feels" checked /> По ощущению</label>
+          <label><input type="checkbox" data-field="wind" checked /> Ветер и порывы</label>
+          <label><input type="checkbox" data-field="precipitation" checked /> Осадки</label>
+          <label><input type="checkbox" data-field="snow" checked /> Снег</label>
+          <form class="city-search" id="city-search">
+            <input id="city-query" type="search" placeholder="Найти другой город" aria-label="Найти другой город" />
+            <button type="submit">Найти</button>
+          </form>
         </div>
       </header>
 
-      <form class="city-search" id="city-search">
-        <input id="city-query" type="search" placeholder="Найти город" aria-label="Найти город" />
-        <button type="submit">Найти</button>
-      </form>
-      <nav class="city-list" id="city-list" aria-label="Избранные города"></nav>
-
-      <section class="settings-panel" id="settings-panel" hidden aria-label="Отображаемые поля">
-        <label><input type="checkbox" data-field="air" checked /> Температура воздуха</label>
-        <label><input type="checkbox" data-field="feels" checked /> По ощущению</label>
-        <label><input type="checkbox" data-field="wind" checked /> Ветер и порывы</label>
-        <label><input type="checkbox" data-field="precipitation" checked /> Осадки в жидком эквиваленте</label>
-        <label><input type="checkbox" data-field="snow" checked /> Выпадающий снег</label>
-      </section>
-
-      <section class="forecast-card" aria-labelledby="ten-days-heading">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">Прогноз на 10 дней</p>
-            <h2 id="ten-days-heading">Осадки в мм и их распределение внутри дня</h2>
-          </div>
-          <p class="legend"><span></span> высота — осадки за день; штрихи — часы</p>
-        </div>
-        <div class="daily-scroll"><div class="daily-grid" id="daily-grid"></div></div>
-      </section>
-
-      <section class="forecast-card hourly-card" aria-labelledby="hourly-heading">
-        <div class="section-heading hourly-heading">
-          <div>
-            <p class="eyebrow" id="selected-date-label">Почасовой прогноз</p>
-            <h2 id="hourly-heading">На выбранный день</h2>
-          </div>
-          <button class="text-button" id="today-button" type="button">Сегодня</button>
-        </div>
-        <div class="hourly-scroll">
+      <section class="forecast-view" data-view-panel="forecast" aria-label="Прогноз погоды">
+        <section class="forecast-card daily-card" aria-label="Прогноз на 12 дней"><div class="daily-scroll"><div class="daily-grid" id="daily-grid"></div></div></section>
+        <section class="forecast-card hourly-card" aria-label="Почасовой прогноз на выбранный день">
+          <button class="text-button today-button" id="today-button" type="button">Сегодня</button>
           <div class="hourly-grid" id="hourly-grid"></div>
-        </div>
+        </section>
       </section>
 
-      <p class="source-note">Данные прогноза: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a>, CC BY 4.0. Это модельный прогноз, а не наблюдение.</p>
-    </main>
+      <section class="history-view" data-view-panel="history" hidden aria-label="Дневник погоды">
+        <form class="history-controls" id="history-controls">
+          <label>С <input id="history-start" type="date" required /></label>
+          <label>по <input id="history-end" type="date" required /></label>
+          <button type="submit">Показать</button>
+        </form>
+        <section class="forecast-card history-card"><p class="history-status" id="history-status">Выберите период</p><div class="history-grid" id="history-grid"></div></section>
+      </section>
 
+      <p class="source-note">Прогноз и прошлые данные: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a>, CC BY 4.0.</p>
+    </main>
     <template id="message-template"><p class="message"></p></template>
     <script src="app.js"></script>
   </body>
