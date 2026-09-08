@@ -423,7 +423,7 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
 
     assert repeat.json() == {"ok": True, "account_credentials": True}
     repeat_message = fake.sent[-1][1]
-    assert "https://go.похудение-это-есть.рф/lk" in repeat_message
+    assert "https://edabalans.ru/lk" in repeat_message
     assert "Пароль:" not in repeat_message
     assert "Пароль уже приходил" in repeat_message
     assert "06.09.2026" in repeat_message
