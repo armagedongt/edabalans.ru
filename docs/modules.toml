@@ -14,7 +14,7 @@ card = "docs/knowledge-base/modules/catalog/platform.md"
 owns_files = ["README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md", "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md"]
 owns_routes = ["*/embed.js", "*/site-footer.js"]
 sources = [
-  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "contract", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
+  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
 ]
 
 [[modules]]
@@ -351,6 +351,7 @@ depends_on = [
   "platform.auth", "platform.content", "products.catalog",
   "products.masterclass.course", "products.metabolism", "operations.delivery",
 ]
+reads_from = ["platform"]
 owns_files = [
   "backend/app/calorie_course_routes.py", "backend/app/calorie_course_service.py",
   "backend/app/calorie_course_material_service.py",
@@ -423,6 +424,7 @@ id = "products.masterclass.course"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.course.md"
 depends_on = ["platform.content"]
+reads_from = ["platform"]
 owns_files = [
   "backend/app/course_structure_routes.py", "backend/app/course_structure_service.py",
   "backend/app/course_material_routes.py", "backend/app/course_material_service.py",
@@ -481,7 +483,7 @@ owns_tables = [
   "masterclass_notifications", "masterclass_test_profiles",
 ]
 owns_routes = ["*/api/masterclass*", "*/admin/api/masterclass*", "*/admin/masterclass*"]
-reads_from = ["products.masterclass.course"]
+reads_from = ["platform", "products.masterclass.course"]
 
 [[modules]]
 id = "products.masterclass.questionnaires"
