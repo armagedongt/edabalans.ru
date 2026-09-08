@@ -406,7 +406,15 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert 'data-disabled-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review"' in response.text
     assert '<div class="anya-story__player-shell">' in response.text
     assert ".anya-story__player-shell{padding:0 var(--page-gutter)}" in response.text
-    assert '<div class="site-player" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-main">' in response.text
+    assert '<div class="anya-story__player-frame">' in response.text
+    assert ".anya-story__player-frame{width:min(var(--content-video-frame),calc(100% - 24px));margin:25px auto 0}" in response.text
+    assert "@media (max-width:600px){.anya-story__player-frame{width:var(--content-frame);max-width:100%}}" in response.text
+    assert ".site-player--anya{width:75.2351097%;margin:0 auto}" in response.text
+    assert ".site-player--anya .site-player__mask{aspect-ratio:1080/1914}" in response.text
+    assert response.text.count(".site-player--anya{") == 1
+    anya_width_share = 75.2351097 / 100
+    assert abs((anya_width_share / (1080 / 1914)) - (4 / 3)) < 1e-9
+    assert '<div class="site-player site-player--anya" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-portrait">' in response.text
     anya_slider_template = response.text.split(
         '<template data-temporarily-disabled="anya-slider">', 1
     )[1].split("</template>", 1)[0]

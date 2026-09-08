@@ -987,6 +987,11 @@
     .chain-block--anya{padding:var(--space-section) 0 0;background:transparent;color:#16181d;font-family:Manrope,Arial,sans-serif}
     .anya-story{width:100%;max-width:none;margin:0;padding:0}
     .anya-story__player-shell{padding:0 var(--page-gutter)}
+    .anya-story__player-frame{width:min(var(--content-video-frame),calc(100% - 24px));margin:25px auto 0}
+    .site-player--anya{width:75.2351097%;margin:0 auto}
+    .site-player--anya .site-player__mask{aspect-ratio:1080/1914}
+    @media (max-width:600px){.anya-story__player-frame{width:var(--content-frame);max-width:100%}}
+    @media (min-width:900px){.anya-story__player-frame{margin-top:31px}}
     .anya-story__header{width:min(var(--content-frame),calc(100% - var(--page-gutter) - var(--page-gutter)));max-width:100%;margin-right:auto;margin-left:auto}
     .anya-story__kicker{display:inline-flex;padding:8px 12px;border-radius:999px;background:#ff684b;color:#fff;font-size:12px;font-weight:900;letter-spacing:.05em;transform:rotate(-2deg)}
     .anya-story__header h2{margin:18px 0 0;font-family:Unbounded,Manrope,sans-serif;font-size:var(--type-section);font-weight:800;line-height:1.04;letter-spacing:-.055em}
@@ -3195,9 +3200,11 @@
         </header>
         <div class="anya-story__player-shell">
           <div class="site-hero__inner">
-            <div class="site-player" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-main">
-              <div class="site-player__mask">
-                <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            <div class="anya-story__player-frame">
+              <div class="site-player site-player--anya" data-homepage-block="anya-slider" data-homepage-field="media" data-block-width="video-portrait">
+                <div class="site-player__mask">
+                  <iframe data-media-src="/preview/homepage-mobile/vsl-player.html?v=7&context=anya-review" data-media-player data-media-context="anya-review" title="Видеоотзыв Ани" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                </div>
               </div>
             </div>
           </div>
