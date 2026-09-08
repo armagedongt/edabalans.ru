@@ -80,8 +80,24 @@ async def protect_native_account_host(request: Request, call_next):
     host = (request.url.hostname or "").casefold()
     path = request.url.path
     protected = path.startswith(("/api/account", "/api/masterclass", "/api/apps", "/api/access"))
+    managed_app_request = False
+    if path == "/api/apps/strength":
+        managed_app_request = bool(request.query_params.get("target_user_id"))
+        if not managed_app_request and request.method == "POST":
+            try:
+                body = await request.json()
+            except ValueError:
+                body = None
+            managed_app_request = bool(
+                isinstance(body, dict) and body.get("target_user_id")
+            )
     native_account_host = host in {"edabalans.ru", "www.edabalans.ru"} or host.startswith("go.")
-    if native_account_host and protected and not path.startswith("/api/account-auth"):
+    if (
+        native_account_host
+        and protected
+        and not managed_app_request
+        and not path.startswith("/api/account-auth")
+    ):
         with SessionLocal() as db:
             user = native_session_user(request, db)
             if user is None:

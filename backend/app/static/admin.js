@@ -122,7 +122,7 @@
     setHeading(labels[code], "ПРИЛОЖЕНИЕ");
     loading();
     const result = await api(`/admin/api/apps/users?app_code=${code}`);
-    root.innerHTML = `<div class="admin-section-head"><div><h2>${labels[code]}</h2><p>${descriptions[code]} · ${result.users.length} пользователей с доступом или данными</p></div></div><div class="admin-list">${result.users.map((user) => `<button class="admin-person" data-href="/admin/${code}?user=${user.user_id}"><div><h3>${esc(user.display_name || user.email || "Без имени")}</h3><p>${esc(user.email || "email не указан")} · ${user.has_state ? summaryText(code, user.summary) : "приложение ещё не открывалось"}</p></div><div class="admin-actions"><span class="admin-badge ${user.has_access ? "" : "warn"}">${user.has_access ? "доступ есть" : "только исторические данные"}</span>${user.has_state ? `<span class="admin-badge">v${user.version}</span><span class="admin-badge off">${date(user.updated_at)}</span>` : '<span class="admin-badge off">нет состояния</span>'}</div></button>`).join("") || '<div class="admin-empty">В этом приложении пока нет пользователей</div>'}</div>`;
+    root.innerHTML = `<div class="admin-section-head"><div><h2>${labels[code]}</h2><p>${descriptions[code]} · ${result.users.length} пользователей с доступом или данными</p></div></div><div class="admin-list">${result.users.map((user) => `<button class="admin-person ${user.has_state ? "app-started" : ""}" data-href="/admin/${code}?user=${user.user_id}"><div><h3>${esc(user.display_name || user.email || "Без имени")}</h3><p>${esc(user.email || "email не указан")} · ${user.has_state ? summaryText(code, user.summary) : "приложение ещё не открывалось"}</p></div><div class="admin-actions">${user.has_state ? '<span class="admin-badge started">приложение открывалось</span>' : ''}<span class="admin-badge ${user.has_access ? "" : "warn"}">${user.has_access ? "доступ есть" : "только исторические данные"}</span>${user.has_state ? `<span class="admin-badge">v${user.version}</span><span class="admin-badge off">${date(user.updated_at)}</span>` : '<span class="admin-badge off">нет состояния</span>'}</div></button>`).join("") || '<div class="admin-empty">В этом приложении пока нет пользователей</div>'}</div>`;
     bindPersonButtons();
   }
 
@@ -156,12 +156,12 @@
     const modules = moduleResult.modules;
     const email = user.emails[0] && user.emails[0].email;
     root.innerHTML = `
-      <button class="admin-back" id="admin-back">← Назад к списку</button>
+      <div class="admin-mode-banner"><div><strong>Административный режим</strong><span>Вы работаете с профилем ${esc(user.display_name || email || "без имени")}</span></div><button class="admin-action alt" id="admin-back" type="button">Сменить профиль</button></div>
       <div class="admin-profile-head"><div class="admin-profile-id"><div class="admin-avatar">${esc((user.display_name || email || "?").charAt(0).toUpperCase())}</div><div><h2>${esc(user.display_name || email || "Без имени")}</h2><p>${esc(email || "email не указан")} · ${esc(user.id)}</p></div></div><div class="admin-badges">${context ? `<span class="admin-badge">${appDetail.has_access ? "доступ есть" : "нет доступа"}</span><span class="admin-badge ${appDetail.has_state ? "" : "off"}">${appDetail.has_state ? "данные есть" : "данных нет"}</span>` : `<span class="admin-badge">${user.purchase_count} покупок</span><span class="admin-badge">${user.accesses.filter((item) => !item.revoked_at).length} доступов</span>`}</div></div>
       ${switcher(user, modules, context || "users")}
-      <div class="admin-detail-grid">
+      <div class="admin-detail-grid ${context ? "app-context" : ""}">
         <article class="admin-card"><h3>${context ? labels[context] : "Сводка по приложениям"}</h3><div id="admin-app-panel">${context ? appDetails(context, appDetail) : moduleOverview(modules)}</div></article>
-        <article class="admin-card"><h3>Быстрые переходы</h3><div class="admin-links"><a class="admin-action alt" href="/crm?user=${user.id}">Карточка CRM</a>${modules.telegram.exists ? `<a class="admin-action alt" href="/bot?view=contacts&user=${user.id}">Пользователь в боте</a>` : ""}${modules.dqs.exists || modules.dqs.has_access ? `<a class="admin-action alt" href="/admin/dqs?user=${user.id}">DQS</a>` : ""}${modules.strength.exists || modules.strength.has_access ? `<a class="admin-action alt" href="/admin/strength?user=${user.id}">Силовые</a>` : ""}${modules.metabolism.exists || modules.metabolism.has_access ? `<a class="admin-action alt" href="/admin/metabolism?user=${user.id}">Метаболизм</a>` : ""}</div><div class="admin-note" style="margin-top:14px">DQS доступен только для аналитики. В силовых и метаболизме административные изменения будут выполняться тем же интерфейсом приложения и записываться в журнал.</div></article>
+        <article class="admin-card"><h3>Быстрые переходы</h3><div class="admin-links"><a class="admin-action alt" href="/crm?user=${user.id}">Карточка CRM</a>${modules.telegram.exists ? `<a class="admin-action alt" href="/bot?view=contacts&user=${user.id}">Пользователь в боте</a>` : ""}${modules.dqs.exists || modules.dqs.has_access ? `<a class="admin-action alt" href="/admin/dqs?user=${user.id}">DQS</a>` : ""}${modules.strength.exists || modules.strength.has_access ? `<a class="admin-action alt" href="/admin/strength?user=${user.id}">Силовые</a>` : ""}${modules.metabolism.exists || modules.metabolism.has_access ? `<a class="admin-action alt" href="/admin/metabolism?user=${user.id}">Метаболизм</a>` : ""}</div><div class="admin-note" style="margin-top:14px">В DQS, силовых и метаболизме изменения выполняются тем же интерфейсом, который видит человек, и записываются в журнал.</div></article>
       </div><div class="admin-footer">Все разделы связаны одним users.id; данные не копируются между приложениями.</div>`;
     document.getElementById("admin-back").onclick = () => { location.href = context ? `/admin/${context}` : "/admin/users"; };
     const openButton = document.getElementById("admin-open-app");
@@ -175,8 +175,7 @@
         failure(error);
       }
     };
-    if (context === "dqs" && appDetail.has_state) bindDqsPeriods(appDetail);
-    if (["strength", "metabolism"].includes(context) && appDetail.has_state) {
+    if (["dqs", "strength", "metabolism"].includes(context) && appDetail.has_state) {
       const mount = document.querySelector("[data-edabalans-admin-user]");
       if (mount && window.EdabalansEmbed) window.EdabalansEmbed.load(mount);
     }
@@ -191,8 +190,7 @@
       return `<div class="admin-empty compact">Данных пока нет.</div>${detail.has_access ? '<button class="admin-action" id="admin-open-app" type="button">Открыть приложение</button><p class="admin-help">Начальное состояние будет создано только после этого действия.</p>' : '<div class="admin-note">У человека нет действующего доступа к приложению.</div>'}`;
     }
     const state = detail.state;
-    if (code === "dqs") return dqsAnalytics(state.data, 30);
-    if (["strength", "metabolism"].includes(code)) return `<div class="admin-note">Административный режим · изменения сохраняются для выбранного человека и записываются в журнал.</div><div data-edabalans-app="${code}" data-edabalans-admin-user="${esc(detail.user.id)}"><div class="admin-empty">Загружаю приложение…</div></div>`;
+    if (["dqs", "strength", "metabolism"].includes(code)) return `<div data-edabalans-app="${code}" data-edabalans-admin-user="${esc(detail.user.id)}" data-edabalans-account-url="/admin/${code}"><div class="admin-empty">Загружаю приложение…</div></div>`;
     const summary = state.summary;
     let rows;
     if (code === "strength") rows = [["Тренировок", summary.sessions], ["Заполненных", summary.filled_sessions], ["Последняя дата", summary.last_date || "—"], ["Скрыто упражнений", summary.hidden_exercises]];

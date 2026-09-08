@@ -19,6 +19,7 @@
   (function(){
     'use strict';
     var portal=document.getElementById('portal');
+    function returnTarget(){var value=new URL(location.href).searchParams.get('next')||'';if(!value)return '';try{var target=new URL(value,location.origin);return target.origin===location.origin&&!target.pathname.startsWith('/lk')?target.pathname+target.search+target.hash:''}catch(error){return ''}}
     function esc(value){return String(value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
     function login(){
       portal.innerHTML='<section class="auth-shell"><form class="auth-card" id="login-form"><p class="auth-kicker">Похудение — это есть!</p><h1>Личный кабинет</h1><p class="auth-lead">Введите электронную почту, указанную при покупке, и пароль из сообщения бота.</p><label class="auth-field">Электронная почта<input name="email" type="email" autocomplete="username" required placeholder="primer@pochta.ru"></label><label class="auth-field">Пароль<input name="password" type="password" autocomplete="current-password" required minlength="8"></label><button class="auth-submit" type="submit">Войти</button><p class="auth-error" aria-live="polite"></p><p class="auth-help">Нет личного кабинета? <a href="/lk?mode=register">Зарегистрироваться</a></p><p class="auth-help">Не получается войти? <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">Напишите мне</a></p></form></section>';
@@ -31,6 +32,8 @@
       form.onsubmit=function(event){event.preventDefault();button.disabled=true;error.textContent='Отправляю письмо…';fetch('/api/account-auth/register',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value})}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw new Error(payload.detail||'Не удалось начать регистрацию');return payload})}).then(function(payload){form.innerHTML='<p class="auth-kicker">Похудение — это есть!</p><h1>Проверьте почту</h1><p class="auth-lead">'+esc(payload.message)+'</p><p class="auth-help"><a href="/lk">Вернуться ко входу</a></p>';}).catch(function(cause){error.textContent=String(cause.message||cause);button.disabled=false})};
     }
     function openAccount(account){
+      var target=returnTarget();
+      if(target){location.replace(target);return}
       window.EdabalansIdentity={email:account.email,source:'native'};
       window.EdabalansAppHost=location.origin;
       window.EdabalansAccountPayload=account;

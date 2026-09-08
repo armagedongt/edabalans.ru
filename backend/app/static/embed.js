@@ -58,7 +58,12 @@
       localStorage.removeItem(STORAGE_IDENTITY);
     } catch (error) {}
     window.EdabalansIdentity = null;
-    window.top.location.replace(PUBLIC_ACCOUNT_URL);
+    var returnTo = location.pathname + location.search;
+    var destination = PUBLIC_ACCOUNT_URL;
+    if (returnTo && returnTo.indexOf('/lk') !== 0) {
+      destination += '?next=' + encodeURIComponent(returnTo);
+    }
+    window.top.location.replace(destination);
   }
 
   function nativeSession() {

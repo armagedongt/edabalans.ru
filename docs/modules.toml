@@ -247,6 +247,7 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "docs/APPLICATION_PLATFORM.md", "docs/APPLICATION_BACKLOG.md",
   "backend/app/app_routes.py", "backend/app/app_service.py",
+  "backend/app/static/standalone-app.html",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
@@ -313,7 +314,7 @@ owns_files = [
   "backend/migrations/versions/20260822_0004_application_states.py",
 ]
 owns_tables = ["dqs_states"]
-owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*"]
+owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*", "*/dqs"]
 
 [[modules]]
 id = "products.strength"
@@ -327,7 +328,7 @@ owns_files = [
   "content/training/reference/**",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
-owns_routes = ["*/apps/strength*", "*/api/apps/strength*"]
+owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/training", "*/strength"]
 
 [[modules]]
 id = "products.metabolism"

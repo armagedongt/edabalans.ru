@@ -1547,8 +1547,18 @@ body{
 
 <script src="/apps/dqs-category-rules.js"></script>
 <script>
-const API_URL =
+let API_URL =
   'https://edabalans.ru/api/apps/dqs';
+
+const APP_CONTEXT = window.EdabalansAppContext || {};
+const MANAGED_TARGET =
+  APP_CONTEXT.mode === 'admin'
+    ? String(APP_CONTEXT.targetUserId || '')
+    : '';
+
+if(MANAGED_TARGET){
+  API_URL = '/api/apps/dqs';
+}
 
 const DAY_COUNT = 30;
 
@@ -2156,6 +2166,30 @@ function getDayData(dayNumber){
 ========================= */
 
 function api(params){
+
+  if(MANAGED_TARGET){
+    return fetch(
+      '/admin/api/apps/dqs/users/' +
+        encodeURIComponent(MANAGED_TARGET) +
+        '/runtime',
+      {
+        method:'POST',
+        credentials:'same-origin',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(params)
+      }
+    ).then(async response => {
+      const payload = await response.json();
+      if(!response.ok){
+        throw new Error(
+          payload.detail ||
+          payload.error ||
+          'Не удалось выполнить запрос'
+        );
+      }
+      return payload;
+    });
+  }
 
   return new Promise(
     (resolve,reject) => {
@@ -5278,9 +5312,13 @@ function localDayKey(
   dayNumber
 ){
 
+  const storageIdentity = MANAGED_TARGET
+    ? 'admin_' + MANAGED_TARGET
+    : email;
+
   return (
     STORAGE_PREFIX +
-    email +
+    storageIdentity +
     '_' +
     String(
       dayNumber
@@ -5549,6 +5587,11 @@ function escapeHtml(
 
 function logoutUser(){
 
+  if(MANAGED_TARGET){
+    location.assign('/admin/dqs');
+    return;
+  }
+
   flushCurrentDay();
 
   localStorage
@@ -5631,18 +5674,20 @@ window
           .toLowerCase()
       : '';
 
-  if(!accountEmail){
+  if(!accountEmail && !MANAGED_TARGET){
 
     redirectToAccountLogin();
 
     return;
   }
 
-  localStorage
-    .setItem(
-      STORAGE_EMAIL,
-      accountEmail
-    );
+  if(accountEmail){
+    localStorage
+      .setItem(
+        STORAGE_EMAIL,
+        accountEmail
+      );
+  }
 
 
   document

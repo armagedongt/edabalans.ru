@@ -53,6 +53,41 @@ def test_stable_embed_loader_is_public() -> None:
     assert "var appHtmlCache = {};" in response.text
 
 
+def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
+    for path, app_code in (("/dqs", "dqs"), ("/training", "strength"), ("/strength", "strength")):
+        response = client.get(path)
+        assert response.status_code == 200
+        assert f'data-edabalans-app="{app_code}"' in response.text
+        assert '<script src="/embed.js" defer></script>' in response.text
+        assert response.headers["x-robots-tag"] == "noindex, nofollow"
+
+    loader = client.get("/embed.js").text
+    assert "destination += '?next=' + encodeURIComponent(returnTo)" in loader
+    portal = client.get("/lk?next=/training").text
+    assert "function returnTarget()" in portal
+    assert "target.origin===location.origin" in portal
+    assert "if(target){location.replace(target);return}" in portal
+
+
+def test_admin_apps_use_same_managed_frontend_and_highlight_started_profiles() -> None:
+    source = (
+        Path(__file__).resolve().parents[1] / "app" / "static" / "admin.js"
+    ).read_text(encoding="utf-8")
+    page = (
+        Path(__file__).resolve().parents[1] / "app" / "static" / "admin.html"
+    ).read_text(encoding="utf-8")
+
+    assert '["dqs", "strength", "metabolism"].includes(code)' in source
+    assert '["dqs", "strength", "metabolism"].includes(context)' in source
+    assert 'data-edabalans-admin-user="${esc(detail.user.id)}"' in source
+    assert 'data-edabalans-account-url="/admin/${code}"' in source
+    assert 'user.has_state ? "app-started"' in source
+    assert "приложение открывалось" in source
+    assert "Административный режим" in source
+    assert "Сменить профиль" in source
+    assert ".admin-mode-banner" in page
+
+
 def test_account_portal_uses_one_request_for_login_check_and_account_data() -> None:
     portal = client.get("/lk").text
     account = client.get("/apps/account.html").text

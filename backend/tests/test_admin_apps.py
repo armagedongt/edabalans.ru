@@ -136,3 +136,79 @@ def test_strength_managed_runtime_uses_admin_session_and_writes_audit():
         edit = db.scalar(select(AdminAppEdit).where(AdminAppEdit.target_user_id == user_id))
         assert edit.app_code == "strength"
         assert edit.action == "saveExerciseSettings"
+
+
+def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "dqs@example.test", "Дневник DQS")
+        db.add(DqsState(
+            user_id=user.id,
+            start_date="2026-09-01",
+            days={},
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    opened = client.post(
+        f"/admin/api/apps/dqs/users/{user_id}/runtime",
+        json={"action": "openUser"},
+    )
+    assert opened.status_code == 200
+    assert opened.json()["email"] == "dqs@example.test"
+
+    saved = client.post(
+        f"/admin/api/apps/dqs/users/{user_id}/runtime",
+        json={
+            "action": "saveDay",
+            "day": "1",
+            "data": '{"p":[' + ",".join(["0"] * 17) + '],"d":[' + ",".join(["null"] * 17) + "]}",
+        },
+    )
+    assert saved.status_code == 200
+    assert saved.json()["ok"] is True
+    with factory() as db:
+        edit = db.scalar(
+            select(AdminAppEdit).where(
+                AdminAppEdit.target_user_id == user_id,
+                AdminAppEdit.app_code == "dqs",
+            )
+        )
+        assert edit is not None
+        assert edit.action == "saveDay"
+
+
+def test_managed_app_runtime_on_public_host_still_requires_admin_session():
+    _, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "managed@example.test", "Управляемый профиль")
+        db.add(DqsState(user_id=user.id, days={}))
+        db.commit()
+        user_id = user.id
+
+    public_client = TestClient(app, base_url="https://edabalans.ru")
+    denied = public_client.get(
+        f"/api/apps/dqs?action=openUser&target_user_id={user_id}"
+    )
+    assert denied.status_code == 401
+
+    login(public_client)
+    allowed = public_client.post(
+        f"/admin/api/apps/dqs/users/{user_id}/runtime",
+        json={"action": "openUser"},
+    )
+    assert allowed.status_code == 200
+    assert allowed.json()["email"] == "managed@example.test"
+
+    saved = public_client.post(
+        "/api/apps/strength",
+        json={
+            "action": "saveExerciseSettings",
+            "target_user_id": str(user_id),
+            "workout_type": 1,
+            "exercises": [],
+        },
+    )
+    assert saved.status_code == 404
+    assert saved.json()["detail"] == "application state not found"

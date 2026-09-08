@@ -445,6 +445,29 @@ def app_fragment(app_code: str) -> Response:
     return public_asset(STATIC_DIR / "apps" / f"{app_code}.html")
 
 
+@router.get("/training", include_in_schema=False)
+@router.get("/training/", include_in_schema=False)
+@router.get("/strength", include_in_schema=False)
+@router.get("/strength/", include_in_schema=False)
+def strength_standalone() -> HTMLResponse:
+    return standalone_app_page("strength", "Силовые тренировки")
+
+
+@router.get("/dqs", include_in_schema=False)
+@router.get("/dqs/", include_in_schema=False)
+def dqs_standalone() -> HTMLResponse:
+    return standalone_app_page("dqs", "DQS · Дневник качества рациона")
+
+
+def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
+    template = (STATIC_DIR / "standalone-app.html").read_text(encoding="utf-8")
+    template = template.replace("{{APP_CODE}}", app_code).replace("{{APP_TITLE}}", title)
+    return HTMLResponse(
+        template,
+        headers={"Cache-Control": "no-cache", "X-Robots-Tag": "noindex, nofollow"},
+    )
+
+
 @router.get("/apps/dqs-category-rules.js", include_in_schema=False)
 def dqs_category_rules() -> FileResponse:
     return public_asset(STATIC_DIR / "apps" / "dqs-category-rules.js")
@@ -821,86 +844,163 @@ def dqs_legacy_get(
         if action == "ping":
             return jsonp({"ok": True, "service": "DQS", "dayCount": 30, "categoryCount": 17}, callback)
         user = require_user_resource(db, require_native_user(request, db), "dqs")
-        state = db.scalar(select(DqsState).where(DqsState.user_id == user.id))
-        if not state:
-            state = DqsState(user_id=user.id, days={}, source="app")
-            db.add(state)
-            db.flush()
-
-        if action == "openUser":
-            event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == "dqs_opened"))
-            if not event:
-                event = MasterclassEvent(user_id=user.id, event_key="dqs_opened", event_type="dqs_opened", placement="dqs", details={})
-                db.add(event); db.flush()
-            days = [state.days.get(str(index)) for index in range(1, DAY_COUNT + 1)]
-            payload = {
-                "ok": True,
-                "email": primary_email(db, user.id),
-                "startDate": state.start_date or "",
-                "needsStartDate": not bool(state.start_date),
-                "days": days,
-                "version": state.version,
-            }
-        elif action == "completeTutorial":
-            event = db.scalar(select(MasterclassEvent).where(
-                MasterclassEvent.user_id == user.id,
-                MasterclassEvent.event_key == "dqs_tutorial_completed",
-            ))
-            if not event:
-                event = MasterclassEvent(
-                    user_id=user.id,
-                    event_key="dqs_tutorial_completed",
-                    event_type="dqs_tutorial_completed",
-                    placement="dqs",
-                    details={},
-                )
-                db.add(event)
-                db.flush()
-            payload = {"ok": True, "completed": True}
-        elif action == "setStartDate":
-            date.fromisoformat(startDate)
-            already = bool(state.start_date)
-            if not already:
-                state.start_date = startDate
-                state.version += 1
-            payload = {"ok": True, "startDate": state.start_date, "alreadySet": already, "version": state.version}
-        elif action == "saveDay":
-            day_number = int(day)
-            if not 1 <= day_number <= DAY_COUNT:
-                raise ValueError("INVALID_DAY")
-            incoming = json.loads(data)
-            portions = incoming.get("p")
-            diversity = incoming.get("d")
-            if not isinstance(portions, list) or len(portions) != CATEGORY_COUNT:
-                raise ValueError("INVALID_PORTIONS")
-            if not isinstance(diversity, list) or len(diversity) != CATEGORY_COUNT:
-                raise ValueError("INVALID_DIVERSITY")
-            normalized_portions = []
-            for value in portions:
-                number = float(value)
-                if not math.isfinite(number) or number < 0 or abs(number * 2 - round(number * 2)) > 0.000001:
-                    raise ValueError("PORTION_MUST_BE_HALF_STEP")
-                normalized_portions.append(round(number * 2) / 2)
-            if any(value not in (True, False, None) for value in diversity):
-                raise ValueError("INVALID_DIVERSITY_VALUE")
-            saved = {
-                "v": 2,
-                "updated": datetime.now(timezone.utc).isoformat(),
-                "p": normalized_portions,
-                "d": diversity,
-            }
-            next_days = dict(state.days or {})
-            next_days[str(day_number)] = saved
-            state.days = next_days
-            state.version += 1
-            payload = {"ok": True, "data": saved, "version": state.version}
-        else:
-            payload = error("UNKNOWN_ACTION")
+        payload = apply_dqs_action(db, user, action, startDate, day, data)
         db.commit()
         return jsonp(payload, callback)
     except (AppAccessError, ValueError, TypeError, json.JSONDecodeError) as exc:
         db.rollback()
         return jsonp(error(str(exc)), callback)
+
+
+def apply_dqs_action(
+    db: Session,
+    user: User,
+    action: str,
+    start_date: str,
+    day: str,
+    data: str,
+    admin_username: str | None = None,
+) -> dict[str, Any]:
+    state = db.scalar(select(DqsState).where(DqsState.user_id == user.id))
+    if not state:
+        if admin_username:
+            raise HTTPException(status_code=404, detail="application state not found")
+        state = DqsState(user_id=user.id, days={}, source="app")
+        db.add(state)
+        db.flush()
+
+    if action == "openUser":
+        if not admin_username:
+            event = db.scalar(select(MasterclassEvent).where(
+                MasterclassEvent.user_id == user.id,
+                MasterclassEvent.event_key == "dqs_opened",
+            ))
+            if not event:
+                db.add(MasterclassEvent(
+                    user_id=user.id,
+                    event_key="dqs_opened",
+                    event_type="dqs_opened",
+                    placement="dqs",
+                    details={},
+                ))
+                db.flush()
+        days = [state.days.get(str(index)) for index in range(1, DAY_COUNT + 1)]
+        payload = {
+            "ok": True,
+            "email": primary_email(db, user.id),
+            "startDate": state.start_date or "",
+            "needsStartDate": not bool(state.start_date),
+            "days": days,
+            "version": state.version,
+        }
+    elif action == "completeTutorial":
+        event = db.scalar(select(MasterclassEvent).where(
+            MasterclassEvent.user_id == user.id,
+            MasterclassEvent.event_key == "dqs_tutorial_completed",
+        ))
+        if not event:
+            db.add(MasterclassEvent(
+                user_id=user.id,
+                event_key="dqs_tutorial_completed",
+                event_type="dqs_tutorial_completed",
+                placement="dqs",
+                details={},
+            ))
+            db.flush()
+        payload = {"ok": True, "completed": True}
+    elif action == "setStartDate":
+        date.fromisoformat(start_date)
+        already = bool(state.start_date)
+        if not already:
+            state.start_date = start_date
+            state.version += 1
+        payload = {
+            "ok": True,
+            "startDate": state.start_date,
+            "alreadySet": already,
+            "version": state.version,
+        }
+    elif action == "saveDay":
+        day_number = int(day)
+        if not 1 <= day_number <= DAY_COUNT:
+            raise ValueError("INVALID_DAY")
+        incoming = json.loads(data)
+        portions = incoming.get("p")
+        diversity = incoming.get("d")
+        if not isinstance(portions, list) or len(portions) != CATEGORY_COUNT:
+            raise ValueError("INVALID_PORTIONS")
+        if not isinstance(diversity, list) or len(diversity) != CATEGORY_COUNT:
+            raise ValueError("INVALID_DIVERSITY")
+        normalized_portions = []
+        for value in portions:
+            number = float(value)
+            if (
+                not math.isfinite(number)
+                or number < 0
+                or abs(number * 2 - round(number * 2)) > 0.000001
+            ):
+                raise ValueError("PORTION_MUST_BE_HALF_STEP")
+            normalized_portions.append(round(number * 2) / 2)
+        if any(value not in (True, False, None) for value in diversity):
+            raise ValueError("INVALID_DIVERSITY_VALUE")
+        saved = {
+            "v": 2,
+            "updated": datetime.now(timezone.utc).isoformat(),
+            "p": normalized_portions,
+            "d": diversity,
+        }
+        next_days = dict(state.days or {})
+        next_days[str(day_number)] = saved
+        state.days = next_days
+        state.version += 1
+        payload = {"ok": True, "data": saved, "version": state.version}
+    else:
+        payload = error("UNKNOWN_ACTION")
+
+    if (
+        admin_username
+        and action in {"completeTutorial", "setStartDate", "saveDay"}
+        and payload.get("ok")
+    ):
+        db.add(AdminAppEdit(
+            admin_username=admin_username,
+            target_user_id=user.id,
+            app_code="dqs",
+            action=action,
+            details={"version_after": state.version},
+        ))
+    return payload
+
+
+@router.post("/admin/api/apps/dqs/users/{user_id}/runtime")
+async def admin_dqs_runtime(
+    user_id: uuid.UUID,
+    request: Request,
+    admin_username: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> JSONResponse:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        raise HTTPException(status_code=404, detail="user not found")
+    try:
+        body = await request.json()
+        payload = apply_dqs_action(
+            db,
+            user,
+            str(body.get("action") or "ping"),
+            str(body.get("startDate") or ""),
+            str(body.get("day") or ""),
+            str(body.get("data") or ""),
+            admin_username,
+        )
+        db.commit()
+        return JSONResponse(payload)
+    except HTTPException:
+        db.rollback()
+        raise
+    except (ValueError, TypeError, json.JSONDecodeError) as exc:
+        db.rollback()
+        return JSONResponse(error(str(exc)), status_code=400)
 
 
 @router.get("/api/apps/dqs/access")
