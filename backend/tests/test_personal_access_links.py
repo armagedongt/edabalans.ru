@@ -13,6 +13,7 @@ from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import Settings, get_settings  # noqa: E402
+from app.auth import require_admin  # noqa: E402
 from app.access_routes import account_applications  # noqa: E402
 from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
@@ -28,7 +29,6 @@ from app.models import (  # noqa: E402
     UserLegalAcceptance, AccountCredential,
 )
 
-
 def setup():
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
@@ -42,13 +42,15 @@ def setup():
         with factory() as db:
             yield db
 
-    app.dependency_overrides[get_db] = override_db
-    app.dependency_overrides[get_settings] = lambda: Settings(
+    settings = Settings(
         database_url="sqlite+pysqlite:///:memory:",
         admin_username="admin@example.com",
         admin_password="test-admin-password",
         app_auth_secret="test-client-session-secret",
     )
+    app.dependency_overrides[get_db] = override_db
+    app.dependency_overrides[get_settings] = lambda: settings
+    app.dependency_overrides[require_admin] = lambda: "test-admin"
     # These tests exercise the temporary legacy email-bound adapter. The root
     # domain is covered by test_account_password_auth and requires a native
     # authenticated session.
@@ -78,12 +80,8 @@ def setup():
     return client, factory, user_id
 
 
-def login(client):
-    response = client.post("/admin/api/login", json={
-        "username": "admin@example.com",
-        "password": "test-admin-password",
-    })
-    assert response.status_code == 200
+def teardown_function() -> None:
+    app.dependency_overrides.clear()
 
 
 def login_user(client, email):
@@ -93,7 +91,6 @@ def login_user(client, email):
 
 def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
     client, factory, user_id = setup()
-    login(client)
     created = client.post(
         f"/admin/api/users/{user_id}/personal-access-links",
         json={
@@ -137,7 +134,6 @@ def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
 
 def test_paid_personal_link_uses_shared_short_checkout_reference():
     client, factory, user_id = setup()
-    login(client)
     created = client.post(
         f"/admin/api/users/{user_id}/personal-access-links",
         json={

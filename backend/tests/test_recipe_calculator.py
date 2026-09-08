@@ -13,6 +13,7 @@ from app.database import Base, get_db  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.account_security import password_hash  # noqa: E402
 from app.main import app  # noqa: E402
+import app.main as main_module  # noqa: E402
 from app.models import AccountCredential, Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
@@ -30,6 +31,7 @@ def make_client():
 
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[get_settings] = lambda: Settings(database_url="sqlite+pysqlite:///:memory:", app_auth_secret="test-client-session-secret")
+    main_module.SessionLocal = factory
     return TestClient(app, base_url="https://edabalans.ru"), factory
 
 

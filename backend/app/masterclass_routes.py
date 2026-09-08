@@ -636,6 +636,7 @@ def course_payload(
             checkmarks = {
                 str(index): stored_marks.get(item["id"]) is True
                 for index, item in enumerate(context.checks[day])
+                if not item.get("hidden", False)
             }
         first_opened = aware_utc(progress.first_opened_at) if progress else None
         next_unlock = scheduled_unlock_at(db, user.id, progress, now) if progress else None
@@ -656,7 +657,10 @@ def course_payload(
                 "task_unlocked": task_unlocked,
                 "task_opened": bool(progress and progress.task_opened_at),
                 "checkmarks": checkmarks,
-                "check_count": len(context.checks[day]),
+                "check_count": sum(
+                    1 for item in context.checks[day]
+                    if not item.get("hidden", False)
+                ),
                 "completed": bool(progress and progress.completed_at),
                 "completed_at": (
                     aware_utc(progress.completed_at).isoformat()

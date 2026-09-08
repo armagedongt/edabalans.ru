@@ -21,6 +21,7 @@ from app.auth import require_admin  # noqa: E402
 from app.app_auth import create_placement_token  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.main import app  # noqa: E402
+import app.main as main_module  # noqa: E402
 from app.masterclass_routes import current_required_step_ids  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.masterclass_offer_catalog import OFFER_CARD_COPY, OFFER_PRODUCTS  # noqa: E402
@@ -255,7 +256,9 @@ def test_assignment_check_ids_survive_reorder_hide_and_reactivation():
     old_participant = client.get(
         "/api/masterclass/course?email=member@example.test"
     ).json()["days"][0]
-    assert old_participant["check_count"] == len(changed_checks)
+    assert old_participant["check_count"] == sum(
+        not item["hidden"] for item in changed_checks
+    )
     with factory() as db:
         progress = db.scalar(select(MasterclassDayProgress).where(
             MasterclassDayProgress.day_number == 1
@@ -756,6 +759,7 @@ def setup():
     app.dependency_overrides[get_db] = override
     app.dependency_overrides[require_admin] = lambda: "test-admin"
     app.dependency_overrides[get_settings] = lambda: TEST_SETTINGS
+    main_module.SessionLocal = factory
     with factory() as db:
         user = User(display_name="Участник", status="active")
         db.add(user); db.flush()
@@ -1956,7 +1960,7 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
         json={"email": "member@example.test"},
     ).status_code == 200
 
-    for index in range(4):
+    for index in range(offer.json()["days"][0]["check_count"]):
         checked = client.put(
             f"/api/masterclass/course/days/1/checks/{index}",
             json={"email": "member@example.test", "checked": True},

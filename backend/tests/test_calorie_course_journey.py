@@ -18,6 +18,7 @@ from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.main import app  # noqa: E402
+import app.main as main_module  # noqa: E402
 from app.models import (  # noqa: E402
     ContentItem,
     ContentItemVersion,
@@ -54,6 +55,7 @@ def setup(*, course_ready: bool = True):
         admin_password="test-app-secret",
         app_auth_secret="test-client-session-secret",
     )
+    main_module.SessionLocal = factory
     with factory() as db:
         user = User(display_name="Участник Калорийного", status="active")
         denied = User(display_name="Без Калорийного", status="active")

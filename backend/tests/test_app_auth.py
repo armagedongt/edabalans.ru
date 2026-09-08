@@ -15,6 +15,7 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
+import app.main as main_module  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.models import (  # noqa: E402
     AccountCredential, Resource,
@@ -72,6 +73,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
 
     app.dependency_overrides[get_db] = override_db
     app.dependency_overrides[get_settings] = override_settings
+    main_module.SessionLocal = factory
     with factory() as db:
         user = User(display_name="Участник", status="active")
         resource = Resource(

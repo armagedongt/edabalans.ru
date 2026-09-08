@@ -252,7 +252,7 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer() -> Non
     assert "ensureAppShellStylesheet();" in load_function
     assert "'/assets/app-shell.css'" in loader
     assert "location.hostname === 'app.edabalans.ru' ? PUBLIC_ACCOUNT_URL : '/lk'" in loader
-    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk" in loader
+    assert "var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';" in loader
     footer = client.get("/site-footer.js").text
     assert "var(--ed-app-muted,#7b8094)" in footer
 
