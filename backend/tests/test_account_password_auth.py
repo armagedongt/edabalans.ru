@@ -431,6 +431,13 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
     assert "https://max.ru/test_max_bot?start=Mmax" in plain
     assert "Пароль:" not in plain
     assert "Mtelegram" in html and "Mmax" in html
+    assert message["From"] == "Похудение — это есть! · Сергей Воронцов <cabinet@example.test>"
+    assert "Оплата прошла успешно." in plain
+    assert "Ссылки действуют 24 часа." in plain
+    assert "Это техническое письмо, я не увижу ответ." in plain
+    assert "Напишите Сергею" not in plain
+    assert "<h1" not in html
+    assert 'role="presentation"' in html
 
 
 def test_registration_email_does_not_claim_a_payment_or_product_access():

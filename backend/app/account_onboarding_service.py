@@ -10,7 +10,6 @@ import smtplib
 import ssl
 from datetime import UTC, datetime, timedelta
 from email.message import EmailMessage
-from zoneinfo import ZoneInfo
 
 from cryptography.fernet import Fernet, InvalidToken
 from sqlalchemy import or_, select
@@ -226,12 +225,13 @@ def account_access_email(
     message["To"] = email
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
-    intro = (
-        "Оплата прошла. Доступ к материалам уже добавлен."
-        if payment_completed
-        else "Регистрация почти готова."
-    )
-    lines = [intro, "", "Чтобы получить логин и пароль от личного кабинета, откройте удобный мессенджер:"]
+    intro = "Оплата прошла успешно." if payment_completed else "Регистрация почти готова."
+    lines = [
+        intro,
+        "",
+        "Чтобы получить логин и пароль от личного кабинета на моём сайте, "
+        "откройте любой удобный для вас мессенджер:",
+    ]
     if links.get("telegram"):
         lines.append(f"Telegram: {links['telegram']}")
     if links.get("max"):
@@ -239,27 +239,28 @@ def account_access_email(
     lines.extend(
         (
             "",
-            f"Ссылки действуют до {expires_at.astimezone(ZoneInfo('Europe/Moscow')).strftime('%d.%m.%Y %H:%M')} (МСК).",
-            "После первой авторизации сайт запомнит вас на этом устройстве.",
+            "Ссылки действуют 24 часа.",
             "",
-            "Если ссылка перестала действовать или что-то не получилось, ответьте на это письмо.",
+            "Это техническое письмо, я не увижу ответ.",
+            "Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения:",
+            "Telegram: https://t.me/FitnessSergey",
+            "MAX: https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw",
         )
     )
     message.set_content("\n".join(lines))
     buttons = "".join(
-        f'<p><a href="{url}" style="display:inline-block;padding:13px 22px;border-radius:12px;background:{"#229ED9" if platform == "telegram" else "#2563eb"};color:#fff;text-decoration:none;font-weight:700">{"Telegram" if platform == "telegram" else "MAX"}</a></p>'
+        f'<td style="padding-right:12px"><a href="{url}" style="display:inline-block;padding:12px 20px;border-radius:10px;background:{"#229ED9" if platform == "telegram" else "#2563eb"};color:#fff;text-decoration:none;font-weight:700">{"Telegram" if platform == "telegram" else "MAX"}</a></td>'
         for platform, url in links.items()
         if url
     )
     message.add_alternative(
         f"""<!doctype html><html><body style="font:16px/1.55 Arial,sans-serif;color:#17172b">
         <div style="max-width:620px;margin:auto;padding:28px 20px">
-        <h1 style="font-size:28px">{"Доступ в личный кабинет" if payment_completed else "Регистрация в личном кабинете"}</h1>
         <p>{intro}</p>
-        <p>Чтобы получить логин и пароль, откройте удобный мессенджер:</p>
-        {buttons}
-        <p>Ссылки действуют 24 часа. После первой авторизации сайт запомнит вас на этом устройстве.</p>
-        <p>Если ссылка перестала действовать или что-то не получилось, ответьте на это письмо.</p>
+        <p>Чтобы получить логин и пароль от личного кабинета на моём сайте, откройте любой удобный для вас мессенджер:</p>
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>{buttons}</tr></table>
+        <p>Ссылки действуют 24 часа.</p>
+        <p style="color:#5b6472;font-size:14px">Это техническое письмо, я не увижу ответ. Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
         </div></body></html>""",
         subtype="html",
     )

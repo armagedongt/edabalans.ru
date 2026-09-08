@@ -44,7 +44,7 @@ services:
       SMTP_USERNAME: "${SMTP_USERNAME:-}"
       SMTP_PASSWORD: "${SMTP_PASSWORD:-}"
       SMTP_FROM_EMAIL: "${SMTP_FROM_EMAIL:-}"
-      SMTP_FROM_NAME: "${SMTP_FROM_NAME:-Сергей Воронцов · Похудение — это есть!}"
+      SMTP_FROM_NAME: "${SMTP_FROM_NAME:-Похудение — это есть! · Сергей Воронцов}"
       SMTP_REPLY_TO: "${SMTP_REPLY_TO:-armagedongt@gmail.com}"
       SMTP_USE_SSL: "${SMTP_USE_SSL:-true}"
       SMTP_STARTTLS: "${SMTP_STARTTLS:-false}"

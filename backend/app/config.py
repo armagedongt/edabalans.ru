@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     smtp_username: str = ""
     smtp_password: str = ""
     smtp_from_email: str = ""
-    smtp_from_name: str = "Сергей Воронцов · Похудение — это есть!"
+    smtp_from_name: str = "Похудение — это есть! · Сергей Воронцов"
     smtp_reply_to: str = "armagedongt@gmail.com"
     smtp_use_ssl: bool = True
     smtp_starttls: bool = False
