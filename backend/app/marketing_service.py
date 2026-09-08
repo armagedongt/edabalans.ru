@@ -66,6 +66,7 @@ EVENT_LABELS = {
     "intensive_main_open": "Открыл главную интенсива",
     "intensive_home_open": "Открыл главную",
     "intensive_menu_open": "Открыл меню интенсива",
+    "intensive_personal_link_open": "Открыл персональную ссылку интенсива",
     "intensive_masterclass_click": "Перешёл к мастер-классу",
     "intensive_telegram_click": "Нажал Telegram в интенсиве",
     "intensive_max_click": "Нажал MAX в интенсиве",
@@ -187,7 +188,7 @@ def _journey_context(event: Any) -> dict[str, str]:
     metadata = event.metadata_json if isinstance(event, TelegramTrackingEvent) and isinstance(event.metadata_json, dict) else {}
     return {
         key: str(metadata[key])
-        for key in ("journey_id", "entry", "messenger")
+        for key in ("journey_id", "entry", "messenger", "device")
         if metadata.get(key)
     }
 
@@ -546,6 +547,7 @@ def marketing_dashboard(
                 "messenger": landing_context.get("messenger") or (
                     "max" if start_event.event_type.startswith("max_") else "telegram"
                 ),
+                "device": landing_context.get("device") or "не определён",
                 "landing_entry": {
                     "at": _iso(landing_event.occurred_at),
                     "label": _event_label(landing_event),
@@ -604,6 +606,7 @@ def marketing_dashboard(
                 **attribution,
                 "journey_id": journey_id,
                 "messenger": landing_context.get("messenger") or "—",
+                "device": landing_context.get("device") or "не определён",
                 "landing_entry": {
                     "at": _iso(landing_event.occurred_at),
                     "label": _event_label(landing_event),

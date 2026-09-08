@@ -856,8 +856,13 @@ owns_files = [
   "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md",
   "tools/yandex_direct_apply_safe_fixes.py", "tools/yandex_direct_audit.py",
   "tools/yandex_direct_stats.py",
+  "backend/app/marketing_daily_report.py",
+  "backend/migrations/versions/20260908_0038_marketing_daily_reports.py",
+  "backend/tests/test_marketing_daily_report.py",
+  "docs/knowledge-base/YANDEX_DIRECT_OPERATIONS.md",
 ]
 owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*"]
+owns_tables = ["marketing_daily_reports"]
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
 reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "products.intensive"]
 

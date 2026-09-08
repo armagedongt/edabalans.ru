@@ -128,7 +128,7 @@ def tracking_session_context(session: Session, row: TrackingSession) -> dict[str
     metadata = prepared.metadata_json if prepared and isinstance(prepared.metadata_json, dict) else {}
     return {
         key: str(metadata[key])
-        for key in ("journey_id", "entry", "messenger")
+        for key in ("journey_id", "entry", "messenger", "device")
         if metadata.get(key)
     }
 

@@ -129,7 +129,10 @@ test("Telegram-only incident reboots EU first, RU after five minutes, then suspe
     if (String(url).includes("api.telegram.org")) return response(200, { ok: true, result: {} });
     if (String(url).includes("api.timeweb.cloud")) return response(200, {});
     if (String(url).includes("api.direct.yandex.com")) {
-      return response(200, { result: { SuspendResults: [{ Id: 101 }] } });
+      const method = JSON.parse(options.body).method;
+      return method === "get"
+        ? response(200, { result: { Campaigns: [{ Id: 101, State: "ON", Status: "ACCEPTED" }] } })
+        : response(200, { result: { SuspendResults: [{ Id: 101 }] } });
     }
     throw new Error(`Unexpected URL: ${url}`);
   };
@@ -165,8 +168,8 @@ test("Telegram-only incident reboots EU first, RU after five minutes, then suspe
   await runWatchdog(env, storage, { fetchImpl, now: 600_000 });
   assert.equal(calls.filter((call) => call.url.endsWith("/servers/eu-id/reboot")).length, 1);
   assert.equal(calls.filter((call) => call.url.endsWith("/servers/ru-id/reboot")).length, 1);
-  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 1);
-  const yandexCall = calls.find((call) => call.url.includes("api.direct.yandex.com"));
+  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 2);
+  const yandexCall = calls.find((call) => call.url.includes("api.direct.yandex.com") && JSON.parse(call.options.body).method === "suspend");
   assert.deepEqual(JSON.parse(yandexCall.options.body).params.SelectionCriteria.Ids, [101]);
   assert.equal(JSON.parse(yandexCall.options.body).method, "suspend");
   const alertTexts = calls
@@ -214,7 +217,7 @@ test("failed ad suspension keeps retrying, but an ambiguous reboot is never repe
   assert.equal(calls.filter((url) => url.includes("api.direct.yandex.com")).length, 4);
 });
 
-test("recovery after an ad suspension sends an alert and never resumes campaigns", async () => {
+test("recovery resumes only campaigns paused by automation after three healthy checks", async () => {
   let healthy = false;
   const telegramBodies = [];
   const yandexBodies = [];
@@ -225,8 +228,11 @@ test("recovery after an ad suspension sends an alert and never resumes campaigns
     }
     if (String(url).includes("api.timeweb.cloud")) return response(200, {});
     if (String(url).includes("api.direct.yandex.com")) {
-      yandexBodies.push(JSON.parse(options.body));
-      return response(200, { result: { SuspendResults: [{ Id: 101 }] } });
+      const body = JSON.parse(options.body);
+      yandexBodies.push(body);
+      if (body.method === "get") return response(200, { result: { Campaigns: [{ Id: 101, State: "ON", Status: "ACCEPTED" }, { Id: 202, State: "SUSPENDED", Status: "ACCEPTED" }] } });
+      if (body.method === "suspend") return response(200, { result: { SuspendResults: [{ Id: 101 }] } });
+      return response(200, { result: { ResumeResults: [{ Id: 101 }] } });
     }
     return healthy ? response(200, { status: "ready" }) : response(503, { status: "unavailable" });
   };
@@ -241,15 +247,20 @@ test("recovery after an ad suspension sends an alert and never resumes campaigns
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     YANDEX_DIRECT_TOKEN: "direct-secret",
-    YANDEX_CAMPAIGN_IDS: "101",
+    YANDEX_CAMPAIGN_IDS: "101,202",
+    RECOVERY_SUCCESSES_BEFORE_RESUME: "3",
   };
   const storage = new MemoryStorage();
   await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
   await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
   healthy = true;
   await runWatchdog(env, storage, { fetchImpl, now: 4_000 });
-  assert.deepEqual(yandexBodies.map((body) => body.method), ["suspend"]);
-  assert.match(telegramBodies.at(-1).text, /снова работает/);
+  await runWatchdog(env, storage, { fetchImpl, now: 5_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 6_000 });
+  assert.deepEqual(yandexBodies.map((body) => body.method), ["get", "suspend", "resume"]);
+  assert.deepEqual(yandexBodies.at(-1).params.SelectionCriteria.Ids, [101]);
+  assert.match(telegramBodies.at(-1).text, /возобновила 1 камп/);
+  assert.equal(storage.value.incident, null);
 });
 
 test("alerts remain queued after Telegram failure and are delivered once after retry", async () => {
@@ -279,6 +290,42 @@ test("alerts remain queued after Telegram failure and are delivered once after r
   await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
   assert.equal(storage.value.pendingAlerts.length, 0);
   assert.equal(delivered.length, queued);
+});
+
+test("daily report is generated, delivered after 06:00 Moscow, and never duplicated", async () => {
+  const calls = [];
+  const fetchImpl = async (url, options = {}) => {
+    const value = String(url);
+    calls.push({ url: value, body: options.body ? JSON.parse(options.body) : null });
+    if (value.includes("api.telegram.org")) return response(200, { ok: true });
+    if (value.includes("/daily-report/generate")) return response(200, { status: "pending" });
+    if (value.includes("/daily-report/delivered")) return response(200, { status: "sent" });
+    if (value.includes("/daily-report?")) return response(200, {
+      messages: ["dry one", "dry two"],
+      payload: { demo_ai_message: "demo ai" },
+    });
+    return response(200, { status: "ready" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    MARKETING_REPORT_URL: "https://api.example/daily-report",
+    MARKETING_REPORT_TOKEN: "report-secret",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    SEND_REPORT_AI_DEMO_ONCE: "true",
+  };
+  const storage = new MemoryStorage();
+  const atSixMoscow = Date.UTC(2026, 8, 8, 3, 0, 0);
+  await runWatchdog(env, storage, { fetchImpl, now: atSixMoscow });
+  await runWatchdog(env, storage, { fetchImpl, now: atSixMoscow + 60_000 });
+
+  assert.equal(calls.filter((call) => call.url.includes("/generate?")).length, 1);
+  assert.equal(calls.filter((call) => call.url.includes("/delivered?")).length, 1);
+  const telegram = calls.filter((call) => call.url.includes("api.telegram.org"));
+  assert.deepEqual(telegram.map((call) => call.body.text), ["dry one", "dry two", "demo ai"]);
+  assert.equal(storage.value.report.sentDate, "2026-09-07");
+  assert.equal(storage.value.report.demoSent, true);
 });
 
 test("platform incident reboots only the Russian server immediately", async () => {

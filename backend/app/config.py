@@ -53,6 +53,9 @@ class Settings(BaseSettings):
     yandex_metrika_counter_id: str = "97331502"
     yandex_direct_token: str = ""
     yandex_direct_client_login: str = ""
+    marketing_report_token: str = ""
+    marketing_report_campaigns: str = "search:714152601,rsya:714157420"
+    marketing_report_baseline_date: str = "2026-09-08"
     marketing_day_one_events_enabled: bool = False
     marketing_site_home_events_enabled: bool = False
     marketing_later_day_events_enabled: bool = False

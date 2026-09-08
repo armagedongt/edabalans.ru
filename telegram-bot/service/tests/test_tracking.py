@@ -287,6 +287,7 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
             "journey_id": prepared.metadata_json["journey_id"],
             "entry": "button",
             "messenger": "tg",
+            "device": "desktop",
         }
         assert len(clicks) == 1
         assert clicks[0].metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
@@ -297,6 +298,7 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
         assert start.metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
         assert start.metadata_json["entry"] == "button"
         assert start.metadata_json["messenger"] == "tg"
+        assert start.metadata_json["device"] == "desktop"
     app.dependency_overrides.clear()
 
 
@@ -307,6 +309,7 @@ def test_public_qr_scan_is_counted_and_linked_to_real_start(tmp_path, monkeypatc
 
     result = client.post(
         "/bot/public/start-link",
+        headers={"User-Agent": "Mozilla/5.0 (iPhone; Mobile)"},
         json={
             "messenger": "tg",
             "entry": "qr",
@@ -329,9 +332,11 @@ def test_public_qr_scan_is_counted_and_linked_to_real_start(tmp_path, monkeypatc
         assert len(scans) == 1
         assert scans[0].metadata_json["entry"] == "qr"
         assert scans[0].metadata_json["messenger"] == "tg"
+        assert scans[0].metadata_json["device"] == "mobile"
         start = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "start_first", TrackingEvent.telegram_user_id == "606"))
         assert start.metadata_json["journey_id"] == scans[0].metadata_json["journey_id"]
         assert start.metadata_json["entry"] == "qr"
+        assert start.metadata_json["device"] == "mobile"
     app.dependency_overrides.clear()
 
 

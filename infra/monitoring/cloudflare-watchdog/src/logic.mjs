@@ -4,6 +4,7 @@ const DEFAULT_RU_REBOOT_DELAY_SECONDS = 300;
 const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 600;
 const DEFAULT_ACTION_RETRY_SECONDS = 120;
 const DEFAULT_MAX_ACTION_ATTEMPTS = 3;
+const DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME = 3;
 
 export function initialState() {
   return {
@@ -13,6 +14,7 @@ export function initialState() {
     firstFailureAt: null,
     incident: null,
     pendingAlerts: [],
+    report: { generatedDate: null, sentDate: null, demoSent: false, lastError: null },
   };
 }
 
@@ -40,11 +42,17 @@ export function campaignIds(value) {
 
 export function normalizeState(value) {
   if (!value || value.version !== 1) return initialState();
-  return {
+  const state = {
     ...initialState(),
     ...value,
     pendingAlerts: Array.isArray(value.pendingAlerts) ? value.pendingAlerts.slice(-20) : [],
   };
+  state.report = { ...initialState().report, ...(value.report || {}) };
+  if (state.incident) {
+    state.incident.recoveryStreak ??= 0;
+    state.incident.resumeAds ??= actionState();
+  }
+  return state;
 }
 
 export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS) {
@@ -128,11 +136,16 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
 
   if (failures.length === 0) {
     if (state.incident) {
+      const pausedIds = state.incident.adsPause?.campaignIds || [];
+      if (state.incident.adsPause?.status === "succeeded" && pausedIds.length) {
+        state.incident.recoveryStreak = (state.incident.recoveryStreak || 0) + 1;
+        state.failureStreak = 0;
+        state.candidateFailureKey = null;
+        state.firstFailureAt = null;
+        return state;
+      }
       const durationMinutes = Math.max(1, Math.round((now - state.incident.startedAt) / 60_000));
-      queueAlert(
-        state,
-        `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Рекламу автоматически не запускаю.`,
-      );
+      queueAlert(state, `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
     }
     state.failureStreak = 0;
     state.candidateFailureKey = null;
@@ -142,6 +155,7 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
   }
 
   const failureKey = failures.slice().sort().join(",");
+  if (state.incident) state.incident.recoveryStreak = 0;
   if (!state.incident && state.candidateFailureKey !== failureKey) {
     state.failureStreak = 0;
     state.firstFailureAt = now;
@@ -162,6 +176,8 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
       ruReboot: actionState(),
       euReboot: actionState(),
       adsPause: actionState(),
+      resumeAds: actionState(),
+      recoveryStreak: 0,
       missingConfigurationAlerts: {},
     };
     queueAlert(
@@ -196,6 +212,13 @@ function canAttempt(action, target, now) {
 
 function actionPlan(state, checks, now, env) {
   if (!state.incident) return [];
+  if (failedChecks(checks).length === 0) {
+    const threshold = parsePositiveInteger(env.RECOVERY_SUCCESSES_BEFORE_RESUME, DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME);
+    const ids = state.incident.adsPause?.campaignIds || [];
+    return state.incident.recoveryStreak >= threshold && ids.length
+      ? [{ key: "resumeAds", kind: "resume_ads", ids }]
+      : [];
+  }
   const ageSeconds = Math.max(0, (now - state.incident.startedAt) / 1000);
   const ruDelay = parsePositiveInteger(
     env.RU_REBOOT_AFTER_TELEGRAM_FAILURE_SECONDS,
@@ -235,7 +258,7 @@ function configurationFor(action, env) {
   }
   let ids;
   try {
-    ids = campaignIds(env.YANDEX_CAMPAIGN_IDS);
+    ids = action.kind === "resume_ads" ? action.ids : campaignIds(env.YANDEX_CAMPAIGN_IDS);
   } catch (error) {
     return { ok: false, reason: String(error?.message || error) };
   }
@@ -264,15 +287,47 @@ async function pauseAds(ids, env, fetchImpl) {
     "Content-Type": "application/json; charset=utf-8",
   };
   if (env.YANDEX_DIRECT_CLIENT_LOGIN) headers["Client-Login"] = env.YANDEX_DIRECT_CLIENT_LOGIN;
+  const getResponse = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ method: "get", params: { SelectionCriteria: { Ids: ids }, FieldNames: ["Id", "State", "Status"] } }),
+  }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
+  if (!getResponse.ok) throw new Error(`Яндекс.Директ HTTP ${getResponse.status}`);
+  const getBody = await getResponse.json();
+  if (getBody.error) throw new Error(`Яндекс.Директ API ${getBody.error.error_code ?? "error"}`);
+  const activeIds = (getBody.result?.Campaigns || []).filter((item) => item.State === "ON").map((item) => item.Id);
+  if (!activeIds.length) return [];
   const response = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
     method: "POST",
     headers,
-    body: JSON.stringify({ method: "suspend", params: { SelectionCriteria: { Ids: ids } } }),
+    body: JSON.stringify({ method: "suspend", params: { SelectionCriteria: { Ids: activeIds } } }),
   }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
   if (!response.ok) throw new Error(`Яндекс.Директ HTTP ${response.status}`);
   const body = await response.json();
   if (body.error) throw new Error(`Яндекс.Директ API ${body.error.error_code ?? "error"}`);
-  const errors = (body.result?.SuspendResults || []).flatMap((item) => item.Errors || []);
+  const results = body.result?.SuspendResults || [];
+  const succeeded = results.filter((item) => !(item.Errors || []).length).map((item) => item.Id);
+  const errors = results.flatMap((item) => item.Errors || []);
+  if (errors.length || succeeded.length !== activeIds.length) throw new Error(`Яндекс.Директ: ${errors[0]?.Code ?? "не все кампании остановлены"}`);
+  return succeeded;
+}
+
+async function resumeAds(ids, env, fetchImpl) {
+  const headers = {
+    Authorization: `Bearer ${env.YANDEX_DIRECT_TOKEN}`,
+    "Accept-Language": "ru",
+    "Content-Type": "application/json; charset=utf-8",
+  };
+  if (env.YANDEX_DIRECT_CLIENT_LOGIN) headers["Client-Login"] = env.YANDEX_DIRECT_CLIENT_LOGIN;
+  const response = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ method: "resume", params: { SelectionCriteria: { Ids: ids } } }),
+  }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
+  if (!response.ok) throw new Error(`Яндекс.Директ HTTP ${response.status}`);
+  const body = await response.json();
+  if (body.error) throw new Error(`Яндекс.Директ API ${body.error.error_code ?? "error"}`);
+  const errors = (body.result?.ResumeResults || []).flatMap((item) => item.Errors || []);
   if (errors.length) throw new Error(`Яндекс.Директ: ${errors[0].Code ?? "ошибка"}`);
 }
 
@@ -347,9 +402,14 @@ async function executeAction(state, action, env, fetchImpl, storage, now) {
     if (action.kind === "reboot") {
       await rebootServer(action, env, fetchImpl);
       queueAlert(state, `🔄 Отправлена команда перезагрузить ${action.server === "RU" ? "российский" : "европейский"} сервер.`);
+    } else if (action.kind === "pause_ads") {
+      target.campaignIds = await pauseAds(configuration.ids, env, fetchImpl);
+      queueAlert(state, target.campaignIds.length
+        ? `⛔ Реклама в Яндекс.Директе остановлена: ${target.campaignIds.length} камп.`
+        : "ℹ️ Сбой подтверждён, но автоматика не останавливала Директ: указанные кампании уже не работали.");
     } else {
-      await pauseAds(configuration.ids, env, fetchImpl);
-      queueAlert(state, `⛔ Реклама в Яндекс.Директе остановлена: ${configuration.ids.length} камп.`);
+      await resumeAds(configuration.ids, env, fetchImpl);
+      queueAlert(state, `▶️ Бот стабильно работает. Автоматика возобновила ${configuration.ids.length} камп. Яндекс.Директа, которые сама остановила.`);
     }
     target.status = "succeeded";
     target.retryAt = null;
@@ -401,7 +461,12 @@ export async function runWatchdog(env, storage, options = {}) {
     for (const action of actionPlan(state, checks, now, env)) {
       await executeAction(state, action, env, fetchImpl, storage, now);
     }
+    if (state.incident?.resumeAds?.status === "succeeded") {
+      state.incident = null;
+      await persist(storage, state);
+    }
   }
+  if (!options.skipActions) await runDailyReport(state, env, fetchImpl, storage, now);
   await flushAlerts(state, env, fetchImpl, storage);
 
   return {
@@ -410,6 +475,50 @@ export async function runWatchdog(env, storage, options = {}) {
     incident: state.incident?.id ?? null,
     failureStreak: state.failureStreak,
   };
+}
+
+async function reportRequest(url, token, method, fetchImpl) {
+  const response = await fetchWithTimeout(url, {
+    method,
+    headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+  }, fetchImpl, 55_000);
+  if (!response.ok) throw new Error(`marketing report HTTP ${response.status}`);
+  return response.json();
+}
+
+async function runDailyReport(state, env, fetchImpl, storage, now) {
+  if (!env.MARKETING_REPORT_URL || !env.MARKETING_REPORT_TOKEN) return;
+  const instant = new Date(now);
+  const moscowNow = new Date(now + 3 * 60 * 60 * 1000);
+  const target = new Date(Date.UTC(moscowNow.getUTCFullYear(), moscowNow.getUTCMonth(), moscowNow.getUTCDate() - 1));
+  const reportDate = target.toISOString().slice(0, 10);
+  try {
+    if (state.report.generatedDate !== reportDate) {
+      await reportRequest(`${env.MARKETING_REPORT_URL}/generate?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
+      state.report.generatedDate = reportDate;
+      state.report.lastError = null;
+      await persist(storage, state);
+    }
+    if (instant.getUTCHours() >= 3 && state.report.sentDate !== reportDate) {
+      const report = await reportRequest(`${env.MARKETING_REPORT_URL}?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "GET", fetchImpl);
+      for (const message of report.messages || []) await sendTelegramAlert(message, env, fetchImpl);
+      if (parseBoolean(env.SEND_REPORT_AI_DEMO_ONCE, false) && !state.report.demoSent && report.payload?.demo_ai_message) {
+        await sendTelegramAlert(report.payload.demo_ai_message, env, fetchImpl);
+        state.report.demoSent = true;
+      }
+      await reportRequest(`${env.MARKETING_REPORT_URL}/delivered?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
+      state.report.sentDate = reportDate;
+      state.report.lastError = null;
+      await persist(storage, state);
+    }
+  } catch (error) {
+    const message = String(error?.message || error).slice(0, 160);
+    if (state.report.lastError !== message) {
+      queueAlert(state, `⚠️ Ежедневный отчёт не сформирован или не отправлен: ${message}.`);
+      state.report.lastError = message;
+      await persist(storage, state);
+    }
+  }
 }
 
 export const testing = {

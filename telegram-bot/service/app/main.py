@@ -602,6 +602,7 @@ def _record_landing_entry(
 @app.post("/bot/public/start-link")
 def public_messenger_start_link(
     body: PublicMessengerStartLinkIn,
+    request: Request,
     response: Response,
     session: Session = Depends(get_db),
 ) -> dict:
@@ -621,6 +622,9 @@ def public_messenger_start_link(
     payload, tracking_row = create_tracking_session(session, link, alias, raw_query)
     session.flush()
     base = _messenger_start_base(body.messenger)
+    mobile_hint = request.headers.get("sec-ch-ua-mobile", "") == "?1"
+    user_agent = request.headers.get("user-agent", "").casefold()
+    device = "mobile" if mobile_hint or any(marker in user_agent for marker in ("android", "iphone", "ipad", "mobile")) else "desktop"
     session.add(
         TrackingEvent(
             tracking_link_id=link.id,
@@ -632,6 +636,7 @@ def public_messenger_start_link(
                 "journey_id": tracking_row.id,
                 "entry": body.entry,
                 "messenger": body.messenger,
+                "device": device,
             },
             deduplication_key=f"link_prepared:{tracking_row.id}",
         )
