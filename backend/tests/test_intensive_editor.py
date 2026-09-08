@@ -65,7 +65,7 @@ def test_shared_page_requires_admin_to_save_and_is_public_after_save() -> None:
     )
     assert saved.status_code == 200
     assert saved.json()["version"] == 1
-    assert saved.json()["html"] == '<h1>Новый текст</h1><p><a>Ссылка</a></p><blockquote>Важно</blockquote><aside>Акцент</aside><img src="https://cdn.example.com/photo.jpg" alt="Тарелка&amp;ложка&quot; onerror=&quot;bad()">'
+    assert saved.json()["html"] == '<h1>Новый текст</h1><p><a>Ссылка</a></p><blockquote>Важно</blockquote><aside>Акцент</aside><img src="https://cdn.example.com/photo.jpg" alt="Тарелка&amp;ложка&quot; onerror=&quot;bad()" loading="lazy" decoding="async">'
 
     public = client.get("/api/intensive/day-1")
     assert public.status_code == 200
