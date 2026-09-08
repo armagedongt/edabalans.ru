@@ -720,6 +720,19 @@ def test_messenger_link_migration_stores_only_token_hash():
     assert "token varchar" not in migration
 
 
+def test_legacy_first_day_messenger_step_is_hidden_by_production_migration():
+    migration = (
+        Path(__file__).parents[1]
+        / "migrations"
+        / "versions"
+        / "20260908_0039_hide_legacy_messenger_step.py"
+    ).read_text(encoding="utf-8")
+
+    assert 'item.get("id") == "day-01-messenger-link"' in migration
+    assert 'step["hidden"] = True' in migration
+    assert 'created_by="migration-hide-legacy-messenger-step"' in migration
+
+
 def test_offer_window_migration_changes_only_future_early_duration():
     migration = (
         Path(__file__).parents[1]
