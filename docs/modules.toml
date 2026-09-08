@@ -438,6 +438,7 @@ owns_files = [
   "docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md",
   "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
   "backend/migrations/versions/20260825_0024_course_structure_editor.py",
+  "backend/migrations/versions/20260908_0039_hide_legacy_messenger_step.py",
   "tools/build_dqs_component_catalog.py", "tools/build_dqs_legacy_style_preview.py",
   "tools/tests/test_dqs_slider_runtime.py",
   "tools/extract_tilda_article_markdown.py",
