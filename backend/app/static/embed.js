@@ -5,10 +5,7 @@
     ? location.origin
     : 'https://edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
-  var STORAGE_RETURN_PATH = 'edabalans_return_path_v1';
-  var PUBLIC_ACCOUNT_URL = 'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/lk';
-  var TILDA_PROFILE_READER = 'https://members.tildaapi.com/frontend/js/tilda-members-init.min.js';
-  var profileReaderPromise = null;
+  var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -42,111 +39,31 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
-  function detectTildaMemberEmail() {
-    try {
-      if (typeof window.tma__getProfileObjFromLS !== 'function') return '';
-      var profile = window.tma__getProfileObjFromLS();
-      var email = normalizeEmail(profile && profile.login);
-      return validEmail(email) ? email : '';
-    } catch (error) {
-      return '';
-    }
-  }
-
-  function waitForTildaEmail(onFound, onMissing) {
-    var attempts = 0;
-    var maxAttempts = 25;
-    var timer = setInterval(function () {
-      var email = detectTildaMemberEmail();
-      attempts += 1;
-      if (email) {
-        clearInterval(timer);
-        onFound(email);
-        return;
-      }
-      if (attempts >= maxAttempts) {
-        clearInterval(timer);
-        onMissing();
-      }
-    }, 200);
-  }
-
-  function remember(email) {
+  function rememberNative(email) {
     try {
       localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
         email: email,
         sessionToken: '',
         expiresAt: 0,
-        source: 'tilda',
+        source: 'native',
         confirmedAt: new Date().toISOString()
       }));
-      localStorage.setItem('dqs_email', email);
     } catch (error) {}
-    window.EdabalansIdentity = {email: email, sessionToken: '', source: 'tilda'};
-    var marker = document.getElementById('edabalans-member-email');
-    if (!marker) {
-      marker = document.createElement('input');
-      marker.id = 'edabalans-member-email';
-      marker.name = 'member_email';
-      marker.type = 'hidden';
-      document.body.appendChild(marker);
-    }
-    marker.value = email;
+    window.EdabalansIdentity = {email: email, sessionToken: '', source: 'native'};
   }
 
-  function redirectToTildaLogin() {
+  function redirectToAccountLogin() {
     try {
-      var returnPath = location.pathname + location.search + location.hash;
-      if (returnPath.charAt(0) === '/' && returnPath.indexOf('//') !== 0 && returnPath.indexOf('/members/login') !== 0) {
-        sessionStorage.setItem(STORAGE_RETURN_PATH, returnPath);
-      }
       localStorage.removeItem(STORAGE_IDENTITY);
-      localStorage.removeItem('dqs_email');
     } catch (error) {}
     window.EdabalansIdentity = null;
-    location.replace('/members/login');
+    window.top.location.replace(PUBLIC_ACCOUNT_URL);
   }
 
-  function ensureTildaProfileReader() {
-    if (typeof window.tma__getProfileObjFromLS === 'function') return Promise.resolve();
-    if (profileReaderPromise) return profileReaderPromise;
-    profileReaderPromise = new Promise(function (resolve) {
-      var existing = document.getElementById('tilda-membersarea-js') || document.getElementById('edabalans-tilda-profile-reader');
-      if (existing) {
-        existing.addEventListener('load', resolve, {once: true});
-        setTimeout(resolve, 600);
-        return;
-      }
-      var script = document.createElement('script');
-      script.id = 'edabalans-tilda-profile-reader';
-      script.src = TILDA_PROFILE_READER;
-      script.async = true;
-      script.onload = resolve;
-      script.onerror = resolve;
-      document.head.appendChild(script);
-    });
-    return profileReaderPromise;
-  }
-
-  function restoreReturnPath() {
-    var returnPath = '';
-    try {
-      returnPath = String(sessionStorage.getItem(STORAGE_RETURN_PATH) || '');
-      sessionStorage.removeItem(STORAGE_RETURN_PATH);
-    } catch (error) {}
-    if (!returnPath || returnPath.charAt(0) !== '/' || returnPath.indexOf('//') === 0 || returnPath.indexOf('://') >= 0) return false;
-    var currentPath = location.pathname + location.search + location.hash;
-    if (returnPath === currentPath) return false;
-    location.replace(returnPath);
-    return true;
-  }
-
-  function hideTildaUserbar() {
-    if (document.getElementById('edabalans-hide-tilda-userbar')) return;
-    var style = document.createElement('style');
-    style.id = 'edabalans-hide-tilda-userbar';
-    style.textContent = '.tlk-userbar,.tlk-userbar__popup,.tlk-userbar__user-icon,.t-userbar,[class^="tlk-userbar"],[class*=" tlk-userbar"]{display:none!important}';
-    document.head.appendChild(style);
+  function nativeSession() {
+    return fetch(APP_HOST + '/api/account-auth/session', {credentials: 'include'})
+      .then(function (response) { return response.ok ? response.json() : {authenticated: false}; })
+      .catch(function () { return {authenticated: false}; });
   }
 
   function ensureAppShellStylesheet() {
@@ -397,21 +314,18 @@
   function boot() {
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'));
     if (!mounts.length) return;
-    hideTildaUserbar();
-    mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход через Tilda…</div>';
-    ensureTildaProfileReader().then(function () {
-      var detected = detectTildaMemberEmail();
-      if (detected) {
-        remember(detected);
-        if (restoreReturnPath()) return;
-        start(mounts);
+    mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход…</div>';
+    if (location.origin !== APP_HOST) {
+      redirectToAccountLogin();
+      return;
+    }
+    nativeSession().then(function (session) {
+      if (!session.authenticated || !validEmail(session.email)) {
+        redirectToAccountLogin();
         return;
       }
-      waitForTildaEmail(function (email) {
-        remember(email);
-        if (restoreReturnPath()) return;
-        start(mounts);
-      }, redirectToTildaLogin);
+      rememberNative(normalizeEmail(session.email));
+      start(mounts);
     });
   }
 

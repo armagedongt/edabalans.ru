@@ -48,9 +48,28 @@ def resolve_user_for_resource(
     if not user:
         raise AppAccessError("Этот email не найден в списке доступа")
 
+    return require_user_resource(
+        db,
+        user,
+        resource_code,
+        require_legal_acceptance=require_legal_acceptance,
+    )
+
+
+def require_user_resource(
+    db: Session,
+    user: User,
+    resource_code: str | tuple[str, ...],
+    *,
+    require_legal_acceptance: bool = True,
+) -> User:
+    """Validate a resource right for an already authenticated user."""
+    if user.status != "active" or user.merged_into_user_id is not None:
+        raise AppAccessError("Личный кабинет недоступен")
+
     if review_blocks_access(user):
         raise AppAccessError(
-            "Исторические покупки требуют подтверждения Сергея. Напишите Сергею, чтобы он проверил и открыл нужные программы."
+            "Исторические покупки требуют проверки. Напишите мне, и я открою нужные программы."
         )
 
     now = datetime.now(timezone.utc)

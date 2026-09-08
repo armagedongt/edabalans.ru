@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_PASSWORD", "test-app-secret")
+os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, func, select  # noqa: E402
@@ -13,6 +14,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.auth import ADMIN_COOKIE, admin_session_token, require_admin  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
+from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.main import app  # noqa: E402
@@ -27,7 +29,7 @@ from app.models import (  # noqa: E402
     User,
     UserAccess,
     UserEmail,
-    UserLegalAcceptance,
+    UserLegalAcceptance, AccountCredential,
 )
 
 
@@ -50,6 +52,7 @@ def setup(*, course_ready: bool = True):
         database_url="sqlite+pysqlite:///:memory:",
         admin_username="admin@example.test",
         admin_password="test-app-secret",
+        app_auth_secret="test-client-session-secret",
     )
     with factory() as db:
         user = User(display_name="Участник Калорийного", status="active")
@@ -74,6 +77,10 @@ def setup(*, course_ready: bool = True):
                 ),
             ]
         )
+        db.add_all([
+            AccountCredential(user_id=user.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"),
+            AccountCredential(user_id=denied.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"),
+        ])
         resource = Resource(
             code="ACCESS_CALORIES", name="Калорийный курс", status="active"
         )
@@ -100,7 +107,7 @@ def setup(*, course_ready: bool = True):
                 ]
             )
         db.commit()
-    client = TestClient(app)
+    client = TestClient(app, base_url="https://edabalans.ru")
     if course_ready:
         materials = client.get("/admin/api/courses/calories/materials").json()["materials"]
         for material in materials:
@@ -125,6 +132,7 @@ def setup(*, course_ready: bool = True):
             },
         )
         assert response.status_code == 200
+    assert client.post("/api/account-auth/login", json={"email": "calories@example.test", "password": "Test-Password-9"}).status_code == 200
     return client, factory
 
 
@@ -135,8 +143,12 @@ def teardown_function() -> None:
 
 def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
     client, factory = setup()
+    assert client.post("/api/account-auth/logout").status_code == 200
+    assert client.post("/api/account-auth/login", json={"email": "denied@example.test", "password": "Test-Password-9"}).status_code == 200
     denied = client.get("/api/calories/course?email=denied@example.test")
     assert denied.status_code == 403
+    assert client.post("/api/account-auth/logout").status_code == 200
+    assert client.post("/api/account-auth/login", json={"email": "calories@example.test", "password": "Test-Password-9"}).status_code == 200
 
     response = client.get("/api/calories/course?email=calories@example.test")
     assert response.status_code == 200
@@ -214,15 +226,14 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
         )
         db.commit()
 
-    legacy_metabolism = client.get(
-        "/api/apps/metabolism?email=denied@example.test"
-    )
+    assert client.post("/api/account-auth/logout").status_code == 200
+    assert client.post("/api/account-auth/login", json={"email": "denied@example.test", "password": "Test-Password-9"}).status_code == 200
+    legacy_metabolism = client.get("/api/apps/metabolism")
     assert legacy_metabolism.status_code == 200
     assert legacy_metabolism.json()["ok"] is True
     legacy_saved = client.put(
         "/api/apps/metabolism",
         json={
-            "email": "denied@example.test",
             "version": legacy_metabolism.json()["version"],
             "variants": {"1": {"calories": 1900}},
             "activeVariant": 1,

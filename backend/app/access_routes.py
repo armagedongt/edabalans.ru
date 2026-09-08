@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 import uuid
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -44,6 +44,14 @@ from app.product_catalog_service import product_public
 router = APIRouter(tags=["access-links"])
 
 
+def native_user(request: Request, db: Session) -> User:
+    # Imported lazily because account_auth_routes builds the native account
+    # payload from this module.
+    from app.account_auth_routes import require_native_user
+
+    return require_native_user(request, db)
+
+
 class LinkActionIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
 
@@ -67,14 +75,13 @@ def aware_utc(value: datetime | None) -> datetime | None:
 
 
 def matching_link(
-    db: Session, token: str, email: str, *, for_update: bool = False
+    db: Session, token: str, user: User, *, for_update: bool = False
 ) -> tuple[PersonalAccessLink, User]:
     link = link_by_token(db, token, for_update=for_update)
     if link is None:
         raise HTTPException(404, "Персональная ссылка не найдена")
-    user = user_for_email(db, email)
-    if user is None or user.id != link.user_id:
-        raise HTTPException(403, "Эта ссылка создана для другого аккаунта Tilda")
+    if user.id != link.user_id:
+        raise HTTPException(403, "Эта ссылка создана для другого личного кабинета")
     if link.status in {"claimed", "paid"}:
         return link, user
     if not active_link(link):
@@ -115,16 +122,14 @@ def link_payload(db: Session, link: PersonalAccessLink, user: User) -> dict:
 
 
 @router.get("/api/access/status")
-def access_status(email: str, db: Session = Depends(get_db)) -> dict:
-    user = user_for_email(db, email)
-    if user is None:
-        return {"ok": True, "state": "unknown", "message": "Аккаунт пока не связан с CRM"}
+def access_status(request: Request, db: Session = Depends(get_db)) -> dict:
+    user = native_user(request, db)
     return {
         "ok": True,
         "state": "review_required" if review_blocks_access(user) else "ready",
         "review_status": user.access_review_status,
         "message": (
-            "Исторические покупки требуют решения Сергея. Напишите Сергею и укажите email личного кабинета."
+            "Исторические покупки требуют проверки. Напишите мне."
             if review_blocks_access(user)
             else "Доступы проверены"
         ),
@@ -309,14 +314,14 @@ def registration_seen(
 
 
 @router.get("/api/access-links/{token}")
-def personal_link(token: str, email: str, db: Session = Depends(get_db)) -> dict:
-    link, user = matching_link(db, token, email)
+def personal_link(token: str, request: Request, db: Session = Depends(get_db)) -> dict:
+    link, user = matching_link(db, token, native_user(request, db))
     return link_payload(db, link, user)
 
 
 @router.post("/api/access-links/{token}/claim")
-def claim_personal_link(token: str, body: LinkActionIn, db: Session = Depends(get_db)) -> dict:
-    link, user = matching_link(db, token, body.email, for_update=True)
+def claim_personal_link(token: str, body: LinkActionIn, request: Request, db: Session = Depends(get_db)) -> dict:
+    link, user = matching_link(db, token, native_user(request, db), for_update=True)
     if link.mode != "free":
         raise HTTPException(409, "Это платное предложение")
     if link.status == "claimed":
@@ -336,8 +341,8 @@ def claim_personal_link(token: str, body: LinkActionIn, db: Session = Depends(ge
 
 
 @router.post("/api/access-links/{token}/checkout")
-def personal_link_checkout(token: str, body: LinkActionIn, db: Session = Depends(get_db)) -> dict:
-    link, user = matching_link(db, token, body.email, for_update=True)
+def personal_link_checkout(token: str, body: LinkActionIn, request: Request, db: Session = Depends(get_db)) -> dict:
+    link, user = matching_link(db, token, native_user(request, db), for_update=True)
     if link.mode != "paid":
         raise HTTPException(409, "Это бесплатная ссылка")
     if link.status == "paid":

@@ -36,7 +36,7 @@
     .article-head{gap:12px;margin-bottom:28px}.back{min-height:36px;padding:7px 10px;border-radius:10px;font-size:var(--text-sm);font-weight:var(--weight-medium)}.article-nav{grid-template-columns:minmax(140px,1fr) minmax(120px,auto) minmax(140px,1fr);justify-content:center;gap:10px;max-width:680px;margin-top:44px}.article-nav button{min-height:46px;padding:11px 18px;border-radius:12px;font-size:var(--text-base);font-weight:var(--weight-medium);line-height:1.2}@media(max-width:620px){.article-nav{grid-template-columns:auto minmax(96px,1fr) auto;gap:8px;margin-top:36px}.article-nav .outline{grid-column:auto;grid-row:auto}.article-nav button{min-height:38px;padding:8px 10px;border-radius:10px;font-size:var(--text-sm)}}
     /* Краткое описание в карточке материала — пояснение, не второй заголовок. */
     .topic-copy>span:not(.topic-meta){font-weight:var(--weight-regular)}
-    /* Экран привязки не зависит от внешних сбросов отступов Tilda. */
+    /* Экран привязки не зависит от внешних сбросов отступов страницы. */
     .messenger-popup-card h2{margin:0 0 16px}
     .messenger-popup-card>p:not(.messenger-note):not(.messenger-link-note){margin:0 0 12px}
     .hero-lead,.intro,.assignment-intro p,.day-copy span:first-of-type,.next-copy span:first-of-type,.topic-copy>span:not(.topic-meta),.checkline span{white-space:pre-line}
@@ -63,7 +63,7 @@
   (function(){
     'use strict';
     if(!window.EdabalansAppHost&&!window.EdabalansFooter){var footerScript=document.createElement('script');footerScript.src='/site-footer.js';document.head.appendChild(footerScript)}
-    var STORE='edabalans_first_days_v2',HOUR=3600000,APP_HOST=window.EdabalansAppHost||(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?location.origin:'https://app.edabalans.ru'),identity=window.EdabalansIdentity||{},courseContext=window.EdabalansAppContext||{},SERVER_MODE=!!(identity.email&&(identity.sessionToken||identity.source==='tilda'||identity.source==='native'));if('scrollRestoration'in history)history.scrollRestoration='manual';
+    var STORE='edabalans_first_days_v2',HOUR=3600000,APP_HOST=window.EdabalansAppHost||(/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?location.origin:'https://edabalans.ru'),identity=window.EdabalansIdentity||{},courseContext=window.EdabalansAppContext||{},SERVER_MODE=!!(identity.email&&identity.source==='native');if('scrollRestoration'in history)history.scrollRestoration='manual';
     var program=[],recipes={},pages={},days=[],current=-1,currentStep=-1,questionnaireKind='onboarding',courseManifest=null,focusAssignmentOnReturn=false,celebratePending=0,tutorialStep=0,tutorialTopic=-1,messengerPollId=0,messengerConfirmed=false,dqsTutorialRequested=false,articleTocHeadings=[],activeArticleTocButton=null,articleTocBound=false;
     function timezoneName(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'Europe/Moscow'}catch(e){return'Europe/Moscow'}}
     function courseActionBody(){return JSON.stringify({email:identity.email,timezone_name:timezoneName()})}

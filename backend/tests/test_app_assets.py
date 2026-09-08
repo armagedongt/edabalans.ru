@@ -136,9 +136,9 @@ def test_application_fragments_use_server_api() -> None:
     assert 'id="dqs-email"' not in dqs
     assert 'type="email"' not in dqs
     assert "window.EdabalansIdentity" in dqs
-    assert "tildaIdentity.source === 'tilda'" in dqs
-    assert "tma__userbar__sendLogout" in dqs
-    assert "location.replace('/members/login')" in dqs
+    assert "accountIdentity.source === 'native'" in dqs
+    assert "api/account-auth/logout" in dqs
+    assert "location.replace('/lk')" in dqs
     assert "dqs-app-footer" not in dqs
     assert "renderAppFooter" not in dqs
     assert "Все права защищены" not in dqs
@@ -386,7 +386,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "url.searchParams.delete('course_day')" in account.text
     assert "url.searchParams.delete('course_material')" in account.text
     assert "if(openRequestedCourse(data))return" in account.text
-    assert "/api/account" in account.text
+    assert "/api/account-auth/account" in account.text
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
@@ -447,37 +447,25 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "data-edabalans-placement" in loader
     assert "data-edabalans-placement-token" in loader
     assert "onboarding-questionnaire" in loader
-    assert "tma__getProfileObjFromLS" in loader
-    assert "function ensureTildaProfileReader" in loader
-    assert "https://members.tildaapi.com/frontend/js/tilda-members-init.min.js" in loader
-    assert loader.index("ensureTildaProfileReader().then") < loader.index(
-        "var detected = detectTildaMemberEmail();",
-        loader.index("function boot"),
-    )
-    assert "detectTildaMemberEmail" in loader
-    assert "waitForTildaEmail" in loader
-    assert "redirectToTildaLogin" in loader
-    assert "location.replace('/members/login')" in loader
-    assert "edabalans_return_path_v1" in loader
-    assert "restoreReturnPath" in loader
-    assert "returnPath.indexOf('://')" in loader
+    assert "function nativeSession" in loader
+    assert "/api/account-auth/session" in loader
+    assert "redirectToAccountLogin" in loader
+    assert "tma__getProfileObjFromLS" not in loader
     assert "askIdentity" not in loader
     assert "Не удалось автоматически определить email" not in loader
     assert "Введите email, на который оформлена покупка" not in loader
-    assert "remember(detected)" in loader
+    assert "rememberNative" in loader
     assert "masterclass-course" in loader
-    assert "hideTildaUserbar" in loader
     assert "data-edabalans-account-url" in loader
     assert "data-edabalans-account-offer" in loader
     assert "focusProductCode" in loader
-    assert "source: 'tilda'" in loader
+    assert "source: 'native'" in loader
     account = client.get("/apps/account.html").text
     assert (
         '<h1>Личный кабинет</h1><p class="account-session">'
         '<strong class="account-session-email">'
     ) in account
     assert "Вы вошли как" not in account
-    assert "identity.source==='native'?'/lk':'/members/login?exit=y'" in account
     assert "host+'/api/account-auth/logout'" in account
     assert "Курсы и программы" in account
     assert "Приложения" in account
@@ -522,12 +510,12 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert account_button_rules is not None
     assert "white-space:nowrap" in account_button_rules.group("rules")
     assert "Система оценки качества питания" not in account  # names come from the server catalog
-    assert "Старый личный кабинет" in account
+    assert "function legacyPortal(data){return ''}" in account
     assert "Пока доступы не подключены" in account
     assert "data.state!=='ready'" in account
-    assert "tma__userbar__sendLogout" in account
-    assert "/members/login?exit=y" in account
-    assert "identity.source==='tilda'||identity.source==='native'" in course.text
+    assert "tma__userbar__sendLogout" not in account
+    assert "/members/login?exit=y" not in account
+    assert "identity.source==='native'" in course.text
     assert "function authHeaders()" in course.text
     assert "Мастер-класс по изменению питания и пищевых привычек" in course.text
     assert ".tlk-userbar{display:none!important}" in course.text

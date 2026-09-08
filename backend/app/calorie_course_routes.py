@@ -9,7 +9,8 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.app_service import AppAccessError, resolve_user_for_resource
+from app.account_auth_routes import require_native_user
+from app.app_service import AppAccessError, require_user_resource
 from app.calorie_course_material_service import publication_status, published_materials
 from app.calorie_course_service import (
     DOCUMENT_KEY,
@@ -41,10 +42,8 @@ def aware_utc(value: datetime) -> datetime:
 
 
 def resolve_course_user(request: Request, db: Session, email: str) -> User:
-    # The current Tilda Members Area remains the only interactive login. This
-    # mirrors the Masterclass boundary and does not create a second sign-in.
     try:
-        user = resolve_user_for_resource(db, email, RESOURCE_CODE)
+        user = require_user_resource(db, require_native_user(request, db), RESOURCE_CODE)
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
     if not publication_status(db)["ready"]:

@@ -458,12 +458,7 @@ var adminMode=appContext.mode==='admin'&&appContext.targetUserId;
 var API_URL=adminMode
   ? '/admin/api/apps/metabolism/users/'+encodeURIComponent(appContext.targetUserId)+'/runtime'
   : 'https://edabalans.ru/api/apps/metabolism';
-var memberEmail=
-  String(
-    (window.EdabalansIdentity&&window.EdabalansIdentity.email) ||
-    ((document.getElementById('edabalans-member-email')||{}).value) ||
-    ''
-  ).trim().toLowerCase();
+var memberEmail=String((window.EdabalansIdentity&&window.EdabalansIdentity.source==='native'&&window.EdabalansIdentity.email)||'').trim().toLowerCase();
 var serverVersion=null;
 var serverSaveTimer=null;
 
@@ -483,9 +478,10 @@ if(!adminMode){loadStorage();}
 
 function loadServer(){
   if(!adminMode&&!memberEmail){
-    return Promise.reject(new Error('Не удалось определить email пользователя.'));
+    location.replace('/lk');
+    return Promise.reject(new Error('Требуется вход в личный кабинет.'));
   }
-  return fetch(API_URL+(adminMode?'':'?email='+encodeURIComponent(memberEmail)),{credentials:'same-origin'})
+  return fetch(API_URL,{credentials:'same-origin'})
     .then(function(response){return response.json();})
     .then(function(data){
       if(!data.ok){throw new Error(data.error||'Нет доступа к калькулятору');}
@@ -509,7 +505,6 @@ function scheduleServerSave(){
       headers:{'Content-Type':'application/json'},
       credentials:'same-origin',
       body:JSON.stringify({
-        email:memberEmail,
         variants:variants,
         activeVariant:activeVariant,
         version:serverVersion

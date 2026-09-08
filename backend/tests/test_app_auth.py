@@ -12,11 +12,12 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app import app_auth  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
+from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.models import (  # noqa: E402
-    Resource,
+    AccountCredential, Resource,
     User,
     UserAccess,
     UserEmail,
@@ -87,6 +88,7 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
                     is_primary=True,
                     source="test",
                 ),
+                AccountCredential(user_id=user.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"),
                 UserAccess(
                     user_id=user.id,
                     resource_id=resource.id,
@@ -107,7 +109,11 @@ def setup() -> tuple[TestClient, sessionmaker[Session]]:
         db.commit()
     app_auth._last_challenge.clear()
     app_auth._challenge_attempts.clear()
-    return TestClient(app), factory
+    return TestClient(app, base_url="https://edabalans.ru"), factory
+
+
+def login_native(client: TestClient) -> None:
+    assert client.post("/api/account-auth/login", json={"email": "member@example.test", "password": "Test-Password-9"}).status_code == 200
 
 
 def test_course_api_rejects_direct_access_before_current_legal_acceptances():
@@ -115,6 +121,7 @@ def test_course_api_rejects_direct_access_before_current_legal_acceptances():
     with factory() as db:
         db.query(UserLegalAcceptance).delete()
         db.commit()
+    login_native(client)
 
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
@@ -139,7 +146,7 @@ def test_missing_legal_acceptances_do_not_block_identity_challenge(monkeypatch):
     assert response.status_code == 200
 
 
-def test_email_code_session_no_longer_overrides_tilda_masterclass_identity(monkeypatch):
+def test_obsolete_email_code_session_does_not_open_native_masterclass(monkeypatch):
     client, _ = setup()
     delivered = {}
 
@@ -176,12 +183,7 @@ def test_email_code_session_no_longer_overrides_tilda_masterclass_identity(monke
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert opened.status_code == 200
-    mismatched = client.get(
-        "/api/masterclass/questionnaires/onboarding?email=other@example.test",
-        headers={"Authorization": f"Bearer {token}"},
-    )
-    assert mismatched.status_code == 403
+    assert opened.status_code == 401
     app.dependency_overrides.clear()
 
 
@@ -212,13 +214,13 @@ def test_first_challenge_is_allowed_during_first_process_minute(monkeypatch):
     app.dependency_overrides.clear()
 
 
-def test_masterclass_transition_ignores_obsolete_bearer_token_and_uses_tilda_email():
+def test_masterclass_rejects_obsolete_bearer_token_without_native_session():
     client, _ = setup()
     response = client.get(
         "/api/masterclass/questionnaires/onboarding?email=member@example.test",
         headers={"Authorization": "Bearer !!!.not-a-signature"},
     )
-    assert response.status_code == 200
+    assert response.status_code == 401
     app.dependency_overrides.clear()
 
 
@@ -266,9 +268,10 @@ def test_pending_owner_review_blocks_existing_resource_access():
         user.access_review_status = "pending"
         user.access_review_note = "Историческая покупка требует решения Сергея"
         db.commit()
+    login_native(client)
     response = client.get(
         "/api/masterclass/course?email=member@example.test",
     )
     assert response.status_code == 403
-    assert "подтверждения Сергея" in response.json()["detail"]
+    assert "проверки" in response.json()["detail"]
     app.dependency_overrides.clear()

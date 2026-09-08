@@ -29,6 +29,7 @@ from app.app_service import (
     AppAccessError,
     normalize_email,
     primary_email,
+    require_user_resource,
     resolve_user_for_resource,
     utc_iso,
 )
@@ -52,6 +53,7 @@ from app.intensive_web_access import (
     set_session,
     state_payload,
 )
+from app.account_auth_routes import require_native_user
 from app.config import Settings, get_settings
 from app.models import (
     AdminAppEdit,
@@ -806,6 +808,7 @@ def empty_app_state(app_code: str, user_id: uuid.UUID) -> Any:
 
 @router.get("/api/apps/dqs")
 def dqs_legacy_get(
+    request: Request,
     action: str = "ping",
     email: str = "",
     startDate: str = "",
@@ -817,7 +820,7 @@ def dqs_legacy_get(
     try:
         if action == "ping":
             return jsonp({"ok": True, "service": "DQS", "dayCount": 30, "categoryCount": 17}, callback)
-        user = resolve_user_for_resource(db, email, "dqs")
+        user = require_user_resource(db, require_native_user(request, db), "dqs")
         state = db.scalar(select(DqsState).where(DqsState.user_id == user.id))
         if not state:
             state = DqsState(user_id=user.id, days={}, source="app")
@@ -832,7 +835,7 @@ def dqs_legacy_get(
             days = [state.days.get(str(index)) for index in range(1, DAY_COUNT + 1)]
             payload = {
                 "ok": True,
-                "email": normalize_email(email),
+                "email": primary_email(db, user.id),
                 "startDate": state.start_date or "",
                 "needsStartDate": not bool(state.start_date),
                 "days": days,
@@ -901,14 +904,11 @@ def dqs_legacy_get(
 
 
 @router.get("/api/apps/dqs/access")
-def dqs_access_status(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+def dqs_access_status(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
     """Confirm DQS entitlement before the shared legal gate is displayed."""
     try:
-        user = resolve_user_for_resource(
-            db,
-            email,
-            "dqs",
-            require_legal_acceptance=False,
+        user = require_user_resource(
+            db, require_native_user(request, db), "dqs", require_legal_acceptance=False
         )
     except AppAccessError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
@@ -998,7 +998,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             if user is None or user.merged_into_user_id is not None:
                 raise HTTPException(status_code=404, detail="user not found")
         else:
-            user = resolve_user_for_resource(db, body.get("email"), "strength")
+            user = require_user_resource(db, require_native_user(request, db), "strength")
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
         if not state:
             if admin_username:
@@ -1006,7 +1006,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state = empty_strength_state(user.id)
             db.add(state)
             db.flush()
-        user_payload = {"user_id": str(user.id), "email": primary_email(db, user.id) if admin_username else normalize_email(body.get("email")), "display_name": user.display_name or "", "status": user.status}
+        user_payload = {"user_id": str(user.id), "email": primary_email(db, user.id), "display_name": user.display_name or "", "status": user.status}
         if action == "openUser":
             payload = {"ok": True, "user": user_payload}
         elif action == "getWorkout":
@@ -1074,16 +1074,16 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
 
 
 @router.get("/api/apps/metabolism")
-def metabolism_get(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
+def metabolism_get(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
     try:
-        user = resolve_user_for_resource(db, email, ("metabolism", "ACCESS_CALORIES"))
+        user = require_user_resource(db, require_native_user(request, db), ("metabolism", "ACCESS_CALORIES"))
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:
             state = MetabolismState(user_id=user.id, variants={}, source="app")
             db.add(state)
             db.commit()
             db.refresh(state)
-        return {"ok": True, "email": normalize_email(email), "variants": state.variants, "activeVariant": state.active_variant, "version": state.version}
+        return {"ok": True, "email": primary_email(db, user.id), "variants": state.variants, "activeVariant": state.active_variant, "version": state.version}
     except AppAccessError as exc:
         return error(str(exc))
 
@@ -1092,8 +1092,8 @@ def metabolism_get(email: str, db: Session = Depends(get_db)) -> dict[str, Any]:
 async def metabolism_put(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
         body = await request.json()
-        user = resolve_user_for_resource(
-            db, body.get("email"), ("metabolism", "ACCESS_CALORIES")
+        user = require_user_resource(
+            db, require_native_user(request, db), ("metabolism", "ACCESS_CALORIES")
         )
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:

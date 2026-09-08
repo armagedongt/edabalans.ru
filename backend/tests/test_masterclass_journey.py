@@ -35,8 +35,9 @@ from app.models import (  # noqa: E402
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail,
-    UserLegalAcceptance, UserOffer,
+    UserLegalAcceptance, UserOffer, AccountCredential,
 )
+from app.account_security import password_hash  # noqa: E402
 from scripts.generate_masterclass_offer_simulator import (  # noqa: E402
     course_offer_scenarios,
     render_simulator,
@@ -759,6 +760,7 @@ def setup():
         user = User(display_name="Участник", status="active")
         db.add(user); db.flush()
         db.add(UserEmail(user_id=user.id, email_original="member@example.test", email_normalized="member@example.test", is_primary=True, source="test"))
+        db.add(AccountCredential(user_id=user.id, password_hash=password_hash("Test-Password-9", TEST_SETTINGS.app_auth_secret), password_version=1, issued_via="test"))
         product = Product(code="MASTERCLASS_RECIPES", name="Мастер-класс · Стандартный", status="active")
         db.add(product); db.flush()
         db.add(Payment(
@@ -796,7 +798,9 @@ def setup():
         ]
         for code, hours, pricing in stages: db.add(OfferStage(code=code, name=code, duration_hours=hours, pricing=pricing, status="active"))
         db.commit()
-    return TestClient(app), factory
+    client = TestClient(app, base_url="https://edabalans.ru")
+    assert client.post("/api/account-auth/login", json={"email": "member@example.test", "password": "Test-Password-9"}).status_code == 200
+    return client, factory
 
 
 def test_masterclass_personal_data_uses_tilda_email_and_server_access():

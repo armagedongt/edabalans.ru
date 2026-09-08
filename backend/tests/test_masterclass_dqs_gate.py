@@ -125,7 +125,7 @@ def test_dqs_access_holder_accepts_current_legal_documents_before_entry():
         )
         db.commit()
 
-    status = client.get("/api/apps/dqs/access", params={"email": email})
+    status = client.get("/api/apps/dqs/access")
     assert status.status_code == 200
     assert status.json()["legal"]["required"] is True
     assert {
@@ -139,9 +139,8 @@ def test_dqs_access_holder_accepts_current_legal_documents_before_entry():
     assert blocked.json()["ok"] is False
 
     accepted = client.post(
-        "/api/account/legal-acceptances",
+        "/api/account-auth/legal-acceptances",
         json={
-            "email": email,
             "document_codes": [
                 "educational_disclaimer",
                 "personal_data_consent",
@@ -151,7 +150,7 @@ def test_dqs_access_holder_accepts_current_legal_documents_before_entry():
     assert accepted.status_code == 200
     assert accepted.json()["legal"]["required"] is False
 
-    ready = client.get("/api/apps/dqs/access", params={"email": email})
+    ready = client.get("/api/apps/dqs/access")
     assert ready.status_code == 200
     assert ready.json()["legal"]["required"] is False
     opened = client.get(
@@ -163,7 +162,7 @@ def test_dqs_access_holder_accepts_current_legal_documents_before_entry():
     with factory() as db:
         acceptances = list(db.scalars(select(UserLegalAcceptance)))
         assert len(acceptances) == 4
-        assert sum(item.source == "tilda_members_area" for item in acceptances) == 2
+        assert sum(item.source == "native_account" for item in acceptances) == 2
 
 
 def test_dqs_legal_status_is_not_exposed_without_dqs_access():
@@ -173,7 +172,7 @@ def test_dqs_legal_status_is_not_exposed_without_dqs_access():
         db.query(UserLegalAcceptance).delete()
         db.commit()
 
-    status = client.get("/api/apps/dqs/access", params={"email": email})
+    status = client.get("/api/apps/dqs/access")
     assert status.status_code == 403
     assert "нет доступа" in status.json()["detail"].lower()
 

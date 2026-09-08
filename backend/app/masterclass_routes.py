@@ -15,7 +15,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.orm import Session
 
-from app.app_service import AppAccessError, primary_email, resolve_user_for_resource
+from app.app_service import AppAccessError, primary_email, require_user_resource, resolve_user_for_resource
+from app.account_auth_routes import require_native_user
 from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
 from app.config import Settings, get_settings
@@ -282,11 +283,12 @@ def resolve_masterclass_user(
     email: str,
     settings: Settings,
 ) -> User:
-    # Tilda Members Area is the only interactive login during the transition.
-    # The closed page supplies its current email; PostgreSQL only resolves the
-    # matching user and product right without asking for a second login.
     try:
-        return resolve_user_for_resource(db, email, "ACCESS_MASTERCLASS")
+        return require_user_resource(
+            db,
+            require_native_user(request, db),
+            "ACCESS_MASTERCLASS",
+        )
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
 

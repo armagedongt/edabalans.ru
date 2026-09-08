@@ -3797,10 +3797,10 @@ function getTutorialSlide(step){
 
 
 /* =========================
-   ВХОД ЧЕРЕЗ TILDA
+   ВХОД ЧЕРЕЗ ЛИЧНЫЙ КАБИНЕТ
 ========================= */
 
-function redirectToTildaLogin(){
+function redirectToAccountLogin(){
 
   try{
     localStorage.removeItem(STORAGE_EMAIL);
@@ -3808,7 +3808,7 @@ function redirectToTildaLogin(){
   }catch(error){}
 
   window.EdabalansIdentity = null;
-  location.replace('/members/login');
+  location.replace('/lk');
 }
 
 
@@ -4809,7 +4809,7 @@ function renderCurrentView(
 ){
 
   if(!currentUser || !currentUser.email){
-    redirectToTildaLogin();
+    redirectToAccountLogin();
     return;
   }
 
@@ -5576,15 +5576,8 @@ function logoutUser(){
 
   window.EdabalansIdentity = null;
 
-  if(
-    typeof window.tma__userbar__sendLogout ===
-    'function'
-  ){
-    window.tma__userbar__sendLogout();
-    return;
-  }
-
-  location.assign('/members/login?exit=y');
+  fetch('/api/account-auth/logout',{method:'POST',credentials:'same-origin'})
+    .finally(function(){location.assign('/lk');});
 }
 
 
@@ -5628,19 +5621,19 @@ window
 
 (async function initDqs(){
 
-  const tildaIdentity =
+  const accountIdentity =
     window.EdabalansIdentity || {};
 
-  const tildaEmail =
-    tildaIdentity.source === 'tilda'
-      ? String(tildaIdentity.email || '')
+  const accountEmail =
+    accountIdentity.source === 'native'
+      ? String(accountIdentity.email || '')
           .trim()
           .toLowerCase()
       : '';
 
-  if(!tildaEmail){
+  if(!accountEmail){
 
-    redirectToTildaLogin();
+    redirectToAccountLogin();
 
     return;
   }
@@ -5648,7 +5641,7 @@ window
   localStorage
     .setItem(
       STORAGE_EMAIL,
-      tildaEmail
+      accountEmail
     );
 
 
@@ -5669,7 +5662,7 @@ window
     const data =
       await api({
         action:'openUser',
-        email:tildaEmail
+        email:accountEmail
       });
 
 

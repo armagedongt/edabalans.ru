@@ -1343,96 +1343,14 @@ function postApi(body){
 
 
 /* =========================================================
-   TILDA EMAIL
+   ACCOUNT IDENTITY
 ========================================================= */
 
 function detectEmail(){
-
-  var result = [];
-  var i;
-  var inputs;
-  var matches;
-
-  function collect(text){
-
-    if(!text){
-      return;
-    }
-
-    matches =
-      String(text).match(
-        /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi
-      );
-
-    if(!matches){
-      return;
-    }
-
-    for(
-      var j=0;
-      j<matches.length;
-      j++
-    ){
-
-      if(
-        result.indexOf(
-          matches[j]
-        ) === -1
-      ){
-
-        result.push(
-          matches[j]
-        );
-
-      }
-
-    }
-
-  }
-
-  try{
-
-    inputs =
-      document.querySelectorAll(
-        'input'
-      );
-
-    for(
-      i=0;
-      i<inputs.length;
-      i++
-    ){
-
-      if(
-        String(
-          inputs[i].name ||
-          ''
-        )
-        .toLowerCase()
-        .indexOf('email') > -1
-      ){
-
-        collect(
-          inputs[i].value
-        );
-
-      }
-
-    }
-
-    collect(
-      document.body.innerText
-    );
-
-  }catch(e){}
-
-  return (
-    result.length
-    ?
-    result[0]
-    :
-    ''
-  );
+  var identity=window.EdabalansIdentity||{};
+  return identity.source==='native'&&identity.email
+    ? String(identity.email).trim().toLowerCase()
+    : '';
 
 }
 
@@ -5822,10 +5740,11 @@ function init(){
 
     showFatal(
       new Error(
-        'Не удалось определить email пользователя Tilda.'
+        'Требуется вход в личный кабинет.'
       )
     );
 
+    location.replace('/lk');
     return;
 
   }

@@ -22,7 +22,7 @@ var accountUrl=context.accountUrl||'/lk';
 var state={rows:[blank()],recipe:null,title:'Новое блюдо',recipes:[],products:[],shrinkage:'0',portion:false,portionG:0,portionKcal:0,library:false,ownFor:null,focus:null};
 function blank(){return{key:Math.random().toString(36).slice(2),term:'',source:null,weight:'100',items:[]}}
 function esc(v){return String(v==null?'':v).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function email(){return window.EdabalansIdentity&&window.EdabalansIdentity.email||''}
+function email(){return window.EdabalansIdentity&&window.EdabalansIdentity.source==='native'&&window.EdabalansIdentity.email||''}
 function digits(v){return /^\d+$/.test(String(v))?Number(v):0}
 function fmt(v,dec){var n=Number(v)||0;return dec?n.toFixed(dec).replace(/\.0+$/,'').replace('.',','):String(Math.round(n))}
 function api(path,opts){opts=opts||{};opts.headers=Object.assign({'Content-Type':'application/json'},opts.headers||{});return fetch(host+path,opts).then(function(r){return r.json().then(function(data){if(!r.ok||!data.ok)throw Error(data.error||data.detail||'Не удалось выполнить действие');return data})})}

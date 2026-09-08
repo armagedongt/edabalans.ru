@@ -5,6 +5,7 @@ from urllib.parse import parse_qs, urlparse
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
 os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
+os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, func, select  # noqa: E402
@@ -13,6 +14,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import Settings, get_settings  # noqa: E402
 from app.access_routes import account_applications  # noqa: E402
+from app.account_security import password_hash  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
@@ -23,7 +25,7 @@ from app.models import (  # noqa: E402
     UserAccess,
     UserCoursePolicy,
     UserEmail,
-    UserLegalAcceptance,
+    UserLegalAcceptance, AccountCredential,
 )
 
 
@@ -45,6 +47,7 @@ def setup():
         database_url="sqlite+pysqlite:///:memory:",
         admin_username="admin@example.com",
         admin_password="test-admin-password",
+        app_auth_secret="test-client-session-secret",
     )
     # These tests exercise the temporary legacy email-bound adapter. The root
     # domain is covered by test_account_password_auth and requires a native
@@ -67,6 +70,8 @@ def setup():
             Resource(code="ACCESS_CALORIES", name="Курс о калориях", status="active"),
             Resource(code="dqs", name="DQS", status="active"),
             Resource(code="ACCESS_MASTERCLASS_LEGACY", name="Старый мастер-класс", status="active"),
+            AccountCredential(user_id=user.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"),
+            AccountCredential(user_id=other.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"),
         ])
         db.commit()
         user_id = user.id
@@ -79,6 +84,11 @@ def login(client):
         "password": "test-admin-password",
     })
     assert response.status_code == 200
+
+
+def login_user(client, email):
+    response = client.post("/api/account-auth/login", json={"email": email, "password": "Test-Password-9"})
+    assert response.status_code == 200, response.text
 
 
 def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
@@ -97,9 +107,11 @@ def test_free_personal_link_is_bound_to_tilda_email_and_grants_once():
     assert created.status_code == 200
     token = parse_qs(urlparse(created.json()["url"]).query)["access_token"][0]
 
-    wrong = client.get(f"/api/access-links/{token}?email=other@example.test")
+    login_user(client, "other@example.test")
+    wrong = client.get(f"/api/access-links/{token}")
     assert wrong.status_code == 403
-    opened = client.get(f"/api/access-links/{token}?email=client@example.test")
+    login_user(client, "client@example.test")
+    opened = client.get(f"/api/access-links/{token}")
     assert opened.status_code == 200
     assert opened.json()["email"] == "client@example.test"
     assert opened.json()["mode"] == "free"
@@ -137,6 +149,7 @@ def test_paid_personal_link_uses_shared_short_checkout_reference():
     )
     assert created.status_code == 200
     token = parse_qs(urlparse(created.json()["url"]).query)["access_token"][0]
+    login_user(client, "client@example.test")
 
     response = client.post(
         f"/api/access-links/{token}/checkout",

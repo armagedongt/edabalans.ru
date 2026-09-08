@@ -12,16 +12,16 @@
   'use strict';
   var root=document.getElementById('personal-access-app'),ctx=window.EdabalansAppContext||{},identity=window.EdabalansIdentity||{};
   var API=/^(localhost|127\.0\.0\.1|edabalans\.ru|app\.edabalans\.ru)$/.test(location.hostname)?location.origin:'https://edabalans.ru';
-  var token=ctx.linkToken||'',email=identity.email||'';
+  var token=ctx.linkToken||'',email=identity.source==='native'?(identity.email||''):'';
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function money(v){return new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(Number(v||0))+' ₽';}
-  function fail(e){root.innerHTML='<main class="pa"><section class="pa-card"><h1>Ссылка не открылась</h1><p class="pa-error">'+esc(e.message||e)+'</p><p>Убедитесь, что вы вошли в тот аккаунт Tilda, для которого Сергей создал предложение.</p></section></main>';}
+  function fail(e){root.innerHTML='<main class="pa"><section class="pa-card"><h1>Ссылка не открылась</h1><p class="pa-error">'+esc(e.message||e)+'</p><p>Убедитесь, что вы вошли в личный кабинет, для которого я создал предложение.</p></section></main>';}
   function api(path,options){return fetch(API+path,options).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.detail||'Ошибка сервера');return j;});});}
   function draw(data){
     if(data.status==='claimed'||data.status==='paid'){root.innerHTML='<main class="pa"><section class="pa-card"><h1>Доступ уже оформлен</h1><p>Программы привязаны к аккаунту:</p><div class="pa-email">'+esc(data.email)+'</div><p>Вернитесь в личный кабинет — новые разделы уже должны быть доступны.</p></section></main>';return;}
     var items=(data.resources||[]).map(function(item){return '<div class="pa-item"><b>'+esc(item.name)+'</b><small>'+(item.unlock_mode==='fully_unlocked'?'Все материалы будут открыты сразу':'Обычный порядок прохождения')+'</small></div>';}).join('');
     var price=data.mode==='free'?'<div class="pa-price">Бесплатно</div>':(data.standard_amount!=null?'<div class="pa-price-old">'+money(data.standard_amount)+'</div>':'')+'<div class="pa-price">'+money(data.final_amount)+'</div>'+(data.saving>0?'<div class="pa-saving">Выгода '+money(data.saving)+'</div>':'');
-    root.innerHTML='<main class="pa"><section class="pa-card"><h1>'+(data.mode==='free'?'Ваш доступ готов':'Персональное предложение')+'</h1><p>Получатель:</p><div class="pa-email">'+esc(data.email)+'</div><div class="pa-items">'+items+'</div>'+price+'<p>Ссылка работает только внутри этого аккаунта Tilda и не передаёт доступ другому человеку.</p><button id="pa-action">'+(data.mode==='free'?'Получить доступ':'Перейти к оплате')+'</button></section></main>';
+    root.innerHTML='<main class="pa"><section class="pa-card"><h1>'+(data.mode==='free'?'Ваш доступ готов':'Персональное предложение')+'</h1><p>Получатель:</p><div class="pa-email">'+esc(data.email)+'</div><div class="pa-items">'+items+'</div>'+price+'<p>Ссылка работает только внутри этого личного кабинета и не передаёт доступ другому человеку.</p><button id="pa-action">'+(data.mode==='free'?'Получить доступ':'Перейти к оплате')+'</button></section></main>';
     document.getElementById('pa-action').onclick=function(){var button=this;button.disabled=true;button.textContent='Проверяю…';var action=data.mode==='free'?'claim':'checkout';api('/api/access-links/'+encodeURIComponent(token)+'/'+action,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}).then(function(result){if(result.cart_command){location.hash=result.cart_command;return;}draw(result);}).catch(fail);};
   }
   if(!token){fail(new Error('В ссылке нет персонального токена'));return;}

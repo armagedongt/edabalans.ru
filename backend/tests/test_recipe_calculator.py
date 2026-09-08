@@ -2,6 +2,7 @@ import os
 from datetime import datetime, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
+os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, select  # noqa: E402
@@ -9,8 +10,10 @@ from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.database import Base, get_db  # noqa: E402
+from app.config import Settings, get_settings  # noqa: E402
+from app.account_security import password_hash  # noqa: E402
 from app.main import app  # noqa: E402
-from app.models import Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
+from app.models import AccountCredential, Resource, User, UserAccess, UserEmail, UserLegalAcceptance  # noqa: E402
 from app.legal_service import LEGAL_DOCUMENTS  # noqa: E402
 from app.recipe_models import NutritionProduct  # noqa: E402
 from app.product_catalog_service import PRODUCT_CONNECTIONS  # noqa: E402
@@ -26,7 +29,8 @@ def make_client():
             yield db
 
     app.dependency_overrides[get_db] = override_db
-    return TestClient(app), factory
+    app.dependency_overrides[get_settings] = lambda: Settings(database_url="sqlite+pysqlite:///:memory:", app_auth_secret="test-client-session-secret")
+    return TestClient(app, base_url="https://edabalans.ru"), factory
 
 
 def grant_user(db, email: str) -> User:
@@ -37,6 +41,7 @@ def grant_user(db, email: str) -> User:
         db.add(resource)
     db.add(user); db.flush()
     db.add(UserEmail(user_id=user.id, email_original=email, email_normalized=email, source="test"))
+    db.add(AccountCredential(user_id=user.id, password_hash=password_hash("Test-Password-9", "test-client-session-secret"), password_version=1, issued_via="test"))
     db.add(UserAccess(user_id=user.id, resource_id=resource.id, source="test", granted_at=datetime.now(timezone.utc)))
     db.add_all([
         UserLegalAcceptance(
@@ -50,6 +55,11 @@ def grant_user(db, email: str) -> User:
     return user
 
 
+def sign_in(client: TestClient, email: str) -> None:
+    response = client.post("/api/account-auth/login", json={"email": email, "password": "Test-Password-9"})
+    assert response.status_code == 200, response.text
+
+
 def test_recipe_api_keeps_personal_products_private_and_calculates_yield():
     client, factory = make_client()
     with factory() as db:
@@ -58,6 +68,7 @@ def test_recipe_api_keeps_personal_products_private_and_calculates_yield():
         db.add(NutritionProduct(name="Сливки", name_normalized="сливки", protein_g=3, fat_g=20, carbohydrate_g=4, calories_kcal=210, is_active=True))
         db.add(NutritionProduct(owner_user_id=second.id, name="Секрет", name_normalized="секрет", protein_g=1, fat_g=1, carbohydrate_g=1, calories_kcal=20, is_active=True))
         db.commit()
+    sign_in(client, "first@example.test")
 
     catalog = client.get("/api/apps/recipes/catalog", params={"email": "first@example.test", "q": "сли"}).json()
     assert catalog["ok"] is True
@@ -77,6 +88,7 @@ def test_recipe_rejects_decimal_numeric_input_and_excessive_shrinkage():
         grant_user(db, "person@example.test")
         product = NutritionProduct(name="Молоко", name_normalized="молоко", protein_g=3, fat_g=2, carbohydrate_g=5, calories_kcal=50, is_active=True)
         db.add(product); db.commit(); product_id = str(product.id)
+    sign_in(client, "person@example.test")
 
     bad_weight = client.post("/api/apps/recipes", json={"email":"person@example.test","title":"Тест","shrinkage":"0","ingredients":[{"kind":"product","sourceId":product_id,"weight":"10.5"}]})
     assert bad_weight.status_code == 400
@@ -94,6 +106,7 @@ def test_catalog_search_prioritizes_names_starting_with_query():
             NutritionProduct(name="Кофе с молоком", name_normalized="кофе с молоком", protein_g=1, fat_g=1, carbohydrate_g=1, calories_kcal=10, is_active=True),
         ])
         db.commit()
+    sign_in(client, "search@example.test")
 
     items = client.get("/api/apps/recipes/catalog", params={"email": "search@example.test", "q": "молоко"}).json()["items"]
     assert [item["name"] for item in items] == ["Молоко 1%", "Блины с молоком", "Кофе с молоком"]
@@ -105,6 +118,7 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
         grant_user(db, "owner@example.test")
         grant_user(db, "other@example.test")
         db.commit()
+    sign_in(client, "owner@example.test")
     product_response = client.post("/api/apps/recipes/products", json={"email":"owner@example.test","name":"Мой творог","protein":"16","fat":"5","carbohydrate":"3","calories":"120"})
     assert product_response.status_code == 200, product_response.text
     product = product_response.json()["product"]
@@ -115,8 +129,9 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
     assert client.delete(f"/api/apps/recipes/products/{product['id']}", params={"email":"owner@example.test"}).status_code == 200
     assert client.get("/api/apps/recipes/catalog", params={"email":"owner@example.test", "q":"творог"}).json()["items"] == []
     assert client.get(f"/api/apps/recipes/{created['id']}", params={"email":"owner@example.test"}).json()["recipe"]["ingredients"][0]["source"]["name"] == "Мой творог"
-    assert client.get(f"/api/apps/recipes/{created['id']}", params={"email":"other@example.test"}).status_code == 404
-    assert client.delete(f"/api/apps/recipes/{created['id']}", params={"email":"other@example.test"}).status_code == 404
+    sign_in(client, "other@example.test")
+    assert client.get(f"/api/apps/recipes/{created['id']}").status_code == 404
+    assert client.delete(f"/api/apps/recipes/{created['id']}").status_code == 404
 
 
 def test_recipe_product_is_ready_in_account_catalog():
@@ -133,6 +148,7 @@ def test_nested_recipe_cannot_be_deleted_or_cycled():
         grant_user(db, "nested@example.test")
         product = NutritionProduct(name="Курица", name_normalized="курица", protein_g=20, fat_g=5, carbohydrate_g=0, calories_kcal=125, is_active=True)
         db.add(product); db.commit(); product_id = str(product.id)
+    sign_in(client, "nested@example.test")
     base = client.post("/api/apps/recipes", json={"email":"nested@example.test","title":"Основа","shrinkage":"0","ingredients":[{"kind":"product","sourceId":product_id,"weight":"100"}]}).json()["recipe"]
     parent = client.post("/api/apps/recipes", json={"email":"nested@example.test","title":"Суп","shrinkage":"0","ingredients":[{"kind":"recipe","sourceId":base["id"],"weight":"100"}]}).json()["recipe"]
     assert client.delete(f"/api/apps/recipes/{base['id']}", params={"email":"nested@example.test"}).status_code == 400
