@@ -39,6 +39,7 @@ from app.models import (  # noqa: E402
     User,
     UserAccess,
     UserEmail,
+    UserLegalAcceptance,
 )
 
 
@@ -153,6 +154,32 @@ def test_login_sets_remembered_http_only_session_and_logout_revokes_it():
 
     assert client.post("/api/account-auth/logout").status_code == 200
     assert client.get("/api/account-auth/session").json()["authenticated"] is False
+    app.dependency_overrides.clear()
+
+
+def test_native_user_can_accept_current_legal_documents_after_login():
+    client, factory = setup()
+    seed_credential(factory)
+
+    login = client.post(
+        "/api/account-auth/login",
+        json={"email": "member@example.test", "password": "Test-Password-9"},
+    )
+    assert login.status_code == 200
+
+    accepted = client.post(
+        "/api/account-auth/legal-acceptances",
+        json={
+            "document_codes": [
+                "educational_disclaimer",
+                "personal_data_consent",
+            ]
+        },
+    )
+    assert accepted.status_code == 200
+    assert accepted.json()["legal"]["required"] is False
+    with factory() as db:
+        assert len(list(db.scalars(select(UserLegalAcceptance)))) == 2
     app.dependency_overrides.clear()
 
 

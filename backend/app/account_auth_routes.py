@@ -309,6 +309,6 @@ def native_legal_acceptances(
     db: Session = Depends(get_db),
 ) -> dict:
     user = require_native_user(request, db)
-    accept_current_legal_documents(db, user, body.document_codes, source="native_account")
+    accept_current_legal_documents(db, user.id, body.document_codes, source="native_account")
     db.commit()
     return account_payload(primary_email(db, user.id), db)
