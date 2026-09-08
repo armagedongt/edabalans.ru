@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <title>Погода в Петербурге</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="weather-page" id="weather-app" aria-busy="true">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">Санкт-Петербург</p>
+          <h1>Погода и осадки</h1>
+        </div>
+        <div class="header-actions">
+          <p class="updated-at" id="updated-at">Загружаю прогноз…</p>
+          <button class="icon-button" id="settings-button" type="button" aria-expanded="false" aria-controls="settings-panel">⚙ <span>Поля</span></button>
+        </div>
+      </header>
+
+      <form class="city-search" id="city-search">
+        <input id="city-query" type="search" placeholder="Найти город" aria-label="Найти город" />
+        <button type="submit">Найти</button>
+      </form>
+      <nav class="city-list" id="city-list" aria-label="Избранные города"></nav>
+
+      <section class="settings-panel" id="settings-panel" hidden aria-label="Отображаемые поля">
+        <label><input type="checkbox" data-field="air" checked /> Температура воздуха</label>
+        <label><input type="checkbox" data-field="feels" checked /> По ощущению</label>
+        <label><input type="checkbox" data-field="wind" checked /> Ветер и порывы</label>
+        <label><input type="checkbox" data-field="precipitation" checked /> Осадки в жидком эквиваленте</label>
+        <label><input type="checkbox" data-field="snow" checked /> Выпадающий снег</label>
+      </section>
+
+      <section class="forecast-card" aria-labelledby="ten-days-heading">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Прогноз на 10 дней</p>
+            <h2 id="ten-days-heading">Осадки в мм и их распределение внутри дня</h2>
+          </div>
+          <p class="legend"><span></span> высота — осадки за день; штрихи — часы</p>
+        </div>
+        <div class="daily-scroll"><div class="daily-grid" id="daily-grid"></div></div>
+      </section>
+
+      <section class="forecast-card hourly-card" aria-labelledby="hourly-heading">
+        <div class="section-heading hourly-heading">
+          <div>
+            <p class="eyebrow" id="selected-date-label">Почасовой прогноз</p>
+            <h2 id="hourly-heading">На выбранный день</h2>
+          </div>
+          <button class="text-button" id="today-button" type="button">Сегодня</button>
+        </div>
+        <div class="hourly-scroll">
+          <div class="hourly-grid" id="hourly-grid"></div>
+        </div>
+      </section>
+
+      <p class="source-note">Данные прогноза: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a>, CC BY 4.0. Это модельный прогноз, а не наблюдение.</p>
+    </main>
+
+    <template id="message-template"><p class="message"></p></template>
+    <script src="app.js"></script>
+  </body>
+</html>

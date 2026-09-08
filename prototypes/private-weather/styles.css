@@ -1,0 +1,82 @@
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #181818;
+  background: #eef0f2;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; }
+button, input { font: inherit; }
+button { cursor: pointer; }
+
+.weather-page { width: min(1220px, calc(100% - 32px)); margin: 28px auto 44px; }
+.page-header, .section-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+.page-header { margin: 0 2px 18px; }
+.eyebrow { margin: 0 0 3px; font-size: 14px; color: #007ded; }
+h1, h2, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-size: clamp(26px, 4vw, 34px); line-height: 1.1; }
+h2 { margin-bottom: 0; font-size: 18px; font-weight: 500; }
+.header-actions { display: flex; align-items: center; gap: 12px; }
+.city-search { display:flex; gap:8px; margin:0 0 10px; }.city-search input{flex:1;min-width:0;border:0;border-radius:9px;padding:10px 12px}.city-search button,.city-list button{border:0;border-radius:999px;padding:9px 12px;background:#fff;color:#087eea}.city-list{display:flex;gap:7px;overflow-x:auto;margin:0 0 16px;padding-bottom:2px}.city-list button[aria-current="true"]{background:#087eea;color:#fff}
+.updated-at, .source-note, .legend { margin: 0; color: #6d7378; font-size: 13px; }
+.icon-button, .text-button { border: 1px solid #d9dde0; background: #fff; color: #087eea; border-radius: 9px; padding: 8px 11px; }
+.settings-panel { margin: -8px 0 18px auto; padding: 12px 15px; max-width: 540px; border-radius: 12px; background: #fff; box-shadow: 0 5px 16px #15233b12; display: flex; gap: 13px 18px; flex-wrap: wrap; font-size: 14px; }
+.settings-panel input { accent-color: #0788f8; }
+.forecast-card { background: #fff; border-radius: 15px; box-shadow: 0 3px 12px #15233b0d; padding: 18px 0 0; overflow: hidden; }
+.forecast-card + .forecast-card { margin-top: 18px; }
+.section-heading { padding: 0 20px 16px; }
+.legend { display: flex; align-items: center; max-width: 210px; line-height: 1.3; }
+.legend span { width: 18px; height: 10px; margin-right: 6px; background: #98cff5; border-bottom: 1px dashed #238fe3; }
+.daily-scroll, .hourly-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+.daily-grid { min-width: 960px; padding: 0 8px; display: grid; grid-template-columns: repeat(10, minmax(92px, 1fr)); }
+.day-button { position: relative; border: 0; border-radius: 11px 11px 0 0; padding: 10px 5px 0; color: #161616; background: transparent; min-height: 304px; text-align: center; }
+.day-button:hover, .day-button:focus-visible { background: #f5f8fb; outline: none; }
+.day-button[aria-pressed="true"] { background: #f2f9ff; box-shadow: inset 0 3px #0788f8; }
+.weekday { display: block; font-size: 17px; color: #0088ff; }
+.weekend { color: #e60000; }
+.calendar-date { display: block; margin-top: 2px; color: #0088ff; font-size: 14px; }
+.weather-icon { display: block; height: 68px; padding-top: 10px; font-family:"Segoe UI Symbol",sans-serif; font-size: 45px; line-height: 1; color:#aeb4b8; font-weight:400; }
+.temperatures { display:flex; flex-direction:column; min-height:81px; gap:4px; }
+.temperature { width:100%; padding:5px 1px; font-size:20px; }
+.temperature.max { background: #f1f6bd; border-bottom: 1px solid #c3d400; align-self: start; }
+.temperature.min { background: #d9ffc6; border-top: 1px solid #97de00; align-self: end; }
+.daily-total { position: absolute; right: 4px; left: 4px; bottom: 88px; z-index: 2; color: #008af1; font-size: 18px; }
+.mini-rain { position: absolute; inset: auto 7px 0; display: grid; grid-template-columns: repeat(24, 1fr); align-items: end; background: #d7ecfa; }
+.mini-rain::before { content: ""; position: absolute; inset: 0; opacity: .45; pointer-events: none; background: repeating-linear-gradient(to right, transparent 0 calc(4.166% - 1px), #fff 4.166%); }
+.mini-rain i { display: block; min-height: 2px; background: #7fc1ed; }
+.hourly-card { padding-bottom: 0; }
+.hourly-heading { align-items: center; }
+.text-button { padding: 7px 10px; }
+.hourly-grid { min-width: 1650px; display: grid; grid-template-columns: repeat(24, 68px); grid-auto-rows: auto; }
+.hour { min-height: 86px; text-align: center; padding-top: 0; }
+.hour-time { display: block; font-size: 17px; }
+.hour .weather-icon { height: 62px; padding-top: 7px; font-size: 36px; }
+.field-label { grid-column: 1 / -1; padding: 17px 20px 25px; font-size: 17px; background: #fff; }
+.temperature-row, .feels-row, .snow-row, .wind-row, .precipitation-row { display: contents; }
+.cell { display: grid; place-items: center; min-height: 43px; font-size: 19px; }
+.temperature-cell { background: #f0f5ba; border-bottom: 1px solid #c4d400; }
+.feels-cell { background: #f7f7c9; border-bottom: 1px solid #c4d400; }
+.wind-cell { min-height: 84px; border-right: 1px solid #e2e4e6; border-bottom: 1px solid #e4e4e4; grid-template-rows:auto auto; }
+.wind-cell:last-child { border-right: 0; }
+.wind-arrow { color: #a5a9ad; font-size: 16px; }
+.wind-pair{font-weight:600}.gust { color:#a5a9ad; font-size:16px; }
+.precipitation-cell { position: relative; min-height: 94px; align-items: end; padding-bottom: 6px; color: #008af1; overflow: hidden; }
+.rain-fill { position: absolute; inset: auto 0 0; height: var(--rain-height); background: #9bd1f4; width: 100%; z-index: 0; }
+.precipitation-cell span { position: relative; z-index: 1; }
+.snow-cell { min-height: 42px; color: #73777a; border-bottom: 1px solid #eee; }
+.hidden-field { display: none; }
+.message { margin: 50px auto; max-width: 540px; padding: 16px; border-radius: 12px; background: #fff3f0; color: #9e2510; text-align: center; }
+.source-note { margin: 14px 4px 0; line-height: 1.45; }
+.source-note a { color: #087eea; }
+
+@media (max-width: 680px) {
+  .weather-page { width: calc(100% - 20px); margin-top: 16px; }
+  .page-header { display: block; }
+  .header-actions { justify-content: space-between; margin-top: 12px; }
+  .section-heading { padding-inline: 14px; }
+  .legend { display: none; }
+  .forecast-card { border-radius: 12px; }
+  .daily-grid { min-width: 900px; }
+  .hourly-grid { min-width: 1536px; grid-template-columns: repeat(24, 64px); }
+}

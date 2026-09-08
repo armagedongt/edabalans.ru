@@ -119,6 +119,22 @@ def public_asset(path: Path, stable_loader: bool = False) -> FileResponse:
     return response
 
 
+WEATHER_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-weather"
+
+
+@router.get("/weather", include_in_schema=False)
+@router.get("/weather/", include_in_schema=False)
+def private_weather(_: str = Depends(require_admin)) -> FileResponse:
+    return FileResponse(WEATHER_DIR / "index.html", headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/weather/{asset_name}", include_in_schema=False)
+def private_weather_asset(asset_name: str, _: str = Depends(require_admin)) -> FileResponse:
+    if asset_name not in {"styles.css", "app.js"}:
+        raise HTTPException(status_code=404, detail="asset not found")
+    return FileResponse(WEATHER_DIR / asset_name, headers={"Cache-Control": "no-cache"})
+
+
 def homepage_library_fragment(source: str, name: str) -> str:
     start_marker = f"<!-- library:{name}:start -->"
     end_marker = f"<!-- library:{name}:end -->"
