@@ -123,17 +123,17 @@ WEATHER_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-weat
 
 
 @router.get("/weather", include_in_schema=False)
-def private_weather_redirect(_: str = Depends(require_admin)) -> RedirectResponse:
+def private_weather_redirect() -> RedirectResponse:
     return RedirectResponse("/weather/", status_code=307)
 
 
 @router.get("/weather/", include_in_schema=False)
-def private_weather(_: str = Depends(require_admin)) -> FileResponse:
+def private_weather() -> FileResponse:
     return FileResponse(WEATHER_DIR / "index.html", headers={"Cache-Control": "no-cache"})
 
 
 @router.get("/weather/{asset_name}", include_in_schema=False)
-def private_weather_asset(asset_name: str, _: str = Depends(require_admin)) -> FileResponse:
+def private_weather_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"styles.css", "app.js"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return FileResponse(WEATHER_DIR / asset_name, headers={"Cache-Control": "no-cache"})
