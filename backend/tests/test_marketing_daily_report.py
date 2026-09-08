@@ -273,6 +273,7 @@ def test_calendar_start_cohort_keeps_previous_evening_landing_link(monkeypatch):
     report_day = date(2026, 9, 9)
     linked_night_start = {
         "user_id": str(uuid4()),
+        "journey_id": "journey-night",
         "source": "Яндекс",
         "is_new_lead": True,
         "creative": "control_cakes",
@@ -304,6 +305,46 @@ def test_calendar_start_cohort_keeps_previous_evening_landing_link(monkeypatch):
     result = reports._internal_snapshot(None, settings(), report_day)
 
     assert calls[0] == (date(2026, 9, 8), date(2026, 9, 10))
+    assert result["starts"] == 1
+    assert result["tracking_errors"] == []
+
+
+def test_delayed_start_with_durable_journey_id_is_not_an_attribution_error(monkeypatch):
+    report_day = date(2026, 9, 11)
+    delayed_start = {
+        "user_id": str(uuid4()),
+        "journey_id": "journey-from-two-days-ago",
+        "source": "Яндекс",
+        "is_new_lead": True,
+        "creative": "control_cakes",
+        "messenger": "telegram",
+        "entry_method": "button",
+        "device": "mobile",
+        "landing_entry": None,
+        "start": {"at": "2026-09-11T12:00:00+03:00"},
+        "other_actions": [],
+    }
+
+    monkeypatch.setattr(
+        reports,
+        "marketing_dashboard",
+        lambda *_args, **kwargs: (
+            {"rows": [], "entry_breakdown": []}
+            if kwargs["date_from"] == report_day
+            else {"rows": [delayed_start]}
+        ),
+    )
+    monkeypatch.setattr(
+        reports,
+        "_course_depth_snapshot",
+        lambda *_args, **_kwargs: {
+            "page": {str(value): 0 for value in (25, 50, 75, 100)},
+            "video": {str(value): 0 for value in (25, 50, 75, 100)},
+        },
+    )
+
+    result = reports._internal_snapshot(None, settings(), report_day)
+
     assert result["starts"] == 1
     assert result["tracking_errors"] == []
 

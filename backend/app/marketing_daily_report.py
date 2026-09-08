@@ -322,9 +322,11 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
 
     entry_tracking_available = report_date >= entry_tracking_from
     tracking_errors = []
-    unlinked_starts = sum(not row.get("landing_entry") for row in starts)
+    # A delayed Start can legitimately outlive the dashboard's landing-event window.
+    # The journey id carried by the bot Start is the durable attribution link.
+    unlinked_starts = sum(not row.get("journey_id") for row in starts)
     if entry_tracking_available and unlinked_starts:
-        tracking_errors.append(f"У {unlinked_starts} реальных Start нет связанного CTA/QR на посадке")
+        tracking_errors.append(f"У {unlinked_starts} реальных Start нет journey_id посадки")
 
     return {
         "entries": entry_count,
