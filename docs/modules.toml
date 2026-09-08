@@ -861,7 +861,7 @@ owns_files = [
   "backend/tests/test_marketing_daily_report.py",
   "docs/knowledge-base/YANDEX_DIRECT_OPERATIONS.md",
 ]
-owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*"]
+owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*", "*/api/internal/marketing/*"]
 owns_tables = ["marketing_daily_reports"]
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
 reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "products.intensive"]
