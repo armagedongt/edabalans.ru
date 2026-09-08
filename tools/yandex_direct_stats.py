@@ -60,6 +60,7 @@ def request_report(campaign_id: int, date_from: str, date_to: str, goal_id: int)
                 "ConversionRate",
             ],
             "Goals": [str(goal_id)],
+            "AttributionModels": ["AUTO"],
             "ReportName": f"codex-rsya-{campaign_id}-{date_from}-{date_to}",
             "ReportType": "CUSTOM_REPORT",
             "DateRangeType": "CUSTOM_DATE",
@@ -89,6 +90,14 @@ def number(value: str) -> float:
     return float(value.replace(",", "."))
 
 
+def metric(row: dict[str, str], name: str) -> str:
+    """Read either the aggregate metric or its goal/attribution-specific column."""
+    if name in row:
+        return row[name]
+    prefix = f"{name}_"
+    return next((value for key, value in row.items() if key.startswith(prefix)), "")
+
+
 def summarize(tsv: str) -> dict:
     rows = list(csv.DictReader(io.StringIO(tsv), delimiter="\t"))
     result = {
@@ -104,9 +113,9 @@ def summarize(tsv: str) -> dict:
             "cost_rub": number(row["Cost"]),
             "ctr_percent": number(row["Ctr"]),
             "avg_cpc_rub": number(row["AvgCpc"]),
-            "bot_start": number(row.get("Conversions", "")),
-            "bot_start_cpa_rub": number(row.get("CostPerConversion", "")),
-            "conversion_rate_percent": number(row.get("ConversionRate", "")),
+            "bot_start": number(metric(row, "Conversions")),
+            "bot_start_cpa_rub": number(metric(row, "CostPerConversion")),
+            "conversion_rate_percent": number(metric(row, "ConversionRate")),
         }
         result["rows"].append(item)
         for key in ("impressions", "clicks", "cost_rub", "bot_start"):
