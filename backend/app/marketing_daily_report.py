@@ -152,17 +152,20 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
     by_messenger: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
     by_method: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
     by_device: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
-    started_journeys = {row.get("journey_id") for row in starts if row.get("journey_id")}
     for row in starts:
         by_creative[row.get("creative") or "—"] += 1
     for row in entries:
-        started = int(row.get("journey_id") in started_journeys)
         messenger = row.get("messenger") or "не определён"
         method = (row.get("landing_entry") or {}).get("method") or "не определён"
         device = row.get("device") or "не определён"
         for bucket, key in ((by_messenger, messenger), (by_method, method), (by_device, device)):
             bucket[key]["entries"] += 1
-            bucket[key]["starts"] += started
+    for row in starts:
+        messenger = row.get("messenger") or "не определён"
+        method = row.get("entry_method") or "не определён"
+        device = row.get("device") or "не определён"
+        for bucket, key in ((by_messenger, messenger), (by_method, method), (by_device, device)):
+            bucket[key]["starts"] += 1
 
     def count(predicate) -> int:
         return sum(bool(predicate(row)) for row in starts)
@@ -209,8 +212,8 @@ def _money(value: float | None) -> str:
     return "—" if value is None else f"{value:,.0f} ₽".replace(",", " ")
 
 
-def _delta(current: float, previous: float) -> str:
-    if not previous:
+def _delta(current: float | None, previous: float | None) -> str:
+    if current is None or not previous:
         return "нет базы"
     change = (current - previous) * 100 / previous
     return f"{change:+.0f}% ко вчера"
@@ -233,7 +236,7 @@ def render_messages(payload: dict) -> list[str]:
         total = channels[key]["total"]
         prior = previous[key]["total"]
         lines.append(
-            f"{label}: {total['impressions']} | {total['clicks']} | {total['ctr_percent']:.2f}% | {_money(total['cost_rub'])} | {total['starts']} | {_money(total['cpa_start_rub'])} ({_delta(total['cost_rub'], prior['cost_rub'])})"
+            f"{label}: {total['impressions']} | {total['clicks']} | {total['ctr_percent']:.2f}% | {_money(total['cost_rub'])} | {total['starts']} | {_money(total['cpa_start_rub'])} ({_delta(total['cpa_start_rub'], prior.get('cpa_start_rub'))})"
         )
     messages.append("\n".join(lines))
 
@@ -262,6 +265,12 @@ def render_messages(payload: dict) -> list[str]:
     messages.append("\n".join(funnel))
 
     segment = ["СЕГМЕНТЫ: входы → реальные Start"]
+    direct_devices: dict[str, dict] = defaultdict(lambda: {"clicks": 0, "cost_rub": 0.0})
+    for channel in channels.values():
+        for name, data in channel["devices"].items():
+            direct_devices[name]["clicks"] += data["clicks"]
+            direct_devices[name]["cost_rub"] += data["cost_rub"]
+    segment.append("Устройства Direct: " + "; ".join(f"{name} {data['clicks']} кликов / {_money(data['cost_rub'])}" for name, data in sorted(direct_devices.items())))
     for title, key in (("Мессенджер", "by_messenger"), ("Способ", "by_method"), ("Устройство посадки", "by_device")):
         values = internal[key]
         segment.append(title + ": " + ("; ".join(f"{name} {data['entries']}→{data['starts']} ({_pct(data['starts'], data['entries'])})" for name, data in sorted(values.items())) or "данных нет"))
@@ -288,6 +297,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
     campaign_map = _campaigns(settings)
     internal = _internal_snapshot(db, settings, report_date)
     previous_date = report_date - timedelta(days=1)
+    previous_internal = _internal_snapshot(db, settings, previous_date)
     baseline = max(date.fromisoformat(settings.marketing_report_baseline_date), report_date - timedelta(days=365))
     direct_rows = _direct_report(settings, list(campaign_map.values()), min(previous_date, baseline), report_date)
     channels: dict[str, dict] = {}
@@ -296,7 +306,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
     for kind, campaign_id in campaign_map.items():
         campaign_rows = [row for row in direct_rows if int(row.get("CampaignId") or 0) == campaign_id]
         channels[kind] = _with_starts(_summarize_direct([row for row in campaign_rows if row.get("Date") == report_date.isoformat()]), internal["by_creative"])
-        comparison[kind] = _summarize_direct([row for row in campaign_rows if row.get("Date") == previous_date.isoformat()])
+        comparison[kind] = _with_starts(_summarize_direct([row for row in campaign_rows if row.get("Date") == previous_date.isoformat()]), previous_internal["by_creative"])
         cumulative[kind] = _summarize_direct([row for row in campaign_rows if baseline.isoformat() <= str(row.get("Date")) <= report_date.isoformat()]) if baseline <= report_date else _summarize_direct([])
     payload = {
         "schema_version": 1,

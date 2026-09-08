@@ -548,6 +548,7 @@ def marketing_dashboard(
                     "max" if start_event.event_type.startswith("max_") else "telegram"
                 ),
                 "device": landing_context.get("device") or "не определён",
+                "entry_method": landing_context.get("entry") or "не определён",
                 "landing_entry": {
                     "at": _iso(landing_event.occurred_at),
                     "label": _event_label(landing_event),
@@ -607,6 +608,7 @@ def marketing_dashboard(
                 "journey_id": journey_id,
                 "messenger": landing_context.get("messenger") or "—",
                 "device": landing_context.get("device") or "не определён",
+                "entry_method": landing_context.get("entry") or "не определён",
                 "landing_entry": {
                     "at": _iso(landing_event.occurred_at),
                     "label": _event_label(landing_event),
