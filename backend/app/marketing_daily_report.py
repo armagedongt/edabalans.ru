@@ -193,7 +193,9 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
     dashboard = marketing_dashboard(
         db,
         settings,
-        date_from=report_date,
+        # The calendar-Start cohort may contain a correctly attributed Start
+        # between 00:00 and 03:00 whose landing entry happened the previous day.
+        date_from=report_date - timedelta(days=1),
         date_to=report_date + timedelta(days=1),
     )
     entry_dashboard = marketing_dashboard(

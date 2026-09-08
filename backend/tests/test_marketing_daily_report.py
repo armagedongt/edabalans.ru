@@ -269,6 +269,45 @@ def test_internal_snapshot_separates_first_start_cohort_from_click_day_attributi
     assert result["by_method"]["button"] == {"entries": 3, "starts": 2}
 
 
+def test_calendar_start_cohort_keeps_previous_evening_landing_link(monkeypatch):
+    report_day = date(2026, 9, 9)
+    linked_night_start = {
+        "user_id": str(uuid4()),
+        "source": "Яндекс",
+        "is_new_lead": True,
+        "creative": "control_cakes",
+        "messenger": "telegram",
+        "entry_method": "button",
+        "device": "mobile",
+        "landing_entry": {"at": "2026-09-08T23:50:00+03:00", "method": "button"},
+        "start": {"at": "2026-09-09T02:00:00+03:00"},
+        "other_actions": [],
+    }
+    calls = []
+
+    def dashboard(*_args, **kwargs):
+        calls.append((kwargs["date_from"], kwargs["date_to"]))
+        if kwargs["date_from"] == report_day:
+            return {"rows": [], "entry_breakdown": []}
+        return {"rows": [linked_night_start]}
+
+    monkeypatch.setattr(reports, "marketing_dashboard", dashboard)
+    monkeypatch.setattr(
+        reports,
+        "_course_depth_snapshot",
+        lambda *_args, **_kwargs: {
+            "page": {str(value): 0 for value in (25, 50, 75, 100)},
+            "video": {str(value): 0 for value in (25, 50, 75, 100)},
+        },
+    )
+
+    result = reports._internal_snapshot(None, settings(), report_day)
+
+    assert calls[0] == (date(2026, 9, 8), date(2026, 9, 10))
+    assert result["starts"] == 1
+    assert result["tracking_errors"] == []
+
+
 def test_depth_tracking_availability_has_independent_rollout_boundary(monkeypatch):
     monkeypatch.setattr(reports, "marketing_dashboard", lambda *_args, **_kwargs: {"rows": []})
     monkeypatch.setattr(
