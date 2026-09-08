@@ -30,13 +30,14 @@
       var form=document.getElementById('register-form'),button=form.querySelector('button'),error=form.querySelector('.auth-error');
       form.onsubmit=function(event){event.preventDefault();button.disabled=true;error.textContent='Отправляю письмо…';fetch('/api/account-auth/register',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value})}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw new Error(payload.detail||'Не удалось начать регистрацию');return payload})}).then(function(payload){form.innerHTML='<p class="auth-kicker">Похудение — это есть!</p><h1>Проверьте почту</h1><p class="auth-lead">'+esc(payload.message)+'</p><p class="auth-help"><a href="/lk">Вернуться ко входу</a></p>';}).catch(function(cause){error.textContent=String(cause.message||cause);button.disabled=false})};
     }
-    function openAccount(session){
-      window.EdabalansIdentity={email:session.email,source:'native'};
+    function openAccount(account){
+      window.EdabalansIdentity={email:account.email,source:'native'};
       window.EdabalansAppHost=location.origin;
+      window.EdabalansAccountPayload=account;
       portal.innerHTML='<div data-edabalans-app="account"></div>';
       window.EdabalansEmbed.load(portal.firstElementChild);
     }
-    fetch('/api/account-auth/session',{credentials:'same-origin'}).then(function(response){return response.json()}).then(function(session){if(session.authenticated)openAccount(session);else if(new URL(location.href).searchParams.get('mode')==='register')register();else login()}).catch(function(){if(new URL(location.href).searchParams.get('mode')==='register')register();else login()});
+    fetch('/api/account-auth/account',{credentials:'same-origin'}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw Object.assign(new Error(payload.detail||'Не удалось загрузить кабинет'),{status:response.status});return payload})}).then(openAccount).catch(function(error){if(error.status===401||error.status===403){if(new URL(location.href).searchParams.get('mode')==='register')register();else login();return}portal.innerHTML='<section class="auth-shell"><div class="auth-card"><h1>Не удалось открыть личный кабинет</h1><p class="auth-lead">Обновите страницу. Если ошибка повторится, <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">напишите мне</a>.</p></div></section>'});
   }());
   </script>
 </body>

@@ -50,6 +50,17 @@ def test_stable_embed_loader_is_public() -> None:
     assert response.status_code == 200
     assert response.headers["cache-control"] == "no-cache"
     assert "data-edabalans-app" in response.text
+    assert "var appHtmlCache = {};" in response.text
+
+
+def test_account_portal_uses_one_request_for_login_check_and_account_data() -> None:
+    portal = client.get("/lk").text
+    account = client.get("/apps/account.html").text
+
+    assert "fetch('/api/account-auth/session'" not in portal
+    assert "fetch('/api/account-auth/account'" in portal
+    assert "window.EdabalansAccountPayload=account" in portal
+    assert "var initialAccount=window.EdabalansAccountPayload" in account
 
 
 def test_course_footer_contract_is_shared_and_minimal() -> None:

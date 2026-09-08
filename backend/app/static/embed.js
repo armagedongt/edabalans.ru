@@ -6,6 +6,7 @@
     : 'https://edabalans.ru';
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
+  var appHtmlCache = {};
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -275,7 +276,14 @@
       : Promise.resolve();
     return preflight.then(function () {
       mount.innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
-      return fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'});
+      if (appHtmlCache[app]) return new Response(appHtmlCache[app]);
+      return fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'}).then(function (response) {
+        if (!response.ok) return response;
+        return response.text().then(function (html) {
+          appHtmlCache[app] = html;
+          return new Response(html);
+        });
+      });
     })
       .then(function (response) {
         if (!response.ok) throw new Error('Не удалось загрузить приложение');
