@@ -232,6 +232,9 @@ __marimo__/
 *.sql
 backups/
 
+# Local operational exports can contain client personal data. Never commit them.
+outputs/
+
 # LeadTeh export: credentials and exported account data stay local.
 leadteh-export/.env
 leadteh-export/data/
