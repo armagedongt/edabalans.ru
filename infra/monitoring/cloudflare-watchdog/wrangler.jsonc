@@ -37,6 +37,7 @@
     "CHECK_TIMEOUT_MS": "10000",
     "RECOVERY_SUCCESSES_BEFORE_RESUME": "3",
     "MARKETING_REPORT_URL": "https://edabalans.ru/api/internal/marketing/daily-report",
-    "SEND_REPORT_AI_DEMO_ONCE": "true"
+    "SEND_REPORT_AI_DEMO_ONCE": "true",
+    "SEND_RICH_REPORT_PREVIEW_ONCE": "true"
   }
 }

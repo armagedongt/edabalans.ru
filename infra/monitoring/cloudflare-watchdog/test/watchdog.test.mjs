@@ -292,7 +292,7 @@ test("alerts remain queued after Telegram failure and are delivered once after r
   assert.equal(delivered.length, queued);
 });
 
-test("daily report is generated, delivered after 06:00 Moscow, and never duplicated", async () => {
+test("daily report is generated, delivered as native rich tables after 06:00 Moscow, and never duplicated", async () => {
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
     const value = String(url);
@@ -302,7 +302,12 @@ test("daily report is generated, delivered after 06:00 Moscow, and never duplica
     if (value.includes("/daily-report/delivered")) return response(200, { status: "sent" });
     if (value.includes("/daily-report?")) return response(200, {
       messages: ["dry one", "dry two"],
-      payload: { demo_ai_message: "demo ai" },
+      payload: {
+        telegram_rich_messages: [
+          { rich_message: { blocks: [{ type: "table", cells: [] }] }, fallback_text: "fallback" },
+        ],
+        demo_ai_message: "demo ai",
+      },
     });
     return response(200, { status: "ready" });
   };
@@ -323,9 +328,51 @@ test("daily report is generated, delivered after 06:00 Moscow, and never duplica
   assert.equal(calls.filter((call) => call.url.includes("/generate?")).length, 1);
   assert.equal(calls.filter((call) => call.url.includes("/delivered?")).length, 1);
   const telegram = calls.filter((call) => call.url.includes("api.telegram.org"));
-  assert.deepEqual(telegram.map((call) => call.body.text), ["dry one", "dry two", "demo ai"]);
+  assert.deepEqual(telegram.map((call) => call.url.split("/").at(-1)), ["sendRichMessage", "sendMessage"]);
+  assert.equal(telegram[0].body.rich_message.blocks[0].type, "table");
+  assert.equal(telegram[1].body.text, "demo ai");
   assert.equal(storage.value.report.sentDate, "2026-09-07");
   assert.equal(storage.value.report.demoSent, true);
+  assert.equal(storage.value.report.richPreviewSent, true);
+});
+
+test("rich report falls back to readable cards when Telegram rejects native tables", async () => {
+  const telegramCalls = [];
+  const fetchImpl = async (url, options = {}) => {
+    const value = String(url);
+    if (value.endsWith("/sendRichMessage")) {
+      telegramCalls.push(JSON.parse(options.body));
+      return response(400, { ok: false });
+    }
+    if (value.endsWith("/sendMessage")) {
+      telegramCalls.push(JSON.parse(options.body));
+      return response(200, { ok: true });
+    }
+    if (value.includes("/daily-report/generate")) return response(200, { status: "pending" });
+    if (value.includes("/daily-report/delivered")) return response(200, { status: "sent" });
+    if (value.includes("/daily-report?")) return response(200, {
+      messages: [],
+      payload: {
+        telegram_rich_messages: [
+          { rich_message: { blocks: [{ type: "table", cells: [] }] }, fallback_text: "Readable fallback" },
+        ],
+      },
+    });
+    return response(200, { status: "ready" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    MARKETING_REPORT_URL: "https://api.example/daily-report",
+    MARKETING_REPORT_TOKEN: "report-secret",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    SEND_RICH_REPORT_PREVIEW_ONCE: "true",
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 3, 0, 0) });
+  assert.equal(telegramCalls.length, 2);
+  assert.equal(telegramCalls[1].text, "Readable fallback");
 });
 
 test("platform incident reboots only the Russian server immediately", async () => {

@@ -55,7 +55,12 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert payload["comparison_previous"]["rsya"]["total"]["clicks"] == 50
     assert payload["cumulative"]["rsya"]["total"]["clicks"] == 0
     assert any("Реальный Start бота: 6" in message for message in payload["telegram_messages"])
+    assert all("АВТОРАЗБОР БЕЗ ИИ" not in message for message in payload["telegram_messages"])
+    assert len(payload["telegram_rich_messages"]) == 5
+    assert payload["telegram_rich_messages"][1]["rich_message"]["blocks"][1]["type"] == "table"
+    assert payload["telegram_rich_messages"][1]["rich_message"]["blocks"][1]["is_bordered"] is True
     assert "ИМИТАЦИЯ" in payload["demo_ai_message"]
+    assert "\n\nЛучший канал" in payload["demo_ai_message"]
 
 
 def test_generate_and_store_replaces_same_daily_snapshot(monkeypatch):

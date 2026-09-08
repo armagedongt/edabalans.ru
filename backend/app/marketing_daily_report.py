@@ -219,6 +219,42 @@ def _delta(current: float | None, previous: float | None) -> str:
     return f"{change:+.0f}% ко вчера"
 
 
+def _table_cell(text: Any, *, header: bool = False, align: str = "left") -> dict:
+    cell = {"text": str(text), "align": align, "valign": "middle"}
+    if header:
+        cell["is_header"] = True
+    return cell
+
+
+def _table(headers: list[str], rows: list[list[Any]], caption: str) -> dict:
+    return {
+        "type": "table",
+        "caption": caption,
+        "is_bordered": True,
+        "is_striped": True,
+        "is_compact": True,
+        "cells": [
+            [_table_cell(value, header=True, align="left" if index == 0 else "right") for index, value in enumerate(headers)],
+            *[
+                [_table_cell(value, align="left" if index == 0 else "right") for index, value in enumerate(row)]
+                for row in rows
+            ],
+        ],
+    }
+
+
+def _rich_message(title: str, blocks: list[dict], fallback_text: str) -> dict:
+    return {
+        "rich_message": {
+            "blocks": [
+                {"type": "heading", "size": 2, "text": title},
+                *blocks,
+            ]
+        },
+        "fallback_text": fallback_text,
+    }
+
+
 def render_messages(payload: dict) -> list[str]:
     channels = payload["channels"]
     internal = payload["internal"]
@@ -231,20 +267,23 @@ def render_messages(payload: dict) -> list[str]:
         "Остаток: Direct API v5 не отдаёт баланс счёта; проверяется отдельно в кабинете.\n"
         f"Ошибок нет",
     ]
-    lines = ["КАНАЛЫ (до Start)", "канал | показы | клики | CTR | расход | Start | CPA"]
+    lines = ["КАНАЛЫ ДО START"]
     for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         total = channels[key]["total"]
         prior = previous[key]["total"]
         lines.append(
-            f"{label}: {total['impressions']} | {total['clicks']} | {total['ctr_percent']:.2f}% | {_money(total['cost_rub'])} | {total['starts']} | {_money(total['cpa_start_rub'])} ({_delta(total['cpa_start_rub'], prior.get('cpa_start_rub'))})"
+            f"{label}\nПоказы: {total['impressions']} · клики: {total['clicks']} · CTR: {total['ctr_percent']:.2f}%\n"
+            f"Расход: {_money(total['cost_rub'])} · Start: {total['starts']} · CPA: {_money(total['cpa_start_rub'])}\n"
+            f"Изменение CPA: {_delta(total['cpa_start_rub'], prior.get('cpa_start_rub'))}"
         )
     messages.append("\n".join(lines))
 
-    ad_lines = ["ОБЪЯВЛЕНИЯ", "название | клики | расход | Start | клик→Start | CPA"]
+    ad_lines = ["ОБЪЯВЛЕНИЯ"]
     for key in ("rsya", "search"):
         for ad in channels[key]["ads"]:
             ad_lines.append(
-                f"{ad['name']}: {ad['clicks']} | {_money(ad['cost_rub'])} | {ad['starts']} | {_pct(ad['starts'], ad['clicks'])} | {_money(ad['cpa_start_rub'])}"
+                f"{ad['name']}\nКлики: {ad['clicks']} · расход: {_money(ad['cost_rub'])} · Start: {ad['starts']}\n"
+                f"Клик→Start: {_pct(ad['starts'], ad['clicks'])} · CPA: {_money(ad['cpa_start_rub'])}"
             )
     messages.append("\n".join(ad_lines))
 
@@ -257,10 +296,10 @@ def render_messages(payload: dict) -> list[str]:
         ("Включили видео", internal["video_engaged"]),
         ("Кнопка в конце дня", internal["end_day_cta"]),
     ]
-    funnel = ["ВОРОНКА (РСЯ + поиск)", "этап | людей | от прошлого | от клика"]
+    funnel = ["ВОРОНКА (РСЯ + ПОИСК)"]
     previous_count = total_clicks
     for label, value in stages:
-        funnel.append(f"{label}: {value} | {_pct(value, previous_count)} | {_pct(value, total_clicks)}")
+        funnel.append(f"{label}: {value} чел. · от прошлого {_pct(value, previous_count)} · от клика {_pct(value, total_clicks)}")
         previous_count = value
     messages.append("\n".join(funnel))
 
@@ -270,27 +309,109 @@ def render_messages(payload: dict) -> list[str]:
         for name, data in channel["devices"].items():
             direct_devices[name]["clicks"] += data["clicks"]
             direct_devices[name]["cost_rub"] += data["cost_rub"]
-    segment.append("Устройства Direct: " + "; ".join(f"{name} {data['clicks']} кликов / {_money(data['cost_rub'])}" for name, data in sorted(direct_devices.items())))
+    segment.append("Устройства Direct")
+    segment.extend(f"• {name}: {data['clicks']} кликов · {_money(data['cost_rub'])}" for name, data in sorted(direct_devices.items()))
     for title, key in (("Мессенджер", "by_messenger"), ("Способ", "by_method"), ("Устройство посадки", "by_device")):
         values = internal[key]
-        segment.append(title + ": " + ("; ".join(f"{name} {data['entries']}→{data['starts']} ({_pct(data['starts'], data['entries'])})" for name, data in sorted(values.items())) or "данных нет"))
+        segment.append(title)
+        segment.extend(
+            [f"• {name}: {data['entries']} → {data['starts']} ({_pct(data['starts'], data['entries'])})" for name, data in sorted(values.items())]
+            or ["• данных нет"]
+        )
     messages.append("\n".join(segment))
 
-    ads = [ad for channel in channels.values() for ad in channel["ads"] if ad["clicks"]]
-    with_starts = [ad for ad in ads if ad["starts"]]
-    best = min(with_starts, key=lambda ad: ad["cpa_start_rub"]) if with_starts else None
-    worst = max(with_starts, key=lambda ad: ad["cpa_start_rub"]) if with_starts else None
-    analysis = ["АВТОРАЗБОР БЕЗ ИИ"]
-    if best:
-        analysis.append(f"• Лучший наблюдаемый вариант: {best['name']} — CPA Start {_money(best['cpa_start_rub'])}.")
-    if worst and worst is not best:
-        analysis.append(f"• Самый дорогой из вариантов со Start: {worst['name']} — {_money(worst['cpa_start_rub'])}.")
-    insufficient = [ad["name"] for ad in ads if ad["clicks"] < 50 or ad["starts"] < 15]
-    if insufficient:
-        analysis.append("• Решение рано принимать: недостаточно данных у " + ", ".join(insufficient) + ".")
-    analysis.append("• Сравнение учитывает вчерашний период; накопительный итог хранится отдельно с 08.09, первые два дня исключены как артефакт запуска.")
-    messages.append("\n".join(analysis))
     return messages
+
+
+def render_rich_messages(payload: dict) -> list[dict]:
+    channels = payload["channels"]
+    internal = payload["internal"]
+    previous = payload["comparison_previous"]
+    total_clicks = sum(item["total"]["clicks"] for item in channels.values())
+    total_cost = sum(item["total"]["cost_rub"] for item in channels.values())
+    fallbacks = render_messages(payload)
+
+    channel_traffic_rows = []
+    channel_comparison_rows = []
+    for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
+        total = channels[key]["total"]
+        prior = previous[key]["total"]
+        channel_traffic_rows.append([label, total["impressions"], total["clicks"], f"{total['ctr_percent']:.2f}%"])
+        channel_comparison_rows.extend([
+            [f"{label} · отчёт", total["clicks"], _money(total["cost_rub"]), total["starts"], _money(total["cpa_start_rub"])],
+            [f"{label} · вчера", prior["clicks"], _money(prior["cost_rub"]), prior["starts"], _money(prior.get("cpa_start_rub"))],
+        ])
+    summary = _rich_message(
+        f"📊 Реклама · {payload['report_date']}",
+        [
+            {"type": "paragraph", "text": "Срез: 03:00 МСК"},
+            _table(
+                ["Показатель", "Значение"],
+                [
+                    ["Расход", _money(total_cost)],
+                    ["Клики", total_clicks],
+                    ["Реальные Start", internal["starts"]],
+                    ["Цена Start", _money(total_cost / internal["starts"] if internal["starts"] else None)],
+                    ["Ошибки", "Нет"],
+                ],
+                "Общий итог",
+            ),
+            {"type": "footer", "text": "Остаток недоступен в Direct API v5 — проверяется в кабинете."},
+        ],
+        fallbacks[0],
+    )
+    channel_message = _rich_message(
+        "Каналы до Start",
+        [
+            _table(["Канал", "Показы", "Клики", "CTR"], channel_traffic_rows, "Трафик"),
+            _table(["Канал и период", "Клики", "Расход", "Start", "CPA"], channel_comparison_rows, "Сравнение со вчера"),
+        ],
+        fallbacks[1],
+    )
+
+    ad_rows = []
+    for key in ("rsya", "search"):
+        for ad in channels[key]["ads"]:
+            ad_rows.append([
+                ad["name"], ad["clicks"], _money(ad["cost_rub"]), ad["starts"],
+                _pct(ad["starts"], ad["clicks"]), _money(ad["cpa_start_rub"]),
+            ])
+    ads_message = _rich_message(
+        "Объявления",
+        [_table(["Объявление", "Клики", "Расход", "Start", "К→S", "CPA"], ad_rows, "РСЯ и поиск")],
+        fallbacks[2],
+    )
+
+    stages = [
+        ("Клик по рекламе", total_clicks),
+        ("CTA/QR", internal["entries"]),
+        ("Start бота", internal["starts"]),
+        ("Открыли интенсив", internal["personal_or_main_open"]),
+        ("Открыли день 1", internal["day_one"]),
+        ("Включили видео", internal["video_engaged"]),
+        ("Кнопка в конце дня", internal["end_day_cta"]),
+    ]
+    funnel_rows = []
+    previous_count = total_clicks
+    for label, value in stages:
+        funnel_rows.append([label, value, _pct(value, previous_count), _pct(value, total_clicks)])
+        previous_count = value
+    funnel_message = _rich_message(
+        "Воронка · РСЯ + поиск",
+        [_table(["Этап", "Людей", "От прошлого", "От клика"], funnel_rows, "Когорта реального Start")],
+        fallbacks[3],
+    )
+
+    segment_rows = []
+    for title, key in (("Мессенджер", "by_messenger"), ("Способ", "by_method"), ("Устройство", "by_device")):
+        for name, data in sorted(internal[key].items()):
+            segment_rows.append([title, name, data["entries"], data["starts"], _pct(data["starts"], data["entries"])])
+    segment_message = _rich_message(
+        "Сегменты",
+        [_table(["Разрез", "Значение", "Входы", "Start", "Конверсия"], segment_rows or [["—", "Данных нет", 0, 0, "—"]], "Посадка → бот")],
+        fallbacks[4],
+    )
+    return [summary, channel_message, ads_message, funnel_message, segment_message]
 
 
 def build_daily_report(db: Session, settings: Settings, report_date: date) -> dict:
@@ -309,7 +430,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
         comparison[kind] = _with_starts(_summarize_direct([row for row in campaign_rows if row.get("Date") == previous_date.isoformat()]), previous_internal["by_creative"])
         cumulative[kind] = _summarize_direct([row for row in campaign_rows if baseline.isoformat() <= str(row.get("Date")) <= report_date.isoformat()]) if baseline <= report_date else _summarize_direct([])
     payload = {
-        "schema_version": 1,
+        "schema_version": 2,
         "report_date": report_date.isoformat(),
         "cutoff": f"{(report_date + timedelta(days=1)).isoformat()}T03:00:00+03:00",
         "channels": channels,
@@ -320,6 +441,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
         "notes": ["Direct: календарные сутки; бот-воронка: когорта Start этих суток и действия до среза.", "Первые два дня запуска исключены только из накопительного итога."],
     }
     payload["telegram_messages"] = render_messages(payload)
+    payload["telegram_rich_messages"] = render_rich_messages(payload)
     channel_rank = sorted(
         (
             (kind, data["total"].get("cpa_start_rub"))
@@ -331,9 +453,11 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
     best_channel = ({"rsya": "РСЯ", "search": "Поиск"}.get(channel_rank[0][0], channel_rank[0][0]) if channel_rank else "не определён")
     payload["demo_ai_message"] = (
         "🤖 ИМИТАЦИЯ БУДУЩЕГО ИИ-РАЗБОРА (модель пока не подключена)\n"
-        f"Лучший канал по цене реального Start: {best_channel}. Это полезнее простого сравнения CTR: дешёвый клик без запуска бота не является лидом.\n"
+        f"\nЛучший канал по цене реального Start: {best_channel}. Это полезнее простого сравнения CTR: дешёвый клик без запуска бота не является лидом.\n"
+        "\n"
         "Главный следующий вопрос — где теряются люди между CTA/QR и реальным Start, отдельно для Telegram/MAX и кнопки/QR. "
         "Креатив нельзя отключать только из-за малого CTR: для решения нужны хотя бы около 50 кликов и 15 Start на вариант; до этого вывод предварительный.\n"
+        "\n"
         "Сравнение с прошлым маркетологом используем как ориентир по CTR и CPC, но старые «конверсии» не смешиваем с нынешним подтверждённым Start: это разные цели."
     )
     return payload
