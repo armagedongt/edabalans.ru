@@ -74,8 +74,8 @@
         {
           "id": "day-1-check-4",
           "text": "Привязать Telegram или MAX для уведомлений.",
-          "required": true,
-          "hidden": false
+          "required": false,
+          "hidden": true
         }
       ],
       "recipeDay": false,
