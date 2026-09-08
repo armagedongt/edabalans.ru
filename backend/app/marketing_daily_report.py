@@ -737,7 +737,7 @@ def render_messages(payload: dict) -> list[str]:
     ])
     if internal.get("tracking_errors"):
         funnel_lines.extend(f"⚠️ {error}" for error in internal["tracking_errors"])
-    return ["\n".join(direct_lines), "\n".join(funnel_lines)]
+    return ["\n".join(direct_lines) + "\n\n" + "\n".join(funnel_lines)]
 
 
 def _direct_channel_rows(channel: dict) -> list[list[Any]]:
@@ -808,12 +808,6 @@ def render_rich_messages(payload: dict) -> list[dict]:
             "Расход за день и недельный остаток показаны отдельно.",
         ]),
     ])
-    direct_message = _rich_message(
-        f"📊 Директ · {day}",
-        direct_blocks,
-        fallbacks[0],
-    )
-
     values = _funnel_values(payload)
     entry_available = bool(internal.get("entry_tracking_available"))
     depth_available = bool(internal.get("depth_tracking_available"))
@@ -846,12 +840,11 @@ def render_rich_messages(payload: dict) -> list[dict]:
         "НД — сигнал тогда ещё не собирался или не был связан; это не ноль.",
         f"Сбор входов: {'работает' if entry_available else 'для этого периода ещё не работал'}; глубина: {'работает' if depth_available else 'для этого периода ещё не работала'}; напоминания: {'работают' if reminder_available else 'НД'}.",
     ]))
-    funnel_message = _rich_message(
-        f"🧭 Путь лида · {day}",
-        funnel_blocks,
-        fallbacks[1],
-    )
-    return [direct_message, funnel_message]
+    return [_rich_message(
+        f"📊 Директ и путь лида · {day}",
+        [*direct_blocks, *funnel_blocks],
+        "\n\n".join(fallbacks),
+    )]
 
 
 def build_daily_report(db: Session, settings: Settings, report_date: date) -> dict:
