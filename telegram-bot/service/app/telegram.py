@@ -57,24 +57,29 @@ class TelegramClient:
             raise TelegramError(data.get("description", "Telegram API upload error"))
         return data["result"]
 
+    @staticmethod
+    def _reply_markup(configuration: dict[str, Any]) -> dict[str, Any] | None:
+        buttons = configuration.get("buttons") or []
+        if not buttons:
+            return None
+
+        def button_action(button: dict[str, Any]) -> dict[str, Any]:
+            if button.get("web_app"):
+                return {"web_app": button["web_app"]}
+            if button.get("url"):
+                return {"url": button["url"]}
+            return {"callback_data": button["callback_data"]}
+
+        return {
+            "inline_keyboard": [[{
+                "text": button["text"],
+                **button_action(button),
+            }] for button in buttons]
+        }
+
     def send_content(self, chat_id: str, content: Any, configuration: dict[str, Any]) -> str:
         rendered_body = content_body_for_telegram(content)
-        buttons = configuration.get("buttons") or []
-        reply_markup = None
-        if buttons:
-            def button_action(button: dict[str, Any]) -> dict[str, Any]:
-                if button.get("web_app"):
-                    return {"web_app": button["web_app"]}
-                if button.get("url"):
-                    return {"url": button["url"]}
-                return {"callback_data": button["callback_data"]}
-
-            reply_markup = {
-                "inline_keyboard": [[{
-                    "text": button["text"],
-                    **button_action(button),
-                }] for button in buttons]
-            }
+        reply_markup = self._reply_markup(configuration)
         common: dict[str, Any] = {"chat_id": chat_id}
         if reply_markup:
             common["reply_markup"] = reply_markup
@@ -108,6 +113,26 @@ class TelegramClient:
                 },
             )
         return str(result["message_id"])
+
+    def edit_content(self, chat_id: str, message_id: str, content: Any, configuration: dict[str, Any]) -> None:
+        payload: dict[str, Any] = {
+            "chat_id": chat_id,
+            "message_id": int(message_id),
+            "text": content_body_for_telegram(content),
+            "parse_mode": "HTML",
+            "disable_web_page_preview": not bool(configuration.get("link_preview", False)),
+        }
+        reply_markup = self._reply_markup(configuration)
+        if reply_markup:
+            payload["reply_markup"] = reply_markup
+        try:
+            self.call("editMessageText", payload)
+        except TelegramError as exc:
+            # Refreshing immediately can legitimately produce an identical
+            # message. Telegram reports that as an error even though the menu
+            # is already in the requested state.
+            if "message is not modified" not in str(exc).casefold():
+                raise
 
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:
         self.call("answerCallbackQuery", {"callback_query_id": callback_query_id, "text": text})

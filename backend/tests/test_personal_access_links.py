@@ -327,7 +327,7 @@ def test_application_preview_entitlement_opens_only_owned_unreleased_apps():
     app.dependency_overrides.clear()
 
 
-def test_application_preview_requires_preview_and_concrete_app_resource():
+def test_published_application_requires_only_its_concrete_resource():
     preview_only = {
         item["code"]: item
         for item in account_applications({"ACCESS_APPLICATION_PREVIEW"}, False)
@@ -346,9 +346,9 @@ def test_application_preview_requires_preview_and_concrete_app_resource():
     assert preview_only["recipes"]["ready"] is True
     assert preview_only["recipes"]["owned"] is False
     assert preview_only["recipes"]["app"] is None
-    assert resource_only["recipes"]["ready"] is False
+    assert resource_only["recipes"]["ready"] is True
     assert resource_only["recipes"]["owned"] is True
-    assert resource_only["recipes"]["app"] is None
+    assert resource_only["recipes"]["app"] == "recipes"
     assert both["recipes"]["ready"] is True
     assert both["recipes"]["owned"] is True
     assert both["recipes"]["app"] == "recipes"

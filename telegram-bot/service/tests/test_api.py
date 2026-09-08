@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+from uuid import uuid4
+
 from fastapi.testclient import TestClient
-from sqlalchemy import func, select
+from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.database import Base, get_db, make_engine
 from app.main import app
 import app.main as main_module
-from app.models import BotInstance, Contact, ContentItem, CrmMessengerAccount, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
+from app.models import BotInstance, Contact, ContentItem, CrmMessengerAccount, CrmUser, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
 from app.seed import seed_defaults
 
 
@@ -18,6 +20,7 @@ class FakeTelegram:
         self.configurations = []
         self.menu_apps = []
         self.reset_menu_buttons = []
+        self.edited = []
 
     def send_content(self, chat_id, content, configuration):
         self.sent.append((chat_id, content.code if hasattr(content, "code") else content.body_source))
@@ -32,6 +35,9 @@ class FakeTelegram:
 
     def reset_chat_menu_button(self, chat_id):
         self.reset_menu_buttons.append(chat_id)
+
+    def edit_content(self, chat_id, message_id, content, configuration):
+        self.edited.append((chat_id, message_id, content.body_source, configuration))
 
 
 def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
@@ -224,6 +230,78 @@ def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypa
         assert session.scalar(select(Contact).where(Contact.telegram_user_id == "42")).status == "active"
 
     assert client.post(f"/bot-api/contacts/{waiting.id}/messages", json={"text": "Нельзя отправлять"}).status_code == 409
+    app.dependency_overrides.clear()
+
+
+def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'apps-link.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        session.execute(text("""
+            CREATE TABLE resources (
+                id TEXT PRIMARY KEY,
+                code TEXT NOT NULL UNIQUE,
+                status TEXT NOT NULL
+            )
+        """))
+        session.execute(text("""
+            CREATE TABLE user_accesses (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                resource_id TEXT NOT NULL,
+                expires_at TIMESTAMP NULL,
+                revoked_at TIMESTAMP NULL
+            )
+        """))
+        seed_defaults(session, "Fitness_Talks_bot")
+        user = CrmUser(display_name="DQS user", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+        resource_id = str(uuid4())
+        session.execute(
+            text("INSERT INTO resources (id, code, status) VALUES (:id, 'dqs', 'active')"),
+            {"id": resource_id},
+        )
+        session.add(
+            CrmMessengerAccount(
+                user_id=user.id,
+                platform="telegram",
+                platform_user_id="99",
+                first_seen_at=None,
+                last_seen_at=None,
+                linked_at=None,
+                source="test",
+            )
+        )
+        session.execute(text("""
+            INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
+            VALUES (:id, :user_id, :resource_id, NULL, NULL)
+        """), {"id": str(uuid4()), "user_id": user.id, "resource_id": resource_id})
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    fake = FakeTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", True)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_allowed_user_ids", "42")
+    client = TestClient(app)
+
+    opened = {"update_id": 300, "message": {"from": {"id": 99, "first_name": "Visitor"}, "chat": {"id": 99}, "text": "/start dqs"}}
+    assert client.post("/telegram/webhook", json=opened).json() == {"ok": True, "apps_menu": True}
+    assert fake.configurations[-1]["buttons"][0] == {
+        "text": "Оценка качества питания",
+        "web_app": {"url": "https://edabalans.ru/dqs"},
+    }
+
+    refreshed = {"update_id": 301, "callback_query": {"id": "apps-cb", "from": {"id": 99, "first_name": "Visitor"}, "message": {"chat": {"id": 99}, "message_id": 7}, "data": "apps:refresh"}}
+    assert client.post("/telegram/webhook", json=refreshed).json() == {"ok": True, "apps_menu": True}
+    assert fake.edited[-1][0:2] == ("99", "7")
+    assert fake.callbacks[-1] == ("apps-cb", "Список обновлён")
     app.dependency_overrides.clear()
 
 

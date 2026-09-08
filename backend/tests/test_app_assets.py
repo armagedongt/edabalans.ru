@@ -362,9 +362,11 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer() -> Non
         assert re.search(r'class=["\'][^"\']*footer', fragments[app_code], re.IGNORECASE) is None
         assert "©" not in fragments[app_code]
 
-    assert 'href="${escapeHtml(ACCOUNT_URL)}"' in fragments["dqs"]
+    assert 'href="${escapeHtml(ACCOUNT_URL)}"' not in fragments["dqs"]
+    assert 'href="/admin/dqs"' in fragments["dqs"]
     assert re.search(r'dqs-profile-link ed-app-account-link[^>]*>\s*<svg', fragments["dqs"])
-    assert "href=\"'+esc(ACCOUNT_URL)+'\"" in fragments["strength"]
+    assert "href=\"'+esc(ACCOUNT_URL)+'\"" not in fragments["strength"]
+    assert 'href="/admin/strength"' in fragments["strength"]
     assert re.search(r'st-profile ed-app-account-link[^>]*>\s*[^<]*<svg', fragments["strength"])
     assert "root.querySelector('.open-account').onclick=function(){location.href=accountUrl}" in fragments["recipes"]
     assert "mask:url(" in fragments["recipes"]

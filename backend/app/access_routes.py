@@ -189,9 +189,9 @@ def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
     preview_enabled = APPLICATION_PREVIEW_RESOURCE in owned
     definitions = (
         ("dqs", "Система оценки качества питания", "Оценивайте рацион по продуктовым категориям и наблюдайте изменения.", "dqs", "dqs", True),
-        ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "strength", "strength", False),
-        ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", False),
-        ("metabolism", "Калькулятор метаболизма и тренировок", "Оценивайте расход энергии и тренировочную нагрузку.", "metabolism", "metabolism", False),
+        ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "strength", "strength", True),
+        ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", True),
+        ("metabolism", "Калькулятор метаболизма и тренировок", "Оценивайте расход энергии и тренировочную нагрузку.", "metabolism", "metabolism", True),
     )
     return [
         {

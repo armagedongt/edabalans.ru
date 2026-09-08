@@ -609,6 +609,23 @@ owns_files = [
 ]
 
 [[modules]]
+id = "messaging.telegram.apps"
+parent = "messaging.telegram"
+card = "docs/knowledge-base/modules/catalog/messaging.telegram.apps.md"
+depends_on = [
+  "messaging.telegram.engine", "platform.crm", "products.dqs",
+  "products.strength", "products.metabolism", "products.recipes",
+]
+reads_from = [
+  "platform.crm", "products.dqs", "products.strength",
+  "products.metabolism", "products.recipes",
+]
+owns_files = [
+  "telegram-bot/service/app/app_menu.py",
+  "telegram-bot/service/tests/test_app_menu.py",
+]
+
+[[modules]]
 id = "messaging.telegram.prepurchase"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.prepurchase.md"
@@ -865,7 +882,7 @@ owns_files = [
   ".codex/skills/yandex-direct-operations/SKILL.md",
   "docs/knowledge-base/modules/catalog/planned.marketing-catalog.md",
   "tools/yandex_direct_apply_safe_fixes.py", "tools/yandex_direct_audit.py",
-  "tools/yandex_direct_stats.py",
+  "tools/yandex_direct_stats.py", "tools/tests/test_yandex_direct_stats.py",
   "backend/app/marketing_daily_report.py",
   "backend/migrations/versions/20260908_0038_marketing_daily_reports.py",
   "backend/tests/test_marketing_daily_report.py",

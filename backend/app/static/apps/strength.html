@@ -2417,12 +2417,11 @@ function commonHeader(){
         '<div>'+
           '<div class="st-title">Силовые тренировки</div>'+
         '</div>'+
-        '<a class="st-profile ed-app-account-link" href="'+esc(ACCOUNT_URL)+'" aria-label="Личный кабинет" title="Личный кабинет">'+
+        (MANAGED_TARGET ? '<a class="st-profile ed-app-account-link" href="/admin/strength" aria-label="Вернуться в админку" title="Вернуться в админку">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
-            '<circle cx="12" cy="8" r="4"></circle>'+
-            '<path d="M4.5 21c.8-4.2 3.3-6.3 7.5-6.3s6.7 2.1 7.5 6.3"></path>'+
+            '<path d="M15 18l-6-6 6-6"></path>'+
           '</svg>'+
-        '</a>'+
+        '</a>' : '')+
       '</div>'
   );
 

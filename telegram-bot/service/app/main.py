@@ -23,6 +23,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events
 from app.database import Base, SessionLocal, engine, get_db
+from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
@@ -833,6 +834,11 @@ def process_update(update: dict, session: Session) -> dict:
     elif message:
         contact = _upsert_contact(session, bot, message["from"], message["chat"])
         text = message.get("text", "")
+        requested_app = app_request(text)
+        if requested_app is not None:
+            send_menu(session, contact, client(), requested_app)
+            session.commit()
+            return {"ok": True, "apps_menu": True}
         normalized_start = text.strip().casefold() in {"start", "старт"}
         is_start = normalized_start or text.startswith("/start")
         if not is_start:
@@ -989,6 +995,15 @@ def process_update(update: dict, session: Session) -> dict:
     elif callback:
         msg = callback.get("message") or {}
         contact = _upsert_contact(session, bot, callback["from"], msg.get("chat") or {"id": callback["from"]["id"]})
+        if callback.get("data") == REFRESH_CALLBACK:
+            message_id = str(msg.get("message_id") or "")
+            if message_id:
+                refresh_menu(session, contact, client(), message_id)
+            else:
+                send_menu(session, contact, client(), "apps")
+            client().answer_callback(str(callback["id"]), "Список обновлён")
+            session.commit()
+            return {"ok": True, "apps_menu": True}
         if not _maintenance_allows_contact(contact):
             client().answer_callback(str(callback["id"]), "Бот временно на ремонте")
             _handle_maintenance_contact(session, contact, receipt_id, "callback_query")

@@ -291,6 +291,7 @@ class CrmUser(TimestampMixin, Base):
     id: Mapped[str] = mapped_column(Uuid(as_uuid=False), primary_key=True, default=lambda: str(uuid.uuid4()))
     display_name: Mapped[str | None] = mapped_column(String(255))
     status: Mapped[str] = mapped_column(String(32), default="active", nullable=False)
+    merged_into_user_id: Mapped[str | None] = mapped_column(Uuid(as_uuid=False), index=True)
     data_origin: Mapped[str] = mapped_column(String(32), default="native", nullable=False)
     first_seen_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 

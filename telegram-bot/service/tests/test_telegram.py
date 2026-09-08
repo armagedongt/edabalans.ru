@@ -90,6 +90,59 @@ def test_send_content_builds_web_app_button():
     }
 
 
+def test_edit_content_replaces_same_message_with_web_app_and_refresh_buttons():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"message_id": 9}})
+
+    content = SimpleNamespace(
+        source_format="telegram_html",
+        media_kind=None,
+        media_path=None,
+        telegram_file_id=None,
+        body_source="<b>Мои приложения</b>",
+        title="Приложения",
+    )
+    TelegramClient("secret", httpx.MockTransport(handler)).edit_content(
+        "42",
+        "9",
+        content,
+        {
+            "buttons": [
+                {"text": "DQS", "web_app": {"url": "https://example.test/dqs"}},
+                {"text": "Обновить", "callback_data": "apps:refresh"},
+            ]
+        },
+    )
+
+    assert seen[0].url.path.endswith("/editMessageText")
+    payload = json.loads(seen[0].content)
+    assert payload["message_id"] == 9
+    assert payload["reply_markup"]["inline_keyboard"][1][0]["callback_data"] == "apps:refresh"
+
+
+def test_edit_content_accepts_unchanged_menu_as_success():
+    def handler(_request):
+        return httpx.Response(200, json={
+            "ok": False,
+            "description": "Bad Request: message is not modified",
+        })
+
+    content = SimpleNamespace(
+        source_format="telegram_html",
+        media_kind=None,
+        media_path=None,
+        telegram_file_id=None,
+        body_source="<b>Мои приложения</b>",
+        title="Приложения",
+    )
+    TelegramClient("secret", httpx.MockTransport(handler)).edit_content(
+        "42", "9", content, {"buttons": [{"text": "Обновить", "callback_data": "apps:refresh"}]}
+    )
+
+
 def test_sets_personal_chat_menu_web_app():
     seen = []
 

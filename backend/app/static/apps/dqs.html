@@ -4123,9 +4123,9 @@ function renderShell(
             DQS&nbsp;${formatScore(total)}
           </div>
 
-          <a class="dqs-profile-link ed-app-account-link" href="${escapeHtml(ACCOUNT_URL)}" aria-label="Личный кабинет" title="Личный кабинет">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </a>
+          ${MANAGED_TARGET ? `<a class="dqs-profile-link ed-app-account-link" href="/admin/dqs" aria-label="Вернуться в админку" title="Вернуться в админку">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>` : ''}
 
         </div>
 
