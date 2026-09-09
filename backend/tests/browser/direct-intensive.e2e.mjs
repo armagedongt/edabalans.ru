@@ -254,7 +254,7 @@ try {
     { id: 'motivation', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
     { id: 'motivation-lines', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
     { id: 'motivation-frame', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий!' },
+    { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий. Я написал бесплатный интенсив: как это сделать — читайте прямо сейчас.' },
   ]) {
     const { context, page } = await landing({
       viewport: { width: 360, height: 900 },
@@ -301,6 +301,8 @@ try {
         stickyActionsDisplay: getComputedStyle(stickyActions).display,
         inlineButtonHeight: inlineActions.querySelector('.edb-di-button').getBoundingClientRect().height,
         inlineButtonRadius: getComputedStyle(inlineActions.querySelector('.edb-di-button')).borderRadius,
+        inlineVpnNote: inlineActions.querySelector('.edb-di-note')?.textContent?.trim(),
+        inlineButtonVpnNote: inlineActions.querySelector('.edb-di-button-note')?.textContent?.trim(),
         legalBottomGap: window.innerHeight - legal.getBoundingClientRect().bottom,
         firstCheckStaysInline: checkPairs.length ? Math.abs(checkPairs[0].prefixTop - checkPairs[0].resultTop) < 1 : true,
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
@@ -309,7 +311,7 @@ try {
     if (fit.rootOverflow > 1 || fit.headingAlign !== 'left' || fit.ctaOverflow > 1 || variant.startsWith('motivation') !== fit.hasSplitArrows || (variant.startsWith('motivation') && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
-    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.legalBottomGap > 12)) {
+    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote || fit.legalBottomGap > 12)) {
       throw new Error(`Motivation actions or footer are misplaced: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {

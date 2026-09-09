@@ -41,6 +41,7 @@
   #edb-direct-intensive-v1 .edb-di-cta-lead span{display:block;white-space:nowrap}
   #edb-direct-intensive-v1[data-landing-variant="instead"] .edb-di-cta-lead,
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead{font-size:clamp(14px,4vw,19px)}
+  #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead{font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);line-height:1.5;font-weight:800;text-align:left}
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead>span:not(.edb-di-cta-arrows){white-space:normal}
   #edb-direct-intensive-v1 .edb-di-cta-lead .edb-di-cta-arrows{display:grid;grid-template-columns:1fr 1fr;width:100%;margin-top:5px;font-size:22px;line-height:1;text-align:center;white-space:nowrap}
   #edb-direct-intensive-v1 .edb-di-actions{display:grid;width:min(calc(100% - 16px),520px);grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,2.4vw,11px);margin-inline:auto}
@@ -57,6 +58,7 @@
   #edb-direct-intensive-v1 .edb-di-button[aria-disabled="true"]{cursor:not-allowed}
   #edb-direct-intensive-v1 .edb-di-button--telegram:has(.edb-di-button-note)>.edb-di-telegram-icon,#edb-direct-intensive-v1 .edb-di-button--telegram:has(.edb-di-button-note)>span:not(.edb-di-button-note){transform:translateY(-4px)}
   #edb-direct-intensive-v1 .edb-di-button-note{position:absolute;right:0;bottom:5px;left:0;color:rgba(255,255,255,.92);font:600 9px/1 Montserrat,Arial,sans-serif;letter-spacing:0;text-align:center;white-space:nowrap}
+  #edb-direct-intensive-v1 .edb-di-note{margin:10px 0 0;color:var(--edb-muted);font-size:12px;line-height:1.35;text-align:center}
   #edb-direct-intensive-v1 .edb-di-qr{display:none;margin:24px auto 0}
   #edb-direct-intensive-v1 .edb-di-qr-intro{margin:0 0 12px;color:#334654;font:650 14px/1.45 Manrope,Montserrat,sans-serif;text-align:center}
   #edb-direct-intensive-v1 .edb-di-qr-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
@@ -125,9 +127,9 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       openingStyle:'plain',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
-        [{text:'Но ещё нужны навыки в управлении питанием и пищевыми привычками, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
+        [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
       ],
-      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как их освоить!'],
+      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки.'],
       splitArrows:true,
       points:[]
     },
@@ -135,9 +137,9 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       openingStyle:'plain',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
-        [{text:'Но ещё нужны навыки в управлении питанием и пищевыми привычками, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
+        [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
       ],
-      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как их освоить!'],
+      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки.'],
       splitArrows:true,
       points:[]
     },
@@ -145,15 +147,15 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       openingStyle:'plain',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
-        [{text:'Но ещё нужны навыки в управлении питанием и пищевыми привычками, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
+        [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
       ],
-      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как их освоить!'],
+      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки.'],
       splitArrows:true,
       points:[]
     },
     instead:{
       openingStyle:'plain-accent',
-      afterList:[{text:'А вместо случайных попыток — '},{text:'понятный порядок действий',strong:true},{text:'! Поэтому я написал бесплатный интенсив, как это сделать!'}],
+      afterList:[{text:'А вместо случайных попыток — '},{text:'понятный порядок действий',strong:true},{text:'. Я написал бесплатный интенсив: как это сделать — читайте прямо сейчас.'}],
       ctaLeadLines:['👇 Читайте прямо сейчас 👇'],
       listKind:'checks',
       points:INSTEAD_POINTS.slice(0,-1)
@@ -195,11 +197,13 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   const assetUrl=name=>location.protocol==='file:'?`./${name}`:(location.hostname==='127.0.0.1'||location.hostname==='localhost'||location.hostname==='app.edabalans.ru'?`/preview/homepage-mobile/${name}`:`https://app.edabalans.ru/preview/homepage-mobile/${name}?v=1`);
   const maxLogoUrl=assetUrl('max-full-colored-official.png');
   const icon=kind=>kind==='telegram'?'<svg class="edb-di-telegram-icon" viewBox="190 270 580 510" aria-hidden="true"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>':`<img class="edb-di-max-logo" src="${maxLogoUrl}" alt="MAX">`;
-  const button=(kind,label,url,note='',position='primary')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="${position}" aria-label="${esc(label)}${note?`. ${esc(note)}`:''}" href="${configured(url)?esc(url):'#'}" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}${kind==='max'?'':`<span>${esc(label)}</span>${note?`<span class="edb-di-button-note">${esc(note)}</span>`:''}`}</a></div>`;
+  const button=(kind,label,url,note='',position='primary',notePlacement='inside')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="${position}" aria-label="${esc(label)}${note?`. ${esc(note)}`:''}" href="${configured(url)?esc(url):'#'}" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}${kind==='max'?'':`<span>${esc(label)}</span>${note&&notePlacement==='inside'?`<span class="edb-di-button-note">${esc(note)}</span>`:''}`}</a>${note&&notePlacement==='below'?`<p class="edb-di-note">${esc(note)}</p>`:''}</div>`;
   const qrOption=(kind,label,selected)=>`<button class="edb-di-qr-option" type="button" role="option" data-edb-qr="${kind}" aria-selected="${selected}" tabindex="${selected?'0':'-1'}"><span class="edb-di-qr-heading"><span>${esc(label)}</span><span class="edb-di-qr-state">${selected?'QR открыт':'QR скрыт'}</span></span><span class="edb-di-qr-frame"><img class="edb-di-qr-code" src="${assetUrl(`direct-intensive-${kind}-qr.svg`)}" data-edb-destination="" alt="QR-код для ${esc(label)}"><span class="edb-di-qr-cover" aria-hidden="${selected?'true':'false'}">Нажмите, чтобы показать этот QR-код</span></span></button>`;
   const ctaArrows=CONTENT.splitArrows?'<span class="edb-di-cta-arrows" aria-hidden="true"><span>👇</span><span>👇</span></span>':'';
+  const usesOriginalInlineActions=ACTIVE_VARIANT.startsWith('motivation');
+  const inlineTelegramNote=usesOriginalInlineActions?'только с VPN':CONTENT.telegramNote;
   root.dataset.landingVariant=ACTIVE_VARIANT;
-  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}</section>${pointList}${afterList}<p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}${ctaArrows}</p><div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote)}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span class="edb-di-legal-line"><span>${esc(CONTENT.legal.business)} · ${esc(CONTENT.legal.inn)}</span><span aria-hidden="true">·</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span aria-hidden="true">·</span><span>${esc(CONTENT.legal.disclaimer)}</span></span></footer></main><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
+  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}</section>${pointList}${afterList}<p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}${ctaArrows}</p><div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,inlineTelegramNote,'primary',usesOriginalInlineActions?'below':'inside')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span class="edb-di-legal-line"><span>${esc(CONTENT.legal.business)} · ${esc(CONTENT.legal.inn)}</span><span aria-hidden="true">·</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span aria-hidden="true">·</span><span>${esc(CONTENT.legal.disclaimer)}</span></span></footer></main><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
 
   let robots=document.head&&document.head.querySelector('meta[name="robots"]');
   if(!robots&&document.head){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}

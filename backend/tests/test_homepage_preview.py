@@ -1393,13 +1393,14 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     assert "?variant=" not in response.text
     assert "requestedVariant=new URLSearchParams(location.search).get('variant')" in response.text
     assert "Да, для похудения — нужен дефицит калорий." in response.text
-    assert "Но ещё нужны навыки в управлении питанием и пищевыми привычками" in response.text
-    assert "Читайте бесплатный интенсив: что это за навыки и как их освоить!" in response.text
+    assert "Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки" in response.text
+    assert "Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки." in response.text
     assert "splitArrows:true" in response.text
     assert "motivation-lines" in response.text
     assert "motivation-frame" in response.text
     assert "А вместо случайных попыток — " in response.text
     assert "{text:'понятный порядок действий',strong:true}" in response.text
+    assert "Я написал бесплатный интенсив: как это сделать — читайте прямо сейчас." in response.text
     assert "читайте прямо сейчас. 👇" not in response.text
     assert "openingStyle:'plain-accent'" in response.text
     assert "openingStyle:'plain-text'" in response.text
