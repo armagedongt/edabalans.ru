@@ -31,6 +31,8 @@ EXERCISE_IDS = {
     "жим гантелей на наклонной скамье": "incline_press",
     "тяга верхнего блока (трицепс)": "triceps",
     "разгибания на трицепс": "triceps",
+    "жим лежа узким хватом": "close_grip_bench_press",
+    "жим лёжа узким хватом": "close_grip_bench_press",
     "разведение ног в тренажере": "abductor",
     "отведение бедра в тренажере": "abductor",
     "разведение гантелей в сторону": "lateral_raise",
@@ -42,6 +44,16 @@ EXERCISE_IDS = {
 
 def text(value: Any) -> str:
     return "" if value is None else str(value).strip()
+
+
+def normalized_exercise_name(value: Any) -> str:
+    return text(value).casefold().replace("ё", "е")
+
+
+def known_exercise(value: Any) -> tuple[str, str] | None:
+    name = text(value)
+    exercise_id = EXERCISE_IDS.get(normalized_exercise_name(name))
+    return (exercise_id, name) if exercise_id else None
 
 
 def row_value(rows: list[list[Any]], row: int, column: int) -> Any:
@@ -84,10 +96,10 @@ def exercise_sections(rows: list[list[Any]]) -> list[dict[str, Any]]:
         end_row = headings[index + 1][0] if index + 1 < len(headings) else len(rows)
         if index + 1 < len(headings) and headings[index + 1][2] != kind:
             end_row = headings[index + 1][0]
-        key = name.casefold().replace("ё", "е")
-        exercise_id = EXERCISE_IDS.get(key)
-        if not exercise_id:
+        identity = known_exercise(name)
+        if not identity:
             raise ValueError(f"Неизвестное упражнение в строке {heading_row + 1}: {name}")
+        exercise_id, _ = identity
         sections.append(
             {
                 "exercise_id": exercise_id,
@@ -123,27 +135,55 @@ def matrix_payload(
     *,
     legacy_user_id: str = DEFAULT_USER_ID,
     display_name: str = DEFAULT_DISPLAY_NAME,
+    email: str = "",
 ) -> dict[str, list[list[Any]]]:
     sections = exercise_sections(rows)
     starts = group_starts(rows)
     if not sections or not starts:
         raise ValueError("В таблице не найдены упражнения или колонки тренировок")
 
-    users = [["user_id", "email", "display_name", "status"], [legacy_user_id, "", display_name, "active"]]
+    users = [["user_id", "email", "display_name", "status"], [legacy_user_id, email, display_name, "active"]]
     types = [
         ["user_id", "workout_type", "title", "active", "sort_order"],
         [legacy_user_id, 1, "Тренировка 1", True, 1],
         [legacy_user_id, 2, "Тренировка 2", True, 2],
     ]
     catalog = [["user_id", "workout_type", "exercise_id", "exercise_name", "active", "sort_order"]]
+    identity_by_section_and_column: dict[tuple[int, int], tuple[str, str]] = {}
+    note_by_section_and_column: dict[tuple[int, int], str] = {}
     order_by_type: dict[int, int] = defaultdict(int)
+    catalog_order: dict[tuple[int, str], int] = {}
     for section in sections:
         kind = section["workout_type"]
-        order_by_type[kind] += 1
-        section["sort_order"] = order_by_type[kind]
-        catalog.append(
-            [legacy_user_id, kind, section["exercise_id"], section["exercise_name"], True, section["sort_order"]]
-        )
+        current_identity = (section["exercise_id"], section["exercise_name"])
+        for column in starts:
+            heading_values = [text(row_value(rows, section["heading_row"], column + offset)) for offset in range(5)]
+            marker_indexes = {
+                index
+                for index, value in enumerate(heading_values)
+                if known_exercise(value) is not None
+            }
+            if marker_indexes:
+                marker = known_exercise(heading_values[min(marker_indexes)])
+                assert marker is not None
+                current_identity = marker
+            identity_by_section_and_column[(section["heading_row"], column)] = current_identity
+            note_by_section_and_column[(section["heading_row"], column)] = " · ".join(
+                dict.fromkeys(
+                    value
+                    for index, value in enumerate(heading_values)
+                    if value and index not in marker_indexes
+                )
+            )
+
+            catalog_key = (kind, current_identity[0])
+            if catalog_key in catalog_order:
+                continue
+            order_by_type[kind] += 1
+            catalog_order[catalog_key] = order_by_type[kind]
+            catalog.append(
+                [legacy_user_id, kind, current_identity[0], current_identity[1], True, catalog_order[catalog_key]]
+            )
 
     sessions = [["session_id", "user_id", "workout_type", "session_number", "date", "status", "legacy_group", "source"]]
     session_exercises = [["session_id", "exercise_id", "exercise_name", "sort_order", "note", "source"]]
@@ -159,8 +199,8 @@ def matrix_payload(
             set_rows: list[list[Any]] = []
             has_rpe = False
             for section in [item for item in sections if item["workout_type"] == workout_type]:
-                note_values = [text(row_value(rows, section["heading_row"], column + offset)) for offset in range(5)]
-                note = " · ".join(dict.fromkeys(value for value in note_values if value))
+                exercise_id, exercise_name = identity_by_section_and_column[(section["heading_row"], column)]
+                note = note_by_section_and_column[(section["heading_row"], column)]
                 own_sets: list[dict[str, Any]] = []
                 fallback_number = 0
                 for row_index in range(section["start_row"], section["end_row"]):
@@ -176,11 +216,11 @@ def matrix_payload(
                 if not note and not own_sets:
                     continue
                 exercise_rows.append(
-                    [session_id, section["exercise_id"], section["exercise_name"], section["sort_order"], note, SOURCE]
+                    [session_id, exercise_id, exercise_name, catalog_order[(workout_type, exercise_id)], note, SOURCE]
                 )
                 for item in own_sets:
                     set_rows.append(
-                        [session_id, section["exercise_id"], item["set_number"]]
+                        [session_id, exercise_id, item["set_number"]]
                         + [item[key] for key in ("plan_weight", "plan_reps", "fact_weight", "fact_reps", "rpe")]
                         + [item[key] for key in ("plan_weight_raw", "plan_reps_raw", "fact_weight_raw", "fact_reps_raw", "rpe_raw")]
                         + [SOURCE]
@@ -203,8 +243,15 @@ def matrix_payload(
     }
 
 
-def run(rows: list[list[Any]], *, dry_run: bool, legacy_user_id: str, display_name: str) -> dict[str, int]:
-    payload = matrix_payload(rows, legacy_user_id=legacy_user_id, display_name=display_name)
+def run(
+    rows: list[list[Any]],
+    *,
+    dry_run: bool,
+    legacy_user_id: str,
+    display_name: str,
+    email: str = "",
+) -> dict[str, int]:
+    payload = matrix_payload(rows, legacy_user_id=legacy_user_id, display_name=display_name, email=email)
     summary: defaultdict[str, int] = defaultdict(int)
     with SessionLocal() as db:
         import_strength(db, payload, summary)
@@ -221,6 +268,7 @@ def main() -> None:
     parser.add_argument("--backup-confirmed", action="store_true", help="Подтвердить свежий backup и test restore")
     parser.add_argument("--legacy-user-id", default=DEFAULT_USER_ID)
     parser.add_argument("--display-name", default=DEFAULT_DISPLAY_NAME)
+    parser.add_argument("--email", default="")
     parser.add_argument(
         "--csv-url",
         help="Публичный CSV-export исходного листа; без параметра матрица читается как JSON из stdin",
@@ -241,6 +289,7 @@ def main() -> None:
                 dry_run=not args.apply,
                 legacy_user_id=args.legacy_user_id,
                 display_name=args.display_name,
+                email=args.email,
             ),
             ensure_ascii=False,
             sort_keys=True,

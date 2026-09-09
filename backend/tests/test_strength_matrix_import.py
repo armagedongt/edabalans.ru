@@ -68,3 +68,30 @@ def test_matrix_import_keeps_heading_notes_and_unlabelled_sets() -> None:
     exercises = [dict(zip(headers, row, strict=True)) for row in payload["strength_session_exercises"][1:]]
     second = next(row for row in exercises if row["session_id"].endswith("t1_s02"))
     assert second["note"] == "Локти мягкие"
+
+
+def test_matrix_import_splits_an_exercise_after_an_exact_heading_rename() -> None:
+    values = sheet()
+    for row in values:
+        row.extend([""] * 6)
+    values[1][14] = "План"
+    values[2][14:19] = ["Вес", "Повторения", "Вес", "Повторения", "RPE"]
+    values[8][8] = "Жим лёжа узким хватом"
+    values[9][8:13] = ["20", "10", "20", "9", "8"]
+    values[8][14] = "Фокус на технике"
+    values[9][14:19] = ["22,5", "8", "22,5", "8", "8"]
+
+    payload = matrix_payload(values, email="v.kapitanova90@gmail.com")
+
+    assert payload["strength_users"][1][1] == "v.kapitanova90@gmail.com"
+    catalog_ids = [row[2] for row in payload["strength_catalog"][1:]]
+    assert catalog_ids == ["extensions", "incline_press", "close_grip_bench_press"]
+
+    headers = payload["strength_session_exercises"][0]
+    exercises = [dict(zip(headers, row, strict=True)) for row in payload["strength_session_exercises"][1:]]
+    session_two = next(row for row in exercises if row["session_id"].endswith("t2_s02"))
+    session_three = next(row for row in exercises if row["session_id"].endswith("t2_s03"))
+    assert session_two["exercise_id"] == "close_grip_bench_press"
+    assert session_two["note"] == ""
+    assert session_three["exercise_id"] == "close_grip_bench_press"
+    assert session_three["note"] == "Фокус на технике"
