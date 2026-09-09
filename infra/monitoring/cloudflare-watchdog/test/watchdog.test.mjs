@@ -924,6 +924,28 @@ test("a fresh report object seeds the production cutover state without duplicate
   assert.equal(storage.value.report.richPreviewSent, true);
 });
 
+test("the coordinator report route runs only the isolated report task", async () => {
+  const storage = new MemoryStorage();
+  const originalFetch = globalThis.fetch;
+  const calls = [];
+  globalThis.fetch = async (url) => { calls.push(String(url)); return response(500, {}); };
+  try {
+    const coordinator = new WatchdogCoordinator({ storage }, {
+      REPORT_STATE_CUTOVER_DATE: "2026-09-08",
+      PLATFORM_READY_URL: "https://must-not-probe.example/ready",
+      TELEGRAM_READY_URL: "https://must-not-probe.example/telegram",
+      ACTIONS_ENABLED: "true",
+    });
+    const result = await coordinator.fetch(new Request("https://watchdog.internal/report", { method: "POST" }));
+    assert.equal(result.status, 200);
+    assert.equal(storage.value.report.sentDate, "2026-09-08");
+    assert.equal(storage.value.incident, null);
+    assert.deepEqual(calls, []);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("scheduled handler delegates the two-check cadence to the production object", async () => {
   let pending;
   let checkCount = 0;
