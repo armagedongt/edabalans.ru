@@ -607,7 +607,15 @@ export async function runWatchdog(env, storage, options = {}) {
 export async function runDailyReportTask(env, storage, options = {}) {
   const fetchImpl = options.fetchImpl || fetch;
   const now = options.now ?? Date.now();
-  const state = normalizeState(await storage.get("state"));
+  const stored = await storage.get("state");
+  const state = normalizeState(stored);
+  if (!stored && env.REPORT_STATE_CUTOVER_DATE) {
+    state.report.generatedDate = env.REPORT_STATE_CUTOVER_DATE;
+    state.report.sentDate = env.REPORT_STATE_CUTOVER_DATE;
+    state.report.demoSent = true;
+    state.report.richPreviewSent = true;
+    await persist(storage, state);
+  }
   await runDailyReport(state, env, fetchImpl, storage, now);
   await flushAlerts(state, env, fetchImpl, storage);
   return { ok: true };

@@ -38,6 +38,7 @@
     "MAX_ACTION_ATTEMPTS": "3",
     "CHECK_TIMEOUT_MS": "10000",
     "MARKETING_REPORT_URL": "https://edabalans.ru/api/internal/marketing/daily-report",
+    "REPORT_STATE_CUTOVER_DATE": "2026-09-08",
     "SEND_REPORT_AI_DEMO_ONCE": "true",
     "SEND_RICH_REPORT_PREVIEW_ONCE": "true"
   }

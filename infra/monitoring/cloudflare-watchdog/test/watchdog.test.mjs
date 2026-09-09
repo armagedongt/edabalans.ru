@@ -5,6 +5,7 @@ import {
   campaignIds,
   initialState,
   probe,
+  runDailyReportTask,
   runWatchdog,
   updateIncidentState,
 } from "../src/logic.mjs";
@@ -852,7 +853,7 @@ test("scheduled dispatcher runs immediately and again after thirty seconds", asy
   const calls = [];
   const stub = {
     fetch(url, options) {
-      calls.push(["fetch", url, options.method]);
+      calls.push(["fetch", url, options.method, options.headers["X-Watchdog-Skip-Report"]]);
       return Promise.resolve(new Response("ok"));
     },
   };
@@ -860,10 +861,67 @@ test("scheduled dispatcher runs immediately and again after thirty seconds", asy
     calls.push(["delay", milliseconds]);
   });
   assert.deepEqual(calls, [
-    ["fetch", "https://watchdog.internal/run", "POST"],
+    ["fetch", "https://watchdog.internal/run", "POST", "true"],
     ["delay", 30_000],
-    ["fetch", "https://watchdog.internal/run", "POST"],
+    ["fetch", "https://watchdog.internal/run", "POST", "true"],
   ]);
+});
+
+test("a rejected first dispatch does not cancel the delayed health check", async () => {
+  let attempts = 0;
+  await dispatchScheduledChecks({
+    fetch() {
+      attempts += 1;
+      return attempts === 1 ? Promise.reject(new Error("binding unavailable")) : Promise.resolve(new Response("ok"));
+    },
+  }, async () => {});
+  assert.equal(attempts, 2);
+});
+
+test("production coordinator honors the skip-report boundary", async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url) => {
+    calls.push(String(url));
+    return response(200, { status: "ready", telegram_route: "relay" });
+  };
+  try {
+    const coordinator = new WatchdogCoordinator({ storage: new MemoryStorage() }, {
+      PLATFORM_READY_URL: "https://api.example/ready",
+      TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+      MARKETING_REPORT_URL: "https://api.example/report",
+      MARKETING_REPORT_TOKEN: "report-secret",
+    });
+    const result = await coordinator.fetch(new Request("https://watchdog.internal/run", {
+      method: "POST",
+      headers: { "X-Watchdog-Skip-Report": "true" },
+    }));
+    assert.equal(result.status, 200);
+    assert.equal(calls.filter((url) => url.includes("/report")).length, 0);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("a fresh report object seeds the production cutover state without duplicate delivery", async () => {
+  const calls = [];
+  const storage = new MemoryStorage();
+  await runDailyReportTask({
+    REPORT_STATE_CUTOVER_DATE: "2026-09-08",
+    MARKETING_REPORT_URL: "https://api.example/report",
+    MARKETING_REPORT_TOKEN: "report-secret",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    SEND_REPORT_AI_DEMO_ONCE: "true",
+    SEND_RICH_REPORT_PREVIEW_ONCE: "true",
+  }, storage, {
+    now: Date.UTC(2026, 8, 9, 15, 0, 0),
+    fetchImpl: async (url) => { calls.push(String(url)); return response(200, {}); },
+  });
+  assert.equal(calls.length, 0);
+  assert.equal(storage.value.report.sentDate, "2026-09-08");
+  assert.equal(storage.value.report.demoSent, true);
+  assert.equal(storage.value.report.richPreviewSent, true);
 });
 
 test("scheduled handler delegates the two-check cadence to the production object", async () => {

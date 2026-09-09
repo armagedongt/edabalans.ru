@@ -8,7 +8,10 @@ export async function dispatchScheduledChecks(stub, delayImpl = (milliseconds) =
   const second = delayImpl(HALF_MINUTE_MS).then(() => (
     stub.fetch("https://watchdog.internal/run", requestOptions)
   ));
-  await Promise.all([first, second]);
+  const results = await Promise.allSettled([first, second]);
+  for (const result of results) {
+    if (result.status === "rejected") console.error("Scheduled health dispatch failed", String(result.reason));
+  }
 }
 
 export class WatchdogCoordinator {
@@ -60,7 +63,7 @@ export default {
     const stub = env.WATCHDOG.get(id);
     const reportId = env.WATCHDOG.idFromName("reports");
     const reportStub = env.WATCHDOG.get(reportId);
-    ctx.waitUntil(Promise.all([
+    ctx.waitUntil(Promise.allSettled([
       dispatchScheduledChecks(stub),
       reportStub.fetch("https://watchdog.internal/report", { method: "POST" }),
     ]));
