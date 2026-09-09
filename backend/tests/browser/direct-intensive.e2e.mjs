@@ -299,6 +299,8 @@ try {
         splitArrowsLayout: arrows ? getComputedStyle(arrows).gridTemplateColumns : 'none',
         inlineActionsDisplay: getComputedStyle(inlineActions).display,
         stickyActionsDisplay: getComputedStyle(stickyActions).display,
+        inlineButtonHeight: inlineActions.querySelector('.edb-di-button').getBoundingClientRect().height,
+        inlineButtonRadius: getComputedStyle(inlineActions.querySelector('.edb-di-button')).borderRadius,
         legalBottomGap: window.innerHeight - legal.getBoundingClientRect().bottom,
         firstCheckStaysInline: checkPairs.length ? Math.abs(checkPairs[0].prefixTop - checkPairs[0].resultTop) < 1 : true,
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
@@ -307,7 +309,7 @@ try {
     if (fit.rootOverflow > 1 || fit.headingAlign !== 'left' || fit.ctaOverflow > 1 || variant.startsWith('motivation') !== fit.hasSplitArrows || (variant.startsWith('motivation') && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
-    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.legalBottomGap > 12)) {
+    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.legalBottomGap > 12)) {
       throw new Error(`Motivation actions or footer are misplaced: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {
