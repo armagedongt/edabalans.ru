@@ -324,6 +324,7 @@ test("partial ad suspension retains every auto-paused campaign across retry and 
     ADS_PAUSE_AFTER_SECONDS: "1",
     ACTION_RETRY_SECONDS: "1",
     RECOVERY_STABLE_SECONDS: "1",
+    RECOVERY_SUCCESSES_BEFORE_RESUME: "2",
     ACTIONS_ENABLED: "true",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
@@ -377,6 +378,7 @@ test("a lost suspend response retains ownership and the campaign is resumed afte
     ADS_PAUSE_AFTER_SECONDS: "1",
     ACTION_RETRY_SECONDS: "1",
     RECOVERY_STABLE_SECONDS: "1",
+    RECOVERY_SUCCESSES_BEFORE_RESUME: "2",
     ACTIONS_ENABLED: "true",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
@@ -435,6 +437,7 @@ test("partial ad resume keeps the incident open and retries only what remains su
     ADS_PAUSE_AFTER_SECONDS: "1",
     ACTION_RETRY_SECONDS: "1",
     RECOVERY_STABLE_SECONDS: "1",
+    RECOVERY_SUCCESSES_BEFORE_RESUME: "2",
     ACTIONS_ENABLED: "true",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
@@ -476,6 +479,23 @@ test("a recovery failure resets the continuous healthy window", async () => {
   }, skipActions: true, now: 300_000 });
   assert.equal(storage.value.incident.recoveryStreak, 0);
   assert.equal(storage.value.incident.recoveryStartedAt, null);
+});
+
+test("a five-minute cron gap cannot replace ten consecutive healthy observations", async () => {
+  const storage = new MemoryStorage();
+  const env = {
+    FAILURES_BEFORE_INCIDENT: "1",
+    RECOVERY_STABLE_SECONDS: "300",
+    RECOVERY_SUCCESSES_BEFORE_RESUME: "10",
+  };
+  await runWatchdog(env, storage, { checks: {
+    platform: { ok: true, status: 200, reasons: [], error: null },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  }, skipActions: true, now: 0 });
+  await runWatchdog(env, storage, { checks: healthyChecks(), skipActions: true, now: 30_000 });
+  await runWatchdog(env, storage, { checks: healthyChecks(), skipActions: true, now: 330_000 });
+  assert.ok(storage.value.incident);
+  assert.equal(storage.value.incident.recoveryStreak, 2);
 });
 
 test("alerts remain queued after Telegram failure and are delivered once after retry", async () => {
@@ -848,13 +868,17 @@ test("scheduled dispatcher runs immediately and again after thirty seconds", asy
 
 test("scheduled handler delegates the two-check cadence to the production object", async () => {
   let pending;
-  let count = 0;
+  let checkCount = 0;
+  let reportCount = 0;
   const env = {
     WATCHDOG: {
-      idFromName(name) { assert.equal(name, "production"); return "object-id"; },
+      idFromName(name) { return `${name}-id`; },
       get(id) {
-        assert.equal(id, "object-id");
-        return { fetch() { count += 1; return Promise.resolve(new Response("ok")); } };
+        return { fetch(url) {
+          if (id === "production-id") checkCount += 1;
+          if (id === "reports-id" && String(url).endsWith("/report")) reportCount += 1;
+          return Promise.resolve(new Response("ok"));
+        } };
       },
     },
   };
@@ -867,7 +891,8 @@ test("scheduled handler delegates the two-check cadence to the production object
   try {
     await worker.scheduled({}, env, { waitUntil(value) { pending = value; } });
     await pending;
-    assert.equal(count, 2);
+    assert.equal(checkCount, 2);
+    assert.equal(reportCount, 1);
   } finally {
     globalThis.setTimeout = originalTimeout;
   }

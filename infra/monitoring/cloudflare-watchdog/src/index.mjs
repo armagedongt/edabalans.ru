@@ -1,11 +1,12 @@
-import { runWatchdog } from "./logic.mjs";
+import { runDailyReportTask, runWatchdog } from "./logic.mjs";
 
 const HALF_MINUTE_MS = 30_000;
 
 export async function dispatchScheduledChecks(stub, delayImpl = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))) {
-  const first = stub.fetch("https://watchdog.internal/run", { method: "POST" });
+  const requestOptions = { method: "POST", headers: { "X-Watchdog-Skip-Report": "true" } };
+  const first = stub.fetch("https://watchdog.internal/run", requestOptions);
   const second = delayImpl(HALF_MINUTE_MS).then(() => (
-    stub.fetch("https://watchdog.internal/run", { method: "POST" })
+    stub.fetch("https://watchdog.internal/run", requestOptions)
   ));
   await Promise.all([first, second]);
 }
@@ -20,13 +21,26 @@ export class WatchdogCoordinator {
 
   async fetch(request) {
     if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
+    const url = new URL(request.url);
+    if (url.pathname === "/report") {
+      const reportRun = this.runQueue.then(() => runDailyReportTask(this.env, this.ctx.storage));
+      this.runQueue = reportRun.catch(() => undefined);
+      try {
+        return Response.json(await reportRun);
+      } catch (error) {
+        console.error("Watchdog report failed", String(error?.message || error));
+        return Response.json({ ok: false, error: "watchdog_report_failed" }, { status: 500 });
+      }
+    }
     const drillState = request.headers.get("X-Watchdog-Drill");
     if (drillState) this.drillClock += HALF_MINUTE_MS;
     const options = drillState ? {
       checks: drillState === "recover" ? healthyDrillChecks() : failingDrillChecks(),
       skipActions: true,
+      skipReport: true,
       now: this.drillClock,
     } : {};
+    if (!drillState) options.skipReport = request.headers.get("X-Watchdog-Skip-Report") === "true";
     const runEnv = drillState ? { ...this.env, FAILURES_BEFORE_INCIDENT: "3" } : this.env;
     const currentRun = this.runQueue.then(() => runWatchdog(runEnv, this.ctx.storage, options));
     this.runQueue = currentRun.catch(() => undefined);
@@ -44,7 +58,12 @@ export default {
   async scheduled(_controller, env, ctx) {
     const id = env.WATCHDOG.idFromName("production");
     const stub = env.WATCHDOG.get(id);
-    ctx.waitUntil(dispatchScheduledChecks(stub));
+    const reportId = env.WATCHDOG.idFromName("reports");
+    const reportStub = env.WATCHDOG.get(reportId);
+    ctx.waitUntil(Promise.all([
+      dispatchScheduledChecks(stub),
+      reportStub.fetch("https://watchdog.internal/report", { method: "POST" }),
+    ]));
   },
 
   async fetch(request, env) {

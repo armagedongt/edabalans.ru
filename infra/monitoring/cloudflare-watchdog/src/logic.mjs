@@ -3,6 +3,7 @@ const DEFAULT_FAILURES_BEFORE_INCIDENT = 3;
 const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 60;
 const DEFAULT_RU_REBOOT_DELAY_SECONDS = 240;
 const DEFAULT_RECOVERY_STABLE_SECONDS = 300;
+const DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME = 10;
 const DEFAULT_ACTION_RETRY_SECONDS = 120;
 const DEFAULT_MAX_ACTION_ATTEMPTS = 3;
 
@@ -224,11 +225,17 @@ function actionPlan(state, checks, now, env) {
       env.RECOVERY_STABLE_SECONDS,
       DEFAULT_RECOVERY_STABLE_SECONDS,
     );
+    const recoverySuccesses = parsePositiveInteger(
+      env.RECOVERY_SUCCESSES_BEFORE_RESUME,
+      DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME,
+    );
     const ids = state.incident.adsPause?.campaignIds || [];
     const stableSeconds = state.incident.recoveryStartedAt == null
       ? 0
       : Math.max(0, (now - state.incident.recoveryStartedAt) / 1000);
-    return stableSeconds >= recoveryStableSeconds && ids.length
+    return stableSeconds >= recoveryStableSeconds
+      && state.incident.recoveryStreak >= recoverySuccesses
+      && ids.length
       ? [{ key: "resumeAds", kind: "resume_ads", ids, stableSeconds: recoveryStableSeconds }]
       : [];
   }
@@ -565,12 +572,18 @@ export async function runWatchdog(env, storage, options = {}) {
         env.RECOVERY_STABLE_SECONDS,
         DEFAULT_RECOVERY_STABLE_SECONDS,
       );
+      const recoverySuccesses = parsePositiveInteger(
+        env.RECOVERY_SUCCESSES_BEFORE_RESUME,
+        DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME,
+      );
       const pausedIds = state.incident.adsPause?.campaignIds || [];
       const resumed = state.incident.resumeAds?.status === "succeeded";
       const stableSeconds = state.incident.recoveryStartedAt == null
         ? 0
         : Math.max(0, (now - state.incident.recoveryStartedAt) / 1000);
-      if (stableSeconds >= recoveryStableSeconds && (!pausedIds.length || resumed)) {
+      if (stableSeconds >= recoveryStableSeconds
+        && state.incident.recoveryStreak >= recoverySuccesses
+        && (!pausedIds.length || resumed)) {
         if (!pausedIds.length) {
           const durationMinutes = Math.max(1, Math.round((now - state.incident.startedAt) / 60_000));
           queueAlert(state, `✅ Бот стабильно работает ${Math.round(recoveryStableSeconds / 60)} мин. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
@@ -580,7 +593,7 @@ export async function runWatchdog(env, storage, options = {}) {
       }
     }
   }
-  if (!options.skipActions) await runDailyReport(state, env, fetchImpl, storage, now);
+  if (!options.skipActions && !options.skipReport) await runDailyReport(state, env, fetchImpl, storage, now);
   await flushAlerts(state, env, fetchImpl, storage);
 
   return {
@@ -589,6 +602,15 @@ export async function runWatchdog(env, storage, options = {}) {
     incident: state.incident?.id ?? null,
     failureStreak: state.failureStreak,
   };
+}
+
+export async function runDailyReportTask(env, storage, options = {}) {
+  const fetchImpl = options.fetchImpl || fetch;
+  const now = options.now ?? Date.now();
+  const state = normalizeState(await storage.get("state"));
+  await runDailyReport(state, env, fetchImpl, storage, now);
+  await flushAlerts(state, env, fetchImpl, storage);
+  return { ok: true };
 }
 
 async function reportRequest(url, token, method, fetchImpl) {
