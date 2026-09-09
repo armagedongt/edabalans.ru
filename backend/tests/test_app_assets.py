@@ -1253,13 +1253,13 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     text = response.text.replace("\r\n", "\n")
 
     assert response.status_code == 200
-    assert "Создать первую тренировку" in text
+    assert "В этом шаблоне пока нет упражнений" in text
     assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in text
     assert "body.email =\n      app.email;" in text
     assert "Редактировать план" in text
     assert "Начать тренировку" in text
-    assert "        'Сплит '+i+" in text
-    assert "Тренировка этого сплита №" in text
+    assert "        'Шаблон '+i+" in text
+    assert "Тренировка по шаблону №" in text
     assert "Перенести выбранное в план" in text
     assert "completeSet:function" in text
     assert "История упражнения" in text
@@ -1282,6 +1282,14 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "if(app.entryMode === 'train'){\n    return '';" in text
     assert "st-finish-bottom\"><button" in text
     assert "Тренировку 1 и Тренировку 2" not in text
-    assert "Сплит '+items[i].type+' · тренировка №" in text
+    assert "Шаблон '+items[i].type+' · тренировка №" in text
     assert "st-modern-comment" in text
     assert "field.scrollHeight" in text
+    assert "Как пользоваться" in text
+    assert "Редактировать шаблон" in text
+    assert "saveExerciseCatalog" in text
+    assert "app.managerDraft = copyCatalog" in text
+    assert "document.body.style.overflow='hidden'" in text
+    assert "document.body.style.overflow=app.modalScrollState.body" in text
+    assert "Добавить своё" in text
+    assert "openExerciseInfo" in text

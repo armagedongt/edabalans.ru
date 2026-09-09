@@ -77,6 +77,25 @@
   font-weight:800;
 }
 
+.st-title-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.st-help{
+  flex:0 0 auto;
+  padding:0;
+  border:0;
+  background:transparent;
+  color:var(--st-purple);
+  font-size:13px;
+  font-weight:800;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
 .st-profile{
   width:42px;
   height:42px;
@@ -914,6 +933,8 @@
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow-y:auto;
+  overscroll-behavior:contain;
   background:rgba(30,29,40,.42);
 }
 
@@ -998,6 +1019,19 @@
   gap:5px;
 }
 
+.st-manager-modal{
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+.st-manager-scroll{
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+
 .st-manager-row{
   padding:7px;
   display:grid;
@@ -1008,6 +1042,14 @@
   background:#f5f5f7;
 }
 
+.st-manager-row.in-template{
+  background:#f5f1ff;
+}
+
+.st-manager-row.out-template{
+  color:#707482;
+}
+
 .st-manager-name{
   font-size:12px;
   font-weight:800;
@@ -1015,6 +1057,8 @@
 
 .st-manager-actions{
   display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
   gap:4px;
 }
 
@@ -1027,6 +1071,65 @@
   background:#fff;
   font-size:10px;
   font-weight:800;
+}
+
+.st-mini.primary{
+  background:var(--st-purple);
+  color:#fff;
+}
+
+.st-mini.danger{
+  color:#bd4b38;
+}
+
+.st-custom-add{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px solid var(--st-line);
+}
+
+.st-custom-add-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px;
+  align-items:end;
+}
+
+.st-custom-add-row .st-modal-input{
+  margin-top:0;
+}
+
+.st-tutorial-list{
+  margin:12px 0 0;
+  padding-left:20px;
+  color:#555968;
+  font-size:14px;
+  line-height:1.5;
+}
+
+.st-tutorial-list li+li{
+  margin-top:8px;
+}
+
+.st-exercise-info-media{
+  margin-top:12px;
+  min-height:130px;
+  display:grid;
+  place-items:center;
+  border-radius:12px;
+  background:linear-gradient(135deg,#f2efff,#eef6ff);
+  color:var(--st-purple);
+  font-size:14px;
+  font-weight:800;
+  text-align:center;
+}
+
+.st-exercise-info-list{
+  margin:10px 0 0;
+  padding-left:20px;
+  color:#555968;
+  font-size:14px;
+  line-height:1.45;
 }
 
 .st-empty{
@@ -1133,7 +1236,8 @@
 .st-entry-modes button{min-height:44px;border:0;border-radius:9px;background:transparent;color:#777a87;font-size:13px;font-weight:800}
 .st-entry-modes button.active{background:#fff;color:var(--st-purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .st-entry-modes button.active.train{background:#fff3eb;color:#f05d25}
-.st-template-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;justify-content:stretch}
+.st-entry-modes button:disabled{opacity:.42;cursor:not-allowed}
+.st-template-actions{display:grid;grid-template-columns:1fr;gap:9px;justify-content:stretch}
 .st-template-actions .st-action{width:100%;min-height:42px;font-size:12px}
 .st-actions-train{justify-content:stretch}
 .st-finish{width:100%;min-height:46px;border:0;border-radius:11px;background:#ff6a2c;color:#fff;font-size:14px;font-weight:900}
@@ -1142,7 +1246,8 @@
 .st-modern-exercise{overflow:hidden;border:1px solid rgba(70,70,90,.09);border-radius:16px;box-shadow:0 7px 20px rgba(30,30,55,.07)}
 .st-modern-head{padding:13px 13px 10px;display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:flex-start;gap:9px;border-bottom:1px solid rgba(70,70,90,.08)}
 .st-modern-title{min-width:0;padding:2px 0 0;color:var(--st-text)}
-.st-modern-title strong{display:block;font-size:19px;line-height:1.22;font-weight:700}
+.st-modern-title strong{display:inline;font-size:20px;line-height:1.22;font-weight:700}
+.st-exercise-info{display:inline-grid;width:24px;height:24px;margin-left:6px;place-items:center;padding:0;border:1px solid rgba(111,61,232,.2);border-radius:50%;background:#f6f3ff;color:var(--st-purple);font-size:13px;font-weight:900;vertical-align:2px}
 .st-modern-tools{display:grid;gap:5px}
 .st-modern-history,.st-modern-remove{display:grid;width:30px;height:30px;place-items:center;padding:0;border-radius:9px;font-weight:900}
 .st-modern-history{border:1px solid rgba(111,61,232,.2);background:#f6f3ff;color:var(--st-purple);font-size:16px}
@@ -1181,7 +1286,7 @@
 .st-history-modal{max-width:720px}
 .st-history-modal-strip{padding:4px 0 8px}
 .st-history-modal-card{flex:0 0 180px;padding:12px;border:1px solid #e1dcf2;border-radius:12px;background:#faf8ff;scroll-snap-align:start}
-@media(max-width:700px){.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-main-tab,.st-stat-tab,.st-type{font-size:13px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr}.st-modern-comment>span{padding-top:0}.st-actions.st-template-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.st-template-actions .st-action{min-height:44px}}
+@media(max-width:700px){.st-title{font-size:22px}.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-nav-title{font-size:18px}.st-nav-sub{font-size:13px}.st-main-tab,.st-stat-tab,.st-type{font-size:15px}.st-entry-modes button{font-size:14px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-modern-title strong{font-size:21px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels{font-size:12px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr;font-size:14px}.st-modern-comment>span{padding-top:0}.st-actions.st-template-actions{display:grid;grid-template-columns:1fr;gap:9px}.st-template-actions .st-action{min-height:44px;font-size:14px}.st-modal{max-height:calc(100dvh - 20px);padding:14px}.st-manager-name{font-size:14px}.st-mini{font-size:12px}.st-modal-title{font-size:19px}.st-modal-sub{font-size:13px}.st-modal-btn{font-size:13px}.st-custom-add-row{grid-template-columns:1fr}}
 </style>
 
 <script>
@@ -1247,6 +1352,8 @@ var app = {
   statsExerciseId:'',
 
   modal:null,
+  managerDraft:null,
+  modalScrollState:null,
   rpeMenu:null,
 
   saveTimers:{},
@@ -1581,6 +1688,40 @@ function currentWorkout(){
     }
   );
 
+}
+
+
+function copyCatalog(catalog){
+  return (catalog || []).map(function(item){
+    return {
+      exercise_id:String(item.exercise_id || ''),
+      exercise_name:String(item.exercise_name || ''),
+      active:item.active === true || String(item.active).toLowerCase() === 'true',
+      catalog_active:item.catalog_active !== false && String(item.catalog_active).toLowerCase() !== 'false',
+      sort_order:Number(item.sort_order || 0),
+      source:String(item.source || 'history'),
+      muscles:String(item.muscles || ''),
+      tips:Array.isArray(item.tips) ? item.tips.slice() : [],
+      media_url:String(item.media_url || '')
+    };
+  });
+}
+
+
+function syncModalLock(){
+  var locked = Boolean(app.modal);
+  if(locked && !app.modalScrollState){
+    app.modalScrollState={
+      html:document.documentElement.style.overflow,
+      body:document.body.style.overflow
+    };
+    document.documentElement.style.overflow='hidden';
+    document.body.style.overflow='hidden';
+  }else if(!locked && app.modalScrollState){
+    document.documentElement.style.overflow=app.modalScrollState.html;
+    document.body.style.overflow=app.modalScrollState.body;
+    app.modalScrollState=null;
+  }
 }
 
 
@@ -2407,6 +2548,7 @@ function activeCatalog(){
     function(item){
 
       return !(
+        item.catalog_active === false ||
         item.active === false ||
         String(
           item.active
@@ -2417,6 +2559,17 @@ function activeCatalog(){
     }
   );
 
+}
+
+
+function catalogItemById(id){
+  var catalog = currentWorkout().catalog || [];
+  for(var i=0;i<catalog.length;i++){
+    if(String(catalog[i].exercise_id) === String(id)){
+      return catalog[i];
+    }
+  }
+  return null;
 }
 
 
@@ -2536,8 +2689,9 @@ function commonHeader(){
   return (
     '<div class="st-card st-header">'+
       '<div class="st-top">'+
-        '<div>'+
+        '<div class="st-title-row">'+
           '<div class="st-title">Силовые тренировки</div>'+
+          '<button class="st-help" onclick="ST.openTutorial()">Как пользоваться</button>'+
         '</div>'+
         (MANAGED_TARGET ? '<a class="st-profile ed-app-account-link" href="/admin/strength" aria-label="Вернуться в админку" title="Вернуться в админку">'+
           '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8">'+
@@ -2648,6 +2802,8 @@ function renderAdminList(){
   root.innerHTML =
     html;
 
+  syncModalLock();
+
 }
 
 
@@ -2743,6 +2899,8 @@ function renderClient(){
 
   renderSavingOnly();
 
+  syncModalLock();
+
   setTimeout(function(){
     var comments = root.querySelectorAll('.st-modern-comment textarea');
     for(var i=0;i<comments.length;i++){ ST.autoGrow(comments[i]); }
@@ -2802,7 +2960,7 @@ function renderTypes(){
         ''
       )+
       '" onclick="ST.setWorkoutType('+i+')">'+
-        'Сплит '+i+
+        'Шаблон '+i+
       '</button>';
 
   }
@@ -2824,10 +2982,7 @@ function renderJournalHeader(){
 
     return (
       '<div class="st-empty">'+
-        'В этом сплите пока нет тренировок.'+
-        (
-          '<div style="margin-top:10px;"><button class="st-add-user" onclick="ST.createFirstSession()">Создать первую тренировку</button></div>'
-        )+
+        'В этом шаблоне пока нет упражнений. Откройте редактор шаблона и добавьте нужные.'+
       '</div>'
     );
 
@@ -2842,7 +2997,7 @@ function renderJournalHeader(){
     '<div class="st-nav">'+
       '<button class="st-arrow" onclick="ST.prevSession()">‹</button>'+
       '<div class="st-nav-center">'+
-        '<div class="st-nav-title">Тренировка этого сплита №'+
+        '<div class="st-nav-title">Тренировка по шаблону №'+
           session.number+
         '</div>'+
         '<div class="st-nav-sub">'+
@@ -2873,6 +3028,8 @@ function renderJournalHeader(){
 
 function renderEntryControls(){
 
+  var hasSession = currentWorkout().sessions.length > 0;
+
   return (
     '<div class="st-entry-control-bar">'+
       '<div class="st-entry-modes">'+
@@ -2882,7 +3039,7 @@ function renderEntryControls(){
           ?
           '<button class="active train" onclick="ST.finishWorkout()">Завершить тренировку</button>'
           :
-          '<button onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'
+          '<button '+(hasSession?'':'disabled')+' onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'
         )+
       '</div>'+
     '</div>'+
@@ -2899,8 +3056,7 @@ function renderActions(){
 
   return (
     '<div class="st-actions st-template-actions">'+
-      '<button class="st-action st-manage" onclick="ST.openManager()">＋ Упражнение</button>'+
-      '<button class="st-action st-manage" onclick="ST.openManager()">↕ Порядок</button>'+
+      '<button class="st-action st-manage" onclick="ST.openManager()">Редактировать шаблон</button>'+
     '</div>'
   );
 
@@ -3068,15 +3224,16 @@ function renderCurrentExercises(){
 
   for(var i=0;i<session.exercises.length;i++){
     var exercise = session.exercises[i];
+    var exerciseInfo = catalogItemById(exercise.id);
     if(!active[String(exercise.id)]){ continue; }
     while(exercise.sets.length < 4){
       exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
     }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong></div>'+
+        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info" onclick="ST.openExerciseInfo(\''+esc(exercise.id)+'\')" aria-label="Как выполнять упражнение" title="Об упражнении">i</button>' : '')+'</div>'+
         '<div class="st-modern-tools"><button class="st-modern-history" onclick="ST.openExerciseHistory(\''+esc(exercise.id)+'\')" aria-label="Открыть историю упражнения" title="История упражнения">◷</button>'+
-        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из Сплита '+app.workoutType+'">×</button>' : '')+'</div>'+
+        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из шаблона '+app.workoutType+'">×</button>' : '')+'</div>'+
       '</header>'+
       (app.entryMode === 'edit' ? renderPreviousExecutions(exercise) : '')+
       '<section class="st-modern-editor">'+
@@ -3691,9 +3848,9 @@ function renderCalendar(){
           '</div>'+
         '</div>'+
         '<div class="st-calendar-legend">'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t1"></span>Сплит 1</div>'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t2"></span>Сплит 2</div>'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t3"></span>Сплит 3</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t1"></span>Шаблон 1</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t2"></span>Шаблон 2</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t3"></span>Шаблон 3</div>'+
         '</div>'+
         '<div class="st-week-head">'+
           '<div class="st-week-name">ПН</div>'+
@@ -4096,6 +4253,10 @@ function renderAnalysis(){
     i++
   ){
 
+    if(catalog[i].catalog_active === false){
+      continue;
+    }
+
     html +=
       '<option value="'+
       esc(
@@ -4441,7 +4602,7 @@ function renderModal(){
       '<div class="st-modal-bg">'+
         '<div class="st-modal">'+
           '<div class="st-modal-title">Добавить пользователя</div>'+
-          '<div class="st-modal-sub">Пользователь будет добавлен в базу и получит Сплит 1 и Сплит 2.</div>'+
+          '<div class="st-modal-sub">Пользователь будет добавлен в базу с тремя пустыми шаблонами тренировок.</div>'+
           '<input id="st-new-user-name" class="st-modal-input" placeholder="Имя">'+
           '<input id="st-new-user-email" class="st-modal-input" placeholder="Email" type="email">'+
           '<div class="st-modal-actions">'+
@@ -4520,6 +4681,22 @@ function renderModal(){
 
   }
 
+  if(app.modal.type === 'tutorial'){
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Это постоянный набор упражнений для разных тренировочных дней.</li><li>Нажмите «Редактировать шаблон», добавьте упражнения из общего каталога и расставьте их в нужном порядке.</li><li>В режиме «Редактировать план» перенесите подходящий прошлый результат в план или заполните план вручную.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Комментарии сохраняются целиком. Иконка часов открывает всю историю упражнения, а значок i — краткую технику.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
+  }
+
+  if(app.modal.type === 'exerciseInfo'){
+    var info = catalogItemById(app.modal.exerciseId);
+    var infoTips = info && Array.isArray(info.tips) ? info.tips : [];
+    var infoHtml = '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">'+esc(info ? info.exercise_name : 'Об упражнении')+'</div>';
+    infoHtml += '<div class="st-exercise-info-media">'+(info && info.media_url ? '<img src="'+esc(info.media_url)+'" alt="Техника упражнения">' : 'Демонстрация движения появится после утверждения каталога медиа')+'</div>';
+    if(info && info.muscles){ infoHtml += '<div class="st-modal-sub" style="margin-top:12px"><strong>Работают:</strong> '+esc(info.muscles)+'</div>'; }
+    if(infoTips.length){ infoHtml += '<ul class="st-exercise-info-list">'; for(var ti=0;ti<infoTips.length;ti++){ infoHtml += '<li>'+esc(infoTips[ti])+'</li>'; } infoHtml += '</ul>'; }
+    if(!infoTips.length){ infoHtml += '<div class="st-modal-sub" style="margin-top:12px">Для пользовательского упражнения справка пока не заполнена.</div>'; }
+    infoHtml += '<div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Готово</button></div></div></div>';
+    return infoHtml;
+  }
+
   if(app.modal.type === 'exerciseHistory'){
     var currentSession = currentWorkout().sessions[app.selectedIndex];
     var currentExercise = findExercise(currentSession,app.modal.exerciseId);
@@ -4538,7 +4715,7 @@ function renderModal(){
   }
 
   if(app.modal.type === 'removeExercise'){
-    return '<div class="st-modal-bg"><div class="st-modal"><div class="st-modal-title">Убрать упражнение?</div><div class="st-modal-sub">Точно убрать упражнение из Сплита '+app.workoutType+'? Общая история упражнения сохранится.</div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Оставить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmRemoveExercise()">Убрать</button></div></div></div>';
+    return '<div class="st-modal-bg"><div class="st-modal"><div class="st-modal-title">Убрать упражнение?</div><div class="st-modal-sub">Точно убрать упражнение из шаблона '+app.workoutType+'? Общая история упражнения сохранится.</div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Оставить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmRemoveExercise()">Убрать</button></div></div></div>';
   }
 
   if(
@@ -4578,12 +4755,16 @@ function renderModal(){
 
 function renderManager(){
 
-  var catalog =
-    currentWorkout()
-      .catalog.slice();
+  var catalog = app.managerDraft || [];
 
   catalog.sort(
     function(a,b){
+
+      var aActive = a.active === true;
+      var bActive = b.active === true;
+      if(aActive !== bActive){
+        return aActive ? -1 : 1;
+      }
 
       return (
         Number(
@@ -4600,25 +4781,21 @@ function renderManager(){
   );
 
   var html =
-    '<div class="st-modal-bg">'+
-      '<div class="st-modal">'+
-        '<div class="st-modal-title">Упражнения</div>'+
-        '<div class="st-modal-sub">'+
-          (
-            app.isAdmin
-            ?
-            'Можно менять порядок, скрывать и добавлять упражнения.'
-            :
-            'Можно менять порядок и скрывать ненужные упражнения. Их всегда можно вернуть.'
-          )+
-        '</div>'+
-        '<div class="st-manager-list">';
+    '<div class="st-modal-bg" onclick="if(event.target===this) ST.cancelManager()">'+
+      '<div class="st-modal st-manager-modal">'+
+        '<div class="st-modal-title">Редактировать шаблон '+app.workoutType+'</div>'+
+        '<div class="st-modal-sub">Каталог общий для аккаунта. Здесь вы только добавляете упражнения в текущий шаблон, убираете их и меняете порядок.</div>'+
+        '<div class="st-manager-scroll"><div class="st-manager-list">';
 
   for(
     var i=0;
     i<catalog.length;
     i++
   ){
+
+    if(catalog[i].catalog_active === false){
+      continue;
+    }
 
     var active =
       !(
@@ -4630,15 +4807,7 @@ function renderManager(){
       );
 
     html +=
-      '<div class="st-manager-row" style="'+
-      (
-        active
-        ?
-        ''
-        :
-        'opacity:.5;'
-      )+
-      '">'+
+      '<div class="st-manager-row '+(active?'in-template':'out-template')+'">'+
         '<div class="st-manager-name">'+
           esc(
             catalog[i]
@@ -4646,15 +4815,15 @@ function renderManager(){
           )+
         '</div>'+
         '<div class="st-manager-actions">'+
-          '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',-1)">↑</button>'+
-          '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',1)">↓</button>'+
+          (active ? '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',-1)" aria-label="Выше">↑</button><button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',1)" aria-label="Ниже">↓</button>' : '')+
+          (catalog[i].source === 'custom' ? '<button class="st-mini" onclick="ST.renameExercise(\''+esc(catalog[i].exercise_id)+'\')">Изменить</button><button class="st-mini danger" onclick="ST.deleteExercise(\''+esc(catalog[i].exercise_id)+'\')">Удалить</button>' : '')+
           '<button class="st-mini" onclick="ST.toggleExercise(\''+esc(catalog[i].exercise_id)+'\')">'+
             (
               active
               ?
-              'Скрыть'
+              'Убрать'
               :
-              'Вернуть'
+              'Добавить'
             )+
           '</button>'+
         '</div>'+
@@ -4664,22 +4833,10 @@ function renderManager(){
 
   html +=
         '</div>'+
-        (
-          app.isAdmin
-          ?
-          '<input id="st-new-exercise" class="st-modal-input" placeholder="Новое упражнение">'
-          :
-          ''
-        )+
+        '<div class="st-custom-add"><div class="st-custom-add-row"><input id="st-new-exercise" class="st-modal-input" placeholder="Название своего упражнения"><button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить своё</button></div></div></div>'+
         '<div class="st-modal-actions">'+
-          '<button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Готово</button>'+
-          (
-            app.isAdmin
-            ?
-            '<button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить упражнение</button>'
-            :
-            ''
-          )+
+          '<button class="st-modal-btn st-modal-close" onclick="ST.cancelManager()">Отмена</button>'+
+          '<button class="st-modal-btn st-modal-save" onclick="ST.saveManager()">Готово</button>'+
         '</div>'+
       '</div>'+
     '</div>';
@@ -4714,7 +4871,7 @@ function renderCalendarDayModal(
 
     html +=
       '<button class="st-user-card" style="margin-top:10px;" onclick="ST.jumpToSession('+items[i].type+','+items[i].index+')">'+
-        '<div class="st-user-card-name">Сплит '+items[i].type+' · тренировка №'+items[i].session.number+'</div>'+
+        '<div class="st-user-card-name">Шаблон '+items[i].type+' · тренировка №'+items[i].session.number+'</div>'+
         '<div class="st-user-card-meta">'+
           (
             isFilled(
@@ -5497,6 +5654,7 @@ window.ST = {
 
   openManager:function(){
 
+    app.managerDraft = copyCatalog(currentWorkout().catalog);
     app.modal = {
       type:'manager'
     };
@@ -5544,9 +5702,7 @@ window.ST = {
 
   toggleExercise:function(id){
 
-    var catalog =
-      currentWorkout()
-        .catalog;
+    var catalog = app.managerDraft || [];
 
     for(
       var i=0;
@@ -5581,8 +5737,6 @@ window.ST = {
 
     }
 
-    saveExerciseSettings();
-
     render();
 
   },
@@ -5593,9 +5747,7 @@ window.ST = {
     direction
   ){
 
-    var catalog =
-      currentWorkout()
-        .catalog;
+    var catalog = app.managerDraft || [];
 
     catalog.sort(
       function(a,b){
@@ -5637,9 +5789,14 @@ window.ST = {
 
     }
 
-    var target =
-      index+
-      Number(direction);
+    var target = index + Number(direction);
+    while(
+      target >= 0 &&
+      target < catalog.length &&
+      (catalog[target].active !== true || catalog[target].catalog_active === false)
+    ){
+      target += Number(direction);
+    }
 
     if(
       index < 0 ||
@@ -5671,18 +5828,12 @@ window.ST = {
 
     }
 
-    saveExerciseSettings();
-
     render();
 
   },
 
 
   addExercise:function(){
-
-    if(!app.isAdmin){
-      return;
-    }
 
     var input =
       document.getElementById(
@@ -5703,50 +5854,139 @@ window.ST = {
       return;
     }
 
-    postApi({
-      action:'addExercise',
-
-      admin_email:
-        app.email,
-
-      target_user_id:
-        currentUserId(),
-
-      workout_type:
-        app.workoutType,
-
-      exercise_name:
-        name
-    })
-    .then(function(){
-
-      return getWorkoutType(
-        app.selectedUser,
-        app.workoutType
-      );
-
-    })
-    .then(function(workout){
-
-      app.workouts[
-        app.workoutType
-      ] = workout;
-
-      app.modal = {
-        type:'manager'
-      };
-
-      render();
-
-    })
-    .catch(function(error){
-
-      alert(
-        error.message
-      );
-
+    var id = 'custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
+    app.managerDraft.push({
+      exercise_id:id,
+      exercise_name:name,
+      active:true,
+      catalog_active:true,
+      sort_order:app.managerDraft.length+1,
+      source:'custom',
+      muscles:'',
+      tips:[],
+      media_url:''
     });
+    render();
 
+  },
+
+
+  renameExercise:function(id){
+    var catalog = app.managerDraft || [];
+    for(var i=0;i<catalog.length;i++){
+      if(String(catalog[i].exercise_id) !== String(id) || catalog[i].source !== 'custom'){
+        continue;
+      }
+      var name = window.prompt('Новое название упражнения',catalog[i].exercise_name);
+      if(name === null){ return; }
+      name = String(name).trim();
+      if(name){ catalog[i].exercise_name = name; }
+      render();
+      return;
+    }
+  },
+
+
+  deleteExercise:function(id){
+    var catalog = app.managerDraft || [];
+    for(var i=0;i<catalog.length;i++){
+      if(String(catalog[i].exercise_id) !== String(id) || catalog[i].source !== 'custom'){
+        continue;
+      }
+      if(!window.confirm('Удалить своё упражнение из каталога? Старая история останется сохранена.')){
+        return;
+      }
+      catalog[i].active = false;
+      catalog[i].catalog_active = false;
+      render();
+      return;
+    }
+  },
+
+
+  cancelManager:function(){
+    app.managerDraft = null;
+    app.modal = null;
+    render();
+  },
+
+
+  saveManager:function(){
+    var catalog = app.managerDraft || [];
+    var body = {
+      action:'saveExerciseCatalog',
+      workout_type:app.workoutType,
+      exercises:catalog.map(function(item,index){
+        return {
+          exercise_id:item.exercise_id,
+          exercise_name:item.exercise_name,
+          active:item.active === true,
+          catalog_active:item.catalog_active !== false,
+          sort_order:index+1,
+          source:item.source
+        };
+      })
+    };
+    if(app.isAdmin){
+      body.target_user_id = currentUserId();
+      body.admin_email = app.email;
+    }else{
+      body.email = app.email;
+    }
+
+    var workout = currentWorkout();
+    workout.catalog = copyCatalog(catalog);
+    var active = catalog.filter(function(item){ return item.catalog_active !== false && item.active === true; });
+    var session = workout.sessions[app.selectedIndex];
+    if(!session && active.length){
+      session = {session_id:'',number:1,date:'',exercises:[]};
+      workout.sessions.push(session);
+      app.selectedIndex = 0;
+    }
+    if(session){
+      var existing = {};
+      session.exercises.forEach(function(item){ existing[String(item.id)] = item; });
+      active.forEach(function(item,index){
+        var exercise = existing[String(item.exercise_id)];
+        if(!exercise){
+          exercise = {id:item.exercise_id,name:item.exercise_name,note:'',sets:[]};
+          for(var setIndex=0;setIndex<4;setIndex++){
+            exercise.sets.push({set_number:setIndex+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:'',completed:false});
+          }
+          session.exercises.push(exercise);
+        }
+        exercise.name = item.exercise_name;
+        exercise.sort_order = index+1;
+      });
+      session.exercises.sort(function(a,b){ return Number(a.sort_order || 999)-Number(b.sort_order || 999); });
+    }
+
+    var sessionBody = session ? sessionSaveBody(app.selectedIndex) : null;
+    postApi(body)
+      .then(function(){ return sessionBody ? postApi(sessionBody) : null; })
+      .then(function(){
+        return Promise.all([getWorkoutType(app.selectedUser,1),getWorkoutType(app.selectedUser,2),getWorkoutType(app.selectedUser,3)]);
+      })
+      .then(function(results){
+        app.workouts[1]=results[0]; app.workouts[2]=results[1]; app.workouts[3]=results[2];
+        app.managerDraft=null; app.modal=null;
+        var sessions=currentWorkout().sessions;
+        app.selectedIndex=sessions.length?sessions.length-1:0;
+        render();
+      })
+      .catch(function(error){ alert('Не удалось сохранить шаблон: '+error.message); });
+  },
+
+
+  openTutorial:function(){
+    app.modal={type:'tutorial'};
+    render();
+  },
+
+
+  openExerciseInfo:function(id){
+    app.modal={type:'exerciseInfo',exerciseId:id};
+    render();
   },
 
 

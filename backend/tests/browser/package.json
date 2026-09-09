@@ -7,7 +7,8 @@
     "test:homepage-anya-player": "node homepage-anya-player.e2e.mjs",
     "test:homepage-checkout": "node homepage-checkout.e2e.mjs",
     "test:intensive-offer": "node intensive-offer.e2e.mjs",
-    "test:intensive-menu-progress": "node intensive-menu-progress.e2e.mjs"
+    "test:intensive-menu-progress": "node intensive-menu-progress.e2e.mjs",
+    "test:strength-editor": "node strength-editor.e2e.mjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

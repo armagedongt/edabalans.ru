@@ -876,6 +876,111 @@ def empty_strength_state(user_id: uuid.UUID) -> StrengthState:
     )
 
 
+# The built-in catalogue is intentionally code-owned until the owner approves the
+# final names and exercise media.  User additions and template membership live in
+# StrengthState.hidden_exercises, so the existing database schema can represent an
+# account catalogue without a migration.
+BASE_STRENGTH_EXERCISES: tuple[dict[str, Any], ...] = (
+    {"code": "bench-press", "name": "Жим штанги лёжа", "muscles": "Грудные мышцы, трицепс, передняя дельта", "tips": ["Сведите лопатки и сохраняйте опору стопами.", "Опускайте штангу подконтрольно к нижней части груди.", "Не отрывайте таз от скамьи."]},
+    {"code": "close-grip-bench-press", "name": "Жим лёжа узким хватом", "muscles": "Трицепс, грудные мышцы, передняя дельта", "tips": ["Держите кисти над локтями.", "Ведите локти ближе к корпусу.", "Не сужайте хват до дискомфорта в запястьях."]},
+    {"code": "incline-dumbbell-press", "name": "Жим гантелей на наклонной скамье", "muscles": "Верх грудных мышц, передняя дельта, трицепс", "tips": ["Зафиксируйте лопатки на скамье.", "Опускайте гантели до комфортной глубины.", "Не сталкивайте гантели в верхней точке."]},
+    {"code": "overhead-press", "name": "Жим над головой", "muscles": "Дельтовидные мышцы, трицепс", "tips": ["Напрягите корпус и ягодицы.", "Проведите снаряд близко к лицу.", "Не переразгибайте поясницу."]},
+    {"code": "lat-pulldown", "name": "Тяга верхнего блока", "muscles": "Широчайшие, бицепс, мышцы лопаток", "tips": ["Начните движение опусканием лопаток.", "Тяните рукоять к верхней части груди.", "Не раскачивайте корпус."]},
+    {"code": "seated-row", "name": "Тяга горизонтального блока", "muscles": "Широчайшие, ромбовидные, задняя дельта", "tips": ["Сохраняйте нейтральную спину.", "Тяните локти назад вдоль корпуса.", "Возвращайте рукоять подконтрольно."]},
+    {"code": "pull-up", "name": "Подтягивания", "muscles": "Широчайшие, бицепс, мышцы лопаток", "tips": ["Начните движением лопаток вниз.", "Подтягивайте грудь к перекладине.", "Не раскачивайтесь."]},
+    {"code": "barbell-row", "name": "Тяга штанги в наклоне", "muscles": "Широчайшие, середина спины, задняя дельта", "tips": ["Зафиксируйте наклон и нейтральную спину.", "Тяните штангу к низу живота.", "Не выпрямляйте корпус каждым повтором."]},
+    {"code": "back-squat", "name": "Приседания со штангой", "muscles": "Квадрицепс, ягодичные, приводящие", "tips": ["Сохраняйте устойчивую стопу.", "Ведите колени по направлению носков.", "Выбирайте глубину без потери положения спины."]},
+    {"code": "leg-press", "name": "Жим ногами", "muscles": "Квадрицепс, ягодичные, приводящие", "tips": ["Не отрывайте таз от спинки.", "Опускайте платформу до комфортной глубины.", "Не блокируйте колени резко."]},
+    {"code": "lunge", "name": "Выпады", "muscles": "Квадрицепс, ягодичные, приводящие", "tips": ["Ставьте стопу устойчиво.", "Опускайтесь вертикально без завала колена внутрь.", "Отталкивайтесь всей стопой."]},
+    {"code": "bulgarian-split-squat", "name": "Болгарские сплит-приседания", "muscles": "Квадрицепс, ягодичные", "tips": ["Подберите устойчивую длину шага.", "Держите таз ровно.", "Не отталкивайтесь задней ногой."]},
+    {"code": "romanian-deadlift", "name": "Румынская тяга", "muscles": "Задняя поверхность бедра, ягодичные, разгибатели спины", "tips": ["Отводите таз назад.", "Держите снаряд близко к ногам.", "Остановитесь до округления поясницы."]},
+    {"code": "deadlift", "name": "Становая тяга", "muscles": "Ягодичные, задняя поверхность бедра, спина", "tips": ["Создайте напряжение до отрыва штанги.", "Толкайте пол ногами.", "Не переразгибайтесь в верхней точке."]},
+    {"code": "hip-thrust", "name": "Ягодичный мост", "muscles": "Ягодичные, задняя поверхность бедра", "tips": ["Подберите опору под лопатками.", "Поднимайте таз за счёт ягодиц.", "Не переразгибайте поясницу."]},
+    {"code": "leg-curl", "name": "Сгибание ног в тренажёре", "muscles": "Задняя поверхность бедра", "tips": ["Совместите колено с осью тренажёра.", "Не отрывайте таз от опоры.", "Возвращайте вес подконтрольно."]},
+    {"code": "leg-extension", "name": "Разгибание ног в тренажёре", "muscles": "Квадрицепс", "tips": ["Совместите колено с осью тренажёра.", "Разгибайте колено без рывка.", "Опускайте вес подконтрольно."]},
+    {"code": "hip-adduction", "name": "Сведение ног в тренажёре", "muscles": "Приводящие мышцы бедра", "tips": ["Прижмите спину к опоре.", "Сводите ноги без рывка.", "Не бросайте вес в обратной фазе."]},
+    {"code": "hip-abduction", "name": "Разведение ног в тренажёре", "muscles": "Средняя ягодичная, малая ягодичная", "tips": ["Сохраняйте устойчивое положение таза.", "Разводите колени без рывка.", "Контролируйте возвращение."]},
+    {"code": "calf-raise", "name": "Подъёмы на носки", "muscles": "Икроножная и камбаловидная мышцы", "tips": ["Опускайте пятку в комфортную амплитуду.", "Поднимайтесь через большой палец стопы.", "Не пружиньте в нижней точке."]},
+    {"code": "dumbbell-curl", "name": "Сгибание рук с гантелями", "muscles": "Бицепс, плечевая мышца", "tips": ["Держите локти близко к корпусу.", "Не раскачивайте туловище.", "Разгибайте руку подконтрольно."]},
+    {"code": "triceps-pushdown", "name": "Разгибание рук на блоке", "muscles": "Трицепс", "tips": ["Зафиксируйте локти у корпуса.", "Разгибайте руки без движения плеча.", "Возвращайте рукоять подконтрольно."]},
+    {"code": "lateral-raise", "name": "Разведение гантелей в стороны", "muscles": "Средняя дельта", "tips": ["Слегка согните локти.", "Поднимайте руки без рывка.", "Не задирайте плечи к ушам."]},
+    {"code": "reverse-fly", "name": "Разведение рук на заднюю дельту", "muscles": "Задняя дельта, мышцы лопаток", "tips": ["Зафиксируйте корпус.", "Ведите локти в стороны.", "Не сводите движение к рывку лопатками."]},
+    {"code": "plank", "name": "Планка", "muscles": "Мышцы живота, ягодичные, плечевой пояс", "tips": ["Выстройте тело в одну линию.", "Напрягите живот и ягодицы.", "Не проваливайте поясницу."]},
+)
+
+
+def strength_account_catalog(db: Session, state: StrengthState) -> list[dict[str, Any]]:
+    items: dict[str, dict[str, Any]] = {
+        item["code"]: {
+            "exercise_id": item["code"],
+            "exercise_name": item["name"],
+            "source": "base",
+            "catalog_active": True,
+            "muscles": item["muscles"],
+            "tips": item["tips"],
+            "media_url": "",
+        }
+        for item in BASE_STRENGTH_EXERCISES
+    }
+    for setting in state.hidden_exercises or []:
+        if not isinstance(setting, dict) or setting.get("scope") != "catalog":
+            continue
+        exercise_id = str(setting.get("exercise_id") or "").strip()
+        exercise_name = str(setting.get("exercise_name") or "").strip()
+        if exercise_id and exercise_name:
+            items[exercise_id] = {
+                "exercise_id": exercise_id,
+                "exercise_name": exercise_name,
+                "source": "custom",
+                "catalog_active": setting.get("catalog_active") is not False,
+                "muscles": "",
+                "tips": [],
+                "media_url": "",
+            }
+    referenced_ids = {
+        str(setting.get("exercise_id"))
+        for setting in (state.hidden_exercises or [])
+        if isinstance(setting, dict)
+        and setting.get("scope") != "catalog"
+        and setting.get("exercise_id")
+    }
+    if referenced_ids:
+        for exercise in db.scalars(
+            select(StrengthExercise).where(
+                StrengthExercise.active.is_(True),
+                StrengthExercise.code.in_(referenced_ids),
+            )
+        ).all():
+            items.setdefault(exercise.code, {
+                "exercise_id": exercise.code,
+                "exercise_name": exercise.name,
+                "source": "history",
+                "catalog_active": True,
+                "muscles": "",
+                "tips": [],
+                "media_url": "",
+            })
+    for workout in state.workouts or []:
+        if not isinstance(workout, dict):
+            continue
+        for exercise in workout.get("exercises", []):
+            if not isinstance(exercise, dict):
+                continue
+            exercise_id = str(exercise.get("exercise_id") or "").strip()
+            exercise_name = str(exercise.get("exercise_name") or "").strip()
+            if exercise_id and exercise_name and exercise_id not in items:
+                items[exercise_id] = {
+                    "exercise_id": exercise_id,
+                    "exercise_name": exercise_name,
+                    "source": "history",
+                    "catalog_active": True,
+                    "muscles": "",
+                    "tips": [],
+                    "media_url": "",
+                }
+    return list(items.values())
+
+
 APP_STATE_MODELS = {
     "dqs": DqsState,
     "strength": StrengthState,
@@ -1095,24 +1200,37 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
     settings = {
         (str(item.get("exercise_id")), int(item.get("workout_type", 0))): item
         for item in (state.hidden_exercises or [])
-        if isinstance(item, dict)
+        if isinstance(item, dict) and item.get("scope") != "catalog"
     }
-    exercises = db.scalars(
-        select(StrengthExercise).where(StrengthExercise.active.is_(True)).order_by(StrengthExercise.sort_order, StrengthExercise.name)
-    ).all()
-    for exercise in exercises:
-        allowed_types = exercise.metadata_json.get("workout_types", [1, 2, 3])
-        if workout_type not in allowed_types:
-            continue
-        own = settings.get((exercise.code, workout_type), {})
+    template_workouts = [
+        item for item in (state.workouts or [])
+        if isinstance(item, dict) and int(item.get("workout_type", 0)) == workout_type
+    ]
+    latest_template = max(
+        template_workouts,
+        key=lambda item: int(item.get("session_number") or 0),
+        default={},
+    )
+    latest_order = {
+        str(item.get("exercise_id")): int(item.get("sort_order") or index)
+        for index, item in enumerate(latest_template.get("exercises", []), 1)
+        if isinstance(item, dict) and item.get("exercise_id")
+    }
+    template_ids = {
+        str(item.get("exercise_id"))
+        for workout in template_workouts
+        for item in workout.get("exercises", [])
+        if isinstance(item, dict) and item.get("exercise_id")
+    }
+    for default_order, exercise in enumerate(strength_account_catalog(db, state), 1):
+        exercise_id = str(exercise["exercise_id"])
+        own = settings.get((exercise_id, workout_type), {})
         catalog.append({
             "user_id": str(user_id),
             "workout_type": workout_type,
-            "exercise_id": exercise.code,
-            "exercise_name": exercise.name,
-            "active": own.get("active", True),
-            "sort_order": own.get("sort_order", exercise.sort_order),
-            "source": exercise.metadata_json.get("source", "catalog"),
+            **exercise,
+            "active": own.get("active", exercise_id in template_ids),
+            "sort_order": own.get("sort_order", latest_order.get(exercise_id, default_order)),
         })
     catalog.sort(key=lambda item: int(item.get("sort_order") or 0))
 
@@ -1209,6 +1327,91 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state.hidden_exercises = settings
             state.version += 1
             payload = {"ok": True, "version": state.version}
+        elif action == "saveExerciseCatalog":
+            workout_type = int(body.get("workout_type") or 0)
+            if workout_type not in (1, 2, 3):
+                raise ValueError("INVALID_WORKOUT_TEMPLATE")
+            incoming = body.get("exercises") or []
+            if not isinstance(incoming, list) or len(incoming) > 250:
+                raise ValueError("INVALID_EXERCISE_CATALOG")
+            base_by_id = {item["code"]: item for item in BASE_STRENGTH_EXERCISES}
+            existing_by_id = {
+                item["exercise_id"]: item for item in strength_account_catalog(db, state)
+            }
+            normalized: list[dict[str, Any]] = []
+            custom_catalog: list[dict[str, Any]] = []
+            renamed_custom: dict[str, str] = {}
+            seen_ids: set[str] = set()
+            for index, item in enumerate(incoming, 1):
+                if not isinstance(item, dict):
+                    raise ValueError("INVALID_EXERCISE")
+                exercise_id = str(item.get("exercise_id") or "").strip()
+                exercise_name = str(item.get("exercise_name") or "").strip()
+                source = str(item.get("source") or "")
+                if (
+                    not exercise_id
+                    or len(exercise_id) > 80
+                    or exercise_id in seen_ids
+                    or len(exercise_name) > 120
+                ):
+                    raise ValueError("INVALID_EXERCISE")
+                seen_ids.add(exercise_id)
+                if exercise_id in base_by_id:
+                    exercise_name = base_by_id[exercise_id]["name"]
+                    source = "base"
+                elif exercise_id in existing_by_id and existing_by_id[exercise_id]["source"] != "custom":
+                    exercise_name = existing_by_id[exercise_id]["exercise_name"]
+                    source = existing_by_id[exercise_id]["source"]
+                elif source == "custom":
+                    if not exercise_id.startswith("custom-") or not exercise_name:
+                        raise ValueError("INVALID_CUSTOM_EXERCISE")
+                    custom_catalog.append({
+                        "scope": "catalog",
+                        "exercise_id": exercise_id,
+                        "exercise_name": exercise_name,
+                        "catalog_active": item.get("catalog_active") is not False,
+                        "source": "custom",
+                    })
+                    renamed_custom[exercise_id] = exercise_name
+                normalized.append({
+                    "exercise_id": exercise_id,
+                    "exercise_name": exercise_name,
+                    "active": item.get("active") is True,
+                    "sort_order": int(item.get("sort_order") or index),
+                    "source": source or "history",
+                })
+            preserved = [
+                item for item in (state.hidden_exercises or [])
+                if isinstance(item, dict)
+                and item.get("scope") != "catalog"
+                and int(item.get("workout_type", 0)) != workout_type
+            ]
+            template_settings = [
+                {
+                    "exercise_id": item["exercise_id"],
+                    "workout_type": workout_type,
+                    "active": item["active"],
+                    "sort_order": item["sort_order"],
+                }
+                for item in normalized
+            ]
+            state.hidden_exercises = preserved + custom_catalog + template_settings
+            if renamed_custom:
+                next_workouts = []
+                for workout in state.workouts or []:
+                    copied = dict(workout)
+                    copied_exercises = []
+                    for exercise in copied.get("exercises", []):
+                        copied_exercise = dict(exercise)
+                        exercise_id = str(copied_exercise.get("exercise_id") or "")
+                        if exercise_id in renamed_custom:
+                            copied_exercise["exercise_name"] = renamed_custom[exercise_id]
+                        copied_exercises.append(copied_exercise)
+                    copied["exercises"] = copied_exercises
+                    next_workouts.append(copied)
+                state.workouts = next_workouts
+            state.version += 1
+            payload = {"ok": True, "version": state.version}
         elif action == "getStats":
             workout_type = int(body.get("type") or 1)
             exercise_id = str(body.get("exercise_id") or "")
@@ -1231,7 +1434,7 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             payload = {"ok": True, "user": user_payload, "stats": history}
         else:
             payload = error("Unknown action: " + action)
-        if admin_username and action in {"saveSession", "saveExerciseSettings"} and payload.get("ok"):
+        if admin_username and action in {"saveSession", "saveExerciseSettings", "saveExerciseCatalog"} and payload.get("ok"):
             db.add(AdminAppEdit(
                 admin_username=admin_username,
                 target_user_id=user.id,

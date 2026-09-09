@@ -188,6 +188,82 @@ def test_strength_completed_set_round_trips_for_the_selected_user():
     assert loaded.json()["workout"]["sets"][0]["completed"] is True
 
 
+def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "catalog@example.test", "Каталог")
+        db.add(StrengthState(
+            user_id=user.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[{
+                "workout_type": 1,
+                "session_number": 1,
+                "session_id": "legacy-1",
+                "date": "2026-09-01",
+                "exercises": [{
+                    "exercise_id": "legacy-cable-row",
+                    "exercise_name": "Тяга блока из старой истории",
+                    "sort_order": 1,
+                    "sets": [],
+                }],
+            }],
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    first = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 1},
+    ).json()["workout"]["exercise_catalog"]
+    second = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 2},
+    ).json()["workout"]["exercise_catalog"]
+
+    assert len([item for item in first if item["source"] == "base"]) == 25
+    assert {item["exercise_id"] for item in first} == {item["exercise_id"] for item in second}
+    assert next(item for item in first if item["exercise_id"] == "legacy-cable-row")["active"] is True
+    assert next(item for item in second if item["exercise_id"] == "legacy-cable-row")["active"] is False
+
+    saved = client.post(
+        "/api/apps/strength",
+        json={
+            "action": "saveExerciseCatalog",
+            "target_user_id": str(user_id),
+            "workout_type": 2,
+            "exercises": [
+                {
+                    "exercise_id": "bench-press",
+                    "exercise_name": "Нельзя переименовать базовое",
+                    "active": True,
+                    "sort_order": 1,
+                    "source": "base",
+                },
+                {
+                    "exercise_id": "custom-my-row",
+                    "exercise_name": "Моя тяга",
+                    "active": True,
+                    "catalog_active": True,
+                    "sort_order": 2,
+                    "source": "custom",
+                },
+            ],
+        },
+    )
+    assert saved.status_code == 200
+    assert saved.json()["ok"] is True
+
+    loaded = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 2},
+    ).json()["workout"]["exercise_catalog"]
+    assert next(item for item in loaded if item["exercise_id"] == "bench-press")["exercise_name"] == "Жим штанги лёжа"
+    assert next(item for item in loaded if item["exercise_id"] == "bench-press")["active"] is True
+    assert next(item for item in loaded if item["exercise_id"] == "custom-my-row")["active"] is True
+
+
 def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
     client, factory = make_client()
     with factory() as db:
