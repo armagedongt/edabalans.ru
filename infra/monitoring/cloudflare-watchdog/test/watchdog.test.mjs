@@ -7,6 +7,7 @@ import {
   probe,
   runDailyReportTask,
   runWatchdog,
+  telegramRequiredRoute,
   updateIncidentState,
 } from "../src/logic.mjs";
 import worker, { dispatchScheduledChecks, WatchdogCoordinator } from "../src/index.mjs";
@@ -192,6 +193,47 @@ test("Telegram probe rejects a ready response on the obsolete proxy route", asyn
   assert.equal(relay.ok, true);
   assert.equal(proxy.ok, false);
   assert.equal(proxy.error, "unexpected_route");
+});
+
+test("watchdog accepts the legacy proxy route only when emergency configuration selects it", async () => {
+  const storage = new MemoryStorage();
+  const fetchImpl = async (url) => {
+    if (String(url).includes("/telegram/ready")) {
+      return response(200, { status: "ready", reasons: [], telegram_route: "proxy" });
+    }
+    if (String(url).endsWith("/ready")) return response(200, { status: "ready" });
+    throw new Error(`Unexpected URL: ${url}`);
+  };
+  const result = await runWatchdog({
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    TELEGRAM_REQUIRED_ROUTE: "proxy",
+  }, storage, { fetchImpl, now: 0 });
+
+  assert.equal(result.ok, true);
+  assert.equal(result.checks.telegram.route, "proxy");
+});
+
+test("invalid Telegram route configuration cannot become a false production incident", async () => {
+  const storage = new MemoryStorage();
+  let fetches = 0;
+  const fetchImpl = async () => {
+    fetches += 1;
+    return response(200, { status: "ready", telegram_route: "relay" });
+  };
+
+  assert.equal(telegramRequiredRoute(" PROXY "), "proxy");
+  assert.throws(() => telegramRequiredRoute("proxi"), /must be relay or proxy/);
+  await assert.rejects(
+    runWatchdog({
+      PLATFORM_READY_URL: "https://api.example/ready",
+      TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+      TELEGRAM_REQUIRED_ROUTE: "proxi",
+    }, storage, { fetchImpl, now: 0 }),
+    /must be relay or proxy/,
+  );
+  assert.equal(fetches, 0);
+  assert.equal(storage.value, null);
 });
 
 test("failed ad suspension keeps retrying without rebooting a healthy platform", async () => {

@@ -39,6 +39,10 @@ Secrets:
 
 - `TELEGRAM_BOT_TOKEN`;
 - `TELEGRAM_ALERT_CHAT_ID`;
+- `TELEGRAM_REQUIRED_ROUTE` — необязательный аварийный override ожидаемого
+  исходящего маршрута; без secret используется `relay`, при ручном возврате на
+  европейский Squid временно устанавливается `proxy` по
+  [`infra/telegram-proxy/README.md`](../../telegram-proxy/README.md);
 - `TIMEWEB_API_TOKEN`;
 - `TIMEWEB_RU_SERVER_ID`;
 - `YANDEX_DIRECT_TOKEN` — уже сохранён в Cloudflare secrets;

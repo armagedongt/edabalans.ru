@@ -338,6 +338,14 @@ async function pauseAds(ids, env, fetchImpl, recordAttemptedIds = async () => {}
   return succeeded;
 }
 
+export function telegramRequiredRoute(value) {
+  const route = String(value || "relay").trim().toLowerCase();
+  if (route !== "relay" && route !== "proxy") {
+    throw new Error("TELEGRAM_REQUIRED_ROUTE must be relay or proxy");
+  }
+  return route;
+}
+
 async function resumeAds(ids, env, fetchImpl) {
   const headers = {
     Authorization: `Bearer ${env.YANDEX_DIRECT_TOKEN}`,
@@ -546,9 +554,10 @@ export async function runWatchdog(env, storage, options = {}) {
   let checks = options.checks;
   if (!checks) {
     const timeoutMs = parsePositiveInteger(env.CHECK_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
+    const requiredTelegramRoute = telegramRequiredRoute(env.TELEGRAM_REQUIRED_ROUTE);
     const [platform, telegram] = await Promise.all([
       probe(env.PLATFORM_READY_URL, fetchImpl, timeoutMs),
-      probe(env.TELEGRAM_READY_URL, fetchImpl, timeoutMs, "relay"),
+      probe(env.TELEGRAM_READY_URL, fetchImpl, timeoutMs, requiredTelegramRoute),
     ]);
     checks = { platform, telegram };
   }
