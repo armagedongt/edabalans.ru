@@ -1347,18 +1347,21 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert response.text.index('name="viewport"') < response.text.index('id="edb-direct-intensive-v1"')
     assert 'id="edb-direct-intensive-v1"' in response.text
     assert "Какие три ошибки в начале похудения, сразу ставят на нём жирный крест!" in response.text
-    assert '<span class="edb-di-hero-copy-line">Как худеть, когда сила воли</span>' in response.text
-    assert '<span class="edb-di-hero-copy-line">вышла из чата?</span>' in response.text
-    assert "Срывы и невозможность взять себя в руки — не черта вашего характера." in response.text
-    assert "Сила воли заканчивается у всех." in response.text
-    assert "в похудении нужны навыки, на которые можно опереться" in response.text
-    assert "бесплатный интенсив из четырёх частей" in response.text
-    assert "Я собрал бесплатный интенсив из четырёх частей" in response.text
+    assert "Как худеть, когда сила воли" not in response.text
+    assert '<span class="edb-di-hero-accent">Надо менять подход!!</span>' in response.text
+    assert "Срывы и невозможность взять себя в руки — это НЕ черта вашего характера." in response.text
+    assert "Если худеть только на силе воли, конечно, она будет заканчиваться." in response.text
+    assert "Читайте бесплатный интенсив в 4-х частях" in response.text
+    assert "чтобы силы воли надо было меньше:" in response.text
+    assert "Почему ВАМ вечно нужно себя ограничивать" in response.text
+    assert "пока другие ЕДЯТ всё подряд" in response.text
+    assert "От чего зависят ваши пищевые привычки и как их менять!" in response.text
+    assert "как начать их менять" not in response.text
     assert "eyebrow:'Бесплатный интенсив'" not in response.text
     assert "Когда каждая попытка</span>" not in response.text
     assert "Хватит откладывать — читайте" in response.text
     assert "👇 и меняйтесь прямо сейчас 👇" in response.text
-    assert "В нём вы узнаете:" in response.text
+    assert "В нём вы узнаете:" not in response.text
     assert "Вы узнаете:" not in response.text
     assert "Не медицинская услуга" in response.text
     assert "business:'ИП Воронцов'" in response.text
@@ -1497,7 +1500,7 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert ".edb-di-actions--inline{display:none}" in response.text
     assert "position:fixed" in response.text
     assert "padding-bottom:calc(70px + env(safe-area-inset-bottom))" in response.text
-    assert "font-size:clamp(17.5px,5.7vw,33px)" in response.text
+    assert "font-size:clamp(15.8px,5.3vw,32px)" in response.text
     assert 'class="edb-di-button-note"' in response.text
     assert "font-size:clamp(6.8px,2.08vw,9px)" in response.text
     assert ".edb-di-qr{display:none" in response.text
