@@ -1128,38 +1128,43 @@
   }
 
 }
-.st-entry-modes{margin-top:10px;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:4px;border-radius:12px;background:#ededf2}
-.st-entry-modes button{min-height:42px;border:0;border-radius:9px;background:transparent;color:#777a87;font-size:11px;font-weight:800}
+.st-entry-control-bar{position:sticky;top:0;z-index:12;padding:6px 0 8px;background:linear-gradient(180deg,#f6f6f8 82%,rgba(246,246,248,0))}
+.st-entry-modes{padding:6px;display:grid;grid-template-columns:1fr 1fr;gap:7px;border-radius:13px;background:rgba(237,237,242,.96);box-shadow:0 8px 20px rgba(31,30,52,.08);backdrop-filter:blur(12px)}
+.st-entry-modes button{min-height:44px;border:0;border-radius:9px;background:transparent;color:#777a87;font-size:13px;font-weight:800}
 .st-entry-modes button.active{background:#fff;color:var(--st-purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .st-entry-modes button.active.train{background:#fff3eb;color:#f05d25}
-.st-template-actions{justify-content:flex-end}
+.st-template-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;justify-content:stretch}
+.st-template-actions .st-action{width:100%;min-height:42px;font-size:12px}
 .st-actions-train{justify-content:stretch}
-.st-finish{width:100%;min-height:44px;border:0;border-radius:11px;background:#ff6a2c;color:#fff;font-size:13px;font-weight:900}
+.st-finish{width:100%;min-height:46px;border:0;border-radius:11px;background:#ff6a2c;color:#fff;font-size:14px;font-weight:900}
+.st-finish-bottom{margin:16px 0 4px}
 .st-modern-list{margin-top:12px;display:grid;gap:14px}
 .st-modern-exercise{overflow:hidden;border:1px solid rgba(70,70,90,.09);border-radius:16px;box-shadow:0 7px 20px rgba(30,30,55,.07)}
-.st-modern-head{padding:13px 13px 10px;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid rgba(70,70,90,.08)}
-.st-modern-title{min-width:0;flex:1;padding:0;border:0;background:transparent;text-align:left;color:var(--st-text)}
-.st-modern-title strong{display:block;font-size:15px;line-height:1.25;font-weight:700}
-.st-modern-title span{display:block;margin-top:4px;color:var(--st-purple);font-size:9px;font-weight:800}
-.st-modern-remove{width:28px;height:28px;padding:0;border:1px solid rgba(70,70,90,.14);border-radius:9px;background:rgba(255,255,255,.72);color:#868996;font-size:18px}
+.st-modern-head{padding:13px 13px 10px;display:grid;grid-template-columns:minmax(0,1fr) 30px;align-items:flex-start;gap:9px;border-bottom:1px solid rgba(70,70,90,.08)}
+.st-modern-title{min-width:0;padding:2px 0 0;color:var(--st-text)}
+.st-modern-title strong{display:block;font-size:19px;line-height:1.22;font-weight:700}
+.st-modern-tools{display:grid;gap:5px}
+.st-modern-history,.st-modern-remove{display:grid;width:30px;height:30px;place-items:center;padding:0;border-radius:9px;font-weight:900}
+.st-modern-history{border:1px solid rgba(111,61,232,.2);background:#f6f3ff;color:var(--st-purple);font-size:16px}
+.st-modern-remove{border:1px solid rgba(220,90,65,.15);background:#fff1ed;color:#ca4f35;font-size:17px}
 .st-previous{padding:11px 12px 12px;background:rgba(255,255,255,.48)}
-.st-previous-title{margin-bottom:7px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
-.st-previous-title small{margin-left:5px;color:var(--st-muted);font-size:9px;font-weight:700;text-transform:none;letter-spacing:0}
+.st-previous-title{margin-bottom:7px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.st-previous-title small{margin-left:5px;color:var(--st-muted);font-size:10px;font-weight:700;text-transform:none;letter-spacing:0}
 .st-history-strip,.st-history-modal-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
 .st-history-strip::-webkit-scrollbar,.st-history-modal-strip::-webkit-scrollbar{display:none}
 .st-history-card{flex:0 0 170px;padding:10px;border:1px solid rgba(111,61,232,.16);border-radius:11px;background:rgba(255,255,255,.74);scroll-snap-align:start;text-align:left;color:var(--st-text)}
 .st-history-card.selected{border-color:var(--st-purple);box-shadow:0 4px 13px rgba(111,61,232,.13)}
 .st-history-card strong,.st-history-card span,.st-history-modal-card strong,.st-history-modal-card span{display:block}
-.st-history-card strong,.st-history-modal-card strong{margin-bottom:6px;font-size:11px}
-.st-history-card span,.st-history-modal-card span{margin-top:4px;font-size:10px;white-space:nowrap}
-.st-copy-history{margin-top:8px;min-height:34px;padding:0 12px;border:0;border-radius:9px;background:var(--st-purple);color:#fff;font-size:10px;font-weight:900}
+.st-history-card strong,.st-history-modal-card strong{margin-bottom:6px;font-size:12px}
+.st-history-card span,.st-history-modal-card span{margin-top:4px;font-size:11px;white-space:nowrap}
+.st-copy-history{margin-top:8px;min-height:38px;padding:0 12px;border:0;border-radius:9px;background:var(--st-purple);color:#fff;font-size:12px;font-weight:900}
 .st-history-empty{padding:10px;color:var(--st-muted);font-size:11px}
 .st-modern-editor{padding:11px 12px 13px;background:rgba(255,255,255,.66)}
 .st-modern-labels,.st-modern-set{display:grid;align-items:center;gap:6px}
 .st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 50px}
 .st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.8fr) 30px minmax(0,1.2fr) 50px}
-.st-modern-labels{padding:0 2px 5px;color:#777b89;font-size:9px;font-weight:900;text-align:center}
-.st-modern-labels small{font-size:8px;font-weight:700}
+.st-modern-labels{padding:0 2px 5px;color:#777b89;font-size:11px;font-weight:900;text-align:center}
+.st-modern-labels small{font-size:9px;font-weight:700}
 .st-modern-set{min-height:43px;padding:5px 0;border-top:1px solid rgba(70,70,90,.07)}
 .st-modern-number{text-align:center;color:#838692;font-size:10px;font-weight:900}
 .st-input-pair,.st-readonly-pair{display:grid;grid-template-columns:1fr 1fr;gap:4px}
@@ -1167,15 +1172,16 @@
 .st-readonly-pair span{min-width:0;padding:7px 2px;border-radius:7px;background:rgba(255,255,255,.55);text-align:center;font-size:11px;font-weight:800}
 .st-set-done{width:29px;height:29px;padding:0;border:1px solid #cfd2dc;border-radius:50%;background:#fff;color:transparent;font-size:16px;font-weight:900}
 .st-set-done.checked{border-color:#3cad72;background:#3cad72;color:#fff}
+.st-set-done:disabled{border-color:#e1e2e7;background:#f3f3f6;color:transparent;cursor:not-allowed;opacity:.58}
 .st-modern-set-actions{margin-top:8px;display:flex;gap:7px}
-.st-modern-set-actions button{min-height:32px;padding:0 11px;border:0;border-radius:8px;background:#efeff4;color:#606471;font-size:10px;font-weight:900}
-.st-modern-comment{margin-top:10px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px;color:#777b89;font-size:10px;font-weight:900}
+.st-modern-set-actions button{min-height:38px;padding:0 11px;border:0;border-radius:8px;background:#efeff4;color:#606471;font-size:12px;font-weight:900}
+.st-modern-comment{margin-top:10px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px;color:#777b89;font-size:12px;font-weight:900}
 .st-modern-comment>span{padding-top:10px}
-.st-modern-comment textarea{display:block;width:100%;min-width:0;min-height:38px;overflow:hidden;resize:none;padding:9px 10px;border:1px solid #dedfe7;border-radius:9px;background:#fff;color:var(--st-text);font-size:11px;line-height:17px}
+.st-modern-comment textarea{display:block;width:100%;min-width:0;min-height:38px;overflow:hidden;resize:none;padding:9px 10px;border:1px solid #dedfe7;border-radius:9px;background:#fff;color:var(--st-text);font-size:12px;line-height:18px}
 .st-history-modal{max-width:720px}
 .st-history-modal-strip{padding:4px 0 8px}
 .st-history-modal-card{flex:0 0 180px;padding:12px;border:1px solid #e1dcf2;border-radius:12px;background:#faf8ff;scroll-snap-align:start}
-@media(max-width:700px){.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr}.st-modern-comment>span{padding-top:0}}
+@media(max-width:700px){.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-main-tab,.st-stat-tab,.st-type{font-size:13px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr}.st-modern-comment>span{padding-top:0}.st-actions.st-template-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}.st-template-actions .st-action{min-height:44px}}
 </style>
 
 <script>
@@ -1226,8 +1232,6 @@ var app = {
   selectedIndex:0,
   entryMode:'edit',
   selectedPrevious:{},
-  completedSets:{},
-
   workouts:{
     1:null,
     2:null,
@@ -1245,7 +1249,8 @@ var app = {
   modal:null,
   rpeMenu:null,
 
-  saveTimer:null,
+  saveTimers:{},
+  saveRequests:0,
   saving:false,
   saveError:'',
 
@@ -1788,7 +1793,11 @@ function buildWorkoutModel(raw){
         ?
         ''
         :
-        row.rpe
+        row.rpe,
+
+      completed:
+        row.completed === true ||
+        String(row.completed).toLowerCase() === 'true'
     });
 
   }
@@ -2094,7 +2103,11 @@ function sessionPayload(session){
 
         rpe:
           ex.sets[j]
-            .rpe
+            .rpe,
+
+        completed:
+          ex.sets[j]
+            .completed === true
       });
 
     }
@@ -2114,10 +2127,25 @@ function scheduleSave(
   sessionIndex
 ){
 
-  if(app.saveTimer){
+  var body =
+    sessionSaveBody(
+      sessionIndex
+    );
+
+  if(!body){
+    return;
+  }
+
+  var timerKey = [
+    body.target_user_id || body.email || '',
+    body.workout_type,
+    body.session.session_id || body.session.session_number
+  ].join('|');
+
+  if(app.saveTimers[timerKey]){
 
     clearTimeout(
-      app.saveTimer
+      app.saveTimers[timerKey]
     );
 
   }
@@ -2127,13 +2155,12 @@ function scheduleSave(
 
   renderSavingOnly();
 
-  app.saveTimer =
+  app.saveTimers[timerKey] =
     setTimeout(
       function(){
 
-        saveSessionNow(
-          sessionIndex
-        );
+        delete app.saveTimers[timerKey];
+        persistSessionBody(body);
 
       },
       450
@@ -2146,17 +2173,38 @@ function saveSessionNow(
   sessionIndex
 ){
 
+  var body =
+    sessionSaveBody(
+      sessionIndex
+    );
+
+  if(body){
+    persistSessionBody(body);
+  }
+
+}
+
+
+function sessionSaveBody(
+  sessionIndex
+){
+
+  var workoutType =
+    app.workoutType;
+
   var workout =
-    currentWorkout();
+    app.workouts[
+      workoutType
+    ];
 
   var session =
-    workout
+    workout && workout
       .sessions[
         sessionIndex
       ];
 
   if(!session){
-    return;
+    return null;
   }
 
   var body = {
@@ -2164,7 +2212,7 @@ function saveSessionNow(
       'saveSession',
 
     workout_type:
-      app.workoutType,
+      workoutType,
 
     session:
       sessionPayload(
@@ -2174,11 +2222,14 @@ function saveSessionNow(
 
   if(app.isAdmin){
 
-    body.user_id =
+    var targetUserId =
       currentUserId();
 
+    body.user_id =
+      targetUserId;
+
     body.target_user_id =
-      currentUserId();
+      targetUserId;
 
     body.admin_email =
       app.email;
@@ -2190,10 +2241,25 @@ function saveSessionNow(
 
   }
 
+  return body;
+
+}
+
+
+function persistSessionBody(body){
+
+  app.saveRequests += 1;
+
   postApi(body)
     .then(function(){
 
-      app.saving = false;
+      app.saveRequests =
+        Math.max(0,app.saveRequests-1);
+
+      app.saving =
+        app.saveRequests > 0 ||
+        Object.keys(app.saveTimers).length > 0;
+
       app.saveError = '';
 
       renderSavingOnly();
@@ -2201,7 +2267,12 @@ function saveSessionNow(
     })
     .catch(function(error){
 
-      app.saving = false;
+      app.saveRequests =
+        Math.max(0,app.saveRequests-1);
+
+      app.saving =
+        app.saveRequests > 0 ||
+        Object.keys(app.saveTimers).length > 0;
 
       app.saveError =
         error.message ||
@@ -2641,7 +2712,12 @@ function renderClient(){
   ){
 
     html +=
+      renderEntryControls()+
       renderJournal();
+
+    if(app.entryMode === 'train'){
+      html += '<div class="st-actions st-actions-train st-finish-bottom"><button class="st-finish" onclick="ST.finishWorkout()">Завершить тренировку</button></div>';
+    }
 
   }else if(
     app.statsTab ===
@@ -2726,7 +2802,7 @@ function renderTypes(){
         ''
       )+
       '" onclick="ST.setWorkoutType('+i+')">'+
-        'Тренировка '+i+
+        'Сплит '+i+
       '</button>';
 
   }
@@ -2748,7 +2824,7 @@ function renderJournalHeader(){
 
     return (
       '<div class="st-empty">'+
-        'У этой тренировки пока нет занятий.'+
+        'В этом сплите пока нет тренировок.'+
         (
           '<div style="margin-top:10px;"><button class="st-add-user" onclick="ST.createFirstSession()">Создать первую тренировку</button></div>'
         )+
@@ -2766,7 +2842,7 @@ function renderJournalHeader(){
     '<div class="st-nav">'+
       '<button class="st-arrow" onclick="ST.prevSession()">‹</button>'+
       '<div class="st-nav-center">'+
-        '<div class="st-nav-title">Тренировка №'+
+        '<div class="st-nav-title">Тренировка этого сплита №'+
           session.number+
         '</div>'+
         '<div class="st-nav-sub">'+
@@ -2781,11 +2857,6 @@ function renderJournalHeader(){
       '</div>'+
       '<button class="st-arrow" onclick="ST.nextSession()">›</button>'+
     '</div>'+
-    '<div class="st-entry-modes">'+
-      '<button class="'+(app.entryMode === 'edit' ? 'active' : '')+'" onclick="ST.setEntryMode(\'edit\')">Редактировать план</button>'+
-      '<button class="'+(app.entryMode === 'train' ? 'active train' : '')+'" onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'+
-    '</div>'+
-    renderActions()+
     '<div id="st-save-state" class="st-saving">'+
       (
         app.saving
@@ -2800,9 +2871,30 @@ function renderJournalHeader(){
 }
 
 
+function renderEntryControls(){
+
+  return (
+    '<div class="st-entry-control-bar">'+
+      '<div class="st-entry-modes">'+
+        '<button class="'+(app.entryMode === 'edit' ? 'active' : '')+'" onclick="ST.setEntryMode(\'edit\')">Редактировать план</button>'+
+        (
+          app.entryMode === 'train'
+          ?
+          '<button class="active train" onclick="ST.finishWorkout()">Завершить тренировку</button>'
+          :
+          '<button onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'
+        )+
+      '</div>'+
+    '</div>'+
+    renderActions()
+  );
+
+}
+
+
 function renderActions(){
   if(app.entryMode === 'train'){
-    return '<div class="st-actions st-actions-train"><button class="st-finish" onclick="ST.finishWorkout()">Завершить тренировку</button></div>';
+    return '';
   }
 
   return (
@@ -2929,7 +3021,7 @@ function renderPreviousExecutions(exercise){
   var html = '<section class="st-previous"><div class="st-previous-title">Было <small>нажмите, чтобы выбрать</small></div><div class="st-history-strip">';
   for(var i=0;i<history.length;i++){
     var item = history[i];
-    html += '<button class="st-history-card '+(i===selected?'selected':'')+'" onclick="ST.choosePrevious(\''+esc(exercise.id)+'\','+i+')"><strong>'+esc(formatDate(item.session.date)||('Тренировка №'+item.session.number))+'</strong>';
+    html += '<button class="st-history-card '+(i===selected?'selected':'')+'" onclick="ST.choosePrevious(\''+esc(exercise.id)+'\','+i+')"><strong>№ '+esc(item.session.number)+' · '+esc(formatDate(item.session.date)||'без даты')+'</strong>';
     for(var s=0;s<item.exercise.sets.length;s++){
       html += '<span>'+(s+1)+'. '+historySetText(item.exercise.sets[s])+'</span>';
     }
@@ -2948,16 +3040,11 @@ function renderModernSet(sessionIndex,exercise,setIndex,set){
   var args = sessionIndex+',\''+esc(exercise.id)+'\','+setIndex;
 
   if(app.entryMode === 'train'){
-    var completeKey = app.workoutType+'|'+sessionIndex+'|'+exercise.id+'|'+setIndex;
-    var complete = Boolean(
-      (app.completedSets && app.completedSets[completeKey]) ||
-      (!blank(set.planWeight) && !blank(set.planReps) &&
-       String(set.factWeight) === String(set.planWeight) &&
-       String(set.factReps) === String(set.planReps))
-    );
+    var complete = set.completed === true;
+    var canComplete = !blank(set.planWeight) && !blank(set.planReps);
     return '<div class="st-modern-set train">'+
       '<div class="st-readonly-pair"><span>'+(planWeight||'—')+'</span><span>'+(planReps||'—')+'</span></div>'+
-      '<button class="st-set-done '+(complete?'checked':'')+'" onclick="ST.completeSet('+args+')" aria-label="Выполнено по плану">✓</button>'+
+      '<button class="st-set-done '+(complete?'checked':'')+'" onclick="ST.completeSet('+args+')" '+(canComplete?'':'disabled')+' aria-pressed="'+(complete?'true':'false')+'" aria-label="'+(complete?'Снять отметку выполнения':canComplete?'Выполнено по плану':'Сначала заполните план подхода')+'">✓</button>'+
       '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
       '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
     '</div>';
@@ -2987,8 +3074,9 @@ function renderCurrentExercises(){
     }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<button class="st-modern-title" onclick="ST.openExerciseHistory(\''+esc(exercise.id)+'\')"><strong>'+esc(exercise.name)+'</strong><span>История упражнения</span></button>'+
-        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из Тренировки '+app.workoutType+'">×</button>' : '')+
+        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong></div>'+
+        '<div class="st-modern-tools"><button class="st-modern-history" onclick="ST.openExerciseHistory(\''+esc(exercise.id)+'\')" aria-label="Открыть историю упражнения" title="История упражнения">◷</button>'+
+        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из Сплита '+app.workoutType+'">×</button>' : '')+'</div>'+
       '</header>'+
       (app.entryMode === 'edit' ? renderPreviousExecutions(exercise) : '')+
       '<section class="st-modern-editor">'+
@@ -3603,9 +3691,9 @@ function renderCalendar(){
           '</div>'+
         '</div>'+
         '<div class="st-calendar-legend">'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t1"></span>Тренировка 1</div>'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t2"></span>Тренировка 2</div>'+
-          '<div class="st-legend-item"><span class="st-legend-dot st-t3"></span>Тренировка 3</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t1"></span>Сплит 1</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t2"></span>Сплит 2</div>'+
+          '<div class="st-legend-item"><span class="st-legend-dot st-t3"></span>Сплит 3</div>'+
         '</div>'+
         '<div class="st-week-head">'+
           '<div class="st-week-name">ПН</div>'+
@@ -4353,7 +4441,7 @@ function renderModal(){
       '<div class="st-modal-bg">'+
         '<div class="st-modal">'+
           '<div class="st-modal-title">Добавить пользователя</div>'+
-          '<div class="st-modal-sub">Пользователь будет добавлен в базу и получит Тренировку 1 и Тренировку 2.</div>'+
+          '<div class="st-modal-sub">Пользователь будет добавлен в базу и получит Сплит 1 и Сплит 2.</div>'+
           '<input id="st-new-user-name" class="st-modal-input" placeholder="Имя">'+
           '<input id="st-new-user-email" class="st-modal-input" placeholder="Email" type="email">'+
           '<div class="st-modal-actions">'+
@@ -4438,7 +4526,7 @@ function renderModal(){
     var items = currentExercise ? exerciseHistory(currentExercise.id,currentExercise.name) : [];
     var historyHtml = '<div class="st-history-modal-strip">';
     for(var h=0;h<items.length;h++){
-      historyHtml += '<article class="st-history-modal-card"><strong>'+esc(formatDate(items[h].session.date)||('Тренировка №'+items[h].session.number))+'</strong>';
+      historyHtml += '<article class="st-history-modal-card"><strong>№ '+esc(items[h].session.number)+' · '+esc(formatDate(items[h].session.date)||'без даты')+'</strong>';
       for(var hs=0;hs<items[h].exercise.sets.length;hs++){
         historyHtml += '<span>'+(hs+1)+'. '+historySetText(items[h].exercise.sets[hs])+'</span>';
       }
@@ -4450,7 +4538,7 @@ function renderModal(){
   }
 
   if(app.modal.type === 'removeExercise'){
-    return '<div class="st-modal-bg"><div class="st-modal"><div class="st-modal-title">Убрать упражнение?</div><div class="st-modal-sub">Точно убрать упражнение из Тренировки '+app.workoutType+'? Общая история упражнения сохранится.</div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Оставить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmRemoveExercise()">Убрать</button></div></div></div>';
+    return '<div class="st-modal-bg"><div class="st-modal"><div class="st-modal-title">Убрать упражнение?</div><div class="st-modal-sub">Точно убрать упражнение из Сплита '+app.workoutType+'? Общая история упражнения сохранится.</div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Оставить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmRemoveExercise()">Убрать</button></div></div></div>';
   }
 
   if(
@@ -4626,7 +4714,7 @@ function renderCalendarDayModal(
 
     html +=
       '<button class="st-user-card" style="margin-top:10px;" onclick="ST.jumpToSession('+items[i].type+','+items[i].index+')">'+
-        '<div class="st-user-card-name">Тренировка '+items[i].type+' · №'+items[i].session.number+'</div>'+
+        '<div class="st-user-card-name">Сплит '+items[i].type+' · тренировка №'+items[i].session.number+'</div>'+
         '<div class="st-user-card-meta">'+
           (
             isFilled(
@@ -4947,6 +5035,9 @@ window.ST = {
     app.entryMode = mode === 'train' ? 'train' : 'edit';
     app.rpeMenu = null;
     render();
+    if(mode === 'train' && root.scrollIntoView){
+      root.scrollIntoView({behavior:'smooth',block:'start'});
+    }
   },
 
   choosePrevious:function(id,index){
@@ -4978,9 +5069,16 @@ window.ST = {
     var exercise = findExercise(currentWorkout().sessions[index],id);
     if(!exercise || !exercise.sets[setIndex]){ return; }
     var set = exercise.sets[setIndex];
+    if(set.completed === true){
+      set.completed = false;
+      scheduleSave(index);
+      render();
+      return;
+    }
+    if(blank(set.planWeight) || blank(set.planReps)){ return; }
     if(blank(set.factWeight)){ set.factWeight = set.planWeight; }
     if(blank(set.factReps)){ set.factReps = set.planReps; }
-    app.completedSets[app.workoutType+'|'+index+'|'+id+'|'+setIndex] = true;
+    set.completed = true;
     scheduleSave(index);
     render();
   },
@@ -5908,6 +6006,16 @@ window.ST = {
 document.addEventListener(
   'click',
   function(event){
+
+    if(
+      app.modal &&
+      event.target &&
+      event.target.classList &&
+      event.target.classList.contains('st-modal-bg')
+    ){
+      ST.closeModal();
+      return;
+    }
 
     if(!app.rpeMenu){
       return;

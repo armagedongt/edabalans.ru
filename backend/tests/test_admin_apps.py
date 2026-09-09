@@ -138,6 +138,56 @@ def test_strength_managed_runtime_uses_admin_session_and_writes_audit():
         assert edit.action == "saveExerciseSettings"
 
 
+def test_strength_completed_set_round_trips_for_the_selected_user():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-completed@example.test", "Тренирующийся")
+        db.add(StrengthState(
+            user_id=user.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[],
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    saved = client.post(
+        "/api/apps/strength",
+        json={
+            "action": "saveSession",
+            "target_user_id": str(user_id),
+            "workout_type": 1,
+            "session": {
+                "session_number": 1,
+                "date": "2026-09-09",
+                "exercises": [{
+                    "exercise_id": "bench_press",
+                    "exercise_name": "Жим лёжа",
+                    "sets": [{
+                        "set_number": 1,
+                        "plan_weight": "40",
+                        "plan_reps": "10",
+                        "fact_weight": "40",
+                        "fact_reps": "10",
+                        "rpe": "8",
+                        "completed": True,
+                    }],
+                }],
+            },
+        },
+    )
+    assert saved.status_code == 200
+    assert saved.json()["ok"] is True
+
+    loaded = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 1},
+    )
+    assert loaded.status_code == 200
+    assert loaded.json()["workout"]["sets"][0]["completed"] is True
+
+
 def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
     client, factory = make_client()
     with factory() as db:

@@ -1116,6 +1116,7 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
                     **{key: item.get(key, "") for key in (
                         "plan_weight", "plan_reps", "fact_weight", "fact_reps", "rpe",
                         "plan_weight_raw", "plan_reps_raw", "fact_weight_raw", "fact_reps_raw", "rpe_raw")},
+                    "completed": item.get("completed") is True,
                     "source": item.get("source", "app"),
                 })
     types = [{"user_id": str(user_id), **item} for item in (state.workout_types or [])]

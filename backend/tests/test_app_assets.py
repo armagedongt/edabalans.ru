@@ -1209,8 +1209,30 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "body.email =\n      app.email;" in text
     assert "Редактировать план" in text
     assert "Начать тренировку" in text
+    assert "        'Сплит '+i+" in text
+    assert "Тренировка этого сплита №" in text
     assert "Перенести выбранное в план" in text
     assert "completeSet:function" in text
     assert "История упражнения" in text
+    assert "set.completed = false" in text
+    assert "set.completed = true" in text
+    assert "completed:\n          ex.sets[j]" in text
+    assert "var body =\n    sessionSaveBody(" in text
+    assert "persistSessionBody(body)" in text
+    assert "app.saveTimers[timerKey]" in text
+    assert "delete app.saveTimers[timerKey]" in text
+    assert "body.target_user_id || body.email || ''" in text
+    assert "body.session.session_id || body.session.session_number" in text
+    assert "workout_type:\n      workoutType" in text
+    assert "body.target_user_id =\n      targetUserId" in text
+    assert "blank(set.planWeight) || blank(set.planReps)" in text
+    assert "event.target.classList.contains('st-modal-bg')" in text
+    assert "position:sticky;top:0" in text
+    assert "renderEntryControls()+\n      renderJournal()" in text
+    assert "'<button class=\"active train\" onclick=\"ST.finishWorkout()\">Завершить тренировку</button>'" in text
+    assert "if(app.entryMode === 'train'){\n    return '';" in text
+    assert "st-finish-bottom\"><button" in text
+    assert "Тренировку 1 и Тренировку 2" not in text
+    assert "Сплит '+items[i].type+' · тренировка №" in text
     assert "st-modern-comment" in text
     assert "field.scrollHeight" in text
