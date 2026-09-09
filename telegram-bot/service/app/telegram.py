@@ -18,18 +18,27 @@ class TelegramClient:
         token: str,
         transport: httpx.BaseTransport | None = None,
         proxy_url: str = "",
+        api_base_url: str = "",
+        gateway_token: str = "",
         channel_id: str = "",
     ):
         self.token = token
-        self.base_url = f"https://api.telegram.org/bot{token}"
+        self.api_base_url = api_base_url.rstrip("/")
+        self.base_url = self.api_base_url or f"https://api.telegram.org/bot{token}"
         self.transport = transport
         self.proxy_url = proxy_url
+        self.gateway_token = gateway_token
         self.channel_id = channel_id
 
     def _client(self, timeout: float) -> httpx.Client:
         options: dict[str, Any] = {"timeout": timeout, "transport": self.transport}
-        if self.proxy_url and self.transport is None:
+        if self.proxy_url and not self.api_base_url and self.transport is None:
             options["proxy"] = self.proxy_url
+        if self.api_base_url and self.gateway_token:
+            options["headers"] = {
+                "X-Edabalans-Relay-Token": self.gateway_token,
+                "X-Telegram-Bot-Token": self.token,
+            }
         return httpx.Client(**options)
 
     def call(self, method: str, payload: dict[str, Any], timeout: float = 30) -> Any:

@@ -32,6 +32,46 @@ def test_http_error_does_not_expose_bot_token():
     assert "very-secret-token" not in str(exc.value)
 
 
+def test_relay_uses_gateway_headers_without_bot_token_in_url():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"id": 1}})
+
+    result = TelegramClient(
+        "123456:very-secret-token",
+        httpx.MockTransport(handler),
+        api_base_url="https://relay.example.test/telegram/",
+        gateway_token="gateway-secret",
+    ).call("getMe", {})
+
+    assert result == {"id": 1}
+    assert str(seen[0].url) == "https://relay.example.test/telegram/getMe"
+    assert seen[0].headers["X-Edabalans-Relay-Token"] == "gateway-secret"
+    assert seen[0].headers["X-Telegram-Bot-Token"] == "123456:very-secret-token"
+
+
+def test_relay_bypasses_a_stale_legacy_proxy_setting(monkeypatch):
+    observed = {}
+    sentinel = object()
+
+    def fake_httpx_client(**options):
+        observed.update(options)
+        return sentinel
+
+    monkeypatch.setattr("app.telegram.httpx.Client", fake_httpx_client)
+    client = TelegramClient(
+        "123456:very-secret-token",
+        proxy_url="http://unreliable-proxy.example.test:3128",
+        api_base_url="https://relay.example.test/telegram",
+        gateway_token="gateway-secret",
+    )
+
+    assert client._client(12) is sentinel
+    assert "proxy" not in observed
+
+
 def test_send_content_passes_validated_html_to_telegram_boundary():
     seen = []
 

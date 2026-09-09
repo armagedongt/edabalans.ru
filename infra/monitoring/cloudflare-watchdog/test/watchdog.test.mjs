@@ -34,7 +34,7 @@ function response(status, body) {
 function healthyChecks() {
   return {
     platform: { ok: true, status: 200, reasons: [], error: null },
-    telegram: { ok: true, status: 200, reasons: [], error: null, route: "proxy" },
+    telegram: { ok: true, status: 200, reasons: [], error: null, route: "relay" },
   };
 }
 
@@ -116,7 +116,7 @@ test("an open incident switches recovery boundary only after three matching chec
   assert.deepEqual(state.incident.confirmedFailures, ["telegram"]);
 });
 
-test("Telegram-only incident reboots EU first, RU after five minutes, then suspends ads", async () => {
+test("Telegram-only incident suspends ads without rebooting either server", async () => {
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
     calls.push({ url: String(url), options });
@@ -154,20 +154,7 @@ test("Telegram-only incident reboots EU first, RU after five minutes, then suspe
   await runWatchdog(env, storage, { fetchImpl, now: 0 });
   await runWatchdog(env, storage, { fetchImpl, now: 60_000 });
   await runWatchdog(env, storage, { fetchImpl, now: 120_000 });
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/eu-id/reboot")).length, 1);
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/ru-id/reboot")).length, 0);
-
-  await runWatchdog(env, storage, { fetchImpl, now: 299_999 });
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/ru-id/reboot")).length, 0);
-  await runWatchdog(env, storage, { fetchImpl, now: 300_000 });
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/ru-id/reboot")).length, 1);
-  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 0);
-
-  await runWatchdog(env, storage, { fetchImpl, now: 599_999 });
-  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 0);
-  await runWatchdog(env, storage, { fetchImpl, now: 600_000 });
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/eu-id/reboot")).length, 1);
-  assert.equal(calls.filter((call) => call.url.endsWith("/servers/ru-id/reboot")).length, 1);
+  assert.equal(calls.filter((call) => call.url.includes("api.timeweb.cloud")).length, 0);
   assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 2);
   const yandexCall = calls.find((call) => call.url.includes("api.direct.yandex.com") && JSON.parse(call.options.body).method === "suspend");
   assert.deepEqual(JSON.parse(yandexCall.options.body).params.SelectionCriteria.Ids, [101]);
@@ -175,14 +162,31 @@ test("Telegram-only incident reboots EU first, RU after five minutes, then suspe
   const alertTexts = calls
     .filter((call) => call.url.includes("api.telegram.org"))
     .map((call) => JSON.parse(call.options.body).text);
-  assert.equal(alertTexts.length, 4);
+  assert.equal(alertTexts.length, 2);
   assert.ok(alertTexts.some((text) => text.includes("Бот не работает")));
-  assert.ok(alertTexts.some((text) => text.includes("европейский сервер")));
-  assert.ok(alertTexts.some((text) => text.includes("российский сервер")));
   assert.ok(alertTexts.some((text) => text.includes("Реклама в Яндекс.Директе остановлена")));
 });
 
-test("failed ad suspension keeps retrying, but an ambiguous reboot is never repeated", async () => {
+test("Telegram probe rejects a ready response on the obsolete proxy route", async () => {
+  const relay = await probe(
+    "https://example.test/telegram/ready",
+    async () => response(200, { status: "ready", telegram_route: "relay" }),
+    10_000,
+    "relay",
+  );
+  const proxy = await probe(
+    "https://example.test/telegram/ready",
+    async () => response(200, { status: "ready", telegram_route: "proxy" }),
+    10_000,
+    "relay",
+  );
+
+  assert.equal(relay.ok, true);
+  assert.equal(proxy.ok, false);
+  assert.equal(proxy.error, "unexpected_route");
+});
+
+test("failed ad suspension keeps retrying without rebooting a healthy platform", async () => {
   const calls = [];
   const fetchImpl = async (url) => {
     calls.push(String(url));
@@ -213,11 +217,11 @@ test("failed ad suspension keeps retrying, but an ambiguous reboot is never repe
   for (const now of [1_000, 3_000, 5_000, 7_000, 9_000]) {
     await runWatchdog(env, storage, { fetchImpl, now });
   }
-  assert.equal(calls.filter((url) => url.endsWith("/servers/eu-id/reboot")).length, 1);
+  assert.equal(calls.filter((url) => url.includes("api.timeweb.cloud")).length, 0);
   assert.equal(calls.filter((url) => url.includes("api.direct.yandex.com")).length, 4);
 });
 
-test("recovery resumes only campaigns paused by automation after three healthy checks", async () => {
+test("recovery never resumes campaigns paused by automation", async () => {
   let healthy = false;
   const telegramBodies = [];
   const yandexBodies = [];
@@ -232,9 +236,11 @@ test("recovery resumes only campaigns paused by automation after three healthy c
       yandexBodies.push(body);
       if (body.method === "get") return response(200, { result: { Campaigns: [{ Id: 101, State: "ON", Status: "ACCEPTED" }, { Id: 202, State: "SUSPENDED", Status: "ACCEPTED" }] } });
       if (body.method === "suspend") return response(200, { result: { SuspendResults: [{ Id: 101 }] } });
-      return response(200, { result: { ResumeResults: [{ Id: 101 }] } });
+      throw new Error(`Unexpected Direct method: ${body.method}`);
     }
-    return healthy ? response(200, { status: "ready" }) : response(503, { status: "unavailable" });
+    return healthy
+      ? response(200, { status: "ready", telegram_route: "relay" })
+      : response(503, { status: "unavailable" });
   };
   const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
@@ -248,18 +254,16 @@ test("recovery resumes only campaigns paused by automation after three healthy c
     TELEGRAM_ALERT_CHAT_ID: "42",
     YANDEX_DIRECT_TOKEN: "direct-secret",
     YANDEX_CAMPAIGN_IDS: "101,202",
-    RECOVERY_SUCCESSES_BEFORE_RESUME: "3",
   };
   const storage = new MemoryStorage();
   await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
   await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
   healthy = true;
-  await runWatchdog(env, storage, { fetchImpl, now: 4_000 });
-  await runWatchdog(env, storage, { fetchImpl, now: 5_000 });
-  await runWatchdog(env, storage, { fetchImpl, now: 6_000 });
-  assert.deepEqual(yandexBodies.map((body) => body.method), ["get", "suspend", "resume"]);
-  assert.deepEqual(yandexBodies.at(-1).params.SelectionCriteria.Ids, [101]);
-  assert.match(telegramBodies.at(-1).text, /возобновила 1 камп/);
+  for (const now of [4_000, 5_000, 6_000, 7_000, 8_000]) {
+    await runWatchdog(env, storage, { fetchImpl, now });
+  }
+  assert.deepEqual(yandexBodies.map((body) => body.method), ["get", "suspend"]);
+  assert.match(telegramBodies.at(-1).text, /остаётся остановленной до ручной проверки/);
   assert.equal(storage.value.incident, null);
 });
 
@@ -309,7 +313,7 @@ test("daily report is generated, delivered as native rich tables after 06:00 Mos
         demo_ai_message: "demo ai",
       },
     });
-    return response(200, { status: "ready" });
+    return response(200, { status: "ready", telegram_route: "relay" });
   };
   const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
@@ -345,7 +349,7 @@ test("daily report snapshot waits for 03:00 Moscow and delivery waits for 06:00"
     if (value.includes("/daily-report/delivered")) return response(200, { status: "sent" });
     if (value.includes("/daily-report?")) return response(200, { messages: ["report"], payload: {} });
     if (value.includes("api.telegram.org")) return response(200, { ok: true });
-    return response(200, { status: "ready" });
+    return response(200, { status: "ready", telegram_route: "relay" });
   };
   const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
@@ -395,7 +399,7 @@ test("rich report falls back to readable cards when Telegram rejects native tabl
         ],
       },
     });
-    return response(200, { status: "ready" });
+    return response(200, { status: "ready", telegram_route: "relay" });
   };
   const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
@@ -633,7 +637,7 @@ test("Durable Object queues overlapping runs instead of executing them together"
   globalThis.fetch = async () => {
     probeCount += 1;
     if (probeCount <= 2) await gate;
-    return response(200, { status: "ready" });
+    return response(200, { status: "ready", telegram_route: "relay" });
   };
   try {
     const coordinator = new WatchdogCoordinator({ storage: new MemoryStorage() }, {

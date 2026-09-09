@@ -1,10 +1,8 @@
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_FAILURES_BEFORE_INCIDENT = 3;
-const DEFAULT_RU_REBOOT_DELAY_SECONDS = 300;
-const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 600;
+const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 120;
 const DEFAULT_ACTION_RETRY_SECONDS = 120;
 const DEFAULT_MAX_ACTION_ATTEMPTS = 3;
-const DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME = 3;
 
 export function initialState() {
   return {
@@ -48,14 +46,10 @@ export function normalizeState(value) {
     pendingAlerts: Array.isArray(value.pendingAlerts) ? value.pendingAlerts.slice(-20) : [],
   };
   state.report = { ...initialState().report, ...(value.report || {}) };
-  if (state.incident) {
-    state.incident.recoveryStreak ??= 0;
-    state.incident.resumeAds ??= actionState();
-  }
   return state;
 }
 
-export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS) {
+export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS, requiredRoute = null) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -71,12 +65,18 @@ export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS) {
       body = null;
     }
     const declaredReady = body?.status === "ready";
+    const route = typeof body?.telegram_route === "string" ? body.telegram_route : null;
+    const routeMatches = !requiredRoute || route === requiredRoute;
     return {
-      ok: response.ok && declaredReady,
+      ok: response.ok && declaredReady && routeMatches,
       status: response.status,
       reasons: Array.isArray(body?.reasons) ? body.reasons.map(String).slice(0, 8) : [],
-      route: typeof body?.telegram_route === "string" ? body.telegram_route : null,
-      error: response.ok && !declaredReady ? "unexpected_response" : null,
+      route,
+      error: response.ok && declaredReady && !routeMatches
+        ? "unexpected_route"
+        : response.ok && !declaredReady
+          ? "unexpected_response"
+          : null,
     };
   } catch (error) {
     return {
@@ -127,7 +127,7 @@ function queueAlert(state, text) {
 
 function incidentLabel(checks) {
   if (!checks.platform.ok) return "основной российский сервер/API";
-  return "Telegram-бот или европейский Telegram-шлюз";
+  return "Telegram-бот или его путь к Telegram";
 }
 
 export function updateIncidentState(stateInput, checks, now, failuresBeforeIncident) {
@@ -137,15 +137,10 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
   if (failures.length === 0) {
     if (state.incident) {
       const pausedIds = state.incident.adsPause?.campaignIds || [];
-      if (state.incident.adsPause?.status === "succeeded" && pausedIds.length) {
-        state.incident.recoveryStreak = (state.incident.recoveryStreak || 0) + 1;
-        state.failureStreak = 0;
-        state.candidateFailureKey = null;
-        state.firstFailureAt = null;
-        return state;
-      }
       const durationMinutes = Math.max(1, Math.round((now - state.incident.startedAt) / 60_000));
-      queueAlert(state, `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
+      queueAlert(state, pausedIds.length
+        ? `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама остаётся остановленной до ручной проверки.`
+        : `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
     }
     state.failureStreak = 0;
     state.candidateFailureKey = null;
@@ -155,7 +150,6 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
   }
 
   const failureKey = failures.slice().sort().join(",");
-  if (state.incident) state.incident.recoveryStreak = 0;
   if (!state.incident && state.candidateFailureKey !== failureKey) {
     state.failureStreak = 0;
     state.firstFailureAt = now;
@@ -174,10 +168,7 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
       boundaryCandidateKey: failureKey,
       boundaryStreak: state.failureStreak,
       ruReboot: actionState(),
-      euReboot: actionState(),
       adsPause: actionState(),
-      resumeAds: actionState(),
-      recoveryStreak: 0,
       missingConfigurationAlerts: {},
     };
     queueAlert(
@@ -212,30 +203,14 @@ function canAttempt(action, target, now) {
 
 function actionPlan(state, checks, now, env) {
   if (!state.incident) return [];
-  if (failedChecks(checks).length === 0) {
-    const threshold = parsePositiveInteger(env.RECOVERY_SUCCESSES_BEFORE_RESUME, DEFAULT_RECOVERY_SUCCESSES_BEFORE_RESUME);
-    const ids = state.incident.adsPause?.campaignIds || [];
-    return state.incident.recoveryStreak >= threshold && ids.length
-      ? [{ key: "resumeAds", kind: "resume_ads", ids }]
-      : [];
-  }
+  if (failedChecks(checks).length === 0) return [];
   const ageSeconds = Math.max(0, (now - state.incident.startedAt) / 1000);
-  const ruDelay = parsePositiveInteger(
-    env.RU_REBOOT_AFTER_TELEGRAM_FAILURE_SECONDS,
-    DEFAULT_RU_REBOOT_DELAY_SECONDS,
-  );
   const adsDelay = parsePositiveInteger(env.ADS_PAUSE_AFTER_SECONDS, DEFAULT_ADS_PAUSE_DELAY_SECONDS);
   const actions = [];
 
   const confirmed = new Set(state.incident.confirmedFailures || state.incident.lastFailures || []);
   if (confirmed.has("platform")) {
     actions.push({ key: "ruReboot", kind: "reboot", server: "RU", serverId: env.TIMEWEB_RU_SERVER_ID });
-  }
-  if (!confirmed.has("platform") && confirmed.has("telegram")) {
-    actions.push({ key: "euReboot", kind: "reboot", server: "EU", serverId: env.TIMEWEB_EU_SERVER_ID });
-    if (ageSeconds >= ruDelay) {
-      actions.push({ key: "ruReboot", kind: "reboot", server: "RU", serverId: env.TIMEWEB_RU_SERVER_ID });
-    }
   }
   if (ageSeconds >= adsDelay) {
     actions.push({ key: "adsPause", kind: "pause_ads" });
@@ -258,7 +233,7 @@ function configurationFor(action, env) {
   }
   let ids;
   try {
-    ids = action.kind === "resume_ads" ? action.ids : campaignIds(env.YANDEX_CAMPAIGN_IDS);
+    ids = campaignIds(env.YANDEX_CAMPAIGN_IDS);
   } catch (error) {
     return { ok: false, reason: String(error?.message || error) };
   }
@@ -310,25 +285,6 @@ async function pauseAds(ids, env, fetchImpl) {
   const errors = results.flatMap((item) => item.Errors || []);
   if (errors.length || succeeded.length !== activeIds.length) throw new Error(`Яндекс.Директ: ${errors[0]?.Code ?? "не все кампании остановлены"}`);
   return succeeded;
-}
-
-async function resumeAds(ids, env, fetchImpl) {
-  const headers = {
-    Authorization: `Bearer ${env.YANDEX_DIRECT_TOKEN}`,
-    "Accept-Language": "ru",
-    "Content-Type": "application/json; charset=utf-8",
-  };
-  if (env.YANDEX_DIRECT_CLIENT_LOGIN) headers["Client-Login"] = env.YANDEX_DIRECT_CLIENT_LOGIN;
-  const response = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
-    method: "POST",
-    headers,
-    body: JSON.stringify({ method: "resume", params: { SelectionCriteria: { Ids: ids } } }),
-  }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
-  if (!response.ok) throw new Error(`Яндекс.Директ HTTP ${response.status}`);
-  const body = await response.json();
-  if (body.error) throw new Error(`Яндекс.Директ API ${body.error.error_code ?? "error"}`);
-  const errors = (body.result?.ResumeResults || []).flatMap((item) => item.Errors || []);
-  if (errors.length) throw new Error(`Яндекс.Директ: ${errors[0].Code ?? "ошибка"}`);
 }
 
 async function sendTelegramAlert(text, env, fetchImpl) {
@@ -444,9 +400,6 @@ async function executeAction(state, action, env, fetchImpl, storage, now) {
       queueAlert(state, target.campaignIds.length
         ? `⛔ Реклама в Яндекс.Директе остановлена: ${target.campaignIds.length} камп.`
         : "ℹ️ Сбой подтверждён, но автоматика не останавливала Директ: указанные кампании уже не работали.");
-    } else {
-      await resumeAds(configuration.ids, env, fetchImpl);
-      queueAlert(state, `▶️ Бот стабильно работает. Автоматика возобновила ${configuration.ids.length} камп. Яндекс.Директа, которые сама остановила.`);
     }
     target.status = "succeeded";
     target.retryAt = null;
@@ -481,7 +434,7 @@ export async function runWatchdog(env, storage, options = {}) {
     const timeoutMs = parsePositiveInteger(env.CHECK_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
     const [platform, telegram] = await Promise.all([
       probe(env.PLATFORM_READY_URL, fetchImpl, timeoutMs),
-      probe(env.TELEGRAM_READY_URL, fetchImpl, timeoutMs),
+      probe(env.TELEGRAM_READY_URL, fetchImpl, timeoutMs, "relay"),
     ]);
     checks = { platform, telegram };
   }
@@ -497,10 +450,6 @@ export async function runWatchdog(env, storage, options = {}) {
   if (state.incident && !options.skipActions) {
     for (const action of actionPlan(state, checks, now, env)) {
       await executeAction(state, action, env, fetchImpl, storage, now);
-    }
-    if (state.incident?.resumeAds?.status === "succeeded") {
-      state.incident = null;
-      await persist(storage, state);
     }
   }
   if (!options.skipActions) await runDailyReport(state, env, fetchImpl, storage, now);

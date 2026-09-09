@@ -83,6 +83,8 @@ def _runtime_failure_reasons(now: float | None = None) -> list[str]:
     reasons: list[str] = []
     if not settings.telegram_test_bot_token:
         reasons.append("telegram_token_missing")
+    if settings.telegram_api_base_url and not settings.telegram_gateway_token:
+        reasons.append("telegram_gateway_token_missing")
     if not settings.telegram_polling_enabled:
         reasons.append("polling_disabled")
     elif runtime_health.last_poll_success is None or current - runtime_health.last_poll_success > poll_max_age:
@@ -102,6 +104,8 @@ def client() -> TelegramClient:
     return TelegramClient(
         settings.telegram_test_bot_token,
         proxy_url=settings.telegram_proxy_url,
+        api_base_url=settings.telegram_api_base_url,
+        gateway_token=settings.telegram_gateway_token,
         channel_id=settings.telegram_channel_id,
     )
 
@@ -374,6 +378,8 @@ def scheduler_iteration() -> None:
         tg = TelegramClient(
             settings.telegram_test_bot_token,
             proxy_url=settings.telegram_proxy_url,
+            api_base_url=settings.telegram_api_base_url,
+            gateway_token=settings.telegram_gateway_token,
             channel_id=settings.telegram_channel_id,
         ) if settings.telegram_test_bot_token else None
         max_sender = MaxClient(
@@ -467,6 +473,8 @@ async def polling_loop() -> None:
     tg = TelegramClient(
         settings.telegram_test_bot_token,
         proxy_url=settings.telegram_proxy_url,
+        api_base_url=settings.telegram_api_base_url,
+        gateway_token=settings.telegram_gateway_token,
         channel_id=settings.telegram_channel_id,
     )
     offset: int | None = None
@@ -765,7 +773,13 @@ def ready(db: Session = Depends(get_db)) -> JSONResponse:
         content={
             "status": "ready" if is_ready else "unavailable",
             "reasons": reasons,
-            "telegram_route": "proxy" if settings.telegram_proxy_url else "direct",
+            "telegram_route": (
+                "relay"
+                if settings.telegram_api_base_url
+                else "proxy"
+                if settings.telegram_proxy_url
+                else "direct"
+            ),
         },
     )
 

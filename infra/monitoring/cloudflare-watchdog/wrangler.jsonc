@@ -30,12 +30,10 @@
     "PLATFORM_READY_URL": "https://edabalans.ru/ready",
     "TELEGRAM_READY_URL": "https://edabalans.ru/api/health/telegram",
     "FAILURES_BEFORE_INCIDENT": "3",
-    "RU_REBOOT_AFTER_TELEGRAM_FAILURE_SECONDS": "300",
-    "ADS_PAUSE_AFTER_SECONDS": "600",
+    "ADS_PAUSE_AFTER_SECONDS": "120",
     "ACTION_RETRY_SECONDS": "120",
     "MAX_ACTION_ATTEMPTS": "3",
     "CHECK_TIMEOUT_MS": "10000",
-    "RECOVERY_SUCCESSES_BEFORE_RESUME": "3",
     "MARKETING_REPORT_URL": "https://edabalans.ru/api/internal/marketing/daily-report",
     "SEND_REPORT_AI_DEMO_ONCE": "true",
     "SEND_RICH_REPORT_PREVIEW_ONCE": "true"

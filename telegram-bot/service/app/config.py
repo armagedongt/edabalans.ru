@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     telegram_webhook_secret: str = ""
     telegram_public_base_url: str = ""
     telegram_proxy_url: str = ""
+    telegram_api_base_url: str = ""
+    telegram_gateway_token: str = ""
     telegram_channel_id: str = ""
     telegram_polling_enabled: bool = False
     telegram_polling_timeout_seconds: int = 25

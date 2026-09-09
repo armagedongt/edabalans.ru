@@ -65,6 +65,19 @@ def test_ready_accepts_the_current_direct_telegram_route(tmp_path, monkeypatch):
     app.dependency_overrides.clear()
 
 
+def test_ready_reports_relay_route(tmp_path, monkeypatch):
+    client = _client(tmp_path, monkeypatch)
+    monkeypatch.setattr(main_module.settings, "telegram_proxy_url", "http://legacy-proxy.example.test:3128")
+    monkeypatch.setattr(main_module.settings, "telegram_api_base_url", "https://relay.example.test/telegram")
+    monkeypatch.setattr(main_module.settings, "telegram_gateway_token", "relay-secret")
+
+    response = client.get("/ready")
+
+    assert response.status_code == 200
+    assert response.json()["telegram_route"] == "relay"
+    app.dependency_overrides.clear()
+
+
 @pytest.mark.parametrize(
     ("setting", "value", "reason"),
     [
@@ -130,9 +143,11 @@ def test_polling_success_is_recorded_only_after_get_updates_through_proxy(monkey
     observed: dict[str, object] = {"calls": 0}
 
     class FakePollingTelegram:
-        def __init__(self, token, *, proxy_url, channel_id):
+        def __init__(self, token, *, proxy_url, api_base_url, gateway_token, channel_id):
             observed["token"] = token
             observed["proxy_url"] = proxy_url
+            observed["api_base_url"] = api_base_url
+            observed["gateway_token"] = gateway_token
             observed["channel_id"] = channel_id
 
         def delete_webhook(self):
@@ -178,7 +193,7 @@ def test_real_telegram_client_applies_configured_proxy_to_httpx(monkeypatch):
 
 def test_polling_failure_does_not_record_success(monkeypatch):
     class FailedPollingTelegram:
-        def __init__(self, token, *, proxy_url, channel_id):
+        def __init__(self, token, *, proxy_url, api_base_url, gateway_token, channel_id):
             pass
 
         def delete_webhook(self):

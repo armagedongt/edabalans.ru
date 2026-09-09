@@ -59,6 +59,7 @@ jobs:
       - name: Test production watchdog
         run: |
           node --test infra/monitoring/cloudflare-watchdog/test/*.test.mjs
+          node --test infra/monitoring/cloudflare-telegram-relay/test/*.test.mjs
           bash infra/monitoring/test-telegram-watchdog.sh
 
       - name: Build module inventory for tests
