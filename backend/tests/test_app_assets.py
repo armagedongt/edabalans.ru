@@ -1286,9 +1286,12 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "st-modern-comment" in text
     assert "field.scrollHeight" in text
     assert "Как пользоваться" in text
-    assert "Редактировать шаблон" in text
+    assert ">Редактировать</button>" in text
+    assert "Изменения применяются сразу" in text
     assert "saveExerciseCatalog" in text
     assert "app.managerDraft = copyCatalog" in text
+    assert "queueManagerSave();" in text
+    assert "ST.saveManager()" not in text
     assert "document.body.style.overflow='hidden'" in text
     assert "document.body.style.overflow=app.modalScrollState.body" in text
     assert "Добавить своё" in text

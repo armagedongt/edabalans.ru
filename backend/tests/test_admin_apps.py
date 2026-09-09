@@ -11,6 +11,7 @@ from sqlalchemy.orm import sessionmaker  # noqa: E402
 from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import get_settings  # noqa: E402
+from app.app_routes import BASE_STRENGTH_EXERCISES  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
@@ -195,7 +196,13 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         db.add(StrengthState(
             user_id=user.id,
             workout_types=[],
-            hidden_exercises=[],
+            hidden_exercises=[{
+                "scope": "catalog",
+                "exercise_id": "custom-old-row",
+                "exercise_name": "Моя старая тяга",
+                "catalog_active": True,
+                "source": "custom",
+            }],
             workouts=[{
                 "workout_type": 1,
                 "session_number": 1,
@@ -206,6 +213,11 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
                     "exercise_name": "Тяга блока из старой истории",
                     "sort_order": 1,
                     "sets": [],
+                }, {
+                    "exercise_id": "custom-old-row",
+                    "exercise_name": "Моя старая тяга",
+                    "sort_order": 2,
+                    "sets": [{"set_number": 1, "fact_weight": "25", "fact_reps": "12"}],
                 }],
             }],
         ))
@@ -223,6 +235,40 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
     ).json()["workout"]["exercise_catalog"]
 
     assert len([item for item in first if item["source"] == "base"]) == 25
+    base_names = {item["name"] for item in BASE_STRENGTH_EXERCISES}
+    assert base_names == {
+        "Жим штанги лёжа",
+        "Жим лёжа узким хватом",
+        "Жим гантелей на наклонной скамье",
+        "Подтягивания в гравитроне",
+        "Тяга верхнего блока сидя",
+        "Тяга горизонтального блока",
+        "Подтягивания",
+        "Тяга штанги в наклоне",
+        "Приседания со штангой",
+        "Жим ногами",
+        "Выпады",
+        "Болгарские сплит-приседания",
+        "Румынская тяга",
+        "Становая тяга",
+        "Ягодичный мост",
+        "Сгибание ног в тренажёре",
+        "Разгибание ног в тренажёре",
+        "Сведение ног в тренажёре",
+        "Разведение ног в тренажёре",
+        "Подъёмы на носки",
+        "Сгибание рук с гантелями",
+        "Тяга верхнего блока на трицепс",
+        "Разведение гантелей в стороны",
+        "Разведение рук на заднюю дельту",
+        "Подъём гантелей на бицепс сидя на наклонной скамье",
+    }
+    assert all(
+        item["muscles"].strip()
+        and len(item["tips"]) >= 3
+        and all(tip.strip() for tip in item["tips"])
+        for item in BASE_STRENGTH_EXERCISES
+    )
     assert {item["exercise_id"] for item in first} == {item["exercise_id"] for item in second}
     assert next(item for item in first if item["exercise_id"] == "legacy-cable-row")["active"] is True
     assert next(item for item in second if item["exercise_id"] == "legacy-cable-row")["active"] is False
@@ -241,14 +287,22 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
                     "sort_order": 1,
                     "source": "base",
                 },
-                {
-                    "exercise_id": "custom-my-row",
-                    "exercise_name": "Моя тяга",
-                    "active": True,
-                    "catalog_active": True,
-                    "sort_order": 2,
-                    "source": "custom",
-                },
+                    {
+                        "exercise_id": "custom-my-row",
+                        "exercise_name": "Моя тяга",
+                        "active": True,
+                        "catalog_active": True,
+                        "sort_order": 2,
+                        "source": "custom",
+                    },
+                    {
+                        "exercise_id": "custom-old-row",
+                        "exercise_name": "Моя старая тяга",
+                        "active": False,
+                        "catalog_active": True,
+                        "sort_order": 3,
+                        "source": "custom",
+                    },
             ],
         },
     )
@@ -262,6 +316,64 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
     assert next(item for item in loaded if item["exercise_id"] == "bench-press")["exercise_name"] == "Жим штанги лёжа"
     assert next(item for item in loaded if item["exercise_id"] == "bench-press")["active"] is True
     assert next(item for item in loaded if item["exercise_id"] == "custom-my-row")["active"] is True
+    loaded_other_template = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 1},
+    ).json()["workout"]["exercise_catalog"]
+    custom_elsewhere = next(item for item in loaded_other_template if item["exercise_id"] == "custom-my-row")
+    assert custom_elsewhere["catalog_active"] is True
+    assert custom_elsewhere["active"] is False
+
+    hidden = client.post(
+        "/api/apps/strength",
+        json={
+            "action": "saveExerciseCatalog",
+            "target_user_id": str(user_id),
+            "workout_type": 1,
+            "exercises": [
+                {
+                    "exercise_id": "legacy-cable-row",
+                    "exercise_name": "Тяга блока из старой истории",
+                    "active": False,
+                    "sort_order": 1,
+                    "source": "history",
+                },
+                {
+                    "exercise_id": "custom-old-row",
+                    "exercise_name": "Моя старая тяга",
+                    "active": False,
+                    "catalog_active": False,
+                    "sort_order": 2,
+                    "source": "custom",
+                },
+            ],
+        },
+    )
+    assert hidden.status_code == 200
+    after_hide = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 1},
+    ).json()["workout"]
+    assert next(
+        item for item in after_hide["exercise_catalog"]
+        if item["exercise_id"] == "legacy-cable-row"
+    )["active"] is False
+    assert any(
+        item["exercise_id"] == "legacy-cable-row"
+        for item in after_hide["session_exercises"]
+    )
+    assert next(
+        item for item in after_hide["exercise_catalog"]
+        if item["exercise_id"] == "custom-old-row"
+    )["catalog_active"] is False
+    assert any(
+        item["exercise_id"] == "custom-old-row"
+        for item in after_hide["session_exercises"]
+    )
+    assert any(
+        item["exercise_id"] == "custom-old-row" and item["fact_weight"] == "25"
+        for item in after_hide["sets"]
+    )
 
 
 def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():

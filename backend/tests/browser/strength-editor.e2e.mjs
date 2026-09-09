@@ -14,13 +14,15 @@ const browser = await chromium.launch({ headless: true });
 
 function workout(type) {
   const names = [
-    "Жим штанги лёжа", "Тяга верхнего блока", "Приседания со штангой",
-    "Румынская тяга", "Ягодичный мост", "Разведение гантелей в стороны",
-    "Жим лёжа узким хватом", "Жим гантелей", "Жим над головой",
-    "Тяга горизонтального блока", "Подтягивания", "Тяга штанги в наклоне",
-    "Жим ногами", "Выпады", "Болгарские сплит-приседания", "Становая тяга",
-    "Сгибание ног", "Разгибание ног", "Сведение ног", "Разведение ног",
-    "Подъёмы на носки", "Сгибание рук", "Разгибание рук", "Задняя дельта", "Планка",
+    "Жим штанги лёжа", "Жим лёжа узким хватом", "Жим гантелей на наклонной скамье",
+    "Подтягивания в гравитроне", "Тяга верхнего блока сидя", "Тяга горизонтального блока",
+    "Подтягивания", "Тяга штанги в наклоне", "Приседания со штангой", "Жим ногами",
+    "Выпады", "Болгарские сплит-приседания", "Румынская тяга", "Становая тяга",
+    "Ягодичный мост", "Сгибание ног в тренажёре", "Разгибание ног в тренажёре",
+    "Сведение ног в тренажёре", "Разведение ног в тренажёре", "Подъёмы на носки",
+    "Сгибание рук с гантелями", "Тяга верхнего блока на трицепс",
+    "Разведение гантелей в стороны", "Разведение рук на заднюю дельту",
+    "Подъём гантелей на бицепс сидя на наклонной скамье",
   ];
   const catalog = names.map((name, index) => ({
     exercise_id: index === 0 ? "bench-press" : index === 1 ? "lat-pulldown" : `base-${index + 1}`,
@@ -57,11 +59,12 @@ function workout(type) {
   };
 }
 
-for (const width of [360, 430]) {
+for (const width of [360, 430, 768, 1440]) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.addInitScript(({ workouts }) => {
     window.EdabalansIdentity = { source: "native", email: "preview@example.test" };
     window.__saveActions = [];
+    window.__saveBodies = [];
     const payload = (value) => Promise.resolve(new Response(JSON.stringify(value), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -77,24 +80,35 @@ for (const width of [360, 430]) {
         return payload({ ok: true, workout: window.__workouts[type] });
       }
       window.__saveActions.push(action);
-      return payload({ ok: true, version: 2 });
+      window.__saveBodies.push(body ? structuredClone(body) : null);
+      if (window.__failNextSave && action === "saveExerciseCatalog") {
+        window.__failNextSave = false;
+        return payload({ ok: false, error: "Сеть недоступна" });
+      }
+      return new Promise((resolve) => setTimeout(() => resolve(new Response(JSON.stringify({ ok: true, version: 2 }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })), 120));
     };
   }, { workouts: { 1: workout(1), 2: workout(2), 3: workout(3) } });
   await page.goto(pathToFileURL(appPath).href);
-  await page.getByText("Редактировать шаблон", { exact: true }).waitFor();
+  await page.getByText("Редактировать", { exact: true }).waitFor();
 
   assert.equal(await page.getByText("Шаблон 1", { exact: true }).count(), 1);
   assert.equal(await page.getByText("Как пользоваться", { exact: true }).count(), 1);
   assert.ok(await page.locator("#strength-app").evaluate((node) => node.scrollWidth <= node.clientWidth));
+  if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-closed-${width}.png`), fullPage: false });
 
   await page.getByText("Как пользоваться", { exact: true }).click();
   assert.equal(await page.getByText("Как пользоваться тренировками", { exact: true }).count(), 1);
   await page.getByText("Понятно", { exact: true }).click();
 
-  await page.getByText("Редактировать шаблон", { exact: true }).click();
-  assert.equal(await page.getByText("Редактировать шаблон 1", { exact: true }).count(), 1);
+  await page.getByText("Редактировать", { exact: true }).click();
+  assert.equal(await page.getByText("Редактировать · Шаблон 1", { exact: true }).count(), 1);
   assert.equal(await page.getByText("Добавить своё", { exact: true }).count(), 1);
   assert.equal(await page.getByText("Добавить", { exact: true }).count() > 0, true);
+  assert.equal(await page.getByText("Изменения применяются сразу.", { exact: false }).count(), 1);
+  assert.equal(await page.getByText("Готово", { exact: true }).count(), 0);
   assert.equal(await page.evaluate(() => document.body.style.overflow), "hidden");
   assert.equal(await page.locator(".st-manager-scroll").evaluate((node) => getComputedStyle(node).overflowY), "auto");
   assert.equal(await page.locator(".st-manager-scroll").evaluate((node) => node.scrollHeight > node.clientHeight), true);
@@ -103,16 +117,38 @@ for (const width of [360, 430]) {
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-manager-${width}.png`), fullPage: false });
 
   await page.getByText("Добавить", { exact: true }).first().click();
+  await page.waitForFunction(() => window.__saveActions.includes("saveExerciseCatalog"));
+  if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-saving-${width}.png`), fullPage: false });
+  await page.locator("#st-new-exercise").fill("Моё упражнение");
+  await page.getByText("Добавить своё", { exact: true }).click();
+  await page.locator(".st-manager-name", { hasText: "Моё упражнение" }).waitFor();
+  await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor();
+  const savedCatalogs = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveExerciseCatalog"));
+  assert.ok(savedCatalogs.length >= 2);
+  assert.ok(savedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Моё упражнение" && item.catalog_active));
+  assert.ok(savedCatalogs.at(-1).exercises.some((item) => item.active));
+  const savedSessions = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession"));
+  assert.ok(savedSessions.length >= 1);
+  assert.ok(savedSessions.at(-1).session.exercises.some((item) => item.exercise_name === "Моё упражнение"));
   await page.locator(".st-modal-bg").click({ position: { x: 2, y: 2 } });
   assert.equal(await page.locator(".st-modal-bg").count(), 0);
   assert.equal(await page.evaluate(() => document.body.style.overflow), "");
-  assert.deepEqual(await page.evaluate(() => window.__saveActions), []);
-
-  await page.getByText("Редактировать шаблон", { exact: true }).click();
-  await page.getByText("Добавить", { exact: true }).first().click();
-  await page.getByText("Готово", { exact: true }).click();
-  await page.getByText("Редактировать шаблон", { exact: true }).waitFor();
   assert.equal((await page.evaluate(() => window.__saveActions)).includes("saveExerciseCatalog"), true);
+
+  await page.getByText("Шаблон 2", { exact: true }).click();
+  await page.getByText("Редактировать", { exact: true }).click();
+  const customRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё упражнение" }) });
+  assert.equal(await customRow.count(), 1);
+  assert.equal(await customRow.getByText("Добавить", { exact: true }).count(), 1);
+  await page.evaluate(() => { window.__failNextSave = true; });
+  await page.getByText("Добавить", { exact: true }).first().click();
+  await page.getByText("Не удалось сохранить", { exact: true }).waitFor();
+  if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-error-${width}.png`), fullPage: false });
+  await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
+  assert.ok((await page.evaluate(() => window.__saveActions.filter((action) => action === "saveExerciseCatalog").length)) >= 4);
+  assert.equal(await page.getByText("Закрыть", { exact: true }).count(), 1);
+  await page.getByText("Закрыть", { exact: true }).click();
+  await page.getByText("Редактировать", { exact: true }).waitFor();
   await page.close();
 }
 
