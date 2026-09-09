@@ -204,10 +204,12 @@
 
       return Promise.all([
         loadSharedScript('edabalans-intensive-header', '/site-header.js', function () { return Boolean(window.EdabalansSiteHeader); }).catch(function () {}),
-        loadSharedScript('edabalans-intensive-footer', '/site-footer.js', function () { return Boolean(window.EdabalansFooter); }).catch(function () {})
+        loadSharedScript('edabalans-intensive-footer', '/site-footer.js', function () { return Boolean(window.EdabalansFooter); }).catch(function () {}),
+        loadSharedScript('edabalans-cookie-notice', '/cookie-notice.js', function () { return Boolean(window.EdabalansCookieNotice); }).catch(function () {})
       ]).then(function () {
         if (window.EdabalansSiteHeader) window.EdabalansSiteHeader.boot(mount);
         if (window.EdabalansFooter) window.EdabalansFooter.boot(mount);
+        if (window.EdabalansCookieNotice) window.EdabalansCookieNotice.boot(document);
         bindMenuAnalytics();
       });
     })

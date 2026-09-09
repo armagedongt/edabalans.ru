@@ -15,11 +15,13 @@ owns_files = [
   "README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md",
   "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md",
   "backend/app/brand_routes.py", "backend/app/static/brand/**",
+  "backend/app/static/site-cookie-notice.js",
   "backend/tests/test_brand_assets.py",
 ]
-owns_routes = ["*/embed.js", "*/site-footer.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
+owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
   { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
+  { path = "backend/app/static/site-cookie-notice.js", role = "runtime", shared = true, consumers = ["products.public-site", "platform.blog", "products.intensive"] },
 ]
 
 [[modules]]
@@ -194,7 +196,7 @@ depends_on = [
   "platform.content", "platform.crm", "products.calories",
   "products.masterclass.offers", "products.masterclass.messenger-links",
 ]
-reads_from = ["products.intensive", "products.masterclass", "messaging.telegram.attribution", "operations.proxy"]
+reads_from = ["platform", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
@@ -269,6 +271,7 @@ id = "products.public-site"
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.public-site.md"
 depends_on = ["platform.content", "platform.commerce", "platform.web_design"]
+reads_from = ["platform"]
 owns_files = [
   "backend/app/public_site_content_service.py", "backend/app/public_site_routes.py",
   "backend/app/public_site_content_cli.py", "backend/app/static/homepage-preview/**",
@@ -401,7 +404,7 @@ owns_files = [
 ]
 owns_routes = ["*/intensive*", "*/admin/api/intensive*"]
 depends_on = ["platform.content"]
-reads_from = ["products.public-site"]
+reads_from = ["platform", "products.public-site"]
 
 [[modules]]
 id = "products.intensive.telegram-login"

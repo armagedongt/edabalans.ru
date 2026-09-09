@@ -544,7 +544,8 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert "display: inline-flex; height: 40px; align-items: center; justify-content: center;" in response.text
     assert ".desktop-wordmark { padding-left: 12px;" in response.text
     assert ".site-title { margin-top: 42px; }" in response.text
-    assert "notice.hidden = true;" in response.text
+    assert '<script src="/cookie-notice.js" defer></script>' in response.text
+    assert "dismiss.addEventListener('click'" not in response.text
     assert "background: var(--site-blue);" in response.text
     assert "background: rgba(255,255,255,.83);" in response.text
     assert "box-shadow: 0 4px 8px -4px rgba(17,142,216,.55);" in response.text

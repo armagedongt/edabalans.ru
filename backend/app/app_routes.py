@@ -179,6 +179,11 @@ def site_header_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-header.js", stable_loader=True)
 
 
+@router.get("/cookie-notice.js", include_in_schema=False)
+def cookie_notice_loader() -> FileResponse:
+    return public_asset(STATIC_DIR / "site-cookie-notice.js", stable_loader=True)
+
+
 @router.get("/preview/homepage-recognition", include_in_schema=False)
 def homepage_recognition_preview() -> HTMLResponse:
     source = (STATIC_DIR / "homepage-preview" / "mobile.html").read_text(

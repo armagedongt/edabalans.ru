@@ -53,6 +53,55 @@ def test_stable_embed_loader_is_public() -> None:
     assert "var appHtmlCache = {};" in response.text
 
 
+def test_public_cookie_notice_is_shared_persistent_and_limited_to_public_pages() -> None:
+    response = client.get("/cookie-notice.js")
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["access-control-allow-origin"] == "*"
+    assert 'const COOKIE_NAME = "edabalans_cookie_notice"' in response.text
+    assert 'const COOKIE_VALUE = "accepted-v1"' in response.text
+    assert "Max-Age=${MAX_AGE_SECONDS}" in response.text
+    assert '"Path=/"' in response.text
+    assert '"SameSite=Lax"' in response.text
+    assert '"edabalans.ru"' in response.text
+    assert '"xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"' in response.text
+    assert "window.EdabalansCookieNotice" in response.text
+    assert "edabalans:cookie-accepted" in response.text
+
+    for path in (
+        "/intensive",
+        "/intensive/day-1",
+        "/intensive/day-2",
+        "/intensive/day-3",
+        "/intensive/day-4",
+    ):
+        page = client.get(path)
+        assert page.status_code == 200, path
+        assert 'cookie-notice.js" defer' in page.text, path
+
+    homepage = client.get("/preview/homepage-mobile")
+    assert '<script src="/cookie-notice.js" defer></script>' in homepage.text
+    assert "bottom: calc(18px + env(safe-area-inset-bottom, 0px));" in homepage.text
+    assert 'data-block-width="overlay" aria-label="Уведомление об использовании cookie" hidden' in homepage.text
+    assert "dismiss.addEventListener('click'" not in homepage.text
+
+    account = client.get("/lk")
+    assert "cookie-notice.js" not in account.text
+    legal = client.get("/legal/privacy")
+    assert "cookie-notice.js" not in legal.text
+
+    tilda_loader = (
+        Path(__file__).resolve().parents[1]
+        / "app"
+        / "static"
+        / "intensive"
+        / "tilda-loader.js"
+    ).read_text(encoding="utf-8")
+    assert "'/cookie-notice.js'" in tilda_loader
+    assert "window.EdabalansCookieNotice.boot(document)" in tilda_loader
+
+
 def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
     for path, app_code in (
         ("/dqs", "dqs"),

@@ -51,6 +51,7 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
     assert "site-footer.js" in response.text
+    assert "https://edabalans.ru/cookie-notice.js" in response.text
     assert "/blog/assets/blog.css" in response.text
 
 
@@ -98,6 +99,7 @@ def test_blog_article_has_toc_cta_metadata_and_related_cards() -> None:
     assert "Как сделать похудение проще" in response.text
     assert "Читать бесплатно" in response.text
     assert '<header class="article-hero">' in response.text
+    assert "https://edabalans.ru/cookie-notice.js" in response.text
     article_hero = response.text.split('<header class="article-hero">', 1)[1].split("</header>", 1)[0]
     assert "<p>" not in article_hero
     assert "blog_cta(" not in response.text

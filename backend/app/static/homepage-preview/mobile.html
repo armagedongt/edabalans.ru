@@ -406,7 +406,7 @@
       position: fixed;
       z-index: 40;
       right: auto;
-      bottom: max(10px, env(safe-area-inset-bottom));
+      bottom: calc(18px + env(safe-area-inset-bottom, 0px));
       left: 50%;
       display: grid;
       width: min(calc(100% - 20px), 560px);
@@ -3358,7 +3358,7 @@
   </div>
   <!-- library:reviews-lightbox:end -->
   <div id="site-footer" data-edabalans-site-footer="public" data-homepage-block="footer" data-block-width="shared"></div>
-  <aside class="cookie-notice" data-cookie-notice data-homepage-block="cookie-notice" data-block-width="overlay" aria-label="Уведомление об использовании cookie">
+  <aside class="cookie-notice" data-cookie-notice data-homepage-block="cookie-notice" data-block-width="overlay" aria-label="Уведомление об использовании cookie" hidden>
     <p class="cookie-notice__copy" data-homepage-field="copy">Сайт использует cookie. Продолжая, вы принимаете <a href="https://edabalans.ru/legal/privacy" target="_blank" rel="noopener" data-homepage-field="policy">политику обработки персональных данных</a>.</p>
     <button class="cookie-notice__accept" type="button" data-cookie-dismiss data-homepage-field="action">Приемлемо</button>
   </aside>
@@ -3412,14 +3412,8 @@
       document.addEventListener('keydown', (event) => { if (event.key === 'Escape') setOpen(false); });
     })();
 
-    (() => {
-      const notice = document.querySelector('[data-cookie-notice]');
-      const dismiss = notice?.querySelector('[data-cookie-dismiss]');
-      if (!notice || !dismiss) return;
-      dismiss.addEventListener('click', () => { notice.hidden = true; });
-    })();
-
-  </script>
+    </script>
+    <script src="/cookie-notice.js" defer></script>
   <!-- library:recognition-script:start -->
   <script>
 
