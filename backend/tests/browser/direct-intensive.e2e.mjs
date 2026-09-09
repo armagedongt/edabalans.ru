@@ -192,28 +192,21 @@ try {
       const sticky = document.querySelector('.edb-di-sticky-actions')
       const inline = document.querySelector('.edb-di-actions--inline')
       const qr = document.querySelector('.edb-di-qr')
-      const stickyTelegramNote = sticky.querySelector('[data-edb-channel="telegram"] .edb-di-button-note')
+      const inlineTelegramNote = inline.querySelector('.edb-di-note')
       return {
         stickyDisplay: getComputedStyle(sticky).display,
         stickyPosition: getComputedStyle(sticky).position,
         inlineDisplay: getComputedStyle(inline).display,
         qrDisplay: getComputedStyle(qr).display,
         visibleButtons: [...document.querySelectorAll('[data-edb-channel]')].filter(link => link.getClientRects().length > 0).length,
-        stickyTelegramNote: stickyTelegramNote?.textContent?.trim(),
+        inlineTelegramNote: inlineTelegramNote?.textContent?.trim(),
       }
     })
     if (responsive.qrDisplay !== 'none') throw new Error(`QR must be absent on mobile, got display=${responsive.qrDisplay}`)
-    if (responsive.inlineDisplay !== 'none') throw new Error(`Inline actions must be hidden on mobile, got display=${responsive.inlineDisplay}`)
-    if (responsive.stickyDisplay !== 'grid' || responsive.stickyPosition !== 'fixed') throw new Error(`Sticky actions must be fixed on mobile: ${JSON.stringify(responsive)}`)
+    if (responsive.inlineDisplay !== 'grid') throw new Error(`Inline actions must remain visible on mobile, got display=${responsive.inlineDisplay}`)
+    if (responsive.stickyDisplay !== 'none') throw new Error(`Sticky actions must be hidden on this variant: ${JSON.stringify(responsive)}`)
     if (responsive.visibleButtons !== 2) throw new Error(`Expected two visible mobile buttons, got ${responsive.visibleButtons}`)
-    if (responsive.stickyTelegramNote !== 'Только с VPN') throw new Error(`VPN note must stay inside the sticky Telegram action: ${JSON.stringify(responsive)}`)
-    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
-    const clearOfSticky = await page.evaluate(() => {
-      const legal = document.querySelector('.edb-di-legal').getBoundingClientRect()
-      const sticky = document.querySelector('.edb-di-sticky-actions').getBoundingClientRect()
-      return legal.bottom <= sticky.top + 1
-    })
-    if (!clearOfSticky) throw new Error('Final legal block must stop above the sticky buttons')
+    if (responsive.inlineTelegramNote !== 'только с VPN') throw new Error(`VPN note must stay below the inline Telegram action: ${JSON.stringify(responsive)}`)
     await context.close()
   }
 
@@ -251,11 +244,12 @@ try {
   }
 
   for (const variant of [
-    { id: 'topics', items: 4, boldFragments: 0, marker: 'Читайте бесплатный интенсив, как сделать похудение проще' },
+    { id: 'topics', items: 4, boldFragments: 0, marker: 'Научитесь, как с помощью изменения пищевых привычек' },
     { id: 'motivation', items: 0, boldFragments: 0, marker: 'Заканчивайте худеть только на силе воли!' },
+    { id: 'motivation-hero', items: 0, boldFragments: 0, marker: 'ПОЭТОМУ ПОРА МЕНЯТЬ ПОДХОД!!' },
     { id: 'motivation-lines', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
     { id: 'motivation-frame', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'instead', items: 5, boldFragments: 5, marker: 'А вместо случайных попыток — понятный порядок действий. Читайте бесплатный интенсив, как перейти к такому подходу' },
+    { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий. Читайте, как всё это сделать в моем бесплатном интенсиве «Последнее похудение»! 👇' },
   ]) {
     const { context, page } = await landing({
       viewport: { width: 360, height: 900 },
@@ -274,7 +268,7 @@ try {
     await context.close()
   }
 
-  for (const variant of ['motivation', 'motivation-lines', 'motivation-frame', 'instead']) {
+  for (const variant of ['topics', 'motivation', 'motivation-hero', 'motivation-lines', 'motivation-frame', 'instead']) {
     const { context, page } = await landing({
       viewport: { width: 320, height: 900 },
       url: `${baseUrl}/preview/direct-intensive?variant=${variant}`,
@@ -282,7 +276,7 @@ try {
     await page.evaluate(() => document.fonts.ready)
     const fit = await page.evaluate(() => {
       const root = document.querySelector('#edb-direct-intensive-v1')
-      const heading = document.querySelector('.edb-di-card-heading, .edb-di-opening-heading, .edb-di-body-heading')
+      const heading = document.querySelector('.edb-di-card-heading, .edb-di-split-hero, .edb-di-opening-heading, .edb-di-body-heading, .edb-di-lead')
       const cta = document.querySelector('.edb-di-cta-lead')
       const arrows = cta?.querySelector('.edb-di-cta-arrows')
       const inlineActions = document.querySelector('.edb-di-actions--inline')
@@ -309,12 +303,13 @@ try {
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
       }
     })
-    const expectsSplitArrows = variant === 'motivation-lines' || variant === 'motivation-frame' || variant === 'instead'
+    const expectsSplitArrows = variant === 'motivation-lines' || variant === 'motivation-frame'
     if (fit.rootOverflow > 1 || !['left', 'start'].includes(fit.headingAlign) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
-    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote || fit.legalBottomGap > 12)) {
-      throw new Error(`Motivation actions or footer are misplaced: ${JSON.stringify(fit)}`)
+    const expectsInlineActions = variant === 'instead' || variant.startsWith('motivation')
+    if (expectsInlineActions && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote || fit.legalBottomGap > 12)) {
+      throw new Error(`Inline actions or footer are misplaced for ${variant}: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {
       throw new Error(`Instead list must wrap only when its content needs it: ${JSON.stringify(fit)}`)

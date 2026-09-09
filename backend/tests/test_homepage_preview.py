@@ -1354,15 +1354,15 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "Не можете взять себя в руки и постоянно срываетесь?" in response.text
     assert "Это НЕ черта вашего характера!!" in response.text
     assert "Если худеть только на силе воли, конечно, она будет заканчиваться, а значит..." in response.text
-    assert "Читайте бесплатный интенсив, как сделать похудение проще" in response.text
-    assert "чтобы силы воли надо было меньше:" in response.text
+    assert "Научитесь, как с помощью изменения пищевых привычек" in response.text
+    assert "чтобы силы воли понадобилось меньше!" in response.text
     assert "Почему ВАМ вечно нужно себя ограничивать" in response.text
     assert "пока другие ЕДЯТ всё подряд" in response.text
     assert "От чего зависят ваши пищевые привычки и как их менять!" in response.text
     assert "как начать их менять" not in response.text
     assert "eyebrow:'Бесплатный интенсив'" not in response.text
     assert "Когда каждая попытка</span>" not in response.text
-    assert "Хватит откладывать — читайте" in response.text
+    assert "👇 Читайте прямо сейчас 👇" in response.text
     assert "👇 и меняйтесь прямо сейчас 👇" in response.text
     assert "В нём вы узнаете:" not in response.text
     assert "Вы узнаете:" not in response.text
@@ -1399,6 +1399,8 @@ def test_direct_intensive_loader_is_stable_cross_origin_tilda_embed() -> None:
     assert "document.getElementById('edb-direct-intensive-host')" in response.text
     assert "fetch(appHost + '/preview/direct-intensive'" in response.text
     assert "host.replaceWith(document.importNode(landing, true))" in response.text
+    assert "landing.style.width = '100vw'" in response.text
+    assert "landing.style.marginLeft = 'calc(50% - 50vw)'" in response.text
     assert "parsed.querySelectorAll('script')" in response.text
 
 
@@ -1416,14 +1418,17 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     assert "openingStyle:'card-heading'" in response.text
     assert "edb-di-callout" in response.text
     assert "splitArrows:false" in response.text
+    assert "motivation-hero" in response.text
+    assert "Поэтому пора менять подход!!" in response.text
     assert "motivation-lines" in response.text
     assert "motivation-frame" in response.text
-    assert "А вместо случайных попыток — понятный порядок действий. Читайте бесплатный интенсив, как перейти к такому подходу" in response.text
+    assert "А вместо случайных попыток — понятный порядок действий. Читайте, как всё это сделать в моем бесплатном интенсиве «" in response.text
+    assert "{text:'Последнее похудение',strong:true}" in response.text
     assert "afterList:[{text:'А вместо случайных попыток" in response.text
-    assert "Читайте бесплатный интенсив, как перейти к такому подходу" in response.text
+    assert "Научитесь, как с помощью изменения пищевых привычек" in response.text
     assert "читайте прямо сейчас. 👇" not in response.text
     assert "openingStyle:'plain-accent'" in response.text
-    assert "openingStyle:'plain-text'" in response.text
+    assert "openingStyle:'content-only'" in response.text
     assert "Надо менять подход!!" in response.text
     assert "👇 Читайте прямо сейчас 👇" in response.text
     assert "Вместо ограничений — " in response.text

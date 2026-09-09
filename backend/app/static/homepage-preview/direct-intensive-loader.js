@@ -37,6 +37,10 @@
       if (!document.getElementById(style.id)) {
         document.head.appendChild(document.importNode(style, true));
       }
+      landing.style.width = '100vw';
+      landing.style.maxWidth = '100vw';
+      landing.style.marginLeft = 'calc(50% - 50vw)';
+      landing.style.marginRight = '0';
       host.replaceWith(document.importNode(landing, true));
 
       Array.prototype.forEach.call(parsed.querySelectorAll('script'), function (sourceScript) {
