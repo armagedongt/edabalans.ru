@@ -126,10 +126,16 @@ for (const width of [360, 430, 768, 1440]) {
   const savedCatalogs = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveExerciseCatalog"));
   assert.ok(savedCatalogs.length >= 2);
   assert.ok(savedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Моё упражнение" && item.catalog_active));
-  assert.ok(savedCatalogs.at(-1).exercises.some((item) => item.active));
+  assert.ok(savedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Жим лёжа узким хватом" && item.active));
   const savedSessions = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession"));
   assert.ok(savedSessions.length >= 1);
   assert.ok(savedSessions.at(-1).session.exercises.some((item) => item.exercise_name === "Моё упражнение"));
+  const customRowBeforeRename = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё упражнение" }) });
+  page.once("dialog", (dialog) => dialog.accept("Моё переименованное упражнение"));
+  await customRowBeforeRename.getByText("Изменить", { exact: true }).click();
+  await page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }).waitFor();
+  const renamedRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }) });
+  await renamedRow.getByRole("button", { name: "Выше" }).click();
   await page.locator(".st-modal-bg").click({ position: { x: 2, y: 2 } });
   assert.equal(await page.locator(".st-modal-bg").count(), 0);
   assert.equal(await page.evaluate(() => document.body.style.overflow), "");
@@ -137,7 +143,7 @@ for (const width of [360, 430, 768, 1440]) {
 
   await page.getByText("Шаблон 2", { exact: true }).click();
   await page.getByText("Редактировать", { exact: true }).click();
-  const customRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё упражнение" }) });
+  const customRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }) });
   assert.equal(await customRow.count(), 1);
   assert.equal(await customRow.getByText("Добавить", { exact: true }).count(), 1);
   await page.evaluate(() => { window.__failNextSave = true; });
@@ -146,8 +152,14 @@ for (const width of [360, 430, 768, 1440]) {
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-error-${width}.png`), fullPage: false });
   await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   assert.ok((await page.evaluate(() => window.__saveActions.filter((action) => action === "saveExerciseCatalog").length)) >= 4);
+  const retriedCatalogs = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveExerciseCatalog"));
+  assert.ok(retriedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Жим гантелей на наклонной скамье" && item.active));
+  page.once("dialog", (dialog) => dialog.accept());
+  await customRow.getByText("Удалить", { exact: true }).click();
+  assert.equal(await page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }).count(), 0);
   assert.equal(await page.getByText("Закрыть", { exact: true }).count(), 1);
   await page.getByText("Закрыть", { exact: true }).click();
+  await page.locator("#st-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   await page.getByText("Редактировать", { exact: true }).waitFor();
   await page.close();
 }
