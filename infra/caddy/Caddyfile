@@ -183,6 +183,11 @@ www.{$PUBLIC_DOMAIN} {
 		-Server
 	}
 
+	@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png
+	handle @brand_icons {
+		reverse_proxy backend:8000
+	}
+
 	@legal_index path /legal /legal/
 	handle @legal_index {
 		rewrite * /legal/index.html
@@ -259,6 +264,11 @@ www.{$PUBLIC_DOMAIN} {
 		X-Frame-Options "DENY"
 		Referrer-Policy "strict-origin-when-cross-origin"
 		-Server
+	}
+
+	@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png
+	handle @brand_icons {
+		reverse_proxy backend:8000
 	}
 
 	@blog_home path /

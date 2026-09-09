@@ -25,6 +25,7 @@ implementation_status: implemented
   без промежуточного HTTP-редиректа и с сохранением query-атрибуции;
 - отдавать изолированный `noindex,nofollow` preview Щербаковой только на точном пути
   `app.edabalans.ru/sherbakova/*`, не передавая этот путь backend или другим сервисам;
+- отдавать единые корневые favicon-пути на публичном, API, app, go и blog-доменах;
 
 Для временной проверки favicon блог-домен пропускает только три явно разрешённых
 пути `/favicon-tests/{black|blue|face}` к одноимённым `noindex`-страницам модуля

@@ -11,8 +11,13 @@ derived_outputs = [
 [[modules]]
 id = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.md"
-owns_files = ["README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md", "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md"]
-owns_routes = ["*/embed.js", "*/site-footer.js"]
+owns_files = [
+  "README.md", "PROJECT_CONTEXT.md", "ARCHITECTURE.md",
+  "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md",
+  "backend/app/brand_routes.py", "backend/app/static/brand/**",
+  "backend/tests/test_brand_assets.py",
+]
+owns_routes = ["*/embed.js", "*/site-footer.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
   { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
 ]

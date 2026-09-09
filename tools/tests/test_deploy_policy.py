@@ -102,6 +102,26 @@ class DeployPolicyTests(unittest.TestCase):
         )
         self.assertIn("/blog/assets/${favicon_asset}", deploy)
 
+    def test_favicon_is_served_and_smoke_checked_on_every_managed_domain(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
+        deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
+
+        self.assertEqual(
+            source.count("@brand_icons path /favicon.ico /favicon.png /apple-touch-icon.png"),
+            2,
+        )
+        self.assertEqual(source.count("handle @brand_icons"), 2)
+        for domain in (
+            "edabalans.ru",
+            "www.edabalans.ru",
+            "api.edabalans.ru",
+            "app.edabalans.ru",
+            "go.похудение-это-есть.рф",
+            "blog.похудение-это-есть.рф",
+        ):
+            self.assertIn(domain, deploy)
+        self.assertIn('"https://${favicon_domain}/favicon.ico"', deploy)
+
     def test_go_robokassa_probe_does_not_publish_general_checkout(self) -> None:
         source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(
             encoding="utf-8"

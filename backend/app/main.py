@@ -39,6 +39,7 @@ from app.product_catalog_routes import router as product_catalog_router
 from app.recipe_routes import router as recipe_router
 from app.calorie_course_routes import router as calorie_course_router
 from app.blog_routes import router as blog_router
+from app.brand_routes import router as brand_router
 from app.public_video_analytics_routes import router as public_video_analytics_router
 from app.public_site_routes import router as public_site_router
 from app.marketing_routes import router as marketing_router
@@ -145,6 +146,7 @@ app.include_router(product_catalog_router)
 app.include_router(recipe_router)
 app.include_router(calorie_course_router)
 app.include_router(blog_router)
+app.include_router(brand_router)
 app.include_router(public_video_analytics_router)
 app.include_router(public_site_router)
 app.mount("/mcp", knowledge_mcp_app)

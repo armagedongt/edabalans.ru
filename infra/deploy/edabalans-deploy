@@ -200,6 +200,16 @@ curl --fail --silent --show-error --max-time 15 \
     https://blog.похудение-это-есть.рф/sitemap.xml >/dev/null
 curl --fail --silent --show-error --max-time 15 \
     https://blog.похудение-это-есть.рф/robots.txt >/dev/null
+for favicon_domain in \
+    edabalans.ru \
+    www.edabalans.ru \
+    api.edabalans.ru \
+    app.edabalans.ru \
+    go.похудение-это-есть.рф \
+    blog.похудение-это-есть.рф; do
+    curl --fail --silent --show-error --location --max-time 15 \
+        "https://${favicon_domain}/favicon.ico" >/dev/null
+done
 for favicon_page in black blue face; do
     curl --fail --silent --show-error --max-time 15 \
         "https://blog.похудение-это-есть.рф/favicon-tests/${favicon_page}" >/dev/null
