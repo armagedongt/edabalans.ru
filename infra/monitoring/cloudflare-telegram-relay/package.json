@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "test": "node --test test/*.test.mjs",
-    "deploy": "wrangler deploy",
+    "deploy": "node scripts/deploy.mjs",
     "check": "wrangler deploy --dry-run"
   },
   "devDependencies": {

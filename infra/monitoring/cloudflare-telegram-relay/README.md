@@ -19,8 +19,9 @@
 pnpm install --frozen-lockfile
 pnpm test
 pnpm check
+export PRODUCTION_RELAY_NAME='<непубличное случайное имя из runtime>'
 pnpm deploy
-pnpm exec wrangler secret put RELAY_TOKEN
+pnpm exec wrangler secret put RELAY_TOKEN --name "$PRODUCTION_RELAY_NAME"
 ```
 
 После публикации российская VM получает `TELEGRAM_API_BASE_URL` и
@@ -29,7 +30,11 @@ pnpm exec wrangler secret put RELAY_TOKEN
 `telegram_route=relay`: эта точка означает, что настоящий long polling уже прошёл
 через Worker до Telegram и вернулся в бот.
 
+Production-имя намеренно не записывается в `wrangler.jsonc`: там находится только
+безопасное локальное template-имя. Оно передаётся deploy-команде через обязательную
+переменную `PRODUCTION_RELAY_NAME` из runtime, иначе публикация завершается ошибкой.
+
 Откат: checkout последнего исправного Git SHA, затем повторить `pnpm install
---frozen-lockfile`, `pnpm test`, `pnpm check`, `pnpm deploy`. Secret сохраняется
+--frozen-lockfile`, `pnpm test`, `pnpm check`, `PRODUCTION_RELAY_NAME=... pnpm deploy`. Secret сохраняется
 Cloudflare; если создаётся новый Worker, `RELAY_TOKEN` нужно записать заново до
 переключения production.
