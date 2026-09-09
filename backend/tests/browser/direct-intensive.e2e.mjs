@@ -251,10 +251,10 @@ try {
 
   for (const variant of [
     { id: 'topics', items: 4, boldFragments: 0, marker: 'Читайте бесплатный интенсив, как сделать похудение проще' },
-    { id: 'motivation', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'motivation-lines', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'motivation-frame', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий. Я написал бесплатный интенсив: как это сделать — читайте прямо сейчас.' },
+    { id: 'motivation', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'motivation-lines', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'motivation-frame', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'instead', items: 5, boldFragments: 6, marker: 'Читайте бесплатный интенсив, как перейти к такому подходу' },
   ]) {
     const { context, page } = await landing({
       viewport: { width: 360, height: 900 },
@@ -281,7 +281,7 @@ try {
     await page.evaluate(() => document.fonts.ready)
     const fit = await page.evaluate(() => {
       const root = document.querySelector('#edb-direct-intensive-v1')
-      const heading = document.querySelector('.edb-di-opening-heading')
+      const heading = document.querySelector('.edb-di-opening-heading, .edb-di-body-heading')
       const cta = document.querySelector('.edb-di-cta-lead')
       const arrows = cta.querySelector('.edb-di-cta-arrows')
       const inlineActions = document.querySelector('.edb-di-actions--inline')
@@ -308,7 +308,8 @@ try {
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
       }
     })
-    if (fit.rootOverflow > 1 || fit.headingAlign !== 'left' || fit.ctaOverflow > 1 || variant.startsWith('motivation') !== fit.hasSplitArrows || (variant.startsWith('motivation') && fit.splitArrowsLayout === 'none')) {
+    const expectsSplitArrows = variant.startsWith('motivation') || variant === 'instead'
+    if (fit.rootOverflow > 1 || !['left', 'start'].includes(fit.headingAlign) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote || fit.legalBottomGap > 12)) {

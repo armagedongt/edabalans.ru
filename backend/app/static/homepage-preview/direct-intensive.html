@@ -19,6 +19,8 @@
   #edb-direct-intensive-v1 .edb-di-section-lead{font-family:Montserrat,Arial,sans-serif;font-size:clamp(16px,4.4vw,19px);line-height:1.35;font-weight:850;text-align:center}
   #edb-direct-intensive-v1 .edb-di-opening-heading{margin:0 0 7px}
   #edb-direct-intensive-v1 .edb-di-approach-heading{margin:16px 0 12px}
+  #edb-direct-intensive-v1 .edb-di-body-heading{margin:0 0 7px}
+  #edb-direct-intensive-v1 .edb-di-body-approach{margin:9px 0 0}
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-section-lead,
   #edb-direct-intensive-v1[data-landing-variant="instead"] .edb-di-opening-heading,
   #edb-direct-intensive-v1[data-landing-variant="motivation-lines"] .edb-di-opening-heading,
@@ -41,7 +43,8 @@
   #edb-direct-intensive-v1 .edb-di-cta-lead span{display:block;white-space:nowrap}
   #edb-direct-intensive-v1[data-landing-variant="instead"] .edb-di-cta-lead,
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead{font-size:clamp(14px,4vw,19px)}
-  #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead{font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);line-height:1.5;font-weight:800;text-align:left}
+  #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead{margin:9px 0 8px;font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);line-height:1.5;font-weight:800;text-align:left}
+  #edb-direct-intensive-v1[data-landing-variant="instead"] .edb-di-cta-lead>span:not(.edb-di-cta-arrows),
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-cta-lead>span:not(.edb-di-cta-arrows){white-space:normal}
   #edb-direct-intensive-v1 .edb-di-cta-lead .edb-di-cta-arrows{display:grid;grid-template-columns:1fr 1fr;width:100%;margin-top:5px;font-size:22px;line-height:1;text-align:center;white-space:nowrap}
   #edb-direct-intensive-v1 .edb-di-actions{display:grid;width:min(calc(100% - 16px),520px);grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(8px,2.4vw,11px);margin-inline:auto}
@@ -58,7 +61,7 @@
   #edb-direct-intensive-v1 .edb-di-button[aria-disabled="true"]{cursor:not-allowed}
   #edb-direct-intensive-v1 .edb-di-button--telegram:has(.edb-di-button-note)>.edb-di-telegram-icon,#edb-direct-intensive-v1 .edb-di-button--telegram:has(.edb-di-button-note)>span:not(.edb-di-button-note){transform:translateY(-4px)}
   #edb-direct-intensive-v1 .edb-di-button-note{position:absolute;right:0;bottom:5px;left:0;color:rgba(255,255,255,.92);font:600 9px/1 Montserrat,Arial,sans-serif;letter-spacing:0;text-align:center;white-space:nowrap}
-  #edb-direct-intensive-v1 .edb-di-note{margin:10px 0 0;color:var(--edb-muted);font-size:12px;line-height:1.35;text-align:center}
+  #edb-direct-intensive-v1 .edb-di-note{margin:3px 0 0;color:var(--edb-muted);font-size:9px;line-height:1.2;text-align:center}
   #edb-direct-intensive-v1 .edb-di-qr{display:none;margin:24px auto 0}
   #edb-direct-intensive-v1 .edb-di-qr-intro{margin:0 0 12px;color:#334654;font:650 14px/1.45 Manrope,Montserrat,sans-serif;text-align:center}
   #edb-direct-intensive-v1 .edb-di-qr-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:0;padding:0;list-style:none}
@@ -79,7 +82,7 @@
   @media (min-width:560px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:44px;padding-bottom:30px}#edb-direct-intensive-v1 .edb-di-actions{gap:12px;align-items:start}#edb-direct-intensive-v1 .edb-di-item{padding:15px 17px 15px 56px}#edb-direct-intensive-v1 .edb-di-item::before{left:16px}}
   @media (max-width:559px){#edb-direct-intensive-v1 .edb-di-list--checks .edb-di-item-result{white-space:nowrap}}
   @media (max-width:899px){#edb-direct-intensive-v1{padding-bottom:calc(70px + env(safe-area-inset-bottom))}#edb-direct-intensive-v1 .edb-di-shell{padding-bottom:5px}#edb-direct-intensive-v1 .edb-di-actions--inline{display:none}#edb-direct-intensive-v1 .edb-di-sticky-actions{position:fixed;z-index:1000;right:0;bottom:0;left:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:8px;padding:8px max(12px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));border-top:1px solid rgba(22,87,128,.13);background:rgba(239,249,255,.92);box-shadow:0 -12px 30px -25px rgba(0,46,78,.78);backdrop-filter:blur(14px)}#edb-direct-intensive-v1 .edb-di-sticky-actions .edb-di-button{height:54px;border-radius:13px}}
-  @media (max-width:899px){#edb-direct-intensive-v1[data-landing-variant^="motivation"]{min-height:100dvh;padding-bottom:0}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-shell{display:flex;min-height:100dvh;flex-direction:column;padding-bottom:8px}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-actions--inline{display:grid}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-actions--inline .edb-di-button{height:54px;border-radius:13px}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-sticky-actions{display:none}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-legal{margin-top:auto}}
+  @media (max-width:899px){#edb-direct-intensive-v1[data-landing-variant^="motivation"]{min-height:100dvh;padding-bottom:0}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-shell{display:flex;min-height:100dvh;flex-direction:column;padding-bottom:8px}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-actions--inline{display:grid}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-actions--inline .edb-di-button{height:54px;border-radius:13px}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-sticky-actions{display:none}#edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-legal{margin-top:auto;padding-top:5px}}
   @media (min-width:900px){#edb-direct-intensive-v1 .edb-di-shell{padding-top:58px;padding-bottom:34px}#edb-direct-intensive-v1 .edb-di-list{grid-template-columns:1fr 1fr}#edb-direct-intensive-v1 .edb-di-item{min-height:104px;padding-left:59px}#edb-direct-intensive-v1 .edb-di-item::before{top:16px;transform:none}#edb-direct-intensive-v1 .edb-di-qr{display:block}}
   @media (min-width:900px){#edb-direct-intensive-v1 .edb-di-list--checks{grid-template-columns:1fr}#edb-direct-intensive-v1 .edb-di-list--checks .edb-di-item{min-height:0;padding:10px 4px 10px 34px}#edb-direct-intensive-v1 .edb-di-list--checks .edb-di-item::before{top:50%;transform:translateY(-50%)}}
   @media (prefers-reduced-motion:reduce){#edb-direct-intensive-v1 .edb-di-button,#edb-direct-intensive-v1 .edb-di-qr-option,#edb-direct-intensive-v1 .edb-di-qr-code,#edb-direct-intensive-v1 .edb-di-qr-cover{transition:none}}
@@ -124,7 +127,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       ]
     },
     motivation:{
-      openingStyle:'plain',
+      openingStyle:'body-emphasis',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
         [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
@@ -134,7 +137,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       points:[]
     },
     'motivation-lines':{
-      openingStyle:'plain',
+      openingStyle:'body-emphasis',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
         [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
@@ -144,7 +147,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       points:[]
     },
     'motivation-frame':{
-      openingStyle:'plain',
+      openingStyle:'body-emphasis',
       body:[
         [{text:'Да, для похудения — нужен дефицит калорий.'}],
         [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
@@ -155,8 +158,9 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     },
     instead:{
       openingStyle:'plain-accent',
-      afterList:[{text:'А вместо случайных попыток — '},{text:'понятный порядок действий',strong:true},{text:'. Я написал бесплатный интенсив: как это сделать — читайте прямо сейчас.'}],
-      ctaLeadLines:['👇 Читайте прямо сейчас 👇'],
+      afterList:[{text:'А вместо случайных попыток — '},{text:'понятный порядок действий',strong:true},{text:'.'}],
+      ctaLeadLines:['Читайте бесплатный интенсив, как перейти к такому подходу'],
+      splitArrows:true,
       listKind:'checks',
       points:INSTEAD_POINTS.slice(0,-1)
     }
@@ -188,6 +192,8 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   const plainOpening=`<h1 class="edb-di-section-lead edb-di-opening-heading">${esc(CONTENT.intro[0].text.trim())}</h1>${paragraph([CONTENT.intro[1]])}${paragraph(CONTENT.reason,'edb-di-offer')}`;
   const openingHtml=CONTENT.openingStyle==='plain'
     ? `${plainOpening}<h2 class="edb-di-section-lead edb-di-approach-heading">${esc(CONTENT.accent)}</h2>`
+    : CONTENT.openingStyle==='body-emphasis'
+      ? `<p class="edb-di-lead edb-di-body-heading"><strong>${esc(CONTENT.intro[0].text.trim())}</strong></p>${paragraph([CONTENT.intro[1]])}${paragraph(CONTENT.reason,'edb-di-offer')}<p class="edb-di-lead edb-di-body-approach"><strong>${esc(CONTENT.accent)}</strong></p>`
     : CONTENT.openingStyle==='plain-accent'
       ? `${plainOpening}<h2 class="edb-di-hero--main edb-di-hero-turn">${HERO_HTML}</h2>`
       : CONTENT.openingStyle==='plain-text'
