@@ -1347,12 +1347,26 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert response.text.index('name="viewport"') < response.text.index('id="edb-direct-intensive-v1"')
     assert 'id="edb-direct-intensive-v1"' in response.text
     assert "Какие три ошибки в начале похудения, сразу ставят на нём жирный крест!" in response.text
+    assert "Как худеть, когда сила воли вышла из чата?" in response.text
+    assert "Срывы и невозможность взять себя в руки — не черта характера." in response.text
+    assert "Вес возвращается не потому, что вы мало стараетесь, а потому, что снова пытаетесь держаться только на силе воли." in response.text
+    assert "бесплатный интенсив из четырёх частей" in response.text
+    assert "Я собрал бесплатный интенсив из четырёх частей" in response.text
+    assert "eyebrow:'Бесплатный интенсив'" not in response.text
+    assert "Когда каждая попытка</span>" not in response.text
     assert "Хватит откладывать — читайте" in response.text
     assert "👇 и меняйтесь прямо сейчас 👇" in response.text
     assert "В нём вы узнаете:" in response.text
     assert "Вы узнаете:" not in response.text
-    assert "Не является медицинской услугой." in response.text
-    assert "Политика обработки персональных данных" in response.text
+    assert "Не медицинская услуга" in response.text
+    assert "business:'ИП Воронцов'" in response.text
+    assert "Политика ПД" in response.text
+    assert "privacyUrl:'https://edabalans.ru/legal/privacy'" in response.text
+    assert "telegramNote:'Только с VPN'" in response.text
+    assert 'class="edb-di-legal-line"' in response.text
+    assert "edb-di-mobile-vpn-note" not in response.text
+    assert "© 2026 Сергей Воронцов" not in response.text
+    assert "https://go.похудение-это-есть.рф/legal/privacy" not in response.text
     assert "apiUrl:'https://edabalans.ru/api/messaging/start-link'" in response.text
     assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
@@ -1362,6 +1376,19 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert source.headers["content-type"].startswith("text/plain")
     assert source.headers["x-robots-tag"] == "noindex, nofollow"
     assert source.text == response.text
+
+
+def test_direct_intensive_a1_preserves_previous_t123_source() -> None:
+    response = client.get("/preview/direct-intensive-a1")
+    source = client.get("/preview/direct-intensive-a1/t123")
+
+    assert response.status_code == 200
+    assert source.status_code == 200
+    assert source.text == response.text
+    assert "© 2026 Сергей Воронцов" in response.text
+    assert "Политика обработки персональных данных" in response.text
+    assert "https://go.похудение-это-есть.рф/legal/privacy" in response.text
+    assert "edb-di-sticky-actions" not in response.text
 
 
 def test_direct_intensive_preview_declares_measurable_events() -> None:
@@ -1463,6 +1490,14 @@ def test_direct_intensive_preview_uses_one_responsive_content_grid() -> None:
     assert "--edb-page-gutter:clamp(16px,4.16vw,32px)" in response.text
     assert "calc(100% - var(--edb-page-gutter) - var(--edb-page-gutter))" in response.text
     assert ".edb-di-actions{display:grid;width:min(calc(100% - 16px),520px)" in response.text
+    assert ".edb-di-sticky-actions{display:none}" in response.text
+    assert "@media (max-width:899px)" in response.text
+    assert ".edb-di-actions--inline{display:none}" in response.text
+    assert "position:fixed" in response.text
+    assert "padding-bottom:calc(76px + env(safe-area-inset-bottom))" in response.text
+    assert "font-size:clamp(12.5px,4.1vw,32px)" in response.text
+    assert 'class="edb-di-button-note"' in response.text
+    assert "font-size:clamp(6.8px,2.08vw,9px)" in response.text
     assert ".edb-di-qr{display:none" in response.text
     assert "@media (min-width:900px)" in response.text
     assert ".edb-di-qr{display:block" in response.text

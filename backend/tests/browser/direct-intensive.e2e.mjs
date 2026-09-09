@@ -148,7 +148,7 @@ try {
 
   for (const channel of ['telegram', 'max']) {
     const { context, page, clickRequests } = await landing({ delay: 120 })
-    await page.locator(`[data-edb-channel=${channel}]`).click()
+    await page.locator(`[data-edb-channel=${channel}]:visible`).click()
     await page.waitForURL(prepared[channel].button.deep)
     const deadline = Date.now() + 1000
     while (!clickRequests.length && Date.now() < deadline) await pause(10)
@@ -158,7 +158,7 @@ try {
 
   {
     const { context, page, events } = await landing({ delay: 1200 })
-    await page.locator('[data-edb-channel=telegram]').click()
+    await page.locator('[data-edb-channel=telegram]:visible').click()
     const deadline = Date.now() + 1000
     while (!events.some(event => event.payload.event === 'intensive_telegram_click') && Date.now() < deadline) await pause(5)
     const clickEvent = events.find(event => event.payload.event === 'intensive_telegram_click')
@@ -173,29 +173,86 @@ try {
 
   {
     const { context, page } = await landing({ api: 'failure' })
-    await page.locator('[data-edb-channel=max]').click()
+    await page.locator('[data-edb-channel=max]:visible').click()
     await page.waitForURL(fallbacks.max)
     await context.close()
   }
 
   {
     const { context, page } = await landing({ api: 'network' })
-    await page.locator('[data-edb-channel=telegram]').click()
+    await page.locator('[data-edb-channel=telegram]:visible').click()
     await page.waitForURL(fallbacks.telegram)
     await context.close()
   }
 
   {
     const { context, page } = await landing({ viewport: { width: 390, height: 844 } })
-    const display = await page.locator('.edb-di-qr').evaluate(element => getComputedStyle(element).display)
-    if (display !== 'none') throw new Error(`QR must be absent on mobile, got display=${display}`)
+    const responsive = await page.evaluate(() => {
+      const sticky = document.querySelector('.edb-di-sticky-actions')
+      const inline = document.querySelector('.edb-di-actions--inline')
+      const qr = document.querySelector('.edb-di-qr')
+      const stickyTelegramNote = sticky.querySelector('[data-edb-channel="telegram"] .edb-di-button-note')
+      return {
+        stickyDisplay: getComputedStyle(sticky).display,
+        stickyPosition: getComputedStyle(sticky).position,
+        inlineDisplay: getComputedStyle(inline).display,
+        qrDisplay: getComputedStyle(qr).display,
+        visibleButtons: [...document.querySelectorAll('[data-edb-channel]')].filter(link => link.getClientRects().length > 0).length,
+        stickyTelegramNote: stickyTelegramNote?.textContent?.trim(),
+      }
+    })
+    if (responsive.qrDisplay !== 'none') throw new Error(`QR must be absent on mobile, got display=${responsive.qrDisplay}`)
+    if (responsive.inlineDisplay !== 'none') throw new Error(`Inline actions must be hidden on mobile, got display=${responsive.inlineDisplay}`)
+    if (responsive.stickyDisplay !== 'grid' || responsive.stickyPosition !== 'fixed') throw new Error(`Sticky actions must be fixed on mobile: ${JSON.stringify(responsive)}`)
+    if (responsive.visibleButtons !== 2) throw new Error(`Expected two visible mobile buttons, got ${responsive.visibleButtons}`)
+    if (responsive.stickyTelegramNote !== 'Только с VPN') throw new Error(`VPN note must stay inside the sticky Telegram action: ${JSON.stringify(responsive)}`)
+    await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight))
+    const clearOfSticky = await page.evaluate(() => {
+      const legal = document.querySelector('.edb-di-legal').getBoundingClientRect()
+      const sticky = document.querySelector('.edb-di-sticky-actions').getBoundingClientRect()
+      return legal.bottom <= sticky.top + 1
+    })
+    if (!clearOfSticky) throw new Error('Final legal block must stop above the sticky buttons')
+    await context.close()
+  }
+
+  {
+    const { context, page } = await landing({ viewport: { width: 1200, height: 1000 } })
+    const responsive = await page.evaluate(() => ({
+      stickyDisplay: getComputedStyle(document.querySelector('.edb-di-sticky-actions')).display,
+      inlineDisplay: getComputedStyle(document.querySelector('.edb-di-actions--inline')).display,
+      qrDisplay: getComputedStyle(document.querySelector('.edb-di-qr')).display,
+    }))
+    if (responsive.stickyDisplay !== 'none') throw new Error(`Sticky actions must be hidden on desktop: ${JSON.stringify(responsive)}`)
+    if (responsive.inlineDisplay !== 'grid' || responsive.qrDisplay !== 'block') throw new Error(`Desktop actions and QR must remain visible: ${JSON.stringify(responsive)}`)
+    await context.close()
+  }
+
+  for (const width of [360, 430, 768, 1440]) {
+    const { context, page } = await landing({ viewport: { width, height: width < 900 ? 900 : 1000 } })
+    const fit = await page.evaluate(() => {
+      const root = document.querySelector('#edb-direct-intensive-v1')
+      const accent = document.querySelector('.edb-di-hero-accent')
+      const rootRect = root.getBoundingClientRect()
+      const accentRect = accent.getBoundingClientRect()
+      const legalRect = document.querySelector('.edb-di-legal-line').getBoundingClientRect()
+      return {
+        rootOverflow: root.scrollWidth - root.clientWidth,
+        accentLeft: accentRect.left - rootRect.left,
+        accentRight: rootRect.right - accentRect.right,
+        accentTextOverflow: accent.scrollWidth - accent.clientWidth,
+        legalLeft: legalRect.left - rootRect.left,
+        legalRight: rootRect.right - legalRect.right,
+      }
+    })
+    if (fit.rootOverflow > 1 || fit.accentLeft < -1 || fit.accentRight < -1 || fit.accentTextOverflow > 1 || fit.legalLeft < -1 || fit.legalRight < -1) throw new Error(`Responsive content is clipped at ${width}px: ${JSON.stringify(fit)}`)
     await context.close()
   }
 
   for (const channel of ['telegram', 'max']) {
     const { context, page } = await landing({ viewport: { width: 390, height: 844 } })
     await page.waitForFunction(kind => document.querySelector(`[data-edb-channel="${kind}"]`).href.includes('?start=U'), channel)
-    await page.locator(`[data-edb-channel=${channel}]`).click()
+    await page.locator(`[data-edb-channel=${channel}]:visible`).click()
     await page.waitForURL(prepared[channel].button.deep)
     await context.close()
   }

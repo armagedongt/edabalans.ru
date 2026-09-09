@@ -276,6 +276,27 @@ def direct_intensive_t123_source() -> PlainTextResponse:
     return response
 
 
+@router.get("/preview/direct-intensive-a1", include_in_schema=False)
+@router.get("/preview/direct-intensive-a1/", include_in_schema=False)
+def direct_intensive_a1_preview() -> HTMLResponse:
+    fragment = (
+        STATIC_DIR / "homepage-preview" / "direct-intensive-a1.html"
+    ).read_text(encoding="utf-8")
+    response = HTMLResponse(fragment, headers={"Cache-Control": "no-cache"})
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/direct-intensive-a1/t123", include_in_schema=False)
+def direct_intensive_a1_t123_source() -> PlainTextResponse:
+    fragment = (
+        STATIC_DIR / "homepage-preview" / "direct-intensive-a1.html"
+    ).read_text(encoding="utf-8")
+    response = PlainTextResponse(fragment, headers={"Cache-Control": "no-cache"})
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
 def direct_intensive_destination(channel: str, request: Request) -> str:
     base = DIRECT_INTENSIVE_DESTINATIONS.get(channel)
     if base is None:

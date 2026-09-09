@@ -24,7 +24,7 @@ MOSCOW = ZoneInfo("Europe/Moscow")
 DIRECT_REPORT_URL = "https://api.direct.yandex.com/json/v5/reports"
 DIRECT_CAMPAIGNS_URL = "https://api.direct.yandex.com/json/v5/campaigns"
 CREATIVE_NAMES = {
-    1920472171246211821: "Женщина с тортиками",
+    1920472171246211821: "Женщина лицом в торт · без текста",
     1920472171246211822: "Кот с бубликом",
     1920472171246211823: "Кот «Худеть будем?»",
     1920469239931549227: "Поиск · как начать",
@@ -541,7 +541,7 @@ def _with_starts(direct: dict, starts: dict[str, int]) -> dict:
     for ad in direct["ads"]:
         candidates = {str(ad["ad_id"]), ad["name"]}
         aliases = {
-            1920472171246211821: {"control_jeans", "control_cakes"},
+            1920472171246211821: {"control_jeans", "control_cakes", "woman_face_cake_no_text"},
             1920472171246211822: {"cat_bagel"},
             1920472171246211823: {"cat_hudey"},
         }.get(ad["ad_id"], set())
