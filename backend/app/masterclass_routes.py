@@ -145,6 +145,13 @@ class RunActionIn(BaseModel):
     timezone_name: str = Field(default=DEFAULT_COURSE_TIMEZONE, min_length=1, max_length=64)
 
 
+class AppRevealIn(BaseModel):
+    email: str
+    day: int = Field(ge=1, le=365)
+    step_index: int = Field(ge=0, le=999)
+    placement: str | None = Field(default=None, max_length=80)
+
+
 class CourseCheckIn(BaseModel):
     email: str
     checked: bool
@@ -1108,6 +1115,8 @@ def record_event(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
+    if body.event_type.startswith("app_revealed_") or body.event_key.startswith("app:"):
+        raise HTTPException(400, "application reveal must use the course application route")
     event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == body.event_key))
     created = event is None
     if created:
@@ -1236,6 +1245,102 @@ def send_dqs_link_to_telegram(
     )
     db.commit()
     return {"ok": True, "status": "queued"}
+
+
+APP_REVEAL_RESOURCES: dict[str, str | tuple[str, ...]] = {
+    "dqs": "dqs",
+    "strength": ("strength", "ACCESS_STRENGTH"),
+    "metabolism": ("metabolism", "ACCESS_CALORIES"),
+    "recipes": ("recipes", "ACCESS_RECIPES"),
+}
+APP_REVEAL_PAYLOADS = {
+    "dqs": "dqs",
+    "strength": "training",
+    "metabolism": "metabolism",
+    "recipes": "recipes",
+}
+
+
+@router.post("/apps/{app_code}/reveal")
+def reveal_course_application(
+    app_code: str,
+    body: AppRevealIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    resource_codes = APP_REVEAL_RESOURCES.get(app_code)
+    if resource_codes is None:
+        raise HTTPException(404, "application not found")
+    user = resolve_masterclass_user(request, db, body.email, settings)
+    context = course_context(db)
+    progress = day_progress(db, user.id, body.day)
+    steps = context.days.get(body.day, {}).get("steps", [])
+    if progress is None:
+        raise HTTPException(409, detail={"reason": "day_not_opened"})
+    if body.step_index >= len(steps):
+        raise HTTPException(404, "masterclass step not found")
+    step = steps[body.step_index]
+    if step.get("hidden", False) or step.get("locked", False):
+        raise HTTPException(409, detail={"reason": "step_locked"})
+    step_code = str(step.get("code") or step.get("kind") or "")
+    step_app = {
+        "dqs": "dqs",
+        "recipes-part-1": "recipes",
+        "recipes-part-2": "recipes",
+        "strength": "strength",
+        "metabolism": "metabolism",
+    }.get(step_code)
+    if step_app != app_code:
+        raise HTTPException(409, detail={"reason": "application_not_in_course_step"})
+    completed = completed_step_indexes(db, user.id, body.day)
+    required_ids = set(effective_required_step_ids(context, progress, body.day))
+    required_before = [
+        index
+        for index, previous in enumerate(steps[:body.step_index])
+        if previous["id"] in required_ids
+    ]
+    if any(index not in completed for index in required_before):
+        raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
+    try:
+        require_user_resource(
+            db,
+            user,
+            resource_codes,
+            require_legal_acceptance=False,
+        )
+    except AppAccessError as exc:
+        raise HTTPException(403, str(exc)) from exc
+    created = db.scalar(
+        select(MasterclassEvent.id).where(
+            MasterclassEvent.user_id == user.id,
+            MasterclassEvent.event_key == f"app:{app_code}:revealed",
+        )
+    ) is None
+    event = course_event(
+        db,
+        user.id,
+        f"app:{app_code}:revealed",
+        f"app_revealed_{app_code}",
+        placement=body.placement or "course-app-trigger",
+        details={
+            "app_code": app_code,
+            "day": body.day,
+            "step_index": body.step_index,
+            "step_id": step["id"],
+        },
+    )
+    db.commit()
+    payload = APP_REVEAL_PAYLOADS[app_code]
+    telegram_username = settings.telegram_test_bot_username.strip().lstrip("@")
+    max_username = settings.max_bot_username.strip().lstrip("@")
+    return {
+        "ok": True,
+        "created": created,
+        "app_code": app_code,
+        "telegram_url": f"https://t.me/{telegram_username}?start={payload}" if telegram_username else "",
+        "max_url": f"https://max.ru/{max_username}?start={payload}" if max_username else "",
+    }
 
 
 def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:

@@ -6,7 +6,7 @@ from uuid import uuid4
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.app_menu import APPS_PAYLOAD, Application, app_request, available_applications, menu_presentation
+from app.app_menu import APPS_PAYLOAD, REVEAL_EVENTS, Application, app_request, available_applications, menu_presentation
 from app.database import Base, make_engine
 from app.models import Contact, CrmUser
 
@@ -29,6 +29,13 @@ def prepared(tmp_path):
             resource_id TEXT NOT NULL,
             expires_at TIMESTAMP NULL,
             revoked_at TIMESTAMP NULL
+        )
+    """))
+    session.execute(text("""
+        CREATE TABLE masterclass_events (
+            id TEXT PRIMARY KEY,
+            user_id TEXT NOT NULL,
+            event_type TEXT NOT NULL
         )
     """))
     user = CrmUser(display_name="Участник", status="active", data_origin="native")
@@ -62,6 +69,13 @@ def grant(session, user, code, *, revoked=False, expired=False):
     })
 
 
+def reveal(session, user, event_type):
+    session.execute(
+        text("INSERT INTO masterclass_events (id, user_id, event_type) VALUES (:id, :user_id, :event_type)"),
+        {"id": str(uuid4()), "user_id": user.id, "event_type": event_type},
+    )
+
+
 def test_common_and_specific_deep_links_are_short_and_reserved():
     assert app_request("/start apps") == APPS_PAYLOAD
     requested = app_request("/start training")
@@ -71,6 +85,15 @@ def test_common_and_specific_deep_links_are_short_and_reserved():
     assert app_request("/start unrelated") is None
 
 
+def test_each_application_requires_only_its_explicit_course_reveal_event():
+    assert REVEAL_EVENTS == {
+        "dqs": {"app_revealed_dqs"},
+        "strength": {"app_revealed_strength"},
+        "metabolism": {"app_revealed_metabolism"},
+        "recipes": {"app_revealed_recipes"},
+    }
+
+
 def test_menu_contains_only_current_active_entitlements(tmp_path):
     session, user, contact = prepared(tmp_path)
     try:
@@ -78,6 +101,8 @@ def test_menu_contains_only_current_active_entitlements(tmp_path):
         grant(session, user, "ACCESS_CALORIES")
         grant(session, user, "strength", revoked=True)
         grant(session, user, "ACCESS_RECIPES", expired=True)
+        reveal(session, user, "app_revealed_dqs")
+        reveal(session, user, "app_revealed_metabolism")
         session.commit()
 
         applications = available_applications(session, user.id)
@@ -110,8 +135,26 @@ def test_inactive_user_never_gets_app_buttons(tmp_path):
     session, user, _ = prepared(tmp_path)
     try:
         grant(session, user, "dqs")
+        reveal(session, user, "app_revealed_dqs")
         user.status = "blocked"
         session.commit()
         assert available_applications(session, user.id) == []
+    finally:
+        session.close()
+
+
+def test_paid_entitlement_stays_hidden_until_course_reveal(tmp_path):
+    session, user, contact = prepared(tmp_path)
+    try:
+        grant(session, user, "dqs")
+        reveal(session, user, "dqs_opened")
+        session.commit()
+        assert available_applications(session, user.id) == []
+
+        reveal(session, user, "app_revealed_dqs")
+        session.commit()
+        assert [item.code for item in available_applications(session, user.id)] == ["dqs"]
+        _, configuration = menu_presentation(session, contact)
+        assert configuration["buttons"][0]["max_app_payload"] == "dqs"
     finally:
         session.close()

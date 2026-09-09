@@ -112,6 +112,29 @@
     });
   }
 
+  function maxMiniAppSession(appCode) {
+    var max = window.WebApp;
+    var initData = max && String(max.initData || '');
+    if (!initData) return Promise.resolve(null);
+    try {
+      if (typeof max.ready === 'function') max.ready();
+      if (typeof max.expand === 'function') max.expand();
+    } catch (error) {}
+    return fetch(APP_HOST + '/api/account-auth/max-miniapp', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({init_data: initData, app_code: appCode})
+    }).then(function (response) {
+      return response.json().catch(function () { return {}; }).then(function (payload) {
+        if (!response.ok) {
+          throw new Error(payload.detail || 'Не удалось войти через MAX');
+        }
+        return payload;
+      });
+    });
+  }
+
   function ensureAppShellStylesheet() {
     if (document.getElementById('edabalans-app-shell-styles')) return;
     var link = document.createElement('link');
@@ -375,6 +398,8 @@
     var appCode = String(mounts[0].getAttribute('data-edabalans-app') || '').toLowerCase();
     var telegram = window.Telegram && window.Telegram.WebApp;
     var hasTelegramInitData = Boolean(telegram && telegram.initData);
+    var max = window.WebApp;
+    var hasMaxInitData = Boolean(max && max.initData);
     prefetchAppHtml(appCode);
     if (hasTelegramInitData) {
       telegramMiniAppSession(appCode).then(function (telegramSession) {
@@ -383,6 +408,19 @@
           return;
         }
         rememberNative(normalizeEmail(telegramSession.email));
+        start(mounts);
+      }).catch(function (error) {
+        showStandaloneAccessError(mounts[0], error.message || String(error));
+      });
+      return;
+    }
+    if (hasMaxInitData) {
+      maxMiniAppSession(appCode).then(function (maxSession) {
+        if (!maxSession || !validEmail(maxSession.email)) {
+          showStandaloneAccessError(mounts[0], 'MAX не привязан к личному кабинету');
+          return;
+        }
+        rememberNative(normalizeEmail(maxSession.email));
         start(mounts);
       }).catch(function (error) {
         showStandaloneAccessError(mounts[0], error.message || String(error));

@@ -88,7 +88,7 @@ def _existing_password_hint(credential: AccountCredential) -> str:
     issued_on = created_at.astimezone(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y")
     return (
         f"Пароль уже приходил в этом чате при регистрации на сайте {issued_on}. "
-        "Если не можете его найти, напишите Сергею."
+        "Если не можете его найти, напишите мне."
     )
 
 
@@ -126,7 +126,7 @@ def consume_masterclass_link(
         else None
     )
     if onboarding is not None and onboarding.claimed_at is not None:
-        return True, "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите Сергею."
+        return True, "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите мне."
 
     account = session.scalar(
         select(CrmMessengerAccount).where(
@@ -147,7 +147,7 @@ def consume_masterclass_link(
                 metadata_json={"target_user_id": token.user_id},
             )
         )
-        return True, "Этот Telegram уже связан с другим клиентом. Напишите Сергею, чтобы безопасно проверить привязку."
+        return True, "Этот Telegram уже связан с другим клиентом. Напишите мне, чтобы я проверил привязку."
 
     account.user_id = token.user_id
     account.username = telegram.get("username")

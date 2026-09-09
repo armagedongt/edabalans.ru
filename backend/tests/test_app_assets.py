@@ -67,6 +67,7 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
         assert f'data-edabalans-app="{app_code}"' in response.text
         assert '<script src="/embed.js" defer></script>' in response.text
         assert "telegram-web-app.js" in response.text
+        assert "max-web-app.js" in response.text
         assert response.headers["x-robots-tag"] == "noindex, nofollow"
 
     loader = client.get("/embed.js").text
@@ -75,6 +76,13 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
     assert "function returnTarget()" in portal
     assert "target.origin===location.origin" in portal
     assert "if(target){location.replace(target);return}" in portal
+
+    max_entry = client.get("/max-app?WebAppStartParam=dqs")
+    assert max_entry.status_code == 200
+    assert "https://st.max.ru/js/max-web-app.js" in max_entry.text
+    assert "WebAppStartParam" in max_entry.text
+    assert "data-edabalans-app" in max_entry.text
+    assert max_entry.headers["x-robots-tag"] == "noindex, nofollow"
 
 
 def test_admin_apps_use_same_managed_frontend_and_highlight_started_profiles() -> None:
@@ -728,6 +736,11 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "else if(d.steps[stepIndex].kind==='dqs'&&d.steps[stepIndex].contentAsset){openDqsMaterial(d,stepIndex)}" in course_html
     assert "dqsTutorialRequested=true;openDqsApplication(d,stepIndex);return" in course_html
     assert "dqs/link-to-telegram" in course_html
+    assert "/api/masterclass/apps/" in course_html
+    assert "revealCourseApplication('dqs',d,stepIndex,'dqs-material')" in course_html
+    assert "if(!SERVER_MODE||!COURSE_APP_REVEALS" in course_html
+    calories_html = client.get("/apps/calories-course.html").text
+    assert "COURSE_APP_REVEALS=false" in calories_html
     assert "dqs-material-actions" in course_html
     assert "DQS_for_print.png" in course_html
     assert "mobile-article-toc-button" in course_html

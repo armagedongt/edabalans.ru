@@ -109,7 +109,7 @@ def client() -> TelegramClient:
 def max_client() -> MaxClient:
     if not settings.max_bot_token:
         raise HTTPException(503, "MAX token is not configured")
-    return MaxClient(settings.max_bot_token)
+    return MaxClient(settings.max_bot_token, bot_username=settings.max_bot_username)
 
 
 def _session_token(username: str, expires_at: int) -> str:
@@ -376,7 +376,10 @@ def scheduler_iteration() -> None:
             proxy_url=settings.telegram_proxy_url,
             channel_id=settings.telegram_channel_id,
         ) if settings.telegram_test_bot_token else None
-        max_sender = MaxClient(settings.max_bot_token) if settings.max_bot_token else None
+        max_sender = MaxClient(
+            settings.max_bot_token,
+            bot_username=settings.max_bot_username,
+        ) if settings.max_bot_token else None
         if tg or max_sender:
             stopped_presale = stop_presale_runs_from_purchase_events(session)
             stopped_presale += reconcile_masterclass_presale_runs(session)

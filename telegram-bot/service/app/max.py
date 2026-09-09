@@ -18,6 +18,7 @@ from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
 from app.account_credentials import generate_password, password_hash
+from app.app_menu import APPS_PAYLOAD, app_request, send_menu
 from app.content_formatting import content_body_for_telegram, replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user
 from app.intensive_access import (
@@ -62,9 +63,15 @@ MAX_ASSIGNMENT_ROUTES = {
 
 
 class MaxClient:
-    def __init__(self, token: str, transport: httpx.BaseTransport | None = None):
+    def __init__(
+        self,
+        token: str,
+        transport: httpx.BaseTransport | None = None,
+        bot_username: str = "",
+    ):
         self.token = token
         self.transport = transport
+        self.bot_username = bot_username.strip().lstrip("@")
 
     def _client(self, timeout: float = 20) -> httpx.Client:
         client_options: dict[str, Any] = {"timeout": timeout}
@@ -208,9 +215,18 @@ class MaxClient:
         if buttons:
             rows = []
             for button in buttons:
+                app_payload = str(button.get("max_app_payload") or "")
+                if button.get("web_app") and app_payload and self.bot_username:
+                    rows.append([{
+                        "type": "open_app",
+                        "text": button["text"],
+                        "web_app": f"https://max.ru/{self.bot_username}",
+                        "payload": app_payload,
+                    }])
+                    continue
                 url = button.get("url") or (button.get("web_app") or {}).get("url")
                 if not url:
-                    raise RuntimeError("MAX sequence supports only link buttons")
+                    raise RuntimeError("MAX sequence supports only link and Mini App buttons")
                 rows.append([{"type": "link", "text": button["text"], "url": url}])
             attachments.append({"type": "inline_keyboard", "payload": {"buttons": rows}})
         body: dict[str, Any] = {
@@ -443,7 +459,7 @@ def _existing_password_hint(credential: AccountCredential) -> str:
     issued_on = created_at.astimezone(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y")
     return (
         f"Пароль уже приходил в этом чате при регистрации на сайте {issued_on}. "
-        "Если не можете его найти, напишите Сергею."
+        "Если не можете его найти, напишите мне."
     )
 
 
@@ -463,12 +479,12 @@ def _consume_account_link(
     )
     now = datetime.now(UTC)
     if token is None or token.platform != "max" or token.purpose != "account_credentials":
-        return "Ссылка не найдена. Проверьте письмо или напишите Сергею."
+        return "Ссылка не найдена. Проверьте письмо или напишите мне."
     if token.consumed_at is not None:
-        return "Эта ссылка уже использована. Если доступ не получен, напишите Сергею."
+        return "Эта ссылка уже использована. Если доступ не получен, напишите мне."
     expires_at = token.expires_at.replace(tzinfo=token.expires_at.tzinfo or UTC)
     if expires_at <= now:
-        return "Срок действия ссылки истёк. Напишите Сергею, чтобы получить новую."
+        return "Срок действия ссылки истёк. Напишите мне, чтобы получить новую."
     onboarding = (
         session.scalar(
             select(AccountOnboarding)
@@ -479,9 +495,9 @@ def _consume_account_link(
         else None
     )
     if onboarding is not None and onboarding.claimed_at is not None:
-        return "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите Сергею."
+        return "Данные для входа уже выданы в выбранном мессенджере. Если вы их потеряли, напишите мне."
     if account.user_id != token.user_id and not _is_disposable_identity(session, account.user_id):
-        return "Этот аккаунт уже связан с другим личным кабинетом. Если это ошибка, напишите Сергею."
+        return "Этот аккаунт уже связан с другим личным кабинетом. Если это ошибка, напишите мне."
 
     account.user_id = token.user_id
     account.linked_at = now
@@ -683,6 +699,55 @@ def process_max_update(
         metadata = dict(tracking_event.metadata_json or {}) if tracking_event else {}
         if tracking_event is None or metadata.get("max_delivery_status") == "sent":
             return {"ok": True, "duplicate": True}
+        if metadata.get("max_delivery_kind") == "app_menu":
+            delivery_status = str(metadata.get("max_delivery_status") or "pending")
+            if delivery_status == "retryable":
+                requested_app = app_request(
+                    f"/start {str(metadata.get('app_payload') or APPS_PAYLOAD)}"
+                )
+                contact = (
+                    session.get(Contact, tracking_event.contact_id)
+                    if tracking_event.contact_id
+                    else None
+                )
+                if requested_app is None or contact is None:
+                    tracking_event.metadata_json = {
+                        **metadata,
+                        "max_delivery_status": "failed",
+                    }
+                    session.commit()
+                    return {"ok": True, "duplicate": True, "delivery_status": "failed"}
+                try:
+                    message_id = send_menu(
+                        session,
+                        contact,
+                        sender,
+                        requested_app,
+                        include_refresh=False,
+                    )
+                except httpx.HTTPError as exc:
+                    _record_max_assignment_failure(session, tracking_event, exc)
+                    raise
+                tracking_event.metadata_json = {
+                    **metadata,
+                    "max_delivery_status": "sent",
+                    "max_message_id": message_id,
+                }
+                session.commit()
+                return {"ok": True, "retried": True, "applications": True}
+            if delivery_status == "pending":
+                tracking_event.metadata_json = {
+                    **metadata,
+                    "max_delivery_status": "uncertain",
+                }
+                session.commit()
+                delivery_status = "uncertain"
+            return {
+                "ok": True,
+                "duplicate": True,
+                "applications": True,
+                "delivery_status": delivery_status,
+            }
         if metadata.get("max_delivery_kind") == "assignment":
             assignment_day = int(metadata["assignment_day"])
             if metadata.get("max_delivery_status") == "retryable":
@@ -766,6 +831,56 @@ def process_max_update(
         return {"ok": True, "retried": True}
 
     payload = str(update.get("payload") or "")
+    requested_app = app_request(f"/start {payload}")
+    if requested_app is not None:
+        session.add(
+            UpdateReceipt(
+                update_id=receipt_id,
+                bot_instance_id=bot.id,
+                update_type="max_app_menu_started",
+            )
+        )
+        account, _ = _ensure_identity(session, user)
+        contact = _ensure_contact(session, bot, account, user)
+        delivery = TrackingEvent(
+            contact_id=contact.id,
+            user_id=account.user_id,
+            telegram_user_id=account.platform_user_id,
+            event_type="max_app_menu_delivery",
+            deduplication_key=f"{receipt_id}:tracking_start",
+            metadata_json={
+                "messenger": "max",
+                "max_delivery_kind": "app_menu",
+                "max_delivery_status": "pending",
+                "app_payload": payload,
+            },
+        )
+        session.add(delivery)
+        session.commit()
+        try:
+            message_id = send_menu(
+                session,
+                contact,
+                sender,
+                requested_app,
+                include_refresh=False,
+            )
+        except httpx.HTTPError as exc:
+            _record_max_assignment_failure(session, delivery, exc)
+            raise
+        delivery.metadata_json = {
+            **(delivery.metadata_json or {}),
+            "max_delivery_status": "sent",
+            "max_message_id": message_id,
+        }
+        session.commit()
+        return {
+            "ok": True,
+            "applications": True,
+            "menu": requested_app == APPS_PAYLOAD,
+            "message_id": message_id,
+        }
+
     if payload.startswith("M"):
         session.add(
             UpdateReceipt(

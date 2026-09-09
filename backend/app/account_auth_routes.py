@@ -165,13 +165,16 @@ def primary_email(db: Session, user_id) -> str:
     ) or ""
 
 
-def telegram_init_user_id(init_data: str, bot_token: str, *, max_age_seconds: int = 900) -> str | None:
+def messenger_init_user_id(init_data: str, bot_token: str, *, max_age_seconds: int = 900) -> str | None:
     if not bot_token:
         return None
     try:
-        values = dict(parse_qsl(init_data, keep_blank_values=True, strict_parsing=True))
+        pairs = parse_qsl(init_data, keep_blank_values=True, strict_parsing=True)
     except ValueError:
         return None
+    if len({key for key, _ in pairs}) != len(pairs):
+        return None
+    values = dict(pairs)
     supplied_hash = values.pop("hash", "")
     if not supplied_hash:
         return None
@@ -192,6 +195,9 @@ def telegram_init_user_id(init_data: str, bot_token: str, *, max_age_seconds: in
         return None
     user_id = str(user.get("id") or "")
     return user_id if user_id.isdigit() else None
+
+
+telegram_init_user_id = messenger_init_user_id
 
 
 def set_native_session(response: Response, db: Session, user: User, settings: Settings) -> str:
@@ -320,7 +326,7 @@ def telegram_miniapp_login(
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
-    telegram_user_id = telegram_init_user_id(body.init_data, settings.telegram_test_bot_token)
+    telegram_user_id = messenger_init_user_id(body.init_data, settings.telegram_test_bot_token)
     if not telegram_user_id:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Не удалось подтвердить вход через Telegram")
     messenger = db.scalar(
@@ -332,6 +338,44 @@ def telegram_miniapp_login(
     user = db.get(User, messenger.user_id) if messenger else None
     if user is None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "Telegram не привязан к личному кабинету")
+    resource_codes: str | tuple[str, ...] = {
+        "dqs": "dqs",
+        "strength": "strength",
+        "metabolism": ("metabolism", "ACCESS_CALORIES"),
+        "recipes": "recipes",
+    }[body.app_code]
+    try:
+        require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
+    except AppAccessError as exc:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
+    expires_at = set_native_session(response, db, user, settings)
+    return {
+        "ok": True,
+        "email": primary_email(db, user.id),
+        "expires_at": expires_at,
+        "app_code": body.app_code,
+    }
+
+
+@router.post("/api/account-auth/max-miniapp")
+def max_miniapp_login(
+    body: TelegramMiniAppLoginIn,
+    response: Response,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    max_user_id = messenger_init_user_id(body.init_data, settings.max_bot_token)
+    if not max_user_id:
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Не удалось подтвердить вход через MAX")
+    messenger = db.scalar(
+        select(MessengerAccount).where(
+            MessengerAccount.platform == "max",
+            MessengerAccount.platform_user_id == max_user_id,
+        )
+    )
+    user = db.get(User, messenger.user_id) if messenger else None
+    if user is None:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "MAX не привязан к личному кабинету")
     resource_codes: str | tuple[str, ...] = {
         "dqs": "dqs",
         "strength": "strength",

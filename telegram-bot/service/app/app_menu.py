@@ -31,6 +31,12 @@ APPLICATIONS = (
     Application("recipes", "recipes", "Калькулятор рецептов", "https://edabalans.ru/recipes", ("recipes", "ACCESS_RECIPES")),
 )
 APPLICATION_BY_PAYLOAD = {item.payload: item for item in APPLICATIONS}
+REVEAL_EVENTS = {
+    "dqs": {"app_revealed_dqs"},
+    "strength": {"app_revealed_strength"},
+    "metabolism": {"app_revealed_metabolism"},
+    "recipes": {"app_revealed_recipes"},
+}
 
 
 def app_request(text: str) -> Application | str | None:
@@ -45,7 +51,7 @@ def app_request(text: str) -> Application | str | None:
     return APPLICATION_BY_PAYLOAD.get(payload)
 
 
-def available_applications(session: Session, user_id: str | None) -> list[Application]:
+def entitled_applications(session: Session, user_id: str | None) -> list[Application]:
     if not user_id:
         return []
     user = session.get(CrmUser, user_id)
@@ -67,6 +73,22 @@ def available_applications(session: Session, user_id: str | None) -> list[Applic
     return [item for item in APPLICATIONS if codes.intersection(item.resource_codes)]
 
 
+def available_applications(session: Session, user_id: str | None) -> list[Application]:
+    entitled = entitled_applications(session, user_id)
+    if not entitled:
+        return []
+    reveal_types = set(session.execute(text("""
+        SELECT event_type
+        FROM masterclass_events
+        WHERE user_id = :user_id
+    """), {"user_id": user_id}).scalars().all())
+    return [
+        item
+        for item in entitled
+        if reveal_types.intersection(REVEAL_EVENTS[item.code])
+    ]
+
+
 def _content(body: str) -> SimpleNamespace:
     return SimpleNamespace(
         title="Мои приложения",
@@ -79,14 +101,21 @@ def _content(body: str) -> SimpleNamespace:
 
 
 def _app_button(item: Application) -> dict:
-    return {"text": item.title, "web_app": {"url": item.url}}
+    return {
+        "text": item.title,
+        "web_app": {"url": item.url},
+        "max_app_payload": item.payload,
+    }
 
 
 def menu_presentation(
     session: Session,
     contact: Contact,
     requested: Application | str = APPS_PAYLOAD,
+    *,
+    include_refresh: bool = True,
 ) -> tuple[SimpleNamespace, dict]:
+    entitled = entitled_applications(session, contact.user_id)
     available = available_applications(session, contact.user_id)
     if isinstance(requested, Application):
         if requested in available:
@@ -97,6 +126,14 @@ def menu_presentation(
                 ),
                 {"buttons": [_app_button(requested)]},
             )
+        if requested in entitled:
+            return (
+                _content(
+                    f"<b>{requested.title}</b>\n\n"
+                    "Доступ уже есть. Приложение появится в «Моих приложениях» после соответствующего материала Мастер-класса."
+                ),
+                {"buttons": [{"text": "Открыть Мастер-класс", "url": "https://edabalans.ru/lk"}]},
+            )
         return (
             _content(
                 f"<b>{requested.title}</b>\n\n"
@@ -106,20 +143,38 @@ def menu_presentation(
         )
 
     buttons = [_app_button(item) for item in available]
-    buttons.append({"text": "Обновить", "callback_data": REFRESH_CALLBACK})
-    body = (
-        "Вот приложения, которые сейчас доступны вам.\n\n"
-        "Если вы приобрели что-то ещё, нажмите «Обновить»."
-        if available
-        else "У вас пока нет доступных приложений. Если доступ должен быть — напишите мне."
-    )
+    if include_refresh:
+        buttons.append({"text": "Обновить", "callback_data": REFRESH_CALLBACK})
+    if available:
+        body = (
+            "Вот приложения, которые сейчас доступны вам.\n\n"
+            "Если вы приобрели что-то ещё, нажмите «Обновить»."
+        )
+    elif entitled:
+        body = (
+            "Доступы уже есть. Приложения появятся здесь после соответствующих материалов Мастер-класса."
+        )
+    else:
+        body = "У вас пока нет доступных приложений. Если доступ должен быть — напишите мне."
     if not available:
         buttons.append({"text": "Написать мне", "url": SUPPORT_URL})
     return _content(f"<b>Мои приложения</b>\n\n{body}"), {"buttons": buttons}
 
 
-def send_menu(session: Session, contact: Contact, sender, requested: Application | str) -> str:
-    content, configuration = menu_presentation(session, contact, requested)
+def send_menu(
+    session: Session,
+    contact: Contact,
+    sender,
+    requested: Application | str,
+    *,
+    include_refresh: bool = True,
+) -> str:
+    content, configuration = menu_presentation(
+        session,
+        contact,
+        requested,
+        include_refresh=include_refresh,
+    )
     return sender.send_content(contact.chat_id, content, configuration)
 
 

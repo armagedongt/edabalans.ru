@@ -7,7 +7,7 @@
   function esc(v){return String(v||'').replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   async function api(path,options){options=options||{};options.headers=options.headers||{};if(sessionToken)options.headers.Authorization='Bearer '+sessionToken;var r=await fetch(API+path,options);var j=await r.json();if(r.status===401&&sessionToken){try{localStorage.removeItem('edabalans_identity_v1');}catch(e){}throw new Error('Сессия входа закончилась. Обновите страницу и подтвердите email ещё раз.');}if(!r.ok){var error=new Error(j.detail||j.error||'Ошибка сервера');error.status=r.status;throw error;}return j;}
   function layout(title,lead,body){root().innerHTML='<main class="mc"><h1>'+esc(title)+'</h1><p class="lead">'+esc(lead)+'</p>'+body+'</main>';}
-  function fail(e){layout('Не удалось открыть приложение',String(e.message||e),'<section class="mc-card mc-error">Если ошибка повторится, напишите Сергею: <b>@FitnessSergey</b></section>');}
+  function fail(e){layout('Не удалось открыть приложение',String(e.message||e),'<section class="mc-card mc-error">Если ошибка повторится, напишите мне: <b>@FitnessSergey</b></section>');}
   function questionnaire(kind){api('/api/masterclass/questionnaires/'+kind+'?email='+encodeURIComponent(email)).then(function(data){
     var title=kind==='onboarding'?'Небольшая анкета перед началом':'Саморевью по итогам мастер-класса';
     var lead=kind==='onboarding'?'Отвечайте в свободной форме. Каждый ответ сохраняется отдельно.':'Эта анкета нужна не только перед консультацией. Она поможет собрать выводы по мастер-классу, увидеть изменения и понять, что делать дальше.';

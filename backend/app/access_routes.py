@@ -217,9 +217,9 @@ def account_payload(email: str, db: Session) -> dict:
             "state": "review_required",
             "review_status": "unknown" if user is None else user.access_review_status,
             "message": (
-                "Аккаунт пока не связан с покупками. Если вы уже что-то приобретали, напишите Сергею и укажите email личного кабинета."
+                "Аккаунт пока не связан с покупками. Если вы уже что-то приобретали, напишите мне и укажите email личного кабинета."
                 if user is None
-                else "Нужно уточнить ваши прежние покупки. Напишите Сергею и укажите email личного кабинета."
+                else "Нужно уточнить ваши прежние покупки. Напишите мне и укажите email личного кабинета."
             ),
             "legal": None if user is None else legal_status_payload(db, user.id),
             "courses": account_courses(definitions, set(), False),

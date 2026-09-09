@@ -114,6 +114,44 @@ def test_max_client_sends_sequence_photo_and_link_button():
     assert payload["attachments"][1]["type"] == "inline_keyboard"
 
 
+def test_max_client_opens_configured_mini_app_with_payload():
+    captured = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["request"] = request
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-app-1"}}})
+
+    content = SimpleNamespace(
+        body_source="<b>Мои приложения</b>",
+        media_kind=None,
+        media_path=None,
+    )
+    MaxClient(
+        "max-secret",
+        httpx.MockTransport(handler),
+        bot_username="id230409966750_bot",
+    ).send_content(
+        "901",
+        content,
+        {"buttons": [{
+            "text": "Оценка качества питания",
+            "web_app": {"url": "https://edabalans.ru/dqs"},
+            "max_app_payload": "dqs",
+        }]},
+    )
+
+    payload = json.loads(captured["request"].content)
+    assert payload["attachments"] == [{
+        "type": "inline_keyboard",
+        "payload": {"buttons": [[{
+            "type": "open_app",
+            "text": "Оценка качества питания",
+            "web_app": "https://max.ru/id230409966750_bot",
+            "payload": "dqs",
+        }]]},
+    }]
+
+
 def test_max_client_uploads_remote_image_when_max_cannot_fetch_it():
     requests = []
     message_attempts = 0
@@ -349,6 +387,86 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
         assert run is not None
         assert run.status == "active"
         assert run.current_step_key == "welcome_reminder_check_day1"
+    app.dependency_overrides.clear()
+
+
+def test_max_apps_start_lists_only_entitled_and_course_revealed_apps(tmp_path, monkeypatch):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    assert client.post("/bot/max/webhook", json=max_start(), headers=headers).status_code == 200
+    with Session(engine) as session:
+        account = session.scalar(select(CrmMessengerAccount).where(
+            CrmMessengerAccount.platform == "max",
+            CrmMessengerAccount.platform_user_id == "901",
+        ))
+        session.execute(text("""
+            CREATE TABLE resources (
+                id TEXT PRIMARY KEY,
+                code TEXT NOT NULL UNIQUE,
+                status TEXT NOT NULL
+            )
+        """))
+        session.execute(text("""
+            CREATE TABLE user_accesses (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                resource_id TEXT NOT NULL,
+                expires_at TIMESTAMP NULL,
+                revoked_at TIMESTAMP NULL
+            )
+        """))
+        session.execute(text("""
+            CREATE TABLE masterclass_events (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                event_type TEXT NOT NULL
+            )
+        """))
+        resources = {code: str(uuid.uuid4()) for code in ("dqs", "strength")}
+        for code, resource_id in resources.items():
+            session.execute(
+                text("INSERT INTO resources (id, code, status) VALUES (:id, :code, 'active')"),
+                {"id": resource_id, "code": code},
+            )
+            session.execute(text("""
+                INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
+                VALUES (:id, :user_id, :resource_id, NULL, NULL)
+            """), {
+                "id": str(uuid.uuid4()),
+                "user_id": str(account.user_id),
+                "resource_id": resource_id,
+            })
+        session.execute(
+            text("""
+                INSERT INTO masterclass_events (id, user_id, event_type)
+                VALUES (:id, :user_id, 'app_revealed_dqs')
+            """),
+            {"id": str(uuid.uuid4()), "user_id": str(account.user_id)},
+        )
+        session.commit()
+
+    response = client.post(
+        "/bot/max/webhook",
+        json=max_start(timestamp="2026-08-27T10:00:01Z", payload="apps"),
+        headers=headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["applications"] is True
+    _, body, configuration = fake.sent[-1]
+    assert "Мои приложения" in body
+    assert [button["text"] for button in configuration["buttons"]] == [
+        "Оценка качества питания",
+    ]
+    assert configuration["buttons"][0]["max_app_payload"] == "dqs"
+
+    sent_count = len(fake.sent)
+    duplicate = client.post(
+        "/bot/max/webhook",
+        json=max_start(timestamp="2026-08-27T10:00:01Z", payload="apps"),
+        headers=headers,
+    )
+    assert duplicate.json() == {"ok": True, "duplicate": True}
+    assert len(fake.sent) == sent_count
     app.dependency_overrides.clear()
 
 

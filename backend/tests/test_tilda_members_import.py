@@ -1,5 +1,6 @@
 import csv
 import os
+from contextlib import nullcontext
 from datetime import datetime, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -8,7 +9,8 @@ from sqlalchemy import create_engine, func, select  # noqa: E402
 from sqlalchemy.orm import Session, sessionmaker  # noqa: E402
 
 from app.database import Base  # noqa: E402
-from app.importers import tilda_members  # noqa: E402
+from app.importers import tilda_access_migration_report, tilda_members  # noqa: E402
+from app.importers.tilda_access_migration_report import HEADERS, migration_rows  # noqa: E402
 from app.models import Payment, Resource, User, UserAccess, UserEmail  # noqa: E402
 
 
@@ -18,6 +20,34 @@ RESOURCE_NAMES = {
     "ACCESS_MASTERCLASS_LEGACY": "Мастер-класс — старая необновляемая версия",
     "ACCESS_CALORIES_LEGACY": "Курс о калориях — старая необновляемая версия",
 }
+
+
+def test_migration_csv_neutralizes_spreadsheet_formulas(tmp_path, monkeypatch) -> None:
+    row = {header: "" for header in HEADERS}
+    row["Имя"] = '=WEBSERVICE("https://example.test")'
+    row["Дата регистрации в Tilda"] = "  +SUM(1,2)"
+    row["Группы Tilda"] = "-2+3"
+    row["Доступы в новой базе"] = "@SUM(1,2)"
+    row["Telegram ID"] = "\t=2+3"
+    row["MAX ID"] = "\r=2+3"
+    monkeypatch.setattr(
+        tilda_access_migration_report,
+        "SessionLocal",
+        lambda: nullcontext(object()),
+    )
+    monkeypatch.setattr(tilda_access_migration_report, "migration_rows", lambda _: [row])
+    output = tmp_path / "migration.csv"
+
+    tilda_access_migration_report.write_report(output)
+
+    with output.open("r", encoding="utf-8-sig", newline="") as source:
+        exported = next(csv.DictReader(source, delimiter=";"))
+    assert exported["Имя"] == '\'=WEBSERVICE("https://example.test")'
+    assert exported["Дата регистрации в Tilda"] == "'  +SUM(1,2)"
+    assert exported["Группы Tilda"] == "'-2+3"
+    assert exported["Доступы в новой базе"] == "'@SUM(1,2)"
+    assert exported["Telegram ID"] == "'\t=2+3"
+    assert exported["MAX ID"] == "'\r=2+3"
 
 
 def prepare(tmp_path, monkeypatch):
@@ -67,6 +97,13 @@ def test_tilda_groups_map_to_current_and_non_updating_access(tmp_path, monkeypat
         }
         assert set(db.scalars(select(User.tilda_access_status))) == {"granted"}
         assert set(db.scalars(select(UserEmail.verification_status))) == {"tilda_registered"}
+
+        report = migration_rows(db)
+        assert len(report) == 2
+        current = next(item for item in report if item["Email"] == "current@example.test")
+        assert current["Версия Мастер-класса"] == "текущий"
+        assert "ACCESS_MASTERCLASS" in current["Доступы в новой базе"]
+        assert current["Пароль"] == "создать при согласованной рассылке"
 
     second = tilda_members.import_members(path, source="tilda_members_test")
     assert second["duplicates"] == 2

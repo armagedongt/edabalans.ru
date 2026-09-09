@@ -61,6 +61,7 @@ def settings() -> Settings:
         smtp_password="smtp-secret",
         smtp_from_email="cabinet@example.test",
         telegram_test_bot_token="telegram-test-token",
+        max_bot_token="max-test-token",
     )
 
 
@@ -119,6 +120,18 @@ def telegram_init_data(user_id: int, auth_date: int | None = None) -> str:
     }
     check = "\n".join(f"{key}={values[key]}" for key in sorted(values))
     secret = hmac.new(b"WebAppData", b"telegram-test-token", hashlib.sha256).digest()
+    values["hash"] = hmac.new(secret, check.encode(), hashlib.sha256).hexdigest()
+    return urlencode(values)
+
+
+def max_init_data(user_id: int, auth_date: int | None = None) -> str:
+    values = {
+        "auth_date": str(auth_date or int(datetime.now(UTC).timestamp())),
+        "query_id": "max-test-query",
+        "user": json.dumps({"id": user_id, "first_name": "Test"}, separators=(",", ":")),
+    }
+    check = "\n".join(f"{key}={values[key]}" for key in sorted(values))
+    secret = hmac.new(b"WebAppData", b"max-test-token", hashlib.sha256).digest()
     values["hash"] = hmac.new(secret, check.encode(), hashlib.sha256).hexdigest()
     return urlencode(values)
 
@@ -240,6 +253,55 @@ def test_telegram_miniapp_creates_same_native_session_only_for_linked_entitled_u
         json={"init_data": telegram_init_data(123456, int(datetime.now(UTC).timestamp()) + 31), "app_code": "strength"},
     )
     assert future.status_code == 401
+    app.dependency_overrides.clear()
+
+
+def test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user():
+    client, factory = setup()
+    seed_credential(factory)
+    with factory() as db:
+        user = db.scalar(
+            select(User).join(UserEmail).where(UserEmail.email_normalized == "member@example.test")
+        )
+        resource = Resource(code="dqs", name="DQS", status="active")
+        db.add(resource)
+        db.flush()
+        db.add_all([
+            UserAccess(
+                user_id=user.id,
+                resource_id=resource.id,
+                source="test",
+                granted_at=datetime.now(UTC),
+            ),
+            MessengerAccount(
+                user_id=user.id,
+                platform="max",
+                platform_user_id="654321",
+                source="test",
+            ),
+        ])
+        db.commit()
+
+    accepted = client.post(
+        "/api/account-auth/max-miniapp",
+        json={"init_data": max_init_data(654321), "app_code": "dqs"},
+    )
+    assert accepted.status_code == 200
+    assert accepted.json()["email"] == "member@example.test"
+    assert accepted.cookies.get("edabalans_account_session")
+
+    rejected = client.post(
+        "/api/account-auth/max-miniapp",
+        json={"init_data": max_init_data(999999), "app_code": "dqs"},
+    )
+    assert rejected.status_code == 403
+
+    duplicated = max_init_data(654321) + "&hash=second"
+    invalid = client.post(
+        "/api/account-auth/max-miniapp",
+        json={"init_data": duplicated, "app_code": "dqs"},
+    )
+    assert invalid.status_code == 401
     app.dependency_overrides.clear()
 
 

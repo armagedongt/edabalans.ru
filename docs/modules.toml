@@ -247,7 +247,7 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "docs/APPLICATION_PLATFORM.md", "docs/APPLICATION_BACKLOG.md",
   "backend/app/app_routes.py", "backend/app/app_service.py",
-  "backend/app/static/standalone-app.html",
+  "backend/app/static/standalone-app.html", "backend/app/static/max-app.html",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
@@ -256,7 +256,7 @@ owns_files = [
   "legacy/google/SOURCES.md",
 ]
 owns_routes = [
-  "*/apps/*", "*/assets/*",
+  "*/apps/*", "*/assets/*", "*/max-app",
 ]
 
 [[modules]]
@@ -469,7 +469,7 @@ id = "products.masterclass.runtime"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md"
 depends_on = ["platform.auth", "platform.commerce"]
-events_out = ["messaging.telegram.postpurchase"]
+events_out = ["messaging.telegram.postpurchase", "messaging.telegram.apps", "messaging.max"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
   "backend/app/static/masterclass.js", "backend/app/static/apps/closing-review.html",
@@ -550,14 +550,14 @@ owns_files = [
 id = "messaging.max"
 parent = "messaging"
 card = "docs/knowledge-base/modules/catalog/messaging.max.md"
-depends_on = ["platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine"]
+depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine", "messaging.telegram.apps"]
 owns_files = [
   "telegram-bot/service/app/max.py", "telegram-bot/service/tests/test_max.py",
   "telegram-bot/service/certs/**",
   "docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md",
 ]
 owns_routes = ["*/bot/max/webhook"]
-reads_from = ["platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine"]
+reads_from = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine", "messaging.telegram.apps"]
 
 [[modules]]
 id = "messaging.telegram.attribution"
@@ -613,11 +613,11 @@ id = "messaging.telegram.apps"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.apps.md"
 depends_on = [
-  "messaging.telegram.engine", "platform.crm", "products.dqs",
+  "messaging.telegram.engine", "platform.crm", "products.masterclass.runtime", "products.dqs",
   "products.strength", "products.metabolism", "products.recipes",
 ]
 reads_from = [
-  "platform.crm", "products.dqs", "products.strength",
+  "platform.crm", "products.masterclass.runtime", "products.dqs", "products.strength",
   "products.metabolism", "products.recipes",
 ]
 owns_files = [

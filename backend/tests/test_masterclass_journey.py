@@ -34,6 +34,7 @@ from app.masterclass_article_components import render_masterclass_component  # n
 from app.models import (  # noqa: E402
     ContentItem, ContentItemVersion, ContentSource,
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
+    MasterclassStepProgress,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
     QuestionnaireAnswer, QuestionnaireRun, Resource, User, UserAccess, UserEmail,
     UserLegalAcceptance, UserOffer, AccountCredential,
@@ -1103,6 +1104,91 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
         assert db.scalar(select(MasterclassEvent).where(
             MasterclassEvent.event_type == "dqs_app_link_requested"
         )) is not None
+
+
+def test_course_app_trigger_reveals_only_an_owned_application_once():
+    client, factory = setup()
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        dqs = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user_id,
+            resource_id=dqs.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+
+    payload = {
+        "email": "member@example.test",
+        "day": 4,
+        "step_index": 1,
+        "placement": "day-04-dqs",
+    }
+    unopened_day = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    assert unopened_day.status_code == 409
+    assert unopened_day.json()["detail"] == {"reason": "day_not_opened"}
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MasterclassDayProgress(
+            user_id=user_id,
+            day_number=4,
+            required_step_ids=["day-04-article-01", "day-04-dqs"],
+        ))
+        db.commit()
+    incomplete_previous = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    assert incomplete_previous.status_code == 409
+    assert incomplete_previous.json()["detail"] == {"reason": "previous_step_not_completed"}
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MasterclassStepProgress(
+            user_id=user_id,
+            day_number=4,
+            step_index=0,
+            step_kind="article",
+            completed_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+
+    first = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    assert first.status_code == 200
+    assert first.json()["created"] is True
+    assert first.json()["telegram_url"].endswith("?start=dqs")
+    assert first.json()["max_url"].endswith("?start=dqs")
+
+    repeated = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    assert repeated.status_code == 200
+    assert repeated.json()["created"] is False
+
+    denied = client.post(
+        "/api/masterclass/apps/strength/reveal",
+        json={
+            "email": "member@example.test",
+            "day": 4,
+            "step_index": 1,
+            "placement": "future-strength-step",
+        },
+    )
+    assert denied.status_code == 409
+
+    forged = client.post(
+        "/api/masterclass/events",
+        json={
+            "email": "member@example.test",
+            "event_key": "app:strength:revealed",
+            "event_type": "app_revealed_strength",
+            "placement": "forged",
+        },
+    )
+    assert forged.status_code == 400
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "app_revealed_dqs"
+        )) == 1
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():

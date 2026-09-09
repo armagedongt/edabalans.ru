@@ -394,6 +394,7 @@ def app_fragment(app_code: str) -> Response:
             "Мастер-класс · первые дни": "Калорийный курс",
             'id="masterclass-course-app"': 'id="calories-course-app"',
             "edabalans_first_days_v2": "edabalans_calories_course_v1",
+            "COURSE_APP_REVEALS=true": "COURSE_APP_REVEALS=false",
             "/api/masterclass/course": "/api/calories/course",
             "/content/masterclass/course/course.json": "/content/calories/course/course.json",
             "masterclass-course": "calories-course",
@@ -480,6 +481,14 @@ def standalone_app_page(app_code: str, title: str) -> HTMLResponse:
         template,
         headers={"Cache-Control": "no-cache", "X-Robots-Tag": "noindex, nofollow"},
     )
+
+
+@router.get("/max-app", include_in_schema=False)
+@router.get("/max-app/", include_in_schema=False)
+def max_app_entry() -> FileResponse:
+    response = public_asset(STATIC_DIR / "max-app.html")
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
 
 
 @router.get("/apps/dqs-category-rules.js", include_in_schema=False)

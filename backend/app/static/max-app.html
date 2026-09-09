@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Приложение · Похудение — это есть!</title>
+  <script src="https://st.max.ru/js/max-web-app.js" defer></script>
+  <style>
+    html,body{margin:0;min-height:100%;background:#f4f4f6}
+    .max-app-loading{min-height:100vh;display:grid;place-items:center;padding:22px;color:#64748b;text-align:center;font:600 15px/1.4 Arial,sans-serif}
+  </style>
+</head>
+<body>
+  <main id="max-app-root" class="max-app-loading">Открываю приложение…</main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var allowed = {
+        dqs: 'dqs',
+        training: 'strength',
+        strength: 'strength',
+        metabolism: 'metabolism',
+        recipes: 'recipes'
+      };
+      var bridge = window.WebApp;
+      var query = new URLSearchParams(location.search);
+      var payload = String(
+        bridge && bridge.initDataUnsafe && bridge.initDataUnsafe.start_param ||
+        query.get('WebAppStartParam') ||
+        query.get('startapp') ||
+        ''
+      ).toLowerCase();
+      var appCode = allowed[payload];
+      var root = document.getElementById('max-app-root');
+      if (!appCode) {
+        root.textContent = 'Откройте нужное приложение из меню «Мои приложения» в боте.';
+        return;
+      }
+      root.className = '';
+      root.setAttribute('data-edabalans-app', appCode);
+      root.innerHTML = '<div class="max-app-loading">Проверяю доступ…</div>';
+      var loader = document.createElement('script');
+      loader.src = '/embed.js';
+      loader.defer = true;
+      document.body.appendChild(loader);
+    });
+  </script>
+</body>
+</html>
