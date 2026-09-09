@@ -245,10 +245,7 @@ try {
 
   for (const variant of [
     { id: 'topics', items: 4, boldFragments: 0, marker: 'Научитесь, как с помощью изменения пищевых привычек' },
-    { id: 'motivation', items: 0, boldFragments: 0, marker: 'Заканчивайте худеть только на силе воли!' },
-    { id: 'motivation-hero', items: 0, boldFragments: 0, marker: 'ПОЭТОМУ ПОРА МЕНЯТЬ ПОДХОД!!' },
-    { id: 'motivation-lines', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'motivation-frame', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'motivation-hero', items: 0, boldFragments: 0, marker: 'ПОРА МЕНЯТЬ ПОДХОД!' },
     { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий. Читайте, как всё это сделать в моем бесплатном интенсиве «Последнее похудение»! 👇' },
   ]) {
     const { context, page } = await landing({
@@ -268,7 +265,7 @@ try {
     await context.close()
   }
 
-  for (const variant of ['topics', 'motivation', 'motivation-hero', 'motivation-lines', 'motivation-frame', 'instead']) {
+  for (const variant of ['topics', 'motivation-hero', 'instead']) {
     const { context, page } = await landing({
       viewport: { width: 320, height: 900 },
       url: `${baseUrl}/preview/direct-intensive?variant=${variant}`,
@@ -276,7 +273,7 @@ try {
     await page.evaluate(() => document.fonts.ready)
     const fit = await page.evaluate(() => {
       const root = document.querySelector('#edb-direct-intensive-v1')
-      const heading = document.querySelector('.edb-di-card-heading, .edb-di-split-hero, .edb-di-opening-heading, .edb-di-body-heading, .edb-di-lead')
+      const heading = document.querySelector('.edb-di-hero-stack, .edb-di-opening-heading, .edb-di-body-heading, .edb-di-lead')
       const cta = document.querySelector('.edb-di-cta-lead')
       const arrows = cta?.querySelector('.edb-di-cta-arrows')
       const inlineActions = document.querySelector('.edb-di-actions--inline')
@@ -303,8 +300,9 @@ try {
         wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
       }
     })
-    const expectsSplitArrows = variant === 'motivation-lines' || variant === 'motivation-frame'
-    if (fit.rootOverflow > 1 || !['left', 'start'].includes(fit.headingAlign) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
+    const expectsSplitArrows = false
+    const expectedHeadingAlignment = variant === 'motivation-hero' ? 'center' : 'left'
+    if (fit.rootOverflow > 1 || !fit.headingAlign.includes(expectedHeadingAlignment) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
     const expectsInlineActions = variant === 'instead' || variant.startsWith('motivation')

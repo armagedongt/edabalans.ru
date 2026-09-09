@@ -1411,25 +1411,25 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     assert "?variant=" not in response.text
     assert "requestedVariant=new URLSearchParams(location.search).get('variant')" in response.text
     assert "?requestedVariant:'instead'" in response.text
-    assert "Заканчивайте худеть только на силе воли!" in response.text
+    assert "headingLines:['Заканчивайте худеть','только на силе воли']" in response.text
     assert "это не ваша личная черта как личности. Это просто недостаток навыков!" in response.text
     assert "сделать похудение проще — чтобы силы воли понадобилось меньше!" in response.text
     assert "Читайте мой бесплатный интенсив как это сделать!" in response.text
-    assert "openingStyle:'card-heading'" in response.text
-    assert "edb-di-callout" in response.text
+    assert "openingStyle:'hero-stack'" in response.text
+    assert "edb-di-hero-stack" in response.text
     assert "splitArrows:false" in response.text
     assert "motivation-hero" in response.text
-    assert "Поэтому пора менять подход!!" in response.text
-    assert "motivation-lines" in response.text
-    assert "motivation-frame" in response.text
+    assert "Пора менять подход!" in response.text
+    assert "motivation-lines" not in response.text
+    assert "motivation-frame" not in response.text
     assert "А вместо случайных попыток — понятный порядок действий. Читайте, как всё это сделать в моем бесплатном интенсиве «" in response.text
     assert "{text:'Последнее похудение',strong:true}" in response.text
     assert "afterList:[{text:'А вместо случайных попыток" in response.text
     assert "Научитесь, как с помощью изменения пищевых привычек" in response.text
     assert "читайте прямо сейчас. 👇" not in response.text
     assert "openingStyle:'plain-accent'" in response.text
-    assert "openingStyle:'content-only'" in response.text
-    assert "Надо менять подход!!" in response.text
+    assert "openingStyle:'plain-accent'" in response.text
+    assert "Надо менять подход!" in response.text
     assert "👇 Читайте прямо сейчас 👇" in response.text
     assert "Вместо ограничений — " in response.text
     assert "Вместо ПП-еды — " in response.text
