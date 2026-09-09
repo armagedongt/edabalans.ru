@@ -26,12 +26,14 @@ def test_brand_icons_are_available_from_root_paths() -> None:
         assert response.headers["content-type"] == content_type
         assert response.headers["cache-control"] == "public, max-age=3600"
         assert response.content.startswith(signature)
+        if content_type == "image/png":
+            assert response.content[25] == 6  # RGBA: transparent background is preserved.
 
 
 def test_primary_html_pages_reference_versioned_brand_icons() -> None:
     expected_links = (
-        '<link rel="icon" type="image/png" href="/favicon.png?v=20260909c">',
-        '<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260909c">',
+        '<link rel="icon" type="image/png" href="/favicon.png?v=20260910a">',
+        '<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">',
     )
     pages = (
         "/lk",
