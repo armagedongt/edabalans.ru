@@ -253,6 +253,13 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
                 revoked_at TIMESTAMP NULL
             )
         """))
+        session.execute(text("""
+            CREATE TABLE masterclass_events (
+                id TEXT PRIMARY KEY,
+                user_id TEXT NOT NULL,
+                event_type TEXT NOT NULL
+            )
+        """))
         seed_defaults(session, "Fitness_Talks_bot")
         user = CrmUser(display_name="DQS user", status="active", data_origin="native")
         session.add(user)
@@ -277,6 +284,13 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
             INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
             VALUES (:id, :user_id, :resource_id, NULL, NULL)
         """), {"id": str(uuid4()), "user_id": user.id, "resource_id": resource_id})
+        session.execute(
+            text("""
+                INSERT INTO masterclass_events (id, user_id, event_type)
+                VALUES (:id, :user_id, 'app_revealed_dqs')
+            """),
+            {"id": str(uuid4()), "user_id": user.id},
+        )
         session.commit()
 
     def db_override():
@@ -293,10 +307,11 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
 
     opened = {"update_id": 300, "message": {"from": {"id": 99, "first_name": "Visitor"}, "chat": {"id": 99}, "text": "/start dqs"}}
     assert client.post("/telegram/webhook", json=opened).json() == {"ok": True, "apps_menu": True}
-    assert fake.configurations[-1]["buttons"][0] == {
+    assert {
         "text": "Оценка качества питания",
         "web_app": {"url": "https://edabalans.ru/dqs"},
-    }
+        "max_app_payload": "dqs",
+    } in fake.configurations[-1]["buttons"]
 
     refreshed = {"update_id": 301, "callback_query": {"id": "apps-cb", "from": {"id": 99, "first_name": "Visitor"}, "message": {"chat": {"id": 99}, "message_id": 7}, "data": "apps:refresh"}}
     assert client.post("/telegram/webhook", json=refreshed).json() == {"ok": True, "apps_menu": True}
