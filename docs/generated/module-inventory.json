@@ -7047,6 +7047,26 @@
     {
       "module_id": "operations.project-work",
       "path": "work/yandex-search-20260904/assets/cat-bagel-no-text.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/01-face-in-chocolate-cake.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/02-split-kettlebell-pizza.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/03-split-treadmill-donuts.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/04-split-treadmill-burger.png"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/05-split-kettlebell-chocolate-cake.png"
     }
   ],
   "modules": [
@@ -22182,7 +22202,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 45,
+          "line": 53,
           "module_id": "operations.imports",
           "name": "prepare",
           "qualname": "prepare"
@@ -22190,7 +22210,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 57,
+          "line": 65,
           "module_id": "operations.imports",
           "name": "write_rows",
           "qualname": "write_rows"
@@ -22198,7 +22218,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 62,
+          "line": 70,
           "module_id": "operations.imports",
           "name": "access_codes",
           "qualname": "access_codes"
@@ -22206,7 +22226,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 71,
+          "line": 79,
           "module_id": "operations.imports",
           "name": "test_tilda_groups_map_to_current_and_non_updating_access",
           "qualname": "test_tilda_groups_map_to_current_and_non_updating_access"
@@ -22214,7 +22234,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 107,
+          "line": 115,
           "module_id": "operations.imports",
           "name": "test_import_preserves_historical_review_queue_and_adds_processing",
           "qualname": "test_import_preserves_historical_review_queue_and_adds_processing"
@@ -22222,7 +22242,7 @@
         {
           "file": "backend/tests/test_tilda_members_import.py",
           "kind": "function",
-          "line": 136,
+          "line": 144,
           "module_id": "operations.imports",
           "name": "test_welcome_only_requires_review_but_welcome_plus_product_is_processed",
           "qualname": "test_welcome_only_requires_review_but_welcome_plus_product_is_processed"
@@ -26235,6 +26255,26 @@
         {
           "module_id": "operations.project-work",
           "path": "work/yandex-search-20260904/assets/cat-bagel-no-text.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/01-face-in-chocolate-cake.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/02-split-kettlebell-pizza.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/03-split-treadmill-donuts.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/04-split-treadmill-burger.png"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/yandex-search-20260904/assets/women-willpower-candidates-20260909/05-split-kettlebell-chocolate-cake.png"
         }
       ],
       "id": "operations.project-work",
@@ -69886,7 +69926,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 45,
+      "line": 53,
       "module_id": "operations.imports",
       "name": "prepare",
       "qualname": "prepare"
@@ -69894,7 +69934,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 57,
+      "line": 65,
       "module_id": "operations.imports",
       "name": "write_rows",
       "qualname": "write_rows"
@@ -69902,7 +69942,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 62,
+      "line": 70,
       "module_id": "operations.imports",
       "name": "access_codes",
       "qualname": "access_codes"
@@ -69910,7 +69950,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 71,
+      "line": 79,
       "module_id": "operations.imports",
       "name": "test_tilda_groups_map_to_current_and_non_updating_access",
       "qualname": "test_tilda_groups_map_to_current_and_non_updating_access"
@@ -69918,7 +69958,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 107,
+      "line": 115,
       "module_id": "operations.imports",
       "name": "test_import_preserves_historical_review_queue_and_adds_processing",
       "qualname": "test_import_preserves_historical_review_queue_and_adds_processing"
@@ -69926,7 +69966,7 @@
     {
       "file": "backend/tests/test_tilda_members_import.py",
       "kind": "function",
-      "line": 136,
+      "line": 144,
       "module_id": "operations.imports",
       "name": "test_welcome_only_requires_review_but_welcome_plus_product_is_processed",
       "qualname": "test_welcome_only_requires_review_but_welcome_plus_product_is_processed"
