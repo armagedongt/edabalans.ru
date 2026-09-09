@@ -21,6 +21,9 @@
   #edb-direct-intensive-v1 .edb-di-approach-heading{margin:16px 0 12px}
   #edb-direct-intensive-v1 .edb-di-body-heading{margin:0 0 7px}
   #edb-direct-intensive-v1 .edb-di-body-approach{margin:9px 0 0}
+  #edb-direct-intensive-v1 .edb-di-card-heading{margin:0 0 17px;padding:10px 12px 11px;border:2px solid var(--edb-orange);border-radius:14px;color:var(--edb-orange);font-family:Manrope,Montserrat,sans-serif;font-size:clamp(19px,5.45vw,28px);font-weight:800;line-height:1.13;letter-spacing:-.03em;text-align:left;text-wrap:balance}
+  #edb-direct-intensive-v1 .edb-di-callout{margin:17px 0 0;padding:14px 15px;border-left:4px solid var(--edb-orange);border-radius:0 13px 13px 0;background:rgba(255,107,54,.09);color:#263640;font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);font-weight:650;line-height:1.48}
+  #edb-direct-intensive-v1 .edb-di-final-cta{margin:19px 0 15px;color:#334654;font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);font-weight:500;line-height:1.5}
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-section-lead,
   #edb-direct-intensive-v1[data-landing-variant="instead"] .edb-di-opening-heading,
   #edb-direct-intensive-v1[data-landing-variant="motivation-lines"] .edb-di-opening-heading,
@@ -127,13 +130,14 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       ]
     },
     motivation:{
-      openingStyle:'body-emphasis',
-      body:[
-        [{text:'Да, для похудения — нужен дефицит калорий.'}],
-        [{text:'Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки, чтобы у вас глаза на лоб не полезли от этого дефицита.'}]
-      ],
-      ctaLeadLines:['Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки.'],
-      splitArrows:true,
+      openingStyle:'card-heading',
+      heading:'Заканчивайте худеть только на силе воли!',
+      intro:[{text:'Если каждая попытка привести себя в форму заканчивается зажором и набором веса обратно — это не ваша личная черта как личности. Это просто недостаток навыков!'}],
+      reason:[{text:'Если худеть только на силе воли, конечно, она будет быстро заканчиваться! Поэтому я предлагаю изменить подход:'}],
+      callout:[{text:'Научитесь, как с помощью изменения пищевых привычек и небольших перестановок в питании сделать похудение проще — чтобы силы воли понадобилось меньше!'}],
+      finalCta:[{text:'Читайте мой бесплатный интенсив как это сделать!'}],
+      ctaLeadLines:[],
+      splitArrows:false,
       points:[]
     },
     'motivation-lines':{
@@ -188,10 +192,14 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     : rich(point);
   const pointList=points.length?`<ul class="edb-di-list${CONTENT.listKind==='checks'?' edb-di-list--checks':''}">${points.map(point=>`<li class="edb-di-item">${pointContent(point)}</li>`).join('')}</ul>`:'';
   const afterList=paragraph(CONTENT.afterList,'edb-di-after-list');
+  const callout=paragraph(CONTENT.callout,'edb-di-callout');
+  const finalCta=paragraph(CONTENT.finalCta,'edb-di-final-cta');
   const HERO_HTML=`<span class="edb-di-hero-accent">${esc(CONTENT.accent)}</span>`;
-  const plainOpening=`<h1 class="edb-di-section-lead edb-di-opening-heading">${esc(CONTENT.intro[0].text.trim())}</h1>${paragraph([CONTENT.intro[1]])}${paragraph(CONTENT.reason,'edb-di-offer')}`;
+  const plainOpening=`<h1 class="edb-di-section-lead edb-di-opening-heading">${esc(CONTENT.intro[0].text.trim())}</h1>${paragraph(CONTENT.intro.slice(1))}${paragraph(CONTENT.reason,'edb-di-offer')}`;
   const openingHtml=CONTENT.openingStyle==='plain'
     ? `${plainOpening}<h2 class="edb-di-section-lead edb-di-approach-heading">${esc(CONTENT.accent)}</h2>`
+    : CONTENT.openingStyle==='card-heading'
+      ? `<h1 class="edb-di-card-heading">${esc(CONTENT.heading)}</h1>${paragraph(CONTENT.intro)}${paragraph(CONTENT.reason,'edb-di-offer')}`
     : CONTENT.openingStyle==='body-emphasis'
       ? `<p class="edb-di-lead edb-di-body-heading"><strong>${esc(CONTENT.intro[0].text.trim())}</strong></p>${paragraph([CONTENT.intro[1]])}${paragraph(CONTENT.reason,'edb-di-offer')}<p class="edb-di-lead edb-di-body-approach"><strong>${esc(CONTENT.accent)}</strong></p>`
     : CONTENT.openingStyle==='plain-accent'
@@ -206,10 +214,13 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   const button=(kind,label,url,note='',position='primary',notePlacement='inside')=>`<div class="edb-di-action-wrap"><a class="edb-di-button edb-di-button--${kind}" data-edb-channel="${kind}" data-cta-position="${position}" aria-label="${esc(label)}${note?`. ${esc(note)}`:''}" href="${configured(url)?esc(url):'#'}" rel="noopener noreferrer"${configured(url)?'':' aria-disabled="true"'}>${icon(kind)}${kind==='max'?'':`<span>${esc(label)}</span>${note&&notePlacement==='inside'?`<span class="edb-di-button-note">${esc(note)}</span>`:''}`}</a>${note&&notePlacement==='below'?`<p class="edb-di-note">${esc(note)}</p>`:''}</div>`;
   const qrOption=(kind,label,selected)=>`<button class="edb-di-qr-option" type="button" role="option" data-edb-qr="${kind}" aria-selected="${selected}" tabindex="${selected?'0':'-1'}"><span class="edb-di-qr-heading"><span>${esc(label)}</span><span class="edb-di-qr-state">${selected?'QR открыт':'QR скрыт'}</span></span><span class="edb-di-qr-frame"><img class="edb-di-qr-code" src="${assetUrl(`direct-intensive-${kind}-qr.svg`)}" data-edb-destination="" alt="QR-код для ${esc(label)}"><span class="edb-di-qr-cover" aria-hidden="${selected?'true':'false'}">Нажмите, чтобы показать этот QR-код</span></span></button>`;
   const ctaArrows=CONTENT.splitArrows?'<span class="edb-di-cta-arrows" aria-hidden="true"><span>👇</span><span>👇</span></span>':'';
+  const ctaLead=CONTENT.ctaLeadLines.length||ctaArrows
+    ?`<p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}${ctaArrows}</p>`
+    :'';
   const usesOriginalInlineActions=ACTIVE_VARIANT.startsWith('motivation');
   const inlineTelegramNote=usesOriginalInlineActions?'только с VPN':CONTENT.telegramNote;
   root.dataset.landingVariant=ACTIVE_VARIANT;
-  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}</section>${pointList}${afterList}<p class="edb-di-section-lead edb-di-cta-lead">${CONTENT.ctaLeadLines.map(line=>`<span>${esc(line)}</span>`).join('')}${ctaArrows}</p><div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,inlineTelegramNote,'primary',usesOriginalInlineActions?'below':'inside')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span class="edb-di-legal-line"><span>${esc(CONTENT.legal.business)} · ${esc(CONTENT.legal.inn)}</span><span aria-hidden="true">·</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span aria-hidden="true">·</span><span>${esc(CONTENT.legal.disclaimer)}</span></span></footer></main><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
+  root.innerHTML=`<main class="edb-di-shell"><section class="edb-di-hero-stage">${openingHtml}${(CONTENT.body||[]).map(item=>paragraph(item,'edb-di-offer')).join('')}${paragraph(CONTENT.offer,'edb-di-offer')}${callout}${finalCta}</section>${pointList}${afterList}${ctaLead}<div class="edb-di-actions edb-di-actions--inline">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,inlineTelegramNote,'primary',usesOriginalInlineActions?'below':'inside')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl)}</div><section class="edb-di-qr" aria-label="QR-коды мессенджеров"><p class="edb-di-qr-intro">Если на компьютере нет мессенджера, отсканируйте QR-код телефоном.</p><div class="edb-di-qr-options" role="listbox" aria-label="Выберите мессенджер">${qrOption('telegram',CONTENT.telegramLabel,true)}${qrOption('max',CONTENT.maxLabel,false)}</div></section><footer class="edb-di-legal"><span class="edb-di-legal-line"><span>${esc(CONTENT.legal.business)} · ${esc(CONTENT.legal.inn)}</span><span aria-hidden="true">·</span><a href="${esc(CONTENT.legal.privacyUrl)}" target="_blank" rel="noopener noreferrer">${esc(CONTENT.legal.privacyLabel)}</a><span aria-hidden="true">·</span><span>${esc(CONTENT.legal.disclaimer)}</span></span></footer></main><nav class="edb-di-sticky-actions" aria-label="Открыть интенсив в мессенджере">${button('telegram',CONTENT.telegramLabel,CONTENT.links.telegramUrl,CONTENT.telegramNote,'sticky')}${button('max',CONTENT.maxLabel,CONTENT.links.maxUrl,'','sticky')}</nav>`;
 
   let robots=document.head&&document.head.querySelector('meta[name="robots"]');
   if(!robots&&document.head){robots=document.createElement('meta');robots.name='robots';document.head.appendChild(robots)}
