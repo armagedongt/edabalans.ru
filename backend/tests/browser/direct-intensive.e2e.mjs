@@ -112,7 +112,7 @@ try {
     const { context, page, requests } = await landing()
     await waitForRequests(requests)
     await page.waitForFunction(() => [...document.querySelectorAll('[data-edb-channel]')].every(link => link.href.includes('?start=U')))
-    const expectedAttribution = { alias: 'BMB6Y', landing_variant: 'topics', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
+    const expectedAttribution = { alias: 'BMB6Y', landing_variant: 'instead', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
     const byKey = Object.fromEntries(requests.map(body => [`${body.messenger}:${body.entry}`, body]))
     for (const messenger of ['tg', 'max']) for (const entry of ['button', 'qr']) {
       const expected = { messenger, entry, ...expectedAttribution }
@@ -142,7 +142,7 @@ try {
     requests.length = 0
     await page.goto(`${baseUrl}/preview/direct-intensive`, { waitUntil: 'domcontentloaded' })
     await waitForRequests(requests)
-    if (!requests.every(body => ['landing_variant', 'yclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].every(key => body[key] === ({ landing_variant: 'topics', yclid: 'click-901', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start' })[key]))) throw new Error(`Session attribution was not restored: ${JSON.stringify(requests)}`)
+    if (!requests.every(body => ['landing_variant', 'yclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].every(key => body[key] === ({ landing_variant: 'instead', yclid: 'click-901', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start' })[key]))) throw new Error(`Session attribution was not restored: ${JSON.stringify(requests)}`)
     await context.close()
   }
 

@@ -1343,6 +1343,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert response.headers["content-type"].startswith("text/html")
     assert response.headers["cache-control"] == "no-cache"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert response.headers["access-control-allow-origin"] == "*"
     assert '<meta name="viewport" content="width=device-width, initial-scale=1">' in response.text
     assert response.text.index('name="viewport"') < response.text.index('id="edb-direct-intensive-v1"')
     assert 'id="edb-direct-intensive-v1"' in response.text
@@ -1386,12 +1387,27 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert source.text == response.text
 
 
+def test_direct_intensive_loader_is_stable_cross_origin_tilda_embed() -> None:
+    response = client.get("/preview/direct-intensive/loader.js")
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("application/javascript")
+    assert response.headers["cache-control"] == "no-cache"
+    assert response.headers["access-control-allow-origin"] == "*"
+    assert response.headers["x-robots-tag"] == "noindex, nofollow"
+    assert "document.getElementById('edb-direct-intensive-host')" in response.text
+    assert "fetch(appHost + '/preview/direct-intensive'" in response.text
+    assert "host.replaceWith(document.importNode(landing, true))" in response.text
+    assert "parsed.querySelectorAll('script')" in response.text
+
+
 def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     response = client.get("/preview/direct-intensive")
 
     assert "const VARIANTS={" in response.text
     assert "?variant=" not in response.text
     assert "requestedVariant=new URLSearchParams(location.search).get('variant')" in response.text
+    assert "?requestedVariant:'instead'" in response.text
     assert "Да, для похудения — нужен дефицит калорий." in response.text
     assert "Но ещё нужны навыки в управлении питанием и адекватные пищевые привычки" in response.text
     assert "Читайте бесплатный интенсив: что это за навыки и как менять пищевые привычки." in response.text

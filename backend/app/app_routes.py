@@ -261,7 +261,30 @@ def direct_intensive_preview() -> HTMLResponse:
     fragment = (
         STATIC_DIR / "homepage-preview" / "direct-intensive.html"
     ).read_text(encoding="utf-8")
-    response = HTMLResponse(fragment, headers={"Cache-Control": "no-cache"})
+    response = HTMLResponse(
+        fragment,
+        headers={
+            "Cache-Control": "no-cache",
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/direct-intensive/loader.js", include_in_schema=False)
+def direct_intensive_loader() -> Response:
+    source = (
+        STATIC_DIR / "homepage-preview" / "direct-intensive-loader.js"
+    ).read_text(encoding="utf-8")
+    response = Response(
+        source,
+        media_type="application/javascript",
+        headers={
+            "Cache-Control": "no-cache",
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
 
