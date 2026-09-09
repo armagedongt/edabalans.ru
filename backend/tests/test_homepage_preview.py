@@ -1398,8 +1398,8 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     assert "splitArrows:true" in response.text
     assert "motivation-lines" in response.text
     assert "motivation-frame" in response.text
-    assert "А вместо случайных попыток — " in response.text
-    assert "{text:'понятный порядок действий',strong:true}" in response.text
+    assert "А вместо случайных попыток — понятный порядок действий. Читайте бесплатный интенсив, как перейти к такому подходу" in response.text
+    assert "afterList:[{text:'А вместо случайных попыток" in response.text
     assert "Читайте бесплатный интенсив, как перейти к такому подходу" in response.text
     assert "читайте прямо сейчас. 👇" not in response.text
     assert "openingStyle:'plain-accent'" in response.text

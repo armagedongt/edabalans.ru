@@ -254,7 +254,7 @@ try {
     { id: 'motivation', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
     { id: 'motivation-lines', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
     { id: 'motivation-frame', items: 0, boldFragments: 2, marker: 'Да, для похудения — нужен дефицит калорий.' },
-    { id: 'instead', items: 5, boldFragments: 6, marker: 'Читайте бесплатный интенсив, как перейти к такому подходу' },
+    { id: 'instead', items: 5, boldFragments: 5, marker: 'А вместо случайных попыток — понятный порядок действий. Читайте бесплатный интенсив, как перейти к такому подходу' },
   ]) {
     const { context, page } = await landing({
       viewport: { width: 360, height: 900 },
