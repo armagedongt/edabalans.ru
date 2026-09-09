@@ -1128,6 +1128,54 @@
   }
 
 }
+.st-entry-modes{margin-top:10px;padding:4px;display:grid;grid-template-columns:1fr 1fr;gap:4px;border-radius:12px;background:#ededf2}
+.st-entry-modes button{min-height:42px;border:0;border-radius:9px;background:transparent;color:#777a87;font-size:11px;font-weight:800}
+.st-entry-modes button.active{background:#fff;color:var(--st-purple);box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.st-entry-modes button.active.train{background:#fff3eb;color:#f05d25}
+.st-template-actions{justify-content:flex-end}
+.st-actions-train{justify-content:stretch}
+.st-finish{width:100%;min-height:44px;border:0;border-radius:11px;background:#ff6a2c;color:#fff;font-size:13px;font-weight:900}
+.st-modern-list{margin-top:12px;display:grid;gap:14px}
+.st-modern-exercise{overflow:hidden;border:1px solid rgba(70,70,90,.09);border-radius:16px;box-shadow:0 7px 20px rgba(30,30,55,.07)}
+.st-modern-head{padding:13px 13px 10px;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid rgba(70,70,90,.08)}
+.st-modern-title{min-width:0;flex:1;padding:0;border:0;background:transparent;text-align:left;color:var(--st-text)}
+.st-modern-title strong{display:block;font-size:15px;line-height:1.25;font-weight:700}
+.st-modern-title span{display:block;margin-top:4px;color:var(--st-purple);font-size:9px;font-weight:800}
+.st-modern-remove{width:28px;height:28px;padding:0;border:1px solid rgba(70,70,90,.14);border-radius:9px;background:rgba(255,255,255,.72);color:#868996;font-size:18px}
+.st-previous{padding:11px 12px 12px;background:rgba(255,255,255,.48)}
+.st-previous-title{margin-bottom:7px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.05em}
+.st-previous-title small{margin-left:5px;color:var(--st-muted);font-size:9px;font-weight:700;text-transform:none;letter-spacing:0}
+.st-history-strip,.st-history-modal-strip{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.st-history-strip::-webkit-scrollbar,.st-history-modal-strip::-webkit-scrollbar{display:none}
+.st-history-card{flex:0 0 170px;padding:10px;border:1px solid rgba(111,61,232,.16);border-radius:11px;background:rgba(255,255,255,.74);scroll-snap-align:start;text-align:left;color:var(--st-text)}
+.st-history-card.selected{border-color:var(--st-purple);box-shadow:0 4px 13px rgba(111,61,232,.13)}
+.st-history-card strong,.st-history-card span,.st-history-modal-card strong,.st-history-modal-card span{display:block}
+.st-history-card strong,.st-history-modal-card strong{margin-bottom:6px;font-size:11px}
+.st-history-card span,.st-history-modal-card span{margin-top:4px;font-size:10px;white-space:nowrap}
+.st-copy-history{margin-top:8px;min-height:34px;padding:0 12px;border:0;border-radius:9px;background:var(--st-purple);color:#fff;font-size:10px;font-weight:900}
+.st-history-empty{padding:10px;color:var(--st-muted);font-size:11px}
+.st-modern-editor{padding:11px 12px 13px;background:rgba(255,255,255,.66)}
+.st-modern-labels,.st-modern-set{display:grid;align-items:center;gap:6px}
+.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:18px minmax(0,1fr) minmax(0,1fr) 50px}
+.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.8fr) 30px minmax(0,1.2fr) 50px}
+.st-modern-labels{padding:0 2px 5px;color:#777b89;font-size:9px;font-weight:900;text-align:center}
+.st-modern-labels small{font-size:8px;font-weight:700}
+.st-modern-set{min-height:43px;padding:5px 0;border-top:1px solid rgba(70,70,90,.07)}
+.st-modern-number{text-align:center;color:#838692;font-size:10px;font-weight:900}
+.st-input-pair,.st-readonly-pair{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.st-input-pair input{width:100%;min-width:0;height:32px;padding:0 2px;border:1px solid #d6d7df;border-radius:7px;background:#fff;text-align:center;font-size:12px;font-weight:800}
+.st-readonly-pair span{min-width:0;padding:7px 2px;border-radius:7px;background:rgba(255,255,255,.55);text-align:center;font-size:11px;font-weight:800}
+.st-set-done{width:29px;height:29px;padding:0;border:1px solid #cfd2dc;border-radius:50%;background:#fff;color:transparent;font-size:16px;font-weight:900}
+.st-set-done.checked{border-color:#3cad72;background:#3cad72;color:#fff}
+.st-modern-set-actions{margin-top:8px;display:flex;gap:7px}
+.st-modern-set-actions button{min-height:32px;padding:0 11px;border:0;border-radius:8px;background:#efeff4;color:#606471;font-size:10px;font-weight:900}
+.st-modern-comment{margin-top:10px;display:grid;grid-template-columns:auto minmax(0,1fr);align-items:start;gap:8px;color:#777b89;font-size:10px;font-weight:900}
+.st-modern-comment>span{padding-top:10px}
+.st-modern-comment textarea{display:block;width:100%;min-width:0;min-height:38px;overflow:hidden;resize:none;padding:9px 10px;border:1px solid #dedfe7;border-radius:9px;background:#fff;color:var(--st-text);font-size:11px;line-height:17px}
+.st-history-modal{max-width:720px}
+.st-history-modal-strip{padding:4px 0 8px}
+.st-history-modal-card{flex:0 0 180px;padding:12px;border:1px solid #e1dcf2;border-radius:12px;background:#faf8ff;scroll-snap-align:start}
+@media(max-width:700px){.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr}.st-modern-comment>span{padding-top:0}}
 </style>
 
 <script>
@@ -1176,6 +1224,9 @@ var app = {
 
   workoutType:1,
   selectedIndex:0,
+  entryMode:'edit',
+  selectedPrevious:{},
+  completedSets:{},
 
   workouts:{
     1:null,
@@ -2616,6 +2667,11 @@ function renderClient(){
 
   renderSavingOnly();
 
+  setTimeout(function(){
+    var comments = root.querySelectorAll('.st-modern-comment textarea');
+    for(var i=0;i<comments.length;i++){ ST.autoGrow(comments[i]); }
+  },0);
+
 }
 
 
@@ -2725,8 +2781,9 @@ function renderJournalHeader(){
       '</div>'+
       '<button class="st-arrow" onclick="ST.nextSession()">›</button>'+
     '</div>'+
-    '<div class="st-motivation">'+
-      esc(app.motivation)+
+    '<div class="st-entry-modes">'+
+      '<button class="'+(app.entryMode === 'edit' ? 'active' : '')+'" onclick="ST.setEntryMode(\'edit\')">Редактировать план</button>'+
+      '<button class="'+(app.entryMode === 'train' ? 'active train' : '')+'" onclick="ST.setEntryMode(\'train\')">Начать тренировку</button>'+
     '</div>'+
     renderActions()+
     '<div id="st-save-state" class="st-saving">'+
@@ -2744,39 +2801,14 @@ function renderJournalHeader(){
 
 
 function renderActions(){
-
-  var current =
-    currentWorkout()
-      .sessions[
-        app.selectedIndex
-      ];
+  if(app.entryMode === 'train'){
+    return '<div class="st-actions st-actions-train"><button class="st-finish" onclick="ST.finishWorkout()">Завершить тренировку</button></div>';
+  }
 
   return (
-      '<div class="st-actions">'+
-      '<div class="st-action-group">'+
-        '<button class="st-action st-manage" onclick="ST.openManager()">Настроить упражнения</button>'+
-      '</div>'+
-      '<div class="st-action-group">'+
-        '<button class="st-action st-copy-plan" '+
-        (
-          isLatest()
-          ?
-          ''
-          :
-          'disabled'
-        )+
-        ' onclick="ST.copyNext(\'plan\')">Скопировать план → следующая</button>'+
-        '<button class="st-action st-copy-fact" '+
-        (
-          isLatest() &&
-          isFilled(current)
-          ?
-          ''
-          :
-          'disabled'
-        )+
-        ' onclick="ST.copyNext(\'fact\')">Скопировать факт → следующая</button>'+
-      '</div>'+
+    '<div class="st-actions st-template-actions">'+
+      '<button class="st-action st-manage" onclick="ST.openManager()">＋ Упражнение</button>'+
+      '<button class="st-action st-manage" onclick="ST.openManager()">↕ Порядок</button>'+
     '</div>'
   );
 
@@ -2843,20 +2875,137 @@ function renderJournal(){
     return '';
   }
 
-  var visible =
-    visibleSessions();
+  return renderCurrentExercises();
 
-  return (
-    renderDayHeads(
-      visible
-    )+
-    '<div class="st-ex-list">'+
-      renderExerciseRows(
-        visible
-      )+
-    '</div>'
-  );
+}
 
+
+function exerciseHistory(id,name){
+  var result = [];
+  for(var type=1;type<=3;type++){
+    var workout = app.workouts[type];
+    if(!workout){ continue; }
+    for(var index=0;index<workout.sessions.length;index++){
+      if(type === app.workoutType && index === app.selectedIndex){ continue; }
+      var session = workout.sessions[index];
+      var exercise = findExercise(session,id);
+      if(!exercise){
+        for(var e=0;e<session.exercises.length;e++){
+          if(String(session.exercises[e].name).toLowerCase() === String(name).toLowerCase()){
+            exercise = session.exercises[e];
+            break;
+          }
+        }
+      }
+      if(!exercise){ continue; }
+      var filled = exercise.sets.some(function(set){
+        return !blank(set.factWeight) || !blank(set.factReps) || !blank(set.rpe);
+      });
+      if(filled){ result.push({type:type,index:index,session:session,exercise:exercise}); }
+    }
+  }
+  result.sort(function(a,b){
+    return String(b.session.date || '').localeCompare(String(a.session.date || '')) || b.session.number-a.session.number;
+  });
+  return result;
+}
+
+
+function historySetText(set){
+  var weight = blank(set.factWeight) ? set.planWeight : set.factWeight;
+  var reps = blank(set.factReps) ? set.planReps : set.factReps;
+  return (blank(weight) ? '—' : esc(weight)+' кг')+' × '+(blank(reps) ? '—' : esc(reps))+(blank(set.rpe) ? '' : ' · RPE '+esc(set.rpe));
+}
+
+
+function renderPreviousExecutions(exercise){
+  var history = exerciseHistory(exercise.id,exercise.name);
+  if(!history.length){
+    return '<section class="st-previous"><div class="st-previous-title">Было</div><div class="st-history-empty">Истории пока нет</div></section>';
+  }
+  var key = app.workoutType+'|'+exercise.id;
+  var selected = Number(app.selectedPrevious[key] || 0);
+  if(selected >= history.length){ selected = 0; }
+  var html = '<section class="st-previous"><div class="st-previous-title">Было <small>нажмите, чтобы выбрать</small></div><div class="st-history-strip">';
+  for(var i=0;i<history.length;i++){
+    var item = history[i];
+    html += '<button class="st-history-card '+(i===selected?'selected':'')+'" onclick="ST.choosePrevious(\''+esc(exercise.id)+'\','+i+')"><strong>'+esc(formatDate(item.session.date)||('Тренировка №'+item.session.number))+'</strong>';
+    for(var s=0;s<item.exercise.sets.length;s++){
+      html += '<span>'+(s+1)+'. '+historySetText(item.exercise.sets[s])+'</span>';
+    }
+    html += '</button>';
+  }
+  html += '</div><button class="st-copy-history" onclick="ST.copyPreviousToPlan(\''+esc(exercise.id)+'\')">Перенести выбранное в план</button></section>';
+  return html;
+}
+
+
+function renderModernSet(sessionIndex,exercise,setIndex,set){
+  var planWeight = esc(set.planWeight);
+  var planReps = esc(set.planReps);
+  var factWeight = esc(set.factWeight);
+  var factReps = esc(set.factReps);
+  var args = sessionIndex+',\''+esc(exercise.id)+'\','+setIndex;
+
+  if(app.entryMode === 'train'){
+    var completeKey = app.workoutType+'|'+sessionIndex+'|'+exercise.id+'|'+setIndex;
+    var complete = Boolean(
+      (app.completedSets && app.completedSets[completeKey]) ||
+      (!blank(set.planWeight) && !blank(set.planReps) &&
+       String(set.factWeight) === String(set.planWeight) &&
+       String(set.factReps) === String(set.planReps))
+    );
+    return '<div class="st-modern-set train">'+
+      '<div class="st-readonly-pair"><span>'+(planWeight||'—')+'</span><span>'+(planReps||'—')+'</span></div>'+
+      '<button class="st-set-done '+(complete?'checked':'')+'" onclick="ST.completeSet('+args+')" aria-label="Выполнено по плану">✓</button>'+
+      '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+      '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
+    '</div>';
+  }
+
+  return '<div class="st-modern-set edit">'+
+    '<span class="st-modern-number">'+(setIndex+1)+'</span>'+
+    '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+planWeight+'" onchange="ST.changeField('+args+',\'planWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+planReps+'" onchange="ST.changeField('+args+',\'planReps\',this.value)"></div>'+
+    '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+    '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
+  '</div>';
+}
+
+
+function renderCurrentExercises(){
+  var workout = currentWorkout();
+  var session = workout.sessions[app.selectedIndex];
+  var active = {};
+  activeCatalog().forEach(function(item){ active[String(item.exercise_id)] = true; });
+  var html = '<div class="st-modern-list">';
+
+  for(var i=0;i<session.exercises.length;i++){
+    var exercise = session.exercises[i];
+    if(!active[String(exercise.id)]){ continue; }
+    while(exercise.sets.length < 4){
+      exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
+    }
+    html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
+      '<header class="st-modern-head">'+
+        '<button class="st-modern-title" onclick="ST.openExerciseHistory(\''+esc(exercise.id)+'\')"><strong>'+esc(exercise.name)+'</strong><span>История упражнения</span></button>'+
+        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из Тренировки '+app.workoutType+'">×</button>' : '')+
+      '</header>'+
+      (app.entryMode === 'edit' ? renderPreviousExecutions(exercise) : '')+
+      '<section class="st-modern-editor">'+
+        '<div class="st-modern-labels '+app.entryMode+'">'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span>План<br><small>вес · разы</small></span>'+
+          (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span>Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
+        '</div>';
+    for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
+      html += renderModernSet(app.selectedIndex,exercise,setIndex,exercise.sets[setIndex]);
+    }
+    html += '<div class="st-modern-set-actions"><button onclick="ST.addSet(\''+esc(exercise.id)+'\')">＋ Подход</button><button onclick="ST.removeSet(\''+esc(exercise.id)+'\')">− Подход</button></div>'+
+      '<label class="st-modern-comment"><span>Комментарий</span><textarea rows="1" placeholder="Добавить комментарий" oninput="ST.autoGrow(this)" onchange="ST.changeNote(\''+esc(exercise.id)+'\',this.value)">'+esc(exercise.note||'')+'</textarea></label>'+
+      '</section></article>';
+  }
+
+  html += '</div>';
+  return html;
 }
 
 
@@ -4283,6 +4432,27 @@ function renderModal(){
 
   }
 
+  if(app.modal.type === 'exerciseHistory'){
+    var currentSession = currentWorkout().sessions[app.selectedIndex];
+    var currentExercise = findExercise(currentSession,app.modal.exerciseId);
+    var items = currentExercise ? exerciseHistory(currentExercise.id,currentExercise.name) : [];
+    var historyHtml = '<div class="st-history-modal-strip">';
+    for(var h=0;h<items.length;h++){
+      historyHtml += '<article class="st-history-modal-card"><strong>'+esc(formatDate(items[h].session.date)||('Тренировка №'+items[h].session.number))+'</strong>';
+      for(var hs=0;hs<items[h].exercise.sets.length;hs++){
+        historyHtml += '<span>'+(hs+1)+'. '+historySetText(items[h].exercise.sets[hs])+'</span>';
+      }
+      historyHtml += '</article>';
+    }
+    if(!items.length){ historyHtml += '<div class="st-history-empty">Истории пока нет</div>'; }
+    historyHtml += '</div>';
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal st-history-modal"><div class="st-modal-title">'+esc(currentExercise ? currentExercise.name : 'История упражнения')+'</div><div class="st-modal-sub">История упражнения</div>'+historyHtml+'<div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Закрыть</button></div></div></div>';
+  }
+
+  if(app.modal.type === 'removeExercise'){
+    return '<div class="st-modal-bg"><div class="st-modal"><div class="st-modal-title">Убрать упражнение?</div><div class="st-modal-sub">Точно убрать упражнение из Тренировки '+app.workoutType+'? Общая история упражнения сохранится.</div><div class="st-modal-actions"><button class="st-modal-btn st-modal-close" onclick="ST.closeModal()">Оставить</button><button class="st-modal-btn st-modal-save" onclick="ST.confirmRemoveExercise()">Убрать</button></div></div></div>';
+  }
+
   if(
     app.modal.type ===
     'calendarDay'
@@ -4753,6 +4923,7 @@ window.ST = {
 
     app.workoutType =
       Number(type);
+    app.entryMode = 'edit';
 
     var sessions =
       currentWorkout()
@@ -4771,6 +4942,98 @@ window.ST = {
 
   },
 
+
+  setEntryMode:function(mode){
+    app.entryMode = mode === 'train' ? 'train' : 'edit';
+    app.rpeMenu = null;
+    render();
+  },
+
+  choosePrevious:function(id,index){
+    app.selectedPrevious[app.workoutType+'|'+id] = Number(index);
+    render();
+  },
+
+  copyPreviousToPlan:function(id){
+    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    if(!exercise){ return; }
+    var history = exerciseHistory(exercise.id,exercise.name);
+    var selected = Number(app.selectedPrevious[app.workoutType+'|'+id] || 0);
+    var source = history[selected] || history[0];
+    if(!source){ return; }
+    exercise.sets = source.exercise.sets.map(function(set,index){
+      return {set_number:index+1,
+        planWeight:blank(set.factWeight)?set.planWeight:set.factWeight,
+        planReps:blank(set.factReps)?set.planReps:set.factReps,
+        factWeight:'',factReps:'',rpe:''};
+    });
+    while(exercise.sets.length < 4){
+      exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
+    }
+    scheduleSave(app.selectedIndex);
+    render();
+  },
+
+  completeSet:function(index,id,setIndex){
+    var exercise = findExercise(currentWorkout().sessions[index],id);
+    if(!exercise || !exercise.sets[setIndex]){ return; }
+    var set = exercise.sets[setIndex];
+    if(blank(set.factWeight)){ set.factWeight = set.planWeight; }
+    if(blank(set.factReps)){ set.factReps = set.planReps; }
+    app.completedSets[app.workoutType+'|'+index+'|'+id+'|'+setIndex] = true;
+    scheduleSave(index);
+    render();
+  },
+
+  addSet:function(id){
+    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    if(!exercise){ return; }
+    exercise.sets.push({set_number:exercise.sets.length+1,planWeight:'',planReps:'',factWeight:'',factReps:'',rpe:''});
+    scheduleSave(app.selectedIndex);
+    render();
+  },
+
+  removeSet:function(id){
+    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    if(!exercise || exercise.sets.length <= 1){ return; }
+    exercise.sets.pop();
+    scheduleSave(app.selectedIndex);
+    render();
+  },
+
+  changeNote:function(id,value){
+    var exercise = findExercise(currentWorkout().sessions[app.selectedIndex],id);
+    if(!exercise){ return; }
+    exercise.note = value;
+    scheduleSave(app.selectedIndex);
+  },
+
+  autoGrow:function(field){
+    field.style.height = 'auto';
+    field.style.height = Math.max(38,field.scrollHeight)+'px';
+  },
+
+  openExerciseHistory:function(id){
+    app.modal = {type:'exerciseHistory',exerciseId:id};
+    render();
+  },
+
+  askRemoveExercise:function(id){
+    app.modal = {type:'removeExercise',exerciseId:id};
+    render();
+  },
+
+  confirmRemoveExercise:function(){
+    if(!app.modal || app.modal.type !== 'removeExercise'){ return; }
+    var id = app.modal.exerciseId;
+    app.modal = null;
+    this.hideExercise(id);
+  },
+
+  finishWorkout:function(){
+    app.entryMode = 'edit';
+    render();
+  },
 
   prevSession:function(){
 

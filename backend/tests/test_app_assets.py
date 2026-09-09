@@ -1207,3 +1207,10 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "Создать первую тренировку" in text
     assert "if(!app.isAdmin){\n      return;\n    }\n\n    var catalog =\n      activeCatalog();" not in text
     assert "body.email =\n      app.email;" in text
+    assert "Редактировать план" in text
+    assert "Начать тренировку" in text
+    assert "Перенести выбранное в план" in text
+    assert "completeSet:function" in text
+    assert "История упражнения" in text
+    assert "st-modern-comment" in text
+    assert "field.scrollHeight" in text
