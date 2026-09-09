@@ -26,3 +26,24 @@ def test_brand_icons_are_available_from_root_paths() -> None:
         assert response.headers["content-type"] == content_type
         assert response.headers["cache-control"] == "public, max-age=3600"
         assert response.content.startswith(signature)
+
+
+def test_primary_html_pages_reference_versioned_brand_icons() -> None:
+    expected_links = (
+        '<link rel="icon" type="image/png" href="/favicon.png?v=20260909c">',
+        '<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260909c">',
+    )
+    pages = (
+        "/lk",
+        "/intensive/",
+        "/intensive/day-1",
+        "/intensive/day-2",
+        "/intensive/day-3",
+        "/intensive/day-4",
+    )
+
+    for path in pages:
+        response = client.get(path)
+        assert response.status_code == 200
+        for expected_link in expected_links:
+            assert expected_link in response.text
