@@ -1982,16 +1982,16 @@ function chooseInitialWorkoutType(){
 
   var type;
 
+  // The exercise catalog is shared by all three workout templates, so it
+  // cannot tell us which template the user actually works with. Prefer the
+  // first template that already has a session; only fall back to the current
+  // (normally first) template when the history is still empty.
   for(type=1;type<=3;type++){
 
     if(
       app.workouts[type] &&
-      (
-        app.workouts[type]
-          .sessions.length ||
-        app.workouts[type]
-          .catalog.length
-      )
+      app.workouts[type]
+        .sessions.length
     ){
 
       app.workoutType =
