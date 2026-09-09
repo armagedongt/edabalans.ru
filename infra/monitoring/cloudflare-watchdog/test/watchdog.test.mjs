@@ -8,7 +8,7 @@ import {
   runWatchdog,
   updateIncidentState,
 } from "../src/logic.mjs";
-import worker, { WatchdogCoordinator } from "../src/index.mjs";
+import worker, { dispatchScheduledChecks, WatchdogCoordinator } from "../src/index.mjs";
 
 class MemoryStorage {
   constructor(value = null) {
@@ -55,7 +55,7 @@ test("probe requires both HTTP success and an explicit ready payload", async () 
   assert.deepEqual(failed.reasons, ["polling_stale"]);
 });
 
-test("three consecutive failures open one incident and recovery queues one message", () => {
+test("three consecutive failures open one incident and the first recovery check keeps it open", () => {
   const failing = healthyChecks();
   failing.telegram = { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "proxy" };
   let state = initialState();
@@ -67,8 +67,10 @@ test("three consecutive failures open one incident and recovery queues one messa
   assert.equal(state.pendingAlerts.length, 1);
 
   state = updateIncidentState(state, healthyChecks(), 180_000, 3);
-  assert.equal(state.incident, null);
-  assert.equal(state.pendingAlerts.length, 2);
+  assert.ok(state.incident);
+  assert.equal(state.incident.recoveryStreak, 1);
+  assert.equal(state.incident.recoveryStartedAt, 180_000);
+  assert.equal(state.pendingAlerts.length, 1);
 });
 
 test("a changed failure boundary must earn its own consecutive failure streak", () => {
@@ -155,8 +157,10 @@ test("Telegram-only incident suspends ads without rebooting either server", asyn
   const storage = new MemoryStorage();
 
   await runWatchdog(env, storage, { fetchImpl, now: 0 });
+  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 0);
+  await runWatchdog(env, storage, { fetchImpl, now: 30_000 });
+  assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 0);
   await runWatchdog(env, storage, { fetchImpl, now: 60_000 });
-  await runWatchdog(env, storage, { fetchImpl, now: 120_000 });
   assert.equal(calls.filter((call) => call.url.includes("api.timeweb.cloud")).length, 0);
   assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 2);
   const yandexCall = calls.find((call) => call.url.includes("api.direct.yandex.com") && JSON.parse(call.options.body).method === "suspend");
@@ -224,10 +228,11 @@ test("failed ad suspension keeps retrying without rebooting a healthy platform",
   assert.equal(calls.filter((url) => url.includes("api.direct.yandex.com")).length, 4);
 });
 
-test("recovery never resumes campaigns paused by automation", async () => {
+test("five continuous healthy minutes resume both auto-paused campaigns but not a pre-paused campaign", async () => {
   let healthy = false;
   const telegramBodies = [];
   const yandexBodies = [];
+  const campaignStates = new Map([[101, "ON"], [202, "ON"], [303, "SUSPENDED"]]);
   const fetchImpl = async (url, options = {}) => {
     if (String(url).includes("api.telegram.org")) {
       telegramBodies.push(JSON.parse(options.body));
@@ -237,8 +242,15 @@ test("recovery never resumes campaigns paused by automation", async () => {
     if (String(url).includes("api.direct.yandex.com")) {
       const body = JSON.parse(options.body);
       yandexBodies.push(body);
-      if (body.method === "get") return response(200, { result: { Campaigns: [{ Id: 101, State: "ON", Status: "ACCEPTED" }, { Id: 202, State: "SUSPENDED", Status: "ACCEPTED" }] } });
-      if (body.method === "suspend") return response(200, { result: { SuspendResults: [{ Id: 101 }] } });
+      if (body.method === "get") return response(200, { result: { Campaigns: [...campaignStates].map(([Id, State]) => ({ Id, State, Status: "ACCEPTED" })) } });
+      if (body.method === "suspend") {
+        for (const id of body.params.SelectionCriteria.Ids) campaignStates.set(id, "SUSPENDED");
+        return response(200, { result: { SuspendResults: body.params.SelectionCriteria.Ids.map((Id) => ({ Id })) } });
+      }
+      if (body.method === "resume") {
+        for (const id of body.params.SelectionCriteria.Ids) campaignStates.set(id, "ON");
+        return response(200, { result: { ResumeResults: body.params.SelectionCriteria.Ids.map((Id) => ({ Id })) } });
+      }
       throw new Error(`Unexpected Direct method: ${body.method}`);
     }
     return healthy
@@ -256,18 +268,214 @@ test("recovery never resumes campaigns paused by automation", async () => {
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     YANDEX_DIRECT_TOKEN: "direct-secret",
-    YANDEX_CAMPAIGN_IDS: "101,202",
+    YANDEX_CAMPAIGN_IDS: "101,202,303",
+    RECOVERY_STABLE_SECONDS: "300",
   };
   const storage = new MemoryStorage();
   await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
   await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
   healthy = true;
-  for (const now of [4_000, 5_000, 6_000, 7_000, 8_000]) {
+  for (const now of [33_000, 63_000, 93_000, 123_000, 153_000, 183_000, 213_000, 243_000, 273_000, 303_000]) {
     await runWatchdog(env, storage, { fetchImpl, now });
   }
   assert.deepEqual(yandexBodies.map((body) => body.method), ["get", "suspend"]);
-  assert.match(telegramBodies.at(-1).text, /остаётся остановленной до ручной проверки/);
+  assert.ok(storage.value.incident);
+  await runWatchdog(env, storage, { fetchImpl, now: 333_000 });
+  assert.deepEqual(yandexBodies.map((body) => body.method), ["get", "suspend", "get", "resume"]);
+  assert.deepEqual(yandexBodies.at(-1).params.SelectionCriteria.Ids, [101, 202]);
+  assert.match(telegramBodies.at(-1).text, /стабильно работает 5 мин/);
   assert.equal(storage.value.incident, null);
+});
+
+test("partial ad suspension retains every auto-paused campaign across retry and recovery", async () => {
+  let healthy = false;
+  let suspendAttempt = 0;
+  const methods = [];
+  const campaignStates = new Map([[101, "ON"], [202, "ON"]]);
+  const fetchImpl = async (url, options = {}) => {
+    const value = String(url);
+    if (value.includes("api.telegram.org")) return response(200, { ok: true });
+    if (value.includes("api.direct.yandex.com")) {
+      const body = JSON.parse(options.body);
+      methods.push(body.method);
+      if (body.method === "get") return response(200, { result: { Campaigns: [...campaignStates].map(([Id, State]) => ({ Id, State, Status: "ACCEPTED" })) } });
+      if (body.method === "suspend") {
+        suspendAttempt += 1;
+        if (suspendAttempt === 1) {
+          campaignStates.set(101, "SUSPENDED");
+          return response(200, { result: { SuspendResults: [{ Id: 101 }, { Id: 202, Errors: [{ Code: 53 }] }] } });
+        }
+        campaignStates.set(202, "SUSPENDED");
+        return response(200, { result: { SuspendResults: [{ Id: 202 }] } });
+      }
+      if (body.method === "resume") {
+        for (const id of body.params.SelectionCriteria.Ids) campaignStates.set(id, "ON");
+        return response(200, { result: { ResumeResults: body.params.SelectionCriteria.Ids.map((Id) => ({ Id })) } });
+      }
+    }
+    return healthy
+      ? response(200, { status: "ready", telegram_route: "relay" })
+      : response(503, { status: "unavailable" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    FAILURES_BEFORE_INCIDENT: "1",
+    ADS_PAUSE_AFTER_SECONDS: "1",
+    ACTION_RETRY_SECONDS: "1",
+    RECOVERY_STABLE_SECONDS: "1",
+    ACTIONS_ENABLED: "true",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    YANDEX_DIRECT_TOKEN: "direct-secret",
+    YANDEX_CAMPAIGN_IDS: "101,202",
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
+  assert.deepEqual(storage.value.incident.adsPause.campaignIds, [101, 202]);
+  await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
+  assert.deepEqual(storage.value.incident.adsPause.campaignIds, [101, 202]);
+  healthy = true;
+  await runWatchdog(env, storage, { fetchImpl, now: 4_000 });
+  assert.ok(storage.value.incident);
+  await runWatchdog(env, storage, { fetchImpl, now: 5_000 });
+  assert.deepEqual(methods, ["get", "suspend", "get", "suspend", "get", "resume"]);
+  assert.equal(storage.value.incident, null);
+});
+
+test("a lost suspend response retains ownership and the campaign is resumed after recovery", async () => {
+  let healthy = false;
+  let campaignState = "ON";
+  let suspendAttempt = 0;
+  const resumeSelections = [];
+  const fetchImpl = async (url, options = {}) => {
+    const value = String(url);
+    if (value.includes("api.telegram.org")) return response(200, { ok: true });
+    if (value.includes("api.direct.yandex.com")) {
+      const body = JSON.parse(options.body);
+      if (body.method === "get") return response(200, { result: { Campaigns: [{ Id: 101, State: campaignState, Status: "ACCEPTED" }] } });
+      if (body.method === "suspend") {
+        suspendAttempt += 1;
+        campaignState = "SUSPENDED";
+        throw new Error("connection_lost_after_apply");
+      }
+      if (body.method === "resume") {
+        resumeSelections.push(body.params.SelectionCriteria.Ids);
+        campaignState = "ON";
+        return response(200, { result: { ResumeResults: [{ Id: 101 }] } });
+      }
+    }
+    return healthy
+      ? response(200, { status: "ready", telegram_route: "relay" })
+      : response(503, { status: "unavailable" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    FAILURES_BEFORE_INCIDENT: "1",
+    ADS_PAUSE_AFTER_SECONDS: "1",
+    ACTION_RETRY_SECONDS: "1",
+    RECOVERY_STABLE_SECONDS: "1",
+    ACTIONS_ENABLED: "true",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    YANDEX_DIRECT_TOKEN: "direct-secret",
+    YANDEX_CAMPAIGN_IDS: "101",
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
+  assert.equal(storage.value.incident.adsPause.status, "failed");
+  assert.deepEqual(storage.value.incident.adsPause.campaignIds, [101]);
+  await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
+  assert.equal(suspendAttempt, 1);
+  assert.equal(storage.value.incident.adsPause.status, "succeeded");
+  healthy = true;
+  await runWatchdog(env, storage, { fetchImpl, now: 4_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 5_000 });
+  assert.deepEqual(resumeSelections, [[101]]);
+  assert.equal(storage.value.incident, null);
+});
+
+test("partial ad resume keeps the incident open and retries only what remains suspended", async () => {
+  let healthy = false;
+  let resumeAttempt = 0;
+  const resumeSelections = [];
+  const campaignStates = new Map([[101, "ON"], [202, "ON"]]);
+  const fetchImpl = async (url, options = {}) => {
+    const value = String(url);
+    if (value.includes("api.telegram.org")) return response(200, { ok: true });
+    if (value.includes("api.direct.yandex.com")) {
+      const body = JSON.parse(options.body);
+      if (body.method === "get") return response(200, { result: { Campaigns: [...campaignStates].map(([Id, State]) => ({ Id, State, Status: "ACCEPTED" })) } });
+      if (body.method === "suspend") {
+        for (const id of body.params.SelectionCriteria.Ids) campaignStates.set(id, "SUSPENDED");
+        return response(200, { result: { SuspendResults: body.params.SelectionCriteria.Ids.map((Id) => ({ Id })) } });
+      }
+      if (body.method === "resume") {
+        resumeAttempt += 1;
+        resumeSelections.push(body.params.SelectionCriteria.Ids);
+        if (resumeAttempt === 1) {
+          campaignStates.set(101, "ON");
+          return response(200, { result: { ResumeResults: [{ Id: 101 }, { Id: 202, Errors: [{ Code: 54 }] }] } });
+        }
+        campaignStates.set(202, "ON");
+        return response(200, { result: { ResumeResults: [{ Id: 202 }] } });
+      }
+    }
+    return healthy
+      ? response(200, { status: "ready", telegram_route: "relay" })
+      : response(503, { status: "unavailable" });
+  };
+  const env = {
+    PLATFORM_READY_URL: "https://api.example/ready",
+    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+    FAILURES_BEFORE_INCIDENT: "1",
+    ADS_PAUSE_AFTER_SECONDS: "1",
+    ACTION_RETRY_SECONDS: "1",
+    RECOVERY_STABLE_SECONDS: "1",
+    ACTIONS_ENABLED: "true",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+    YANDEX_DIRECT_TOKEN: "direct-secret",
+    YANDEX_CAMPAIGN_IDS: "101,202",
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
+  healthy = true;
+  await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
+  assert.ok(storage.value.incident);
+  await runWatchdog(env, storage, { fetchImpl, now: 4_000 });
+  assert.ok(storage.value.incident);
+  assert.equal(storage.value.incident.resumeAds.status, "failed");
+  assert.deepEqual(storage.value.incident.resumeAds.campaignIds, [101]);
+  await runWatchdog(env, storage, { fetchImpl, now: 5_000 });
+  assert.deepEqual(resumeSelections, [[101, 202], [202]]);
+  assert.equal(storage.value.incident, null);
+});
+
+test("a recovery failure resets the continuous healthy window", async () => {
+  const storage = new MemoryStorage();
+  const env = {
+    FAILURES_BEFORE_INCIDENT: "1",
+    RECOVERY_STABLE_SECONDS: "300",
+  };
+  await runWatchdog(env, storage, { checks: {
+    platform: { ok: true, status: 200, reasons: [], error: null },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  }, skipActions: true, now: 0 });
+  for (const now of [30_000, 60_000, 90_000, 120_000, 150_000, 180_000, 210_000, 240_000, 270_000]) {
+    await runWatchdog(env, storage, { checks: healthyChecks(), skipActions: true, now });
+  }
+  assert.equal(storage.value.incident.recoveryStreak, 9);
+  await runWatchdog(env, storage, { checks: {
+    platform: { ok: true, status: 200, reasons: [], error: null },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  }, skipActions: true, now: 300_000 });
+  assert.equal(storage.value.incident.recoveryStreak, 0);
+  assert.equal(storage.value.incident.recoveryStartedAt, null);
 });
 
 test("alerts remain queued after Telegram failure and are delivered once after retry", async () => {
@@ -419,7 +627,7 @@ test("rich report falls back to readable cards when Telegram rejects native tabl
   assert.equal(telegramCalls[1].text, "Readable fallback");
 });
 
-test("platform incident reboots only the Russian server immediately", async () => {
+test("platform incident delays reboot past the deploy window and reboots only the Russian server", async () => {
   const calls = [];
   const fetchImpl = async (url) => {
     calls.push(String(url));
@@ -438,10 +646,79 @@ test("platform incident reboots only the Russian server immediately", async () =
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
   };
-  await runWatchdog(env, new MemoryStorage(), { fetchImpl, now: 1_000 });
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  assert.equal(calls.filter((url) => url.endsWith("/servers/ru-id/reboot")).length, 0);
+  await runWatchdog(env, storage, { fetchImpl, now: 241_000 });
 
   assert.equal(calls.filter((url) => url.endsWith("/servers/ru-id/reboot")).length, 1);
   assert.equal(calls.filter((url) => url.endsWith("/servers/eu-id/reboot")).length, 0);
+});
+
+test("reboot delay measures the current continuous platform failure, not an older Telegram incident", async () => {
+  const calls = [];
+  const fetchImpl = async (url) => {
+    calls.push(String(url));
+    if (String(url).includes("api.telegram.org")) return response(200, { ok: true });
+    if (String(url).includes("api.timeweb.cloud")) return response(200, {});
+    throw new Error(`Unexpected URL: ${url}`);
+  };
+  const env = {
+    FAILURES_BEFORE_INCIDENT: "1",
+    ACTIONS_ENABLED: "true",
+    RU_REBOOT_AFTER_SECONDS: "240",
+    TIMEWEB_API_TOKEN: "timeweb-secret",
+    TIMEWEB_RU_SERVER_ID: "ru-id",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+  };
+  const telegramOnly = {
+    platform: { ok: true, status: 200, reasons: [], error: null },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  };
+  const bothFailed = {
+    platform: { ok: false, status: 503, reasons: [], error: "network_error" },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, checks: telegramOnly, now: 0 });
+  await runWatchdog(env, storage, { fetchImpl, checks: bothFailed, now: 180_000 });
+  await runWatchdog(env, storage, { fetchImpl, checks: bothFailed, now: 241_000 });
+  assert.equal(calls.filter((url) => url.endsWith("/servers/ru-id/reboot")).length, 0);
+  await runWatchdog(env, storage, { fetchImpl, checks: bothFailed, now: 420_000 });
+  assert.equal(calls.filter((url) => url.endsWith("/servers/ru-id/reboot")).length, 1);
+});
+
+test("platform recovery cancels a pending reboot while a Telegram incident remains open", async () => {
+  const calls = [];
+  const fetchImpl = async (url) => {
+    calls.push(String(url));
+    if (String(url).includes("api.telegram.org")) return response(200, { ok: true });
+    if (String(url).includes("api.timeweb.cloud")) return response(200, {});
+    throw new Error(`Unexpected URL: ${url}`);
+  };
+  const env = {
+    FAILURES_BEFORE_INCIDENT: "1",
+    ACTIONS_ENABLED: "true",
+    RU_REBOOT_AFTER_SECONDS: "240",
+    TIMEWEB_API_TOKEN: "timeweb-secret",
+    TIMEWEB_RU_SERVER_ID: "ru-id",
+    TELEGRAM_BOT_TOKEN: "telegram-secret",
+    TELEGRAM_ALERT_CHAT_ID: "42",
+  };
+  const bothFailed = {
+    platform: { ok: false, status: 503, reasons: [], error: "network_error" },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  };
+  const telegramOnly = {
+    platform: { ok: true, status: 200, reasons: [], error: null },
+    telegram: { ok: false, status: 503, reasons: ["polling_stale"], error: null, route: "relay" },
+  };
+  const storage = new MemoryStorage();
+  await runWatchdog(env, storage, { fetchImpl, checks: bothFailed, now: 0 });
+  await runWatchdog(env, storage, { fetchImpl, checks: telegramOnly, now: 240_000 });
+  assert.equal(calls.filter((url) => url.endsWith("/servers/ru-id/reboot")).length, 0);
+  assert.equal(storage.value.incident.platformFailureStartedAt, null);
 });
 
 test("actions stay disabled until secrets and the production switch are configured", async () => {
@@ -458,9 +735,23 @@ test("actions stay disabled until secrets and the production switch are configur
       TELEGRAM_BOT_TOKEN: "telegram-secret",
       TELEGRAM_ALERT_CHAT_ID: "42",
       ACTIONS_ENABLED: "false",
+      RU_REBOOT_AFTER_SECONDS: "1",
     },
     storage,
     { fetchImpl, now: 1_000 },
+  );
+  await runWatchdog(
+    {
+      PLATFORM_READY_URL: "https://api.example/ready",
+      TELEGRAM_READY_URL: "https://api.example/telegram/ready",
+      FAILURES_BEFORE_INCIDENT: "1",
+      TELEGRAM_BOT_TOKEN: "telegram-secret",
+      TELEGRAM_ALERT_CHAT_ID: "42",
+      ACTIONS_ENABLED: "false",
+      RU_REBOOT_AFTER_SECONDS: "1",
+    },
+    storage,
+    { fetchImpl, now: 2_000 },
   );
 
   assert.equal(storage.value.incident.ruReboot.status, "pending");
@@ -475,7 +766,7 @@ test("invalid campaign IDs block all Yandex calls and produce a configuration al
     return response(503, { status: "unavailable" });
   };
   const storage = new MemoryStorage();
-  await runWatchdog({
+  const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     FAILURES_BEFORE_INCIDENT: "1",
@@ -485,18 +776,9 @@ test("invalid campaign IDs block all Yandex calls and produce a configuration al
     TELEGRAM_ALERT_CHAT_ID: "42",
     YANDEX_DIRECT_TOKEN: "direct-secret",
     YANDEX_CAMPAIGN_IDS: "101, typo",
-  }, storage, { fetchImpl, now: 1_000 });
-  await runWatchdog({
-    PLATFORM_READY_URL: "https://api.example/ready",
-    TELEGRAM_READY_URL: "https://api.example/telegram/ready",
-    FAILURES_BEFORE_INCIDENT: "1",
-    ADS_PAUSE_AFTER_SECONDS: "1",
-    ACTIONS_ENABLED: "true",
-    TELEGRAM_BOT_TOKEN: "telegram-secret",
-    TELEGRAM_ALERT_CHAT_ID: "42",
-    YANDEX_DIRECT_TOKEN: "direct-secret",
-    YANDEX_CAMPAIGN_IDS: "101, typo",
-  }, storage, { fetchImpl, now: 3_000 });
+  };
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 3_000 });
   assert.equal(calls.filter((url) => url.includes("api.direct.yandex.com")).length, 0);
   assert.match(storage.value.incident.missingConfigurationAlerts.adsPause, /некорректные ID/);
 });
@@ -509,14 +791,17 @@ test("enabled actions with missing Timeweb credentials never call Timeweb", asyn
     return response(503, { status: "unavailable" });
   };
   const storage = new MemoryStorage();
-  await runWatchdog({
+  const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     FAILURES_BEFORE_INCIDENT: "1",
     ACTIONS_ENABLED: "true",
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
-  }, storage, { fetchImpl, now: 1_000 });
+    RU_REBOOT_AFTER_SECONDS: "1",
+  };
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
   assert.equal(calls.filter((url) => url.includes("api.timeweb.cloud")).length, 0);
   assert.match(storage.value.incident.missingConfigurationAlerts.ruReboot, /не настроен Timeweb API/);
 });
@@ -528,37 +813,64 @@ test("enabled actions require a configured Telegram alert route", async () => {
     return response(503, { status: "unavailable" });
   };
   const storage = new MemoryStorage();
-  await runWatchdog({
+  const env = {
     PLATFORM_READY_URL: "https://api.example/ready",
     TELEGRAM_READY_URL: "https://api.example/telegram/ready",
     FAILURES_BEFORE_INCIDENT: "1",
     ACTIONS_ENABLED: "true",
     TIMEWEB_API_TOKEN: "timeweb-secret",
     TIMEWEB_RU_SERVER_ID: "ru-id",
-  }, storage, { fetchImpl, now: 1_000 });
+    RU_REBOOT_AFTER_SECONDS: "1",
+  };
+  await runWatchdog(env, storage, { fetchImpl, now: 1_000 });
+  await runWatchdog(env, storage, { fetchImpl, now: 2_000 });
   assert.equal(calls.filter((url) => url.includes("api.timeweb.cloud")).length, 0);
   assert.match(storage.value.incident.missingConfigurationAlerts.ruReboot, /канал аварийных уведомлений/);
 });
 
-test("scheduled handler dispatches one serialized Durable Object run", async () => {
+test("scheduled dispatcher runs immediately and again after thirty seconds", async () => {
   const calls = [];
+  const stub = {
+    fetch(url, options) {
+      calls.push(["fetch", url, options.method]);
+      return Promise.resolve(new Response("ok"));
+    },
+  };
+  await dispatchScheduledChecks(stub, async (milliseconds) => {
+    calls.push(["delay", milliseconds]);
+  });
+  assert.deepEqual(calls, [
+    ["fetch", "https://watchdog.internal/run", "POST"],
+    ["delay", 30_000],
+    ["fetch", "https://watchdog.internal/run", "POST"],
+  ]);
+});
+
+test("scheduled handler delegates the two-check cadence to the production object", async () => {
   let pending;
+  let count = 0;
   const env = {
     WATCHDOG: {
-      idFromName(name) { calls.push(["id", name]); return "object-id"; },
+      idFromName(name) { assert.equal(name, "production"); return "object-id"; },
       get(id) {
-        calls.push(["get", id]);
-        return { fetch(url, options) { calls.push(["fetch", url, options.method]); return Promise.resolve(new Response("ok")); } };
+        assert.equal(id, "object-id");
+        return { fetch() { count += 1; return Promise.resolve(new Response("ok")); } };
       },
     },
   };
-  await worker.scheduled({}, env, { waitUntil(value) { pending = value; } });
-  await pending;
-  assert.deepEqual(calls, [
-    ["id", "production"],
-    ["get", "object-id"],
-    ["fetch", "https://watchdog.internal/run", "POST"],
-  ]);
+  const originalTimeout = globalThis.setTimeout;
+  globalThis.setTimeout = (callback, milliseconds) => {
+    assert.equal(milliseconds, 30_000);
+    callback();
+    return 1;
+  };
+  try {
+    await worker.scheduled({}, env, { waitUntil(value) { pending = value; } });
+    await pending;
+    assert.equal(count, 2);
+  } finally {
+    globalThis.setTimeout = originalTimeout;
+  }
 });
 
 test("authenticated drill uses a separate Durable Object and cannot request actions", async () => {
@@ -615,10 +927,12 @@ test("real drill coordinator sends alerts but hard-blocks Timeweb and Yandex act
         headers: { "X-Watchdog-Drill": "fail" },
       }));
     }
-    await coordinator.fetch(new Request("https://watchdog.internal/run", {
-      method: "POST",
-      headers: { "X-Watchdog-Drill": "recover" },
-    }));
+    for (let index = 0; index < 11; index += 1) {
+      await coordinator.fetch(new Request("https://watchdog.internal/run", {
+        method: "POST",
+        headers: { "X-Watchdog-Drill": "recover" },
+      }));
+    }
     assert.equal(calls.filter((call) => call.url.includes("api.timeweb.cloud")).length, 0);
     assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 0);
     const messages = calls
@@ -626,7 +940,7 @@ test("real drill coordinator sends alerts but hard-blocks Timeweb and Yandex act
       .map((call) => JSON.parse(call.options.body).text);
     assert.equal(messages.length, 2);
     assert.match(messages[0], /Бот не работает/);
-    assert.match(messages[1], /снова работает/);
+    assert.match(messages[1], /стабильно работает 5 мин/);
   } finally {
     globalThis.fetch = originalFetch;
   }

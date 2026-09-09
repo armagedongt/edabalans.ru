@@ -1,6 +1,8 @@
 const DEFAULT_TIMEOUT_MS = 10_000;
 const DEFAULT_FAILURES_BEFORE_INCIDENT = 3;
-const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 120;
+const DEFAULT_ADS_PAUSE_DELAY_SECONDS = 60;
+const DEFAULT_RU_REBOOT_DELAY_SECONDS = 240;
+const DEFAULT_RECOVERY_STABLE_SECONDS = 300;
 const DEFAULT_ACTION_RETRY_SECONDS = 120;
 const DEFAULT_MAX_ACTION_ATTEMPTS = 3;
 
@@ -46,6 +48,12 @@ export function normalizeState(value) {
     pendingAlerts: Array.isArray(value.pendingAlerts) ? value.pendingAlerts.slice(-20) : [],
   };
   state.report = { ...initialState().report, ...(value.report || {}) };
+  if (state.incident) {
+    state.incident.recoveryStreak ??= 0;
+    state.incident.recoveryStartedAt ??= null;
+    state.incident.platformFailureStartedAt ??= null;
+    state.incident.resumeAds ??= actionState();
+  }
   return state;
 }
 
@@ -136,20 +144,24 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
 
   if (failures.length === 0) {
     if (state.incident) {
-      const pausedIds = state.incident.adsPause?.campaignIds || [];
-      const durationMinutes = Math.max(1, Math.round((now - state.incident.startedAt) / 60_000));
-      queueAlert(state, pausedIds.length
-        ? `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама остаётся остановленной до ручной проверки.`
-        : `✅ Бот снова работает. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
+      state.incident.recoveryStreak = (state.incident.recoveryStreak || 0) + 1;
+      state.incident.recoveryStartedAt ??= now;
+      state.incident.platformFailureStartedAt = null;
     }
     state.failureStreak = 0;
     state.candidateFailureKey = null;
     state.firstFailureAt = null;
-    state.incident = null;
     return state;
   }
 
   const failureKey = failures.slice().sort().join(",");
+  if (state.incident) {
+    state.incident.recoveryStreak = 0;
+    state.incident.recoveryStartedAt = null;
+    state.incident.platformFailureStartedAt = checks.platform.ok
+      ? null
+      : state.incident.platformFailureStartedAt ?? now;
+  }
   if (!state.incident && state.candidateFailureKey !== failureKey) {
     state.failureStreak = 0;
     state.firstFailureAt = now;
@@ -169,6 +181,10 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
       boundaryStreak: state.failureStreak,
       ruReboot: actionState(),
       adsPause: actionState(),
+      resumeAds: actionState(),
+      recoveryStreak: 0,
+      recoveryStartedAt: null,
+      platformFailureStartedAt: checks.platform.ok ? null : state.firstFailureAt,
       missingConfigurationAlerts: {},
     };
     queueAlert(
@@ -203,13 +219,29 @@ function canAttempt(action, target, now) {
 
 function actionPlan(state, checks, now, env) {
   if (!state.incident) return [];
-  if (failedChecks(checks).length === 0) return [];
+  if (failedChecks(checks).length === 0) {
+    const recoveryStableSeconds = parsePositiveInteger(
+      env.RECOVERY_STABLE_SECONDS,
+      DEFAULT_RECOVERY_STABLE_SECONDS,
+    );
+    const ids = state.incident.adsPause?.campaignIds || [];
+    const stableSeconds = state.incident.recoveryStartedAt == null
+      ? 0
+      : Math.max(0, (now - state.incident.recoveryStartedAt) / 1000);
+    return stableSeconds >= recoveryStableSeconds && ids.length
+      ? [{ key: "resumeAds", kind: "resume_ads", ids, stableSeconds: recoveryStableSeconds }]
+      : [];
+  }
   const ageSeconds = Math.max(0, (now - state.incident.startedAt) / 1000);
   const adsDelay = parsePositiveInteger(env.ADS_PAUSE_AFTER_SECONDS, DEFAULT_ADS_PAUSE_DELAY_SECONDS);
+  const rebootDelay = parsePositiveInteger(env.RU_REBOOT_AFTER_SECONDS, DEFAULT_RU_REBOOT_DELAY_SECONDS);
   const actions = [];
 
   const confirmed = new Set(state.incident.confirmedFailures || state.incident.lastFailures || []);
-  if (confirmed.has("platform")) {
+  const platformFailureSeconds = state.incident.platformFailureStartedAt == null
+    ? 0
+    : Math.max(0, (now - state.incident.platformFailureStartedAt) / 1000);
+  if (!checks.platform.ok && confirmed.has("platform") && platformFailureSeconds >= rebootDelay) {
     actions.push({ key: "ruReboot", kind: "reboot", server: "RU", serverId: env.TIMEWEB_RU_SERVER_ID });
   }
   if (ageSeconds >= adsDelay) {
@@ -233,7 +265,7 @@ function configurationFor(action, env) {
   }
   let ids;
   try {
-    ids = campaignIds(env.YANDEX_CAMPAIGN_IDS);
+    ids = action.kind === "resume_ads" ? action.ids : campaignIds(env.YANDEX_CAMPAIGN_IDS);
   } catch (error) {
     return { ok: false, reason: String(error?.message || error) };
   }
@@ -255,7 +287,7 @@ async function rebootServer(action, env, fetchImpl) {
   if (!response.ok) throw new Error(`Timeweb HTTP ${response.status}`);
 }
 
-async function pauseAds(ids, env, fetchImpl) {
+async function pauseAds(ids, env, fetchImpl, recordAttemptedIds = async () => {}) {
   const headers = {
     Authorization: `Bearer ${env.YANDEX_DIRECT_TOKEN}`,
     "Accept-Language": "ru",
@@ -270,8 +302,15 @@ async function pauseAds(ids, env, fetchImpl) {
   if (!getResponse.ok) throw new Error(`Яндекс.Директ HTTP ${getResponse.status}`);
   const getBody = await getResponse.json();
   if (getBody.error) throw new Error(`Яндекс.Директ API ${getBody.error.error_code ?? "error"}`);
-  const activeIds = (getBody.result?.Campaigns || []).filter((item) => item.State === "ON").map((item) => item.Id);
+  const requestedIds = new Set(ids);
+  const activeIds = (getBody.result?.Campaigns || [])
+    .filter((item) => requestedIds.has(item.Id) && item.State === "ON")
+    .map((item) => item.Id);
   if (!activeIds.length) return [];
+  // Record ownership before the mutating request. If Direct applies suspend but
+  // its response is lost, the next GET already reports SUSPENDED and cannot
+  // reconstruct which actor changed the campaign.
+  await recordAttemptedIds(activeIds);
   const response = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
     method: "POST",
     headers,
@@ -283,8 +322,65 @@ async function pauseAds(ids, env, fetchImpl) {
   const results = body.result?.SuspendResults || [];
   const succeeded = results.filter((item) => !(item.Errors || []).length).map((item) => item.Id);
   const errors = results.flatMap((item) => item.Errors || []);
-  if (errors.length || succeeded.length !== activeIds.length) throw new Error(`Яндекс.Директ: ${errors[0]?.Code ?? "не все кампании остановлены"}`);
+  if (errors.length || succeeded.length !== activeIds.length) {
+    throw new CampaignActionError(
+      `Яндекс.Директ: ${errors[0]?.Code ?? "не все кампании остановлены"}`,
+      succeeded,
+    );
+  }
   return succeeded;
+}
+
+async function resumeAds(ids, env, fetchImpl) {
+  const headers = {
+    Authorization: `Bearer ${env.YANDEX_DIRECT_TOKEN}`,
+    "Accept-Language": "ru",
+    "Content-Type": "application/json; charset=utf-8",
+  };
+  if (env.YANDEX_DIRECT_CLIENT_LOGIN) headers["Client-Login"] = env.YANDEX_DIRECT_CLIENT_LOGIN;
+  const getResponse = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ method: "get", params: { SelectionCriteria: { Ids: ids }, FieldNames: ["Id", "State", "Status"] } }),
+  }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
+  if (!getResponse.ok) throw new Error(`Яндекс.Директ HTTP ${getResponse.status}`);
+  const getBody = await getResponse.json();
+  if (getBody.error) throw new Error(`Яндекс.Директ API ${getBody.error.error_code ?? "error"}`);
+  const requestedIds = new Set(ids);
+  const campaigns = (getBody.result?.Campaigns || []).filter((item) => requestedIds.has(item.Id));
+  const activeIds = campaigns.filter((item) => item.State === "ON").map((item) => item.Id);
+  const suspendedIds = campaigns.filter((item) => item.State === "SUSPENDED").map((item) => item.Id);
+  const knownIds = new Set([...activeIds, ...suspendedIds]);
+  if (ids.some((id) => !knownIds.has(id))) {
+    throw new CampaignActionError("Яндекс.Директ: кампания недоступна для возобновления", activeIds);
+  }
+  if (!suspendedIds.length) return activeIds;
+  const response = await fetchWithTimeout("https://api.direct.yandex.com/json/v501/campaigns", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ method: "resume", params: { SelectionCriteria: { Ids: suspendedIds } } }),
+  }, fetchImpl, parsePositiveInteger(env.ACTION_TIMEOUT_MS, DEFAULT_TIMEOUT_MS));
+  if (!response.ok) throw new Error(`Яндекс.Директ HTTP ${response.status}`);
+  const body = await response.json();
+  if (body.error) throw new Error(`Яндекс.Директ API ${body.error.error_code ?? "error"}`);
+  const results = body.result?.ResumeResults || [];
+  const succeeded = results.filter((item) => !(item.Errors || []).length).map((item) => item.Id);
+  const errors = results.flatMap((item) => item.Errors || []);
+  const restored = [...new Set([...activeIds, ...succeeded])];
+  if (errors.length || succeeded.length !== suspendedIds.length) {
+    throw new CampaignActionError(
+      `Яндекс.Директ: ${errors[0]?.Code ?? "не все кампании возобновлены"}`,
+      restored,
+    );
+  }
+  return restored;
+}
+
+class CampaignActionError extends Error {
+  constructor(message, campaignIds = []) {
+    super(message);
+    this.campaignIds = campaignIds;
+  }
 }
 
 async function sendTelegramAlert(text, env, fetchImpl) {
@@ -396,14 +492,25 @@ async function executeAction(state, action, env, fetchImpl, storage, now) {
       await rebootServer(action, env, fetchImpl);
       queueAlert(state, `🔄 Отправлена команда перезагрузить ${action.server === "RU" ? "российский" : "европейский"} сервер.`);
     } else if (action.kind === "pause_ads") {
-      target.campaignIds = await pauseAds(configuration.ids, env, fetchImpl);
+      const pausedIds = await pauseAds(configuration.ids, env, fetchImpl, async (attemptedIds) => {
+        target.campaignIds = [...new Set([...(target.campaignIds || []), ...attemptedIds])];
+        await persist(storage, state);
+      });
+      target.campaignIds = [...new Set([...(target.campaignIds || []), ...pausedIds])];
       queueAlert(state, target.campaignIds.length
         ? `⛔ Реклама в Яндекс.Директе остановлена: ${target.campaignIds.length} камп.`
         : "ℹ️ Сбой подтверждён, но автоматика не останавливала Директ: указанные кампании уже не работали.");
+    } else if (action.kind === "resume_ads") {
+      const resumedIds = await resumeAds(configuration.ids, env, fetchImpl);
+      target.campaignIds = [...new Set([...(target.campaignIds || []), ...resumedIds])];
+      queueAlert(state, `▶️ Бот стабильно работает ${Math.round(action.stableSeconds / 60)} мин. Автоматика возобновила ${target.campaignIds.length} камп. Яндекс.Директа.`);
     }
     target.status = "succeeded";
     target.retryAt = null;
   } catch (error) {
+    if (Array.isArray(error?.campaignIds)) {
+      target.campaignIds = [...new Set([...(target.campaignIds || []), ...error.campaignIds])];
+    }
     target.status = "failed";
     target.lastError = String(error?.message || "unknown_error").slice(0, 160);
     if (action.kind === "reboot" || target.attempts === alertAfterAttempts) {
@@ -447,9 +554,30 @@ export async function runWatchdog(env, storage, options = {}) {
   const state = updateIncidentState(previous, checks, now, failuresBeforeIncident);
   await persist(storage, state);
 
-  if (state.incident && !options.skipActions) {
-    for (const action of actionPlan(state, checks, now, env)) {
-      await executeAction(state, action, env, fetchImpl, storage, now);
+  if (state.incident) {
+    if (!options.skipActions) {
+      for (const action of actionPlan(state, checks, now, env)) {
+        await executeAction(state, action, env, fetchImpl, storage, now);
+      }
+    }
+    if (failedChecks(checks).length === 0) {
+      const recoveryStableSeconds = parsePositiveInteger(
+        env.RECOVERY_STABLE_SECONDS,
+        DEFAULT_RECOVERY_STABLE_SECONDS,
+      );
+      const pausedIds = state.incident.adsPause?.campaignIds || [];
+      const resumed = state.incident.resumeAds?.status === "succeeded";
+      const stableSeconds = state.incident.recoveryStartedAt == null
+        ? 0
+        : Math.max(0, (now - state.incident.recoveryStartedAt) / 1000);
+      if (stableSeconds >= recoveryStableSeconds && (!pausedIds.length || resumed)) {
+        if (!pausedIds.length) {
+          const durationMinutes = Math.max(1, Math.round((now - state.incident.startedAt) / 60_000));
+          queueAlert(state, `✅ Бот стабильно работает ${Math.round(recoveryStableSeconds / 60)} мин. Авария закрыта, длительность около ${durationMinutes} мин. Реклама не была остановлена автоматикой.`);
+        }
+        state.incident = null;
+        await persist(storage, state);
+      }
     }
   }
   if (!options.skipActions) await runDailyReport(state, env, fetchImpl, storage, now);

@@ -1,18 +1,31 @@
 import { runWatchdog } from "./logic.mjs";
 
+const HALF_MINUTE_MS = 30_000;
+
+export async function dispatchScheduledChecks(stub, delayImpl = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds))) {
+  const first = stub.fetch("https://watchdog.internal/run", { method: "POST" });
+  const second = delayImpl(HALF_MINUTE_MS).then(() => (
+    stub.fetch("https://watchdog.internal/run", { method: "POST" })
+  ));
+  await Promise.all([first, second]);
+}
+
 export class WatchdogCoordinator {
   constructor(ctx, env) {
     this.ctx = ctx;
     this.env = env;
     this.runQueue = Promise.resolve();
+    this.drillClock = Date.now();
   }
 
   async fetch(request) {
     if (request.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
     const drillState = request.headers.get("X-Watchdog-Drill");
+    if (drillState) this.drillClock += HALF_MINUTE_MS;
     const options = drillState ? {
       checks: drillState === "recover" ? healthyDrillChecks() : failingDrillChecks(),
       skipActions: true,
+      now: this.drillClock,
     } : {};
     const runEnv = drillState ? { ...this.env, FAILURES_BEFORE_INCIDENT: "3" } : this.env;
     const currentRun = this.runQueue.then(() => runWatchdog(runEnv, this.ctx.storage, options));
@@ -31,7 +44,7 @@ export default {
   async scheduled(_controller, env, ctx) {
     const id = env.WATCHDOG.idFromName("production");
     const stub = env.WATCHDOG.get(id);
-    ctx.waitUntil(stub.fetch("https://watchdog.internal/run", { method: "POST" }));
+    ctx.waitUntil(dispatchScheduledChecks(stub));
   },
 
   async fetch(request, env) {
