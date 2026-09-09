@@ -131,8 +131,11 @@ test("Telegram-only incident suspends ads without rebooting either server", asyn
     if (String(url).includes("api.direct.yandex.com")) {
       const method = JSON.parse(options.body).method;
       return method === "get"
-        ? response(200, { result: { Campaigns: [{ Id: 101, State: "ON", Status: "ACCEPTED" }] } })
-        : response(200, { result: { SuspendResults: [{ Id: 101 }] } });
+        ? response(200, { result: { Campaigns: [
+          { Id: 101, State: "ON", Status: "ACCEPTED" },
+          { Id: 202, State: "ON", Status: "ACCEPTED" },
+        ] } })
+        : response(200, { result: { SuspendResults: [{ Id: 101 }, { Id: 202 }] } });
     }
     throw new Error(`Unexpected URL: ${url}`);
   };
@@ -147,7 +150,7 @@ test("Telegram-only incident suspends ads without rebooting either server", asyn
     TELEGRAM_BOT_TOKEN: "telegram-secret",
     TELEGRAM_ALERT_CHAT_ID: "42",
     YANDEX_DIRECT_TOKEN: "direct-secret",
-    YANDEX_CAMPAIGN_IDS: "101",
+    YANDEX_CAMPAIGN_IDS: "101,202",
   };
   const storage = new MemoryStorage();
 
@@ -157,7 +160,7 @@ test("Telegram-only incident suspends ads without rebooting either server", asyn
   assert.equal(calls.filter((call) => call.url.includes("api.timeweb.cloud")).length, 0);
   assert.equal(calls.filter((call) => call.url.includes("api.direct.yandex.com")).length, 2);
   const yandexCall = calls.find((call) => call.url.includes("api.direct.yandex.com") && JSON.parse(call.options.body).method === "suspend");
-  assert.deepEqual(JSON.parse(yandexCall.options.body).params.SelectionCriteria.Ids, [101]);
+  assert.deepEqual(JSON.parse(yandexCall.options.body).params.SelectionCriteria.Ids, [101, 202]);
   assert.equal(JSON.parse(yandexCall.options.body).method, "suspend");
   const alertTexts = calls
     .filter((call) => call.url.includes("api.telegram.org"))

@@ -139,7 +139,7 @@ def test_ready_fails_when_database_is_unavailable(tmp_path, monkeypatch):
     app.dependency_overrides.clear()
 
 
-def test_polling_success_is_recorded_only_after_get_updates_through_proxy(monkeypatch):
+def test_polling_success_uses_the_configured_relay_route(monkeypatch):
     observed: dict[str, object] = {"calls": 0}
 
     class FakePollingTelegram:
@@ -161,6 +161,8 @@ def test_polling_success_is_recorded_only_after_get_updates_through_proxy(monkey
 
     monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "test-token")
     monkeypatch.setattr(main_module.settings, "telegram_proxy_url", "socks5://eu-gateway.example.test:1080")
+    monkeypatch.setattr(main_module.settings, "telegram_api_base_url", "https://relay.example.test/telegram")
+    monkeypatch.setattr(main_module.settings, "telegram_gateway_token", "relay-secret")
     monkeypatch.setattr(main_module.settings, "telegram_channel_id", "channel")
     monkeypatch.setattr(main_module, "TelegramClient", FakePollingTelegram)
     main_module.runtime_health.last_poll_success = None
@@ -169,8 +171,54 @@ def test_polling_success_is_recorded_only_after_get_updates_through_proxy(monkey
         asyncio.run(main_module.polling_loop())
 
     assert observed["proxy_url"] == "socks5://eu-gateway.example.test:1080"
+    assert observed["api_base_url"] == "https://relay.example.test/telegram"
+    assert observed["gateway_token"] == "relay-secret"
     assert observed["webhook_removed"] is True
     assert main_module.runtime_health.last_poll_success is not None
+
+
+def test_response_and_scheduler_clients_receive_the_relay_configuration(monkeypatch):
+    calls = []
+
+    class FakeTelegram:
+        def __init__(self, token, **options):
+            calls.append((token, options))
+
+    class FakeSession:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def scalars(self, _query):
+            return self
+
+        def all(self):
+            return []
+
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "test-token")
+    monkeypatch.setattr(main_module.settings, "telegram_proxy_url", "http://legacy-proxy.example.test:3128")
+    monkeypatch.setattr(main_module.settings, "telegram_api_base_url", "https://relay.example.test/telegram")
+    monkeypatch.setattr(main_module.settings, "telegram_gateway_token", "relay-secret")
+    monkeypatch.setattr(main_module.settings, "telegram_channel_id", "channel")
+    monkeypatch.setattr(main_module.settings, "max_bot_token", "")
+    monkeypatch.setattr(main_module, "TelegramClient", FakeTelegram)
+    monkeypatch.setattr(main_module, "SessionLocal", FakeSession)
+    monkeypatch.setattr(main_module, "stop_presale_runs_from_purchase_events", lambda _session: 0)
+    monkeypatch.setattr(main_module, "reconcile_masterclass_presale_runs", lambda _session: 0)
+    monkeypatch.setattr(main_module, "due_runs", lambda _session: [])
+    monkeypatch.setattr(main_module, "dispatch_masterclass_notifications", lambda _session, _tg: 0)
+
+    main_module.client()
+    main_module.scheduler_iteration()
+
+    assert len(calls) == 2
+    for token, options in calls:
+        assert token == "test-token"
+        assert options["api_base_url"] == "https://relay.example.test/telegram"
+        assert options["gateway_token"] == "relay-secret"
+        assert options["proxy_url"] == "http://legacy-proxy.example.test:3128"
 
 
 def test_real_telegram_client_applies_configured_proxy_to_httpx(monkeypatch):
