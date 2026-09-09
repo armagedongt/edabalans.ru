@@ -273,7 +273,7 @@ try {
     await page.evaluate(() => document.fonts.ready)
     const fit = await page.evaluate(() => {
       const root = document.querySelector('#edb-direct-intensive-v1')
-      const heading = document.querySelector('.edb-di-hero-stack, .edb-di-opening-heading, .edb-di-body-heading, .edb-di-lead')
+      const heading = document.querySelector('.edb-di-hero-split, .edb-di-hero-stack, .edb-di-opening-heading, .edb-di-body-heading, .edb-di-lead')
       const cta = document.querySelector('.edb-di-cta-lead')
       const arrows = cta?.querySelector('.edb-di-cta-arrows')
       const inlineActions = document.querySelector('.edb-di-actions--inline')
@@ -301,7 +301,7 @@ try {
       }
     })
     const expectsSplitArrows = false
-    const expectedHeadingAlignment = variant === 'motivation-hero' ? 'center' : 'left'
+    const expectedHeadingAlignment = 'left'
     if (fit.rootOverflow > 1 || !fit.headingAlign.includes(expectedHeadingAlignment) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
       throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
     }
