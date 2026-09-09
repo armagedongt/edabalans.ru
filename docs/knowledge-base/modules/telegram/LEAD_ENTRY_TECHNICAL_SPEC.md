@@ -265,7 +265,8 @@ POST https://edabalans.ru/api/messaging/start-link
 ```
 
 JSON принимает `messenger=tg|max`, ровно одно из `alias`/`rule_id` и только
-`utm_source`, `utm_medium`, `utm_campaign`, `utm_content`, `utm_term`, `yclid`.
+`landing_variant`, `utm_source`, `utm_medium`, `utm_campaign`, `utm_content`,
+`utm_term`, `yclid`.
 Лишние поля отклоняются. Ответ содержит прямой deep link выбранного бота с
 одноразовым `U...` payload, его TTL 604800 секунд и постоянный fallback deep link
 с исходным `B...` alias. Redirect и промежуточная web-страница отсутствуют.

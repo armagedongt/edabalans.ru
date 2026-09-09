@@ -112,7 +112,7 @@ try {
     const { context, page, requests } = await landing()
     await waitForRequests(requests)
     await page.waitForFunction(() => [...document.querySelectorAll('[data-edb-channel]')].every(link => link.href.includes('?start=U')))
-    const expectedAttribution = { alias: 'BMB6Y', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
+    const expectedAttribution = { alias: 'BMB6Y', landing_variant: 'topics', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start', yclid: 'click-901' }
     const byKey = Object.fromEntries(requests.map(body => [`${body.messenger}:${body.entry}`, body]))
     for (const messenger of ['tg', 'max']) for (const entry of ['button', 'qr']) {
       const expected = { messenger, entry, ...expectedAttribution }
@@ -142,7 +142,7 @@ try {
     requests.length = 0
     await page.goto(`${baseUrl}/preview/direct-intensive`, { waitUntil: 'domcontentloaded' })
     await waitForRequests(requests)
-    if (!requests.every(body => ['yclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].every(key => body[key] === ({ yclid: 'click-901', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start' })[key]))) throw new Error(`Session attribution was not restored: ${JSON.stringify(requests)}`)
+    if (!requests.every(body => ['landing_variant', 'yclid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].every(key => body[key] === ({ landing_variant: 'topics', yclid: 'click-901', utm_source: 'yandex', utm_medium: 'cpc', utm_campaign: 'search', utm_content: 'cat', utm_term: 'start' })[key]))) throw new Error(`Session attribution was not restored: ${JSON.stringify(requests)}`)
     await context.close()
   }
 
@@ -234,18 +234,103 @@ try {
       const root = document.querySelector('#edb-direct-intensive-v1')
       const accent = document.querySelector('.edb-di-hero-accent')
       const rootRect = root.getBoundingClientRect()
-      const accentRect = accent.getBoundingClientRect()
+      const accentRect = accent?.getBoundingClientRect()
       const legalRect = document.querySelector('.edb-di-legal-line').getBoundingClientRect()
       return {
         rootOverflow: root.scrollWidth - root.clientWidth,
-        accentLeft: accentRect.left - rootRect.left,
-        accentRight: rootRect.right - accentRect.right,
-        accentTextOverflow: accent.scrollWidth - accent.clientWidth,
+        accentLeft: accentRect ? accentRect.left - rootRect.left : 0,
+        accentRight: accentRect ? rootRect.right - accentRect.right : 0,
+        accentTextOverflow: accent ? accent.scrollWidth - accent.clientWidth : 0,
         legalLeft: legalRect.left - rootRect.left,
         legalRight: rootRect.right - legalRect.right,
       }
     })
     if (fit.rootOverflow > 1 || fit.accentLeft < -1 || fit.accentRight < -1 || fit.accentTextOverflow > 1 || fit.legalLeft < -1 || fit.legalRight < -1) throw new Error(`Responsive content is clipped at ${width}px: ${JSON.stringify(fit)}`)
+    await context.close()
+  }
+
+  for (const variant of [
+    { id: 'topics', items: 4, boldFragments: 0, marker: 'Читайте бесплатный интенсив, как сделать похудение проще' },
+    { id: 'motivation', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'motivation-lines', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'motivation-frame', items: 0, boldFragments: 0, marker: 'Да, для похудения — нужен дефицит калорий.' },
+    { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий!' },
+  ]) {
+    const { context, page } = await landing({
+      viewport: { width: 360, height: 900 },
+      url: `${baseUrl}/preview/direct-intensive?variant=${variant.id}`,
+    })
+    const state = await page.evaluate(() => ({
+      variant: document.querySelector('#edb-direct-intensive-v1').dataset.landingVariant,
+      items: document.querySelectorAll('.edb-di-item').length,
+      text: document.querySelector('.edb-di-shell').innerText,
+      boldFragments: document.querySelectorAll('.edb-di-shell strong').length,
+      overflow: document.querySelector('#edb-direct-intensive-v1').scrollWidth - document.querySelector('#edb-direct-intensive-v1').clientWidth,
+    }))
+    if (state.variant !== variant.id || state.items !== variant.items || !state.text.includes(variant.marker) || state.boldFragments !== variant.boldFragments || state.overflow > 1) {
+      throw new Error(`Bad ${variant.id} variant: ${JSON.stringify(state)}`)
+    }
+    await context.close()
+  }
+
+  for (const variant of ['motivation', 'motivation-lines', 'motivation-frame', 'instead']) {
+    const { context, page } = await landing({
+      viewport: { width: 320, height: 900 },
+      url: `${baseUrl}/preview/direct-intensive?variant=${variant}`,
+    })
+    await page.evaluate(() => document.fonts.ready)
+    const fit = await page.evaluate(() => {
+      const root = document.querySelector('#edb-direct-intensive-v1')
+      const heading = document.querySelector('.edb-di-opening-heading')
+      const cta = document.querySelector('.edb-di-cta-lead')
+      const arrows = cta.querySelector('.edb-di-cta-arrows')
+      const inlineActions = document.querySelector('.edb-di-actions--inline')
+      const stickyActions = document.querySelector('.edb-di-sticky-actions')
+      const legal = document.querySelector('.edb-di-legal')
+      const checkPairs = [...document.querySelectorAll('.edb-di-list--checks .edb-di-item')].map(item => ({
+        prefixTop: item.querySelector('.edb-di-item-prefix').getBoundingClientRect().top,
+        resultTop: item.querySelector('.edb-di-item-result').getBoundingClientRect().top,
+      }))
+      return {
+        rootOverflow: root.scrollWidth - root.clientWidth,
+        headingAlign: getComputedStyle(heading).textAlign,
+        ctaOverflow: cta.scrollWidth - cta.clientWidth,
+        hasSplitArrows: !!arrows,
+        splitArrowsLayout: arrows ? getComputedStyle(arrows).gridTemplateColumns : 'none',
+        inlineActionsDisplay: getComputedStyle(inlineActions).display,
+        stickyActionsDisplay: getComputedStyle(stickyActions).display,
+        legalBottomGap: window.innerHeight - legal.getBoundingClientRect().bottom,
+        firstCheckStaysInline: checkPairs.length ? Math.abs(checkPairs[0].prefixTop - checkPairs[0].resultTop) < 1 : true,
+        wrappedCheckCount: checkPairs.filter(pair => pair.resultTop - pair.prefixTop > 1).length,
+      }
+    })
+    if (fit.rootOverflow > 1 || fit.headingAlign !== 'left' || fit.ctaOverflow > 1 || variant.startsWith('motivation') !== fit.hasSplitArrows || (variant.startsWith('motivation') && fit.splitArrowsLayout === 'none')) {
+      throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
+    }
+    if (variant.startsWith('motivation') && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.legalBottomGap > 12)) {
+      throw new Error(`Motivation actions or footer are misplaced: ${JSON.stringify(fit)}`)
+    }
+    if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {
+      throw new Error(`Instead list must wrap only when its content needs it: ${JSON.stringify(fit)}`)
+    }
+    if (variant === 'instead' && !(await page.locator('.edb-di-approach-heading, .edb-di-hero-accent').filter({ hasText: 'Надо менять подход!' }).count())) {
+      throw new Error('Instead variant must keep the orange approach accent')
+    }
+    await context.close()
+  }
+
+  {
+    const { context, page } = await landing({
+      viewport: { width: 1000, height: 900 },
+      url: `${baseUrl}/preview/direct-intensive?variant=instead`,
+    })
+    await page.evaluate(() => document.fonts.ready)
+    const allChecksStayInline = await page.evaluate(() => [...document.querySelectorAll('.edb-di-list--checks .edb-di-item')].every(item => {
+      const prefixTop = item.querySelector('.edb-di-item-prefix').getBoundingClientRect().top
+      const resultTop = item.querySelector('.edb-di-item-result').getBoundingClientRect().top
+      return Math.abs(prefixTop - resultTop) < 1
+    }))
+    if (!allChecksStayInline) throw new Error('Instead list must keep every item on one line on desktop')
     await context.close()
   }
 

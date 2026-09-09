@@ -246,6 +246,7 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
         json={
             "messenger": "tg",
             "alias": alias,
+            "landing_variant": "topics",
             "utm_source": "yandex",
             "yclid": "click-public-1",
         },
@@ -282,7 +283,11 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
             TrackingEvent.event_type == "start_first",
         ))
         assert prepared.metadata_json == {
-            "raw_query": {"utm_source": "yandex", "yclid": "click-public-1"},
+            "raw_query": {
+                "landing_variant": "topics",
+                "utm_source": "yandex",
+                "yclid": "click-public-1",
+            },
             "path_token": alias,
             "journey_id": prepared.metadata_json["journey_id"],
             "entry": "button",
@@ -292,6 +297,7 @@ def test_public_start_link_returns_direct_telegram_u_payload_and_static_b_fallba
         assert len(clicks) == 1
         assert clicks[0].metadata_json["journey_id"] == prepared.metadata_json["journey_id"]
         assert start.metadata_json["raw_query"] == {
+            "landing_variant": "topics",
             "utm_source": "yandex",
             "yclid": "click-public-1",
         }

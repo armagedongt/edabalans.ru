@@ -622,6 +622,7 @@ def public_messenger_start_link(
     raw_query = {
         key: value
         for key in (
+            "landing_variant",
             "utm_source",
             "utm_medium",
             "utm_campaign",

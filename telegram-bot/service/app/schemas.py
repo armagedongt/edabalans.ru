@@ -31,6 +31,12 @@ class PublicMessengerStartLinkIn(BaseModel):
     entry: Literal["button", "qr"] = "button"
     alias: str | None = Field(default=None, min_length=2, max_length=64)
     rule_id: str | None = Field(default=None, min_length=1, max_length=36)
+    landing_variant: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=64,
+        pattern=r"^[a-z0-9_-]+$",
+    )
     utm_source: str | None = Field(default=None, max_length=500)
     utm_medium: str | None = Field(default=None, max_length=500)
     utm_campaign: str | None = Field(default=None, max_length=500)

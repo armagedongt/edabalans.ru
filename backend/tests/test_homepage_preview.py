@@ -1348,10 +1348,11 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert 'id="edb-direct-intensive-v1"' in response.text
     assert "Какие три ошибки в начале похудения, сразу ставят на нём жирный крест!" in response.text
     assert "Как худеть, когда сила воли" not in response.text
-    assert '<span class="edb-di-hero-accent">Надо менять подход!!</span>' in response.text
-    assert "Срывы и невозможность взять себя в руки — это НЕ черта вашего характера." in response.text
-    assert "Если худеть только на силе воли, конечно, она будет заканчиваться." in response.text
-    assert "Читайте бесплатный интенсив в 4-х частях" in response.text
+    assert "accent:'Надо менять подход!'" in response.text
+    assert "Не можете взять себя в руки и постоянно срываетесь?" in response.text
+    assert "Это НЕ черта вашего характера!!" in response.text
+    assert "Если худеть только на силе воли, конечно, она будет заканчиваться, а значит..." in response.text
+    assert "Читайте бесплатный интенсив, как сделать похудение проще" in response.text
     assert "чтобы силы воли надо было меньше:" in response.text
     assert "Почему ВАМ вечно нужно себя ограничивать" in response.text
     assert "пока другие ЕДЯТ всё подряд" in response.text
@@ -1375,12 +1376,43 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "apiUrl:'https://edabalans.ru/api/messaging/start-link'" in response.text
     assert "telegramUrl:'https://t.me/Fitness_Talks_bot?start=BMB6Y'" in response.text
     assert "maxUrl:'https://max.ru/id230409966750_bot?start=BMB6Y'" in response.text
+    assert "landing_variant:ACTIVE_VARIANT" in response.text
+    assert "root.dataset.landingVariant=ACTIVE_VARIANT" in response.text
 
     source = client.get("/preview/direct-intensive/t123")
     assert source.status_code == 200
     assert source.headers["content-type"].startswith("text/plain")
     assert source.headers["x-robots-tag"] == "noindex, nofollow"
     assert source.text == response.text
+
+
+def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
+    response = client.get("/preview/direct-intensive")
+
+    assert "const VARIANTS={" in response.text
+    assert "?variant=" not in response.text
+    assert "requestedVariant=new URLSearchParams(location.search).get('variant')" in response.text
+    assert "Да, для похудения — нужен дефицит калорий." in response.text
+    assert "Но ещё нужны навыки в управлении питанием и пищевыми привычками" in response.text
+    assert "Читайте бесплатный интенсив: что это за навыки и как их освоить!" in response.text
+    assert "splitArrows:true" in response.text
+    assert "motivation-lines" in response.text
+    assert "motivation-frame" in response.text
+    assert "А вместо случайных попыток — " in response.text
+    assert "{text:'понятный порядок действий',strong:true}" in response.text
+    assert "читайте прямо сейчас. 👇" not in response.text
+    assert "openingStyle:'plain-accent'" in response.text
+    assert "openingStyle:'plain-text'" in response.text
+    assert "Надо менять подход!!" in response.text
+    assert "👇 Читайте прямо сейчас 👇" in response.text
+    assert "Вместо ограничений — " in response.text
+    assert "Вместо ПП-еды — " in response.text
+    assert "Вместо уменьшения калорий — " in response.text
+    assert "Вместо подсчета граммов — " in response.text
+    assert "Вместо погони за цифрами — " in response.text
+    assert "Вместо случайных попыток — " in response.text
+    assert "{text:'баланс',strong:true}" in response.text
+    assert "{text:'дневник питания',strong:true}" in response.text
 
 
 def test_direct_intensive_a1_preserves_previous_t123_source() -> None:
@@ -1418,7 +1450,7 @@ def test_direct_intensive_prefetch_contract_is_allowlisted_and_fail_open() -> No
     response = client.get("/preview/direct-intensive")
 
     assert "new Set(['utm_source','utm_medium','utm_campaign','utm_content','utm_term','yclid'])" in response.text
-    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,...attribution})" in response.text
+    assert "body:JSON.stringify({messenger:config.apiMessenger,entry,alias:CONTENT.links.alias,landing_variant:ACTIVE_VARIANT,...attribution})" in response.text
     assert "if(!response.ok)throw new Error(`start-link ${response.status}`)" in response.text
     assert ".catch(()=>config.fallbackUrl)" in response.text
     assert "states[channel]={button:prepare(channel,'button'),qr:prepare(channel,'qr')}" in response.text
