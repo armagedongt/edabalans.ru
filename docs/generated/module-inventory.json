@@ -6810,6 +6810,10 @@
     },
     {
       "module_id": "operations.project-work",
+      "path": "work/strength-workout-editor-redesign/exercise-media-catalog.md"
+    },
+    {
+      "module_id": "operations.project-work",
       "path": "work/strength-workout-editor-redesign/user-spec.md"
     },
     {
@@ -7333,7 +7337,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1553,
+          "line": 1570,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -7341,7 +7345,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1705,
+          "line": 1722,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -7349,7 +7353,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1758,
+          "line": 1775,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -7357,7 +7361,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1671,
+          "line": 1688,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -7651,7 +7655,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1553,
+          "line": 1570,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -7659,7 +7663,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1671,
+          "line": 1688,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -7667,7 +7671,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1705,
+          "line": 1722,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -7675,7 +7679,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1758,
+          "line": 1775,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -26384,6 +26388,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/strength-workout-editor-redesign/exercise-media-catalog.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/strength-workout-editor-redesign/user-spec.md"
         },
         {
@@ -27024,6 +27032,7 @@
         "маршрутизировать публичные пути `edabalans.ru` и временные совместимые app/api/go/blog домены через Caddy;",
         "не публиковать PostgreSQL и внутренние порты напрямую;",
         "не публиковать NocoDB в интернет; доступ оставлять только через loopback и SSH-туннель;",
+        "раздавать разрешённые публичные медиа владельца из отдельных read-only",
         "публиковать глубокую Telegram readiness-проверку для внешнего мониторинга",
         "передавать Telegram Bot API через отдельный закрытый Cloudflare relay, не",
         "хранить готовый аварийный runbook возврата на выключенную европейскую Squid VM",
@@ -38454,7 +38463,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1487,
+          "line": 1504,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -38462,7 +38471,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1622,
+          "line": 1639,
           "module_id": "products",
           "name": "admin_state_has_records",
           "qualname": "admin_state_has_records"
@@ -38470,7 +38479,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1630,
+          "line": 1647,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -38478,7 +38487,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1655,
+          "line": 1672,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -38486,7 +38495,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1741,
+          "line": 1758,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -39006,7 +39015,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 31,
+          "line": 32,
           "module_id": "products",
           "name": "make_client",
           "qualname": "make_client"
@@ -39014,7 +39023,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 40,
+          "line": 41,
           "module_id": "products",
           "name": "override_db",
           "qualname": "make_client.override_db"
@@ -39022,7 +39031,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 49,
+          "line": 50,
           "module_id": "products",
           "name": "add_user",
           "qualname": "add_user"
@@ -39030,7 +39039,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 63,
+          "line": 64,
           "module_id": "products",
           "name": "login",
           "qualname": "login"
@@ -39038,7 +39047,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 71,
+          "line": 72,
           "module_id": "products",
           "name": "test_admin_app_list_includes_access_without_state_and_state_without_access",
           "qualname": "test_admin_app_list_includes_access_without_state_and_state_without_access"
@@ -39046,7 +39055,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 112,
+          "line": 113,
           "module_id": "products",
           "name": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records",
           "qualname": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records"
@@ -39054,7 +39063,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 155,
+          "line": 156,
           "module_id": "products",
           "name": "test_strength_managed_runtime_uses_admin_session_and_writes_audit",
           "qualname": "test_strength_managed_runtime_uses_admin_session_and_writes_audit"
@@ -39062,7 +39071,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 185,
+          "line": 186,
           "module_id": "products",
           "name": "test_strength_completed_set_round_trips_for_the_selected_user",
           "qualname": "test_strength_completed_set_round_trips_for_the_selected_user"
@@ -39070,7 +39079,23 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 235,
+          "line": 236,
+          "module_id": "products",
+          "name": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template",
+          "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 251,
+          "module_id": "products",
+          "name": "create",
+          "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template.create"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 279,
           "module_id": "products",
           "name": "test_strength_catalog_is_account_wide_and_template_membership_is_separate",
           "qualname": "test_strength_catalog_is_account_wide_and_template_membership_is_separate"
@@ -39078,7 +39103,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 431,
+          "line": 475,
           "module_id": "products",
           "name": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit",
           "qualname": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit"
@@ -39086,7 +39111,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 472,
+          "line": 516,
           "module_id": "products",
           "name": "test_managed_app_runtime_on_public_host_still_requires_admin_session",
           "qualname": "test_managed_app_runtime_on_public_host_still_requires_admin_session"
@@ -47634,7 +47659,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1501,
+          "line": 1518,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -47642,7 +47667,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1518,
+          "line": 1535,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -47650,7 +47675,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1453,
+          "line": 1470,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -47658,7 +47683,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1468,
+          "line": 1485,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -47696,7 +47721,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1453,
+          "line": 1470,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -47704,7 +47729,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1468,
+          "line": 1485,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -47712,7 +47737,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1501,
+          "line": 1518,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -47720,7 +47745,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1518,
+          "line": 1535,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -49061,6 +49086,14 @@
           "qualname": "payload"
         },
         {
+          "file": "backend/tests/browser/strength-editor.e2e.mjs",
+          "kind": "function",
+          "line": 213,
+          "module_id": "products.public-site",
+          "name": "pad",
+          "qualname": "pad"
+        },
+        {
           "file": "backend/tests/test_homepage_preview.py",
           "kind": "class",
           "line": 24,
@@ -50152,6 +50185,7 @@
       "capabilities": [
         "вести plan/fact тренировок и упражнения;",
         "хранить три повторно используемых «Шаблона 1/2/3» с общей историей каждого упражнения;",
+        "нумеровать конкретные тренировки отдельно внутри каждого шаблона и явной кнопкой",
         "давать каждому аккаунту единый каталог упражнений: 25 базовых названий плюс",
         "редактировать состав шаблона в одном мобильном окне с внутренней прокруткой,",
         "показывать постоянную ссылку «Как пользоваться» и краткую справку по базовому",
@@ -51450,7 +51484,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1501,
+      "line": 1518,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -51458,7 +51492,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1518,
+      "line": 1535,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -51466,7 +51500,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1553,
+      "line": 1570,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -51474,7 +51508,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1705,
+      "line": 1722,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -51482,7 +51516,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1758,
+      "line": 1775,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -52002,7 +52036,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1671,
+      "line": 1688,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -52282,7 +52316,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1453,
+      "line": 1470,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -52290,7 +52324,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1468,
+      "line": 1485,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -55430,7 +55464,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1453,
+      "line": 1470,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -55438,7 +55472,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1468,
+      "line": 1485,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -55446,7 +55480,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1487,
+      "line": 1504,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -55454,7 +55488,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1501,
+      "line": 1518,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -55462,7 +55496,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1518,
+      "line": 1535,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -55470,7 +55504,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1553,
+      "line": 1570,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -55478,7 +55512,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1622,
+      "line": 1639,
       "module_id": "products",
       "name": "admin_state_has_records",
       "qualname": "admin_state_has_records"
@@ -55486,7 +55520,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1630,
+      "line": 1647,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -55494,7 +55528,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1655,
+      "line": 1672,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -55502,7 +55536,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1671,
+      "line": 1688,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -55510,7 +55544,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1705,
+      "line": 1722,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -55518,7 +55552,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1741,
+      "line": 1758,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -55526,7 +55560,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1758,
+      "line": 1775,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -66836,6 +66870,14 @@
       "qualname": "payload"
     },
     {
+      "file": "backend/tests/browser/strength-editor.e2e.mjs",
+      "kind": "function",
+      "line": 213,
+      "module_id": "products.public-site",
+      "name": "pad",
+      "qualname": "pad"
+    },
+    {
       "file": "backend/tests/test_account_password_auth.py",
       "kind": "function",
       "line": 51,
@@ -67030,7 +67072,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 31,
+      "line": 32,
       "module_id": "products",
       "name": "make_client",
       "qualname": "make_client"
@@ -67038,7 +67080,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 40,
+      "line": 41,
       "module_id": "products",
       "name": "override_db",
       "qualname": "make_client.override_db"
@@ -67046,7 +67088,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 49,
+      "line": 50,
       "module_id": "products",
       "name": "add_user",
       "qualname": "add_user"
@@ -67054,7 +67096,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 63,
+      "line": 64,
       "module_id": "products",
       "name": "login",
       "qualname": "login"
@@ -67062,7 +67104,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 71,
+      "line": 72,
       "module_id": "products",
       "name": "test_admin_app_list_includes_access_without_state_and_state_without_access",
       "qualname": "test_admin_app_list_includes_access_without_state_and_state_without_access"
@@ -67070,7 +67112,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 112,
+      "line": 113,
       "module_id": "products",
       "name": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records",
       "qualname": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records"
@@ -67078,7 +67120,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 155,
+      "line": 156,
       "module_id": "products",
       "name": "test_strength_managed_runtime_uses_admin_session_and_writes_audit",
       "qualname": "test_strength_managed_runtime_uses_admin_session_and_writes_audit"
@@ -67086,7 +67128,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 185,
+      "line": 186,
       "module_id": "products",
       "name": "test_strength_completed_set_round_trips_for_the_selected_user",
       "qualname": "test_strength_completed_set_round_trips_for_the_selected_user"
@@ -67094,7 +67136,23 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 235,
+      "line": 236,
+      "module_id": "products",
+      "name": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template",
+      "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 251,
+      "module_id": "products",
+      "name": "create",
+      "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template.create"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 279,
       "module_id": "products",
       "name": "test_strength_catalog_is_account_wide_and_template_membership_is_separate",
       "qualname": "test_strength_catalog_is_account_wide_and_template_membership_is_separate"
@@ -67102,7 +67160,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 431,
+      "line": 475,
       "module_id": "products",
       "name": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit",
       "qualname": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit"
@@ -67110,7 +67168,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 472,
+      "line": 516,
       "module_id": "products",
       "name": "test_managed_app_runtime_on_public_host_still_requires_admin_session",
       "qualname": "test_managed_app_runtime_on_public_host_still_requires_admin_session"
