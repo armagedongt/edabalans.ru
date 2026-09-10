@@ -6670,6 +6670,10 @@
     },
     {
       "module_id": "products.public-site",
+      "path": "work/public-homepage-redesign/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
     },
     {
@@ -6699,6 +6703,10 @@
     {
       "module_id": "products.public-site",
       "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "work/public-homepage-redesign/user-spec.md"
     },
     {
       "module_id": "operations.project-work",
@@ -48197,6 +48205,10 @@
         },
         {
           "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "products.public-site",
           "path": "work/public-homepage-redesign/mobile-chain-revision-brief-v2.md"
         },
         {
@@ -48226,6 +48238,10 @@
         {
           "module_id": "products.public-site",
           "path": "work/public-homepage-redesign/site-architecture-inventory-v1.md"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "work/public-homepage-redesign/user-spec.md"
         }
       ],
       "id": "products.public-site",

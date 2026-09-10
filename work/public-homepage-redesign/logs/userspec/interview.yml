@@ -1,0 +1,82 @@
+# User-spec planning interview
+
+interview_metadata:
+  started: "2026-09-10 00:00:00+03:00"
+  last_updated: "2026-09-10 00:00:00+03:00"
+  status: "in_progress"
+  can_resume: true
+
+conversation_history: []
+
+general_understanding:
+  feature_name:
+    score: 100
+    value: "Финальная доводка новой публичной главной"
+    gaps: []
+    required: true
+
+  feature_description:
+    score: 95
+    value: "Довести существующее каноническое полотно mobile.html по полному пакету визуальных, медийных и функциональных правок, затем автономно собрать и выпустить T123."
+    gaps: ["Нужны перечисленные владельцем медиафайлы"]
+    required: true
+
+  work_type:
+    score: 100
+    value: "Feature completion, bug fixes и refactoring общих popup/media primitives"
+    gaps: []
+    required: true
+
+  user_problem:
+    score: 100
+    value: "Страница почти собрана, но ручная приёмка множества мелких правок затягивает запуск; несколько крупных компонентов ещё неудобны или не включены."
+    gaps: []
+    required: true
+
+  target_users:
+    score: 100
+    value: "Посетители публичной главной на mobile и desktop, включая пришедших после бесплатного интенсива."
+    gaps: []
+    required: false
+
+  success_criteria:
+    score: 90
+    value: "Четыре локальных эталона приняты; страница собрана без дублей, скидка и checkout совпадают, media ленивые, Tilda embed и адаптив проходят проверки."
+    gaps: ["Визуальный выбор CTA и знака выполняется на preview"]
+    required: true
+
+  constraints:
+    score: 95
+    value: "Один канонический source; сервер владеет ценой и скидкой; публичные тексты проходят writer; production Tilda и реальный платёж являются отдельными точками."
+    gaps: ["Финальная модель consent зависит от inventory и юридической проверки"]
+    required: true
+
+  testing_strategy:
+    score: 100
+    value: "DOM/unit, integration pricing/consent/Tilda, browser E2E на контрольных viewport и network/performance проверки lazy media."
+    gaps: []
+    required: true
+
+integration:
+  user_flow:
+    score: 95
+    value: "Посетитель читает страницу, смотрит VSL и отзывы, получает корректную скидку, выбирает тариф и открывает прямой серверный checkout."
+    gaps: ["Реальные медиа заполняются после передачи owner handoff"]
+    required: true
+
+  edge_cases:
+    score: 90
+    value: "Истёкшая скидка, медленный API, popup поверх popup, последний элемент галереи, закрытый VSL, отсутствие медиа и дубли Tilda."
+    gaps: []
+    required: true
+
+  deployment:
+    score: 100
+    value: "Сначала локальные previews, затем noindex server smoke, T123 test page и отдельное назначение новой главной с rollback."
+    gaps: []
+    required: true
+
+notes: >-
+  Основной owner-source — надиктованный файл
+  C:/Users/Segey/.codex/attachments/138416f4-5848-44c1-b1ad-4e9424a42656/pasted-text.txt.
+  Точные фразы из него не переписываются без отдельного разрешения.
