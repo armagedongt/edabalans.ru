@@ -156,6 +156,12 @@ www.{$PUBLIC_DOMAIN} {
 		file_server
 	}
 
+	handle_path /media/reviews/* {
+		root * /srv/edabalans-public/reviews
+		header Cache-Control "public, max-age=86400"
+		file_server
+	}
+
 	handle /docs {
 		redir https://go.похудение-это-есть.рф/legal/privacy 302
 	}

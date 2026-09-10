@@ -21,6 +21,22 @@
 ключ `~/.ssh/edabalans_timeweb`; открытый пароль и приватный ключ в репозиторий не
 попадают. Проверка подключения: `ssh edabalans-prod "hostname"`.
 
+## Публичные медиа владельца
+
+Публичные отзывы и другие разрешённые владельцем пользовательские изображения,
+которые нельзя помещать в Git, хранятся в `/srv/edabalans-public/reviews`.
+Caddy монтирует этот каталог только для чтения и публикует его на
+`https://app.edabalans.ru/media/reviews/`. Версионный подкаталог обязателен,
+например `v1/`: опубликованный файл не заменяется другим содержимым под тем же
+immutable URL.
+
+В Git хранится только Caddy/Compose-контракт. Карта URL и SHA-манифест остаются в
+локальном каталоге отзывов владельца вне Git; закрытая серверная копия манифеста
+лежит вне публичного mount в `/srv/edabalans-public/reviews-manifests`. Сами
+отзывы, аватарки и другие изображения реальных людей в репозиторий не добавляются.
+Перед загрузкой изображения оптимизируются, после загрузки проверяются HTTP 200,
+`Content-Type`, размер и контрольная сумма локального и серверного файла.
+
 Секреты находятся только на сервере в `/opt/edabalans/.env` и
 `/root/.config/edabalans/s3.env`. Их нельзя выводить в логи, отправлять в GitHub или
 вставлять в документацию.
@@ -34,6 +50,7 @@ curl -fsS https://edabalans.ru/health
 curl -fsS https://edabalans.ru/ready
 curl -fsS https://edabalans.ru/api/health/telegram
 curl -fsS https://edabalans.ru/apps/dqs.html
+curl -fsSI https://app.edabalans.ru/media/reviews/v1/r043-stream-collage.webp
 curl -fsS https://edabalans.ru/admin/messaging
 curl -fsS https://edabalans.ru/legal
 curl -fsS https://edabalans.ru/legal/disclaimer
