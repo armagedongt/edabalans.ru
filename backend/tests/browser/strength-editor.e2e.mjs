@@ -34,6 +34,16 @@ function workout(type) {
     muscles: "Основные работающие мышцы",
     tips: ["Первый ориентир", "Второй ориентир"],
   }));
+  catalog.push({
+    exercise_id: "custom-x');window.__strengthXss=1;//",
+    exercise_name: "Пользовательское упражнение",
+    active: false,
+    catalog_active: true,
+    sort_order: catalog.length + 1,
+    source: "custom",
+    muscles: "",
+    tips: [],
+  });
   const exercises = catalog.filter((item) => item.active).map((item, index) => ({
     session_id: `session-${type}`,
     exercise_id: item.exercise_id,
@@ -112,6 +122,13 @@ for (const width of [360, 430, 768, 1440]) {
   assert.equal(await page.evaluate(() => document.body.style.overflow), "hidden");
   assert.equal(await page.locator(".st-manager-scroll").evaluate((node) => getComputedStyle(node).overflowY), "auto");
   assert.equal(await page.locator(".st-manager-scroll").evaluate((node) => node.scrollHeight > node.clientHeight), true);
+  if (width === 360) {
+    await page.evaluate(() => { window.__strengthXss = 0; });
+    page.once("dialog", (dialog) => dialog.dismiss());
+    await page.locator(".st-manager-row", { hasText: "Пользовательское упражнение" }).getByText("Изменить", { exact: true }).click();
+    assert.equal(await page.evaluate(() => window.__strengthXss), 0);
+    await page.locator(".st-manager-row", { hasText: "Пользовательское упражнение" }).getByText("Добавить", { exact: true }).click();
+  }
   await page.locator(".st-manager-scroll").evaluate((node) => { node.scrollTop = 120; });
   assert.equal(await page.locator(".st-manager-scroll").evaluate((node) => node.scrollTop > 0), true);
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-manager-${width}.png`), fullPage: false });
@@ -140,6 +157,12 @@ for (const width of [360, 430, 768, 1440]) {
   assert.equal(await page.locator(".st-modal-bg").count(), 0);
   assert.equal(await page.evaluate(() => document.body.style.overflow), "");
   assert.equal((await page.evaluate(() => window.__saveActions)).includes("saveExerciseCatalog"), true);
+  if (width === 360) {
+    const maliciousExercise = page.locator("article.st-modern-exercise", { hasText: "Пользовательское упражнение" });
+    await maliciousExercise.getByRole("button", { name: "Открыть историю упражнения" }).click();
+    assert.equal(await page.evaluate(() => window.__strengthXss), 0);
+    await page.locator(".st-modal-bg").click({ position: { x: 2, y: 2 } });
+  }
 
   await page.getByText("Шаблон 2", { exact: true }).click();
   await page.getByText("Редактировать", { exact: true }).click();

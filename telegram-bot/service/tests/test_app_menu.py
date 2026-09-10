@@ -3,12 +3,15 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 from uuid import uuid4
 
-from sqlalchemy import text
+import pytest
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.app_menu import APPS_PAYLOAD, REVEAL_EVENTS, Application, app_request, available_applications, menu_presentation
+from app.app_menu import APPS_PAYLOAD, REVEAL_EVENTS, STRENGTH_ADMIN_CONTENT_CODE, STRENGTH_ADMIN_PAYLOAD, Application, app_request, available_applications, menu_presentation
 from app.database import Base, make_engine
-from app.models import Contact, CrmUser
+from app.graph import apps_menu_graph
+from app.models import Contact, ContentItem, CrmUser
+from app.seed import _start_system_messages
 
 
 def prepared(tmp_path):
@@ -48,6 +51,16 @@ def prepared(tmp_path):
         chat_id="42",
     )
     session.add(contact)
+    session.add(ContentItem(
+        code=STRENGTH_ADMIN_CONTENT_CODE,
+        title="Админка тренировок — вход с телефона",
+        body_source="<b>Админка тренировок</b>",
+        source_format="telegram_html",
+        status="published",
+        purpose="Открыть владельцу мобильную админку тренировок.",
+        writer_brief="Служебный вход владельца; не обещать пользовательский доступ.",
+        editorial_status="approved",
+    ))
     return session, user, contact
 
 
@@ -82,7 +95,63 @@ def test_common_and_specific_deep_links_are_short_and_reserved():
     assert isinstance(requested, Application)
     assert requested.code == "strength"
     assert app_request("/apps") == APPS_PAYLOAD
+    assert app_request("/start training_admin") == STRENGTH_ADMIN_PAYLOAD
     assert app_request("/start unrelated") is None
+
+
+def test_strength_admin_deep_link_opens_protected_mobile_admin_for_current_profile(tmp_path):
+    session, user, contact = prepared(tmp_path)
+    try:
+        requested = app_request("/start training_admin")
+        content, configuration = menu_presentation(session, contact, requested)
+        assert content.body_source.startswith("<b>Админка тренировок</b>")
+        assert configuration["buttons"] == [{
+            "text": "Открыть админку тренировок",
+            "web_app": {
+                "url": f"https://edabalans.ru/admin/strength?mobile=1&user={user.id}"
+            },
+        }]
+    finally:
+        session.close()
+
+
+def test_strength_admin_message_is_an_editable_approved_slot_and_visible_in_graph(tmp_path):
+    rows = {row["code"]: row for row in _start_system_messages()}
+    assert rows["apps_strength_admin"]["body"].startswith("<b>Админка тренировок</b>")
+
+    session, _, _ = prepared(tmp_path)
+    try:
+        item = session.scalar(select(ContentItem).where(ContentItem.code == STRENGTH_ADMIN_CONTENT_CODE))
+        item.body_source = "Отредактированный текст входа"
+        session.commit()
+
+        content, _ = menu_presentation(session, session.query(Contact).one(), STRENGTH_ADMIN_PAYLOAD)
+        assert content is item
+        graph = apps_menu_graph(session)
+        message = next(node for node in graph["nodes"] if node["id"] == "apps_admin_message")
+        assert message["content"]["code"] == STRENGTH_ADMIN_CONTENT_CODE
+        assert message["content"]["usages"] == [{
+            "kind": "direct_trigger",
+            "module": "apps_menu",
+            "step": "training_admin",
+            "previous": "Открыта служебная ссылка /start training_admin",
+            "next": "Кнопка открывает защищённую мобильную админку тренировок",
+        }]
+        assert not graph["issues"]
+    finally:
+        session.close()
+
+
+def test_strength_admin_does_not_send_unapproved_content(tmp_path):
+    session, _, contact = prepared(tmp_path)
+    try:
+        item = session.scalar(select(ContentItem).where(ContentItem.code == STRENGTH_ADMIN_CONTENT_CODE))
+        item.editorial_status = "draft"
+        session.commit()
+        with pytest.raises(RuntimeError, match="not owner-approved"):
+            menu_presentation(session, contact, STRENGTH_ADMIN_PAYLOAD)
+    finally:
+        session.close()
 
 
 def test_each_application_requires_only_its_explicit_course_reveal_event():

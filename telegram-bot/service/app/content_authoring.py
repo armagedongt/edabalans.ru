@@ -35,6 +35,15 @@ START_CONTEXT = {
     "tpl_intensive_entry_delivered": ("Выданы все четыре части", "Показать оглавление и Мастер-класс"),
     "tpl_intensive_entry_legacy_update": ("Найден старый участник", "Показать полностью открытый обновлённый интенсив"),
 }
+DIRECT_TRIGGER_CONTEXT = {
+    "tpl_apps_strength_admin": {
+        "kind": "direct_trigger",
+        "module": "apps_menu",
+        "step": "training_admin",
+        "previous": "Открыта служебная ссылка /start training_admin",
+        "next": "Кнопка открывает защищённую мобильную админку тренировок",
+    },
+}
 SILENT_EVENTS = {
     "owner_closing_review": "Архивное событие: итоговое саморевью сохраняется в CRM, а копия отправляется участнику.",
     "dqs_support": "Архивное событие без автоматической клиентской отправки.",
@@ -141,6 +150,8 @@ def content_usages(session: Session) -> dict[str, list[dict]]:
             "previous": previous,
             "next": next_step,
         })
+    for code, usage in DIRECT_TRIGGER_CONTEXT.items():
+        usages[code].append(usage)
     return dict(usages)
 
 

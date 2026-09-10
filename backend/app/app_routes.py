@@ -1552,6 +1552,8 @@ async def admin_metabolism_put(
 @router.get("/admin/api/apps/users")
 def admin_app_users(
     app_code: str = Query(pattern="^(dqs|strength|metabolism)$"),
+    with_records: bool = False,
+    q: str = Query(default="", max_length=255),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> dict[str, Any]:
@@ -1574,6 +1576,13 @@ def admin_app_users(
             )
         ).all()
     )
+    if with_records:
+        state_by_user = {
+            user_id: state
+            for user_id, state in state_by_user.items()
+            if admin_state_has_records(app_code, state)
+        }
+        access_user_ids = set()
     user_ids = set(state_by_user) | access_user_ids
     users = {
         item.id: item
@@ -1583,22 +1592,39 @@ def admin_app_users(
             .order_by(User.display_name, User.created_at)
         ).all()
     } if user_ids else {}
+    rows = [
+        {
+            "user_id": str(user_id),
+            "display_name": users[user_id].display_name,
+            "email": primary_email(db, user_id),
+            "has_access": user_id in access_user_ids,
+            "has_state": user_id in state_by_user,
+            "version": state_by_user[user_id].version if user_id in state_by_user else None,
+            "updated_at": utc_iso(state_by_user[user_id].updated_at) if user_id in state_by_user else "",
+            "summary": admin_state_summary(app_code, state_by_user[user_id]) if user_id in state_by_user else {},
+        }
+        for user_id in users
+    ]
+    normalized_query = q.strip().casefold()
+    if normalized_query:
+        rows = [
+            row
+            for row in rows
+            if normalized_query in str(row["email"] or "").casefold()
+            or normalized_query in str(row["display_name"] or "").casefold()
+        ]
     return {
         "ok": True,
-        "users": [
-            {
-                "user_id": str(user_id),
-                "display_name": users[user_id].display_name,
-                "email": primary_email(db, user_id),
-                "has_access": user_id in access_user_ids,
-                "has_state": user_id in state_by_user,
-                "version": state_by_user[user_id].version if user_id in state_by_user else None,
-                "updated_at": utc_iso(state_by_user[user_id].updated_at) if user_id in state_by_user else "",
-                "summary": admin_state_summary(app_code, state_by_user[user_id]) if user_id in state_by_user else {},
-            }
-            for user_id in users
-        ],
+        "users": rows,
     }
+
+
+def admin_state_has_records(app_code: str, state: Any) -> bool:
+    if app_code == "dqs":
+        return any(value not in (None, "", {}) for value in (state.days or {}).values())
+    if app_code == "strength":
+        return any(isinstance(item, dict) for item in (state.workouts or []))
+    return any(value not in (None, "", {}) for value in (state.variants or {}).values())
 
 
 def admin_state_summary(app_code: str, state: Any) -> dict[str, Any]:

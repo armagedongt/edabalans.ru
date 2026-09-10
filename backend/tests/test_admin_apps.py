@@ -109,6 +109,49 @@ def test_admin_app_list_includes_access_without_state_and_state_without_access()
         assert edit.action == "open_empty_state"
 
 
+def test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records():
+    client, factory = make_client()
+    with factory() as db:
+        with_history = add_user(db, "history@example.test", "Есть тренировки")
+        empty_state = add_user(db, "empty@example.test", "Только открыл")
+        db.add(StrengthState(
+            user_id=with_history.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[{"session_id": "one", "workout_type": 1, "date": "2026-09-10"}],
+        ))
+        db.add(StrengthState(
+            user_id=empty_state.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[],
+        ))
+        db.commit()
+
+    denied = client.get(
+        "/admin/api/apps/users",
+        params={"app_code": "strength", "with_records": True},
+    )
+    assert denied.status_code == 401
+
+    login(client)
+    response = client.get(
+        "/admin/api/apps/users",
+        params={"app_code": "strength", "with_records": True},
+    )
+    assert response.status_code == 200
+    assert [row["email"] for row in response.json()["users"]] == ["history@example.test"]
+
+    response = client.get(
+        "/admin/api/apps/users",
+        params={"app_code": "strength", "with_records": True, "q": "HISTORY@EXAMPLE"},
+    )
+    assert response.status_code == 200
+    rows = response.json()["users"]
+    assert [row["email"] for row in rows] == ["history@example.test"]
+    assert rows[0]["summary"]["sessions"] == 1
+
+
 def test_strength_managed_runtime_uses_admin_session_and_writes_audit():
     client, factory = make_client()
     with factory() as db:
@@ -223,6 +266,15 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
         ))
         db.commit()
         user_id = user.id
+
+    denied_requests = [
+        client.get(f"/api/apps/strength?action=openUser&target_user_id={user_id}"),
+        client.get(f"/api/apps/strength?action=getWorkout&target_user_id={user_id}&type=1"),
+        client.post("/api/apps/strength", json={"action": "saveExerciseSettings", "target_user_id": str(user_id), "workout_type": 1, "exercises": []}),
+        client.post("/api/apps/strength", json={"action": "saveExerciseCatalog", "target_user_id": str(user_id), "workout_type": 1, "exercises": []}),
+        client.post("/api/apps/strength", json={"action": "saveSession", "target_user_id": str(user_id), "workout_type": 1, "session": {"session_number": 1, "exercises": []}}),
+    ]
+    assert [response.status_code for response in denied_requests] == [401, 401, 401, 401, 401]
 
     login(client)
     first = client.get(

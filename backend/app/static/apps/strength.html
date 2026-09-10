@@ -3254,13 +3254,13 @@ function renderPreviousExecutions(exercise){
   var html = '<section class="st-previous"><div class="st-previous-title">Было <small>нажмите, чтобы выбрать</small></div><div class="st-history-strip">';
   for(var i=0;i<history.length;i++){
     var item = history[i];
-    html += '<button class="st-history-card '+(i===selected?'selected':'')+'" onclick="ST.choosePrevious(\''+esc(exercise.id)+'\','+i+')"><strong>№ '+esc(item.session.number)+' · '+esc(formatDate(item.session.date)||'без даты')+'</strong>';
+    html += '<button class="st-history-card '+(i===selected?'selected':'')+'" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.choosePrevious(this.dataset.exerciseId,'+i+')"><strong>№ '+esc(item.session.number)+' · '+esc(formatDate(item.session.date)||'без даты')+'</strong>';
     for(var s=0;s<item.exercise.sets.length;s++){
       html += '<span>'+(s+1)+'. '+historySetText(item.exercise.sets[s])+'</span>';
     }
     html += '</button>';
   }
-  html += '</div><button class="st-copy-history" onclick="ST.copyPreviousToPlan(\''+esc(exercise.id)+'\')">Перенести выбранное в план</button></section>';
+  html += '</div><button class="st-copy-history" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.copyPreviousToPlan(this.dataset.exerciseId)">Перенести выбранное в план</button></section>';
   return html;
 }
 
@@ -3270,24 +3270,25 @@ function renderModernSet(sessionIndex,exercise,setIndex,set){
   var planReps = esc(set.planReps);
   var factWeight = esc(set.factWeight);
   var factReps = esc(set.factReps);
-  var args = sessionIndex+',\''+esc(exercise.id)+'\','+setIndex;
+  var dataExercise = ' data-exercise-id="'+esc(exercise.id)+'"';
+  var args = sessionIndex+',this.dataset.exerciseId,'+setIndex;
 
   if(app.entryMode === 'train'){
     var complete = set.completed === true;
     var canComplete = !blank(set.planWeight) && !blank(set.planReps);
     return '<div class="st-modern-set train">'+
       '<div class="st-readonly-pair"><span>'+(planWeight||'—')+'</span><span>'+(planReps||'—')+'</span></div>'+
-      '<button class="st-set-done '+(complete?'checked':'')+'" onclick="ST.completeSet('+args+')" '+(canComplete?'':'disabled')+' aria-pressed="'+(complete?'true':'false')+'" aria-label="'+(complete?'Снять отметку выполнения':canComplete?'Выполнено по плану':'Сначала заполните план подхода')+'">✓</button>'+
-      '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
-      '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
+      '<button class="st-set-done '+(complete?'checked':'')+'"'+dataExercise+' onclick="ST.completeSet('+args+')" '+(canComplete?'':'disabled')+' aria-pressed="'+(complete?'true':'false')+'" aria-label="'+(complete?'Снять отметку выполнения':canComplete?'Выполнено по плану':'Сначала заполните план подхода')+'">✓</button>'+
+      '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+      '<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+dataExercise+' onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
     '</div>';
   }
 
   return '<div class="st-modern-set edit">'+
     '<span class="st-modern-number">'+(setIndex+1)+'</span>'+
-    '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+planWeight+'" onchange="ST.changeField('+args+',\'planWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+planReps+'" onchange="ST.changeField('+args+',\'planReps\',this.value)"></div>'+
-    '<div class="st-input-pair"><input inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
-    '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
+    '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+planWeight+'" onchange="ST.changeField('+args+',\'planWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+planReps+'" onchange="ST.changeField('+args+',\'planReps\',this.value)"></div>'+
+    '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+    '<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+dataExercise+' onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
   '</div>';
 }
 
@@ -3308,9 +3309,9 @@ function renderCurrentExercises(){
     }
     html += '<article class="st-modern-exercise ex'+(i%6)+'">'+
       '<header class="st-modern-head">'+
-        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info" onclick="ST.openExerciseInfo(\''+esc(exercise.id)+'\')" aria-label="Как выполнять упражнение" title="Об упражнении">i</button>' : '')+'</div>'+
-        '<div class="st-modern-tools"><button class="st-modern-history" onclick="ST.openExerciseHistory(\''+esc(exercise.id)+'\')" aria-label="Открыть историю упражнения" title="История упражнения">◷</button>'+
-        (app.entryMode === 'edit' ? '<button class="st-modern-remove" onclick="ST.askRemoveExercise(\''+esc(exercise.id)+'\')" aria-label="Убрать из шаблона '+app.workoutType+'">×</button>' : '')+'</div>'+
+        '<div class="st-modern-title"><strong>'+esc(exercise.name)+'</strong>'+(exerciseInfo && exerciseInfo.source === 'base' ? '<button class="st-exercise-info" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseInfo(this.dataset.exerciseId)" aria-label="Как выполнять упражнение" title="Об упражнении">i</button>' : '')+'</div>'+
+        '<div class="st-modern-tools"><button class="st-modern-history" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.openExerciseHistory(this.dataset.exerciseId)" aria-label="Открыть историю упражнения" title="История упражнения">◷</button>'+
+        (app.entryMode === 'edit' ? '<button class="st-modern-remove" data-exercise-id="'+esc(exercise.id)+'" onclick="ST.askRemoveExercise(this.dataset.exerciseId)" aria-label="Убрать из шаблона '+app.workoutType+'">×</button>' : '')+'</div>'+
       '</header>'+
       (app.entryMode === 'edit' ? renderPreviousExecutions(exercise) : '')+
       '<section class="st-modern-editor">'+
@@ -3321,8 +3322,8 @@ function renderCurrentExercises(){
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
       html += renderModernSet(app.selectedIndex,exercise,setIndex,exercise.sets[setIndex]);
     }
-    html += '<div class="st-modern-set-actions"><button onclick="ST.addSet(\''+esc(exercise.id)+'\')">＋ Подход</button><button onclick="ST.removeSet(\''+esc(exercise.id)+'\')">− Подход</button></div>'+
-      '<label class="st-modern-comment"><span>Комментарий</span><textarea rows="1" placeholder="Добавить комментарий" oninput="ST.autoGrow(this)" onchange="ST.changeNote(\''+esc(exercise.id)+'\',this.value)">'+esc(exercise.note||'')+'</textarea></label>'+
+    html += '<div class="st-modern-set-actions"><button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.addSet(this.dataset.exerciseId)">＋ Подход</button><button data-exercise-id="'+esc(exercise.id)+'" onclick="ST.removeSet(this.dataset.exerciseId)">− Подход</button></div>'+
+      '<label class="st-modern-comment"><span>Комментарий</span><textarea data-exercise-id="'+esc(exercise.id)+'" rows="1" placeholder="Добавить комментарий" oninput="ST.autoGrow(this)" onchange="ST.changeNote(this.dataset.exerciseId,this.value)">'+esc(exercise.note||'')+'</textarea></label>'+
       '</section></article>';
   }
 
@@ -4892,9 +4893,9 @@ function renderManager(){
           )+
         '</div>'+
         '<div class="st-manager-actions">'+
-          (active ? '<button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',-1)" aria-label="Выше">↑</button><button class="st-mini" onclick="ST.moveExercise(\''+esc(catalog[i].exercise_id)+'\',1)" aria-label="Ниже">↓</button>' : '')+
-          (catalog[i].source === 'custom' ? '<button class="st-mini" onclick="ST.renameExercise(\''+esc(catalog[i].exercise_id)+'\')">Изменить</button><button class="st-mini danger" onclick="ST.deleteExercise(\''+esc(catalog[i].exercise_id)+'\')">Удалить</button>' : '')+
-          '<button class="st-mini" onclick="ST.toggleExercise(\''+esc(catalog[i].exercise_id)+'\')">'+
+          (active ? '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,-1)" aria-label="Выше">↑</button><button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.moveExercise(this.dataset.exerciseId,1)" aria-label="Ниже">↓</button>' : '')+
+          (catalog[i].source === 'custom' ? '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.renameExercise(this.dataset.exerciseId)">Изменить</button><button class="st-mini danger" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.deleteExercise(this.dataset.exerciseId)">Удалить</button>' : '')+
+          '<button class="st-mini" data-exercise-id="'+esc(catalog[i].exercise_id)+'" onclick="ST.toggleExercise(this.dataset.exerciseId)">'+
             (
               active
               ?

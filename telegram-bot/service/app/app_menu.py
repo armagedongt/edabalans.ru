@@ -4,13 +4,16 @@ from dataclasses import dataclass
 from datetime import UTC, datetime
 from types import SimpleNamespace
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.models import Contact, CrmUser
+from app.content_formatting import content_is_runtime_ready
+from app.models import Contact, ContentItem, CrmUser
 
 
 APPS_PAYLOAD = "apps"
+STRENGTH_ADMIN_PAYLOAD = "training_admin"
+STRENGTH_ADMIN_CONTENT_CODE = "tpl_apps_strength_admin"
 REFRESH_CALLBACK = "apps:refresh"
 SUPPORT_URL = "https://t.me/FitnessSergey"
 
@@ -48,6 +51,8 @@ def app_request(text: str) -> Application | str | None:
     payload = normalized.partition(" ")[2].strip().casefold()
     if payload == APPS_PAYLOAD:
         return APPS_PAYLOAD
+    if payload == STRENGTH_ADMIN_PAYLOAD:
+        return STRENGTH_ADMIN_PAYLOAD
     return APPLICATION_BY_PAYLOAD.get(payload)
 
 
@@ -100,6 +105,16 @@ def _content(body: str) -> SimpleNamespace:
     )
 
 
+def _editable_content(session: Session, code: str) -> ContentItem:
+    """Return only an owner-approved runtime content slot."""
+    item = session.scalar(select(ContentItem).where(ContentItem.code == code))
+    if not item:
+        raise RuntimeError(f"Missing direct-trigger content: {code}")
+    if not content_is_runtime_ready(item):
+        raise RuntimeError(f"Direct-trigger content is not owner-approved: {code}")
+    return item
+
+
 def _app_button(item: Application) -> dict:
     return {
         "text": item.title,
@@ -115,6 +130,20 @@ def menu_presentation(
     *,
     include_refresh: bool = True,
 ) -> tuple[SimpleNamespace, dict]:
+    if requested == STRENGTH_ADMIN_PAYLOAD:
+        query = f"&user={contact.user_id}" if contact.user_id else ""
+        return (
+            _editable_content(
+                session,
+                STRENGTH_ADMIN_CONTENT_CODE,
+            ),
+            {
+                "buttons": [{
+                    "text": "Открыть админку тренировок",
+                    "web_app": {"url": f"https://edabalans.ru/admin/strength?mobile=1{query}"},
+                }]
+            },
+        )
     entitled = entitled_applications(session, contact.user_id)
     available = available_applications(session, contact.user_id)
     if isinstance(requested, Application):

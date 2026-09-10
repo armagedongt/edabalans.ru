@@ -10,6 +10,9 @@
     strength: "Тренировочные сессии, упражнения и прогресс",
     metabolism: "Два сохранённых варианта расчёта пользователя"
   };
+  const pageParams = new URLSearchParams(location.search);
+  const strengthMobileMode = location.pathname === "/admin/strength" && pageParams.get("mobile") === "1";
+  if (strengthMobileMode) document.body.classList.add("strength-mobile-admin");
   const dqsCategories = [
     ["Фрукты", [2,2,2,1,0,0,0,-1]], ["Овощи", [2,2,2,1,0,0,0,-1]], ["Зелень", [2,2,2,1,0,0,0,-1]],
     ["Мясо", [2,2,1,0,0,-1,-2,-2]], ["Молочка", [2,2,1,0,-1,-2,-2,-2]], ["Сыры", [2,0,-1,-2,-2,-2,-2,-2]],
@@ -101,6 +104,86 @@
     root.querySelectorAll("[data-href]").forEach((button) => button.addEventListener("click", () => { location.href = button.dataset.href; }));
   }
 
+  function strengthMobileUrl(userId) {
+    const params = new URLSearchParams({ mobile: "1" });
+    if (userId) params.set("user", userId);
+    return `/admin/strength?${params}`;
+  }
+
+  function strengthMobileRows(users, query = "") {
+    const needle = query.trim().toLocaleLowerCase("ru-RU");
+    const filtered = users.filter((user) => {
+      if (!needle) return true;
+      return `${user.display_name || ""} ${user.email || ""}`.toLocaleLowerCase("ru-RU").includes(needle);
+    });
+    return filtered.map((user) => `
+      <button class="strength-mobile-person" type="button" data-user-id="${esc(user.user_id)}">
+        <strong>${esc(user.display_name || user.email || "Без имени")}</strong>
+        <span>${esc(user.email || "email не указан")}</span>
+        <small>${summaryText("strength", user.summary || {})}</small>
+      </button>`).join("") || '<div class="strength-mobile-empty">Клиенты не найдены</div>';
+  }
+
+  async function openStrengthMobilePicker({ required = false } = {}) {
+    let overlay = document.getElementById("strength-mobile-picker");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "strength-mobile-picker";
+      overlay.className = "strength-mobile-picker";
+      overlay.innerHTML = `
+        <section class="strength-mobile-picker-card" role="dialog" aria-modal="true" aria-labelledby="strength-mobile-picker-title">
+          <header><div><small>АДМИНКА ТРЕНИРОВОК</small><h2 id="strength-mobile-picker-title">Выберите клиента</h2></div>${required ? "" : '<button type="button" class="strength-mobile-picker-close" aria-label="Закрыть">×</button>'}</header>
+          <label class="strength-mobile-search"><span>Поиск по имени или email</span><input type="search" autocomplete="off" placeholder="Например, anna@mail.ru"></label>
+          <div class="strength-mobile-picker-list"><div class="strength-mobile-empty">Загружаю клиентов…</div></div>
+        </section>`;
+      document.body.appendChild(overlay);
+    }
+    document.body.classList.add("strength-mobile-picker-open");
+    const close = () => {
+      if (required) return;
+      overlay.remove();
+      document.body.classList.remove("strength-mobile-picker-open");
+    };
+    overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    const closeButton = overlay.querySelector(".strength-mobile-picker-close");
+    if (closeButton) closeButton.addEventListener("click", close);
+    const list = overlay.querySelector(".strength-mobile-picker-list");
+    const input = overlay.querySelector("input");
+    try {
+      const result = await api("/admin/api/apps/users?app_code=strength&with_records=true");
+      const users = result.users || [];
+      const draw = () => {
+        list.innerHTML = strengthMobileRows(users, input.value);
+        list.querySelectorAll("[data-user-id]").forEach((button) => button.addEventListener("click", () => {
+          location.href = strengthMobileUrl(button.dataset.userId);
+        }));
+      };
+      input.addEventListener("input", draw);
+      draw();
+      input.focus({ preventScroll: true });
+    } catch (error) {
+      list.innerHTML = `<div class="strength-mobile-empty error">${esc(error.message)}</div>`;
+    }
+  }
+
+  function renderStrengthMobilePerson(user, appDetail) {
+    const email = user.email || "email не указан";
+    root.innerHTML = `
+      <div class="strength-mobile-current">
+        <button type="button" id="strength-mobile-current-user" aria-haspopup="dialog">
+          <small>АДМИНКА ТРЕНИРОВОК · СМЕНИТЬ ПОЛЬЗОВАТЕЛЯ</small>
+          <strong>${esc(user.display_name || email || "Без имени")}</strong>
+          <span>${esc(email)}</span>
+        </button>
+      </div>
+      ${appDetail.has_state
+        ? `<div class="strength-mobile-app" data-edabalans-app="strength" data-edabalans-admin-user="${esc(user.id)}" data-edabalans-account-url="${esc(strengthMobileUrl(user.id))}"><div class="admin-empty">Загружаю тренировки…</div></div>`
+        : '<div class="strength-mobile-empty standalone">У этого клиента пока нет записей в тренировках.</div>'}`;
+    document.getElementById("strength-mobile-current-user").addEventListener("click", () => openStrengthMobilePicker());
+    const mount = document.querySelector("[data-edabalans-admin-user]");
+    if (mount && window.EdabalansEmbed) window.EdabalansEmbed.load(mount);
+  }
+
   async function users() {
     const params = new URLSearchParams(location.search);
     const selected = params.get("user");
@@ -119,6 +202,12 @@
   async function application(code) {
     const selected = new URLSearchParams(location.search).get("user");
     if (selected) return person(selected, code);
+    if (code === "strength" && strengthMobileMode) {
+      loading();
+      await openStrengthMobilePicker({ required: true });
+      root.innerHTML = '<div class="strength-mobile-empty standalone">Выберите клиента, чтобы открыть его тренировки.</div>';
+      return;
+    }
     setHeading(labels[code], "ПРИЛОЖЕНИЕ");
     loading();
     const result = await api(`/admin/api/apps/users?app_code=${code}`);
@@ -155,6 +244,10 @@
     }
     const modules = moduleResult.modules;
     const email = user.emails[0] && user.emails[0].email;
+    if (context === "strength" && strengthMobileMode) {
+      renderStrengthMobilePerson({ ...user, email }, appDetail);
+      return;
+    }
     root.innerHTML = `
       <div class="admin-mode-banner"><div><strong>Административный режим</strong><span>Вы работаете с профилем ${esc(user.display_name || email || "без имени")}</span></div><button class="admin-action alt" id="admin-back" type="button">Сменить профиль</button></div>
       <div class="admin-profile-head"><div class="admin-profile-id"><div class="admin-avatar">${esc((user.display_name || email || "?").charAt(0).toUpperCase())}</div><div><h2>${esc(user.display_name || email || "Без имени")}</h2><p>${esc(email || "email не указан")} · ${esc(user.id)}</p></div></div><div class="admin-badges">${context ? `<span class="admin-badge">${appDetail.has_access ? "доступ есть" : "нет доступа"}</span><span class="admin-badge ${appDetail.has_state ? "" : "off"}">${appDetail.has_state ? "данные есть" : "данных нет"}</span>` : `<span class="admin-badge">${user.purchase_count} покупок</span><span class="admin-badge">${user.accesses.filter((item) => !item.revoked_at).length} доступов</span>`}</div></div>

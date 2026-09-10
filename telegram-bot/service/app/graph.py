@@ -179,7 +179,9 @@ def start_attribution_graph(session: Session) -> dict[str, Any]:
     return {"level": "module", "module_code": "start_attribution", "title": "1. Старт и атрибуция", "status": "Основной бот · временный режим ремонта", "description": "Источник и факт покупки определяются до временной заглушки. Пользовательские ответы и цепочки после неё доступны только двум аккаунтам владельца; остальные сохраняются в лист ожидания без отметки о начале Welcome.", "nodes": nodes, "edges": edges, "issues": []}
 
 
-def apps_menu_graph() -> dict[str, Any]:
+def apps_menu_graph(session: Session) -> dict[str, Any]:
+    usage_map = content_usages(session)
+    admin_content = session.scalar(select(ContentItem).where(ContentItem.code == "tpl_apps_strength_admin"))
     nodes = [
         {"id": "apps_entry", "kind": "module_entry", "label": "Открыта общая ссылка приложения", "subtitle": "apps / dqs / training / metabolism / recipes", "position": 1, "details": {"Tracking": "Не применяется", "Welcome": "Не запускается"}},
         {"id": "apps_identity", "kind": "condition", "label": "Найти пользователя по Telegram ID", "subtitle": "Существующий messenger_accounts либо новый пустой профиль", "position": 2, "details": {"Источник": "messenger_accounts.platform_user_id"}},
@@ -188,7 +190,12 @@ def apps_menu_graph() -> dict[str, Any]:
         {"id": "apps_denied", "kind": "message", "label": "Сообщить, что доступа нет", "subtitle": "Кнопка «Написать мне»", "position": 5, "details": {"Доступ": "Не выдаётся этим модулем"}},
         {"id": "apps_refresh", "kind": "action", "label": "Обновить", "subtitle": "Повторно прочитать права и изменить то же сообщение", "position": 6, "details": {"Telegram API": "editMessageText"}},
         {"id": "apps_exit", "kind": "module_exit", "label": "Открыть Mini App", "subtitle": "Серверная проверка Telegram initData", "position": 7, "details": {"Результат": "Приложение или отказ"}},
+        {"id": "apps_admin_entry", "kind": "module_entry", "label": "Открыта служебная ссылка администратора", "subtitle": "/start training_admin", "position": 8, "details": {"Доступ": "Только через серверную admin-session"}},
+        {"id": "apps_admin_message", "kind": "message", "label": "Открыть мобильную админку тренировок", "subtitle": "Служебная ссылка на экран входа", "position": 9, "details": {"Контент": "tpl_apps_strength_admin", "Ссылка": "/admin/strength?mobile=1", "Граница доступа": "Серверная admin-сессия, а не секретность ссылки"}},
+        {"id": "apps_admin_exit", "kind": "module_exit", "label": "Мобильная админка тренировок", "subtitle": "Поиск клиента и managed-режим", "position": 10, "details": {"Безопасность": "Админская сессия и серверная проверка каждого API"}},
     ]
+    if admin_content:
+        nodes[-2]["content"] = authoring_payload(admin_content, usage_map.get(admin_content.code, []))
     edges = [
         {"id": "apps:1", "source": "apps_entry", "target": "apps_identity", "label": "Telegram update", "branch": "default"},
         {"id": "apps:2", "source": "apps_identity", "target": "apps_access", "label": "user_id определён", "branch": "default"},
@@ -197,6 +204,8 @@ def apps_menu_graph() -> dict[str, Any]:
         {"id": "apps:5", "source": "apps_buttons", "target": "apps_exit", "label": "Нажато приложение", "branch": "default"},
         {"id": "apps:6", "source": "apps_buttons", "target": "apps_refresh", "label": "Нажато «Обновить»", "branch": "refresh"},
         {"id": "apps:7", "source": "apps_refresh", "target": "apps_access", "label": "То же сообщение", "branch": "default"},
+        {"id": "apps:8", "source": "apps_admin_entry", "target": "apps_admin_message", "label": "Telegram update", "branch": "admin"},
+        {"id": "apps:9", "source": "apps_admin_message", "target": "apps_admin_exit", "label": "Нажата кнопка", "branch": "default"},
     ]
     return {"level": "module", "module_code": "apps_menu", "title": "Мои приложения", "status": "Исполняемый служебный модуль", "description": "Общие короткие ссылки показывают только приложения с действующими серверными правами.", "nodes": nodes, "edges": edges, "issues": []}
 
@@ -267,7 +276,7 @@ def module_graph(session: Session, module_code: str) -> dict[str, Any]:
     if module_code == "postpurchase_masterclass":
         return postpurchase_graph(session)
     if module_code == "apps_menu":
-        return apps_menu_graph()
+        return apps_menu_graph(session)
     if module_code in {"inbox", "broadcasts"}:
         return service_module_graph(module_code)
     if module_code in {"welcome_intensive", "prepurchase_nurture", "postmasterclass_nurture"}:

@@ -36,6 +36,7 @@ OWNER_APPROVED_SEED_CODES = {
     "start_has_masterclass",
     "start_intensive_waiting",
     "start_intensive_complete",
+    "apps_strength_admin",
     *APPROVED_INTENSIVE_CONTENT,
     "intensive_reminder_photo",
     "intensive_mid2_photo",
@@ -398,6 +399,13 @@ def _start_system_messages() -> list[dict]:
             "и я сразу же отправлю первый день интенсива.",
             None,
             ["система", "welcome", "подписка", "повторная проверка"],
+        ),
+        (
+            "apps_strength_admin",
+            "Админка тренировок — вход с телефона",
+            "<b>Админка тренировок</b>",
+            None,
+            ["система", "приложения", "силовые", "админка"],
         ),
         (
             "web_login_code",
