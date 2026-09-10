@@ -1259,7 +1259,11 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "Редактировать план" in text
     assert "Начать тренировку" in text
     assert "        'Шаблон '+i+" in text
-    assert "Тренировка по шаблону №" in text
+    assert "Тренировка №" in text
+    assert "Новая тренировка" in text
+    assert "createNextSession:function" in text
+    assert "number:maxNumber+1" in text
+    assert "date:todayKey()" in text
     assert "Перенести выбранное в план" in text
     assert "completeSet:function" in text
     assert "История упражнения" in text
@@ -1277,7 +1281,7 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "blank(set.planWeight) || blank(set.planReps)" in text
     assert "event.target.classList.contains('st-modal-bg')" in text
     assert "position:sticky;top:0" in text
-    assert "renderEntryControls()+\n      renderJournal()" in text
+    assert "renderEntryControls()+renderJournal()" in text
     assert "'<button class=\"active train\" onclick=\"ST.finishWorkout()\">Завершить тренировку</button>'" in text
     assert "if(app.entryMode === 'train'){\n    return '';" in text
     assert "st-finish-bottom\"><button" in text
@@ -1288,6 +1292,8 @@ def test_strength_new_user_can_start_and_manage_own_workouts() -> None:
     assert "Как пользоваться" in text
     assert ">Редактировать</button>" in text
     assert "Изменения применяются сразу" in text
+    assert "undoManagerChange:function" in text
+    assert "↶ Отменить" in text
     assert "saveExerciseCatalog" in text
     assert "app.managerDraft = copyCatalog" in text
     assert "queueManagerSave();" in text

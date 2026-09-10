@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime, timezone
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -230,6 +231,49 @@ def test_strength_completed_set_round_trips_for_the_selected_user():
     )
     assert loaded.status_code == 200
     assert loaded.json()["workout"]["sets"][0]["completed"] is True
+
+
+def test_strength_server_assigns_unique_numbers_and_ids_inside_each_template():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-numbering@example.test", "Нумерация")
+        db.add(StrengthState(
+            user_id=user.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[],
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+
+    def create(workout_type: int) -> dict:
+        response = client.post(
+            "/api/apps/strength",
+            json={
+                "action": "saveSession",
+                "target_user_id": str(user_id),
+                "workout_type": workout_type,
+                "session": {"session_number": 99, "date": "2026-09-10", "exercises": []},
+            },
+        )
+        assert response.status_code == 200
+        assert response.json()["ok"] is True
+        return response.json()["session"]
+
+    first = create(1)
+    second = create(1)
+    other_template = create(2)
+
+    assert first["session_number"] == 1
+    assert second["session_number"] == 2
+    assert other_template["session_number"] == 1
+    assert uuid.UUID(first["session_id"])
+    assert uuid.UUID(second["session_id"])
+    assert uuid.UUID(other_template["session_id"])
+    assert first["session_id"] != second["session_id"]
+    assert other_template["session_id"] not in {first["session_id"], second["session_id"]}
 
 
 def test_strength_catalog_is_account_wide_and_template_membership_is_separate():

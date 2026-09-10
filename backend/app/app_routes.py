@@ -1305,10 +1305,27 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
         elif action == "saveSession":
             workout_type = int(body.get("workout_type") or 0)
             session = body.get("session") or {}
+            state = db.scalar(
+                select(StrengthState)
+                .where(StrengthState.id == state.id)
+                .execution_options(populate_existing=True)
+                .with_for_update()
+            )
+            if state is None:
+                raise ValueError("STRENGTH_STATE_NOT_FOUND")
             workouts = list(state.workouts or [])
             own_numbers = [int(w.get("session_number") or 0) for w in workouts if int(w.get("workout_type") or 0) == workout_type]
-            number = int(session.get("session_number") or 0) or (max(own_numbers, default=0) + 1)
-            session_id = str(session.get("session_id") or f"{user.id}_t{workout_type}_s{number:02d}")
+            requested_session_id = str(session.get("session_id") or "")
+            if requested_session_id:
+                existing = next(
+                    (item for item in workouts if str(item.get("session_id")) == requested_session_id),
+                    None,
+                )
+                number = int((existing or {}).get("session_number") or session.get("session_number") or 0)
+                session_id = requested_session_id
+            else:
+                number = max(own_numbers, default=0) + 1
+                session_id = str(uuid.uuid4())
             now = datetime.now(timezone.utc).isoformat()
             item = {**session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": session.get("created_at") or now, "source": "app"}
             item["status"] = "filled" if any(

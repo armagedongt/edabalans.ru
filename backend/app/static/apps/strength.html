@@ -261,6 +261,11 @@
   font-size:23px;
 }
 
+.st-arrow:disabled{
+  opacity:.3;
+  cursor:default;
+}
+
 .st-nav-center{
   text-align:center;
 }
@@ -337,6 +342,23 @@
 
 .st-saving.error{
   color:#bd5959;
+}
+
+.st-new-session{
+  width:100%;
+  min-height:42px;
+  margin-top:9px;
+  border:0;
+  border-radius:10px;
+  background:#fff3eb;
+  color:#e85a24;
+  font-size:13px;
+  font-weight:900;
+}
+
+.st-new-session:disabled{
+  opacity:.55;
+  cursor:wait;
 }
 
 .st-days{
@@ -1007,6 +1029,16 @@
   color:#bd5959;
 }
 
+.st-manager-undo{
+  background:#fff3eb;
+  color:#d95724;
+}
+
+.st-manager-undo:disabled{
+  opacity:.38;
+  cursor:default;
+}
+
 .st-modal-btn{
   min-height:36px;
   padding:0 13px;
@@ -1365,6 +1397,7 @@ var app = {
 
   modal:null,
   managerDraft:null,
+  managerUndoStack:[],
   managerSavePending:null,
   managerSaveRunning:false,
   modalScrollState:null,
@@ -1375,6 +1408,7 @@ var app = {
   saveRequests:0,
   saving:false,
   saveError:'',
+  creatingSession:false,
 
   motivation:''
 };
@@ -1576,6 +1610,21 @@ function pad2(n){
     '0' + Number(n)
     :
     String(Number(n))
+  );
+
+}
+
+
+function todayKey(){
+
+  var date = new Date();
+
+  return (
+    date.getFullYear() +
+    '-' +
+    pad2(date.getMonth()+1) +
+    '-' +
+    pad2(date.getDate())
   );
 
 }
@@ -2424,6 +2473,45 @@ function persistSessionBody(body){
 }
 
 
+function syncPersistedSession(body,saved){
+
+  if(!saved){
+    return;
+  }
+
+  var workout = app.workouts[Number(body.workout_type)];
+  if(!workout){
+    return;
+  }
+
+  var session = null;
+  for(var index=0;index<workout.sessions.length;index++){
+    var candidate = workout.sessions[index];
+    if(
+      (body.session.session_id && String(candidate.session_id) === String(body.session.session_id)) ||
+      (!body.session.session_id && !candidate.session_id && Number(candidate.number) === Number(body.session.session_number))
+    ){
+      session = candidate;
+      break;
+    }
+  }
+
+  if(!session){
+    return;
+  }
+
+  session.session_id = String(saved.session_id || session.session_id || '');
+  session.number = Number(saved.session_number || session.number);
+  session.date = String(saved.date || session.date || '').substring(0,10);
+  session.status = saved.status || session.status || '';
+  workout.sessions.sort(function(a,b){ return Number(a.number)-Number(b.number); });
+  if(Number(body.workout_type) === app.workoutType){
+    app.selectedIndex = workout.sessions.indexOf(session);
+  }
+
+}
+
+
 function flushSessionSave(timerKey){
 
   var queue = app.sessionSaveQueues[timerKey];
@@ -2439,7 +2527,13 @@ function flushSessionSave(timerKey){
   app.saveRequests += 1;
 
   postApi(body)
-    .then(function(){
+    .then(function(result){
+
+      var createdSession = !body.session.session_id;
+      syncPersistedSession(body,result.session);
+      if(createdSession){
+        app.creatingSession = false;
+      }
 
       app.saveRequests =
         Math.max(0,app.saveRequests-1);
@@ -2456,6 +2550,9 @@ function flushSessionSave(timerKey){
 
       renderSavingOnly();
       renderManagerSavingOnly();
+      if(createdSession){
+        render();
+      }
 
       if(queue.pending){
         flushSessionSave(timerKey);
@@ -2941,8 +3038,11 @@ function renderClient(){
   ){
 
     html +=
-      renderEntryControls()+
-      renderJournal();
+      (
+        app.creatingSession
+        ? '<div class="st-card st-empty">Создаю тренировку…</div>'
+        : renderEntryControls()+renderJournal()
+      );
 
     if(app.entryMode === 'train'){
       html += '<div class="st-actions st-actions-train st-finish-bottom"><button class="st-finish" onclick="ST.finishWorkout()">Завершить тренировку</button></div>';
@@ -3055,8 +3155,17 @@ function renderJournalHeader(){
 
     return (
       '<div class="st-empty">'+
-        'В этом шаблоне пока нет упражнений. Нажмите «Редактировать» и добавьте нужные.'+
-      '</div>'
+        (
+          activeCatalog().length
+          ? 'В этом шаблоне пока нет тренировок.'
+          : 'В этом шаблоне пока нет упражнений. Нажмите «Редактировать» и добавьте нужные.'
+        )+
+      '</div>'+
+      (
+        activeCatalog().length
+        ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Создать первую тренировку')+'</button>'
+        : ''
+      )
     );
 
   }
@@ -3068,13 +3177,13 @@ function renderJournalHeader(){
 
   return (
     '<div class="st-nav">'+
-      '<button class="st-arrow" onclick="ST.prevSession()">‹</button>'+
+      '<button class="st-arrow" onclick="ST.prevSession()" '+(app.selectedIndex>0?'':'disabled')+' aria-label="Предыдущая тренировка">‹</button>'+
       '<div class="st-nav-center">'+
-        '<div class="st-nav-title">Тренировка по шаблону №'+
+        '<div class="st-nav-title">Тренировка №'+
           session.number+
         '</div>'+
         '<div class="st-nav-sub">'+
-          (
+          'Шаблон '+app.workoutType+' · '+(
             isFilled(session)
             ?
             'заполнена'
@@ -3083,8 +3192,13 @@ function renderJournalHeader(){
           )+
         '</div>'+
       '</div>'+
-      '<button class="st-arrow" onclick="ST.nextSession()">›</button>'+
+      '<button class="st-arrow" onclick="ST.nextSession()" '+(app.selectedIndex<sessions.length-1?'':'disabled')+' aria-label="Следующая тренировка">›</button>'+
     '</div>'+
+    (
+      app.entryMode === 'edit' && app.selectedIndex === sessions.length-1
+      ? '<button class="st-new-session" onclick="ST.createNextSession()" '+(app.creatingSession?'disabled':'')+'>'+(app.creatingSession?'Создаю…':'＋ Новая тренировка')+'</button>'
+      : ''
+    )+
     '<div id="st-save-state" class="st-saving'+(app.saveError?' error':'')+'">'+
       (
         app.saveError
@@ -4760,7 +4874,7 @@ function renderModal(){
   }
 
   if(app.modal.type === 'tutorial'){
-    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». Это постоянный набор упражнений для разных тренировочных дней.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Все изменения сохраняются сразу.</li><li>В режиме «Редактировать план» перенесите подходящий прошлый результат в план или заполните план вручную.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Комментарии сохраняются целиком. Иконка часов открывает всю историю упражнения, а значок i — краткую технику.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
+    return '<div class="st-modal-bg" onclick="if(event.target===this) ST.closeModal()"><div class="st-modal"><div class="st-modal-title">Как пользоваться тренировками</div><ol class="st-tutorial-list"><li>Выберите «Шаблон 1», «Шаблон 2» или «Шаблон 3». У каждого шаблона свой список тренировок и своя нумерация.</li><li>Нажмите «Редактировать», добавьте упражнения из общего каталога и расставьте их в нужном порядке. Все изменения сохраняются сразу. Чтобы отменить добавление в шаблон, нажмите «Убрать».</li><li>Кнопка «Новая тренировка» создаёт следующий номер внутри выбранного шаблона и ставит сегодняшнюю дату.</li><li>В режиме «Редактировать план» перенесите подходящий прошлый результат в план или заполните план вручную.</li><li>Нажмите «Начать тренировку». Галочка у подхода переносит план в факт; после этого укажите RPE. Галочку можно снять.</li><li>Комментарии сохраняются целиком. Иконка часов открывает всю историю упражнения, а значок i — краткую технику базового упражнения.</li></ol><div class="st-modal-actions"><button class="st-modal-btn st-modal-save" onclick="ST.closeModal()">Понятно</button></div></div></div>';
   }
 
   if(app.modal.type === 'exerciseInfo'){
@@ -4914,6 +5028,7 @@ function renderManager(){
         '<div class="st-custom-add"><div class="st-custom-add-row"><input id="st-new-exercise" class="st-modal-input" placeholder="Название своего упражнения"><button class="st-modal-btn st-modal-save" onclick="ST.addExercise()">Добавить своё</button></div></div></div>'+
         '<div class="st-modal-actions">'+
           '<span id="st-manager-save-state" class="st-manager-save-state'+(app.saveError?' error':'')+'">'+(app.saveError?'Не удалось сохранить':(app.managerSaveRunning||app.managerSavePending||app.saveRequests>0?'Сохраняю…':'Сохранено'))+'</span>'+
+          '<button class="st-modal-btn st-manager-undo" onclick="ST.undoManagerChange()" '+(app.managerUndoStack.length?'':'disabled')+'>↶ Отменить</button>'+
           '<button class="st-modal-btn st-modal-close" onclick="ST.closeManager()">Закрыть</button>'+
         '</div>'+
       '</div>'+
@@ -5092,6 +5207,19 @@ function saveExerciseSettings(){
 }
 
 
+function rememberManagerChange(){
+
+  app.managerUndoStack.push(
+    copyCatalog(app.managerDraft || [])
+  );
+
+  if(app.managerUndoStack.length > 20){
+    app.managerUndoStack.shift();
+  }
+
+}
+
+
 function managerCatalogBody(catalog){
   var body = {
     action:'saveExerciseCatalog',
@@ -5159,11 +5287,6 @@ function applyManagerDraft(catalog){
     return item.catalog_active !== false && item.active === true;
   });
   var session = workout.sessions[app.selectedIndex];
-  if(!session && active.length){
-    session = {session_id:'',number:1,date:'',exercises:[]};
-    workout.sessions.push(session);
-    app.selectedIndex = 0;
-  }
   if(!session){
     return;
   }
@@ -5598,6 +5721,59 @@ window.ST = {
   },
 
 
+  createNextSession:function(){
+
+    if(app.creatingSession){
+      return;
+    }
+
+    var workout = currentWorkout();
+    var catalog = activeCatalog();
+    var maxNumber = 0;
+
+    for(var sessionIndex=0;sessionIndex<workout.sessions.length;sessionIndex++){
+      maxNumber = Math.max(maxNumber,Number(workout.sessions[sessionIndex].number || 0));
+    }
+
+    var exercises = catalog.map(function(item,index){
+      var sets = [];
+      for(var setIndex=0;setIndex<4;setIndex++){
+        sets.push({
+          set_number:setIndex+1,
+          planWeight:'',
+          planReps:'',
+          factWeight:'',
+          factReps:'',
+          rpe:'',
+          completed:false
+        });
+      }
+      return {
+        id:item.exercise_id,
+        name:item.exercise_name,
+        sort_order:index+1,
+        note:'',
+        sets:sets
+      };
+    });
+
+    workout.sessions.push({
+      session_id:'',
+      number:maxNumber+1,
+      date:todayKey(),
+      status:'planned',
+      exercises:exercises
+    });
+
+    app.selectedIndex = workout.sessions.length-1;
+    app.entryMode = 'edit';
+    app.creatingSession = true;
+    saveSessionNow(app.selectedIndex);
+    render();
+
+  },
+
+
   openDate:function(id){
 
     var input =
@@ -5931,6 +6107,7 @@ window.ST = {
   openManager:function(){
 
     app.managerDraft = copyCatalog(currentWorkout().catalog);
+    app.managerUndoStack = [];
     app.modal = {
       type:'manager'
     };
@@ -5993,6 +6170,8 @@ window.ST = {
         ) ===
         String(id)
       ){
+
+        rememberManagerChange();
 
         var active =
           !(
@@ -6084,6 +6263,8 @@ window.ST = {
       return;
     }
 
+    rememberManagerChange();
+
     var temp =
       catalog[index];
 
@@ -6132,6 +6313,8 @@ window.ST = {
       return;
     }
 
+    rememberManagerChange();
+
     var id = 'custom-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
     app.managerDraft.push({
       exercise_id:id,
@@ -6160,6 +6343,7 @@ window.ST = {
       if(name === null){ return; }
       name = String(name).trim();
       if(name){
+        rememberManagerChange();
         catalog[i].exercise_name = name;
         queueManagerSave();
       }
@@ -6178,6 +6362,7 @@ window.ST = {
       if(!window.confirm('Удалить своё упражнение из каталога? Старая история останется сохранена.')){
         return;
       }
+      rememberManagerChange();
       catalog[i].active = false;
       catalog[i].catalog_active = false;
       queueManagerSave();
@@ -6189,8 +6374,22 @@ window.ST = {
 
   closeManager:function(){
     app.managerDraft = null;
+    app.managerUndoStack = [];
     app.modal = null;
     render();
+  },
+
+
+  undoManagerChange:function(){
+
+    if(!app.managerUndoStack.length){
+      return;
+    }
+
+    app.managerDraft = app.managerUndoStack.pop();
+    queueManagerSave();
+    render();
+
   },
 
 
