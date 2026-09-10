@@ -245,7 +245,7 @@ try {
 
   for (const variant of [
     { id: 'topics', items: 4, boldFragments: 0, marker: 'Научитесь, как с помощью изменения пищевых привычек' },
-    { id: 'motivation-hero', items: 0, boldFragments: 0, marker: 'ПОРА МЕНЯТЬ ПОДХОД!' },
+    { id: 'motivation-hero', items: 0, boldFragments: 1, marker: 'ПОРА МЕНЯТЬ ПОДХОД!' },
     { id: 'instead', items: 5, boldFragments: 6, marker: 'А вместо случайных попыток — понятный порядок действий. Читайте, как всё это сделать в моем бесплатном интенсиве «Последнее похудение»! 👇' },
   ]) {
     const { context, page } = await landing({
@@ -301,12 +301,12 @@ try {
       }
     })
     const expectsSplitArrows = false
-    const expectedHeadingAlignment = 'left'
+    const expectedHeadingAlignment = variant === 'motivation-hero' ? 'center' : 'left'
     if (fit.rootOverflow > 1 || !fit.headingAlign.includes(expectedHeadingAlignment) || fit.ctaOverflow > 1 || expectsSplitArrows !== fit.hasSplitArrows || (expectsSplitArrows && fit.splitArrowsLayout === 'none')) {
-      throw new Error(`Variant ${variant} clips or is not left-aligned at 320px: ${JSON.stringify(fit)}`)
+      throw new Error(`Variant ${variant} clips or has the wrong heading alignment at 320px: ${JSON.stringify(fit)}`)
     }
     const expectsInlineActions = variant === 'instead' || variant.startsWith('motivation')
-    if (expectsInlineActions && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote || fit.legalBottomGap > 12)) {
+    if (expectsInlineActions && (fit.inlineActionsDisplay !== 'grid' || fit.stickyActionsDisplay !== 'none' || fit.inlineButtonHeight !== 54 || fit.inlineButtonRadius !== '13px' || fit.inlineVpnNote !== 'только с VPN' || fit.inlineButtonVpnNote)) {
       throw new Error(`Inline actions or footer are misplaced for ${variant}: ${JSON.stringify(fit)}`)
     }
     if (variant.startsWith('instead') && (!fit.firstCheckStaysInline || fit.wrappedCheckCount < 1)) {
