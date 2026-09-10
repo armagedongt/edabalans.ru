@@ -22,9 +22,10 @@
   #edb-direct-intensive-v1 .edb-di-hero-stack{display:block;width:fit-content;max-width:100%;margin:0 0 18px;padding:clamp(6px,1.7vw,9px) clamp(8px,2vw,12px) clamp(7px,1.9vw,10px);border-radius:clamp(7px,2.7vw,10px);background:var(--edb-orange);color:#fff;font-family:Unbounded,Montserrat,sans-serif;font-size:clamp(14px,4.75vw,29px);font-weight:800;line-height:1.13;letter-spacing:-.045em;text-align:center;text-transform:uppercase;word-spacing:.11em}
   #edb-direct-intensive-v1 .edb-di-hero-stack span{display:block}
   #edb-direct-intensive-v1 .edb-di-hero-stack--approach{margin:20px 0 15px;font-size:clamp(14px,4.9vw,30px)}
-  #edb-direct-intensive-v1 .edb-di-hero-split{display:flex;flex-direction:column;align-items:center;width:100%;margin:0 0 18px;color:var(--edb-ink);font-family:Unbounded,Montserrat,sans-serif;font-size:clamp(20px,6.5vw,38px);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-align:center;text-transform:uppercase}
-  #edb-direct-intensive-v1 .edb-di-hero-split-main{display:block;width:100%;word-spacing:.11em}
-  #edb-direct-intensive-v1 .edb-di-hero-split .edb-di-hero-accent{display:block;width:100%;max-width:100%;margin-top:5px;padding:clamp(5px,1.7vw,8px) clamp(5px,1.8vw,10px) clamp(6px,1.9vw,9px);border-radius:clamp(7px,2.7vw,10px);background:var(--edb-orange);color:#fff;font-size:clamp(16px,5.2vw,32px);line-height:1.04;white-space:nowrap;transform:rotate(-.8deg)}
+  #edb-direct-intensive-v1 .edb-di-hero-split{display:flex;flex-direction:column;align-items:center;width:100%;margin:0 0 18px;color:var(--edb-ink);font-family:Unbounded,Montserrat,sans-serif;font-size:clamp(14px,4.6vw,38px);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-align:center;text-transform:uppercase}
+  #edb-direct-intensive-v1 .edb-di-hero-split-main{display:block;width:100%;word-spacing:.11em;white-space:nowrap}
+  #edb-direct-intensive-v1 .edb-di-hero-split .edb-di-hero-accent{display:block;width:100%;max-width:100%;margin-top:5px;padding:clamp(5px,1.7vw,8px) clamp(5px,1.8vw,10px) clamp(6px,1.9vw,9px);border-radius:clamp(7px,2.7vw,10px);background:var(--edb-orange);color:#fff;font-size:clamp(13px,4.5vw,32px);line-height:1.04;white-space:nowrap;transform:rotate(-.8deg)}
+  #edb-direct-intensive-v1 .edb-di-hero-split-approach{margin:16px 0 15px;font-family:Unbounded,Montserrat,sans-serif;font-size:clamp(14px,4.6vw,38px);font-weight:800;line-height:1.08;letter-spacing:-.045em;text-align:center;text-transform:uppercase}
   #edb-direct-intensive-v1 .edb-di-final-cta{margin:19px 0 15px;color:#334654;font-family:Manrope,Montserrat,sans-serif;font-size:clamp(15px,4vw,18.5px);font-weight:500;line-height:1.5}
   #edb-direct-intensive-v1[data-landing-variant="motivation-hero"] .edb-di-lead,#edb-direct-intensive-v1[data-landing-variant="motivation-hero"] .edb-di-final-cta{font-size:clamp(16px,4.3vw,20px)}
   #edb-direct-intensive-v1[data-landing-variant^="motivation"] .edb-di-section-lead,
@@ -135,7 +136,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
     'motivation-hero':{
       openingStyle:'hero-split',
       headingLines:['Заканчивайте худеть','только на силе воли'],
-      intro:[{text:'Если каждая попытка привести себя в форму заканчивается зажором и набором веса обратно — это не ваша личная черта как личности.'},{text:'Это просто недостаток навыков, как жить в дефиците калорий.'}],
+      intro:[{text:'Если каждая попытка привести себя в форму заканчивается зажором и набором веса обратно — это не ваша личная черта как личности.'},{text:'Это просто недостаток навыков, как жить в дефиците калорий.',strong:true}],
       reason:[{text:'Если худеть только на силе воли, конечно, она будет быстро заканчиваться! Поэтому…'}],
       accent:'Пора менять подход!',
       body:[[{text:'Научитесь, как с помощью изменения пищевых привычек и небольших перестановок в питании сделать похудение проще — чтобы силы воли понадобилось меньше!'}]],
@@ -185,7 +186,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
   const openingHtml=CONTENT.openingStyle==='plain'
     ? `${plainOpening}<h2 class="edb-di-section-lead edb-di-approach-heading">${esc(CONTENT.accent)}</h2>`
     : CONTENT.openingStyle==='hero-split'
-      ? `<h1 class="edb-di-hero-split"><span class="edb-di-hero-split-main">${esc(CONTENT.headingLines[0])}</span><span class="edb-di-hero-accent">${esc(CONTENT.headingLines[1])}</span></h1>${paragraph(CONTENT.intro.slice(0,1))}${paragraph(CONTENT.intro.slice(1),'edb-di-offer')}${paragraph(CONTENT.reason,'edb-di-offer')}<h2 class="edb-di-hero--main edb-di-hero-turn">${HERO_HTML}</h2>`
+      ? `<h1 class="edb-di-hero-split"><span class="edb-di-hero-split-main">${esc(CONTENT.headingLines[0])}</span><span class="edb-di-hero-accent">${esc(CONTENT.headingLines[1])}</span></h1>${paragraph(CONTENT.intro.slice(0,1))}${paragraph(CONTENT.intro.slice(1),'edb-di-offer')}${paragraph(CONTENT.reason,'edb-di-offer')}<h2 class="edb-di-hero-split-approach">${esc(CONTENT.accent)}</h2>`
     : CONTENT.openingStyle==='hero-stack'
       ? `<h1 class="edb-di-hero-stack">${CONTENT.headingLines.map(line=>`<span>${esc(line)}</span>`).join('')}</h1>${paragraph(CONTENT.intro)}${paragraph(CONTENT.reason,'edb-di-offer')}<h2 class="edb-di-hero-stack edb-di-hero-stack--approach">${esc(CONTENT.accent)}</h2>`
     : CONTENT.openingStyle==='content-only'

@@ -19,7 +19,7 @@
     element.style.padding = '0';
   });
 
-  fetch(appHost + '/preview/direct-intensive', {
+  fetch(appHost + '/preview/direct-intensive?variant=motivation-hero', {
     credentials: 'omit',
     mode: 'cors',
     cache: 'no-store'

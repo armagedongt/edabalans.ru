@@ -1397,7 +1397,7 @@ def test_direct_intensive_loader_is_stable_cross_origin_tilda_embed() -> None:
     assert response.headers["access-control-allow-origin"] == "*"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     assert "document.getElementById('edb-direct-intensive-host')" in response.text
-    assert "fetch(appHost + '/preview/direct-intensive'" in response.text
+    assert "fetch(appHost + '/preview/direct-intensive?variant=motivation-hero'" in response.text
     assert "host.replaceWith(document.importNode(landing, true))" in response.text
     assert "landing.style.width = '100vw'" in response.text
     assert "landing.style.marginLeft = 'calc(50% - 50vw)'" in response.text
