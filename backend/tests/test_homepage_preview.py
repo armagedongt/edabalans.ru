@@ -1413,9 +1413,9 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
     assert "?requestedVariant:'instead'" in response.text
     assert "headingLines:['Заканчивайте худеть','только на силе воли']" in response.text
     assert "это не ваша личная черта как личности.'" in response.text
-    assert "Это просто недостаток навыков, как жить в дефиците калорий." in response.text
+    assert "Это просто недостаток навыков, как жить в условиях похудения." in response.text
     assert "сделать похудение проще — чтобы силы воли понадобилось меньше!" in response.text
-    assert "Читайте в моём бесплатном интенсиве, как это сделать!" in response.text
+    assert "Читайте мою подробную статью, как это сделать!" in response.text
     assert "openingStyle:'hero-split'" in response.text
     assert "edb-di-hero-split" in response.text
     assert "splitArrows:false" in response.text
