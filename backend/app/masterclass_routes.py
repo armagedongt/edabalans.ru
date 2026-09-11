@@ -51,6 +51,10 @@ from app.masterclass_offer_rules import (
 from app.pricing_service import active_pricing_version, pricing_entry_map
 from app.product_identity import purchased_products
 from app.product_catalog_service import product_public
+from app.public_site_content_service import (
+    active_public_site_document,
+    serialize_public_site_rendered_document,
+)
 from app.course_structure_service import (
     CourseContext,
     course_context,
@@ -1857,6 +1861,12 @@ def build_offers(
         }
         for product_code in visible_product_codes
     }
+    if "recipes" in product_presentations:
+        recipes_document = serialize_public_site_rendered_document(
+            active_public_site_document(db, "recipes")
+        )
+        product_presentations["recipes"]["canonical_html"] = recipes_document["html"]
+        product_presentations["recipes"]["canonical_version"] = recipes_document["version"]
     product_offer_actions: dict[str, list[dict]] = {code: [] for code in visible_product_codes}
     for card in visible_cards:
         for product_code in card["items"]:

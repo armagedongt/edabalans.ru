@@ -57,6 +57,16 @@ def test_all_product_windows_have_how_descriptions() -> None:
         assert response.json()["description"].startswith("Как")
 
 
+def test_recipes_program_keeps_structured_sections_from_its_canonical_markdown() -> None:
+    client = make_client()
+    payload = client.get("/api/public-site/content/recipes").json()
+
+    assert "<blockquote>" in payload["html"]
+    assert "<h2>Программа по дням:</h2>" in payload["html"]
+    assert payload["html"].count("<h3>День") == 3
+    assert "Каталог рецептов — обновляемый" in payload["html"]
+
+
 def test_accepted_approach_copy_is_seeded_and_rendered() -> None:
     client = make_client()
     payload = client.get("/api/public-site/content/approach").json()

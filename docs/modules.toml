@@ -278,6 +278,7 @@ owns_files = [
   "backend/app/public_site_content_cli.py", "backend/app/static/homepage-preview/**",
   "backend/app/static/public-site-assets/**",
   "backend/app/static/homepage.js", "backend/app/static/homepage-tilda-shell.html",
+  "backend/app/static/public-program-card.css", "backend/app/static/public-program-card.js",
   "backend/app/static/site-header.js",
   "backend/app/public_video_analytics_routes.py",
   "backend/app/public_homepage_analytics_routes.py",
@@ -485,7 +486,7 @@ sources = [
 id = "products.masterclass.runtime"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.runtime.md"
-depends_on = ["platform.auth", "platform.commerce"]
+depends_on = ["platform.auth", "platform.commerce", "products.public-site"]
 events_out = ["messaging.telegram.postpurchase", "messaging.telegram.apps", "messaging.max"]
 owns_files = [
   "backend/app/masterclass_routes.py", "backend/app/static/masterclass.css",
@@ -532,7 +533,8 @@ owns_files = [
 ]
 owns_tables = ["offer_stages", "user_offers", "offer_checkouts"]
 owns_routes = ["*/api/masterclass/*offer*", "*/admin/api/masterclass/*offer*"]
-depends_on = ["platform.commerce", "products.masterclass.runtime"]
+depends_on = ["platform.commerce", "products.masterclass.runtime", "products.public-site"]
+reads_from = ["products.public-site"]
 sources = [
   { path = "backend/app/masterclass_offer_rules.py", role = "rule", shared = true, consumers = ["messaging.telegram.postpurchase"] },
   { path = "backend/app/masterclass_offer_catalog.py", role = "copy", shared = false, consumers = [] },

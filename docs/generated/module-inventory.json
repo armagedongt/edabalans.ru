@@ -918,6 +918,14 @@
     },
     {
       "module_id": "products.public-site",
+      "path": "backend/app/static/public-program-card.css"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "backend/app/static/public-program-card.js"
+    },
+    {
+      "module_id": "products.public-site",
       "path": "backend/app/static/public-site-assets/education-documents-original.png"
     },
     {
@@ -7409,7 +7417,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1642,
+          "line": 1645,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -7417,7 +7425,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1794,
+          "line": 1797,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -7425,7 +7433,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1847,
+          "line": 1850,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -7433,7 +7441,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1760,
+          "line": 1763,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -7727,7 +7735,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1642,
+          "line": 1645,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -7735,7 +7743,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1760,
+          "line": 1763,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -7743,7 +7751,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1794,
+          "line": 1797,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -7751,7 +7759,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1847,
+          "line": 1850,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -29994,7 +30002,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 636,
+          "line": 639,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal",
@@ -30002,7 +30010,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 636,
+          "line": 639,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal",
@@ -30010,7 +30018,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 641,
+          "line": 644,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/legal.css",
@@ -30018,7 +30026,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 646,
+          "line": 649,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}",
@@ -30026,7 +30034,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 628,
+          "line": 631,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/legal/{document_code}.html",
@@ -30608,7 +30616,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 628,
+          "line": 631,
           "module_id": "platform.commerce",
           "name": "legal_document",
           "qualname": "legal_document"
@@ -30616,7 +30624,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 636,
+          "line": 639,
           "module_id": "platform.commerce",
           "name": "legal_index",
           "qualname": "legal_index"
@@ -30624,7 +30632,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 641,
+          "line": 644,
           "module_id": "platform.commerce",
           "name": "legal_stylesheet",
           "qualname": "legal_stylesheet"
@@ -30632,7 +30640,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 646,
+          "line": 649,
           "module_id": "platform.commerce",
           "name": "legal_document_friendly",
           "qualname": "legal_document_friendly"
@@ -31848,7 +31856,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 42,
+          "line": 43,
           "module_id": "platform.commerce",
           "name": "certificate_pair",
           "qualname": "certificate_pair"
@@ -31856,7 +31864,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 62,
+          "line": 63,
           "module_id": "platform.commerce",
           "name": "make_client",
           "qualname": "make_client"
@@ -31864,7 +31872,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 75,
+          "line": 78,
           "module_id": "platform.commerce",
           "name": "enable_sqlite_foreign_keys",
           "qualname": "make_client.enable_sqlite_foreign_keys"
@@ -31872,7 +31880,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 99,
+          "line": 102,
           "module_id": "platform.commerce",
           "name": "override_db",
           "qualname": "make_client.override_db"
@@ -31880,7 +31888,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 108,
+          "line": 111,
           "module_id": "platform.commerce",
           "name": "test_official_pem_certificate_format_is_accepted",
           "qualname": "test_official_pem_certificate_format_is_accepted"
@@ -31888,7 +31896,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 119,
+          "line": 122,
           "module_id": "platform.commerce",
           "name": "seed_catalog",
           "qualname": "seed_catalog"
@@ -31896,7 +31904,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 150,
+          "line": 153,
           "module_id": "platform.commerce",
           "name": "signed_result",
           "qualname": "signed_result"
@@ -31904,7 +31912,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 176,
+          "line": 179,
           "module_id": "platform.commerce",
           "name": "encoded",
           "qualname": "signed_result.encoded"
@@ -31912,7 +31920,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 187,
+          "line": 190,
           "module_id": "platform.commerce",
           "name": "create_checkout",
           "qualname": "create_checkout"
@@ -31920,7 +31928,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 197,
+          "line": 200,
           "module_id": "platform.commerce",
           "name": "test_checkout_uses_database_price_and_does_not_create_user",
           "qualname": "test_checkout_uses_database_price_and_does_not_create_user"
@@ -31928,7 +31936,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 238,
+          "line": 241,
           "module_id": "platform.commerce",
           "name": "test_go_test_page_is_one_button_with_database_price",
           "qualname": "test_go_test_page_is_one_button_with_database_price"
@@ -31936,7 +31944,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 258,
+          "line": 261,
           "module_id": "platform.commerce",
           "name": "test_go_test_button_redirects_to_classic_interface_with_go_callbacks",
           "qualname": "test_go_test_button_redirects_to_classic_interface_with_go_callbacks"
@@ -31944,7 +31952,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 291,
+          "line": 294,
           "module_id": "platform.commerce",
           "name": "test_go_test_page_is_disabled_outside_robokassa_test_mode",
           "qualname": "test_go_test_page_is_disabled_outside_robokassa_test_mode"
@@ -31952,7 +31960,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 305,
+          "line": 308,
           "module_id": "platform.commerce",
           "name": "test_go_payment_returns_link_back_only_after_failed_payment",
           "qualname": "test_go_payment_returns_link_back_only_after_failed_payment"
@@ -31960,7 +31968,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 321,
+          "line": 324,
           "module_id": "platform.commerce",
           "name": "test_public_payment_success_waits_for_callback_then_renders_canonical_copy",
           "qualname": "test_public_payment_success_waits_for_callback_then_renders_canonical_copy"
@@ -31968,7 +31976,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 335,
+          "line": 338,
           "module_id": "platform.commerce",
           "name": "test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag",
           "qualname": "test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag"
@@ -31976,7 +31984,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 346,
+          "line": 349,
           "module_id": "platform.commerce",
           "name": "test_public_payment_success_preview_shows_final_paid_state",
           "qualname": "test_public_payment_success_preview_shows_final_paid_state"
@@ -31984,7 +31992,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 359,
+          "line": 362,
           "module_id": "platform.commerce",
           "name": "test_manual_service_success_preview_has_contacts_and_receipt",
           "qualname": "test_manual_service_success_preview_has_contacts_and_receipt"
@@ -31992,7 +32000,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 371,
+          "line": 374,
           "module_id": "platform.commerce",
           "name": "test_member_offer_success_preview_links_account_and_contacts",
           "qualname": "test_member_offer_success_preview_links_account_and_contacts"
@@ -32000,7 +32008,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 382,
+          "line": 385,
           "module_id": "platform.commerce",
           "name": "test_live_probe_page_is_explicitly_enabled_and_noindex",
           "qualname": "test_live_probe_page_is_explicitly_enabled_and_noindex"
@@ -32008,7 +32016,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 400,
+          "line": 403,
           "module_id": "platform.commerce",
           "name": "test_live_probe_is_hidden_when_disabled",
           "qualname": "test_live_probe_is_hidden_when_disabled"
@@ -32016,7 +32024,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 420,
+          "line": 423,
           "module_id": "platform.commerce",
           "name": "test_live_probe_creates_real_ten_ruble_invoice_with_production_password",
           "qualname": "test_live_probe_creates_real_ten_ruble_invoice_with_production_password"
@@ -32024,7 +32032,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 480,
+          "line": 483,
           "module_id": "platform.commerce",
           "name": "test_live_probe_result_records_payment_without_user_access_or_onboarding",
           "qualname": "test_live_probe_result_records_payment_without_user_access_or_onboarding"
@@ -32032,7 +32040,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 523,
+          "line": 526,
           "module_id": "platform.commerce",
           "name": "test_live_probe_rejects_wrong_host_and_cross_origin_requests",
           "qualname": "test_live_probe_rejects_wrong_host_and_cross_origin_requests"
@@ -32040,7 +32048,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 566,
+          "line": 569,
           "module_id": "platform.commerce",
           "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
           "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
@@ -32048,7 +32056,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 586,
+          "line": 589,
           "module_id": "platform.commerce",
           "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
           "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -32056,7 +32064,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 613,
+          "line": 616,
           "module_id": "platform.commerce",
           "name": "test_signed_production_result_grants_access",
           "qualname": "test_signed_production_result_grants_access"
@@ -32064,7 +32072,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 635,
+          "line": 638,
           "module_id": "platform.commerce",
           "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
           "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -32072,7 +32080,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 660,
+          "line": 663,
           "module_id": "platform.commerce",
           "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
           "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -32080,7 +32088,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 685,
+          "line": 688,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
           "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -32088,7 +32096,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 742,
+          "line": 745,
           "module_id": "platform.commerce",
           "name": "test_manual_payment_keeps_comment_without_creating_access_or_account",
           "qualname": "test_manual_payment_keeps_comment_without_creating_access_or_account"
@@ -32096,7 +32104,7 @@
         {
           "file": "backend/tests/test_robokassa_payments.py",
           "kind": "function",
-          "line": 780,
+          "line": 788,
           "module_id": "platform.commerce",
           "name": "test_personal_offer_rejects_another_email_before_payment",
           "qualname": "test_personal_offer_rejects_another_email_before_payment"
@@ -38728,7 +38736,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 886,
+          "line": 889,
           "module_id": "products",
           "name": "intensive_day_asset",
           "qualname": "intensive_day_asset"
@@ -38736,7 +38744,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 926,
+          "line": 929,
           "module_id": "products",
           "name": "error",
           "qualname": "error"
@@ -38744,7 +38752,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 930,
+          "line": 933,
           "module_id": "products",
           "name": "jsonp",
           "qualname": "jsonp"
@@ -38752,7 +38760,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 937,
+          "line": 940,
           "module_id": "products",
           "name": "empty_strength_state",
           "qualname": "empty_strength_state"
@@ -38760,7 +38768,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 984,
+          "line": 987,
           "module_id": "products",
           "name": "strength_account_catalog",
           "qualname": "strength_account_catalog"
@@ -38768,7 +38776,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1063,
+          "line": 1066,
           "module_id": "products",
           "name": "app_resource_codes",
           "qualname": "app_resource_codes"
@@ -38776,7 +38784,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1069,
+          "line": 1072,
           "module_id": "products",
           "name": "empty_app_state",
           "qualname": "empty_app_state"
@@ -38784,7 +38792,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1104,
+          "line": 1107,
           "module_id": "products",
           "name": "apply_dqs_action",
           "qualname": "apply_dqs_action"
@@ -38792,7 +38800,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1270,
+          "line": 1273,
           "module_id": "products",
           "name": "strength_payload",
           "qualname": "strength_payload"
@@ -38800,7 +38808,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1576,
+          "line": 1579,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -38808,7 +38816,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1711,
+          "line": 1714,
           "module_id": "products",
           "name": "admin_state_has_records",
           "qualname": "admin_state_has_records"
@@ -38816,7 +38824,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1719,
+          "line": 1722,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -38824,7 +38832,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1744,
+          "line": 1747,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -38832,7 +38840,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1830,
+          "line": 1833,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -39600,7 +39608,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 739,
+          "line": 748,
           "module_id": "products",
           "name": "test_masterclass_first_day_article_and_image_layout_contract",
           "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -39608,7 +39616,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 932,
+          "line": 941,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -39616,7 +39624,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 950,
+          "line": 959,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -39624,7 +39632,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 977,
+          "line": 986,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -39632,7 +39640,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1002,
+          "line": 1011,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -39640,7 +39648,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1016,
+          "line": 1025,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -39648,7 +39656,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1083,
+          "line": 1092,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -39656,7 +39664,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1099,
+          "line": 1108,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -39664,7 +39672,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1118,
+          "line": 1127,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -39672,7 +39680,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1208,
+          "line": 1217,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -39680,7 +39688,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1214,
+          "line": 1223,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -39688,7 +39696,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1227,
+          "line": 1236,
           "module_id": "products",
           "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
           "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -39696,7 +39704,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1261,
+          "line": 1270,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -39704,7 +39712,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1272,
+          "line": 1281,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -39712,7 +39720,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1286,
+          "line": 1295,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -40942,7 +40950,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1225,
+          "line": 1228,
           "method": "POST",
           "module_id": "products.dqs",
           "path": "/admin/api/apps/dqs/users/{user_id}/runtime",
@@ -40950,7 +40958,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1082,
+          "line": 1085,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/api/apps/dqs",
@@ -40958,7 +40966,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1256,
+          "line": 1259,
           "method": "GET",
           "module_id": "products.dqs",
           "path": "/api/apps/dqs/access",
@@ -41012,7 +41020,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1082,
+          "line": 1085,
           "module_id": "products.dqs",
           "name": "dqs_legacy_get",
           "qualname": "dqs_legacy_get"
@@ -41020,7 +41028,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1225,
+          "line": 1228,
           "module_id": "products.dqs",
           "name": "admin_dqs_runtime",
           "qualname": "admin_dqs_runtime"
@@ -41028,7 +41036,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1256,
+          "line": 1259,
           "module_id": "products.dqs",
           "name": "dqs_access_status",
           "qualname": "dqs_access_status"
@@ -41492,7 +41500,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 847,
+          "line": 850,
           "method": "POST",
           "module_id": "products.intensive",
           "path": "/api/intensive/day-{day_number}/post/{messenger}",
@@ -41500,7 +41508,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 787,
+          "line": 790,
           "method": "POST",
           "module_id": "products.intensive",
           "path": "/api/intensive/events",
@@ -41508,7 +41516,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 818,
+          "line": 821,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/api/intensive/offer-token",
@@ -41516,7 +41524,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 762,
+          "line": 765,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/api/intensive/state",
@@ -41524,7 +41532,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 702,
+          "line": 705,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive",
@@ -41532,7 +41540,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 702,
+          "line": 705,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive",
@@ -41540,7 +41548,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 686,
+          "line": 689,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/assets/{day_code}/{asset_name}",
@@ -41548,7 +41556,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 676,
+          "line": 679,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive-components.css",
@@ -41556,7 +41564,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 653,
+          "line": 656,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.css",
@@ -41564,7 +41572,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 658,
+          "line": 661,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/intensive.js",
@@ -41572,7 +41580,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 681,
+          "line": 684,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/max-full-colored-official.png",
@@ -41580,7 +41588,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 702,
+          "line": 705,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/menu",
@@ -41588,7 +41596,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 663,
+          "line": 666,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/runtime.js",
@@ -41596,7 +41604,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 732,
+          "line": 735,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/start",
@@ -41604,7 +41612,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 668,
+          "line": 671,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/tilda-loader.js",
@@ -41612,7 +41620,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 917,
+          "line": 920,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}",
@@ -41620,7 +41628,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 907,
+          "line": 910,
           "method": "GET",
           "module_id": "products.intensive",
           "path": "/intensive/{day_code}.html",
@@ -41658,7 +41666,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 653,
+          "line": 656,
           "module_id": "products.intensive",
           "name": "intensive_stylesheet",
           "qualname": "intensive_stylesheet"
@@ -41666,7 +41674,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 658,
+          "line": 661,
           "module_id": "products.intensive",
           "name": "intensive_script",
           "qualname": "intensive_script"
@@ -41674,7 +41682,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 663,
+          "line": 666,
           "module_id": "products.intensive",
           "name": "intensive_runtime_script",
           "qualname": "intensive_runtime_script"
@@ -41682,7 +41690,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 668,
+          "line": 671,
           "module_id": "products.intensive",
           "name": "intensive_tilda_loader",
           "qualname": "intensive_tilda_loader"
@@ -41690,7 +41698,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 676,
+          "line": 679,
           "module_id": "products.intensive",
           "name": "intensive_components_stylesheet",
           "qualname": "intensive_components_stylesheet"
@@ -41698,7 +41706,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 681,
+          "line": 684,
           "module_id": "products.intensive",
           "name": "intensive_max_logo",
           "qualname": "intensive_max_logo"
@@ -41706,7 +41714,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 686,
+          "line": 689,
           "module_id": "products.intensive",
           "name": "intensive_content_asset",
           "qualname": "intensive_content_asset"
@@ -41714,7 +41722,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 702,
+          "line": 705,
           "module_id": "products.intensive",
           "name": "intensive_menu",
           "qualname": "intensive_menu"
@@ -41722,7 +41730,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 732,
+          "line": 735,
           "module_id": "products.intensive",
           "name": "intensive_entry",
           "qualname": "intensive_entry"
@@ -41730,7 +41738,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 762,
+          "line": 765,
           "module_id": "products.intensive",
           "name": "intensive_state",
           "qualname": "intensive_state"
@@ -41738,7 +41746,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 787,
+          "line": 790,
           "module_id": "products.intensive",
           "name": "intensive_client_event",
           "qualname": "intensive_client_event"
@@ -41746,7 +41754,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 818,
+          "line": 821,
           "module_id": "products.intensive",
           "name": "intensive_offer_token",
           "qualname": "intensive_offer_token"
@@ -41754,7 +41762,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 847,
+          "line": 850,
           "module_id": "products.intensive",
           "name": "intensive_post_target",
           "qualname": "intensive_post_target"
@@ -41762,7 +41770,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 907,
+          "line": 910,
           "module_id": "products.intensive",
           "name": "intensive_day_html",
           "qualname": "intensive_day_html"
@@ -41770,7 +41778,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 917,
+          "line": 920,
           "module_id": "products.intensive",
           "name": "intensive_day_friendly",
           "qualname": "intensive_day_friendly"
@@ -45495,7 +45503,7 @@
       "routes": [
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1203,
+          "line": 1207,
           "method": "POST",
           "module_id": "products.masterclass.messenger-links",
           "path": "/api/masterclass/dqs/link-to-telegram",
@@ -45503,7 +45511,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1130,
+          "line": 1134,
           "method": "POST",
           "module_id": "products.masterclass.messenger-links",
           "path": "/api/masterclass/messenger-links",
@@ -45511,7 +45519,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1176,
+          "line": 1180,
           "method": "GET",
           "module_id": "products.masterclass.messenger-links",
           "path": "/api/masterclass/messenger-links/status",
@@ -45525,7 +45533,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1130,
+          "line": 1134,
           "module_id": "products.masterclass.messenger-links",
           "name": "create_messenger_link",
           "qualname": "create_messenger_link"
@@ -45533,7 +45541,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1176,
+          "line": 1180,
           "module_id": "products.masterclass.messenger-links",
           "name": "messenger_link_status",
           "qualname": "messenger_link_status"
@@ -45541,7 +45549,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1203,
+          "line": 1207,
           "module_id": "products.masterclass.messenger-links",
           "name": "send_dqs_link_to_telegram",
           "qualname": "send_dqs_link_to_telegram"
@@ -45596,7 +45604,7 @@
         }
       ],
       "admin_urls": [],
-      "boundary": "Позиция блока приходит из active course structure; Telegram не пересчитывает условия.",
+      "boundary": "Позиция блока приходит из active course structure; Telegram не пересчитывает условия.\nТекстом и адаптивом программной карточки «Система рецептов» владеет `products.public-site`;\nмодуль допродаж добавляет к ней только актуальные цены и кнопки checkout.",
       "capabilities": [
         "выбирать предложение по placement и состоянию покупок;",
         "повторно проверять цену и доступность перед checkout;",
@@ -45668,17 +45676,20 @@
       "relations": {
         "depends_on": [
           "platform.commerce",
-          "products.masterclass.runtime"
+          "products.masterclass.runtime",
+          "products.public-site"
         ],
         "events_in": [],
         "events_out": [],
-        "reads_from": [],
+        "reads_from": [
+          "products.public-site"
+        ],
         "writes_to": []
       },
       "routes": [
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1896,
+          "line": 1906,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/account-offers",
@@ -45686,7 +45697,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1936,
+          "line": 1946,
           "method": "POST",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/account-offers/checkout",
@@ -45694,7 +45705,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2070,
+          "line": 2080,
           "method": "POST",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/offer-preview",
@@ -45702,7 +45713,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2103,
+          "line": 2113,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/offer-preview/clients",
@@ -45710,7 +45721,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2124,
+          "line": 2134,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/offer-preview/clients/{user_id}",
@@ -45718,7 +45729,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2064,
+          "line": 2074,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/offer-stages",
@@ -45726,7 +45737,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2300,
+          "line": 2310,
           "method": "PUT",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/offer-stages/{stage_code}",
@@ -45734,7 +45745,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2326,
+          "line": 2336,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/admin/user-offers",
@@ -45742,7 +45753,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1877,
+          "line": 1887,
           "method": "GET",
           "module_id": "products.masterclass.offers",
           "path": "/api/masterclass/offers",
@@ -45803,7 +45814,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 181,
+          "line": 179,
           "module_id": "products.masterclass.offers",
           "name": "offer_products",
           "qualname": "offer_products"
@@ -45811,7 +45822,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 206,
+          "line": 204,
           "module_id": "products.masterclass.offers",
           "name": "bundle_detail",
           "qualname": "bundle_detail"
@@ -45819,7 +45830,7 @@
         {
           "file": "backend/app/masterclass_offer_catalog.py",
           "kind": "function",
-          "line": 211,
+          "line": 209,
           "module_id": "products.masterclass.offers",
           "name": "partial_bundle_copy",
           "qualname": "partial_bundle_copy"
@@ -45827,7 +45838,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1877,
+          "line": 1887,
           "module_id": "products.masterclass.offers",
           "name": "offers",
           "qualname": "offers"
@@ -45835,7 +45846,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1896,
+          "line": 1906,
           "module_id": "products.masterclass.offers",
           "name": "account_offers",
           "qualname": "account_offers"
@@ -45843,7 +45854,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1936,
+          "line": 1946,
           "module_id": "products.masterclass.offers",
           "name": "account_offer_checkout",
           "qualname": "account_offer_checkout"
@@ -45851,7 +45862,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2064,
+          "line": 2074,
           "module_id": "products.masterclass.offers",
           "name": "admin_offer_stages",
           "qualname": "admin_offer_stages"
@@ -45859,7 +45870,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2070,
+          "line": 2080,
           "module_id": "products.masterclass.offers",
           "name": "admin_offer_preview",
           "qualname": "admin_offer_preview"
@@ -45867,7 +45878,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2103,
+          "line": 2113,
           "module_id": "products.masterclass.offers",
           "name": "admin_offer_preview_clients",
           "qualname": "admin_offer_preview_clients"
@@ -45875,7 +45886,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2124,
+          "line": 2134,
           "module_id": "products.masterclass.offers",
           "name": "admin_offer_preview_client_context",
           "qualname": "admin_offer_preview_client_context"
@@ -45883,7 +45894,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2300,
+          "line": 2310,
           "module_id": "products.masterclass.offers",
           "name": "admin_update_offer_stage",
           "qualname": "admin_update_offer_stage"
@@ -45891,7 +45902,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2326,
+          "line": 2336,
           "module_id": "products.masterclass.offers",
           "name": "admin_masterclass_user_offers",
           "qualname": "admin_masterclass_user_offers"
@@ -46030,7 +46041,7 @@
       "routes": [
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1006,
+          "line": 1010,
           "method": "GET",
           "module_id": "products.masterclass.questionnaires",
           "path": "/api/masterclass/questionnaires/{kind}",
@@ -46038,7 +46049,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1036,
+          "line": 1040,
           "method": "PUT",
           "module_id": "products.masterclass.questionnaires",
           "path": "/api/masterclass/questionnaires/{kind}/answer",
@@ -46046,7 +46057,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1058,
+          "line": 1062,
           "method": "POST",
           "module_id": "products.masterclass.questionnaires",
           "path": "/api/masterclass/questionnaires/{kind}/{action}",
@@ -46060,7 +46071,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1006,
+          "line": 1010,
           "module_id": "products.masterclass.questionnaires",
           "name": "questionnaire",
           "qualname": "questionnaire"
@@ -46068,7 +46079,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1036,
+          "line": 1040,
           "module_id": "products.masterclass.questionnaires",
           "name": "save_answer",
           "qualname": "save_answer"
@@ -46076,7 +46087,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1058,
+          "line": 1062,
           "module_id": "products.masterclass.questionnaires",
           "name": "finish_questionnaire",
           "qualname": "finish_questionnaire"
@@ -46215,7 +46226,8 @@
       "relations": {
         "depends_on": [
           "platform.auth",
-          "platform.commerce"
+          "platform.commerce",
+          "products.public-site"
         ],
         "events_in": [],
         "events_out": [
@@ -46240,7 +46252,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2258,
+          "line": 2268,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/client-progress",
@@ -46248,7 +46260,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2160,
+          "line": 2170,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/embed-tokens",
@@ -46256,7 +46268,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2359,
+          "line": 2369,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/notifications",
@@ -46264,7 +46276,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2321,
+          "line": 2331,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/summary",
@@ -46272,7 +46284,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2203,
+          "line": 2213,
           "method": "PUT",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/test-profile",
@@ -46280,7 +46292,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2231,
+          "line": 2241,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/test-profile/reset",
@@ -46288,7 +46300,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2174,
+          "line": 2184,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/admin/users",
@@ -46296,7 +46308,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1265,
+          "line": 1269,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/apps/{app_code}/reveal",
@@ -46304,7 +46316,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1916,
+          "line": 1926,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/checkout",
@@ -46312,7 +46324,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 749,
+          "line": 753,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course",
@@ -46320,7 +46332,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 774,
+          "line": 778,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/content/{asset_name}",
@@ -46328,7 +46340,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 912,
+          "line": 916,
           "method": "PUT",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/days/{day}/checks/{index}",
@@ -46336,7 +46348,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 792,
+          "line": 796,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/days/{day}/open",
@@ -46344,7 +46356,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 809,
+          "line": 813,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/days/{day}/steps/{index}/complete",
@@ -46352,7 +46364,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 878,
+          "line": 882,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/days/{day}/task/open",
@@ -46360,7 +46372,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 701,
+          "line": 705,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/manifest",
@@ -46368,7 +46380,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 712,
+          "line": 716,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/course/materials",
@@ -46376,7 +46388,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 1111,
+          "line": 1115,
           "method": "POST",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/events",
@@ -46384,7 +46396,7 @@
         },
         {
           "file": "backend/app/masterclass_routes.py",
-          "line": 2011,
+          "line": 2021,
           "method": "GET",
           "module_id": "products.masterclass.runtime",
           "path": "/api/masterclass/gate/{part}",
@@ -46406,7 +46418,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 132,
+          "line": 136,
           "module_id": "products.masterclass.runtime",
           "name": "aware_utc",
           "qualname": "aware_utc"
@@ -46414,7 +46426,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 137,
+          "line": 141,
           "module_id": "products.masterclass.runtime",
           "name": "AnswerIn",
           "qualname": "AnswerIn"
@@ -46422,7 +46434,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 143,
+          "line": 147,
           "module_id": "products.masterclass.runtime",
           "name": "RunActionIn",
           "qualname": "RunActionIn"
@@ -46430,7 +46442,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 148,
+          "line": 152,
           "module_id": "products.masterclass.runtime",
           "name": "AppRevealIn",
           "qualname": "AppRevealIn"
@@ -46438,7 +46450,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 155,
+          "line": 159,
           "module_id": "products.masterclass.runtime",
           "name": "CourseCheckIn",
           "qualname": "CourseCheckIn"
@@ -46446,7 +46458,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 160,
+          "line": 164,
           "module_id": "products.masterclass.runtime",
           "name": "EventIn",
           "qualname": "EventIn"
@@ -46454,7 +46466,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 167,
+          "line": 171,
           "module_id": "products.masterclass.runtime",
           "name": "MessengerLinkIn",
           "qualname": "MessengerLinkIn"
@@ -46462,7 +46474,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 172,
+          "line": 176,
           "module_id": "products.masterclass.runtime",
           "name": "CheckoutIn",
           "qualname": "CheckoutIn"
@@ -46470,7 +46482,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 179,
+          "line": 183,
           "module_id": "products.masterclass.runtime",
           "name": "AccountOfferCheckoutIn",
           "qualname": "AccountOfferCheckoutIn"
@@ -46478,7 +46490,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 185,
+          "line": 189,
           "module_id": "products.masterclass.runtime",
           "name": "StageUpdateIn",
           "qualname": "StageUpdateIn"
@@ -46486,7 +46498,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 192,
+          "line": 196,
           "module_id": "products.masterclass.runtime",
           "name": "AdminOfferPreviewIn",
           "qualname": "AdminOfferPreviewIn"
@@ -46494,7 +46506,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "class",
-          "line": 200,
+          "line": 204,
           "module_id": "products.masterclass.runtime",
           "name": "TestProfileIn",
           "qualname": "TestProfileIn"
@@ -46502,7 +46514,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 207,
+          "line": 211,
           "module_id": "products.masterclass.runtime",
           "name": "test_profile",
           "qualname": "test_profile"
@@ -46510,7 +46522,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 212,
+          "line": 216,
           "module_id": "products.masterclass.runtime",
           "name": "course_timezone",
           "qualname": "course_timezone"
@@ -46518,7 +46530,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 222,
+          "line": 226,
           "module_id": "products.masterclass.runtime",
           "name": "next_local_unlock_at",
           "qualname": "next_local_unlock_at"
@@ -46526,7 +46538,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 239,
+          "line": 243,
           "module_id": "products.masterclass.runtime",
           "name": "scheduled_unlock_at",
           "qualname": "scheduled_unlock_at"
@@ -46534,7 +46546,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 253,
+          "line": 257,
           "module_id": "products.masterclass.runtime",
           "name": "masterclass_fully_unlocked",
           "qualname": "masterclass_fully_unlocked"
@@ -46542,7 +46554,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 267,
+          "line": 271,
           "module_id": "products.masterclass.runtime",
           "name": "notification_due",
           "qualname": "notification_due"
@@ -46550,7 +46562,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 272,
+          "line": 276,
           "module_id": "products.masterclass.runtime",
           "name": "unopened_day_reminder_due",
           "qualname": "unopened_day_reminder_due"
@@ -46558,7 +46570,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 287,
+          "line": 291,
           "module_id": "products.masterclass.runtime",
           "name": "resolve_masterclass_user",
           "qualname": "resolve_masterclass_user"
@@ -46566,7 +46578,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 303,
+          "line": 307,
           "module_id": "products.masterclass.runtime",
           "name": "course_step_kinds",
           "qualname": "course_step_kinds"
@@ -46574,7 +46586,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 313,
+          "line": 317,
           "module_id": "products.masterclass.runtime",
           "name": "current_required_step_ids",
           "qualname": "current_required_step_ids"
@@ -46582,7 +46594,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 325,
+          "line": 329,
           "module_id": "products.masterclass.runtime",
           "name": "course_event",
           "qualname": "course_event"
@@ -46590,7 +46602,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 381,
+          "line": 385,
           "module_id": "products.masterclass.runtime",
           "name": "day_progress",
           "qualname": "day_progress"
@@ -46598,7 +46610,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 392,
+          "line": 396,
           "module_id": "products.masterclass.runtime",
           "name": "course_day_unlock_at",
           "qualname": "course_day_unlock_at"
@@ -46606,7 +46618,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 403,
+          "line": 407,
           "module_id": "products.masterclass.runtime",
           "name": "course_day_can_open",
           "qualname": "course_day_can_open"
@@ -46614,7 +46626,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 421,
+          "line": 425,
           "module_id": "products.masterclass.runtime",
           "name": "open_course_day",
           "qualname": "open_course_day"
@@ -46622,7 +46634,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 466,
+          "line": 470,
           "module_id": "products.masterclass.runtime",
           "name": "completed_step_indexes",
           "qualname": "completed_step_indexes"
@@ -46630,7 +46642,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 477,
+          "line": 481,
           "module_id": "products.masterclass.runtime",
           "name": "required_step_indexes",
           "qualname": "required_step_indexes"
@@ -46638,7 +46650,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 488,
+          "line": 492,
           "module_id": "products.masterclass.runtime",
           "name": "finalize_course_day",
           "qualname": "finalize_course_day"
@@ -46646,7 +46658,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 538,
+          "line": 542,
           "module_id": "products.masterclass.runtime",
           "name": "reconcile_course_progress",
           "qualname": "reconcile_course_progress"
@@ -46654,7 +46666,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 563,
+          "line": 567,
           "module_id": "products.masterclass.runtime",
           "name": "course_payload",
           "qualname": "course_payload"
@@ -46662,7 +46674,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 701,
+          "line": 705,
           "module_id": "products.masterclass.runtime",
           "name": "course_manifest",
           "qualname": "course_manifest"
@@ -46670,7 +46682,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 712,
+          "line": 716,
           "module_id": "products.masterclass.runtime",
           "name": "course_materials",
           "qualname": "course_materials"
@@ -46678,7 +46690,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 728,
+          "line": 732,
           "module_id": "products.masterclass.runtime",
           "name": "course_step_event",
           "qualname": "course_step_event"
@@ -46686,7 +46698,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 749,
+          "line": 753,
           "module_id": "products.masterclass.runtime",
           "name": "course_state",
           "qualname": "course_state"
@@ -46694,7 +46706,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 774,
+          "line": 778,
           "module_id": "products.masterclass.runtime",
           "name": "course_content",
           "qualname": "course_content"
@@ -46702,7 +46714,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 792,
+          "line": 796,
           "module_id": "products.masterclass.runtime",
           "name": "course_open_day",
           "qualname": "course_open_day"
@@ -46710,7 +46722,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 809,
+          "line": 813,
           "module_id": "products.masterclass.runtime",
           "name": "course_complete_step",
           "qualname": "course_complete_step"
@@ -46718,7 +46730,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 878,
+          "line": 882,
           "module_id": "products.masterclass.runtime",
           "name": "course_open_task",
           "qualname": "course_open_task"
@@ -46726,7 +46738,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 912,
+          "line": 916,
           "module_id": "products.masterclass.runtime",
           "name": "course_update_check",
           "qualname": "course_update_check"
@@ -46734,7 +46746,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 946,
+          "line": 950,
           "module_id": "products.masterclass.runtime",
           "name": "questions",
           "qualname": "questions"
@@ -46742,7 +46754,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 953,
+          "line": 957,
           "module_id": "products.masterclass.runtime",
           "name": "consultation_description_url",
           "qualname": "consultation_description_url"
@@ -46750,7 +46762,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 961,
+          "line": 965,
           "module_id": "products.masterclass.runtime",
           "name": "get_run",
           "qualname": "get_run"
@@ -46758,7 +46770,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 969,
+          "line": 973,
           "module_id": "products.masterclass.runtime",
           "name": "queue_notification",
           "qualname": "queue_notification"
@@ -46766,7 +46778,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 975,
+          "line": 979,
           "module_id": "products.masterclass.runtime",
           "name": "queue_offer_last_chance",
           "qualname": "queue_offer_last_chance"
@@ -46774,7 +46786,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1111,
+          "line": 1115,
           "module_id": "products.masterclass.runtime",
           "name": "record_event",
           "qualname": "record_event"
@@ -46782,7 +46794,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1265,
+          "line": 1269,
           "module_id": "products.masterclass.runtime",
           "name": "reveal_course_application",
           "qualname": "reveal_course_application"
@@ -46790,7 +46802,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1346,
+          "line": 1350,
           "module_id": "products.masterclass.runtime",
           "name": "access_codes",
           "qualname": "access_codes"
@@ -46798,7 +46810,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1351,
+          "line": 1355,
           "module_id": "products.masterclass.runtime",
           "name": "configured_offer_stage",
           "qualname": "configured_offer_stage"
@@ -46806,7 +46818,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1360,
+          "line": 1364,
           "module_id": "products.masterclass.runtime",
           "name": "create_offer_window",
           "qualname": "create_offer_window"
@@ -46814,7 +46826,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1392,
+          "line": 1396,
           "module_id": "products.masterclass.runtime",
           "name": "schedule_last_week_from_review",
           "qualname": "schedule_last_week_from_review"
@@ -46822,7 +46834,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1408,
+          "line": 1412,
           "module_id": "products.masterclass.runtime",
           "name": "timeline_stage",
           "qualname": "timeline_stage"
@@ -46830,7 +46842,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1427,
+          "line": 1431,
           "module_id": "products.masterclass.runtime",
           "name": "offer_stage",
           "qualname": "offer_stage"
@@ -46838,7 +46850,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1505,
+          "line": 1509,
           "module_id": "products.masterclass.runtime",
           "name": "offer_checkout_order",
           "qualname": "offer_checkout_order"
@@ -46846,7 +46858,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1509,
+          "line": 1513,
           "module_id": "products.masterclass.runtime",
           "name": "build_offers",
           "qualname": "build_offers"
@@ -46854,7 +46866,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1558,
+          "line": 1562,
           "module_id": "products.masterclass.runtime",
           "name": "catalog_amount",
           "qualname": "build_offers.catalog_amount"
@@ -46862,7 +46874,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1566,
+          "line": 1570,
           "module_id": "products.masterclass.runtime",
           "name": "standard_amount",
           "qualname": "build_offers.standard_amount"
@@ -46870,7 +46882,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1582,
+          "line": 1586,
           "module_id": "products.masterclass.runtime",
           "name": "single_card",
           "qualname": "build_offers.single_card"
@@ -46878,7 +46890,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1597,
+          "line": 1601,
           "module_id": "products.masterclass.runtime",
           "name": "digital_bundle",
           "qualname": "build_offers.digital_bundle"
@@ -46886,7 +46898,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1653,
+          "line": 1657,
           "module_id": "products.masterclass.runtime",
           "name": "site_short_consultation_card",
           "qualname": "build_offers.site_short_consultation_card"
@@ -46894,7 +46906,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1916,
+          "line": 1926,
           "module_id": "products.masterclass.runtime",
           "name": "checkout",
           "qualname": "checkout"
@@ -46902,7 +46914,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1959,
+          "line": 1969,
           "module_id": "products.masterclass.runtime",
           "name": "create_offer_checkout",
           "qualname": "create_offer_checkout"
@@ -46910,7 +46922,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 1966,
+          "line": 1976,
           "module_id": "products.masterclass.runtime",
           "name": "create_offer_checkout_record",
           "qualname": "create_offer_checkout_record"
@@ -46918,7 +46930,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2011,
+          "line": 2021,
           "module_id": "products.masterclass.runtime",
           "name": "recipe_gate",
           "qualname": "recipe_gate"
@@ -46926,7 +46938,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2160,
+          "line": 2170,
           "module_id": "products.masterclass.runtime",
           "name": "admin_embed_tokens",
           "qualname": "admin_embed_tokens"
@@ -46934,7 +46946,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2174,
+          "line": 2184,
           "module_id": "products.masterclass.runtime",
           "name": "admin_masterclass_users",
           "qualname": "admin_masterclass_users"
@@ -46942,7 +46954,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2203,
+          "line": 2213,
           "module_id": "products.masterclass.runtime",
           "name": "admin_set_test_profile",
           "qualname": "admin_set_test_profile"
@@ -46950,7 +46962,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2231,
+          "line": 2241,
           "module_id": "products.masterclass.runtime",
           "name": "admin_reset_test_profile",
           "qualname": "admin_reset_test_profile"
@@ -46958,7 +46970,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2258,
+          "line": 2268,
           "module_id": "products.masterclass.runtime",
           "name": "admin_client_progress",
           "qualname": "admin_client_progress"
@@ -46966,7 +46978,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2321,
+          "line": 2331,
           "module_id": "products.masterclass.runtime",
           "name": "admin_masterclass_summary",
           "qualname": "admin_masterclass_summary"
@@ -46974,7 +46986,7 @@
         {
           "file": "backend/app/masterclass_routes.py",
           "kind": "function",
-          "line": 2359,
+          "line": 2369,
           "module_id": "products.masterclass.runtime",
           "name": "admin_masterclass_notifications",
           "qualname": "admin_masterclass_notifications"
@@ -47566,7 +47578,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1424,
+          "line": 1427,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
           "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -47574,7 +47586,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1445,
+          "line": 1451,
           "module_id": "products.masterclass.runtime",
           "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
           "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -47582,7 +47594,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1517,
+          "line": 1523,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
           "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -47590,7 +47602,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1545,
+          "line": 1551,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
           "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -47598,7 +47610,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1593,
+          "line": 1599,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_preview_uses_production_offer_builder",
           "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -47606,7 +47618,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1615,
+          "line": 1621,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -47614,7 +47626,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1669,
+          "line": 1675,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
           "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -47622,7 +47634,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1689,
+          "line": 1695,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -47630,7 +47642,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1714,
+          "line": 1720,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
           "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -47638,7 +47650,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1737,
+          "line": 1743,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
           "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -47646,7 +47658,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1754,
+          "line": 1760,
           "module_id": "products.masterclass.runtime",
           "name": "test_checkout_rejects_token_from_another_offer_stage",
           "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -47654,7 +47666,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1767,
+          "line": 1773,
           "module_id": "products.masterclass.runtime",
           "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
           "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -47662,7 +47674,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1801,
+          "line": 1807,
           "module_id": "products.masterclass.runtime",
           "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
           "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -47670,7 +47682,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1836,
+          "line": 1842,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
           "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -47678,7 +47690,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1886,
+          "line": 1892,
           "module_id": "products.masterclass.runtime",
           "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
           "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -47686,7 +47698,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1912,
+          "line": 1918,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
           "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -47694,7 +47706,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1932,
+          "line": 1938,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
           "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -47702,7 +47714,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1964,
+          "line": 1970,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_21_day_offer_placements_select_expected_stages",
           "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -47710,7 +47722,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1982,
+          "line": 1988,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
           "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -47718,7 +47730,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2132,
+          "line": 2138,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
           "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -47726,7 +47738,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2166,
+          "line": 2172,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_enable_isolated_accelerated_course_profile",
           "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -47734,7 +47746,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2187,
+          "line": 2193,
           "module_id": "products.masterclass.runtime",
           "name": "test_closing_review_sends_one_copy_only_after_submit",
           "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -47742,7 +47754,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2233,
+          "line": 2239,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_content_uses_the_same_member_session",
           "qualname": "test_course_content_uses_the_same_member_session"
@@ -47750,7 +47762,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2253,
+          "line": 2259,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_gate_uses_access_and_records_open_once",
           "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -47758,7 +47770,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2315,
+          "line": 2321,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
           "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -47766,7 +47778,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2326,
+          "line": 2332,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
           "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -47774,7 +47786,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2351,
+          "line": 2357,
           "module_id": "products.masterclass.runtime",
           "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
           "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -47782,7 +47794,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2403,
+          "line": 2409,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
           "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -47790,7 +47802,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2433,
+          "line": 2439,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_19_fixes_review_and_last_week_timeline_once",
           "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -47798,7 +47810,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2458,
+          "line": 2464,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_21_during_review_only_shows_its_existing_remainder",
           "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -47806,7 +47818,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2484,
+          "line": 2490,
           "module_id": "products.masterclass.runtime",
           "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
           "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -47814,7 +47826,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2521,
+          "line": 2527,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
           "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -47822,7 +47834,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2543,
+          "line": 2549,
           "module_id": "products.masterclass.runtime",
           "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
           "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -48005,7 +48017,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1590,
+          "line": 1593,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -48013,7 +48025,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1607,
+          "line": 1610,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -48021,7 +48033,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1542,
+          "line": 1545,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -48029,7 +48041,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1557,
+          "line": 1560,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -48067,7 +48079,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1542,
+          "line": 1545,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -48075,7 +48087,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1557,
+          "line": 1560,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -48083,7 +48095,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1590,
+          "line": 1593,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -48091,7 +48103,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1607,
+          "line": 1610,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -48127,6 +48139,7 @@
         "показывать отдельный `noindex`-предпросмотр полотна реальных отзывов до его",
         "проверять в этом предпросмотре одиночный голосовой отзыв: воспроизводить",
         "хранить часто изменяемый текст продуктовых мини-страниц, FAQ и содержательных",
+        "отдавать карточку программы рецептов из одного Markdown-канона и на главную, и в",
         "безопасно рендерить Markdown через общий редакционный renderer;",
         "читать тарифы только из канонического pricing catalog;",
         "в новой Tilda-вставке открывать единый прямой checkout Robokassa по",
@@ -48300,6 +48313,14 @@
         {
           "module_id": "products.public-site",
           "path": "backend/app/static/homepage.js"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/public-program-card.css"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/app/static/public-program-card.js"
         },
         {
           "module_id": "products.public-site",
@@ -49491,6 +49512,14 @@
           "qualname": "restoreOffer"
         },
         {
+          "file": "backend/app/static/public-program-card.js",
+          "kind": "function",
+          "line": 3,
+          "module_id": "products.public-site",
+          "name": "enhance",
+          "qualname": "enhance"
+        },
+        {
           "file": "backend/app/static/site-header.js",
           "kind": "function",
           "line": 47,
@@ -50063,13 +50092,21 @@
           "kind": "function",
           "line": 60,
           "module_id": "products.public-site",
+          "name": "test_recipes_program_keeps_structured_sections_from_its_canonical_markdown",
+          "qualname": "test_recipes_program_keeps_structured_sections_from_its_canonical_markdown"
+        },
+        {
+          "file": "backend/tests/test_public_site_content.py",
+          "kind": "function",
+          "line": 70,
+          "module_id": "products.public-site",
           "name": "test_accepted_approach_copy_is_seeded_and_rendered",
           "qualname": "test_accepted_approach_copy_is_seeded_and_rendered"
         },
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 72,
+          "line": 82,
           "module_id": "products.public-site",
           "name": "test_accepted_approach_copy_replaces_an_existing_active_version",
           "qualname": "test_accepted_approach_copy_replaces_an_existing_active_version"
@@ -50077,7 +50114,7 @@
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 97,
+          "line": 107,
           "module_id": "products.public-site",
           "name": "test_faq_is_returned_as_structured_items",
           "qualname": "test_faq_is_returned_as_structured_items"
@@ -50085,7 +50122,7 @@
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 107,
+          "line": 117,
           "module_id": "products.public-site",
           "name": "test_admin_update_creates_version_and_rejects_stale_write",
           "qualname": "test_admin_update_creates_version_and_rejects_stale_write"
@@ -50093,7 +50130,7 @@
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 126,
+          "line": 136,
           "module_id": "products.public-site",
           "name": "test_public_markdown_sanitizes_script_and_rejects_missing_document",
           "qualname": "test_public_markdown_sanitizes_script_and_rejects_missing_document"
@@ -50101,7 +50138,7 @@
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 143,
+          "line": 153,
           "module_id": "products.public-site",
           "name": "test_faq_rejects_missing_questions_and_empty_answers",
           "qualname": "test_faq_rejects_missing_questions_and_empty_answers"
@@ -50109,7 +50146,7 @@
         {
           "file": "backend/tests/test_public_site_content.py",
           "kind": "function",
-          "line": 154,
+          "line": 164,
           "module_id": "products.public-site",
           "name": "test_public_site_editor_requires_admin",
           "qualname": "test_public_site_editor_requires_admin"
@@ -50928,7 +50965,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1345,
+          "line": 1348,
           "method": "GET",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -50936,7 +50973,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1345,
+          "line": 1348,
           "method": "POST",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -50990,7 +51027,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1345,
+          "line": 1348,
           "module_id": "products.strength",
           "name": "strength_legacy",
           "qualname": "strength_legacy"
@@ -51834,6 +51871,11 @@
       "type": "depends_on"
     },
     {
+      "source": "products.masterclass.offers",
+      "target": "products.public-site",
+      "type": "depends_on"
+    },
+    {
       "source": "products.masterclass.questionnaires",
       "target": "products.masterclass.runtime",
       "type": "depends_on"
@@ -51846,6 +51888,11 @@
     {
       "source": "products.masterclass.runtime",
       "target": "platform.commerce",
+      "type": "depends_on"
+    },
+    {
+      "source": "products.masterclass.runtime",
+      "target": "products.public-site",
       "type": "depends_on"
     },
     {
@@ -52094,6 +52141,11 @@
       "type": "reads_from"
     },
     {
+      "source": "products.masterclass.offers",
+      "target": "products.public-site",
+      "type": "reads_from"
+    },
+    {
       "source": "products.masterclass.runtime",
       "target": "platform",
       "type": "reads_from"
@@ -52136,7 +52188,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1225,
+      "line": 1228,
       "method": "POST",
       "module_id": "products.dqs",
       "path": "/admin/api/apps/dqs/users/{user_id}/runtime",
@@ -52144,7 +52196,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1590,
+      "line": 1593,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -52152,7 +52204,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1607,
+      "line": 1610,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -52160,7 +52212,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1642,
+      "line": 1645,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -52168,7 +52220,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1794,
+      "line": 1797,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -52176,7 +52228,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1847,
+      "line": 1850,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -52696,7 +52748,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1760,
+      "line": 1763,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -52968,7 +53020,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1082,
+      "line": 1085,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/api/apps/dqs",
@@ -52976,7 +53028,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1256,
+      "line": 1259,
       "method": "GET",
       "module_id": "products.dqs",
       "path": "/api/apps/dqs/access",
@@ -52984,7 +53036,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1542,
+      "line": 1545,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -52992,7 +53044,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1557,
+      "line": 1560,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -53080,7 +53132,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1345,
+      "line": 1348,
       "method": "GET",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -53088,7 +53140,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1345,
+      "line": 1348,
       "method": "POST",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -53152,7 +53204,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 847,
+      "line": 850,
       "method": "POST",
       "module_id": "products.intensive",
       "path": "/api/intensive/day-{day_number}/post/{messenger}",
@@ -53160,7 +53212,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 787,
+      "line": 790,
       "method": "POST",
       "module_id": "products.intensive",
       "path": "/api/intensive/events",
@@ -53168,7 +53220,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 818,
+      "line": 821,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/api/intensive/offer-token",
@@ -53176,7 +53228,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 762,
+      "line": 765,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/api/intensive/state",
@@ -53248,7 +53300,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1896,
+      "line": 1906,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/account-offers",
@@ -53256,7 +53308,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1936,
+      "line": 1946,
       "method": "POST",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/account-offers/checkout",
@@ -53264,7 +53316,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2258,
+      "line": 2268,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/client-progress",
@@ -53272,7 +53324,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2160,
+      "line": 2170,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/embed-tokens",
@@ -53280,7 +53332,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2359,
+      "line": 2369,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/notifications",
@@ -53288,7 +53340,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2070,
+      "line": 2080,
       "method": "POST",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/offer-preview",
@@ -53296,7 +53348,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2103,
+      "line": 2113,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/offer-preview/clients",
@@ -53304,7 +53356,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2124,
+      "line": 2134,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/offer-preview/clients/{user_id}",
@@ -53312,7 +53364,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2064,
+      "line": 2074,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/offer-stages",
@@ -53320,7 +53372,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2300,
+      "line": 2310,
       "method": "PUT",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/offer-stages/{stage_code}",
@@ -53328,7 +53380,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2321,
+      "line": 2331,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/summary",
@@ -53336,7 +53388,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2203,
+      "line": 2213,
       "method": "PUT",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/test-profile",
@@ -53344,7 +53396,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2231,
+      "line": 2241,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/test-profile/reset",
@@ -53352,7 +53404,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2326,
+      "line": 2336,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/admin/user-offers",
@@ -53360,7 +53412,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2174,
+      "line": 2184,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/admin/users",
@@ -53368,7 +53420,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1265,
+      "line": 1269,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/apps/{app_code}/reveal",
@@ -53376,7 +53428,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1916,
+      "line": 1926,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/checkout",
@@ -53384,7 +53436,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 749,
+      "line": 753,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course",
@@ -53392,7 +53444,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 774,
+      "line": 778,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/content/{asset_name}",
@@ -53400,7 +53452,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 912,
+      "line": 916,
       "method": "PUT",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/days/{day}/checks/{index}",
@@ -53408,7 +53460,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 792,
+      "line": 796,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/days/{day}/open",
@@ -53416,7 +53468,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 809,
+      "line": 813,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/days/{day}/steps/{index}/complete",
@@ -53424,7 +53476,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 878,
+      "line": 882,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/days/{day}/task/open",
@@ -53432,7 +53484,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 701,
+      "line": 705,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/manifest",
@@ -53440,7 +53492,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 712,
+      "line": 716,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/course/materials",
@@ -53448,7 +53500,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1203,
+      "line": 1207,
       "method": "POST",
       "module_id": "products.masterclass.messenger-links",
       "path": "/api/masterclass/dqs/link-to-telegram",
@@ -53456,7 +53508,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1111,
+      "line": 1115,
       "method": "POST",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/events",
@@ -53464,7 +53516,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 2011,
+      "line": 2021,
       "method": "GET",
       "module_id": "products.masterclass.runtime",
       "path": "/api/masterclass/gate/{part}",
@@ -53472,7 +53524,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1130,
+      "line": 1134,
       "method": "POST",
       "module_id": "products.masterclass.messenger-links",
       "path": "/api/masterclass/messenger-links",
@@ -53480,7 +53532,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1176,
+      "line": 1180,
       "method": "GET",
       "module_id": "products.masterclass.messenger-links",
       "path": "/api/masterclass/messenger-links/status",
@@ -53488,7 +53540,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1877,
+      "line": 1887,
       "method": "GET",
       "module_id": "products.masterclass.offers",
       "path": "/api/masterclass/offers",
@@ -53496,7 +53548,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1006,
+      "line": 1010,
       "method": "GET",
       "module_id": "products.masterclass.questionnaires",
       "path": "/api/masterclass/questionnaires/{kind}",
@@ -53504,7 +53556,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1036,
+      "line": 1040,
       "method": "PUT",
       "module_id": "products.masterclass.questionnaires",
       "path": "/api/masterclass/questionnaires/{kind}/answer",
@@ -53512,7 +53564,7 @@
     },
     {
       "file": "backend/app/masterclass_routes.py",
-      "line": 1058,
+      "line": 1062,
       "method": "POST",
       "module_id": "products.masterclass.questionnaires",
       "path": "/api/masterclass/questionnaires/{kind}/{action}",
@@ -54328,7 +54380,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 702,
+      "line": 705,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive",
@@ -54336,7 +54388,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 702,
+      "line": 705,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive",
@@ -54344,7 +54396,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 686,
+      "line": 689,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/assets/{day_code}/{asset_name}",
@@ -54352,7 +54404,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 676,
+      "line": 679,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive-components.css",
@@ -54360,7 +54412,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 653,
+      "line": 656,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.css",
@@ -54368,7 +54420,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 658,
+      "line": 661,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/intensive.js",
@@ -54376,7 +54428,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 681,
+      "line": 684,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/max-full-colored-official.png",
@@ -54384,7 +54436,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 702,
+      "line": 705,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/menu",
@@ -54392,7 +54444,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 663,
+      "line": 666,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/runtime.js",
@@ -54400,7 +54452,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 732,
+      "line": 735,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/start",
@@ -54408,7 +54460,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 668,
+      "line": 671,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/tilda-loader.js",
@@ -54416,7 +54468,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 917,
+      "line": 920,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}",
@@ -54424,7 +54476,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 907,
+      "line": 910,
       "method": "GET",
       "module_id": "products.intensive",
       "path": "/intensive/{day_code}.html",
@@ -54440,7 +54492,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 636,
+      "line": 639,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal",
@@ -54448,7 +54500,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 636,
+      "line": 639,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal",
@@ -54456,7 +54508,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 641,
+      "line": 644,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/legal.css",
@@ -54464,7 +54516,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 646,
+      "line": 649,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}",
@@ -54472,7 +54524,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 628,
+      "line": 631,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/legal/{document_code}.html",
@@ -55988,7 +56040,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 628,
+      "line": 631,
       "module_id": "platform.commerce",
       "name": "legal_document",
       "qualname": "legal_document"
@@ -55996,7 +56048,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 636,
+      "line": 639,
       "module_id": "platform.commerce",
       "name": "legal_index",
       "qualname": "legal_index"
@@ -56004,7 +56056,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 641,
+      "line": 644,
       "module_id": "platform.commerce",
       "name": "legal_stylesheet",
       "qualname": "legal_stylesheet"
@@ -56012,7 +56064,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 646,
+      "line": 649,
       "module_id": "platform.commerce",
       "name": "legal_document_friendly",
       "qualname": "legal_document_friendly"
@@ -56020,7 +56072,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 653,
+      "line": 656,
       "module_id": "products.intensive",
       "name": "intensive_stylesheet",
       "qualname": "intensive_stylesheet"
@@ -56028,7 +56080,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 658,
+      "line": 661,
       "module_id": "products.intensive",
       "name": "intensive_script",
       "qualname": "intensive_script"
@@ -56036,7 +56088,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 663,
+      "line": 666,
       "module_id": "products.intensive",
       "name": "intensive_runtime_script",
       "qualname": "intensive_runtime_script"
@@ -56044,7 +56096,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 668,
+      "line": 671,
       "module_id": "products.intensive",
       "name": "intensive_tilda_loader",
       "qualname": "intensive_tilda_loader"
@@ -56052,7 +56104,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 676,
+      "line": 679,
       "module_id": "products.intensive",
       "name": "intensive_components_stylesheet",
       "qualname": "intensive_components_stylesheet"
@@ -56060,7 +56112,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 681,
+      "line": 684,
       "module_id": "products.intensive",
       "name": "intensive_max_logo",
       "qualname": "intensive_max_logo"
@@ -56068,7 +56120,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 686,
+      "line": 689,
       "module_id": "products.intensive",
       "name": "intensive_content_asset",
       "qualname": "intensive_content_asset"
@@ -56076,7 +56128,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 702,
+      "line": 705,
       "module_id": "products.intensive",
       "name": "intensive_menu",
       "qualname": "intensive_menu"
@@ -56084,7 +56136,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 732,
+      "line": 735,
       "module_id": "products.intensive",
       "name": "intensive_entry",
       "qualname": "intensive_entry"
@@ -56092,7 +56144,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 762,
+      "line": 765,
       "module_id": "products.intensive",
       "name": "intensive_state",
       "qualname": "intensive_state"
@@ -56100,7 +56152,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 787,
+      "line": 790,
       "module_id": "products.intensive",
       "name": "intensive_client_event",
       "qualname": "intensive_client_event"
@@ -56108,7 +56160,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 818,
+      "line": 821,
       "module_id": "products.intensive",
       "name": "intensive_offer_token",
       "qualname": "intensive_offer_token"
@@ -56116,7 +56168,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 847,
+      "line": 850,
       "module_id": "products.intensive",
       "name": "intensive_post_target",
       "qualname": "intensive_post_target"
@@ -56124,7 +56176,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 886,
+      "line": 889,
       "module_id": "products",
       "name": "intensive_day_asset",
       "qualname": "intensive_day_asset"
@@ -56132,7 +56184,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 907,
+      "line": 910,
       "module_id": "products.intensive",
       "name": "intensive_day_html",
       "qualname": "intensive_day_html"
@@ -56140,7 +56192,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 917,
+      "line": 920,
       "module_id": "products.intensive",
       "name": "intensive_day_friendly",
       "qualname": "intensive_day_friendly"
@@ -56148,7 +56200,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 926,
+      "line": 929,
       "module_id": "products",
       "name": "error",
       "qualname": "error"
@@ -56156,7 +56208,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 930,
+      "line": 933,
       "module_id": "products",
       "name": "jsonp",
       "qualname": "jsonp"
@@ -56164,7 +56216,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 937,
+      "line": 940,
       "module_id": "products",
       "name": "empty_strength_state",
       "qualname": "empty_strength_state"
@@ -56172,7 +56224,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 984,
+      "line": 987,
       "module_id": "products",
       "name": "strength_account_catalog",
       "qualname": "strength_account_catalog"
@@ -56180,7 +56232,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1063,
+      "line": 1066,
       "module_id": "products",
       "name": "app_resource_codes",
       "qualname": "app_resource_codes"
@@ -56188,7 +56240,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1069,
+      "line": 1072,
       "module_id": "products",
       "name": "empty_app_state",
       "qualname": "empty_app_state"
@@ -56196,7 +56248,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1082,
+      "line": 1085,
       "module_id": "products.dqs",
       "name": "dqs_legacy_get",
       "qualname": "dqs_legacy_get"
@@ -56204,7 +56256,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1104,
+      "line": 1107,
       "module_id": "products",
       "name": "apply_dqs_action",
       "qualname": "apply_dqs_action"
@@ -56212,7 +56264,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1225,
+      "line": 1228,
       "module_id": "products.dqs",
       "name": "admin_dqs_runtime",
       "qualname": "admin_dqs_runtime"
@@ -56220,7 +56272,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1256,
+      "line": 1259,
       "module_id": "products.dqs",
       "name": "dqs_access_status",
       "qualname": "dqs_access_status"
@@ -56228,7 +56280,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1270,
+      "line": 1273,
       "module_id": "products",
       "name": "strength_payload",
       "qualname": "strength_payload"
@@ -56236,7 +56288,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1345,
+      "line": 1348,
       "module_id": "products.strength",
       "name": "strength_legacy",
       "qualname": "strength_legacy"
@@ -56244,7 +56296,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1542,
+      "line": 1545,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -56252,7 +56304,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1557,
+      "line": 1560,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -56260,7 +56312,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1576,
+      "line": 1579,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -56268,7 +56320,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1590,
+      "line": 1593,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -56276,7 +56328,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1607,
+      "line": 1610,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -56284,7 +56336,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1642,
+      "line": 1645,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -56292,7 +56344,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1711,
+      "line": 1714,
       "module_id": "products",
       "name": "admin_state_has_records",
       "qualname": "admin_state_has_records"
@@ -56300,7 +56352,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1719,
+      "line": 1722,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -56308,7 +56360,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1744,
+      "line": 1747,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -56316,7 +56368,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1760,
+      "line": 1763,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -56324,7 +56376,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1794,
+      "line": 1797,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -56332,7 +56384,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1830,
+      "line": 1833,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -56340,7 +56392,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1847,
+      "line": 1850,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -61484,7 +61536,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 181,
+      "line": 179,
       "module_id": "products.masterclass.offers",
       "name": "offer_products",
       "qualname": "offer_products"
@@ -61492,7 +61544,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 206,
+      "line": 204,
       "module_id": "products.masterclass.offers",
       "name": "bundle_detail",
       "qualname": "bundle_detail"
@@ -61500,7 +61552,7 @@
     {
       "file": "backend/app/masterclass_offer_catalog.py",
       "kind": "function",
-      "line": 211,
+      "line": 209,
       "module_id": "products.masterclass.offers",
       "name": "partial_bundle_copy",
       "qualname": "partial_bundle_copy"
@@ -61508,7 +61560,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 132,
+      "line": 136,
       "module_id": "products.masterclass.runtime",
       "name": "aware_utc",
       "qualname": "aware_utc"
@@ -61516,7 +61568,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 137,
+      "line": 141,
       "module_id": "products.masterclass.runtime",
       "name": "AnswerIn",
       "qualname": "AnswerIn"
@@ -61524,7 +61576,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 143,
+      "line": 147,
       "module_id": "products.masterclass.runtime",
       "name": "RunActionIn",
       "qualname": "RunActionIn"
@@ -61532,7 +61584,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 148,
+      "line": 152,
       "module_id": "products.masterclass.runtime",
       "name": "AppRevealIn",
       "qualname": "AppRevealIn"
@@ -61540,7 +61592,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 155,
+      "line": 159,
       "module_id": "products.masterclass.runtime",
       "name": "CourseCheckIn",
       "qualname": "CourseCheckIn"
@@ -61548,7 +61600,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 160,
+      "line": 164,
       "module_id": "products.masterclass.runtime",
       "name": "EventIn",
       "qualname": "EventIn"
@@ -61556,7 +61608,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 167,
+      "line": 171,
       "module_id": "products.masterclass.runtime",
       "name": "MessengerLinkIn",
       "qualname": "MessengerLinkIn"
@@ -61564,7 +61616,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 172,
+      "line": 176,
       "module_id": "products.masterclass.runtime",
       "name": "CheckoutIn",
       "qualname": "CheckoutIn"
@@ -61572,7 +61624,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 179,
+      "line": 183,
       "module_id": "products.masterclass.runtime",
       "name": "AccountOfferCheckoutIn",
       "qualname": "AccountOfferCheckoutIn"
@@ -61580,7 +61632,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 185,
+      "line": 189,
       "module_id": "products.masterclass.runtime",
       "name": "StageUpdateIn",
       "qualname": "StageUpdateIn"
@@ -61588,7 +61640,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 192,
+      "line": 196,
       "module_id": "products.masterclass.runtime",
       "name": "AdminOfferPreviewIn",
       "qualname": "AdminOfferPreviewIn"
@@ -61596,7 +61648,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "class",
-      "line": 200,
+      "line": 204,
       "module_id": "products.masterclass.runtime",
       "name": "TestProfileIn",
       "qualname": "TestProfileIn"
@@ -61604,7 +61656,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 207,
+      "line": 211,
       "module_id": "products.masterclass.runtime",
       "name": "test_profile",
       "qualname": "test_profile"
@@ -61612,7 +61664,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 212,
+      "line": 216,
       "module_id": "products.masterclass.runtime",
       "name": "course_timezone",
       "qualname": "course_timezone"
@@ -61620,7 +61672,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 222,
+      "line": 226,
       "module_id": "products.masterclass.runtime",
       "name": "next_local_unlock_at",
       "qualname": "next_local_unlock_at"
@@ -61628,7 +61680,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 239,
+      "line": 243,
       "module_id": "products.masterclass.runtime",
       "name": "scheduled_unlock_at",
       "qualname": "scheduled_unlock_at"
@@ -61636,7 +61688,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 253,
+      "line": 257,
       "module_id": "products.masterclass.runtime",
       "name": "masterclass_fully_unlocked",
       "qualname": "masterclass_fully_unlocked"
@@ -61644,7 +61696,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 267,
+      "line": 271,
       "module_id": "products.masterclass.runtime",
       "name": "notification_due",
       "qualname": "notification_due"
@@ -61652,7 +61704,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 272,
+      "line": 276,
       "module_id": "products.masterclass.runtime",
       "name": "unopened_day_reminder_due",
       "qualname": "unopened_day_reminder_due"
@@ -61660,7 +61712,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 287,
+      "line": 291,
       "module_id": "products.masterclass.runtime",
       "name": "resolve_masterclass_user",
       "qualname": "resolve_masterclass_user"
@@ -61668,7 +61720,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 303,
+      "line": 307,
       "module_id": "products.masterclass.runtime",
       "name": "course_step_kinds",
       "qualname": "course_step_kinds"
@@ -61676,7 +61728,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 313,
+      "line": 317,
       "module_id": "products.masterclass.runtime",
       "name": "current_required_step_ids",
       "qualname": "current_required_step_ids"
@@ -61684,7 +61736,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 325,
+      "line": 329,
       "module_id": "products.masterclass.runtime",
       "name": "course_event",
       "qualname": "course_event"
@@ -61692,7 +61744,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 381,
+      "line": 385,
       "module_id": "products.masterclass.runtime",
       "name": "day_progress",
       "qualname": "day_progress"
@@ -61700,7 +61752,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 392,
+      "line": 396,
       "module_id": "products.masterclass.runtime",
       "name": "course_day_unlock_at",
       "qualname": "course_day_unlock_at"
@@ -61708,7 +61760,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 403,
+      "line": 407,
       "module_id": "products.masterclass.runtime",
       "name": "course_day_can_open",
       "qualname": "course_day_can_open"
@@ -61716,7 +61768,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 421,
+      "line": 425,
       "module_id": "products.masterclass.runtime",
       "name": "open_course_day",
       "qualname": "open_course_day"
@@ -61724,7 +61776,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 466,
+      "line": 470,
       "module_id": "products.masterclass.runtime",
       "name": "completed_step_indexes",
       "qualname": "completed_step_indexes"
@@ -61732,7 +61784,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 477,
+      "line": 481,
       "module_id": "products.masterclass.runtime",
       "name": "required_step_indexes",
       "qualname": "required_step_indexes"
@@ -61740,7 +61792,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 488,
+      "line": 492,
       "module_id": "products.masterclass.runtime",
       "name": "finalize_course_day",
       "qualname": "finalize_course_day"
@@ -61748,7 +61800,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 538,
+      "line": 542,
       "module_id": "products.masterclass.runtime",
       "name": "reconcile_course_progress",
       "qualname": "reconcile_course_progress"
@@ -61756,7 +61808,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 563,
+      "line": 567,
       "module_id": "products.masterclass.runtime",
       "name": "course_payload",
       "qualname": "course_payload"
@@ -61764,7 +61816,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 701,
+      "line": 705,
       "module_id": "products.masterclass.runtime",
       "name": "course_manifest",
       "qualname": "course_manifest"
@@ -61772,7 +61824,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 712,
+      "line": 716,
       "module_id": "products.masterclass.runtime",
       "name": "course_materials",
       "qualname": "course_materials"
@@ -61780,7 +61832,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 728,
+      "line": 732,
       "module_id": "products.masterclass.runtime",
       "name": "course_step_event",
       "qualname": "course_step_event"
@@ -61788,7 +61840,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 749,
+      "line": 753,
       "module_id": "products.masterclass.runtime",
       "name": "course_state",
       "qualname": "course_state"
@@ -61796,7 +61848,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 774,
+      "line": 778,
       "module_id": "products.masterclass.runtime",
       "name": "course_content",
       "qualname": "course_content"
@@ -61804,7 +61856,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 792,
+      "line": 796,
       "module_id": "products.masterclass.runtime",
       "name": "course_open_day",
       "qualname": "course_open_day"
@@ -61812,7 +61864,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 809,
+      "line": 813,
       "module_id": "products.masterclass.runtime",
       "name": "course_complete_step",
       "qualname": "course_complete_step"
@@ -61820,7 +61872,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 878,
+      "line": 882,
       "module_id": "products.masterclass.runtime",
       "name": "course_open_task",
       "qualname": "course_open_task"
@@ -61828,7 +61880,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 912,
+      "line": 916,
       "module_id": "products.masterclass.runtime",
       "name": "course_update_check",
       "qualname": "course_update_check"
@@ -61836,7 +61888,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 946,
+      "line": 950,
       "module_id": "products.masterclass.runtime",
       "name": "questions",
       "qualname": "questions"
@@ -61844,7 +61896,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 953,
+      "line": 957,
       "module_id": "products.masterclass.runtime",
       "name": "consultation_description_url",
       "qualname": "consultation_description_url"
@@ -61852,7 +61904,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 961,
+      "line": 965,
       "module_id": "products.masterclass.runtime",
       "name": "get_run",
       "qualname": "get_run"
@@ -61860,7 +61912,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 969,
+      "line": 973,
       "module_id": "products.masterclass.runtime",
       "name": "queue_notification",
       "qualname": "queue_notification"
@@ -61868,7 +61920,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 975,
+      "line": 979,
       "module_id": "products.masterclass.runtime",
       "name": "queue_offer_last_chance",
       "qualname": "queue_offer_last_chance"
@@ -61876,7 +61928,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1006,
+      "line": 1010,
       "module_id": "products.masterclass.questionnaires",
       "name": "questionnaire",
       "qualname": "questionnaire"
@@ -61884,7 +61936,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1036,
+      "line": 1040,
       "module_id": "products.masterclass.questionnaires",
       "name": "save_answer",
       "qualname": "save_answer"
@@ -61892,7 +61944,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1058,
+      "line": 1062,
       "module_id": "products.masterclass.questionnaires",
       "name": "finish_questionnaire",
       "qualname": "finish_questionnaire"
@@ -61900,7 +61952,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1111,
+      "line": 1115,
       "module_id": "products.masterclass.runtime",
       "name": "record_event",
       "qualname": "record_event"
@@ -61908,7 +61960,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1130,
+      "line": 1134,
       "module_id": "products.masterclass.messenger-links",
       "name": "create_messenger_link",
       "qualname": "create_messenger_link"
@@ -61916,7 +61968,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1176,
+      "line": 1180,
       "module_id": "products.masterclass.messenger-links",
       "name": "messenger_link_status",
       "qualname": "messenger_link_status"
@@ -61924,7 +61976,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1203,
+      "line": 1207,
       "module_id": "products.masterclass.messenger-links",
       "name": "send_dqs_link_to_telegram",
       "qualname": "send_dqs_link_to_telegram"
@@ -61932,7 +61984,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1265,
+      "line": 1269,
       "module_id": "products.masterclass.runtime",
       "name": "reveal_course_application",
       "qualname": "reveal_course_application"
@@ -61940,7 +61992,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1346,
+      "line": 1350,
       "module_id": "products.masterclass.runtime",
       "name": "access_codes",
       "qualname": "access_codes"
@@ -61948,7 +62000,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1351,
+      "line": 1355,
       "module_id": "products.masterclass.runtime",
       "name": "configured_offer_stage",
       "qualname": "configured_offer_stage"
@@ -61956,7 +62008,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1360,
+      "line": 1364,
       "module_id": "products.masterclass.runtime",
       "name": "create_offer_window",
       "qualname": "create_offer_window"
@@ -61964,7 +62016,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1392,
+      "line": 1396,
       "module_id": "products.masterclass.runtime",
       "name": "schedule_last_week_from_review",
       "qualname": "schedule_last_week_from_review"
@@ -61972,7 +62024,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1408,
+      "line": 1412,
       "module_id": "products.masterclass.runtime",
       "name": "timeline_stage",
       "qualname": "timeline_stage"
@@ -61980,7 +62032,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1427,
+      "line": 1431,
       "module_id": "products.masterclass.runtime",
       "name": "offer_stage",
       "qualname": "offer_stage"
@@ -61988,7 +62040,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1505,
+      "line": 1509,
       "module_id": "products.masterclass.runtime",
       "name": "offer_checkout_order",
       "qualname": "offer_checkout_order"
@@ -61996,7 +62048,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1509,
+      "line": 1513,
       "module_id": "products.masterclass.runtime",
       "name": "build_offers",
       "qualname": "build_offers"
@@ -62004,7 +62056,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1558,
+      "line": 1562,
       "module_id": "products.masterclass.runtime",
       "name": "catalog_amount",
       "qualname": "build_offers.catalog_amount"
@@ -62012,7 +62064,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1566,
+      "line": 1570,
       "module_id": "products.masterclass.runtime",
       "name": "standard_amount",
       "qualname": "build_offers.standard_amount"
@@ -62020,7 +62072,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1582,
+      "line": 1586,
       "module_id": "products.masterclass.runtime",
       "name": "single_card",
       "qualname": "build_offers.single_card"
@@ -62028,7 +62080,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1597,
+      "line": 1601,
       "module_id": "products.masterclass.runtime",
       "name": "digital_bundle",
       "qualname": "build_offers.digital_bundle"
@@ -62036,7 +62088,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1653,
+      "line": 1657,
       "module_id": "products.masterclass.runtime",
       "name": "site_short_consultation_card",
       "qualname": "build_offers.site_short_consultation_card"
@@ -62044,7 +62096,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1877,
+      "line": 1887,
       "module_id": "products.masterclass.offers",
       "name": "offers",
       "qualname": "offers"
@@ -62052,7 +62104,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1896,
+      "line": 1906,
       "module_id": "products.masterclass.offers",
       "name": "account_offers",
       "qualname": "account_offers"
@@ -62060,7 +62112,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1916,
+      "line": 1926,
       "module_id": "products.masterclass.runtime",
       "name": "checkout",
       "qualname": "checkout"
@@ -62068,7 +62120,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1936,
+      "line": 1946,
       "module_id": "products.masterclass.offers",
       "name": "account_offer_checkout",
       "qualname": "account_offer_checkout"
@@ -62076,7 +62128,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1959,
+      "line": 1969,
       "module_id": "products.masterclass.runtime",
       "name": "create_offer_checkout",
       "qualname": "create_offer_checkout"
@@ -62084,7 +62136,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 1966,
+      "line": 1976,
       "module_id": "products.masterclass.runtime",
       "name": "create_offer_checkout_record",
       "qualname": "create_offer_checkout_record"
@@ -62092,7 +62144,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2011,
+      "line": 2021,
       "module_id": "products.masterclass.runtime",
       "name": "recipe_gate",
       "qualname": "recipe_gate"
@@ -62100,7 +62152,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2064,
+      "line": 2074,
       "module_id": "products.masterclass.offers",
       "name": "admin_offer_stages",
       "qualname": "admin_offer_stages"
@@ -62108,7 +62160,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2070,
+      "line": 2080,
       "module_id": "products.masterclass.offers",
       "name": "admin_offer_preview",
       "qualname": "admin_offer_preview"
@@ -62116,7 +62168,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2103,
+      "line": 2113,
       "module_id": "products.masterclass.offers",
       "name": "admin_offer_preview_clients",
       "qualname": "admin_offer_preview_clients"
@@ -62124,7 +62176,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2124,
+      "line": 2134,
       "module_id": "products.masterclass.offers",
       "name": "admin_offer_preview_client_context",
       "qualname": "admin_offer_preview_client_context"
@@ -62132,7 +62184,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2160,
+      "line": 2170,
       "module_id": "products.masterclass.runtime",
       "name": "admin_embed_tokens",
       "qualname": "admin_embed_tokens"
@@ -62140,7 +62192,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2174,
+      "line": 2184,
       "module_id": "products.masterclass.runtime",
       "name": "admin_masterclass_users",
       "qualname": "admin_masterclass_users"
@@ -62148,7 +62200,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2203,
+      "line": 2213,
       "module_id": "products.masterclass.runtime",
       "name": "admin_set_test_profile",
       "qualname": "admin_set_test_profile"
@@ -62156,7 +62208,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2231,
+      "line": 2241,
       "module_id": "products.masterclass.runtime",
       "name": "admin_reset_test_profile",
       "qualname": "admin_reset_test_profile"
@@ -62164,7 +62216,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2258,
+      "line": 2268,
       "module_id": "products.masterclass.runtime",
       "name": "admin_client_progress",
       "qualname": "admin_client_progress"
@@ -62172,7 +62224,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2300,
+      "line": 2310,
       "module_id": "products.masterclass.offers",
       "name": "admin_update_offer_stage",
       "qualname": "admin_update_offer_stage"
@@ -62180,7 +62232,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2321,
+      "line": 2331,
       "module_id": "products.masterclass.runtime",
       "name": "admin_masterclass_summary",
       "qualname": "admin_masterclass_summary"
@@ -62188,7 +62240,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2326,
+      "line": 2336,
       "module_id": "products.masterclass.offers",
       "name": "admin_masterclass_user_offers",
       "qualname": "admin_masterclass_user_offers"
@@ -62196,7 +62248,7 @@
     {
       "file": "backend/app/masterclass_routes.py",
       "kind": "function",
-      "line": 2359,
+      "line": 2369,
       "module_id": "products.masterclass.runtime",
       "name": "admin_masterclass_notifications",
       "qualname": "admin_masterclass_notifications"
@@ -66482,6 +66534,14 @@
       "qualname": "load"
     },
     {
+      "file": "backend/app/static/public-program-card.js",
+      "kind": "function",
+      "line": 3,
+      "module_id": "products.public-site",
+      "name": "enhance",
+      "qualname": "enhance"
+    },
+    {
       "file": "backend/app/static/site-cookie-notice.js",
       "kind": "function",
       "line": 13,
@@ -68324,7 +68384,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 739,
+      "line": 748,
       "module_id": "products",
       "name": "test_masterclass_first_day_article_and_image_layout_contract",
       "qualname": "test_masterclass_first_day_article_and_image_layout_contract"
@@ -68332,7 +68392,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 932,
+      "line": 941,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -68340,7 +68400,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 950,
+      "line": 959,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -68348,7 +68408,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 977,
+      "line": 986,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -68356,7 +68416,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1002,
+      "line": 1011,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -68364,7 +68424,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1016,
+      "line": 1025,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -68372,7 +68432,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1083,
+      "line": 1092,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -68380,7 +68440,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1099,
+      "line": 1108,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -68388,7 +68448,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1118,
+      "line": 1127,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -68396,7 +68456,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1208,
+      "line": 1217,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -68404,7 +68464,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1214,
+      "line": 1223,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -68412,7 +68472,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1227,
+      "line": 1236,
       "module_id": "products",
       "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
       "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -68420,7 +68480,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1261,
+      "line": 1270,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -68428,7 +68488,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1272,
+      "line": 1281,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -68436,7 +68496,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1286,
+      "line": 1295,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -70980,7 +71040,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1424,
+      "line": 1427,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
       "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -70988,7 +71048,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1445,
+      "line": 1451,
       "module_id": "products.masterclass.runtime",
       "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
       "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -70996,7 +71056,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1517,
+      "line": 1523,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
       "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -71004,7 +71064,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1545,
+      "line": 1551,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
       "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -71012,7 +71072,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1593,
+      "line": 1599,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_preview_uses_production_offer_builder",
       "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -71020,7 +71080,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1615,
+      "line": 1621,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -71028,7 +71088,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1669,
+      "line": 1675,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
       "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -71036,7 +71096,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1689,
+      "line": 1695,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -71044,7 +71104,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1714,
+      "line": 1720,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
       "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -71052,7 +71112,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1737,
+      "line": 1743,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
       "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -71060,7 +71120,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1754,
+      "line": 1760,
       "module_id": "products.masterclass.runtime",
       "name": "test_checkout_rejects_token_from_another_offer_stage",
       "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -71068,7 +71128,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1767,
+      "line": 1773,
       "module_id": "products.masterclass.runtime",
       "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
       "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -71076,7 +71136,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1801,
+      "line": 1807,
       "module_id": "products.masterclass.runtime",
       "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
       "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -71084,7 +71144,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1836,
+      "line": 1842,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
       "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -71092,7 +71152,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1886,
+      "line": 1892,
       "module_id": "products.masterclass.runtime",
       "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
       "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -71100,7 +71160,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1912,
+      "line": 1918,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
       "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -71108,7 +71168,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1932,
+      "line": 1938,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
       "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -71116,7 +71176,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1964,
+      "line": 1970,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_21_day_offer_placements_select_expected_stages",
       "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -71124,7 +71184,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1982,
+      "line": 1988,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
       "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -71132,7 +71192,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2132,
+      "line": 2138,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
       "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -71140,7 +71200,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2166,
+      "line": 2172,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_enable_isolated_accelerated_course_profile",
       "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -71148,7 +71208,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2187,
+      "line": 2193,
       "module_id": "products.masterclass.runtime",
       "name": "test_closing_review_sends_one_copy_only_after_submit",
       "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -71156,7 +71216,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2233,
+      "line": 2239,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_content_uses_the_same_member_session",
       "qualname": "test_course_content_uses_the_same_member_session"
@@ -71164,7 +71224,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2253,
+      "line": 2259,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_gate_uses_access_and_records_open_once",
       "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -71172,7 +71232,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2315,
+      "line": 2321,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
       "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -71180,7 +71240,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2326,
+      "line": 2332,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
       "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -71188,7 +71248,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2351,
+      "line": 2357,
       "module_id": "products.masterclass.runtime",
       "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
       "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -71196,7 +71256,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2403,
+      "line": 2409,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
       "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -71204,7 +71264,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2433,
+      "line": 2439,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_19_fixes_review_and_last_week_timeline_once",
       "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -71212,7 +71272,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2458,
+      "line": 2464,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_21_during_review_only_shows_its_existing_remainder",
       "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -71220,7 +71280,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2484,
+      "line": 2490,
       "module_id": "products.masterclass.runtime",
       "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
       "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -71228,7 +71288,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2521,
+      "line": 2527,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
       "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -71236,7 +71296,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2543,
+      "line": 2549,
       "module_id": "products.masterclass.runtime",
       "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
       "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -71638,13 +71698,21 @@
       "kind": "function",
       "line": 60,
       "module_id": "products.public-site",
+      "name": "test_recipes_program_keeps_structured_sections_from_its_canonical_markdown",
+      "qualname": "test_recipes_program_keeps_structured_sections_from_its_canonical_markdown"
+    },
+    {
+      "file": "backend/tests/test_public_site_content.py",
+      "kind": "function",
+      "line": 70,
+      "module_id": "products.public-site",
       "name": "test_accepted_approach_copy_is_seeded_and_rendered",
       "qualname": "test_accepted_approach_copy_is_seeded_and_rendered"
     },
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 72,
+      "line": 82,
       "module_id": "products.public-site",
       "name": "test_accepted_approach_copy_replaces_an_existing_active_version",
       "qualname": "test_accepted_approach_copy_replaces_an_existing_active_version"
@@ -71652,7 +71720,7 @@
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 97,
+      "line": 107,
       "module_id": "products.public-site",
       "name": "test_faq_is_returned_as_structured_items",
       "qualname": "test_faq_is_returned_as_structured_items"
@@ -71660,7 +71728,7 @@
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 107,
+      "line": 117,
       "module_id": "products.public-site",
       "name": "test_admin_update_creates_version_and_rejects_stale_write",
       "qualname": "test_admin_update_creates_version_and_rejects_stale_write"
@@ -71668,7 +71736,7 @@
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 126,
+      "line": 136,
       "module_id": "products.public-site",
       "name": "test_public_markdown_sanitizes_script_and_rejects_missing_document",
       "qualname": "test_public_markdown_sanitizes_script_and_rejects_missing_document"
@@ -71676,7 +71744,7 @@
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 143,
+      "line": 153,
       "module_id": "products.public-site",
       "name": "test_faq_rejects_missing_questions_and_empty_answers",
       "qualname": "test_faq_rejects_missing_questions_and_empty_answers"
@@ -71684,7 +71752,7 @@
     {
       "file": "backend/tests/test_public_site_content.py",
       "kind": "function",
-      "line": 154,
+      "line": 164,
       "module_id": "products.public-site",
       "name": "test_public_site_editor_requires_admin",
       "qualname": "test_public_site_editor_requires_admin"
@@ -71852,7 +71920,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 42,
+      "line": 43,
       "module_id": "platform.commerce",
       "name": "certificate_pair",
       "qualname": "certificate_pair"
@@ -71860,7 +71928,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 62,
+      "line": 63,
       "module_id": "platform.commerce",
       "name": "make_client",
       "qualname": "make_client"
@@ -71868,7 +71936,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 75,
+      "line": 78,
       "module_id": "platform.commerce",
       "name": "enable_sqlite_foreign_keys",
       "qualname": "make_client.enable_sqlite_foreign_keys"
@@ -71876,7 +71944,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 99,
+      "line": 102,
       "module_id": "platform.commerce",
       "name": "override_db",
       "qualname": "make_client.override_db"
@@ -71884,7 +71952,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 108,
+      "line": 111,
       "module_id": "platform.commerce",
       "name": "test_official_pem_certificate_format_is_accepted",
       "qualname": "test_official_pem_certificate_format_is_accepted"
@@ -71892,7 +71960,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 119,
+      "line": 122,
       "module_id": "platform.commerce",
       "name": "seed_catalog",
       "qualname": "seed_catalog"
@@ -71900,7 +71968,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 150,
+      "line": 153,
       "module_id": "platform.commerce",
       "name": "signed_result",
       "qualname": "signed_result"
@@ -71908,7 +71976,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 176,
+      "line": 179,
       "module_id": "platform.commerce",
       "name": "encoded",
       "qualname": "signed_result.encoded"
@@ -71916,7 +71984,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 187,
+      "line": 190,
       "module_id": "platform.commerce",
       "name": "create_checkout",
       "qualname": "create_checkout"
@@ -71924,7 +71992,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 197,
+      "line": 200,
       "module_id": "platform.commerce",
       "name": "test_checkout_uses_database_price_and_does_not_create_user",
       "qualname": "test_checkout_uses_database_price_and_does_not_create_user"
@@ -71932,7 +72000,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 238,
+      "line": 241,
       "module_id": "platform.commerce",
       "name": "test_go_test_page_is_one_button_with_database_price",
       "qualname": "test_go_test_page_is_one_button_with_database_price"
@@ -71940,7 +72008,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 258,
+      "line": 261,
       "module_id": "platform.commerce",
       "name": "test_go_test_button_redirects_to_classic_interface_with_go_callbacks",
       "qualname": "test_go_test_button_redirects_to_classic_interface_with_go_callbacks"
@@ -71948,7 +72016,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 291,
+      "line": 294,
       "module_id": "platform.commerce",
       "name": "test_go_test_page_is_disabled_outside_robokassa_test_mode",
       "qualname": "test_go_test_page_is_disabled_outside_robokassa_test_mode"
@@ -71956,7 +72024,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 305,
+      "line": 308,
       "module_id": "platform.commerce",
       "name": "test_go_payment_returns_link_back_only_after_failed_payment",
       "qualname": "test_go_payment_returns_link_back_only_after_failed_payment"
@@ -71964,7 +72032,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 321,
+      "line": 324,
       "module_id": "platform.commerce",
       "name": "test_public_payment_success_waits_for_callback_then_renders_canonical_copy",
       "qualname": "test_public_payment_success_waits_for_callback_then_renders_canonical_copy"
@@ -71972,7 +72040,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 335,
+      "line": 338,
       "module_id": "platform.commerce",
       "name": "test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag",
       "qualname": "test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag"
@@ -71980,7 +72048,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 346,
+      "line": 349,
       "module_id": "platform.commerce",
       "name": "test_public_payment_success_preview_shows_final_paid_state",
       "qualname": "test_public_payment_success_preview_shows_final_paid_state"
@@ -71988,7 +72056,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 359,
+      "line": 362,
       "module_id": "platform.commerce",
       "name": "test_manual_service_success_preview_has_contacts_and_receipt",
       "qualname": "test_manual_service_success_preview_has_contacts_and_receipt"
@@ -71996,7 +72064,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 371,
+      "line": 374,
       "module_id": "platform.commerce",
       "name": "test_member_offer_success_preview_links_account_and_contacts",
       "qualname": "test_member_offer_success_preview_links_account_and_contacts"
@@ -72004,7 +72072,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 382,
+      "line": 385,
       "module_id": "platform.commerce",
       "name": "test_live_probe_page_is_explicitly_enabled_and_noindex",
       "qualname": "test_live_probe_page_is_explicitly_enabled_and_noindex"
@@ -72012,7 +72080,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 400,
+      "line": 403,
       "module_id": "platform.commerce",
       "name": "test_live_probe_is_hidden_when_disabled",
       "qualname": "test_live_probe_is_hidden_when_disabled"
@@ -72020,7 +72088,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 420,
+      "line": 423,
       "module_id": "platform.commerce",
       "name": "test_live_probe_creates_real_ten_ruble_invoice_with_production_password",
       "qualname": "test_live_probe_creates_real_ten_ruble_invoice_with_production_password"
@@ -72028,7 +72096,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 480,
+      "line": 483,
       "module_id": "platform.commerce",
       "name": "test_live_probe_result_records_payment_without_user_access_or_onboarding",
       "qualname": "test_live_probe_result_records_payment_without_user_access_or_onboarding"
@@ -72036,7 +72104,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 523,
+      "line": 526,
       "module_id": "platform.commerce",
       "name": "test_live_probe_rejects_wrong_host_and_cross_origin_requests",
       "qualname": "test_live_probe_rejects_wrong_host_and_cross_origin_requests"
@@ -72044,7 +72112,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 566,
+      "line": 569,
       "module_id": "platform.commerce",
       "name": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing",
       "qualname": "test_checkout_fails_before_redirect_when_result2_certificate_is_missing"
@@ -72052,7 +72120,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 586,
+      "line": 589,
       "module_id": "platform.commerce",
       "name": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent",
       "qualname": "test_signed_test_result_creates_user_without_production_access_and_is_idempotent"
@@ -72060,7 +72128,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 613,
+      "line": 616,
       "module_id": "platform.commerce",
       "name": "test_signed_production_result_grants_access",
       "qualname": "test_signed_production_result_grants_access"
@@ -72068,7 +72136,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 635,
+      "line": 638,
       "module_id": "platform.commerce",
       "name": "test_invalid_signature_or_amount_cannot_confirm_payment",
       "qualname": "test_invalid_signature_or_amount_cannot_confirm_payment"
@@ -72076,7 +72144,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 660,
+      "line": 663,
       "module_id": "platform.commerce",
       "name": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment",
       "qualname": "test_signed_wrong_shop_or_non_ok_state_cannot_confirm_payment"
@@ -72084,7 +72152,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 685,
+      "line": 688,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_changes_preview_and_checkout_by_one_thousand",
       "qualname": "test_personal_offer_changes_preview_and_checkout_by_one_thousand"
@@ -72092,7 +72160,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 742,
+      "line": 745,
       "module_id": "platform.commerce",
       "name": "test_manual_payment_keeps_comment_without_creating_access_or_account",
       "qualname": "test_manual_payment_keeps_comment_without_creating_access_or_account"
@@ -72100,7 +72168,7 @@
     {
       "file": "backend/tests/test_robokassa_payments.py",
       "kind": "function",
-      "line": 780,
+      "line": 788,
       "module_id": "platform.commerce",
       "name": "test_personal_offer_rejects_another_email_before_payment",
       "qualname": "test_personal_offer_rejects_another_email_before_payment"

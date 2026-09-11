@@ -1413,11 +1413,14 @@ def test_offer_product_catalog_has_one_complete_card_contract():
     assert all(product["description"] for product in OFFER_PRODUCTS.values())
     assert all(product["resource"] for product in OFFER_PRODUCTS.values())
     assert all(product["standard"] > 0 for product in OFFER_PRODUCTS.values())
-    assert all(product["presentation_intro"] for product in OFFER_PRODUCTS.values())
-    assert all(product["presentation_program"] for product in OFFER_PRODUCTS.values())
+    standalone_presentations = {
+        code: product for code, product in OFFER_PRODUCTS.items() if code != "recipes"
+    }
+    assert all(product["presentation_intro"] for product in standalone_presentations.values())
+    assert all(product["presentation_program"] for product in standalone_presentations.values())
     assert all(
         all(item["title"] and item["description"] for item in product["presentation_program"])
-        for product in OFFER_PRODUCTS.values()
+        for product in standalone_presentations.values()
     )
 
 
@@ -1432,8 +1435,11 @@ def test_offer_payload_links_product_presentations_to_current_checkout_cards():
     recipes = payload["product_presentations"]["recipes"]
     assert recipes["name"]
     assert recipes["description"].startswith("Как")
-    assert recipes["intro"]
-    assert recipes["program"]
+    assert recipes["intro"] == ""
+    assert recipes["program"] == []
+    assert recipes["canonical_html"]
+    assert recipes["canonical_version"] == 1
+    assert "Программа по дням" in recipes["canonical_html"]
     assert all(set(item) == {"title", "description"} for item in recipes["program"])
     actions = payload["product_offer_actions"]["recipes"]
     assert {action["offer_code"] for action in actions} == {

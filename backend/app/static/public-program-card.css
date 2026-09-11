@@ -1,0 +1,36 @@
+.edb-program-card[data-program-card="recipes"]{display:block!important;color:#20252b}
+.edb-program-card[data-program-card="recipes"]>p{margin:0 0 18px;color:#4f5965;font-size:16px;font-weight:600;line-height:1.62}
+.edb-program-card[data-program-card="recipes"]>p:first-child{margin-bottom:20px;color:#20252b;font-size:18px;line-height:1.45}
+.edb-program-card[data-program-card="recipes"]>blockquote{margin:14px 0;padding:20px 22px;border:1px solid #dbe9f2;border-left:4px solid #26afff;border-radius:16px;background:#f8fcff;box-shadow:0 10px 28px -25px rgba(25,78,111,.6)}
+.edb-program-card[data-program-card="recipes"]>blockquote p{margin:0 0 12px;color:#40505d;font-size:15px;font-weight:600;line-height:1.58}
+.edb-program-card[data-program-card="recipes"]>blockquote p:last-child{margin-bottom:0}
+.edb-program-card[data-program-card="recipes"]>h2{margin:34px 0 16px!important;padding:0!important;border:0!important;color:#20252b;font-size:22px!important;font-weight:900;line-height:1.2}
+.edb-program-card__days{display:grid;gap:12px}
+.edb-program-card__day{padding:18px;border:1px solid #e0e7ec;border-radius:16px;background:#fff;box-shadow:0 12px 30px -28px rgba(24,55,76,.72)}
+.edb-program-card__day h3{margin:0 0 12px;color:#168fdc;font-size:16px;font-weight:900;line-height:1.3}
+.edb-program-card__day ul{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.edb-program-card__day li{display:block!important;position:relative;margin:0;padding-left:17px;color:#53606b;font-size:14px;font-weight:600;line-height:1.48}
+.edb-program-card__day li:before{position:absolute;left:0;color:#ff682e;content:'\2022';font-weight:900}
+.edb-program-card[data-program-card="recipes"]>blockquote:last-of-type{margin-top:22px;border-color:#ffd5c5;border-left-color:#ff682e;background:#fff5ef}
+.edb-program-card[data-program-card="recipes"]>p:last-child{margin-top:20px;color:#20252b;font-size:16px}
+
+@media(min-width:760px){
+  .edb-product-overlay.is-recipes .edb-product-overlay-content{width:min(100%,920px)!important;max-width:920px!important}
+  .mc-product-sheet.has-canonical-program-card{max-width:920px}
+  .edb-program-card[data-program-card="recipes"]>blockquote:first-of-type{padding:24px 26px}
+  .edb-program-card__days{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
+  .edb-program-card__day:last-child{grid-column:1/-1}
+  .edb-program-card__day{padding:20px}
+}
+
+@media(min-width:1000px){
+  .edb-program-card__days{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .edb-program-card__day:last-child{grid-column:auto}
+}
+
+@media(max-width:430px){
+  .edb-program-card[data-program-card="recipes"]>p:first-child{font-size:17px}
+  .edb-program-card[data-program-card="recipes"]>blockquote{padding:17px 16px}
+  .edb-program-card[data-program-card="recipes"]>h2{margin-top:28px!important;font-size:20px!important}
+  .edb-program-card__day{padding:16px}
+}
