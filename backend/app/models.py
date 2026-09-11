@@ -1438,3 +1438,28 @@ class PublicVideoView(TimestampMixin, Base):
     last_event_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     completed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     exited_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class PublicHomepageEvent(Base):
+    """One anonymous first-party reach signal for the public masterclass homepage."""
+
+    __tablename__ = "public_homepage_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "session_id", "page_id", "event_type", "section_id",
+            name="uq_public_homepage_events_session_event",
+        ),
+        Index("ix_public_homepage_events_page_section_created", "page_id", "section_id", "created_at"),
+        Index("ix_public_homepage_events_viewer", "viewer_key"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    session_id: Mapped[str] = mapped_column(String(36), nullable=False)
+    viewer_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    page_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    page_path: Mapped[str] = mapped_column(String(255), nullable=False)
+    event_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    section_id: Mapped[str] = mapped_column(String(80), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )

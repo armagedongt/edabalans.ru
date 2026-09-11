@@ -71,6 +71,20 @@ from app.models import (
 
 router = APIRouter()
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+PUBLIC_SITE_ASSETS_DIR = STATIC_DIR / "public-site-assets"
+PUBLIC_SITE_ASSETS = {
+    "education-documents.webp",
+    "education-documents-original.png",
+    "reviews/elena-review.mp3",
+    "reviews/anastasia-lapshina-review.mp3",
+    "reviews/irina-review.mp3",
+    "reviews/irina-review-main.mp3",
+    "reviews/anna-valkovskaya-review.mp3",
+    "reviews/tatiana-sysueva-review.mp3",
+    "reviews/anastasia-lapshina-avatar.jpg",
+    "reviews/irina-avatar.jpg",
+    "reviews/anna-valkovskaya-avatar.jpg",
+}
 DAY_COUNT = 30
 CATEGORY_COUNT = 17
 JSONP_CALLBACK = re.compile(r"^[A-Za-z_$][0-9A-Za-z_$]*$")
@@ -80,6 +94,7 @@ HOMEPAGE_MOBILE_PREVIEW_ASSETS = {
     "direct-intensive-max-qr.svg",
     "direct-intensive-telegram-qr.svg",
     "final-cta-cat-clock.webp",
+    "favicon-no-outline.png",
     "max-full-colored-dark-official.png",
     "max-full-colored-official.png",
     "money-bag-ruble-v1.webp",
@@ -118,6 +133,30 @@ def public_asset(path: Path, stable_loader: bool = False) -> FileResponse:
     response = FileResponse(path)
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Cache-Control"] = "no-cache" if stable_loader else "public, max-age=300"
+    return response
+
+
+@router.get("/public-site-assets/{asset_path:path}", include_in_schema=False)
+def public_site_asset(asset_path: str) -> FileResponse:
+    """Serve only explicitly approved public homepage media."""
+    if asset_path not in PUBLIC_SITE_ASSETS:
+        raise HTTPException(status_code=404, detail="asset not found")
+    media_type = {
+        "education-documents.webp": "image/webp",
+        "education-documents-original.png": "image/png",
+        "reviews/elena-review.mp3": "audio/mpeg",
+        "reviews/anastasia-lapshina-review.mp3": "audio/mpeg",
+        "reviews/irina-review.mp3": "audio/mpeg",
+        "reviews/irina-review-main.mp3": "audio/mpeg",
+        "reviews/anna-valkovskaya-review.mp3": "audio/mpeg",
+        "reviews/tatiana-sysueva-review.mp3": "audio/mpeg",
+        "reviews/anastasia-lapshina-avatar.jpg": "image/jpeg",
+        "reviews/irina-avatar.jpg": "image/jpeg",
+        "reviews/anna-valkovskaya-avatar.jpg": "image/jpeg",
+    }[asset_path]
+    response = FileResponse(PUBLIC_SITE_ASSETS_DIR / asset_path, media_type=media_type)
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Cache-Control"] = "public, max-age=300"
     return response
 
 
@@ -273,6 +312,18 @@ def direct_intensive_preview() -> HTMLResponse:
             "Access-Control-Allow-Origin": "*",
         },
     )
+    response.headers["X-Robots-Tag"] = "noindex, nofollow"
+    return response
+
+
+@router.get("/preview/homepage-release-candidate", include_in_schema=False)
+@router.get("/preview/homepage-release-candidate/", include_in_schema=False)
+def homepage_release_candidate_preview() -> HTMLResponse:
+    """Online review route; never becomes the Tilda source without explicit promotion."""
+    template = (STATIC_DIR / "homepage-preview" / "release-candidate.html").read_text(
+        encoding="utf-8"
+    )
+    response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response
 
