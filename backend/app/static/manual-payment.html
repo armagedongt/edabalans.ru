@@ -6,14 +6,16 @@
   <meta name="robots" content="noindex,nofollow">
   <title>Страница индивидуальная оплата</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@700;800&display=swap');
     :root{--blue:#159ee4;--ink:#172c3d;--orange:#fb6b2b;--line:#d8e8f2;--sky:#eef9ff}
     *{box-sizing:border-box} body{margin:0;background:linear-gradient(145deg,#f5fbff,#e8f6ff);color:var(--ink);font:16px/1.55 Manrope,Arial,sans-serif}
-    main{width:min(100% - 32px,640px);margin:clamp(40px,9vw,92px) auto 48px}
-    h1{margin:0 0 26px;font-size:clamp(30px,5vw,44px);line-height:1.08;letter-spacing:-.045em}.copy{margin:0 0 30px;font-size:18px}.copy p{margin:0 0 15px}.copy ul{margin:0 0 16px;padding-left:1.2em}.copy li{margin:0 0 7px}.pay-card{padding:clamp(22px,5vw,32px);border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:0 22px 56px -36px rgba(20,104,152,.55)}
-    label{display:grid;gap:7px;font-size:14px;font-weight:800}input,textarea{width:100%;border:1px solid #c8dce9;border-radius:13px;padding:14px 15px;background:#fff;color:var(--ink);font:16px Manrope,Arial,sans-serif}textarea{min-height:100px;resize:vertical}input:focus,textarea:focus{outline:3px solid #bde9ff;border-color:var(--blue)}
-    button{min-height:54px;border:0;border-radius:15px;padding:12px 22px;background:var(--orange);box-shadow:0 12px 24px -15px rgba(210,74,22,.9);color:#fff;font:800 16px Manrope,Arial,sans-serif;cursor:pointer}button:disabled{opacity:.62;cursor:wait}.error{margin:0;color:#b33722;font-weight:700}.legal{margin:4px 0 0;color:#657984;font-size:12px}.legal a{color:#277bad}.footer{margin-top:52px;padding-top:22px;border-top:1px solid #cfe1ec;color:#647987;font-size:13px}.footer a{color:#237bb1;font-weight:800;text-decoration:none}.modal[hidden]{display:none}.modal{position:fixed;z-index:10;inset:0;display:grid;place-items:center;padding:18px;background:rgba(15,51,77,.56);backdrop-filter:blur(5px)}.dialog{width:min(100%,520px);max-height:calc(100svh - 36px);overflow:auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 28px 75px rgba(7,39,63,.3)}.dialog p{margin:0 0 20px;color:#5f7380}.form{display:grid;gap:16px}.form button{margin-top:6px}.close{float:right;min-height:36px;padding:0 10px;background:#edf7fc;box-shadow:none;color:#2475a8;font-size:23px}
-    @media(max-width:520px){main{width:min(100% - 24px,640px);margin-top:34px}.copy{font-size:16px}.pay-card{border-radius:21px}.modal{padding:0;background:#fff;backdrop-filter:none}.dialog{width:100%;max-height:none;min-height:100svh;padding:28px 12px;border-radius:0;box-shadow:none}.dialog .form,.dialog p{width:min(100%,640px);margin-left:auto;margin-right:auto}.close{margin-right:0}}
+    main{width:min(100% - 32px,640px);margin:clamp(40px,9vw,92px) auto 48px}.step[hidden]{display:none}
+    h1{margin:0 0 26px;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(25px,4.4vw,40px);font-weight:800;line-height:1.12;letter-spacing:-.055em}.copy{margin:0 0 30px;font-size:18px}.copy p{margin:0 0 15px}.copy ul{margin:0 0 16px;padding-left:1.2em}.copy li{margin:0 0 7px}.pay-card{padding:clamp(22px,5vw,32px);border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:0 22px 56px -36px rgba(20,104,152,.55)}
+    .form{display:grid;gap:16px}.field{display:grid;gap:7px;font-size:14px;font-weight:800}.amount-field{text-align:center}.amount-field input{text-align:center}.amount-form button,.form button{width:100%;margin-top:6px}
+    input,textarea{width:100%;border:1px solid #c8dce9;border-radius:13px;padding:14px 15px;background:#fff;color:var(--ink);font:16px Manrope,Arial,sans-serif}textarea{min-height:100px;resize:vertical}input:focus,textarea:focus{outline:3px solid #bde9ff;border-color:var(--blue)}
+    button{min-height:54px;border:0;border-radius:15px;padding:12px 22px;background:var(--orange);box-shadow:0 12px 24px -15px rgba(210,74,22,.9);color:#fff;font:800 16px Manrope,Arial,sans-serif;cursor:pointer}button:disabled{opacity:.62;cursor:wait}.error{margin:0;color:#b33722;font-weight:700}.legal{display:grid;grid-template-columns:18px minmax(0,1fr);gap:9px;align-items:start;margin:4px 0 0;color:#657984;font-size:12px;font-weight:600;line-height:1.45}.legal input{width:18px;height:18px;margin:0;accent-color:var(--blue)}.legal a{color:#277bad}.footer{margin-top:52px;padding-top:22px;border-top:1px solid #cfe1ec;color:#647987;font-size:13px}.footer a{color:#237bb1;font-weight:800;text-decoration:none}
+    .details-head{display:flex;align-items:center;gap:16px;margin:0 0 22px}.details-head h1{margin:0}.back{flex:0 0 auto;min-height:42px;padding:0 14px;background:#edf7fc;box-shadow:none;color:#2475a8;font-size:15px}.details-copy{margin:0 0 22px;color:#5f7380}
+    @media(max-width:520px){main{width:min(100% - 24px,640px);min-height:100svh;margin:0 auto;padding:34px 0}.copy{font-size:16px}.pay-card{border-radius:21px}.details-head{align-items:flex-start;gap:12px}.details-head h1{font-size:clamp(22px,8vw,30px)}.back{min-height:40px;padding:0 11px}}
   </style>
 </head>
 <body>
@@ -25,39 +27,43 @@
         <li>какую-то конкретную покупку или услугу;</li>
         <li>какую-то конкретную цену.</li>
       </ul>
-      <p>Тогда вы просто введите нужную сумму и нажмите «Оплатить».</p>
-      <p>После оплаты, как только я увижу уведомление, свяжусь с вами для обсуждения деталей консультации или чтобы вручную выдать доступы в личный кабинет.</p>
+      <p>Тогда просто введите нужную сумму и нажмите «Оплатить».</p>
+      <p>Как только я увижу уведомление — свяжусь с вами для обсуждения деталей или чтобы вручную выдать доступ в личный кабинет.</p>
     </div>
     <section class="pay-card" aria-label="Оплата">
-      <form id="amount-form">
-        <label for="amount">Укажите сумму в рублях<input id="amount" name="amount" type="text" inputmode="decimal" autocomplete="off" required value="9 900" aria-describedby="amount-error"></label>
+      <form class="form amount-form" id="amount-form">
+        <label class="field amount-field" for="amount">Укажите сумму в рублях<input id="amount" name="amount" type="text" inputmode="decimal" autocomplete="off" required aria-describedby="amount-error"></label>
         <p class="error" id="amount-error" hidden></p>
         <button type="submit">Оплатить</button>
       </form>
     </section>
     <footer class="footer">© 2026 ИП Воронцов Сергей Сергеевич · <a href="https://t.me/FitnessSergey">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a></footer>
   </main>
-  <div class="modal" id="details-modal" hidden>
-    <section class="dialog" role="dialog" aria-modal="true" aria-label="Детали оплаты">
-      <button class="close" type="button" aria-label="Закрыть">×</button>
+  <section class="step" id="details-step" hidden>
+    <div class="details-head">
+      <button class="back" id="back" type="button" aria-label="Вернуться к сумме">← Назад</button>
+      <h1>Детали оплаты</h1>
+    </div>
+    <section class="pay-card" aria-label="Детали оплаты">
       <p>Имя нужно, чтобы я вас узнал, когда мне придет уведомление, а почта нужна для автоматической отправки чека и будет использована как логин в личный кабинет, если вы оплачиваете курс или что-то такое.</p>
       <form class="form" id="details-form">
-        <label for="payer-name">Имя<input id="payer-name" name="payer_name" autocomplete="name" maxlength="255" required></label>
-        <label for="email">Электронная почта<input id="email" name="email" type="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru"></label>
-        <label for="comment">Комментарий<textarea id="comment" name="comment" maxlength="1000" required placeholder="Например: консультация по питанию, сопровождение или название курса"></textarea></label>
-        <label class="legal"><span><input name="consent" type="checkbox" required> Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span></label>
+        <label class="field" for="payer-name">Имя<input id="payer-name" name="payer_name" autocomplete="name" maxlength="255" required></label>
+        <label class="field" for="email">Электронная почта<input id="email" name="email" type="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru"></label>
+        <label class="field" for="comment">Комментарий<textarea id="comment" name="comment" maxlength="1000" required placeholder="Например: консультация по питанию, сопровождение или название курса"></textarea></label>
+        <label class="legal"><input name="consent" type="checkbox" required><span>Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span></label>
         <p class="error" id="error" hidden></p>
         <button type="submit">Перейти к оплате</button>
       </form>
     </section>
-  </div>
+  </section>
   <script>
     (() => {
-      const amountForm=document.getElementById('amount-form'), amount=document.getElementById('amount'), amountError=document.getElementById('amount-error'), modal=document.getElementById('details-modal'), details=document.getElementById('details-form'), error=document.getElementById('error'), close=document.querySelector('.close');
+      const amountForm=document.getElementById('amount-form'), amount=document.getElementById('amount'), amountError=document.getElementById('amount-error'), main=document.querySelector('main'), detailsStep=document.getElementById('details-step'), details=document.getElementById('details-form'), error=document.getElementById('error'), back=document.getElementById('back');
       const parsedAmount=()=>Number(String(amount.value).replace(/\s/g,'').replace(',','.'));
-      const show=()=>{const value=parsedAmount();if(!Number.isFinite(value)||value<=0||value>10000000){amountError.textContent='Укажите сумму от 1 до 10 000 000 рублей.';amountError.hidden=false;amount.focus();return}amountError.hidden=true;modal.hidden=false;document.getElementById('payer-name').focus()};
-      const hide=()=>{modal.hidden=true;error.hidden=true};
-      amountForm.addEventListener('submit',(event)=>{event.preventDefault();show()}); close.addEventListener('click',hide); modal.addEventListener('click',(event)=>{if(event.target===modal)hide()});
+      const showDetails=(fromHistory=false)=>{main.hidden=true;detailsStep.hidden=false;error.hidden=true;if(!fromHistory)history.pushState({payStep:'details'},'',location.pathname);document.getElementById('payer-name').focus()};
+      const showAmount=()=>{detailsStep.hidden=true;main.hidden=false;amount.focus()};
+      const show=()=>{const value=parsedAmount();if(!Number.isFinite(value)||value<=0||value>10000000){amountError.textContent='Укажите сумму от 1 до 10 000 000 рублей.';amountError.hidden=false;amount.focus();return}amountError.hidden=true;showDetails()};
+      amountForm.addEventListener('submit',(event)=>{event.preventDefault();show()}); back.addEventListener('click',()=>history.back()); window.addEventListener('popstate',()=>showAmount());
       details.addEventListener('submit',async(event)=>{event.preventDefault();error.hidden=true;if(!details.checkValidity()){details.reportValidity();return}const button=details.querySelector('button[type="submit"]');button.disabled=true;button.textContent='Создаю счёт…';try{const response=await fetch('/api/payments/robokassa/manual-checkout',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',body:JSON.stringify({amount:parsedAmount(),payer_name:details.payer_name.value,email:details.email.value,comment:details.comment.value})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.detail||'Не удалось создать счёт. Попробуйте ещё раз.');const form=document.createElement('form');form.method=result.payment_form.method||'POST';form.action=result.payment_form.action;Object.entries(result.payment_form.fields||{}).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value);form.append(input)});document.body.append(form);form.submit()}catch(issue){error.textContent=issue.message;error.hidden=false;button.disabled=false;button.textContent='Перейти к оплате'}});
     })();
   </script>
