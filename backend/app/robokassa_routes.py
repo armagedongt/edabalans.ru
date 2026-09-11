@@ -25,6 +25,9 @@ from app.pricing_service import (
 )
 from app.robokassa_service import (
     RobokassaError,
+    SUCCESS_KIND_MANUAL_SERVICE,
+    SUCCESS_KIND_MEMBER_OFFER,
+    SUCCESS_KIND_PUBLIC_MASTERCLASS,
     confirm_payment,
     create_live_probe_payment,
     create_member_offer_payment,
@@ -38,6 +41,43 @@ GO_PAYMENT_HOSTS = {
     "go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
 }
 GO_TEST_PRICE_CODE = "site.masterclass.basic"
+
+SUCCESS_CONTENT = {
+    SUCCESS_KIND_PUBLIC_MASTERCLASS: {
+        "title": "Оплата прошла успешно!",
+        "html": (
+            "<p>Проверьте почту, на которую оформляли заказ. В течение нескольких минут туда придут данные для входа в личный кабинет и ссылка на него.</p>"
+            "<p>Кассовый чек также отправлен на эту почту.</p>"
+            "<p>Если письма нет, проверьте папку «Спам».</p>"
+            "<p>При любых технических проблемах напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
+        ),
+    },
+    SUCCESS_KIND_MANUAL_SERVICE: {
+        "title": "Оплата прошла успешно!",
+        "html": (
+            "<p>Кассовый чек отправлен на почту, которую вы указали при оплате.</p>"
+            "<p>Мне тоже придёт уведомление об оплате, но вы можете сразу написать мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
+        ),
+    },
+    SUCCESS_KIND_MEMBER_OFFER: {
+        "title": "Оплата прошла успешно!",
+        "html": (
+            "<p>Кассовый чек отправлен на почту, которую вы указали при оплате.</p>"
+            "<p>Доступ к приобретённым материалам проверяйте в <a href=\"/lk\">личном кабинете</a>.</p>"
+            "<p>Если вы оплачивали консультацию или курс, который открывается после прохождения другого курса, и хотите уточнить сроки — напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
+        ),
+    },
+}
+
+
+def _success_kind(payment: Payment) -> str:
+    payload = payment.raw_payload or {}
+    kind = payload.get("success_kind")
+    if kind in SUCCESS_CONTENT:
+        return str(kind)
+    if payload.get("account_purchase"):
+        return SUCCESS_KIND_MEMBER_OFFER
+    return SUCCESS_KIND_PUBLIC_MASTERCLASS
 GO_TEST_EMAIL = "robokassa-test@pohudenie-eto-est.invalid"
 
 
@@ -344,7 +384,6 @@ async def robokassa_result2(
 def robokassa_status(
     invoice_id: str,
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
 ) -> dict:
     payment = db.scalar(
         select(Payment).where(
@@ -354,17 +393,11 @@ def robokassa_status(
     )
     if payment is None:
         raise HTTPException(404, "Счёт не найден")
-    account_purchase = bool((payment.raw_payload or {}).get("account_purchase"))
     return {
         "ok": True,
         "invoice_id": invoice_id,
         "status": payment.payment_status,
-        "paid_message": (
-            "Спасибо за оплату! Курс появится в личном кабинете в течение минуты."
-            if account_purchase and payment.payment_status == "paid"
-            else None
-        ),
-        "account_url": settings.account_public_url if account_purchase else None,
+        "success_kind": _success_kind(payment),
     }
 
 
@@ -373,55 +406,67 @@ def _return_page(
     message: str,
     *,
     invoice_id: str | None = None,
-    return_url: str = "/preview/homepage-release-candidate#pricing",
-    paid_message: str = "Оплата подтверждена.",
-    paid_title: str | None = None,
-    paid_url: str | None = None,
-    show_account_link: bool = False,
+    return_url: str | None = "/preview/homepage-release-candidate#pricing",
+    success_kind: str | None = None,
 ) -> HTMLResponse:
     polling = ""
     if invoice_id and invoice_id.isdigit():
         polling = f"""<script>
 const statusUrl='/api/payments/robokassa/{invoice_id}/status';
-const paidMessage={json.dumps(paid_message, ensure_ascii=False)};
-const paidTitle={json.dumps(paid_title, ensure_ascii=False)};
-const paidUrl={json.dumps(paid_url, ensure_ascii=False)};
-async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{document.getElementById('state').textContent=d.paid_message||paidMessage;if(paidTitle){{document.title=paidTitle;document.getElementById('payment-page-title').textContent=paidTitle;}}const destination=d.account_url||paidUrl;const link=document.getElementById('account-link');if(destination&&link){{link.href=destination;link.hidden=false;}}return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
+const successContent={json.dumps(SUCCESS_CONTENT, ensure_ascii=False)};
+function showPaid(kind){{const content=successContent[kind]||successContent[{json.dumps(SUCCESS_KIND_PUBLIC_MASTERCLASS)}];document.title=content.title;document.getElementById('payment-page-title').textContent=content.title;document.getElementById('state').innerHTML=content.html;}}
+async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{showPaid(d.success_kind);return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
 </script>"""
-    account_link = '<p><a id="account-link" hidden>Открыть личный кабинет</a></p>' if show_account_link else ""
-    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><p id=\"state\">{message}</p>{account_link}<p><a href=\"{escape(return_url, quote=True)}\">Вернуться на сайт</a></p></main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
+    if success_kind:
+        content = SUCCESS_CONTENT[success_kind]
+        title = content["title"]
+        message = content["html"]
+    return_link = (
+        f'<p><a href="{escape(return_url, quote=True)}">Вернуться на сайт</a></p>'
+        if return_url else ""
+    )
+    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}#state p{{margin:0 0 14px}}#state p:last-child{{margin-bottom:0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><div id=\"state\">{message}</div>{return_link}</main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
 
 
 @router.get("/payments/robokassa/success", include_in_schema=False)
 def robokassa_success(
-    request: Request,
     InvId: str | None = Query(default=None),
-    settings: Settings = Depends(get_settings),
 ) -> HTMLResponse:
     return _return_page(
         "Проверяем оплату",
         "Robokassa приняла платёж. Ждём подтверждение от платёжного сервера…",
         invoice_id=InvId,
-        return_url=(
-            "/robokassa-test"
-            if (request.url.hostname or "").lower() in GO_PAYMENT_HOSTS
-            else "/preview/homepage-release-candidate#pricing"
-        ),
-        paid_message=(
-            "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате."
-            if settings.account_onboarding_enabled
-            else "Оплата подтверждена."
-        ),
-        paid_title="Оплата прошла успешно",
+        return_url=None,
     )
 
 
 @router.get("/preview/robokassa-success", include_in_schema=False)
 def robokassa_success_preview() -> HTMLResponse:
     return _return_page(
-        "Оплата прошла успешно",
-        "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате.",
-        return_url="/preview/homepage-release-candidate#pricing",
+        "Оплата прошла успешно!",
+        "",
+        return_url=None,
+        success_kind=SUCCESS_KIND_PUBLIC_MASTERCLASS,
+    )
+
+
+@router.get("/preview/robokassa-success/manual-service", include_in_schema=False)
+def robokassa_manual_service_success_preview() -> HTMLResponse:
+    return _return_page(
+        "Оплата прошла успешно!",
+        "",
+        return_url=None,
+        success_kind=SUCCESS_KIND_MANUAL_SERVICE,
+    )
+
+
+@router.get("/preview/robokassa-success/member-offer", include_in_schema=False)
+def robokassa_member_offer_success_preview() -> HTMLResponse:
+    return _return_page(
+        "Оплата прошла успешно!",
+        "",
+        return_url=None,
+        success_kind=SUCCESS_KIND_MEMBER_OFFER,
     )
 
 

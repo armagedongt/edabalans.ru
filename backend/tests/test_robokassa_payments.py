@@ -302,7 +302,7 @@ def test_go_test_page_is_disabled_outside_robokassa_test_mode() -> None:
     app.dependency_overrides.clear()
 
 
-def test_go_payment_returns_link_back_to_test_page() -> None:
+def test_go_payment_returns_link_back_only_after_failed_payment() -> None:
     _, _, _ = make_client()
     client = TestClient(
         app,
@@ -313,33 +313,33 @@ def test_go_payment_returns_link_back_to_test_page() -> None:
     success = client.get("/payments/robokassa/success?InvId=123")
     failure = client.get("/payments/robokassa/fail")
 
-    assert 'href="/robokassa-test"' in success.text
+    assert 'href="/robokassa-test"' not in success.text
     assert 'href="/robokassa-test"' in failure.text
     app.dependency_overrides.clear()
 
 
-def test_public_payment_success_tells_buyer_to_check_email() -> None:
+def test_public_payment_success_waits_for_callback_then_renders_canonical_copy() -> None:
     _, _, _ = make_client(account_onboarding_enabled=True)
     client = TestClient(app, base_url="https://app.edabalans.ru")
 
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert "Данные для входа отправили на email" in response.text
-    assert 'const paidTitle="Оплата прошла успешно"' in response.text
-    assert 'id="account-link"' not in response.text
-    assert 'const paidUrl=null' in response.text
+    assert "Проверьте почту, на которую оформляли заказ" in response.text
+    assert "Кассовый чек также отправлен на эту почту" in response.text
+    assert "const successContent=" in response.text
+    assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
     app.dependency_overrides.clear()
 
 
-def test_public_payment_success_tells_buyer_to_check_email_without_onboarding_flag() -> None:
+def test_public_payment_success_copy_does_not_depend_on_onboarding_feature_flag() -> None:
     _, _, _ = make_client(account_onboarding_enabled=False)
     client = TestClient(app, base_url="https://app.edabalans.ru")
 
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert 'const paidMessage="Оплата подтверждена."' in response.text
+    assert "данные для входа в личный кабинет и ссылка на него" in response.text
     app.dependency_overrides.clear()
 
 
@@ -350,8 +350,32 @@ def test_public_payment_success_preview_shows_final_paid_state() -> None:
 
     assert response.status_code == 200
     assert "Оплата прошла успешно" in response.text
-    assert "Данные для входа отправили на email" in response.text
-    assert 'href="/preview/homepage-release-candidate#pricing"' in response.text
+    assert "данные для входа в личный кабинет и ссылка на него" in response.text
+    assert "Кассовый чек также отправлен на эту почту" in response.text
+    assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
+
+
+def test_manual_service_success_preview_has_contacts_and_receipt() -> None:
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+
+    response = client.get("/preview/robokassa-success/manual-service")
+
+    assert response.status_code == 200
+    assert "Кассовый чек отправлен на почту" in response.text
+    assert "Мне тоже придёт уведомление об оплате" in response.text
+    assert "https://t.me/FitnessSergey" in response.text
+    assert 'Вернуться на сайт' not in response.text
+
+
+def test_member_offer_success_preview_links_account_and_contacts() -> None:
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+
+    response = client.get("/preview/robokassa-success/member-offer")
+
+    assert response.status_code == 200
+    assert 'href="/lk">личном кабинете</a>' in response.text
+    assert "Кассовый чек отправлен на почту" in response.text
+    assert "хотите уточнить сроки" in response.text
 
 
 def test_live_probe_page_is_explicitly_enabled_and_noindex() -> None:
@@ -596,9 +620,12 @@ def test_signed_production_result_grants_access() -> None:
     )
 
     assert response.status_code == 200
+    status_response = client.get(f"/api/payments/robokassa/{result['invoice_id']}/status")
+    assert status_response.json()["success_kind"] == "public_masterclass"
     with factory() as db:
         payment = db.scalar(select(Payment))
         assert payment is not None and payment.payment_status == "paid"
+        assert payment.raw_payload["success_kind"] == "public_masterclass"
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
     app.dependency_overrides.clear()

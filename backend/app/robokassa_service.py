@@ -33,6 +33,9 @@ from app.account_onboarding_service import ensure_paid_account_onboarding
 
 
 SOURCE = "robokassa"
+SUCCESS_KIND_PUBLIC_MASTERCLASS = "public_masterclass"
+SUCCESS_KIND_MEMBER_OFFER = "member_offer"
+SUCCESS_KIND_MANUAL_SERVICE = "manual_service"
 LIVE_PROBE_CHECKOUT_KIND = "robokassa_live_probe"
 LIVE_PROBE_OFFER_CODE = "robokassa.live.probe"
 LIVE_PROBE_TITLE = "Техническая проверка прямой оплаты"
@@ -225,7 +228,13 @@ def create_payment(
         payment_status="pending",
         payment_system="robokassa",
         user_id=account_user.id if account_user is not None else None,
-        raw_payload={"test_mode": settings.robokassa_test_mode, "account_purchase": account_user is not None},
+        raw_payload={
+            "test_mode": settings.robokassa_test_mode,
+            "account_purchase": account_user is not None,
+            "success_kind": (
+                SUCCESS_KIND_MEMBER_OFFER if account_user is not None else SUCCESS_KIND_PUBLIC_MASTERCLASS
+            ),
+        },
     )
     checkout = OfferCheckout(
         user_id=account_user.id if account_user is not None else offer_user_id,
@@ -321,7 +330,12 @@ def create_member_offer_payment(
         currency="RUB",
         payment_status="pending",
         payment_system="robokassa",
-        raw_payload={"test_mode": settings.robokassa_test_mode, "account_purchase": True, "checkout_id": str(checkout.id)},
+        raw_payload={
+            "test_mode": settings.robokassa_test_mode,
+            "account_purchase": True,
+            "success_kind": SUCCESS_KIND_MEMBER_OFFER,
+            "checkout_id": str(checkout.id),
+        },
     )
     db.add(payment)
     db.flush()
@@ -513,7 +527,13 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             raise RobokassaError(str(exc)) from exc
     if user is None:
         raise RobokassaError("В счёте отсутствует email")
-    is_test_payment = bool((payment.raw_payload or {}).get("test_mode"))
+    checkout_metadata = dict(payment.raw_payload or {})
+    is_test_payment = bool(checkout_metadata.get("test_mode"))
+    account_purchase = bool(checkout_metadata.get("account_purchase"))
+    success_kind = str(
+        checkout_metadata.get("success_kind")
+        or (SUCCESS_KIND_MEMBER_OFFER if account_purchase else SUCCESS_KIND_PUBLIC_MASTERCLASS)
+    )
     payment.user_id = user.id
     payment.external_payment_id = operation_id
     payment.payment_status = "test_paid" if is_test_payment else "paid"
@@ -521,6 +541,9 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     payment.source_event_at = occurred_at
     payment.paid_at = occurred_at
     payment.raw_payload = {
+        "success_kind": success_kind,
+        "account_purchase": account_purchase,
+        "checkout_id": checkout_metadata.get("checkout_id"),
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
@@ -528,7 +551,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     checkout.status = payment.payment_status
     if not is_test_payment:
         grant_payment_access(db, payment, checkout, occurred_at)
-        if settings.account_onboarding_enabled and not bool((payment.raw_payload or {}).get("account_purchase")):
+        if settings.account_onboarding_enabled and not account_purchase:
             ensure_paid_account_onboarding(db, payment, settings)
     db.commit()
     return invoice_id
