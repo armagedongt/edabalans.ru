@@ -40,6 +40,9 @@ LIVE_PROBE_CHECKOUT_KIND = "robokassa_live_probe"
 LIVE_PROBE_OFFER_CODE = "robokassa.live.probe"
 LIVE_PROBE_TITLE = "Техническая проверка прямой оплаты"
 LIVE_PROBE_AMOUNT = Decimal("10.00")
+MANUAL_SERVICE_CHECKOUT_KIND = "manual_service"
+MANUAL_SERVICE_OFFER_CODE = "manual.payment"
+MANUAL_SERVICE_TITLE = "Свободная оплата"
 MOSCOW = ZoneInfo("Europe/Moscow")
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 HASH_ALGORITHMS = {"md5", "sha1", "sha256", "sha384", "sha512"}
@@ -350,6 +353,81 @@ def create_member_offer_payment(
         "expires_at": expires_at.isoformat(),
         "payment_form": {"action": settings.robokassa_payment_url, "method": "POST", "fields": fields},
     }
+
+
+def create_manual_service_payment(
+    db: Session,
+    settings: Settings,
+    amount: Decimal,
+    payer_name: str,
+    email_original: str,
+    comment: str,
+) -> dict:
+    """Create a no-access payment for an individually agreed service."""
+    _require_checkout_settings(settings)
+    email = normalize_checkout_email(email_original)
+    clean_name = " ".join(payer_name.split())
+    clean_comment = " ".join(comment.split())
+    if not clean_name:
+        raise RobokassaError("Укажите имя")
+    if not clean_comment:
+        raise RobokassaError("Напишите, за что вы платите")
+    if amount <= 0 or amount > Decimal("10000000"):
+        raise RobokassaError("Укажите сумму от 1 до 10 000 000 ₽")
+    now = datetime.now(timezone.utc)
+    expires_at = now + timedelta(hours=2)
+    payment_id = uuid.uuid4()
+    invoice_id = str(_invoice_id(payment_id))
+    payment = Payment(
+        id=payment_id,
+        price_entry_code=MANUAL_SERVICE_OFFER_CODE,
+        source=SOURCE,
+        external_order_id=invoice_id,
+        email_at_purchase=email,
+        product_name_raw=MANUAL_SERVICE_TITLE,
+        amount=amount,
+        amount_is_estimated=False,
+        currency="RUB",
+        payment_status="pending",
+        payment_system="robokassa",
+        raw_payload={
+            "test_mode": settings.robokassa_test_mode,
+            "success_kind": SUCCESS_KIND_MANUAL_SERVICE,
+            "payer_name": clean_name,
+            "comment": clean_comment,
+        },
+    )
+    checkout = OfferCheckout(
+        checkout_kind=MANUAL_SERVICE_CHECKOUT_KIND,
+        price_entry_code=MANUAL_SERVICE_OFFER_CODE,
+        offer_code=MANUAL_SERVICE_OFFER_CODE,
+        title=MANUAL_SERVICE_TITLE,
+        items=[],
+        amount=amount,
+        expires_at=expires_at,
+        payment_id=payment.id,
+    )
+    db.add(payment)
+    db.flush()
+    db.add(checkout)
+    db.flush()
+    payment.raw_payload = {
+        "test_mode": settings.robokassa_test_mode,
+        "success_kind": SUCCESS_KIND_MANUAL_SERVICE,
+        "checkout_id": str(checkout.id),
+        "payer_name": clean_name,
+        "comment": clean_comment,
+    }
+    fields = _payment_fields(settings, payment, MANUAL_SERVICE_TITLE, email, expires_at)
+    db.commit()
+    return {
+        "ok": True,
+        "invoice_id": invoice_id,
+        "amount": amount_value(amount),
+        "test_mode": settings.robokassa_test_mode,
+        "expires_at": expires_at.isoformat(),
+        "payment_form": {"action": settings.robokassa_payment_url, "method": "POST", "fields": fields},
+    }
 def create_live_probe_payment(
     db: Session,
     settings: Settings,
@@ -493,6 +571,25 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             "notification": payload,
         }
         checkout.status = "paid"
+        db.commit()
+        return invoice_id
+    if checkout.checkout_kind == MANUAL_SERVICE_CHECKOUT_KIND:
+        checkout_metadata = dict(payment.raw_payload or {})
+        is_test_payment = bool(checkout_metadata.get("test_mode"))
+        payment.external_payment_id = operation_id
+        payment.payment_status = "test_paid" if is_test_payment else "paid"
+        payment.payment_system = str(data.get("paymentMethod") or "robokassa")[:64]
+        payment.source_event_at = occurred_at
+        payment.paid_at = occurred_at
+        payment.raw_payload = {
+            "success_kind": SUCCESS_KIND_MANUAL_SERVICE,
+            "checkout_id": checkout_metadata.get("checkout_id"),
+            "payer_name": checkout_metadata.get("payer_name"),
+            "comment": checkout_metadata.get("comment"),
+            "integration": {"test_mode": is_test_payment},
+            "notification": payload,
+        }
+        checkout.status = payment.payment_status
         db.commit()
         return invoice_id
     if checkout.user_id is not None:

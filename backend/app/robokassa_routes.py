@@ -1,12 +1,14 @@
 from __future__ import annotations
 
+from decimal import Decimal
 from html import escape
 import json
+from pathlib import Path
 import uuid
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
-from fastapi.responses import HTMLResponse, PlainTextResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -30,6 +32,7 @@ from app.robokassa_service import (
     SUCCESS_KIND_PUBLIC_MASTERCLASS,
     confirm_payment,
     create_live_probe_payment,
+    create_manual_service_payment,
     create_member_offer_payment,
     create_payment,
 )
@@ -41,6 +44,7 @@ GO_PAYMENT_HOSTS = {
     "go.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
 }
 GO_TEST_PRICE_CODE = "site.masterclass.basic"
+MANUAL_PAYMENT_PAGE = Path(__file__).with_name("static") / "manual-payment.html"
 
 SUCCESS_CONTENT = {
     SUCCESS_KIND_PUBLIC_MASTERCLASS: {
@@ -96,6 +100,13 @@ class NativeTariffCheckoutIn(BaseModel):
     price_code: str = Field(min_length=3, max_length=120)
 
 
+class ManualPaymentCheckoutIn(BaseModel):
+    amount: Decimal = Field(gt=0, le=10_000_000, max_digits=14, decimal_places=2)
+    payer_name: str = Field(min_length=1, max_length=255)
+    email: str = Field(min_length=3, max_length=320)
+    comment: str = Field(min_length=1, max_length=1000)
+
+
 def _require_go_test_host(request: Request) -> None:
     host = (request.url.hostname or "").lower()
     if host not in GO_PAYMENT_HOSTS and host != "testserver":
@@ -126,6 +137,15 @@ def _go_live_probe_settings(request: Request, settings: Settings) -> Settings:
             "robokassa_success_url_2": f"{origin}/payments/robokassa/live-probe-success",
             "robokassa_fail_url_2": f"{origin}/payments/robokassa/live-probe-fail",
         }
+    )
+
+
+@router.get("/pay", include_in_schema=False)
+def manual_payment_page() -> FileResponse:
+    return FileResponse(
+        MANUAL_PAYMENT_PAGE,
+        media_type="text/html; charset=utf-8",
+        headers={"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-cache"},
     )
 
 
@@ -303,6 +323,24 @@ def robokassa_checkout(
             body.price_code,
             body.email,
             offer_user_id=discount_user_id,
+        )
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.post("/api/payments/robokassa/manual-checkout")
+def robokassa_manual_checkout(
+    body: ManualPaymentCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    try:
+        return create_manual_service_payment(
+            db, settings, body.amount, body.payer_name, body.email, body.comment
         )
     except RobokassaError as exc:
         db.rollback()

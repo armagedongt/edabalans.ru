@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Свободная оплата · Еда Баланс</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
+    :root{--blue:#159ee4;--ink:#172c3d;--orange:#fb6b2b;--line:#d8e8f2;--sky:#eef9ff}
+    *{box-sizing:border-box} body{margin:0;background:linear-gradient(145deg,#f5fbff,#e8f6ff);color:var(--ink);font:16px/1.55 Manrope,Arial,sans-serif}
+    main{width:min(100% - 32px,760px);margin:clamp(40px,9vw,110px) auto 48px}.eyebrow{margin:0 0 14px;color:var(--blue);font-size:13px;font-weight:800;letter-spacing:.08em}
+    h1{max-width:650px;margin:0 0 26px;font-size:clamp(36px,7vw,66px);line-height:1.03;letter-spacing:-.06em}.accent{color:var(--orange);text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.11em}
+    .copy{max-width:650px;margin:0 0 30px;font-size:18px}.copy p{margin:0 0 15px}.pay-card{padding:clamp(22px,5vw,38px);border:1px solid var(--line);border-radius:28px;background:#fff;box-shadow:0 22px 56px -36px rgba(20,104,152,.55)}
+    label{display:grid;gap:7px;font-size:14px;font-weight:800}input,textarea{width:100%;border:1px solid #c8dce9;border-radius:13px;padding:14px 15px;background:#fff;color:var(--ink);font:16px Manrope,Arial,sans-serif}textarea{min-height:100px;resize:vertical}input:focus,textarea:focus{outline:3px solid #bde9ff;border-color:var(--blue)}
+    button{min-height:54px;border:0;border-radius:15px;padding:12px 22px;background:var(--orange);box-shadow:0 12px 24px -15px rgba(210,74,22,.9);color:#fff;font:800 16px Manrope,Arial,sans-serif;cursor:pointer}button:disabled{opacity:.62;cursor:wait}.note{margin:14px 0 0;color:#5c7180;font-size:13px}.error{margin:14px 0 0;color:#b33722;font-weight:700}.legal{margin:20px 0 0;color:#657984;font-size:12px}.legal a{color:#277bad}.footer{margin-top:52px;padding-top:22px;border-top:1px solid #cfe1ec;color:#647987;font-size:13px}.footer a{color:#237bb1;font-weight:800;text-decoration:none}.modal[hidden]{display:none}.modal{position:fixed;z-index:10;inset:0;display:grid;place-items:center;padding:18px;background:rgba(15,51,77,.56);backdrop-filter:blur(5px)}.dialog{width:min(100%,520px);max-height:calc(100svh - 36px);overflow:auto;padding:28px;border-radius:24px;background:#fff;box-shadow:0 28px 75px rgba(7,39,63,.3)}.dialog h2{margin:0 0 8px;font-size:26px;letter-spacing:-.04em}.dialog p{margin:0 0 20px;color:#5f7380}.form{display:grid;gap:16px}.form button{margin-top:6px}.close{float:right;min-height:36px;padding:0 10px;background:#edf7fc;box-shadow:none;color:#2475a8;font-size:23px}
+    @media(max-width:520px){main{width:min(100% - 24px,760px);margin-top:34px}.copy{font-size:16px}.pay-card{border-radius:21px}.dialog{padding:22px}}
+  </style>
+</head>
+<body>
+  <main>
+    <p class="eyebrow">ЕДА БАЛАНС</p>
+    <h1><span class="accent">Свободная</span><br>оплата</h1>
+    <div class="copy">
+      <p>Если я прислал вам эту страницу, значит, мы уже <strong>индивидуально согласовали</strong> с вами какую-то конкретную <strong>покупку или услугу</strong> за <strong>конкретную цену</strong>.</p>
+      <p>Тогда просто укажите нужную сумму и нажмите «Оплатить» 👇</p>
+    </div>
+    <section class="pay-card" aria-labelledby="pay-title">
+      <form id="amount-form">
+        <label for="amount">Сумма к оплате, ₽<input id="amount" name="amount" type="number" min="1" max="10000000" step="0.01" inputmode="decimal" required placeholder="Например, 3 500"></label>
+        <button type="submit">Оплатить</button>
+      </form>
+      <p class="note">После этого уточним имя, почту и назначение платежа.</p>
+    </section>
+    <footer class="footer">© 2026 ИП Воронцов Сергей Сергеевич · <a href="https://t.me/FitnessSergey">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a></footer>
+  </main>
+  <div class="modal" id="details-modal" hidden>
+    <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="pay-title">
+      <button class="close" type="button" aria-label="Закрыть">×</button>
+      <h2 id="pay-title">Пара деталей</h2>
+      <p>Имя нужно, чтобы я узнал вас в уведомлении. Почта нужна для автоматической отправки чека.</p>
+      <form class="form" id="details-form">
+        <label for="payer-name">Ваше имя<input id="payer-name" name="payer_name" autocomplete="name" maxlength="255" required></label>
+        <label for="email">Электронная почта<input id="email" name="email" type="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru"></label>
+        <label for="comment">Комментарий<textarea id="comment" name="comment" maxlength="1000" required placeholder="Например: консультация по питанию, о которой договорились"></textarea></label>
+        <p class="note">В поле «Комментарий» напишите, что вы оплачиваете, чтобы я потом не запутался.</p>
+        <label class="legal"><span><input name="consent" type="checkbox" required> Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a> и даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a>.</span></label>
+        <p class="error" id="error" hidden></p>
+        <button type="submit">Перейти к оплате</button>
+      </form>
+    </section>
+  </div>
+  <script>
+    (() => {
+      const amountForm=document.getElementById('amount-form'), amount=document.getElementById('amount'), modal=document.getElementById('details-modal'), details=document.getElementById('details-form'), error=document.getElementById('error'), close=document.querySelector('.close');
+      const show=()=>{if(!amount.validity.valid){amount.reportValidity();return}modal.hidden=false;document.getElementById('payer-name').focus()};
+      const hide=()=>{modal.hidden=true;error.hidden=true};
+      amountForm.addEventListener('submit',(event)=>{event.preventDefault();show()}); close.addEventListener('click',hide); modal.addEventListener('click',(event)=>{if(event.target===modal)hide()});
+      details.addEventListener('submit',async(event)=>{event.preventDefault();error.hidden=true;if(!details.checkValidity()){details.reportValidity();return}const button=details.querySelector('button[type="submit"]');button.disabled=true;button.textContent='Создаю счёт…';try{const response=await fetch('/api/payments/robokassa/manual-checkout',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'omit',body:JSON.stringify({amount:Number(amount.value),payer_name:details.payer_name.value,email:details.email.value,comment:details.comment.value})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.detail||'Не удалось создать счёт. Попробуйте ещё раз.');const form=document.createElement('form');form.method=result.payment_form.method||'POST';form.action=result.payment_form.action;Object.entries(result.payment_form.fields||{}).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value);form.append(input)});document.body.append(form);form.submit()}catch(issue){error.textContent=issue.message;error.hidden=false;button.disabled=false;button.textContent='Перейти к оплате'}});
+    })();
+  </script>
+</body>
+</html>

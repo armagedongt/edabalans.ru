@@ -739,6 +739,44 @@ def test_personal_offer_changes_preview_and_checkout_by_one_thousand() -> None:
     app.dependency_overrides.clear()
 
 
+def test_manual_payment_keeps_comment_without_creating_access_or_account() -> None:
+    client, factory, key = make_client()
+
+    page = client.get("/pay")
+    checkout = client.post(
+        "/api/payments/robokassa/manual-checkout",
+        json={
+            "amount": "3500.50",
+            "payer_name": "Ирина Петрова",
+            "email": "irina@example.test",
+            "comment": "Консультация по питанию, о которой договорились",
+        },
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+
+    assert page.status_code == 200
+    assert "В поле «Комментарий»" in page.text
+    assert checkout.status_code == 200
+    assert checkout.json()["amount"] == 3500.5
+    assert checkout.json()["payment_form"]["fields"]["OutSum"] == "3500.50"
+    callback = client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout.json()["invoice_id"], "3500.50"),
+    )
+    assert callback.status_code == 200
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        checkout_row = db.scalar(select(OfferCheckout))
+        assert payment is not None
+        assert payment.payment_status == "test_paid"
+        assert payment.raw_payload["payer_name"] == "Ирина Петрова"
+        assert payment.raw_payload["comment"] == "Консультация по питанию, о которой договорились"
+        assert checkout_row is not None and checkout_row.checkout_kind == "manual_service"
+        assert db.scalar(select(func.count(User.id))) == 0
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
+    app.dependency_overrides.clear()
+
+
 def test_personal_offer_rejects_another_email_before_payment() -> None:
     client, factory, _ = make_client()
     seed_catalog(factory)
