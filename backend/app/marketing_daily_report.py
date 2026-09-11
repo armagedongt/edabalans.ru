@@ -27,14 +27,30 @@ CREATIVE_NAMES = {
     1920472171246211821: "Женщина лицом в торт · без текста",
     1920472171246211822: "Кот с бубликом",
     1920472171246211823: "Кот «Худеть будем?»",
+    1921017629943159159: "Холодильник и торт · «Как можно худеть без срывов?»",
     1920469239931549227: "Поиск · как начать",
     1920469239931549228: "Поиск · без диет и силы воли",
     1920469239931549229: "Поиск · срывы и возврат веса",
 }
 CAMPAIGN_AD_IDS = {
-    "rsya": (1920472171246211821, 1920472171246211822, 1920472171246211823),
+    "rsya": (1920472171246211821, 1920472171246211822, 1920472171246211823, 1921017629943159159),
     "search": (1920469239931549227, 1920469239931549228, 1920469239931549229),
 }
+
+
+def _creative_name(ad_id: int, rows: list[dict[str, Any]] | None = None) -> str:
+    """Return a truthful label for an immutable creative, including legacy mixed IDs."""
+
+    if ad_id != 1920472171246211821:
+        return CREATIVE_NAMES.get(ad_id, str(ad_id))
+    dates = {str(row.get("Date") or "") for row in rows or []}
+    if dates and all(value <= "2026-09-08" for value in dates):
+        return "Женщина у холодильника с тортами · без текста (V1)"
+    if dates == {"2026-09-09"}:
+        return "Переход V1 → V2 внутри одного объявления · не сравнивать"
+    if dates and any(value <= "2026-09-09" for value in dates):
+        return "Женщина у холодильника / лицом в торт · смешанные версии"
+    return "Женщина лицом в светлый торт · без текста (V2)"
 
 
 def _campaigns(settings: Settings) -> dict[str, int]:
@@ -161,6 +177,7 @@ def _integer_metric(value: Any) -> int | None:
 def _summarize_direct(rows: list[dict]) -> dict:
     total = {"impressions": 0, "clicks": 0, "sessions": 0, "sessions_available": True, "cost_rub": 0.0}
     ads: dict[int, dict] = {}
+    ad_rows: dict[int, list[dict]] = defaultdict(list)
     devices: dict[str, dict] = defaultdict(
         lambda: {"impressions": 0, "clicks": 0, "sessions": 0, "sessions_available": True, "cost_rub": 0.0}
     )
@@ -170,6 +187,7 @@ def _summarize_direct(rows: list[dict]) -> dict:
         sessions = _integer_metric(row.get("Sessions"))
         cost = _number(row.get("Cost"))
         ad_id = int(row.get("AdId") or 0)
+        ad_rows[ad_id].append(row)
         device = str(row.get("Device") or "UNKNOWN").lower()
         ad = ads.setdefault(
             ad_id,
@@ -191,6 +209,8 @@ def _summarize_direct(rows: list[dict]) -> dict:
             else:
                 target["sessions"] += sessions
             target["cost_rub"] += cost
+    for ad_id, ad in ads.items():
+        ad["name"] = _creative_name(ad_id, ad_rows[ad_id])
     for target in [total, *ads.values(), *devices.values()]:
         target["cost_rub"] = round(target["cost_rub"], 2)
         target["ctr_percent"] = round(target["clicks"] * 100 / target["impressions"], 2) if target["impressions"] else 0.0

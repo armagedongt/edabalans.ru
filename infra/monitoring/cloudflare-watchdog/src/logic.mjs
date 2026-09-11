@@ -641,11 +641,14 @@ async function reportRequest(url, token, method, fetchImpl) {
 
 async function runDailyReport(state, env, fetchImpl, storage, now) {
   if (!env.MARKETING_REPORT_URL || !env.MARKETING_REPORT_TOKEN) return;
-  const instant = new Date(now);
   const moscowNow = new Date(now + 3 * 60 * 60 * 1000);
   const target = new Date(Date.UTC(moscowNow.getUTCFullYear(), moscowNow.getUTCMonth(), moscowNow.getUTCDate() - 1));
   const reportDate = target.toISOString().slice(0, 10);
   const snapshotReady = moscowNow.getUTCHours() >= 3;
+  // The platform snapshot is complete at 03:00 Moscow.  Give it thirty minutes
+  // to settle, then deliver the same report in the 03:30 Moscow watchdog run.
+  const deliveryReady = moscowNow.getUTCHours() > 3
+    || (moscowNow.getUTCHours() === 3 && moscowNow.getUTCMinutes() >= 30);
   try {
     if (snapshotReady && state.report.generatedDate !== reportDate) {
       await reportRequest(`${env.MARKETING_REPORT_URL}/generate?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "POST", fetchImpl);
@@ -653,7 +656,7 @@ async function runDailyReport(state, env, fetchImpl, storage, now) {
       state.report.lastError = null;
       await persist(storage, state);
     }
-    if (snapshotReady && instant.getUTCHours() >= 3 && state.report.sentDate !== reportDate) {
+    if (snapshotReady && deliveryReady && state.report.sentDate !== reportDate) {
       const report = await reportRequest(`${env.MARKETING_REPORT_URL}?date=${reportDate}`, env.MARKETING_REPORT_TOKEN, "GET", fetchImpl);
       const usedRichMessages = await deliverDailyReport(report, env, fetchImpl);
       if (usedRichMessages) state.report.richPreviewSent = true;

@@ -570,7 +570,7 @@ test("alerts remain queued after Telegram failure and are delivered once after r
   assert.equal(delivered.length, queued);
 });
 
-test("daily report is generated, delivered as native rich tables after 06:00 Moscow, and never duplicated", async () => {
+test("daily report is generated, delivered as native rich tables after 03:30 Moscow, and never duplicated", async () => {
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
     const value = String(url);
@@ -599,9 +599,9 @@ test("daily report is generated, delivered as native rich tables after 06:00 Mos
     SEND_REPORT_AI_DEMO_ONCE: "true",
   };
   const storage = new MemoryStorage();
-  const atSixMoscow = Date.UTC(2026, 8, 8, 3, 0, 0);
-  await runWatchdog(env, storage, { fetchImpl, now: atSixMoscow });
-  await runWatchdog(env, storage, { fetchImpl, now: atSixMoscow + 60_000 });
+  const atThreeThirtyMoscow = Date.UTC(2026, 8, 8, 0, 30, 0);
+  await runWatchdog(env, storage, { fetchImpl, now: atThreeThirtyMoscow });
+  await runWatchdog(env, storage, { fetchImpl, now: atThreeThirtyMoscow + 60_000 });
 
   assert.equal(calls.filter((call) => call.url.includes("/generate?")).length, 1);
   assert.equal(calls.filter((call) => call.url.includes("/delivered?")).length, 1);
@@ -614,7 +614,7 @@ test("daily report is generated, delivered as native rich tables after 06:00 Mos
   assert.equal(storage.value.report.richPreviewSent, true);
 });
 
-test("daily report snapshot waits for 03:00 Moscow and delivery waits for 06:00", async () => {
+test("daily report snapshot waits for 03:00 Moscow and delivery waits for 03:30", async () => {
   const calls = [];
   const fetchImpl = async (url) => {
     const value = String(url);
@@ -643,7 +643,12 @@ test("daily report snapshot waits for 03:00 Moscow and delivery waits for 06:00"
   assert.equal(calls.filter((url) => url.includes("/delivered?")).length, 0);
   assert.equal(calls.filter((url) => url.includes("api.telegram.org")).length, 0);
 
-  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 3, 0, 0) });
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 0, 29, 0) });
+  assert.equal(calls.filter((url) => url.includes("/generate?")).length, 1);
+  assert.equal(calls.filter((url) => url.includes("/delivered?")).length, 0);
+  assert.equal(calls.filter((url) => url.includes("api.telegram.org")).length, 0);
+
+  await runWatchdog(env, storage, { fetchImpl, now: Date.UTC(2026, 8, 8, 0, 30, 0) });
   assert.equal(calls.filter((url) => url.includes("/generate?")).length, 1);
   assert.equal(calls.filter((url) => url.includes("/delivered?")).length, 1);
   assert.equal(calls.filter((url) => url.includes("api.telegram.org")).length, 1);

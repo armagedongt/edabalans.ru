@@ -64,6 +64,8 @@ def main() -> None:
     parser.add_argument("--source-ad-id", type=int, required=True)
     parser.add_argument("--image", type=Path, required=True)
     parser.add_argument("--creative", required=True)
+    parser.add_argument("--title", help="Override headline for the new immutable ad")
+    parser.add_argument("--text", help="Override description for the new immutable ad")
     parser.add_argument("--execute", action="store_true")
     parser.add_argument("--replace-source", action="store_true")
     args = parser.parse_args()
@@ -89,6 +91,8 @@ def main() -> None:
         "image_bytes": len(image_bytes),
         "creative": args.creative,
         "href": with_creative_alias(source["TextAd"]["Href"], args.creative),
+        "title": args.title or source["TextAd"]["Title"],
+        "text": args.text or source["TextAd"]["Text"],
     }
     if not args.execute:
         print(json.dumps({"status": "dry_run", **plan}, ensure_ascii=False, indent=2))
@@ -139,8 +143,8 @@ def main() -> None:
         return
     text = source["TextAd"]
     text_add = {
-        "Title": text["Title"],
-        "Text": text["Text"],
+        "Title": plan["title"],
+        "Text": plan["text"],
         "Href": plan["href"],
         "Mobile": text.get("Mobile", "NO"),
         "AdImageHash": image_hash,

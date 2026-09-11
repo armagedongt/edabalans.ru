@@ -123,7 +123,7 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert "Поиск: неделя 500 ₽ из 3 500 ₽ · осталось 3 000 ₽" in footer["text"]
     assert "РСЯ: неделя 1 000 ₽ из 10 000 ₽ · осталось 9 000 ₽" in footer["text"]
     assert "demo_ai_message" not in payload
-    assert len(payload["channels"]["rsya"]["ads"]) == 3
+    assert len(payload["channels"]["rsya"]["ads"]) == 4
     assert len(payload["channels"]["search"]["ads"]) == 3
     assert next(ad for ad in payload["channels"]["rsya"]["ads"] if ad["ad_id"] == 1920472171246211822)["clicks"] == 0
     assert "Видео 100%" in payload["telegram_messages"][0]
