@@ -568,10 +568,19 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
         assert response.status_code == 200
         assert f'id="{app_code}-app"' in response.text
         assert "masterclass.js" in response.text
+        if app_code in {"masterclass-offers", "recipes-part-1", "recipes-part-2"}:
+            assert "public-program-card.css" in response.text
+            assert "public-program-card.js" in response.text
     offers_js = client.get("/assets/masterclass.js")
     offers_css = client.get("/assets/masterclass.css")
+    program_card_js = client.get("/assets/public-program-card.js")
+    program_card_css = client.get("/assets/public-program-card.css")
     assert offers_js.status_code == 200
     assert offers_css.status_code == 200
+    assert program_card_js.status_code == 200
+    assert program_card_css.status_code == 200
+    assert "canonical_html" in offers_js.text
+    assert "edb-program-card__days" in program_card_js.text
     assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
     assert ".mc-offer-card.is-featured" in offers_css.text
     assert client.get("/assets/max-logo.png").status_code == 200

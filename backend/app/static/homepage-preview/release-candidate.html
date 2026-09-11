@@ -1249,6 +1249,8 @@
       #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:left}
     }
   </style>
+  <link rel="stylesheet" href="/assets/public-program-card.css">
+  <script src="/assets/public-program-card.js"></script>
 </head>
 <body data-page-theme="blue-mist">
   <script>
@@ -3429,6 +3431,7 @@
       });
 
       async function openProduct(code) {
+        overlay.classList.toggle('is-recipes', code === 'recipes');
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
         overlayCopy.hidden = true;
@@ -3447,6 +3450,7 @@
           overlayCopy.textContent = product.description || '';
           overlayCopy.hidden = !product.description;
           overlayPoints.innerHTML = product.html;
+          if (window.EdabalansProgramCard) window.EdabalansProgramCard.enhance(overlayPoints, code);
           overlayCta.textContent = 'Выбрать тариф';
           overlayCta.dataset.target = String(productTargets[code] || 0);
           overlayCta.hidden = false;
