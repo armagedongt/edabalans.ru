@@ -758,7 +758,7 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
     )
 
     assert page.status_code == 200
-    assert "Страница индивидуальная оплата" in page.text
+    assert "Страница индивидуальной оплаты" in page.text
     assert "Укажите сумму в рублях" in page.text
     assert 'value="9 900"' not in page.text
     assert 'id="details-modal"' not in page.text
