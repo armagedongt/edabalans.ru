@@ -60,6 +60,7 @@ owns_files = [
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
   "backend/app/account_onboarding_service.py",
   "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
+  "backend/app/static/manual-payment.html",
   "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
   "backend/tests/test_tilda_payments.py",
