@@ -57,11 +57,13 @@ try {
   }
 
   await cta.click()
-  await page.waitForFunction(() => document.querySelector('.masterclass-cta')?.href.includes('intensive_offer=offer-scroll-test'))
+  const href = await page.waitForFunction(() => {
+    const value = document.querySelector('.masterclass-cta')?.href
+    return value?.includes('intensive_offer=offer-scroll-test') ? value : null
+  }).then(handle => handle.jsonValue())
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
   }
-  const href = await cta.getAttribute('href')
   if (!href?.includes('/mk1?intensive_offer=offer-scroll-test#masterclass')) {
     throw new Error(`Day-four CTA does not target discounted /mk1: ${href}`)
   }
