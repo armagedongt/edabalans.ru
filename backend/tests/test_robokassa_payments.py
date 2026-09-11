@@ -758,7 +758,8 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
     )
 
     assert page.status_code == 200
-    assert "В поле «Комментарий»" in page.text
+    assert "Страница индивидуальная оплата" in page.text
+    assert "Укажите сумму в рублях" in page.text
     assert checkout.status_code == 200
     assert checkout.json()["amount"] == 3500.5
     assert checkout.json()["payment_form"]["fields"]["OutSum"] == "3500.50"
