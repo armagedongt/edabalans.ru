@@ -783,11 +783,16 @@ def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers(
     assert 'data-edabalans-account-offer="true"' in response.text
     assert 'data-edabalans-manual="true"' in response.text
     assert 'data-production-href="/lk"' in response.text
+    assert "У вас уже есть доступ к мастер-классу" in response.text
+    assert 'напишите мне: <a href="https://t.me/FitnessSergey"' in response.text
+    assert 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw' in response.text
     assert "function showOwnedOffers()" in response.text
     assert "function ownsMasterclass(account)" in response.text
     assert "`${publicAppHost}/api/account-auth/account`" in response.text
     assert "`${publicAppHost}/embed.js`" in response.text
     assert "pricingList.hidden = true;" in response.text
+    assert "pricingIntro.hidden = true;" in response.text
+    assert "root.querySelector('.edb-pricing-assurances').hidden = true;" in response.text
     assert "root.querySelector('.edb-pricing-details').hidden = true;" in response.text
 
 

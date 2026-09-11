@@ -1696,16 +1696,18 @@
     #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers {
       width: min(100%, 980px);
       margin: 0 auto;
-      padding: clamp(22px, 4vw, 38px);
+      display: grid;
+      gap: clamp(22px, 3vw, 30px);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro {
+      width: min(100%, 760px);
+      margin: 0 auto;
+      padding: clamp(22px, 4vw, 32px);
       border: 1px solid rgba(38, 175, 255, .3);
       border-radius: 24px;
       background: rgba(255, 255, 255, .9);
       box-shadow: 0 12px 28px -22px rgba(17, 112, 176, .45);
-    }
-
-    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro {
-      width: min(100%, 680px);
-      margin: 0 auto clamp(22px, 3vw, 30px);
       text-align: center;
     }
 
@@ -3047,8 +3049,9 @@
 
     <section class="edb-pricing-owned-offers" hidden aria-live="polite">
       <header class="edb-pricing-owned-intro">
-        <h3>Мастер-класс уже у вас</h3>
-        <p>Доступ к мастер-классу есть в <a href="/lk" data-production-href="/lk">личном кабинете</a>. Дополнительные курсы и услуги можно приобрести ниже или в личном кабинете. Если нужно индивидуальное предложение, <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">напишите мне в Telegram</a>.</p>
+        <h3>У вас уже есть доступ к мастер-классу</h3>
+        <p>Дополнительные курсы или услуги можно приобрести ниже или в <a href="/lk" data-production-href="/lk">личном кабинете</a>.</p>
+        <p>Если вам нужно что-то обсудить индивидуально, напишите мне: <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">в Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noopener">в MAX</a>.</p>
       </header>
       <div data-edabalans-app="masterclass-offers" data-edabalans-manual="true" data-edabalans-inline="true" data-edabalans-account-offer="true" data-edabalans-account-url="/lk"></div>
     </section>
@@ -3206,6 +3209,7 @@
       const intensiveOfferTimer = intensiveOffer.querySelector('span');
       const ownedOffers = root.querySelector('.edb-pricing-owned-offers');
       const ownedOffersMount = ownedOffers.querySelector('[data-edabalans-app="masterclass-offers"]');
+      const pricingIntro = root.querySelector('.edb-pricing-intro');
       const publicAppHost = new URL(root.dataset.pricingEndpoint, window.location.href).origin;
       const checkoutModal = root.querySelector('.edb-checkout-modal');
       const checkoutDialog = root.querySelector('.edb-checkout-dialog');
@@ -3349,6 +3353,7 @@
           if (!ownsMasterclass(account)) return false;
           window.EdabalansIdentity = { email: account.email, sessionToken: '', source: 'native' };
           await loadScript(`${publicAppHost}/embed.js`);
+          pricingIntro.hidden = true;
           pricingList.hidden = true;
           intensiveOffer.hidden = true;
           pricingStatus.hidden = true;
