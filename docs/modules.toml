@@ -297,6 +297,7 @@ owns_routes = [
   "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
   "*/preview/direct-intensive*",
+  "*/landing/direct/*",
   "*/site-header.js",
   "*/api/public/video-analytics", "*/api/public/homepage-analytics",
   "*/api/admin/public-homepage-analytics", "*/public-site-assets/*",
