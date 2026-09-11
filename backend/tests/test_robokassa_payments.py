@@ -21,6 +21,7 @@ from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.intensive_web_access import create_offer_token  # noqa: E402
 from app.main import app  # noqa: E402
+from app.pricing_routes import _preview_checkout_rate_lock, _preview_checkout_rate_state  # noqa: E402
 from app.models import (  # noqa: E402
     AccountCredential,
     AccountOnboarding,
@@ -65,6 +66,8 @@ def make_client(
     live_probe_enabled: bool = False,
     account_onboarding_enabled: bool = False,
 ) -> tuple[TestClient, sessionmaker[Session], rsa.RSAPrivateKey]:
+    with _preview_checkout_rate_lock:
+        _preview_checkout_rate_state.clear()
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
