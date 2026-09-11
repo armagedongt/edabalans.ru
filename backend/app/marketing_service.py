@@ -103,7 +103,7 @@ def _normalize_source(value: str | None) -> str:
     folded = source.casefold()
     if not folded or "не определ" in folded:
         return "Не определён"
-    if "яндекс" in folded or "yandex" in folded:
+    if folded == "ya" or "яндекс" in folded or "yandex" in folded:
         return "Яндекс"
     if "пикабу" in folded or "pikabu" in folded:
         return "Пикабу"

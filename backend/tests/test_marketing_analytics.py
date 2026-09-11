@@ -32,6 +32,10 @@ app.include_router(marketing_router)
 ADMIN_AUTH = ("admin@example.com", "test-admin-password")
 
 
+def test_normalize_source_recognizes_yandex_short_utm_value() -> None:
+    assert marketing_service._normalize_source("ya") == "Яндекс"
+
+
 def make_client() -> tuple[TestClient, sessionmaker]:
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
