@@ -36,6 +36,12 @@ CAMPAIGN_AD_IDS = {
     "rsya": (1920472171246211821, 1920472171246211822, 1920472171246211823, 1921017629943159159),
     "search": (1920469239931549227, 1920469239931549228, 1920469239931549229),
 }
+DIRECT_CREATIVE_ALIASES = {
+    1920472171246211821: {"control_jeans", "control_cakes", "woman_face_cake_no_text"},
+    1920472171246211822: {"cat_bagel"},
+    1920472171246211823: {"cat_hudey"},
+    1921017629943159159: {"fridge_cake_sryvy_v1"},
+}
 
 
 def _creative_name(ad_id: int, rows: list[dict[str, Any]] | None = None) -> str:
@@ -219,22 +225,9 @@ def _summarize_direct(rows: list[dict]) -> dict:
 
 
 def _ensure_known_ads(summary: dict, kind: str) -> dict:
-    existing = {int(ad["ad_id"]) for ad in summary["ads"]}
-    for ad_id in CAMPAIGN_AD_IDS[kind]:
-        if ad_id in existing:
-            continue
-        summary["ads"].append({
-            "ad_id": ad_id,
-            "name": CREATIVE_NAMES[ad_id],
-            "impressions": 0,
-            "clicks": 0,
-            "sessions": 0,
-            "sessions_available": True,
-            "cost_rub": 0.0,
-            "ctr_percent": 0.0,
-            "cpc_rub": None,
-        })
-    summary["ads"].sort(key=lambda item: item["ad_id"])
+    # The report is an operational daily view: only served announcements belong
+    # here. Archived and paused zero rows remain available in the catalogue.
+    del kind
     return summary
 
 
@@ -313,7 +306,7 @@ def _reminder_snapshot(db: Session | None, starts: list[dict], cutoff: datetime)
     """Count day-one reminders and openings during the next three hours."""
 
     if db is None or not inspect(db.get_bind()).has_table("tg_step_deliveries"):
-        return {"available": False, "sent": 0, "opened_within_3h": 0}
+        return {"available": False, "sent": 0, "eligible_within_3h": 0, "opened_within_3h": 0}
 
     start_by_user: dict[str, datetime] = {}
     day_one_by_user: dict[str, datetime] = {}
@@ -336,7 +329,7 @@ def _reminder_snapshot(db: Session | None, starts: list[dict], cutoff: datetime)
                 pass
 
     if not start_by_user:
-        return {"available": True, "sent": 0, "opened_within_3h": 0}
+        return {"available": True, "sent": 0, "eligible_within_3h": 0, "opened_within_3h": 0}
 
     reminder_by_user: dict[str, datetime] = {}
     deliveries = db.execute(
@@ -367,24 +360,35 @@ def _reminder_snapshot(db: Session | None, starts: list[dict], cutoff: datetime)
             continue
         reminder_by_user[user_id] = min(reminder_by_user.get(user_id, sent_at), sent_at)
 
+    eligible_reminders = {
+        user_id: sent_at
+        for user_id, sent_at in reminder_by_user.items()
+        if sent_at + timedelta(hours=3) <= _aware_utc(cutoff)
+    }
     opened_within_3h = 0
-    for user_id, sent_at in reminder_by_user.items():
+    for user_id, sent_at in eligible_reminders.items():
         opened_at = day_one_by_user.get(user_id)
         if opened_at and sent_at <= opened_at < _aware_utc(cutoff) and opened_at <= sent_at + timedelta(hours=3):
             opened_within_3h += 1
     return {
         "available": True,
         "sent": len(reminder_by_user),
+        "eligible_within_3h": len(eligible_reminders),
         "opened_within_3h": opened_within_3h,
     }
 
 
-def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> dict:
+def _internal_snapshot(
+    db: Session,
+    settings: Settings,
+    report_date: date,
+    creative_to_channel: dict[str, str] | None = None,
+) -> dict:
     dashboard = marketing_dashboard(
         db,
         settings,
-        # The calendar-Start cohort may contain a correctly attributed Start
-        # between 00:00 and 03:00 whose landing entry happened the previous day.
+        # Query one adjacent day on each side, then apply the exact midnight
+        # boundary below to avoid losing a journey at a date boundary.
         date_from=report_date - timedelta(days=1),
         date_to=report_date + timedelta(days=1),
     )
@@ -395,7 +399,9 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
         date_to=report_date,
     )
     rows = dashboard["rows"]
-    cutoff = datetime.combine(report_date + timedelta(days=1), dt_time(hour=3), tzinfo=MOSCOW)
+    # Direct closes each day at the next Moscow midnight. The lead funnel uses
+    # the identical boundary, so one report never extends into a second day.
+    cutoff = datetime.combine(report_date + timedelta(days=1), dt_time.min, tzinfo=MOSCOW)
 
     def before_cutoff(value: str | None) -> bool:
         if not value:
@@ -511,6 +517,65 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
     acquisition_cohort = cohort_metrics(attributed_starts)
     acquisition_reminders = _reminder_snapshot(db, attributed_starts, cutoff)
 
+    def channel_snapshot(channel: str) -> dict:
+        def belongs(row: dict) -> bool:
+            return creative_to_channel is not None and creative_to_channel.get(str(row.get("creative") or "")) == channel
+
+        channel_starts = [row for row in starts if belongs(row)]
+        channel_attributed = [row for row in attributed_starts if belongs(row)]
+        channel_breakdown = [
+            item for item in entry_breakdown
+            if creative_to_channel is not None and creative_to_channel.get(str(item.get("creative") or "")) == channel
+        ]
+        messenger: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
+        method: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
+        device: dict[str, dict] = defaultdict(lambda: {"entries": 0, "starts": 0})
+        for item in channel_breakdown:
+            item_messenger = item.get("messenger") or "не определён"
+            item_method = item.get("entry") or "не определён"
+            entries = int(item.get("entries") or 0)
+            messenger[item_messenger]["entries"] += entries
+            method[item_method]["entries"] += entries
+        seen_journeys: set[str] = set()
+        for row in entry_dashboard.get("rows", []):
+            journey_id = str(row.get("journey_id") or "")
+            if not belongs(row) or not journey_id or journey_id in seen_journeys:
+                continue
+            seen_journeys.add(journey_id)
+            device[row.get("device") or "не определён"]["entries"] += 1
+        for row in channel_attributed:
+            row_messenger = row.get("messenger") or "не определён"
+            row_method = row.get("entry_method") or "не определён"
+            row_device = row.get("device") or "не определён"
+            messenger[row_messenger]["starts"] += 1
+            method[row_method]["starts"] += 1
+            device[row_device]["starts"] += 1
+        cohort = cohort_metrics(channel_attributed)
+        depth = _course_depth_snapshot(db, channel_attributed, cutoff)
+        reminders = _reminder_snapshot(db, channel_attributed, cutoff)
+        channel_unlinked_starts = sum(not row.get("journey_id") for row in channel_starts)
+        return {
+            "entries": sum(int(item.get("entries") or 0) for item in channel_breakdown),
+            "starts": len(channel_starts),
+            "acquisition_starts": cohort["starts"],
+            "acquisition_day_one": cohort["day_one"],
+            "acquisition_video_engaged": cohort["video_engaged"],
+            "acquisition_end_day_cta": cohort["end_day_cta"],
+            "acquisition_subscribed": cohort["subscribed"],
+            "acquisition_page_depth": depth["page"],
+            "acquisition_video_depth": depth["video"],
+            "acquisition_reminders_sent": reminders["sent"],
+            "acquisition_reminders_eligible_within_3h": reminders.get("eligible_within_3h", reminders["sent"]),
+            "acquisition_opened_within_3h_after_reminder": reminders["opened_within_3h"],
+            "by_messenger": dict(messenger),
+            "by_method": dict(method),
+            "by_device": dict(device),
+            "tracking_errors": (
+                [f"У {channel_unlinked_starts} реальных Start нет journey_id посадки"]
+                if entry_tracking_available and channel_unlinked_starts else []
+            ),
+        }
+
     try:
         entry_tracking_from = date.fromisoformat(settings.marketing_report_entry_tracking_from)
         depth_tracking_from = date.fromisoformat(settings.marketing_report_depth_tracking_from)
@@ -549,22 +614,25 @@ def _internal_snapshot(db: Session, settings: Settings, report_date: date) -> di
         "acquisition_subscribed": acquisition_cohort["subscribed"],
         "reminder_tracking_available": acquisition_reminders["available"],
         "acquisition_reminders_sent": acquisition_reminders["sent"],
+        "acquisition_reminders_eligible_within_3h": acquisition_reminders.get("eligible_within_3h", acquisition_reminders["sent"]),
         "acquisition_opened_within_3h_after_reminder": acquisition_reminders["opened_within_3h"],
         "by_creative": dict(by_creative),
         "by_messenger": dict(by_messenger),
         "by_method": dict(by_method),
         "by_device": dict(by_device),
+        **({
+            "channels": {
+                channel: channel_snapshot(channel)
+                for channel in sorted(set(creative_to_channel.values()))
+            },
+        } if creative_to_channel else {}),
     }
 
 
 def _with_starts(direct: dict, starts: dict[str, int]) -> dict:
     for ad in direct["ads"]:
         candidates = {str(ad["ad_id"]), ad["name"]}
-        aliases = {
-            1920472171246211821: {"control_jeans", "control_cakes", "woman_face_cake_no_text"},
-            1920472171246211822: {"cat_bagel"},
-            1920472171246211823: {"cat_hudey"},
-        }.get(ad["ad_id"], set())
+        aliases = DIRECT_CREATIVE_ALIASES.get(ad["ad_id"], set())
         value = sum(count for key, count in starts.items() if key in candidates | aliases or str(ad["ad_id"]) in key)
         ad["starts"] = value
         ad["click_to_start_percent"] = round(value * 100 / ad["clicks"], 1) if ad["clicks"] else None
@@ -643,47 +711,56 @@ def _report_period(payload: dict) -> tuple[str, str]:
     )
 
 
-def _funnel_values(payload: dict) -> dict[str, int | None]:
+def _funnel_values(payload: dict, channel: str) -> dict[str, int | None]:
     channels = payload["channels"]
     internal = payload["internal"]
-    clicks = sum(item["total"]["clicks"] for item in channels.values())
-    sessions_available = all(item["total"].get("sessions_available", True) for item in channels.values())
-    sessions = sum(item["total"].get("sessions", 0) for item in channels.values()) if sessions_available else None
-    device_sessions: dict[str, int] = defaultdict(int)
-    device_sessions_available = sessions_available
-    for channel in channels.values():
-        for device, values in channel.get("devices", {}).items():
-            if not values.get("sessions_available", True):
-                device_sessions_available = False
-            else:
-                device_sessions[device] += int(values.get("sessions") or 0)
+    direct = channels[channel]
+    # Stored reports generated before the split have no channel map. New reports
+    # must never borrow another channel's funnel when one channel has no traffic.
+    channel_internal = internal if "channels" not in internal else internal["channels"].get(channel, {})
+    clicks = direct["total"]["clicks"]
+    sessions_available = direct["total"].get("sessions_available", True)
+    sessions = direct["total"].get("sessions", 0) if sessions_available else None
+    device_sessions = direct.get("devices", {})
     entry_available = bool(internal.get("entry_tracking_available"))
     depth_available = bool(internal.get("depth_tracking_available"))
     reminder_available = bool(internal.get("reminder_tracking_available"))
-    button = internal.get("by_method", {}).get("button", {})
-    qr = internal.get("by_method", {}).get("qr", {})
-    page = internal.get("acquisition_page_depth") or {}
-    video = internal.get("acquisition_video_depth") or {}
+    button = channel_internal.get("by_method", {}).get("button", {})
+    qr = channel_internal.get("by_method", {}).get("qr", {})
+    page = channel_internal.get("acquisition_page_depth") or {}
+    video = channel_internal.get("acquisition_video_depth") or {}
+    messenger = channel_internal.get("by_messenger", {})
     return {
         "clicks": clicks,
         "sessions": sessions,
         "mobile": (
-            sum(value for key, value in device_sessions.items() if key in {"mobile", "tablet"})
-            if device_sessions_available else None
+            sum(int(value.get("sessions") or 0) for key, value in device_sessions.items() if key in {"mobile", "tablet"})
+            if sessions_available else None
         ),
-        "desktop": device_sessions.get("desktop", 0) if device_sessions_available else None,
-        "entries": internal.get("entries") if entry_available else None,
+        "desktop": int(device_sessions.get("desktop", {}).get("sessions") or 0) if sessions_available else None,
+        "entries": channel_internal.get("entries") if entry_available else None,
         "button": int(button.get("entries") or 0) if entry_available else None,
         "qr": int(qr.get("entries") or 0) if entry_available else None,
-        "starts": internal.get("acquisition_starts"),
-        "day_one": internal.get("acquisition_day_one"),
-        "reminders": internal.get("acquisition_reminders_sent") if reminder_available else None,
-        "after_reminder": internal.get("acquisition_opened_within_3h_after_reminder") if reminder_available else None,
+        "max": int(messenger.get("max", {}).get("entries") or 0) if entry_available else None,
+        "max_starts": int(messenger.get("max", {}).get("starts") or 0) if entry_available else None,
+        "telegram": (
+            int(messenger.get("tg", {}).get("entries") or 0)
+            + int(messenger.get("telegram", {}).get("entries") or 0)
+        ) if entry_available else None,
+        "telegram_starts": (
+            int(messenger.get("tg", {}).get("starts") or 0)
+            + int(messenger.get("telegram", {}).get("starts") or 0)
+        ) if entry_available else None,
+        "starts": channel_internal.get("acquisition_starts"),
+        "day_one": channel_internal.get("acquisition_day_one"),
+        "reminders": channel_internal.get("acquisition_reminders_sent") if reminder_available else None,
+        "reminder_eligible": channel_internal.get("acquisition_reminders_eligible_within_3h") if reminder_available else None,
+        "after_reminder": channel_internal.get("acquisition_opened_within_3h_after_reminder") if reminder_available else None,
         **{f"page_{value}": int(page.get(str(value)) or 0) if depth_available else None for value in (25, 50, 75, 100)},
-        "video_start": internal.get("acquisition_video_engaged"),
+        "video_start": channel_internal.get("acquisition_video_engaged"),
         **{f"video_{value}": int(video.get(str(value)) or 0) if depth_available else None for value in (25, 50, 75, 100)},
-        "end_cta": internal.get("acquisition_end_day_cta"),
-        "subscribed": internal.get("acquisition_subscribed"),
+        "end_cta": channel_internal.get("acquisition_end_day_cta"),
+        "subscribed": channel_internal.get("acquisition_subscribed"),
     }
 
 
@@ -700,13 +777,15 @@ FUNNEL_SPECS: tuple[tuple[str, str, str | None], ...] = (
     ("Посетили посадку", "sessions", "clicks"),
     ("↳ Телефон", "mobile", "sessions"),
     ("↳ ПК", "desktop", "sessions"),
-    ("Перешли в бот", "entries", "sessions"),
-    ("↳ Кнопка", "button", "entries"),
-    ("↳ QR", "qr", "entries"),
+    ("Нажали кнопку мессенджера", "entries", "sessions"),
+    ("↳ MAX", "max", "entries"),
+    ("↳ Telegram", "telegram", "entries"),
+    ("↳ QR-код", "qr", "entries"),
     ("Нажали Start", "starts", "entries"),
     ("Открыли день 1", "day_one", "starts"),
     ("↳ Напоминание", "reminders", "starts"),
-    ("↳ Открыли ≤3ч", "after_reminder", "reminders"),
+    ("↳ Полное окно ≤3ч", "reminder_eligible", "reminders"),
+    ("↳ Открыли ≤3ч", "after_reminder", "reminder_eligible"),
     ("Текст 25%", "page_25", "day_one"),
     ("Текст 50%", "page_50", "page_25"),
     ("Текст 75%", "page_75", "page_50"),
@@ -723,41 +802,32 @@ FUNNEL_SPECS: tuple[tuple[str, str, str | None], ...] = (
 
 def render_messages(payload: dict) -> list[str]:
     channels = payload["channels"]
-    internal = payload["internal"]
     day, cutoff_day = _report_period(payload)
-    total_clicks = sum(item["total"]["clicks"] for item in channels.values())
-    total_cost = sum(item["total"]["cost_rub"] for item in channels.values())
-    direct_lines = [
-        f"📊 ДИРЕКТ · {day} 00:00–23:59 МСК",
-        f"Всего: {total_clicks} рекламных кликов · {_money(total_cost)} · {internal['acquisition_starts']} Start",
-    ]
+    messages = []
     for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
         total = channels[key]["total"]
-        direct_lines.append(
-            f"{label} ИТОГО: {total['clicks']} кликов · CTR {total['ctr_percent']:.2f}% · "
-            f"{_money(total['cost_rub'])} · Start {total['starts']} · CPA {_money(total['cpa_start_rub'])}"
+        direct_lines = [
+            f"📊 {label} · {day} 00:00–{cutoff_day} 00:00 МСК",
+            f"ИТОГО: {total['impressions']} показов · {total['clicks']} кликов · CTR {total['ctr_percent']:.2f}% · "
+            f"{_money(total['cost_rub'])} · Start {total['starts']} · CPA {_money(total['cpa_start_rub'])}",
+        ]
+        direct_lines.extend(
+            f"{ad['name']}: {ad['impressions']} · {ad['clicks']} · CTR {ad['ctr_percent']:.2f}% · "
+            f"{_money(ad['cost_rub'])} · Start {ad['starts']} · CPA {_money(ad['cpa_start_rub'])}"
+            for ad in channels[key]["ads"]
         )
-        for ad in channels[key]["ads"]:
-            direct_lines.append(
-                f"  {ad['name']}: {ad['clicks']} · {_money(ad['cost_rub'])} · "
-                f"Start {ad['starts']} · CPA {_money(ad['cpa_start_rub'])}"
+        funnel = _funnel_values(payload, key)
+        funnel_lines = [f"🧭 ПУТЬ ЛИДА · входы и действия {day} 00:00–{cutoff_day} 00:00 МСК"]
+        for label_text, funnel_key, parent_key in FUNNEL_SPECS:
+            value = funnel.get(funnel_key)
+            parent = funnel.get(parent_key) if parent_key else None
+            parent_conversion = "—" if parent_key is None else _conversion(value, parent)
+            funnel_lines.append(
+                f"{label_text}: {_shown(value)} · от шага {parent_conversion} · от клика {_conversion(value, funnel['clicks'])}"
             )
-    funnel = _funnel_values(payload)
-    funnel_lines = [f"🧭 ПУТЬ ЛИДА · входы {day}, действия до {cutoff_day} 03:00 МСК"]
-    for label, key, parent_key in FUNNEL_SPECS:
-        value = funnel.get(key)
-        parent = funnel.get(parent_key) if parent_key else None
-        parent_conversion = "—" if parent_key is None else _conversion(value, parent)
-        funnel_lines.append(
-            f"{label}: {_shown(value)} · от шага {parent_conversion} · от клика {_conversion(value, funnel['clicks'])}"
-        )
-    direct_lines.extend([
-        _budget_line("РСЯ", channels["rsya"]),
-        _budget_line("Поиск", channels["search"]),
-    ])
-    if internal.get("tracking_errors"):
-        funnel_lines.extend(f"⚠️ {error}" for error in internal["tracking_errors"])
-    return ["\n".join(direct_lines) + "\n\n" + "\n".join(funnel_lines)]
+        direct_lines.append(_budget_line(label, channels[key]))
+        messages.append("\n".join(direct_lines) + "\n\n" + "\n".join(funnel_lines))
+    return messages
 
 
 def _direct_channel_rows(channel: dict) -> list[list[Any]]:
@@ -786,58 +856,33 @@ def _budget_line(label: str, channel: dict) -> str:
     return f"{label}: неделя {_money(spent)} из {_money(limit)} · осталось {_money(remaining)}"
 
 
-def render_rich_messages(payload: dict) -> list[dict]:
+def _channel_rich_message(payload: dict, channel: str, label: str, fallback_text: str) -> dict:
     channels = payload["channels"]
     internal = payload["internal"]
     previous = payload["comparison_previous"]
     day, cutoff_day = _report_period(payload)
-    total_clicks = sum(item["total"]["clicks"] for item in channels.values())
-    total_cost = sum(item["total"]["cost_rub"] for item in channels.values())
-    fallbacks = render_messages(payload)
+    prior = previous[channel]["total"]
     direct_blocks: list[dict] = [
-        {"type": "paragraph", "text": f"Период: {day}, 00:00–23:59 МСК"},
+        {"type": "paragraph", "text": f"Период: {day}, 00:00–{cutoff_day} 00:00 МСК"},
+        _table(
+            ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"],
+            _direct_channel_rows(channels[channel]),
+            label,
+        ),
+        {"type": "paragraph", "text": (
+            f"{label} вчера: {prior['impressions']} показов · {prior['clicks']} кликов · "
+            f"{_money(prior['cost_rub'])} · Start {prior['starts']} · CPA {_money(prior.get('cpa_start_rub'))}"
+        )},
+        {"type": "footer", "text": _budget_line(label, channels[channel])},
     ]
-    for key, label in (("rsya", "РСЯ"), ("search", "Поиск")):
-        prior = previous[key]["total"]
-        direct_blocks.extend([
-            _table(
-                ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"],
-                _direct_channel_rows(channels[key]),
-                label,
-            ),
-            {
-                "type": "paragraph",
-                "text": (
-                    f"{label} вчера: {prior['clicks']} кликов · {_money(prior['cost_rub'])} · "
-                    f"{prior['starts']} Start · CPA {_money(prior.get('cpa_start_rub'))}"
-                ),
-            },
-        ])
-    direct_blocks.extend([
-        {
-            "type": "footer",
-            "text": (
-                f"Всего: {total_clicks} кликов · {_money(total_cost)} · {internal['acquisition_starts']} Start.\n"
-                f"{_budget_line('РСЯ', channels['rsya'])}\n{_budget_line('Поиск', channels['search'])}"
-            ),
-        },
-        _details([
-            "Кл. — клики по рекламе; Пок. — показы.",
-            "Start — человек реально нажал Start в Telegram или MAX, а не просто открыл мессенджер.",
-            "CPA — расход на один реальный Start.",
-            "Расход за день и недельный остаток показаны отдельно.",
-        ]),
-    ])
-    values = _funnel_values(payload)
-    entry_available = bool(internal.get("entry_tracking_available"))
-    depth_available = bool(internal.get("depth_tracking_available"))
-    reminder_available = bool(internal.get("reminder_tracking_available"))
+    values = _funnel_values(payload, channel)
+    channel_internal = internal if "channels" not in internal else internal["channels"].get(channel, {})
     funnel_rows = []
-    for label, key, parent_key in FUNNEL_SPECS:
+    for label_text, key, parent_key in FUNNEL_SPECS:
         value = values.get(key)
         parent = values.get(parent_key) if parent_key else None
         funnel_rows.append([
-            label,
+            label_text,
             _shown(value),
             "—" if parent_key is None else _conversion(value, parent),
             _conversion(value, values["clicks"]),
@@ -845,33 +890,47 @@ def render_rich_messages(payload: dict) -> list[dict]:
     funnel_blocks: list[dict] = [
         {
             "type": "paragraph",
-            "text": f"Входы {day}; Start и дальнейшие действия учитываются до {cutoff_day} 03:00 МСК.",
+            "text": f"Входы и действия: {day} 00:00–{cutoff_day} 00:00 МСК.",
         },
-        _table(["Этап", "Кол-во", "От шага", "От клика"], funnel_rows, "РСЯ + поиск"),
+        _table(["Этап", "Кол-во", "От шага", "От клика"], funnel_rows, f"Путь лида · {label}"),
+        _table(
+            ["Мессенджер", "CTA", "Start", "CTA → Start"],
+            [
+                ["MAX", _shown(values["max"]), _shown(values["max_starts"]), _conversion(values["max_starts"], values["max"])],
+                ["Telegram", _shown(values["telegram"]), _shown(values["telegram_starts"]), _conversion(values["telegram_starts"], values["telegram"])],
+                ["QR-код", _shown(values["qr"]), "—", "—"],
+            ],
+            f"Мессенджеры · {label}",
+        ),
     ]
-    if internal.get("tracking_errors"):
-        funnel_blocks.append({"type": "paragraph", "text": "⚠️ " + "\n⚠️ ".join(internal["tracking_errors"])})
+    if channel_internal.get("tracking_errors"):
+        funnel_blocks.append({"type": "paragraph", "text": "⚠️ " + "\n⚠️ ".join(channel_internal["tracking_errors"])})
     funnel_blocks.append(_details([
         "Клик рекламы — клик, зарегистрированный Директом.",
         "Посетили посадку — визиты Метрики после рекламного клика. Визитов иногда больше кликов из-за повторных заходов.",
-        "Телефон/ПК — устройство визита посадки; кнопка/QR — способ перехода в мессенджер.",
+        "MAX/Telegram — выбранный на посадке мессенджер; QR-код выводится отдельно, если им воспользовались.",
+        "Полное окно ≤3ч — только те, кому после напоминания успели дать все три часа до полуночи; это защищает отчёт от ложного нуля у поздних лидов.",
         "От шага — конверсия от логического родительского этапа; От клика — от всех рекламных кликов.",
-        "Напоминание сейчас отправляется через 15 минут, только если день 1 ещё не открыт; следующий ряд — открытие в течение 3 часов после него.",
         "НД — сигнал тогда ещё не собирался или не был связан; это не ноль.",
-        f"Сбор входов: {'работает' if entry_available else 'для этого периода ещё не работал'}; глубина: {'работает' if depth_available else 'для этого периода ещё не работала'}; напоминания: {'работают' if reminder_available else 'НД'}.",
     ]))
-    return [_rich_message(
-        f"📊 Директ и путь лида · {day}",
+    return _rich_message(
+        f"📊 {label} и путь лида · {day}",
         [*direct_blocks, *funnel_blocks],
-        "\n\n".join(fallbacks),
-    )]
+        fallback_text,
+    )
+
+
+def render_rich_messages(payload: dict) -> list[dict]:
+    fallbacks = render_messages(payload)
+    return [
+        _channel_rich_message(payload, "rsya", "РСЯ", fallbacks[0]),
+        _channel_rich_message(payload, "search", "Поиск", fallbacks[1]),
+    ]
 
 
 def build_daily_report(db: Session, settings: Settings, report_date: date) -> dict:
     campaign_map = _campaigns(settings)
-    internal = _internal_snapshot(db, settings, report_date)
     previous_date = report_date - timedelta(days=1)
-    previous_internal = _internal_snapshot(db, settings, previous_date)
     baseline = max(date.fromisoformat(settings.marketing_report_baseline_date), report_date - timedelta(days=365))
     week_start = report_date - timedelta(days=report_date.weekday())
     try:
@@ -886,6 +945,16 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
         min(previous_date, baseline, week_start),
         report_date,
     )
+    campaign_to_channel = {campaign_id: kind for kind, campaign_id in campaign_map.items()}
+    creative_to_channel = {
+        str(row.get("AdId")): campaign_to_channel[int(row.get("CampaignId") or 0)]
+        for row in direct_rows
+        if int(row.get("CampaignId") or 0) in campaign_to_channel and row.get("AdId")
+    }
+    for raw_ad_id, channel in list(creative_to_channel.items()):
+        creative_to_channel.update({alias: channel for alias in DIRECT_CREATIVE_ALIASES.get(int(raw_ad_id), set())})
+    internal = _internal_snapshot(db, settings, report_date, creative_to_channel)
+    previous_internal = _internal_snapshot(db, settings, previous_date, creative_to_channel)
     channels: dict[str, dict] = {}
     comparison: dict[str, dict] = {}
     cumulative: dict[str, dict] = {}
@@ -922,7 +991,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
     payload = {
         "schema_version": 3,
         "report_date": report_date.isoformat(),
-        "cutoff": f"{(report_date + timedelta(days=1)).isoformat()}T03:00:00+03:00",
+        "cutoff": f"{(report_date + timedelta(days=1)).isoformat()}T00:00:00+03:00",
         "channels": channels,
         "comparison_previous": comparison,
         "cumulative_from": baseline.isoformat(),
@@ -938,7 +1007,7 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
 def generate_and_store(db: Session, settings: Settings, report_date: date) -> MarketingDailyReport:
     payload = build_daily_report(db, settings, report_date)
     start = datetime.combine(report_date, dt_time.min, tzinfo=MOSCOW).astimezone(timezone.utc)
-    end = datetime.combine(report_date + timedelta(days=1), dt_time(hour=3), tzinfo=MOSCOW).astimezone(timezone.utc)
+    end = datetime.combine(report_date + timedelta(days=1), dt_time.min, tzinfo=MOSCOW).astimezone(timezone.utc)
     row = db.scalar(select(MarketingDailyReport).where(MarketingDailyReport.report_date == report_date.isoformat()))
     if row is None:
         row = MarketingDailyReport(report_date=report_date.isoformat(), period_start=start, period_end=end)
