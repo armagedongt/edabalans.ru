@@ -17,6 +17,29 @@ from app.course_structure_service import normalize_seed  # noqa: E402
 client = TestClient(app)
 
 
+def test_public_homepage_media_is_server_owned_and_allowlisted() -> None:
+    document = client.get("/public-site-assets/education-documents.webp")
+    document_original = client.get("/public-site-assets/education-documents-original.png")
+    avatar = client.get("/public-site-assets/reviews/anastasia-lapshina-avatar.jpg")
+    first_voice = client.get("/public-site-assets/reviews/elena-review.mp3")
+    clipped_voice = client.get("/public-site-assets/reviews/irina-review-main.mp3")
+    voice = client.get("/public-site-assets/reviews/tatiana-sysueva-review.mp3")
+
+    assert document.status_code == 200
+    assert document.headers["content-type"].startswith("image/webp")
+    assert document_original.status_code == 200
+    assert document_original.headers["content-type"].startswith("image/png")
+    assert avatar.status_code == 200
+    assert avatar.headers["content-type"].startswith("image/jpeg")
+    assert first_voice.status_code == 200
+    assert first_voice.headers["content-type"].startswith("audio/mpeg")
+    assert clipped_voice.status_code == 200
+    assert clipped_voice.headers["content-type"].startswith("audio/mpeg")
+    assert voice.status_code == 200
+    assert voice.headers["content-type"].startswith("audio/mpeg")
+    assert client.get("/public-site-assets/../../account-portal.html").status_code == 404
+
+
 def test_masterclass_article_tables_keep_mobile_scroll_contract() -> None:
     source = (
         Path(__file__).resolve().parents[1]
@@ -1212,6 +1235,8 @@ def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     assert "edabalans_intensive_offer_v1" in response.text
     assert "window.localStorage" in response.text
     assert "history.replaceState" in response.text
+    assert "data-production-src" in response.text
+    assert "data-production-href" in response.text
     assert "createElement('iframe')" not in response.text
     assert "/homepage.js" not in client.get("/openapi.json").json()["paths"]
 
@@ -1219,6 +1244,9 @@ def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     assert embedded_source.status_code == 200
     assert 'data-tilda-homepage-embed="true"' in embedded_source.text
     assert 'data-pricing-endpoint="/api/pricing/site"' in embedded_source.text
+    assert "Ваша персональная скидка за прохождение бесплатного интенсива — 1 000 ₽" in embedded_source.text
+    assert 'data-price-field="personal-sale"' in embedded_source.text
+    assert "personal_sale_amount" in embedded_source.text
 
     shell = client.get("/preview/homepage-tilda-shell")
     assert shell.status_code == 200

@@ -689,7 +689,8 @@ def test_personal_offer_changes_preview_and_checkout_by_one_thousand() -> None:
     )
 
     assert preview.status_code == 200
-    assert preview.json()["tariffs"][0]["sale_amount"] == 4900
+    assert preview.json()["tariffs"][0]["sale_amount"] == 5900
+    assert preview.json()["tariffs"][0]["personal_sale_amount"] == 4900
     assert checkout.status_code == 200
     assert checkout.json()["amount"] == 4900
     assert checkout.json()["payment_form"]["fields"]["OutSum"] == "4900.00"

@@ -203,8 +203,7 @@ def site_pricing_payload(
         catalog_tariff = tariff_public(db, entry.product_code or "")
         serialized = serialize_entry(entry)
         if discount:
-            serialized["compare_at_amount"] = serialized["sale_amount"]
-            serialized["sale_amount"] = amount_value(
+            serialized["personal_sale_amount"] = amount_value(
                 site_tariff_amount(entry, personal_discount=discount)
             )
         entries.append(

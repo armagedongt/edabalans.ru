@@ -375,7 +375,9 @@
             document.head.appendChild(copy);
           }
         });
-        ensureLegalFooter(mount);
+        if (mount.getAttribute('data-edabalans-inline') !== 'true') {
+          ensureLegalFooter(mount);
+        }
         return executeScripts(doc);
       })
       .catch(function (error) {
@@ -388,7 +390,8 @@
   }
 
   function boot() {
-    var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'));
+    var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'))
+      .filter(function (mount) { return mount.getAttribute('data-edabalans-manual') !== 'true'; });
     if (!mounts.length) return;
     mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход…</div>';
     if (location.origin !== APP_HOST) {

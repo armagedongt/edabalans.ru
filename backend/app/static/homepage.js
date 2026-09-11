@@ -50,6 +50,17 @@
   }
 
   function prepareElement(element, baseUrl) {
+    if (element.hasAttribute('data-production-src')) {
+      var productionSrc = absolute(element.getAttribute('data-production-src'), appHost);
+      if (element.hasAttribute('data-voice-src')) {
+        element.setAttribute('data-voice-src', productionSrc);
+      } else {
+        element.setAttribute('src', productionSrc);
+      }
+    }
+    if (element.hasAttribute('data-production-href')) {
+      element.setAttribute('href', absolute(element.getAttribute('data-production-href'), appHost));
+    }
     ['src', 'poster'].forEach(function (attribute) {
       if (element.hasAttribute(attribute)) {
         var source = element.getAttribute(attribute);

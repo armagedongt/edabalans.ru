@@ -392,8 +392,9 @@ def test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email() ->
 
     prices = client.get("/api/pricing/site", params={"intensive_offer": token})
     assert prices.status_code == 200
-    assert prices.json()["tariffs"][0]["compare_at_amount"] == 15900
-    assert prices.json()["tariffs"][0]["sale_amount"] == 14900
+    assert prices.json()["tariffs"][0]["compare_at_amount"] == 17700
+    assert prices.json()["tariffs"][0]["sale_amount"] == 15900
+    assert prices.json()["tariffs"][0]["personal_sale_amount"] == 14900
     assert prices.json()["intensive_offer"]["discount_amount"] == 1000
 
     checkout_response = client.post(

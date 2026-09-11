@@ -373,7 +373,7 @@ def _return_page(
     message: str,
     *,
     invoice_id: str | None = None,
-    return_url: str = "/preview/homepage-mobile#pricing",
+    return_url: str = "/preview/homepage-release-candidate#pricing",
     paid_message: str = "Оплата подтверждена.",
     paid_title: str | None = None,
     paid_url: str | None = None,
@@ -405,7 +405,7 @@ def robokassa_success(
         return_url=(
             "/robokassa-test"
             if (request.url.hostname or "").lower() in GO_PAYMENT_HOSTS
-            else "/preview/homepage-mobile#pricing"
+            else "/preview/homepage-release-candidate#pricing"
         ),
         paid_message=(
             "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате."
@@ -433,7 +433,7 @@ def robokassa_fail(request: Request) -> HTMLResponse:
         return_url=(
             "/robokassa-test"
             if (request.url.hostname or "").lower() in GO_PAYMENT_HOSTS
-            else "/preview/homepage-mobile#pricing"
+            else "/preview/homepage-release-candidate#pricing"
         ),
     )
 

@@ -774,6 +774,23 @@ def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     assert "amount.className = 'edb-checkout-amount'" in response.text
 
 
+def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers() -> None:
+    response = client.get("/preview/homepage-release-candidate?embed=tilda")
+
+    assert response.status_code == 200
+    assert 'class="edb-pricing-owned-offers" hidden' in response.text
+    assert 'data-edabalans-app="masterclass-offers"' in response.text
+    assert 'data-edabalans-account-offer="true"' in response.text
+    assert 'data-edabalans-manual="true"' in response.text
+    assert 'data-production-href="/lk"' in response.text
+    assert "function showOwnedOffers()" in response.text
+    assert "function ownsMasterclass(account)" in response.text
+    assert "`${publicAppHost}/api/account-auth/account`" in response.text
+    assert "`${publicAppHost}/embed.js`" in response.text
+    assert "pricingList.hidden = true;" in response.text
+    assert "root.querySelector('.edb-pricing-details').hidden = true;" in response.text
+
+
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:
     response = client.get("/preview/homepage-reviews-wall")
 

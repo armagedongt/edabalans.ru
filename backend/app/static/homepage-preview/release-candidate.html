@@ -1655,21 +1655,29 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer {
       display: grid;
-      gap: 5px;
-      width: min(100%, 430px);
+      gap: 9px;
+      width: min(100%, 720px);
       margin: -8px auto 24px;
-      padding: 15px 17px;
-      border: 1px solid rgba(50, 161, 94, .34);
-      border-radius: 17px;
-      background: linear-gradient(135deg, #eaffef 0%, #f7fff9 100%);
-      box-shadow: 0 14px 28px -26px rgba(32, 130, 70, .65);
-      color: #21683d;
+      padding: 22px 24px;
+      border: 1px solid rgba(32, 151, 82, .5);
+      border-radius: 20px;
+      background: linear-gradient(135deg, #dfffea 0%, #f4fff7 54%, #d8f7e6 100%);
+      box-shadow: 0 18px 34px -24px rgba(22, 123, 61, .72);
+      color: #155f34;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer strong {
-      color: #16763d;
-      font-size: 15px;
+      color: #0e7036;
+      font-size: 17px;
       line-height: 1.25;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer p {
+      margin: 0;
+      color: #246742;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.45;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer span {
@@ -1680,8 +1688,44 @@
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer[hidden],
-    #edb-pricing-neurozeh-v1 .edb-pricing-mini-courses[hidden] {
+    #edb-pricing-neurozeh-v1 .edb-pricing-mini-courses[hidden],
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers[hidden] {
       display: none !important;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: clamp(22px, 4vw, 38px);
+      border: 1px solid rgba(38, 175, 255, .3);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 12px 28px -22px rgba(17, 112, 176, .45);
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro {
+      width: min(100%, 680px);
+      margin: 0 auto clamp(22px, 3vw, 30px);
+      text-align: center;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro h3 {
+      margin: 0;
+      color: #137bc0;
+      font-size: clamp(24px, 3.2vw, 34px);
+      line-height: 1.15;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro p {
+      margin: 12px 0 0;
+      color: #3d4f60;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-intro a {
+      color: #137bc0;
+      font-weight: 800;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-kicker {
@@ -2010,6 +2054,48 @@
       line-height: 1;
       letter-spacing: -.05em;
       white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-sale-line {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      min-width: 0;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-personal-price {
+      display: none;
+      min-width: 0;
+      color: #16763d;
+      font-size: clamp(9px, 1.05vw, 12px);
+      font-weight: 800;
+      letter-spacing: -.015em;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-personal-price.is-visible {
+      display: inline;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-featured .edb-pricing-personal-price {
+      color: #d9ffe9;
+    }
+
+    #edb-pricing-neurozeh-v1 .edb-pricing-plan-consult .edb-pricing-personal-price {
+      color: #f7dda0;
+    }
+
+    @media (max-width: 480px) {
+      #edb-pricing-neurozeh-v1 .edb-pricing-sale-line {
+        gap: 6px;
+      }
+
+      #edb-pricing-neurozeh-v1 .edb-pricing-personal-price {
+        font-size: 8px;
+        letter-spacing: -.05em;
+      }
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-button {
@@ -2953,10 +3039,19 @@
       <div class="edb-pricing-kicker" id="edb-pricing-title" data-homepage-field="text">Выберите тариф</div>
     </header>
     <aside class="edb-pricing-intensive-offer" hidden aria-live="polite">
-      <strong>Ваша скидка за интенсив — 1 000 ₽</strong>
+      <strong>Ваша персональная скидка за прохождение бесплатного интенсива — 1 000 ₽</strong>
+      <p>Она применится к цене выбранного тарифа, когда вы нажмёте «Начать прямо сейчас». Скидка действует 72 часа с момента прохождения последнего дня интенсива.</p>
       <span></span>
     </aside>
     <p class="edb-pricing-status" hidden>Тарифы временно недоступны. Обновите страницу чуть позже.</p>
+
+    <section class="edb-pricing-owned-offers" hidden aria-live="polite">
+      <header class="edb-pricing-owned-intro">
+        <h3>Мастер-класс уже у вас</h3>
+        <p>Доступ к мастер-классу есть в <a href="/lk" data-production-href="/lk">личном кабинете</a>. Дополнительные курсы и услуги можно приобрести ниже или в личном кабинете. Если нужно индивидуальное предложение, <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">напишите мне в Telegram</a>.</p>
+      </header>
+      <div data-edabalans-app="masterclass-offers" data-edabalans-manual="true" data-edabalans-inline="true" data-edabalans-account-offer="true" data-edabalans-account-url="/lk"></div>
+    </section>
 
     <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide">
       <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
@@ -2966,7 +3061,7 @@
         </ul>
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
-          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
       </article>
@@ -2981,7 +3076,7 @@
         </ul>
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
-          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
       </article>
@@ -2999,7 +3094,7 @@
         </ul>
         <div class="edb-pricing-bottom">
           <div class="edb-pricing-price-row" aria-hidden="true"><div class="edb-pricing-old" data-price-field="compare"></div><div class="edb-pricing-discount-ticket" data-price-field="discount"><span class="edb-pricing-discount-icon"></span><span class="edb-pricing-discount-label">Скидка</span><strong></strong><span class="edb-pricing-discount-saving" data-price-field="saving"></span></div></div>
-          <div class="edb-pricing-price" data-price-field="sale"></div>
+          <div class="edb-pricing-sale-line"><div class="edb-pricing-price" data-price-field="sale"></div><div class="edb-pricing-personal-price" data-price-field="personal-sale"></div></div>
           <button class="edb-pricing-button" type="button">Начать прямо сейчас</button>
         </div>
       </article>
@@ -3109,6 +3204,9 @@
       const pricingStatus = root.querySelector('.edb-pricing-status');
       const intensiveOffer = root.querySelector('.edb-pricing-intensive-offer');
       const intensiveOfferTimer = intensiveOffer.querySelector('span');
+      const ownedOffers = root.querySelector('.edb-pricing-owned-offers');
+      const ownedOffersMount = ownedOffers.querySelector('[data-edabalans-app="masterclass-offers"]');
+      const publicAppHost = new URL(root.dataset.pricingEndpoint, window.location.href).origin;
       const checkoutModal = root.querySelector('.edb-checkout-modal');
       const checkoutDialog = root.querySelector('.edb-checkout-dialog');
       const checkoutForm = root.querySelector('.edb-checkout-form');
@@ -3138,6 +3236,11 @@
           if (!tariff) return;
           plan.querySelector('[data-price-field="name"]').textContent = tariff.name;
           plan.querySelector('[data-price-field="sale"]').textContent = formatPrice(tariff.sale_amount);
+          const personalSale = Number(tariff.personal_sale_amount);
+          const personalPrice = plan.querySelector('[data-price-field="personal-sale"]');
+          const hasPersonalPrice = Number.isFinite(personalSale) && personalSale >= 0 && personalSale < Number(tariff.sale_amount || 0);
+          personalPrice.textContent = hasPersonalPrice ? `Для вас ещё дешевле: ${formatPrice(personalSale)}` : '';
+          personalPrice.classList.toggle('is-visible', hasPersonalPrice);
           const compare = Number(tariff.compare_at_amount || 0);
           const sale = Number(tariff.sale_amount || 0);
           const oldPrice = plan.querySelector('[data-price-field="compare"]');
@@ -3214,7 +3317,52 @@
         }
       }
 
-      loadPricingCatalog();
+      function ownsMasterclass(account) {
+        return Boolean(account && (account.courses || []).some((course) => course.code === 'masterclass' && course.owned));
+      }
+
+      function loadScript(source) {
+        return new Promise((resolve, reject) => {
+          const existing = [...document.scripts].find((script) => script.src === source);
+          if (existing) {
+            if (window.EdabalansEmbed) resolve();
+            else existing.addEventListener('load', resolve, { once: true });
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = source;
+          script.async = true;
+          script.onload = resolve;
+          script.onerror = reject;
+          document.head.appendChild(script);
+        });
+      }
+
+      async function showOwnedOffers() {
+        try {
+          const response = await fetch(`${publicAppHost}/api/account-auth/account`, {
+            credentials: 'include',
+            mode: 'cors'
+          });
+          if (!response.ok) return false;
+          const account = await response.json();
+          if (!ownsMasterclass(account)) return false;
+          window.EdabalansIdentity = { email: account.email, sessionToken: '', source: 'native' };
+          await loadScript(`${publicAppHost}/embed.js`);
+          pricingList.hidden = true;
+          intensiveOffer.hidden = true;
+          pricingStatus.hidden = true;
+          root.querySelector('.edb-pricing-assurances').hidden = true;
+          root.querySelector('.edb-pricing-details').hidden = true;
+          ownedOffers.hidden = false;
+          await window.EdabalansEmbed.load(ownedOffersMount);
+          return true;
+        } catch (error) {
+          return false;
+        }
+      }
+
+      showOwnedOffers().then((shown) => { if (!shown) loadPricingCatalog(); });
       const productTargets = { program: 0, recipes: 1, consultation: 2, calories: 0, training: 0 };
 
       root.querySelectorAll('[data-variant-button]').forEach((button) => {
