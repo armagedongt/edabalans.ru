@@ -46,8 +46,8 @@ SUCCESS_CONTENT = {
     SUCCESS_KIND_PUBLIC_MASTERCLASS: {
         "title": "Оплата прошла успешно!",
         "html": (
-            "<p>Проверьте почту, на которую оформляли заказ. В течение нескольких минут туда придут данные для входа в личный кабинет и ссылка на него.</p>"
-            "<p>Кассовый чек также отправлен на эту почту.</p>"
+            "<p>Проверьте почту, на которую оформляли заказ.</p>"
+            "<p>Туда отправлен чек о покупке. В течение нескольких минут туда придут данные для входа в личный кабинет и ссылка на него.</p>"
             "<p>Если письма нет, проверьте папку «Спам».</p>"
             "<p>При любых технических проблемах напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
         ),
@@ -55,14 +55,14 @@ SUCCESS_CONTENT = {
     SUCCESS_KIND_MANUAL_SERVICE: {
         "title": "Оплата прошла успешно!",
         "html": (
-            "<p>Кассовый чек отправлен на почту, которую вы указали при оплате.</p>"
+            "<p>Чек о покупке отправлен вам на почту, которую вы указали при оплате.</p>"
             "<p>Мне тоже придёт уведомление об оплате, но вы можете сразу написать мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
         ),
     },
     SUCCESS_KIND_MEMBER_OFFER: {
         "title": "Оплата прошла успешно!",
         "html": (
-            "<p>Кассовый чек отправлен на почту, которую вы указали при оплате.</p>"
+            "<p>Чек о покупке отправлен вам на почту, которую вы указали при оплате.</p>"
             "<p>Доступ к приобретённым материалам проверяйте в <a href=\"/lk\">личном кабинете</a>.</p>"
             "<p>Если вы оплачивали консультацию или курс, который открывается после прохождения другого курса, и хотите уточнить сроки — напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
         ),
@@ -425,7 +425,7 @@ async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}
         f'<p><a href="{escape(return_url, quote=True)}">Вернуться на сайт</a></p>'
         if return_url else ""
     )
-    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}#state p{{margin:0 0 14px}}#state p:last-child{{margin-bottom:0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><div id=\"state\">{message}</div>{return_link}</main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
+    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:left}}a{{color:#167bc0}}#state p{{margin:0 0 14px}}#state p:last-child{{margin-bottom:0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><div id=\"state\">{message}</div>{return_link}</main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
 
 
 @router.get("/payments/robokassa/success", include_in_schema=False)

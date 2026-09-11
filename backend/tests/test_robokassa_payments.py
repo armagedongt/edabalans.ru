@@ -326,7 +326,7 @@ def test_public_payment_success_waits_for_callback_then_renders_canonical_copy()
 
     assert response.status_code == 200
     assert "Проверьте почту, на которую оформляли заказ" in response.text
-    assert "Кассовый чек также отправлен на эту почту" in response.text
+    assert "Туда отправлен чек о покупке" in response.text
     assert "const successContent=" in response.text
     assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
     app.dependency_overrides.clear()
@@ -351,7 +351,8 @@ def test_public_payment_success_preview_shows_final_paid_state() -> None:
     assert response.status_code == 200
     assert "Оплата прошла успешно" in response.text
     assert "данные для входа в личный кабинет и ссылка на него" in response.text
-    assert "Кассовый чек также отправлен на эту почту" in response.text
+    assert "Туда отправлен чек о покупке" in response.text
+    assert "text-align:left" in response.text
     assert 'href="/preview/homepage-release-candidate#pricing"' not in response.text
 
 
@@ -361,7 +362,7 @@ def test_manual_service_success_preview_has_contacts_and_receipt() -> None:
     response = client.get("/preview/robokassa-success/manual-service")
 
     assert response.status_code == 200
-    assert "Кассовый чек отправлен на почту" in response.text
+    assert "Чек о покупке отправлен вам на почту" in response.text
     assert "Мне тоже придёт уведомление об оплате" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert 'Вернуться на сайт' not in response.text
@@ -374,7 +375,7 @@ def test_member_offer_success_preview_links_account_and_contacts() -> None:
 
     assert response.status_code == 200
     assert 'href="/lk">личном кабинете</a>' in response.text
-    assert "Кассовый чек отправлен на почту" in response.text
+    assert "Чек о покупке отправлен вам на почту" in response.text
     assert "хотите уточнить сроки" in response.text
 
 
