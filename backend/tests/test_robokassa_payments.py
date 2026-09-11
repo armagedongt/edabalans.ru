@@ -318,17 +318,40 @@ def test_go_payment_returns_link_back_to_test_page() -> None:
     app.dependency_overrides.clear()
 
 
-def test_public_payment_success_tells_buyer_to_check_email_when_onboarding_enabled() -> None:
+def test_public_payment_success_tells_buyer_to_check_email() -> None:
     _, _, _ = make_client(account_onboarding_enabled=True)
     client = TestClient(app, base_url="https://app.edabalans.ru")
 
     response = client.get("/payments/robokassa/success?InvId=123")
 
     assert response.status_code == 200
-    assert "Ищите письмо с дальнейшими шагами" in response.text
+    assert "Данные для входа отправили на email" in response.text
+    assert 'const paidTitle="Оплата прошла успешно"' in response.text
     assert 'id="account-link"' not in response.text
     assert 'const paidUrl=null' in response.text
     app.dependency_overrides.clear()
+
+
+def test_public_payment_success_tells_buyer_to_check_email_without_onboarding_flag() -> None:
+    _, _, _ = make_client(account_onboarding_enabled=False)
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+
+    response = client.get("/payments/robokassa/success?InvId=123")
+
+    assert response.status_code == 200
+    assert 'const paidMessage="Оплата подтверждена."' in response.text
+    app.dependency_overrides.clear()
+
+
+def test_public_payment_success_preview_shows_final_paid_state() -> None:
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+
+    response = client.get("/preview/robokassa-success")
+
+    assert response.status_code == 200
+    assert "Оплата прошла успешно" in response.text
+    assert "Данные для входа отправили на email" in response.text
+    assert 'href="/preview/homepage-release-candidate#pricing"' in response.text
 
 
 def test_live_probe_page_is_explicitly_enabled_and_noindex() -> None:

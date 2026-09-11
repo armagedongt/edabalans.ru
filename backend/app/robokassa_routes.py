@@ -375,6 +375,7 @@ def _return_page(
     invoice_id: str | None = None,
     return_url: str = "/preview/homepage-mobile#pricing",
     paid_message: str = "Оплата подтверждена.",
+    paid_title: str | None = None,
     paid_url: str | None = None,
     show_account_link: bool = False,
 ) -> HTMLResponse:
@@ -383,11 +384,12 @@ def _return_page(
         polling = f"""<script>
 const statusUrl='/api/payments/robokassa/{invoice_id}/status';
 const paidMessage={json.dumps(paid_message, ensure_ascii=False)};
+const paidTitle={json.dumps(paid_title, ensure_ascii=False)};
 const paidUrl={json.dumps(paid_url, ensure_ascii=False)};
-async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{document.getElementById('state').textContent=d.paid_message||paidMessage;const destination=d.account_url||paidUrl;const link=document.getElementById('account-link');if(destination&&link){{link.href=destination;link.hidden=false;}}return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
+async function check(){{try{{const r=await fetch(statusUrl,{{credentials:'omit'}});const d=await r.json();if(d.status==='paid'){{document.getElementById('state').textContent=d.paid_message||paidMessage;if(paidTitle){{document.title=paidTitle;document.getElementById('payment-page-title').textContent=paidTitle;}}const destination=d.account_url||paidUrl;const link=document.getElementById('account-link');if(destination&&link){{link.href=destination;link.hidden=false;}}return;}}if(d.status==='test_paid'){{document.getElementById('state').textContent='Тестовая оплата подтверждена.';return;}}}}catch(e){{}}setTimeout(check,2000);}}check();
 </script>"""
     account_link = '<p><a id="account-link" hidden>Открыть личный кабинет</a></p>' if show_account_link else ""
-    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}</style><main><h1>{title}</h1><p id=\"state\">{message}</p>{account_link}<p><a href=\"{escape(return_url, quote=True)}\">Вернуться на сайт</a></p></main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
+    return HTMLResponse(f"""<!doctype html><html lang=\"ru\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta name=\"robots\" content=\"noindex,nofollow\"><title>{title}</title><style>body{{margin:0;min-height:100svh;display:grid;place-items:center;background:#eef8ff;color:#173f70;font:16px/1.5 Arial,sans-serif}}main{{max-width:560px;margin:20px;padding:32px;border-radius:24px;background:white;box-shadow:0 20px 60px #176ba326;text-align:center}}a{{color:#167bc0}}</style><main><h1 id=\"payment-page-title\">{title}</h1><p id=\"state\">{message}</p>{account_link}<p><a href=\"{escape(return_url, quote=True)}\">Вернуться на сайт</a></p></main>{polling}</html>""", headers={"X-Robots-Tag": "noindex, nofollow"})
 
 
 @router.get("/payments/robokassa/success", include_in_schema=False)
@@ -406,10 +408,20 @@ def robokassa_success(
             else "/preview/homepage-mobile#pricing"
         ),
         paid_message=(
-            "Спасибо за оплату! Доступ готов. Ищите письмо с дальнейшими шагами на email, который вы указали при оплате."
+            "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате."
             if settings.account_onboarding_enabled
             else "Оплата подтверждена."
         ),
+        paid_title="Оплата прошла успешно",
+    )
+
+
+@router.get("/preview/robokassa-success", include_in_schema=False)
+def robokassa_success_preview() -> HTMLResponse:
+    return _return_page(
+        "Оплата прошла успешно",
+        "Спасибо за оплату! Доступ готов. Данные для входа отправили на email, который вы указали при оплате.",
+        return_url="/preview/homepage-release-candidate#pricing",
     )
 
 
