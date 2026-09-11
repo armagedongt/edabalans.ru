@@ -9,6 +9,7 @@ const browser = await chromium.launch({
 
 try {
   const page = await browser.newPage({ viewport: { width: 1200, height: 800 } })
+  await page.addInitScript(() => { window.ym = () => {} })
   let offerRequests = 0
   await page.route(`${baseUrl}/api/intensive/state`, route => route.fulfill({
     contentType: 'application/json',
@@ -50,6 +51,12 @@ try {
   }
 
   await cta.scrollIntoViewIfNeeded()
+  await page.waitForTimeout(250)
+  if (offerRequests !== 0) {
+    throw new Error(`Offer started by reading or scrolling to the day-four CTA: ${offerRequests}`)
+  }
+
+  await cta.click()
   await page.waitForFunction(() => document.querySelector('.masterclass-cta')?.href.includes('intensive_offer=offer-scroll-test'))
   if (offerRequests !== 1) {
     throw new Error(`Offer endpoint called an unexpected number of times: ${offerRequests}`)
