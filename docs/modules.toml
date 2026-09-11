@@ -86,7 +86,7 @@ owns_tables = [
   "account_onboardings",
 ]
 owns_routes = [
-  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*",
+  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay",
   "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
 ]
 
