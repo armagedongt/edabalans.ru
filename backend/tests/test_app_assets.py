@@ -1147,7 +1147,7 @@ def test_intensive_concept_pages_are_public() -> None:
         assert "data-edabalans-footer" in friendly.text
         if day_code in {"day-1", "day-2", "day-3"}:
             assert 'data-channel-block hidden' in friendly.text
-        assert '/intensive/runtime.js?v=2' in friendly.text
+        assert '/intensive/runtime.js?v=3' in friendly.text
         assert "EDITOR NOTE" not in friendly.text
     stylesheet = client.get("/intensive/intensive-components.css")
     assert stylesheet.status_code == 200
@@ -1162,7 +1162,9 @@ def test_intensive_concept_pages_are_public() -> None:
     assert "edabalans_intensive_progress" not in script.text
     assert "/api/intensive/state" in script.text
     assert "/api/intensive/offer-token" in script.text
-    assert "IntersectionObserver" in script.text
+    day_offer_runtime = script.text.split("async function setupDayOffer", 1)[1].split("function setupVideoAnalytics", 1)[0]
+    assert "IntersectionObserver" not in day_offer_runtime
+    assert "link.addEventListener(\"click\"" in day_offer_runtime
     assert "/mk1#masterclass" in script.text
     assert "serverState.identified && !(serverState.assignment_days || []).includes(day)" in script.text
     assert 'block.hidden = false' in script.text

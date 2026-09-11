@@ -393,15 +393,6 @@
         }
       });
     });
-    if (!("IntersectionObserver" in window)) {
-      activate().catch(() => {});
-      return;
-    }
-    const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting)) return;
-      activate().then(() => observer.disconnect()).catch(() => {});
-    }, {rootMargin: "0px", threshold: 0.01});
-    links.forEach((link) => observer.observe(link));
   }
 
   function setupVideoAnalytics() {
