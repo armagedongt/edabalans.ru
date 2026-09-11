@@ -340,9 +340,20 @@ def homepage_release_candidate_preview(embed: str | None = Query(default=None)) 
 
 @router.get("/preview/direct-intensive/loader.js", include_in_schema=False)
 def direct_intensive_loader() -> Response:
-    source = (
-        STATIC_DIR / "homepage-preview" / "direct-intensive-loader.js"
-    ).read_text(encoding="utf-8")
+    return direct_intensive_loader_response("instead")
+
+
+@router.get("/landing/direct/{variant}.js", include_in_schema=False)
+def direct_intensive_explicit_loader(variant: str) -> Response:
+    if variant not in {"instead", "motivation-hero", "topics"}:
+        raise HTTPException(status_code=404, detail="landing variant not found")
+    return direct_intensive_loader_response(variant)
+
+
+def direct_intensive_loader_response(variant: str) -> Response:
+    source = (STATIC_DIR / "homepage-preview" / "direct-intensive-loader.js").read_text(
+        encoding="utf-8"
+    ).replace("__EDB_DIRECT_VARIANT__", variant)
     response = Response(
         source,
         media_type="application/javascript",

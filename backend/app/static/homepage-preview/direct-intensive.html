@@ -157,7 +157,7 @@ var qrcode=function(){function i(t,r){function a(t,r){g=function(t){for(var r=ne
       points:INSTEAD_POINTS.slice(0,-1)
     }
   };
-  const requestedVariant=new URLSearchParams(location.search).get('variant');
+  const requestedVariant=window.__edbDirectIntensiveVariant||new URLSearchParams(location.search).get('variant');
   const ACTIVE_VARIANT=Object.prototype.hasOwnProperty.call(VARIANTS,requestedVariant)?requestedVariant:'instead';
   const CONTENT={
     ...OPENING,

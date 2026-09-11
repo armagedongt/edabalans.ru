@@ -1,6 +1,7 @@
 (function () {
   'use strict';
 
+  var explicitVariant = '__EDB_DIRECT_VARIANT__';
   var script = document.currentScript;
   var host = document.getElementById('edb-direct-intensive-host');
   var appHost = script && script.src
@@ -10,6 +11,7 @@
   if (!host || host.dataset.edabalansLoaded === 'true') return;
   host.dataset.edabalansLoaded = 'true';
   host.setAttribute('aria-busy', 'true');
+  window.__edbDirectIntensiveVariant = explicitVariant;
 
   [host, host.closest('.t123__centeredContainer'), host.closest('.t-rec')].forEach(function (element) {
     if (!element) return;
@@ -19,7 +21,7 @@
     element.style.padding = '0';
   });
 
-  fetch(appHost + '/preview/direct-intensive?variant=motivation-hero', {
+  fetch(appHost + '/preview/direct-intensive', {
     credentials: 'omit',
     mode: 'cors',
     cache: 'no-store'

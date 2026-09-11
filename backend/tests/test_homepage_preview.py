@@ -1398,10 +1398,23 @@ def test_direct_intensive_loader_is_stable_cross_origin_tilda_embed() -> None:
     assert response.headers["access-control-allow-origin"] == "*"
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
     assert "document.getElementById('edb-direct-intensive-host')" in response.text
-    assert "fetch(appHost + '/preview/direct-intensive?variant=motivation-hero'" in response.text
+    assert "window.__edbDirectIntensiveVariant = explicitVariant" in response.text
+    assert "fetch(appHost + '/preview/direct-intensive'" in response.text
+    assert "var explicitVariant = 'instead'" in response.text
     assert "host.replaceWith(document.importNode(landing, true))" in response.text
     assert "landing.style.width = '100vw'" in response.text
     assert "landing.style.marginLeft = 'calc(50% - 50vw)'" in response.text
+
+
+def test_direct_intensive_explicit_loaders_choose_their_landing_without_query_params() -> None:
+    for variant in ("instead", "motivation-hero", "topics"):
+        response = client.get(f"/landing/direct/{variant}.js")
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("application/javascript")
+        assert f"var explicitVariant = '{variant}'" in response.text
+        assert "?variant=" not in response.text
+
+    assert client.get("/landing/direct/not-a-variant.js").status_code == 404
     assert "parsed.querySelectorAll('script')" in response.text
 
 
@@ -1410,7 +1423,7 @@ def test_direct_intensive_preview_contains_controlled_copy_variants() -> None:
 
     assert "const VARIANTS={" in response.text
     assert "?variant=" not in response.text
-    assert "requestedVariant=new URLSearchParams(location.search).get('variant')" in response.text
+    assert "requestedVariant=window.__edbDirectIntensiveVariant||new URLSearchParams(location.search).get('variant')" in response.text
     assert "?requestedVariant:'instead'" in response.text
     assert "headingLines:['Заканчивайте худеть','только на силе воли']" in response.text
     assert "это не ваша личная черта как личности.'" in response.text
