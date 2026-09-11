@@ -1064,7 +1064,7 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "root.addEventListener('click', engageFromFirstPlayerClick, true);"
         in response.text
     )
-    assert "soundCard.addEventListener('click', enableSoundAndWatch);" not in response.text
+    assert "soundCard.addEventListener('click', enableSoundAndWatch);" in response.text
     assert "edabalans:video-play" not in response.text
     assert "Содержание" not in response.text
     assert "event.pointerType === 'mouse' && event.button !== 0" in response.text
@@ -1090,18 +1090,18 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
         "\n  };\n  const mediaPreset", 1
     )[0]
     assert "'homepage-vsl':" in media_presets
-    assert "https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4" in media_presets
-    assert "https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4" in media_presets
+    homepage_vsl_preset = response.text.split("const homepageVslPreset = {", 1)[1].split(
+        "\n  };\n  const MEDIA_PRESETS", 1
+    )[0]
+    assert "https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4" in homepage_vsl_preset
+    assert "https://cdn-g.boomstream.com/balancer/F5zqt5iQ-9WmCBBoU.mp4" in homepage_vsl_preset
     assert "https://cdn-g.boomstream.com/balancer/IpVIy3yM-9WmCBBoU.mp4" in media_presets
     assert "https://cdn-g.boomstream.com/balancer/RkqYeVnc-9WmCBBoU.mp4" in media_presets
     anya_media_preset = media_presets.split("'anya-review': {", 1)[1].split(
         "\n    }", 1
     )[0]
     assert "volume:" not in anya_media_preset
-    main_media_preset = media_presets.split("'homepage-vsl': {", 1)[1].split(
-        "\n    }", 1
-    )[0]
-    assert "volume: 0.85" in main_media_preset
+    assert "volume: 0.85" in homepage_vsl_preset
     assert "previewVideo.volume = mediaPreset.volume ?? 1;" in response.text
     assert "volumeSlider.value = String(video.volume);" in response.text
     assert "mainVideo.src = mediaPreset.source;" in response.text

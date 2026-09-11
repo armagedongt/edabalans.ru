@@ -3879,6 +3879,8 @@
   <script src="/preview/homepage-mobile/media-coordinator.js?v=3"></script>
   <script>
     (() => {
+      const floatingEnabled = false;
+      if (!floatingEnabled) return;
       const module = document.querySelector('[data-floating-vsl]');
       const frame = module?.querySelector('iframe');
       const close = module?.querySelector('[data-floating-vsl-close]');
