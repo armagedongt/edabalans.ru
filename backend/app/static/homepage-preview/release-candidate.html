@@ -2063,18 +2063,19 @@
       align-items: baseline;
       gap: 10px;
       min-width: 0;
-      white-space: nowrap;
+      flex-wrap: wrap;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-personal-price {
       display: none;
       min-width: 0;
+      flex: 1 1 105px;
       color: #16763d;
       font-size: clamp(9px, 1.05vw, 12px);
       font-weight: 800;
       letter-spacing: -.015em;
       line-height: 1.2;
-      white-space: nowrap;
+      white-space: normal;
     }
 
     #edb-pricing-neurozeh-v1 .edb-pricing-personal-price.is-visible {
@@ -3219,9 +3220,13 @@
       const checkoutSummary = root.querySelector('.edb-checkout-summary');
       const checkoutError = root.querySelector('.edb-checkout-error');
       const checkoutSubmit = root.querySelector('.edb-checkout-submit');
+      // This is also the key used by homepage.js in the Tilda mount. Keeping one
+      // browser record makes the offer survive ordinary revisits for its full window.
+      const offerStorageKey = 'edabalans_intensive_offer_v1';
       let selectedPlan = null;
       let checkoutTrigger = null;
       let intensiveOfferTimerId = null;
+      let activeOfferToken = '';
       const formatPrice = (amount) => {
         const numericAmount = Number(amount);
         const hasKopecks = !Number.isInteger(numericAmount);
@@ -3231,6 +3236,42 @@
         }).format(numericAmount).replace(/\u00a0/g, '\u202f');
         return `${formatted} ₽`;
       };
+
+      function readActiveOfferToken() {
+        const urlToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
+        let saved = null;
+        try { saved = JSON.parse(window.localStorage.getItem(offerStorageKey) || 'null'); } catch (_error) {}
+        if (urlToken) {
+          try {
+            window.localStorage.setItem(offerStorageKey, JSON.stringify({
+              token: urlToken,
+              expiresAt: saved && saved.token === urlToken ? saved.expiresAt : null
+            }));
+          } catch (_error) {}
+          return urlToken;
+        }
+        if (!saved || !saved.token) return '';
+        if (saved.expiresAt && Date.parse(saved.expiresAt) <= Date.now()) {
+          clearActiveOfferToken();
+          return '';
+        }
+        return saved.token;
+      }
+
+      function saveActiveOfferExpiry(offer) {
+        if (!activeOfferToken || !offer || !offer.expires_at) return;
+        try {
+          window.localStorage.setItem(offerStorageKey, JSON.stringify({
+            token: activeOfferToken,
+            expiresAt: offer.expires_at
+          }));
+        } catch (_error) {}
+      }
+
+      function clearActiveOfferToken() {
+        activeOfferToken = '';
+        try { window.localStorage.removeItem(offerStorageKey); } catch (_error) {}
+      }
 
       function renderPricingCatalog(catalog, source) {
         const byCode = Object.fromEntries((catalog.tariffs || []).map((tariff) => [tariff.code, tariff]));
@@ -3305,14 +3346,21 @@
         pricingStatus.hidden = false;
         root.dataset.pricingSource = 'loading';
         try {
-          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
+          activeOfferToken = readActiveOfferToken();
           const pricingUrl = new URL(root.dataset.pricingEndpoint, window.location.origin);
-          if (offerToken) {
-            pricingUrl.searchParams.set('intensive_offer', offerToken);
+          if (activeOfferToken) {
+            pricingUrl.searchParams.set('intensive_offer', activeOfferToken);
           }
-          const response = await fetch(pricingUrl, { credentials: 'omit' });
+          let response = await fetch(pricingUrl, { credentials: 'omit' });
+          if (response.status === 403 && activeOfferToken) {
+            // The server is the authority for expiry; a stale browser token must not
+            // keep showing a discount after its 72-hour window has ended.
+            clearActiveOfferToken();
+            response = await fetch(new URL(root.dataset.pricingEndpoint, window.location.origin), { credentials: 'omit' });
+          }
           if (!response.ok) throw new Error(`pricing catalog ${response.status}`);
           const catalog = await response.json();
+          saveActiveOfferExpiry(catalog.intensive_offer);
           renderPricingCatalog(catalog, 'database');
         } catch (error) {
           root.dataset.pricingSource = 'unavailable';
@@ -3442,7 +3490,10 @@
         selectedPlan = plan;
         checkoutTrigger = trigger;
         const name = plan.querySelector('[data-price-field="name"]').textContent;
-        const price = plan.querySelector('[data-price-field="sale"]').textContent;
+        const personalPrice = plan.querySelector('[data-price-field="personal-sale"]');
+        const price = personalPrice.classList.contains('is-visible')
+          ? personalPrice.textContent.replace(/^Для вас ещё дешевле:\s*/, '')
+          : plan.querySelector('[data-price-field="sale"]').textContent;
         const amount = document.createElement('span');
         amount.className = 'edb-checkout-amount';
         amount.textContent = price;
@@ -3488,14 +3539,13 @@
         button.disabled = true;
         button.textContent = 'Открываю корзину…';
         try {
-          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
           const response = await fetch(root.dataset.checkoutEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'omit',
             body: JSON.stringify({
               price_code: plan.dataset.priceCode,
-              intensive_offer: offerToken || null
+              intensive_offer: activeOfferToken || null
             })
           });
           const result = await response.json().catch(() => ({}));
@@ -3543,7 +3593,6 @@
         checkoutSubmit.disabled = true;
         checkoutSubmit.textContent = 'Создаю счёт…';
         try {
-          const offerToken = new URLSearchParams(window.location.search).get('intensive_offer') || '';
           const response = await fetch(root.dataset.checkoutEndpoint, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -3551,7 +3600,7 @@
             body: JSON.stringify({
               price_code: selectedPlan.dataset.priceCode,
               email: checkoutEmail.value,
-              intensive_offer: offerToken || null
+              intensive_offer: activeOfferToken || null
             })
           });
           const result = await response.json().catch(() => ({}));

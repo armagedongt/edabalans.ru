@@ -774,6 +774,17 @@ def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     assert "amount.className = 'edb-checkout-amount'" in response.text
 
 
+def test_release_candidate_keeps_a_valid_intensive_offer_for_catalog_and_checkout() -> None:
+    response = client.get("/preview/homepage-release-candidate?embed=tilda")
+
+    assert response.status_code == 200
+    assert "const offerStorageKey = 'edabalans_intensive_offer_v1'" in response.text
+    assert "function readActiveOfferToken()" in response.text
+    assert "function saveActiveOfferExpiry(offer)" in response.text
+    assert "intensive_offer: activeOfferToken || null" in response.text
+    assert "personalPrice.textContent.replace(/^Для вас ещё дешевле:" in response.text
+
+
 def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers() -> None:
     response = client.get("/preview/homepage-release-candidate?embed=tilda")
 
