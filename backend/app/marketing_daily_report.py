@@ -220,6 +220,7 @@ def _summarize_direct(rows: list[dict]) -> dict:
     for target in [total, *ads.values(), *devices.values()]:
         target["cost_rub"] = round(target["cost_rub"], 2)
         target["ctr_percent"] = round(target["clicks"] * 100 / target["impressions"], 2) if target["impressions"] else 0.0
+        target["cpm_rub"] = round(target["cost_rub"] * 1000 / target["impressions"], 2) if target["impressions"] else None
         target["cpc_rub"] = round(target["cost_rub"] / target["clicks"], 2) if target["clicks"] else None
     return {"total": total, "ads": sorted(ads.values(), key=lambda item: item["ad_id"]), "devices": dict(devices)}
 
@@ -511,6 +512,23 @@ def _internal_snapshot(
             ),
         }
 
+    # The operator's primary comparison is one continuous acquisition path for
+    # each creative: landing button → Start → first intensive opening. Keep it
+    # alongside the detailed funnel so different ads never borrow one another's
+    # conversion values.
+    creative_funnel: dict[str, dict[str, int]] = defaultdict(
+        lambda: {"button_clicks": 0, "starts": 0, "intensive_opened": 0}
+    )
+    for item in entry_breakdown:
+        creative = str(item.get("creative") or "—")
+        if item.get("entry") == "button":
+            creative_funnel[creative]["button_clicks"] += int(item.get("entries") or 0)
+    for row in attributed_starts:
+        creative = str(row.get("creative") or "—")
+        creative_funnel[creative]["starts"] += 1
+        if row.get("day_one") and before_cutoff(row["day_one"].get("at")):
+            creative_funnel[creative]["intensive_opened"] += 1
+
     depth = _course_depth_snapshot(db, starts, cutoff)
     acquisition_depth = _course_depth_snapshot(db, attributed_starts, cutoff)
     start_cohort = cohort_metrics(starts)
@@ -617,6 +635,7 @@ def _internal_snapshot(
         "acquisition_reminders_eligible_within_3h": acquisition_reminders.get("eligible_within_3h", acquisition_reminders["sent"]),
         "acquisition_opened_within_3h_after_reminder": acquisition_reminders["opened_within_3h"],
         "by_creative": dict(by_creative),
+        "by_creative_funnel": dict(creative_funnel),
         "by_messenger": dict(by_messenger),
         "by_method": dict(by_method),
         "by_device": dict(by_device),
@@ -644,12 +663,61 @@ def _with_starts(direct: dict, starts: dict[str, int]) -> dict:
     return direct
 
 
+def _with_primary_funnel(
+    direct: dict,
+    creative_funnel: dict[str, dict[str, int]],
+    *,
+    entry_tracking_available: bool,
+) -> dict:
+    """Attach the fixed operator comparison path to each served Direct ad."""
+
+    total_buttons: int | None = 0 if entry_tracking_available else None
+    total_intensive: int | None = 0 if entry_tracking_available else None
+    for ad in direct["ads"]:
+        candidates = {str(ad["ad_id"]), ad["name"]} | DIRECT_CREATIVE_ALIASES.get(ad["ad_id"], set())
+        button_clicks = (
+            sum(int((creative_funnel.get(candidate) or {}).get("button_clicks") or 0) for candidate in candidates)
+            if entry_tracking_available else None
+        )
+        intensive_opened = (
+            sum(int((creative_funnel.get(candidate) or {}).get("intensive_opened") or 0) for candidate in candidates)
+            if entry_tracking_available else None
+        )
+        starts = ad["starts"]
+        ad.update({"button_clicks": button_clicks, "intensive_opened": intensive_opened})
+        ad["landing_to_button_percent"] = round(button_clicks * 100 / ad["sessions"], 1) if button_clicks is not None and ad.get("sessions_available") and ad["sessions"] else None
+        ad["button_to_start_percent"] = round(starts * 100 / button_clicks, 1) if button_clicks else None
+        ad["start_to_intensive_percent"] = round(intensive_opened * 100 / starts, 1) if intensive_opened is not None and starts else None
+        ad["cpo_intensive_rub"] = round(ad["cost_rub"] / intensive_opened, 2) if intensive_opened else None
+        if total_buttons is not None:
+            total_buttons += button_clicks or 0
+        if total_intensive is not None:
+            total_intensive += intensive_opened or 0
+
+    total = direct["total"]
+    total["button_clicks"] = total_buttons
+    total["intensive_opened"] = total_intensive
+    total["landing_to_button_percent"] = round(total_buttons * 100 / total["sessions"], 1) if total_buttons is not None and total.get("sessions_available") and total["sessions"] else None
+    total["button_to_start_percent"] = round(total["starts"] * 100 / total_buttons, 1) if total_buttons else None
+    total["start_to_intensive_percent"] = round(total_intensive * 100 / total["starts"], 1) if total_intensive is not None and total["starts"] else None
+    total["cpo_intensive_rub"] = round(total["cost_rub"] / total_intensive, 2) if total_intensive else None
+    return direct
+
+
 def _pct(value: int, base: int) -> str:
     return f"{value * 100 / base:.1f}%" if base else "—"
 
 
 def _money(value: float | None) -> str:
     return "—" if value is None else f"{value:,.0f} ₽".replace(",", " ")
+
+
+def _rub(value: float | None) -> str:
+    return "—" if value is None else f"{value:,.2f} ₽".replace(",", " ").replace(".", ",")
+
+
+def _stage(value: int | None, conversion: float | None) -> str:
+    return "НД" if value is None else f"{value} · {conversion:.1f}%" if conversion is not None else str(value)
 
 
 def _delta(current: float | None, previous: float | None) -> str:
@@ -809,11 +877,19 @@ def render_messages(payload: dict) -> list[str]:
         direct_lines = [
             f"📊 {label} · {day} 00:00–{cutoff_day} 00:00 МСК",
             f"ИТОГО: {total['impressions']} показов · {total['clicks']} кликов · CTR {total['ctr_percent']:.2f}% · "
-            f"{_money(total['cost_rub'])} · Start {total['starts']} · CPA {_money(total['cpa_start_rub'])}",
+            f"CPM {_rub(total['cpm_rub'])} · CPC {_rub(total['cpc_rub'])} · "
+            f"кнопка {_stage(total.get('button_clicks'), total.get('landing_to_button_percent'))} · "
+            f"Start {_stage(total.get('starts'), total.get('button_to_start_percent'))} · "
+            f"интенсив {_stage(total.get('intensive_opened'), total.get('start_to_intensive_percent'))} · "
+            f"CPA Start {_rub(total['cpa_start_rub'])} · CPO интенсив {_rub(total.get('cpo_intensive_rub'))}",
         ]
         direct_lines.extend(
             f"{ad['name']}: {ad['impressions']} · {ad['clicks']} · CTR {ad['ctr_percent']:.2f}% · "
-            f"{_money(ad['cost_rub'])} · Start {ad['starts']} · CPA {_money(ad['cpa_start_rub'])}"
+            f"CPM {_rub(ad['cpm_rub'])} · CPC {_rub(ad['cpc_rub'])} · "
+            f"кнопка {_stage(ad.get('button_clicks'), ad.get('landing_to_button_percent'))} · "
+            f"Start {_stage(ad.get('starts'), ad.get('button_to_start_percent'))} · "
+            f"интенсив {_stage(ad.get('intensive_opened'), ad.get('start_to_intensive_percent'))} · "
+            f"CPA Start {_rub(ad['cpa_start_rub'])} · CPO интенсив {_rub(ad.get('cpo_intensive_rub'))}"
             for ad in channels[key]["ads"]
         )
         funnel = _funnel_values(payload, key)
@@ -838,13 +914,21 @@ def render_messages(payload: dict) -> list[str]:
 def _direct_channel_rows(channel: dict) -> list[list[Any]]:
     total = channel["total"]
     rows = [[
-        "ИТОГО", total["impressions"], total["clicks"], f"{total['ctr_percent']:.2f}%",
-        _money(total["cost_rub"]), total["starts"], _money(total["cpa_start_rub"]),
+        "ИТОГО", total["impressions"], f"{total['clicks']} · {total['ctr_percent']:.2f}%",
+        _rub(total["cpm_rub"]), _money(total["cost_rub"]), _rub(total["cpc_rub"]),
+        _stage(total.get("button_clicks"), total.get("landing_to_button_percent")),
+        _stage(total.get("starts"), total.get("button_to_start_percent")),
+        _stage(total.get("intensive_opened"), total.get("start_to_intensive_percent")),
+        _rub(total["cpa_start_rub"]), _rub(total.get("cpo_intensive_rub")),
     ]]
     rows.extend([
         [
-            ad["name"], ad["impressions"], ad["clicks"], f"{ad['ctr_percent']:.2f}%",
-            _money(ad["cost_rub"]), ad["starts"], _money(ad["cpa_start_rub"]),
+            ad["name"], ad["impressions"], f"{ad['clicks']} · {ad['ctr_percent']:.2f}%",
+            _rub(ad["cpm_rub"]), _money(ad["cost_rub"]), _rub(ad["cpc_rub"]),
+            _stage(ad.get("button_clicks"), ad.get("landing_to_button_percent")),
+            _stage(ad.get("starts"), ad.get("button_to_start_percent")),
+            _stage(ad.get("intensive_opened"), ad.get("start_to_intensive_percent")),
+            _rub(ad["cpa_start_rub"]), _rub(ad.get("cpo_intensive_rub")),
         ]
         for ad in channel["ads"]
     ])
@@ -870,7 +954,7 @@ def _channel_rich_message(payload: dict, channel: str, label: str, fallback_text
     direct_blocks: list[dict] = [
         {"type": "paragraph", "text": f"Период: {day}, 00:00–{cutoff_day} 00:00 МСК"},
         _table(
-            ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"],
+            ["Вариант", "Пок.", "Кл. · CTR", "CPM", "Расход", "CPC", "Кнопка / посадка", "Start / кнопка", "Интенсив / Start", "CPA Start", "CPO интенсив"],
             _direct_channel_rows(channels[channel]),
             label,
         ),
@@ -965,12 +1049,16 @@ def build_daily_report(db: Session, settings: Settings, report_date: date) -> di
     cumulative: dict[str, dict] = {}
     for kind, campaign_id in campaign_map.items():
         campaign_rows = [row for row in direct_rows if int(row.get("CampaignId") or 0) == campaign_id]
-        channels[kind] = _with_starts(
-            _ensure_known_ads(
-                _summarize_direct([row for row in campaign_rows if row.get("Date") == report_date.isoformat()]),
-                kind,
+        channels[kind] = _with_primary_funnel(
+            _with_starts(
+                _ensure_known_ads(
+                    _summarize_direct([row for row in campaign_rows if row.get("Date") == report_date.isoformat()]),
+                    kind,
+                ),
+                internal["by_creative"],
             ),
-            internal["by_creative"],
+            internal.get("by_creative_funnel", {}),
+            entry_tracking_available=bool(internal.get("entry_tracking_available")),
         )
         comparison[kind] = _with_starts(
             _ensure_known_ads(

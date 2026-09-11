@@ -61,6 +61,10 @@ def internal_snapshot():
         "acquisition_reminders_eligible_within_3h": 2,
         "acquisition_opened_within_3h_after_reminder": 1,
         "by_creative": {"control_cakes": 4, "1920469239931549227": 2},
+        "by_creative_funnel": {
+            "control_cakes": {"button_clicks": 10, "starts": 4, "intensive_opened": 4},
+            "1920469239931549227": {"button_clicks": 2, "starts": 2, "intensive_opened": 1},
+        },
         "by_messenger": {"tg": {"entries": 8, "starts": 5}, "max": {"entries": 4, "starts": 1}},
         "by_method": {"button": {"entries": 10, "starts": 5}, "qr": {"entries": 2, "starts": 1}},
         "by_device": {"mobile": {"entries": 10, "starts": 5}, "desktop": {"entries": 2, "starts": 1}},
@@ -71,7 +75,10 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     monkeypatch.setattr(reports, "_direct_report", lambda *_args, **_kwargs: direct_rows())
     monkeypatch.setattr(reports, "_direct_campaign_budgets", lambda *_args, **_kwargs: {714152601: 3500.0, 714157420: 10000.0})
     monkeypatch.setattr(reports, "_internal_snapshot", lambda *_args, **_kwargs: internal_snapshot())
-    payload = reports.build_daily_report(None, settings(), date(2026, 9, 7))
+    report_settings = settings()
+    report_settings.marketing_report_entry_tracking_from = "2026-09-07"
+    report_settings.marketing_report_depth_tracking_from = "2026-09-07"
+    payload = reports.build_daily_report(None, report_settings, date(2026, 9, 7))
 
     assert payload["channels"]["rsya"]["total"]["starts"] == 4
     assert payload["channels"]["search"]["total"]["starts"] == 2
@@ -87,7 +94,14 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert [message["fallback_text"] for message in payload["telegram_rich_messages"]] == payload["telegram_messages"]
     first_blocks = payload["telegram_rich_messages"][0]["rich_message"]["blocks"]
     rsya_table = next(block for block in first_blocks if block.get("type") == "table" and block.get("caption") == "РСЯ")
-    assert [cell["text"] for cell in rsya_table["cells"][0]] == ["Вариант", "Пок.", "Кл.", "CTR", "Расход", "Start", "CPA"]
+    assert [cell["text"] for cell in rsya_table["cells"][0]] == [
+        "Вариант", "Пок.", "Кл. · CTR", "CPM", "Расход", "CPC", "Кнопка / посадка",
+        "Start / кнопка", "Интенсив / Start", "CPA Start", "CPO интенсив",
+    ]
+    assert [cell["text"] for cell in rsya_table["cells"][1][1:]] == [
+        "1000", "100 · 10.00%", "1 000,00 ₽", "1 000 ₽", "10,00 ₽", "10 · 10.9%",
+        "4 · 40.0%", "4 · 100.0%", "250,00 ₽", "250,00 ₽",
+    ]
     assert rsya_table["cells"][1][0]["text"] == "ИТОГО"
     assert [row[0]["text"] for row in rsya_table["cells"][1:]] == [
         "ИТОГО", *[ad["name"] for ad in payload["channels"]["rsya"]["ads"]]
@@ -123,6 +137,105 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert "от шага" in payload["telegram_messages"][0]
     assert "↳ MAX: CTA 4 · Start 1 · 25.0%" in payload["telegram_messages"][0]
     assert "↳ Telegram: CTA 8 · Start 5 · 62.5%" in payload["telegram_messages"][0]
+
+
+def test_primary_operator_funnel_uses_nd_when_landing_or_depth_tracking_is_unavailable():
+    direct = reports._with_starts(reports._summarize_direct([direct_rows()[0]]), {"control_cakes": 1})
+
+    result = reports._with_primary_funnel(
+        direct,
+        {"control_cakes": {"button_clicks": 1, "starts": 1, "intensive_opened": 1}},
+        entry_tracking_available=False,
+    )
+
+    ad = result["ads"][0]
+    assert ad["starts"] == 1
+    assert ad["button_clicks"] is None
+    assert ad["intensive_opened"] is None
+    assert ad["cpo_intensive_rub"] is None
+
+
+def test_primary_operator_funnel_keeps_two_ads_and_their_metrics_separate():
+    first, _search, _previous = direct_rows()
+    second = {
+        **first,
+        "AdId": "1920469239931549229",
+        "Impressions": "500",
+        "Clicks": "50",
+        "Sessions": "40",
+        "Cost": "200",
+    }
+    direct = reports._with_starts(
+        reports._summarize_direct([first, second]),
+        {"control_cakes": 4, "1920469239931549229": 2},
+    )
+
+    result = reports._with_primary_funnel(
+        direct,
+        {
+            "control_cakes": {"button_clicks": 10, "starts": 4, "intensive_opened": 3},
+            "1920469239931549229": {"button_clicks": 5, "starts": 2, "intensive_opened": 1},
+        },
+        entry_tracking_available=True,
+    )
+
+    ads = {ad["ad_id"]: ad for ad in result["ads"]}
+    first_ad = ads[1920472171246211821]
+    second_ad = ads[1920469239931549229]
+    assert (first_ad["button_clicks"], first_ad["starts"], first_ad["intensive_opened"], first_ad["cpo_intensive_rub"]) == (10, 4, 3, 333.33)
+    assert (second_ad["button_clicks"], second_ad["starts"], second_ad["intensive_opened"], second_ad["cpo_intensive_rub"]) == (5, 2, 1, 200.0)
+    assert (result["total"]["button_clicks"], result["total"]["starts"], result["total"]["intensive_opened"]) == (15, 6, 4)
+
+
+def test_operator_table_renders_nd_for_unavailable_primary_stages_and_ad_specific_rows():
+    first, _search, _previous = direct_rows()
+    second = {
+        **first,
+        "AdId": "1920469239931549229",
+        "Impressions": "500",
+        "Clicks": "50",
+        "Sessions": "40",
+        "Cost": "200",
+    }
+    available = reports._with_primary_funnel(
+        reports._with_starts(
+            reports._summarize_direct([first, second]),
+            {"control_cakes": 4, "1920469239931549229": 2},
+        ),
+        {
+            "control_cakes": {"button_clicks": 10, "starts": 4, "intensive_opened": 3},
+            "1920469239931549229": {"button_clicks": 5, "starts": 2, "intensive_opened": 1},
+        },
+        entry_tracking_available=True,
+    )
+    unavailable = reports._with_primary_funnel(
+        reports._with_starts(reports._summarize_direct([first]), {"control_cakes": 1}),
+        {},
+        entry_tracking_available=False,
+    )
+    payload = {
+        "report_date": "2026-09-07",
+        "channels": {"rsya": available},
+        "comparison_previous": {"rsya": {"total": available["total"]}},
+        "internal": {"entry_tracking_available": False, "depth_tracking_available": False, "reminder_tracking_available": False},
+    }
+    table = next(
+        block for block in reports._channel_rich_message(payload, "rsya", "РСЯ", "")["rich_message"]["blocks"]
+        if block.get("type") == "table" and block.get("caption") == "РСЯ"
+    )
+    rows = {row[0]["text"]: [cell["text"] for cell in row] for row in table["cells"][1:]}
+    assert rows[available["ads"][0]["name"]][5:] != rows[available["ads"][1]["name"]][5:]
+
+    unavailable_payload = {
+        **payload,
+        "channels": {"rsya": unavailable},
+        "comparison_previous": {"rsya": {"total": unavailable["total"]}},
+    }
+    unavailable_table = next(
+        block for block in reports._channel_rich_message(unavailable_payload, "rsya", "РСЯ", "")["rich_message"]["blocks"]
+        if block.get("type") == "table" and block.get("caption") == "РСЯ"
+    )
+    assert [cell["text"] for cell in unavailable_table["cells"][1][6:9]] == ["НД", "1", "НД"]
 
 
 def test_course_depth_snapshot_counts_unique_day_one_milestones_after_start():
@@ -395,6 +508,7 @@ def test_internal_snapshot_separates_first_start_cohort_from_click_day_attributi
         "rows": [base_row],
         "entry_breakdown": [{
             "source": "Яндекс",
+            "creative": "control_cakes",
             "messenger": "telegram",
             "entry": "button",
             "entries": 3,
@@ -418,6 +532,9 @@ def test_internal_snapshot_separates_first_start_cohort_from_click_day_attributi
     assert result["acquisition_starts"] == 1
     assert result["entries"] == 3
     assert result["by_creative"] == {"control_cakes": 1}
+    assert result["by_creative_funnel"] == {
+        "control_cakes": {"button_clicks": 3, "starts": 1, "intensive_opened": 0},
+    }
     assert result["by_method"]["button"] == {"entries": 3, "starts": 1}
 
 
@@ -450,7 +567,7 @@ def test_acquisition_cohort_drives_reminder_subscription_and_funnel_rows(monkeyp
         if kwargs["date_from"] == report_day:
             return {
                 "rows": [attributed],
-                "entry_breakdown": [{"source": "Яндекс", "messenger": "tg", "entry": "button", "entries": 1}],
+                "entry_breakdown": [{"source": "Яндекс", "creative": "control_cakes", "messenger": "tg", "entry": "button", "entries": 1}],
             }
         return {"rows": [attributed, organic], "entry_breakdown": []}
 
@@ -476,6 +593,9 @@ def test_acquisition_cohort_drives_reminder_subscription_and_funnel_rows(monkeyp
     assert result["acquisition_reminders_sent"] == 1
     assert result["acquisition_opened_within_3h_after_reminder"] == 1
     assert result["acquisition_subscribed"] == 1
+    assert result["by_creative_funnel"] == {
+        "control_cakes": {"button_clicks": 1, "starts": 1, "intensive_opened": 1},
+    }
 
     payload = {
         "report_date": report_day.isoformat(),
