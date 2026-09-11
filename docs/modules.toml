@@ -278,10 +278,13 @@ owns_files = [
   "backend/app/static/homepage.js", "backend/app/static/homepage-tilda-shell.html",
   "backend/app/static/site-header.js",
   "backend/app/public_video_analytics_routes.py",
+  "backend/app/public_homepage_analytics_routes.py",
   "backend/tests/test_homepage_preview.py", "backend/tests/browser/**",
   "backend/tests/test_public_site_content.py",
   "backend/tests/test_public_video_analytics.py",
+  "backend/tests/test_public_homepage_analytics.py",
   "backend/migrations/versions/20260831_0033_public_video_analytics.py",
+  "backend/migrations/versions/20260911_0040_public_homepage_analytics.py",
   "content/public-site/homepage/**", "tools/publish_public_site_content.ps1",
   "tools/serve_public_homepage_preview.mjs",
   "docs/knowledge-base/PUBLIC_SITE.md", "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md",
@@ -289,14 +292,17 @@ owns_files = [
 ]
 owns_routes = [
   "*/homepage.js", "*/preview/homepage-recognition*", "*/preview/homepage-mobile*",
+  "*/preview/homepage-release-candidate*",
   "*/preview/homepage-tilda-shell*",
   "*/preview/homepage-reviews-wall*",
   "*/preview/direct-intensive*",
   "*/site-header.js",
-  "*/api/public/video-analytics", "*/api/public-site/content/*",
+  "*/api/public/video-analytics", "*/api/public/homepage-analytics",
+  "*/api/admin/public-homepage-analytics", "*/public-site-assets/*",
+  "*/api/public-site/content/*",
   "*/admin/api/public-site/content*",
 ]
-owns_tables = ["public_video_views"]
+owns_tables = ["public_video_views", "public_homepage_events"]
 
 [[modules]]
 id = "products.catalog"
