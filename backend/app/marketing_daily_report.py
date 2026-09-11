@@ -825,6 +825,11 @@ def render_messages(payload: dict) -> list[str]:
             funnel_lines.append(
                 f"{label_text}: {_shown(value)} · от шага {parent_conversion} · от клика {_conversion(value, funnel['clicks'])}"
             )
+        funnel_lines.extend([
+            "Мессенджеры · CTA → Start:",
+            f"↳ MAX: CTA {_shown(funnel['max'])} · Start {_shown(funnel['max_starts'])} · {_conversion(funnel['max_starts'], funnel['max'])}",
+            f"↳ Telegram: CTA {_shown(funnel['telegram'])} · Start {_shown(funnel['telegram_starts'])} · {_conversion(funnel['telegram_starts'], funnel['telegram'])}",
+        ])
         direct_lines.append(_budget_line(label, channels[key]))
         messages.append("\n".join(direct_lines) + "\n\n" + "\n".join(funnel_lines))
     return messages

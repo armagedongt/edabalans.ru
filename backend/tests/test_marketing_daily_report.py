@@ -121,6 +121,8 @@ def test_report_compares_days_and_uses_real_internal_starts(monkeypatch):
     assert len(payload["channels"]["search"]["ads"]) == 1
     assert "Видео 100%" in payload["telegram_messages"][0]
     assert "от шага" in payload["telegram_messages"][0]
+    assert "↳ MAX: CTA 4 · Start 1 · 25.0%" in payload["telegram_messages"][0]
+    assert "↳ Telegram: CTA 8 · Start 5 · 62.5%" in payload["telegram_messages"][0]
 
 
 def test_course_depth_snapshot_counts_unique_day_one_milestones_after_start():
