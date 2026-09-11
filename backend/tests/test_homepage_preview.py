@@ -1077,11 +1077,12 @@ def test_homepage_vsl_uses_first_player_click_and_server_analytics() -> None:
     assert "PLAYER_CONTEXT === 'anya-review'" in response.text
     assert "root.classList.toggle('mvp--anya-review', PLAYER_CONTEXT === 'anya-review');" in response.text
     assert "#modular-video-player.mvp--anya-review .mvp__video{inset:0;width:100%;height:100%;object-fit:contain}" in response.text
-    assert (
-        "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') "
-        "|| 'homepage-vsl';"
-        in response.text
-    )
+    assert "const playerQuery = new URLSearchParams(location.search);" in response.text
+    assert "const PLAYER_CONTEXT = playerQuery.get('context') || 'homepage-vsl';" in response.text
+    assert "const TRUSTED_PARENT_ORIGINS = new Set([" in response.text
+    assert "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai" in response.text
+    assert "const parentOrigin = (() => {" in response.text
+    assert "postToParent({ type:'edabalans:player-active', context:PLAYER_CONTEXT });" in response.text
     assert 'class="mvp__video mvp__video--preview"' in response.text
     assert 'class="mvp__video mvp__video--main" playsinline preload="none"' in response.text
     assert "mvp--awaiting-sound .mvp__controls" in response.text
@@ -1149,7 +1150,7 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
     assert "'intensive-day-1': {" in response.text
     assert "https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4" in response.text
     assert "videoId: 'intensive-day-1-2026-09-03'" in response.text
-    assert "const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context')" in response.text
+    assert "const PLAYER_CONTEXT = playerQuery.get('context')" in response.text
     assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];" in response.text
     assert "singleSource: true" in response.text
     assert "allowSeek: true" in response.text

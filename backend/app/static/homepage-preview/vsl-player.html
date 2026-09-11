@@ -358,7 +358,25 @@
     standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
   const modePreset = MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard;
-  const PLAYER_CONTEXT = new URLSearchParams(location.search).get('context') || 'homepage-vsl';
+  const playerQuery = new URLSearchParams(location.search);
+  const PLAYER_CONTEXT = playerQuery.get('context') || 'homepage-vsl';
+  const TRUSTED_PARENT_ORIGINS = new Set([
+    location.origin,
+    'https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai'
+  ]);
+  const parentOrigin = (() => {
+    const requested = playerQuery.get('parent_origin');
+    if (!requested) return location.origin;
+    try {
+      const origin = new URL(requested).origin;
+      return TRUSTED_PARENT_ORIGINS.has(origin) ? origin : location.origin;
+    } catch (_error) {
+      return location.origin;
+    }
+  })();
+  const postToParent = (message) => {
+    if (parent !== window) parent.postMessage(message, parentOrigin);
+  };
   root.classList.toggle('mvp--anya-review', PLAYER_CONTEXT === 'anya-review');
   const homepageVslPreset = {
       previewSource: 'https://cdn-g.boomstream.com/balancer/3qGepzqy-9WmCBBoU.mp4',
@@ -527,7 +545,7 @@
 
   function announceActivePlayer(){
     if (parent === window) return;
-    parent.postMessage({ type:'edabalans:player-active', context:PLAYER_CONTEXT }, location.origin);
+    postToParent({ type:'edabalans:player-active', context:PLAYER_CONTEXT });
   }
 
   function playAndTakeFocus(target = video, announce = true){
@@ -683,7 +701,7 @@
       showControls(false);
       setTimeout(()=>{
         if (soundEngaged && videos.every(candidate=>candidate.paused || candidate.ended)) {
-          parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+          postToParent({ type:'edabalans:player-idle' });
         }
       }, 0);
     });
@@ -691,7 +709,7 @@
       if (item !== video || item === previewVideo) return;
       updatePlayUI();
       showControls(false);
-      parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+      postToParent({ type:'edabalans:player-idle' });
     });
     item.addEventListener('timeupdate', ()=>{
       if (item !== video) return;
@@ -706,7 +724,7 @@
     const handleSingleSourceEnded = ()=>{
       updatePlayUI();
       showControls(false);
-      parent.postMessage({ type:'edabalans:player-idle' }, location.origin);
+      postToParent({ type:'edabalans:player-idle' });
     };
     previewVideo.addEventListener('ended', handleSingleSourceEnded);
   }
@@ -743,14 +761,14 @@
         try { root.setPointerCapture?.(event.pointerId); } catch (_) {}
       }
       if (!drag.active) return;
-      parent.postMessage({ type:'edabalans:anya-drag', phase:'move', delta:drag.lastX - event.clientX }, location.origin);
+      postToParent({ type:'edabalans:anya-drag', phase:'move', delta:drag.lastX - event.clientX });
       drag.lastX = event.clientX;
     });
     const finishDrag = (event)=>{
       if (!drag || drag.id !== event.pointerId) return;
       if (drag.active) {
         suppressClick = true;
-        parent.postMessage({ type:'edabalans:anya-drag', phase:'end' }, location.origin);
+        postToParent({ type:'edabalans:anya-drag', phase:'end' });
         setTimeout(()=>{ suppressClick = false; }, 250);
       }
       drag = null;
@@ -789,7 +807,7 @@
       if (floatingDrag.active) {
         suppressFloatingClick = true;
         if (Math.abs(distance) >= 54) {
-          parent.postMessage({ type:'edabalans:floating-dismiss' }, location.origin);
+          postToParent({ type:'edabalans:floating-dismiss' });
         }
         setTimeout(()=>{ suppressFloatingClick = false; }, 250);
       }
@@ -812,7 +830,7 @@
   }
 
   window.addEventListener('message', (event)=>{
-    if (event.origin !== location.origin || event.source !== parent) return;
+    if (event.origin !== parentOrigin || event.source !== parent) return;
     if (event.data?.type === 'edabalans:set-player-presentation') {
       setFloatingPresentation(Boolean(event.data.floating));
       return;

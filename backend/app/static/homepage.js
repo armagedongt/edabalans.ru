@@ -18,6 +18,14 @@
     return new URL(value, baseUrl).href;
   }
 
+  function playerUrl(value, baseUrl) {
+    var resolved = new URL(value, baseUrl);
+    if (/\/vsl-player\.html$/.test(resolved.pathname)) {
+      resolved.searchParams.set('parent_origin', window.location.origin);
+    }
+    return resolved.href;
+  }
+
   function rewriteCss(source) {
     return String(source || '').replace(
       /url\(\s*(['"]?)\/(?!\/)/g,
@@ -44,15 +52,27 @@
   function prepareElement(element, baseUrl) {
     ['src', 'poster'].forEach(function (attribute) {
       if (element.hasAttribute(attribute)) {
-        element.setAttribute(attribute, absolute(element.getAttribute(attribute), baseUrl));
+        var source = element.getAttribute(attribute);
+        element.setAttribute(
+          attribute,
+          element.tagName === 'IFRAME' && attribute === 'src'
+            ? playerUrl(source, baseUrl)
+            : absolute(source, baseUrl)
+        );
       }
     });
     if (element.hasAttribute('srcset')) {
       element.setAttribute('srcset', rewriteSrcset(element.getAttribute('srcset'), baseUrl));
     }
-    ['data-media-src', 'data-static-src'].forEach(function (attribute) {
+    ['data-media-src', 'data-disabled-media-src', 'data-static-src'].forEach(function (attribute) {
       if (element.hasAttribute(attribute)) {
-        element.setAttribute(attribute, absolute(element.getAttribute(attribute), baseUrl));
+        var deferredSource = element.getAttribute(attribute);
+        element.setAttribute(
+          attribute,
+          element.tagName === 'IFRAME' && attribute !== 'data-static-src'
+            ? playerUrl(deferredSource, baseUrl)
+            : absolute(deferredSource, baseUrl)
+        );
       }
     });
     ['data-pricing-endpoint', 'data-checkout-endpoint'].forEach(function (attribute) {
@@ -203,7 +223,7 @@
   }
 
   prepareTildaShell();
-  restoreOffer().then(function () { return fetch(appHost + '/preview/homepage-mobile?theme=blue-mist&embed=tilda', {
+  restoreOffer().then(function () { return fetch(appHost + '/preview/homepage-release-candidate?embed=tilda', {
     credentials: 'omit',
     mode: 'cors',
     cache: 'no-store'

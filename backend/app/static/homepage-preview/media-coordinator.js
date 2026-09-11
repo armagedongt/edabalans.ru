@@ -4,8 +4,14 @@
 
   const frames = () => [...document.querySelectorAll(frameSelector)];
   const localMedia = () => [...document.querySelectorAll('audio,video')];
+  const frameOrigin = (frame) => {
+    const source = frame.getAttribute('data-media-src')
+      || frame.getAttribute('data-disabled-media-src')
+      || frame.getAttribute('src');
+    try { return new URL(source, location.href).origin; } catch (_error) { return location.origin; }
+  };
   const pauseFrame = (frame) => {
-    frame.contentWindow?.postMessage({ type: 'edabalans:pause-player' }, location.origin);
+    frame.contentWindow?.postMessage({ type: 'edabalans:pause-player' }, frameOrigin(frame));
   };
   const pauseLocalMedia = (except = null) => {
     localMedia().forEach((media) => {
@@ -29,9 +35,8 @@
   }, true);
 
   window.addEventListener('message', (event) => {
-    if (event.origin !== location.origin) return;
     const frame = frames().find((candidate) => event.source === candidate.contentWindow) || null;
-    if (!frame) return;
+    if (!frame || event.origin !== frameOrigin(frame)) return;
     if (event.data?.type === 'edabalans:player-idle') {
       if (activeFrame === frame) activeFrame = null;
       return;

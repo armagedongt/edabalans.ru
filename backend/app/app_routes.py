@@ -318,11 +318,21 @@ def direct_intensive_preview() -> HTMLResponse:
 
 @router.get("/preview/homepage-release-candidate", include_in_schema=False)
 @router.get("/preview/homepage-release-candidate/", include_in_schema=False)
-def homepage_release_candidate_preview() -> HTMLResponse:
-    """Online review route; never becomes the Tilda source without explicit promotion."""
+def homepage_release_candidate_preview(embed: str | None = Query(default=None)) -> HTMLResponse:
+    """Accepted public homepage source, with an optional T123-safe embedded form."""
     template = (STATIC_DIR / "homepage-preview" / "release-candidate.html").read_text(
         encoding="utf-8"
     )
+    if embed == "tilda":
+        template = template.replace(
+            '<body data-page-theme="blue-mist">',
+            '<body data-page-theme="blue-mist" data-tilda-homepage-embed="true">',
+            1,
+        ).replace(
+            'data-pricing-endpoint="/api/pricing/site/preview"',
+            'data-pricing-endpoint="/api/pricing/site"',
+            1,
+        )
     response = HTMLResponse(template, headers={"Cache-Control": "no-cache"})
     response.headers["X-Robots-Tag"] = "noindex, nofollow"
     return response

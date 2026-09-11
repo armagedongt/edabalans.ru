@@ -1207,13 +1207,18 @@ def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     assert response.headers["cache-control"] == "no-cache"
     assert response.headers["access-control-allow-origin"] == "*"
     assert "[data-edabalans-homepage]" in response.text
-    assert "/preview/homepage-mobile?theme=blue-mist&embed=tilda" in response.text
+    assert "/preview/homepage-release-candidate?embed=tilda" in response.text
     assert "DOMParser" in response.text
     assert "edabalans_intensive_offer_v1" in response.text
     assert "window.localStorage" in response.text
     assert "history.replaceState" in response.text
     assert "createElement('iframe')" not in response.text
     assert "/homepage.js" not in client.get("/openapi.json").json()["paths"]
+
+    embedded_source = client.get("/preview/homepage-release-candidate?embed=tilda")
+    assert embedded_source.status_code == 200
+    assert 'data-tilda-homepage-embed="true"' in embedded_source.text
+    assert 'data-pricing-endpoint="/api/pricing/site"' in embedded_source.text
 
     shell = client.get("/preview/homepage-tilda-shell")
     assert shell.status_code == 200
