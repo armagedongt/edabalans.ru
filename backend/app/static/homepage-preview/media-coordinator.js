@@ -21,6 +21,8 @@
   document.addEventListener('play', (event) => {
     const media = event.target;
     if (!(media instanceof HTMLMediaElement)) return;
+    // Muted decorative loops must not interrupt the primary VSL autoplay.
+    if (media.muted || media.volume === 0) return;
     activeFrame = null;
     pauseLocalMedia(media);
     pauseOtherFrames();

@@ -710,7 +710,11 @@
     previewVideo.addEventListener('ended', handleSingleSourceEnded);
   }
   previewVideo.addEventListener('ended', ()=>{
-    if (mediaPreset.singleSource) return;
+    if (!soundEngaged && passiveAutoplayAllowed) {
+      previewVideo.currentTime = 0;
+      previewVideo.play().catch(()=>{});
+    }
+    if (mediaPreset.singleSource || !soundEngaged) return;
     handoffPending = true;
     root.classList.add('mvp--handoff-pending');
     tryMainHandoff();
