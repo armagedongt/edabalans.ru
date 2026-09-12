@@ -292,6 +292,7 @@ owns_files = [
   "content/public-site/homepage/**", "tools/publish_public_site_content.ps1",
   "tools/serve_public_homepage_preview.mjs",
   "docs/knowledge-base/PUBLIC_SITE.md", "docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md",
+  "docs/knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md",
   "work/public-homepage-redesign/**",
 ]
 owns_routes = [
