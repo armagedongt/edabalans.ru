@@ -23,6 +23,7 @@ from app.max import (
     MAX_CA_BUNDLE,
     MaxClient,
     _existing_password_hint,
+    start_max_one_shot_chain,
 )
 from app.models import (
     AccountCredential,
@@ -35,9 +36,11 @@ from app.models import (
     CrmUserTag,
     Contact,
     MessengerLinkToken,
+    ManualMessage,
     TrackingEvent,
     UpdateReceipt,
     SequenceRun,
+    UserVariable,
 )
 from app.seed import seed_defaults
 
@@ -45,6 +48,7 @@ from app.seed import seed_defaults
 class FakeMax:
     def __init__(self):
         self.sent = []
+        self.callback_answers = []
 
     def send_html(self, user_id, text, **kwargs):
         self.sent.append((user_id, text, kwargs))
@@ -56,6 +60,9 @@ class FakeMax:
 
     def subscription_status(self, _user_id):
         return None
+
+    def answer_callback(self, callback_id, **kwargs):
+        self.callback_answers.append((callback_id, kwargs))
 
 
 def test_max_ca_bundle_loads_without_changing_system_trust():
@@ -91,6 +98,43 @@ def test_max_client_sends_link_button():
             "url": "https://app.edabalans.ru/intensive/start?i=Etoken",
         }]]},
     }]
+
+
+def test_max_client_sends_callback_button_and_can_remove_it():
+    requests = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        if request.url.path == "/answers":
+            return httpx.Response(200, json={"success": True})
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-callback-1"}}})
+
+    client = MaxClient("max-secret", httpx.MockTransport(handler))
+    message_id = client.send_html(
+        "901",
+        "<b>Тест</b>",
+        button_text="Читать дальше",
+        callback_data="mx1:0123456789abcdefabcd:0",
+    )
+    client.answer_callback(
+        "callback-1",
+        replacement_text="<b>Тест</b>",
+    )
+
+    assert message_id == "max-callback-1"
+    sent = json.loads(requests[0].content)
+    assert sent["attachments"] == [{
+        "type": "inline_keyboard",
+        "payload": {"buttons": [[{
+            "type": "callback",
+            "text": "Читать дальше",
+            "payload": "mx1:0123456789abcdefabcd:0",
+        }]]},
+    }]
+    answered = json.loads(requests[1].content)
+    assert requests[1].url.params["callback_id"] == "callback-1"
+    assert answered["message"]["attachments"] == []
+    assert answered["message"]["text"] == "<b>Тест</b>"
 
 
 def test_max_client_sends_sequence_photo_and_link_button():
@@ -376,6 +420,24 @@ def max_start(timestamp="2026-08-27T10:00:00Z", payload=""):
     }
 
 
+def max_callback(payload, callback_id="callback-1", timestamp=1_788_000_000_000):
+    return {
+        "update_type": "message_callback",
+        "timestamp": timestamp,
+        "callback": {
+            "timestamp": timestamp,
+            "callback_id": callback_id,
+            "payload": payload,
+            "user": {"user_id": 901, "name": "MAX visitor", "username": "max_visitor"},
+        },
+        "message": {
+            "timestamp": timestamp - 1,
+            "recipient": {"user_id": 901},
+            "body": {"mid": "one-shot-1", "text": "Письмо 1", "attachments": []},
+        },
+    }
+
+
 def make_client(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'max.sqlite'}")
     Base.metadata.create_all(engine)
@@ -444,6 +506,91 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
         assert run is not None
         assert run.status == "active"
         assert run.current_step_key == "welcome_reminder_check_day1"
+    app.dependency_overrides.clear()
+
+
+def test_max_one_shot_chain_removes_old_button_and_sends_each_continuation_once(
+    tmp_path,
+    monkeypatch,
+):
+    client, engine, fake = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    assert client.post("/bot/max/webhook", json=max_start(), headers=headers).status_code == 200
+
+    with Session(engine) as session:
+        contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "901"))
+        started = start_max_one_shot_chain(
+            session,
+            contact,
+            fake,
+            ["Письмо 1", "Письмо 2", "Письмо 3", "Письмо 4"],
+        )
+        token = started["token"]
+
+    assert fake.sent[-1][1] == "Письмо 1"
+    assert fake.sent[-1][2]["callback_data"] == f"mx1:{token}:0"
+
+    first = client.post(
+        "/bot/max/webhook",
+        json=max_callback(f"mx1:{token}:0"),
+        headers=headers,
+    )
+    assert first.json() == {
+        "ok": True,
+        "one_shot": True,
+        "completed": False,
+        "next_index": 1,
+    }
+    assert fake.callback_answers[-1] == (
+        "callback-1",
+        {"replacement_text": "Письмо 1"},
+    )
+    assert fake.sent[-1][1] == "Письмо 2"
+    assert fake.sent[-1][2]["callback_data"] == f"mx1:{token}:1"
+    sent_after_first_click = len(fake.sent)
+
+    duplicate = client.post(
+        "/bot/max/webhook",
+        json=max_callback(
+            f"mx1:{token}:0",
+            callback_id="callback-duplicate",
+            timestamp=1_788_000_000_001,
+        ),
+        headers=headers,
+    )
+    assert duplicate.json() == {"ok": True, "duplicate": True, "one_shot": True}
+    assert len(fake.sent) == sent_after_first_click
+    assert fake.callback_answers[-1] == (
+        "callback-duplicate",
+        {"replacement_text": "Письмо 1", "notification": "Уже открыто"},
+    )
+
+    for index in range(1, 4):
+        response = client.post(
+            "/bot/max/webhook",
+            json=max_callback(
+                f"mx1:{token}:{index}",
+                callback_id=f"callback-{index + 1}",
+                timestamp=1_788_000_000_001 + index,
+            ),
+            headers=headers,
+        )
+        assert response.status_code == 200
+
+    assert len([item for item in fake.sent if item[1].startswith("Письмо")]) == 4
+    assert fake.sent[-1][1] == "Письмо 4"
+    with Session(engine) as session:
+        variable = session.scalar(select(UserVariable).where(
+            UserVariable.key == f"max_one_shot:{token}"
+        ))
+        assert variable.value["status"] == "completed"
+        assert variable.value["expected_index"] is None
+        assert session.scalar(select(func.count(ManualMessage.id)).where(
+            ManualMessage.operator_email == "system:max_one_shot_test"
+        )) == 4
+        assert session.scalar(select(func.count(TrackingEvent.id)).where(
+            TrackingEvent.event_type == "max_one_shot_advanced"
+        )) == 4
     app.dependency_overrides.clear()
 
 

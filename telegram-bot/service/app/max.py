@@ -44,8 +44,9 @@ from app.models import (
     TrackingLinkTag,
     TrackingEvent,
     UpdateReceipt,
+    UserVariable,
 )
-from app.engine import advance_run
+from app.engine import advance_run, resume_callback
 from app.seed import WELCOME_CODE
 from app.start_router import execute_start_decision, inspect_start
 from app.tracking import canonical_tag, resolve_start_payload
@@ -55,6 +56,8 @@ MAX_API_BASE = "https://platform-api2.max.ru"
 MAX_CA_BUNDLE = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_ca.pem"
 MAX_BOT_CODE = "max"
 MAX_MESSAGE_TEXT_LIMIT = 4000
+MAX_ONE_SHOT_CALLBACK_PREFIX = "mx1"
+MAX_ONE_SHOT_VARIABLE_PREFIX = "max_one_shot:"
 DEFAULT_MAX_CHANNEL_URL = "https://max.ru/id230409966750_biz"
 DEFAULT_MAX_CONTACT_URL = "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"
 HTML_LINK_PATTERN = re.compile(r'<a\s+href="([^"]+)"([^>]*)>(.*?)</a>', re.IGNORECASE | re.DOTALL)
@@ -221,20 +224,27 @@ class MaxClient:
         *,
         button_text: str | None = None,
         button_url: str | None = None,
+        callback_data: str | None = None,
     ) -> str:
         body: dict[str, Any] = {
             "text": self._compact_html(self._platform_text(text)),
             "format": "html",
             "disable_link_preview": True,
         }
-        if button_text and button_url:
+        if button_text and button_url and callback_data:
+            raise ValueError("MAX button cannot be both a link and a callback")
+        if button_text and (button_url or callback_data):
+            button: dict[str, Any] = {
+                "type": "link" if button_url else "callback",
+                "text": button_text,
+            }
+            if button_url:
+                button["url"] = self._platform_url(button_url)
+            else:
+                button["payload"] = callback_data
             body["attachments"] = [{
                 "type": "inline_keyboard",
-                "payload": {"buttons": [[{
-                    "type": "link",
-                    "text": button_text,
-                    "url": self._platform_url(button_url),
-                }]]},
+                "payload": {"buttons": [[button]]},
             }]
         with self._client() as client:
             response = client.post(
@@ -246,6 +256,35 @@ class MaxClient:
         response.raise_for_status()
         data = response.json()
         return str(data.get("message", {}).get("body", {}).get("mid", ""))
+
+    def answer_callback(
+        self,
+        callback_id: str,
+        *,
+        replacement_text: str | None = None,
+        notification: str = "",
+    ) -> None:
+        body: dict[str, Any] = {}
+        if replacement_text is not None:
+            body["message"] = {
+                "text": self._compact_html(self._platform_text(replacement_text)),
+                "format": "html",
+                "disable_link_preview": True,
+                "attachments": [],
+            }
+        if notification:
+            body["notification"] = notification
+        with self._client() as client:
+            response = client.post(
+                f"{MAX_API_BASE}/answers",
+                params={"callback_id": callback_id},
+                headers={"Authorization": self.token},
+                json=body,
+            )
+        response.raise_for_status()
+        result = response.json()
+        if result.get("success") is False:
+            raise RuntimeError(result.get("message") or "MAX callback answer failed")
 
     def send_content(self, user_id: str, content: Any, configuration: dict[str, Any]) -> str:
         text_value = self._compact_html(
@@ -279,9 +318,17 @@ class MaxClient:
                         "payload": app_payload,
                     }])
                     continue
+                callback_data = button.get("callback_data")
+                if callback_data:
+                    rows.append([{
+                        "type": "callback",
+                        "text": button["text"],
+                        "payload": str(callback_data),
+                    }])
+                    continue
                 url = button.get("url") or (button.get("web_app") or {}).get("url")
                 if not url:
-                    raise RuntimeError("MAX sequence supports only link and Mini App buttons")
+                    raise RuntimeError("MAX sequence supports only link, callback and Mini App buttons")
                 rows.append([{
                     "type": "link",
                     "text": button["text"],
@@ -344,14 +391,193 @@ def _max_bot(session: Session, username: str) -> BotInstance:
 
 
 def _receipt_id(update: dict[str, Any]) -> str:
-    user = update.get("user") or {}
+    callback = update.get("callback") or {}
+    user = update.get("user") or callback.get("user") or {}
     raw = "|".join((
         str(update.get("update_type", "")),
         str(update.get("timestamp", "")),
         str(user.get("user_id", "")),
-        str(update.get("payload", "")),
+        str(update.get("payload", "") or callback.get("payload", "")),
+        str(callback.get("callback_id", "")),
     ))
     return f"max:{hashlib.sha256(raw.encode()).hexdigest()[:56]}"
+
+
+def _one_shot_payload(token: str, message_index: int) -> str:
+    return f"{MAX_ONE_SHOT_CALLBACK_PREFIX}:{token}:{message_index}"
+
+
+def _parse_one_shot_payload(payload: str) -> tuple[str, int] | None:
+    parts = payload.split(":")
+    if len(parts) != 3 or parts[0] != MAX_ONE_SHOT_CALLBACK_PREFIX:
+        return None
+    token = parts[1]
+    if not re.fullmatch(r"[a-f0-9]{20}", token):
+        return None
+    try:
+        message_index = int(parts[2])
+    except ValueError:
+        return None
+    return token, message_index
+
+
+def start_max_one_shot_chain(
+    session: Session,
+    contact: Contact,
+    sender: MaxClient,
+    messages: list[str],
+) -> dict[str, Any]:
+    if not messages:
+        raise ValueError("MAX one-shot chain needs at least one message")
+    for message in messages:
+        MaxClient._compact_html(message)
+
+    token = uuid.uuid4().hex[:20]
+    variable = UserVariable(
+        contact_id=contact.id,
+        key=f"{MAX_ONE_SHOT_VARIABLE_PREFIX}{token}",
+        value={
+            "version": 1,
+            "messages": messages,
+            "expected_index": 0,
+            "status": "pending",
+            "message_ids": [],
+        },
+    )
+    session.add(variable)
+    session.commit()
+
+    try:
+        message_id = sender.send_html(
+            contact.chat_id,
+            messages[0],
+            button_text="Завершить тест" if len(messages) == 1 else "Читать дальше",
+            callback_data=_one_shot_payload(token, 0),
+        )
+    except Exception as exc:
+        variable = session.scalar(
+            select(UserVariable)
+            .where(UserVariable.id == variable.id)
+            .with_for_update()
+        )
+        variable.value = {**variable.value, "status": "error", "error": str(exc)}
+        session.commit()
+        raise
+
+    variable = session.scalar(
+        select(UserVariable)
+        .where(UserVariable.id == variable.id)
+        .with_for_update()
+    )
+    variable.value = {
+        **variable.value,
+        "status": "waiting",
+        "message_ids": [message_id],
+    }
+    session.add(ManualMessage(
+        contact_id=contact.id,
+        direction="out",
+        body_source=messages[0],
+        status="sent",
+        operator_email="system:max_one_shot_test",
+        platform_message_id=message_id,
+    ))
+    session.commit()
+    return {"token": token, "message_id": message_id, "messages": len(messages)}
+
+
+def _handle_max_one_shot_callback(
+    session: Session,
+    *,
+    contact: Contact,
+    callback: dict[str, Any],
+    sender: MaxClient,
+) -> dict[str, Any] | None:
+    parsed = _parse_one_shot_payload(str(callback.get("payload") or ""))
+    if parsed is None:
+        return None
+    token, message_index = parsed
+    variable = session.scalar(
+        select(UserVariable)
+        .where(
+            UserVariable.contact_id == contact.id,
+            UserVariable.key == f"{MAX_ONE_SHOT_VARIABLE_PREFIX}{token}",
+        )
+        .with_for_update()
+    )
+    callback_id = str(callback.get("callback_id") or "")
+    if variable is None:
+        sender.answer_callback(callback_id, notification="Эта кнопка уже неактивна")
+        return {"ok": True, "duplicate": True, "one_shot": True}
+
+    state = dict(variable.value or {})
+    messages = list(state.get("messages") or [])
+    expected_index = state.get("expected_index")
+    if not 0 <= message_index < len(messages):
+        sender.answer_callback(callback_id, notification="Эта кнопка уже неактивна")
+        return {"ok": True, "duplicate": True, "one_shot": True}
+    current_text = str(messages[message_index])
+    if state.get("status") != "waiting" or expected_index != message_index:
+        sender.answer_callback(
+            callback_id,
+            replacement_text=current_text,
+            notification="Уже открыто",
+        )
+        return {"ok": True, "duplicate": True, "one_shot": True}
+
+    # Hold the row lock until the old keyboard is removed and the next message is
+    # accepted. A simultaneous second click then observes the advanced index and
+    # cannot send the continuation twice.
+    sender.answer_callback(callback_id, replacement_text=current_text)
+    next_index = message_index + 1
+    message_ids = list(state.get("message_ids") or [])
+    if next_index < len(messages):
+        next_message_id = sender.send_html(
+            contact.chat_id,
+            str(messages[next_index]),
+            button_text=(
+                "Завершить тест"
+                if next_index == len(messages) - 1
+                else "Читать дальше"
+            ),
+            callback_data=_one_shot_payload(token, next_index),
+        )
+        message_ids.append(next_message_id)
+        state.update({
+            "expected_index": next_index,
+            "status": "waiting",
+            "message_ids": message_ids,
+        })
+        session.add(ManualMessage(
+            contact_id=contact.id,
+            direction="out",
+            body_source=str(messages[next_index]),
+            status="sent",
+            operator_email="system:max_one_shot_test",
+            platform_message_id=next_message_id,
+        ))
+    else:
+        state.update({"expected_index": None, "status": "completed"})
+    variable.value = state
+    session.add(TrackingEvent(
+        contact_id=contact.id,
+        user_id=contact.user_id,
+        telegram_user_id=contact.telegram_user_id,
+        event_type="max_one_shot_advanced",
+        deduplication_key=f"max-one-shot:{token}:{message_index}",
+        metadata_json={
+            "messenger": "max",
+            "message_index": message_index,
+            "next_index": next_index if next_index < len(messages) else None,
+        },
+    ))
+    session.commit()
+    return {
+        "ok": True,
+        "one_shot": True,
+        "completed": next_index >= len(messages),
+        "next_index": next_index if next_index < len(messages) else None,
+    }
 
 
 def _ensure_contact(
@@ -744,6 +970,43 @@ def process_max_update(
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
     update_type = str(update.get("update_type") or "")
+    if update_type == "message_callback":
+        callback = update.get("callback") or {}
+        user = callback.get("user") or {}
+        callback_id = str(callback.get("callback_id") or "")
+        if not user.get("user_id") or not callback_id:
+            return {"ok": True, "ignored": True}
+        bot = _max_bot(session, bot_username)
+        account, _ = _ensure_identity(session, user)
+        contact = _ensure_contact(session, bot, account, user)
+        result = _handle_max_one_shot_callback(
+            session,
+            contact=contact,
+            callback=callback,
+            sender=sender,
+        )
+        if result is None:
+            callback_data = str(callback.get("payload") or "")
+            run = resume_callback(session, contact.id, callback_data)
+            message_body = (update.get("message") or {}).get("body") or {}
+            replacement_text = message_body.get("text")
+            sender.answer_callback(
+                callback_id,
+                replacement_text=str(replacement_text) if replacement_text is not None else None,
+                notification="Продолжаем" if run else "Эта кнопка уже неактивна",
+            )
+            if run:
+                advance_run(session, run, sender)
+            result = {"ok": True, "callback": True, "resumed": bool(run)}
+        receipt_id = _receipt_id(update)
+        if session.get(UpdateReceipt, receipt_id) is None:
+            session.add(UpdateReceipt(
+                update_id=receipt_id,
+                bot_instance_id=bot.id,
+                update_type="max_message_callback",
+            ))
+            session.commit()
+        return result
     if update_type in {"bot_stopped", "dialog_removed"}:
         user = update.get("user") or {}
         if not user.get("user_id"):
