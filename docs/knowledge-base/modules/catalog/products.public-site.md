@@ -110,7 +110,8 @@ checkout, `platform.content` — Markdown-диалект и версиониро
 
 ## Источники истины
 
-`docs/knowledge-base/PUBLIC_SITE.md`, `content/public-site/homepage/`, активные
+`docs/knowledge-base/PUBLIC_SITE.md`,
+`docs/knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md`, `content/public-site/homepage/`, активные
 редакции `public-site-content` в `managed_document_versions` и runtime-компоненты
 `backend/app/static/homepage-preview/`. Временный монтаж Tilda принадлежит
 `backend/app/static/homepage.js`; локальная проверочная оболочка —
