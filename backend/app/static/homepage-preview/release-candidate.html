@@ -3461,8 +3461,6 @@
       });
 
       async function openProduct(code) {
-        overlay.classList.toggle('is-recipes', code === 'recipes');
-        overlay.classList.toggle('is-program', code === 'program');
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
         overlayCopy.hidden = true;
@@ -3483,7 +3481,6 @@
           overlayCopy.textContent = '';
           overlayCopy.hidden = true;
           overlayPoints.innerHTML = product.html;
-          if (window.EdabalansProgramCard) window.EdabalansProgramCard.enhance(overlayPoints, code);
           overlayCta.textContent = 'Выбрать тариф';
           overlayCta.dataset.target = String(productTargets[code] || 0);
           overlayCta.hidden = false;

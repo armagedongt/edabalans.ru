@@ -81,6 +81,7 @@ def test_program_popup_runtime_uses_the_three_canonical_markdown_documents() -> 
     assert "['P']" in renderer
     assert "['UL']" in renderer
     assert "Product catalog descriptions serve other surfaces" in homepage
+    assert "EdabalansProgramCard.enhance(overlayPoints, code)" not in homepage
     assert 'data-program-card="program"' in styles
     assert 'data-program-card="recipes"' in styles
     assert 'data-program-card="consultation"' in styles
