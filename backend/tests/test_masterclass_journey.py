@@ -2611,3 +2611,40 @@ def test_crm_card_contains_masterclass_answers_events_and_offer_windows():
     assert data["questionnaires"][0]["answers"][0]["answer"] == "Хочу выстроить питание"
     assert "recipes_part_1_opened" in {event["type"] for event in data["events"]}
     assert data["offers"][0]["stage"] == "early"
+
+
+def test_masterclass_article_media_route_serves_only_registered_image_tree() -> None:
+    client, _ = setup()
+    image = client.get(
+        "/course-assets/masterclass/media/55-store-food-without-cooking/"
+        "lavka-cutlets-turkey-dietary-2026-08-30.png"
+    )
+    assert image.status_code == 200
+    assert image.headers["content-type"] == "image/png"
+    assert image.headers["cache-control"] == "public, max-age=86400"
+
+    escaped = client.get(
+        "/course-assets/masterclass/media/%2E%2E/course/course.json"
+    )
+    assert escaped.status_code == 404
+
+
+def test_masterclass_outline_and_material_cards_do_not_render_summaries() -> None:
+    root = Path(__file__).resolve().parents[2]
+    course_html = (
+        root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
+    ).read_text(encoding="utf-8")
+
+    menu = course_html[
+        course_html.index("function renderMenu"):course_html.index("function directMp4")
+    ]
+    topic = course_html[
+        course_html.index("function topicCard"):course_html.index("function renderDay")
+    ]
+    assert "x[1]" not in menu
+    assert "day-progress" not in menu
+    assert "day-kind" not in menu
+    assert "t.summary" not in topic
+    assert "summary?" not in topic
+    assert "step.editorialHtml" in course_html
+    assert "special-material-prelude" in course_html

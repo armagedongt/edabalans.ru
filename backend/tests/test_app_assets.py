@@ -813,7 +813,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "d.kicker" not in course_html
     assert "afterLead" in course_html
     assert "esc(t.title)" in course_html
-    assert "esc(t.summary)" in course_html
+    assert "esc(t.summary)" not in course_html
     assert "pages[step.contentPageTitle||step.title]" in course_html
     assert "videoId:step.videoId,image:step.image" in course_html
     assert "materialMedia(t)+body" in course_html

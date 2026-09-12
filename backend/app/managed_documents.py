@@ -93,6 +93,7 @@ def publish_document(
     payload: dict,
     expected_version: int,
     admin: str,
+    commit: bool = True,
 ) -> ManagedDocumentVersion:
     current = db.scalar(
         select(ManagedDocumentVersion)
@@ -148,14 +149,18 @@ def publish_document(
                     ManagedDocumentVersion.id.not_in(keep_ids),
                 )
             )
-        db.commit()
+        if commit:
+            db.commit()
+        else:
+            db.flush()
     except IntegrityError as exc:
         db.rollback()
         raise HTTPException(
             status_code=409,
             detail="Структура уже изменена в другой вкладке. Обновите страницу перед сохранением",
         ) from exc
-    db.refresh(version)
+    if commit:
+        db.refresh(version)
     return version
 
 

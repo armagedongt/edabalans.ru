@@ -143,6 +143,8 @@ Boomstream. Прямая HTTPS-ссылка, оканчивающаяся на `
   обычных видимых статей уже открытых или доступных к открытию дней по `step.id`;
   frontend отдаёт им приоритет над fallback-файлами, но при временной ошибке этого
   запроса продолжает открывать встроенные материалы;
+- `GET /course-assets/masterclass/media/{asset_path}` — публичные изображения
+  опубликованных статей только из разрешённого каталога `source-current/assets`;
 - `POST /api/masterclass/course/days/{day}/open` — первое/повторное открытие;
 - `POST /api/masterclass/course/days/{day}/steps/{index}/complete` — завершение
   следующего обязательного пункта;
@@ -161,6 +163,12 @@ Boomstream. Прямая HTTPS-ссылка, оканчивающаяся на `
 через `/versions/{version}/restore`. Локальный клиент для ИИ-писателя —
 `tools/publish_course_material.py`; после первоначального выпуска механизма его
 обычные вызовы не требуют Git, tests или deploy.
+
+Полная согласованная редакция из `content/masterclass/editorial/` публикуется
+командой `python scripts/publish_masterclass_editorial.py --publish` внутри backend.
+Она создаёт новую версию структуры, синхронизирует названия и видимый состав
+материалов, скрывает не вошедшие старые шаги без удаления и публикует отдельные
+версии обычных статей.
 
 ## Исходящие стрелки в messaging backend
 

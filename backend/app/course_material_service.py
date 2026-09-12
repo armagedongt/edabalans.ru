@@ -219,6 +219,7 @@ def publish_material(
     content_format: str,
     expected_version: int,
     admin: str,
+    commit: bool = True,
 ) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
@@ -269,7 +270,10 @@ def publish_material(
         db.add(version)
         db.flush()
         item.latest_version_id = version.id
-        db.commit()
+        if commit:
+            db.commit()
+        else:
+            db.flush()
     except HTTPException:
         db.rollback()
         raise
@@ -279,7 +283,8 @@ def publish_material(
             409,
             "Материал уже изменён. Получите актуальную версию перед публикацией",
         ) from exc
-    db.refresh(version)
+    if commit:
+        db.refresh(version)
     return version_payload(step_id, day_number, step, version)
 
 

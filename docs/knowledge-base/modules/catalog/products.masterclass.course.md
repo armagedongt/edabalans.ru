@@ -16,7 +16,7 @@ implementation_status: implemented
 - сохранять введённые через Enter переносы строк без HTML-кода в редакторе;
 - задавать каноническую структуру страницы статьи и её компактного оглавления без
   второго набора заголовков;
-- готовить следующую редакцию напрямую в `content/masterclass/editorial/`, где
+- готовить и публиковать редакцию напрямую из `content/masterclass/editorial/`, где
   `program.md` владеет названиями и порядком, а отдельные Markdown-файлы — текстами
   дней и материалов;
 - публиковать обычный текстовый материал отдельной версией по стабильному
@@ -39,16 +39,20 @@ implementation_status: implemented
 
 Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; смысловой контракт — `COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета — `COURSE_VISUAL_SYSTEM.md`.
 
-`content/masterclass/editorial/` — authoring truth следующей ещё не опубликованной
-редакции. Он становится runtime только после явной команды владельца и создания
-новой active revision.
+`content/masterclass/editorial/` — authoring truth редакции. Команда
+`backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active
+revision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в
+программу прежние шаги не удаляются, а остаются скрытыми.
 
 `content/masterclass/source-current/` хранит миграционные исходники прежней
 редакции и после первичного переноса не является местом новой редактуры. Для DQS
 прежний полный исходник — `13-dqs-system.md`; `.txt` сохранён как неизменяемый
 legacy-источник. Повторно используемые авторские вставки и код
 находятся в `content/masterclass/components/`: код слайдера отделён от ссылок на
-изображения, а таблицы получают данные из одного продуктового allowlist. Страница
+изображения, а таблицы получают данные из одного продуктового allowlist. Локальные
+изображения авторских материалов выдаются только из `source-current/assets/` через
+ограниченный маршрут `/course-assets/masterclass/media/*`; Markdown-публикатор
+заменяет относительный префикс `assets/` на этот маршрут. Страница
 курса загружает CSS и JavaScript напрямую из этого каталога через
 `/course-assets/masterclass/article-components.*`; копии runtime-кода в HTML нет.
 Сырой HTML статьи не получает доверенные component-классы и `data-*` атрибуты:

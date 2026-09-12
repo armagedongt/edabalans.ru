@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Literal
 
-from fastapi import APIRouter, Depends
-from fastapi.responses import Response
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
@@ -30,10 +31,24 @@ def material_service(course_code: str):
 
 
 router = APIRouter(tags=["course-material-publisher"])
+MASTERCLASS_MEDIA_ROOT = (COURSE_CONTENT_ROOT / "source-current" / "assets").resolve()
+MASTERCLASS_MEDIA_SUFFIXES = {".gif", ".jpeg", ".jpg", ".png", ".webp"}
 
 
 def component_asset(*parts: str) -> str:
     return COURSE_CONTENT_ROOT.joinpath("components", *parts).read_text(encoding="utf-8")
+
+
+@router.get("/course-assets/masterclass/media/{asset_path:path}", include_in_schema=False)
+def masterclass_article_media(asset_path: str) -> FileResponse:
+    path = (MASTERCLASS_MEDIA_ROOT / asset_path).resolve()
+    if (
+        not path.is_relative_to(MASTERCLASS_MEDIA_ROOT)
+        or path.suffix.casefold() not in MASTERCLASS_MEDIA_SUFFIXES
+        or not path.is_file()
+    ):
+        raise HTTPException(404, "Изображение материала не найдено")
+    return FileResponse(path, headers={"Cache-Control": "public, max-age=86400"})
 
 
 @router.get("/course-assets/masterclass/article-components.css", include_in_schema=False)
