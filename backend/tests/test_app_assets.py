@@ -586,7 +586,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert program_card_js.status_code == 200
     assert program_card_css.status_code == 200
     assert "canonical_html" in offers_js.text
-    assert "edb-program-card__days" in program_card_js.text
+    assert "edb-program-card__sections" in program_card_js.text
     assert "o.code==='single:consultation'?' is-featured':''" in offers_js.text
     assert ".mc-offer-card.is-featured" in offers_css.text
     assert client.get("/assets/max-logo.png").status_code == 200

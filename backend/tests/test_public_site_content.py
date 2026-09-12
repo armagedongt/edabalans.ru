@@ -67,6 +67,25 @@ def test_recipes_program_keeps_structured_sections_from_its_canonical_markdown()
     assert "Каталог рецептов — обновляемый" in payload["html"]
 
 
+def test_program_popup_runtime_uses_the_three_canonical_markdown_documents() -> None:
+    root = Path(__file__).parents[1] / "app" / "static"
+    homepage = (root / "homepage-preview" / "release-candidate.html").read_text(encoding="utf-8")
+    renderer = (root / "public-program-card.js").read_text(encoding="utf-8")
+    styles = (root / "public-program-card.css").read_text(encoding="utf-8")
+
+    assert "/api/public-site/content/${encodeURIComponent(code)}" in homepage
+    assert "slug === 'program' || slug === 'consultation'" in renderer
+    assert "slug === 'recipes'" in renderer
+    assert "edb-program-card__sections" in renderer
+    assert "programCardEnhanced" not in renderer
+    assert "['P']" in renderer
+    assert "['UL']" in renderer
+    assert "Product catalog descriptions serve other surfaces" in homepage
+    assert 'data-program-card="program"' in styles
+    assert 'data-program-card="recipes"' in styles
+    assert 'data-program-card="consultation"' in styles
+
+
 def test_accepted_approach_copy_is_seeded_and_rendered() -> None:
     client = make_client()
     payload = client.get("/api/public-site/content/approach").json()

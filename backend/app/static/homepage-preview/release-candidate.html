@@ -3462,6 +3462,7 @@
 
       async function openProduct(code) {
         overlay.classList.toggle('is-recipes', code === 'recipes');
+        overlay.classList.toggle('is-program', code === 'program');
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
         overlayCopy.hidden = true;
@@ -3477,8 +3478,10 @@
           if (!response.ok) throw new Error(`public content ${response.status}`);
           const product = await response.json();
           overlayTitle.textContent = product.title;
-          overlayCopy.textContent = product.description || '';
-          overlayCopy.hidden = !product.description;
+          // The visible popup copy belongs to its canonical Markdown document.
+          // Product catalog descriptions serve other surfaces and must not duplicate it here.
+          overlayCopy.textContent = '';
+          overlayCopy.hidden = true;
           overlayPoints.innerHTML = product.html;
           if (window.EdabalansProgramCard) window.EdabalansProgramCard.enhance(overlayPoints, code);
           overlayCta.textContent = 'Выбрать тариф';
