@@ -933,6 +933,17 @@
     .method-overlay__document-preview{display:block;width:100%;margin:0 0 var(--space-related)}
     .method-overlay__image{display:block;width:100%;height:auto;border-radius:0}
     .method-overlay__document-link{color:var(--site-blue);font-weight:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+    .method-overlay__panel--gallery{width:min(100%,1120px);padding:clamp(18px,3vw,30px)}
+    .method-gallery__controls{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px;padding-right:48px}
+    .method-gallery__group{display:flex;align-items:center;gap:8px}
+    .method-gallery__button{min-width:42px;min-height:40px;border:1px solid rgba(74,159,209,.28);border-radius:10px;background:#f3fbff;color:var(--site-blue);font:inherit;font-weight:800;cursor:pointer}
+    .method-gallery__button:hover,.method-gallery__button:focus-visible{border-color:var(--site-blue);background:#e5f6ff;outline:none}
+    .method-gallery__status{min-width:68px;color:var(--site-muted);font-size:14px;font-weight:800;text-align:center}
+    .method-gallery__viewport{overflow:auto;max-height:calc(100dvh - 168px);border:1px solid rgba(74,159,209,.18);border-radius:14px;background:#edf6f8}
+    .method-gallery__page[hidden]{display:none}
+    .method-gallery__page{display:block;width:100%;min-width:0}
+    .method-gallery__viewport.is-zoomed .method-gallery__page{width:170%;max-width:none}
+    @media(max-width:640px){.method-gallery__controls{padding-right:34px}.method-gallery__button{min-width:38px;min-height:38px}.method-gallery__viewport{max-height:calc(100dvh - 150px)}}
     .proof-list{display:grid;gap:18px;max-width:var(--content-reading);margin:30px 0 0;padding:0;list-style:none}
     .proof-list li{display:grid;grid-template-columns:34px minmax(0,1fr);align-items:center;gap:13px;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.58}
     .proof-list li::before{display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:#d7f2e0;color:#299b57;font-size:19px;font-weight:900;line-height:1;content:"✓"}
@@ -1569,12 +1580,31 @@
         <h2 id="education-overlay-title">Моё образование</h2>
         <p><strong>Я не медицинский специалист по питанию.</strong></p>
         <p>У меня дополнительное профессиональное образование по программе «Фитнес-нутрициолог» объёмом 340 часов, а также по программе «Специалист по инструкторской и методической работе в области физической культуры и спорта».</p>
-        <p>Диплом № 342419695163, регистрационный номер 1092, предоставляет право на профессиональную деятельность в сфере консультирования по вопросам здорового образа жизни, рационального и сбалансированного питания людей разных возрастных групп (<a class="method-overlay__document-link" href="/public-site-assets/education-documents-original.png" target="_blank" rel="noopener" data-production-href="/public-site-assets/education-documents-original.png">ссылка на оригинал документа</a>).</p>
-        <p>Сертификат № 10900 подтверждает компетенции профессионального стандарта «Специалист по инструкторской и методической работе в области физической культуры и спорта» в части трудовой функции «Планирование и реализация мероприятий по физическому воспитанию населения» (<a class="method-overlay__document-link" href="/public-site-assets/education-documents-original.png" target="_blank" rel="noopener" data-production-href="/public-site-assets/education-documents-original.png">ссылка на оригинал документа</a>).</p>
+        <p>Диплом № 342419695163, регистрационный номер 1092, предоставляет право на профессиональную деятельность в сфере консультирования по вопросам здорового образа жизни, рационального и сбалансированного питания людей разных возрастных групп.</p>
+        <p>Сертификат № 10900 подтверждает компетенции профессионального стандарта «Специалист по инструкторской и методической работе в области физической культуры и спорта» в части трудовой функции «Планирование и реализация мероприятий по физическому воспитанию населения».</p>
+        <p><button class="method-proof__link" type="button" data-method-overlay-open="education-originals">Открыть оригиналы документов <svg class="method-proof__link-icon" viewBox="0 0 20 20" aria-hidden="true"><path d="M7 13 13 7M8 7h5v5"/></svg></button></p>
         <h3>Чем медицинский специалист в сфере питания отличается от немедицинского?</h3>
         <p>Медицинский специалист работает с людьми с заболеваниями: диагностирует и лечит заболевания, назначает лечение и даёт медицинские рекомендации.</p>
         <p>Немедицинский специалист помогает с поведенческими аспектами реализации уже имеющихся рекомендаций врача и консультирует относительно здоровых людей по вопросам питания и здорового образа жизни — так, чтобы им потом не пришлось обращаться уже к медицинским специалистам.</p>
         <p>Если какой-то ваш вопрос требует врача или другого специалиста — я так прямо об этом и говорю.</p>
+      </section>
+    </div>
+    <div class="method-overlay" data-method-overlay="education-originals" hidden>
+      <div class="method-overlay__backdrop" data-method-overlay-close></div>
+      <section class="method-overlay__panel method-overlay__panel--gallery" role="dialog" aria-modal="true" aria-labelledby="education-originals-title" tabindex="-1">
+        <button class="method-overlay__close" type="button" data-method-overlay-close aria-label="Закрыть">×</button>
+        <h2 id="education-originals-title">Оригиналы документов</h2>
+        <div class="method-gallery" data-education-gallery>
+          <div class="method-gallery__controls" aria-label="Управление просмотром документов">
+            <div class="method-gallery__group"><button class="method-gallery__button" type="button" data-education-gallery-prev aria-label="Предыдущий документ">←</button><span class="method-gallery__status" data-education-gallery-status aria-live="polite">1 из 3</span><button class="method-gallery__button" type="button" data-education-gallery-next aria-label="Следующий документ">→</button></div>
+            <button class="method-gallery__button" type="button" data-education-gallery-zoom aria-pressed="false">Увеличить</button>
+          </div>
+          <div class="method-gallery__viewport" data-education-gallery-viewport>
+            <img class="method-gallery__page" data-static-src="/public-site-assets/education-certificate-10900.webp" data-production-static-src="/public-site-assets/education-certificate-10900.webp" alt="Сертификат № 10900" decoding="async">
+            <img class="method-gallery__page" data-static-src="/public-site-assets/education-diploma-1092.webp" data-production-static-src="/public-site-assets/education-diploma-1092.webp" alt="Диплом о профессиональной переподготовке № 342419695163" decoding="async" hidden>
+            <img class="method-gallery__page" data-static-src="/public-site-assets/education-diploma-supplement.jpg" data-production-static-src="/public-site-assets/education-diploma-supplement.jpg" alt="Приложение к диплому о профессиональной переподготовке" decoding="async" hidden>
+          </div>
+        </div>
       </section>
     </div>
     <div class="method-overlay" data-method-overlay="sources" hidden>
@@ -3631,6 +3661,37 @@
         });
       });
     })();
+
+    (() => {
+      const gallery = document.querySelector('[data-education-gallery]');
+      if (!gallery) return;
+      const pages = [...gallery.querySelectorAll('.method-gallery__page')];
+      const viewport = gallery.querySelector('[data-education-gallery-viewport]');
+      const status = gallery.querySelector('[data-education-gallery-status]');
+      const zoom = gallery.querySelector('[data-education-gallery-zoom]');
+      let active = 0;
+      let zoomed = false;
+      const loadPage = (page) => {
+        if (!page.getAttribute('src')) page.setAttribute('src', page.dataset.staticSrc);
+      };
+      const render = () => {
+        loadPage(pages[active]);
+        pages.forEach((page, index) => { page.hidden = index !== active; });
+        status.textContent = `${active + 1} из ${pages.length}`;
+        zoom.textContent = zoomed ? 'Уменьшить' : 'Увеличить';
+        zoom.setAttribute('aria-pressed', String(zoomed));
+        viewport.classList.toggle('is-zoomed', zoomed);
+        viewport.scrollTo({ left: 0, top: 0 });
+      };
+      const changePage = (step) => { active = (active + step + pages.length) % pages.length; zoomed = false; render(); };
+      gallery.querySelector('[data-education-gallery-prev]').addEventListener('click', () => changePage(-1));
+      gallery.querySelector('[data-education-gallery-next]').addEventListener('click', () => changePage(1));
+      const toggleZoom = () => { zoomed = !zoomed; render(); };
+      zoom.addEventListener('click', toggleZoom);
+      document.addEventListener('click', (event) => {
+        if (event.target.closest('[data-method-overlay-open="education-originals"]')) { active = 0; zoomed = false; render(); }
+      });
+    })();
   </script>
 </div>
 </section>
@@ -4500,10 +4561,19 @@
       if (!overlays.length) return;
       let activeOverlay = null;
       let previousFocus = null;
+      const overlayStack = [];
       const lock = () => document.documentElement.classList.add('method-overlay--locked');
       const closeOverlay = () => {
         if (!activeOverlay) return;
         activeOverlay.hidden = true;
+        const previousOverlay = overlayStack.pop();
+        if (previousOverlay) {
+          activeOverlay = previousOverlay.overlay;
+          previousFocus = previousOverlay.previousFocus;
+          activeOverlay.hidden = false;
+          previousOverlay.opener?.focus();
+          return;
+        }
         activeOverlay = null;
         document.documentElement.classList.remove('method-overlay--locked');
         previousFocus?.focus();
@@ -4512,7 +4582,10 @@
       const openOverlay = (name, opener) => {
         const overlay = overlays.find((item) => item.dataset.methodOverlay === name);
         if (!overlay) return;
-        if (activeOverlay && activeOverlay !== overlay) activeOverlay.hidden = true;
+        if (activeOverlay && activeOverlay !== overlay) {
+          overlayStack.push({ overlay: activeOverlay, opener, previousFocus });
+          activeOverlay.hidden = true;
+        }
         previousFocus = opener;
         activeOverlay = overlay;
         overlay.hidden = false;

@@ -757,6 +757,30 @@ def test_homepage_method_overlays_and_post_anya_cta_keep_their_public_contract()
     )
 
 
+def test_release_candidate_has_navigable_education_originals_gallery() -> None:
+    response = client.get("/preview/homepage-release-candidate")
+
+    assert response.status_code == 200
+    for marker in (
+        "Открыть оригиналы документов",
+        'data-method-overlay="education-originals"',
+        "data-education-gallery-next",
+        "data-education-gallery-zoom",
+        "/public-site-assets/education-certificate-10900.webp",
+        "/public-site-assets/education-diploma-1092.webp",
+        "/public-site-assets/education-diploma-supplement.jpg",
+    ):
+        assert marker in response.text
+    assert 'class="method-gallery__page" src=' not in response.text
+    for interaction in (
+        "const loadPage = (page)",
+        "data-education-gallery-prev]').addEventListener('click'",
+        "data-education-gallery-next]').addEventListener('click'",
+        "zoom.addEventListener('click', toggleZoom)",
+    ):
+        assert interaction in response.text
+
+
 def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     response = client.get("/preview/homepage-mobile?embed=tilda")
 

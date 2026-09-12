@@ -20,6 +20,9 @@ client = TestClient(app)
 def test_public_homepage_media_is_server_owned_and_allowlisted() -> None:
     document = client.get("/public-site-assets/education-documents.webp")
     document_original = client.get("/public-site-assets/education-documents-original.png")
+    certificate = client.get("/public-site-assets/education-certificate-10900.webp")
+    diploma = client.get("/public-site-assets/education-diploma-1092.webp")
+    supplement = client.get("/public-site-assets/education-diploma-supplement.jpg")
     avatar = client.get("/public-site-assets/reviews/anastasia-lapshina-avatar.jpg")
     first_voice = client.get("/public-site-assets/reviews/elena-review.mp3")
     clipped_voice = client.get("/public-site-assets/reviews/irina-review-main.mp3")
@@ -29,6 +32,9 @@ def test_public_homepage_media_is_server_owned_and_allowlisted() -> None:
     assert document.headers["content-type"].startswith("image/webp")
     assert document_original.status_code == 200
     assert document_original.headers["content-type"].startswith("image/png")
+    assert certificate.headers["content-type"].startswith("image/webp")
+    assert diploma.headers["content-type"].startswith("image/webp")
+    assert supplement.headers["content-type"].startswith("image/jpeg")
     assert avatar.status_code == 200
     assert avatar.headers["content-type"].startswith("image/jpeg")
     assert first_voice.status_code == 200

@@ -50,6 +50,12 @@
   }
 
   function prepareElement(element, baseUrl) {
+    if (element.hasAttribute('data-production-static-src')) {
+      element.setAttribute(
+        'data-static-src',
+        absolute(element.getAttribute('data-production-static-src'), appHost)
+      );
+    }
     if (element.hasAttribute('data-production-src')) {
       var productionSrc = absolute(element.getAttribute('data-production-src'), appHost);
       if (element.hasAttribute('data-voice-src')) {

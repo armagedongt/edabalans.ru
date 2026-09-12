@@ -75,6 +75,9 @@ PUBLIC_SITE_ASSETS_DIR = STATIC_DIR / "public-site-assets"
 PUBLIC_SITE_ASSETS = {
     "education-documents.webp",
     "education-documents-original.png",
+    "education-certificate-10900.webp",
+    "education-diploma-supplement.jpg",
+    "education-diploma-1092.webp",
     "reviews/elena-review.mp3",
     "reviews/anastasia-lapshina-review.mp3",
     "reviews/irina-review.mp3",
@@ -144,6 +147,9 @@ def public_site_asset(asset_path: str) -> FileResponse:
     media_type = {
         "education-documents.webp": "image/webp",
         "education-documents-original.png": "image/png",
+        "education-certificate-10900.webp": "image/webp",
+        "education-diploma-supplement.jpg": "image/jpeg",
+        "education-diploma-1092.webp": "image/webp",
         "reviews/elena-review.mp3": "audio/mpeg",
         "reviews/anastasia-lapshina-review.mp3": "audio/mpeg",
         "reviews/irina-review.mp3": "audio/mpeg",
