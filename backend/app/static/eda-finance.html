@@ -49,7 +49,7 @@
 <script>
 (() => {
   const STORAGE_KEY = 'edabalans-finance-model-v2';
-  const defaults = { paid:25, organic:5, conversion:3, cpl:150, minPrice:6900, standardPrice:8900, consultTariff:15900, consultCap:6, minShare:40, standardShare:40, consultShare:20, digitalRate:15, digitalAverage:4840, consultRate:10, supportRate:35, supportMonths:3, clubEnabled:false, clubRate:10, clubPrice:990, clubMonths:4, opex:20000, weeklyCap:6, timeUnit:4000, feeRate:10 };
+  const defaults = { paid:25, organic:5, conversion:3, cpl:150, minPrice:6900, standardPrice:8900, consultTariff:15900, consultCap:6, minShare:40, standardShare:40, consultShare:20, digitalRate:15, digitalAverage:4840, consultRate:10, supportRate:35, supportPrice:9800, supportMonths:3, clubEnabled:false, clubRate:10, clubPrice:990, clubMonths:4, opex:20000, weeklyCap:6, timeUnit:4000, feeRate:10 };
   const groups = {
     'main-fields': [['paid','Платных покупателей / месяц','Спрос на входные тарифы до применения лимита консультационного тарифа. От него растёт вся воронка.'],['organic','Органических покупателей / месяц','Добавляются к выручке, но не требуют оплаченных лидов.'],['conversion','Лид → покупатель, %','При 3% на 1 000 лидов приходится 30 покупателей.'],['cpl','CPL, ₽','Цена одного оплаченного лида.']],
     'tariff-fields': [['minPrice','Минимальный тариф, ₽'],['standardPrice','Стандарт, ₽'],['consultTariff','Тариф с консультацией, ₽'],['consultCap','Лимит тарифа с консультацией / мес.','Максимум продаж тарифа с консультацией. Если спрос выше: 10% излишка не покупают ничего, а 90% поровну переходят в минимальный и стандартный тариф. 0 — без лимита.'],['minShare','Доля минимального, %','Доли нормализуются до 100%.'],['standardShare','Доля стандарта, %'],['consultShare','Доля тарифа с консультацией, %']],
@@ -109,7 +109,7 @@
     }
   }
   function snapshot(){ return Object.fromEntries(Object.keys(defaults).map(id => [id,input(id).type==='checkbox'?input(id).checked:input(id).value])); }
-  function apply(data){ Object.entries(data||{}).forEach(([id,saved])=>{const el=input(id);if(!el)return;if(el.type==='checkbox')el.checked=Boolean(saved);else el.value=saved;}); calculate(); }
+  function apply(data){ Object.entries(data||{}).forEach(([id,saved])=>{const el=input(id);if(!el)return;if(el.type==='checkbox')el.checked=Boolean(saved);else el.value=(saved === '' || saved === null || saved === undefined || saved === 'undefined') ? defaults[id] : saved;}); calculate(); }
   function savedLabel(message){ input('saved').textContent=message; }
   const tooltip=document.createElement('div'); tooltip.id='finance-tooltip'; tooltip.className='tooltip hidden'; document.body.append(tooltip);
   const closeTooltip=()=>tooltip.classList.add('hidden');
