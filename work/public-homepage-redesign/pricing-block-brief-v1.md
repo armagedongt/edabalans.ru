@@ -140,4 +140,6 @@ CTA из описаний возвращает к подходящему тар�
 помечаются статусом разработки.
 
 Side-browser mockup:
-`assets/masterclass-pricing-neurozeh-v32.html` (принятая итерация `v32`).
+`assets/masterclass-pricing-neurozeh-v32.html` (принятая визуальная итерация `v32`).
+Тексты программ брать только из
+`content/public-site/homepage/{program,recipes,consultation,calories,training}.md`.

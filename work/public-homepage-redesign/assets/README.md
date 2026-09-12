@@ -117,7 +117,9 @@
 
 ## Тарифы Мастер-класса
 
-- Принятый mobile-first прототип: `masterclass-pricing-neurozeh-v32.html`.
+- Принятый mobile-first визуальный прототип: `masterclass-pricing-neurozeh-v32.html`.
+  Тексты раскрытий в нём не хранятся: единственные источники — файлы
+  `content/public-site/homepage/{program,recipes,consultation,calories,training}.md`.
 - Иконка возврата: `money-bag-ruble-v1.webp`; исходный PNG уменьшен до 256 px и
   сохранён lossless WebP, чтобы не менять изображение при размере показа `40×44`.
 - Основная версия: белый `Минимальный`, голубой `Стандартный`, тёмный

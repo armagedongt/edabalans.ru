@@ -44,7 +44,8 @@ presentation `site_short_v1` подготовлена migration `20260825_0025`.
 | Неизменяемые длительности окон 72/72/72/168 | этот документ; исполняемая константа `OFFER_STAGE_DURATIONS` в `masterclass_offer_rules.py` |
 | Версионный каталог входных тарифов и общего checkout | `../../PRICING_CATALOG.md`, таблицы `pricing_versions` и `price_entries` |
 | Отображение карточек внутри оболочки курса | `../../../../backend/app/static/masterclass.js` |
-| Полный текстовый просмотр продукта, программа и тезисы | `OFFER_PRODUCTS` в `../../../../backend/app/masterclass_offer_catalog.py` |
+| Полный текстовый просмотр рецептов, калорий и тренировок | `../../../../content/public-site/homepage/recipes.md`, `calories.md`, `training.md` |
+| Полный текстовый просмотр остальных продуктов | `OFFER_PRODUCTS` в `../../../../backend/app/masterclass_offer_catalog.py` |
 | Реакции Telegram на due-сигналы | `../telegram/POST_PURCHASE_MASTERCLASS.md` и исполняемый `postpurchase_masterclass` |
 | Визуальные правила | `COURSE_VISUAL_SYSTEM.md` |
 
@@ -82,13 +83,12 @@ Production получает `PRICING_CATALOG_ENABLED=true`. Три входны�
 материала**, а не модальное окно поверх ЛК. Экран использует тот же визуальный
 язык, что и материалы курса; его дизайн остаётся в `COURSE_VISUAL_SYSTEM.md`.
 
-Текстовый состав экрана: название, короткое описание, один вводный абзац,
-«Что вы получите» и короткая программа. Все эти поля (`name`, `description`,
-`features`, `presentation_intro`, `presentation_program`) принадлежат одному
-продукту в `OFFER_PRODUCTS`. `offer_products()` подменяет только редактируемые
-публичные `name` и `description` из продуктового каталога, сохраняя остальные
-поля; карточка, строка состава и полноэкранный экран не генерируют собственный
-текст на месте.
+Для рецептов, калорий и тренировок полноэкранный экран получает весь подробный
+текст из одноимённого Markdown-файла `content/public-site/homepage/`; этот же
+документ использует главная. `OFFER_PRODUCTS` для них хранит только короткую
+карточку, признаки доступа и состав предложения. Для остальных продуктов вводный
+абзац, «Что вы получите» и короткая программа пока хранятся в полях
+`presentation_intro` и `presentation_program` каталога.
 
 Сборщик `build_offers()` отдаёт только презентации видимых продуктов и список
 доступных в текущей точке действий. Поэтому экран показывает:

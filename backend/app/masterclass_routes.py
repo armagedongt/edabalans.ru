@@ -1906,12 +1906,14 @@ def build_offers(
         }
         for product_code in visible_product_codes
     }
-    if "recipes" in product_presentations:
-        recipes_document = serialize_public_site_rendered_document(
-            active_public_site_document(db, "recipes")
+    for product_code in ("recipes", "calories", "training"):
+        if product_code not in product_presentations:
+            continue
+        canonical_document = serialize_public_site_rendered_document(
+            active_public_site_document(db, product_code)
         )
-        product_presentations["recipes"]["canonical_html"] = recipes_document["html"]
-        product_presentations["recipes"]["canonical_version"] = recipes_document["version"]
+        product_presentations[product_code]["canonical_html"] = canonical_document["html"]
+        product_presentations[product_code]["canonical_version"] = canonical_document["version"]
     product_offer_actions: dict[str, list[dict]] = {code: [] for code in visible_product_codes}
     for card in visible_cards:
         for product_code in card["items"]:

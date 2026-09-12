@@ -1456,8 +1456,16 @@ def test_offer_product_catalog_has_one_complete_card_contract():
     assert all(product["description"] for product in OFFER_PRODUCTS.values())
     assert all(product["resource"] for product in OFFER_PRODUCTS.values())
     assert all(product["standard"] > 0 for product in OFFER_PRODUCTS.values())
+    markdown_presentations = {"recipes", "calories", "training"}
+    assert all(
+        OFFER_PRODUCTS[code]["presentation_intro"] == ""
+        and OFFER_PRODUCTS[code]["presentation_program"] == []
+        for code in markdown_presentations
+    )
     standalone_presentations = {
-        code: product for code, product in OFFER_PRODUCTS.items() if code != "recipes"
+        code: product
+        for code, product in OFFER_PRODUCTS.items()
+        if code not in markdown_presentations
     }
     assert all(product["presentation_intro"] for product in standalone_presentations.values())
     assert all(product["presentation_program"] for product in standalone_presentations.values())
@@ -1489,6 +1497,13 @@ def test_offer_payload_links_product_presentations_to_current_checkout_cards():
         "single:recipes", "bundle:digital"
     }
     assert {action["composition"] for action in actions} == {"single", "bundle"}
+
+    calories = payload["product_presentations"]["calories"]
+    assert calories["intro"] == ""
+    assert calories["program"] == []
+    assert calories["canonical_html"]
+    assert calories["canonical_version"] == 1
+    assert "Курс разделён на четыре этапа" in calories["canonical_html"]
 
 
 def test_account_offer_entry_prioritises_selected_product_without_resetting_window():
