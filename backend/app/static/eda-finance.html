@@ -33,7 +33,7 @@
         <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>LTV после комиссий</span><b id="ltv"></b></div><div class="row"><span>Рекламный бюджет</span><b id="ad-budget"></b></div></div>
         <div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div><div class="row"><span>Твой предел</span><b id="capacity"></b></div><div class="row total"><span><b>Статус</b></span><b id="status"></b></div></div>
         <div class="block"><h2>Клиенты сопровождения</h2><div class="row"><span>Новых / месяц</span><b id="new-support"></b></div><div class="row"><span>Активных на полке</span><b id="active-support"></b></div><div class="row"><span>Выход на полку</span><b id="plateau"></b></div><div class="row"><span>Оборот сопровождения</span><b id="support-revenue"></b></div></div>
-        <div class="block"><h2>Структура цифровых допов</h2><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b>4 840 ₽</b></div></div>
+        <div class="block"><h2>Структура цифровых допов</h2><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b id="digital-average-display"></b></div></div>
         <div class="block"><h2>Клуб</h2><div class="row"><span>Статус</span><b id="club-status"></b></div><div class="row"><span>Активных на полке</span><b id="active-club"></b></div><div class="row"><span>Оборот клуба</span><b id="club-revenue"></b></div></div>
       </div>
       <div class="blocks months">
@@ -49,11 +49,11 @@
 <script>
 (() => {
   const STORAGE_KEY = 'edabalans-finance-model-v2';
-  const defaults = { paid:25, organic:5, conversion:3, cpl:150, minPrice:6900, standardPrice:8900, consultTariff:15900, minShare:40, standardShare:40, consultShare:20, digitalRate:15, consultRate:10, supportRate:35, supportPrice:9800, supportMonths:3, clubEnabled:false, clubRate:10, clubPrice:990, clubMonths:4, opex:20000, weeklyCap:6, timeUnit:4000, feeRate:10 };
+  const defaults = { paid:25, organic:5, conversion:3, cpl:150, minPrice:6900, standardPrice:8900, consultTariff:15900, minShare:40, standardShare:40, consultShare:20, digitalRate:15, digitalAverage:4840, consultRate:10, supportRate:35, supportPrice:9800, supportMonths:3, clubEnabled:false, clubRate:10, clubPrice:990, clubMonths:4, opex:20000, weeklyCap:6, timeUnit:4000, feeRate:10 };
   const groups = {
     'main-fields': [['paid','Платных покупателей / месяц','Главный поток. От него растёт вся воронка.'],['organic','Органических покупателей / месяц','Добавляются к выручке, но не требуют оплаченных лидов.'],['conversion','Лид → покупатель, %','При 3% на 1 000 лидов приходится 30 покупателей.'],['cpl','CPL, ₽','Цена одного оплаченного лида.']],
     'tariff-fields': [['minPrice','Минимальный тариф, ₽'],['standardPrice','Стандарт, ₽'],['consultTariff','Тариф с консультацией, ₽'],['minShare','Доля минимального, %','Доли нормализуются до 100%.'],['standardShare','Доля стандарта, %'],['consultShare','Доля тарифа с консультацией, %']],
-    'funnel-fields': [['digitalRate','Самостоятельные: покупают цифровой доп, %','Средний чек корзины зафиксирован по трём типам допов: 4 840 ₽.'],['consultRate','Самостоятельные: докупают разбор, %','Разбор считается как одна консультационная единица и приносит 7 500 ₽.'],['supportRate','Консультация → сопровождение, %','Доля клиентов с консультацией, переходящих на сопровождение.'],['supportMonths','Средняя длительность сопровождения, мес.','Определяет, сколько когорт одновременно активно на полке.']],
+    'funnel-fields': [['digitalRate','Самостоятельные: покупают цифровой доп, %','Доля самостоятельных покупателей, которые берут хотя бы один цифровой доп.'],['digitalAverage','Средний чек покупки допа, ₽','Средняя выручка на одного покупателя цифрового допа. Считай её по фактической смеси разовых продуктов и пакетов.'],['consultRate','Самостоятельные: докупают разбор, %','Разбор считается как одна консультационная единица и приносит 7 500 ₽.'],['supportRate','Консультация → сопровождение, %','Доля клиентов с консультацией, переходящих на сопровождение.'],['supportMonths','Средняя длительность сопровождения, мес.','Определяет, сколько когорт одновременно активно на полке.']],
     'advanced-fields': [['supportPrice','Сопровождение / месяц, ₽'],['opex','Тех. постоянные расходы / месяц, ₽'],['weeklyCap','Комфортный предел консультаций / неделю'],['timeUnit','Внутренняя стоимость консультации, ₽'],['feeRate','Налоги + эквайринг, %']],
     'club-fields': [['clubEnabled','Включить клуб','Клуб добавляется к прогнозу только после включения.','checkbox'],['clubRate','Покупатели → клуб, %'],['clubPrice','Клуб / месяц, ₽'],['clubMonths','Средняя длительность клуба, мес.']]
   };
@@ -70,7 +70,7 @@
     const d=values(), buyers=d.paid+d.organic, mix=d.minShare+d.standardShare+d.consultShare || 1;
     const minimum=buyers*d.minShare/mix, standard=buyers*d.standardShare/mix, consultTariff=buyers*d.consultShare/mix, self=minimum+standard;
     const entry=minimum*d.minPrice+standard*d.standardPrice+consultTariff*d.consultTariff;
-    const digital=self*d.digitalRate/100*4840, lateConsult=self*d.consultRate/100, lateRevenue=lateConsult*7500;
+    const digital=self*d.digitalRate/100*d.digitalAverage, lateConsult=self*d.consultRate/100, lateRevenue=lateConsult*7500;
     const directUnits=consultTariff+lateConsult, newSupport=directUnits*d.supportRate/100, activeSupport=newSupport*d.supportMonths, supportRevenue=activeSupport*d.supportPrice;
     const clubActive=d.clubEnabled ? buyers*d.clubRate/100*d.clubMonths : 0, clubRevenue=clubActive*d.clubPrice;
     const entryRevenue=entry+digital+lateRevenue, turnover=entryRevenue+supportRevenue+clubRevenue, fees=turnover*d.feeRate/100;
@@ -84,7 +84,7 @@
     const primaryWeek=directUnits/4.33, supportWeek=supportUnits/4.33, totalWeek=primaryWeek+supportWeek, status=totalWeek>d.weeklyCap?'выше предела':'в пределах';
     set('primary-week',number(primaryWeek)); set('support-week',number(supportWeek)); set('total-week',number(totalWeek)); set('capacity',number(d.weeklyCap)); set('status',status,status==='выше предела'?'bad':'good');
     set('new-support',number(newSupport)); set('active-support',number(activeSupport)); set('plateau',(1+Math.ceil(d.supportMonths))+'-й месяц'); set('support-revenue',money(supportRevenue));
-    set('club-status',d.clubEnabled?'включён':'выключен',d.clubEnabled?'good':'warn'); set('active-club',number(clubActive)); set('club-revenue',money(clubRevenue));
+    set('club-status',d.clubEnabled?'включён':'выключен',d.clubEnabled?'good':'warn'); set('active-club',number(clubActive)); set('club-revenue',money(clubRevenue)); set('digital-average-display',money(d.digitalAverage));
     for(let month=1;month<=4;month++){
       const supportCohorts=Math.min(Math.max(month-1,0),d.supportMonths), clubCohorts=d.clubEnabled ? Math.min(Math.max(month-1,0),d.clubMonths) : 0;
       const monthTurnover=entryRevenue+newSupport*supportCohorts*d.supportPrice+buyers*d.clubRate/100*clubCohorts*d.clubPrice;
