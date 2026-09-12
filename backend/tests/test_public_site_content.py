@@ -45,7 +45,10 @@ def test_public_markdown_document_is_seeded_and_rendered() -> None:
     assert "updated_by" not in payload
 
     editor = client.get("/admin/api/public-site/content/program").json()["active"]
-    assert editor["markdown"].startswith("<!-- public-site-version: 1 -->")
+    source = (
+        Path(__file__).parents[2] / "content" / "public-site" / "homepage" / "program.md"
+    ).read_text(encoding="utf-8").strip()
+    assert editor["markdown"] == source
     assert editor["updated_by"]
 
 
