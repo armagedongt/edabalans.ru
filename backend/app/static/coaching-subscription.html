@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Индивидуальное сопровождение по подписке</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Unbounded:wght@700;800&display=swap');
+    :root{--blue:#159ee4;--ink:#172c3d;--orange:#fb6b2b;--line:#d8e8f2;--muted:#657984;--sky:#eef9ff}
+    *{box-sizing:border-box}body{margin:0;background:linear-gradient(145deg,#f5fbff,#e8f6ff);color:var(--ink);font:16px/1.55 Manrope,Arial,sans-serif}
+    main{width:min(100% - 32px,680px);margin:clamp(40px,8vw,84px) auto 48px}h1{margin:0 0 20px;font-family:Unbounded,Manrope,sans-serif;font-size:clamp(25px,4.4vw,40px);font-weight:800;line-height:1.12;letter-spacing:-.055em}
+    .lead{margin:0 0 28px;font-size:18px}.card{margin-top:22px;padding:clamp(22px,5vw,32px);border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:0 22px 56px -36px rgba(20,104,152,.55)}
+    .price{margin:0 0 5px;color:var(--orange);font-size:clamp(30px,7vw,48px);font-weight:800;letter-spacing:-.05em}.period{margin:0 0 22px;color:var(--muted);font-weight:700}.features{margin:0 0 26px;padding-left:1.2em}.features li{margin-bottom:8px}
+    .form{display:grid;gap:16px}.field{display:grid;gap:7px;font-size:14px;font-weight:800}input[type=email]{width:100%;border:1px solid #c8dce9;border-radius:13px;padding:14px 15px;background:#fff;color:var(--ink);font:16px Manrope,Arial,sans-serif}input:focus{outline:3px solid #bde9ff;border-color:var(--blue)}
+    button,.button{display:inline-grid;place-items:center;min-height:54px;border:0;border-radius:15px;padding:12px 22px;background:var(--orange);box-shadow:0 12px 24px -15px rgba(210,74,22,.9);color:#fff;font:800 16px Manrope,Arial,sans-serif;text-decoration:none;cursor:pointer}button:disabled{opacity:.62;cursor:wait}.secondary{background:#edf7fc;box-shadow:none;color:#2475a8}.danger{background:#b84b35}.legal{display:grid;grid-template-columns:18px minmax(0,1fr);gap:9px;align-items:start;color:var(--muted);font-size:12px;font-weight:600;line-height:1.45}.legal input{width:18px;height:18px;margin:0;accent-color:var(--blue)}a{color:#237bb1}.error{margin:0;color:#b33722;font-weight:700}.status{padding:16px;border-radius:15px;background:var(--sky)}.status strong{display:block;margin-bottom:4px}.manage-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.note{color:var(--muted);font-size:13px}.footer{margin-top:52px;padding-top:22px;border-top:1px solid #cfe1ec;color:#647987;font-size:13px}
+    @media(max-width:520px){main{width:min(100% - 24px,680px);margin:0 auto;padding:34px 0}.lead{font-size:16px}.card{border-radius:21px}.manage-actions>*{width:100%}}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Индивидуальное сопровождение</h1>
+    <p class="lead">Месяц регулярной работы над вашим питанием: две консультации — обычно примерно раз в две недели — и короткий обмен сообщениями между ними по срочным вопросам.</p>
+
+    <section class="card" aria-labelledby="purchase-title">
+      <h2 id="purchase-title">Оформить подписку</h2>
+      <p class="price" id="price">Загружаю цену…</p>
+      <p class="period">в месяц</p>
+      <ul class="features">
+        <li>первый месяц оплачивается сейчас;</li>
+        <li>затем та же сумма списывается раз в месяц;</li>
+        <li>будущие списания можно отключить на этой странице.</li>
+        <li>если списание не пройдёт, мы напишем на email; заранее напоминаний не будет.</li>
+      </ul>
+      <p class="note">Укажите почту вашего существующего аккаунта. Новый аккаунт при этой покупке не создаётся.</p>
+      <form class="form" id="purchase-form">
+        <label class="field" for="email">Электронная почта<input id="email" name="email" type="email" autocomplete="email" maxlength="320" required placeholder="primer@pochta.ru"></label>
+        <label class="legal"><input name="accept_terms" type="checkbox" required><span>Я принимаю <a href="/legal/offer" target="_blank" rel="noopener">публичную оферту</a>, даю <a href="/legal/consent" target="_blank" rel="noopener">согласие на обработку персональных данных</a> и соглашаюсь на ежемесячные автоматические списания указанной суммы до отключения подписки.</span></label>
+        <p class="error" id="purchase-error" hidden></p>
+        <button type="submit" disabled>Перейти к первой оплате</button>
+      </form>
+    </section>
+
+    <section class="card" id="manage" aria-labelledby="manage-title">
+      <h2 id="manage-title">Управление подпиской</h2>
+      <div id="manage-content"><p>Проверяю вход…</p></div>
+    </section>
+
+    <footer class="footer">© 2026 ИП Воронцов Сергей Сергеевич · <a href="https://t.me/FitnessSergey">Telegram</a> · <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a></footer>
+  </main>
+  <script>
+  (()=>{
+    const form=document.getElementById('purchase-form'),price=document.getElementById('price'),purchaseError=document.getElementById('purchase-error'),submit=form.querySelector('button'),manage=document.getElementById('manage-content');
+    const money=value=>new Intl.NumberFormat('ru-RU',{maximumFractionDigits:2}).format(value)+' ₽';
+    const date=value=>value?new Intl.DateTimeFormat('ru-RU',{day:'numeric',month:'long',year:'numeric'}).format(new Date(value)):'';
+    const postForm=result=>{const target=document.createElement('form');target.method=result.payment_form.method||'POST';target.action=result.payment_form.action;Object.entries(result.payment_form.fields||{}).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=String(value);target.append(input)});document.body.append(target);target.submit()};
+
+    fetch('/api/payments/robokassa/subscription/offer').then(r=>r.json().then(data=>{if(!r.ok)throw new Error(data.detail||'Подписка временно недоступна');return data})).then(data=>{price.textContent=money(data.amount);submit.textContent='Перейти к первой оплате · '+money(data.amount);submit.disabled=false}).catch(error=>{price.textContent='Подписка временно недоступна';purchaseError.textContent=error.message;purchaseError.hidden=false});
+    form.addEventListener('submit',async event=>{event.preventDefault();purchaseError.hidden=true;if(!form.checkValidity()){form.reportValidity();return}submit.disabled=true;const old=submit.textContent;submit.textContent='Создаю счёт…';try{const response=await fetch('/api/payments/robokassa/subscription/checkout',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:form.email.value,accept_terms:form.accept_terms.checked})});const result=await response.json().catch(()=>({}));if(!response.ok)throw new Error(result.detail||'Не удалось создать счёт');postForm(result)}catch(error){purchaseError.textContent=error.message;purchaseError.hidden=false;submit.disabled=false;submit.textContent=old}});
+
+    function renderSubscription(item){
+      if(!item.exists){manage.innerHTML='<p>В вашем аккаунте нет подписки на сопровождение.</p>';return}
+      const labels={pending:'Ожидает первой оплаты',test_paid:'Тестовая оплата подтверждена',active:'Подписка активна',charging:'Идёт очередное списание',cancellation_pending:'Отключение принято',cancelled:'Автопродление отключено',past_due:'Повторное списание не прошло'};
+      let detail='';if(item.status==='active')detail='<p>Следующее списание: <strong>'+date(item.next_charge_at)+'</strong>, '+money(item.amount)+'.</p>';if(item.status==='cancellation_pending')detail='<p>Новых списаний после уже начатой операции не будет. Итог текущей операции ещё проверяется.</p>';if(item.status==='cancelled'&&item.current_period_end)detail='<p>Будущих списаний не будет. Оплаченный период действует до <strong>'+date(item.current_period_end)+'</strong>.</p>';if(item.status==='past_due')detail='<p>Новое списание не выполнено, автоматические попытки остановлены. Пополните прежнюю карту либо при новой оплате выберите другую.</p><p><a href="#purchase-title">Оформить подписку заново</a></p>';
+      const cancel=item.status==='active'?'<div class="manage-actions"><button class="secondary" id="cancel-start" type="button">Отключить автопродление</button></div>':'';
+      manage.innerHTML='<div class="status"><strong>'+(labels[item.status]||'Статус уточняется')+'</strong>'+detail+'</div>'+cancel;
+      const start=document.getElementById('cancel-start');if(start)start.onclick=()=>{manage.querySelector('.manage-actions').innerHTML='<p class="note">После отключения новых списаний не будет. Уже оплаченный месяц продолжит действовать.</p><button class="danger" id="cancel-confirm" type="button">Да, отключить будущие списания</button><button class="secondary" id="cancel-back" type="button">Оставить подписку</button>';document.getElementById('cancel-back').onclick=()=>renderSubscription(item);document.getElementById('cancel-confirm').onclick=cancelSubscription};
+    }
+    async function cancelSubscription(){const button=document.getElementById('cancel-confirm');button.disabled=true;button.textContent='Отключаю…';try{const response=await fetch('/api/payments/robokassa/subscription/cancel',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'}});const result=await response.json();if(!response.ok)throw new Error(result.detail||'Не удалось отключить подписку');renderSubscription(result.subscription)}catch(error){const message=document.createElement('p');message.className='error';message.textContent=String(error.message||error);manage.append(message)}}
+    fetch('/api/account-auth/session',{credentials:'same-origin'}).then(r=>r.json()).then(session=>{if(!session.authenticated){manage.innerHTML='<p>Войдите в аккаунт, чтобы увидеть свою подписку или отключить будущие списания.</p><a class="button secondary" href="/lk?next=%2Fsubscription%23manage">Войти в аккаунт</a>';return}form.email.value=session.email||'';return fetch('/api/payments/robokassa/subscription/mine',{credentials:'same-origin'}).then(r=>r.json().then(data=>{if(!r.ok)throw new Error(data.detail||'Не удалось загрузить подписку');renderSubscription(data.subscription)}))}).catch(error=>{const message=document.createElement('p');message.className='error';message.textContent=String(error.message||error);manage.replaceChildren(message)});
+  })();
+  </script>
+</body>
+</html>

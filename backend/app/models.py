@@ -412,6 +412,48 @@ class Payment(Base):
     )
 
 
+class RecurringSubscription(TimestampMixin, Base):
+    __tablename__ = "recurring_subscriptions"
+    __table_args__ = (
+        Index("ix_recurring_subscriptions_user_status", "user_id", "status"),
+        Index("ix_recurring_subscriptions_due", "status", "next_charge_at"),
+        Index("ix_recurring_subscriptions_email", "email_normalized"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    user_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True
+    )
+    product_code: Mapped[str] = mapped_column(String(80), nullable=False)
+    price_entry_code: Mapped[str] = mapped_column(String(120), nullable=False)
+    pricing_version_id: Mapped[uuid.UUID | None] = mapped_column(
+        ForeignKey("pricing_versions.id", ondelete="SET NULL"), index=True
+    )
+    email_normalized: Mapped[str] = mapped_column(String(320), nullable=False)
+    amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)
+    currency: Mapped[str] = mapped_column(String(3), default="RUB", nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    parent_invoice_id: Mapped[str | None] = mapped_column(String(255), unique=True)
+    pending_invoice_id: Mapped[str | None] = mapped_column(String(255), unique=True)
+    successful_payments: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    current_period_start: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    current_period_end: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_charge_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    charge_started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_status_check_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status_check_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    cancelled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancellation_source: Mapped[str | None] = mapped_column(String(64))
+    last_error: Mapped[str | None] = mapped_column(Text)
+    failure_notification_status: Mapped[str | None] = mapped_column(String(32))
+    failure_notification_attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    next_notification_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    failure_notified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    terms_accepted_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    terms_ip: Mapped[str | None] = mapped_column(String(64))
+    terms_user_agent: Mapped[str | None] = mapped_column(String(500))
+
+
 class UserAccess(Base):
     __tablename__ = "user_accesses"
     __table_args__ = (

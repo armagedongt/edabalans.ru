@@ -15,6 +15,10 @@ implementation_status: implemented
 - принимать оплаты и выдавать/проверять продуктовые права;
 - создавать прямой счёт Robokassa по цене PostgreSQL и подтверждать его через
   подписанный `ResultUrl2`, не создавая пользователя до подтверждённой оплаты;
+- продавать существующему владельцу аккаунта сопровождение через публичную
+  серверную подписку: первый платёж с `Recurring=true`, ежемесячные дочерние
+  счета, отключение после входа и одно уведомление только после неудачного
+  списания;
 - принимать свободную оплату индивидуально согласованной услуги через `/pay`,
   сохранять имя, email, сумму и обязательный комментарий о назначении платежа,
   но не выдавать при ней доступы или личный кабинет автоматически;
@@ -40,7 +44,7 @@ implementation_status: implemented
 
 ## Источники истины
 
-PostgreSQL pricing/payments/access tables, `docs/TILDA_PAYMENTS.md`,
+PostgreSQL pricing/payments/access/subscription tables, `docs/TILDA_PAYMENTS.md`,
 `docs/ROBOKASSA_PAYMENTS.md`, `docs/knowledge-base/PRICING_CATALOG.md`,
 `ACCESS_RULES.md`.
 

@@ -540,9 +540,20 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     if payment is None:
         raise RobokassaError("Счёт Robokassa не найден")
     if payment.payment_status in {"paid", "test_paid"}:
-        if payment.external_payment_id != operation_id:
+        if payment.external_payment_id not in {None, operation_id}:
             raise RobokassaError("Операция Robokassa не совпадает со счётом")
-        db.rollback()
+        if payment.external_payment_id is None:
+            # A recurring child payment can be reconciled through the authenticated
+            # OpStateExt API before a delayed ResultUrl2 arrives.
+            payment.external_payment_id = operation_id
+            payment.payment_system = str(data.get("paymentMethod") or "robokassa")[:64]
+            payment.raw_payload = {
+                **dict(payment.raw_payload or {}),
+                "notification": payload,
+            }
+            db.commit()
+        else:
+            db.rollback()
         return invoice_id
     try:
         paid_amount = Decimal(str(data.get("incSum")))
@@ -641,14 +652,39 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "success_kind": success_kind,
         "account_purchase": account_purchase,
         "checkout_id": checkout_metadata.get("checkout_id"),
+        "subscription_id": checkout_metadata.get("subscription_id"),
+        "recurring_role": checkout_metadata.get("recurring_role"),
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
     checkout.user_id = user.id
     checkout.status = payment.payment_status
     if not is_test_payment:
-        grant_payment_access(db, payment, checkout, occurred_at)
+        if checkout.checkout_kind == "recurring_subscription":
+            from app.robokassa_subscription_service import apply_confirmed_subscription_payment
+
+            apply_confirmed_subscription_payment(
+                db,
+                payment,
+                user,
+                occurred_at,
+                checkout_metadata,
+                is_test_payment=False,
+            )
+        else:
+            grant_payment_access(db, payment, checkout, occurred_at)
         if settings.account_onboarding_enabled and not account_purchase:
             ensure_paid_account_onboarding(db, payment, settings)
+    elif checkout.checkout_kind == "recurring_subscription":
+        from app.robokassa_subscription_service import apply_confirmed_subscription_payment
+
+        apply_confirmed_subscription_payment(
+            db,
+            payment,
+            user,
+            occurred_at,
+            checkout_metadata,
+            is_test_payment=True,
+        )
     db.commit()
     return invoice_id

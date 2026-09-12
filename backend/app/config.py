@@ -40,9 +40,14 @@ class Settings(BaseSettings):
     robokassa_test_mode: bool = True
     robokassa_merchant_login: str = ""
     robokassa_password_1: str = ""
+    robokassa_password_2: str = ""
     robokassa_test_password_1: str = ""
     robokassa_hash_algorithm: str = "sha256"
     robokassa_payment_url: str = "https://auth.robokassa.ru/Merchant/Index.aspx"
+    robokassa_recurring_url: str = "https://auth.robokassa.ru/Merchant/Recurring"
+    robokassa_operation_state_url: str = "https://auth.robokassa.ru/Merchant/WebService/Service.asmx/OpStateExt"
+    robokassa_recurring_worker_enabled: bool = False
+    robokassa_recurring_poll_seconds: float = 60.0
     robokassa_result_url_2: str = "https://edabalans.ru/integrations/robokassa/result2"
     robokassa_success_url_2: str = "https://edabalans.ru/payments/robokassa/success"
     robokassa_fail_url_2: str = "https://edabalans.ru/payments/robokassa/fail"
