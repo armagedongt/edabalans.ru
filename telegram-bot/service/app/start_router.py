@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from types import SimpleNamespace
@@ -14,11 +15,13 @@ from app.customer_lifecycle import stop_presale_runs_for_user
 from app.content_formatting import content_is_runtime_ready, replace_template_values
 from app.models import Contact, ContentItem, ManualMessage, Sequence, SequenceRun, SequenceVersion, StepDelivery, TrackingEvent
 from app.seed import WELCOME_CODE
+from app.telegram import TelegramError
 
 
 MASTERCLASS_CODES = ["MASTERCLASS_BASIC", "MASTERCLASS_RECIPES", "MASTERCLASS_CONSULT"]
 ACTIVE_RUN_STATUSES = ["active", "waiting"]
 DAY_FOUR_STEP_KEY = "welcome_day4"
+logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -165,7 +168,12 @@ def execute_start_decision(
         return None
     if decision.code == "launch_welcome":
         if send_entry_circle:
-            send_system_content(session, contact, "tpl_entry_circle", sender)
+            try:
+                send_system_content(session, contact, "tpl_entry_circle", sender)
+            except TelegramError as exc:
+                if "VOICE_MESSAGES_FORBIDDEN" not in str(exc):
+                    raise
+                logger.info("Telegram recipient forbids video notes; skipping entry circle")
         send_system_content(
             session,
             contact,

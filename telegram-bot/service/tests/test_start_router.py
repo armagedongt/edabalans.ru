@@ -8,6 +8,7 @@ from app.engine import advance_run, start_run
 from app.models import BotInstance, Contact, ContentItem, CrmUser, ManualMessage, MessengerLinkToken, SequenceRun, StepDelivery, TrackingEvent, UserVariable
 from app.seed import WELCOME_CODE, seed_defaults
 from app.start_router import StartDecision, StartFacts, decision_from_facts, execute_start_decision, inspect_start, send_system_content
+from app.telegram import TelegramError
 
 
 class FakeSender:
@@ -140,6 +141,33 @@ def test_first_visit_sends_circle_and_selected_personal_entry_then_starts_schedu
             "https://edabalans.ru/intensive?i=E"
         )
         assert "&from=tg&entry=bot" in sender.sent[1][3]["buttons"][0]["url"]
+    finally:
+        session.close()
+
+
+def test_first_visit_skips_circle_when_recipient_forbids_video_notes(tmp_path):
+    session, contact = prepared(tmp_path, "no-voice")
+    try:
+        decision = decision_from_facts(StartFacts(
+            is_first_visit=True,
+            has_masterclass=False,
+            day_four_sent=False,
+            has_active_welcome_run=False,
+            welcome_ever_started=False,
+        ))
+
+        class NoVideoNoteSender(FakeSender):
+            def send_content(self, chat_id, content, configuration):
+                if content.code == "tpl_entry_circle":
+                    raise TelegramError("Telegram API HTTP 400: Bad Request: VOICE_MESSAGES_FORBIDDEN")
+                return super().send_content(chat_id, content, configuration)
+
+        run = execute_start_decision(session, contact, decision, None, NoVideoNoteSender(), WELCOME_CODE)
+
+        assert run is not None
+        failed = session.scalar(select(ManualMessage).where(ManualMessage.status == "failed"))
+        assert failed is not None
+        assert session.scalar(select(ManualMessage.body_source).where(ManualMessage.status == "sent")) is not None
     finally:
         session.close()
 

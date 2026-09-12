@@ -45,7 +45,12 @@ class TelegramClient:
         with self._client(timeout) as client:
             response = client.post(f"{self.base_url}/{method}", json=payload)
         if not response.is_success:
-            raise TelegramError(f"Telegram API HTTP {response.status_code}")
+            try:
+                description = str(response.json().get("description") or "").strip()
+            except (ValueError, TypeError):
+                description = ""
+            suffix = f": {description}" if description else ""
+            raise TelegramError(f"Telegram API HTTP {response.status_code}{suffix}")
         data = response.json()
         if not data.get("ok"):
             raise TelegramError(data.get("description", "Telegram API error"))
