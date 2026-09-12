@@ -677,7 +677,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "Система оценки качества питания" not in account  # names come from the server catalog
     assert "function legacyPortal(data){return ''}" in account
     assert "Пока доступы не подключены" in account
-    assert "data.state!=='ready'" in account
+    assert "if(!data.no_access_notice)return''" in account
+    assert "var locked=data.state!=='ready'||Boolean(data.legal&&data.legal.required)" in account
     assert "tma__userbar__sendLogout" not in account
     assert "/members/login?exit=y" not in account
     assert "identity.source==='native'" in course.text

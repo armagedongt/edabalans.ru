@@ -19,7 +19,19 @@ from app.models import PublicHomepageEvent
 
 router = APIRouter(tags=["public-homepage-analytics"])
 PAGE_ID = "masterclass-homepage-2026"
-EVENT_TYPES = {"page_open", "section_seen"}
+EVENT_TYPES = {
+    "page_open",
+    "section_seen",
+    "cta_click",
+    "popup_open",
+    "checkout_open",
+    "checkout_started",
+    "section_active_10s",
+    "section_active_30s",
+    "page_active_30s",
+    "page_active_90s",
+    "page_active_180s",
+}
 SECTION_IDS = {
     "page_open",
     "hero_video",
@@ -40,6 +52,18 @@ SECTION_IDS = {
     "final_choice",
     "reviews_more",
     "reviews_wall",
+    "program",
+    "recipes",
+    "consultation",
+    "calories",
+    "training",
+    "contacts",
+    "account",
+    "checkout",
+    "page_time",
+    "tariff_basic",
+    "tariff_recipes",
+    "tariff_consult",
 }
 RATE_WINDOW_SECONDS = 60
 MAX_EVENTS_PER_WINDOW = 80
@@ -48,7 +72,19 @@ _rate_state: dict[str, tuple[float, int]] = {}
 
 
 class PublicHomepageEventIn(BaseModel):
-    event: Literal["page_open", "section_seen"]
+    event: Literal[
+        "page_open",
+        "section_seen",
+        "cta_click",
+        "popup_open",
+        "checkout_open",
+        "checkout_started",
+        "section_active_10s",
+        "section_active_30s",
+        "page_active_30s",
+        "page_active_90s",
+        "page_active_180s",
+    ]
     viewer_id: uuid.UUID
     session_id: uuid.UUID
     page_id: str = Field(min_length=1, max_length=120)
@@ -102,8 +138,8 @@ def collect_public_homepage_event(
     enforce_rate_limit(request)
     if body.event == "page_open" and body.section_id != "page_open":
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "page_open requires page_open section")
-    if body.event == "section_seen" and body.section_id == "page_open":
-        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "section_seen requires a section")
+    if body.event != "page_open" and body.section_id == "page_open":
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_CONTENT, "homepage event requires a target")
     row = PublicHomepageEvent(
         session_id=str(body.session_id),
         viewer_key=viewer_key(body.viewer_id),
@@ -133,17 +169,30 @@ def public_homepage_analytics_summary(
     days = max(1, min(days, 366))
     since = datetime.now(timezone.utc) - timedelta(days=days)
     rows = db.execute(
-        select(PublicHomepageEvent.section_id, func.count(func.distinct(PublicHomepageEvent.session_id)))
+        select(
+            PublicHomepageEvent.event_type,
+            PublicHomepageEvent.section_id,
+            func.count(func.distinct(PublicHomepageEvent.session_id)),
+        )
         .where(PublicHomepageEvent.page_id == PAGE_ID, PublicHomepageEvent.created_at >= since)
-        .group_by(PublicHomepageEvent.section_id)
+        .group_by(PublicHomepageEvent.event_type, PublicHomepageEvent.section_id)
     ).all()
-    counts = dict(rows)
+    counts = {(event_type, section_id): count for event_type, section_id, count in rows}
     return {
         "page_id": PAGE_ID,
         "days": days,
-        "sessions": int(counts.get("page_open", 0)),
+        "sessions": int(counts.get(("page_open", "page_open"), 0)),
         "sections": [
-            {"id": section_id, "sessions": int(counts.get(section_id, 0))}
+            {"id": section_id, "sessions": int(counts.get(("section_seen", section_id), 0))}
             for section_id in sorted(SECTION_IDS - {"page_open"})
+        ],
+        "interactions": [
+            {
+                "event": event_type,
+                "target": section_id,
+                "sessions": int(count),
+            }
+            for (event_type, section_id), count in sorted(counts.items())
+            if event_type not in {"page_open", "section_seen"}
         ],
     }

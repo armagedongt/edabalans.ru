@@ -215,6 +215,11 @@ def account_payload(email: str, db: Session) -> dict:
         return {
             "ok": True,
             "state": "review_required",
+            # The cabinet intentionally uses one permanent, neutral notice for
+            # an unverified historic account and a newly created empty account.
+            # The distinction remains in `review_status` for staff, but is not
+            # made into two confusing user-facing scenarios.
+            "no_access_notice": True,
             "review_status": "unknown" if user is None else user.access_review_status,
             "message": (
                 "Аккаунт пока не связан с покупками. Если вы уже что-то приобретали, напишите мне и укажите email личного кабинета."
@@ -257,6 +262,7 @@ def account_payload(email: str, db: Session) -> dict:
     return {
         "ok": True,
         "state": "ready",
+        "no_access_notice": not bool(owned),
         "review_status": user.access_review_status,
         "email": email.strip().lower(),
         "legal": legal,

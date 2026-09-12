@@ -188,6 +188,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     blocked = client.get("/api/account?email=client@example.test")
     assert blocked.status_code == 200
     assert blocked.json()["state"] == "review_required"
+    assert blocked.json()["no_access_notice"] is True
     assert len(blocked.json()["courses"]) == 6
     assert all(item["owned"] is False for item in blocked.json()["courses"])
     assert all(item["app"] is None for item in blocked.json()["courses"])
@@ -208,6 +209,14 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     with factory() as db:
         user = db.get(User, user_id)
         user.access_review_status = "completed"
+        db.commit()
+    empty = client.get("/api/account?email=client@example.test")
+    assert empty.status_code == 200
+    assert empty.json()["state"] == "ready"
+    assert empty.json()["no_access_notice"] is True
+
+    with factory() as db:
+        user = db.get(User, user_id)
         masterclass = db.scalar(
             select(Resource).where(Resource.code == "ACCESS_MASTERCLASS")
         )
@@ -233,6 +242,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert ready.status_code == 200
     data = ready.json()
     assert data["state"] == "ready"
+    assert data["no_access_notice"] is False
     assert data["legal"]["required"] is True
     masterclass_card = next(item for item in data["courses"] if item["code"] == "masterclass")
     assert masterclass_card["state"] == "available"

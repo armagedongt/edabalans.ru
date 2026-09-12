@@ -3429,6 +3429,7 @@
       });
 
       async function openProduct(code) {
+        window.dispatchEvent(new CustomEvent('edb:homepage-analytics', { detail: { event: 'popup_open', sectionId: code } }));
         overlayTitle.textContent = 'Загружаю…';
         overlayCopy.textContent = '';
         overlayCopy.hidden = true;
@@ -3486,7 +3487,12 @@
         if (checkoutTrigger) checkoutTrigger.focus();
       }
 
+      function analyticsTariffId(plan) {
+        return ({ 'site.masterclass.basic': 'tariff_basic', 'site.masterclass.recipes': 'tariff_recipes', 'site.masterclass.consult': 'tariff_consult' })[plan.dataset.priceCode] || 'checkout';
+      }
+
       function openCheckout(plan, trigger) {
+        window.dispatchEvent(new CustomEvent('edb:homepage-analytics', { detail: { event: 'checkout_open', sectionId: analyticsTariffId(plan) } }));
         selectedPlan = plan;
         checkoutTrigger = trigger;
         const name = plan.querySelector('[data-price-field="name"]').textContent;
@@ -3591,6 +3597,7 @@
           return;
         }
         checkoutSubmit.disabled = true;
+        window.dispatchEvent(new CustomEvent('edb:homepage-analytics', { detail: { event: 'checkout_started', sectionId: analyticsTariffId(selectedPlan) } }));
         checkoutSubmit.textContent = 'Создаю счёт…';
         try {
           const response = await fetch(root.dataset.checkoutEndpoint, {
@@ -4158,6 +4165,87 @@
         target.dataset.analyticsSection = id;
         observer.observe(target);
       });
+      // Сохраняем не посекундный след, а два осмысленных порога: так видно,
+      // у какого блока человек задержался, без избыточной записи поведения.
+      let activeSection = null;
+      let activeSectionSince = null;
+      let activeSectionMs = 0;
+      const activeSectionsReported = new Set();
+      const reportSectionActiveTime = () => {
+        if (!activeSection) return;
+        const elapsed = activeSectionMs + (activeSectionSince === null ? 0 : performance.now() - activeSectionSince);
+        [[10_000, 'section_active_10s'], [30_000, 'section_active_30s']].forEach(([threshold, event]) => {
+          const key = `${event}:${activeSection}`;
+          if (elapsed >= threshold && !activeSectionsReported.has(key)) {
+            activeSectionsReported.add(key);
+            send(event, activeSection);
+          }
+        });
+      };
+      const readingObserver = new IntersectionObserver((entries) => {
+        const visible = entries.filter((entry) => entry.isIntersecting && entry.intersectionRatio >= .55)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (!visible) return;
+        const next = visible.target.dataset.analyticsSection;
+        if (next === activeSection) return;
+        reportSectionActiveTime();
+        activeSection = next;
+        activeSectionMs = 0;
+        activeSectionSince = document.hidden ? null : performance.now();
+      }, { threshold: [.55, .8] });
+      sectionTargets.forEach(([, selector]) => {
+        const target = document.querySelector(selector);
+        if (target) readingObserver.observe(target);
+      });
+      // Components inside the page dispatch these semantic events instead of
+      // owning another analytics implementation. This keeps the public page
+      // and its Markdown overlays on the same anonymous first-party ledger.
+      addEventListener('edb:homepage-analytics', (event) => {
+        const detail = event.detail || {};
+        if (detail.event && detail.sectionId) send(detail.event, detail.sectionId);
+      });
+      const trackedLinkTargets = new Map([
+        ['#pricing', 'pricing'],
+        ['/intensive', 'free_intensive'],
+        ['/lk', 'account'],
+        ['https://t.me/FitnessSergey', 'contacts'],
+        ['https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw', 'contacts']
+      ]);
+      document.addEventListener('click', (event) => {
+        const link = event.target.closest('a[href]');
+        if (!link) return;
+        const target = trackedLinkTargets.get(link.getAttribute('href'));
+        if (target) send('cta_click', target);
+      });
+      let activeSince = document.hidden ? null : performance.now();
+      let activeMs = 0;
+      const reportedThresholds = new Set();
+      const reportActiveTime = () => {
+        const current = activeMs + (activeSince === null ? 0 : performance.now() - activeSince);
+        [[30_000, 'page_active_30s'], [90_000, 'page_active_90s'], [180_000, 'page_active_180s']].forEach(([threshold, event]) => {
+          if (current >= threshold && !reportedThresholds.has(event)) {
+            reportedThresholds.add(event);
+            send(event, 'page_time');
+          }
+        });
+      };
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && activeSince !== null) {
+          activeMs += performance.now() - activeSince;
+          activeSince = null;
+          if (activeSectionSince !== null) {
+            activeSectionMs += performance.now() - activeSectionSince;
+            activeSectionSince = null;
+          }
+          reportActiveTime();
+          reportSectionActiveTime();
+        } else if (!document.hidden && activeSince === null) {
+          activeSince = performance.now();
+          if (activeSection) activeSectionSince = performance.now();
+        }
+      });
+      window.setInterval(() => { reportActiveTime(); reportSectionActiveTime(); }, 5_000);
+      addEventListener('pagehide', () => { reportActiveTime(); reportSectionActiveTime(); });
     })();
   </script>
   <script>
