@@ -34,7 +34,12 @@ def _is_disposable_identity(session: Session, user_id: str) -> bool:
     return int(counts or 0) == 0
 
 
-def _queue_link_messages(session: Session, user_id: str, token_id: str) -> None:
+def _queue_link_messages(
+    session: Session,
+    user_id: str,
+    token_id: str,
+    platform_user_id: str,
+) -> None:
     now = datetime.now(UTC)
     for position, (kind, code) in enumerate((
         ("messenger_identity", "tpl_postpurchase_identity"),
@@ -55,30 +60,13 @@ def _queue_link_messages(session: Session, user_id: str, token_id: str) -> None:
                     content_code=code,
                     deduplication_key=key,
                     due_at=now + timedelta(seconds=position),
-                    payload={"messenger_link_token_id": token_id},
+                    payload={
+                        "messenger_link_token_id": token_id,
+                        "target_platform": "telegram",
+                        "target_platform_user_id": platform_user_id,
+                    },
                 )
             )
-
-
-def _queue_account_questionnaire(session: Session, user_id: str, token_id: str) -> None:
-    key = f"account-onboarding:{token_id}:questionnaire"
-    if session.scalar(
-        select(MasterclassNotification.id).where(
-            MasterclassNotification.user_id == user_id,
-            MasterclassNotification.deduplication_key == key,
-        )
-    ):
-        return
-    session.add(
-        MasterclassNotification(
-            user_id=user_id,
-            notification_kind="messenger_questionnaire",
-            content_code="tpl_postpurchase_questionnaire",
-            deduplication_key=key,
-            due_at=datetime.now(UTC) + timedelta(seconds=1),
-            payload={"messenger_link_token_id": token_id, "source": "account_onboarding"},
-        )
-    )
 
 
 def _existing_password_hint(credential: AccountCredential) -> str:
@@ -195,10 +183,6 @@ def consume_masterclass_link(
                 issued_via="telegram",
             )
             session.add(credential)
-        # The questionnaire belongs to a paid Masterclass start, not to a
-        # voluntary empty account created from the registration form.
-        if onboarding is None or onboarding.payment_id is not None:
-            _queue_account_questionnaire(session, token.user_id, token.id)
         if raw_password:
             return True, (
                 "<b>Добро пожаловать! Доступ в личный кабинет готов.</b>\n\n"
@@ -213,5 +197,10 @@ def consume_masterclass_link(
             f'<a href="{html.escape(account_url, quote=True)}">Открыть личный кабинет</a>\n\n'
             + _existing_password_hint(credential)
         )
-    _queue_link_messages(session, token.user_id, token.id)
+    _queue_link_messages(
+        session,
+        token.user_id,
+        token.id,
+        contact.telegram_user_id,
+    )
     return True, "Telegram привязан. Сейчас пришлю ваши данные и анкету, а затем коротко напишу, что сделать дальше."

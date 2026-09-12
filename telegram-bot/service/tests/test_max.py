@@ -512,6 +512,16 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
         credential = session.get(AccountCredential, target_user_id)
         assert credential is not None
         assert credential.issued_via == "max"
+        account = session.scalar(select(CrmMessengerAccount).where(
+            CrmMessengerAccount.platform == "max",
+            CrmMessengerAccount.platform_user_id == "901",
+        ))
+        assert account is not None
+        contact = session.scalar(select(Contact).where(
+            Contact.telegram_user_id == "901",
+        ))
+        assert contact is not None
+        assert contact.user_id == target_user_id
         credential.created_at = datetime(2026, 9, 5, 21, 30, tzinfo=UTC)
         onboarding = AccountOnboarding(
             user_id=target_user_id,

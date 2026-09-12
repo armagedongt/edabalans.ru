@@ -57,7 +57,7 @@ ALLOWED_VARIABLES_BY_CONTENT_CODE = {
     "tpl_intensive_mid2_unsubscribed": {"wait_interval"},
     "tpl_intensive_mid3_subscribed": {"wait_interval"},
     "tpl_intensive_mid3_unsubscribed": {"wait_interval"},
-    "tpl_postpurchase_identity": {"email", "telegram_username", "masterclass_tariff", "purchase_date", "account_url", "questionnaire_formatted"},
+    "tpl_postpurchase_identity": {"email", "telegram_username", "messenger_username", "masterclass_tariff", "purchase_date", "account_url", "questionnaire_formatted"},
     "tpl_postpurchase_current_diet": {"current_diet_formatted"},
     "tpl_postpurchase_closing_review_copy": {
         "closing_review_formatted",

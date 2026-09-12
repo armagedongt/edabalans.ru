@@ -597,6 +597,9 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "step.kind==='questionnaire'||step.kind==='closing-review'" in course.text
     assert "step.questionnaireKind||'onboarding'" in course.text
     assert "А какая у вас сейчас «диета»?" in course.text
+    assert "Каждый ответ сохраняется отдельно и автоматически" in course.text
+    assert "Отправить в мессенджер" in course.text
+    assert "который вы привязали к личному кабинету" in course.text
     assert "После заполнения обязательно нажмите «Отправить в Telegram и продолжить»" in course.text
     assert "Получить саморевью в Telegram" in course.text
     assert "Как проходит консультация" in course.text

@@ -18,6 +18,7 @@ from app.models import (
     BotInstance,
     Contact,
     ContentItem,
+    CrmMessengerAccount,
     ManualMessage,
     MasterclassNotification,
     Sequence,
@@ -88,6 +89,8 @@ def add_contact_and_content(session):
     contact = Contact(bot_instance_id=bot.id, user_id="11111111-1111-1111-1111-111111111111", telegram_user_id="42", chat_id="42", status="active")
     session.add(contact)
     for code in (
+        "tpl_postpurchase_identity",
+        "tpl_postpurchase_questionnaire",
         "tpl_postpurchase_recipes_missing",
         "tpl_postpurchase_recipes_owned",
         "tpl_postpurchase_review_consultation",
@@ -97,7 +100,11 @@ def add_contact_and_content(session):
         "tpl_postpurchase_final_offer",
         "tpl_postpurchase_dqs_app_link",
     ):
-        if code == "tpl_postpurchase_day_unopened":
+        if code == "tpl_postpurchase_identity":
+            body = "<b>Данные участника</b>\n\n{{questionnaire_formatted}}"
+        elif code == "tpl_postpurchase_questionnaire":
+            body = "Мессенджер привязан. Перешлите сообщение выше."
+        elif code == "tpl_postpurchase_day_unopened":
             body = "Откройте {{day_url}}"
         elif code == "tpl_postpurchase_closing_review_copy":
             body = (
@@ -638,8 +645,86 @@ def test_disabled_postpurchase_scheduler_dispatches_only_requested_service_deliv
     assert calls[0][1]["notification_kinds"] == {
         "dqs_app_link",
         "closing_review_copy",
+        "messenger_identity",
+        "messenger_questionnaire",
     }
     assert "test_only" not in calls[0][1]
+
+
+def test_questionnaire_delivery_uses_only_the_linked_max_contact(tmp_path):
+    with session_factory(tmp_path) as session:
+        telegram_contact = add_contact_and_content(session)
+        max_bot = BotInstance(
+            code="max",
+            username="max-test",
+            display_name="MAX test",
+            token_env_name="MAX_TOKEN",
+            is_active=True,
+        )
+        session.add(max_bot)
+        session.flush()
+        max_contact = Contact(
+            bot_instance_id=max_bot.id,
+            user_id=telegram_contact.user_id,
+            telegram_user_id="max-42",
+            chat_id="max-42",
+            status="active",
+        )
+        other_max_contact = Contact(
+            bot_instance_id=max_bot.id,
+            user_id=telegram_contact.user_id,
+            telegram_user_id="max-other",
+            chat_id="max-other",
+            status="active",
+            last_seen_at=datetime.now(UTC),
+        )
+        session.add_all([max_contact, other_max_contact])
+        linked_account = CrmMessengerAccount(
+            user_id=telegram_contact.user_id,
+            platform="max",
+            platform_user_id="max-42",
+            username="member",
+            linked_at=datetime.now(UTC),
+            source="test",
+        )
+        session.add(linked_account)
+        session.flush()
+        session.add(MasterclassNotification(
+            user_id=telegram_contact.user_id,
+            notification_kind="messenger_questionnaire",
+            content_code="tpl_postpurchase_questionnaire",
+            deduplication_key="questionnaire:onboarding:max",
+            due_at=datetime.now(UTC) - timedelta(seconds=1),
+            status="pending",
+            payload={
+                "target_platform": "max",
+                "target_platform_user_id": "max-42",
+                "target_messenger_account_id": linked_account.id,
+            },
+        ))
+        session.commit()
+
+        telegram_sender = FakeSender()
+        assert dispatch_due_masterclass_notifications(
+            session,
+            telegram_sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            platform="telegram",
+        )["sent"] == 0
+        assert telegram_sender.sent == []
+
+        max_sender = FakeSender()
+        assert dispatch_due_masterclass_notifications(
+            session,
+            max_sender,
+            "",
+            lambda *_: {"ACCESS_MASTERCLASS"},
+            platform="max",
+        )["sent"] == 1
+        assert max_sender.sent == [
+            ("max-42", "tpl_postpurchase_questionnaire", "Мессенджер привязан. Перешлите сообщение выше.")
+        ]
 
 
 def test_dispatch_skips_legacy_review_week_notifications(tmp_path):

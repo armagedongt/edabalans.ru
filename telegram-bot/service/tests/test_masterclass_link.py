@@ -70,6 +70,8 @@ def test_one_time_link_reassigns_disposable_bot_identity_and_queues_two_messages
         assert presale_run.context["stopped_reason"] == "messenger_link_confirmed"
         queued = list(session.scalars(select(MasterclassNotification).where(MasterclassNotification.user_id == target.id)))
         assert [row.notification_kind for row in queued] == ["messenger_identity", "messenger_questionnaire"]
+        assert all(row.payload["target_platform"] == "telegram" for row in queued)
+        assert all(row.payload["target_platform_user_id"] == "42" for row in queued)
 
 
 def test_used_link_is_not_consumed_twice(tmp_path):
@@ -99,7 +101,7 @@ def test_used_link_is_not_consumed_twice(tmp_path):
         assert session.scalar(select(MasterclassNotification.id)) is None
 
 
-def test_account_claim_creates_password_once_and_queues_questionnaire(tmp_path):
+def test_account_claim_creates_password_once_without_premature_questionnaire(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'account-claim.sqlite'}")
     Base.metadata.create_all(engine)
     with Session(engine) as session:
@@ -158,7 +160,7 @@ def test_account_claim_creates_password_once_and_queues_questionnaire(tmp_path):
         assert onboarding.claimed_platform == "telegram"
         assert onboarding.claimed_at is not None
         queued = list(session.scalars(select(MasterclassNotification).where(MasterclassNotification.user_id == target.id)))
-        assert [row.notification_kind for row in queued] == ["messenger_questionnaire"]
+        assert queued == []
         credential = session.get(AccountCredential, target.id)
         assert credential is not None
         credential.created_at = datetime(2026, 9, 5, 21, 30, tzinfo=UTC)

@@ -838,15 +838,58 @@ def test_questionnaire_autosaves_each_answer_and_submit_is_idempotent():
     opened = client.get("/api/masterclass/questionnaires/onboarding?email=member@example.test")
     assert opened.status_code == 200
     assert len(opened.json()["questions"]) == 15
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="max",
+            platform_user_id="max-member-42",
+            username="member",
+            linked_at=datetime.now(timezone.utc),
+            source="test",
+        ))
+        db.commit()
     payload = {"email": "member@example.test", "question_code": "main_request", "answer_text": "Хочу наладить питание"}
     assert client.put("/api/masterclass/questionnaires/onboarding/answer", json=payload).status_code == 200
     assert client.put("/api/masterclass/questionnaires/onboarding/answer", json={**payload, "answer_text": "Обновлённый ответ"}).status_code == 200
-    assert client.post("/api/masterclass/questionnaires/onboarding/submit", json={"email": "member@example.test"}).status_code == 200
-    assert client.post("/api/masterclass/questionnaires/onboarding/submit", json={"email": "member@example.test"}).status_code == 200
+    submitted = client.post("/api/masterclass/questionnaires/onboarding/submit", json={"email": "member@example.test"})
+    repeated = client.post("/api/masterclass/questionnaires/onboarding/submit", json={"email": "member@example.test"})
+    assert submitted.status_code == repeated.status_code == 200
+    assert submitted.json()["messenger_link_status"] == "queued"
+    assert submitted.json()["messenger_platform"] == "max"
     with factory() as db:
         assert db.scalar(select(func.count(QuestionnaireAnswer.id))) == 1
         assert db.scalar(select(QuestionnaireAnswer.answer_text)) == "Обновлённый ответ"
         assert db.scalar(select(func.count(MasterclassEvent.id))) == 1
+        notifications = list(db.scalars(
+            select(MasterclassNotification).order_by(MasterclassNotification.due_at)
+        ))
+        assert [row.notification_kind for row in notifications] == [
+            "messenger_identity",
+            "messenger_questionnaire",
+        ]
+        assert [row.content_code for row in notifications] == [
+            "tpl_postpurchase_identity",
+            "tpl_postpurchase_questionnaire",
+        ]
+        assert all(row.payload["target_platform"] == "max" for row in notifications)
+        assert all(
+            row.payload["target_platform_user_id"] == "max-member-42"
+            for row in notifications
+        )
+
+
+def test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_messenger():
+    client, factory = setup()
+    submitted = client.post(
+        "/api/masterclass/questionnaires/onboarding/submit",
+        json={"email": "member@example.test"},
+    )
+    assert submitted.status_code == 200
+    assert submitted.json()["messenger_link_status"] == "not_linked"
+    assert submitted.json()["messenger_platform"] is None
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassNotification.id))) == 0
 
 
 def test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result():

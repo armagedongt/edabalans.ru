@@ -431,10 +431,10 @@ def _postpurchase_messages() -> list[dict]:
     rows = [
         (
             "postpurchase_identity",
-            "01 · После привязки — данные и анкета участника",
+            "01 · После анкеты — данные и анкета участника",
             "👉 <b>Данные участника мастер-класса</b>\n\n"
             "<b>Почта:</b> {{email}}\n"
-            "<b>Telegram:</b> @{{telegram_username}}\n"
+            "<b>Мессенджер:</b> {{messenger_username}}\n"
             "<b>Тариф:</b> {{masterclass_tariff}}\n"
             "<b>Дата покупки:</b> {{purchase_date}}\n"
             "<b>Личный кабинет:</b> <a href=\"{{account_url}}\">открыть ЛК</a>\n\n"
@@ -444,10 +444,10 @@ def _postpurchase_messages() -> list[dict]:
         ),
         (
             "postpurchase_questionnaire",
-            "02 · После привязки — что сделать дальше",
-            "Telegram привязан.\n\n"
+            "02 · После анкеты — что сделать дальше",
+            "Мессенджер привязан.\n\n"
             "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
-            "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если Telegram разделил длинную анкету на несколько сообщений, перешлите все части.",
+            "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если мессенджер разделил длинную анкету на несколько сообщений, перешлите все части.",
             None,
             ["после покупки", "онбординг", "анкета"],
         ),
@@ -633,10 +633,28 @@ def seed_defaults(
             # System and test-only messages must remain sendable. Replace known
             # seed placeholders, but never overwrite text edited by the owner.
             item.status = "published"
+            previous_identity = (
+                "👉 <b>Данные участника мастер-класса</b>\n\n"
+                "<b>Почта:</b> {{email}}\n"
+                "<b>Telegram:</b> @{{telegram_username}}\n"
+                "<b>Тариф:</b> {{masterclass_tariff}}\n"
+                "<b>Дата покупки:</b> {{purchase_date}}\n"
+                "<b>Личный кабинет:</b> <a href=\"{{account_url}}\">открыть ЛК</a>\n\n"
+                "👉 <b>Анкета участника</b>\n\n{{questionnaire_formatted}}"
+            )
+            previous_questionnaire = (
+                "Telegram привязан.\n\n"
+                "Если в почте, тарифе или других данных выше есть ошибка, напишите мне — я всё поправлю.\n\n"
+                "👆 Перешлите мне в личные сообщения сообщение выше с вашими данными и анкетой. Если Telegram разделил длинную анкету на несколько сообщений, перешлите все части."
+            )
             known_old_postpurchase = (
                 row["code"] == "postpurchase_identity" and "Проверьте ваши данные" in (item.body_source or "")
             ) or (
                 row["code"] == "postpurchase_questionnaire" and "Ваша анкета" in (item.body_source or "")
+            ) or (
+                row["code"] == "postpurchase_identity" and item.body_source == previous_identity
+            ) or (
+                row["code"] == "postpurchase_questionnaire" and item.body_source == previous_questionnaire
             ) or (
                 row["code"] == "postpurchase_tempo_late" and "Вы остановились в Мастер-классе" in (item.body_source or "")
             )
@@ -947,8 +965,8 @@ def seed_defaults(
         version = SequenceVersion(sequence_id=post.id, version_no=last_version + 1, status="draft")
         session.add(version); session.flush()
         specs = [
-            ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
-            ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "messenger_link_confirmed", "state": "editorial_slot"}),
+            ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
+            ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
             ("pp_current_diet_questionnaire", "MESSAGE", "postpurchase_current_diet", None, {"trigger": "current_diet_questionnaire_completed", "condition": "telegram_linked=true", "state": "editorial_slot"}),
             ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "dqs_app_link_requested", "condition": "telegram_linked=true AND masterclass_access=true", "state": "manual_request", "buttons": [{"text": "Открыть приложение", "web_app": {"url": "https://похудение-это-есть.рф/dqs"}}]}),
             ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
@@ -976,6 +994,12 @@ def seed_defaults(
         .join(SequenceVersion, SequenceVersion.id == SequenceStep.sequence_version_id)
         .where(SequenceVersion.sequence_id == post.id)
     ):
+        if step.step_key in {"pp_identity", "pp_questionnaire"}:
+            step.configuration = {
+                **(step.configuration or {}),
+                "trigger": "onboarding_questionnaire_completed",
+                "state": "service_delivery",
+            }
         help_data = editorial_help(step.step_key)
         if help_data:
             step.configuration = {**(step.configuration or {}), "editorial_help": help_data}

@@ -1083,6 +1083,44 @@ def finish_questionnaire(
     if not event:
         event = MasterclassEvent(user_id=user.id, event_key=event_key, event_type=event_type, details={"run_id": str(run.id), "status": run.status})
         db.add(event); db.flush()
+    messenger_account = db.scalar(
+        select(MessengerAccount)
+        .where(
+            MessengerAccount.user_id == user.id,
+            MessengerAccount.platform.in_(("telegram", "max")),
+            MessengerAccount.platform_user_id.is_not(None),
+            MessengerAccount.platform_user_id != "",
+            MessengerAccount.linked_at.is_not(None),
+        )
+        .order_by(MessengerAccount.linked_at.desc(), MessengerAccount.id.desc())
+    )
+    if kind == "onboarding" and action == "submit" and messenger_account:
+        now = datetime.now(timezone.utc)
+        notification_payload = {
+            "questionnaire_kind": kind,
+            "run_id": str(run.id),
+            "target_platform": messenger_account.platform,
+            "target_messenger_account_id": str(messenger_account.id),
+            "target_platform_user_id": messenger_account.platform_user_id,
+        }
+        queue_notification(
+            db,
+            user.id,
+            event,
+            "messenger_identity",
+            now,
+            content_code="tpl_postpurchase_identity",
+            payload=notification_payload,
+        )
+        queue_notification(
+            db,
+            user.id,
+            event,
+            "messenger_questionnaire",
+            now + timedelta(seconds=1),
+            content_code="tpl_postpurchase_questionnaire",
+            payload=notification_payload,
+        )
     if kind == "closing-review" and action == "submit":
         queue_notification(
             db,
@@ -1107,7 +1145,14 @@ def finish_questionnaire(
     return {
         "ok": True,
         "status": run.status,
-        "messenger_link_status": "queued" if kind == "closing-review" and action == "submit" else "planned",
+        "messenger_link_status": (
+            ("queued" if messenger_account else "not_linked")
+            if action == "submit" and kind == "onboarding"
+            else "queued"
+            if action == "submit" and kind == "closing-review"
+            else "planned"
+        ),
+        "messenger_platform": messenger_account.platform if messenger_account else None,
     }
 
 

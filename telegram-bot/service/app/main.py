@@ -329,30 +329,48 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
     return sent, failed
 
 
-def dispatch_masterclass_notifications(session: Session, tg: TelegramClient) -> dict[str, int]:
+def dispatch_masterclass_notifications(
+    session: Session,
+    sender: TelegramClient | MaxClient,
+    platform: str = "telegram",
+) -> dict[str, int]:
     common = {
         "course_url": settings.masterclass_course_url,
         "account_url": settings.masterclass_account_url,
         "allowed_telegram_ids": (
             settings.telegram_maintenance_allowed_user_ids
-            if settings.telegram_maintenance_mode
+            if platform == "telegram" and settings.telegram_maintenance_mode
             else None
         ),
+        "platform": platform,
         "progress_callback": _record_scheduler_activity,
     }
+    if platform == "max":
+        return dispatch_due_masterclass_notifications(
+            session,
+            sender,
+            settings.masterclass_offers_url,
+            notification_kinds={"messenger_identity", "messenger_questionnaire"},
+            **common,
+        )
     if settings.postpurchase_dispatch_enabled:
         return dispatch_due_masterclass_notifications(
             session,
-            tg,
+            sender,
             settings.masterclass_offers_url,
             test_only=settings.postpurchase_test_only,
             **common,
         )
     return dispatch_due_masterclass_notifications(
         session,
-        tg,
+        sender,
         settings.masterclass_offers_url,
-        notification_kinds={"dqs_app_link", "closing_review_copy"},
+        notification_kinds={
+            "dqs_app_link",
+            "closing_review_copy",
+            "messenger_identity",
+            "messenger_questionnaire",
+        },
         **common,
     )
 
@@ -410,6 +428,8 @@ def scheduler_iteration() -> None:
                 for broadcast in scheduled:
                     _deliver_broadcast(session, broadcast, tg)
                 dispatch_masterclass_notifications(session, tg)
+            if max_sender:
+                dispatch_masterclass_notifications(session, max_sender, platform="max")
             _record_scheduler_activity()
         _record_scheduler_activity()
 

@@ -897,6 +897,7 @@ def process_max_update(
             app_auth_secret=app_auth_secret,
             account_url=account_url,
         )
+        _ensure_contact(session, bot, account, user)
         sender.send_html(str(user["user_id"]), reply)
         session.commit()
         return {"ok": True, "account_credentials": True}

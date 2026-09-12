@@ -15,6 +15,7 @@ from app.models import (
     BotInstance,
     Contact,
     ContentItem,
+    CrmMessengerAccount,
     ManualMessage,
     MasterclassNotification,
     Sequence,
@@ -409,7 +410,7 @@ def client_values(
         ),
         "offer_expires_at": "срок указан на странице предложения",
     }
-    identity_keys = ("{{email}}", "{{telegram_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}", "{{current_diet_formatted}}", "{{closing_review_formatted}}")
+    identity_keys = ("{{email}}", "{{telegram_username}}", "{{messenger_username}}", "{{masterclass_tariff}}", "{{purchase_date}}", "{{questionnaire_formatted}}", "{{current_diet_formatted}}", "{{closing_review_formatted}}")
     if not any(key in template_body for key in identity_keys):
         return values
     email = session.execute(
@@ -470,6 +471,10 @@ def client_values(
         **values,
         "email": escape(str(email or "не найден"), quote=True),
         "telegram_username": escape(contact.username or "без username", quote=True),
+        "messenger_username": escape(
+            f"@{contact.username}" if contact.username else (contact.first_name or "без username"),
+            quote=True,
+        ),
         "masterclass_tariff": escape(MASTERCLASS_TARIFFS.get(str(payment[0]) if payment else "", "Тариф уточняется"), quote=True),
         "purchase_date": paid_at.strftime("%d.%m.%Y") if paid_at else "дата не указана",
         "questionnaire_formatted": questionnaire,
@@ -534,6 +539,7 @@ def dispatch_due_masterclass_notifications(
     test_only: bool = False,
     allowed_telegram_ids: str | None = None,
     notification_kinds: set[str] | None = None,
+    platform: str = "telegram",
     progress_callback: Callable[[], None] | None = None,
 ) -> dict[str, int]:
     counters = {"sent": 0, "skipped": 0, "waiting_contact": 0, "test_filtered": 0, "maintenance_filtered": 0, "failed": 0}
@@ -549,6 +555,14 @@ def dispatch_due_masterclass_notifications(
     progress = progress_callback or (lambda: None)
     for notification in due:
         progress()
+        target_platform = str((notification.payload or {}).get("target_platform") or "")
+        if target_platform and target_platform != platform:
+            continue
+        if platform == "max" and notification.notification_kind in {
+            "messenger_identity",
+            "messenger_questionnaire",
+        } and target_platform != "max":
+            continue
         if test_only:
             enabled = session.execute(
                 text(
@@ -560,21 +574,43 @@ def dispatch_due_masterclass_notifications(
             if not enabled:
                 counters["test_filtered"] += 1
                 continue
-        contact = session.scalar(
-            select(Contact)
-            .where(
-                Contact.user_id == notification.user_id,
-                Contact.status == "active",
-                Contact.bot_instance_id.in_(
-                    select(BotInstance.id).where(BotInstance.code != "max")
-                ),
-            )
-            .order_by(Contact.last_seen_at.desc())
+        bot_ids = select(BotInstance.id).where(
+            BotInstance.code == "max" if platform == "max" else BotInstance.code != "max"
         )
+        contact_query = select(Contact).where(
+            Contact.user_id == notification.user_id,
+            Contact.status == "active",
+            Contact.bot_instance_id.in_(bot_ids),
+        )
+        target_platform_user_id = str(
+            (notification.payload or {}).get("target_platform_user_id") or ""
+        )
+        target_messenger_account_id = str(
+            (notification.payload or {}).get("target_messenger_account_id") or ""
+        )
+        if target_platform_user_id:
+            account_query = select(CrmMessengerAccount.id).where(
+                CrmMessengerAccount.user_id == notification.user_id,
+                CrmMessengerAccount.platform == platform,
+                CrmMessengerAccount.platform_user_id == target_platform_user_id,
+                CrmMessengerAccount.linked_at.is_not(None),
+            )
+            if target_messenger_account_id:
+                account_query = account_query.where(
+                    CrmMessengerAccount.id == target_messenger_account_id
+                )
+            if not session.scalar(account_query):
+                counters["waiting_contact"] += 1
+                continue
+        if target_platform_user_id:
+            contact_query = contact_query.where(
+                Contact.telegram_user_id == target_platform_user_id
+            )
+        contact = session.scalar(contact_query.order_by(Contact.last_seen_at.desc()))
         if not contact:
             counters["waiting_contact"] += 1
             continue
-        if allowed_ids is not None and contact.telegram_user_id not in allowed_ids:
+        if platform == "telegram" and allowed_ids is not None and contact.telegram_user_id not in allowed_ids:
             counters["maintenance_filtered"] += 1
             continue
         access = access_resolver(session, notification.user_id)
