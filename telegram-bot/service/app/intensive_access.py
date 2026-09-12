@@ -30,7 +30,10 @@ def intensive_access_url(public_url: str, token: str, platform: str) -> str:
     parts = urlsplit(public_url)
     source = "tg" if platform == "telegram" else "max"
     query = urlencode({"i": token, "from": source, "entry": "bot"})
-    return urlunsplit((parts.scheme, parts.netloc, parts.path.rstrip("/"), query, ""))
+    path = parts.path.rstrip("/")
+    if not path.endswith("/start"):
+        path = f"{path}/start"
+    return urlunsplit((parts.scheme, parts.netloc, path, query, ""))
 
 
 def personal_tracking_values(

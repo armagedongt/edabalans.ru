@@ -178,6 +178,62 @@ def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch
     app.dependency_overrides.clear()
 
 
+def test_telegram_stop_and_block_events_stop_only_that_contacts_schedule(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'stop-events.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель")
+        session.add(user); session.flush()
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=user.id,
+            telegram_user_id="42",
+            chat_id="42",
+        )
+        session.add(contact); session.flush()
+        from app.engine import start_run
+        start_run(session, contact.id, "welcome_intensive")
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    fake = FakeTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    client = TestClient(app)
+
+    response = client.post("/telegram/webhook", json={
+        "update_id": 900,
+        "message": {
+            "from": {"id": 42, "first_name": "Получатель"},
+            "chat": {"id": 42, "type": "private"},
+            "text": "/stop",
+        },
+    })
+    assert response.json() == {"ok": True, "stopped": True, "stopped_runs": 1}
+    assert fake.sent[-1][1] == "system_stop_confirmation"
+
+    response = client.post("/telegram/webhook", json={
+        "update_id": 901,
+        "my_chat_member": {
+            "chat": {"id": 42, "type": "private"},
+            "new_chat_member": {"status": "kicked"},
+        },
+    })
+    assert response.json() == {"ok": True}
+    with Session(engine) as session:
+        contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "42"))
+        events = list(session.scalars(select(TrackingEvent).where(TrackingEvent.event_type == "bot_stopped")))
+        assert contact.status == "stopped"
+        assert len(events) == 2
+    app.dependency_overrides.clear()
+
+
 def test_maintenance_mode_waitlists_outsider_and_allows_owner(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'maintenance.sqlite'}")
     Base.metadata.create_all(engine)

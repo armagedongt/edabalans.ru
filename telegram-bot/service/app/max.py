@@ -20,7 +20,7 @@ from sqlalchemy.orm import Session
 from app.account_credentials import generate_password, password_hash
 from app.app_menu import APPS_PAYLOAD, app_request, send_menu
 from app.content_formatting import content_body_for_telegram, replace_template_values
-from app.customer_lifecycle import stop_presale_runs_for_user
+from app.customer_lifecycle import stop_presale_runs_for_user, stop_runs_for_contact
 from app.intensive_access import (
     create_intensive_access_link,
     intensive_token,
@@ -743,7 +743,44 @@ def process_max_update(
     account_url: str = "https://edabalans.ru/lk",
 ) -> dict[str, Any]:
     """Persist a MAX bot start and send a platform-bound intensive link."""
-    if update.get("update_type") != "bot_started":
+    update_type = str(update.get("update_type") or "")
+    if update_type in {"bot_stopped", "dialog_removed"}:
+        user = update.get("user") or {}
+        if not user.get("user_id"):
+            return {"ok": True, "ignored": True}
+        bot = _max_bot(session, bot_username)
+        receipt_id = _receipt_id(update)
+        if session.get(UpdateReceipt, receipt_id):
+            return {"ok": True, "duplicate": True}
+        session.add(UpdateReceipt(
+            update_id=receipt_id,
+            bot_instance_id=bot.id,
+            update_type=f"max_{update_type}",
+        ))
+        platform_user_id = str(user["user_id"])
+        contact = session.scalar(select(Contact).where(
+            Contact.bot_instance_id == bot.id,
+            Contact.telegram_user_id == platform_user_id,
+        ))
+        stopped_runs = 0
+        if contact is not None:
+            contact.status = "stopped"
+            stopped_runs = stop_runs_for_contact(
+                session,
+                contact.id,
+                reason=f"max_{update_type}",
+            )
+            session.add(TrackingEvent(
+                contact_id=contact.id,
+                user_id=contact.user_id,
+                telegram_user_id=contact.telegram_user_id,
+                event_type="bot_stopped",
+                deduplication_key=f"{receipt_id}:bot_stopped",
+                metadata_json={"messenger": "max", "update_type": update_type},
+            ))
+        session.commit()
+        return {"ok": True, "stopped": True, "stopped_runs": stopped_runs}
+    if update_type != "bot_started":
         return {"ok": True, "ignored": True}
     user = update.get("user") or {}
     if not user.get("user_id"):

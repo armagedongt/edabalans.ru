@@ -35,6 +35,15 @@ class FakeSender:
         return self.subscription
 
 
+class FailingSender(FakeSender):
+    def __init__(self, error):
+        super().__init__()
+        self.error = error
+
+    def send_content(self, chat_id, content, configuration):
+        raise self.error
+
+
 def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path):
     with session_factory(tmp_path) as session:
         seed_defaults(session, "Fitness_Talks_bot")
@@ -71,7 +80,7 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
         assert len(intensive_code) == 9
-        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
+        assert intensive_url == f"https://edabalans.ru/intensive/start?i={intensive_code}&from=tg&entry=bot"
 
 
 def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
@@ -116,7 +125,7 @@ def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
         intensive_url = rendered.body_source.removeprefix("Интенсив: ")
         intensive_code = parse_qs(urlparse(intensive_url).query)["i"][0]
         assert configuration["buttons"][0]["url"].endswith(intensive_code)
-        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=max&entry=bot"
+        assert intensive_url == f"https://edabalans.ru/intensive/start?i={intensive_code}&from=max&entry=bot"
 
 
 def session_factory(tmp_path):
@@ -491,6 +500,66 @@ def test_sequence_stops_before_unapproved_message(tmp_path):
         assert run.status == "error"
         assert run.last_error == "Content is not owner-approved: tpl_intensive_day2"
         assert "tpl_intensive_day2" not in [item[1] for item in sender.sent]
+
+
+def test_transient_delivery_error_is_retried_without_stopping_sequence(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель")
+        session.add(user); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="retry", chat_id="retry")
+        session.add(contact); session.commit()
+        run = start_run(session, contact.id, WELCOME_CODE)
+        run.current_step_key = "welcome_day2"
+
+        before = datetime.now(UTC)
+        advance_run(session, run, FailingSender(TimeoutError("temporary timeout")))
+
+        delivery = session.scalar(select(StepDelivery).where(StepDelivery.step_key == "welcome_day2"))
+        assert delivery.status == "retrying"
+        assert delivery.attempt_count == 1
+        assert run.status == "active"
+        retry_at = run.next_action_at.replace(tzinfo=UTC) if run.next_action_at.tzinfo is None else run.next_action_at
+        assert retry_at >= before + timedelta(seconds=59)
+        assert session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "message_delivery_retry_scheduled"
+        )) is not None
+
+
+def test_recipient_403_stops_only_that_contacts_runs(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель")
+        other_user = CrmUser(display_name="Другой получатель")
+        session.add_all([user, other_user]); session.flush()
+        contact = Contact(bot_instance_id=bot.id, user_id=user.id, telegram_user_id="blocked", chat_id="blocked")
+        other = Contact(bot_instance_id=bot.id, user_id=other_user.id, telegram_user_id="other", chat_id="other")
+        session.add_all([contact, other]); session.commit()
+        run = start_run(session, contact.id, WELCOME_CODE)
+        second_run = SequenceRun(
+            contact_id=contact.id,
+            sequence_version_id=run.sequence_version_id,
+            current_step_key="welcome_day2",
+            status="active",
+            next_action_at=datetime.now(UTC),
+        )
+        other_run = start_run(session, other.id, WELCOME_CODE)
+        session.add(second_run); session.flush()
+        run.current_step_key = "welcome_day2"
+
+        advance_run(session, run, FailingSender(RuntimeError("Client error '403 Forbidden'")))
+
+        delivery = session.scalar(select(StepDelivery).where(StepDelivery.run_id == run.id))
+        assert delivery.status == "undeliverable"
+        assert contact.status == "blocked"
+        assert run.status == "completed"
+        assert second_run.status == "completed"
+        assert other_run.status == "active"
+        assert session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "bot_delivery_blocked"
+        )) is not None
 
 
 def test_welcome_timing_and_subscription_observation_steps(tmp_path):

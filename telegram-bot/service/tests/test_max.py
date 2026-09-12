@@ -408,7 +408,7 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
     assert fake.sent[0][1] == ""
     assert "Бесплатный интенсив" in fake.sent[1][1]
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/start?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
@@ -444,6 +444,26 @@ def test_max_start_saves_identity_and_sends_intensive_link(tmp_path, monkeypatch
         assert run is not None
         assert run.status == "active"
         assert run.current_step_key == "welcome_reminder_check_day1"
+    app.dependency_overrides.clear()
+
+
+def test_max_bot_stopped_marks_only_contact_and_stops_schedule(tmp_path, monkeypatch):
+    client, engine, _ = make_client(tmp_path, monkeypatch)
+    headers = {"X-Max-Bot-Api-Secret": "test-secret"}
+    assert client.post("/bot/max/webhook", json=max_start(), headers=headers).status_code == 200
+
+    stopped = max_start(timestamp="2026-08-27T10:05:00Z")
+    stopped["update_type"] = "bot_stopped"
+    response = client.post("/bot/max/webhook", json=stopped, headers=headers)
+
+    assert response.json() == {"ok": True, "stopped": True, "stopped_runs": 1}
+    with Session(engine) as session:
+        contact = session.scalar(select(Contact).where(Contact.telegram_user_id == "901"))
+        run = session.scalar(select(SequenceRun).where(SequenceRun.contact_id == contact.id))
+        event = session.scalar(select(TrackingEvent).where(TrackingEvent.event_type == "bot_stopped"))
+        assert contact.status == "stopped"
+        assert run.status == "completed"
+        assert event.metadata_json == {"messenger": "max", "update_type": "bot_stopped"}
     app.dependency_overrides.clear()
 
 
@@ -1023,7 +1043,7 @@ def test_max_delivery_failure_persists_same_link_for_webhook_retry(tmp_path, mon
     response = client.post("/bot/max/webhook", json=max_start(), headers=headers)
     assert response.json() == {"ok": True, "retried": True}
     assert len(fake.sent) == 2
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/start?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     assert client.post("/bot/max/webhook", json=max_start(), headers=headers).json() == {
         "ok": True,
@@ -1068,7 +1088,7 @@ def test_unknown_max_payload_keeps_identity_without_inventing_attribution(tmp_pa
 
     response = client.post("/bot/max/webhook", json=max_start(payload="obsolete-link"), headers=headers)
     assert response.json() == {"ok": True, "intensive": True, "first_start": True}
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/start?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
 
     with Session(engine) as session:
@@ -1111,6 +1131,6 @@ def test_distinct_later_max_start_is_recorded_as_repeat(tmp_path, monkeypatch):
         assert events == ["start_first", "start_repeat"]
     assert len(fake.sent) == 3
     assert fake.sent[1][2]["buttons"][0]["text"] == "Открыть интенсив"
-    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive?i=E")
+    assert fake.sent[1][2]["buttons"][0]["url"].startswith("https://edabalans.ru/intensive/start?i=E")
     assert "&from=max&entry=bot" in fake.sent[1][2]["buttons"][0]["url"]
     app.dependency_overrides.clear()

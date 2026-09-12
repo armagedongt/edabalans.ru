@@ -138,7 +138,7 @@ def test_first_visit_sends_circle_and_selected_personal_entry_then_starts_schedu
         ]
         assert "{{personal_" not in sender.sent[1][2]
         assert sender.sent[1][3]["buttons"][0]["url"].startswith(
-            "https://edabalans.ru/intensive?i=E"
+            "https://edabalans.ru/intensive/start?i=E"
         )
         assert "&from=tg&entry=bot" in sender.sent[1][3]["buttons"][0]["url"]
     finally:
@@ -189,7 +189,7 @@ def test_system_content_resolves_personal_link(tmp_path):
         send_system_content(session, contact, item.code, sender)
 
         assert "{{personal_" not in sender.sent[0][2]
-        assert "https://edabalans.ru/intensive?i=E" in sender.sent[0][2]
+        assert "https://edabalans.ru/intensive/start?i=E" in sender.sent[0][2]
         assert "&from=tg&entry=bot" in sender.sent[0][2]
         assert session.query(MessengerLinkToken).count() == 1
     finally:

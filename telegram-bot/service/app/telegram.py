@@ -180,7 +180,7 @@ class TelegramClient:
         self.call("deleteWebhook", {"drop_pending_updates": False})
 
     def get_updates(self, offset: int | None = None, timeout: int = 25) -> list[dict[str, Any]]:
-        payload: dict[str, Any] = {"timeout": timeout, "allowed_updates": ["message", "callback_query", "chat_member", "chat_join_request"]}
+        payload: dict[str, Any] = {"timeout": timeout, "allowed_updates": ["message", "callback_query", "my_chat_member", "chat_member", "chat_join_request"]}
         if offset is not None:
             payload["offset"] = offset
         return self.call("getUpdates", payload, timeout=timeout + 10)

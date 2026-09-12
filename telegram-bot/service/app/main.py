@@ -21,7 +21,7 @@ from sqlalchemy import case, delete, func, or_, select, text
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
-from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events
+from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events, stop_runs_for_contact
 from app.database import Base, SessionLocal, engine, get_db
 from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
 from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
@@ -68,6 +68,8 @@ class RuntimeHealth:
 
 runtime_health = RuntimeHealth()
 last_metrika_sync_monotonic: float | None = None
+TELEGRAM_UPDATE_MAX_ATTEMPTS = 3
+telegram_update_failures: dict[str, int] = {}
 
 
 def _record_scheduler_activity() -> None:
@@ -517,8 +519,51 @@ async def polling_loop() -> None:
                 settings.telegram_polling_timeout_seconds,
             )
             for update in updates:
-                with SessionLocal() as session:
-                    process_update(update, session)
+                update_id = str(update.get("update_id") or "")
+                try:
+                    with SessionLocal() as session:
+                        process_update(update, session)
+                except Exception as exc:
+                    attempts = telegram_update_failures.get(update_id, 0) + 1
+                    telegram_update_failures[update_id] = attempts
+                    if attempts < TELEGRAM_UPDATE_MAX_ATTEMPTS:
+                        raise
+                    logger.exception(
+                        "Telegram update %s moved to dead letter after %s attempts",
+                        update_id,
+                        attempts,
+                    )
+                    with SessionLocal() as session:
+                        bot = _bot(session)
+                        receipt_id = f"{bot.id}:{update_id}"
+                        if not session.get(UpdateReceipt, receipt_id):
+                            session.add(UpdateReceipt(
+                                update_id=receipt_id,
+                                bot_instance_id=bot.id,
+                                update_type="dead_letter",
+                            ))
+                            session.add(TrackingEvent(
+                                event_type="telegram_update_dead_letter",
+                                deduplication_key=f"telegram:{update_id}:dead_letter",
+                                metadata_json={
+                                    "update_id": update_id,
+                                    "update_type": next(
+                                        (key for key in (
+                                            "message",
+                                            "callback_query",
+                                            "my_chat_member",
+                                            "chat_member",
+                                            "chat_join_request",
+                                        ) if update.get(key)),
+                                        "unknown",
+                                    ),
+                                    "attempts": attempts,
+                                    "error_type": type(exc).__name__,
+                                    "error": str(exc)[:500],
+                                },
+                            ))
+                            session.commit()
+                telegram_update_failures.pop(update_id, None)
                 offset = int(update["update_id"]) + 1
             runtime_health.last_poll_success = time.monotonic()
         except asyncio.CancelledError:
@@ -861,12 +906,33 @@ def process_update(update: dict, session: Session) -> dict:
 
     message = update.get("message")
     callback = update.get("callback_query")
+    my_member = update.get("my_chat_member")
     member = update.get("chat_member")
     join_request = update.get("chat_join_request")
-    update_type = "chat_member" if member else ("chat_join_request" if join_request else ("callback_query" if callback else "message"))
+    update_type = "my_chat_member" if my_member else ("chat_member" if member else ("chat_join_request" if join_request else ("callback_query" if callback else "message")))
     session.add(UpdateReceipt(update_id=receipt_id, bot_instance_id=bot.id, update_type=update_type))
 
-    if member or join_request:
+    if my_member:
+        chat = my_member.get("chat") or {}
+        status = str((my_member.get("new_chat_member") or {}).get("status") or "")
+        contact = session.scalar(select(Contact).where(
+            Contact.bot_instance_id == bot.id,
+            Contact.chat_id == str(chat.get("id") or ""),
+        ))
+        if contact is not None and str(chat.get("type") or "private") == "private":
+            stopped = status in {"kicked", "left"}
+            contact.status = "stopped" if stopped else "active"
+            if stopped:
+                stop_runs_for_contact(session, contact.id, reason=f"telegram_{status}")
+            session.add(TrackingEvent(
+                contact_id=contact.id,
+                user_id=contact.user_id,
+                telegram_user_id=contact.telegram_user_id,
+                event_type="bot_stopped" if stopped else "bot_restarted",
+                deduplication_key=f"telegram:{update_id}:bot_membership",
+                metadata_json={"messenger": "telegram", "status": status},
+            ))
+    elif member or join_request:
         payload = member or join_request
         invite_url = ((payload.get("invite_link") or {}).get("invite_link") or "").strip()
         person = ((member or {}).get("new_chat_member") or {}).get("user") or (join_request or {}).get("from") or {}
@@ -879,6 +945,35 @@ def process_update(update: dict, session: Session) -> dict:
     elif message:
         contact = _upsert_contact(session, bot, message["from"], message["chat"])
         text = message.get("text", "")
+        command = text.strip().casefold().split(maxsplit=1)
+        if command and command[0].split("@", 1)[0] == "/stop":
+            _record_incoming_message(session, contact, message)
+            contact.status = "stopped"
+            stopped_runs = stop_runs_for_contact(session, contact.id, reason="telegram_stop_command")
+            session.add(TrackingEvent(
+                contact_id=contact.id,
+                user_id=contact.user_id,
+                telegram_user_id=contact.telegram_user_id,
+                event_type="bot_stopped",
+                deduplication_key=f"telegram:{update_id}:bot_stopped",
+                metadata_json={"messenger": "telegram", "reason": "stop_command"},
+            ))
+            session.commit()
+            try:
+                client().send_content(
+                    contact.chat_id,
+                    SimpleNamespace(
+                        code="system_stop_confirmation",
+                        body_source="Сообщения остановлены. Чтобы запустить их снова, нажмите Start.",
+                        media_kind=None,
+                        media_path=None,
+                        telegram_file_id=None,
+                    ),
+                    {},
+                )
+            except TelegramError:
+                logger.warning("Telegram stop confirmation failed", exc_info=True)
+            return {"ok": True, "stopped": True, "stopped_runs": stopped_runs}
         requested_app = app_request(text)
         if requested_app is not None:
             send_menu(session, contact, client(), requested_app)

@@ -13,6 +13,30 @@ ACTIVE_RUN_STATUSES = ("active", "waiting")
 PRESALE_SEQUENCE_CODES = (START_ENTRY_CODE, WELCOME_CODE, PREPURCHASE_CODE)
 
 
+def stop_runs_for_contact(
+    session: Session,
+    contact_id: str,
+    *,
+    reason: str,
+) -> int:
+    """Stop scheduled work for one messenger contact without affecting others."""
+    runs = list(
+        session.scalars(
+            select(SequenceRun).where(
+                SequenceRun.contact_id == contact_id,
+                SequenceRun.status.in_(ACTIVE_RUN_STATUSES),
+            )
+        )
+    )
+    now = datetime.now(UTC)
+    for run in runs:
+        run.status = "completed"
+        run.finished_at = now
+        run.next_action_at = None
+        run.context = {**(run.context or {}), "stopped_reason": reason}
+    return len(runs)
+
+
 def stop_presale_runs_for_user(
     session: Session,
     user_id: str,

@@ -13,6 +13,7 @@ from sqlalchemy.orm import Session
 from app.models import BotInstance, ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.config import get_settings
 from app.content_formatting import content_is_runtime_ready, replace_template_values
+from app.customer_lifecycle import stop_runs_for_contact
 from app.intensive_access import personal_tracking_values
 
 
@@ -21,6 +22,8 @@ PERSONAL_TEMPLATE_MARKER = "{{personal_"
 PERSONAL_CHANNEL_POST_TEMPLATE = re.compile(
     r"{{\s*personal_channel_post_([1-9][0-9]{0,6})_url\s*}}"
 )
+DELIVERY_RETRY_DELAYS = (60, 5 * 60, 15 * 60, 60 * 60, 3 * 60 * 60)
+HTTP_STATUS_PATTERN = re.compile(r"\b([45][0-9]{2})\b")
 
 
 class Sender(Protocol):
@@ -30,6 +33,67 @@ class Sender(Protocol):
 
 def utcnow() -> datetime:
     return datetime.now(UTC)
+
+
+def _delivery_http_status(exc: Exception) -> int | None:
+    response = getattr(exc, "response", None)
+    status = getattr(response, "status_code", None)
+    if isinstance(status, int):
+        return status
+    match = HTTP_STATUS_PATTERN.search(str(exc))
+    return int(match.group(1)) if match else None
+
+
+def _recipient_is_unreachable(exc: Exception) -> bool:
+    message = str(exc).casefold()
+    return _delivery_http_status(exc) == 403 or any(
+        marker in message
+        for marker in (
+            "blocked by the user",
+            "bot was blocked",
+            "chat not found",
+            "user is deactivated",
+            "dialog was removed",
+        )
+    )
+
+
+def _delivery_is_retryable(exc: Exception) -> bool:
+    status = _delivery_http_status(exc)
+    if status in {408, 409, 425, 429} or (status is not None and status >= 500):
+        return True
+    name = type(exc).__name__.casefold()
+    message = str(exc).casefold()
+    return any(marker in name or marker in message for marker in (
+        "timeout",
+        "connecterror",
+        "connectionerror",
+        "networkerror",
+        "temporarily unavailable",
+        "name or service not known",
+    ))
+
+
+def _record_delivery_event(
+    session: Session,
+    contact: Contact,
+    delivery: StepDelivery,
+    event_type: str,
+    metadata: dict[str, Any],
+) -> None:
+    session.add(TrackingEvent(
+        contact_id=contact.id,
+        user_id=contact.user_id,
+        telegram_user_id=contact.telegram_user_id,
+        event_type=event_type,
+        deduplication_key=f"delivery:{delivery.id}:{event_type}:{delivery.attempt_count}",
+        metadata_json={
+            "delivery_id": delivery.id,
+            "step_key": delivery.step_key,
+            "attempt": delivery.attempt_count,
+            **metadata,
+        },
+    ))
 
 
 def published_version(session: Session, sequence_code: str) -> SequenceVersion | None:
@@ -433,9 +497,46 @@ def advance_run(session: Session, run: SequenceRun, sender: Sender, max_steps: i
                 delivery.status = "sent"; delivery.sent_at = utcnow(); delivery.error_message = None
             except Exception as exc:
                 message = str(exc)
-                delivery.status = "failed"; delivery.error_message = message; run.status = "error"; run.last_error = message
-                if "blocked by the user" in message.lower() or "chat not found" in message.lower():
+                delivery.error_message = message
+                delivery.error_code = str(_delivery_http_status(exc) or type(exc).__name__)[:80]
+                run.last_error = message
+                if _recipient_is_unreachable(exc):
+                    delivery.status = "undeliverable"
                     contact.status = "blocked"
+                    _record_delivery_event(
+                        session,
+                        contact,
+                        delivery,
+                        "bot_delivery_blocked",
+                        {"reason": delivery.error_code},
+                    )
+                    stop_runs_for_contact(
+                        session,
+                        contact.id,
+                        reason="recipient_unreachable",
+                    )
+                elif _delivery_is_retryable(exc) and delivery.attempt_count <= len(DELIVERY_RETRY_DELAYS):
+                    delay = DELIVERY_RETRY_DELAYS[delivery.attempt_count - 1]
+                    delivery.status = "retrying"
+                    run.status = "active"
+                    run.next_action_at = utcnow() + timedelta(seconds=delay)
+                    _record_delivery_event(
+                        session,
+                        contact,
+                        delivery,
+                        "message_delivery_retry_scheduled",
+                        {"retry_in_seconds": delay, "reason": delivery.error_code},
+                    )
+                else:
+                    delivery.status = "dead_letter"
+                    run.status = "error"
+                    _record_delivery_event(
+                        session,
+                        contact,
+                        delivery,
+                        "message_delivery_dead_letter",
+                        {"reason": delivery.error_code},
+                    )
                 break
             try:
                 _assign_content_tag(

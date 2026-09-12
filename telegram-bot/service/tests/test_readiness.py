@@ -5,12 +5,15 @@ import time
 
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 import app.main as main_module
 import app.telegram as telegram_module
 from app.database import Base, get_db, make_engine
 from app.main import app
+from app.models import TrackingEvent, UpdateReceipt
+from app.seed import seed_defaults
 
 
 def _client(tmp_path, monkeypatch) -> TestClient:
@@ -263,6 +266,50 @@ def test_polling_failure_does_not_record_success(monkeypatch):
         asyncio.run(main_module.polling_loop())
 
     assert main_module.runtime_health.last_poll_success is None
+
+
+def test_poison_update_is_dead_lettered_after_bounded_retries(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'polling-dead-letter.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+
+    offsets = []
+
+    class PoisonPollingTelegram:
+        def __init__(self, token, *, proxy_url, api_base_url, gateway_token, channel_id):
+            pass
+
+        def delete_webhook(self):
+            pass
+
+        def get_updates(self, offset, timeout):
+            offsets.append(offset)
+            if offset is not None:
+                raise asyncio.CancelledError
+            return [{"update_id": 777, "message": {"text": "/start"}}]
+
+    async def no_wait(_seconds):
+        return None
+
+    monkeypatch.setattr(main_module.settings, "telegram_test_bot_token", "test-token")
+    monkeypatch.setattr(main_module, "TelegramClient", PoisonPollingTelegram)
+    monkeypatch.setattr(main_module, "SessionLocal", lambda: Session(engine))
+    monkeypatch.setattr(main_module, "process_update", lambda _update, _session: (_ for _ in ()).throw(RuntimeError("poison")))
+    monkeypatch.setattr(main_module.asyncio, "sleep", no_wait)
+    main_module.telegram_update_failures.clear()
+
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(main_module.polling_loop())
+
+    assert offsets == [None, None, None, 778]
+    with Session(engine) as session:
+        receipt = session.scalar(select(UpdateReceipt).where(UpdateReceipt.update_type == "dead_letter"))
+        event = session.scalar(select(TrackingEvent).where(
+            TrackingEvent.event_type == "telegram_update_dead_letter"
+        ))
+        assert receipt is not None
+        assert event.metadata_json["attempts"] == 3
 
 
 def test_scheduler_gets_startup_grace_before_first_iteration(monkeypatch):
