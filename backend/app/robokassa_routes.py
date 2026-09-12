@@ -36,6 +36,14 @@ from app.robokassa_service import (
     create_member_offer_payment,
     create_payment,
 )
+from app.robokassa_subscription_service import (
+    SUCCESS_KIND_SUBSCRIPTION,
+    cancel_subscription,
+    create_subscription_payment,
+    public_subscription_offer,
+    serialize_subscription,
+    subscription_for_user,
+)
 
 
 router = APIRouter(tags=["payments"])
@@ -45,6 +53,7 @@ GO_PAYMENT_HOSTS = {
 }
 GO_TEST_PRICE_CODE = "site.masterclass.basic"
 MANUAL_PAYMENT_PAGE = Path(__file__).with_name("static") / "manual-payment.html"
+SUBSCRIPTION_PAGE = Path(__file__).with_name("static") / "coaching-subscription.html"
 
 SUCCESS_CONTENT = {
     SUCCESS_KIND_PUBLIC_MASTERCLASS: {
@@ -69,6 +78,16 @@ SUCCESS_CONTENT = {
             "<p>Чек о покупке отправлен вам на почту, которую вы указали при оплате.</p>"
             "<p>Доступ к приобретённым материалам проверяйте в <a href=\"/lk\">личном кабинете</a>.</p>"
             "<p>Если вы оплачивали консультацию или курс, который открывается после прохождения другого курса, и хотите уточнить сроки — напишите мне: <a href=\"https://t.me/FitnessSergey\">в Telegram</a> или <a href=\"https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw\">в MAX</a>.</p>"
+        ),
+    },
+    SUCCESS_KIND_SUBSCRIPTION: {
+        "title": "Первый месяц сопровождения оплачен!",
+        "html": (
+            "<p>Подписка активна. Следующее списание произойдёт через месяц по той же цене.</p>"
+            "<p>Управлять подпиской и отключить будущие списания можно на "
+            "<a href=\"/subscription\">странице подписки</a> после входа в ваш аккаунт.</p>"
+            "<p>Если нужен быстрый ответ, напишите мне "
+            "<a href=\"https://t.me/FitnessSergey\">в Telegram</a>.</p>"
         ),
     },
 }
@@ -105,6 +124,11 @@ class ManualPaymentCheckoutIn(BaseModel):
     payer_name: str = Field(min_length=1, max_length=255)
     email: str = Field(min_length=3, max_length=320)
     comment: str = Field(min_length=1, max_length=1000)
+
+
+class SubscriptionCheckoutIn(BaseModel):
+    email: str = Field(min_length=3, max_length=320)
+    accept_terms: bool
 
 
 def _require_go_test_host(request: Request) -> None:
@@ -147,6 +171,87 @@ def manual_payment_page() -> FileResponse:
         media_type="text/html; charset=utf-8",
         headers={"X-Robots-Tag": "noindex, nofollow", "Cache-Control": "no-cache"},
     )
+
+
+@router.get("/subscription", include_in_schema=False)
+@router.get("/subscription/", include_in_schema=False)
+def coaching_subscription_page() -> FileResponse:
+    return FileResponse(
+        SUBSCRIPTION_PAGE,
+        media_type="text/html; charset=utf-8",
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
+@router.get("/api/payments/robokassa/subscription/offer")
+def robokassa_subscription_offer(
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    if not settings.robokassa_recurring_worker_enabled:
+        raise HTTPException(503, "Подписка пока не опубликована")
+    version = active_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Активная версия цен не опубликована")
+    try:
+        return public_subscription_offer(db, version)
+    except RobokassaError as exc:
+        raise HTTPException(503, str(exc)) from exc
+
+
+@router.post("/api/payments/robokassa/subscription/checkout")
+def robokassa_subscription_checkout(
+    body: SubscriptionCheckoutIn,
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    enforce_preview_checkout_rate_limit(request)
+    if not settings.robokassa_recurring_worker_enabled:
+        raise HTTPException(503, "Подписка пока не опубликована")
+    if not body.accept_terms:
+        raise HTTPException(422, "Нужно принять условия подписки и обработки данных")
+    version = active_pricing_version(db)
+    if version is None:
+        raise HTTPException(503, "Активная версия цен не опубликована")
+    try:
+        return create_subscription_payment(
+            db,
+            settings,
+            version,
+            body.email,
+            terms_ip=request.client.host if request.client else None,
+            terms_user_agent=request.headers.get("user-agent"),
+        )
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(422, str(exc)) from exc
+
+
+@router.get("/api/payments/robokassa/subscription/mine")
+def robokassa_my_subscription(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> dict:
+    user = require_native_user(request, db)
+    return {"ok": True, "subscription": serialize_subscription(subscription_for_user(db, user))}
+
+
+@router.post("/api/payments/robokassa/subscription/cancel")
+def robokassa_cancel_subscription(
+    request: Request,
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> dict:
+    _enforce_checkout_origin(request, settings)
+    user = require_native_user(request, db)
+    try:
+        row = cancel_subscription(db, user)
+    except RobokassaError as exc:
+        db.rollback()
+        raise HTTPException(409, str(exc)) from exc
+    return {"ok": True, "subscription": serialize_subscription(row)}
 
 
 def _robokassa_redirect(payment_form: dict) -> RedirectResponse:

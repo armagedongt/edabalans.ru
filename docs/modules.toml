@@ -57,10 +57,12 @@ owns_files = [
   "backend/app/legal_service.py", "backend/app/pricing_routes.py",
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
   "backend/app/robokassa_routes.py", "backend/app/robokassa_service.py",
+  "backend/app/robokassa_subscription_service.py",
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
   "backend/app/account_onboarding_service.py",
   "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
   "backend/app/static/manual-payment.html",
+  "backend/app/static/coaching-subscription.html",
   "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
   "backend/tests/test_tilda_payments.py",
@@ -78,15 +80,16 @@ owns_files = [
   "backend/migrations/versions/20260831_0032_application_preview_access.py",
   "backend/migrations/versions/20260905_0036_account_onboarding.py",
   "backend/migrations/versions/20260906_0037_account_registration.py",
+  "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
   "pricing_versions", "price_entries", "payments", "user_accesses",
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
-  "account_onboardings",
+  "account_onboardings", "recurring_subscriptions",
 ]
 owns_routes = [
-  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay",
+  "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
   "*/admin/api/payments", "*/admin/api/payment-products", "*/admin/api/resources",
 ]
 

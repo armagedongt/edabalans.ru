@@ -2,6 +2,7 @@ import base64
 import hashlib
 import json
 import os
+import uuid
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal
 from urllib.parse import parse_qs, unquote_plus, urlsplit
@@ -20,10 +21,13 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 from app.intensive_web_access import create_offer_token  # noqa: E402
+from app.account_security import token_hash  # noqa: E402
+from app.account_auth_routes import COOKIE_NAME  # noqa: E402
 from app.main import app  # noqa: E402
 from app.pricing_routes import _preview_checkout_rate_lock, _preview_checkout_rate_state  # noqa: E402
 from app.models import (  # noqa: E402
     AccountCredential,
+    AccountSession,
     AccountOnboarding,
     MessengerLinkToken,
     OfferCheckout,
@@ -36,8 +40,10 @@ from app.models import (  # noqa: E402
     UserAccess,
     UserEmail,
     UserOffer,
+    RecurringSubscription,
 )
 from app.robokassa_service import _result_public_key  # noqa: E402
+import app.robokassa_subscription_service as subscription_service  # noqa: E402
 
 
 def certificate_pair(
@@ -93,7 +99,9 @@ def make_client(
         robokassa_test_mode=test_mode,
         robokassa_merchant_login="edabalans-test",
         robokassa_password_1="production-password-1",
+        robokassa_password_2="production-password-2",
         robokassa_test_password_1="test-password-1",
+        robokassa_recurring_worker_enabled=True,
         robokassa_hash_algorithm="sha256",
         robokassa_jws_certificate_base64=certificate,
         robokassa_receipt_tax="none",
@@ -148,6 +156,52 @@ def seed_catalog(factory: sessionmaker[Session]) -> None:
             )
         )
         db.commit()
+
+
+def seed_subscription_catalog(
+    factory: sessionmaker[Session], *, with_user: bool = True
+) -> uuid.UUID | None:
+    seed_catalog(factory)
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+        db.add(
+            PriceEntry(
+                version_id=version.id,
+                code="subscription.coaching.monthly",
+                section="subscriptions",
+                name="Индивидуальное сопровождение — 1 месяц",
+                product_code="COACHING",
+                resource_codes=[],
+                regular_amount=Decimal("9800"),
+                compare_at_amount=Decimal("9800"),
+                sale_amount=Decimal("9800"),
+                enabled=True,
+                sort_order=10,
+            )
+        )
+        if not with_user:
+            db.commit()
+            return None
+        user = User(display_name="Участник", data_origin="native")
+        db.add(user)
+        db.flush()
+        db.add_all(
+            [UserEmail(
+                user_id=user.id,
+                email_original="member@example.test",
+                email_normalized="member@example.test",
+                source="test",
+                verification_status="verified",
+            ),
+            AccountCredential(
+                user_id=user.id,
+                password_hash="not-used-in-subscription-test",
+                password_version=1,
+                issued_via="test",
+            )]
+        )
+        db.commit()
+        return user.id
 
 
 def signed_result(
@@ -829,4 +883,430 @@ def test_personal_offer_rejects_another_email_before_payment() -> None:
     assert response.status_code == 422
     with factory() as db:
         assert db.scalar(select(func.count(Payment.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_public_subscription_uses_postgres_price_and_existing_account() -> None:
+    client, factory, _ = make_client()
+    user_id = seed_subscription_catalog(factory)
+
+    page = client.get("/subscription")
+    offer = client.get("/api/payments/robokassa/subscription/offer")
+    checkout = client.post(
+        "/api/payments/robokassa/subscription/checkout",
+        json={"email": "member@example.test", "accept_terms": True},
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+
+    assert page.status_code == 200
+    assert "Управление подпиской" in page.text
+    assert offer.status_code == 200
+    assert offer.json()["amount"] == 9800
+    assert checkout.status_code == 200, checkout.text
+    assert checkout.json()["amount"] == 9800
+    fields = checkout.json()["payment_form"]["fields"]
+    assert fields["OutSum"] == "9800.00"
+    assert fields["Recurring"] == "true"
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        payment = db.scalar(select(Payment))
+        assert row is not None and row.user_id == user_id
+        assert row.amount == Decimal("9800")
+        assert payment is not None and payment.user_id == user_id
+        assert db.scalar(select(func.count(User.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_subscription_month_end_is_clamped_to_last_calendar_day() -> None:
+    january = datetime(2027, 1, 31, 12, 30, tzinfo=timezone.utc)
+    leap_january = datetime(2028, 1, 31, 12, 30, tzinfo=timezone.utc)
+
+    assert subscription_service.add_calendar_month(january) == datetime(
+        2027, 2, 28, 12, 30, tzinfo=timezone.utc
+    )
+    assert subscription_service.add_calendar_month(leap_january) == datetime(
+        2028, 2, 29, 12, 30, tzinfo=timezone.utc
+    )
+
+
+def test_subscription_rejects_unknown_account_before_creating_invoice() -> None:
+    client, factory, _ = make_client()
+    seed_subscription_catalog(factory, with_user=False)
+
+    response = client.post(
+        "/api/payments/robokassa/subscription/checkout",
+        json={"email": "unknown@example.test", "accept_terms": True},
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+
+    assert response.status_code == 422
+    assert "Не удалось подтвердить готовый аккаунт" in response.text
+    with factory() as db:
+        assert db.scalar(select(func.count(Payment.id))) == 0
+        assert db.scalar(select(func.count(RecurringSubscription.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_subscription_result_activates_month_without_account_onboarding() -> None:
+    client, factory, key = make_client(
+        test_mode=False, account_onboarding_enabled=True
+    )
+    user_id = seed_subscription_catalog(factory)
+    checkout = client.post(
+        "/api/payments/robokassa/subscription/checkout",
+        json={"email": "member@example.test", "accept_terms": True},
+        headers={"Origin": "https://app.edabalans.ru"},
+    ).json()
+
+    response = client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout["invoice_id"], "9800.00"),
+    )
+
+    assert response.status_code == 200, response.text
+    status_response = client.get(
+        f"/api/payments/robokassa/{checkout['invoice_id']}/status"
+    )
+    assert status_response.json()["success_kind"] == "coaching_subscription"
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        assert row is not None and row.status == "active"
+        assert row.user_id == user_id
+        assert row.successful_payments == 1
+        assert row.current_period_end == subscription_service.add_calendar_month(
+            row.current_period_start
+        )
+        assert row.next_charge_at == row.current_period_end
+        assert db.scalar(select(func.count(User.id))) == 1
+        assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
+    app.dependency_overrides.clear()
+
+
+def test_subscription_cancellation_requires_login_and_stops_future_charge() -> None:
+    client, factory, key = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    checkout = client.post(
+        "/api/payments/robokassa/subscription/checkout",
+        json={"email": "member@example.test", "accept_terms": True},
+        headers={"Origin": "https://app.edabalans.ru"},
+    ).json()
+    client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout["invoice_id"], "9800.00"),
+    )
+
+    denied = client.post(
+        "/api/payments/robokassa/subscription/cancel",
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+    assert denied.status_code == 401
+    raw_session = "subscription-session-token"
+    with factory() as db:
+        db.add(
+            AccountSession(
+                user_id=user_id,
+                token_hash=token_hash(raw_session),
+                password_version=1,
+                expires_at=datetime.now(timezone.utc) + timedelta(days=1),
+                last_seen_at=datetime.now(timezone.utc),
+            )
+        )
+        db.commit()
+    client.cookies.set(COOKIE_NAME, raw_session)
+
+    cancelled = client.post(
+        "/api/payments/robokassa/subscription/cancel",
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+
+    assert cancelled.status_code == 200, cancelled.text
+    assert cancelled.json()["subscription"]["status"] == "cancelled"
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        assert row is not None and row.next_charge_at is None
+        assert row.current_period_end is not None
+    app.dependency_overrides.clear()
+
+
+def test_failed_recurring_charge_notifies_only_after_final_failure(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+        subscription = RecurringSubscription(
+            user_id=user_id,
+            product_code="COACHING",
+            price_entry_code="subscription.coaching.monthly",
+            pricing_version_id=version.id,
+            email_normalized="member@example.test",
+            amount=Decimal("9800"),
+            status="charging",
+            parent_invoice_id="100",
+            pending_invoice_id="101",
+            current_period_start=now - timedelta(days=31),
+            current_period_end=now,
+            next_status_check_at=now,
+            terms_accepted_at=now - timedelta(days=31),
+        )
+        payment = Payment(
+            user_id=user_id,
+            source="robokassa",
+            external_order_id="101",
+            email_at_purchase="member@example.test",
+            product_name_raw="Индивидуальное сопровождение — 1 месяц",
+            amount=Decimal("9800"),
+            payment_status="pending",
+        )
+        db.add(payment)
+        db.flush()
+        db.add(
+            OfferCheckout(
+                user_id=user_id,
+                checkout_kind="recurring_subscription",
+                offer_code="subscription.coaching.monthly",
+                title="Индивидуальное сопровождение — 1 месяц",
+                items=[],
+                amount=Decimal("9800"),
+                expires_at=now + timedelta(days=1),
+                payment_id=payment.id,
+            )
+        )
+        db.add(subscription)
+        db.commit()
+
+    settings = app.dependency_overrides[get_settings]().model_copy(
+        update={
+            "robokassa_password_2": "production-password-2",
+            "smtp_host": "smtp.example.test",
+            "smtp_from_email": "hello@example.test",
+        }
+    )
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(
+        subscription_service,
+        "_operation_state",
+        lambda _settings, _invoice: (0, 10),
+    )
+    sent = []
+    monkeypatch.setattr(
+        subscription_service,
+        "_send_message",
+        lambda message, _settings: sent.append(message),
+    )
+
+    assert subscription_service.send_one_failure_notification(settings) is False
+    assert subscription_service.check_one_pending_charge(settings) is True
+    assert sent == []
+    assert subscription_service.send_one_failure_notification(settings) is True
+    assert len(sent) == 1
+    assert "пополните" in sent[0].get_body(preferencelist=("plain",)).get_content().lower()
+    assert subscription_service.send_one_failure_notification(settings) is False
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        assert row is not None and row.status == "past_due"
+        assert row.failure_notification_status == "sent"
+        assert row.failure_notified_at is not None
+    app.dependency_overrides.clear()
+
+
+def test_due_subscription_creates_child_invoice_on_recurring_endpoint(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+        db.add(
+            RecurringSubscription(
+                user_id=user_id,
+                product_code="COACHING",
+                price_entry_code="subscription.coaching.monthly",
+                pricing_version_id=version.id,
+                email_normalized="member@example.test",
+                amount=Decimal("9800"),
+                status="active",
+                parent_invoice_id="100",
+                successful_payments=1,
+                current_period_start=now - timedelta(days=31),
+                current_period_end=now,
+                next_charge_at=now,
+                terms_accepted_at=now - timedelta(days=31),
+            )
+        )
+        db.commit()
+
+    captured = {}
+
+    class FakeResponse:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args):
+            return False
+
+        def read(self, _limit):
+            return f"OK+{captured['fields']['InvoiceID']}".encode()
+
+    def fake_urlopen(request, timeout):
+        captured["url"] = request.full_url
+        captured["timeout"] = timeout
+        captured["fields"] = {
+            key: values[0]
+            for key, values in parse_qs(request.data.decode()).items()
+        }
+        return FakeResponse()
+
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(subscription_service.urllib.request, "urlopen", fake_urlopen)
+    settings = app.dependency_overrides[get_settings]().model_copy(
+        update={"robokassa_result_url_2": "https://edabalans.ru/integrations/robokassa/result2"}
+    )
+
+    assert subscription_service.charge_one_due_subscription(settings) is True
+    fields = captured["fields"]
+    assert captured["url"] == "https://auth.robokassa.ru/Merchant/Recurring"
+    assert fields["PreviousInvoiceID"] == "100"
+    assert fields["OutSum"] == "9800.00"
+    assert "Recurring" not in fields
+    signature_source = ":".join(
+        [
+            "edabalans-test",
+            "9800.00",
+            fields["InvoiceID"],
+            fields["Receipt"],
+            fields["ResultUrl2"],
+            "production-password-1",
+        ]
+    )
+    assert fields["SignatureValue"] == hashlib.sha256(
+        signature_source.encode("utf-8")
+    ).hexdigest()
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        child = db.scalar(
+            select(Payment).where(Payment.external_order_id == fields["InvoiceID"])
+        )
+        assert row is not None and row.status == "charging"
+        assert row.pending_invoice_id == fields["InvoiceID"]
+        assert row.next_status_check_at is not None
+        assert child is not None and child.raw_payload["recurring_role"] == "child"
+    app.dependency_overrides.clear()
+
+
+def test_lost_recurring_response_is_polled_before_failure_email(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+        db.add(
+            RecurringSubscription(
+                user_id=user_id,
+                product_code="COACHING",
+                price_entry_code="subscription.coaching.monthly",
+                pricing_version_id=version.id,
+                email_normalized="member@example.test",
+                amount=Decimal("9800"),
+                status="active",
+                parent_invoice_id="100",
+                successful_payments=1,
+                current_period_start=now - timedelta(days=31),
+                current_period_end=now,
+                next_charge_at=now,
+                terms_accepted_at=now - timedelta(days=31),
+            )
+        )
+        db.commit()
+
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(
+        subscription_service.urllib.request,
+        "urlopen",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(TimeoutError("response lost")),
+    )
+    settings = app.dependency_overrides[get_settings]()
+
+    assert subscription_service.charge_one_due_subscription(settings) is True
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        assert row is not None and row.status == "charging"
+        assert row.pending_invoice_id is not None
+        assert row.next_status_check_at is not None
+        assert row.failure_notification_status is None
+    app.dependency_overrides.clear()
+
+
+def test_operation_state_recovers_success_when_result2_is_delayed(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    user_id = seed_subscription_catalog(factory)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        version = db.scalar(select(PricingVersion).where(PricingVersion.status == "active"))
+        subscription = RecurringSubscription(
+            user_id=user_id,
+            product_code="COACHING",
+            price_entry_code="subscription.coaching.monthly",
+            pricing_version_id=version.id,
+            email_normalized="member@example.test",
+            amount=Decimal("9800"),
+            status="charging",
+            parent_invoice_id="100",
+            pending_invoice_id="101",
+            successful_payments=1,
+            current_period_start=now - timedelta(days=31),
+            current_period_end=now,
+            charge_started_at=now - timedelta(minutes=10),
+            next_status_check_at=now,
+            terms_accepted_at=now - timedelta(days=31),
+        )
+        db.add(subscription)
+        db.flush()
+        payment = Payment(
+            user_id=user_id,
+            pricing_version_id=version.id,
+            price_entry_code="subscription.coaching.monthly",
+            source="robokassa",
+            external_order_id="101",
+            email_at_purchase="member@example.test",
+            product_name_raw="Индивидуальное сопровождение — 1 месяц",
+            amount=Decimal("9800"),
+            payment_status="pending",
+            raw_payload={
+                "subscription_id": str(subscription.id),
+                "recurring_role": "child",
+                "account_purchase": True,
+            },
+        )
+        db.add(payment)
+        db.flush()
+        db.add(
+            OfferCheckout(
+                user_id=user_id,
+                checkout_kind="recurring_subscription",
+                offer_code="subscription.coaching.monthly",
+                title="Индивидуальное сопровождение — 1 месяц",
+                items=[],
+                amount=Decimal("9800"),
+                expires_at=now + timedelta(days=1),
+                payment_id=payment.id,
+            )
+        )
+        db.commit()
+
+    settings = app.dependency_overrides[get_settings]().model_copy(
+        update={"robokassa_password_2": "production-password-2"}
+    )
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(subscription_service, "_operation_state", lambda *_args: (0, 100))
+
+    assert subscription_service.check_one_pending_charge(settings) is True
+    with factory() as db:
+        row = db.scalar(select(RecurringSubscription))
+        child = db.scalar(select(Payment).where(Payment.external_order_id == "101"))
+        assert row is not None and row.status == "active"
+        assert row.successful_payments == 2
+        assert row.pending_invoice_id is None
+        assert row.next_charge_at == row.current_period_end
+        assert child is not None and child.payment_status == "paid"
+        assert child.raw_payload["reconciled_via"] == "OpStateExt"
     app.dependency_overrides.clear()
