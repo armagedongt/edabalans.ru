@@ -16,7 +16,14 @@ from urllib.parse import parse_qs, urlparse
 import app.main as main_module
 from app.database import Base, get_db, make_engine
 from app.main import app
-from app.max import MAX_CA_BUNDLE, MaxClient, _existing_password_hint
+from app.generated_intensive_content import APPROVED_INTENSIVE_CONTENT
+from app.max import (
+    DEFAULT_MAX_CHANNEL_URL,
+    DEFAULT_MAX_CONTACT_URL,
+    MAX_CA_BUNDLE,
+    MaxClient,
+    _existing_password_hint,
+)
 from app.models import (
     AccountCredential,
     AccountOnboarding,
@@ -112,6 +119,56 @@ def test_max_client_sends_sequence_photo_and_link_button():
         "payload": {"url": "https://cdn.example.test/reminder.jpg"},
     }
     assert payload["attachments"][1]["type"] == "inline_keyboard"
+
+
+def test_max_client_rewrites_shared_telegram_references_to_max():
+    captured = {}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        captured["request"] = request
+        return httpx.Response(200, json={"message": {"body": {"mid": "max-localized-1"}}})
+
+    content = SimpleNamespace(
+        body_source=(
+            'Основной тг-канал <a href="https://t.me/Fitness_Talks/260">'
+            '«Похудение — это есть!»</a>\n'
+            'По любым вопросам @FitnessSergey\n'
+            '<a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">'
+            'Запасной канал в MAX</a>'
+        ),
+        media_kind=None,
+        media_path=None,
+    )
+    MaxClient(
+        "max-secret",
+        httpx.MockTransport(handler),
+        bot_username="id230409966750_bot",
+    ).send_content(
+        "901",
+        content,
+        {"buttons": [{
+            "text": "Посмотреть разбор завтраков",
+            "url": "https://t.me/Fitness_Talks/734",
+        }]},
+    )
+
+    payload = json.loads(captured["request"].content)
+    assert "t.me/" not in payload["text"]
+    assert "telegram.me/" not in payload["text"]
+    assert "@FitnessSergey" not in payload["text"]
+    assert DEFAULT_MAX_CHANNEL_URL in payload["text"]
+    assert DEFAULT_MAX_CONTACT_URL in payload["text"]
+    assert payload["attachments"][0]["payload"]["buttons"][0][0]["url"] == DEFAULT_MAX_CHANNEL_URL
+
+
+def test_every_approved_intensive_message_is_safe_after_max_localization():
+    client = MaxClient("max-secret", bot_username="id230409966750_bot")
+
+    for code, body in APPROVED_INTENSIVE_CONTENT.items():
+        localized = client._platform_text(body)
+        assert "t.me/" not in localized, code
+        assert "telegram.me/" not in localized, code
+        assert "@FitnessSergey" not in localized, code
 
 
 def test_max_client_opens_configured_mini_app_with_payload():

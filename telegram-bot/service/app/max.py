@@ -55,6 +55,9 @@ MAX_API_BASE = "https://platform-api2.max.ru"
 MAX_CA_BUNDLE = Path(__file__).resolve().parent.parent / "certs" / "russian_trusted_ca.pem"
 MAX_BOT_CODE = "max"
 MAX_MESSAGE_TEXT_LIMIT = 4000
+DEFAULT_MAX_CHANNEL_URL = "https://max.ru/id230409966750_biz"
+DEFAULT_MAX_CONTACT_URL = "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"
+HTML_LINK_PATTERN = re.compile(r'<a\s+href="([^"]+)"([^>]*)>(.*?)</a>', re.IGNORECASE | re.DOTALL)
 MAX_ASSIGNMENT_ROUTES = {
     "iz1": (1, "tpl_max_forwarded_assignment_day1"),
     "iz2": (2, "tpl_max_forwarded_assignment_day2"),
@@ -68,10 +71,60 @@ class MaxClient:
         token: str,
         transport: httpx.BaseTransport | None = None,
         bot_username: str = "",
+        channel_url: str = DEFAULT_MAX_CHANNEL_URL,
+        contact_url: str = DEFAULT_MAX_CONTACT_URL,
     ):
         self.token = token
         self.transport = transport
         self.bot_username = bot_username.strip().lstrip("@")
+        self.channel_url = channel_url.strip()
+        self.contact_url = contact_url.strip()
+
+    def _platform_url(self, value: str) -> str:
+        """Keep a MAX delivery inside MAX when shared copy contains Telegram URLs."""
+        parsed = urlparse(value)
+        if (parsed.hostname or "").casefold() not in {"t.me", "telegram.me"}:
+            return value
+        first_path = parsed.path.strip("/").split("/", 1)[0].casefold()
+        if first_path == "fitness_talks_bot" and self.bot_username:
+            query = f"?{parsed.query}" if parsed.query else ""
+            return f"https://max.ru/{self.bot_username}{query}"
+        if first_path == "fitness_talks":
+            return self.channel_url
+        if first_path == "fitnesssergey":
+            return self.contact_url
+        return value
+
+    def _platform_text(self, value: str) -> str:
+        """Localize shared Telegram/MAX HTML without changing its editorial copy."""
+        def replace_link(match: re.Match[str]) -> str:
+            href, attributes, label = match.groups()
+            normalized_label = re.sub(r"<[^>]+>", "", label).strip().casefold()
+            if "канал" in normalized_label and "max" in normalized_label:
+                href = self.channel_url
+            else:
+                href = self._platform_url(href)
+            return f'<a href="{html.escape(href, quote=True)}"{attributes}>{label}</a>'
+
+        text_value = HTML_LINK_PATTERN.sub(replace_link, value)
+        text_value = text_value.replace("Основной тг-канал", "Основной канал в MAX")
+        text_value = text_value.replace("мой Telegram-канал", "мой канал в MAX")
+        text_value = text_value.replace(
+            "По любым вопросам @FitnessSergey",
+            f'По любым вопросам — <a href="{html.escape(self.contact_url, quote=True)}">напишите мне в MAX</a>',
+        )
+        text_value = text_value.replace(
+            "Любые вопросы — просто напишите мне в личные сообщения @FitnessSergey",
+            f'Любые вопросы — просто <a href="{html.escape(self.contact_url, quote=True)}">напишите мне в MAX</a>',
+        )
+        text_value = text_value.replace(
+            "пишите мне в личные сообщения → @FitnessSergey",
+            f'<a href="{html.escape(self.contact_url, quote=True)}">пишите мне в личные сообщения в MAX</a>',
+        )
+        return text_value.replace(
+            "@FitnessSergey",
+            f'<a href="{html.escape(self.contact_url, quote=True)}">написать мне в MAX</a>',
+        )
 
     def _client(self, timeout: float = 20) -> httpx.Client:
         client_options: dict[str, Any] = {"timeout": timeout}
@@ -170,7 +223,7 @@ class MaxClient:
         button_url: str | None = None,
     ) -> str:
         body: dict[str, Any] = {
-            "text": self._compact_html(text),
+            "text": self._compact_html(self._platform_text(text)),
             "format": "html",
             "disable_link_preview": True,
         }
@@ -180,7 +233,7 @@ class MaxClient:
                 "payload": {"buttons": [[{
                     "type": "link",
                     "text": button_text,
-                    "url": button_url,
+                    "url": self._platform_url(button_url),
                 }]]},
             }]
         with self._client() as client:
@@ -195,7 +248,9 @@ class MaxClient:
         return str(data.get("message", {}).get("body", {}).get("mid", ""))
 
     def send_content(self, user_id: str, content: Any, configuration: dict[str, Any]) -> str:
-        text_value = self._compact_html(content_body_for_telegram(content))
+        text_value = self._compact_html(
+            self._platform_text(content_body_for_telegram(content))
+        )
         attachments: list[dict[str, Any]] = []
         remote_image_url: str | None = None
         media_path = str(getattr(content, "media_path", "") or "")
@@ -227,7 +282,11 @@ class MaxClient:
                 url = button.get("url") or (button.get("web_app") or {}).get("url")
                 if not url:
                     raise RuntimeError("MAX sequence supports only link and Mini App buttons")
-                rows.append([{"type": "link", "text": button["text"], "url": url}])
+                rows.append([{
+                    "type": "link",
+                    "text": button["text"],
+                    "url": self._platform_url(str(url)),
+                }])
             attachments.append({"type": "inline_keyboard", "payload": {"buttons": rows}})
         body: dict[str, Any] = {
             "text": text_value,

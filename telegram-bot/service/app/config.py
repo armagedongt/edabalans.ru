@@ -23,6 +23,8 @@ class Settings(BaseSettings):
     max_bot_username: str = ""
     max_bot_token: str = ""
     max_webhook_secret: str = ""
+    max_channel_url: str = "https://max.ru/id230409966750_biz"
+    max_contact_url: str = "https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw"
     yandex_oauth_token: str = ""
     yandex_metrika_counter_id: int = 97331502
     yandex_metrika_offline_enabled: bool = False
