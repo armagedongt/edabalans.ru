@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>EDA Balance — финансовая модель</title>
+  <style>
+    :root{--ink:#15262a;--green:#176a60;--soft:#e5f2ed;--bg:#f4f3ef;--line:#e2dfd8;--muted:#647278;--red:#a23832;--amber:#8a5910}*{box-sizing:border-box}body{margin:0;background:var(--bg);font:15px/1.35 system-ui,sans-serif;color:var(--ink)}main{max-width:1440px;margin:auto;padding:16px}.grid{display:grid;grid-template-columns:370px minmax(0,1fr);gap:16px;align-items:start}.box{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px}h1{margin:0 0 10px;font-size:21px}h2{margin:16px 0 6px;color:var(--green);font-size:12px;letter-spacing:.06em;text-transform:uppercase}.field{display:grid;grid-template-columns:minmax(0,1fr) 88px;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid #f0eeeb}.field input{width:88px;padding:7px;border:1px solid #cbd7d3;border-radius:7px;text-align:right;font:inherit;background:#fff}.field input[type=checkbox]{justify-self:end;width:18px;height:18px;accent-color:var(--green)}.q{display:inline-grid;place-items:center;width:16px;height:16px;border:1px solid #86a69e;border-radius:50%;color:#38665e;font:700 11px system-ui;cursor:help;font-style:normal}.buttons{display:flex;gap:7px;align-items:center;margin:0 0 7px}.buttons button{border:1px solid #7fa69d;background:#fff;color:var(--green);padding:7px 9px;border-radius:7px;font:600 13px system-ui;cursor:pointer}.buttons button:first-child{background:var(--green);color:#fff}.saved{color:var(--muted);font-size:12px}.top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.metric{min-height:96px;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid #d5e7e1;border-radius:10px;background:#f6fbf9}.metric.primary{background:var(--soft)}.metric span{display:block;color:var(--muted);font-size:12px}.metric b{display:block;font-size:22px;letter-spacing:-.04em;white-space:nowrap}.blocks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:11px}.months{grid-template-columns:repeat(4,minmax(0,1fr))}.block{border:1px solid var(--line);border-radius:10px;padding:12px}.block h2{margin:0 0 7px}.row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid #f0eeeb}.row:last-child{border:0}.row span{color:var(--muted);font-size:13px}.row b{white-space:nowrap;text-align:right}.total{margin:5px -3px -3px;padding:8px 3px;background:var(--soft);border-radius:7px}.bad{color:var(--red)}.good{color:var(--green)}.warn{color:var(--amber)}details{margin-top:10px}summary{color:var(--green);cursor:pointer;font-weight:700}.note{margin:12px 0 0;padding:10px;background:#f6f7f5;border-radius:8px;color:#526064;font-size:12px}.hidden{display:none}@media(max-width:1100px){.grid{grid-template-columns:1fr}.top{grid-template-columns:repeat(2,1fr)}.blocks{grid-template-columns:repeat(2,minmax(0,1fr))}.months{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:620px){main{padding:10px}.top,.blocks,.months{grid-template-columns:1fr}.metric{min-height:78px}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="grid">
+    <section class="box">
+      <h1>Параметры</h1>
+      <div class="buttons"><button id="save" type="button">Сохранить</button><button id="restore" type="button">Вернуть сохранённое</button><span id="saved" class="saved"></span></div>
+      <details id="club-settings"><summary>Настройки клуба</summary><div id="club-fields"></div></details>
+      <h2>Поток и реклама</h2><div id="main-fields"></div>
+      <h2>Входные тарифы</h2><div id="tariff-fields"></div>
+      <h2>Путь после самостоятельного тарифа</h2><div id="funnel-fields"></div>
+      <details><summary>Постоянные и внутренние настройки</summary><div id="advanced-fields"></div></details>
+    </section>
+    <section class="box">
+      <h1>Твой результат в устойчивый месяц</h1>
+      <div class="top">
+        <div class="metric primary"><span>Общий твой доход <i class="q" title="Деньги, остающиеся тебе после налогов, рекламы и постоянных расходов. Внутри — оплата твоих консультаций и маржа бизнеса.">?</i></span><b id="personal"></b></div>
+        <div class="metric"><span>Доход от консультаций <i class="q" title="Консультационные единицы × внутренняя стоимость одной консультации. Это часть твоего общего дохода, а не дополнительная сумма к нему.">?</i></span><b id="consult-income"></b></div>
+        <div class="metric"><span>Маржа бизнеса <i class="q" title="Часть общего дохода, которая остаётся сверх оплаты твоих консультационных часов.">?</i></span><b id="business-margin"></b></div>
+        <div class="metric"><span>Оборот <i class="q" title="Все поступления: входные тарифы, допы, сопровождение и при включении — клуб.">?</i></span><b id="turnover"></b></div>
+      </div>
+      <div class="blocks">
+        <div class="block"><h2>Из оборота вычитается</h2><div class="row"><span>Налоги + эквайринг</span><b id="fees"></b></div><div class="row"><span>Реклама</span><b id="ads"></b></div><div class="row"><span>Тех. расходы</span><b id="opex"></b></div><div class="row"><span>Стоимость твоего времени</span><b id="time-cost"></b></div></div>
+        <div class="block"><h2>Поток и клиент</h2><div class="row"><span>Всего покупателей / мес.</span><b id="buyers"></b></div><div class="row"><span>Платных лидов / мес.</span><b id="leads"></b></div><div class="row"><span>CAC</span><b id="cac"></b></div><div class="row"><span>LTV после комиссий</span><b id="ltv"></b></div><div class="row"><span>Рекламный бюджет</span><b id="ad-budget"></b></div></div>
+        <div class="block"><h2>Консультации на полке</h2><div class="row"><span>Первичные / разовые в неделю</span><b id="primary-week"></b></div><div class="row"><span>Сопровождение в неделю</span><b id="support-week"></b></div><div class="row"><span>Всего в неделю</span><b id="total-week"></b></div><div class="row"><span>Твой предел</span><b id="capacity"></b></div><div class="row total"><span><b>Статус</b></span><b id="status"></b></div></div>
+        <div class="block"><h2>Клиенты сопровождения</h2><div class="row"><span>Новых / месяц</span><b id="new-support"></b></div><div class="row"><span>Активных на полке</span><b id="active-support"></b></div><div class="row"><span>Выход на полку</span><b id="plateau"></b></div><div class="row"><span>Оборот сопровождения</span><b id="support-revenue"></b></div></div>
+        <div class="block"><h2>Структура цифровых допов</h2><div class="row"><span>Разовый продукт</span><b>40% × 3 400 ₽</b></div><div class="row"><span>Пакет</span><b>45% × 5 400 ₽</b></div><div class="row"><span>Расширенный пакет</span><b>15% × 7 000 ₽</b></div><div class="row total"><span>Средний чек цифрового допа</span><b>4 840 ₽</b></div></div>
+        <div class="block"><h2>Клуб</h2><div class="row"><span>Статус</span><b id="club-status"></b></div><div class="row"><span>Активных на полке</span><b id="active-club"></b></div><div class="row"><span>Оборот клуба</span><b id="club-revenue"></b></div></div>
+      </div>
+      <div class="blocks months">
+        <div class="block"><h2>1-й месяц: запуск</h2><div class="row"><span>Вложить в начале</span><b id="m1-start"></b></div><div class="row"><span>Оборот</span><b id="m1-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m1-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m1-net"></b></div></div>
+        <div class="block"><h2>2-й месяц</h2><div class="row"><span>Вложить в начале</span><b id="m2-start"></b></div><div class="row"><span>Оборот</span><b id="m2-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m2-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m2-net"></b></div></div>
+        <div class="block"><h2>3-й месяц</h2><div class="row"><span>Вложить в начале</span><b id="m3-start"></b></div><div class="row"><span>Оборот</span><b id="m3-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m3-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m3-net"></b></div></div>
+        <div class="block"><h2>4-й месяц: полка</h2><div class="row"><span>Вложить в начале</span><b id="m4-start"></b></div><div class="row"><span>Оборот</span><b id="m4-turnover"></b></div><div class="row"><span>Налоги + эквайринг</span><b id="m4-fees"></b></div><div class="row total"><span><b>Чистый доход</b></span><b id="m4-net"></b></div></div>
+      </div>
+      <p class="note">Поток начинается с платных и органических покупателей. От него считаются тарифы, цифровые допы, разборы, переходы в сопровождение, лиды, реклама и загрузка. «Полка» — момент, когда при одинаковом ежемесячном притоке в сопровождении одновременно находятся все когорты за среднюю длительность работы.</p>
+    </section>
+  </div>
+</main>
+<script>
+(() => {
+  const STORAGE_KEY = 'edabalans-finance-model-v2';
+  const defaults = { paid:25, organic:5, conversion:3, cpl:150, minPrice:6900, standardPrice:8900, consultTariff:15900, minShare:40, standardShare:40, consultShare:20, digitalRate:15, consultRate:10, supportRate:35, supportPrice:9800, supportMonths:3, clubEnabled:false, clubRate:10, clubPrice:990, clubMonths:4, opex:20000, weeklyCap:6, timeUnit:4000, feeRate:10 };
+  const groups = {
+    'main-fields': [['paid','Платных покупателей / месяц','Главный поток. От него растёт вся воронка.'],['organic','Органических покупателей / месяц','Добавляются к выручке, но не требуют оплаченных лидов.'],['conversion','Лид → покупатель, %','При 3% на 1 000 лидов приходится 30 покупателей.'],['cpl','CPL, ₽','Цена одного оплаченного лида.']],
+    'tariff-fields': [['minPrice','Минимальный тариф, ₽'],['standardPrice','Стандарт, ₽'],['consultTariff','Тариф с консультацией, ₽'],['minShare','Доля минимального, %','Доли нормализуются до 100%.'],['standardShare','Доля стандарта, %'],['consultShare','Доля тарифа с консультацией, %']],
+    'funnel-fields': [['digitalRate','Самостоятельные: покупают цифровой доп, %','Средний чек корзины зафиксирован по трём типам допов: 4 840 ₽.'],['consultRate','Самостоятельные: докупают разбор, %','Разбор считается как одна консультационная единица и приносит 7 500 ₽.'],['supportRate','Консультация → сопровождение, %','Доля клиентов с консультацией, переходящих на сопровождение.'],['supportMonths','Средняя длительность сопровождения, мес.','Определяет, сколько когорт одновременно активно на полке.']],
+    'advanced-fields': [['supportPrice','Сопровождение / месяц, ₽'],['opex','Тех. постоянные расходы / месяц, ₽'],['weeklyCap','Комфортный предел консультаций / неделю'],['timeUnit','Внутренняя стоимость консультации, ₽'],['feeRate','Налоги + эквайринг, %']],
+    'club-fields': [['clubEnabled','Включить клуб','Клуб добавляется к прогнозу только после включения.','checkbox'],['clubRate','Покупатели → клуб, %'],['clubPrice','Клуб / месяц, ₽'],['clubMonths','Средняя длительность клуба, мес.']]
+  };
+  const money = value => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:0}).format(Math.round(value))+' ₽';
+  const number = value => new Intl.NumberFormat('ru-RU',{maximumFractionDigits:1}).format(value);
+  const tip = text => text ? ` <i class="q" title="${text}">?</i>` : '';
+  const field = ([id,label,help='',type='number']) => `<div class="field"><label for="${id}">${label}${tip(help)}</label><input id="${id}" type="${type}" ${type==='checkbox' ? '' : `value="${defaults[id]}" step=".1"`}></div>`;
+  Object.entries(groups).forEach(([target, fields]) => document.getElementById(target).innerHTML = fields.map(field).join(''));
+  const input = id => document.getElementById(id);
+  const value = id => input(id).type === 'checkbox' ? input(id).checked : Number(input(id).value || 0);
+  const set = (id,text,className='') => { const el=input(id); el.textContent=text; el.className=className; };
+  const values = () => Object.fromEntries(Object.keys(defaults).map(id => [id,value(id)]));
+  function calculate(){
+    const d=values(), buyers=d.paid+d.organic, mix=d.minShare+d.standardShare+d.consultShare || 1;
+    const minimum=buyers*d.minShare/mix, standard=buyers*d.standardShare/mix, consultTariff=buyers*d.consultShare/mix, self=minimum+standard;
+    const entry=minimum*d.minPrice+standard*d.standardPrice+consultTariff*d.consultTariff;
+    const digital=self*d.digitalRate/100*4840, lateConsult=self*d.consultRate/100, lateRevenue=lateConsult*7500;
+    const directUnits=consultTariff+lateConsult, newSupport=directUnits*d.supportRate/100, activeSupport=newSupport*d.supportMonths, supportRevenue=activeSupport*d.supportPrice;
+    const clubActive=d.clubEnabled ? buyers*d.clubRate/100*d.clubMonths : 0, clubRevenue=clubActive*d.clubPrice;
+    const entryRevenue=entry+digital+lateRevenue, turnover=entryRevenue+supportRevenue+clubRevenue, fees=turnover*d.feeRate/100;
+    const paidLeads=d.conversion ? d.paid/(d.conversion/100) : 0, ads=paidLeads*d.cpl;
+    const supportUnits=activeSupport*2, consultationIncome=(directUnits+supportUnits)*d.timeUnit;
+    const personalIncome=turnover-fees-ads-d.opex, businessMargin=personalIncome-consultationIncome;
+    const expectedLtv=(entryRevenue+newSupport*d.supportPrice*d.supportMonths+(d.clubEnabled ? d.clubRate/100*d.clubMonths*d.clubPrice : 0))*(1-d.feeRate/100)/Math.max(buyers,1);
+    set('personal',money(personalIncome),personalIncome<0?'bad':'good'); set('consult-income',money(consultationIncome)); set('business-margin',money(businessMargin),businessMargin<0?'bad':'good'); set('turnover',money(turnover));
+    set('fees','−'+money(fees)); set('ads','−'+money(ads)); set('opex','−'+money(d.opex)); set('time-cost','−'+money(consultationIncome));
+    set('buyers',number(buyers)); set('leads',number(paidLeads)); set('cac',money(d.conversion ? d.cpl/(d.conversion/100) : 0)); set('ltv',money(expectedLtv)); set('ad-budget',money(ads));
+    const primaryWeek=directUnits/4.33, supportWeek=supportUnits/4.33, totalWeek=primaryWeek+supportWeek, status=totalWeek>d.weeklyCap?'выше предела':'в пределах';
+    set('primary-week',number(primaryWeek)); set('support-week',number(supportWeek)); set('total-week',number(totalWeek)); set('capacity',number(d.weeklyCap)); set('status',status,status==='выше предела'?'bad':'good');
+    set('new-support',number(newSupport)); set('active-support',number(activeSupport)); set('plateau',(1+Math.ceil(d.supportMonths))+'-й месяц'); set('support-revenue',money(supportRevenue));
+    set('club-status',d.clubEnabled?'включён':'выключен',d.clubEnabled?'good':'warn'); set('active-club',number(clubActive)); set('club-revenue',money(clubRevenue));
+    for(let month=1;month<=4;month++){
+      const supportCohorts=Math.min(Math.max(month-1,0),d.supportMonths), clubCohorts=d.clubEnabled ? Math.min(Math.max(month-1,0),d.clubMonths) : 0;
+      const monthTurnover=entryRevenue+newSupport*supportCohorts*d.supportPrice+buyers*d.clubRate/100*clubCohorts*d.clubPrice;
+      const monthFees=monthTurnover*d.feeRate/100, startCost=ads+d.opex, net=monthTurnover-monthFees-startCost;
+      set(`m${month}-start`,'−'+money(startCost)); set(`m${month}-turnover`,money(monthTurnover)); set(`m${month}-fees`,'−'+money(monthFees)); set(`m${month}-net`,money(net),net<0?'bad':'good');
+    }
+  }
+  function snapshot(){ return Object.fromEntries(Object.keys(defaults).map(id => [id,input(id).type==='checkbox'?input(id).checked:input(id).value])); }
+  function apply(data){ Object.entries(data||{}).forEach(([id,saved])=>{const el=input(id);if(!el)return;if(el.type==='checkbox')el.checked=Boolean(saved);else el.value=saved;}); calculate(); }
+  function savedLabel(message){ input('saved').textContent=message; }
+  document.querySelectorAll('input').forEach(el => el.addEventListener('change',calculate));
+  input('save').addEventListener('click',()=>{ localStorage.setItem(STORAGE_KEY,JSON.stringify(snapshot())); savedLabel('Сохранено в этом браузере'); });
+  input('restore').addEventListener('click',()=>{ try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved){apply(saved);savedLabel('Сохранённые значения восстановлены');}else savedLabel('Сохранённых значений пока нет'); }catch{savedLabel('Не удалось прочитать сохранённые значения');} });
+  try { const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(saved){apply(saved);savedLabel('Загружены сохранённые значения');}else calculate(); } catch { calculate(); }
+})();
+</script>
+</body>
+</html>

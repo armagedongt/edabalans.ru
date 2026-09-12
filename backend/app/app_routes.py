@@ -213,6 +213,16 @@ def site_footer_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-footer.js", stable_loader=True)
 
 
+@router.get("/finance", include_in_schema=False)
+@router.get("/finance/", include_in_schema=False)
+def finance_model() -> FileResponse:
+    """Owner-facing EDA Balance financial model. Settings stay in the browser."""
+    return FileResponse(
+        STATIC_DIR / "eda-finance.html",
+        headers={"Cache-Control": "no-cache"},
+    )
+
+
 @router.get("/site-header.js", include_in_schema=False)
 def site_header_loader() -> FileResponse:
     return public_asset(STATIC_DIR / "site-header.js", stable_loader=True)
