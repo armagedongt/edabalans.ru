@@ -1721,7 +1721,10 @@
 
     #edb-pricing-neurozeh-v1 .edb-pricing-intensive-offer[hidden],
     #edb-pricing-neurozeh-v1 .edb-pricing-mini-courses[hidden],
-    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers[hidden] {
+    #edb-pricing-neurozeh-v1 .edb-pricing-owned-offers[hidden],
+    #edb-pricing-neurozeh-v1 .edb-pricing-list[hidden],
+    #edb-pricing-neurozeh-v1 .edb-pricing-assurances[hidden],
+    #edb-pricing-neurozeh-v1 .edb-pricing-details[hidden] {
       display: none !important;
     }
 
@@ -3349,6 +3352,28 @@
         renderIntensiveOffer(catalog.intensive_offer || null);
       }
 
+      function showPublicPricingLoading() {
+        // This reset is deliberately complete. The account-offers app and the public
+        // catalogue are mutually exclusive surfaces: a retry must never leave both
+        // of them visible on the same homepage.
+        ownedOffers.hidden = true;
+        pricingIntro.hidden = false;
+        intensiveOffer.hidden = true;
+        pricingList.hidden = true;
+        pricingAssurances.hidden = true;
+        pricingDetails.hidden = true;
+      }
+
+      function showOwnedPricing() {
+        pricingIntro.hidden = true;
+        pricingList.hidden = true;
+        intensiveOffer.hidden = true;
+        pricingStatus.hidden = true;
+        pricingAssurances.hidden = true;
+        pricingDetails.hidden = true;
+        ownedOffers.hidden = false;
+      }
+
       function renderIntensiveOffer(offer) {
         if (intensiveOfferTimerId) {
           window.clearInterval(intensiveOfferTimerId);
@@ -3380,9 +3405,7 @@
 
       async function loadPricingCatalog() {
         plans.forEach((plan) => { plan.hidden = true; });
-        pricingList.hidden = true;
-        pricingAssurances.hidden = true;
-        pricingDetails.hidden = true;
+        showPublicPricingLoading();
         pricingStatus.textContent = 'Загружаю актуальные тарифы…';
         pricingStatus.hidden = false;
         root.dataset.pricingSource = 'loading';
@@ -3441,19 +3464,14 @@
           const account = await response.json();
           if (!ownsMasterclass(account)) return false;
           window.EdabalansIdentity = { email: account.email, sessionToken: '', source: 'native' };
-          // Do not leave the old purchase surface on screen while the add-ons module
-          // starts: an owner must see either their add-ons or a loading gap, never both.
-          pricingIntro.hidden = true;
-          pricingList.hidden = true;
-          intensiveOffer.hidden = true;
-          pricingStatus.hidden = true;
-          pricingAssurances.hidden = true;
-          pricingDetails.hidden = true;
-          ownedOffers.hidden = false;
           await loadScript(`${publicAppHost}/embed.js`);
           await window.EdabalansEmbed.load(ownedOffersMount);
+          showOwnedPricing();
           return true;
         } catch (error) {
+          // A failed owner-module boot must not leave a half-switched page behind.
+          // The normal public path will reset every owner-only element before it loads.
+          ownedOffers.hidden = true;
           return false;
         }
       }
