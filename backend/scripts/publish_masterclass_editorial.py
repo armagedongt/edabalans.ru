@@ -45,6 +45,21 @@ def new_article_step(item: dict, *, next_version: int) -> dict:
     }
 
 
+def new_placeholder_step(item: dict, *, next_version: int) -> dict:
+    return {
+        "id": item["step_id"],
+        "kind": "article",
+        "title": item["title"],
+        "summary": "",
+        "status": "draft",
+        "contentKind": "placeholder",
+        "durationMinutes": item["duration"],
+        "hidden": False,
+        "required": False,
+        "requiredForAllAfterRevision": next_version,
+    }
+
+
 def compile_manifest(current: dict, *, next_version: int) -> tuple[dict, list[str]]:
     days, materials = parse_program()
     result = deepcopy(current)
@@ -68,9 +83,12 @@ def compile_manifest(current: dict, *, next_version: int) -> tuple[dict, list[st
         for item in editorial_day["materials"]:
             step = current_steps.get(item["step_id"])
             if step is None:
-                if item["step_id"] != "day-07-store-food":
+                if item["step_id"] == "day-07-store-food":
+                    step = new_article_step(item, next_version=next_version)
+                elif item["step_id"] == "day-17-article-04":
+                    step = new_placeholder_step(item, next_version=next_version)
+                else:
                     raise ValueError(f"Нет runtime-шаблона материала {item['step_id']}")
-                step = new_article_step(item, next_version=next_version)
                 day["steps"].append(step)
                 current_steps[step["id"]] = step
                 changes.append(f"день {editorial_day['number']}: добавлен {step['id']}")

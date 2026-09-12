@@ -60,6 +60,31 @@ def test_editorial_program_compiles_to_runtime_titles_and_visible_steps() -> Non
     assert cycles["badge"] == "Скоро"
 
 
+def test_editorial_program_restores_placeholder_missing_from_older_runtime() -> None:
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    manifest["days"][16]["steps"] = [
+        step
+        for step in manifest["days"][16]["steps"]
+        if step["id"] != "day-17-article-04"
+    ]
+
+    compiled, _ = compile_manifest(manifest, next_version=12)
+
+    cycles = next(
+        step
+        for step in compiled["days"][16]["steps"]
+        if step["id"] == "day-17-article-04"
+    )
+    assert cycles["contentKind"] == "placeholder"
+    assert cycles["status"] == "draft"
+    assert cycles["locked"] is True
+    assert cycles["badge"] == "Скоро"
+
+
 def test_program_order_replaces_stale_runtime_order() -> None:
     manifest = json.loads(
         (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(

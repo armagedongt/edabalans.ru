@@ -165,7 +165,7 @@ Boomstream. Прямая HTTPS-ссылка, оканчивающаяся на `
 обычные вызовы не требуют Git, tests или deploy.
 
 Полная согласованная редакция из `content/masterclass/editorial/` публикуется
-командой `python scripts/publish_masterclass_editorial.py --publish` внутри backend.
+командой `python -m scripts.publish_masterclass_editorial --publish` внутри backend.
 Она создаёт новую версию структуры, синхронизирует названия и видимый состав
 материалов, скрывает не вошедшие старые шаги без удаления и публикует отдельные
 версии обычных статей.
