@@ -19,4 +19,5 @@ def test_finance_model_is_public_and_contains_browser_persistence() -> None:
     assert 'id="save"' in response.text
     assert 'id="restore"' in response.text
     assert "digitalAverage:4840" in response.text
+    assert 'id="ltv-after-labor"' in response.text
     assert "edabalans-finance-model-v2" in response.text
