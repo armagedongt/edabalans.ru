@@ -827,8 +827,14 @@ def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers(
     assert "`${publicAppHost}/embed.js`" in response.text
     assert "pricingList.hidden = true;" in response.text
     assert "pricingIntro.hidden = true;" in response.text
-    assert "root.querySelector('.edb-pricing-assurances').hidden = true;" in response.text
-    assert "root.querySelector('.edb-pricing-details').hidden = true;" in response.text
+    assert 'class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide" hidden' in response.text
+    assert 'class="edb-pricing-assurances" data-homepage-block="pricing-trust" data-homepage-field="text" data-block-width="content" hidden' in response.text
+    assert 'class="edb-pricing-details" data-homepage-block="pricing-program" data-homepage-field="links" data-block-width="content" hidden' in response.text
+    assert "pricingAssurances.hidden = true;" in response.text
+    assert "pricingDetails.hidden = true;" in response.text
+    assert "pricingList.hidden = !hasTariffs;" in response.text
+    assert "pricingAssurances.hidden = !hasTariffs;" in response.text
+    assert "pricingDetails.hidden = !hasTariffs;" in response.text
 
 
 def test_homepage_reviews_preview_uses_playable_voice_featured_order_and_21_wall_reviews() -> None:

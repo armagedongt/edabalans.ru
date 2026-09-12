@@ -3089,7 +3089,7 @@
       <div data-edabalans-app="masterclass-offers" data-edabalans-manual="true" data-edabalans-inline="true" data-edabalans-account-offer="true" data-edabalans-account-url="/lk"></div>
     </section>
 
-    <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide">
+    <div class="edb-pricing-list" data-homepage-block="pricing-cards" data-homepage-field="catalog" data-block-width="wide" hidden>
       <article class="edb-pricing-plan" data-price-code="site.masterclass.basic">
         <h3 class="edb-pricing-plan-name" data-price-field="name"></h3>
         <ul>
@@ -3136,7 +3136,7 @@
       </article>
     </div>
 
-    <ul class="edb-pricing-assurances" data-homepage-block="pricing-trust" data-homepage-field="text" data-block-width="content">
+    <ul class="edb-pricing-assurances" data-homepage-block="pricing-trust" data-homepage-field="text" data-block-width="content" hidden>
       <li>
         <span class="edb-assurance-icon">
           <span class="edb-fire-emoji" aria-hidden="true">🔥</span>
@@ -3157,7 +3157,7 @@
       </li>
     </ul>
 
-    <div class="edb-pricing-details" data-homepage-block="pricing-program" data-homepage-field="links" data-block-width="content">
+    <div class="edb-pricing-details" data-homepage-block="pricing-program" data-homepage-field="links" data-block-width="content" hidden>
       <h3 class="edb-pricing-details-title" id="pricing-program-title">Программа по дням</h3>
       <div class="edb-pricing-program" aria-label="Основная программа">
         <p class="edb-pricing-program-label">Основная программа</p>
@@ -3238,6 +3238,8 @@
       const pricingSection = root.closest('.chain-block--pricing');
       const plans = root.querySelectorAll('.edb-pricing-plan');
       const pricingStatus = root.querySelector('.edb-pricing-status');
+      const pricingAssurances = root.querySelector('.edb-pricing-assurances');
+      const pricingDetails = root.querySelector('.edb-pricing-details');
       const intensiveOffer = root.querySelector('.edb-pricing-intensive-offer');
       const intensiveOfferTimer = intensiveOffer.querySelector('span');
       const ownedOffers = root.querySelector('.edb-pricing-owned-offers');
@@ -3339,7 +3341,11 @@
         });
         root.dataset.pricingSource = source;
         root.dataset.pricingVersion = String(catalog.version || 'preview');
-        pricingStatus.hidden = Object.keys(byCode).length > 0;
+        const hasTariffs = Object.keys(byCode).length > 0;
+        pricingStatus.hidden = hasTariffs;
+        pricingList.hidden = !hasTariffs;
+        pricingAssurances.hidden = !hasTariffs;
+        pricingDetails.hidden = !hasTariffs;
         renderIntensiveOffer(catalog.intensive_offer || null);
       }
 
@@ -3374,6 +3380,9 @@
 
       async function loadPricingCatalog() {
         plans.forEach((plan) => { plan.hidden = true; });
+        pricingList.hidden = true;
+        pricingAssurances.hidden = true;
+        pricingDetails.hidden = true;
         pricingStatus.textContent = 'Загружаю актуальные тарифы…';
         pricingStatus.hidden = false;
         root.dataset.pricingSource = 'loading';
@@ -3432,14 +3441,16 @@
           const account = await response.json();
           if (!ownsMasterclass(account)) return false;
           window.EdabalansIdentity = { email: account.email, sessionToken: '', source: 'native' };
-          await loadScript(`${publicAppHost}/embed.js`);
+          // Do not leave the old purchase surface on screen while the add-ons module
+          // starts: an owner must see either their add-ons or a loading gap, never both.
           pricingIntro.hidden = true;
           pricingList.hidden = true;
           intensiveOffer.hidden = true;
           pricingStatus.hidden = true;
-          root.querySelector('.edb-pricing-assurances').hidden = true;
-          root.querySelector('.edb-pricing-details').hidden = true;
+          pricingAssurances.hidden = true;
+          pricingDetails.hidden = true;
           ownedOffers.hidden = false;
+          await loadScript(`${publicAppHost}/embed.js`);
           await window.EdabalansEmbed.load(ownedOffersMount);
           return true;
         } catch (error) {
