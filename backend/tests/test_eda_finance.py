@@ -23,5 +23,10 @@ def test_finance_model_is_public_and_contains_browser_persistence() -> None:
     assert 'id="self-cashflow"' in response.text
     assert 'id="self-ltv"' in response.text
     assert 'id="self-after-cac"' in response.text
+    assert "consultCap:6" in response.text
+    assert 'id="consult-tariff-sold"' in response.text
+    assert 'id="lost-by-cap"' in response.text
+    assert "lostByCap=excessConsultDemand*.20" in response.text
+    assert "reallocatedByCap=excessConsultDemand*.80" in response.text
     assert "finance-tooltip" in response.text
     assert "edabalans-finance-model-v2" in response.text
