@@ -39,7 +39,7 @@ from app.content_authoring import allowed_variables, audit_content, authoring_pa
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
 from app.seed import LEGACY_PREPURCHASE_CODE, PREPURCHASE_CODE, START_ENTRY_CODE, WELCOME_CODE, seed_defaults
 from app.start_router import StartFacts, decision_from_facts, execute_start_decision, inspect_start
-from app.telegram import TelegramClient
+from app.telegram import TelegramClient, TelegramError
 from app.tracking import active_link, assign_first_touch, create_tracking_session, ensure_crm_identity, exact_utm_matches, generate_alias_token, normalize_value, parse_utm_url, resolve_alias, resolve_pending_channel_touch, resolve_start_payload, tag_code, tracking_query_params, tracking_session_by_payload, tracking_session_context, unresolved_utm_groups
 
 
@@ -1005,7 +1005,13 @@ def process_update(update: dict, session: Session) -> dict:
                 platform="telegram",
                 public_url=settings.intensive_public_url,
             )
-            tg.reset_chat_menu_button(contact.chat_id)
+            # The persistent menu is convenient navigation, not a condition for
+            # accepting Start. A temporary Telegram rate limit must not leave
+            # the same update at the head of polling and block later users.
+            try:
+                tg.reset_chat_menu_button(contact.chat_id)
+            except TelegramError:
+                logger.warning("Telegram menu reset failed; continuing Start", exc_info=True)
             yandex_entry = any(
                 marker in " ".join([
                     str((raw_query or {}).get("utm_source") or ""),

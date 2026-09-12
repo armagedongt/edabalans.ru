@@ -11,6 +11,7 @@ from app.main import app
 import app.main as main_module
 from app.models import BotInstance, Contact, ContentItem, CrmMessengerAccount, CrmUser, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
 from app.seed import seed_defaults
+from app.telegram import TelegramError
 
 
 class FakeTelegram:
@@ -382,4 +383,35 @@ def test_inbox_timeline_and_safe_broadcast_workflow(tmp_path, monkeypatch):
     assert client.post(f"/bot-api/broadcasts/{draft['id']}/retry").status_code == 409
     assert client.get("/bot-api/map?module_code=inbox").json()["issues"] == []
     assert client.get("/bot-api/map?module_code=broadcasts").json()["issues"] == []
+    app.dependency_overrides.clear()
+
+
+def test_start_continues_when_telegram_rate_limits_optional_menu_reset(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'menu-rate-limit.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        session.commit()
+
+    class RateLimitedMenuTelegram(FakeTelegram):
+        def reset_chat_menu_button(self, chat_id):
+            raise TelegramError("Telegram API HTTP 429")
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    fake = RateLimitedMenuTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "")
+    response = TestClient(app).post(
+        "/telegram/webhook",
+        json={"update_id": 103, "message": {"from": {"id": 43, "first_name": "Sergey"}, "chat": {"id": 43}, "text": "/start"}},
+    )
+
+    assert response.json() == {"ok": True}
+    assert [entry[1] for entry in fake.sent] == ["tpl_entry_circle", "tpl_intensive_entry_default"]
+    with Session(engine) as session:
+        assert session.scalar(select(func.count(UpdateReceipt.update_id))) == 1
     app.dependency_overrides.clear()
