@@ -7,8 +7,20 @@
   <title>Приложение · Похудение — это есть!</title>
   <script src="https://st.max.ru/js/max-web-app.js" defer></script>
   <style>
+    :root{font-family:Arial,sans-serif;color:#1f2937;background:#f4f4f6}
+    *{box-sizing:border-box}
     html,body{margin:0;min-height:100%;background:#f4f4f6}
     .max-app-loading{min-height:100vh;display:grid;place-items:center;padding:22px;color:#64748b;text-align:center;font:600 15px/1.4 Arial,sans-serif}
+    .max-app-home{min-height:100vh;padding:28px 18px 36px}
+    .max-app-home__inner{width:min(100%,520px);margin:0 auto}
+    .max-app-home h1{margin:0;color:#172033;font-size:28px;line-height:1.15}
+    .max-app-home__intro{margin:10px 0 22px;color:#64748b;font-size:16px;line-height:1.45}
+    .max-app-home__list{display:grid;gap:10px}
+    .max-app-home__button{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:17px 18px;border:1px solid #e5e7eb;border-radius:16px;background:#fff;color:#172033;font:700 16px/1.25 Arial,sans-serif;text-align:left;box-shadow:0 1px 2px rgba(15,23,42,.04);cursor:pointer}
+    .max-app-home__button:active{transform:scale(.99);background:#f8fafc}
+    .max-app-home__arrow{flex:none;color:#8b5cf6;font-size:24px;line-height:1}
+    .max-app-home__intensive{margin-top:18px;border:0;background:#7c3aed;color:#fff}
+    .max-app-home__intensive .max-app-home__arrow{color:#fff}
   </style>
 </head>
 <body>
@@ -30,10 +42,38 @@
         query.get('startapp') ||
         ''
       ).toLowerCase();
-      var appCode = allowed[payload];
+      var appCode = allowed[payload] || allowed[String(query.get('app') || '').toLowerCase()];
       var root = document.getElementById('max-app-root');
       if (!appCode) {
-        root.textContent = 'Откройте нужное приложение из меню «Мои приложения» в боте.';
+        root.className = 'max-app-home';
+        root.innerHTML = [
+          '<div class="max-app-home__inner">',
+          '<h1>Приложения</h1>',
+          '<p class="max-app-home__intro">Выберите нужный раздел. Доступ к нему проверится автоматически.</p>',
+          '<div class="max-app-home__list">',
+          '<button class="max-app-home__button" type="button" data-max-app="dqs">Оценка качества питания <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-app="strength">Силовые тренировки <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-app="metabolism">Калькулятор метаболизма <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-app="recipes">Калькулятор рецептов <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '</div>',
+          '<button class="max-app-home__button max-app-home__intensive" type="button" data-max-intense="true">Бесплатный интенсив <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '</div>'
+        ].join('');
+        Array.prototype.forEach.call(root.querySelectorAll('[data-max-app]'), function (button) {
+          button.addEventListener('click', function () {
+            var target = new URL(location.href);
+            target.searchParams.set('app', button.getAttribute('data-max-app'));
+            location.assign(target.toString());
+          });
+        });
+        root.querySelector('[data-max-intense]').addEventListener('click', function () {
+          var intensiveUrl = 'https://edabalans.ru/intensive';
+          if (bridge && typeof bridge.openLink === 'function') {
+            bridge.openLink(intensiveUrl);
+          } else {
+            location.assign(intensiveUrl);
+          }
+        });
         return;
       }
       root.className = '';

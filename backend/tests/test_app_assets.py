@@ -162,6 +162,15 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
     assert "data-edabalans-app" in max_entry.text
     assert max_entry.headers["x-robots-tag"] == "noindex, nofollow"
 
+    max_home = client.get("/max-app")
+    assert max_home.status_code == 200
+    assert "Оценка качества питания" in max_home.text
+    assert "Силовые тренировки" in max_home.text
+    assert "Калькулятор метаболизма" in max_home.text
+    assert "Калькулятор рецептов" in max_home.text
+    assert "Бесплатный интенсив" in max_home.text
+    assert "query.get('app')" in max_home.text
+
 
 def test_admin_apps_use_same_managed_frontend_and_highlight_started_profiles() -> None:
     source = (
