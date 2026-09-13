@@ -72,6 +72,11 @@ ALLOWED_VARIABLES_BY_CONTENT_CODE = {
 }
 GLOBAL_ALLOWED_VARIABLES = {
     "personal_intensive_url",
+    "personal_intensive_current_day_url",
+    "personal_intensive_day_1_url",
+    "personal_intensive_day_2_url",
+    "personal_intensive_day_3_url",
+    "personal_intensive_day_4_url",
     "personal_masterclass_url",
 }
 

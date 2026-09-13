@@ -893,9 +893,6 @@ def intensive_post_target(
             status_code=403,
             detail="intensive messenger does not match personal link",
         )
-    rows = progress_rows(db, user_id)
-    if not day_unlocked(rows, day_number):
-        raise HTTPException(status_code=403, detail="intensive day is not open")
     if mark_assignment_opened(db, user_id, day_number, messenger) is None:
         raise HTTPException(status_code=409, detail="intensive day is not open")
     db.commit()
@@ -911,14 +908,40 @@ def intensive_day_asset(
     if day_code not in {"day-1", "day-2", "day-3", "day-4"}:
         raise HTTPException(status_code=404, detail="intensive day not found")
     day_number = int(day_code[-1])
-    identity = session_identity(request, settings.app_auth_secret)
-    if identity is not None and db.get(User, identity[0]) is not None:
-        user_id, _ = identity
-        if open_day(db, user_id, day_number) is None:
+    identity = None
+    direct_delivery = False
+    supplied_token = request.query_params.get("i") or request.query_params.get("token")
+    if supplied_token:
+        token_row = consume_access_token(db, supplied_token)
+        if token_row is None:
+            raise HTTPException(status_code=404, detail="intensive link not found")
+        identity = (token_row.user_id, token_row.platform)
+        direct_delivery = True
+        record_entry_attribution(db, token_row.user_id, token_row.platform, request)
+    if identity is None:
+        identity = session_identity(request, settings.app_auth_secret)
+    if identity is not None and db.get(User, identity[0]) is None:
+        identity = None
+    if identity is not None:
+        user_id, platform = identity
+        if open_day(
+            db,
+            user_id,
+            day_number,
+            allow_direct_delivery=direct_delivery,
+        ) is None:
             return RedirectResponse(attributed_path(request, "/intensive"), status_code=307)
         db.commit()
     response = public_asset(STATIC_DIR / "intensive" / f"{day_code}.html")
     response.headers["Referrer-Policy"] = "no-referrer"
+    if identity is not None:
+        set_session(
+            response,
+            request,
+            settings.app_auth_secret,
+            user_id,
+            platform,
+        )
     return response
 
 

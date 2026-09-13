@@ -118,6 +118,22 @@ def _wait_values(run: SequenceRun | None) -> dict[str, str]:
     return {"next_message_at": next_at.astimezone(ZoneInfo("Europe/Moscow")).strftime("%d.%m.%Y в %H:%M МСК"), "wait_interval": wait}
 
 
+def _latest_delivered_day(session: Session, run: SequenceRun | None) -> int:
+    if run is None:
+        return 1
+    sent_steps = set(session.scalars(
+        select(StepDelivery.step_key).where(
+            StepDelivery.run_id == run.id,
+            StepDelivery.status == "sent",
+            StepDelivery.step_key.in_(["welcome_day2", "welcome_day3", "welcome_day4"]),
+        )
+    ))
+    for day in (4, 3, 2):
+        if f"welcome_day{day}" in sent_steps:
+            return day
+    return 1
+
+
 def _render_content(item: ContentItem, values: dict[str, str]) -> SimpleNamespace:
     channel_link = '<a href="https://t.me/Fitness_Talks">основной Telegram-канал</a>'
     body = replace_template_values(item.body_source, {**values, "channel_link": channel_link})
@@ -180,7 +196,7 @@ def execute_start_decision(
             entry_content_code,
             sender,
             configuration={
-                "buttons": [{"text": "Открыть интенсив", "url": "{{personal_intensive_url}}"}],
+                "buttons": [{"text": "Открыть часть #1", "url": "{{personal_intensive_day_1_url}}"}],
             },
         )
         run = start_run(session, contact.id, sequence_code)
@@ -191,7 +207,14 @@ def execute_start_decision(
         send_system_content(session, contact, decision.content_code, sender)
         return None
     if decision.code == "intensive_waiting":
-        send_system_content(session, contact, decision.content_code, sender, _wait_values(welcome_run))
+        send_system_content(
+            session,
+            contact,
+            decision.content_code,
+            sender,
+            _wait_values(welcome_run),
+            configuration={"personal_intensive_day": _latest_delivered_day(session, welcome_run)},
+        )
         return None
     if decision.code == "legacy_update":
         send_system_content(

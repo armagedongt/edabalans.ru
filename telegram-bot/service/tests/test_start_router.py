@@ -138,7 +138,7 @@ def test_first_visit_sends_circle_and_selected_personal_entry_then_starts_schedu
         ]
         assert "{{personal_" not in sender.sent[1][2]
         assert sender.sent[1][3]["buttons"][0]["url"].startswith(
-            "https://edabalans.ru/intensive/start?i=E"
+            "https://edabalans.ru/intensive/day-1?i=E"
         )
         assert "&from=tg&entry=bot" in sender.sent[1][3]["buttons"][0]["url"]
     finally:
@@ -189,8 +189,36 @@ def test_system_content_resolves_personal_link(tmp_path):
         send_system_content(session, contact, item.code, sender)
 
         assert "{{personal_" not in sender.sent[0][2]
-        assert "https://edabalans.ru/intensive/start?i=E" in sender.sent[0][2]
+        assert "https://edabalans.ru/intensive?i=E" in sender.sent[0][2]
         assert "&from=tg&entry=bot" in sender.sent[0][2]
         assert session.query(MessengerLinkToken).count() == 1
+    finally:
+        session.close()
+
+
+def test_repeat_start_before_day_four_returns_to_latest_issued_day(tmp_path):
+    session, contact = prepared(tmp_path, "waiting-day")
+    try:
+        run = start_run(session, contact.id, WELCOME_CODE)
+        session.add(StepDelivery(
+            run_id=run.id,
+            step_key="welcome_day3",
+            idempotency_key=f"{run.id}:welcome_day3:test",
+            status="sent",
+        ))
+        session.commit()
+        decision = decision_from_facts(StartFacts(
+            is_first_visit=False,
+            has_masterclass=False,
+            day_four_sent=False,
+            has_active_welcome_run=True,
+            welcome_ever_started=True,
+        ))
+        sender = FakeSender()
+
+        execute_start_decision(session, contact, decision, run, sender, WELCOME_CODE)
+
+        assert "/intensive/day-3?i=E" in sender.sent[0][2]
+        assert "personal_intensive_day" not in sender.sent[0][3]
     finally:
         session.close()

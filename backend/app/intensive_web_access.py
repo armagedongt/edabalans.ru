@@ -367,6 +367,8 @@ def progress_rows(db: Session, user_id: uuid.UUID) -> dict[int, CourseStageProgr
 def day_unlocked(
     rows: dict[int, CourseStageProgress], day: int, *, now: datetime | None = None
 ) -> bool:
+    if day in rows:
+        return True
     if day == 1:
         return True
     previous = rows.get(day - 1)
@@ -379,8 +381,8 @@ def day_unlocked(
 def current_day(
     rows: dict[int, CourseStageProgress], *, now: datetime | None = None
 ) -> int:
-    current = 1
-    for day in range(2, 5):
+    current = max(rows, default=1)
+    for day in range(current + 1, 5):
         if not day_unlocked(rows, day, now=now):
             break
         current = day
@@ -437,12 +439,13 @@ def open_day(
     day: int,
     *,
     now: datetime | None = None,
+    allow_direct_delivery: bool = False,
 ) -> CourseStageProgress | None:
     if day not in range(1, 5):
         return None
     current = aware_utc(now or datetime.now(timezone.utc))
     rows = progress_rows(db, user_id)
-    if not day_unlocked(rows, day, now=current):
+    if not allow_direct_delivery and not day_unlocked(rows, day, now=current):
         return None
     progress = rows.get(day)
     if progress is None:

@@ -37,7 +37,7 @@ def test_intensive_link_is_personal_platform_bound_and_long_lived(tmp_path):
         token = query["i"][0]
         assert len(token) == 9
         assert query == {"i": [token], "from": ["tg"], "entry": ["bot"]}
-        assert parsed.path == "/intensive/start"
+        assert parsed.path == "/intensive"
         assert row.user_id == user.id
         assert row.platform == "telegram"
         assert row.purpose == PURPOSE
@@ -114,14 +114,18 @@ def test_personal_destinations_reuse_one_opaque_code(tmp_path):
         post_code = urlparse(values["personal_channel_post_260_url"]).path.rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code == post_code
         assert values["personal_intensive_url"] == (
-            f"https://edabalans.ru/intensive/start?i={intensive_code}&from=tg&entry=bot"
+            f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
         )
+        for day in range(1, 5):
+            assert values[f"personal_intensive_day_{day}_url"] == (
+                f"https://edabalans.ru/intensive/day-{day}?i={intensive_code}&from=tg&entry=bot"
+            )
         assert values["personal_channel_post_732_url"].endswith(f"/p/732/{intensive_code}")
         assert values["personal_channel_post_734_url"].endswith(f"/p/734/{intensive_code}")
         assert session.query(MessengerLinkToken).count() == 1
 
 
-def test_intensive_start_path_is_not_duplicated(tmp_path):
+def test_configured_start_path_is_normalized_to_menu(tmp_path):
     engine = make_engine(f"sqlite:///{tmp_path / 'intensive-start.sqlite'}")
     Base.metadata.create_all(engine)
     with Session(engine) as session:
@@ -136,4 +140,4 @@ def test_intensive_start_path_is_not_duplicated(tmp_path):
             public_url="https://edabalans.ru/intensive/start",
         )
 
-        assert urlparse(url).path == "/intensive/start"
+        assert urlparse(url).path == "/intensive"

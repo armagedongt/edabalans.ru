@@ -4,7 +4,7 @@ status: accepted
 surface: messenger
 button_label: Открыть часть #2
 button_target: intensive_cabinet
-button_url: "{{personal_intensive_url}}"
+button_url: "{{personal_intensive_day_2_url}}"
 button_fallback_url: "https://похудение-это-есть.рф/intensiv"
 ---
 

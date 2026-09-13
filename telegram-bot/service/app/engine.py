@@ -424,6 +424,21 @@ def personalized_delivery(
         public_url=get_settings().intensive_public_url,
         channel_post_numbers=channel_post_numbers,
     )
+    requested_day = configuration.get("personal_intensive_day")
+    if requested_day is not None:
+        try:
+            day_number = int(requested_day)
+        except (TypeError, ValueError) as exc:
+            raise RuntimeError("Invalid personal intensive day") from exc
+        day_url = values.get(f"personal_intensive_day_{day_number}_url")
+        if not day_url:
+            raise RuntimeError("Invalid personal intensive day")
+        values["personal_intensive_current_day_url"] = day_url
+        configuration = {
+            key: value
+            for key, value in configuration.items()
+            if key != "personal_intensive_day"
+        }
     rendered = SimpleNamespace(
         code=content.code,
         title=content.title,

@@ -26,13 +26,25 @@ def intensive_token(token_id: str) -> str:
     return "E" + body[:SHORT_TOKEN_BODY_LENGTH]
 
 
-def intensive_access_url(public_url: str, token: str, platform: str) -> str:
+def intensive_access_url(
+    public_url: str,
+    token: str,
+    platform: str,
+    *,
+    day: int | None = None,
+) -> str:
+    if day is not None and day not in range(1, 5):
+        raise ValueError("invalid intensive day")
     parts = urlsplit(public_url)
     source = "tg" if platform == "telegram" else "max"
     query = urlencode({"i": token, "from": source, "entry": "bot"})
     path = parts.path.rstrip("/")
-    if not path.endswith("/start"):
-        path = f"{path}/start"
+    for suffix in ("/start", "/menu", "/day-1", "/day-2", "/day-3", "/day-4"):
+        if path.endswith(suffix):
+            path = path[: -len(suffix)]
+            break
+    if day is not None:
+        path = f"{path}/day-{day}"
     return urlunsplit((parts.scheme, parts.netloc, path, query, ""))
 
 
@@ -59,6 +71,13 @@ def personal_tracking_values(
         "personal_intensive_url": intensive_url,
         "personal_masterclass_url": f"{root}/m/{encoded}",
     }
+    for day in range(1, 5):
+        values[f"personal_intensive_day_{day}_url"] = intensive_access_url(
+            public_url,
+            token,
+            platform,
+            day=day,
+        )
     for post_number in channel_post_numbers:
         if post_number < 1 or post_number > 9_999_999:
             raise ValueError("invalid Telegram channel post number")

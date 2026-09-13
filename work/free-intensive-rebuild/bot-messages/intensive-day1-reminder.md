@@ -13,7 +13,7 @@ content_tag: "Пост - Маленькие шаги"
 content_tag_id: "5f56aba0-74be-49af-bec9-c2799b260411"
 button_label: "Открыть часть #{{unopened_day_number}}"
 button_target: intensive_cabinet
-button_url: "{{personal_intensive_url}}"
+button_url: "{{personal_intensive_current_day_url}}"
 button_fallback_url: "https://похудение-это-есть.рф/intensiv"
 media_alias: intensive_day1_reminder_small_steps
 media_url: "https://cdn4.telesco.pe/file/eMtVgVZ2Xkr-xFQCBqPoBtPiMfdyX9idG6D4AbvJYUgxjcOJmE7bnKWP53IBz9g_9tztdCAb44CpSDiKWVTMFcNoMwRwh3V5H7MUQFsqMxlKHtCzoVyuGftig0zGf_H5i2Ltby6DU9f3Zu2UaDBzJJcc822PxG2YrU-g2_Ba0XoMT_aQdjAdnTpKy0zwuGHb83DP6q3yjUvjo_qmd0IBUtA-mCPrdJfYEoPSRJVxYDjuDtsVokmLXeyI6TQ2oRBp9K_gZErdrf3aq1TDHPWILyNyh8FA1xssN-EUpkFPjk14sVdGhoBtA69CPUK7TIlIWWvMvaQhuV3unf4iW1l_tw.jpg"

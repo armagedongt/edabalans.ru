@@ -124,10 +124,12 @@ https://go.похудение-это-есть.рф/B7K4PV
 `landing_button_click`, сканирование `/q/<U...>` — `landing_qr_scan`; тот же
 `journey_id` затем записывается в настоящий `start_first`/`start_repeat`.
 
-Персональная кнопка интенсива из бота ведёт прямо на
-`https://edabalans.ru/intensive?i=<code>&from=tg&entry=bot` либо с `from=max`.
-Redirect в этой ссылке отсутствует;
-персональный код и источник сохраняются в query string.
+Пока выдаются первые четыре части, персональная кнопка интенсива из бота ведёт
+прямо на `https://edabalans.ru/intensive/day-N?i=<code>&from=tg&entry=bot` либо с
+`from=max`. Каждая часть и её напоминание имеют собственный номер дня; главная не
+используется как промежуточный экран. После доставки четвёртой части повторный
+Start даёт одну ссылку на `https://edabalans.ru/intensive?i=<code>`. Redirect в
+новых ссылках отсутствует; персональный код и источник сохраняются в query string.
 
 Связь правила с существующими CRM-тегами хранится в `tg_tracking_link_tags`.
 Новый тег не создаётся при переходе. Администратор отдельно выбирает существующий
@@ -232,10 +234,11 @@ Telegram `user` и `chat` и создаёт либо обновляет `tg_cont
   `tpl_start_has_masterclass`;
 - первый вход или новая рассылка ещё не запускалась → запустить
   `welcome_intensive`;
-- День 4 доставлен → отправить оглавление завершённого интенсива
-  `tpl_start_intensive_complete`;
-- Welcome run активен → отправить `tpl_start_intensive_waiting` с фактическим
-  `next_action_at`, не меняя шаг и расписание;
+- День 4 доставлен → отправить завершённый вход с одной ссылкой на главную
+  `tpl_intensive_entry_delivered`;
+- Welcome run активен → отправить `tpl_intensive_entry_continue` с фактическим
+  `next_action_at` и прямой ссылкой на последний выданный день, не меняя шаг и
+  расписание;
 - Welcome раньше запускался, но run потерян и День 4 не доставлен → записать
   `start_routing_error` в `tg_tracking_events`, ничего человеку не отправлять.
 

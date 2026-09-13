@@ -80,7 +80,7 @@ def test_personalized_delivery_resolves_body_and_button_with_same_code(tmp_path)
         masterclass_code = configuration["buttons"][0]["url"].rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code
         assert len(intensive_code) == 9
-        assert intensive_url == f"https://edabalans.ru/intensive/start?i={intensive_code}&from=tg&entry=bot"
+        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
 
 
 def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
@@ -125,7 +125,40 @@ def test_personalized_delivery_binds_links_to_max_contact(tmp_path):
         intensive_url = rendered.body_source.removeprefix("Интенсив: ")
         intensive_code = parse_qs(urlparse(intensive_url).query)["i"][0]
         assert configuration["buttons"][0]["url"].endswith(intensive_code)
-        assert intensive_url == f"https://edabalans.ru/intensive/start?i={intensive_code}&from=max&entry=bot"
+        assert intensive_url == f"https://edabalans.ru/intensive?i={intensive_code}&from=max&entry=bot"
+
+
+def test_personalized_delivery_resolves_current_issued_day_and_strips_internal_config(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        bot = session.scalar(select(BotInstance))
+        user = CrmUser(display_name="Получатель", status="active", data_origin="native")
+        session.add(user)
+        session.flush()
+        contact = Contact(
+            bot_instance_id=bot.id,
+            user_id=user.id,
+            telegram_user_id="current-day",
+            chat_id="current-day",
+        )
+        content = ContentItem(
+            code="tpl_current_day",
+            title="Current day",
+            body_source="Вернуться: {{personal_intensive_current_day_url}}",
+            source_format="telegram_html",
+            status="published",
+            editorial_status="approved",
+        )
+
+        rendered, configuration = personalized_delivery(
+            session,
+            contact,
+            content,
+            {"personal_intensive_day": 3},
+        )
+
+        assert "/intensive/day-3?i=E" in rendered.body_source
+        assert "personal_intensive_day" not in configuration
 
 
 def session_factory(tmp_path):
@@ -171,7 +204,37 @@ def test_seed_splits_start_welcome_and_nurture_modules(tmp_path):
         assert "{{next_message_at}}" in waiting
         complete = session.scalar(select(ContentItem.body_source).where(ContentItem.code == "tpl_intensive_entry_delivered"))
         assert complete.startswith("<b>Сделайте похудение проще</b>")
-        assert complete.count("{{personal_intensive_url}}") == 4
+        assert complete.count("{{personal_intensive_url}}") == 1
+        welcome = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+        welcome_version = session.scalar(
+            select(SequenceVersion).where(SequenceVersion.sequence_id == welcome.id)
+        )
+        direct_days = {
+            step.step_key: step.configuration["buttons"][0]["url"]
+            for step in session.scalars(
+                select(SequenceStep).where(
+                    SequenceStep.sequence_version_id == welcome_version.id,
+                    SequenceStep.step_key.in_([
+                        "welcome_reminder_day1",
+                        "welcome_day2",
+                        "welcome_reminder_day2",
+                        "welcome_day3",
+                        "welcome_reminder_day3",
+                        "welcome_day4",
+                        "welcome_reminder_day4",
+                    ]),
+                )
+            )
+        }
+        assert direct_days == {
+            "welcome_reminder_day1": "{{personal_intensive_day_1_url}}",
+            "welcome_day2": "{{personal_intensive_day_2_url}}",
+            "welcome_reminder_day2": "{{personal_intensive_day_2_url}}",
+            "welcome_day3": "{{personal_intensive_day_3_url}}",
+            "welcome_reminder_day3": "{{personal_intensive_day_3_url}}",
+            "welcome_day4": "{{personal_intensive_day_4_url}}",
+            "welcome_reminder_day4": "{{personal_intensive_day_4_url}}",
+        }
         assert session.scalar(select(func.count(SequenceEdge.id))) > 0
         assert session.scalar(select(BotRoute.target_sequence_code).where(BotRoute.code == "main_start")) == WELCOME_CODE
 
@@ -196,6 +259,32 @@ def test_seed_upgrades_intermediate_combined_layout_with_new_versions(tmp_path):
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_welcome.id, SequenceStep.step_key == "welcome_final_image"))
         assert latest_nurture.version_no == 2
         assert session.scalar(select(SequenceStep.id).where(SequenceStep.sequence_version_id == latest_nurture.id, SequenceStep.step_key == "nurture_delay_hard_sale_1")) is None
+
+
+def test_seed_upgrades_direct_day_links_in_archived_versions_used_by_active_runs(tmp_path):
+    with session_factory(tmp_path) as session:
+        seed_defaults(session, "Fitness_Talks_bot")
+        welcome = session.scalar(select(Sequence).where(Sequence.code == WELCOME_CODE))
+        original = session.scalar(
+            select(SequenceVersion).where(
+                SequenceVersion.sequence_id == welcome.id,
+                SequenceVersion.status == "published",
+            )
+        )
+        day_three = session.scalar(select(SequenceStep).where(
+            SequenceStep.sequence_version_id == original.id,
+            SequenceStep.step_key == "welcome_day3",
+        ))
+        day_three.configuration = {
+            "buttons": [{"text": "Открыть часть #3", "url": "{{personal_intensive_url}}"}]
+        }
+        session.commit()
+
+        seed_defaults(session, "Fitness_Talks_bot")
+
+        session.refresh(day_three)
+        assert original.status == "archived"
+        assert day_three.configuration["buttons"][0]["url"] == "{{personal_intensive_day_3_url}}"
 
 
 def test_seed_publishes_new_welcome_version_when_channel_check_is_enabled(tmp_path):

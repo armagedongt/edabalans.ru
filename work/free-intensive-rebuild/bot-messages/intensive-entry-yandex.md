@@ -2,9 +2,9 @@
 content_id: intensive_entry_yandex
 status: accepted
 surface: telegram_bot
-button_label: Открыть интенсив
-button_target: intensive_cabinet
-button_url: "{{personal_intensive_url}}"
+button_label: Открыть часть #1
+button_target: intensive_day_1
+button_url: "{{personal_intensive_day_1_url}}"
 button_fallback_url: "https://похудение-это-есть.рф/intensiv"
 secondary_links: false
 ---

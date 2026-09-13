@@ -156,6 +156,36 @@ def test_canonical_personal_entry_serves_menu_without_redirect_and_keeps_query()
     app.dependency_overrides.clear()
 
 
+def test_personal_day_link_opens_exact_scheduled_day_without_prior_progress() -> None:
+    client, factory = make_client()
+    user = create_user(factory)
+    with factory() as db:
+        token, _ = issue_access_token(db, user.id, "max")
+        db.commit()
+
+    page = client.get(
+        f"/intensive/day-3?i={token}&from=max&entry=bot",
+        follow_redirects=False,
+    )
+
+    assert page.status_code == 200
+    assert "location" not in page.headers
+    assert "edabalans_intensive_session" in page.headers["set-cookie"]
+    state = client.get("/api/intensive/state").json()
+    assert state["platform"] == "max"
+    assert state["opened_days"] == [3]
+    assert state["unlocked_days"] == [1, 3]
+    assert state["current_day"] == 3
+    with factory() as db:
+        event = db.scalar(select(AttributionEvent))
+        assert event is not None
+        assert event.source_raw == "max"
+        assert event.landing_url is not None
+        assert "/intensive/day-3" in event.landing_url
+        assert "i=" not in event.landing_url
+    app.dependency_overrides.clear()
+
+
 def test_progress_is_durable_and_offer_starts_only_at_day_four_cta() -> None:
     _, factory = make_client()
     user = create_user(factory)
