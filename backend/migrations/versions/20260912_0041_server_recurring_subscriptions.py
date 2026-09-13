@@ -76,7 +76,11 @@ def upgrade() -> None:
             'RUB',
             true,
             10,
-            '{"period":"month","billing":"server_recurring","price_change_requires_new_consent":true}'::jsonb
+            jsonb_build_object(
+                'period', 'month',
+                'billing', 'server_recurring',
+                'price_change_requires_new_consent', true
+            )
         FROM pricing_versions version
         WHERE version.status IN ('active', 'draft')
           AND NOT EXISTS (
