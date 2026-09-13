@@ -164,11 +164,10 @@ def test_dqs_and_training_have_standalone_account_aware_pages() -> None:
 
     max_home = client.get("/max-app")
     assert max_home.status_code == 200
-    assert "Оценка качества питания" in max_home.text
-    assert "Силовые тренировки" in max_home.text
-    assert "Калькулятор метаболизма" in max_home.text
-    assert "Калькулятор рецептов" in max_home.text
+    assert "Мастер-класс" in max_home.text
+    assert "Личный кабинет" in max_home.text
     assert "Бесплатный интенсив" in max_home.text
+    assert "account: 'account'" in max_home.text
     assert "query.get('app')" in max_home.text
 
 

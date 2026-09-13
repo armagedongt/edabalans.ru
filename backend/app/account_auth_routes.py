@@ -59,6 +59,11 @@ class TelegramMiniAppLoginIn(BaseModel):
     app_code: str = Field(pattern="^(dqs|strength|metabolism|recipes)$")
 
 
+class MaxMiniAppLoginIn(BaseModel):
+    init_data: str = Field(min_length=20, max_length=8192)
+    app_code: str = Field(pattern="^(account|dqs|strength|metabolism|recipes)$")
+
+
 def _aware(value: datetime) -> datetime:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
@@ -359,7 +364,7 @@ def telegram_miniapp_login(
 
 @router.post("/api/account-auth/max-miniapp")
 def max_miniapp_login(
-    body: TelegramMiniAppLoginIn,
+    body: MaxMiniAppLoginIn,
     response: Response,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
@@ -374,18 +379,20 @@ def max_miniapp_login(
         )
     )
     user = db.get(User, messenger.user_id) if messenger else None
-    if user is None:
+    if user is None or user.status != "active" or user.merged_into_user_id is not None:
         raise HTTPException(status.HTTP_403_FORBIDDEN, "MAX не привязан к личному кабинету")
-    resource_codes: str | tuple[str, ...] = {
+    resource_codes: str | tuple[str, ...] | None = {
+        "account": None,
         "dqs": "dqs",
         "strength": "strength",
         "metabolism": ("metabolism", "ACCESS_CALORIES"),
         "recipes": "recipes",
     }[body.app_code]
-    try:
-        require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
-    except AppAccessError as exc:
-        raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
+    if resource_codes is not None:
+        try:
+            require_user_resource(db, user, resource_codes, require_legal_acceptance=False)
+        except AppAccessError as exc:
+            raise HTTPException(status.HTTP_403_FORBIDDEN, str(exc)) from exc
     expires_at = set_native_session(response, db, user, settings)
     return {
         "ok": True,

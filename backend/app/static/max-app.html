@@ -28,6 +28,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var allowed = {
+        account: 'account',
         dqs: 'dqs',
         training: 'strength',
         strength: 'strength',
@@ -48,13 +49,11 @@
         root.className = 'max-app-home';
         root.innerHTML = [
           '<div class="max-app-home__inner">',
-          '<h1>Приложения</h1>',
-          '<p class="max-app-home__intro">Выберите нужный раздел. Доступ к нему проверится автоматически.</p>',
+          '<h1>Похудение — это есть!</h1>',
+          '<p class="max-app-home__intro">Выберите, куда перейти.</p>',
           '<div class="max-app-home__list">',
-          '<button class="max-app-home__button" type="button" data-max-app="dqs">Оценка качества питания <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
-          '<button class="max-app-home__button" type="button" data-max-app="strength">Силовые тренировки <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
-          '<button class="max-app-home__button" type="button" data-max-app="metabolism">Калькулятор метаболизма <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
-          '<button class="max-app-home__button" type="button" data-max-app="recipes">Калькулятор рецептов <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-link="https://похудение-это-есть.рф">Мастер-класс <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
+          '<button class="max-app-home__button" type="button" data-max-app="account">Личный кабинет <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
           '</div>',
           '<button class="max-app-home__button max-app-home__intensive" type="button" data-max-intense="true">Бесплатный интенсив <span class="max-app-home__arrow" aria-hidden="true">›</span></button>',
           '</div>'
@@ -64,6 +63,16 @@
             var target = new URL(location.href);
             target.searchParams.set('app', button.getAttribute('data-max-app'));
             location.assign(target.toString());
+          });
+        });
+        Array.prototype.forEach.call(root.querySelectorAll('[data-max-link]'), function (button) {
+          button.addEventListener('click', function () {
+            var url = button.getAttribute('data-max-link');
+            if (bridge && typeof bridge.openLink === 'function') {
+              bridge.openLink(url);
+            } else {
+              location.assign(url);
+            }
           });
         });
         root.querySelector('[data-max-intense]').addEventListener('click', function () {

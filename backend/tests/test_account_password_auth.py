@@ -290,6 +290,13 @@ def test_max_miniapp_creates_same_native_session_only_for_linked_entitled_user()
     assert accepted.json()["email"] == "member@example.test"
     assert accepted.cookies.get("edabalans_account_session")
 
+    account = client.post(
+        "/api/account-auth/max-miniapp",
+        json={"init_data": max_init_data(654321), "app_code": "account"},
+    )
+    assert account.status_code == 200
+    assert account.json()["app_code"] == "account"
+
     rejected = client.post(
         "/api/account-auth/max-miniapp",
         json={"init_data": max_init_data(999999), "app_code": "dqs"},
