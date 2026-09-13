@@ -142,6 +142,10 @@ def publish_draft(db: Session, version: PricingVersion, admin: str) -> None:
     current = active_pricing_version(db)
     if current is not None:
         current.status = "archived"
+        # PostgreSQL permits only one active pricing version.  Flush the
+        # archival before assigning the draft the active state so the unique
+        # constraint is respected independently of ORM update ordering.
+        db.flush()
     version.status = "active"
     version.activated_at = now
     version.effective_from = now

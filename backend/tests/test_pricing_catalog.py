@@ -219,6 +219,12 @@ def test_published_version_is_immutable_and_new_draft_is_a_copy() -> None:
     assert copied.status_code == 200
     assert copied.json()["version"]["version_number"] == 2
     assert copied.json()["version"]["entries"][0]["sale_amount"] == 15900
+    copied_id = copied.json()["version"]["id"]
+    republished = client.post(f"/admin/api/pricing/versions/{copied_id}/publish")
+    assert republished.status_code == 200
+    assert republished.json()["version"]["status"] == "active"
+    catalog = client.get("/admin/api/pricing")
+    assert [row["status"] for row in catalog.json()["versions"]].count("active") == 1
     app.dependency_overrides.clear()
 
 
