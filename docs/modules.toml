@@ -838,7 +838,7 @@ id = "operations.proxy"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.proxy.md"
 owns_files = [
-  "infra/caddy/**", "infra/telegram-proxy/**",
+  "infra/caddy/**", "infra/telegram-proxy/**", "infra/network/**",
   "docs/DOMAIN_CUTOVER_RUNBOOK.md",
 ]
 
