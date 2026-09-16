@@ -11,6 +11,7 @@ export function initialState() {
   return {
     version: 1,
     failureStreak: 0,
+    failureChecks: {},
     candidateFailureKey: null,
     firstFailureAt: null,
     incident: null,
@@ -49,6 +50,14 @@ export function normalizeState(value) {
     pendingAlerts: Array.isArray(value.pendingAlerts) ? value.pendingAlerts.slice(-20) : [],
   };
   state.report = { ...initialState().report, ...(value.report || {}) };
+  if (!value.failureChecks) {
+    // Preserve the pre-release streak when upgrading existing durable state.
+    state.failureChecks = Object.fromEntries(
+      String(value.candidateFailureKey || "").split(",").filter(Boolean).map((name) => [name, {
+        streak: value.failureStreak || 0, startedAt: value.firstFailureAt,
+      }]),
+    );
+  }
   if (state.incident) {
     state.incident.recoveryStreak ??= 0;
     state.incident.recoveryStartedAt ??= null;
@@ -137,10 +146,10 @@ function queueAlert(state, text) {
   state.pendingAlerts = state.pendingAlerts.slice(-20);
 }
 
-function incidentLabel(checks) {
-  if (!checks.platform.ok) return "основной российский сервер/API";
-  if (checks.max && !checks.max.ok) {
-    return checks.telegram.ok ? "MAX-бот или его путь к MAX" : "Telegram и MAX";
+function incidentLabel(confirmedFailures) {
+  if (confirmedFailures.includes("platform")) return "основной российский сервер/API";
+  if (confirmedFailures.includes("max")) {
+    return confirmedFailures.includes("telegram") ? "Telegram и MAX" : "MAX-бот или его путь к MAX";
   }
   return "Telegram-бот или его путь к Telegram";
 }
@@ -148,6 +157,10 @@ function incidentLabel(checks) {
 export function updateIncidentState(stateInput, checks, now, failuresBeforeIncident) {
   const state = normalizeState(stateInput);
   const failures = failedChecks(checks);
+  state.failureChecks = Object.fromEntries(failures.map((name) => [name, {
+    streak: (state.failureChecks[name]?.streak || 0) + 1,
+    startedAt: state.failureChecks[name]?.startedAt ?? now,
+  }]));
 
   if (failures.length === 0) {
     if (state.incident) {
@@ -162,28 +175,34 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
   }
 
   const failureKey = failures.slice().sort().join(",");
+  const confirmedFailures = failures.filter((name) => state.failureChecks[name].streak >= failuresBeforeIncident);
+  state.failureStreak = Math.max(...failures.map((name) => state.failureChecks[name].streak));
+  state.firstFailureAt = Math.min(...failures.map((name) => state.failureChecks[name].startedAt));
+  state.candidateFailureKey = failureKey;
   if (state.incident) {
     state.incident.recoveryStreak = 0;
     state.incident.recoveryStartedAt = null;
     state.incident.platformFailureStartedAt = checks.platform.ok
       ? null
-      : state.incident.platformFailureStartedAt ?? now;
+      : state.failureChecks.platform.startedAt;
+    if (state.incident.resumeAds.attempts > 0) {
+      // A partial or lost resume response may already have switched ads ON.
+      // Re-pause only campaigns owned by this incident, never expand that list.
+      state.incident.adsPause = {
+        ...actionState(), campaignIds: state.incident.adsPause.campaignIds || [], ownedOnly: true,
+      };
+      state.incident.resumeAds = actionState();
+    }
   }
-  if (!state.incident && state.candidateFailureKey !== failureKey) {
-    state.failureStreak = 0;
-    state.firstFailureAt = now;
-    state.candidateFailureKey = failureKey;
-  }
-  state.failureStreak += 1;
-  state.firstFailureAt ??= now;
 
-  if (!state.incident && state.failureStreak >= failuresBeforeIncident) {
+  if (!state.incident && confirmedFailures.length) {
+    const startedAt = Math.min(...confirmedFailures.map((name) => state.failureChecks[name].startedAt));
     state.incident = {
-      id: String(state.firstFailureAt),
-      startedAt: state.firstFailureAt,
+      id: String(startedAt),
+      startedAt,
       openedAt: now,
       lastFailures: failures,
-      confirmedFailures: failures,
+      confirmedFailures,
       boundaryCandidateKey: failureKey,
       boundaryStreak: state.failureStreak,
       ruReboot: actionState(),
@@ -191,24 +210,18 @@ export function updateIncidentState(stateInput, checks, now, failuresBeforeIncid
       resumeAds: actionState(),
       recoveryStreak: 0,
       recoveryStartedAt: null,
-      platformFailureStartedAt: checks.platform.ok ? null : state.firstFailureAt,
+      platformFailureStartedAt: checks.platform.ok ? null : state.failureChecks.platform.startedAt,
       missingConfigurationAlerts: {},
     };
     queueAlert(
       state,
-      `🚨 Бот не работает: ${incidentLabel(checks)}. Ошибка подтверждена ${state.failureStreak} проверками. ${checkDetails(checks)}`,
+      `🚨 Бот не работает: ${incidentLabel(confirmedFailures)}. Ошибка подтверждена ${state.failureStreak} проверками. ${checkDetails(checks)}`,
     );
   } else if (state.incident) {
     state.incident.lastFailures = failures;
-    if (state.incident.boundaryCandidateKey === failureKey) {
-      state.incident.boundaryStreak = (state.incident.boundaryStreak || 0) + 1;
-    } else {
-      state.incident.boundaryCandidateKey = failureKey;
-      state.incident.boundaryStreak = 1;
-    }
-    if (state.incident.boundaryStreak >= failuresBeforeIncident) {
-      state.incident.confirmedFailures = failures;
-    }
+    state.incident.boundaryCandidateKey = failureKey;
+    state.incident.boundaryStreak = state.failureStreak;
+    if (confirmedFailures.length) state.incident.confirmedFailures = confirmedFailures;
   }
 
   return state;
@@ -258,7 +271,8 @@ function actionPlan(state, checks, now, env) {
     actions.push({ key: "ruReboot", kind: "reboot", server: "RU", serverId: env.TIMEWEB_RU_SERVER_ID });
   }
   if (ageSeconds >= adsDelay) {
-    actions.push({ key: "adsPause", kind: "pause_ads" });
+    actions.push({ key: "adsPause", kind: "pause_ads",
+      ids: state.incident.adsPause.ownedOnly ? state.incident.adsPause.campaignIds : undefined });
   }
   return actions;
 }
@@ -278,7 +292,7 @@ function configurationFor(action, env) {
   }
   let ids;
   try {
-    ids = action.kind === "resume_ads" ? action.ids : campaignIds(env.YANDEX_CAMPAIGN_IDS);
+    ids = Array.isArray(action.ids) ? action.ids : campaignIds(env.YANDEX_CAMPAIGN_IDS);
   } catch (error) {
     return { ok: false, reason: String(error?.message || error) };
   }
