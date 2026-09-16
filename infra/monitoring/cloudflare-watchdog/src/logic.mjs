@@ -58,7 +58,7 @@ export function normalizeState(value) {
   return state;
 }
 
-export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS, requiredRoute = null) {
+export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS, requiredRoute = null, requiredMessenger = null) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -76,12 +76,15 @@ export async function probe(url, fetchImpl, timeoutMs = DEFAULT_TIMEOUT_MS, requ
     const declaredReady = body?.status === "ready";
     const route = typeof body?.telegram_route === "string" ? body.telegram_route : null;
     const routeMatches = !requiredRoute || route === requiredRoute;
+    const messengerMatches = !requiredMessenger || body?.messenger === requiredMessenger;
     return {
-      ok: response.ok && declaredReady && routeMatches,
+      ok: response.ok && declaredReady && routeMatches && messengerMatches,
       status: response.status,
       reasons: Array.isArray(body?.reasons) ? body.reasons.map(String).slice(0, 8) : [],
       route,
-      error: response.ok && declaredReady && !routeMatches
+      error: response.ok && declaredReady && !messengerMatches
+        ? "unexpected_messenger"
+        : response.ok && declaredReady && !routeMatches
         ? "unexpected_route"
         : response.ok && !declaredReady
           ? "unexpected_response"
@@ -136,6 +139,9 @@ function queueAlert(state, text) {
 
 function incidentLabel(checks) {
   if (!checks.platform.ok) return "основной российский сервер/API";
+  if (checks.max && !checks.max.ok) {
+    return checks.telegram.ok ? "MAX-бот или его путь к MAX" : "Telegram и MAX";
+  }
   return "Telegram-бот или его путь к Telegram";
 }
 
@@ -555,13 +561,14 @@ export async function runWatchdog(env, storage, options = {}) {
   if (!checks) {
     const timeoutMs = parsePositiveInteger(env.CHECK_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
     const requiredTelegramRoute = telegramRequiredRoute(env.TELEGRAM_REQUIRED_ROUTE);
-    const [platform, telegram] = await Promise.all([
+    const [platform, telegram, max] = await Promise.all([
       probe(env.PLATFORM_READY_URL, fetchImpl, timeoutMs),
       probe(env.TELEGRAM_READY_URL, fetchImpl, timeoutMs, requiredTelegramRoute),
+      env.MAX_READY_URL ? probe(env.MAX_READY_URL, fetchImpl, timeoutMs, null, "max") : null,
     ]);
     checks = { platform, telegram };
+    if (max) checks.max = max;
   }
-  const { platform, telegram } = checks;
   const previous = normalizeState(await storage.get("state"));
   const failuresBeforeIncident = parsePositiveInteger(
     env.FAILURES_BEFORE_INCIDENT,
@@ -606,7 +613,7 @@ export async function runWatchdog(env, storage, options = {}) {
   await flushAlerts(state, env, fetchImpl, storage);
 
   return {
-    ok: platform.ok && telegram.ok,
+    ok: failedChecks(checks).length === 0,
     checks,
     incident: state.incident?.id ?? null,
     failureStreak: state.failureStreak,

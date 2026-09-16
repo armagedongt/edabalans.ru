@@ -48,3 +48,5 @@ Production webhook обязан быть подписан как минимум 
 поэтому потери после кнопки или сканирования считаются так же, как для Telegram.
 
 Подробный канонический контракт: `docs/knowledge-base/modules/max/START_AND_ATTRIBUTION.md`.
+Доступность API, webhook и правила аварийного восстановления:
+[модуль `operations.health`](../../../runtime-health/README.md).

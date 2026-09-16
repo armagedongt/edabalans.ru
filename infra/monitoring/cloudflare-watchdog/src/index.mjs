@@ -36,9 +36,10 @@ export class WatchdogCoordinator {
       }
     }
     const drillState = request.headers.get("X-Watchdog-Drill");
+    const drillMessenger = request.headers.get("X-Watchdog-Drill-Messenger") === "max" ? "max" : "telegram";
     if (drillState) this.drillClock += HALF_MINUTE_MS;
     const options = drillState ? {
-      checks: drillState === "recover" ? healthyDrillChecks() : failingDrillChecks(),
+      checks: drillState === "recover" ? healthyDrillChecks() : failingDrillChecks(drillMessenger),
       skipActions: true,
       skipReport: true,
       now: this.drillClock,
@@ -71,15 +72,19 @@ export default {
 
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === "/drill/fail" || url.pathname === "/drill/recover") {
+    if (["/drill/fail", "/drill/recover", "/drill/max/fail", "/drill/max/recover"].includes(url.pathname)) {
       if (request.method !== "POST" || !env.DRILL_TOKEN || request.headers.get("Authorization") !== `Bearer ${env.DRILL_TOKEN}`) {
         return new Response("Not Found", { status: 404 });
       }
-      const id = env.WATCHDOG.idFromName("drill");
+      const messenger = url.pathname.startsWith("/drill/max/") ? "max" : "telegram";
+      const id = env.WATCHDOG.idFromName(messenger === "max" ? "drill-max" : "drill");
       const stub = env.WATCHDOG.get(id);
       return stub.fetch("https://watchdog.internal/run", {
         method: "POST",
-        headers: { "X-Watchdog-Drill": url.pathname.endsWith("recover") ? "recover" : "fail" },
+        headers: {
+          "X-Watchdog-Drill": url.pathname.endsWith("recover") ? "recover" : "fail",
+          "X-Watchdog-Drill-Messenger": messenger,
+        },
       });
     }
     return Response.json({ status: "ok", service: "edabalans-watchdog" });
@@ -90,12 +95,12 @@ function healthyDrillChecks() {
   return {
     platform: { ok: true, status: 200, reasons: [], route: null, error: null },
     telegram: { ok: true, status: 200, reasons: [], route: "drill", error: null },
+    max: { ok: true, status: 200, reasons: [], error: null },
   };
 }
 
-function failingDrillChecks() {
-  return {
-    platform: { ok: true, status: 200, reasons: [], route: null, error: null },
-    telegram: { ok: false, status: 503, reasons: ["isolated_drill"], route: "drill", error: null },
-  };
+function failingDrillChecks(messenger) {
+  const checks = healthyDrillChecks();
+  checks[messenger] = { ...checks[messenger], ok: false, status: 503, reasons: ["isolated_drill"] };
+  return checks;
 }

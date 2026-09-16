@@ -236,6 +236,7 @@ backups/
 
 # Local operational exports can contain client personal data. Never commit them.
 outputs/
+.tmp/
 
 # LeadTeh export: credentials and exported account data stay local.
 leadteh-export/.env

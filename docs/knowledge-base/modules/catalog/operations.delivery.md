@@ -14,12 +14,7 @@ implementation_status: implemented
 - классифицировать влияние commit на данные, backend, Telegram, Caddy и Compose;
 - строить, тестировать и перезапускать только затронутые сервисы;
 - блокировать автоматический deploy при migration или провале checks;
-- локально перезапускать зависший Telegram-контейнер;
-- независимо проверять production с Cloudflare и запускать согласованное аварийное восстановление;
-- при подтверждённой недоступности Telegram останавливать рекламные кампании без
-  бесполезной перезагрузки серверов, а после двух полных минут непрерывно
-  успешных 30-секундных проверок (не менее четырёх наблюдений)
-  возобновлять только кампании, остановленные автоматикой в этом incident;
+- проверять readiness подключённых ботов после server deploy;
 - забирать публичный `main` через зафиксированный HTTP/1.1, не завися от
   нестабильного HTTP/2 Git-транспорта текущей VM;
 
@@ -31,10 +26,12 @@ Production smoke-check проверяет единый `/favicon.ico` на вс�
 ## Граница
 
 Push, CI и deploy — разные технические этапы одного маршрута.
+Наблюдение, incident и аварийное восстановление принадлежат `operations.health`:
+[единый README](../../../runtime-health/README.md).
 
 ## Источники истины
 
-GitHub workflow, deploy poll/script, `infra/monitoring/` и `docs/OPERATIONS.md`.
+GitHub workflow, deploy poll/script и `docs/OPERATIONS.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

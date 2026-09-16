@@ -751,7 +751,7 @@ owns_tables = [
 owns_routes = ["*/bot", "*/bot/*", "*/bot-api/*"]
 depends_on = ["platform.crm", "platform.commerce"]
 sources = [
-  { path = "telegram-bot/service/app/main.py", role = "runtime", shared = true, consumers = ["messaging.max"] },
+  { path = "telegram-bot/service/app/main.py", role = "runtime", shared = true, consumers = ["messaging.max", "operations.health"] },
   { path = "telegram-bot/service/app/config.py", role = "config", shared = true, consumers = ["messaging.max"] },
 ]
 
@@ -821,24 +821,38 @@ owns_tables = ["alembic_version"]
 id = "operations.delivery"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.delivery.md"
-depends_on = ["operations.database", "operations.backup", "operations.proxy"]
+depends_on = ["operations.database", "operations.backup", "operations.proxy", "operations.health"]
 owns_files = [
   ".github/workflows/production.yml", "backend/.dockerignore", "backend/Dockerfile",
   "backend/requirements*.txt", "infra/deploy/**", "infra/docker/**",
-  "infra/monitoring/**", "infra/systemd/edabalans-deploy-poll.*",
-  "infra/systemd/edabalans-telegram-watchdog.*", "docs/OPERATIONS.md",
+  "infra/systemd/edabalans-deploy-poll.*", "docs/OPERATIONS.md",
   "backend/app/__init__.py", "backend/app/config.py", "backend/app/main.py",
-  "backend/tests/test_health.py", "tools/tests/test_deploy_policy.py",
+  "backend/tests/test_health.py", "tools/tests/test_deploy_policy.py", "tools/tests/test_max_health_deploy.py",
   "infra/fail2ban/**", "infra/scripts/install-docker.sh",
 ]
 owns_routes = ["*/health", "*/ready"]
+
+[[modules]]
+id = "operations.health"
+parent = "operations"
+card = "docs/knowledge-base/modules/catalog/operations.health.md"
+depends_on = ["operations.database", "operations.proxy", "messaging.telegram.engine", "messaging.max"]
+reads_from = ["messaging.telegram.engine", "messaging.max"]
+owns_files = [
+  "docs/runtime-health/**", "infra/network/**",
+  "infra/monitoring/cloudflare-watchdog/**",
+  "infra/monitoring/edabalans-telegram-watchdog", "infra/monitoring/test-telegram-watchdog.sh",
+  "infra/systemd/edabalans-telegram-watchdog.*",
+  "telegram-bot/service/app/max_health.py", "telegram-bot/service/tests/test_max_health.py",
+]
+owns_routes = ["*/ready/max"]
 
 [[modules]]
 id = "operations.proxy"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.proxy.md"
 owns_files = [
-  "infra/caddy/**", "infra/telegram-proxy/**", "infra/network/**",
+  "infra/caddy/**", "infra/telegram-proxy/**", "infra/monitoring/cloudflare-telegram-relay/**",
   "docs/DOMAIN_CUTOVER_RUNBOOK.md",
 ]
 

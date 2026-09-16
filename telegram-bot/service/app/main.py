@@ -34,6 +34,7 @@ from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
+from app.max_health import MAX_CHECK_INTERVAL_SECONDS, MaxHealth, check_max_dependencies
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, PublicMessengerStartLinkIn, PublicMessengerTouchIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables, variable_is_allowed
 from app.content_formatting import SUPPORTED_SOURCE_FORMATS, is_placeholder_text, replace_template_values, validate_telegram_html
@@ -67,6 +68,7 @@ class RuntimeHealth:
 
 
 runtime_health = RuntimeHealth()
+max_health = MaxHealth()
 last_metrika_sync_monotonic: float | None = None
 TELEGRAM_UPDATE_MAX_ATTEMPTS = 3
 telegram_update_failures: dict[str, int] = {}
@@ -498,6 +500,25 @@ async def metrika_sync_loop() -> None:
         )
 
 
+async def max_health_loop() -> None:
+    while True:
+        try:
+            max_health.reasons = await asyncio.to_thread(
+                check_max_dependencies,
+                max_client(),
+                f"{settings.telegram_public_base_url.rstrip('/')}/api/messaging/max/webhook",
+                settings.max_webhook_secret,
+            )
+            max_health.checked_at = time.monotonic()
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            max_health.reasons = ["max_check_failed"]
+            max_health.checked_at = time.monotonic()
+            logger.error("MAX dependency check failed")
+        await asyncio.sleep(MAX_CHECK_INTERVAL_SECONDS)
+
+
 async def polling_loop() -> None:
     tg = TelegramClient(
         settings.telegram_test_bot_token,
@@ -585,6 +606,8 @@ async def lifespan(_: FastAPI):
             enable_subscription_checks=bool(settings.telegram_channel_id),
         )
     tasks = []
+    if settings.max_bot_token:
+        tasks.append(asyncio.create_task(max_health_loop()))
     if settings.scheduler_enabled:
         tasks.append(asyncio.create_task(scheduler_loop()))
     if (
@@ -854,6 +877,28 @@ def ready(db: Session = Depends(get_db)) -> JSONResponse:
                 else "direct"
             ),
         },
+    )
+
+
+@app.get("/ready/max")
+def max_ready(db: Session = Depends(get_db)) -> JSONResponse:
+    reasons = []
+    if not settings.max_bot_token:
+        reasons.append("max_token_missing")
+    if not settings.max_webhook_secret:
+        reasons.append("max_webhook_secret_missing")
+    if not settings.telegram_public_base_url:
+        reasons.append("max_public_url_missing")
+    reasons.extend(reason for reason in _runtime_failure_reasons() if reason.startswith("scheduler_"))
+    reasons.extend(max_health.failure_reasons())
+    try:
+        db.execute(text("SELECT 1"))
+    except Exception:
+        reasons.append("database_unavailable")
+    return JSONResponse(
+        status_code=503 if reasons else 200,
+        content={"status": "unavailable" if reasons else "ready", "reasons": reasons, "messenger": "max"},
+        headers={"Cache-Control": "no-store"},
     )
 
 

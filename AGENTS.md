@@ -237,5 +237,7 @@
 - Теги: перед очисткой, переименованием, объединением, импортом или обратной выгрузкой
   полностью читать `docs/TAG_RULES.md`.
 - Production и эксплуатация: `docs/OPERATIONS.md`.
+- Доступность сервера/Telegram/MAX, аварии, уведомления, DNS, тесты и restart:
+  модуль `operations.health`, единая точка входа `docs/runtime-health/README.md`.
 - Параллельные чаты: `docs/CHAT_WORKSTREAMS.md`; два потока не меняют один canonical
   source одновременно.
