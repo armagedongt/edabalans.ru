@@ -1,0 +1,188 @@
+# User-spec planning interview
+# Questions and answers are preserved verbatim. Topic fields track what is known and still open.
+
+interview_metadata:
+  started: "2026-09-16"
+  last_updated: "2026-09-16"
+  status: "in_progress"  # in_progress | completed
+  can_resume: true
+
+conversation_history:
+  - asked_at: "2026-09-16"
+    topic_keys: ["feature_description", "user_problem", "constraints", "user_stories"]
+    agent_questions: |
+      Предыдущий ответ предложил explicit Markdown publishing, без публикации при сохранении,
+      и сначала полный цикл выбранного материала МК с картинкой.
+    user_answer: |
+      Никаких ручных копирований в админку, сборки страницы или команд Git от тебя. Впоследствии ту же операцию можно сделать кнопкой в Obsidian. **Такая кнопка пока не настроена.**   а как это сделать? сложно? какие минусы?&#x20;
+
+      да согласен с Сохранение файла само по себе не должно запускать публикацию: иначе незаконченная фраза тоже попадёт ученикам. &#x20;
+
+      да давай сделаем на примере всего мк. и свяжем это с ли и полностью настроим. чтобы я потом просто в мд мог править.&#x20;
+
+      тогда по мк у нас какой набор должен быть? все там в старом чате присутствет вроде я уже проавил его.&#x20;
+
+      там оглавление название материалов. текст внутри дня и задания, и отдельно все материалы. верно? это всё?
+# Entry format:
+# - asked_at: "YYYY-MM-DD HH:MM:SS"
+#   topic_keys: ["user_problem", "success_criteria"]
+#   agent_questions: |
+#     Full question batch, verbatim.
+#   user_answer: |
+#     Full user answer, verbatim.
+
+general_understanding:
+  feature_name:
+    score: 95
+    value: "Публикация Мастер-класса из Obsidian Markdown в существующий ЛК"
+    gaps: []
+    required: true
+
+  feature_description:
+    score: 85
+    value: "Редактирование program, days, материалов и картинок в Markdown; публикация только по явной команде или кнопке, без ручного Git и копирования. ЛИ трактуется как существующий ЛК."
+    gaps: ["Уточнить охват вопросов анкет и механизм выбора публикации"]
+    required: true
+
+  work_type:
+    score: 95
+    value: "feature: расширение существующего версионного публикационного контура"
+    gaps: []
+    required: true
+
+  user_problem:
+    score: 95
+    value: "Автор хочет править тексты в Obsidian и минимальными усилиями обновлять МК, не разбираясь в API, deploy и разных источниках."
+    gaps: []
+    required: true
+
+  target_users:
+    score: 0
+    value: ""
+    gaps: ["Identify affected users when applicable"]
+    required: false
+
+  success_criteria:
+    score: 0
+    value: ""
+    gaps: ["Define concrete observable success"]
+    required: true
+
+  constraints:
+    score: 90
+    value: "Без автопубликации при сохранении; сохранять авторский текст, стабильные ID и прогресс; переиспользовать ЛК и API; картинки обязательны как поддерживаемая часть; исходная папка и последние правки требуют подтверждения."
+    gaps: []
+    required: true
+
+  testing_strategy:
+    score: 0
+    value: ""
+    gaps: ["Map behavioral risks to the smallest reliable checks"]
+    required: true
+
+user_experience:
+  user_stories:
+    score: 0
+    value: ""
+    gaps: ["Describe applicable user flows step by step"]
+    required: true
+
+  acceptance_criteria:
+    score: 0
+    value: ""
+    gaps: ["Define testable acceptance criteria"]
+    required: true
+
+  edge_cases:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable boundaries and unusual scenarios"]
+    required: true
+
+  error_scenarios:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable failures and expected behavior"]
+    required: true
+
+  verification_strategy:
+    score: 0
+    value: ""
+    gaps: ["Define how the agent and user will verify the result"]
+    required: true
+
+  ui_ux_requirements:
+    score: 0
+    value: ""
+    gaps: ["Describe UI or UX requirements when applicable"]
+    required: false
+
+  risks:
+    score: 0
+    value: ""
+    gaps: ["Identify applicable risks and mitigations"]
+    required: true
+
+  technical_decisions:
+    score: 0
+    value: ""
+    gaps: ["Record material technical decisions and rejected alternatives"]
+    required: false
+
+  deploy_approach:
+    score: 0
+    value: ""
+    gaps: ["Describe deployment and required configuration when applicable"]
+    required: false
+
+  manual_user_actions:
+    score: 0
+    value: ""
+    gaps: ["List manual setup or launch actions when applicable"]
+    required: false
+
+integration:
+  integration_points:
+    score: 0
+    value: ""
+    gaps: ["Identify where the change fits in the current system"]
+    required: true
+
+  dependencies:
+    score: 0
+    value: ""
+    gaps: ["Identify relevant existing features, services, or libraries"]
+    required: false
+
+  technical_constraints:
+    score: 0
+    value: ""
+    gaps: ["Resolve applicable performance, security, or platform limits"]
+    required: false
+
+  data_requirements:
+    score: 0
+    value: ""
+    gaps: ["Describe required data, sources, destinations, and persistence"]
+    required: false
+
+  migration_needs:
+    score: 0
+    value: ""
+    gaps: ["Describe migration and compatibility needs when applicable"]
+    required: false
+
+pending_question_batch:
+  asked_at: "2026-09-16"
+  agent_questions: |
+    1. Как называется старый чат с твоей последней правкой МК? Это нужно, чтобы взять именно её, а не более ранний редакторский пакет.
+    2. Вопросы анкет и подсказки тоже делаем редактируемыми в Markdown? Рекомендую да, но без изменения типов полей, расчётов и логики анкеты.
+    3. Делаем две команды: «Опубликовать текущий файл» и «Опубликовать изменения МК» — вторую со списком затронутых файлов и подтверждением? Рекомендую именно так.
+  status: answered_scope_changed
+  user_answer_excerpt: |
+    Первое: какой чат? Я не знаю. Скорее всего это либо Яндекс.Директ, либо VSL, кто-то из них. Либо дизайн. Напиши им, выясни сам.
+    Второе: вопросы-анкеты, подсказки — тоже делаем в редактируемом MD.
+    Давай пока не будем. Давай пока мне просто дай отредачить, и я тебя тут попрошу потом всё это сделать просто вручную.
+  resolution: "Связаться с тремя чатами; сначала утверждение найденного источника, потом каталог по дням. API и кнопки отложены. Анкетные тексты включены, DQS исключён. Независимо разрешён локальный тест форматирования. Это выписки, не полный транскрипт ответа; детальный контекст — checkpoint.md и source-confirmation.md."
+
+notes: "Research-only preparation. Сборщик main пишет напрямую в DB; HTTP API полного editorial package отсутствует. Анкетные вопросы и access gates не включены в полный Markdown publish. До выбора канонического источника и раскрытия первой публикации production не менять."

@@ -101,6 +101,11 @@ MCP-доступ принадлежат `platform.knowledge`; этот моду�
 
 ## Источники истины
 
+Синтаксис переноса обычных Markdown-материалов в семантические роли принадлежит
+`docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md` (draft, локальный прототип).
+Общая редактируемая библиотека и шаблоны Obsidian — `content/article-components/`.
+Она не заменяет ARTICLE_STANDARD и не означает готовность publication API.
+
 Единый нормативный канон принадлежит этому модулю:
 `content/author-voice/writer-contract-v1.md` владеет голосом, аргументацией и
 продажами, `authoring-work-profiles-v1.md` — выбором авторского маршрута,

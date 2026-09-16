@@ -1,0 +1,160 @@
+# User-spec planning interview
+# Questions and answers are preserved verbatim. Topic fields track what is known and still open.
+
+interview_metadata:
+  started: "2026-09-16"
+  last_updated: "2026-09-16"
+  status: "in_progress"  # in_progress | completed
+  can_resume: true
+
+conversation_history: []
+# Entry format:
+# - asked_at: "YYYY-MM-DD HH:MM:SS"
+#   topic_keys: ["user_problem", "success_criteria"]
+#   agent_questions: |
+#     Full question batch, verbatim.
+#   user_answer: |
+#     Full user answer, verbatim.
+
+general_understanding:
+  feature_name:
+    score: 90
+    value: "obsidian-source-catalog"
+    gaps: []
+    required: true
+
+  feature_description:
+    score: 90
+    value: "Навигация по существующим модулям, курсам, сообщениям и навыкам без редактуры источников"
+    gaps: []
+    required: true
+
+  work_type:
+    score: 90
+    value: "feature: локальный каталог"
+    gaps: []
+    required: true
+
+  user_problem:
+    score: 90
+    value: "Невозможно проверить принятые правила и зависшие версии без пересказа чата"
+    gaps: []
+    required: true
+
+  target_users:
+    score: 90
+    value: "Сергей"
+    gaps: []
+    required: false
+
+  success_criteria:
+    score: 90
+    value: "Открываемые источники и явные пробелы по всем запрошенным областям"
+    gaps: []
+    required: true
+
+  constraints:
+    score: 90
+    value: "Не оптимизировать, редактировать, перемещать и удалять источники; не публиковать"
+    gaps: []
+    required: true
+
+  testing_strategy:
+    score: 90
+    value: "Сверка покрытия регистров, ссылок, версий и hash; diff исходников"
+    gaps: []
+    required: true
+
+user_experience:
+  user_stories:
+    score: 90
+    value: "Главная → курс → день → текст; цепочка → Telegram/MAX → сообщение; модуль → источники; навык → зависимости"
+    gaps: []
+    required: true
+
+  acceptance_criteria:
+    score: 90
+    value: "Каждый запрошенный объект связан с источником либо отмечен доказуемым пробелом"
+    gaps: []
+    required: true
+
+  edge_cases:
+    score: 90
+    value: "Спорные версии показываются рядом без назначения канона; отсутствующие варианты каналов не сочинять"
+    gaps: []
+    required: true
+
+  error_scenarios:
+    score: 90
+    value: "Недоступность API/файла блокирует лишь этот объект и отражается в отчёте"
+    gaps: []
+    required: true
+
+  verification_strategy:
+    score: 90
+    value: "Проверка ссылок Obsidian, существования путей, покрытия и неизменности источников"
+    gaps: []
+    required: true
+
+  ui_ux_requirements:
+    score: 90
+    value: "Обычные MD-навигационные страницы без обязательных плагинов"
+    gaps: []
+    required: false
+
+  risks:
+    score: 90
+    value: "Dirty old branch, живые редакторские потоки, неверное принятие и личные данные"
+    gaps: []
+    required: true
+
+  technical_decisions:
+    score: 90
+    value: "Каталог — представление над existing registry, не новый канон"
+    gaps: []
+    required: false
+
+  deploy_approach:
+    score: 90
+    value: "Локально без API writes и deploy; draft ТЗ не отправлять автоматически в main"
+    gaps: []
+    required: false
+
+  manual_user_actions:
+    score: 90
+    value: "Открыть стартовую страницу; главную спорную версию решать отдельно"
+    gaps: []
+    required: false
+
+integration:
+  integration_points:
+    score: 90
+    value: "docs/modules.toml, карточки модулей, course manifests, bot graph, skill packages"
+    gaps: []
+    required: true
+
+  dependencies:
+    score: 90
+    value: "Существующие файловые экспорты, Git, доступный read-only API"
+    gaps: []
+    required: false
+
+  technical_constraints:
+    score: 90
+    value: "Не переключать dirty checkout; не вводить junctions и новые сервисы"
+    gaps: []
+    required: false
+
+  data_requirements:
+    score: 90
+    value: "Публичные/продуктовые тексты и правила без клиентских выгрузок, credentials и здоровья"
+    gaps: []
+    required: false
+
+  migration_needs:
+    score: 90
+    value: "Миграции источников в первой фазе нет"
+    gaps: []
+    required: false
+
+notes: "Начальное описание — прямое поручение владельца в задаче 01a058af-c16b-7500-98e5-3b7f86d6f7c7 от 2026-09-16. Дополнительных вопросов и ответов в этой фазе нет; conversation_history пока пуст. Источники discoverable, спорные версии не выбираем. Одобрение готового ТЗ пока не получено."

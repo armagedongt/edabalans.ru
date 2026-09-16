@@ -1,0 +1,7 @@
+/* Placement contract; Design owns the final visual tokens and geometry. */
+#article .article-actions{display:flex;flex-direction:column;align-items:flex-start;gap:12px;margin:24px 0}
+#article .article-actions a{display:block;box-sizing:border-box;max-width:100%;min-height:44px;padding:12px 20px;border-radius:12px;background:var(--article-action-bg,#1769D2);color:var(--article-action-color,#fff);font:600 16px/1.4 Inter,sans-serif;text-align:center;text-decoration:none;overflow-wrap:anywhere}
+#article .article-actions a:focus-visible{outline:3px solid #1769D2;outline-offset:4px}
+#article .article-actions-row{flex-direction:row;flex-wrap:wrap}
+#article .article-actions-center{align-items:center}
+@media(max-width:620px){#article .article-actions-row{flex-direction:column;align-items:stretch}#article .article-actions a{width:100%}}

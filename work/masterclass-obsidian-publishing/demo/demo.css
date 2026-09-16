@@ -1,0 +1,40 @@
+/* Local prototype of ARTICLE_STANDARD. Not a new production stylesheet. */
+@font-face{font-family:Inter;src:url('/fonts/inter-cyrillic.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:Inter;src:url('/fonts/inter-latin.woff2') format('woff2');font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+2000-206F}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:#252525;font:18px/1.65 Inter,Arial,sans-serif}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 24px;border-bottom:1px solid #E5E7EB;background:#F2F2F2;font-size:14px}
+a{color:#1769D2;font-weight:600;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+a:focus-visible,summary:focus-visible{outline:3px solid #1769D2;outline-offset:4px}
+main{width:min(100%,840px);margin:auto;padding:32px 40px 64px}
+.demo-status{font-size:14px;color:#666;margin:0 0 20px}
+.article h1{font-size:clamp(38px,5vw,62px);font-weight:800;line-height:1.05;margin:0 0 28px;overflow-wrap:anywhere}
+.article h2{font-size:29px;font-weight:800;line-height:1.2;margin:44px 0 14px;scroll-margin-top:24px}
+.article h3{font-size:23px;font-weight:800;line-height:1.25;margin:32px 0 10px;scroll-margin-top:24px}
+.article p{margin:0 0 18px;overflow-wrap:anywhere}
+.article strong{font-weight:600}
+.article ul,.article ol{padding-left:26px;margin:20px 0}
+.article li{margin-bottom:8px;overflow-wrap:anywhere}
+.article blockquote{border-left:4px solid #C95B3D;padding:0 0 0 20px;margin:24px 0;font-size:22px;font-weight:600;line-height:1.45}
+.article .editorial-note{background:#FFF0E8;color:#3A2A24;border-radius:16px;padding:18px 20px;margin:24px 0;font-size:17px;line-height:1.6}
+.article .editorial-note>strong{display:block;color:#934329;font-size:16px;font-weight:600;margin-bottom:8px}
+.article .editorial-note p:last-child{margin-bottom:0}
+.article figure{margin:0 0 28px}
+.article figure img{display:block;width:100%;height:auto;border-radius:0}
+.article figcaption{font-size:14px;color:#666;margin-top:8px}
+.article-table-wrap{max-width:100%;overflow-x:auto;margin:20px 0 28px}
+.article-data-table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+.article-data-table th,.article-data-table td{padding:12px 14px;border:1px solid #E5E7EB;text-align:left;vertical-align:top}
+.article-data-table th{background:#F2F2F2;font-weight:600}
+.contents{border:1px solid #E5E7EB;border-radius:12px;padding:12px 16px;margin-bottom:28px;background:#fff}
+.contents summary{cursor:pointer;font-weight:600;font-size:16px}
+.contents nav{display:grid;gap:6px;padding-top:12px;font-size:15px}
+.contents a{display:block;padding:4px 0}
+.contents .level-h3{padding-left:18px;font-weight:400}
+.material-card{display:grid;gap:8px;border:1px solid #E5E7EB;border-radius:16px;padding:22px;margin:24px 0;text-decoration:none;background:#F2F2F2}
+.material-card strong{font-size:23px}
+.material-card span{font-size:14px}
+.material-card:hover{border-color:#1769D2}
+.files{margin-top:36px;font-size:14px}
+footer{padding:20px;text-align:center;font-size:13px;color:#666;border-top:1px solid #E5E7EB}
+@media(max-width:620px){body{font-size:17px}.top{padding:12px 16px;flex-wrap:wrap;gap:6px}.top span{width:100%;font-size:12px}main{padding:24px 16px 48px}.article h1{margin-bottom:22px}.article h2{font-size:25px}.article h3{font-size:21px}.article blockquote{font-size:20px}.article .editorial-note{padding:16px}}

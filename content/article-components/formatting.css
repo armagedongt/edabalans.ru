@@ -1,0 +1,5 @@
+/* Prototype theme. Scope is the article root, not the surrounding LK. */
+#article mark{background:var(--article-highlight-bg,#FFF6C9);color:inherit;border-radius:3px;padding:0 2px}
+#article del{color:inherit;opacity:1}
+#article hr{border:0;height:1px;background:linear-gradient(90deg,transparent,rgba(37,37,37,.24),transparent);width:min(280px,70%);margin:36px auto}
+#article img{max-width:100%;height:auto}

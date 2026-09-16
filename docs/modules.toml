@@ -128,6 +128,7 @@ owns_files = [
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
   "docs/knowledge-base/ARTICLE_STANDARD.md",
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
+  "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md", "content/article-components/**",
   "content/author-voice/**",
   "content/author-voice/CALIBRATION_V1.md",
   "content/author-voice/correction-nutritionists-law-v1.json",

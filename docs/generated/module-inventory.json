@@ -1486,6 +1486,54 @@
     },
     {
       "module_id": "platform.content",
+      "path": "content/article-components/DESIGN_HANDOFF.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/OBSIDIAN_CHEATSHEET.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/README.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/actions.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/copy.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/formatting.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/note.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/obsidian-templates/Кнопки в строку.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/obsidian-templates/Кнопки по центру.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/obsidian-templates/Кнопки слева.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/status-list.css"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "content/article-components/table.css"
+    },
+    {
+      "module_id": "platform.content",
       "path": "content/author-voice/CALIBRATION_V1.md"
     },
     {
@@ -2889,6 +2937,10 @@
       "path": "docs/DOMAIN_CUTOVER_RUNBOOK.md"
     },
     {
+      "module_id": "products",
+      "path": "docs/FINANCE_MODEL.md"
+    },
+    {
       "module_id": "products.intensive",
       "path": "docs/INTENSIVE_PAGES.md"
     },
@@ -2967,6 +3019,10 @@
     {
       "module_id": "platform.commerce",
       "path": "docs/knowledge-base/LEGAL_DOCUMENTS.md"
+    },
+    {
+      "module_id": "platform.content",
+      "path": "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md"
     },
     {
       "module_id": "admin.project-knowledge",
@@ -3590,6 +3646,10 @@
     },
     {
       "module_id": "operations.delivery",
+      "path": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs"
+    },
+    {
+      "module_id": "operations.delivery",
       "path": "infra/monitoring/cloudflare-watchdog/test/watchdog.test.mjs"
     },
     {
@@ -3603,6 +3663,10 @@
     {
       "module_id": "operations.delivery",
       "path": "infra/monitoring/test-telegram-watchdog.sh"
+    },
+    {
+      "module_id": "operations.proxy",
+      "path": "infra/network/10-netplan-eth0.network.d/90-edabalans-dns.conf"
     },
     {
       "module_id": "operations.backup",
@@ -6897,6 +6961,82 @@
       "path": "work/masterclass-editorial-finalization-2026-08-31/validate_and_publish_remaining.py"
     },
     {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/checkpoint.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/01-99 — Тест переноса Markdown.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/README.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/VERIFICATION.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/demo.css"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/lk-bootstrap.js"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/lk-preview.css"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/md-copy.js"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/serve_demo.py"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/smoke.mjs"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/test_demo.py"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/Возможности Obsidian — лаборатория.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/Карта переноса.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/demo/Шпаргалка Markdown.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/source-confirmation.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/masterclass-obsidian-publishing/user-spec.md"
+    },
+    {
       "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/TASK_LIST.md"
     },
@@ -6919,6 +7059,82 @@
     {
       "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/user-spec.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Telegram.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Главная.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Интенсив.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Как открыть Obsidian.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Мастер-класс.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Модули — описание.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Модули.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Навыки — назначение.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Навыки.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Рабочие версии.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Ручные дополнения.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Старт.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/catalog/Стили.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/checkpoint.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/transition-plan.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/obsidian-source-catalog/user-spec.md"
     },
     {
       "module_id": "products.public-site",
@@ -21081,6 +21297,10 @@
         },
         {
           "module_id": "operations.delivery",
+          "path": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs"
+        },
+        {
+          "module_id": "operations.delivery",
           "path": "infra/monitoring/cloudflare-watchdog/test/watchdog.test.mjs"
         },
         {
@@ -21525,6 +21745,38 @@
           "module_id": "operations.delivery",
           "name": "runDailyReport",
           "qualname": "runDailyReport"
+        },
+        {
+          "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+          "kind": "function",
+          "line": 12,
+          "module_id": "operations.delivery",
+          "name": "incidentStorage",
+          "qualname": "incidentStorage"
+        },
+        {
+          "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+          "kind": "function",
+          "line": 22,
+          "module_id": "operations.delivery",
+          "name": "recoveryHarness",
+          "qualname": "recoveryHarness"
+        },
+        {
+          "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+          "kind": "function",
+          "line": 33,
+          "module_id": "operations.delivery",
+          "name": "fetchImpl",
+          "qualname": "fetchImpl"
+        },
+        {
+          "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+          "kind": "function",
+          "line": 47,
+          "module_id": "operations.delivery",
+          "name": "run",
+          "qualname": "run"
         },
         {
           "file": "infra/monitoring/cloudflare-watchdog/test/watchdog.test.mjs",
@@ -27216,6 +27468,158 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/checkpoint.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/01-99 — Тест переноса Markdown.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/README.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/VERIFICATION.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/demo.css"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/lk-bootstrap.js"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/lk-preview.css"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/md-copy.js"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/serve_demo.py"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/smoke.mjs"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/test_demo.py"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/Возможности Obsidian — лаборатория.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/Карта переноса.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/demo/Шпаргалка Markdown.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/source-confirmation.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/masterclass-obsidian-publishing/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Telegram.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Главная.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Интенсив.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Как открыть Obsidian.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Мастер-класс.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Модули — описание.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Модули.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Навыки — назначение.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Навыки.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Рабочие версии.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Ручные дополнения.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Старт.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/catalog/Стили.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/checkpoint.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/transition-plan.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/obsidian-source-catalog/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/recipe-catalog/code-research.md"
         },
         {
@@ -27921,6 +28325,382 @@
           "qualname": "main"
         },
         {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 27,
+          "module_id": "operations.project-work",
+          "name": "git_file",
+          "qualname": "git_file"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 34,
+          "module_id": "operations.project-work",
+          "name": "load_renderer",
+          "qualname": "load_renderer"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 51,
+          "module_id": "operations.project-work",
+          "name": "inline_formatting",
+          "qualname": "inline_formatting"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 76,
+          "module_id": "operations.project-work",
+          "name": "encoded_component",
+          "qualname": "encoded_component"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 81,
+          "module_id": "operations.project-work",
+          "name": "basic_blocks",
+          "qualname": "basic_blocks"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 106,
+          "module_id": "operations.project-work",
+          "name": "protect_inline",
+          "qualname": "basic_blocks.protect_inline"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 119,
+          "module_id": "operations.project-work",
+          "name": "image_links",
+          "qualname": "image_links"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "class",
+          "line": 148,
+          "module_id": "operations.project-work",
+          "name": "Contents",
+          "qualname": "Contents"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 149,
+          "module_id": "operations.project-work",
+          "name": "__init__",
+          "qualname": "Contents.__init__"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 155,
+          "module_id": "operations.project-work",
+          "name": "handle_starttag",
+          "qualname": "Contents.handle_starttag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 160,
+          "module_id": "operations.project-work",
+          "name": "handle_data",
+          "qualname": "Contents.handle_data"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 164,
+          "module_id": "operations.project-work",
+          "name": "handle_endtag",
+          "qualname": "Contents.handle_endtag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "class",
+          "line": 170,
+          "module_id": "operations.project-work",
+          "name": "InlineLiterals",
+          "qualname": "InlineLiterals"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 172,
+          "module_id": "operations.project-work",
+          "name": "__init__",
+          "qualname": "InlineLiterals.__init__"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 177,
+          "module_id": "operations.project-work",
+          "name": "handle_starttag",
+          "qualname": "InlineLiterals.handle_starttag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 180,
+          "module_id": "operations.project-work",
+          "name": "handle_endtag",
+          "qualname": "InlineLiterals.handle_endtag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 183,
+          "module_id": "operations.project-work",
+          "name": "handle_data",
+          "qualname": "InlineLiterals.handle_data"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 190,
+          "module_id": "operations.project-work",
+          "name": "obsidian_spoilers",
+          "qualname": "obsidian_spoilers"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 249,
+          "module_id": "operations.project-work",
+          "name": "spoiler_component",
+          "qualname": "spoiler_component"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "class",
+          "line": 300,
+          "module_id": "operations.project-work",
+          "name": "ResponsiveTables",
+          "qualname": "ResponsiveTables"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 302,
+          "module_id": "operations.project-work",
+          "name": "__init__",
+          "qualname": "ResponsiveTables.__init__"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 310,
+          "module_id": "operations.project-work",
+          "name": "handle_starttag",
+          "qualname": "ResponsiveTables.handle_starttag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 327,
+          "module_id": "operations.project-work",
+          "name": "handle_data",
+          "qualname": "ResponsiveTables.handle_data"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 332,
+          "module_id": "operations.project-work",
+          "name": "handle_endtag",
+          "qualname": "ResponsiveTables.handle_endtag"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 341,
+          "module_id": "operations.project-work",
+          "name": "render_source",
+          "qualname": "render_source"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 365,
+          "module_id": "operations.project-work",
+          "name": "add_anchor",
+          "qualname": "render_source.add_anchor"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 377,
+          "module_id": "operations.project-work",
+          "name": "shell",
+          "qualname": "shell"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 387,
+          "module_id": "operations.project-work",
+          "name": "material_page",
+          "qualname": "material_page"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 395,
+          "module_id": "operations.project-work",
+          "name": "day_page",
+          "qualname": "day_page"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 403,
+          "module_id": "operations.project-work",
+          "name": "course_shell",
+          "qualname": "course_shell"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 412,
+          "module_id": "operations.project-work",
+          "name": "demo_manifest",
+          "qualname": "demo_manifest"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 431,
+          "module_id": "operations.project-work",
+          "name": "demo_content",
+          "qualname": "demo_content"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "function",
+          "line": 445,
+          "module_id": "operations.project-work",
+          "name": "content_policy",
+          "qualname": "content_policy"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "class",
+          "line": 456,
+          "module_id": "operations.project-work",
+          "name": "Handler",
+          "qualname": "Handler"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+          "kind": "method",
+          "line": 457,
+          "module_id": "operations.project-work",
+          "name": "do_GET",
+          "qualname": "Handler.do_GET"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "class",
+          "line": 11,
+          "module_id": "operations.project-work",
+          "name": "FormattingStandTests",
+          "qualname": "FormattingStandTests"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 12,
+          "module_id": "operations.project-work",
+          "name": "test_folded_obsidian_note_becomes_closed_spoiler_without_changing_quotes",
+          "qualname": "FormattingStandTests.test_folded_obsidian_note_becomes_closed_spoiler_without_changing_quotes"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 27,
+          "module_id": "operations.project-work",
+          "name": "test_plain_uppercase_note_is_accent_without_heading_and_parenthesis_is_plain_text",
+          "qualname": "FormattingStandTests.test_plain_uppercase_note_is_accent_without_heading_and_parenthesis_is_plain_text"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 36,
+          "module_id": "operations.project-work",
+          "name": "test_formatting_comments_tasks_and_rule",
+          "qualname": "FormattingStandTests.test_formatting_comments_tasks_and_rule"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 45,
+          "module_id": "operations.project-work",
+          "name": "test_code_block_preserves_lines_and_html_without_rendering_or_hiding_it",
+          "qualname": "FormattingStandTests.test_code_block_preserves_lines_and_html_without_rendering_or_hiding_it"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 56,
+          "module_id": "operations.project-work",
+          "name": "test_inline_code_is_not_restored_as_markup_in_link_attributes",
+          "qualname": "FormattingStandTests.test_inline_code_is_not_restored_as_markup_in_link_attributes"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 62,
+          "module_id": "operations.project-work",
+          "name": "test_highlight_and_strike_preserve_nested_emphasis_and_links",
+          "qualname": "FormattingStandTests.test_highlight_and_strike_preserve_nested_emphasis_and_links"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 69,
+          "module_id": "operations.project-work",
+          "name": "test_native_link_callouts_render_safe_placement_groups",
+          "qualname": "FormattingStandTests.test_native_link_callouts_render_safe_placement_groups"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 91,
+          "module_id": "operations.project-work",
+          "name": "test_simple_table_gets_escaped_labels_without_changing_cell_data",
+          "qualname": "FormattingStandTests.test_simple_table_gets_escaped_labels_without_changing_cell_data"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 99,
+          "module_id": "operations.project-work",
+          "name": "test_image_url_keeps_position_but_regular_links_and_code_are_not_images",
+          "qualname": "FormattingStandTests.test_image_url_keeps_position_but_regular_links_and_code_are_not_images"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 107,
+          "module_id": "operations.project-work",
+          "name": "test_renderer_preserves_basic_semantics_and_contents_has_unique_anchors",
+          "qualname": "FormattingStandTests.test_renderer_preserves_basic_semantics_and_contents_has_unique_anchors"
+        },
+        {
+          "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+          "kind": "method",
+          "line": 118,
+          "module_id": "operations.project-work",
+          "name": "test_http_stand_exposes_only_allowlisted_routes_and_rejects_writes",
+          "qualname": "FormattingStandTests.test_http_stand_exposes_only_allowlisted_routes_and_rejects_writes"
+        },
+        {
           "file": "work/training-course-design/tools/export_author_sources.py",
           "kind": "function",
           "line": 58,
@@ -27959,6 +28739,7 @@
       "capabilities": [
         "маршрутизировать публичные пути `edabalans.ru` и временные совместимые app/api/go/blog домены через Caddy;",
         "не публиковать PostgreSQL и внутренние порты напрямую;",
+        "задавать независимые исходящие DNS российской VM вместо общего набора",
         "не публиковать NocoDB в интернет; доступ оставлять только через loopback и SSH-туннель;",
         "раздавать разрешённые публичные медиа владельца из отдельных read-only",
         "публиковать глубокую Telegram readiness-проверку для внешнего мониторинга",
@@ -27982,6 +28763,10 @@
         {
           "module_id": "operations.proxy",
           "path": "infra/caddy/Caddyfile"
+        },
+        {
+          "module_id": "operations.proxy",
+          "path": "infra/network/10-netplan-eth0.network.d/90-edabalans-dns.conf"
         },
         {
           "module_id": "operations.proxy",
@@ -32701,7 +33486,7 @@
         {
           "file": "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
           "kind": "function",
-          "line": 90,
+          "line": 94,
           "module_id": "platform.commerce",
           "name": "downgrade",
           "qualname": "downgrade"
@@ -32845,7 +33630,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 225,
+          "line": 231,
           "module_id": "platform.commerce",
           "name": "test_preview_reads_prices_and_preview_checkout_requires_published_version",
           "qualname": "test_preview_reads_prices_and_preview_checkout_requires_published_version"
@@ -32853,7 +33638,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 288,
+          "line": 294,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
           "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -32861,7 +33646,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 338,
+          "line": 344,
           "module_id": "platform.commerce",
           "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
           "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -32869,7 +33654,7 @@
         {
           "file": "backend/tests/test_pricing_catalog.py",
           "kind": "function",
-          "line": 369,
+          "line": 375,
           "module_id": "platform.commerce",
           "name": "test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email",
           "qualname": "test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email"
@@ -33622,6 +34407,54 @@
         },
         {
           "module_id": "platform.content",
+          "path": "content/article-components/DESIGN_HANDOFF.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/OBSIDIAN_CHEATSHEET.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/README.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/actions.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/copy.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/formatting.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/note.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/obsidian-templates/Кнопки в строку.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/obsidian-templates/Кнопки по центру.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/obsidian-templates/Кнопки слева.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/status-list.css"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/article-components/table.css"
+        },
+        {
+          "module_id": "platform.content",
           "path": "content/author-voice/CALIBRATION_V1.md"
         },
         {
@@ -33747,6 +34580,10 @@
         {
           "module_id": "platform.content",
           "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md"
         },
         {
           "module_id": "platform.content",
@@ -38205,6 +39042,7 @@
       "telegram": null,
       "title": "Каталог материалов",
       "truths": [
+        "Синтаксис переноса обычных Markdown-материалов в семантические роли принадлежит\n`docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md` (draft, локальный прототип).\nОбщая редактируемая библиотека и шаблоны Obsidian — `content/article-components/`.\nОна не заменяет ARTICLE_STANDARD и не означает готовность publication API.",
         "Единый нормативный канон принадлежит этому модулю:\n`content/author-voice/writer-contract-v1.md` владеет голосом, аргументацией и\nпродажами, `authoring-work-profiles-v1.md` — выбором авторского маршрута,\nсоседний `editing-modes-v1.md` — разрешениями на изменение исходника,\nа `docs/knowledge-base/ARTICLE_STANDARD.md` — общим оформлением статей сайта и\nматериалов любых курсов. Обязательная точка входа —\n`content/author-voice/skill/edabalans-writer/SKILL.md`. Продуктовые факты\nподключаются через `content/author-voice/product-fact-router.md` без копирования\nв голос.",
         "Машинный task описан `author-task.schema.json`, компонентные вызовы —\n`article-component-router.md`, проход доказательных ссылок —\n`source-integration-pass-v1.md`, состояние проверок —\n`source-review-registry-v1.json`, четыре оси состояния материала —\n`material-status-v1.md`, исполнимый маршрут — `tools/author_workflow.py`.",
         "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,\n`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и перечисленные в\n`docs/modules.toml` канонические файлы `content/author-voice/`.\nОсновной порядок составления и согласования материалов с Codex задаёт\n`docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md`. Технический каталог и\nадминки сохраняются полностью и могут использоваться Сергеем как дополнительные\nинструменты; они не заменяют общий протокол общения через таблицу и Markdown.\nОсобенности оболочки курса задают канонические документы соответствующего курса,\nне создавая второй редакторский голос.\nВнешние книги, видео и другие переданные референсы маршрутизируются через\n`content/external-references/README.md`; этот слой поставляет идеи и provenance,\nно не определяет авторский голос, продуктовые факты или медицинские выводы.\nПолные локальные тексты и индексы голоса хранятся только в\n`C:\\private\\edabalans-content-authoring`; Git содержит контракт, правила и ID\nдоказательств в `content/author-voice/`.\nЗашифрованный backup приватного канона создаёт `tools/backup_author_memory.py`;\nоперационный маршрут хранения и восстановления описан в `docs/OPERATIONS.md`."
@@ -39754,6 +40592,10 @@
         {
           "module_id": "products",
           "path": "docs/APPLICATION_PLATFORM.md"
+        },
+        {
+          "module_id": "products",
+          "path": "docs/FINANCE_MODEL.md"
         },
         {
           "module_id": "products",
@@ -69789,7 +70631,7 @@
     {
       "file": "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
       "kind": "function",
-      "line": 90,
+      "line": 94,
       "module_id": "platform.commerce",
       "name": "downgrade",
       "qualname": "downgrade"
@@ -73941,7 +74783,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 225,
+      "line": 231,
       "module_id": "platform.commerce",
       "name": "test_preview_reads_prices_and_preview_checkout_requires_published_version",
       "qualname": "test_preview_reads_prices_and_preview_checkout_requires_published_version"
@@ -73949,7 +74791,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 288,
+      "line": 294,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot",
       "qualname": "test_public_checkout_binds_new_tilda_user_and_keeps_pricing_snapshot"
@@ -73957,7 +74799,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 338,
+      "line": 344,
       "module_id": "platform.commerce",
       "name": "test_public_checkout_rejects_tampered_amount_without_creating_payment",
       "qualname": "test_public_checkout_rejects_tampered_amount_without_creating_payment"
@@ -73965,7 +74807,7 @@
     {
       "file": "backend/tests/test_pricing_catalog.py",
       "kind": "function",
-      "line": 369,
+      "line": 375,
       "module_id": "platform.commerce",
       "name": "test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email",
       "qualname": "test_intensive_offer_discounts_checkout_but_binds_access_to_payer_email"
@@ -75513,6 +76355,38 @@
       "module_id": "operations.delivery",
       "name": "runDailyReport",
       "qualname": "runDailyReport"
+    },
+    {
+      "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+      "kind": "function",
+      "line": 12,
+      "module_id": "operations.delivery",
+      "name": "incidentStorage",
+      "qualname": "incidentStorage"
+    },
+    {
+      "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+      "kind": "function",
+      "line": 22,
+      "module_id": "operations.delivery",
+      "name": "recoveryHarness",
+      "qualname": "recoveryHarness"
+    },
+    {
+      "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+      "kind": "function",
+      "line": 33,
+      "module_id": "operations.delivery",
+      "name": "fetchImpl",
+      "qualname": "fetchImpl"
+    },
+    {
+      "file": "infra/monitoring/cloudflare-watchdog/test/recovery-policy.test.mjs",
+      "kind": "function",
+      "line": 47,
+      "module_id": "operations.delivery",
+      "name": "run",
+      "qualname": "run"
     },
     {
       "file": "infra/monitoring/cloudflare-watchdog/test/watchdog.test.mjs",
@@ -88377,6 +89251,382 @@
       "module_id": "operations.project-work",
       "name": "main",
       "qualname": "main"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 27,
+      "module_id": "operations.project-work",
+      "name": "git_file",
+      "qualname": "git_file"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 34,
+      "module_id": "operations.project-work",
+      "name": "load_renderer",
+      "qualname": "load_renderer"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 51,
+      "module_id": "operations.project-work",
+      "name": "inline_formatting",
+      "qualname": "inline_formatting"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 76,
+      "module_id": "operations.project-work",
+      "name": "encoded_component",
+      "qualname": "encoded_component"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 81,
+      "module_id": "operations.project-work",
+      "name": "basic_blocks",
+      "qualname": "basic_blocks"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 106,
+      "module_id": "operations.project-work",
+      "name": "protect_inline",
+      "qualname": "basic_blocks.protect_inline"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 119,
+      "module_id": "operations.project-work",
+      "name": "image_links",
+      "qualname": "image_links"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "class",
+      "line": 148,
+      "module_id": "operations.project-work",
+      "name": "Contents",
+      "qualname": "Contents"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 149,
+      "module_id": "operations.project-work",
+      "name": "__init__",
+      "qualname": "Contents.__init__"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 155,
+      "module_id": "operations.project-work",
+      "name": "handle_starttag",
+      "qualname": "Contents.handle_starttag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 160,
+      "module_id": "operations.project-work",
+      "name": "handle_data",
+      "qualname": "Contents.handle_data"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 164,
+      "module_id": "operations.project-work",
+      "name": "handle_endtag",
+      "qualname": "Contents.handle_endtag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "class",
+      "line": 170,
+      "module_id": "operations.project-work",
+      "name": "InlineLiterals",
+      "qualname": "InlineLiterals"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 172,
+      "module_id": "operations.project-work",
+      "name": "__init__",
+      "qualname": "InlineLiterals.__init__"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 177,
+      "module_id": "operations.project-work",
+      "name": "handle_starttag",
+      "qualname": "InlineLiterals.handle_starttag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 180,
+      "module_id": "operations.project-work",
+      "name": "handle_endtag",
+      "qualname": "InlineLiterals.handle_endtag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 183,
+      "module_id": "operations.project-work",
+      "name": "handle_data",
+      "qualname": "InlineLiterals.handle_data"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 190,
+      "module_id": "operations.project-work",
+      "name": "obsidian_spoilers",
+      "qualname": "obsidian_spoilers"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 249,
+      "module_id": "operations.project-work",
+      "name": "spoiler_component",
+      "qualname": "spoiler_component"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "class",
+      "line": 300,
+      "module_id": "operations.project-work",
+      "name": "ResponsiveTables",
+      "qualname": "ResponsiveTables"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 302,
+      "module_id": "operations.project-work",
+      "name": "__init__",
+      "qualname": "ResponsiveTables.__init__"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 310,
+      "module_id": "operations.project-work",
+      "name": "handle_starttag",
+      "qualname": "ResponsiveTables.handle_starttag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 327,
+      "module_id": "operations.project-work",
+      "name": "handle_data",
+      "qualname": "ResponsiveTables.handle_data"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 332,
+      "module_id": "operations.project-work",
+      "name": "handle_endtag",
+      "qualname": "ResponsiveTables.handle_endtag"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 341,
+      "module_id": "operations.project-work",
+      "name": "render_source",
+      "qualname": "render_source"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 365,
+      "module_id": "operations.project-work",
+      "name": "add_anchor",
+      "qualname": "render_source.add_anchor"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 377,
+      "module_id": "operations.project-work",
+      "name": "shell",
+      "qualname": "shell"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 387,
+      "module_id": "operations.project-work",
+      "name": "material_page",
+      "qualname": "material_page"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 395,
+      "module_id": "operations.project-work",
+      "name": "day_page",
+      "qualname": "day_page"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 403,
+      "module_id": "operations.project-work",
+      "name": "course_shell",
+      "qualname": "course_shell"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 412,
+      "module_id": "operations.project-work",
+      "name": "demo_manifest",
+      "qualname": "demo_manifest"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 431,
+      "module_id": "operations.project-work",
+      "name": "demo_content",
+      "qualname": "demo_content"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "function",
+      "line": 445,
+      "module_id": "operations.project-work",
+      "name": "content_policy",
+      "qualname": "content_policy"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "class",
+      "line": 456,
+      "module_id": "operations.project-work",
+      "name": "Handler",
+      "qualname": "Handler"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "kind": "method",
+      "line": 457,
+      "module_id": "operations.project-work",
+      "name": "do_GET",
+      "qualname": "Handler.do_GET"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "class",
+      "line": 11,
+      "module_id": "operations.project-work",
+      "name": "FormattingStandTests",
+      "qualname": "FormattingStandTests"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 12,
+      "module_id": "operations.project-work",
+      "name": "test_folded_obsidian_note_becomes_closed_spoiler_without_changing_quotes",
+      "qualname": "FormattingStandTests.test_folded_obsidian_note_becomes_closed_spoiler_without_changing_quotes"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 27,
+      "module_id": "operations.project-work",
+      "name": "test_plain_uppercase_note_is_accent_without_heading_and_parenthesis_is_plain_text",
+      "qualname": "FormattingStandTests.test_plain_uppercase_note_is_accent_without_heading_and_parenthesis_is_plain_text"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 36,
+      "module_id": "operations.project-work",
+      "name": "test_formatting_comments_tasks_and_rule",
+      "qualname": "FormattingStandTests.test_formatting_comments_tasks_and_rule"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 45,
+      "module_id": "operations.project-work",
+      "name": "test_code_block_preserves_lines_and_html_without_rendering_or_hiding_it",
+      "qualname": "FormattingStandTests.test_code_block_preserves_lines_and_html_without_rendering_or_hiding_it"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 56,
+      "module_id": "operations.project-work",
+      "name": "test_inline_code_is_not_restored_as_markup_in_link_attributes",
+      "qualname": "FormattingStandTests.test_inline_code_is_not_restored_as_markup_in_link_attributes"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 62,
+      "module_id": "operations.project-work",
+      "name": "test_highlight_and_strike_preserve_nested_emphasis_and_links",
+      "qualname": "FormattingStandTests.test_highlight_and_strike_preserve_nested_emphasis_and_links"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 69,
+      "module_id": "operations.project-work",
+      "name": "test_native_link_callouts_render_safe_placement_groups",
+      "qualname": "FormattingStandTests.test_native_link_callouts_render_safe_placement_groups"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 91,
+      "module_id": "operations.project-work",
+      "name": "test_simple_table_gets_escaped_labels_without_changing_cell_data",
+      "qualname": "FormattingStandTests.test_simple_table_gets_escaped_labels_without_changing_cell_data"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 99,
+      "module_id": "operations.project-work",
+      "name": "test_image_url_keeps_position_but_regular_links_and_code_are_not_images",
+      "qualname": "FormattingStandTests.test_image_url_keeps_position_but_regular_links_and_code_are_not_images"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 107,
+      "module_id": "operations.project-work",
+      "name": "test_renderer_preserves_basic_semantics_and_contents_has_unique_anchors",
+      "qualname": "FormattingStandTests.test_renderer_preserves_basic_semantics_and_contents_has_unique_anchors"
+    },
+    {
+      "file": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "kind": "method",
+      "line": 118,
+      "module_id": "operations.project-work",
+      "name": "test_http_stand_exposes_only_allowlisted_routes_and_rejects_writes",
+      "qualname": "FormattingStandTests.test_http_stand_exposes_only_allowlisted_routes_and_rejects_writes"
     },
     {
       "file": "work/training-course-design/tools/export_author_sources.py",

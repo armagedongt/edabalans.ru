@@ -1,0 +1,5 @@
+/* Icons: homepage-local.html, homepage-block-approval-20260910, HEAD 037fbc586d364ae4f2c858b4b9a3fa3141736ada, .proof-list. */
+#article li.article-task{position:relative;list-style:none;min-height:32px;padding-left:47px;margin:16px 0;overflow-wrap:anywhere}
+#article li.article-task::before{position:absolute;left:0;top:0;display:grid;width:32px;height:32px;place-items:center;border-radius:9px;background:var(--article-positive-bg,#d7f2e0);color:var(--article-positive-color,#299b57);font-size:19px;font-weight:900;line-height:1;content:"✓"}
+#article li.article-task-negative::before{background:var(--article-negative-bg,#ffe4df);color:var(--article-negative-color,#d34f42);font-size:25px;content:"×"}
+#article .article-status-label{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
