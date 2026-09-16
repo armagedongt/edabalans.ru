@@ -261,7 +261,7 @@ owns_files = [
   "backend/app/static/standalone-app.html", "backend/app/static/max-app.html",
   "backend/tests/test_admin_apps.py", "backend/tests/test_app_assets.py", "backend/tests/test_eda_finance.py",
   "backend/app/static/apps/recipes-part-1.html", "backend/app/static/apps/recipes-part-2.html",
-  "backend/app/static/eda-finance.html",
+  "backend/app/static/eda-finance.html", "docs/FINANCE_MODEL.md",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
   "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",
