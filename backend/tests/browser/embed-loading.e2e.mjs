@@ -92,7 +92,7 @@ try {
   const after = await page.locator('.ed-loading-stage').boundingBox()
   assert.equal(before.y, after.y, 'Changing the stage must not move the loader')
   data.release()
-  await page.waitForFunction(() => !document.querySelector('.ed-loading-screen'))
+  await waitForReveal(page)
   assert.equal(await page.locator('#account-app h1').isVisible(), true)
   assert.equal(await page.locator('#account-app h1').evaluate(el=>getComputedStyle(el).color), 'rgb(17, 142, 216)')
   assert.deepEqual(counts, {session:1,html:1,css:1}, 'Prefetch and load share one request')
@@ -123,7 +123,7 @@ try {
   const failedAttempts = cssAttempts
   cssFailed = false
   await retry.locator('.ed-loading-retry').click()
-  await retry.waitForFunction(() => !document.querySelector('.ed-loading-screen'))
+  await waitForReveal(retry)
   assert.equal(cssAttempts, failedAttempts + 1)
   assert.equal(await retry.locator('#account-app h1').isVisible(), true)
   await retry.close()
@@ -143,7 +143,8 @@ try {
   await legal.goto(origin, {waitUntil:'domcontentloaded'})
   await legal.locator('[data-edabalans-dqs-legal]').check()
   await legal.locator('.edabalans-dqs-legal-action').click()
-  await legal.waitForFunction(() => !document.querySelector('.ed-loading-screen'))
+  await legal.locator('#dqs-app h1').waitFor({state:'visible'})
+  await waitForReveal(legal)
   assert.equal(await legal.locator('#dqs-app h1').isVisible(), true)
   await legal.close()
 
@@ -565,7 +566,7 @@ try {
   assert.equal(sessionRetry.url(),origin+'/')
   assert.equal(await sessionRetry.locator('.ed-loading-dots').count(),0)
   await sessionRetry.locator('.ed-loading-retry').click()
-  await sessionRetry.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(sessionRetry)
   assert.equal(attempts,2)
   assert.equal(await sessionRetry.locator('#account-app').isVisible(),true)
   await sessionRetry.close()
@@ -594,7 +595,7 @@ try {
     assert.equal(await app.locator('.ed-loading-screen').count(),1,code)
     assert.equal(await app.locator('#'+id).isVisible(),false,code)
     pending.release()
-    await app.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+    await waitForReveal(app)
     assert.equal(await app.locator('#'+id).isVisible(),true,code)
     await app.close()
   }
@@ -619,7 +620,7 @@ try {
   await capture(nested,'nested-error')
   broken=false
   await nested.locator('.ed-loading-retry').click()
-  await nested.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(nested)
   assert.equal(await nested.locator('#masterclass-offers-app').isVisible(),true)
   await nested.close()
 
@@ -654,6 +655,7 @@ try {
     pricing.release()
     documentReady.release()
     await publicPage.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('h1'))
+    await waitForReveal(publicPage)
     assert.equal(await publicPage.locator('h1').isVisible(),true,'Public content must not wait for analytics/header/footer')
     assert.equal(authCalls,0,'Public loaders must not start authorization')
     analytics.release()
