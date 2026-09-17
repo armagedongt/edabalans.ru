@@ -27,6 +27,13 @@ implementation_status: implemented
 
 `docs/APPLICATION_PLATFORM.md`, backend runtime и `legacy/google/metabolism/`.
 
+## Сохранённый визуальный образец
+
+[Паспорт визуала V2](../../../design-references/metabolism-mobile-v2-20260917/METABOLISM_VISUAL_V2.md)
+фиксирует локальную версию, где на телефоне рабочие параметры и главный
+результат видны вместе. Это отдельный черновой референс, а не описание
+опубликованного приложения или новая методология расчётов.
+
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.
 

@@ -375,6 +375,7 @@ card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**",
+  "docs/design-references/metabolism-mobile-v2-20260917/**",
   "tools/import_calorizator_products.py", "tools/tests/test_import_calorizator_products.py",
 ]
 owns_tables = ["metabolism_states"]
