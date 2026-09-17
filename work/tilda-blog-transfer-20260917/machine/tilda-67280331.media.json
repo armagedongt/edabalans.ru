@@ -1,0 +1,18 @@
+[
+  {
+    "file": "tilda-67280331/tilda-01.png",
+    "sha256": "8209c1e2c30e5a3c0a9ad86ed1f1534bb2362e6c7444e3b537d0bf373a860ce5",
+    "content_type": "image/png",
+    "http_status": 200,
+    "source_url": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png",
+    "alt": "Мем: стрелка весов и скорость похудения"
+  },
+  {
+    "file": "tilda-67280331/tilda-02.png",
+    "sha256": "cb0667617296c45d87702fe858f9b087de47d627f54acb5802eb2cf87acffbde",
+    "content_type": "image/png",
+    "http_status": 200,
+    "source_url": "https://static.tildacdn.com/tild3361-3365-4563-a435-393539646438/image.png",
+    "alt": "Схемы измерения биоимпеданса между точками тела"
+  }
+]

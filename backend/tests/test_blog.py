@@ -30,8 +30,9 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
         "Пишу о питании, похудении и пищевых привычках, "
         "чтобы сделать ваше похудение проще."
     ) in response.text
-    assert response.text.count('class="article-card"') == 6
-    assert response.text.count('class="card-tag"') == 6
+    published_count = len(load_blog_catalog().published)
+    assert response.text.count('class="article-card"') == published_count
+    assert response.text.count('class="card-tag"') == published_count
     first_card = response.text.split('class="article-card"', 1)[1].split('</article>', 1)[0]
     assert first_card.index('class="card-visual"') < first_card.index('class="card-tag"')
     assert first_card.index('class="card-tag"') < first_card.index('class="card-title"')
@@ -184,14 +185,16 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
     assert "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/sitemap.xml" in robots.text
     assert sitemap.status_code == 200
     assert sitemap.headers["content-type"].startswith("application/xml")
-    assert sitemap.text.count("<url>") == 7
+    assert sitemap.text.count("<url>") == len(load_blog_catalog().published) + 1
     assert "/articles/nepriyatnaya-pravda-pro-med" in sitemap.text
 
 
 def test_every_published_article_and_declared_image_is_served() -> None:
     catalog = load_blog_catalog()
 
-    assert len(catalog.published) == 6
+    assert {
+        "tilda-49734795", "tilda-49745867", "tilda-67280331"
+    }.issubset({article.source_id for article in catalog.published})
     for article in catalog.published:
         page = client.get(f"/blog/articles/{article.slug}")
         assert page.status_code == 200

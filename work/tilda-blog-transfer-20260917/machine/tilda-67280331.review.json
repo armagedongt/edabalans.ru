@@ -1,0 +1,20 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex source-preservation editorial review",
+  "reviewed_at": "2026-09-17T17:07:43.424707+00:00",
+  "pack_sha256": "0db6fcd4c9c26e5402e91910e7a9eebe2b59fd65dbaadb6c265c98011180f798",
+  "draft_sha256": "fd57ddf5722df28937e63cbdf2a60a3ee46b1589a8c400f7a8b6fbf19264522a",
+  "fact_sources": [
+    {
+      "name": "Tilda page 67280331",
+      "fingerprint": "cdea3b9bddb8624af0c44df3e0904e818052a90f138217ddd4efaff30638c4d0"
+    }
+  ],
+  "checks": [
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Сверена full source record mapping текущей Tilda страницы: порядок, заголовки, примеры, смысловые bold и все медиа сохранены. Pikabu версии не использовались. Глобальные runtime/nav не изменены. Остаточные научные конфликты отдельно зафиксированы без рерайта. РПП: разрешённая Сергеем точная версия 5 production day-01-article-03; арифметическая опечатка исправлена."
+    }
+  ]
+}
