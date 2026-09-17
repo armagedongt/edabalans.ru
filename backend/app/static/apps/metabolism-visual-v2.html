@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="color-scheme" content="light">
+  <title>Калькулятор метаболизма · визуальный прототип V2</title>
+  <style>html,body{background:#fff}</style>
+  <style>
+    #metabolism-mobile-proposal table{line-height:normal}
+    #metabolism-mobile-proposal table td:not(.mw-selected){color:#000}
+    @media (min-width:721px) and (max-width:767px) {
+      #metabolism-mobile-proposal .mw-window:not(.mw-phone) .mw-breakdown{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+<div id="metabolism-mobile-proposal">
+  <style>
+    #metabolism-mobile-proposal{color-scheme:light;font:14px/1.4 Inter,Arial,sans-serif;color:#17172b}
+    #metabolism-mobile-proposal *{box-sizing:border-box}
+    #metabolism-mobile-proposal .mw-window{background:#f5f5f7;padding:18px;max-width:1440px;margin:auto;border-radius:16px}
+    #metabolism-mobile-proposal .mw-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+    #metabolism-mobile-proposal h2{font-size:21px;margin:0;font-weight:600}
+    #metabolism-mobile-proposal h3{font-size:16px;margin:0 0 12px;font-weight:600}
+    #metabolism-mobile-proposal button,#metabolism-mobile-proposal input,#metabolism-mobile-proposal select{font:inherit}
+    #metabolism-mobile-proposal button{border:1px solid #e7e7ef;border-radius:8px;background:#fff;color:#17172b;padding:8px 12px;cursor:pointer}
+    #metabolism-mobile-proposal .mw-caption{font-size:12px;color:#62677a;margin-top:3px}
+    #metabolism-mobile-proposal .mw-variants{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+    #metabolism-mobile-proposal .mw-variants button{text-align:left;padding:10px 12px}
+    #metabolism-mobile-proposal .mw-variants button[aria-pressed=true]{border-color:#6f3de8;background:#f5f1ff;color:#4f28b7}
+    #metabolism-mobile-proposal .mw-variants small{display:block;color:#62677a;margin-top:2px}
+    #metabolism-mobile-proposal .mw-workspace{display:grid;grid-template-columns:340px minmax(0,1fr);gap:12px;align-items:start}
+    #metabolism-mobile-proposal .mw-panel{background:#fff;border:1px solid #e7e7ef;border-radius:16px;padding:16px;box-shadow:0 3px 12px #14142806;min-width:0}
+    #metabolism-mobile-proposal .mw-group{font-size:12px;color:#62677a;margin:14px 0 5px;letter-spacing:.04em;text-transform:uppercase}
+    #metabolism-mobile-proposal .mw-group:first-of-type{margin-top:0}
+    #metabolism-mobile-proposal .mw-field{display:grid;grid-template-columns:minmax(0,1fr) 122px;gap:8px;align-items:center;padding:3px 0}
+    #metabolism-mobile-proposal .mw-field input,#metabolism-mobile-proposal .mw-field select{width:100%;min-width:0;height:30px;border:1px solid #dedee6;border-radius:8px;padding:5px 8px;background:#fff;color:#17172b}
+    #metabolism-mobile-proposal .mw-right{display:grid;gap:12px;min-width:0}
+    #metabolism-mobile-proposal .mw-hero{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px}
+    #metabolism-mobile-proposal .mw-stat{border-radius:10px;background:#f5f5f7;padding:12px;min-width:0}
+    #metabolism-mobile-proposal .mw-stat:first-child{background:#f5f1ff;color:#4f28b7}
+    #metabolism-mobile-proposal .mw-stat span{display:block;font-size:12px;margin-bottom:8px}
+    #metabolism-mobile-proposal .mw-stat strong{font-size:23px;font-weight:600;white-space:nowrap}
+    #metabolism-mobile-proposal .mw-stat small{display:block;font-size:12px;margin-top:3px}
+    #metabolism-mobile-proposal .mw-breakdown{display:grid;grid-template-columns:1fr 1fr;column-gap:22px}
+    #metabolism-mobile-proposal .mw-line{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid #e7e7ef;font-size:13px}
+    #metabolism-mobile-proposal .mw-line b{font-weight:500;white-space:nowrap;font-variant-numeric:tabular-nums}
+    #metabolism-mobile-proposal details{margin-top:12px;color:#62677a;font-size:13px}
+    #metabolism-mobile-proposal summary{cursor:pointer;color:#4f28b7}
+    #metabolism-mobile-proposal table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
+    #metabolism-mobile-proposal th,#metabolism-mobile-proposal td{padding:6px 5px;border-bottom:1px solid #e7e7ef;text-align:right;overflow-wrap:anywhere;font-weight:400;font-variant-numeric:tabular-nums}
+    #metabolism-mobile-proposal th:first-child,#metabolism-mobile-proposal td:first-child{text-align:left;width:35%}
+    #metabolism-mobile-proposal th{color:#62677a;font-size:12px}
+    #metabolism-mobile-proposal .mw-selected{background:#f5f1ff;color:#4f28b7}
+    #metabolism-mobile-proposal .mw-mobile-nav{display:none;gap:5px;margin-bottom:12px}
+    #metabolism-mobile-proposal .mw-mobile-nav button{flex:1;min-width:0;padding:9px 5px}
+    #metabolism-mobile-proposal .mw-mobile-nav button[aria-pressed=true]{background:#6f3de8;color:#fff;border-color:#6f3de8}
+    #metabolism-mobile-proposal .mw-footer{font-size:12px;color:#62677a;margin-top:10px}
+    #metabolism-mobile-proposal .mw-phone{max-width:430px}
+    #metabolism-mobile-proposal .mw-phone .mw-workspace{display:block}
+    #metabolism-mobile-proposal .mw-phone .mw-mobile-nav{display:flex}
+    #metabolism-mobile-proposal .mw-phone h2{font-size:18px}
+    #metabolism-mobile-proposal .mw-phone .mw-hero{grid-template-columns:1fr}
+    #metabolism-mobile-proposal .mw-phone .mw-breakdown{grid-template-columns:1fr}
+    #metabolism-mobile-proposal .mw-phone input,#metabolism-mobile-proposal .mw-phone select{font-size:16px;height:42px}
+    #metabolism-mobile-proposal .mw-phone .mw-field{padding:5px 0}
+    #metabolism-mobile-proposal .mw-phone th,#metabolism-mobile-proposal .mw-phone td{padding:9px 5px}
+    #metabolism-mobile-proposal .mw-phone .mw-top{align-items:start}
+    #metabolism-mobile-proposal .mw-phone .mw-variants button{padding:9px 6px;font-size:13px}
+    #metabolism-mobile-proposal .mw-phone .mw-variants small{font-size:11px}
+    #metabolism-mobile-proposal .mw-phone [data-mobile-hidden=true]{display:none}
+    @media(max-width:720px){
+      #metabolism-mobile-proposal .mw-window{padding:12px}
+      #metabolism-mobile-proposal .mw-workspace{display:block}
+      #metabolism-mobile-proposal .mw-mobile-nav{display:flex}
+      #metabolism-mobile-proposal [data-mobile-hidden=true]{display:none}
+      #metabolism-mobile-proposal .mw-hero,#metabolism-mobile-proposal .mw-breakdown{grid-template-columns:1fr}
+      #metabolism-mobile-proposal .mw-top{align-items:start}
+      #metabolism-mobile-proposal h2{font-size:18px}
+      #metabolism-mobile-proposal .mw-variants button{padding:9px 6px;font-size:13px}
+      #metabolism-mobile-proposal input,#metabolism-mobile-proposal select{font-size:16px!important;height:42px!important}
+      #metabolism-mobile-proposal .mw-field{padding:5px 0}
+      #metabolism-mobile-proposal th,#metabolism-mobile-proposal td{padding:9px 5px}
+    }
+
+    #metabolism-mobile-proposal .mw-person{margin:0 0 12px}
+    #metabolism-mobile-proposal .mw-person summary{color:#17172b;font-size:14px;font-weight:500}
+    #metabolism-mobile-proposal .mw-name{margin:0 0 12px}
+    #metabolism-mobile-proposal .mw-name summary{font-size:12px}
+    #metabolism-mobile-proposal .mw-name label{display:block;font-size:12px;color:#62677a;margin-top:8px}
+    #metabolism-mobile-proposal .mw-name input{width:100%;min-width:0;padding:6px 8px;border:1px solid #dedee6;border-radius:8px;background:#fff;color:#17172b}
+    #metabolism-mobile-proposal .mw-caption:empty{display:none}
+    @media(min-width:721px){
+      #metabolism-mobile-proposal .mw-window:not(.mw-phone) .mw-name[open]{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+      #metabolism-mobile-proposal .mw-window:not(.mw-phone) .mw-name label{display:flex;align-items:center;gap:8px;margin:0;white-space:nowrap}
+      #metabolism-mobile-proposal .mw-window:not(.mw-phone) .mw-name summary{display:none}
+      #metabolism-mobile-proposal .mw-window:not(.mw-phone) .mw-person summary{pointer-events:none;list-style:none}
+    }
+    #metabolism-mobile-proposal [data-hero] strong{font-variant-numeric:tabular-nums}
+    #metabolism-mobile-proposal .mw-deficit-unit{font-size:12px;padding:0 5px;border:1px solid #dedee6;border-radius:5px;background:white}
+    #metabolism-mobile-proposal .mw-phone .mw-field .mw-deficit-unit{width:auto;height:24px!important;font-size:12px!important;padding:0 3px}
+    @media(max-width:720px){#metabolism-mobile-proposal .mw-field .mw-deficit-unit{width:auto;height:24px!important;font-size:12px!important;padding:0 3px}}
+    #metabolism-mobile-proposal .mw-phone .mw-top{margin-bottom:9px}
+    #metabolism-mobile-proposal .mw-phone .mw-variants small{white-space:normal;overflow-wrap:anywhere}
+    #metabolism-mobile-proposal .mw-phone .mw-panel{padding:12px}
+    #metabolism-mobile-proposal .mw-phone .mw-hero{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:0}
+    #metabolism-mobile-proposal .mw-phone .mw-stat{padding:10px 7px}
+    #metabolism-mobile-proposal .mw-phone .mw-stat strong{font-size:19px}
+    #metabolism-mobile-proposal .mw-phone .mw-stat span{font-size:11px;margin-bottom:4px}
+    #metabolism-mobile-proposal .mw-phone .mw-stat small{font-size:11px}
+    #metabolism-mobile-proposal .mw-phone [data-breakdown],#metabolism-mobile-proposal .mw-phone [data-section=results]>details{display:none}
+    #metabolism-mobile-proposal .mw-phone .mw-work-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px}
+    #metabolism-mobile-proposal .mw-phone .mw-work-fields .mw-group{display:none}
+    #metabolism-mobile-proposal .mw-phone .mw-work-fields .mw-field{display:block;padding:0}
+    #metabolism-mobile-proposal .mw-phone .mw-work-fields label{display:block;font-size:12px;margin-bottom:4px}
+    #metabolism-mobile-proposal .mw-phone .mw-work-fields input,#metabolism-mobile-proposal .mw-phone .mw-work-fields select{height:38px;font-size:16px}
+    #metabolism-mobile-proposal .mw-phone [data-section=inputs]>h3{display:none}
+    #metabolism-mobile-proposal .mw-phone .mw-footer{display:none}
+    #metabolism-mobile-proposal .mw-phone [data-section=results]{margin-top:10px}
+    #metabolism-mobile-proposal .mw-phone [data-section=results] h3{font-size:13px;margin-bottom:8px}
+    @media(max-width:720px){
+      #metabolism-mobile-proposal .mw-work-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px 12px}
+      #metabolism-mobile-proposal .mw-work-fields .mw-group{display:none}
+      #metabolism-mobile-proposal .mw-work-fields .mw-field{display:block;padding:0}
+      #metabolism-mobile-proposal .mw-work-fields label{display:block;font-size:12px;margin-bottom:4px}
+      #metabolism-mobile-proposal [data-section=inputs]>h3,#metabolism-mobile-proposal .mw-footer{display:none}
+      #metabolism-mobile-proposal .mw-panel{padding:12px}
+      #metabolism-mobile-proposal [data-section=results]{margin-top:10px}
+      #metabolism-mobile-proposal [data-section=results] h3{font-size:13px;margin-bottom:8px}
+      #metabolism-mobile-proposal .mw-hero{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-bottom:0}
+      #metabolism-mobile-proposal .mw-stat{padding:10px 7px}
+      #metabolism-mobile-proposal .mw-stat strong{font-size:18px}
+      #metabolism-mobile-proposal .mw-stat span,#metabolism-mobile-proposal .mw-stat small{font-size:11px}
+      #metabolism-mobile-proposal [data-breakdown],#metabolism-mobile-proposal [data-section=results]>details{display:none}
+    }
+
+  </style>
+  <div class="mw-window">
+    <div class="mw-top"><div><h2>Калькулятор метаболизма</h2><div class="mw-caption">Демо · данные анкеты не подключены</div></div><button type="button" data-view>Телефон</button></div>
+    <div class="mw-variants" aria-label="Варианты расчёта"></div>
+    <div class="mw-mobile-nav" aria-label="Разделы калькулятора"><button type="button" data-tab="inputs">Расчёт</button><button type="button" data-tab="compare">Сравнение</button></div><details class="mw-name"><summary>Название и комментарий варианта</summary><label for="mw-title">Название <input id="mw-title" data-name maxlength="36"></label><label for="mw-comment">Комментарий <input id="mw-comment" data-comment maxlength="100"></label></details>
+    <div class="mw-workspace">
+      <section class="mw-panel" data-section="inputs"><h3>Исходные данные</h3><div data-fields></div><div class="mw-footer" data-status>Изменения остаются в выбранном варианте демо</div></section>
+      <div class="mw-right">
+        <section class="mw-panel" data-section="results" aria-live="polite"><h3>Результат</h3><div class="mw-hero" data-hero></div><div class="mw-breakdown" data-breakdown></div><details><summary>Технический расчёт</summary><div data-tech></div></details></section>
+        <section class="mw-panel" data-section="compare"><h3>Три варианта рядом</h3><table><thead><tr><th>Показатель</th><th>1</th><th>2</th><th>3</th></tr></thead><tbody data-comparison></tbody></table></section>
+      </div>
+    </div>
+  </div>
+  <script>
+    (()=>{
+      const root=document.getElementById('metabolism-mobile-proposal'),win=root.querySelector('.mw-window');
+      const initial={gender:'Женщина',age:35,height:170,weight:80,fat_percent:30,protein:100,steps:6000,active_steps_percent:50,train_week:0,deficit:300,time:30};
+      const variants=[{...initial},{...initial,steps:10000},{...initial,steps:10000,train_week:1400}];
+      const names=['Исходный','Больше шагов','С тренировками'];const comments=['6000 шагов, без тренировок','10000 шагов, без тренировок','10000 шагов, 1400 ккал тренировок в неделю'];let active=0,tab='inputs';const units=['kcal','kcal','kcal'];const percents=[0,0,0];const personOpen=[false,false,false];
+      const design={view:innerWidth<=720?'Телефон':'ПК',width:340,filled:true};
+      const fields=[['gender','Пол','','Человек'],['age','Возраст, лет','number','Человек'],['height','Рост, см','number','Человек'],['weight','Вес, кг','number','Человек'],['fat_percent','Жир, %','','Человек'],['protein','Белок, г/день','number','Активность и питание'],['steps','Шаги / день','number','Активность и питание'],['active_steps_percent','Активные шаги, %','','Активность и питание'],['train_week','Тренировки, ккал/нед','number','Активность и питание'],['deficit','Дефицит, ккал/день','number','Прогноз'],['time','Срок, дней','number','Прогноз']];
+      const fmt=(n,d=0)=>!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('ru-RU',{maximumFractionDigits:d,minimumFractionDigits:d});
+      const personal=['gender','age','height','weight','fat_percent'];const esc=x=>String(x).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));const complete=v=>fields.every(([id])=>v[id]!==''&&v[id]!==null&&Number.isFinite(id==='gender'?0:Number(v[id])))&&!!v.gender;
+      function calc(v){if(!complete(v))return null;const bmr=(10*v.weight+6.25*v.height-5*v.age+(v.gender==='Мужчина'?5:-161))*(1.05-v.fat_percent*.002);const neat=v.weight*(v.steps*v.height*.415/100000)*(.8+v.active_steps_percent*.004)*.7;const train=v.train_week/7,tef=.03*bmr+(v.protein-45)*.72,balance=bmr+neat+train+tef;const i=variants.indexOf(v),deficit=units[i]==='percent'?balance*percents[i]/100:v.deficit;return{bmr,neat,train,tef,balance,deficit,eat:balance-deficit,speed:deficit*7/7500*1000,loss:deficit*v.time/7500}}
+
+      function mobile(){return design.view==='Телефон'||innerWidth<=720}
+      function renderFields(){
+        function field([id,label,type]){
+          if(id==='deficit')label='Дефицит <select class="mw-deficit-unit" data-unit aria-label="Единица дефицита"><option value="kcal" '+(units[active]==='kcal'?'selected':'')+'>ккал/день</option><option value="percent" '+(units[active]==='percent'?'selected':'')+'>%</option></select>';
+          let control;
+          if(type){const r=calc(variants[active]);const value=id==='deficit'&&units[active]==='percent'&&r?Math.round(percents[active]*10)/10:variants[active][id];control='<input id="mw-'+id+'" data-field="'+id+'" type="number" step="any" value="'+value+'">'}
+          else{const values=id==='gender'?['','Женщина','Мужчина']:id==='fat_percent'?['',15,20,25,30,35,40,45,50]:['',0,25,50,75,100];control='<select id="mw-'+id+'" data-field="'+id+'">'+values.map(x=>'<option value="'+x+'" '+(String(x)===String(variants[active][id])?'selected':'')+'>'+(x===''?'Выберите':x)+'</option>').join('')+'</select>'}
+          return '<div class="mw-field"><label for="mw-'+id+'">'+label+'</label>'+control+'</div>';
+        }
+        const v=variants[active],missing=personal.some(id=>v[id]==='');
+        root.querySelector('[data-fields]').innerHTML='<details class="mw-person" '+(!mobile()||missing||personOpen[active]?'open':'')+'><summary>'+(missing?'Заполните данные человека':'Данные человека · '+v.age+' лет · '+v.height+' см · '+v.weight+' кг')+'</summary><div>'+fields.filter(x=>personal.includes(x[0])).map(field).join('')+'</div></details><div class="mw-work-fields">'+fields.filter(x=>!personal.includes(x[0])).map(field).join('')+'</div>';
+        root.querySelector('.mw-person').addEventListener('toggle',e=>{personOpen[active]=e.target.open;if((!mobile()||personal.some(id=>variants[active][id]===''))&&!e.target.open)e.target.open=true});
+        root.querySelector('[data-name]').value=names[active];root.querySelector('[data-comment]').value=comments[active];
+        root.querySelector('.mw-name').open=!mobile();
+      }
+      function update(){const v=variants[active],result=calc(v),r=result||{eat:NaN,balance:NaN,bmr:NaN,neat:NaN,train:NaN,tef:NaN,speed:NaN,loss:NaN};root.querySelector('.mw-variants').innerHTML=variants.map((x,i)=>'<button type="button" data-variant="'+i+'" aria-pressed="'+(i===active)+'">Вариант '+(i+1)+'<small>'+esc(names[i])+'</small></button>').join('');root.querySelector('[data-hero]').innerHTML=[['Потребление',fmt(r.eat),'ккал / день'],['Скорость похудения',fmt(r.speed),'г / неделю'],['За '+v.time+' дней',fmt(r.loss,1),'кг']].map(([l,n,u])=>'<div class="mw-stat"><span>'+l+'</span><strong>'+n+'</strong><small>'+u+'</small></div>').join('');root.querySelector('[data-breakdown]').innerHTML=[['Базовый метаболизм',r.bmr],['Повседневная активность',r.neat],['Тренировки / день',r.train],['Термический эффект пищи',r.tef],['Энергетический баланс',r.balance],['Дефицит',r.deficit]].map(([l,n])=>'<div class="mw-line"><span>'+l+'</span><b>'+fmt(n)+' ккал</b></div>').join('');root.querySelector('[data-tech]').textContent='Длина шага: '+fmt(v.height*.415/100,3)+' м · Расстояние: '+fmt(v.steps*v.height*.415/100000,2)+' км';root.querySelector('[data-comparison]').innerHTML=[['Шаги / день',x=>fmt(x.steps)],['Тренировки, ккал/нед',x=>fmt(x.train_week)],['Дефицит, ккал/день',x=>fmt((calc(x)||{}).deficit)],['Энергобаланс, ккал',x=>fmt((calc(x)||{}).balance)],['Потребление, ккал/день',x=>fmt((calc(x)||{}).eat)],['Скорость, г/нед',x=>fmt((calc(x)||{}).speed)],['Срок, дней',x=>fmt(x.time)],['За срок, кг',x=>fmt((calc(x)||{}).loss,1)]].map(([l,f])=>'<tr><td>'+l+'</td>'+variants.map((x,i)=>'<td class="'+(i===active?'mw-selected':'')+'">'+f(x)+'</td>').join('')+'</tr>').join('');root.querySelectorAll('[data-section]').forEach(x=>x.dataset.mobileHidden=String(tab==='compare'?x.dataset.section!=='compare':x.dataset.section==='compare'));root.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.tab===tab)));win.classList.toggle('mw-phone',design.view==='Телефон');win.style.setProperty('--mw-left',design.width+'px');if(design.view!=='Телефон'&&innerWidth>720)root.querySelector('.mw-workspace').style.gridTemplateColumns=design.width+'px minmax(0,1fr)';else root.querySelector('.mw-workspace').style.gridTemplateColumns='';root.querySelector('[data-view]').textContent=design.view==='ПК'?'Телефон':'ПК'}
+      root.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-variant')){active=Number(b.dataset.variant);renderFields()}if(b.dataset.tab)tab=b.dataset.tab;if(b.hasAttribute('data-view')){design.view=design.view==='ПК'?'Телефон':'ПК';renderFields()}update()});
+
+      root.addEventListener('input',e=>{
+        if(e.target.hasAttribute('data-name')){names[active]=e.target.value;update();return}
+        if(e.target.hasAttribute('data-comment')){comments[active]=e.target.value;return}
+        if(!e.target.dataset.field)return;
+        const id=e.target.dataset.field;let value=e.target.type==='number'?(e.target.value===''?'':Number(e.target.value)):e.target.value;
+        if(id==='deficit'&&units[active]==='percent'){percents[active]=value;const r=calc(variants[active]);if(value!==''&&r)value=r.balance*value/100}
+        variants[active][id]=value;update();
+      });
+      root.addEventListener('change',e=>{if(e.target.hasAttribute('data-unit')){const r=calc(variants[active]);if(e.target.value==='percent'&&r)percents[active]=r.deficit/r.balance*100;if(e.target.value==='kcal'&&r)variants[active].deficit=r.deficit;units[active]=e.target.value;renderFields();update()}});
+      root.addEventListener('focusout',e=>{if(e.target.dataset.field&&personal.includes(e.target.dataset.field)){const v=variants[active],missing=personal.some(id=>v[id]==='');const detail=root.querySelector('.mw-person');if(missing)detail.open=true;detail.querySelector('summary').textContent=missing?'Заполните данные человека':'Данные человека · '+v.age+' лет · '+v.height+' см · '+v.weight+' кг'}});
+      function restore(saved){if(!saved||saved.mockVersion!==2)return;for(let i=0;i<3;i++){if(saved.variants?.[i]&&typeof saved.variants[i]==='object')Object.assign(variants[i],saved.variants[i]);if(typeof saved.names?.[i]==='string')names[i]=saved.names[i];if(typeof saved.comments?.[i]==='string')comments[i]=saved.comments[i];if(['kcal','percent'].includes(saved.units?.[i]))units[i]=saved.units[i];if(Number.isFinite(saved.percents?.[i]))percents[i]=saved.percents[i]}if([0,1,2].includes(saved.active))active=saved.active;if(['ПК','Телефон'].includes(saved.view))design.view=saved.view}
+      restore(window.openai?.widgetState?.privateContent);
+      function remember(){if(window.openai?.setWidgetState)window.openai.setWidgetState({modelContent:{mockVersion:2,view:design.view},privateContent:{mockVersion:2,variants,names,comments,units,percents,active,view:design.view}}).catch(()=>{})}
+      root.addEventListener('input',remember);root.addEventListener('change',remember);root.addEventListener('click',e=>{if(e.target.closest('button'))remember()});
+      addEventListener('openai:set_globals',e=>{restore(e.detail?.globals?.widgetState?.privateContent);renderFields();update()});
+      addEventListener('resize',()=>{renderFields();update()});
+      renderFields();update();
+      if(globalThis.Tweak){const tweak=new Tweak({container:root,onChange:()=>{for(const v of variants)for(const id of personal){if(!design.filled)v[id]='';else if(v[id]==='')v[id]=initial[id]}renderFields();update()}});tweak.addToggle(design,'filled',{label:'Данные человека заполнены'});tweak.addSelect(design,'view',{label:'Экран',options:['ПК','Телефон']});tweak.addSlider(design,'width',{label:'Ширина панели ввода',min:300,max:400,step:10,unit:'px'})}
+    })();
+  </script>
+</div>
+</body>
+</html>
