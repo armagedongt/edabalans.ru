@@ -44,6 +44,11 @@ async function captureSnapshot(page,name){
   })
   await writeFile(process.env.QA_OUT+'/'+name+'.html',html)
 }
+async function waitForReveal(page){
+  await page.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  // Visibility inherited by nested mounts is asserted after Chromium has painted it.
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+}
 const origin = 'http://127.0.0.1:18995'
 const browser = await chromium.launch({headless: true,args:['--disable-gpu','--in-process-gpu']})
 const html = '<div id="account-app"><h1>Готовый кабинет</h1><iframe src="/slow-video"></iframe></div><link rel="stylesheet" href="/visual.css"><script>EdabalansEmbed.waitUntilReady(document.getElementById("account-app"),fetch("/api/test-data").then(r=>{if(!r.ok)throw Error("Ошибка данных");return r.json()}))</script>'
@@ -232,7 +237,7 @@ try {
   await prefetched.promise
   assert.equal(await dashboard.native.locator('#account-app').count(),0,'Prefetch must not execute the app before authorization')
   auth.release()
-  await dashboard.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(dashboard.native)
   assert.equal(await dashboard.native.locator('.account-card').first().isVisible(),true,'Offers and fonts must not delay the first useful screen')
   await dashboard.native.waitForFunction(()=>document.fonts.status==='loading')
   assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').count(),0)
@@ -344,8 +349,7 @@ try {
   assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').count(),1)
   assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').textContent(),'Загрузка страницы','Nested loading must replace authorization without cycling cosmetic captions')
   article.release()
-  await direct.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
-  await direct.native.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+  await waitForReveal(direct.native)
   assert.equal(await direct.native.locator('#article').isVisible(),true)
   assert.match(await direct.native.locator('#article').textContent(),/Готовое содержимое/)
   assert.equal(direct.requests.step,1)
@@ -372,7 +376,7 @@ try {
   await form.native.waitForFunction(()=>document.querySelector('#q-fields')?.textContent.includes('Загружаю вопросы'))
   assert.equal(await form.native.locator('#masterclass-course-app').isVisible(),false)
   questionnaire.release()
-  await form.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(form.native)
   assert.equal(await form.native.locator('#questionnaire').isVisible(),true)
   assert.doesNotMatch(await form.native.locator('#q-fields').textContent(),/Загружаю вопросы/)
   assert.deepEqual(form.faults,[])
@@ -383,7 +387,7 @@ try {
   await tutorial.native.waitForFunction(()=>document.querySelector('#article p')?.textContent.includes('Загрузка материала'))
   assert.equal(await tutorial.native.locator('#masterclass-course-app').isVisible(),false)
   firstArticle.release()
-  await tutorial.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(tutorial.native)
   assert.match(await tutorial.native.locator('#article').textContent(),/Готовое содержимое/)
   assert.equal(tutorial.requests.step,1,'Published text without contentAsset must still load')
   assert.equal(tutorial.requests.corpus,0)
@@ -395,7 +399,7 @@ try {
   await dqs.native.waitForFunction(()=>document.querySelector('#masterclass-course-app'))
   assert.equal(await dqs.native.locator('#masterclass-course-app').isVisible(),false)
   asset.release()
-  await dqs.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  await waitForReveal(dqs.native)
   assert.match(await dqs.native.locator('#article').textContent(),/Готовое описание приложения/)
   assert.deepEqual(dqs.faults,[])
   await dqs.native.close()
@@ -407,8 +411,7 @@ try {
   assert.equal(await offer.native.locator('.ed-loading-inline').count(),0,'Nested inline app reuses the active fullscreen loader')
   assert.equal(await offer.native.locator('#masterclass-course-app').isVisible(),false)
   special.release()
-  await offer.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
-  await offer.native.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+  await waitForReveal(offer.native)
   assert.equal(await offer.native.locator('#masterclass-offers-app').isVisible(),true)
   assert.deepEqual(offer.faults,[])
   await offer.native.close()
