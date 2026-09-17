@@ -66,7 +66,7 @@ def test_recipes_program_keeps_conceptual_sections_from_its_canonical_markdown()
 
     assert "<blockquote>" in payload["html"]
     assert "<h2>Программа по дням:</h2>" not in payload["html"]
-    assert "<h3>Как сделать еду сытной и вкусной</h3>" in payload["html"]
+    assert "<h3>От готовых рецептов — к своим решениям</h3>" in payload["html"]
     assert "День 6" not in payload["html"]
     assert "Каталог рецептов — обновляемый" in payload["html"]
 

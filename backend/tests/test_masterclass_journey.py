@@ -1511,7 +1511,7 @@ def test_offer_payload_links_product_presentations_to_current_checkout_cards():
     assert recipes["program"] == []
     assert recipes["canonical_html"]
     assert recipes["canonical_version"] == 1
-    assert "Как сделать еду сытной и вкусной" in recipes["canonical_html"]
+    assert "От готовых рецептов — к своим решениям" in recipes["canonical_html"]
     assert "Программа по дням" not in recipes["canonical_html"]
     assert all(set(item) == {"title", "description"} for item in recipes["program"])
     actions = payload["product_offer_actions"]["recipes"]
