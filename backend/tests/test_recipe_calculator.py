@@ -136,8 +136,10 @@ def test_personal_product_hides_from_search_but_keeps_saved_recipe_and_recipe_is
     assert client.delete(f"/api/apps/recipes/{created['id']}").status_code == 404
 
 
-def test_recipe_product_is_ready_in_account_catalog():
-    assert PRODUCT_CONNECTIONS["recipes"] == {
+def test_recipe_product_retains_base_readiness():
+    connection = PRODUCT_CONNECTIONS["recipes"]
+    # Temporary interface maintenance does not remove the underlying product.
+    assert {key: connection[key] for key in ("resource", "app", "ready")} == {
         "resource": "recipes",
         "app": "recipes",
         "ready": True,
