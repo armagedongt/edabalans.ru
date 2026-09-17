@@ -1,0 +1,36 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "38c7502bcc851bd5410675559eb8ba4b75fb92784fda6c4124fc486b3e546583",
+  "draft_sha256": "97229d7d88ebaad0c9025b9bd3c52c895964219741b15f2954bcb913815530b7",
+  "review_sha256": "1644497dc9917651252ef5b1cc13cd00d0db9114a7d0907fd85e478f3cfff7a7",
+  "validated_at": "2026-09-17T19:09:16.880808+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": null,
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [
+    "Не обновлять медицинские и численные утверждения. Не переписывать остальные абзацы."
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 1953,
+    "token_coverage": 0.9846390168970814,
+    "source_visible_characters": 13882,
+    "draft_visible_characters": 13646,
+    "visible_length_ratio": 0.9829995677856217
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Не обновлять медицинские и численные утверждения. Не переписывать остальные абзацы."
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

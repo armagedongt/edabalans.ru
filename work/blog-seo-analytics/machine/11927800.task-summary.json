@@ -1,0 +1,26 @@
+{
+  "note": "Удалить только согласованный исторический хвост; фактура, аргументы, остальные медиа и CTA сохраняются.",
+  "work_profile": "develop_existing",
+  "edit_mode": "targeted_edit",
+  "source_basis": "full_source",
+  "surface_context": "site_article",
+  "delivery_platform": "website",
+  "format_profile": "article",
+  "preservation_anchors": [
+    "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
+    "*Привет, меня зовут Сергей, я тренер по питанию, нутрициолог, похудатель человеческих тел.*",
+    "**Когда я узнал, как организована система питания в японских школах, у меня просто отвалилась челюсть!**"
+  ],
+  "fact_sources": [
+    {
+      "name": "Accepted article f458798",
+      "fingerprint": "7cb5592e0a869bcbd1910a622e94daaac47522b113b5eeb0168e0739923414b4"
+    }
+  ],
+  "forbidden_claims": [
+    "Не обновлять медицинские и численные утверждения. Не переписывать остальные абзацы."
+  ],
+  "source_sha256": "7cb5592e0a869bcbd1910a622e94daaac47522b113b5eeb0168e0739923414b4",
+  "removed_fragment_count": 1,
+  "private_full_source_pack": true
+}

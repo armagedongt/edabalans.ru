@@ -1670,6 +1670,10 @@
     },
     {
       "module_id": "platform.content",
+      "path": "content/author-voice/platform-adaptation-v1.md"
+    },
+    {
+      "module_id": "platform.content",
       "path": "content/author-voice/product-fact-router.md"
     },
     {
@@ -3671,6 +3675,10 @@
     {
       "module_id": "marketing.analytics",
       "path": "docs/knowledge-base/YANDEX_DIRECT_OPERATIONS.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "docs/knowledge-base/modules/blog/README.md"
     },
     {
       "module_id": "products.calories",
@@ -6581,6 +6589,74 @@
       "path": "work/blog-editorial-system/user-spec.md"
     },
     {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/analytics-proposal.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/code-research.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/current-decisions.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/decisions.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/11927800.review.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/11927800.task-summary.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/11927800.validation.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/tilda-49734795.review.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/tilda-49734795.task-summary.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/machine/tilda-49734795.validation.json"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/publication-proposal.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/review-summary.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/seo-recommendations.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/user-spec.md"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/validate_editorial_removals.py"
+    },
+    {
+      "module_id": "platform.blog",
+      "path": "work/blog-seo-analytics/verification.md"
+    },
+    {
       "module_id": "operations.project-work",
       "path": "work/calorie-course-rebuild/README.md"
     },
@@ -8295,6 +8371,10 @@
     {
       "module_id": "operations.project-work",
       "path": "work/content-authoring-system/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/content-authoring-system/platform-adaptation-checkpoint-20260917.md"
     },
     {
       "module_id": "products.masterclass.course",
@@ -12703,6 +12783,7 @@
         "reads_from": [
           "messaging.max",
           "messaging.telegram.attribution",
+          "platform.commerce",
           "platform.crm",
           "products.intensive"
         ],
@@ -16462,7 +16543,7 @@
       },
       "title": "Старт и атрибуция Telegram",
       "truths": [
-        "`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,\n`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data и\n`backend/app/telegram_public_cta.py` для публичного CTA и\n`backend/app/personal_tracking_routes.py` для персональных исходящих маршрутов."
+        "`START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,\n`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data;\n[`LINKS_AND_ATTRIBUTION.md`](../telegram/LINKS_AND_ATTRIBUTION.md) для правил\nиспользования исходящих ссылок; снимок источника прямого заказа принадлежит\n[`ROBOKASSA_PAYMENTS.md`](../../../ROBOKASSA_PAYMENTS.md).\n`backend/app/telegram_public_cta.py` для публичного CTA и\n`backend/app/personal_tracking_routes.py` для персональных исходящих маршрутов."
       ]
     },
     {
@@ -29478,6 +29559,10 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/content-authoring-system/platform-adaptation-checkpoint-20260917.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/free-intensive-rebuild/README.md"
         },
         {
@@ -33446,6 +33531,10 @@
         },
         {
           "module_id": "platform.blog",
+          "path": "docs/knowledge-base/modules/blog/README.md"
+        },
+        {
+          "module_id": "platform.blog",
           "path": "docs/knowledge-base/modules/catalog/platform.blog.md"
         },
         {
@@ -34759,6 +34848,74 @@
         {
           "module_id": "platform.blog",
           "path": "work/blog-audit-20260917/version-groups.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/analytics-proposal.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/code-research.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/current-decisions.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/decisions.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/11927800.review.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/11927800.task-summary.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/11927800.validation.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/tilda-49734795.review.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/tilda-49734795.task-summary.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/machine/tilda-49734795.validation.json"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/publication-proposal.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/review-summary.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/seo-recommendations.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/user-spec.md"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/validate_editorial_removals.py"
+        },
+        {
+          "module_id": "platform.blog",
+          "path": "work/blog-seo-analytics/verification.md"
         }
       ],
       "id": "platform.blog",
@@ -34777,6 +34934,7 @@
         "events_in": [],
         "events_out": [],
         "reads_from": [
+          "marketing.analytics",
           "messaging.telegram.attribution",
           "operations.proxy",
           "platform",
@@ -35446,6 +35604,30 @@
           "module_id": "platform.blog",
           "name": "root",
           "qualname": "root"
+        },
+        {
+          "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+          "kind": "function",
+          "line": 24,
+          "module_id": "platform.blog",
+          "name": "approved_fragment",
+          "qualname": "approved_fragment"
+        },
+        {
+          "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+          "kind": "function",
+          "line": 32,
+          "module_id": "platform.blog",
+          "name": "assert_approved_draft",
+          "qualname": "assert_approved_draft"
+        },
+        {
+          "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+          "kind": "function",
+          "line": 37,
+          "module_id": "platform.blog",
+          "name": "safe_artifact",
+          "qualname": "safe_artifact"
         }
       ],
       "tables": [],
@@ -39062,6 +39244,10 @@
         {
           "module_id": "platform.content",
           "path": "content/author-voice/pikabu-structure-adapter-v1.md"
+        },
+        {
+          "module_id": "platform.content",
+          "path": "content/author-voice/platform-adaptation-v1.md"
         },
         {
           "module_id": "platform.content",
@@ -43648,7 +43834,7 @@
       "telegram": null,
       "title": "Каталог материалов",
       "truths": [
-        "Человекочитаемый вход во весь писательский контур —\n[Писарь: единый вход, правила и маршруты работы](../../../../content/author-voice/README.md).\nТам связаны реальные виды задач, владельцы фактов, инструменты, доставка и\nпредыдущие разборы. Главная исполняемая инструкция остаётся существующим\n`edabalans-writer/SKILL.md`, без второго агента или паспорта.\nРасширенный `docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md` сохраняет уже\nподготовленный draft локального прототипа, не подтверждает production-поддержку.",
+        "Человекочитаемый вход во весь писательский контур —\n[Писарь: единый вход, правила и маршруты работы](../../../../content/author-voice/README.md).\nТам связаны реальные виды задач, владельцы фактов, инструменты, доставка и\nпредыдущие разборы. Главная исполняемая инструкция остаётся существующим\n`edabalans-writer/SKILL.md`, без второго агента или паспорта.\nВнутренний [маршрут адаптации площадок](../../../../content/author-voice/platform-adaptation-v1.md)\nвыбирает требования Telegram/MAX, Pikabu, сайта, курсов, бота и рекламы.\nОн разделяет место текста и площадку доставки, не создаёт отдельные голоса,\nнавыки для каждой короткой поправки или копии сценариев.\nРасширенный `docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md` сохраняет уже\nподготовленный draft локального прототипа, не подтверждает production-поддержку.",
         "Единый нормативный канон принадлежит этому модулю:\n`content/author-voice/writer-contract-v1.md` владеет голосом, аргументацией и\nпродажами, `authoring-work-profiles-v1.md` — выбором авторского маршрута,\nсоседний `editing-modes-v1.md` — разрешениями на изменение исходника,\nа `docs/knowledge-base/ARTICLE_STANDARD.md` — общим оформлением статей сайта и\nматериалов любых курсов. Обязательная точка входа —\n`content/author-voice/skill/edabalans-writer/SKILL.md`. Продуктовые факты\nподключаются через `content/author-voice/product-fact-router.md` без копирования\nв голос.",
         "Машинный task описан `author-task.schema.json`, компонентные вызовы —\n`article-component-router.md`, проход доказательных ссылок —\n`source-integration-pass-v1.md`, состояние проверок —\n`source-review-registry-v1.json`, четыре оси состояния материала —\n`material-status-v1.md`, исполнимый маршрут — `tools/author_workflow.py`.",
         "PostgreSQL content tables, `docs/CONTENT_CATALOG.md`,\n`docs/knowledge-base/ARTICLE_STANDARD.md`, importers и перечисленные в\n`docs/modules.toml` канонические файлы `content/author-voice/`.\nОсновной порядок составления и согласования материалов с Codex задаёт\n`docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md`. Технический каталог и\nадминки сохраняются полностью и могут использоваться Сергеем как дополнительные\nинструменты; они не заменяют общий протокол общения через таблицу и Markdown.\nОсобенности оболочки курса задают канонические документы соответствующего курса,\nне создавая второй редакторский голос.\nВнешние книги, видео и другие переданные референсы маршрутизируются через\n`content/external-references/README.md`; этот слой поставляет идеи и provenance,\nно не определяет авторский голос, продуктовые факты или медицинские выводы.\nПолные локальные тексты и индексы голоса хранятся только в\n`C:\\private\\edabalans-content-authoring`; Git содержит контракт, правила и ID\nдоказательств в `content/author-voice/`.\nЗашифрованный backup приватного канона создаёт `tools/backup_author_memory.py`;\nоперационный маршрут хранения и восстановления описан в `docs/OPERATIONS.md`."
@@ -59952,6 +60138,11 @@
     },
     {
       "source": "marketing.analytics",
+      "target": "platform.commerce",
+      "type": "reads_from"
+    },
+    {
+      "source": "marketing.analytics",
       "target": "platform.crm",
       "type": "reads_from"
     },
@@ -60038,6 +60229,11 @@
     {
       "source": "platform.auth",
       "target": "platform.commerce",
+      "type": "reads_from"
+    },
+    {
+      "source": "platform.blog",
+      "target": "marketing.analytics",
       "type": "reads_from"
     },
     {
@@ -96023,6 +96219,30 @@
       "module_id": "platform.blog",
       "name": "root",
       "qualname": "root"
+    },
+    {
+      "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+      "kind": "function",
+      "line": 24,
+      "module_id": "platform.blog",
+      "name": "approved_fragment",
+      "qualname": "approved_fragment"
+    },
+    {
+      "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+      "kind": "function",
+      "line": 32,
+      "module_id": "platform.blog",
+      "name": "assert_approved_draft",
+      "qualname": "assert_approved_draft"
+    },
+    {
+      "file": "work/blog-seo-analytics/validate_editorial_removals.py",
+      "kind": "function",
+      "line": 37,
+      "module_id": "platform.blog",
+      "name": "safe_artifact",
+      "qualname": "safe_artifact"
     },
     {
       "file": "work/calorie-course-rebuild/export_calorie_candidates.py",

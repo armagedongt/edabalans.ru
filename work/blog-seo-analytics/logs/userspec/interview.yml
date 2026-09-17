@@ -1,0 +1,168 @@
+# User-spec planning interview
+# Questions and answers are preserved verbatim. Topic fields track what is known and still open.
+
+interview_metadata:
+  started: "2026-09-17"
+  last_updated: "2026-09-17"
+  status: "in_progress"  # in_progress | completed
+  can_resume: true
+
+conversation_history:
+  - asked_at: "2026-09-17"
+    topic_keys: ["migration_needs", "ui_ux_requirements", "success_criteria"]
+    agent_questions: |
+      Для API-публикации предлагаю перенести девять текущих статей в существующее серверное хранилище версий, сохранив адреса, медиа и возможность отката. После этого Markdown можно публиковать пакетно без сборки сайта; новые статьи — только после вашего выбора и writer pass. Подтверждаете такой переход?
+      Для единственной всплывашки предлагаю оставить условия: 75 секунд активного чтения и половина текста, максимум раз в 14 дней, только пока посетитель не связан с пользователем. Закрывается кнопкой и Escape, не блокирует статью. Принимаем эти условия?
+      Для статистики предлагаю отдельно показывать глубину прокрутки, активное время и «вероятное дочитывание»: просмотрено не менее 90% текста и активное время не меньше трети расчётного времени чтения. Это оценка, не доказательство прочтения. Принимаем такую методику?
+    user_answer: null
+    status: awaiting_reply
+# Entry format:
+# - asked_at: "YYYY-MM-DD HH:MM:SS"
+#   topic_keys: ["user_problem", "success_criteria"]
+#   agent_questions: |
+#     Full question batch, verbatim.
+#   user_answer: |
+#     Full user answer, verbatim.
+
+general_understanding:
+  feature_name:
+    score: 90
+    value: "Блог: SEO, аналитика и пакетная публикация"
+    gaps: []
+    required: true
+
+  feature_description:
+    score: 90
+    value: "Канонический контур текущего блога, рекомендации SEO, автоматический related, автор/даты, чтение/клики и popup; перенос MD publication на API."
+    gaps: []
+    required: true
+
+  work_type:
+    score: 90
+    value: "feature"
+    gaps: []
+    required: true
+
+  user_problem:
+    score: 90
+    value: "130 материалов неудобно публиковать отдельными deploy; SEO и статистика неполны, ручные related не масштабируются."
+    gaps: []
+    required: true
+
+  target_users:
+    score: 90
+    value: "Читатели публичного блога и владелец редакционной публикации."
+    gaps: []
+    required: false
+
+  success_criteria:
+    score: 70
+    value: "Стабильные URL/media; writer gate; три related; фактические чтение/клики отдельно от Start/покупки; batch без deploy текста."
+    gaps: ["Подтвердить API переход и метрику вероятного дочитывания"]
+    required: true
+
+  constraints:
+    score: 90
+    value: "Не менять медицинскую фактуру/авторский текст ради SEO. Общие footer, typography, cookie. Без выдуманных дат и квалификаций."
+    gaps: []
+    required: true
+
+  testing_strategy:
+    score: 90
+    value: "Existing 24 blog tests pass; будущие publisher auth/409/hash/media/rollback и tracker duplicate/visibility/idle checks."
+    gaps: []
+    required: true
+
+user_experience:
+  user_stories:
+    score: 90
+    value: "Читатель открывает статью, читает и переходит в related/CTA; редактор публикует проверенные MD bundles административным batch."
+    gaps: []
+    required: true
+
+  acceptance_criteria:
+    score: 70
+    value: "Current ending removals exact/delete-only with writer pass; API requires one reader, stable URL, per-item result and rollback."
+    gaps: ["Утвердить popup frequency/trigger и completion metric"]
+    required: true
+
+  edge_cases:
+    score: 70
+    value: "Unlinked не означает absent in bot; same-cookie apex/blog только общий root; related не включает drafts/self; stale writes409."
+    gaps: ["Политика popup при неизвестной identity"]
+    required: true
+
+  error_scenarios:
+    score: 90
+    value: "Validation/media failure сохраняют старую публикацию; partial batch reports; неизвестная атрибуция не ложный ноль."
+    gaps: []
+    required: true
+
+  verification_strategy:
+    score: 90
+    value: "Tests, fresh reviews, actual production route/content checks; events visible in agreed reports after implementation."
+    gaps: []
+    required: true
+
+  ui_ux_requirements:
+    score: 70
+    value: "15 per page, existing purple/shared typography, shared footer; only intensive popup, close/Escape nonblocking."
+    gaps: ["75s+50% и14дней ждут ответа"]
+    required: false
+
+  risks:
+    score: 90
+    value: "Import source switch/backup, dual truth, identity privacy, false read labels, accidental copy/science edits."
+    gaps: []
+    required: true
+
+  technical_decisions:
+    score: 90
+    value: "Reuse platform.blog and managed_document_versions; shared narrow Metrika loader; no duplicate SEO/ad canon."
+    gaps: []
+    required: false
+
+  deploy_approach:
+    score: 70
+    value: "Current endings/docs independent; major API import after approval and verified backup/recovery."
+    gaps: ["Подтверждение смены publication source"]
+    required: false
+
+  manual_user_actions:
+    score: 90
+    value: "Выбрать статьи карты; ответить на три продуктовых решения; фактура только по прямому заданию."
+    gaps: []
+    required: false
+
+integration:
+  integration_points:
+    score: 90
+    value: "platform.blog/content, marketing.analytics, attribution, auth, public site and proxy."
+    gaps: []
+    required: true
+
+  dependencies:
+    score: 90
+    value: "Existing renderer, typed CTA, managed versions, admin auth, shared cookie/footer, existing97331502."
+    gaps: []
+    required: false
+
+  technical_constraints:
+    score: 90
+    value: "Blog proxy no broad API; host-only account cookie not visible; ClientID not CRM identity."
+    gaps: []
+    required: false
+
+  data_requirements:
+    score: 90
+    value: "Stable source_id, metadata/provenance, truthful source/blog dates, immutable media, hashes/versioned gate."
+    gaps: []
+    required: false
+
+  migration_needs:
+    score: 70
+    value: "Active9 Git bundles become one managed runtime source only after confirmed import; no automatic130 import."
+    gaps: ["Подтверждение пользователя и backup/recovery проверка"]
+    required: false
+
+notes: "Code research завершено; completeness и user-spec drafting ещё не выполнялись: три вопроса ожидают ответа. Current approved narrow edits проверены отдельно."

@@ -1,0 +1,20 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex source-preservation editorial review",
+  "reviewed_at": "2026-09-17T19:09:16.858172+00:00",
+  "pack_sha256": "38c7502bcc851bd5410675559eb8ba4b75fb92784fda6c4124fc486b3e546583",
+  "draft_sha256": "97229d7d88ebaad0c9025b9bd3c52c895964219741b15f2954bcb913815530b7",
+  "fact_sources": [
+    {
+      "name": "Accepted article f458798",
+      "fingerprint": "7cb5592e0a869bcbd1910a622e94daaac47522b113b5eeb0168e0739923414b4"
+    }
+  ],
+  "checks": [
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Полный исходник и защищённый diff проверены: удаление только согласованного блока. Новых фраз нет, антинейрослоп новых связок не применим; фактура и прочие медиа сохранены."
+    }
+  ]
+}
