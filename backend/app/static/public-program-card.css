@@ -19,6 +19,9 @@
 .edb-program-card[data-program-card="consultation"]>p,
 .edb-program-card[data-program-card="consultation"]>p:first-child,
 .edb-program-card[data-program-card="consultation"] .edb-program-card__section p{color:#4f5965;font-size:16px;font-weight:600;line-height:1.6}
+.edb-program-card[data-program-card="recipes"] .edb-program-card__section p+p,
+.edb-program-card[data-program-card="consultation"] .edb-program-card__section p+p{margin-top:12px}
+.edb-program-card[data-program-card="recipes"] .edb-program-card__section ul{margin-top:12px}
 .edb-program-card[data-program-card="program"] .edb-program-card__section h2{font-family:'Unbounded',sans-serif;font-size:14px!important;letter-spacing:-.035em}
 
 @media(min-width:760px){
