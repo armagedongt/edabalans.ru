@@ -77,14 +77,15 @@ def test_program_popup_runtime_uses_the_three_canonical_markdown_documents() -> 
     styles = (root / "public-program-card.css").read_text(encoding="utf-8")
 
     assert "/api/public-site/content/${encodeURIComponent(code)}" in homepage
-    assert "slug === 'program' || slug === 'consultation'" in renderer
+    assert "slug === 'program'" in renderer
+    assert "slug === 'consultation'" in renderer
     assert "slug === 'recipes'" in renderer
     assert "edb-program-card__sections" in renderer
     assert "programCardEnhanced" not in renderer
-    assert "['P']" in renderer
+    assert "['P', 'UL']" in renderer
     assert "['UL']" in renderer
     assert "Product catalog descriptions serve other surfaces" in homepage
-    assert "EdabalansProgramCard.enhance(overlayPoints, code)" not in homepage
+    assert "EdabalansProgramCard.enhance(overlayPoints, code)" in homepage
     assert 'data-program-card="program"' in styles
     assert 'data-program-card="recipes"' in styles
     assert 'data-program-card="consultation"' in styles

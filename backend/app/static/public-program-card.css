@@ -5,8 +5,9 @@
 .edb-program-card>blockquote p{margin:0 0 12px;color:#40505d;font-size:15px;font-weight:600;line-height:1.58}
 .edb-program-card>blockquote p:last-child{margin-bottom:0}
 .edb-program-card>h2{margin:34px 0 16px!important;padding:0!important;border:0!important;color:#20252b;font-size:22px!important;font-weight:900;line-height:1.2}
-.edb-program-card__sections{display:grid;gap:12px}
+.edb-program-card__sections{display:block;column-count:1;gap:0}
 .edb-program-card__section{padding:18px;border:1px solid #e0e7ec;border-radius:16px;background:#fff;box-shadow:0 12px 30px -28px rgba(24,55,76,.72)}
+.edb-program-card__section+.edb-program-card__section{margin-top:12px}
 .edb-program-card__section h2,.edb-program-card__section h3{margin:0 0 12px!important;padding:0!important;border:0!important;color:#168fdc;font-size:16px!important;font-weight:900;line-height:1.3}
 .edb-program-card__section p{margin:0;color:#53606b;font-size:14px;font-weight:600;line-height:1.5}
 .edb-program-card__section ul{display:grid;gap:8px;margin:0;padding:0;list-style:none}
@@ -15,18 +16,16 @@
 .edb-program-card[data-program-card="recipes"]>blockquote:last-of-type{margin-top:22px;border-color:#ffd5c5;border-left-color:#ff682e;background:#fff5ef}
 .edb-program-card[data-program-card="recipes"]>p:last-child{margin-top:20px;color:#20252b;font-size:16px}
 .edb-program-card[data-program-card="consultation"] .edb-program-card__section{background:linear-gradient(135deg,#f5fcff,#fff)}
+.edb-program-card[data-program-card="consultation"]>p,
+.edb-program-card[data-program-card="consultation"]>p:first-child,
+.edb-program-card[data-program-card="consultation"] .edb-program-card__section p{color:#4f5965;font-size:16px;font-weight:600;line-height:1.6}
 .edb-program-card[data-program-card="program"] .edb-program-card__section h2{font-family:'Unbounded',sans-serif;font-size:14px!important;letter-spacing:-.035em}
 
 @media(min-width:760px){
   .edb-product-overlay.is-recipes .edb-product-overlay-content,.edb-product-overlay.is-program .edb-product-overlay-content{width:min(100%,920px)!important;max-width:920px!important}
   .mc-product-sheet.has-canonical-program-card{max-width:920px}
   .edb-program-card[data-program-card="recipes"]>blockquote:first-of-type{padding:24px 26px}
-  .edb-program-card__sections{grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch}
   .edb-program-card__section{padding:20px}
-}
-
-@media(min-width:1000px){
-  .edb-program-card[data-program-card="recipes"] .edb-program-card__sections{grid-template-columns:repeat(3,minmax(0,1fr))}
 }
 
 @media(max-width:430px){

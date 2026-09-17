@@ -1,9 +1,9 @@
 (function () {
   'use strict';
 
-  function groupSections(root, headingSelector, bodyTags) {
+  function groupSections(root, headingSelector, bodyTags, includeHeading) {
     var headings = Array.prototype.slice.call(root.children).filter(function (node) {
-      return node.matches(headingSelector);
+      return node.matches(headingSelector) && (!includeHeading || includeHeading(node));
     });
     if (!headings.length) return;
 
@@ -32,8 +32,11 @@
     root.classList.add('edb-program-card');
     root.dataset.programCard = slug || '';
 
-    if (slug === 'program' || slug === 'consultation') groupSections(root, 'h2', ['P']);
-    if (slug === 'recipes') groupSections(root, 'h3', ['UL']);
+    if (slug === 'program') groupSections(root, 'h3', ['P', 'UL']);
+    if (slug === 'consultation') groupSections(root, 'h2', ['P']);
+    if (slug === 'recipes') groupSections(root, 'h3', ['UL'], function (heading) {
+      return /^День(?:\s|$)/.test(heading.textContent.trim());
+    });
   }
 
   window.EdabalansProgramCard = { enhance: enhance };
