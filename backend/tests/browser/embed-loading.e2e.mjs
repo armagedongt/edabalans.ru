@@ -8,6 +8,10 @@ const accountHtml = await readFile(new URL('../../app/static/apps/account.html',
 const courseHtml = await readFile(new URL('../../app/static/masterclass-first-days-preview.html', import.meta.url), 'utf8')
 const questionnaireJs = await readFile(new URL('../../app/static/masterclass.js', import.meta.url), 'utf8')
 const personJs = await readFile(new URL('../../app/static/questionnaire-person.js', import.meta.url), 'utf8')
+const personCss = await readFile(new URL('../../app/static/questionnaire-person.css', import.meta.url), 'utf8')
+const standaloneCss = await readFile(new URL('../../app/static/masterclass.css', import.meta.url), 'utf8')
+const personFields=[{key:'gender',code:'person_gender',title:'Пол',options:['Женщина','Мужчина']},{key:'age',code:'person_age',title:'Возраст, лет',min:1,max:120,step:1},{key:'height',code:'person_height',title:'Рост, см',min:50,max:250,step:0.1},{key:'weight',code:'person_weight',title:'Вес, кг',min:10,max:500,step:0.1}]
+const personParameters={gender:'Женщина',age:35,height:170,weight:80}
 const manifest = JSON.parse(await readFile(new URL('../../../content/masterclass/course/course.json', import.meta.url), 'utf8'))
 const visualCss = await readFile(new URL('../../app/static/course-visual.css', import.meta.url), 'utf8')
 const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', import.meta.url), 'utf8')
@@ -209,6 +213,7 @@ try {
       if(path==='/slow-font.woff2'){await delays.fontFile.promise;return route.abort()}
       if(path==='/assets/content-gallery.js')return route.fulfill({contentType:'application/javascript',body:galleryJs})
       if(path==='/assets/questionnaire-person.js')return route.fulfill({contentType:'application/javascript',body:personJs})
+      if(path==='/assets/questionnaire-person.css')return route.fulfill({contentType:'text/css',body:personCss})
       if(path==='/course-assets/masterclass/article-components.js')return route.fulfill({contentType:'application/javascript',body:sliderJs})
       if(path.endsWith('.css'))return route.fulfill({contentType:'text/css',body:''})
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
@@ -406,13 +411,14 @@ try {
   const mdStep=mdManifest.days[0].steps.find(step=>step.id==='day-01-questionnaire')
   mdStep.title=mdCopy.title;mdStep.label=mdCopy.title;mdStep.editorialHtml=mdCopy.leadHtml
   const mdQuestions=[{code:'parameters',title:'Вопрос из MD',prompt:'Подсказка из MD',answer:'Прежний ответ'}]
-  const mdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:mdCopy})
+  const mdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:mdCopy,personFields,personParameters})
   await mdForm.native.locator('#q-fields textarea').waitFor()
   assert.equal(await mdForm.native.locator('#questionnaire-title').textContent(),mdCopy.title)
   assert.equal(await mdForm.native.locator('#q-done').textContent(),mdCopy.button)
   assert.equal(await mdForm.native.locator('#q-fields strong').textContent(),'Подсказка из MD')
   assert.equal(await mdForm.native.locator('#q-fields textarea').inputValue(),'Прежний ответ')
   assert.equal(await mdForm.native.locator('#q-note').textContent(),'После формы из MD')
+  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await mdForm.native.setViewportSize({width,height:900});await capture(mdForm.native,'questionnaire-person-course-'+width)}
   await mdForm.native.close()
   mdStep.editorialHtml=''
   const emptyMdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:{...mdCopy,leadHtml:''}})
@@ -423,10 +429,12 @@ try {
   let standaloneCopy=mdCopy
   await standalone.route(origin+'/**',route=>{
     const path=new URL(route.request().url()).pathname
-    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="onboarding-questionnaire-app"></div><script>window.EdabalansAppContext={app:"onboarding-questionnaire"};window.EdabalansIdentity={email:"reader@example.test"}</script><script src="/person.js"></script><script src="/questionnaire.js"></script>'})
+    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<link rel="stylesheet" href="/masterclass.css"><link rel="stylesheet" href="/person.css"><div id="onboarding-questionnaire-app"></div><script>window.EdabalansAppContext={app:"onboarding-questionnaire"};window.EdabalansIdentity={email:"reader@example.test"}</script><script src="/person.js"></script><script src="/questionnaire.js"></script>'})
     if(path==='/person.js')return route.fulfill({contentType:'application/javascript',body:personJs})
+    if(path==='/person.css')return route.fulfill({contentType:'text/css',body:personCss})
+    if(path==='/masterclass.css')return route.fulfill({contentType:'text/css',body:standaloneCss})
     if(path==='/questionnaire.js')return route.fulfill({contentType:'application/javascript',body:questionnaireJs})
-    if(path==='/api/masterclass/questionnaires/onboarding')return route.fulfill({json:{questions:mdQuestions,copy:standaloneCopy,personFields:[],personParameters:{}}})
+    if(path==='/api/masterclass/questionnaires/onboarding')return route.fulfill({json:{questions:mdQuestions,copy:standaloneCopy,personFields,personParameters}})
     return route.fulfill({contentType:'text/css',body:''})
   })
   await standalone.goto(origin,{waitUntil:'domcontentloaded'})
@@ -435,6 +443,7 @@ try {
   assert.equal(await standalone.locator('#mc-submit').textContent(),mdCopy.button)
   assert.equal(await standalone.locator('.mc-question strong').textContent(),'Подсказка из MD')
   assert.equal(await standalone.locator('textarea').inputValue(),'Прежний ответ')
+  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await standalone.setViewportSize({width,height:900});await capture(standalone,'questionnaire-person-standalone-'+width)}
   standaloneCopy={...mdCopy,leadHtml:''}
   await standalone.reload({waitUntil:'domcontentloaded'})
   await standalone.locator('#mc-submit').waitFor()
