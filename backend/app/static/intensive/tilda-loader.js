@@ -8,6 +8,7 @@
   var mount = document.querySelector('[data-edabalans-intensive]');
   var attributionKeys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'alias'];
   var currentParams = new URLSearchParams(window.location.search);
+  var loadFailed = false;
 
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
@@ -117,6 +118,7 @@
       var shared = document.createElement('script');
       shared.id = id;
       shared.src = appHost + path;
+      if (id === 'edabalans-shared-loader') shared.setAttribute('data-edabalans-loader-only', 'true');
       shared.onload = resolve;
       shared.onerror = reject;
       document.body.appendChild(shared);
@@ -124,6 +126,8 @@
   }
 
   function showFailure(error) {
+    loadFailed = true;
+    if (window.EdabalansEmbed) window.EdabalansEmbed.finishLoading(mount);
     mount.removeAttribute('aria-busy');
     mount.innerHTML = '<div style="max-width:760px;margin:40px auto;padding:20px;border:1px solid #d9eaf4;border-radius:16px;background:#fff;color:#334;line-height:1.5">Не удалось загрузить интенсив. Обновите страницу ещё раз.</div>';
     if (window.console && console.error) console.error('[edabalans intensive]', error);
@@ -178,14 +182,18 @@
   }
 
   prepareTildaShell();
-  fetch(appHost + '/intensive', {credentials: 'omit', mode: 'cors', cache: 'no-store'})
+  var loaderReady = loadSharedScript('edabalans-shared-loader', '/embed.js', function () { return Boolean(window.EdabalansEmbed); })
+    .then(function () { if (!loadFailed) window.EdabalansEmbed.beginLoading(mount, 'Загрузка страницы'); });
+  var pageRequest = fetch(appHost + '/intensive', {credentials: 'omit', mode: 'cors', cache: 'no-store'})
     .then(function (response) {
       if (!response.ok) throw new Error('intensive ' + response.status);
       return response.text().then(function (html) {
         return {html: html, baseUrl: response.url};
       });
-    })
-    .then(function (result) {
+    });
+  Promise.all([loaderReady, pageRequest])
+    .then(function (results) {
+      var result = results[1];
       var parsed = new DOMParser().parseFromString(result.html, 'text/html');
       var sourceRoot = parsed.querySelector('.intensive-page');
       if (!sourceRoot) throw new Error('intensive root not found');
@@ -201,6 +209,7 @@
 
       mount.replaceChildren(sourceRoot);
       mount.removeAttribute('aria-busy');
+      window.EdabalansEmbed.finishLoading(mount);
 
       return Promise.all([
         loadSharedScript('edabalans-intensive-header', '/site-header.js', function () { return Boolean(window.EdabalansSiteHeader); }).catch(function () {}),

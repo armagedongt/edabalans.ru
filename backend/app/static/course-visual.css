@@ -1,5 +1,4 @@
 
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@700;800&display=swap');
         @import url('/assets/article-typography.css');
         @import url('/assets/article-note.css');
         :root,#masterclass-course-app{--ink:#17191e;--muted:#46515b;--paper:#f8fcfe;--card:#fff;--line:rgba(17,142,216,.28);--accent:#f46a35;--soft:#fff4ef;--green:#118ed8;--side:#259bd3;--side2:#1689c2;--violet:#118ed8;--shadow:0 17px 34px -27px rgba(12,91,136,.5);--font:Manrope,Arial,sans-serif}

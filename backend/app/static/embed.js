@@ -1,5 +1,7 @@
 (function () {
   'use strict';
+  if (window.EdabalansEmbed) return;
+  var loaderOnly = document.currentScript && document.currentScript.getAttribute('data-edabalans-loader-only') === 'true';
 
   var APP_HOST = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) || location.hostname.indexOf('go.') === 0
     ? location.origin
@@ -11,6 +13,7 @@
   var stylesheetRequests = {};
   var readyRequests = new WeakMap();
   var loadingScreens = new WeakMap();
+  var fullscreenLoading = null;
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -67,19 +70,36 @@
 
   function beginLoading(mount, stage) {
     var current = loadingScreens.get(mount);
-    if (current) { current.overlay.querySelector('.ed-loading-stage').textContent = stage; return; }
+    if (current) { current.stage = stage; renderLoadingStage(current.shared); return; }
     var inline = mount.getAttribute('data-edabalans-inline') === 'true' || Boolean(mount.closest('#inline-app-frame,#dqs-frame'));
-    var parent = inline ? mount.parentElement : document.body;
-    var overlay = document.createElement('div');
-    overlay.innerHTML = loadingHtml(stage);
-    overlay = overlay.firstElementChild;
-    overlay.classList.add(inline ? 'ed-loading-inline' : 'ed-loading-screen');
-    var state = {overlay: overlay, visibility: mount.style.visibility, parent: parent, position: parent.style.position, inline: inline};
-    if (inline && getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+    var shared = fullscreenLoading;
+    for (var ancestor = mount.parentElement; !shared && ancestor; ancestor = ancestor.parentElement) {
+      var ancestorState = loadingScreens.get(ancestor);
+      if (ancestorState) shared = ancestorState.shared;
+    }
+    if (!shared) {
+      var parent = inline ? mount.parentElement : document.body;
+      var overlay = document.createElement('div');
+      overlay.innerHTML = loadingHtml(stage);
+      overlay = overlay.firstElementChild;
+      overlay.classList.add(inline ? 'ed-loading-inline' : 'ed-loading-screen');
+      shared = {overlay: overlay, parent: parent, position: parent.style.position, inline: inline, states: [], failed: false};
+      if (inline && getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+      parent.appendChild(overlay);
+      if (!inline) fullscreenLoading = shared;
+    }
+    var state = {shared: shared, mount: mount, stage: stage, visibility: mount.style.visibility};
     mount.style.visibility = 'hidden';
     mount.setAttribute('aria-busy', 'true');
-    parent.appendChild(overlay);
+    shared.states.push(state);
     loadingScreens.set(mount, state);
+    renderLoadingStage(shared);
+  }
+
+  function renderLoadingStage(shared) {
+    if (shared.failed || !shared.states.length) return;
+    // A parent waiting for its child must not overwrite the child's actual stage.
+    shared.overlay.querySelector('.ed-loading-stage').textContent = shared.states[shared.states.length - 1].stage;
   }
 
   function finishLoading(mount) {
@@ -87,14 +107,21 @@
     if (!state) return;
     mount.style.visibility = state.visibility;
     mount.removeAttribute('aria-busy');
-    state.overlay.remove();
-    if (state.inline) state.parent.style.position = state.position;
     loadingScreens.delete(mount);
+    var shared = state.shared;
+    shared.states.splice(shared.states.indexOf(state), 1);
+    if (shared.states.length) { renderLoadingStage(shared); return; }
+    shared.overlay.remove();
+    if (shared.inline) shared.parent.style.position = shared.position;
+    if (fullscreenLoading === shared) fullscreenLoading = null;
   }
 
   function failLoading(mount, error, retry) {
     beginLoading(mount, 'Не удалось загрузить страницу');
-    var overlay = loadingScreens.get(mount).overlay;
+    var shared = loadingScreens.get(mount).shared;
+    shared.failed = true;
+    var overlay = shared.overlay;
+    overlay.querySelector('.ed-loading-stage').textContent = 'Не удалось загрузить страницу';
     var dots = overlay.querySelector('.ed-loading-dots');
     if (dots) dots.remove();
     overlay.querySelectorAll('.ed-loading-error,.ed-loading-retry').forEach(function (item) { item.remove(); });
@@ -176,8 +203,30 @@
   }
 
   function prefetchAppHtml(appCode) {
-    if (!roots[appCode] || appHtmlCache[appCode]) return;
-    appHtml(appCode).catch(function () {});
+    if (!roots[appCode]) return;
+    return appHtml(appCode).then(function (html) {
+      prepareAppAssets(new DOMParser().parseFromString(html, 'text/html')).catch(function () {});
+    }).catch(function () {});
+  }
+
+  function prepareAppAssets(doc) {
+    Array.prototype.forEach.call(doc.querySelectorAll('script[src]'), function (source) {
+      var url = new URL(source.getAttribute('src'), APP_HOST).href;
+      if (document.querySelector('link[rel="preload"][href="' + url + '"]')) return;
+      var link = document.createElement('link');
+      link.rel = 'preload'; link.as = 'script'; link.href = url;
+      document.head.appendChild(link);
+    });
+    var styles = Array.prototype.map.call(doc.querySelectorAll('link[rel="stylesheet"][href]'), function (source) {
+      var href = source.getAttribute('href');
+      var request = loadStylesheet(href);
+      if (new URL(href, APP_HOST).hostname === 'fonts.googleapis.com') {
+        request.catch(function () {});
+        return Promise.resolve();
+      }
+      return request;
+    });
+    return Promise.all(styles);
   }
 
   function telegramMiniAppSession(appCode) {
@@ -463,12 +512,9 @@
         }
         // App-owned shared styles must also be mounted when HTML is embedded in /lk.
         beginLoading(mount, 'Загрузка оформления');
-        var stylesheetLoads = Array.prototype.map.call(doc.querySelectorAll('link[rel="stylesheet"][href]'), function (source) { return loadStylesheet(source.getAttribute('href')); });
-        return Promise.all(stylesheetLoads).then(function () { return executeScripts(doc); }).then(function () {
+        return prepareAppAssets(doc).then(function () { return executeScripts(doc); }).then(function () {
           beginLoading(mount, 'Загрузка материалов');
           return readyRequests.get(mount);
-        }).then(function () {
-          return document.fonts ? document.fonts.ready : null;
         }).then(function () { finishLoading(mount); });
       })
       .catch(function (error) {
@@ -531,8 +577,10 @@
       }).catch(function (error) { failLoading(mounts[0], error, boot); });
   }
 
-  window.EdabalansEmbed = {load: load, boot: boot, beginLoading: beginLoading, finishLoading: finishLoading, failLoading: failLoading, loadingHtml: loadingHtml, waitUntilReady: waitUntilReady};
+  window.EdabalansEmbed = {load: load, boot: boot, prefetch: prefetchAppHtml, beginLoading: beginLoading, finishLoading: finishLoading, failLoading: failLoading, loadingHtml: loadingHtml, waitUntilReady: waitUntilReady};
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-  else boot();
+  if (!loaderOnly) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  }
 }());

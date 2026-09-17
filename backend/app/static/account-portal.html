@@ -24,6 +24,10 @@
     'use strict';
     var portal=document.getElementById('portal');
     window.EdabalansEmbed.beginLoading(portal,'Проверка авторизации');
+    window.EdabalansEmbed.prefetch('account');
+    var initialParams=new URL(location.href).searchParams;
+    if(initialParams.has('course_day')||initialParams.has('course_material'))window.EdabalansEmbed.prefetch('masterclass-course');
+    if(initialParams.has('calories_stage')||initialParams.has('calories_material'))window.EdabalansEmbed.prefetch('calories-course');
     function returnTarget(){var value=new URL(location.href).searchParams.get('next')||'';if(!value)return '';try{var target=new URL(value,location.origin);return target.origin===location.origin&&!target.pathname.startsWith('/lk')?target.pathname+target.search+target.hash:''}catch(error){return ''}}
     function esc(value){return String(value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
     function login(){

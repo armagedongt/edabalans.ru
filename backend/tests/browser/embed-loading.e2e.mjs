@@ -10,6 +10,8 @@ const manifest = JSON.parse(await readFile(new URL('../../../content/masterclass
 const visualCss = await readFile(new URL('../../app/static/course-visual.css', import.meta.url), 'utf8')
 const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', import.meta.url), 'utf8')
 const sliderJs = await readFile(new URL('../../../content/masterclass/components/dqs-image-slider/slider.js', import.meta.url), 'utf8')
+const homepageLoader = await readFile(new URL('../../app/static/homepage.js', import.meta.url), 'utf8')
+const intensiveLoader = await readFile(new URL('../../app/static/intensive/tilda-loader.js', import.meta.url), 'utf8')
 async function capture(page, name) {
   if (!process.env.QA_OUT) return
   await mkdir(process.env.QA_OUT, {recursive:true})
@@ -21,7 +23,7 @@ async function capture(page, name) {
   await page.setViewportSize(previous)
 }
 const origin = 'http://127.0.0.1:18995'
-const browser = await chromium.launch({headless: true})
+const browser = await chromium.launch({headless: true,args:['--disable-gpu','--in-process-gpu']})
 const html = '<div id="account-app"><h1>Готовый кабинет</h1><iframe src="/slow-video"></iframe></div><link rel="stylesheet" href="/visual.css"><script>EdabalansEmbed.waitUntilReady(document.getElementById("account-app"),fetch("/api/test-data").then(r=>{if(!r.ok)throw Error("Ошибка данных");return r.json()}))</script>'
 
 function barrier() {
@@ -71,14 +73,14 @@ try {
 
   // A failed stylesheet must not reveal unstyled content or poison the retry cache.
   const retry = await browser.newPage()
-  let cssAttempts = 0
+  let cssAttempts = 0, cssFailed = true
   await retry.route(origin + '/**', async route => {
     const path = new URL(route.request().url()).pathname
     if (path === '/') return route.fulfill({contentType:'text/html; charset=utf-8',body:'<meta charset="utf-8"><div data-edabalans-app="account"></div><script src="/embed.js"></script>'})
     if (path === '/embed.js') return route.fulfill({contentType:'application/javascript',body:embed})
     if (path === '/api/account-auth/session') return route.fulfill({json:{authenticated:true,email:'reader@example.test'}})
     if (path === '/apps/account.html') return route.fulfill({contentType:'text/html',body:html})
-    if (path === '/visual.css') { cssAttempts++; return route.fulfill({status:cssAttempts===1?500:200,contentType:'text/css',body:'#account-app{color:blue}'}) }
+    if (path === '/visual.css') { cssAttempts++; return route.fulfill({status:cssFailed?500:200,contentType:'text/css',body:'#account-app{color:blue}'}) }
     if (path === '/api/test-data') return route.fulfill({json:{ok:true}})
     return route.fulfill({contentType:'application/javascript',body:''})
   })
@@ -87,9 +89,11 @@ try {
   await capture(retry, 'loader-error')
   assert.equal(await retry.locator('#account-app h1').isVisible(), false)
   assert.equal(await retry.locator('.ed-loading-dots').count(), 0)
+  const failedAttempts = cssAttempts
+  cssFailed = false
   await retry.locator('.ed-loading-retry').click()
   await retry.waitForFunction(() => !document.querySelector('.ed-loading-screen'))
-  assert.equal(cssAttempts, 2)
+  assert.equal(cssAttempts, failedAttempts + 1)
   assert.equal(await retry.locator('#account-app h1').isVisible(), true)
   await retry.close()
 
@@ -113,28 +117,35 @@ try {
   await legal.close()
 
   // The real native portal and account app must propagate readiness, not just our fixture.
-  const account = {email:'reader@example.test',state:'ready',courses:[{app:'masterclass-course',code:'masterclass',product_code:'masterclass',owned:true,ready:true,title:'Мастер-класс'}],applications:[]}
+  const account = {email:'reader@example.test',state:'ready',courses:[{app:'masterclass-course',code:'masterclass',product_code:'masterclass',owned:true,ready:true,title:'Мастер-класс'},{code:'calories',product_code:'calories',owned:false,ready:true,title:'Калорийный курс'}],applications:[]}
   const progress = {current_day:2,server_now:new Date().toISOString(),days:manifest.days.map(d=>({number:d.number,opened:d.number<=5,can_open:d.number<=5,completed:false,completed_steps:d.steps.map((_,i)=>i),checkmarks:{},first_opened_at:new Date().toISOString()}))}
   async function nativePage(query, delays) {
     const native = await browser.newPage({viewport:{width:1440,height:1000}})
     const requests = {account:0,session:0,step:0,corpus:0}
     const faults = []
+    await native.addInitScript(()=>{
+      window.loaderCounts=[]
+      new MutationObserver(()=>loaderCounts.push(document.querySelectorAll('.ed-loading-screen,.ed-loading-inline').length)).observe(document,{childList:true,subtree:true})
+    })
     native.on('pageerror',e=>faults.push(String(e)))
     native.on('console',message=>{if(message.type()==='warning')console.error(message.text())})
     await native.route('**/*', async route => {
       const url = new URL(route.request().url()), path = url.pathname
       if(path==='/lk')return route.fulfill({contentType:'text/html; charset=utf-8',body:portalHtml})
       if(path==='/embed.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:embed})
-      if(path==='/apps/account.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:accountHtml})
+      if(path==='/apps/account.html'){if(delays.html)delays.html.release();return route.fulfill({contentType:'text/html; charset=utf-8',body:accountHtml})}
       if(path==='/apps/masterclass-course.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:courseHtml})
       if(path==='/apps/masterclass-offers.html'){if(delays.special)await delays.special.promise;return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="masterclass-offers-app">Готовые предложения</div>'})}
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
+      if(url.hostname==='fonts.googleapis.com'){if(delays.fontCss)await delays.fontCss.promise;return route.fulfill({contentType:'text/css',body:''})}
+      if(path==='/assets/account-visual.css'&&delays.fontFile)return route.fulfill({contentType:'text/css',body:'@font-face{font-family:Manrope;src:url(/slow-font.woff2)} .account-shell{font-family:Manrope,Arial}'})
+      if(path==='/slow-font.woff2'){await delays.fontFile.promise;return route.abort()}
       if(path==='/assets/content-gallery.js')return route.fulfill({contentType:'application/javascript',body:galleryJs})
       if(path==='/course-assets/masterclass/article-components.js')return route.fulfill({contentType:'application/javascript',body:sliderJs})
       if(path.endsWith('.css'))return route.fulfill({contentType:'text/css',body:''})
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
       if(path==='/api/account-auth/account'){requests.account++;if(delays.auth)await delays.auth.promise;return route.fulfill({json:account})}
-      if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:[]}})}
+      if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
       if(path==='/api/masterclass/course/manifest')return route.fulfill({json:manifest})
       if(path==='/api/masterclass/course')return route.fulfill({json:progress})
       if(/\/steps\/\d+\/complete$/.test(path))return route.fulfill({json:progress})
@@ -152,17 +163,28 @@ try {
     await native.goto(origin+'/lk'+query,{waitUntil:'domcontentloaded'})
     return {native,requests,faults}
   }
-  const auth=barrier(), offers=barrier()
-  const dashboard=await nativePage('',{auth,offers})
+  const auth=barrier(), offers=barrier(), prefetched=barrier(), fontCss=barrier(), fontFile=barrier()
+  const dashboard=await nativePage('',{auth,offers,html:prefetched,fontCss,fontFile})
   await dashboard.native.locator('.ed-loading-screen').waitFor()
   assert.equal(await dashboard.native.locator('.ed-loading-stage').textContent(),'Проверка авторизации')
+  await prefetched.promise
+  assert.equal(await dashboard.native.locator('#account-app').count(),0,'Prefetch must not execute the app before authorization')
   auth.release()
-  await dashboard.native.waitForFunction(()=>document.getElementById('account-app'))
-  assert.equal(await dashboard.native.locator('#account-app').isVisible(),false)
-  offers.release()
   await dashboard.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
-  assert.equal(await dashboard.native.locator('.account-card').isVisible(),true)
+  assert.equal(await dashboard.native.locator('.account-card').first().isVisible(),true,'Offers and fonts must not delay the first useful screen')
+  await dashboard.native.waitForFunction(()=>document.fonts.status==='loading')
+  assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').count(),0)
+  offers.release()
+  await dashboard.native.locator('[data-offer-product="calories"]').waitFor()
+  assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').isEnabled(),true,'Background offer must remain purchasable')
+  assert.equal(await dashboard.native.evaluate(()=>Math.max(...loaderCounts)),1,'Native portal and app share one loader')
   assert.deepEqual(dashboard.requests,{account:1,session:0,step:0,corpus:0})
+  assert.deepEqual(dashboard.faults,[])
+  fontCss.release();fontFile.release()
+  await dashboard.native.locator('[data-offer-product="calories"]').click()
+  await dashboard.native.locator('#masterclass-offers-app').waitFor({state:'visible'})
+  assert.equal(await dashboard.native.locator('[data-edabalans-focus-product="calories"]').count(),1,'Background Buy must open the requested product')
+  assert.equal(await dashboard.native.locator('[data-edabalans-account-offer="true"]').count(),1,'Background Buy must retain account-offer context')
   assert.deepEqual(dashboard.faults,[])
   await dashboard.native.close()
 
@@ -170,6 +192,9 @@ try {
   const direct=await nativePage('?course_day=2&course_material=day-02-article-01',{article,corpus})
   await direct.native.waitForFunction(()=>document.querySelector('#article p')?.textContent.includes('Загрузка материала'))
   assert.equal(await direct.native.locator('#masterclass-course-app').isVisible(),false)
+  assert.equal(await direct.native.locator('.ed-loading-screen').count(),1,'Portal, account and course must share one loader')
+  assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').count(),1)
+  assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').textContent(),'Загрузка материалов','Nested material loading must replace the completed authorization stage')
   article.release()
   await direct.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
   assert.equal(await direct.native.locator('#article').isVisible(),true)
@@ -177,6 +202,7 @@ try {
   assert.equal(direct.requests.step,1)
   assert.equal(direct.requests.corpus,0,'Opening one article must not request the whole corpus')
   assert.deepEqual(direct.faults,[])
+  assert.equal(await direct.native.evaluate(()=>Math.max(...loaderCounts)),1)
   await capture(direct.native,'native-material')
   if(process.env.QA_OUT) {
     const snapshot=await direct.native.evaluate(()=>{const copy=document.documentElement.cloneNode(true);copy.querySelectorAll('script').forEach(e=>e.remove());copy.querySelectorAll('link[href]').forEach(e=>{e.href=e.href.replace('http://127.0.0.1:18995','http://127.0.0.1:8796')});copy.querySelector('.article-inline-image').src='data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"%3E%3Crect width="1200" height="600" fill="%2327aff5"/%3E%3C/svg%3E';const base=document.createElement('base');base.href='http://127.0.0.1:8796/';copy.querySelector('head').prepend(base);return '<!doctype html>'+copy.outerHTML})
@@ -225,7 +251,9 @@ try {
 
   const special=barrier()
   const offer=await nativePage('?course_day=1&course_material=day-01-offer',{special})
-  await offer.native.waitForFunction(()=>document.querySelector('#inline-app-frame .ed-loading-inline'))
+  await offer.native.waitForFunction(()=>document.querySelector('#inline-app-frame'))
+  assert.equal(await offer.native.locator('.ed-loading-screen').count(),1)
+  assert.equal(await offer.native.locator('.ed-loading-inline').count(),0,'Nested inline app reuses the active fullscreen loader')
   assert.equal(await offer.native.locator('#masterclass-course-app').isVisible(),false)
   special.release()
   await offer.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
@@ -271,6 +299,113 @@ try {
   assert.equal(attempts,2)
   assert.equal(await sessionRetry.locator('#account-app').isVisible(),true)
   await sessionRetry.close()
+
+  // Every registered app uses the same loader, including direct standalone entry.
+  const appRoots={account:'account-app','masterclass-course':'masterclass-course-app','calories-course':'calories-course-app','masterclass-sales':'masterclass-sales-app',dqs:'dqs-app',strength:'strength-app',metabolism:'metabolism-app','onboarding-questionnaire':'onboarding-questionnaire-app','masterclass-offers':'masterclass-offers-app','recipes-part-1':'recipes-part-1-app','recipes-part-2':'recipes-part-2-app',recipes:'recipes-app','closing-review':'closing-review-app','personal-access':'personal-access-app'}
+  for(const [code,id] of Object.entries(appRoots)) {
+    console.log('Checking shared loader: '+code)
+    const app=await browser.newPage()
+    const pending=barrier()
+    await app.route(origin+'/**',async route=>{
+      const path=new URL(route.request().url()).pathname
+      if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div data-edabalans-app="'+code+'"></div><script src="/embed.js"></script>'})
+      if(path==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+      if(path==='/api/account-auth/session')return route.fulfill({json:{authenticated:true,email:account.email}})
+      if(path==='/api/apps/dqs/access')return route.fulfill({json:{legal:{required:false}}})
+      if(path==='/apps/'+code+'.html')return route.fulfill({contentType:'text/html',body:'<div id="'+id+'">Готово</div><script>EdabalansEmbed.waitUntilReady(document.getElementById("'+id+'"),fetch("/api/first-screen"))</script>'})
+      if(path==='/api/first-screen'){await pending.promise;return route.fulfill({json:{ok:true}})}
+      return route.fulfill({contentType:'text/css',body:''})
+    })
+    await app.goto(origin,{waitUntil:'domcontentloaded'})
+    await app.waitForFunction(()=>document.querySelector('.ed-loading-stage')?.textContent==='Загрузка материалов').catch(async error=>{
+      console.error(code,await app.locator('body').innerHTML())
+      throw error
+    })
+    assert.equal(await app.locator('.ed-loading-screen').count(),1,code)
+    assert.equal(await app.locator('#'+id).isVisible(),false,code)
+    pending.release()
+    await app.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+    assert.equal(await app.locator('#'+id).isVisible(),true,code)
+    await app.close()
+  }
+
+  // A nested failure survives its parent finishing; retry reveals the child.
+  const nested=await browser.newPage()
+  let broken=true
+  await nested.route(origin+'/**',async route=>{
+    const path=new URL(route.request().url()).pathname
+    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div data-edabalans-app="account"></div><script src="/embed.js"></script>'})
+    if(path==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+    if(path==='/api/account-auth/session')return route.fulfill({json:{authenticated:true,email:account.email}})
+    if(path==='/apps/account.html')return route.fulfill({contentType:'text/html',body:'<div id="account-app"><div data-edabalans-app="masterclass-offers"></div></div><script>var parent=document.getElementById("account-app");EdabalansEmbed.waitUntilReady(parent,EdabalansEmbed.load(parent.firstElementChild))</script>'})
+    if(path==='/apps/masterclass-offers.html')return route.fulfill({contentType:'text/html',body:'<div id="masterclass-offers-app">Предложения</div><link rel="stylesheet" href="/nested.css">'})
+    if(path==='/nested.css')return route.fulfill({status:broken?500:200,contentType:'text/css',body:''})
+    return route.fulfill({contentType:'text/css',body:''})
+  })
+  await nested.goto(origin,{waitUntil:'domcontentloaded'})
+  await nested.locator('.ed-loading-retry').waitFor()
+  assert.equal(await nested.locator('.ed-loading-screen').count(),1)
+  assert.equal(await nested.locator('#masterclass-offers-app').isVisible(),false)
+  await capture(nested,'nested-error')
+  broken=false
+  await nested.locator('.ed-loading-retry').click()
+  await nested.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
+  assert.equal(await nested.locator('#masterclass-offers-app').isVisible(),true)
+  await nested.close()
+
+  for(const kind of ['homepage','intensive']) {
+    const publicPage=await browser.newPage()
+    const documentReady=barrier(),analytics=barrier(),pricing=barrier(),pageRequested=barrier()
+    const loaderPath=kind==='homepage'?'/homepage.js':'/intensive/tilda-loader.js'
+    const sourcePath=kind==='homepage'?'/preview/homepage-release-candidate':'/intensive'
+    let authCalls=0
+    await publicPage.route('**/*',async route=>{
+      const url=new URL(route.request().url()),path=url.pathname
+      if(url.origin!==origin)return route.abort()
+      if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div data-edabalans-'+kind+'></div><script src="'+loaderPath+'"></script>'})
+      if(path===loaderPath)return route.fulfill({contentType:'application/javascript',body:kind==='homepage'?homepageLoader:intensiveLoader})
+      if(path==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+      if(path.startsWith('/api/account-auth/')){authCalls++;return route.fulfill({status:401,json:{}})}
+      if(path===sourcePath){pageRequested.release();await documentReady.promise;return route.fulfill({contentType:'text/html',body:kind==='homepage'?'<html><body><h1>Готовая главная</h1><script src="/slow-analytics.js"></script></body></html>':'<html><body><main class="intensive-page"><section data-view="menu"><h1>Готовый интенсив</h1></section></main></body></html>'})}
+      if(path==='/api/pricing/site'){await pricing.promise;return route.fulfill({json:{intensive_offer:{expires_at:'2099-01-01T00:00:00Z'}}})}
+      if(path==='/slow-analytics.js'||path==='/site-header.js'){await analytics.promise;return route.fulfill({contentType:'application/javascript',body:''})}
+      return route.fulfill({contentType:'application/javascript',body:''})
+    })
+    await publicPage.goto(origin+(kind==='homepage'?'/?source_context=test-source&intensive_offer=test-offer':''),{waitUntil:'domcontentloaded'})
+    await publicPage.locator('.ed-loading-screen').waitFor()
+    assert.equal(await publicPage.locator('.ed-loading-screen').count(),1)
+    assert.equal(await publicPage.locator('.ed-loading-stage').textContent(),'Загрузка страницы')
+    await capture(publicPage,'public-'+kind)
+    await pageRequested.promise
+    if(kind==='homepage') {
+      assert.equal(await publicPage.evaluate(()=>window.EdabalansCheckoutSourceContext),'test-source','Shared loading must preserve the accepted commerce source context')
+      assert.equal(await publicPage.evaluate(()=>sessionStorage.getItem('edabalans_checkout_source_v1')),'test-source')
+    }
+    pricing.release()
+    documentReady.release()
+    await publicPage.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('h1'))
+    assert.equal(await publicPage.locator('h1').isVisible(),true,'Public content must not wait for analytics/header/footer')
+    assert.equal(authCalls,0,'Public loaders must not start authorization')
+    analytics.release()
+    await publicPage.close()
+
+    // A failed document may arrive before the shared component; no late overlay.
+    const late=await browser.newPage(),library=barrier()
+    await late.route(origin+'/**',async route=>{
+      const path=new URL(route.request().url()).pathname
+      if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div data-edabalans-'+kind+'></div><script src="'+loaderPath+'"></script>'})
+      if(path===loaderPath)return route.fulfill({contentType:'application/javascript',body:kind==='homepage'?homepageLoader:intensiveLoader})
+      if(path==='/embed.js'){await library.promise;return route.fulfill({contentType:'application/javascript',body:embed})}
+      if(path===sourcePath)return route.fulfill({status:503,body:''})
+      return route.fulfill({contentType:'application/javascript',body:''})
+    })
+    await late.goto(origin,{waitUntil:'domcontentloaded'})
+    await late.waitForFunction(()=>document.querySelector('[data-edabalans-homepage],[data-edabalans-intensive]')?.textContent.includes('Не удалось'))
+    library.release()
+    await late.waitForFunction(()=>window.EdabalansEmbed)
+    assert.equal(await late.locator('.ed-loading-screen').count(),0,'A late shared script must not cover an already displayed error')
+    await late.close()
+  }
   console.log('PASS: real portal/course readiness, per-article firstscreen, inline/reduced motion, auth retry, resources and legal gate')
 } finally {
   await browser.close()

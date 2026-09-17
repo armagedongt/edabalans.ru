@@ -8,6 +8,7 @@
   var mount = document.querySelector('[data-edabalans-homepage]');
   var offerStorageKey = 'edabalans_intensive_offer_v1';
   var sourceContextStorageKey = 'edabalans_checkout_source_v1';
+  var loadFailed = false;
 
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
@@ -161,9 +162,27 @@
   }
 
   function showFailure(error) {
+    loadFailed = true;
+    if (window.EdabalansEmbed) window.EdabalansEmbed.finishLoading(mount);
     mount.removeAttribute('aria-busy');
     mount.innerHTML = '<div style="max-width:760px;margin:40px auto;padding:20px;border:1px solid #d9eaf4;border-radius:16px;background:#fff;color:#334;line-height:1.5">Не удалось загрузить страницу. Обновите её ещё раз.</div>';
     if (window.console && console.error) console.error('[edabalans homepage]', error);
+  }
+
+  function sharedLoader() {
+    if (window.EdabalansEmbed) return Promise.resolve();
+    return new Promise(function (resolve, reject) {
+      var existing = document.getElementById('edabalans-shared-loader');
+      var loader = existing || document.createElement('script');
+      loader.addEventListener('load', resolve, {once:true});
+      loader.addEventListener('error', reject, {once:true});
+      if (!existing) {
+        loader.id = 'edabalans-shared-loader';
+        loader.setAttribute('data-edabalans-loader-only', 'true');
+        loader.src = appHost + '/embed.js';
+        document.body.appendChild(loader);
+      }
+    });
   }
 
   function storedOffer() {
@@ -258,16 +277,20 @@
 
   prepareTildaShell();
   window.EdabalansCheckoutSourceContext = restoreSourceContext();
-  restoreOffer().then(function () { return fetch(appHost + '/preview/homepage-release-candidate?embed=tilda', {
+  var loaderReady = sharedLoader().then(function () { if (!loadFailed) window.EdabalansEmbed.beginLoading(mount, 'Загрузка страницы'); });
+  var offerReady = restoreOffer();
+  var pageRequest = fetch(appHost + '/preview/homepage-release-candidate?embed=tilda', {
     credentials: 'omit',
     mode: 'cors',
     cache: 'no-store'
-  }); }).then(function (response) {
+  }).then(function (response) {
     if (!response.ok) throw new Error('homepage ' + response.status);
     return response.text().then(function (html) {
       return {html: html, baseUrl: response.url};
     });
-  }).then(function (result) {
+  });
+  Promise.all([loaderReady, offerReady, pageRequest]).then(function (results) {
+    var result = results[2];
     var parsed = new DOMParser().parseFromString(result.html, 'text/html');
     var scripts = Array.prototype.slice.call(parsed.querySelectorAll('script'));
     var headAssets = Array.prototype.slice.call(
@@ -303,6 +326,7 @@
     while (parsed.body.firstChild) fragment.appendChild(parsed.body.firstChild);
     mount.replaceChildren(fragment);
     mount.removeAttribute('aria-busy');
+    window.EdabalansEmbed.finishLoading(mount);
 
     return scripts.reduce(function (chain, item) {
       return chain.then(function () { return appendScript(item, result.baseUrl); });

@@ -20,7 +20,7 @@ owns_files = [
 ]
 owns_routes = ["*/embed.js", "*/site-footer.js", "*/cookie-notice.js", "*/favicon.ico", "*/favicon.png", "*/apple-touch-icon.png"]
 sources = [
-  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories"] },
+  { path = "docs/knowledge-base/COURSE_APPLICATION_STANDARD.md", role = "rule", shared = true, consumers = ["products.masterclass.course", "products.masterclass.runtime", "products.calories", "products.public-site", "products.intensive"] },
   { path = "backend/app/static/site-cookie-notice.js", role = "runtime", shared = true, consumers = ["products.public-site", "platform.blog", "products.intensive"] },
 ]
 

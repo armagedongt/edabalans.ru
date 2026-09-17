@@ -6,7 +6,8 @@
   .account-card{box-shadow:0 5px 18px rgba(20,20,40,.06)}.account-card.featured,.account-review,.account-legal{border-color:#cfc6ec;background:#f9f7ff;box-shadow:none}.account-review p,.account-legal>p{color:var(--muted)}.account-state{background:#ededf2;color:#63677a}.legal-card{border-color:var(--line);background:var(--card)}.legal-card a{color:var(--accent)}.application-card{grid-template-columns:48px minmax(0,1fr) auto;background:var(--card);box-shadow:0 5px 18px rgba(20,20,40,.06)}.application-icon{display:grid;width:48px;height:48px;place-items:center;border-radius:var(--radius-control);background:var(--accent-soft);color:var(--accent)}.application-icon svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.account-open.purchase{background:var(--accent)}.account-open:disabled{background:#ededf2;color:#7b8094}.account-logout:focus-visible,.account-open:focus-visible,.legacy-link:focus-visible,.account-contact a:focus-visible{outline-color:#d9cff8}.legacy-card{background:var(--card)}
   @media(max-width:480px){.application-card{grid-template-columns:44px minmax(0,1fr);align-items:start}.application-icon{width:44px;height:44px}.application-card .account-open{grid-column:1/-1;width:100%;margin-top:4px}.legacy-card{display:block}.legacy-link{display:block;margin-top:14px;text-align:center}}
 </style>
-<link rel="stylesheet" href="/assets/account-visual.css">
+<link rel="stylesheet" href="/assets/account-visual.css?v=20260917-loader1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@0,700;0,800;1,800&display=swap">
 <link rel="stylesheet" href="/assets/account-theme.css?v=20260917a">
 <script src="/assets/account-theme.js?v=20260917a"></script>
 <script>
@@ -37,7 +38,27 @@
   function offerContext(data){var ownsMasterclass=(data.courses||[]).some(function(item){return item.code==='masterclass'&&item.owned});if(data.state!=='ready'||!ownsMasterclass)return Promise.resolve({});return fetch(host+'/api/masterclass/account-offers?email='+encodeURIComponent(identity.email)).then(function(response){return response.ok?response.json():{}}).catch(function(){return{}})}
   var initialAccount=window.EdabalansAccountPayload;window.EdabalansAccountPayload=null;
   var accountRequest=initialAccount&&initialAccount.email===identity.email?Promise.resolve(initialAccount):fetch(host+'/api/account-auth/account',{credentials:'same-origin'}).then(function(response){return response.json().then(function(data){if(!response.ok)throw new Error(data.detail||'Не удалось загрузить кабинет');return data})});
-  var accountReady=accountRequest.then(function(data){if(openRequestedCourse(data))return nestedLoad;return offerContext(data).then(function(context){dashboard(data,context)})});
+  function refreshOffers(data,context){
+    var grid=root.querySelector('.account-grid');
+    if(!grid||!grid.isConnected)return;
+    window.__accountOfferContext=context||{};
+    var purchasable=(context&&context.focusable_product_codes)||[],locked=data.state!=='ready'||Boolean(data.legal&&data.legal.required);
+    orderedCourses(data.courses).forEach(function(item,index){
+      var canBuy=!item.owned&&!locked&&purchasable.indexOf(item.product_code)>=0;
+      if(!canBuy)return;
+      var cardElement=grid.children[index],button=cardElement&&cardElement.querySelector('.account-open');
+      if(!button)return;
+      if(item.product_code==='consultation')cardElement.classList.add('featured');
+      button.disabled=false;button.className='account-open purchase';button.textContent='Купить';
+      button.setAttribute('data-offer-product',item.product_code);
+      button.onclick=function(){root.innerHTML='<div class="account-course" data-edabalans-app="masterclass-offers" data-edabalans-account-offer="true" data-edabalans-focus-product="'+esc(item.product_code)+'" data-edabalans-account-url="'+esc(accountBaseUrl())+'"></div>';window.EdabalansEmbed.load(root.firstElementChild)};
+    });
+  }
+  var accountReady=accountRequest.then(function(data){
+    if(openRequestedCourse(data))return nestedLoad;
+    dashboard(data,{});
+    offerContext(data).then(function(context){refreshOffers(data,context)});
+  });
   window.EdabalansEmbed.waitUntilReady(root,accountReady);
 }());
 </script>

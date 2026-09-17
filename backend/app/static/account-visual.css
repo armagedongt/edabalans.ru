@@ -1,5 +1,4 @@
 
-        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@0,700;0,800;1,800&display=swap');
         html:has(#account-app):not(:has(#masterclass-course-app)),body:has(#account-app):not(:has(#masterclass-course-app)){background:#fff!important}
         #account-app{
           --ink:#17191e;
