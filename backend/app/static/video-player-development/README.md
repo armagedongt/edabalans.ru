@@ -10,6 +10,10 @@ module_id: products.masterclass.runtime
 источниками; соседние документы владеют правилами продукта и аналитики.
 Временные `work/`, handoff и старые preview не заменяют этот вход.
 
+Ссылки на технические источники ведут к принятому `main` на GitHub:
+основная локальная папка может быть на старой ветке, не иметь этих файлов
+или содержать незавершённые изменения. Каталог не переписывает её код.
+
 Каталог сверен с принятым `main` `0519e658` 17.09.2026. На живом
 `https://edabalans.ru` отдельно проверены HTTP 200 и признаки ожидаемой разметки
 RC, публичного плеера, учебного плеера, оболочки МК и интенсива.
@@ -21,15 +25,15 @@ Tilda-страницы в этом разборе не сканировалис�
 
 | Место / адрес | Реальная реализация | Профиль и возможности | Источник настроек / владелец |
 |---|---|---|---|
-| Главная: `/preview/homepage-release-candidate`, `hero-video`; Tilda через `/homepage.js` | [release-candidate.html](../homepage-preview/release-candidate.html) → [vsl-player.html](../homepage-preview/vsl-player.html) | `homepage-vsl`: короткий muted loop → длинный MP4 после клика; опережающая шкала, без перемотки и глав; публичная аналитика | `homepageVslPreset`, оболочка RC; `products.public-site` |
+| Главная: `/preview/homepage-release-candidate`, `hero-video`; Tilda через `/homepage.js` | [release-candidate.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/release-candidate.html) → [vsl-player.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/vsl-player.html) | `homepage-vsl`: короткий muted loop → длинный MP4 после клика; опережающая шкала, без перемотки и глав; публичная аналитика | `homepageVslPreset`, оболочка RC; `products.public-site` |
 | Главная: история Ани | Та же RC → тот же `vsl-player.html` | `anya-review`: короткий/длинный MP4, без перемотки и глав; аналитика; портретный кадр, отложенная загрузка iframe | `MEDIA_PRESETS['anya-review']`; `products.public-site` |
 | Главная: `#review-circle-video` в полотне отзывов | Обычный `<video>` и обработчик внутри RC, **не** VSL-плеер | Один MP4, отложенная загрузка, muted autoplay/loop, звук и play/pause; без меню глав/скоростей и подключённого VSL-учёта | `<source data-src>`, обработчик RC; `products.public-site` |
-| Интенсив: `/intensive/day-1`; встроенный вид первого дня в `/intensive` | [day-1.html](../intensive/day-1.html), [index.html](../intensive/index.html), [runtime.js](../intensive/runtime.js) → `vsl-player.html?context=intensive-day-1` | Один полный MP4; muted loop до клика, затем с нуля со звуком без loop; **честная шкала и перемотка**, без глав; публичная аналитика | preset `intensive-day-1`: `products.public-site`; место/доступ: `products.intensive` |
-| МК: видео в шапке дня, `/apps/masterclass-course.html` | [masterclass-first-days-preview.html](../masterclass-first-days-preview.html) → `/apps/video-player.html` → [player-standard-with-contents.html](player-standard-with-contents.html) | `standard`: HTTPS MP4; ручной старт, честная шкала, перемотка, кликабельные главы при наличии таймкодов; без публичной аналитики | День: `videoId`, `image`, `timings`; структура: `products.masterclass.course`, плеер: `products.masterclass.runtime` |
+| Интенсив: `/intensive/day-1`; встроенный вид первого дня в `/intensive` | [day-1.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/intensive/day-1.html), [index.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/intensive/index.html), [runtime.js](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/intensive/runtime.js) → `vsl-player.html?context=intensive-day-1` | Один полный MP4; muted loop до клика, затем с нуля со звуком без loop; **честная шкала и перемотка**, без глав; публичная аналитика | preset `intensive-day-1`: `products.public-site`; место/доступ: `products.intensive` |
+| МК: видео в шапке дня, `/apps/masterclass-course.html` | [masterclass-first-days-preview.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/masterclass-first-days-preview.html) → `/apps/video-player.html` → [player-standard-with-contents.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/video-player-development/player-standard-with-contents.html) | `standard`: HTTPS MP4; ручной старт, честная шкала, перемотка, кликабельные главы при наличии таймкодов; без публичной аналитики | День: `videoId`, `image`, `timings`; структура: `products.masterclass.course`, плеер: `products.masterclass.runtime` |
 | МК: видео отдельного материала | Тот же renderer, `materialMedia` → `media` | MP4 использует тот же `standard`; текущий вызов передаёт видео/название, **не передаёт обложку и главы материала** | Материал: `videoId`; не приписывать ему все настройки шапки дня |
 | МК: ID/страница Boomstream в шапке или материале | Renderer → iframe провайдера | **Внешний плеер**, не наша HTML-версия; таймкоды дня — список под видео без программной перемотки чужого iframe | Те же поля структуры; интерфейс воспроизведения принадлежит провайдеру |
-| `/preview/homepage-mobile` | [mobile.html](../homepage-preview/mobile.html) → тот же VSL-плеер | Legacy/noindex-оболочка с VSL/Аней, не канон новой главной | `products.public-site`; новые решения переносить в RC |
-| Автономная внешняя заготовка, без подтверждённого действующего размещения | [player-autoplay-analytics-fast-progress.html](player-autoplay-analytics-fast-progress.html) | `engagement`: один MP4, muted autoplay, опережающая шкала, информационные главы без перемотки; локальная аналитика, сетевой endpoint пуст | Отдельная HTML-заготовка; не действующий VSL |
+| `/preview/homepage-mobile` | [mobile.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/mobile.html) → тот же VSL-плеер | Legacy/noindex-оболочка с VSL/Аней, не канон новой главной | `products.public-site`; новые решения переносить в RC |
+| Автономная внешняя заготовка, без подтверждённого действующего размещения | [player-autoplay-analytics-fast-progress.html](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/video-player-development/player-autoplay-analytics-fast-progress.html) | `engagement`: один MP4, muted autoplay, опережающая шкала, информационные главы без перемотки; локальная аналитика, сетевой endpoint пуст | Отдельная HTML-заготовка; не действующий VSL |
 
 Название `masterclass-first-days-preview.html` историческое: файл реально
 отдаётся маршрутом курса. Наличие файла или шаблона само по себе не доказывает
@@ -51,11 +55,11 @@ Floating-код VSL есть, но `floatingEnabled=false`: режим выкл�
 |---|---|
 | Учебная шкала, перемотка, главы | `player-standard-with-contents.html`, `products.masterclass.runtime` |
 | Публичное превью, звук, preview→full | `vsl-player.html`, `products.public-site` |
-| Данные и подключение видео дня/материала | [контракт структуры](../../../../docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md), renderer курса; `products.masterclass.course` |
-| Учёт осознанного публичного просмотра | [PUBLIC_VIDEO_ANALYTICS.md](../../../../docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md), `products.public-site` |
-| Координация звука на странице | [media-coordinator.js](../homepage-preview/media-coordinator.js): iframe, локальные audio/video; ограничение ниже |
-| Маска, размер, положение, тень | Оболочка потребителя; [PUBLIC_SITE.md](../../../../docs/knowledge-base/PUBLIC_SITE.md), [визуальный паспорт МК](../../../../docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md) |
-| Исходники, архивы, расшифровки | [media-catalog.md](../../../../content/media-catalog.md), [библиотека](../../../../docs/KNOWLEDGE_LIBRARY.md); не настройки плеера |
+| Данные и подключение видео дня/материала | [контракт структуры](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/modules/masterclass/COURSE_STRUCTURE_CONTRACT.md), renderer курса; `products.masterclass.course` |
+| Учёт осознанного публичного просмотра | [PUBLIC_VIDEO_ANALYTICS.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md), `products.public-site` |
+| Координация звука на странице | [media-coordinator.js](https://github.com/armagedongt/edabalans.ru/blob/main/backend/app/static/homepage-preview/media-coordinator.js): iframe, локальные audio/video; ограничение ниже |
+| Маска, размер, положение, тень | Оболочка потребителя; [PUBLIC_SITE.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_SITE.md), [визуальный паспорт МК](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md) |
+| Исходники, архивы, расшифровки | [media-catalog.md](https://github.com/armagedongt/edabalans.ru/blob/main/content/media-catalog.md), [библиотека](https://github.com/armagedongt/edabalans.ru/blob/main/docs/KNOWLEDGE_LIBRARY.md); не настройки плеера |
 
 Единый вход не переносит ownership публичной аналитики/интенсива в МК.
 Публичный плеер, учебный плеер, провайдер и простая видеоотзывная вставка
@@ -80,11 +84,11 @@ Floating-код VSL есть, но `floatingEnabled=false`: режим выкл�
 Точный событийный контракт принадлежит документу аналитики.
 
 Границы координации локальных видео, включая включение звука у уже играющего
-circle-video, принадлежат [PUBLIC_SITE.md](../../../../docs/knowledge-base/PUBLIC_SITE.md).
+circle-video, принадлежат [PUBLIC_SITE.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_SITE.md).
 Наличие координатора не означает проверки всех способов включения звука.
 
 Большие видео, приватные расшифровки, клиентские выгрузки и секреты в Git
-не помещать. Старые задумки читать в [VIDEO_PLAYER_DEFERRED.md](../../../../docs/plans/VIDEO_PLAYER_DEFERRED.md),
+не помещать. Старые задумки читать в [VIDEO_PLAYER_DEFERRED.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/plans/VIDEO_PLAYER_DEFERRED.md),
 не выполнять план автоматически и не считать всё перечисленное отсутствующим.
 
 ## Файлы
@@ -269,7 +273,7 @@ const ANALYTICS_CONFIG = {
 Этот пример описывает автономную заготовку, не гарантирует совместимость
 с публичным API: сервер принимает только зарегистрированные ID.
 У действующего VSL endpoint уже подключён; правила принадлежат
-[PUBLIC_VIDEO_ANALYTICS.md](../../../../docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md).
+[PUBLIC_VIDEO_ANALYTICS.md](https://github.com/armagedongt/edabalans.ru/blob/main/docs/knowledge-base/PUBLIC_VIDEO_ANALYTICS.md).
 
 События:
 
@@ -312,9 +316,9 @@ inline-SVG. Корпус динамика неподвижен, дуги по о
 После изменения поведения/вида проверить затронутый профиль, не все
 плееры без причины. Документационная правка не требует импорта медиа,
 пересборки видео или перезапуска сервиса.
-Источники проверок: [test_app_assets.py](../../../tests/test_app_assets.py),
-[test_homepage_preview.py](../../../tests/test_homepage_preview.py),
-[test_public_video_analytics.py](../../../tests/test_public_video_analytics.py).
+Источники проверок: [test_app_assets.py](https://github.com/armagedongt/edabalans.ru/blob/main/backend/tests/test_app_assets.py),
+[test_homepage_preview.py](https://github.com/armagedongt/edabalans.ru/blob/main/backend/tests/test_homepage_preview.py),
+[test_public_video_analytics.py](https://github.com/armagedongt/edabalans.ru/blob/main/backend/tests/test_public_video_analytics.py).
 
 Для затронутого плеера проверить:
 
