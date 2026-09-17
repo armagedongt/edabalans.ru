@@ -253,6 +253,16 @@
       "evidence_ids": ["pikabu:14157938", "telegram:1878297271:799", "tilda:f203c05ea54ff027ebf8"]
     },
     {
+      "rule_id": "language.deliberate_noun_repetition",
+      "section": "language",
+      "statement": "Не сокращать намеренный повтор существительного до гладкой конструкции «не X, а Y», если повтор создаёт живую человеческую интонацию.",
+      "mechanism": "Повторить смысловой предмет во второй половине фразы: «Похудение — это не спринт, похудение — это марафон».",
+      "scope": ["telegram", "bot", "education", "sales"],
+      "counter_boundary": "Не дублировать слова механически там, где повтор не меняет ритм, голос или удар.",
+      "confidence": "high",
+      "evidence_ids": ["owner:2026-09-04:deliberate-noun-repetition"]
+    },
+    {
       "rule_id": "language.humor_has_job",
       "section": "language",
       "statement": "Шутка должна усиливать абсурд старого правила, создавать близость или снимать тяжесть фактуры.",

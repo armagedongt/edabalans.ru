@@ -15,7 +15,7 @@
 | Публичное название, дескрипшн и редакционный контекст продукта | `docs/knowledge-base/PRODUCT_CATALOG.md` и активный runtime `product-catalog/core` |
 | Цена, скидка, тариф, окно и доступность предложения | Активная опубликованная версия PostgreSQL и `docs/knowledge-base/PRICING_CATALOG.md` |
 | Состав, дни, доступы и офферы Мастер-класса | `docs/knowledge-base/modules/masterclass/README.md`, связанные карточки и активная runtime-версия курса |
-| Тексты учебных материалов Мастер-класса | `content/masterclass/source-current/` и активная редакторская версия |
+| Тексты учебных материалов Мастер-класса | `content/masterclass/editorial/README.md`: названия и порядок в `program.md`, тела и подводки в `materials/`; фактически опубликованный текст — активная версия course API. `source-current/` — прежние исходники, не место текущей редактуры |
 | Бесплатный интенсив | `docs/INTENSIVE_PAGES.md`, карточка `products.intensive` и активный content runtime |
 | Другая программа или курс | Карточка соответствующего продукта в `docs/modules.toml`, её канонические документы и активный runtime |
 
