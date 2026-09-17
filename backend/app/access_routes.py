@@ -38,7 +38,7 @@ from app.models import (
     UserEmail,
 )
 from app.product_identity import purchased_products
-from app.product_catalog_service import product_public
+from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
 
 
 router = APIRouter(tags=["access-links"])
@@ -149,6 +149,8 @@ def account_product_definitions(db: Session) -> list[dict]:
             from app.calorie_course_material_service import publication_status
 
             definition["ready"] = publication_status(db)["ready"]
+        if definition.get("maintenance"):
+            definition["ready"] = False
         definitions.append(definition)
     return definitions
 
@@ -159,6 +161,7 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
     for definition in definitions:
         code = definition["account_code"]
         has_access = definition["resource"] in owned
+        maintenance = bool(definition.get("maintenance"))
         courses.append({
             "code": code,
             "product_code": definition["code"],
@@ -167,15 +170,16 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
             "resource": definition["resource"],
             "catalog_status": definition["status"],
             "owned": has_access,
+            "maintenance": maintenance,
             "ready": definition["ready"],
-            "state": "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
+            "state": "maintenance" if maintenance else "available" if has_access and definition["ready"] else "preparing" if has_access else "not_owned",
             "app": definition["app"] if has_access and definition["ready"] and not legal_required else None,
             # Before the first Masterclass purchase every closed product is an
             # entry point to the three base tariffs. Once it is owned, the
             # participant sees the focused add-on offer for the product instead.
             "purchase_mode": (
                 "public_masterclass_tariffs"
-                if not has_masterclass and not has_access
+                if not has_masterclass and not has_access and not maintenance
                 else None
             ),
         })
@@ -200,9 +204,10 @@ def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
             "summary": summary,
             "resource": resource,
             "owned": resource in owned,
-            "ready": ready or preview_enabled,
-            "state": "available" if resource in owned and (ready or preview_enabled) else "preparing" if resource in owned else "not_owned",
-            "app": app if resource in owned and (ready or preview_enabled) and not legal_required else None,
+            "maintenance": bool(PRODUCT_CONNECTIONS.get(code, {}).get("maintenance")),
+            "ready": (ready or preview_enabled) and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance"),
+            "state": "maintenance" if PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else "available" if resource in owned and (ready or preview_enabled) else "preparing" if resource in owned else "not_owned",
+            "app": app if resource in owned and (ready or preview_enabled) and not legal_required and not PRODUCT_CONNECTIONS.get(code, {}).get("maintenance") else None,
         }
         for code, title, summary, resource, app, ready in definitions
     ]

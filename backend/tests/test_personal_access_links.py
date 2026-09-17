@@ -238,7 +238,8 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     assert masterclass_card["state"] == "available"
     assert masterclass_card["app"] is None
     recipes_card = next(item for item in data["courses"] if item["code"] == "recipes")
-    assert recipes_card["state"] == "not_owned"
+    assert recipes_card["state"] == "maintenance"
+    assert recipes_card["owned"] is False
     assert recipes_card["app"] is None
     dqs_card = next(item for item in data["applications"] if item["code"] == "dqs")
     assert dqs_card["owned"] is True
@@ -279,7 +280,10 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     app.dependency_overrides.clear()
 
 
-def test_application_preview_entitlement_opens_only_owned_unreleased_apps():
+def test_application_preview_entitlement_opens_only_owned_unreleased_apps(monkeypatch):
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", False)
     client, factory, user_id = setup()
     with factory() as db:
         user = db.get(User, user_id)
@@ -327,7 +331,10 @@ def test_application_preview_entitlement_opens_only_owned_unreleased_apps():
     app.dependency_overrides.clear()
 
 
-def test_published_application_requires_only_its_concrete_resource():
+def test_published_application_requires_only_its_concrete_resource(monkeypatch):
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", False)
     preview_only = {
         item["code"]: item
         for item in account_applications({"ACCESS_APPLICATION_PREVIEW"}, False)
@@ -352,3 +359,66 @@ def test_published_application_requires_only_its_concrete_resource():
     assert both["recipes"]["ready"] is True
     assert both["recipes"]["owned"] is True
     assert both["recipes"]["app"] == "recipes"
+
+
+def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(monkeypatch):
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+    import app.calorie_course_material_service as calorie_materials
+
+    client, factory, user_id = setup()
+    with factory() as db:
+        db.get(User, user_id).access_review_status = "completed"
+        recipe_resource = Resource(code="recipes", name="Рецепты", status="active")
+        db.add(recipe_resource)
+        db.flush()
+        resources = list(db.scalars(select(Resource).where(Resource.code.in_(
+            ["ACCESS_MASTERCLASS", "ACCESS_CALORIES", "recipes"]
+        ))))
+        for resource in resources:
+            db.add(UserAccess(user_id=user_id, resource_id=resource.id, source="test",
+                              granted_at=datetime.now(timezone.utc)))
+        db.commit()
+        before = [(row.id, row.resource_id, row.revoked_at, row.expires_at)
+                  for row in db.scalars(select(UserAccess).order_by(UserAccess.id))]
+
+    monkeypatch.setattr(calorie_materials, "publication_status", lambda db: {"ready": True})
+    login_user(client, "client@example.test")
+    accepted = client.post("/api/account-auth/legal-acceptances", json={
+        "document_codes": ["educational_disclaimer", "personal_data_consent"]
+    })
+    assert accepted.status_code == 200
+    data = client.get("/api/account-auth/account").json()
+    courses = {item["code"]: item for item in data["courses"]}
+    assert courses["masterclass"]["app"] == "masterclass-course"
+    for code in ("calories", "recipes"):
+        assert courses[code]["owned"] is True
+        assert courses[code]["state"] == "maintenance"
+        assert courses[code]["ready"] is False
+        assert courses[code]["app"] is None
+    assert courses["strength"]["ready"] is False
+    recipe_app = next(item for item in data["applications"] if item["code"] == "recipes")
+    assert recipe_app["owned"] is True
+    assert recipe_app["state"] == "maintenance"
+    assert recipe_app["app"] is None
+    assert next(item for item in account_applications({"recipes", "ACCESS_APPLICATION_PREVIEW"}, False) if item["code"] == "recipes")["app"] is None
+
+    login_user(client, "other@example.test")
+    empty = client.get("/api/account-auth/account").json()
+    for item in empty["courses"]:
+        if item["code"] in {"calories", "recipes"}:
+            assert item["owned"] is False
+            assert item["state"] == "maintenance"
+            assert item["purchase_mode"] is None
+
+    for code in ("calories", "recipes"):
+        monkeypatch.setitem(PRODUCT_CONNECTIONS[code], "maintenance", False)
+    login_user(client, "client@example.test")
+    restored = client.get("/api/account-auth/account").json()
+    restored_courses = {item["code"]: item for item in restored["courses"]}
+    assert restored_courses["calories"]["app"] == "calories-course"
+    assert restored_courses["recipes"]["app"] == "recipes"
+    assert next(item for item in restored["applications"] if item["code"] == "recipes")["app"] == "recipes"
+    with factory() as db:
+        after = [(row.id, row.resource_id, row.revoked_at, row.expires_at)
+                 for row in db.scalars(select(UserAccess).order_by(UserAccess.id))]
+        assert after == before

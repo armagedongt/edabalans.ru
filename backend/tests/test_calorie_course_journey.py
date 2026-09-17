@@ -374,7 +374,10 @@ def test_course_editor_lists_calories_and_updates_stage_copy():
     assert saved.json()["active"]["manifest"]["stages"][0]["lead"] == "Обновлённая рабочая подводка."
 
 
-def test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready():
+def test_calorie_course_stays_closed_until_every_material_and_launch_switch_are_ready(monkeypatch):
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", False)
     client, _ = setup(course_ready=False)
     email = "calories@example.test"
 
@@ -510,7 +513,10 @@ def test_hidden_article_does_not_block_launch_when_visible_articles_are_publishe
     assert client.get(f"/api/calories/course/manifest?email={email}").status_code == 200
 
 
-def test_calorie_course_reuses_masterclass_shell_with_stage_routes():
+def test_calorie_course_reuses_masterclass_shell_with_stage_routes(monkeypatch):
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", False)
     client, _ = setup(course_ready=False)
     fragment = client.get("/apps/calories-course.html")
     assert fragment.status_code == 200

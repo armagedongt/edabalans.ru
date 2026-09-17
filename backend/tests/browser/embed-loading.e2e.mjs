@@ -12,6 +12,11 @@ const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', 
 const sliderJs = await readFile(new URL('../../../content/masterclass/components/dqs-image-slider/slider.js', import.meta.url), 'utf8')
 const homepageLoader = await readFile(new URL('../../app/static/homepage.js', import.meta.url), 'utf8')
 const intensiveLoader = await readFile(new URL('../../app/static/intensive/tilda-loader.js', import.meta.url), 'utf8')
+const dqsHtml = await readFile(new URL('../../app/static/apps/dqs.html', import.meta.url), 'utf8')
+const strengthHtml = await readFile(new URL('../../app/static/apps/strength.html', import.meta.url), 'utf8')
+const dqsRules = await readFile(new URL('../../app/static/apps/dqs-category-rules.js', import.meta.url), 'utf8')
+const accountVisual = await readFile(new URL('../../app/static/account-visual.css', import.meta.url), 'utf8')
+const appShellCss = await readFile(new URL('../../app/static/app-shell.css', import.meta.url), 'utf8')
 async function capture(page, name) {
   if (!process.env.QA_OUT) return
   await mkdir(process.env.QA_OUT, {recursive:true})
@@ -21,6 +26,19 @@ async function capture(page, name) {
     await page.screenshot({path:process.env.QA_OUT+'/'+name+'-'+width+'.png'})
   }
   await page.setViewportSize(previous)
+}
+async function captureSnapshot(page,name){
+  if(!process.env.QA_OUT)return
+  const html=await page.evaluate(()=>{
+    const copy=document.documentElement.cloneNode(true)
+    copy.querySelectorAll('script').forEach(node=>node.remove())
+    copy.querySelectorAll('link[href]').forEach(node=>{
+      if(node.href.includes('fonts.googleapis.com'))node.remove()
+      else node.href=node.href.replace('http://127.0.0.1:18995','http://127.0.0.1:8790')
+    })
+    return '<!doctype html>'+copy.outerHTML
+  })
+  await writeFile(process.env.QA_OUT+'/'+name+'.html',html)
 }
 const origin = 'http://127.0.0.1:18995'
 const browser = await chromium.launch({headless: true,args:['--disable-gpu','--in-process-gpu']})
@@ -135,16 +153,26 @@ try {
       if(path==='/embed.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:embed})
       if(path==='/apps/account.html'){if(delays.html)delays.html.release();return route.fulfill({contentType:'text/html; charset=utf-8',body:accountHtml})}
       if(path==='/apps/masterclass-course.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:courseHtml})
+      if(path==='/apps/dqs.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:dqsHtml})
+      if(path==='/apps/strength.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:strengthHtml})
+      if(path==='/apps/dqs-category-rules.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:dqsRules})
       if(path==='/apps/masterclass-offers.html'){if(delays.special)await delays.special.promise;return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="masterclass-offers-app">Готовые предложения</div>'})}
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
       if(url.hostname==='fonts.googleapis.com'){if(delays.fontCss)await delays.fontCss.promise;return route.fulfill({contentType:'text/css',body:''})}
       if(path==='/assets/account-visual.css'&&delays.fontFile)return route.fulfill({contentType:'text/css',body:'@font-face{font-family:Manrope;src:url(/slow-font.woff2)} .account-shell{font-family:Manrope,Arial}'})
+      if(path==='/assets/account-visual.css')return route.fulfill({contentType:'text/css',body:accountVisual})
+      if(path==='/assets/app-shell.css')return route.fulfill({contentType:'text/css',body:appShellCss})
       if(path==='/slow-font.woff2'){await delays.fontFile.promise;return route.abort()}
       if(path==='/assets/content-gallery.js')return route.fulfill({contentType:'application/javascript',body:galleryJs})
       if(path==='/course-assets/masterclass/article-components.js')return route.fulfill({contentType:'application/javascript',body:sliderJs})
       if(path.endsWith('.css'))return route.fulfill({contentType:'text/css',body:''})
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
-      if(path==='/api/account-auth/account'){requests.account++;if(delays.auth)await delays.auth.promise;return route.fulfill({json:account})}
+      if(path==='/api/account-auth/account'){requests.account++;if(delays.auth)await delays.auth.promise;return route.fulfill({json:delays.account||account})}
+      if(path==='/api/apps/dqs'){
+        const payload={ok:true,email:account.email,startDate:'2026-09-01',needsStartDate:false,days:[]},callback=url.searchParams.get('callback')
+        return callback?route.fulfill({contentType:'application/javascript; charset=utf-8',body:callback+'('+JSON.stringify(payload)+')'}):route.fulfill({json:payload})
+      }
+      if(path==='/api/apps/strength')return route.fulfill({json:{ok:true,user:{user_id:'preview',email:account.email,display_name:'Предпросмотр'},workout:{workout_types:[],exercise_catalog:[],sessions:[],session_exercises:[],sets:[]}}})
       if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
       if(path==='/api/masterclass/course/manifest')return route.fulfill({json:manifest})
       if(path==='/api/masterclass/course')return route.fulfill({json:progress})
@@ -187,6 +215,51 @@ try {
   assert.equal(await dashboard.native.locator('[data-edabalans-account-offer="true"]').count(),1,'Background Buy must retain account-offer context')
   assert.deepEqual(dashboard.faults,[])
   await dashboard.native.close()
+
+  const maintenanceAccount={...account,courses:[account.courses[0],
+    {code:'calories',product_code:'calories',title:'Калорийный курс',owned:true,ready:false,maintenance:true},
+    {code:'recipes',product_code:'recipes',title:'Система рецептов',owned:true,ready:false,maintenance:true},
+    {code:'strength',product_code:'training',title:'Курс по тренировкам',owned:false,ready:false}],
+    applications:[{code:'recipes',title:'Калькулятор и каталог рецептов',owned:true,ready:false,maintenance:true}]}
+  const maintenance=await nativePage('?calories_stage=1',{account:maintenanceAccount})
+  await maintenance.native.locator('.account-card').first().waitFor({state:'visible'})
+  for(const title of ['Калорийный курс','Система рецептов']){
+    const card=maintenance.native.locator('.account-card').filter({has:maintenance.native.getByRole('heading',{name:title,exact:true})})
+    assert.equal(await card.getByRole('button',{name:'На ремонте',exact:true}).isDisabled(),true)
+    assert.equal(await card.locator('[data-app],[data-offer-product]').count(),0)
+  }
+  assert.equal(await maintenance.native.getByRole('button',{name:'Скоро',exact:true}).isDisabled(),true)
+  assert.equal(await maintenance.native.locator('.application-card').getByRole('button',{name:'На ремонте'}).isDisabled(),true)
+  assert.equal(await maintenance.native.locator('[data-app="masterclass-course"]').isEnabled(),true)
+  await maintenance.native.waitForFunction(()=>window.__accountOfferContext?.focusable_product_codes)
+  assert.equal(await maintenance.native.locator('[data-offer-product="calories"]').count(),0,'Late offers must not enable maintenance purchases')
+  await capture(maintenance.native,'account-maintenance')
+  await captureSnapshot(maintenance.native,'account-maintenance')
+  assert.deepEqual(maintenance.faults,[])
+  await maintenance.native.close()
+
+  const navigation=await nativePage('',{account:{...account,applications:[
+    {code:'dqs',title:'DQS',owned:true,ready:true,app:'dqs'},
+    {code:'strength',title:'Силовые тренировки',owned:true,ready:true,app:'strength'}]}})
+  await navigation.native.evaluate(()=>localStorage.setItem('dqs_tutorial_seen_reader@example.test','1'))
+  for(const app of ['dqs','strength']){
+    await navigation.native.locator('[data-app="'+app+'"]').click()
+    const back=navigation.native.getByRole('link',{name:'Личный кабинет',exact:true})
+    try{await back.waitFor({state:'visible'})}catch(error){console.error(app,await navigation.native.locator('body').innerText(),navigation.faults);throw error}
+    assert.equal(await back.getAttribute('href'),origin+'/lk')
+    for(const width of [360,430,768,1440]){
+      await navigation.native.setViewportSize({width,height:1000})
+      assert.equal(await back.isVisible(),true)
+      const box=await back.boundingBox()
+      assert(box.x>=0&&box.x+box.width<=width,'Restored account link must fit the app header')
+    }
+    await capture(navigation.native,'navigation-'+app)
+    await captureSnapshot(navigation.native,'navigation-'+app)
+    await back.click()
+    await navigation.native.locator('.account-card').first().waitFor({state:'visible'})
+  }
+  assert.deepEqual(navigation.faults,[])
+  await navigation.native.close()
 
   const article=barrier(), corpus=barrier()
   const direct=await nativePage('?course_day=2&course_material=day-02-article-01',{article,corpus})

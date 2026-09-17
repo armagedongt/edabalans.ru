@@ -49,3 +49,20 @@
   width:21px;
   height:21px;
 }
+
+.ed-app-maintenance{
+  display:grid;
+  justify-items:center;
+  gap:24px;
+  width:min(600px,100%);
+  margin:48px auto;
+  padding:32px 24px;
+  box-sizing:border-box;
+  background:var(--ed-app-card);
+  color:var(--ed-app-text);
+  border:1px solid var(--ed-app-line);
+  border-radius:var(--ed-app-radius-large);
+  font:16px/1.5 Manrope,Arial,sans-serif;
+}
+.ed-app-maintenance h1{margin:0;font-size:28px}
+.ed-app-maintenance-account{width:auto;padding:0 20px;color:#119ee8}

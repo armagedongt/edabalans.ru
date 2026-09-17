@@ -376,7 +376,10 @@ def test_application_fragments_use_server_api() -> None:
     }
 
 
-def test_client_apps_share_design_tokens_account_link_and_single_footer() -> None:
+def test_client_apps_share_design_tokens_account_link_and_single_footer(monkeypatch) -> None:
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", False)
     shell = client.get("/assets/app-shell.css")
     assert shell.status_code == 200
     assert "--ed-app-accent:#6f3de8" in shell.text
@@ -473,10 +476,10 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer() -> Non
         assert re.search(r'class=["\'][^"\']*footer', fragments[app_code], re.IGNORECASE) is None
         assert "©" not in fragments[app_code]
 
-    assert 'href="${escapeHtml(ACCOUNT_URL)}"' not in fragments["dqs"]
+    assert 'href="${escapeHtml(ACCOUNT_URL)}"' in fragments["dqs"]
     assert 'href="/admin/dqs"' in fragments["dqs"]
     assert re.search(r'dqs-profile-link ed-app-account-link[^>]*>\s*<svg', fragments["dqs"])
-    assert "href=\"'+esc(ACCOUNT_URL)+'\"" not in fragments["strength"]
+    assert "href=\"'+esc(ACCOUNT_URL)+'\"" in fragments["strength"]
     assert 'href="/admin/strength"' in fragments["strength"]
     assert re.search(r'st-profile ed-app-account-link[^>]*>\s*[^<]*<svg', fragments["strength"])
     assert "root.querySelector('.open-account').onclick=function(){location.href=accountUrl}" in fragments["recipes"]
@@ -499,6 +502,23 @@ def test_production_admin_assets_do_not_name_legacy_storage() -> None:
 
 def test_unknown_application_fragment_is_404() -> None:
     assert client.get("/apps/unknown.html").status_code == 404
+
+
+def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(monkeypatch) -> None:
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    for app_code in ("calories-course", "recipes", "recipes-part-1", "recipes-part-2"):
+        response = client.get(f"/apps/{app_code}.html")
+        assert response.status_code == 200
+        assert f'id="{app_code}-app"' in response.text
+        assert "На ремонте" in response.text
+        assert 'href="/lk"' in response.text
+        assert "<script" not in response.text
+        assert response.headers["cache-control"] == "no-cache"
+    for code in ("recipes", "calories"):
+        monkeypatch.setitem(PRODUCT_CONNECTIONS[code], "maintenance", False)
+    assert "/api/calories/course" in client.get("/apps/calories-course.html").text
+    assert "<script" in client.get("/apps/recipes.html").text
 
 
 def test_app_visual_catalog_is_public_noindex_preview() -> None:
@@ -573,7 +593,10 @@ def test_shared_content_gallery_asset_is_public_without_captions() -> None:
     assert "figcaption" not in response.text
 
 
-def test_masterclass_fragments_and_shared_assets_are_public() -> None:
+def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None:
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["recipes"], "maintenance", False)
     account = client.get("/apps/account.html")
     assert account.status_code == 200
     assert 'id="account-app"' in account.text
@@ -709,7 +732,7 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert len(set(icons.values())) == 4
     assert "item.ready?(item.owned?'Открыть':'Доступ закрыт'):'Скоро'" in account
     course_renderer = account[account.index("function card") : account.index("function applicationIcon")]
-    assert "label=item.ready?(item.owned?'Доступ открыт':'Доступ закрыт'):'Скоро'" in course_renderer
+    assert "item.ready?(item.owned?'Доступ открыт':'Доступ закрыт'):'Скоро'" in course_renderer
     assert "item.ready?'Доступ закрыт':'Скоро'" in course_renderer
     assert "'В разработке'" not in account
     assert "'Куплен, готовится'" not in account
@@ -780,7 +803,10 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "if(!still)" in masterclass
 
 
-def test_masterclass_first_day_article_and_image_layout_contract() -> None:
+def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) -> None:
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", False)
     root = Path(__file__).resolve().parents[2]
     manifest = json.loads(
         (root / "content" / "masterclass" / "course" / "course.json").read_text(

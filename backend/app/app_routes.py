@@ -55,6 +55,7 @@ from app.intensive_web_access import (
 )
 from app.account_auth_routes import require_native_user
 from app.config import Settings, get_settings
+from app.product_catalog_service import PRODUCT_CONNECTIONS
 from app.models import (
     AdminAppEdit,
     DqsState,
@@ -534,6 +535,19 @@ def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
 def app_fragment(app_code: str) -> Response:
     if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
         raise HTTPException(status_code=404, detail="app not found")
+    product_code = "recipes" if app_code in {"recipes-part-1", "recipes-part-2"} else next(
+        (code for code, connection in PRODUCT_CONNECTIONS.items() if connection["app"] == app_code),
+        None,
+    )
+    if PRODUCT_CONNECTIONS.get(product_code, {}).get("maintenance"):
+        return HTMLResponse(
+            '<link rel="stylesheet" href="/assets/app-shell.css?v=20260917-maintenance1">'
+            f'<section id="{escape(app_code)}-app" class="ed-app-maintenance">'
+            '<h1>На ремонте</h1>'
+            '<a class="ed-app-account-link ed-app-maintenance-account" href="/lk">Личный кабинет</a>'
+            '</section>',
+            headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
+        )
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
     if app_code == "calories-course":

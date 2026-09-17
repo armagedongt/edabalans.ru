@@ -18,8 +18,8 @@ SCHEMA_VERSION = 2
 # not appear in the editorial editor. The product catalog owns public wording.
 PRODUCT_CONNECTIONS = {
     "masterclass": {"resource": "ACCESS_MASTERCLASS", "app": "masterclass-course", "ready": True},
-    "recipes": {"resource": "recipes", "app": "recipes", "ready": True},
-    "calories": {"resource": "ACCESS_CALORIES", "app": "calories-course", "ready": False},
+    "recipes": {"resource": "recipes", "app": "recipes", "ready": True, "maintenance": True},
+    "calories": {"resource": "ACCESS_CALORIES", "app": "calories-course", "ready": False, "maintenance": True},
     "training": {"resource": "ACCESS_STRENGTH", "app": None, "ready": False},
     "recordings": {"resource": "ACCESS_CONSULTATION_RECORDINGS", "app": None, "ready": False},
     "consultation": {"resource": "ACCESS_CONSULTATION", "app": None, "ready": False},
