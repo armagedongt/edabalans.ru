@@ -811,7 +811,8 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "messenger-links/status" in course_html
     assert "if(messengerConfirmed)advanceCourseStep" in course_html
     assert "Персональная ссылка для подключения действует 15 минут" not in course_html
-    assert "var next=nextVisibleStep(d,step)" in course_html
+    assert "var next=action==='submit'?nextVisibleStep(d,step):-1" in course_html
+    assert "pendingQuestionnaireSaves[key]=request.then" in course_html
     assert "if(next>=0)openCourseStep(d,next)" in course_html
     assert "if(!step.hidden&&step.contentAsset)" in course_html
     assert "loadPublishedMaterials" not in course_html
