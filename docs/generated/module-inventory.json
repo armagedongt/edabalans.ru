@@ -3729,6 +3729,10 @@
       "path": "docs/knowledge-base/TILDA_GROUP_CLEANUP_GUIDE.md"
     },
     {
+      "module_id": "platform.content",
+      "path": "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md"
+    },
+    {
       "module_id": "marketing.analytics",
       "path": "docs/knowledge-base/YANDEX_DIRECT_CREATIVE_TESTING.md"
     },
@@ -9094,6 +9098,14 @@
     },
     {
       "module_id": "admin.project-knowledge",
+      "path": "work/module-knowledge-system/standardization-20260917/root-reconciliation-20260918.json"
+    },
+    {
+      "module_id": "admin.project-knowledge",
+      "path": "work/module-knowledge-system/standardization-20260917/root-reconciliation-20260918.md"
+    },
+    {
+      "module_id": "admin.project-knowledge",
       "path": "work/module-knowledge-system/standardization-20260917/task-reports.md"
     },
     {
@@ -11787,6 +11799,14 @@
         {
           "module_id": "admin.project-knowledge",
           "path": "work/module-knowledge-system/standardization-20260917/README.md"
+        },
+        {
+          "module_id": "admin.project-knowledge",
+          "path": "work/module-knowledge-system/standardization-20260917/root-reconciliation-20260918.json"
+        },
+        {
+          "module_id": "admin.project-knowledge",
+          "path": "work/module-knowledge-system/standardization-20260917/root-reconciliation-20260918.md"
         },
         {
           "module_id": "admin.project-knowledge",
@@ -24935,7 +24955,7 @@
         "импортировать по фактической схеме источника с audit trail;",
         "останавливать операцию при конфликте идентичности или неподтверждённом backup;",
         "собирать read-only CSV для согласования переноса старых Tilda-пользователей:",
-        "локально нормализовать Telegram Desktop export и папки с видео/аудио для расшифровки без CRM-анализа;"
+        "нормализовать Telegram Desktop export и папки медиа без CRM-анализа;"
       ],
       "card": "docs/knowledge-base/modules/catalog/operations.imports.md",
       "document_status": "current",
@@ -25174,7 +25194,9 @@
         ],
         "events_in": [],
         "events_out": [],
-        "reads_from": [],
+        "reads_from": [
+          "platform.content"
+        ],
         "writes_to": []
       },
       "routes": [],
@@ -27585,6 +27607,7 @@
       "telegram": null,
       "title": "Импорт и служебные инструменты",
       "truths": [
+        "Правила приёма и разрешения внешней расшифровки задаёт\n[голосовой диспетчер](../../VOICE_TRANSCRIPTION_WORKFLOW.md), `platform.content`.\nИмпортёр не создаёт второй маршрут приёма или каталог персональных записей.",
         "`backend/app/importers/`, `tools/`, import tables, профильные runbook и\n`docs/telegram-consultation-import.md`."
       ]
     },
@@ -39249,6 +39272,7 @@
       "boundary": "Не определяет порядок 21-дневного курса и не заменяет исходные тексты мастер-класса.\nОбщая серверная карта редакционного и технического знания, provenance, права и\nMCP-доступ принадлежат `platform.knowledge`; этот модуль продолжает владеть\nфактическим каталогом контента, приватным авторским корпусом и Писарем.",
       "capabilities": [
         "собирать материалы из поддерживаемых источников;",
+        "направлять любые голосовые, аудио и видео единому локальному диспетчеру,",
         "вести версии текста, связи, метрики и редакционные комментарии;",
         "показывать в одной защищённой серверной витрине семьи и единичные материалы",
         "сохранять правки владельца новой неизменяемой редакцией и не затирать",
@@ -39537,6 +39561,10 @@
         },
         {
           "module_id": "platform.content",
+          "path": "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md"
+        },
+        {
+          "module_id": "platform.content",
           "path": "docs/knowledge-base/modules/catalog/platform.content.md"
         },
         {
@@ -39818,7 +39846,17 @@
         }
       ],
       "runtime_services": [],
-      "sources": [],
+      "sources": [
+        {
+          "consumers": [
+            "operations.imports",
+            "platform.knowledge"
+          ],
+          "path": "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md",
+          "role": "rule",
+          "shared": true
+        }
+      ],
       "summary": "Хранит и помогает разбирать авторские материалы, версии, медиа, ссылки, метрики и комментарии.",
       "symbols": [
         {
@@ -44032,6 +44070,7 @@
       "telegram": null,
       "title": "Каталог материалов",
       "truths": [
+        "Приём, локальная расшифровка, приватное хранение, версии и передача результата\nдругим чатам задаются [регламентом голосового диспетчера](../../VOICE_TRANSCRIPTION_WORKFLOW.md).\nМаршрут не регистрирует источники на сервере автоматически и не создаёт вторую\nбиблиотеку; серверной регистрацией и правами владеет `platform.knowledge`.",
         "Человекочитаемый вход во весь писательский контур —\n[Писарь: единый вход, правила и маршруты работы](../../../../content/author-voice/README.md).\nТам связаны реальные виды задач, владельцы фактов, инструменты, доставка и\nпредыдущие разборы. Главная исполняемая инструкция остаётся существующим\n`edabalans-writer/SKILL.md`, без второго агента или паспорта.\nВнутренний [маршрут адаптации площадок](../../../../content/author-voice/platform-adaptation-v1.md)\nвыбирает требования Telegram/MAX, Pikabu, сайта, курсов, бота и рекламы.\nОн разделяет место текста и площадку доставки, не создаёт отдельные голоса,\nнавыки для каждой короткой поправки или копии сценариев.\nРасширенный `docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md` сохраняет уже\nподготовленный draft локального прототипа, не подтверждает production-поддержку.",
         "Единый нормативный канон принадлежит этому модулю:\n`content/author-voice/writer-contract-v1.md` владеет голосом, аргументацией и\nпродажами, `authoring-work-profiles-v1.md` — выбором авторского маршрута,\nсоседний `editing-modes-v1.md` — разрешениями на изменение исходника,\nа `docs/knowledge-base/ARTICLE_STANDARD.md` — общим оформлением статей сайта и\nматериалов любых курсов. Обязательная точка входа —\n`content/author-voice/skill/edabalans-writer/SKILL.md`. Продуктовые факты\nподключаются через `content/author-voice/product-fact-router.md` без копирования\nв голос.",
         "Машинный task описан `author-task.schema.json`, компонентные вызовы —\n`article-component-router.md`, проход доказательных ссылок —\n`source-integration-pass-v1.md`, состояние проверок —\n`source-review-registry-v1.json`, четыре оси состояния материала —\n`material-status-v1.md`, исполнимый маршрут — `tools/author_workflow.py`.",
@@ -60649,6 +60688,11 @@
     {
       "source": "operations.health",
       "target": "messaging.telegram.engine",
+      "type": "reads_from"
+    },
+    {
+      "source": "operations.imports",
+      "target": "platform.content",
       "type": "reads_from"
     },
     {
