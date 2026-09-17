@@ -1,4 +1,10 @@
 /* Shared cabinet skin. Account/course visual CSS owns the underlying layout. */
+html[data-account-theme="light"]:has(#account-app),
+html[data-account-theme="light"]:has(#masterclass-course-app),
+html[data-account-theme="light"] body:has(#account-app),
+html[data-account-theme="light"] body:has(#masterclass-course-app),
+html[data-account-theme="light"] #account-app,
+html[data-account-theme="light"] #masterclass-course-app{background:#fff!important}
 .account-shell,.content{position:relative}
 .account-theme-toggle{display:grid;place-items:center;width:44px;height:44px;margin:0 0 18px auto;padding:10px;border:1px solid #a8d7ef;border-radius:12px;background:#eaf8ff;color:#118ed8;cursor:pointer}
 .account-theme-toggle svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
