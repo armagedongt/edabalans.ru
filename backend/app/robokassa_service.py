@@ -32,7 +32,6 @@ from app.models import (
     Product,
     TelegramTrackingEvent,
     User,
-    UserEmail,
 )
 from app.pricing_service import amount_value, pricing_entry_map, site_tariff_amount
 from app.product_catalog_service import tariff_public
@@ -135,13 +134,12 @@ def _stored_acquisition_snapshot(
 
 
 def trusted_source_snapshot(
-    db: Session, settings: Settings, source_context: str | None, payer_email: str
+    db: Session, settings: Settings, source_context: str | None
 ) -> dict[str, object] | None:
     """Validate a personal-link context without turning it into buyer identity.
 
-    A matching, already known email is required before the token's owner may be
-    used for attribution. The confirmation path resolves the purchaser from the
-    payment email in its normal way.
+    The source belongs to the link, including when it is forwarded. The
+    confirmation path resolves the purchaser from the payment email separately.
     """
     if not source_context:
         return None
@@ -150,15 +148,6 @@ def trusted_source_snapshot(
         return _unknown_source_snapshot()
     source_user = db.get(User, token_row.user_id)
     if source_user is None:
-        return _unknown_source_snapshot()
-    has_email = db.scalar(
-        select(UserEmail.id).where(UserEmail.user_id == source_user.id)
-    )
-    if has_email is None:
-        return _unknown_source_snapshot()
-    try:
-        validate_user_email_binding(db, source_user, payer_email)
-    except TildaPayloadError:
         return _unknown_source_snapshot()
     return {
         "status": "verified",
@@ -198,6 +187,7 @@ def _record_initial_direct_payment(
         None,
         occurred_at,
         trusted_source_snapshot=source_snapshot if isinstance(source_snapshot, dict) else None,
+        allow_messenger_fallback=False,
     )
 
 
@@ -311,6 +301,7 @@ def create_payment(
     offer_user_id: uuid.UUID | None = None,
     account_user: User | None = None,
     source_context: str | None = None,
+    acquisition_query: dict[str, str] | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
@@ -327,7 +318,18 @@ def create_payment(
             validate_user_email_binding(db, offer_user, email)
         except TildaPayloadError as exc:
             raise RobokassaError(str(exc)) from exc
-    source_snapshot = trusted_source_snapshot(db, settings, source_context, email)
+    query = {
+        key: value.strip() for key, value in (acquisition_query or {}).items()
+        if key in ACQUISITION_QUERY_KEYS and value.strip()
+    }
+    source_snapshot = (
+        {
+            "status": "reported",
+            "original_acquisition": {"event_type": "site_entry", "raw_query": query},
+            "current_mailing_touch": {"kind": "tagged_site_link"},
+        }
+        if query else trusted_source_snapshot(db, settings, source_context)
+    )
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
         raise RobokassaError("Тариф недоступен")

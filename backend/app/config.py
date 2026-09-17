@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     max_bot_token: str = ""
     account_telegram_bot_username: str = "Fitness_Talks_bot"
     account_max_bot_username: str = "id230409966750_bot"
-    account_public_url: str = "https://edabalans.ru/lk"
+    account_public_url: str = "https://похудение-это-есть.рф/lk"
     account_onboarding_enabled: bool = False
     account_session_days: int = 30
     account_email_worker_enabled: bool = True

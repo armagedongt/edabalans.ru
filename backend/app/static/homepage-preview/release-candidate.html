@@ -3710,7 +3710,12 @@
               price_code: selectedPlan.dataset.priceCode,
               email: checkoutEmail.value,
               intensive_offer: activeOfferToken || null,
-              source_context: activeSourceContext || null
+              source_context: activeSourceContext || null,
+              acquisition_query: Object.fromEntries(
+                ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'alias']
+                  .map(key => [key, new URLSearchParams(window.location.search).get(key) || ''])
+                  .filter(([, value]) => value.trim())
+              )
             })
           });
           const result = await response.json().catch(() => ({}));

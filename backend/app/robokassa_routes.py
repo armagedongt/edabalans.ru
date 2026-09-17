@@ -4,12 +4,13 @@ from decimal import Decimal
 from html import escape
 import json
 from pathlib import Path
+from typing import Annotated
 import uuid
 from urllib.parse import parse_qs, urlencode, urlsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, RedirectResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -109,6 +110,10 @@ class RobokassaCheckoutIn(BaseModel):
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
     source_context: str | None = Field(default=None, max_length=160)
+    acquisition_query: dict[
+        Annotated[str, StringConstraints(max_length=64)],
+        Annotated[str, StringConstraints(max_length=512)],
+    ] | None = Field(default=None, max_length=8)
 
 
 class NativeOfferCheckoutIn(BaseModel):
@@ -430,6 +435,7 @@ def robokassa_checkout(
             body.email,
             offer_user_id=discount_user_id,
             source_context=body.source_context,
+            acquisition_query=body.acquisition_query,
         )
     except RobokassaError as exc:
         db.rollback()

@@ -92,7 +92,7 @@ try {
   })
   await page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button').waitFor({ state: 'visible' })
   failNextStoredOfferValidation = true
-  await page.goto(tildaUrl, { waitUntil: 'domcontentloaded' })
+  await page.goto(`${tildaUrl}?utm_source=telegram_channel&utm_content=post_42&yclid=channel-click`, { waitUntil: 'domcontentloaded' })
   const tildaButton = page.locator('[data-price-code="site.masterclass.basic"] .edb-pricing-button')
   await tildaButton.waitFor({ state: 'visible' })
   const checkoutEndpoint = await page.locator('#edb-pricing-neurozeh-v1').getAttribute('data-checkout-endpoint')
@@ -111,6 +111,11 @@ try {
 
   if (checkoutBody?.price_code !== 'site.masterclass.basic' || checkoutBody?.intensive_offer !== 'offer-test') {
     throw new Error(`Stored intensive offer was not restored in Tilda checkout: ${JSON.stringify(checkoutBody)}`)
+  }
+  if (JSON.stringify(checkoutBody?.acquisition_query) !== JSON.stringify({
+    utm_source: 'telegram_channel', utm_content: 'post_42', yclid: 'channel-click',
+  })) {
+    throw new Error(`Channel attribution was lost by the Tilda loader: ${JSON.stringify(checkoutBody)}`)
   }
 
   await page.goto(`${tildaUrl}?intensive_offer=expired-test`, { waitUntil: 'domcontentloaded' })

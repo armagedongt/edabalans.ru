@@ -40,7 +40,7 @@ class Settings(BaseSettings):
     media_root: str = "./telegram-bot/runtime/media"
     masterclass_offers_url: str = "https://похудение-это-есть.рф/lk"
     masterclass_course_url: str = "https://похудение-это-есть.рф/lk"
-    masterclass_account_url: str = "https://edabalans.ru/lk"
+    masterclass_account_url: str = "https://похудение-это-есть.рф/lk"
     intensive_public_url: str = "https://edabalans.ru/intensive"
     public_link_allowed_origins: str = (
         "https://edabalans.ru,https://www.edabalans.ru,"
