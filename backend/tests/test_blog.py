@@ -196,6 +196,11 @@ def test_shared_article_styles_and_local_manrope_are_served() -> None:
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[2]
+    article_page = client.get("/blog/articles/pohudenie-nachinaetsya-ne-s-pohudeniya")
+    assert article_page.status_code == 200
+    assert 'id="article"' in article_page.text
+    for shared_style in ("article-typography.css", "article-note.css"):
+        assert f'href="/blog/assets/{shared_style}?v=' in article_page.text
     for public_name, source_name in (
         ("article-typography.css", "typography.css"),
         ("article-note.css", "note.css"),

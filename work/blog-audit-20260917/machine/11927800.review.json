@@ -1,8 +1,8 @@
 {
   "schema_version": "author-review-v1",
   "reviewer": "Codex targeted source-preservation review",
-  "reviewed_at": "2026-09-17T18:17:28.205569+00:00",
-  "pack_sha256": "c8720cd96405cd1038801c88fc399fa5e972b2be3cc746412e493c71daf7016d",
+  "reviewed_at": "2026-09-17T18:36:12.098394+00:00",
+  "pack_sha256": "b1fc00924d40dc4e8bd09dee79aa4592234f9697706f8692c48fe9465fa152f4",
   "draft_sha256": "db9760d6f249290b84b27fdb7e72206cb5491dc3e73e25642ad29e8420193b88",
   "fact_sources": [
     {

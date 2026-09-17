@@ -1,10 +1,10 @@
 {
   "schema_version": "author-validation-v1",
   "status": "pass",
-  "pack_sha256": "326dd6c57b304132b3272e2002c15ce8fc2a9a95699a7277785e5b320ad6ba66",
+  "pack_sha256": "02cbac53ee23850285764d0850d3078d2e68cbd5b6d2216f54356f9882884122",
   "draft_sha256": "5802744dc76a806ca5a7a34f6a930c7780906b68cc1eff0523f4307f6c059b25",
-  "review_sha256": "8b23a3c01094347122dba82266d0f0712c5aa30c0521aa0286154d3fec13708b",
-  "validated_at": "2026-09-17T18:17:28.836929+00:00",
+  "review_sha256": "a4e795ca1f1d71fedf025c9ab9076dd7f7e688c1d4e57f20d95a741f3df77042",
+  "validated_at": "2026-09-17T18:36:12.753667+00:00",
   "missing_verbatim": [],
   "unresolved_placeholders": [],
   "protected_layer_errors": [],
