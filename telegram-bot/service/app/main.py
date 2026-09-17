@@ -4,12 +4,13 @@ import asyncio
 import base64
 import hashlib
 import hmac
+import json
 import logging
 import secrets
 import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -18,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from sqlalchemy import case, delete, func, or_, select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
@@ -29,7 +31,7 @@ from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
 from app.masterclass_dispatch import dispatch_due_masterclass_notifications
-from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
+from app.models import BotInstance, BotRoute, Broadcast, BroadcastRecipient, Contact, ContentItem, CrmMessengerAccount, CrmTag, CrmUserTag, ManualMessage, MessengerLinkToken, OwnerPaymentAlertDelivery, Sequence, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, TrackingLink, TrackingLinkAlias, TrackingLinkTag, UpdateReceipt, UtmTagRule
 from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
@@ -112,6 +114,33 @@ def client() -> TelegramClient:
         gateway_token=settings.telegram_gateway_token,
         channel_id=settings.telegram_channel_id,
     )
+
+
+def _owner_payment_alert_signature(notification_id: str, message_text: str) -> str:
+    payload = f"{notification_id}\n{message_text}".encode("utf-8")
+    return hmac.new(settings.app_auth_secret.encode("utf-8"), payload, hashlib.sha256).hexdigest()
+
+
+def _owner_payment_alert_contact(session: Session) -> Contact | None:
+    telegram_user_id = settings.payment_owner_telegram_user_id.strip()
+    if not telegram_user_id:
+        return None
+    contacts = session.scalars(
+        select(Contact)
+        .join(BotInstance, BotInstance.id == Contact.bot_instance_id)
+        .where(
+            BotInstance.is_active.is_(True),
+            Contact.telegram_user_id == telegram_user_id,
+            Contact.status == "active",
+        )
+        .order_by(Contact.last_seen_at.desc())
+        .limit(2)
+    ).all()
+    return contacts[0] if len(contacts) == 1 else None
+
+
+def _owner_payment_alert_digest(message_text: str) -> str:
+    return hashlib.sha256(message_text.encode("utf-8")).hexdigest()
 
 
 def max_client() -> MaxClient:
@@ -1223,6 +1252,85 @@ def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None =
     if settings.telegram_webhook_secret and not secrets.compare_digest(x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret):
         raise HTTPException(403, "Invalid webhook secret")
     return process_update(update, session)
+
+
+@app.post("/internal/owner-payment-alert", include_in_schema=False)
+async def owner_payment_alert(
+    request: Request,
+    x_edabalans_payment_signature: str | None = Header(default=None),
+    session: Session = Depends(get_db),
+) -> dict:
+    if not settings.app_auth_secret:
+        raise HTTPException(503, "Internal payment alert secret is not configured")
+    raw_body = await request.body()
+    if len(raw_body) > 16_384:
+        raise HTTPException(413, "Payment alert payload is too large")
+    try:
+        payload = json.loads(raw_body)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise HTTPException(400, "Invalid payment alert payload") from exc
+    if not isinstance(payload, dict):
+        raise HTTPException(400, "Invalid payment alert payload")
+    notification_id = str(payload.get("notification_id") or "").strip()
+    message_text = str(payload.get("message_text") or "").strip()
+    if not notification_id or not message_text or len(message_text) > 4096:
+        raise HTTPException(422, "Invalid payment alert fields")
+    expected = _owner_payment_alert_signature(notification_id, message_text)
+    if not secrets.compare_digest(x_edabalans_payment_signature or "", expected):
+        raise HTTPException(403, "Invalid payment alert signature")
+    contact = _owner_payment_alert_contact(session)
+    if contact is None:
+        raise HTTPException(503, "Payment alert owner Telegram contact is unavailable")
+    digest = _owner_payment_alert_digest(message_text)
+    delivery = session.get(OwnerPaymentAlertDelivery, notification_id)
+    if delivery is not None:
+        if not secrets.compare_digest(delivery.message_digest, digest):
+            raise HTTPException(409, "Payment alert notification payload changed")
+        if delivery.status == "sent":
+            return {"ok": True, "message_id": delivery.platform_message_id or ""}
+        updated_at = delivery.updated_at
+        if updated_at is not None and updated_at.tzinfo is None:
+            updated_at = updated_at.replace(tzinfo=UTC)
+        if (
+            delivery.status == "sending"
+            and updated_at is not None
+            and datetime.now(UTC) - updated_at < timedelta(minutes=2)
+        ):
+            raise HTTPException(503, "Payment alert delivery is in progress")
+        delivery.status = "sending"
+        delivery.attempt_count += 1
+    else:
+        delivery = OwnerPaymentAlertDelivery(
+            notification_id=notification_id,
+            message_digest=digest,
+            status="sending",
+            attempt_count=1,
+        )
+        session.add(delivery)
+    try:
+        session.commit()
+    except IntegrityError:
+        # A simultaneous retry claimed the same notification. The backend will
+        # retry this durable outbox row; never send a second Telegram message.
+        session.rollback()
+        raise HTTPException(503, "Payment alert delivery is in progress") from None
+    try:
+        result = client().call(
+            "sendMessage",
+            {
+                "chat_id": contact.chat_id,
+                "text": message_text,
+                "disable_web_page_preview": True,
+            },
+        )
+    except TelegramError as exc:
+        delivery.status = "retry"
+        session.commit()
+        raise HTTPException(502, "Telegram rejected payment alert") from exc
+    delivery.status = "sent"
+    delivery.platform_message_id = str(result.get("message_id") or "")[:128] or None
+    session.commit()
+    return {"ok": True, "message_id": delivery.platform_message_id or ""}
 
 
 @app.post("/bot/max/webhook")

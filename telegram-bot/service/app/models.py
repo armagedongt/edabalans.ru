@@ -189,6 +189,18 @@ class StepDelivery(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
+class OwnerPaymentAlertDelivery(TimestampMixin, Base):
+    """Telegram-side receipt: prevents a backend retry after a lost ACK from resending."""
+
+    __tablename__ = "tg_owner_payment_alert_deliveries"
+
+    notification_id: Mapped[str] = mapped_column(String(36), primary_key=True)
+    message_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="sending", nullable=False)
+    attempt_count: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
+    platform_message_id: Mapped[str | None] = mapped_column(String(128))
+
+
 class UpdateReceipt(Base):
     __tablename__ = "tg_update_receipts"
 

@@ -49,7 +49,7 @@ id = "platform.commerce"
 admin_catalog = [{ category = "tools", order = 20, url = "/admin/pricing", label = "Цены и тарифы", description = "Цены продуктов, тарифы и дополнительные предложения." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
-depends_on = ["platform.crm"]
+depends_on = ["platform.crm", "messaging.telegram"]
 events_out = ["messaging.telegram.postpurchase"]
 owns_files = [
   "backend/app/access_routes.py", "backend/app/access_service.py",
@@ -58,6 +58,7 @@ owns_files = [
   "backend/app/pricing_service.py", "backend/app/product_identity.py",
   "backend/app/robokassa_routes.py", "backend/app/robokassa_service.py",
   "backend/app/robokassa_subscription_service.py",
+  "backend/app/owner_payment_notification_service.py",
   "backend/app/tilda_routes.py", "backend/app/tilda_service.py",
   "backend/app/account_onboarding_service.py",
   "backend/app/static/apps/account.html", "backend/app/static/apps/personal-access.html",
@@ -66,7 +67,7 @@ owns_files = [
   "backend/app/static/coaching-subscription.html",
   "backend/app/static/legal/**", "backend/tests/test_personal_access_links.py",
   "backend/tests/test_pricing_catalog.py", "backend/tests/test_robokassa_payments.py",
-  "backend/tests/test_tilda_payments.py",
+  "backend/tests/test_tilda_payments.py", "backend/tests/test_owner_payment_notifications.py",
   "docs/TILDA_PAYMENTS.md", "docs/ROBOKASSA_PAYMENTS.md", "docs/TILDA_PERSONAL_ACCESS_EMBED.md",
   "docs/knowledge-base/ACCESS_MANAGEMENT_GUIDE.md",
   "docs/knowledge-base/ACCESS_RULES.md", "docs/knowledge-base/ACCOUNT_LEGAL_GATE.md",
@@ -82,12 +83,13 @@ owns_files = [
   "backend/migrations/versions/20260905_0036_account_onboarding.py",
   "backend/migrations/versions/20260906_0037_account_registration.py",
   "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
+  "backend/migrations/versions/20260917_0042_owner_payment_notifications.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
   "pricing_versions", "price_entries", "payments", "user_accesses",
   "personal_access_links", "user_course_policies", "user_legal_acceptances",
-  "account_onboardings", "recurring_subscriptions",
+  "account_onboardings", "recurring_subscriptions", "owner_payment_notifications",
 ]
 owns_routes = [
   "*/account*", "*/access*", "*/legal*", "*/pricing*", "*/robokassa*", "*/tilda/*", "*/personal-access*", "*/pay", "*/subscription*",
@@ -583,6 +585,7 @@ owns_files = [
   "docs/knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md",
   "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md",
   ]
+owns_tables = ["tg_owner_payment_alert_deliveries"]
 
 [[modules]]
 id = "messaging.max"

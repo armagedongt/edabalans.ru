@@ -35,6 +35,7 @@ from app.models import (  # noqa: E402
     AccountOnboarding,
     MessengerLinkToken,
     OfferCheckout,
+    OwnerPaymentNotification,
     Payment,
     PriceEntry,
     PricingVersion,
@@ -654,6 +655,119 @@ def test_live_probe_result_records_payment_without_user_access_or_onboarding() -
     app.dependency_overrides.clear()
 
 
+def test_expired_direct_invoice_enqueues_final_failure_owner_alert(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        payment = Payment(
+            source="robokassa",
+            external_order_id="408",
+            email_at_purchase="buyer@example.test",
+            product_name_raw="Мастер-класс",
+            amount=Decimal("5900.00"),
+            payment_status="pending",
+            raw_payload={},
+        )
+        db.add(payment)
+        db.flush()
+        db.add(
+            OfferCheckout(
+                checkout_kind="standard",
+                offer_code="site.masterclass.basic",
+                title="Мастер-класс",
+                items=[],
+                amount=Decimal("5900.00"),
+                expires_at=now - timedelta(minutes=1),
+                payment_id=payment.id,
+            )
+        )
+        db.commit()
+
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(subscription_service, "_operation_state", lambda *_args: (0, 10))
+    settings = app.dependency_overrides[get_settings]().model_copy(
+        update={"robokassa_password_2": "production-password-2"}
+    )
+
+    assert subscription_service.check_one_expired_direct_payment(settings) is True
+    with factory() as db:
+        payment = db.scalar(select(Payment).where(Payment.external_order_id == "408"))
+        checkout = db.scalar(select(OfferCheckout).where(OfferCheckout.payment_id == payment.id))
+        alert = db.scalar(select(OwnerPaymentNotification).where(OwnerPaymentNotification.payment_id == payment.id))
+        assert payment is not None and payment.payment_status == "failed"
+        assert checkout is not None and checkout.status == "failed"
+        assert alert is not None
+        assert alert.event_kind == "failed"
+        assert "истёк" in alert.message_text
+    app.dependency_overrides.clear()
+
+
+def test_expired_first_subscription_invoice_enqueues_final_failure_owner_alert(monkeypatch) -> None:
+    _, factory, _ = make_client(test_mode=False)
+    now = datetime.now(timezone.utc)
+    with factory() as db:
+        user = User(display_name="Подписчик")
+        db.add(user)
+        db.flush()
+        payment = Payment(
+            user_id=user.id,
+            source="robokassa",
+            external_order_id="409",
+            email_at_purchase="member@example.test",
+            product_name_raw="Индивидуальное сопровождение — 1 месяц",
+            amount=Decimal("9900.00"),
+            payment_status="pending",
+            raw_payload={"recurring_role": "parent"},
+        )
+        db.add(payment)
+        db.flush()
+        db.add(
+            OfferCheckout(
+                user_id=user.id,
+                checkout_kind="recurring_subscription",
+                offer_code="subscription.coaching.monthly",
+                title="Индивидуальное сопровождение — 1 месяц",
+                items=[],
+                amount=Decimal("9900.00"),
+                expires_at=now - timedelta(minutes=1),
+                payment_id=payment.id,
+            )
+        )
+        db.add(
+            RecurringSubscription(
+                user_id=user.id,
+                product_code="COACHING",
+                price_entry_code="subscription.coaching.monthly",
+                email_normalized="member@example.test",
+                amount=Decimal("9900.00"),
+                status="pending",
+                parent_invoice_id="409",
+                terms_accepted_at=now,
+            )
+        )
+        db.commit()
+
+    monkeypatch.setattr(subscription_service, "SessionLocal", factory)
+    monkeypatch.setattr(subscription_service, "_operation_state", lambda *_args: (0, 60))
+    settings = app.dependency_overrides[get_settings]().model_copy(
+        update={"robokassa_password_2": "production-password-2"}
+    )
+
+    assert subscription_service.check_one_expired_direct_payment(settings) is True
+    with factory() as db:
+        payment = db.scalar(select(Payment).where(Payment.external_order_id == "409"))
+        subscription = db.scalar(
+            select(RecurringSubscription).where(RecurringSubscription.parent_invoice_id == "409")
+        )
+        alert = db.scalar(
+            select(OwnerPaymentNotification).where(OwnerPaymentNotification.payment_id == payment.id)
+        )
+        assert payment is not None and payment.payment_status == "failed"
+        assert subscription is not None and subscription.status == "cancelled"
+        assert alert is not None and alert.event_kind == "failed"
+    app.dependency_overrides.clear()
+
+
 def test_live_probe_rejects_wrong_host_and_cross_origin_requests() -> None:
     _, factory, _ = make_client(live_probe_enabled=True)
     app_client = TestClient(
@@ -765,6 +879,8 @@ def test_signed_production_result_grants_access() -> None:
     with factory() as db:
         payment = db.scalar(select(Payment))
         assert payment is not None and payment.payment_status == "paid"
+        alert = db.scalar(select(OwnerPaymentNotification).where(OwnerPaymentNotification.payment_id == payment.id))
+        assert alert is not None and alert.event_kind == "paid"
         assert payment.raw_payload["success_kind"] == "public_masterclass"
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
@@ -1078,7 +1194,7 @@ def test_personal_offer_changes_preview_and_checkout_by_one_thousand() -> None:
 
 
 def test_manual_payment_keeps_comment_without_creating_access_or_account() -> None:
-    client, factory, key = make_client()
+    client, factory, key = make_client(test_mode=False)
 
     page = client.get("/pay")
     checkout = client.post(
@@ -1111,10 +1227,12 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
         payment = db.scalar(select(Payment))
         checkout_row = db.scalar(select(OfferCheckout))
         assert payment is not None
-        assert payment.payment_status == "test_paid"
+        assert payment.payment_status == "paid"
         assert payment.raw_payload["payer_name"] == "Ирина Петрова"
         assert payment.raw_payload["comment"] == "Консультация по питанию, о которой договорились"
         assert checkout_row is not None and checkout_row.checkout_kind == "manual_service"
+        alert = db.scalar(select(OwnerPaymentNotification).where(OwnerPaymentNotification.payment_id == payment.id))
+        assert alert is not None and "Консультация по питанию" in alert.message_text
         assert db.scalar(select(func.count(User.id))) == 0
         assert db.scalar(select(func.count(UserAccess.id))) == 0
         assert db.scalar(

@@ -32,6 +32,10 @@ from app.robokassa_subscription_service import (
     recurring_subscription_configuration_error,
     recurring_subscription_worker,
 )
+from app.owner_payment_notification_service import (
+    owner_payment_alert_configuration_error,
+    owner_payment_notification_worker,
+)
 from app.intensive_routes import router as intensive_router
 from app.intensive_login_routes import router as intensive_login_router
 from app.knowledge_routes import router as knowledge_router
@@ -62,11 +66,17 @@ async def lifespan(_: FastAPI):
     email_task = None
     stop_recurring_worker = asyncio.Event()
     recurring_task = None
+    stop_owner_payment_alerts = asyncio.Event()
+    owner_payment_alerts_task = None
     if settings.account_onboarding_enabled and settings.account_email_worker_enabled:
         email_task = asyncio.create_task(account_email_worker(settings, stop_email_worker))
     if settings.robokassa_recurring_worker_enabled:
         recurring_task = asyncio.create_task(
             recurring_subscription_worker(settings, stop_recurring_worker)
+        )
+    if settings.payment_owner_alerts_enabled:
+        owner_payment_alerts_task = asyncio.create_task(
+            owner_payment_notification_worker(settings, stop_owner_payment_alerts)
         )
     try:
         async with knowledge_mcp.session_manager.run():
@@ -74,6 +84,7 @@ async def lifespan(_: FastAPI):
     finally:
         stop_email_worker.set()
         stop_recurring_worker.set()
+        stop_owner_payment_alerts.set()
         if email_task is not None:
             email_task.cancel()
             with suppress(asyncio.CancelledError):
@@ -82,6 +93,10 @@ async def lifespan(_: FastAPI):
             recurring_task.cancel()
             with suppress(asyncio.CancelledError):
                 await recurring_task
+        if owner_payment_alerts_task is not None:
+            owner_payment_alerts_task.cancel()
+            with suppress(asyncio.CancelledError):
+                await owner_payment_alerts_task
 
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
@@ -200,5 +215,11 @@ def ready(db: Session = Depends(get_db)) -> dict[str, str]:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail=recurring_error,
+        )
+    owner_payment_alert_error = owner_payment_alert_configuration_error(settings)
+    if owner_payment_alert_error:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail=owner_payment_alert_error,
         )
     return {"status": "ready"}

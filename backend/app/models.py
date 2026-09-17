@@ -412,6 +412,30 @@ class Payment(Base):
     )
 
 
+class OwnerPaymentNotification(Base):
+    __tablename__ = "owner_payment_notifications"
+    __table_args__ = (
+        UniqueConstraint("payment_id", "event_kind", name="uq_owner_payment_notification_event"),
+        Index("ix_owner_payment_notifications_due", "status", "next_attempt_at"),
+    )
+
+    id: Mapped[uuid.UUID] = uuid_pk()
+    payment_id: Mapped[uuid.UUID] = mapped_column(
+        ForeignKey("payments.id", ondelete="CASCADE"), nullable=False, index=True
+    )
+    event_kind: Mapped[str] = mapped_column(String(32), nullable=False)
+    message_text: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(String(32), default="pending", nullable=False)
+    attempt_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    sent_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    delivery_message_id: Mapped[str | None] = mapped_column(String(128))
+    last_error: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False
+    )
+
+
 class RecurringSubscription(TimestampMixin, Base):
     __tablename__ = "recurring_subscriptions"
     __table_args__ = (

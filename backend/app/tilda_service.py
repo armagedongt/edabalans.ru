@@ -33,6 +33,10 @@ from app.models import (
 )
 from app.access_service import complete_review, grant_resources
 from app.account_onboarding_service import ensure_paid_account_onboarding
+from app.owner_payment_notification_service import (
+    enqueue_failed_payment_notification,
+    enqueue_paid_payment_notification,
+)
 from app.checkout_reference import checkout_reference_from_product
 from app.config import Settings, get_settings
 
@@ -769,6 +773,7 @@ def process_tilda_payment(
                 )
             )
         record_paid_tracking_event(db, existing, referer, event_at)
+        enqueue_paid_payment_notification(db, existing)
         try:
             db.commit()
         except IntegrityError:
@@ -833,6 +838,12 @@ def process_tilda_payment(
     if settings.account_onboarding_enabled:
         ensure_paid_account_onboarding(db, payment, settings)
     record_paid_tracking_event(db, payment, referer, event_at)
+    if payment.payment_status == "paid":
+        enqueue_paid_payment_notification(db, payment)
+    elif payment.payment_status in {"failed", "cancelled"}:
+        enqueue_failed_payment_notification(
+            db, payment, f"Tilda передала статус {payment.payment_status}"
+        )
 
     try:
         db.commit()

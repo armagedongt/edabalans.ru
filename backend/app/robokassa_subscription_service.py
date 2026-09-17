@@ -17,6 +17,10 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings
 from app.account_onboarding_service import _send_message
+from app.owner_payment_notification_service import (
+    enqueue_failed_payment_notification,
+    enqueue_paid_payment_notification,
+)
 from app.database import SessionLocal
 from app.models import (
     AccountCredential,
@@ -47,6 +51,7 @@ SUBSCRIPTION_PRODUCT_CODE = "COACHING"
 SUBSCRIPTION_TITLE = "Индивидуальное сопровождение — 1 месяц"
 SUBSCRIPTION_CHECKOUT_KIND = "recurring_subscription"
 SUCCESS_KIND_SUBSCRIPTION = "coaching_subscription"
+LIVE_PROBE_CHECKOUT_KIND = "robokassa_live_probe"
 
 
 def recurring_subscription_configuration_error(settings: Settings) -> str | None:
@@ -489,6 +494,7 @@ def check_one_pending_charge(settings: Settings) -> bool:
                         metadata,
                         is_test_payment=False,
                     )
+                    enqueue_paid_payment_notification(db, payment)
         elif final_failure:
             subscription.status = "cancelled" if subscription.cancelled_at else "past_due"
             subscription.next_charge_at = None
@@ -499,6 +505,11 @@ def check_one_pending_charge(settings: Settings) -> bool:
                 subscription.next_notification_attempt_at = now
             if payment is not None:
                 payment.payment_status = "failed"
+                reason = {
+                    10: "операция отменена или срок оплаты истёк (код 10)",
+                    60: "отказ в зачислении, деньги возвращены покупателю (код 60)",
+                }.get(state_code, "Robokassa не нашла операцию в течение 24 часов")
+                enqueue_failed_payment_notification(db, payment, reason)
             if checkout is not None:
                 checkout.status = "failed"
         else:
@@ -508,6 +519,99 @@ def check_one_pending_charge(settings: Settings) -> bool:
             subscription.last_error = (
                 None if result_code == 0 else f"OpStateExt result {result_code}"
             )
+        db.commit()
+        return True
+
+
+def _next_direct_status_check(metadata: dict) -> datetime | None:
+    value = metadata.get("owner_payment_alert_status_check_at")
+    if not isinstance(value, str):
+        return None
+    try:
+        parsed = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+
+
+def check_one_expired_direct_payment(settings: Settings) -> bool:
+    """Record only a final Robokassa refusal for an expired server-created invoice."""
+    if settings.robokassa_test_mode:
+        return False
+    now = datetime.now(timezone.utc)
+    with SessionLocal() as db:
+        candidates = db.execute(
+            select(Payment, OfferCheckout)
+            .join(OfferCheckout, OfferCheckout.payment_id == Payment.id)
+            .where(
+                Payment.source == SOURCE,
+                Payment.payment_status == "pending",
+                OfferCheckout.checkout_kind != LIVE_PROBE_CHECKOUT_KIND,
+                OfferCheckout.expires_at <= now,
+            )
+            .order_by(OfferCheckout.expires_at)
+            .limit(50)
+            .with_for_update(skip_locked=True)
+        ).all()
+        selected: tuple[Payment, OfferCheckout] | None = None
+        for payment, checkout in candidates:
+            metadata = dict(payment.raw_payload or {})
+            # A recurring child invoice is reconciled by check_one_pending_charge,
+            # which also extends the paid period. The first subscription invoice is
+            # a normal direct checkout and must remain eligible here.
+            if (
+                checkout.checkout_kind == SUBSCRIPTION_CHECKOUT_KIND
+                and metadata.get("recurring_role") == "child"
+            ):
+                continue
+            next_check = _next_direct_status_check(metadata)
+            if next_check is None or next_check <= now:
+                selected = (payment, checkout)
+                break
+        if selected is None:
+            return False
+        payment, checkout = selected
+        metadata = dict(payment.raw_payload or {})
+        try:
+            result_code, state_code = _operation_state(settings, payment.external_order_id or "")
+        except (OSError, ValueError, ET.ParseError, urllib.error.URLError, RobokassaError) as exc:
+            metadata["owner_payment_alert_status_check_at"] = (
+                now + timedelta(minutes=15)
+            ).isoformat()
+            metadata["owner_payment_alert_status_error"] = str(exc)[:500]
+            payment.raw_payload = metadata
+            db.commit()
+            return True
+        if result_code == 0 and state_code in {10, 60}:
+            payment.payment_status = "failed"
+            payment.source_event_at = now
+            payment.raw_payload = {
+                **metadata,
+                "reconciled_via": "OpStateExt",
+                "operation_state": state_code,
+            }
+            checkout.status = "failed"
+            if checkout.checkout_kind == SUBSCRIPTION_CHECKOUT_KIND:
+                subscription = db.scalar(
+                    select(RecurringSubscription).where(
+                        RecurringSubscription.parent_invoice_id == payment.external_order_id
+                    ).with_for_update()
+                )
+                if subscription is not None and subscription.status == "pending":
+                    subscription.status = "cancelled"
+                    subscription.last_error = f"Robokassa state {state_code}"
+            reason = {
+                10: "операция отменена или срок оплаты истёк (код 10)",
+                60: "отказ в зачислении, деньги возвращены покупателю (код 60)",
+            }[state_code]
+            enqueue_failed_payment_notification(db, payment, reason)
+        else:
+            metadata["owner_payment_alert_status_check_at"] = (
+                now + timedelta(minutes=15)
+            ).isoformat()
+            metadata["owner_payment_alert_status_result"] = result_code
+            metadata["owner_payment_alert_status_state"] = state_code
+            payment.raw_payload = metadata
         db.commit()
         return True
 
@@ -667,11 +771,18 @@ def charge_one_due_subscription(settings: Settings) -> bool:
 
 async def recurring_subscription_worker(settings: Settings, stop_event: asyncio.Event) -> None:
     while not stop_event.is_set():
-        processed = await asyncio.to_thread(check_one_pending_charge, settings)
-        if not processed:
-            processed = await asyncio.to_thread(send_one_failure_notification, settings)
-        if not processed:
-            processed = await asyncio.to_thread(charge_one_due_subscription, settings)
+        try:
+            processed = await asyncio.to_thread(check_one_pending_charge, settings)
+            if not processed:
+                processed = await asyncio.to_thread(check_one_expired_direct_payment, settings)
+            if not processed:
+                processed = await asyncio.to_thread(send_one_failure_notification, settings)
+            if not processed:
+                processed = await asyncio.to_thread(charge_one_due_subscription, settings)
+        except Exception:
+            # The worker must survive a temporary database/network failure; the
+            # next pass reclaims unfinished rows under their existing locks.
+            processed = False
         if processed:
             continue
         try:

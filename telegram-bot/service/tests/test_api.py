@@ -78,6 +78,68 @@ def test_admin_can_upload_media(tmp_path, monkeypatch):
     assert (tmp_path / response.json()["media_path"].split("/")[-1]).read_bytes() == b"jpeg-data"
 
 
+def test_internal_owner_payment_alert_uses_signed_payload_and_active_owner_contact(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'owner-alert.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "TetrisgfgfgfBot")
+        bot = session.scalar(select(BotInstance).where(BotInstance.is_active.is_(True)))
+        assert bot is not None
+        session.add(
+            Contact(
+                bot_instance_id=bot.id,
+                telegram_user_id="77",
+                chat_id="77",
+                username="svorontsovski",
+                status="active",
+            )
+        )
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    class PaymentAlertTelegram:
+        def __init__(self):
+            self.calls = []
+
+        def call(self, method, payload):
+            self.calls.append((method, payload))
+            return {"message_id": 444}
+
+    fake = PaymentAlertTelegram()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "app_auth_secret", "owner-alert-tests")
+    monkeypatch.setattr(main_module.settings, "payment_owner_telegram_user_id", "77")
+    payload = {"notification_id": "a12", "message_text": "Оплата прошла\nСумма: 9 900 ₽"}
+    signature = main_module._owner_payment_alert_signature(
+        payload["notification_id"], payload["message_text"]
+    )
+    client = TestClient(app)
+
+    accepted = client.post(
+        "/internal/owner-payment-alert",
+        json=payload,
+        headers={"X-Edabalans-Payment-Signature": signature},
+    )
+    repeated = client.post(
+        "/internal/owner-payment-alert",
+        json=payload,
+        headers={"X-Edabalans-Payment-Signature": signature},
+    )
+    rejected = client.post("/internal/owner-payment-alert", json=payload)
+
+    assert accepted.status_code == 200
+    assert accepted.json() == {"ok": True, "message_id": "444"}
+    assert repeated.status_code == 200
+    assert repeated.json() == {"ok": True, "message_id": "444"}
+    assert fake.calls == [("sendMessage", {"chat_id": "77", "text": payload["message_text"], "disable_web_page_preview": True})]
+    assert rejected.status_code == 403
+    app.dependency_overrides.clear()
+
+
 def test_webhook_start_is_idempotent_and_admin_can_inspect(tmp_path, monkeypatch):
     engine = make_engine(f"sqlite:///{tmp_path / 'api.sqlite'}")
     Base.metadata.create_all(engine)

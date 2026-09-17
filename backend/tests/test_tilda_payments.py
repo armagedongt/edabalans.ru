@@ -22,6 +22,7 @@ from app.models import (  # noqa: E402
     AccountOnboarding,
     MasterclassEvent,
     MasterclassNotification,
+    OwnerPaymentNotification,
     Payment,
     OfferCheckout,
     Product,
@@ -169,6 +170,8 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert str(payment.amount) == "4990.00"
         assert payment.currency == "RUB"
         assert payment.payment_status == "paid"
+        alert = db.scalar(select(OwnerPaymentNotification).where(OwnerPaymentNotification.payment_id == payment.id))
+        assert alert is not None and alert.event_kind == "paid"
         assert payment.raw_payload["requestid"] == "request-1001"
         assert db.scalar(select(UserEmail.email_normalized)) == "client@example.test"
         assert db.scalar(select(UserPhone.phone_normalized)) == "+79991234567"
@@ -197,6 +200,26 @@ def test_paid_order_is_written_to_client_payment_and_access() -> None:
         assert db.scalar(select(func.count(Payment.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
         assert db.scalar(select(func.count(AccountOnboarding.id))) == 1
+    app.dependency_overrides.clear()
+
+
+def test_tilda_terminal_failure_enqueues_owner_alert_without_access() -> None:
+    client, session_factory = make_client()
+    seed_catalog(session_factory)
+    payload = paid_payload()
+    payload["Payment status"] = "cancelled"
+    payload["orderid"] = "order-cancelled"
+    payload["paymentid"] = "payment-cancelled"
+
+    response = client.post("/integrations/tilda/payments", data=payload, headers=HEADERS)
+
+    assert response.status_code == 200
+    with session_factory() as db:
+        payment = db.scalar(select(Payment))
+        alert = db.scalar(select(OwnerPaymentNotification))
+        assert payment is not None and payment.payment_status == "cancelled"
+        assert alert is not None and alert.event_kind == "failed"
+        assert db.scalar(select(func.count(UserAccess.id))) == 0
     app.dependency_overrides.clear()
 
 

@@ -45,6 +45,7 @@ from app.tilda_service import (
     validate_user_email_binding,
 )
 from app.account_onboarding_service import ensure_paid_account_onboarding
+from app.owner_payment_notification_service import enqueue_paid_payment_notification
 
 
 SOURCE = "robokassa"
@@ -696,6 +697,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             # A repeated ResultUrl2 is the safe repair path when a prior
             # confirmation did not yet produce its deduplicated tracking event.
             _record_initial_direct_payment(db, payment, checkout, occurred_at)
+            enqueue_paid_payment_notification(db, payment)
         db.commit()
         return invoice_id
     try:
@@ -739,6 +741,8 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             "notification": payload,
         }
         checkout.status = payment.payment_status
+        if payment.payment_status == "paid":
+            enqueue_paid_payment_notification(db, payment)
         db.commit()
         return invoice_id
     if checkout.user_id is not None:
@@ -828,5 +832,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             checkout_metadata,
             is_test_payment=True,
         )
+    if payment.payment_status == "paid":
+        enqueue_paid_payment_notification(db, payment)
     db.commit()
     return invoice_id

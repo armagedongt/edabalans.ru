@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     robokassa_operation_state_url: str = "https://auth.robokassa.ru/Merchant/WebService/Service.asmx/OpStateExt"
     robokassa_recurring_worker_enabled: bool = False
     robokassa_recurring_poll_seconds: float = 60.0
+    payment_owner_alerts_enabled: bool = False
+    payment_owner_alerts_poll_seconds: float = 15.0
+    payment_owner_alerts_endpoint: str = "http://telegram-bot:8001/internal/owner-payment-alert"
     robokassa_result_url_2: str = "https://edabalans.ru/integrations/robokassa/result2"
     robokassa_success_url_2: str = "https://edabalans.ru/payments/robokassa/success"
     robokassa_fail_url_2: str = "https://edabalans.ru/payments/robokassa/fail"
