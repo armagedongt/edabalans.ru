@@ -12,13 +12,12 @@ from sqlalchemy.orm import Session
 
 from app.models import BotInstance, ContentItem, Contact, CrmMessengerAccount, CrmTag, CrmUserTag, Sequence, SequenceEdge, SequenceRun, SequenceStep, SequenceVersion, StepDelivery, TrackingEvent, UserVariable
 from app.config import get_settings
-from app.content_formatting import content_is_runtime_ready, replace_template_values
+from app.content_formatting import TEMPLATE_VARIABLE, content_is_runtime_ready, replace_template_values
 from app.customer_lifecycle import stop_runs_for_contact
 from app.intensive_access import personal_tracking_values
 
 
 logger = logging.getLogger(__name__)
-PERSONAL_TEMPLATE_MARKER = "{{personal_"
 PERSONAL_CHANNEL_POST_TEMPLATE = re.compile(
     r"{{\s*personal_channel_post_([1-9][0-9]{0,6})_url\s*}}"
 )
@@ -408,7 +407,7 @@ def personalized_delivery(
     configuration: dict[str, Any],
 ) -> tuple[Any, dict[str, Any]]:
     body = content.body_source or ""
-    if PERSONAL_TEMPLATE_MARKER not in body and PERSONAL_TEMPLATE_MARKER not in str(configuration):
+    if not any(match.group(1).startswith("personal_") for match in TEMPLATE_VARIABLE.finditer(f"{body}\n{configuration}")):
         return content, configuration
     if not contact.user_id:
         raise RuntimeError("Personal link requires a CRM user")

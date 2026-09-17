@@ -444,7 +444,7 @@ def test_broadcast_refreshes_scheduler_activity_between_recipients(monkeypatch):
         )()
         for item_id in (1, 2)
     }
-    content = type("Content", (), {"code": "test"})()
+    content = type("Content", (), {"code": "test", "body_source": "Plain fixture"})()
     row = type(
         "BroadcastRow",
         (),

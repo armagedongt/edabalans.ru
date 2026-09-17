@@ -24,7 +24,7 @@ from app.config import get_settings
 from app.customer_lifecycle import reconcile_masterclass_presale_runs, stop_presale_runs_from_purchase_events, stop_runs_for_contact
 from app.database import Base, SessionLocal, engine, get_db
 from app.app_menu import REFRESH_CALLBACK, app_request, refresh_menu, send_menu
-from app.engine import advance_run, due_runs, resume_callback, resume_wait_timeout, start_run
+from app.engine import advance_run, due_runs, personalized_delivery, resume_callback, resume_wait_timeout, start_run
 from app.graph import module_graph, module_overview_graph, sequence_graph
 from app.maintenance import DEFAULT_MAINTENANCE_MESSAGE, MAINTENANCE_CONTENT_CODE, allowed_telegram_ids, maintenance_allows, record_maintenance_contact
 from app.metrika import MetrikaOfflineClient, sync_offline_conversions
@@ -311,6 +311,16 @@ def _snapshot_broadcast_recipients(session: Session, row: Broadcast) -> list[Con
     return contacts
 
 
+def _send_broadcast_content(session: Session, contact: Contact, content: ContentItem, configuration: dict, sender: TelegramClient) -> str:
+    rendered, rendered_configuration = personalized_delivery(session, contact, content, configuration)
+    if "{{" in (rendered.body_source or "") or "{{" in str(rendered_configuration):
+        raise RuntimeError(f"Unresolved delivery template: {rendered.code}")
+    message_id = sender.send_content(contact.chat_id, rendered, rendered_configuration)
+    if rendered is not content and rendered.telegram_file_id:
+        content.telegram_file_id = rendered.telegram_file_id
+    return message_id
+
+
 def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, snapshot: bool = False) -> tuple[int, int]:
     if snapshot:
         _snapshot_broadcast_recipients(session, row)
@@ -325,7 +335,7 @@ def _deliver_broadcast(session: Session, row: Broadcast, tg: TelegramClient, *, 
             recipient.status = "skipped_maintenance"
             continue
         try:
-            recipient.platform_message_id = tg.send_content(contact.chat_id, content, configuration)
+            recipient.platform_message_id = _send_broadcast_content(session, contact, content, configuration, tg)
             recipient.status = "sent"; recipient.sent_at = datetime.now(UTC); sent += 1
         except Exception as exc:
             message = str(exc)
@@ -1970,7 +1980,14 @@ def create_broadcast(body: BroadcastIn, admin: str = Depends(require_admin), ses
     for button in body.buttons:
         label = str(button.get("text", "")).strip()
         url = str(button.get("url", "")).strip()
-        if not label or len(label) > 64 or not url.startswith(("https://", "http://")):
+        variables = template_variables(url)
+        personal_url = (
+            len(variables) == 1
+            and url == "{{" + variables[0] + "}}"
+            and variables[0] != "personal_intensive_current_day_url"
+            and variable_is_allowed("", variables[0])
+        )
+        if not label or len(label) > 64 or not (url.startswith(("https://", "http://")) or personal_url):
             raise HTTPException(422, "У кнопки нужны текст до 64 символов и http(s)-ссылка")
         buttons.append({"text": label, "url": url})
     segment["_buttons"] = buttons
@@ -2050,7 +2067,7 @@ def test_broadcast(broadcast_id: str, body: BroadcastTestIn, admin: str = Depend
     if contact.telegram_user_id not in allowed_telegram_ids(settings.telegram_maintenance_allowed_user_ids):
         raise HTTPException(409, "Тест рассылки разрешён только owner-аккаунтам")
     content = session.get(ContentItem, row.content_item_id)
-    message_id = client().send_content(contact.chat_id, content, {"buttons": (row.segment or {}).get("_buttons", [])})
+    message_id = _send_broadcast_content(session, contact, content, {"buttons": (row.segment or {}).get("_buttons", [])}, client())
     session.add(ManualMessage(contact_id=contact.id, direction="out", body_source=f"[Тест рассылки: {row.title}]\n{content.body_source}", status="sent", operator_email=admin, platform_message_id=message_id))
     session.commit()
     return {"status": "sent", "platform_message_id": message_id}

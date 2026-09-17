@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app.database import Base, get_db, make_engine
 from app.main import app
 import app.main as main_module
-from app.models import BotInstance, Contact, ContentItem, CrmMessengerAccount, CrmUser, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
+from app.models import BotInstance, Broadcast, Contact, ContentItem, CrmMessengerAccount, CrmUser, MessengerLinkToken, SequenceRun, StepDelivery, TrackingEvent, UpdateReceipt
 from app.seed import seed_defaults
 from app.telegram import TelegramError
 
@@ -440,6 +440,115 @@ def test_inbox_timeline_and_safe_broadcast_workflow(tmp_path, monkeypatch):
     assert client.get("/bot-api/map?module_code=inbox").json()["issues"] == []
     assert client.get("/bot-api/map?module_code=broadcasts").json()["issues"] == []
     app.dependency_overrides.clear()
+
+
+def test_broadcast_personal_links_are_per_recipient_and_survive_retry(tmp_path, monkeypatch):
+    engine = make_engine(f"sqlite:///{tmp_path / 'broadcast-personal.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        seed_defaults(session, "FixtureBot")
+        bot = session.scalar(select(BotInstance).where(BotInstance.code == "test"))
+        contact_ids = {}
+        for number in (42, 43, 44):
+            user_id = str(uuid4()) if number != 44 else None
+            if user_id:
+                session.add(CrmUser(id=user_id))
+                session.flush()
+            contact = Contact(bot_instance_id=bot.id, user_id=user_id, telegram_user_id=str(number), chat_id=str(number))
+            session.add(contact)
+            session.flush()
+            contact_ids[number] = contact.id
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    class PersonalSender(FakeTelegram):
+        def __init__(self):
+            super().__init__()
+            self.deliveries = []
+            self.fail_once = True
+
+        def send_content(self, chat_id, content, configuration):
+            self.deliveries.append((chat_id, content.body_source, configuration))
+            if chat_id == "43" and self.fail_once:
+                self.fail_once = False
+                raise TelegramError("Fixture temporary failure")
+            if content.media_kind == "photo":
+                content.telegram_file_id = "fixture-photo-file"
+            return super().send_content(chat_id, content, configuration)
+
+    fake = PersonalSender()
+    monkeypatch.setattr(main_module, "client", lambda: fake)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_mode", True)
+    monkeypatch.setattr(main_module.settings, "telegram_maintenance_allowed_user_ids", "42,43,44")
+    monkeypatch.setattr(main_module.settings, "admin_username", "")
+    monkeypatch.setattr(main_module.settings, "admin_password", "")
+    app.dependency_overrides[get_db] = db_override
+    try:
+        client = TestClient(app)
+        template = '<a href="{{ personal_masterclass_url }}">Мастер-класс</a>'
+        for invalid_url in ("{{unknown_url}}", "{{personal_intensive_current_day_url}}", "javascript:alert(1)"):
+            rejected = client.post("/bot-api/broadcasts", json={"title": "Fixture", "text": template, "buttons": [{"text": "Открыть", "url": invalid_url}]})
+            assert rejected.status_code == 422
+        draft_response = client.post("/bot-api/broadcasts", json={
+            "title": "Personal fixture", "text": template,
+            "segment": {"status": "active", "telegram_user_ids": ["42", "43"]},
+            "buttons": [{"text": "Открыть", "url": "{{personal_masterclass_url}}"}],
+        })
+        assert draft_response.status_code == 200
+        draft = draft_response.json()
+        assert client.post(f"/bot-api/broadcasts/{draft['id']}/test", json={"contact_id": contact_ids[42]}).status_code == 200
+        launched = client.post(f"/bot-api/broadcasts/{draft['id']}/launch", json={"confirmed_recipient_count": 2}).json()
+        assert (launched["sent"], launched["failed"]) == (1, 1)
+        retried = client.post(f"/bot-api/broadcasts/{draft['id']}/retry").json()
+        assert (retried["sent"], retried["failed"]) == (1, 0)
+        deliveries = {number: [item for item in fake.deliveries if item[0] == str(number)] for number in (42, 43)}
+        assert len(deliveries[42]) == 2  # owner-test and initial send, not retry
+        assert len(deliveries[43]) == 2  # failed initial send and retry
+        urls = {}
+        for number, attempts in deliveries.items():
+            urls[number] = attempts[0][2]["buttons"][0]["url"]
+            assert urls[number].startswith("https://edabalans.ru/m/E")
+            for _, body, configuration in attempts:
+                assert "{{" not in body and "{{" not in str(configuration)
+                assert f'href="{urls[number]}"' in body
+                assert configuration["buttons"][0]["url"] == urls[number]
+        assert urls[42] != urls[43]
+
+        body_only_draft = client.post("/bot-api/broadcasts", json={
+            "title": "Whitespace body fixture", "text": template,
+            "media_kind": "photo", "media_path": "https://example.com/fixture.jpg",
+            "segment": {"telegram_user_ids": ["42"]},
+        }).json()
+        body_only_result = client.post(f"/bot-api/broadcasts/{body_only_draft['id']}/launch", json={"confirmed_recipient_count": 1}).json()
+        assert (body_only_result["sent"], body_only_result["failed"]) == (1, 0)
+        assert f'href="{urls[42]}"' in fake.deliveries[-1][1]
+        assert fake.deliveries[-1][2]["buttons"] == []
+
+        before = len(fake.deliveries)
+        anonymous_draft = client.post("/bot-api/broadcasts", json={"title": "No CRM fixture", "text": template, "segment": {"telegram_user_ids": ["44"]}}).json()
+        anonymous_result = client.post(f"/bot-api/broadcasts/{anonymous_draft['id']}/launch", json={"confirmed_recipient_count": 1}).json()
+        assert (anonymous_result["sent"], anonymous_result["failed"]) == (0, 1)
+        assert len(fake.deliveries) == before
+        unresolved_draft = client.post("/bot-api/broadcasts", json={
+            "title": "Unresolved fixture", "text": '<a href="{{personal_intensive_current_day_url}}">Текущий день</a>',
+            "segment": {"telegram_user_ids": ["42"]},
+        }).json()
+        unresolved_result = client.post(f"/bot-api/broadcasts/{unresolved_draft['id']}/launch", json={"confirmed_recipient_count": 1}).json()
+        assert (unresolved_result["sent"], unresolved_result["failed"]) == (0, 1)
+        assert len(fake.deliveries) == before
+        with Session(engine) as session:
+            row = session.get(Broadcast, draft["id"])
+            assert session.get(ContentItem, row.content_item_id).body_source == template
+            assert row.segment["_buttons"][0]["url"] == "{{personal_masterclass_url}}"
+            media_row = session.get(Broadcast, body_only_draft["id"])
+            assert session.get(ContentItem, media_row.content_item_id).telegram_file_id == "fixture-photo-file"
+            assert session.scalar(select(func.count()).select_from(MessengerLinkToken)) == 2
+    finally:
+        app.dependency_overrides.clear()
+        engine.dispose()
 
 
 def test_start_continues_when_telegram_rate_limits_optional_menu_reset(tmp_path, monkeypatch):
