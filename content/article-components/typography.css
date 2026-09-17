@@ -1,0 +1,33 @@
+/* Shared reading layer. The course shell owns navigation, not authored MD. */
+#article{--article-link:#118ed8;--article-action-bg:#27aff5;--article-action-color:#fff;font-family:Manrope,Arial,sans-serif;color:#17191e;font-size:18px;line-height:1.65}
+#article p,#article li{max-width:none;font:400 18px/1.65 Manrope,Arial,sans-serif;color:inherit;letter-spacing:normal}
+#article p{margin:0 0 18px}
+#article strong{font-weight:600;color:inherit;font-size:inherit}
+#article h1{font:800 clamp(32px,3.6vw,44px)/1.12 Manrope,Arial,sans-serif;letter-spacing:-.035em;color:inherit;margin:0 0 28px;overflow-wrap:normal}
+#article h2{font:800 29px/1.2 Manrope,Arial,sans-serif;letter-spacing:-.025em;color:inherit;margin:44px 0 14px;scroll-margin-top:90px}
+#article h3{font:800 23px/1.25 Manrope,Arial,sans-serif;color:inherit;margin:32px 0 10px;scroll-margin-top:90px}
+#article a{color:var(--article-link);font-weight:600;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+#article a:hover{color:#0c76b5}
+#article ul,#article ol{margin:20px 0;padding-left:26px}
+#article li{margin:8px 0}
+#article blockquote{margin:24px 0;padding:0 0 0 20px;border:0;border-left:4px solid #f39a2f;border-radius:0;background:none;box-shadow:none;color:inherit}
+#article blockquote p{font-size:inherit;line-height:inherit}
+#article figure{margin:24px 0 28px;width:100%}
+#article img,#article .article-inline-image,#article .article-hero-image{display:block;width:auto;max-width:100%;height:auto;margin:24px auto 28px;border-radius:14px;object-fit:contain}
+#article figure img{margin:0 auto}
+#article .article-inline-image,#article .article-hero-image,#article figure>img{width:100%}
+#article figcaption{font:400 14px/1.45 Manrope,Arial,sans-serif;color:#46515b;margin-top:10px}
+#article .article-note-accent,#article .article-spoiler,#article .article-copy-block{font-family:inherit}
+#article .article-copy-block pre{font:inherit;letter-spacing:normal}
+#article .article-note-accent strong{font-weight:600}
+#article .article-actions a,#article .article-copy-button{font-family:inherit}
+#article .article-actions a{color:var(--article-action-color);text-decoration:none}
+#article .article-actions a:hover{background:#118ed8;color:#fff}
+#article .article-copy-button:hover{background:#eaf8ff}
+@media(max-width:620px){
+ #article,#article p,#article li{font-size:17px}
+ #article h1{font-size:32px;margin-bottom:22px}
+ #article h2{font-size:25px}
+ #article h3{font-size:21px}
+ #article img,#article .article-inline-image,#article .article-hero-image{max-width:100%;margin-left:auto;margin-right:auto}
+}

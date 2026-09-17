@@ -17,6 +17,19 @@ from app.course_structure_service import normalize_seed  # noqa: E402
 client = TestClient(app)
 
 
+def test_native_course_visual_assets_are_public_and_allowlisted() -> None:
+    for name in ("account-visual.css", "course-visual.css", "article-typography.css", "article-note.css"):
+        response = client.get("/assets/" + name)
+        assert response.status_code == 200, name
+        assert response.headers["content-type"].startswith("text/css")
+        assert response.content
+    brain = client.get("/assets/brain-logo.png")
+    assert brain.status_code == 200
+    assert brain.headers["content-type"].startswith("image/png")
+    assert client.get("/assets/unknown.css").status_code == 404
+    assert client.get("/assets/article-README.md").status_code == 404
+
+
 def test_public_homepage_media_is_server_owned_and_allowlisted() -> None:
     document = client.get("/public-site-assets/education-documents.webp")
     document_original = client.get("/public-site-assets/education-documents-original.png")

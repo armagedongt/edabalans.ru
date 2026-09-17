@@ -635,9 +635,15 @@ def dqs_category_rules() -> FileResponse:
 
 @router.get("/assets/{asset_name}", include_in_schema=False)
 def app_asset(asset_name: str) -> FileResponse:
+    if asset_name == "brain-logo.png":
+        return public_asset(STATIC_DIR / "homepage-preview" / "favicon-no-outline.png")
+    if asset_name in {"article-typography.css", "article-note.css"}:
+        filename = asset_name.removeprefix("article-")
+        return public_asset(STATIC_DIR.parents[2] / "content" / "article-components" / filename)
     if asset_name not in {
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
+        "account-visual.css", "course-visual.css",
     }:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)

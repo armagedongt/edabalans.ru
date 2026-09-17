@@ -16,10 +16,35 @@ except ImportError:
     fastapi_stub.HTTPException = HTTPException
     sys.modules["fastapi"] = fastapi_stub
 
-from app.article_markup import markdown_to_article_html, safe_href, safe_image_src
+from app.article_markup import markdown_to_article_html, safe_href, safe_image_src, sanitize_article_html
 
 
 class ArticleMarkupTests(unittest.TestCase):
+    def test_note_preserves_paragraphs_inline_formatting_and_safe_links(self) -> None:
+        rendered = markdown_to_article_html("> [!NOTE]\n> **Акцент** и [ссылка](https://example.test/a).\n>\n> Второй абзац.")
+        self.assertEqual(rendered, '<div class="article-note-accent"><p><strong>Акцент</strong> и <a href="https://example.test/a" target="_blank" rel="noopener">ссылка</a>.</p><p>Второй абзац.</p></div>')
+        self.assertEqual(sanitize_article_html(rendered, allow_h1=False, course_semantics=True), rendered)
+
+    def test_note_does_not_turn_author_html_or_unsafe_links_into_code(self) -> None:
+        rendered = markdown_to_article_html('> [!NOTE]\n> <script>alert(1)</script> [текст](javascript:alert)')
+        self.assertNotIn('<script>', rendered)
+        self.assertNotIn('href="javascript:', rendered)
+        self.assertIn('&lt;script&gt;', rendered)
+
+    def test_note_rejects_empty_unknown_and_unsupported_nested_blocks(self) -> None:
+        for source in ('> [!NOTE]', '> [!WARNING]\n> Текст', '> [!NOTE] Заголовок\n> Текст', '> [!NOTE]\n> |А|Б|', '> [!NOTE]\n> > Цитата', '> [!NOTE]\n> slider(\n> )'):
+            with self.subTest(source=source), self.assertRaises(Exception) as caught:
+                markdown_to_article_html(source)
+            self.assertEqual(caught.exception.status_code, 422)
+
+    def test_note_preserves_dqs_portion_lists(self) -> None:
+        rendered = markdown_to_article_html('> [!NOTE]\n> **Стандартные порции**\n>\n> - 120 г для густых\n> - **250 мл** для жидких')
+        self.assertIn('<p><strong>Стандартные порции</strong></p><ul><li>120 г для густых</li><li><strong>250 мл</strong> для жидких</li></ul>', rendered)
+        self.assertEqual(sanitize_article_html(rendered, course_semantics=True), rendered)
+
+    def test_plain_quote_stays_plain_quote(self) -> None:
+        self.assertEqual(markdown_to_article_html('> Обычная цитата'), '<blockquote>Обычная цитата</blockquote>')
+
     def test_markdown_table_renders_as_scrollable_course_table(self) -> None:
         source = """| Блюдо | Ккал | Белки, г |
 |---|---:|---:|

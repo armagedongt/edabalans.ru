@@ -1,0 +1,73 @@
+
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:ital,wght@0,700;0,800;1,800&display=swap');
+        html:has(#account-app):not(:has(#masterclass-course-app)),body:has(#account-app):not(:has(#masterclass-course-app)){background:#fff!important}
+        #account-app{
+          --ink:#17191e;
+          --muted:#3f4b55;
+          --paper:#fff;
+          --card:#fff;
+          --line:rgba(17,142,216,.16);
+          --accent:#27aff5;
+          --accent-soft:#eef9ff;
+          --radius-large:18px;
+          --radius-small:14px;
+          --radius-control:12px;
+          min-height:100vh;
+          background:transparent!important;
+          color:var(--ink);
+          font:500 16px/1.55 Manrope,Arial,sans-serif;
+        }
+        #account-app .account-shell{width:min(1080px,100%);padding:34px 24px 80px}
+        #account-app .account-head{max-width:760px;margin-bottom:31px;padding-bottom:25px;border-bottom:1px solid rgba(17,142,216,.15)}
+        #account-app .account-kicker{display:flex;align-items:center;gap:5px;margin:0 0 12px;color:transparent;font-size:0;letter-spacing:0;text-transform:none}
+        #account-app .account-kicker::before{width:22px;height:22px;flex:0 0 22px;background:transparent url('/assets/brain-logo.png') center/20px 20px no-repeat;content:'';filter:none}
+        #account-app .account-kicker::after{content:'ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ';color:#118ed8;font:800 11px/1 Unbounded,Manrope,sans-serif;letter-spacing:-.055em}
+        #account-app .account-head h1,#account-app .account-section h2{font-family:Manrope,Arial,sans-serif;color:#17191e}
+        #account-app .account-head h1{font-size:clamp(38px,6vw,58px);font-weight:800;line-height:1;letter-spacing:-.065em}
+        #account-app .account-section{margin-top:36px}
+        #account-app .account-section h2{font-size:clamp(26px,3vw,34px);font-weight:800;letter-spacing:-.05em}
+        #account-app .account-session{color:#4f555e;font-size:14px}
+        #account-app .account-session-email,#account-app .account-logout{color:#17191e}
+        #account-app .account-grid{gap:16px}
+        #account-app .account-card{min-height:230px;padding:22px;border:1px solid rgba(17,142,216,.17);border-radius:18px;background:#fff;box-shadow:0 15px 34px -29px rgba(12,91,136,.44)}
+        #account-app .account-card.available-card{border-color:rgba(39,175,245,.42);background:linear-gradient(135deg,#fff 65%,#eef9ff)}
+        #account-app .account-card.featured{border-color:rgba(244,106,53,.32);background:linear-gradient(135deg,#fff 65%,#fff4ef);box-shadow:0 15px 34px -29px rgba(244,106,53,.4)}
+        #account-app .account-card h3{font:800 23px/1.12 Manrope,Arial,sans-serif;letter-spacing:-.04em}
+        #account-app .account-card p,#account-app .application-card p{color:#3f4b55}
+        #account-app .account-state{border:1px solid transparent;border-radius:8px;background:#ffe7e5;color:#c7453c;font:800 11px/1 Manrope,Arial,sans-serif}
+        #account-app .account-state.owned{background:#e0f7e8;color:#207b44}
+        #account-app .account-state.preparing{background:#fff4d7;color:#9a6311}
+        #account-app .account-open{min-height:48px;border-radius:12px;background:#27aff5;color:#fff;font:800 14px/1 Manrope,Arial,sans-serif;box-shadow:0 9px 19px -15px rgba(17,142,216,.8)}
+        #account-app .account-open.available{background:#27aff5}
+        #account-app .account-open.purchase{background:#f46a35;box-shadow:0 9px 19px -15px rgba(244,106,53,.8)}
+        #account-app .account-open:disabled{border:1px solid #add8ec;background:#e3f3fb;color:#39708b;box-shadow:none;opacity:1}
+        #account-app .application-grid{gap:14px}
+        #account-app .application-card{border-color:rgba(17,142,216,.16);border-radius:14px;background:#fff;box-shadow:0 12px 28px -27px rgba(12,91,136,.42)}
+        #account-app .application-icon{border-radius:12px;background:#eef9ff;color:#118ed8}
+        #account-app .application-card .account-open{width:124px;min-height:42px;margin:0;background:#27aff5}
+        #account-app .account-review,#account-app .account-legal{border-color:rgba(244,106,53,.34);border-radius:18px;background:#fff7f3;box-shadow:none}
+        #account-app .account-review p,#account-app .account-legal>p{color:#4f555e}
+        #account-app .account-contact a{border-radius:12px;background:#118ed8;font-family:Manrope,Arial,sans-serif}
+        #account-app .account-contact a:last-child{background:#fff;color:#118ed8;border:1px solid rgba(17,142,216,.25)}
+        #account-app .legal-card{border-color:rgba(17,142,216,.15);border-radius:14px;background:#fff}
+        #account-app .legal-card input{accent-color:#f46a35}
+        #account-app .legal-card a{color:#118ed8}
+        #account-app .legacy-card{border-radius:14px;background:#fff}
+        #account-app .account-logout:focus-visible,#account-app .account-open:focus-visible,#account-app .legacy-link:focus-visible,#account-app .account-contact a:focus-visible{outline-color:#f46a35}
+        @media(max-width:760px){
+          #account-app .account-shell{padding:27px 16px 66px}
+          #account-app .account-head{padding-bottom:21px}
+        #account-app .account-kicker::before{width:24px;height:24px;flex-basis:24px}
+          #account-app .account-kicker::after{font-size:11px}
+          #account-app .account-card{padding:19px}
+        }
+
+
+        #account-app .account-state.owned{background:#e0f7e8;color:#207b44}
+        #account-app .account-state.preparing{background:#fff4d7;color:#9a6311}
+        #account-app .account-open.purchase{background:#f46a35;color:#fff}
+        #account-app .account-open:disabled{border-color:#f1b9b4;background:#fff0ef;color:#b8433a}
+        #account-app .account-card:has(.account-state.preparing) .account-open:disabled{border-color:#f0d18d;background:#fff8e8;color:#9a6311}
+        #account-app .application-card .account-open:disabled{border-color:#f0d18d;background:#fff8e8;color:#9a6311}
+
+#account-app .account-card h3 .account-tariff-inline{font:500 .72em/1.15 Manrope,Arial,sans-serif;letter-spacing:-.02em;white-space:nowrap}

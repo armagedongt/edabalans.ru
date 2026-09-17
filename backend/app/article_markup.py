@@ -29,7 +29,7 @@ COURSE_CLASS_TOKENS = {
     "blog-cta-eyebrow",
     "score-2", "score-1", "score-0", "score--1", "score--2",
 }
-COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table"}
+COURSE_BASE_CLASS_TOKENS = {"article-table-wrap", "article-data-table", "article-note-accent"}
 
 
 def safe_href(value: str) -> bool:
@@ -335,9 +335,24 @@ def markdown_to_article_html(
             while index < len(lines) and lines[index].strip().startswith(">"):
                 quote_lines.append(re.sub(r"^>\s?", "", lines[index].strip()))
                 index += 1
-            output.append(
-                "<blockquote>" + "<br>".join(inline_markdown(item) for item in quote_lines) + "</blockquote>"
-            )
+            note = quote_lines[0] == "[!NOTE]"
+            if note:
+                body = "\n".join(quote_lines[1:]).strip()
+                if not body:
+                    raise HTTPException(422, "Плашка NOTE не может быть пустой")
+                if any(re.match(r"^(?:>|\[!|#|\||```|:::|!\[|(?:slider|spoiler|dqs_score_table)\()", item.strip()) for item in quote_lines[1:]):
+                    raise HTTPException(422, "В NOTE поддержаны абзацы, списки, выделения и ссылки")
+                output.append(
+                    '<div class="article-note-accent">'
+                    + markdown_to_article_html(body)
+                    + "</div>"
+                )
+            elif quote_lines[0].startswith("[!"):
+                raise HTTPException(422, "В этом renderer поддержан только обычный NOTE")
+            else:
+                output.append(
+                    "<blockquote>" + "<br>".join(inline_markdown(item) for item in quote_lines) + "</blockquote>"
+                )
             continue
         image = re.fullmatch(
             r'!\[([^\]]*)\]\((https://[^\s)]+|/(?!/)[^\s)]+)(?:\s+"([^"]*)")?\)',

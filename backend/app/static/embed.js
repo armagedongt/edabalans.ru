@@ -378,7 +378,30 @@
         if (mount.getAttribute('data-edabalans-inline') !== 'true') {
           ensureLegalFooter(mount);
         }
-        return executeScripts(doc);
+        // App-owned shared styles must also be mounted when HTML is embedded in /lk.
+        var stylesheetLoads = Array.prototype.map.call(
+          doc.querySelectorAll('link[rel="stylesheet"][href]'),
+          function (source) {
+            var url = new URL(source.getAttribute('href'), APP_HOST);
+            var existing = Array.prototype.find.call(
+              document.querySelectorAll('link[rel="stylesheet"]'),
+              function (link) { return link.href === url.href; }
+            );
+            if (existing) return Promise.resolve();
+            return new Promise(function (resolve, reject) {
+              var link = document.createElement('link');
+              link.rel = 'stylesheet';
+              link.href = url.href;
+              link.onload = resolve;
+              link.onerror = function () {
+                link.remove();
+                reject(new Error('Не удалось загрузить оформление приложения'));
+              };
+              document.head.appendChild(link);
+            });
+          }
+        );
+        return Promise.all(stylesheetLoads).then(function () { return executeScripts(doc); });
       })
       .catch(function (error) {
         mount.innerHTML = '<div style="padding:24px;color:#b42318;font-family:Arial,sans-serif">' + String(error.message || error) + '</div>';
