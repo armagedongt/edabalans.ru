@@ -21,6 +21,7 @@ const accountThemeJs = await readFile(new URL('../../app/static/account-theme.js
 const articleTypography = await readFile(new URL('../../../content/article-components/typography.css', import.meta.url), 'utf8')
 const articleNote = await readFile(new URL('../../../content/article-components/note.css', import.meta.url), 'utf8')
 const appShellCss = await readFile(new URL('../../app/static/app-shell.css', import.meta.url), 'utf8')
+async function waitUntil(predicate){const deadline=Date.now()+15000;while(!predicate()){if(Date.now()>deadline)throw Error('Timed out waiting for background request');await new Promise(resolve=>setTimeout(resolve,20))}}
 async function capture(page, name) {
   if (!process.env.QA_OUT) return
   await mkdir(process.env.QA_OUT, {recursive:true})
@@ -174,7 +175,8 @@ try {
   const progress = {current_day:2,server_now:new Date().toISOString(),days:manifest.days.map(d=>({number:d.number,opened:d.number<=5,can_open:d.number<=5,completed:false,completed_steps:d.steps.map((_,i)=>i),checkmarks:{},first_opened_at:new Date().toISOString()}))}
   async function nativePage(query, delays) {
     const native = await browser.newPage({viewport:{width:delays.width||1440,height:1000},reducedMotion:'reduce'})
-    const requests = {account:0,session:0,step:0,corpus:0}
+    const requests = {account:0,session:0,step:0,corpus:0,answers:[],submitted:0,completed:0}
+    const completedSteps=new Set((delays.progress||progress).days[0].completed_steps)
     const faults = []
     await native.addInitScript(()=>{
       window.loaderCounts=[]
@@ -215,13 +217,35 @@ try {
       if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
       if(path==='/api/masterclass/course/manifest')return route.fulfill({json:manifest})
       if(path==='/api/masterclass/course')return route.fulfill({json:delays.progress||progress})
-      if(/\/steps\/\d+\/complete$/.test(path))return route.fulfill({json:progress})
+      if(/\/steps\/\d+\/complete$/.test(path)){
+        const index=Number(path.match(/\/steps\/(\d+)\/complete$/)[1])
+        if(path.includes('/days/1/')&&index===5&&!completedSteps.has(3))return route.fulfill({status:409,json:{detail:{reason:'previous_step_not_completed'}}})
+        completedSteps.add(index);requests.completed++;
+        const updated=structuredClone(delays.progress||progress)
+        updated.days[0].completed_steps=[...completedSteps]
+        return route.fulfill({json:updated})
+      }
+      if(path.endsWith('/task/open')){
+        const updated=structuredClone(delays.progress||progress)
+        updated.days[0].completed_steps=[...completedSteps]
+        updated.days[0].task_opened=true
+        return route.fulfill({json:updated})
+      }
       if(path==='/api/masterclass/course/materials'){
         const id=url.searchParams.get('step_id')
         if(id){requests.step++;if(delays.article)await delays.article.promise;return route.fulfill({json:{materials:id==='day-04-dqs'?{}:{[id]:{html:'<p>Готовое содержимое выбранной статьи.</p><img class="article-inline-image" src="https://cdn.example.test/diagram.svg" alt="Проверка обычного изображения">',word_count:5,version:1}}}})}
         requests.corpus++;if(delays.corpus)await delays.corpus.promise;return route.fulfill({json:{materials:{}}})
       }
-      if(path.includes('/questionnaires/')){if(delays.questionnaire)await delays.questionnaire.promise;return route.fulfill({json:{questions:[],answers:[]}})}
+      if(path.includes('/questionnaires/')){
+        if(path.endsWith('/answer')){
+          requests.answers.push(route.request().postDataJSON())
+          if(delays.answerSave&&requests.answers.length===1)await delays.answerSave.promise
+          return route.fulfill({status:delays.failAnswer?500:200,json:delays.failAnswer?{detail:'Save failed'}:{ok:true}})
+        }
+        if(path.endsWith('/submit')){requests.submitted++;return route.fulfill({json:{ok:true,messenger_link_status:'queued'}})}
+        if(delays.questionnaire)await delays.questionnaire.promise
+        return route.fulfill({json:{questions:delays.questions||[],answers:[]}})
+      }
       if(path.includes('/course/content/')){if(delays.asset)await delays.asset.promise;return route.fulfill({contentType:'text/plain; charset=utf-8',body:'## Инструкция DQS\n\nГотовое описание приложения.'})}
       if(path==='/diagram.svg')return route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"><rect width="1200" height="600" fill="#eaf8ff"/><rect x="50" y="50" width="1100" height="500" fill="#27aff5"/></svg>'})
       if(path.startsWith('/api/'))return route.fulfill({json:{ok:true}})
@@ -245,7 +269,7 @@ try {
   await dashboard.native.locator('[data-offer-product="calories"]').waitFor()
   assert.equal(await dashboard.native.locator('[data-offer-product="calories"]').isEnabled(),true,'Background offer must remain purchasable')
   assert.equal(await dashboard.native.evaluate(()=>Math.max(...loaderCounts)),1,'Native portal and app share one loader')
-  assert.deepEqual(dashboard.requests,{account:1,session:0,step:0,corpus:0})
+  assert.deepEqual(dashboard.requests,{account:1,session:0,step:0,corpus:0,answers:[],submitted:0,completed:0})
   assert.deepEqual(dashboard.faults,[])
   fontCss.release();fontFile.release()
   await dashboard.native.locator('[data-offer-product="calories"]').click()
@@ -381,6 +405,56 @@ try {
   assert.doesNotMatch(await form.native.locator('#q-fields').textContent(),/Загружаю вопросы/)
   assert.deepEqual(form.faults,[])
   await form.native.close()
+
+  // Navigation must not wait for an old autosave; final answers win in the background.
+  const answerSave=barrier()
+  const unanswered=structuredClone(progress)
+  unanswered.days[0].completed_steps=[0,1,2]
+  const fastForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{
+    answerSave,progress:unanswered,questions:[{code:'main_request',title:'Главный запрос',prompt:'',answer:''}],
+  })
+  await waitForReveal(fastForm.native)
+  assert.equal(await fastForm.native.locator('#q-done').evaluate(el=>getComputedStyle(el).cursor),'pointer')
+  await fastForm.native.locator('#q-done').hover()
+  assert.notEqual(await fastForm.native.locator('#q-done').evaluate(el=>getComputedStyle(el).filter),'none')
+  await capture(fastForm.native,'questionnaire-submit-hover')
+  await fastForm.native.locator('textarea').fill('Старый ответ')
+  await waitUntil(()=>fastForm.requests.answers.length===1)
+  await fastForm.native.locator('textarea').evaluate(el=>{window.firstAutosave=el.saveRequest})
+  await fastForm.native.locator('textarea').fill('Промежуточный ответ')
+  await fastForm.native.waitForFunction(()=>document.querySelector('textarea').saveRequest!==window.firstAutosave)
+  await fastForm.native.locator('textarea').fill('Последний ответ')
+  await fastForm.native.locator('#q-done').click()
+  await fastForm.native.waitForURL('**/*course_material=day-01-offer')
+  assert.equal(await fastForm.native.locator('#questionnaire').isVisible(),false)
+  assert.equal(fastForm.requests.submitted,0)
+  assert.equal(fastForm.requests.completed,0)
+  assert.equal(fastForm.requests.answers.length,1,'Final snapshot waits until old autosave completes')
+  assert.equal(await fastForm.native.locator('#inline-app-view').isVisible(),true)
+  await fastForm.native.locator('#inline-app-next').click()
+  assert.equal(await fastForm.native.locator('[data-check]').first().isDisabled(),true)
+  answerSave.release()
+  await waitUntil(()=>fastForm.requests.completed===2)
+  await fastForm.native.waitForFunction(()=>!document.querySelector('[data-check]').disabled)
+  assert.deepEqual(fastForm.requests.answers.map(item=>item.answer_text),['Старый ответ','Промежуточный ответ','Последний ответ'])
+  assert.equal(fastForm.requests.submitted,1)
+  assert.deepEqual(fastForm.faults,[])
+  await fastForm.native.close()
+
+  const failedSave=barrier(),saveErrors=[]
+  const failedForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{
+    answerSave:failedSave,failAnswer:true,progress:unanswered,questions:[{code:'main_request',title:'Главный запрос',prompt:'',answer:'Ответ'}],
+  })
+  failedForm.native.on('dialog',async dialog=>{saveErrors.push(dialog.message());await dialog.dismiss()})
+  await waitForReveal(failedForm.native)
+  await failedForm.native.locator('#q-done').click()
+  await failedForm.native.waitForURL('**/*course_material=day-01-offer')
+  failedSave.release()
+  await waitUntil(()=>saveErrors.length===1)
+  assert.match(saveErrors[0],/Save failed/)
+  assert.equal(failedForm.requests.submitted,0)
+  assert.equal(failedForm.requests.completed,0)
+  await failedForm.native.close()
 
   const firstArticle=barrier()
   const tutorial=await nativePage('?course_day=1&course_material=day-01-article-tutorial',{article:firstArticle})

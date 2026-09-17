@@ -639,21 +639,34 @@ def test_requested_questionnaire_delivers_to_regular_user_but_mailings_stay_test
             content_code="tpl_postpurchase_questionnaire", deduplication_key="requested-copy",
             due_at=datetime.now(UTC) - timedelta(seconds=1), status="pending", payload={},
         )
+        identity_content = session.scalar(select(ContentItem).where(
+            ContentItem.code == "tpl_postpurchase_identity"
+        ))
+        identity_content.body_source = "Полная анкета участника: хочу устойчиво похудеть."
+        identity = MasterclassNotification(
+            user_id=contact.user_id, notification_kind="messenger_identity",
+            content_code="tpl_postpurchase_identity", deduplication_key="requested-identity",
+            due_at=datetime.now(UTC) - timedelta(seconds=2), status="pending", payload={},
+        )
         mailing = MasterclassNotification(
             user_id=contact.user_id, notification_kind="course_stalled",
             content_code="tpl_postpurchase_tempo_late", deduplication_key="automatic-mailing",
             due_at=datetime.now(UTC) - timedelta(seconds=1), status="pending", payload={},
         )
-        session.add_all([requested, mailing]); session.commit()
+        session.add_all([identity, requested, mailing]); session.commit()
         sender = FakeSender()
         result = dispatch_due_masterclass_notifications(
             session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}, test_only=True,
         )
-        assert result["sent"] == 1
+        assert result["sent"] == 2
         assert result["test_filtered"] == 1
         assert requested.status == "sent"
+        assert identity.status == "sent"
         assert mailing.status == "pending"
-        assert sender.sent[0][1] == "tpl_postpurchase_questionnaire"
+        assert [message[1] for message in sender.sent] == [
+            "tpl_postpurchase_identity", "tpl_postpurchase_questionnaire",
+        ]
+        assert "хочу устойчиво похудеть" in sender.sent[0][2]
         assert dispatch_due_masterclass_notifications(
             session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}, test_only=True,
         )["sent"] == 0

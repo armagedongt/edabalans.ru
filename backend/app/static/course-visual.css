@@ -756,6 +756,10 @@ body:has(.sidebar.open) .main, body:has(.sidebar.preview-open) .main { margin-le
 #masterclass-course-app .article-hero-image { display: block; margin-block: var(--course-media-gap); height: auto; }
 #masterclass-course-app .article-inline-image { display: block; margin-block: var(--course-media-gap); height: auto; }
 html:has(#masterclass-course-app) { background: rgb(255, 255, 255); }
+.q-actions button:not(:disabled){cursor:pointer;transition:filter .15s ease}
+.q-actions button:not(:disabled):hover{filter:brightness(.92)}
+.q-actions button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.q-actions button:disabled{cursor:default;opacity:.65}
 #masterclass-course-app .day-view .intro { white-space: normal; margin: 24px 0px 32px; }
 #masterclass-course-app .day-view .intro .hero-lead { max-width: none; white-space: normal; margin: 0px 0px 18px; }
 #masterclass-course-app .day-view .intro .hero-lead:last-child { margin-bottom: 0px; }
