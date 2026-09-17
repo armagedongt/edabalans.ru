@@ -174,3 +174,11 @@
 .sidebar::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.7)}
 .sidebar::-webkit-scrollbar-button{display:none;width:0;height:0}
 .topic-copy>.topic-badge{display:inline-flex!important;width:max-content;margin-top:5px;padding:2px 8px;border-radius:7px;background:#fff1bd;color:#665329!important;font-size:12px;line-height:1.4}
+
+/* The open day and open material share one heading scale; sidebar titles stay unchanged. */
+#masterclass-course-app{--course-heading-size:clamp(32px,4vw,44px);--course-media-gap:24px}
+#masterclass-course-app .hero h1,#masterclass-course-app .article h1{font:800 var(--course-heading-size)/1.12 Manrope,Arial,sans-serif!important;letter-spacing:-.035em!important;margin:0 0 var(--course-media-gap)!important}
+#masterclass-course-app .hero{margin-bottom:var(--course-media-gap)}
+#masterclass-course-app .media{margin-block:var(--course-media-gap);background:#eaf8ff}
+#masterclass-course-app .day-media-image,#masterclass-course-app .article-hero-image,#masterclass-course-app .article-inline-image{display:block;margin-block:var(--course-media-gap);height:auto}
+html:has(#masterclass-course-app){background:#fff}

@@ -450,6 +450,23 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
     )
     assert runtime.status_code == 200
     assert runtime.json()["materials"]["day-01-article-02"]["html"] == body["html"]
+    selected = client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+        "&step_id=day-01-article-02"
+    )
+    assert selected.status_code == 200
+    assert selected.json()["materials"] == {
+        "day-01-article-02": runtime.json()["materials"]["day-01-article-02"]
+    }
+    assert client.get(
+        "/api/masterclass/course/materials?email=other@example.test"
+        "&step_id=day-01-article-02"
+    ).status_code == 403
+    for absent_id in ("day-03-article-02", "day-01-questionnaire", "unknown"):
+        assert client.get(
+            "/api/masterclass/course/materials?email=member@example.test"
+            f"&step_id={absent_id}"
+        ).json()["materials"] == {}
     with factory() as db:
         source_row = db.scalar(select(ContentSource).where(
             ContentSource.account_key == "masterclass-course-materials"
@@ -505,6 +522,10 @@ def test_course_material_publisher_supports_markdown_history_restore_and_blocks_
     )
     assert locked_runtime.status_code == 200
     assert "day-03-article-02" not in locked_runtime.json()["materials"]
+    assert client.get(
+        "/api/masterclass/course/materials?email=member@example.test"
+        "&step_id=day-03-article-02"
+    ).json()["materials"] == {}
 
     second = client.put(
         endpoint,

@@ -7,6 +7,10 @@
   var STORAGE_IDENTITY = 'edabalans_identity_v1';
   var PUBLIC_ACCOUNT_URL = APP_HOST + '/lk';
   var appHtmlCache = {};
+  var appHtmlRequests = {};
+  var stylesheetRequests = {};
+  var readyRequests = new WeakMap();
+  var loadingScreens = new WeakMap();
   var roots = {
     account: 'account-app',
     'masterclass-course': 'masterclass-course-app',
@@ -40,6 +44,96 @@
       .replace(/"/g, '&quot;')
       .replace(/'/g, '&#039;');
   }
+
+  // Critical loader styles are synchronous: the loader must not wait for its own CSS.
+  function ensureLoadingStyles() {
+    if (document.getElementById('edabalans-loading-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'edabalans-loading-styles';
+    style.textContent = '.ed-loading{box-sizing:border-box;display:grid;place-items:center;min-height:260px;padding:24px;background:#fff;color:#46515b;font:600 15px/1.5 Manrope,Arial,sans-serif;text-align:center}' +
+      '.ed-loading-screen{position:fixed;inset:0;z-index:2147483000;min-height:100dvh}.ed-loading-inline{position:absolute;inset:0;z-index:100}' +
+      '.ed-loading-stage{min-height:46px;max-width:320px;margin:0 0 18px}.ed-loading-dots{display:flex;justify-content:center;align-items:center;gap:9px;height:22px}' +
+      '.ed-loading-dots i{display:block;width:10px;height:10px;border-radius:50%;background:#27aff5;animation:ed-loading-pulse 1.1s ease-in-out infinite}.ed-loading-dots i:nth-child(2){animation-delay:.15s}.ed-loading-dots i:nth-child(3){animation-delay:.3s;background:#f39a2f}' +
+      '.ed-loading-error{max-width:420px;margin:12px 0;color:#b42318}.ed-loading-retry{min-height:44px;padding:10px 22px;border:0;border-radius:12px;background:#27aff5;color:#fff;font:800 15px/1.4 Manrope,Arial,sans-serif;cursor:pointer}.ed-loading-retry:focus-visible{outline:3px solid #118ed8;outline-offset:3px}' +
+      'body:has(>.ed-loading-screen){background:#fff!important}body:has(>.ed-loading-screen) [data-edabalans-app]{pointer-events:none}' +
+      '@keyframes ed-loading-pulse{0%,70%,100%{transform:translateY(0);opacity:.45}35%{transform:translateY(-6px);opacity:1}}@media(prefers-reduced-motion:reduce){.ed-loading-dots i{animation:none;opacity:1}}';
+    document.head.appendChild(style);
+  }
+
+  function loadingHtml(stage) {
+    ensureLoadingStyles();
+    return '<div class="ed-loading" role="status" aria-live="polite"><div><p class="ed-loading-stage">' + escapeHtml(stage) + '</p><div class="ed-loading-dots" aria-hidden="true"><i></i><i></i><i></i></div></div></div>';
+  }
+
+  function beginLoading(mount, stage) {
+    var current = loadingScreens.get(mount);
+    if (current) { current.overlay.querySelector('.ed-loading-stage').textContent = stage; return; }
+    var inline = mount.getAttribute('data-edabalans-inline') === 'true' || Boolean(mount.closest('#inline-app-frame,#dqs-frame'));
+    var parent = inline ? mount.parentElement : document.body;
+    var overlay = document.createElement('div');
+    overlay.innerHTML = loadingHtml(stage);
+    overlay = overlay.firstElementChild;
+    overlay.classList.add(inline ? 'ed-loading-inline' : 'ed-loading-screen');
+    var state = {overlay: overlay, visibility: mount.style.visibility, parent: parent, position: parent.style.position, inline: inline};
+    if (inline && getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+    mount.style.visibility = 'hidden';
+    mount.setAttribute('aria-busy', 'true');
+    parent.appendChild(overlay);
+    loadingScreens.set(mount, state);
+  }
+
+  function finishLoading(mount) {
+    var state = loadingScreens.get(mount);
+    if (!state) return;
+    mount.style.visibility = state.visibility;
+    mount.removeAttribute('aria-busy');
+    state.overlay.remove();
+    if (state.inline) state.parent.style.position = state.position;
+    loadingScreens.delete(mount);
+  }
+
+  function failLoading(mount, error, retry) {
+    beginLoading(mount, 'Не удалось загрузить страницу');
+    var overlay = loadingScreens.get(mount).overlay;
+    var dots = overlay.querySelector('.ed-loading-dots');
+    if (dots) dots.remove();
+    overlay.querySelectorAll('.ed-loading-error,.ed-loading-retry').forEach(function (item) { item.remove(); });
+    var message = document.createElement('p');
+    message.className = 'ed-loading-error';
+    message.textContent = String(error.message || error);
+    overlay.firstElementChild.appendChild(message);
+    var button = document.createElement('button');
+    button.type = 'button'; button.className = 'ed-loading-retry'; button.textContent = 'Повторить';
+    button.onclick = function () { finishLoading(mount); retry(); };
+    overlay.firstElementChild.appendChild(button);
+  }
+
+  function waitUntilReady(mount, request) { readyRequests.set(mount, request); }
+
+  function appHtml(app) {
+    if (appHtmlCache[app]) return Promise.resolve(appHtmlCache[app]);
+    if (appHtmlRequests[app]) return appHtmlRequests[app];
+    appHtmlRequests[app] = fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'}).then(function (response) {
+      if (!response.ok) throw new Error('Не удалось загрузить приложение');
+      return response.text();
+    }).then(function (html) { appHtmlCache[app] = html; return html; }).finally(function () { delete appHtmlRequests[app]; });
+    return appHtmlRequests[app];
+  }
+
+  function loadStylesheet(href) {
+    var url = new URL(href, APP_HOST).href;
+    if (stylesheetRequests[url]) return stylesheetRequests[url];
+    var existing = Array.prototype.find.call(document.querySelectorAll('link[rel="stylesheet"]'), function (link) { return link.href === url; });
+    if (existing && existing.sheet) return Promise.resolve();
+    stylesheetRequests[url] = new Promise(function (resolve, reject) {
+      var link = existing || document.createElement('link');
+      link.rel = 'stylesheet'; link.href = url;
+      link.addEventListener('load', resolve, {once: true});
+      link.addEventListener('error', function () { link.remove(); delete stylesheetRequests[url]; reject(new Error('Не удалось загрузить оформление страницы')); }, {once: true});
+      if (!existing) document.head.appendChild(link);
+    });
+    return stylesheetRequests[url];
+  }
   function rememberNative(email) {
     try {
       localStorage.setItem(STORAGE_IDENTITY, JSON.stringify({
@@ -67,6 +161,7 @@
   }
 
   function showStandaloneAccessError(mount, message) {
+    finishLoading(mount);
     mount.innerHTML = '<div style="box-sizing:border-box;min-height:100vh;display:grid;place-items:center;padding:22px;background:#f4f4f6;font:16px/1.5 Arial,sans-serif;color:#17172b">' +
       '<div style="width:min(520px,100%);padding:26px;border-radius:22px;background:#fff;box-shadow:0 16px 50px rgba(15,23,42,.12)">' +
       '<h1 style="margin:0 0 12px;font-size:24px">Приложение не открылось</h1>' +
@@ -77,16 +172,12 @@
 
   function nativeSession() {
     return fetch(APP_HOST + '/api/account-auth/session', {credentials: 'include'})
-      .then(function (response) { return response.ok ? response.json() : {authenticated: false}; })
-      .catch(function () { return {authenticated: false}; });
+      .then(function (response) { if (!response.ok) throw new Error('Не удалось проверить вход'); return response.json(); });
   }
 
   function prefetchAppHtml(appCode) {
     if (!roots[appCode] || appHtmlCache[appCode]) return;
-    fetch(APP_HOST + '/apps/' + appCode + '.html', {cache: 'no-cache'})
-      .then(function (response) { return response.ok ? response.text() : ''; })
-      .then(function (html) { if (html) appHtmlCache[appCode] = html; })
-      .catch(function () {});
+    appHtml(appCode).catch(function () {});
   }
 
   function telegramMiniAppSession(appCode) {
@@ -258,6 +349,7 @@
         if (!status) return;
         var legal = status.legal;
         if (!legal || !legal.required) return;
+        finishLoading(mount);
         return new Promise(function (resolve, reject) {
           var documents = legal.documents || [];
           var cards = documents.map(function (item) {
@@ -339,23 +431,14 @@
       mount.textContent = 'Неизвестное приложение: ' + app;
       return Promise.resolve();
     }
+    beginLoading(mount, 'Загрузка страницы');
+    readyRequests.delete(mount);
     var preflight = app === 'dqs' && !adminUser
       ? dqsLegalGate(mount)
       : Promise.resolve();
     return preflight.then(function () {
-      mount.innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Загрузка…</div>';
-      if (appHtmlCache[app]) return new Response(appHtmlCache[app]);
-      return fetch(APP_HOST + '/apps/' + app + '.html', {cache: 'no-cache'}).then(function (response) {
-        if (!response.ok) return response;
-        return response.text().then(function (html) {
-          appHtmlCache[app] = html;
-          return new Response(html);
-        });
-      });
-    })
-      .then(function (response) {
-        if (!response.ok) throw new Error('Не удалось загрузить приложение');
-        return response.text();
+      beginLoading(mount, 'Загрузка страницы');
+      return appHtml(app);
       })
       .then(function (html) {
         window.EdabalansAppHost = APP_HOST;
@@ -379,32 +462,17 @@
           ensureLegalFooter(mount);
         }
         // App-owned shared styles must also be mounted when HTML is embedded in /lk.
-        var stylesheetLoads = Array.prototype.map.call(
-          doc.querySelectorAll('link[rel="stylesheet"][href]'),
-          function (source) {
-            var url = new URL(source.getAttribute('href'), APP_HOST);
-            var existing = Array.prototype.find.call(
-              document.querySelectorAll('link[rel="stylesheet"]'),
-              function (link) { return link.href === url.href; }
-            );
-            if (existing) return Promise.resolve();
-            return new Promise(function (resolve, reject) {
-              var link = document.createElement('link');
-              link.rel = 'stylesheet';
-              link.href = url.href;
-              link.onload = resolve;
-              link.onerror = function () {
-                link.remove();
-                reject(new Error('Не удалось загрузить оформление приложения'));
-              };
-              document.head.appendChild(link);
-            });
-          }
-        );
-        return Promise.all(stylesheetLoads).then(function () { return executeScripts(doc); });
+        beginLoading(mount, 'Загрузка оформления');
+        var stylesheetLoads = Array.prototype.map.call(doc.querySelectorAll('link[rel="stylesheet"][href]'), function (source) { return loadStylesheet(source.getAttribute('href')); });
+        return Promise.all(stylesheetLoads).then(function () { return executeScripts(doc); }).then(function () {
+          beginLoading(mount, 'Загрузка материалов');
+          return readyRequests.get(mount);
+        }).then(function () {
+          return document.fonts ? document.fonts.ready : null;
+        }).then(function () { finishLoading(mount); });
       })
       .catch(function (error) {
-        mount.innerHTML = '<div style="padding:24px;color:#b42318;font-family:Arial,sans-serif">' + String(error.message || error) + '</div>';
+        failLoading(mount, error, function () { load(mount); });
       });
   }
 
@@ -416,7 +484,7 @@
     var mounts = Array.prototype.slice.call(document.querySelectorAll('[data-edabalans-app]'))
       .filter(function (mount) { return mount.getAttribute('data-edabalans-manual') !== 'true'; });
     if (!mounts.length) return;
-    mounts[0].innerHTML = '<div style="padding:30px;text-align:center;font-family:Arial,sans-serif">Проверяю вход…</div>';
+    beginLoading(mounts[0], 'Проверка авторизации');
     if (location.origin !== APP_HOST) {
       redirectToAccountLogin();
       return;
@@ -460,10 +528,10 @@
         }
         rememberNative(normalizeEmail(session.email));
         start(mounts);
-      });
+      }).catch(function (error) { failLoading(mounts[0], error, boot); });
   }
 
-  window.EdabalansEmbed = {load: load, boot: boot};
+  window.EdabalansEmbed = {load: load, boot: boot, beginLoading: beginLoading, finishLoading: finishLoading, failLoading: failLoading, loadingHtml: loadingHtml, waitUntilReady: waitUntilReady};
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();

@@ -346,7 +346,9 @@ def restore_material(
     )
 
 
-def published_materials(db: Session, *, allowed_days: set[int]) -> dict:
+def published_materials(
+    db: Session, *, allowed_days: set[int], step_id: str | None = None
+) -> dict:
     context = course_context(db)
     allowed = {
         step["id"]: (day_number, step)
@@ -357,14 +359,16 @@ def published_materials(db: Session, *, allowed_days: set[int]) -> dict:
         and not step.get("locked", False)
         and step.get("kind") == "article"
         and step.get("contentKind") != "tutorial"
+        and (step_id is None or step["id"] == step_id)
     }
     source = material_source(db)
-    if source is None:
+    if source is None or not allowed:
         return {"ok": True, "materials": {}}
     rows = db.execute(
         select(ContentItem, ContentItemVersion)
         .join(ContentItemVersion, ContentItemVersion.id == ContentItem.latest_version_id)
         .where(ContentItem.source_id == source.id)
+        .where(ContentItem.external_id.in_(allowed))
     ).all()
     materials = {}
     for item, version in rows:

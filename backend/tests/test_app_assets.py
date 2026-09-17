@@ -820,11 +820,12 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "var next=nextVisibleStep(d,step)" in course_html
     assert "if(next>=0)openCourseStep(d,next)" in course_html
     assert "if(!step.hidden&&step.contentAsset)" in course_html
-    assert "if(SERVER_MODE)loadPublishedMaterials();" in course_html
+    assert "loadPublishedMaterials" not in course_html
+    assert "'&step_id='+encodeURIComponent(step.id)" in course_html
     assert "var bundled=SERVER_MODE?Promise.resolve():loadManifestContent(result[0])" in course_html
     assert "function ensureStepContent(step)" in course_html
     assert "if(contentRequests[asset])return contentRequests[asset]" in course_html
-    assert "Загружаю материал…" in course_html
+    assert "EdabalansEmbed.loadingHtml('Загрузка материала')" in course_html
     assert "return!step.hidden&&['messenger','offer']" in course_html
     assert "day.shortTitle||day.title" not in course_html
     assert "return day.tocSummary||generated" in course_html
@@ -845,7 +846,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert day_four_dqs["contentAsset"] == "19-dqs-access-and-print-options.md"
     assert "openDqsMaterial" in course_html
     assert "if(step.kind==='dqs'&&step.contentAsset){openDqsMaterial(d,stepIndex);return}" in course_html
-    assert "else if(d.steps[stepIndex].kind==='dqs'&&d.steps[stepIndex].contentAsset){openDqsMaterial(d,stepIndex)}" in course_html
+    assert "pending=openDqsMaterial(d,stepIndex)" in course_html
     assert "dqsTutorialRequested=true;openDqsApplication(d,stepIndex);return" in course_html
     assert "dqs/link-to-telegram" in course_html
     assert "/api/masterclass/apps/" in course_html

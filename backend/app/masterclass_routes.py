@@ -716,6 +716,7 @@ def course_manifest(
 def course_materials(
     email: str,
     request: Request,
+    step_id: str | None = None,
     db: Session = Depends(get_db),
     settings: Settings = Depends(get_settings),
 ) -> dict:
@@ -726,7 +727,7 @@ def course_materials(
         for day in state["days"]
         if day["opened"] or day["can_open"]
     }
-    return published_materials(db, allowed_days=allowed_days)
+    return published_materials(db, allowed_days=allowed_days, step_id=step_id)
 
 
 def course_step_event(

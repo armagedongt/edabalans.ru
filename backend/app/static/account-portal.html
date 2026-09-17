@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260910a">
   <title>Личный кабинет · Похудение — это есть!</title>
   <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Manrope,Inter,Arial,sans-serif;color:#173f70;background:#7b8da0}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Manrope,Inter,Arial,sans-serif;color:#173f70;background:#fff}
     .auth-shell{min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,rgba(19,54,88,.24),rgba(65,88,113,.58))}.auth-card{width:min(100%,370px);padding:27px 25px 25px;border:1px solid rgba(255,255,255,.78);border-radius:21px;background:#fff;box-shadow:0 21px 48px rgba(12,37,61,.25)}
     .auth-kicker{margin:0 0 9px;color:#239fe9;font-size:12px;font-weight:850;letter-spacing:.07em;text-transform:uppercase}.auth-card h1{margin:0;color:#173f70;font-size:26px;line-height:1.15;letter-spacing:-.035em}.auth-lead{margin:8px 0 21px;color:#647b91;font-size:14px;line-height:1.45}.auth-field{display:block;margin-top:14px;color:#173f70;font-size:12px;font-weight:850}.auth-field input{display:block;width:100%;height:48px;margin-top:7px;padding:0 14px;border:1px solid #cbd9e5;border-radius:11px;background:#fff;color:#173f70;font:600 16px Manrope,Inter,Arial,sans-serif}.auth-field input::placeholder{color:#91a2b1}.auth-field input:focus{outline:0;border-color:#239fe9;box-shadow:0 0 0 3px rgba(35,159,233,.2)}.auth-submit{width:100%;min-height:46px;margin-top:19px;border:0;border-radius:13px;background:#ff682e;color:#fff;font:850 15px Manrope,Inter,Arial,sans-serif;cursor:pointer;box-shadow:0 12px 24px rgba(255,104,46,.24)}.auth-submit:hover,.auth-submit:focus-visible{background:#f05b24;transform:translateY(-1px)}.auth-submit:focus-visible{outline:3px solid rgba(35,159,233,.34)}.auth-submit:disabled{opacity:.65;cursor:wait;transform:none}.auth-error{min-height:20px;margin:11px 0 0;color:#b2452c;font-size:12px;text-align:center}.auth-help{margin:14px 0 0;color:#6d8294;font-size:12px;line-height:1.45;text-align:center}.auth-help+.auth-help{margin-top:8px}.auth-help a{color:#176ba3;font-weight:850}.loading{padding:40px;color:#fff;text-align:center}
     @media(max-width:520px){.auth-shell{padding:14px}.auth-card{padding:25px 20px 22px}.auth-card h1{font-size:25px}}
@@ -21,6 +21,7 @@
   (function(){
     'use strict';
     var portal=document.getElementById('portal');
+    window.EdabalansEmbed.beginLoading(portal,'Проверка авторизации');
     function returnTarget(){var value=new URL(location.href).searchParams.get('next')||'';if(!value)return '';try{var target=new URL(value,location.origin);return target.origin===location.origin&&!target.pathname.startsWith('/lk')?target.pathname+target.search+target.hash:''}catch(error){return ''}}
     function esc(value){return String(value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
     function login(){
@@ -40,9 +41,9 @@
       window.EdabalansAppHost=location.origin;
       window.EdabalansAccountPayload=account;
       portal.innerHTML='<div data-edabalans-app="account"></div>';
-      window.EdabalansEmbed.load(portal.firstElementChild);
+      return window.EdabalansEmbed.load(portal.firstElementChild);
     }
-    fetch('/api/account-auth/account',{credentials:'same-origin'}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw Object.assign(new Error(payload.detail||'Не удалось загрузить кабинет'),{status:response.status});return payload})}).then(openAccount).catch(function(error){if(error.status===401||error.status===403){if(new URL(location.href).searchParams.get('mode')==='register')register();else login();return}portal.innerHTML='<section class="auth-shell"><div class="auth-card"><h1>Не удалось открыть личный кабинет</h1><p class="auth-lead">Обновите страницу. Если ошибка повторится, <a href="https://t.me/FitnessSergey" target="_blank" rel="noopener">напишите мне</a>.</p></div></section>'});
+    fetch('/api/account-auth/account',{credentials:'same-origin'}).then(function(response){return response.json().then(function(payload){if(!response.ok)throw Object.assign(new Error(payload.detail||'Не удалось загрузить кабинет'),{status:response.status});return payload})}).then(openAccount).then(function(){window.EdabalansEmbed.finishLoading(portal)}).catch(function(error){if(error.status===401||error.status===403){if(new URL(location.href).searchParams.get('mode')==='register')register();else login();window.EdabalansEmbed.finishLoading(portal);return}window.EdabalansEmbed.failLoading(portal,error,function(){location.reload()})});
   }());
   </script>
 </body>
