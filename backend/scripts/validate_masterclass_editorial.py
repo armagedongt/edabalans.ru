@@ -14,6 +14,7 @@ def main() -> None:
     linked.update({
         (EDITORIAL / "materials" / "07-00-приобрести-систему-рецептов.md").resolve(),
         (EDITORIAL / "materials" / "15-00-приобрести-каталог-рецептов.md").resolve(),
+        (EDITORIAL / "materials" / "08-01-система-рецептов-последний-день.md").resolve(),
     })
     for item in materials.values():
         path: Path = item["path"]
@@ -22,10 +23,7 @@ def main() -> None:
             continue
         text = path.read_text(encoding="utf-8")
         first = text.splitlines()[0] if text else ""
-        if first != f"# {item['title']}":
-            errors.append(
-                f"Заголовок не совпадает с program.md: {path.relative_to(EDITORIAL)}"
-            )
+        # The file H1 is a reading aid, never an independent runtime title.
         if f"step_id: {item['step_id']}" not in text:
             errors.append(f"Нет стабильного ID: {path.relative_to(EDITORIAL)}")
         expected_type = {
@@ -41,7 +39,6 @@ def main() -> None:
             "day-02-current-diet": "<!-- EMBED: questionnaire current-diet -->",
             "day-19-closing-review": "<!-- EMBED: questionnaire closing-review -->",
             "day-04-dqs": "<!-- EMBED: application dqs -->",
-            "day-07-recipes-part-1": "<!-- EMBED: application recipes-part-1 -->",
             "day-15-recipes-part-2": "<!-- EMBED: application recipes-part-2 -->",
         }
         expected_embed = exact_embeds.get(item["step_id"])
@@ -51,22 +48,11 @@ def main() -> None:
             errors.append(
                 f"Неверная метка встроенного блока: {path.relative_to(EDITORIAL)}"
             )
-    expected_day_paths: set[Path] = set()
     for day in days:
-        safe_title = re.sub(r'[<>:"/\\|?*]', "-", day["title"]).strip().rstrip(".")
-        path = EDITORIAL / "days" / f"{day['number']:02d}-{safe_title}.md"
-        expected_day_paths.add(path.resolve())
-        if not path.is_file():
-            errors.append(f"Нет файла дня: {path.relative_to(EDITORIAL)}")
-            continue
-        text = path.read_text(encoding="utf-8")
-        if not text.startswith(f"# {day['number']}. {day['title']}\n"):
-            errors.append(f"Заголовок дня не совпадает: {path.relative_to(EDITORIAL)}")
-        if f"day_id: day-{day['number']:02d}" not in text:
-            errors.append(f"Нет стабильного ID дня: {path.relative_to(EDITORIAL)}")
-    for path in (EDITORIAL / "days").glob("*.md"):
-        if path.resolve() not in expected_day_paths:
-            errors.append(f"Файл дня не включён в программу: {path.relative_to(EDITORIAL)}")
+        if not day["intro_text"]:
+            errors.append(f"Нет текста дня {day['number']} в program.md")
+        if not re.search(r"^- \[[ xX]] .+", day["task_text"], flags=re.MULTILINE):
+            errors.append(f"Нет пунктов задания дня {day['number']} в program.md")
     for path in (EDITORIAL / "materials").glob("*.md"):
         if path.resolve() not in linked:
             errors.append(f"Файл не включён в программу: {path.relative_to(EDITORIAL)}")

@@ -6,6 +6,7 @@ const embed = await readFile(new URL('../../app/static/embed.js', import.meta.ur
 const portalHtml = await readFile(new URL('../../app/static/account-portal.html', import.meta.url), 'utf8')
 const accountHtml = await readFile(new URL('../../app/static/apps/account.html', import.meta.url), 'utf8')
 const courseHtml = await readFile(new URL('../../app/static/masterclass-first-days-preview.html', import.meta.url), 'utf8')
+const questionnaireJs = await readFile(new URL('../../app/static/masterclass.js', import.meta.url), 'utf8')
 const manifest = JSON.parse(await readFile(new URL('../../../content/masterclass/course/course.json', import.meta.url), 'utf8'))
 const visualCss = await readFile(new URL('../../app/static/course-visual.css', import.meta.url), 'utf8')
 const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', import.meta.url), 'utf8')
@@ -215,7 +216,7 @@ try {
       }
       if(path==='/api/apps/strength')return route.fulfill({json:{ok:true,user:{user_id:'preview',email:account.email,display_name:'Предпросмотр'},workout:{workout_types:[],exercise_catalog:[],sessions:[],session_exercises:[],sets:[]}}})
       if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
-      if(path==='/api/masterclass/course/manifest')return route.fulfill({json:manifest})
+      if(path==='/api/masterclass/course/manifest')return route.fulfill({json:delays.manifest||manifest})
       if(path==='/api/masterclass/course')return route.fulfill({json:delays.progress||progress})
       if(/\/steps\/\d+\/complete$/.test(path)){
         const index=Number(path.match(/\/steps\/(\d+)\/complete$/)[1])
@@ -244,7 +245,7 @@ try {
         }
         if(path.endsWith('/submit')){requests.submitted++;return route.fulfill({json:{ok:true,messenger_link_status:'queued'}})}
         if(delays.questionnaire)await delays.questionnaire.promise
-        return route.fulfill({json:{questions:delays.questions||[],answers:[]}})
+        return route.fulfill({json:{questions:delays.questions||[],answers:[],copy:delays.questionnaireCopy}})
       }
       if(path.includes('/course/content/')){if(delays.asset)await delays.asset.promise;return route.fulfill({contentType:'text/plain; charset=utf-8',body:'## Инструкция DQS\n\nГотовое описание приложения.'})}
       if(path==='/diagram.svg')return route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"><rect width="1200" height="600" fill="#eaf8ff"/><rect x="50" y="50" width="1100" height="500" fill="#27aff5"/></svg>'})
@@ -395,6 +396,44 @@ try {
   corpus.release()
   await direct.native.close()
 
+  const mdCopy={title:'Название из программы',leadHtml:'<p>Подводка из MD</p>',button:'Кнопка из MD',noteHtml:'<p>После формы из MD</p>',questions:[{code:'parameters',promptHtml:'<p><strong>Подсказка из MD</strong></p>'}]}
+  const mdManifest=structuredClone(manifest)
+  const mdStep=mdManifest.days[0].steps.find(step=>step.id==='day-01-questionnaire')
+  mdStep.title=mdCopy.title;mdStep.label=mdCopy.title;mdStep.editorialHtml=mdCopy.leadHtml
+  const mdQuestions=[{code:'parameters',title:'Вопрос из MD',prompt:'Подсказка из MD',answer:'Прежний ответ'}]
+  const mdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:mdCopy})
+  await mdForm.native.locator('#q-done').waitFor()
+  assert.equal(await mdForm.native.locator('#questionnaire-title').textContent(),mdCopy.title)
+  assert.equal(await mdForm.native.locator('#q-done').textContent(),mdCopy.button)
+  assert.equal(await mdForm.native.locator('#q-fields strong').textContent(),'Подсказка из MD')
+  assert.equal(await mdForm.native.locator('#q-fields textarea').inputValue(),'Прежний ответ')
+  assert.equal(await mdForm.native.locator('#q-note').textContent(),'После формы из MD')
+  await mdForm.native.close()
+  mdStep.editorialHtml=''
+  const emptyMdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:{...mdCopy,leadHtml:''}})
+  await emptyMdForm.native.locator('#q-done').waitFor()
+  assert.equal(await emptyMdForm.native.locator('#questionnaire-lead').isVisible(),false,'Deleting MD prelude must not resurrect legacy prose')
+  await emptyMdForm.native.close()
+  const standalone=await browser.newPage()
+  let standaloneCopy=mdCopy
+  await standalone.route(origin+'/**',route=>{
+    const path=new URL(route.request().url()).pathname
+    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="onboarding-questionnaire-app"></div><script>window.EdabalansAppContext={app:"onboarding-questionnaire"};window.EdabalansIdentity={email:"reader@example.test"}</script><script src="/questionnaire.js"></script>'})
+    if(path==='/questionnaire.js')return route.fulfill({contentType:'application/javascript',body:questionnaireJs})
+    if(path==='/api/masterclass/questionnaires/onboarding')return route.fulfill({json:{questions:mdQuestions,copy:standaloneCopy}})
+    return route.fulfill({contentType:'text/css',body:''})
+  })
+  await standalone.goto(origin,{waitUntil:'domcontentloaded'})
+  await standalone.locator('#mc-submit').waitFor()
+  assert.equal(await standalone.locator('h1').textContent(),mdCopy.title)
+  assert.equal(await standalone.locator('#mc-submit').textContent(),mdCopy.button)
+  assert.equal(await standalone.locator('.mc-question strong').textContent(),'Подсказка из MD')
+  assert.equal(await standalone.locator('textarea').inputValue(),'Прежний ответ')
+  standaloneCopy={...mdCopy,leadHtml:''}
+  await standalone.reload({waitUntil:'domcontentloaded'})
+  await standalone.locator('#mc-submit').waitFor()
+  assert.equal(await standalone.locator('.lead').isVisible(),false)
+  await standalone.close()
   const questionnaire=barrier()
   const form=await nativePage('?course_day=1&course_material=day-01-questionnaire',{questionnaire})
   await form.native.waitForFunction(()=>document.querySelector('#q-fields')?.textContent.includes('Загружаю вопросы'))

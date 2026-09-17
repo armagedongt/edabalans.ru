@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 from html import escape
+import json
 import re
 from types import SimpleNamespace
 from typing import Callable
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 import uuid
 
-from sqlalchemy import select, text
+from sqlalchemy import inspect, select, text
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -360,6 +361,20 @@ def questionnaire_formatted(
     numbered: bool = False,
     include_empty: bool = False,
 ) -> str:
+    if inspect(session.get_bind()).has_table("managed_document_versions"):
+        raw = session.execute(text(
+            "SELECT payload FROM managed_document_versions WHERE document_type=:type "
+            "AND document_key=:key AND is_active=true"
+        ), {"type": "course-structure", "key": "masterclass-21"}).scalar()
+        manifest = json.loads(raw) if isinstance(raw, str) else raw
+        step_id = {"onboarding": "day-01-questionnaire", "current-diet": "day-02-current-diet", "closing-review": "day-19-closing-review"}.get(kind)
+        if manifest:
+            rows = next((step.get("questionnaireDefinition", {}).get("questions", [])
+                         for day in manifest.get("days", []) for step in day.get("steps", [])
+                         if step.get("id") == step_id), [])
+            if rows:
+                titles = {row["code"]: row["title"] for row in rows}
+                order = {row["code"]: index for index, row in enumerate(rows)}
     answers = session.execute(
         text(
             "SELECT qa.question_code, qa.answer_text FROM questionnaire_runs qr "

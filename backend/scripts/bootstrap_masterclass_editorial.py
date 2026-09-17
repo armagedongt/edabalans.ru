@@ -89,9 +89,31 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
                 "number": int(day_match.group(1)),
                 "title": day_match.group(2).strip(),
                 "materials": [],
+                "intro_lines": [],
+                "task_lines": [],
+                "task_title": "Задание на сегодня",
+                "section": "intro",
             }
             days.append(current_day)
             continue
+        if current_day is not None:
+            gate_match = re.match(r"Экран без доступа: \[([^]]+)]\((materials/[^)]+)\)$", line)
+            if gate_match:
+                current_day["access_gate"] = {"title": gate_match.group(1), "path": EDITORIAL / gate_match.group(2)}
+                continue
+            if line.startswith("## "):
+                raise ValueError("Внутри дня подзаголовки пишутся начиная с ###")
+            if line == "### Материалы":
+                current_day["section"] = "materials"
+                continue
+            if line.startswith("### ") and current_day["section"] == "materials":
+                current_day["section"] = "task"
+                current_day["task_title"] = line[4:].strip()
+                continue
+            if current_day["section"] == "intro" and not line.lstrip().startswith("<!--"):
+                current_day["intro_lines"].append(line)
+            elif current_day["section"] == "task":
+                current_day["task_lines"].append(line)
         material_match = re.match(
             r"\d+\. \[([^]]+)]\((materials/[^)]+)\) · ≈ (\d+) мин$", line
         )
@@ -120,6 +142,10 @@ def parse_program() -> tuple[list[dict], dict[str, dict]]:
         materials[item["step_id"]] = item
     if [day["number"] for day in days] != list(range(1, 21)):
         raise ValueError("В program.md должны быть дни 1–20 без пропусков")
+    for day in days:
+        day["intro_text"] = "\n".join(day.pop("intro_lines")).strip()
+        day["task_text"] = "\n".join(day.pop("task_lines")).strip()
+        day.pop("section")
     return days, materials
 
 

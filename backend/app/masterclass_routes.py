@@ -59,6 +59,7 @@ from app.course_structure_service import (
     CourseContext,
     course_context,
     effective_required_step_ids,
+    active_course_version,
 )
 
 router = APIRouter(prefix="/api/masterclass", tags=["masterclass"])
@@ -949,7 +950,20 @@ def course_update_check(
     return course_payload(db, user, settings, now, context)
 
 
-def questions(kind: str) -> list[tuple[str, str, str]]:
+def questionnaire_copy(kind: str, db: Session) -> dict:
+    step_id = {"onboarding": "day-01-questionnaire", "current-diet": "day-02-current-diet", "closing-review": "day-19-closing-review"}.get(kind)
+    if not step_id:
+        raise HTTPException(404, "questionnaire not found")
+    return next(({**step.get("questionnaireDefinition", {}), "title": step.get("title", ""), **({"leadHtml": step["editorialHtml"]} if "editorialHtml" in step else {})}
+                 for day in active_course_version(db).payload["days"]
+                 for step in day.get("steps", []) if step.get("id") == step_id), {})
+
+
+def questions(kind: str, db: Session | None = None) -> list[tuple[str, str, str]]:
+    if db is not None:
+        definition = questionnaire_copy(kind, db)
+        if definition.get("questions"):
+            return [(row["code"], row["title"], row["prompt"]) for row in definition["questions"]]
     if kind == "onboarding": return ONBOARDING_QUESTIONS
     if kind == "current-diet": return CURRENT_DIET_QUESTIONS
     if kind == "closing-review": return CLOSING_QUESTIONS
@@ -1029,7 +1043,8 @@ def questionnaire(
         "ok": True,
         "kind": kind,
         "status": run.status,
-        "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind)],
+        "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind, db)],
+        "copy": questionnaire_copy(kind, db),
         "consultation_description_url": (
             consultation_description_url(settings.masterclass_course_url)
             if kind == "closing-review"
@@ -1047,7 +1062,7 @@ def save_answer(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
-    valid = {row[0] for row in questions(kind)}
+    valid = {row[0] for row in questions(kind, db)}
     if body.question_code not in valid: raise HTTPException(422, "unknown question")
     run = get_run(db, user.id, kind)
     answer = db.scalar(select(QuestionnaireAnswer).where(QuestionnaireAnswer.run_id == run.id, QuestionnaireAnswer.question_code == body.question_code))
@@ -1070,7 +1085,7 @@ def finish_questionnaire(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     if action not in {"submit", "skip"}: raise HTTPException(404, "action not found")
-    questions(kind)
+    questions(kind, db)
     user = resolve_masterclass_user(request, db, body.email, settings)
     run = get_run(db, user.id, kind)
     run.status = "submitted" if action == "submit" else "skipped"
@@ -2085,7 +2100,8 @@ def recipe_gate(
         event = MasterclassEvent(user_id=user.id, event_key=key, event_type=key, placement=placement, details={})
         db.add(event); db.flush()
     allowed = "ACCESS_RECIPES" in access_codes(db, user.id)
-    payload = {"ok": True, "part": part, "allowed": allowed}
+    gate_day = next((day for day in active_course_version(db).payload["days"] if day["number"] == (7 if part == 1 else 15)), {})
+    payload = {"ok": True, "part": part, "allowed": allowed, "editorialHtml": gate_day.get("accessGateHtml", ""), "editorialTitle": gate_day.get("accessGateTitle", "")}
     if allowed:
         recipe_items: list[dict] = []
         context = course_context(db)

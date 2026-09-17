@@ -1,5 +1,6 @@
 from datetime import UTC, datetime, timedelta
 import re
+import json
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
@@ -13,6 +14,7 @@ from app.masterclass_dispatch import (
     content_is_sendable,
     dispatch_due_masterclass_notifications,
     telegram_text_parts,
+    questionnaire_formatted,
 )
 from app.models import (
     BotInstance,
@@ -36,6 +38,25 @@ class FakeSender:
         self.sent.append((chat_id, content.code, content.body_source))
         self.configurations.append(configuration)
         return str(len(self.sent))
+
+
+def test_questionnaire_copy_uses_published_order_and_titles_without_rebinding_answers(tmp_path):
+    with session_factory(tmp_path) as session:
+        session.execute(text("CREATE TABLE questionnaire_runs (id TEXT, user_id TEXT, kind TEXT)"))
+        session.execute(text("CREATE TABLE questionnaire_answers (run_id TEXT, question_code TEXT, answer_text TEXT, updated_at DATETIME)"))
+        session.execute(text("CREATE TABLE managed_document_versions (document_type TEXT, document_key TEXT, is_active BOOLEAN, payload TEXT)"))
+        definition = {"days": [{"steps": [{"id": "day-01-questionnaire", "questionnaireDefinition": {"questions": [
+            {"code": "second", "title": "Новый второй"}, {"code": "first", "title": "Новый <первый>"}
+        ]}}]}]}
+        session.execute(text("INSERT INTO managed_document_versions VALUES ('course-structure', 'masterclass-21', true, :payload)"), {"payload": json.dumps(definition)})
+        session.execute(text("INSERT INTO questionnaire_runs VALUES ('run', 'user', 'onboarding')"))
+        session.execute(text("INSERT INTO questionnaire_answers VALUES ('run', 'first', 'Прежний ответ первого', CURRENT_TIMESTAMP)"))
+        session.execute(text("INSERT INTO questionnaire_answers VALUES ('run', 'second', 'Прежний ответ второго', CURRENT_TIMESTAMP)"))
+        rendered = questionnaire_formatted(session, "user", "onboarding", {"first": "Старый первый", "second": "Старый второй"}, {"first": 0, "second": 1}, "Пусто", numbered=True)
+        assert rendered.index("Новый второй") < rendered.index("Новый &lt;первый&gt;")
+        assert "<b>1. Новый второй:</b>\nПрежний ответ второго" in rendered
+        assert "<b>2. Новый &lt;первый&gt;:</b>\nПрежний ответ первого" in rendered
+        assert "Старый" not in rendered
 
 
 def test_postpurchase_rejects_unapproved_content():

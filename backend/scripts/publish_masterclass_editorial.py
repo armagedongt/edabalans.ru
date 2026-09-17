@@ -81,6 +81,9 @@ def compile_manifest(
         day["title"] = editorial_day["title"]
         day["tocSummary"] = ""
         wanted = [item["step_id"] for item in editorial_day["materials"]]
+        old_day_ids = {step["id"] for step in day.get("steps", [])}
+        if any(step_id in current_steps and step_id not in old_day_ids for step_id in wanted):
+            raise ValueError("Перенос материала между днями требует согласования привязки и прогресса")
         wanted_set = set(wanted)
         for step in day.get("steps", []):
             step["hidden"] = step["id"] not in wanted_set
@@ -103,6 +106,11 @@ def compile_manifest(
                 step["label"] = item["title"]
             step["summary"] = ""
             step["durationMinutes"] = item["duration"]
+            if item["type"] == "article" and step.get("kind") == "recipes-part-1":
+                step["kind"] = "article"
+                step["contentKind"] = "text"
+                step.pop("code", None)
+                step["contentAsset"] = "58-first-recipes-selection.md"
             if was_hidden:
                 step["requiredForAllAfterRevision"] = next_version
             if item["step_id"] == "day-17-article-04":
@@ -135,11 +143,40 @@ def editorial_body(path) -> str:
 
 def special_prelude(path, material_type: str) -> str:
     body = editorial_body(path)
+    reuse = re.search(r"<!-- PRELUDE: ([^ ]+) -->", body)
+    if reuse:
+        _, items = parse_program()
+        return special_prelude(items[reuse.group(1)]["path"], "offer")
     if material_type == "questionnaire":
         body = body.split("## Вопросы", 1)[0].strip() + "\n"
     body = body.split("<!-- EMBED:", 1)[0].strip() + "\n"
     body = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL).strip()
     return render_material(body, "markdown") if body.strip() else ""
+
+
+def questionnaire_definition(path) -> dict:
+    body = editorial_body(path)
+    codes_match = re.search(r"<!-- question_codes: (.+?) -->", body)
+    if not codes_match:
+        raise ValueError(f"Нет привязки вопросов: {path.name}")
+    codes = [code.strip() for code in codes_match.group(1).split(",")]
+    question_text = body.split("## Вопросы\n", 1)[1].split("## После анкеты", 1)[0]
+    parts = re.split(r"^([0-9]+)\. (.+)$", question_text, flags=re.MULTILINE)
+    if len(parts[1:]) // 3 != len(codes) or len(set(codes)) != len(codes):
+        raise ValueError(f"Число или привязки вопросов неоднозначны: {path.name}")
+    rows = []
+    for index, code in enumerate(codes):
+        number, title, prompt = parts[index * 3 + 1:index * 3 + 4]
+        if int(number) != index + 1 or not re.fullmatch(r"[a-z][a-z0-9_]*", code):
+            raise ValueError(f"Неверная нумерация/код вопроса: {path.name}")
+        prompt_html = render_material(prompt.strip(), "markdown") if prompt.strip() else ""
+        rows.append({"code": code, "title": title.strip(), "prompt": article_plain_text(prompt_html), "promptHtml": prompt_html})
+    after = body.split("## После анкеты", 1)[1]
+    button = re.search(r"^Кнопка: (.+)$", after, flags=re.MULTILINE)
+    if not button:
+        raise ValueError(f"Нет текста кнопки: {path.name}")
+    note = after[:button.start()].strip()
+    return {"questions": rows, "button": button.group(1).strip(), "noteHtml": render_material(note, "markdown") if note else ""}
 
 
 def day_sections(path) -> dict[str, str]:
@@ -159,24 +196,19 @@ def render_day_section(value: str) -> str:
 
 
 def apply_day_copy(manifest: dict, days: list[dict], *, through_day: int = 20) -> None:
-    day_files = {
-        int(match.group(1)): path
-        for path in (EDITORIAL / "days").glob("*.md")
-        for match in [re.match(r"(\d+)-", path.name)]
-        if match
-    }
     for editorial_day, day in zip(days, manifest["days"], strict=True):
         if editorial_day["number"] > through_day:
             continue
-        sections = day_sections(day_files[editorial_day["number"]])
-        lead = sections.get("Перед вводным медиа", "")
-        day["lead"] = article_plain_text(render_day_section(lead)) if lead else ""
-        intro = sections.get("После вводного медиа", "")
+        day["lead"] = ""
+        intro = editorial_day["intro_text"]
         day["intro"] = render_day_section(intro) if intro else ""
-        before = sections.get("Перед заданием", "")
         day["afterLead"] = ""
         day["afterTitle"] = ""
-        day["afterText"] = render_day_section(before) if before else ""
+        day["afterText"] = ""
+        day["taskTitle"] = editorial_day["task_title"]
+        task_paragraphs = "\n".join(line for line in editorial_day["task_text"].splitlines()
+                                    if not re.match(r"- \[[ xX]] ", line.strip()))
+        day["taskIntroHtml"] = render_day_section(task_paragraphs) if task_paragraphs.strip() else ""
         old_checks = list(day.get("checks", []))
         old_by_text = {
             str(item.get("text") or "").strip(): item
@@ -184,7 +216,7 @@ def apply_day_copy(manifest: dict, days: list[dict], *, through_day: int = 20) -
             if isinstance(item, dict)
         }
         checks = []
-        for index, line in enumerate(sections.get("Задание на сегодня", "").splitlines()):
+        for index, line in enumerate(editorial_day["task_text"].splitlines()):
             match = re.match(r"- \[[ xX]] (.+)", line.strip())
             if match:
                 check_text = match.group(1).strip()
@@ -199,6 +231,8 @@ def apply_day_copy(manifest: dict, days: list[dict], *, through_day: int = 20) -
                     "required": True,
                     "hidden": False,
                 })
+        if not checks:
+            raise ValueError(f"В дне {editorial_day['number']} нет пунктов задания для отметки прохождения")
         if checks:
             used_ids = {item["id"] for item in checks}
             for old in old_checks:
@@ -280,6 +314,19 @@ def main() -> None:
                 if step["id"] == item["step_id"]
             )
             step["editorialHtml"] = special_prelude(item["path"], item["type"])
+            if item["type"] == "questionnaire":
+                step["questionnaireDefinition"] = questionnaire_definition(item["path"])
+            if item["step_id"] == "day-04-dqs":
+                button_text = editorial_body(item["path"]).split("## Кнопки", 1)[1]
+                labels = re.findall(r"^[0-9]+\. (.+)$", button_text, flags=re.MULTILINE)
+                if len(labels) != 4:
+                    raise ValueError("У DQS должны быть четыре подписанные кнопки")
+                step["applicationButtons"] = dict(zip(["open", "copy-link", "print", "send-telegram"], labels, strict=True))
+        for editorial_day, day in zip(days, manifest["days"], strict=True):
+            if day["number"] in {7, 15} and day["number"] <= args.through_day:
+                gate = editorial_day["access_gate"]
+                day["accessGateHtml"] = special_prelude(gate["path"], "offer")
+                day["accessGateTitle"] = gate["title"]
         print(f"Текущая редакция структуры: {current.version_no}")
         print("\n".join(changes))
         if not args.publish:

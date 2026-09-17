@@ -28,7 +28,10 @@ implementation_status: implemented
 
 ## Источники истины
 
-Questionnaire runtime tables и Masterclass canonical documents.
+Вопросы, пояснения и подписи кнопок — `content/masterclass/editorial/materials/`
+с публикацией определения формы в активную структуру курса. Runtime tables
+сохраняют ответы по прежним кодам; кодовые наборы вопросов — fallback старых
+редакций. Публикация MD не отправляет анкеты участникам сама по себе.
 
 Технические файлы, routes, таблицы, migrations и программные символы не
 перечисляются вручную в карточке: они подставляются из generated inventory.

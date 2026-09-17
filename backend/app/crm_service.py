@@ -30,9 +30,7 @@ from app.models import (
     UserOffer,
 )
 from app.masterclass_routes import (
-    CLOSING_QUESTIONS,
-    CURRENT_DIET_QUESTIONS,
-    ONBOARDING_QUESTIONS,
+    questions,
 )
 from app.product_identity import purchased_products, tariff_name
 
@@ -427,9 +425,9 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
     question_titles = {
         kind: {code: title for code, title, _ in rows}
         for kind, rows in {
-            "onboarding": ONBOARDING_QUESTIONS,
-            "current-diet": CURRENT_DIET_QUESTIONS,
-            "closing-review": CLOSING_QUESTIONS,
+            "onboarding": questions("onboarding", db),
+            "current-diet": questions("current-diet", db),
+            "closing-review": questions("closing-review", db),
         }.items()
     }
     paid = [payment for payment, _, _ in payments if payment.payment_status in CONFIRMED_PAYMENT_STATUSES]

@@ -491,6 +491,7 @@ owns_files = [
   "tools/tests/test_dqs_slider_runtime.py",
   "tools/extract_tilda_article_markdown.py",
   "work/course-structure-editor/**",
+  "work/course-md-authoring-2026-09-17/**",
 ]
 owns_tables = ["managed_document_versions"]
 owns_routes = [

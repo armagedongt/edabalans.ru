@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import pytest
 from types import SimpleNamespace
 from pathlib import Path
 
@@ -19,6 +20,7 @@ from scripts.publish_masterclass_editorial import (
     editorial_body,
     migrate_step_progress,
     special_prelude,
+    questionnaire_definition,
 )
 
 
@@ -118,15 +120,17 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
     apply_day_copy(compiled, days)
 
     day = compiled["days"][5]
-    assert day["lead"].startswith("Когда у вас четыре приёма пищи в день")
-    assert day["intro"].startswith("<p>Опорная точка — это не просто блюдо")
-    assert day["afterText"].startswith("<p>Выберите один повторяющийся приём пищи")
+    assert day["lead"] == ""
+    assert day["intro"].startswith("<p>Когда у вас четыре приёма пищи в день")
+    assert "Опорная точка — это не просто блюдо" in day["intro"]
+    assert "Выберите один повторяющийся приём пищи" in day["intro"]
+    assert day["afterText"] == ""
     assert day["checks"][0]["text"].startswith("Выбрать одну опорную точку")
     assert "<p>" in day["intro"]
 
     first = compiled["days"][0]
-    assert first["intro"] == ""
-    assert "достаточно одной галочки" in first["afterText"]
+    assert "достаточно одной галочки" in first["intro"]
+    assert first["afterText"] == ""
 
 
 def test_first_five_release_preserves_later_days_and_adds_practice() -> None:
@@ -259,4 +263,106 @@ def test_tutorial_body_omits_working_status_metadata() -> None:
         ROOT / "content/masterclass/editorial/materials/01-01-как-устроен-мастер-класс.md"
     )
     assert "draft_for_editing" not in body
-    assert "хотя бы одна галочка" in body
+    assert "О чём этот Мастер-класс" in body
+
+
+def test_questionnaire_markdown_defines_existing_questions_and_button() -> None:
+    path = ROOT / "content/masterclass/editorial/materials/02-03-какая-у-вас-сейчас-диета.md"
+    definition = questionnaire_definition(path)
+    assert len(definition["questions"]) == 16
+    assert definition["questions"][0]["code"] == "whole_grains"
+    assert definition["questions"][0]["prompt"] == ""
+    assert definition["button"]
+    assert "question_codes" not in special_prelude(path, "questionnaire")
+    assert "Кнопка:" not in special_prelude(path, "questionnaire")
+
+
+def test_questionnaire_markdown_preserves_help_format_and_rejects_ambiguous_codes(tmp_path) -> None:
+    path = tmp_path / "form.md"
+    text = "<!-- question_codes: a, b -->\n## Вопросы\n1. Первый\n\n**Подсказка**\n\n2. Второй\n\n> [!NOTE]\n> Помощь\n\n## После анкеты\n\nКнопка: Отправить\n"
+    path.write_text(text, encoding="utf-8")
+    definition = questionnaire_definition(path)
+    assert "<strong>Подсказка</strong>" in definition["questions"][0]["promptHtml"]
+    assert "article-note-accent" in definition["questions"][1]["promptHtml"]
+    path.write_text(text.replace("a, b", "a, a"), encoding="utf-8")
+    with pytest.raises(ValueError, match="неоднозначны"):
+        questionnaire_definition(path)
+
+
+def test_rest_day_has_no_materials_and_recipe_selection_is_article() -> None:
+    current = json.loads((ROOT / "content/masterclass/course/course.json").read_text(encoding="utf-8"))
+    compiled, _ = compile_manifest(current, next_version=12)
+    assert not [step for step in compiled["days"][7]["steps"] if not step.get("hidden")]
+    selection = next(step for step in compiled["days"][6]["steps"] if step["id"] == "day-07-recipes-part-1")
+    assert selection["kind"] == "article"
+    assert selection["contentKind"] == "text"
+
+
+def test_cross_day_move_stops_instead_of_corrupting_positional_progress() -> None:
+    current = json.loads((ROOT / "content/masterclass/course/course.json").read_text(encoding="utf-8"))
+    moved = next(step for step in current["days"][0]["steps"] if step["id"] == "day-01-article-02")
+    current["days"][0]["steps"].remove(moved)
+    current["days"][1]["steps"].append(moved)
+    with pytest.raises(ValueError, match="Перенос материала между днями"):
+        compile_manifest(current, next_version=12)
+
+
+def test_recipe_access_gate_reuses_same_prelude_instead_of_copying_text() -> None:
+    folder = ROOT / "content/masterclass/editorial/materials"
+    assert special_prelude(folder / "07-00-приобрести-систему-рецептов.md", "offer") == special_prelude(folder / "06-04-что-такое-система-рецептов.md", "offer")
+
+
+def test_title_changes_only_in_program_reach_runtime_without_editing_body_h1(monkeypatch) -> None:
+    from scripts import publish_masterclass_editorial as publisher
+    days, items = parse_program()
+    item = items["day-01-article-02"]
+    unchanged_body = item["path"].read_text(encoding="utf-8")
+    item["title"] = "Новое название дневника"
+    days[0]["title"] = "Новое название дня"
+    monkeypatch.setattr(publisher, "parse_program", lambda: (days, items))
+    current = json.loads((ROOT / "content/masterclass/course/course.json").read_text(encoding="utf-8"))
+    compiled, _ = publisher.compile_manifest(current, next_version=12)
+    step = next(step for step in compiled["days"][0]["steps"] if step["id"] == item["step_id"])
+    assert compiled["days"][0]["title"] == "Новое название дня"
+    assert step["title"] == item["title"]
+    assert item["path"].read_text(encoding="utf-8") == unchanged_body
+
+
+def test_published_questions_keep_saved_answers_bound_to_codes_in_api_and_crm(monkeypatch) -> None:
+    from app import masterclass_routes as routes
+    from app.course_structure_service import active_course_version
+    from app.models import QuestionnaireRun, QuestionnaireAnswer
+    from app.config import Settings
+    from app.crm_service import user_detail
+    from copy import deepcopy
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+    with Session(engine) as db:
+        user = User(display_name="Редакционная проверка", status="active")
+        db.add(user)
+        db.commit()
+        current = active_course_version(db)
+        manifest = deepcopy(current.payload)
+        step = next(step for day in manifest["days"] for step in day["steps"] if step["id"] == "day-01-questionnaire")
+        step["title"] = "Название формы из программы"
+        step["editorialHtml"] = "<p>Подводка из MD</p>"
+        step["questionnaireDefinition"] = {"questions": [
+            {"code": "main_request", "title": "Переименованный запрос", "prompt": "Новая подсказка", "promptHtml": "<p>Новая подсказка</p>"},
+            {"code": "parameters", "title": "Переименованные параметры", "prompt": "", "promptHtml": ""},
+        ], "button": "Новая кнопка", "noteHtml": "<p>После формы</p>"}
+        current.payload = manifest
+        run = QuestionnaireRun(user_id=user.id, kind="onboarding")
+        db.add(run)
+        db.flush()
+        db.add(QuestionnaireAnswer(run_id=run.id, question_code="parameters", answer_text="Старые параметры"))
+        db.commit()
+        monkeypatch.setattr(routes, "resolve_masterclass_user", lambda *args: user)
+        result = routes.questionnaire("onboarding", "test@example.test", None, db, Settings())
+        assert [row["code"] for row in result["questions"]] == ["main_request", "parameters"]
+        assert result["questions"][1]["answer"] == "Старые параметры"
+        assert result["questions"][1]["title"] == "Переименованные параметры"
+        assert result["copy"]["button"] == "Новая кнопка"
+        assert result["copy"]["title"] == step["title"]
+        detail = user_detail(db, user.id)
+        assert detail is not None
+        assert any(answer["title"] == "Переименованные параметры" for item in detail["masterclass"]["questionnaires"] for answer in item["answers"])
