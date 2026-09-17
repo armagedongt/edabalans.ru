@@ -46552,7 +46552,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 26,
+          "line": 30,
           "module_id": "products",
           "name": "waitUntil",
           "qualname": "waitUntil"
@@ -46560,7 +46560,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 27,
+          "line": 31,
           "module_id": "products",
           "name": "capture",
           "qualname": "capture"
@@ -46568,7 +46568,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 37,
+          "line": 41,
           "module_id": "products",
           "name": "captureSnapshot",
           "qualname": "captureSnapshot"
@@ -46576,7 +46576,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 50,
+          "line": 54,
           "module_id": "products",
           "name": "waitForReveal",
           "qualname": "waitForReveal"
@@ -46584,7 +46584,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 58,
+          "line": 62,
           "module_id": "products",
           "name": "barrier",
           "qualname": "barrier"
@@ -46592,7 +46592,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 179,
+          "line": 183,
           "module_id": "products",
           "name": "nativePage",
           "qualname": "nativePage"
@@ -46600,7 +46600,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 333,
+          "line": 338,
           "module_id": "products",
           "name": "courseSkin",
           "qualname": "courseSkin"
@@ -77522,7 +77522,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 26,
+      "line": 30,
       "module_id": "products",
       "name": "waitUntil",
       "qualname": "waitUntil"
@@ -77530,7 +77530,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 27,
+      "line": 31,
       "module_id": "products",
       "name": "capture",
       "qualname": "capture"
@@ -77538,7 +77538,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 37,
+      "line": 41,
       "module_id": "products",
       "name": "captureSnapshot",
       "qualname": "captureSnapshot"
@@ -77546,7 +77546,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 50,
+      "line": 54,
       "module_id": "products",
       "name": "waitForReveal",
       "qualname": "waitForReveal"
@@ -77554,7 +77554,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 58,
+      "line": 62,
       "module_id": "products",
       "name": "barrier",
       "qualname": "barrier"
@@ -77562,7 +77562,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 179,
+      "line": 183,
       "module_id": "products",
       "name": "nativePage",
       "qualname": "nativePage"
@@ -77570,7 +77570,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 333,
+      "line": 338,
       "module_id": "products",
       "name": "courseSkin",
       "qualname": "courseSkin"
