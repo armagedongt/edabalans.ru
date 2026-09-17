@@ -628,6 +628,37 @@ def test_dqs_dispatch_fails_when_text_and_graph_destinations_differ(tmp_path):
         )
 
 
+def test_requested_questionnaire_delivers_to_regular_user_but_mailings_stay_test_only(tmp_path):
+    with session_factory(tmp_path) as session:
+        contact = add_contact_and_content(session)
+        session.execute(text(
+            "CREATE TABLE masterclass_test_profiles (user_id TEXT PRIMARY KEY, enabled BOOLEAN)"
+        ))
+        requested = MasterclassNotification(
+            user_id=contact.user_id, notification_kind="messenger_questionnaire",
+            content_code="tpl_postpurchase_questionnaire", deduplication_key="requested-copy",
+            due_at=datetime.now(UTC) - timedelta(seconds=1), status="pending", payload={},
+        )
+        mailing = MasterclassNotification(
+            user_id=contact.user_id, notification_kind="course_stalled",
+            content_code="tpl_postpurchase_tempo_late", deduplication_key="automatic-mailing",
+            due_at=datetime.now(UTC) - timedelta(seconds=1), status="pending", payload={},
+        )
+        session.add_all([requested, mailing]); session.commit()
+        sender = FakeSender()
+        result = dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}, test_only=True,
+        )
+        assert result["sent"] == 1
+        assert result["test_filtered"] == 1
+        assert requested.status == "sent"
+        assert mailing.status == "pending"
+        assert sender.sent[0][1] == "tpl_postpurchase_questionnaire"
+        assert dispatch_due_masterclass_notifications(
+            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}, test_only=True,
+        )["sent"] == 0
+
+
 def test_disabled_postpurchase_scheduler_dispatches_only_requested_service_deliveries(monkeypatch):
     calls = []
 

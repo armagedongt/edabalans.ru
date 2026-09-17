@@ -563,7 +563,11 @@ def dispatch_due_masterclass_notifications(
             "messenger_questionnaire",
         } and target_platform != "max":
             continue
-        if test_only:
+        # Explicit questionnaire requests are service deliveries, not course mailings.
+        if test_only and notification.notification_kind not in {
+            "messenger_identity", "messenger_questionnaire",
+            "closing_review_copy", "current_diet_questionnaire",
+        }:
             enabled = session.execute(
                 text(
                     "SELECT 1 FROM masterclass_test_profiles "
