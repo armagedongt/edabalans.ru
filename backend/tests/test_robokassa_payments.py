@@ -252,6 +252,7 @@ def create_checkout(
     *,
     email: str = "buyer@example.test",
     source_context: str | None = None,
+    acquisition_query: dict[str, str] | None = None,
 ) -> dict:
     body: dict[str, str] = {
         "price_code": "site.masterclass.basic",
@@ -259,6 +260,8 @@ def create_checkout(
     }
     if source_context:
         body["source_context"] = source_context
+    if acquisition_query is not None:
+        body["acquisition_query"] = acquisition_query
     response = client.post(
         "/api/payments/robokassa/checkout",
         json=body,
@@ -1029,7 +1032,7 @@ def test_personal_source_context_is_frozen_and_creates_one_paid_tracking_event()
     app.dependency_overrides.clear()
 
 
-def test_mismatched_personal_source_context_is_not_used_for_payer_or_attribution() -> None:
+def test_forwarded_personal_link_attributes_source_without_changing_payer() -> None:
     client, factory, key = make_client(test_mode=False)
     seed_catalog(factory)
     source_user_id, source_context = seed_personal_link_source(
@@ -1052,10 +1055,71 @@ def test_mismatched_personal_source_context_is_not_used_for_payer_or_attribution
             )
         )
         assert payment is not None and payment.user_id != source_user_id
-        assert payment.raw_payload["trusted_source_snapshot"] == {"status": "unknown"}
+        assert payment.raw_payload["trusted_source_snapshot"]["status"] == "verified"
         assert paid_event is not None
-        assert paid_event.metadata_json["raw_query"] == {}
-        assert paid_event.metadata_json["attribution_source"] == "unattributed"
+        assert paid_event.metadata_json["raw_query"] == {"yclid": "owner-yclid"}
+        assert paid_event.metadata_json["attribution_source"] == "trusted_source_snapshot"
+        assert paid_event.user_id == payment.user_id
+        assert db.scalar(select(UserEmail.email_normalized).where(UserEmail.user_id == payment.user_id)) == "other@example.test"
+    app.dependency_overrides.clear()
+
+
+def test_personal_link_without_known_email_preserves_source_not_buyer_identity() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    source_user_id, context = seed_personal_link_source(
+        factory, email="source@example.test", yclid="new-bot-yclid"
+    )
+    with factory() as db:
+        db.query(UserEmail).filter(UserEmail.user_id == source_user_id).delete()
+        db.commit()
+    checkout = create_checkout(client, source_context=context)
+    notification = signed_result(key, checkout["invoice_id"], "5900.00")
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        events = db.scalars(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "purchase_paid")).all()
+        assert payment.user_id != source_user_id
+        assert len(events) == 1
+        assert events[0].metadata_json["raw_query"] == {"yclid": "new-bot-yclid"}
+        assert db.scalar(select(UserAccess.id).where(UserAccess.user_id == source_user_id)) is None
+    app.dependency_overrides.clear()
+
+
+def test_channel_attributes_are_frozen_and_override_personal_context() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    _, context = seed_personal_link_source(factory, email="buyer@example.test", yclid="old-bot")
+    checkout = create_checkout(client, source_context=context, acquisition_query={
+        "utm_source": "telegram_channel", "utm_content": "post_42", "yclid": "channel-click", "email": "discard@example.test"
+    })
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        snapshot = payment.raw_payload["trusted_source_snapshot"]
+        assert snapshot["status"] == "reported"
+        assert snapshot["original_acquisition"]["raw_query"] == {
+            "utm_source": "telegram_channel", "utm_content": "post_42", "yclid": "channel-click"
+        }
+    assert client.post("/integrations/robokassa/result2", content=signed_result(key, checkout["invoice_id"], "5900.00")).status_code == 200
+    with factory() as db:
+        event = db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "purchase_paid"))
+        assert event.metadata_json["raw_query"] == {"yclid": "channel-click"}
+    app.dependency_overrides.clear()
+
+
+def test_untagged_direct_purchase_does_not_infer_old_bot_source() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    seed_personal_link_source(factory, email="buyer@example.test", yclid="old-bot")
+    checkout = create_checkout(client)
+    assert client.post("/integrations/robokassa/result2", content=signed_result(key, checkout["invoice_id"], "5900.00")).status_code == 200
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        assert "trusted_source_snapshot" not in payment.raw_payload
+        event = db.scalar(select(TelegramTrackingEvent).where(TelegramTrackingEvent.event_type == "purchase_paid"))
+        assert event.metadata_json["raw_query"] == {}
+        assert event.metadata_json["attribution_source"] == "unattributed"
     app.dependency_overrides.clear()
 
 

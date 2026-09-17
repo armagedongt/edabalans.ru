@@ -60,13 +60,14 @@ def test_all_product_windows_have_how_descriptions() -> None:
         assert response.json()["description"].startswith("Как")
 
 
-def test_recipes_program_keeps_structured_sections_from_its_canonical_markdown() -> None:
+def test_recipes_program_keeps_conceptual_sections_from_its_canonical_markdown() -> None:
     client = make_client()
     payload = client.get("/api/public-site/content/recipes").json()
 
     assert "<blockquote>" in payload["html"]
-    assert "<h2>Программа по дням:</h2>" in payload["html"]
-    assert payload["html"].count("<h3>День") == 3
+    assert "<h2>Программа по дням:</h2>" not in payload["html"]
+    assert "<h3>Как сделать еду сытной и вкусной</h3>" in payload["html"]
+    assert "День 6" not in payload["html"]
     assert "Каталог рецептов — обновляемый" in payload["html"]
 
 
@@ -83,7 +84,7 @@ def test_program_popup_runtime_uses_the_three_canonical_markdown_documents() -> 
     assert "edb-program-card__sections" in renderer
     assert "programCardEnhanced" not in renderer
     assert "['P', 'UL']" in renderer
-    assert "['UL']" in renderer
+    assert renderer.count("['P', 'UL']") >= 2
     assert "Product catalog descriptions serve other surfaces" in homepage
     assert "EdabalansProgramCard.enhance(overlayPoints, code)" in homepage
     assert 'data-program-card="program"' in styles

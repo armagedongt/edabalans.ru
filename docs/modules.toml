@@ -131,6 +131,7 @@ owns_files = [
   "backend/tests/fixtures/telegram_channel_export.json",
   "docs/CONTENT_CATALOG.md", "tools/pikabu_collect.py",
   "docs/knowledge-base/ARTICLE_STANDARD.md",
+  "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md",
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
   "content/author-voice/**",
   "content/author-voice/CALIBRATION_V1.md",
@@ -141,6 +142,9 @@ owns_files = [
   "tools/tests/test_backup_author_memory.py",
   "tools/requirements-test.txt",
   "content/author-voice/skill/edabalans-writer/assets/skill-manifest.json",
+  "content/author-voice/skill/edabalans-pikabu/SKILL.md",
+  "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
+  "content/author-voice/pikabu-structure-adapter-v1.md",
   "content/author-voice/author-task.schema.json",
   "content/author-voice/article-component-router.md",
   "content/author-voice/authoring-work-profiles-v1.md",
@@ -376,6 +380,8 @@ card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**",
+  "backend/app/static/apps/metabolism-visual-v2.html",
+  "docs/design-references/metabolism-mobile-v2-20260917/**",
   "tools/import_calorizator_products.py", "tools/tests/test_import_calorizator_products.py",
 ]
 owns_tables = ["metabolism_states"]

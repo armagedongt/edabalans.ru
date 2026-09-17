@@ -572,7 +572,7 @@ def test_broadcast_personal_links_are_per_recipient_and_survive_retry(tmp_path, 
         urls = {}
         for number, attempts in deliveries.items():
             urls[number] = attempts[0][2]["buttons"][0]["url"]
-            assert urls[number].startswith("https://edabalans.ru/m/E")
+            assert urls[number].startswith("https://go.похудение-это-есть.рф/m/E")
             for _, body, configuration in attempts:
                 assert "{{" not in body and "{{" not in str(configuration)
                 assert f'href="{urls[number]}"' in body

@@ -731,7 +731,7 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
     assert match is not None
     assert not set(match.group(1)) & set("O0Il1")
     assert "member@example.test" in message
-    assert "https://edabalans.ru/lk" in message
+    assert "https://похудение-это-есть.рф/lk" in message
     with Session(engine) as session:
         credential = session.get(AccountCredential, target_user_id)
         assert credential is not None
@@ -775,7 +775,7 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
 
     assert repeat.json() == {"ok": True, "account_credentials": True}
     repeat_message = fake.sent[-1][1]
-    assert "https://edabalans.ru/lk" in repeat_message
+    assert "https://похудение-это-есть.рф/lk" in repeat_message
     assert "Пароль:" not in repeat_message
     assert "Пароль уже приходил" in repeat_message
     assert "06.09.2026" in repeat_message

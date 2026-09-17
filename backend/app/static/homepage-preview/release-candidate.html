@@ -1260,8 +1260,8 @@
       #edb-pricing-neurozeh-v1 .edb-pricing-intro{text-align:left}
     }
   </style>
-  <link rel="stylesheet" href="/assets/public-program-card.css?v=20260917-2">
-  <script src="/assets/public-program-card.js?v=20260917-2"></script>
+  <link rel="stylesheet" href="/assets/public-program-card.css?v=20260917-3">
+  <script src="/assets/public-program-card.js?v=20260917-3"></script>
 </head>
 <body data-page-theme="blue-mist">
   <script>
@@ -3710,7 +3710,12 @@
               price_code: selectedPlan.dataset.priceCode,
               email: checkoutEmail.value,
               intensive_offer: activeOfferToken || null,
-              source_context: activeSourceContext || null
+              source_context: activeSourceContext || null,
+              acquisition_query: Object.fromEntries(
+                ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'yclid', 'alias']
+                  .map(key => [key, new URLSearchParams(window.location.search).get(key) || ''])
+                  .filter(([, value]) => value.trim())
+              )
             })
           });
           const result = await response.json().catch(() => ({}));

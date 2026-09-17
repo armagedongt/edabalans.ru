@@ -48,6 +48,7 @@
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
+| Писарь: единый вход, правила, источники, прошлые разборы и маршруты публикации | [Писарь](../content/author-voice/README.md); рабочая инструкция — `../content/author-voice/skill/edabalans-writer/SKILL.md` |
 | Использование нашего видеоплеера: возможности, настройки и места подключения | [Использование нашего видеоплеера](../backend/app/static/video-player-development/README.md) |
 | Единая библиотека, Библиотекарь и MCP | `KNOWLEDGE_LIBRARY.md` |
 | Редакционная и продуктовая система | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` |

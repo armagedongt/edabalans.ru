@@ -79,6 +79,7 @@ def record_paid_tracking_event(
     occurred_at: datetime,
     *,
     trusted_source_snapshot: dict | None = None,
+    allow_messenger_fallback: bool = True,
 ) -> None:
     if payment.payment_status != "paid" or payment.user_id is None:
         return
@@ -94,7 +95,7 @@ def record_paid_tracking_event(
     snapshot_acquisition = (
         trusted_source_snapshot.get("original_acquisition")
         if isinstance(trusted_source_snapshot, dict)
-        and trusted_source_snapshot.get("status") == "verified"
+        and trusted_source_snapshot.get("status") in {"verified", "reported"}
         else None
     )
     if not yclid and isinstance(snapshot_acquisition, dict):
@@ -106,7 +107,7 @@ def record_paid_tracking_event(
         tracking_link_id = snapshot_acquisition.get("tracking_link_id")
         if isinstance(tracking_link_id, str) and tracking_link_id:
             source_tracking_link_id = tracking_link_id
-    if not yclid:
+    if not yclid and allow_messenger_fallback:
         candidates = db.scalars(
             select(TelegramTrackingEvent)
             .where(

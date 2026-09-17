@@ -113,6 +113,8 @@ def test_personal_destinations_reuse_one_opaque_code(tmp_path):
         masterclass_code = urlparse(values["personal_masterclass_url"]).path.rsplit("/", 1)[-1]
         post_code = urlparse(values["personal_channel_post_260_url"]).path.rsplit("/", 1)[-1]
         assert intensive_code == masterclass_code == post_code
+        assert urlparse(values["personal_masterclass_url"]).netloc == "go.похудение-это-есть.рф"
+        assert urlparse(values["personal_channel_post_260_url"]).netloc == "go.похудение-это-есть.рф"
         assert values["personal_intensive_url"] == (
             f"https://edabalans.ru/intensive?i={intensive_code}&from=tg&entry=bot"
         )
