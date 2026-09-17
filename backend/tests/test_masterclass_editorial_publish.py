@@ -118,8 +118,8 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
     apply_day_copy(compiled, days)
 
     day = compiled["days"][5]
-    assert day["lead"].startswith("Сегодня собираем первую версию еды")
-    assert day["intro"].startswith("<p>Сегодня не нужно искать идеальный рецепт")
+    assert day["lead"].startswith("Когда у вас четыре приёма пищи в день")
+    assert day["intro"].startswith("<p>Опорная точка — это не просто блюдо")
     assert day["afterText"].startswith("<p>Выберите один повторяющийся приём пищи")
     assert day["checks"][0]["text"].startswith("Выбрать одну опорную точку")
     assert "<p>" in day["intro"]
