@@ -95,6 +95,10 @@
         "masterclass_material", "intensive_article"
       ]
     },
+    "delivery_platform": {
+      "description": "Редакционная площадка для выбора правил Писаря; не переключает транспорт или публикацию.",
+      "enum": ["telegram", "max", "pikabu", "website", "yandex_direct", "email"]
+    },
     "format_profile": {"enum": ["article", "course"]},
     "course_context": {
       "type": "object",

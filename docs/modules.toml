@@ -145,6 +145,7 @@ owns_files = [
   "content/author-voice/skill/edabalans-pikabu/SKILL.md",
   "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
   "content/author-voice/pikabu-structure-adapter-v1.md",
+  "content/author-voice/platform-adaptation-v1.md",
   "content/author-voice/author-task.schema.json",
   "content/author-voice/article-component-router.md",
   "content/author-voice/authoring-work-profiles-v1.md",
