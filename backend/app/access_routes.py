@@ -39,6 +39,7 @@ from app.models import (
 )
 from app.product_identity import purchased_products
 from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
+from app.metabolism_service import metabolism_stage_complete
 
 
 router = APIRouter(tags=["access-links"])
@@ -189,15 +190,15 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
 APPLICATION_PREVIEW_RESOURCE = "ACCESS_APPLICATION_PREVIEW"
 
 
-def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
+def account_applications(owned: set[str], legal_required: bool, *, metabolism_unlocked: bool = False) -> list[dict]:
     preview_enabled = APPLICATION_PREVIEW_RESOURCE in owned
     definitions = (
         ("dqs", "Система оценки качества питания", "Оценивайте рацион по продуктовым категориям и наблюдайте изменения.", "dqs", "dqs", True),
         ("strength", "Дневник силовых тренировок", "Записывайте тренировки и следите за прогрессом.", "strength", "strength", True),
         ("recipes", "Калькулятор и каталог рецептов", "Считайте блюда и сохраняйте подходящие рецепты.", "recipes", "recipes", True),
-        ("metabolism", "Калькулятор метаболизма и тренировок", "Оценивайте расход энергии и тренировочную нагрузку.", "metabolism", "metabolism", True),
+        ("metabolism", "Калькулятор метаболизма", "Оценивайте расход энергии и сравнивайте три варианта расчёта.", "metabolism", "metabolism", True),
     )
-    return [
+    result = [
         {
             "code": code,
             "title": title,
@@ -211,9 +212,16 @@ def account_applications(owned: set[str], legal_required: bool) -> list[dict]:
         }
         for code, title, summary, resource, app, ready in definitions
     ]
+    metabolism = next(item for item in result if item["code"] == "metabolism")
+    metabolism["title"] = "Калькулятор метаболизма"
+    metabolism["owned"] = "ACCESS_CALORIES" in owned
+    metabolism["unlock_after_stage"] = 2
+    metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "stage_locked" if metabolism["owned"] else "not_owned"
+    metabolism["app"] = "metabolism" if metabolism["owned"] and metabolism_unlocked and not legal_required else None
+    return result
 
 
-def account_payload(email: str, db: Session) -> dict:
+def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | None = None) -> dict:
     user = user_for_email(db, email)
     definitions = account_product_definitions(db)
     if user is None or review_blocks_access(user):
@@ -267,7 +275,7 @@ def account_payload(email: str, db: Session) -> dict:
         "legal": legal,
         "purchased_products": purchases,
         "courses": courses,
-        "applications": account_applications(owned, legal["required"]),
+        "applications": account_applications(owned, legal["required"], metabolism_unlocked=progress_user_id == user.id and metabolism_stage_complete(db, user.id)),
         "legacy_portal": {
             "available": bool({"ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"} & owned),
             "url": "/members/",
@@ -276,14 +284,18 @@ def account_payload(email: str, db: Session) -> dict:
 
 
 @router.get("/api/account")
-def account_catalog(email: str, db: Session = Depends(get_db)) -> dict:
+def account_catalog(email: str, request: Request, db: Session = Depends(get_db)) -> dict:
     """Universal Members Area home; Tilda supplies identity, PostgreSQL supplies data."""
-    return account_payload(email, db)
+    from app.account_auth_routes import native_session_user
+
+    session_user = native_session_user(request, db)
+    return account_payload(email, db, progress_user_id=session_user.id if session_user else None)
 
 
 @router.post("/api/account/legal-acceptances")
 def accept_account_legal_documents(
     body: LegalAcceptancesIn,
+    request: Request,
     db: Session = Depends(get_db),
 ) -> dict:
     user = user_for_email(db, body.email)
@@ -300,7 +312,10 @@ def accept_account_legal_documents(
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
     db.commit()
-    return account_payload(body.email, db)
+    from app.account_auth_routes import native_session_user
+
+    session_user = native_session_user(request, db)
+    return account_payload(body.email, db, progress_user_id=session_user.id if session_user else None)
 
 
 @router.post("/api/access/registration-seen")

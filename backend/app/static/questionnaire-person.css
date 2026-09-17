@@ -1,0 +1,5 @@
+.ed-person-fields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
+.ed-person-fields label{display:grid;gap:6px;min-width:0;font:inherit;font-size:15px}
+.ed-person-fields input,.ed-person-fields select{min-width:0;width:100%;min-height:42px;border:1px solid var(--line,#dedee6);border-radius:8px;padding:8px 10px;background:var(--card,#fff);color:var(--ink,#17191e);font:inherit}
+.ed-person-fields :is(input,select):focus-visible{outline:2px solid #118ed8;outline-offset:2px}
+@media(max-width:720px){.ed-person-fields{grid-template-columns:1fr 1fr}.ed-person-fields input,.ed-person-fields select{font-size:16px}}

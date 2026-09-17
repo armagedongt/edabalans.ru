@@ -22,6 +22,7 @@ from app.auth import require_admin
 from app.config import Settings, get_settings
 from app.checkout_reference import tilda_order_command
 from app.database import get_db
+from app.questionnaire_person_service import PERSON_FIELDS, normalize_person_answer, person_parameters
 from app.course_material_service import published_materials
 from app.models import (
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification, MasterclassTestProfile,
@@ -1043,6 +1044,7 @@ def questionnaire(
         "ok": True,
         "kind": kind,
         "status": run.status,
+        **({"personFields": list(PERSON_FIELDS), "personParameters": person_parameters(db, user.id)} if kind == "onboarding" else {}),
         "questions": [{"code": c, "title": t, "prompt": p, "answer": answers.get(c, "")} for c,t,p in questions(kind, db)],
         "copy": questionnaire_copy(kind, db),
         "consultation_description_url": (
@@ -1063,13 +1065,15 @@ def save_answer(
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
     valid = {row[0] for row in questions(kind, db)}
+    person_codes = {row["code"] for row in PERSON_FIELDS} if kind == "onboarding" else set()
+    valid |= person_codes
     if body.question_code not in valid: raise HTTPException(422, "unknown question")
     run = get_run(db, user.id, kind)
     answer = db.scalar(select(QuestionnaireAnswer).where(QuestionnaireAnswer.run_id == run.id, QuestionnaireAnswer.question_code == body.question_code))
     if not answer:
         answer = QuestionnaireAnswer(run_id=run.id, question_code=body.question_code)
         db.add(answer)
-    answer.answer_text = body.answer_text
+    answer.answer_text = normalize_person_answer(body.question_code, body.answer_text) if body.question_code in person_codes else body.answer_text
     answer.updated_at = datetime.now(timezone.utc)
     db.commit()
     return {"ok": True, "saved": body.question_code}

@@ -434,7 +434,7 @@ def account_logout(
 @router.get("/api/account-auth/account")
 def native_account(request: Request, db: Session = Depends(get_db)) -> dict:
     user = require_native_user(request, db)
-    return account_payload(primary_email(db, user.id), db)
+    return account_payload(primary_email(db, user.id), db, progress_user_id=user.id)
 
 
 @router.post("/api/account-auth/legal-acceptances")
@@ -446,4 +446,4 @@ def native_legal_acceptances(
     user = require_native_user(request, db)
     accept_current_legal_documents(db, user.id, body.document_codes, source="native_account")
     db.commit()
-    return account_payload(primary_email(db, user.id), db)
+    return account_payload(primary_email(db, user.id), db, progress_user_id=user.id)

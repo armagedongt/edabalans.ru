@@ -22,6 +22,7 @@
     dqs: 'dqs-app',
     strength: 'strength-app',
     metabolism: 'metabolism-app',
+    'metabolism-old': 'metabolism-old-app',
     'onboarding-questionnaire': 'onboarding-questionnaire-app',
     'masterclass-offers': 'masterclass-offers-app',
     'recipes-part-1': 'recipes-part-1-app',
@@ -534,13 +535,14 @@
       return;
     }
     var appCode = String(mounts[0].getAttribute('data-edabalans-app') || '').toLowerCase();
+    var sessionAppCode = appCode === 'metabolism-old' ? 'metabolism' : appCode;
     var telegram = window.Telegram && window.Telegram.WebApp;
     var hasTelegramInitData = Boolean(telegram && telegram.initData);
     var max = window.WebApp;
     var hasMaxInitData = Boolean(max && max.initData);
     prefetchAppHtml(appCode);
     if (hasTelegramInitData) {
-      telegramMiniAppSession(appCode).then(function (telegramSession) {
+      telegramMiniAppSession(sessionAppCode).then(function (telegramSession) {
         if (!telegramSession || !validEmail(telegramSession.email)) {
           showStandaloneAccessError(mounts[0], 'Telegram не привязан к личному кабинету');
           return;
@@ -553,7 +555,7 @@
       return;
     }
     if (hasMaxInitData) {
-      maxMiniAppSession(appCode).then(function (maxSession) {
+      maxMiniAppSession(sessionAppCode).then(function (maxSession) {
         if (!maxSession || !validEmail(maxSession.email)) {
           showStandaloneAccessError(mounts[0], 'MAX не привязан к личному кабинету');
           return;

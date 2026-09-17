@@ -178,6 +178,15 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
 
     metabolism = client.get("/api/apps/metabolism?email=calories@example.test")
     assert metabolism.status_code == 200
+    assert metabolism.json()["ok"] is False
+    premature = client.put("/api/apps/metabolism", json={"variants": {"1": {"steps": 9000}}, "activeVariant": 1})
+    assert premature.status_code == 400
+    assert premature.json()["ok"] is False
+    with factory() as db:
+        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "calories@example.test"))
+        db.add(CourseStageProgress(user_id=user_id, course_code="calories", stage_number=2, completed_at=datetime.now(timezone.utc)))
+        db.commit()
+    metabolism = client.get("/api/apps/metabolism")
     assert metabolism.json()["ok"] is True
     saved_metabolism = client.put(
         "/api/apps/metabolism",
@@ -232,17 +241,17 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
     assert client.post("/api/account-auth/login", json={"email": "denied@example.test", "password": "Test-Password-9"}).status_code == 200
     legacy_metabolism = client.get("/api/apps/metabolism")
     assert legacy_metabolism.status_code == 200
-    assert legacy_metabolism.json()["ok"] is True
+    assert legacy_metabolism.json()["ok"] is False
     legacy_saved = client.put(
         "/api/apps/metabolism",
         json={
-            "version": legacy_metabolism.json()["version"],
+            "version": 1,
             "variants": {"1": {"calories": 1900}},
             "activeVariant": 1,
         },
     )
-    assert legacy_saved.status_code == 200
-    assert legacy_saved.json()["ok"] is True
+    assert legacy_saved.status_code == 400
+    assert legacy_saved.json()["ok"] is False
 
 
 def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
@@ -280,6 +289,7 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
     )
     assert second.status_code == 200
     assert second.json()["stages"][1]["opened"] is True
+    assert client.get("/api/apps/metabolism").json()["ok"] is False
 
     with factory() as db:
         assert db.scalar(select(func.count(CourseStageProgress.id))) == 2
@@ -292,6 +302,15 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
             "calories_stage_assignment_opened",
             "calories_stage_completed",
         } <= events
+
+    for index in range(3):
+        assert client.post(f"/api/calories/course/days/2/steps/{index}/complete", json={"email": email}).status_code == 200
+    assert client.post("/api/calories/course/days/2/task/open", json={"email": email}).status_code == 200
+    for index in range(3):
+        assert client.put(f"/api/calories/course/days/2/checks/{index}", json={"email": email, "checked": True}).status_code == 200
+    assert client.get("/api/apps/metabolism").json()["ok"] is True
+    application = next(row for row in client.get("/api/account-auth/account").json()["applications"] if row["code"] == "metabolism")
+    assert application["app"] == "metabolism"
 
 
 def test_calorie_material_can_be_published_without_structure_deploy():

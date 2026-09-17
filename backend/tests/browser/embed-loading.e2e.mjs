@@ -7,6 +7,7 @@ const portalHtml = await readFile(new URL('../../app/static/account-portal.html'
 const accountHtml = await readFile(new URL('../../app/static/apps/account.html', import.meta.url), 'utf8')
 const courseHtml = await readFile(new URL('../../app/static/masterclass-first-days-preview.html', import.meta.url), 'utf8')
 const questionnaireJs = await readFile(new URL('../../app/static/masterclass.js', import.meta.url), 'utf8')
+const personJs = await readFile(new URL('../../app/static/questionnaire-person.js', import.meta.url), 'utf8')
 const manifest = JSON.parse(await readFile(new URL('../../../content/masterclass/course/course.json', import.meta.url), 'utf8'))
 const visualCss = await readFile(new URL('../../app/static/course-visual.css', import.meta.url), 'utf8')
 const galleryJs = await readFile(new URL('../../app/static/content-gallery.js', import.meta.url), 'utf8')
@@ -207,6 +208,7 @@ try {
       if(path==='/assets/app-shell.css')return route.fulfill({contentType:'text/css',body:appShellCss})
       if(path==='/slow-font.woff2'){await delays.fontFile.promise;return route.abort()}
       if(path==='/assets/content-gallery.js')return route.fulfill({contentType:'application/javascript',body:galleryJs})
+      if(path==='/assets/questionnaire-person.js')return route.fulfill({contentType:'application/javascript',body:personJs})
       if(path==='/course-assets/masterclass/article-components.js')return route.fulfill({contentType:'application/javascript',body:sliderJs})
       if(path.endsWith('.css'))return route.fulfill({contentType:'text/css',body:''})
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
@@ -246,7 +248,7 @@ try {
         }
         if(path.endsWith('/submit')){requests.submitted++;return route.fulfill({json:{ok:true,messenger_link_status:'queued'}})}
         if(delays.questionnaire)await delays.questionnaire.promise
-        return route.fulfill({json:{questions:delays.questions||[],answers:[],copy:delays.questionnaireCopy}})
+        return route.fulfill({json:{questions:delays.questions||[],answers:[],copy:delays.questionnaireCopy,personFields:delays.personFields||[],personParameters:delays.personParameters||{}}})
       }
       if(path.includes('/course/content/')){if(delays.asset)await delays.asset.promise;return route.fulfill({contentType:'text/plain; charset=utf-8',body:'## Инструкция DQS\n\nГотовое описание приложения.'})}
       if(path==='/diagram.svg')return route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600"><rect width="1200" height="600" fill="#eaf8ff"/><rect x="50" y="50" width="1100" height="500" fill="#27aff5"/></svg>'})
@@ -405,7 +407,7 @@ try {
   mdStep.title=mdCopy.title;mdStep.label=mdCopy.title;mdStep.editorialHtml=mdCopy.leadHtml
   const mdQuestions=[{code:'parameters',title:'Вопрос из MD',prompt:'Подсказка из MD',answer:'Прежний ответ'}]
   const mdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:mdCopy})
-  await mdForm.native.locator('#q-done').waitFor()
+  await mdForm.native.locator('#q-fields textarea').waitFor()
   assert.equal(await mdForm.native.locator('#questionnaire-title').textContent(),mdCopy.title)
   assert.equal(await mdForm.native.locator('#q-done').textContent(),mdCopy.button)
   assert.equal(await mdForm.native.locator('#q-fields strong').textContent(),'Подсказка из MD')
@@ -414,16 +416,17 @@ try {
   await mdForm.native.close()
   mdStep.editorialHtml=''
   const emptyMdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:{...mdCopy,leadHtml:''}})
-  await emptyMdForm.native.locator('#q-done').waitFor()
+  await emptyMdForm.native.locator('#q-fields textarea').waitFor()
   assert.equal(await emptyMdForm.native.locator('#questionnaire-lead').isVisible(),false,'Deleting MD prelude must not resurrect legacy prose')
   await emptyMdForm.native.close()
   const standalone=await browser.newPage()
   let standaloneCopy=mdCopy
   await standalone.route(origin+'/**',route=>{
     const path=new URL(route.request().url()).pathname
-    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="onboarding-questionnaire-app"></div><script>window.EdabalansAppContext={app:"onboarding-questionnaire"};window.EdabalansIdentity={email:"reader@example.test"}</script><script src="/questionnaire.js"></script>'})
+    if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="onboarding-questionnaire-app"></div><script>window.EdabalansAppContext={app:"onboarding-questionnaire"};window.EdabalansIdentity={email:"reader@example.test"}</script><script src="/person.js"></script><script src="/questionnaire.js"></script>'})
+    if(path==='/person.js')return route.fulfill({contentType:'application/javascript',body:personJs})
     if(path==='/questionnaire.js')return route.fulfill({contentType:'application/javascript',body:questionnaireJs})
-    if(path==='/api/masterclass/questionnaires/onboarding')return route.fulfill({json:{questions:mdQuestions,copy:standaloneCopy}})
+    if(path==='/api/masterclass/questionnaires/onboarding')return route.fulfill({json:{questions:mdQuestions,copy:standaloneCopy,personFields:[],personParameters:{}}})
     return route.fulfill({contentType:'text/css',body:''})
   })
   await standalone.goto(origin,{waitUntil:'domcontentloaded'})
@@ -454,6 +457,7 @@ try {
   unanswered.days[0].completed_steps=[0,1,2]
   const fastForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{
     answerSave,progress:unanswered,questions:[{code:'main_request',title:'Главный запрос',prompt:'',answer:''}],
+    personFields:[{key:'weight',code:'person_weight',title:'Вес, кг',min:10,max:500,step:0.1}],personParameters:{weight:80},
   })
   await waitForReveal(fastForm.native)
   assert.equal(await fastForm.native.locator('#q-done').evaluate(el=>getComputedStyle(el).cursor),'pointer')
@@ -466,19 +470,22 @@ try {
   await fastForm.native.locator('textarea').fill('Промежуточный ответ')
   await fastForm.native.waitForFunction(()=>document.querySelector('textarea').saveRequest!==window.firstAutosave)
   await fastForm.native.locator('textarea').fill('Последний ответ')
+  assert.equal(await fastForm.native.locator('[data-person-field=weight]').inputValue(),'80')
+  await fastForm.native.locator('[data-person-field=weight]').fill('81.5')
   await fastForm.native.locator('#q-done').click()
   await fastForm.native.waitForURL('**/*course_material=day-01-offer')
   assert.equal(await fastForm.native.locator('#questionnaire').isVisible(),false)
   assert.equal(fastForm.requests.submitted,0)
   assert.equal(fastForm.requests.completed,0)
-  assert.equal(fastForm.requests.answers.length,1,'Final snapshot waits until old autosave completes')
+  assert.equal(fastForm.requests.answers.filter(item=>item.question_code==='main_request').length,1,'Final snapshot of each field waits until its own old autosave completes')
   assert.equal(await fastForm.native.locator('#inline-app-view').isVisible(),true)
   await fastForm.native.locator('#inline-app-next').click()
   assert.equal(await fastForm.native.locator('[data-check]').first().isDisabled(),true)
   answerSave.release()
   await waitUntil(()=>fastForm.requests.completed===2)
   await fastForm.native.waitForFunction(()=>!document.querySelector('[data-check]').disabled)
-  assert.deepEqual(fastForm.requests.answers.map(item=>item.answer_text),['Старый ответ','Промежуточный ответ','Последний ответ'])
+  assert.deepEqual(fastForm.requests.answers.filter(item=>item.question_code==='main_request').map(item=>item.answer_text),['Старый ответ','Промежуточный ответ','Последний ответ'])
+  assert.equal(fastForm.requests.answers.filter(item=>item.question_code==='person_weight').at(-1).answer_text,'81.5','Submit flushes the latest structured field even with an old answer save in flight')
   assert.equal(fastForm.requests.submitted,1)
   assert.deepEqual(fastForm.faults,[])
   await fastForm.native.close()

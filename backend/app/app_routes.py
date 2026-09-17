@@ -54,6 +54,8 @@ from app.intensive_web_access import (
     state_payload,
 )
 from app.account_auth_routes import require_native_user
+from app.metabolism_service import require_metabolism_user
+from app.questionnaire_person_service import person_parameters
 from app.config import Settings, get_settings
 from app.product_catalog_service import PRODUCT_CONNECTIONS
 from app.models import (
@@ -533,7 +535,7 @@ def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> Response:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "metabolism-visual-v2", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "metabolism-old", "metabolism-visual-v2", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
         raise HTTPException(status_code=404, detail="app not found")
     product_code = "recipes" if app_code in {"recipes-part-1", "recipes-part-2"} else next(
         (code for code, connection in PRODUCT_CONNECTIONS.items() if connection["app"] == app_code),
@@ -631,6 +633,12 @@ def metabolism_standalone() -> HTMLResponse:
     return standalone_app_page("metabolism", "\u041a\u0430\u043b\u044c\u043a\u0443\u043b\u044f\u0442\u043e\u0440 \u043c\u0435\u0442\u0430\u0431\u043e\u043b\u0438\u0437\u043c\u0430")
 
 
+@router.get("/metabolism-old", include_in_schema=False)
+@router.get("/metabolism-old/", include_in_schema=False)
+def metabolism_old_standalone() -> HTMLResponse:
+    return standalone_app_page("metabolism-old", "Калькулятор метаболизма · прежняя версия")
+
+
 @router.get("/recipes", include_in_schema=False)
 @router.get("/recipes/", include_in_schema=False)
 @router.get("/recipe-calculator", include_in_schema=False)
@@ -673,6 +681,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "course-visual.css",
         "account-theme.css", "account-theme.js",
+        "questionnaire-person.js", "questionnaire-person.css",
     }:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)
@@ -1618,14 +1627,14 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
 @router.get("/api/apps/metabolism")
 def metabolism_get(request: Request, db: Session = Depends(get_db)) -> dict[str, Any]:
     try:
-        user = require_user_resource(db, require_native_user(request, db), ("metabolism", "ACCESS_CALORIES"))
+        user = require_metabolism_user(db, require_native_user(request, db))
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:
             state = MetabolismState(user_id=user.id, variants={}, source="app")
             db.add(state)
             db.commit()
             db.refresh(state)
-        return {"ok": True, "email": primary_email(db, user.id), "variants": state.variants, "activeVariant": state.active_variant, "version": state.version}
+        return {"ok": True, "email": primary_email(db, user.id), "name": user.display_name, "personParameters": person_parameters(db, user.id), "variants": state.variants, "activeVariant": state.active_variant, "version": state.version}
     except AppAccessError as exc:
         return error(str(exc))
 
@@ -1634,9 +1643,7 @@ def metabolism_get(request: Request, db: Session = Depends(get_db)) -> dict[str,
 async def metabolism_put(request: Request, db: Session = Depends(get_db)) -> JSONResponse:
     try:
         body = await request.json()
-        user = require_user_resource(
-            db, require_native_user(request, db), ("metabolism", "ACCESS_CALORIES")
-        )
+        user = require_metabolism_user(db, require_native_user(request, db))
         state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == user.id))
         if not state:
             state = MetabolismState(user_id=user.id, variants={}, source="app")
@@ -1656,9 +1663,21 @@ def apply_metabolism_update(state: MetabolismState, body: dict[str, Any]) -> Non
         raise HTTPException(status_code=409, detail="STATE_VERSION_CONFLICT")
     variants = body.get("variants")
     active = int(body.get("activeVariant") or 1)
-    if not isinstance(variants, dict) or active not in (1, 2):
+    if not isinstance(variants, dict) or active not in (1, 2, 3):
         raise ValueError("INVALID_STATE")
-    state.variants = variants
+    if any(key not in {"1", "2", "3"} or not isinstance(value, dict) for key, value in variants.items()):
+        raise ValueError("INVALID_STATE")
+    # The archived two-variant UI must not discard the third variant or V2 metadata.
+    updates = {}
+    for key, value in variants.items():
+        merged = {**(state.variants or {}).get(key, {}), **value}
+        if "deficit" in value and "_unit" not in value:
+            merged.update(_unit="kcal", _percent=0)
+        updates[key] = merged
+    state.variants = {
+        **(state.variants or {}),
+        **updates,
+    }
     state.active_variant = active
     state.version += 1
 

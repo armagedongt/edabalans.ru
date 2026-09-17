@@ -7,6 +7,7 @@ from decimal import Decimal
 from sqlalchemy import (
     JSON,
     Boolean,
+    CheckConstraint,
     DateTime,
     ForeignKey,
     Index,
@@ -1053,6 +1054,7 @@ class StrengthExercise(TimestampMixin, Base):
 
 class MetabolismState(TimestampMixin, Base):
     __tablename__ = "metabolism_states"
+    __table_args__ = (CheckConstraint("active_variant IN (1, 2, 3)", name="ck_metabolism_active_variant"),)
 
     id: Mapped[uuid.UUID] = uuid_pk()
     user_id: Mapped[uuid.UUID] = mapped_column(

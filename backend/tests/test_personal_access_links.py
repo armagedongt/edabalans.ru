@@ -195,7 +195,7 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
         "Система оценки качества питания",
         "Дневник силовых тренировок",
         "Калькулятор и каталог рецептов",
-        "Калькулятор метаболизма и тренировок",
+        "Калькулятор метаболизма",
     ]
     assert blocked.json()["legacy_portal"]["available"] is False
 
@@ -327,7 +327,9 @@ def test_application_preview_entitlement_opens_only_owned_unreleased_apps(monkey
     applications = {item["code"]: item for item in accepted["applications"]}
     assert applications["strength"]["app"] == "strength"
     assert applications["recipes"]["app"] == "recipes"
-    assert applications["metabolism"]["app"] == "metabolism"
+    # Preview and a legacy technical entitlement do not bypass course progression.
+    assert applications["metabolism"]["app"] is None
+    assert applications["metabolism"]["owned"] is False
     app.dependency_overrides.clear()
 
 

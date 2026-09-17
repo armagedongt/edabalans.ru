@@ -382,12 +382,17 @@ card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/metabolism.html", "legacy/google/metabolism/**",
+  "backend/app/static/apps/metabolism-old.html", "backend/app/metabolism_service.py",
+  "backend/migrations/versions/20260918_0043_metabolism_three_variants.py",
+  "backend/tests/test_metabolism_account.py", "backend/tests/browser/metabolism.e2e.mjs", "docs/knowledge-base/modules/metabolism/**",
+  "work/metabolism-account-integration-20260917/**",
   "backend/app/static/apps/metabolism-visual-v2.html",
   "docs/design-references/metabolism-mobile-v2-20260917/**",
   "tools/import_calorizator_products.py", "tools/tests/test_import_calorizator_products.py",
 ]
 owns_tables = ["metabolism_states"]
-owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*", "*/metabolism"]
+owns_routes = ["*/apps/metabolism*", "*/api/apps/metabolism*", "*/metabolism", "*/metabolism-old"]
+reads_from = ["products.calories", "products.masterclass.questionnaires"]
 
 [[modules]]
 id = "products.calories"
@@ -542,7 +547,7 @@ reads_from = ["platform", "products.masterclass.course"]
 id = "products.masterclass.questionnaires"
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.questionnaires.md"
-owns_files = ["backend/app/static/apps/onboarding-questionnaire.html"]
+owns_files = ["backend/app/static/apps/onboarding-questionnaire.html", "backend/app/questionnaire_person_service.py", "backend/app/static/questionnaire-person.*"]
 owns_tables = ["questionnaire_runs", "questionnaire_answers"]
 owns_routes = ["*/api/masterclass/*questionnaire*", "*/api/masterclass/*closing-review*"]
 depends_on = ["products.masterclass.runtime"]

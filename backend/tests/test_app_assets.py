@@ -319,7 +319,7 @@ def test_application_fragments_use_server_api() -> None:
     for app_code in ("dqs", "strength", "metabolism"):
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
-        assert "edabalans.ru/api/apps/" in response.text
+        assert "/api/apps/" in response.text
         assert "REDACTED_LEGACY_APPS_SCRIPT_URL" not in response.text
         lowered = response.text.lower()
         assert "google" not in lowered
@@ -444,9 +444,9 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer(monkeypa
     assert "root.querySelector('.open-account').onclick=function(){location.href=accountUrl}" in fragments["recipes"]
     assert "mask:url(" in fragments["recipes"]
     metabolism = fragments["metabolism"]
-    assert "href=\"'+escapeAttr(accountUrl)+'\"" in metabolism
+    assert "context.accountUrl||'/lk'" in metabolism
     assert "ed-app-account-link" in metabolism
-    assert re.search(r'ed-app-account-link[^>]*>[^<]*\'\+\s*\'<svg', metabolism)
+    assert re.search(r'ed-app-account-link[^>]*>\s*<svg', metabolism)
     assert "mc-footer" not in metabolism
     assert "Сергей Воронцов" not in metabolism
 
