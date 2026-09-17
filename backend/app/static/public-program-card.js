@@ -34,9 +34,7 @@
 
     if (slug === 'program') groupSections(root, 'h3', ['P', 'UL']);
     if (slug === 'consultation') groupSections(root, 'h2', ['P']);
-    if (slug === 'recipes') groupSections(root, 'h3', ['UL'], function (heading) {
-      return /^День(?:\s|$)/.test(heading.textContent.trim());
-    });
+    if (slug === 'recipes') groupSections(root, 'h3', ['P', 'UL']);
   }
 
   window.EdabalansProgramCard = { enhance: enhance };
