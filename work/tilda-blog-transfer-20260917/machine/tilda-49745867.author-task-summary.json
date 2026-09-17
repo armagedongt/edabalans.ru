@@ -16,6 +16,6 @@
       "fingerprint": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a"
     }
   ],
-  "source_text_sha256": "1237a2445c14752f0af485d21e0a8547381ac897262a1e8044e9105213a82092",
+  "source_text_sha256": "31308725aecf5010e037bf379c92a581cc72c53763c9a4068f1ef9ab4a3018fe",
   "private_artifact_note": "Executable full-source task/pack retained outside Git; this is the safe machine handoff summary."
 }

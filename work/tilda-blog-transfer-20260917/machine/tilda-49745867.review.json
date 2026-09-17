@@ -1,9 +1,9 @@
 {
   "schema_version": "author-review-v1",
   "reviewer": "Codex source-preservation editorial review",
-  "reviewed_at": "2026-09-17T17:06:24.836332+00:00",
-  "pack_sha256": "787f7ef08ea9bf4df2c3b69865f7a2e9a9220fec1b210c08ad1845eab64c6b36",
-  "draft_sha256": "3bb565c44ffa9b636407b7e8fab51c9de0e4eab075da5fbfad489e95815df41e",
+  "reviewed_at": "2026-09-17T17:07:42.875685+00:00",
+  "pack_sha256": "ba7bdf2543a67f15a0c05c2f9e5dfb847b44f96c4e89a4498398c3a5271bd414",
+  "draft_sha256": "16f3329c2066139f18aaea4ad550cb2b6cfd2c890da740ba7268915e847a0a37",
   "fact_sources": [
     {
       "name": "Tilda page 49745867",
