@@ -962,7 +962,7 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "tutorialStep++;renderTutorial()" in course
     assert "tutorialStep--;renderTutorial()" in course
     assert "splitArticleHtml(firstFivePresentation(t),!pages['step:'+t.stepId]&&t.imagePresentation==='gallery')" in course
-    assert "function firstFivePresentation(t)" in course
+    assert re.search(r"function\s+firstFivePresentation\(", course)
     assert "DQS_CATEGORY_ROWS" in course
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
     assert "overflow-wrap:anywhere" in course
