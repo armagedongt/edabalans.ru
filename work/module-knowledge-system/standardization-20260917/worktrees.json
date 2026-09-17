@@ -1,0 +1,857 @@
+{
+  "document_status": "draft",
+  "snapshot_date": "2026-09-17",
+  "purpose": "Временный технический снимок, не реестр модулей и не разрешение удаления",
+  "accepted_base": "f45879861a3393e70674948b4b8fe122b42e2e8b",
+  "worktrees_checked": 84,
+  "restoration": {
+    "removed_before_owner_stop": 6,
+    "restored": 6,
+    "paths_and_heads_verified": true,
+    "tasks_archived": 0,
+    "unique_source_data_deleted": 0,
+    "detail": "Проверенные tracked-файлы и ветки восстановлены. В удалявшихся копиях дополнительные файлы были только пересоздаваемыми Python/pytest-кэшами; эти кэши не восстанавливались."
+  },
+  "worktrees": [
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru",
+      "branch": "codex/markiting",
+      "head": "e2047628c0325ecbdb20197f68ca533a5e46c18e",
+      "unique_commits_not_in_main": 43,
+      "working_changes": 36819,
+      "ignored_files": 67122,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/29/01a04c00-61a8-7790-bde6-badb05f93409/d1",
+      "branch": "codex/intensive-day01-page-copy-20260902",
+      "head": "d78800ddbf32836f5e94380ba3678ef3de088d41",
+      "unique_commits_not_in_main": 2,
+      "working_changes": 0,
+      "ignored_files": 3,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/29/01a04c00-61a8-7790-bde6-badb05f93409/intensive-routing-20260906",
+      "branch": "codex/intensive-routing-20260906",
+      "head": "51e47971a548e04cacc82c1f8af7fe77751807ae",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/29/01a04c00-61a8-7790-bde6-badb05f93409/intensive-routing-20260917",
+      "branch": "codex/intensive-routing-20260917",
+      "head": "af07998e197a11aceb3d2c7be0e7d1263a410904",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/30/01a05492-5878-7312-b4ea-15b5fb4daee4/blog-audit-catalog",
+      "branch": "codex/blog-seo-analytics-20260917",
+      "head": "f45879861a3393e70674948b4b8fe122b42e2e8b",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 6,
+      "ignored_files": 21,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/30/01a05492-5878-7312-b4ea-15b5fb4daee4/blog-copywriter-output-v2",
+      "branch": "codex/blog-copywriter-output-v2",
+      "head": "c41b93e84dc6e35bf9ab2677454826b44a997b50",
+      "unique_commits_not_in_main": 29,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/30/01a05492-5878-7312-b4ea-15b5fb4daee4/tilda-five-blog",
+      "branch": "codex/tilda-five-blog-20260917",
+      "head": "38cbf0c4448f2370c3a252c297333fd981d86b44",
+      "unique_commits_not_in_main": 2,
+      "working_changes": 13,
+      "ignored_files": 15,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/08/30/01a05492-5878-7312-b4ea-15b5fb4daee4/tilda-five-blog-release",
+      "branch": "codex/tilda-five-blog-release-20260917",
+      "head": "9ca8baa0dbd08ee0be4d3d87b74ab8ba2e312932",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 3,
+      "ignored_files": 10,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/09/02/01a0610b-7619-73c0-8a3f-74544399f2c4/direct-intensive-visual-draft",
+      "branch": "codex/direct-intensive-visual-draft",
+      "head": "43fd76e928afc26697555d31707e6595deb9d57f",
+      "unique_commits_not_in_main": 3,
+      "working_changes": 0,
+      "ignored_files": 57,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/09/04/01a06df4-9ee9-7163-8046-3c8bf444487b/direct-t123-deep-links",
+      "branch": "codex/direct-t123-deep-links",
+      "head": "370dbfff1118f9b630a01bb692896344f6c16e4f",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 34,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/visualizations/2026/09/16/md-material-transfer-handoff",
+      "branch": "codex/md-material-transfer-20260916",
+      "head": "4e1bd91015945a6b7da4d359dc51a3abe7ed8f6c",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 1,
+      "ignored_files": 2,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/1c11/edabalans.ru",
+      "branch": "codex/unified-domain-production",
+      "head": "1d5ffe76bd6b0eeba2fe63ae56c433d1345aa4f3",
+      "unique_commits_not_in_main": 7,
+      "working_changes": 22,
+      "ignored_files": 5417,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/46d8/edabalans.ru",
+      "branch": "codex/course-md-authoring-20260917",
+      "head": "130c976051701c7713b3bcd25b40c943cc26d3ed",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 10,
+      "ignored_files": 155,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/direct-landing-preview-integration-20260909",
+      "branch": "codex/direct-loader-launch-20260910",
+      "head": "2d815e040692cdb714410a092641dbfc2fa8e440",
+      "unique_commits_not_in_main": 8,
+      "working_changes": 0,
+      "ignored_files": 5413,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/direct-landing-release-20260909/edabalans.ru",
+      "branch": "codex/direct-landing-release-20260909",
+      "head": "c28b1d56b61d8c0dcea5baaed9e43d8b94ce1dac",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 286,
+      "ignored_files": 129,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/direct-report-publish",
+      "branch": "detached",
+      "head": "4a92a7769808dbe5358ec0dd2afcc61dafd2aaca",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 3,
+      "ignored_files": 82,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/edabalans-sherbakova-preview",
+      "branch": "codex/sherbakova-static-preview",
+      "head": "6771a7ed715e622559326538b61a630342c0d7fd",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 36,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/bot-rate-limit-release",
+      "branch": "codex/telegram-rate-limit-20260912",
+      "head": "ca9ca43897231c7044b1f20bb8e7664598af87a8",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 162,
+      "ignored_files": 331,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/cta-qr-tracking",
+      "branch": "codex/cta-qr-tracking",
+      "head": "f0d6ca084b5a8c9b54df1460b3c43e5d783e9be2",
+      "unique_commits_not_in_main": 4,
+      "working_changes": 135,
+      "ignored_files": 6019,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/direct-analysis-20260909",
+      "branch": "codex/direct-analysis-20260909",
+      "head": "813675c8f1cc6065627c8f934b682e186148bc37",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/direct-main-integration",
+      "branch": "detached",
+      "head": "b2ce85db86545e38d5cfe89aa571ceea64ed6811",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 3,
+      "ignored_files": 36,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/direct-report-main-merge",
+      "branch": "codex/direct-workflow-update",
+      "head": "1f18c7deaeca7b3ffece6ae796c5ac1e32c61e53",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 19,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/direct-report-release",
+      "branch": "codex/direct-report-depth-20260908",
+      "head": "032ccf2cc16cdf252e5215415bfc1b04af963b19",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 135,
+      "ignored_files": 5449,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/dns-resilience-20260916",
+      "branch": "infra/dns-resilience-20260916",
+      "head": "d26b1a1fa5670d5450739d928674d124bd6129a8",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 5308,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/domain-runbook",
+      "branch": "codex/domain-cutover-runbook",
+      "head": "a4b7c2a34c455e9f8d71bedcc031952312892c35",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 45,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/landing-sticky-local",
+      "branch": "codex/direct-landing-sticky-20260909",
+      "head": "dfb7aec41bb537e8dc3bc8ffee3431dca1f52be1",
+      "unique_commits_not_in_main": 2,
+      "working_changes": 42,
+      "ignored_files": 5923,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/marketing-attribution",
+      "branch": "codex/max-intensive-production-20260905",
+      "head": "05deb08b7b8c439b2e26769e10bc5abaa42341be",
+      "unique_commits_not_in_main": 2,
+      "working_changes": 34,
+      "ignored_files": 12567,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/max-health-20260916",
+      "branch": "infra/max-health-20260916",
+      "head": "453741ff85ffb1e6df176245b89407c997a1a254",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 7,
+      "ignored_files": 5556,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/max-one-shot-chain",
+      "branch": "codex/intensive-direct-day-links-20260913",
+      "head": "4c74e92eabe74d97e2cfb9118723a4ece797fc34",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 5,
+      "ignored_files": 530,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/repo",
+      "branch": "codex/yandex-yclid-capture",
+      "head": "115bc0d77c7c9b6961042332101b9e706c69175f",
+      "unique_commits_not_in_main": 3,
+      "working_changes": 1,
+      "ignored_files": 184,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/f932/edabalans.ru/tmp/api-first-integration",
+      "branch": "codex/integrate-api-first-20260904",
+      "head": "932a092ebc589633ed368e7b2832861793b1abe6",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/homepage-popup-conceptual-20260917",
+      "branch": "codex/homepage-popup-conceptual-20260917",
+      "head": "4498bf7a38f9a5969151310d0a0a2cd23dfb5be8",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 86,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/homepage-popup-copy-20260917",
+      "branch": "codex/homepage-popup-copy-20260917",
+      "head": "da169c8ba928c4978ca4a318857089fbb4b233af",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 80,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/homepage-popup-layout-20260917",
+      "branch": "codex/homepage-popup-layout-20260917",
+      "head": "802c619fd60ef0749cbcd4395ee724c1cf6f35a5",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 78,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/server-404-20260917",
+      "branch": "codex/server-404-20260917",
+      "head": "bf77a1130559709c5dcae73c43ffbd11056f05c0",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 9,
+      "ignored_files": 86,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex/worktrees/writer-consolidation-20260917",
+      "branch": "codex/writer-consolidation-20260917",
+      "head": "a676f43ce756cddc2438703b4acb3e3d1a113abe",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 28,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/.codex-worktrees/commerce-owner-alerts",
+      "branch": "codex/commerce-owner-alerts",
+      "head": "c29c7fe2bc7aa2431cb68953c4d1d4d9364aa5fd",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 257,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/eda-finance-release",
+      "branch": "codex/finance-release",
+      "head": "053108e8f212a7aced2a9353bcfd146b8180f6b6",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 77,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans-cross-messenger-bridge",
+      "branch": "codex/cross-messenger-bridge",
+      "head": "56f1ce7403e103c4fa8429d28e51744d13124c68",
+      "unique_commits_not_in_main": 4,
+      "working_changes": 54,
+      "ignored_files": 46,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans-sprints-ui",
+      "branch": "codex/sprints-ui-refresh",
+      "head": "31228684454014a8fc5b8566884224427ac99edb",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 75,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/direct-robokassa-20260904",
+      "branch": "codex/direct-robokassa-20260904",
+      "head": "7f23107a65608dd37fb379c5bfb93240229630f0",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 8,
+      "ignored_files": 123,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/dqs-telegram-webapp-20260904",
+      "branch": "codex/dqs-telegram-webapp",
+      "head": "5f48796173bfdc2d093df238dcf173279a41e2b4",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 67,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/finance-blue-theme-local-20260916",
+      "branch": "detached",
+      "head": "053108e8f212a7aced2a9353bcfd146b8180f6b6",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 71,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-background-variants-20260901",
+      "branch": "codex/homepage-background-variants",
+      "head": "d8efbfeec71aaaf928cc37f5f740fd1b852049a2",
+      "unique_commits_not_in_main": 7,
+      "working_changes": 0,
+      "ignored_files": 59,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-block-approval-20260910",
+      "branch": "codex/homepage-block-approval-20260910",
+      "head": "037fbc586d364ae4f2c858b4b9a3fa3141736ada",
+      "unique_commits_not_in_main": 3,
+      "working_changes": 200,
+      "ignored_files": 286,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-cookie-preview-20260902",
+      "branch": "codex/shared-cookie-notice-20260909",
+      "head": "ad3227a8fbc3896595c8ab39d86ed2367109cef7",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 561,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-flow-reorder-20260902",
+      "branch": "codex/homepage-flow-reorder-20260902",
+      "head": "9634f8e46553ad46748b941f83200248fcff809f",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 67,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-popup-scroll-fix",
+      "branch": "codex/homepage-popup-scroll-fix",
+      "head": "095c5d7ec492196a433606d3597a730ade4c331a",
+      "unique_commits_not_in_main": 3,
+      "working_changes": 0,
+      "ignored_files": 58,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-program-popup-sources",
+      "branch": "codex/homepage-program-popup-sources",
+      "head": "ea10a127a46eaf6a90fc5d2facf6713a19832060",
+      "unique_commits_not_in_main": 9,
+      "working_changes": 3,
+      "ignored_files": 86,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-runtime-20260831",
+      "branch": "codex/homepage-runtime-content",
+      "head": "2ed63529441c4be28bf0eb1f1ca483f73184bcfd",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 1,
+      "ignored_files": 1,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/homepage-spacing-standard-20260902",
+      "branch": "codex/homepage-spacing-standard-20260902",
+      "head": "4a62889ffd4bb8eab4dea73ee2415c0982c12437",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 60,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/integrate-final-reviews-cards-20260902",
+      "branch": "codex/integrate-final-reviews-cards-20260902",
+      "head": "fb75a97fa3302f5389f4a894e03e83c6a04c454b",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 137,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/integrate-reviews-wall-20260902",
+      "branch": "codex/integrate-reviews-wall-20260902",
+      "head": "3d76dc6f54ae784b98d5f2e952195331ba3772f3",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 88,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-full-release-20260904",
+      "branch": "codex/intensive-full-release-20260904",
+      "head": "e44ef76c6370e89c2d56ea475927a666b6f6b7fb",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 77,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-menu-publish-20260905",
+      "branch": "codex/intensive-menu-publish-20260905",
+      "head": "8df32bf1989a59cfb3ed01e24484712f567f0e76",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 138,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-miniapp-20260905",
+      "branch": "codex/intensive-miniapp-20260905",
+      "head": "f3cc535e0af9a997e27b00569201e6c105524974",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 154,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-offer-release",
+      "branch": "detached",
+      "head": "cda7e9af434267629e13e5c884a0817fe1667af1",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 170,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-tilda-loader-20260905",
+      "branch": "codex/intensive-tilda-loader-20260905",
+      "head": "24092a71520c37e324a67cff5a247e2aa850e64f",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 7959,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/intensive-unified-entry-20260906",
+      "branch": "codex/intensive-unified-entry-20260906",
+      "head": "a288e32edb28b547a379f379f1238f69b0ef46ad",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 674,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/lk-dark-theme-preview-20260917",
+      "branch": "codex/lk-dark-theme-preview-20260917",
+      "head": "55e55c3a1fa27da33dc47a94280b8077cbb928c0",
+      "unique_commits_not_in_main": 5,
+      "working_changes": 0,
+      "ignored_files": 1,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/lk-visual-runtime-20260917",
+      "branch": "codex/lk-visual-runtime-20260917",
+      "head": "3517497573aa371ace7aba176f9c8547785149c5",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 196,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/masterclass-markdown-canon-20260912",
+      "branch": "codex/masterclass-markdown-publish-20260912",
+      "head": "358bd568d7fbb970ef4c778bb0103f113bd808b1",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 145,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/max-empty-upload-response",
+      "branch": "codex/max-empty-upload-response",
+      "head": "51e47971a548e04cacc82c1f8af7fe77751807ae",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 3,
+      "ignored_files": 2713,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/max-welcome",
+      "branch": "codex/max-welcome",
+      "head": "99d78308f702ccbf727f5648d563af8dccc8877c",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 78,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/own-account-auth-20260905",
+      "branch": "codex/intensive-branded-links-20260905",
+      "head": "ba71e527d0501848adf839a53bdafeb93070cccb",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 4502,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/pay-individual-revision",
+      "branch": "codex/pay-individual-page",
+      "head": "af8407bbeeb4af1fb5dac992c3440a9fb838706e",
+      "unique_commits_not_in_main": 4,
+      "working_changes": 0,
+      "ignored_files": 83,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/popup-canons-20260912",
+      "branch": "codex/popup-canons-20260912",
+      "head": "1f7b5c7fb0beb071b0738f80b8853d47e88fb4ff",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/pricing-v32-integration",
+      "branch": "codex/pricing-v32-accepted",
+      "head": "5bc5a96903d299e0859a37bf3735190c1e5fbc72",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/public-shell-plan-20260910",
+      "branch": "codex/public-shell-plan-20260910",
+      "head": "33d90845e8d38a240581558546bd23243292520d",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/questionnaire-messenger-delivery",
+      "branch": "codex/questionnaire-messenger-delivery",
+      "head": "e631382631bc08b8dac0a9df20d58a4aa68c3d36",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 206,
+      "ignored_files": 131,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/recipes-program-card-release",
+      "branch": "codex/recipes-program-card-release",
+      "head": "a6d649a8a102c3522bbe10ea8628f148bf8416bd",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 77,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/robokassa-go-test-20260905",
+      "branch": "codex/robokassa-go-test-20260905",
+      "head": "350122afa966ea69699f2d85cfb535b00d552405",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 7174,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/robokassa-live-probe-20260906",
+      "branch": "codex/robokassa-live-probe-20260906",
+      "head": "635c6c39536d05e786dfcf6e43fedf930a31ba48",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 172,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/robokassa-server-subscriptions",
+      "branch": "codex/robokassa-server-subscriptions",
+      "head": "2f76485a2479d94e43545d4ecc88c6f896629a46",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 285,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/robokassa-subscriptions-release-20260913",
+      "branch": "codex/robokassa-subscriptions-release-20260913",
+      "head": "99051db9b3e3435861e220d95e2cb7a516481157",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 144,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/subscription-recovery-20260913",
+      "branch": "codex/subscription-recovery-20260913",
+      "head": "99051db9b3e3435861e220d95e2cb7a516481157",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 32,
+      "ignored_files": 167,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/telegram-relay-reliability-20260909",
+      "branch": "codex/telegram-relay-reliability-20260909",
+      "head": "4cd6bc625e457cb519aa071725f44b61a865984c",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 202,
+      "ignored_files": 10181,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/unified-messenger-links",
+      "branch": "codex/unified-messenger-links",
+      "head": "e3c3c8e944e307cafd486bdae24d816a11aaabff",
+      "unique_commits_not_in_main": 1,
+      "working_changes": 0,
+      "ignored_files": 61,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/vsl-copy-editing-20260902",
+      "branch": "codex/vsl-copy-editing-20260902",
+      "head": "d78800ddbf32836f5e94380ba3678ef3de088d41",
+      "unique_commits_not_in_main": 2,
+      "working_changes": 0,
+      "ignored_files": 3,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/yandex-direct-attribution",
+      "branch": "codex/yandex-direct-attribution",
+      "head": "4ac204a42224387efea80084cc4e53f221e17f71",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 14,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "C:/Users/Segey/Documents/ChatGPT/weather-release",
+      "branch": "detached",
+      "head": "bf77a1130559709c5dcae73c43ffbd11056f05c0",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 146,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "D:/codex-temp/edabalans-pricing-initial-7800",
+      "branch": "codex/pricing-initial-7800",
+      "head": "5677c03896a5f4eaece114a3615462fe47d3aa69",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 0,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "D:/CodexWork/source-link-audit-20260917",
+      "branch": "codex/source-link-audit-20260917",
+      "head": "fee0ff6fd54150e4bb58080720aa3c503ea772da",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 0,
+      "ignored_files": 130,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    },
+    {
+      "path": "D:/CodexWorktrees/edabalans-reviews-assets-20260911",
+      "branch": "codex/reviews-public-assets-20260911",
+      "head": "c3a9504cef9b22259bc33af6628c75137315b43e",
+      "unique_commits_not_in_main": 0,
+      "working_changes": 1,
+      "ignored_files": 1,
+      "status_check_ok": true,
+      "decision": "preserve_pending_owner_command"
+    }
+  ]
+}

@@ -23,6 +23,14 @@ implementation_status: implemented
 Текстом и адаптивом программной карточки «Система рецептов» владеет `products.public-site`;
 модуль допродаж добавляет к ней только актуальные цены и кнопки checkout.
 
+## Рабочий маршрут
+
+Начинать с [контракта допродаж](../masterclass/OFFERS_MODULE.md): он разделяет
+placement, правила окна, состав карточки, действующую цену и исходящее действие.
+Изменение текста проходит через `platform.content` и Писаря, но не меняет
+алгоритм предложения. Названия приходят из `products.catalog`, цены и checkout —
+из `platform.commerce`; Telegram потребляет готовые правила, не пересчитывая их.
+
 ## Источники истины
 
 `OFFERS_MODULE.md`, `masterclass_offer_rules.py`, `masterclass_offer_catalog.py`, pricing/offer runtime tables.
