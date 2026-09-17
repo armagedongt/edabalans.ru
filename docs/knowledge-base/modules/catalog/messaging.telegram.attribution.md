@@ -38,7 +38,10 @@ implementation_status: implemented
 ## Источники истины
 
 `START_WELCOME_ROUTING.md`, `LEAD_ENTRY_OWNER_REQUIREMENTS.md`,
-`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data и
+`LEAD_ENTRY_TECHNICAL_SPEC.md`, runtime tracking data;
+[`LINKS_AND_ATTRIBUTION.md`](../telegram/LINKS_AND_ATTRIBUTION.md) для правил
+использования исходящих ссылок; снимок источника прямого заказа принадлежит
+[`ROBOKASSA_PAYMENTS.md`](../../../ROBOKASSA_PAYMENTS.md).
 `backend/app/telegram_public_cta.py` для публичного CTA и
 `backend/app/personal_tracking_routes.py` для персональных исходящих маршрутов.
 

@@ -958,7 +958,7 @@ owns_files = [
 owns_routes = ["*/admin/marketing", "*/admin/api/marketing/*", "*/api/internal/marketing/*"]
 owns_tables = ["marketing_daily_reports"]
 depends_on = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.max", "products.intensive"]
-reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "products.intensive"]
+reads_from = ["messaging.telegram.attribution", "messaging.max", "platform.crm", "platform.commerce", "products.intensive"]
 
 [[modules]]
 id = "planned.telegram-quiz"
