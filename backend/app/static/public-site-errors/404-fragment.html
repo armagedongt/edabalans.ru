@@ -1,0 +1,35 @@
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Unbounded:wght@800&display=swap');
+.ed404{--blue:#27aff5;--deep:#118ed8;--ink:#17191e;box-sizing:border-box;color:var(--ink);font-family:Manrope,Arial,sans-serif;background:radial-gradient(ellipse at 18% 10%,#e4f5ff,transparent 55%),#f2faff;min-height:100svh;overflow-wrap:anywhere}
+.ed404 *{box-sizing:border-box}
+.ed404__main{width:min(1180px,100%);margin:auto;min-height:calc(100svh - 180px);padding:64px 32px;display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.ed404__art{text-align:center}.ed404__number{margin:0;color:var(--blue);font-family:Unbounded,Manrope,sans-serif;font-size:clamp(72px,10vw,136px);font-weight:800;line-height:1.05;letter-spacing:-.07em}
+.ed404__art img{display:block;width:100%;max-width:510px;height:auto;margin:14px auto 0}
+.ed404 h1{font-size:clamp(28px,3vw,42px);line-height:1.16;letter-spacing:-.035em;margin:0 0 20px;font-weight:800}
+.ed404__copy p{color:#4f555e;font-size:18px;line-height:1.6;margin:0 0 28px;max-width:440px}
+.ed404__links{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:470px}
+.ed404__links a{display:flex;align-items:center;justify-content:center;min-height:56px;padding:14px 18px;border:1px solid #c9e9fb;border-radius:15px;text-decoration:none;color:#116da7;background:white;font-size:15px;font-weight:800;text-align:center;transition:background .15s,transform .15s}
+.ed404__links a:first-child{background:var(--blue);color:#fff;border-color:transparent;grid-column:1/-1}
+.ed404__links a:last-child{grid-column:1/-1}
+.ed404__links a:hover{background:#e4f5ff;transform:translateY(-2px)}.ed404__links a:first-child:hover{background:var(--deep)}
+.ed404__links a:focus-visible{outline:3px solid #118ed8;outline-offset:4px}
+@media(max-width:767px){.ed404__main{grid-template-columns:1fr;gap:24px;padding:36px 20px 48px;min-height:0}.ed404__art img{max-width:360px;margin-top:8px}.ed404__number{font-size:88px}.ed404__copy{max-width:470px;width:100%;margin:auto;text-align:center}.ed404 h1{font-size:30px}.ed404__copy p{font-size:16px;margin:0 auto 24px}.ed404__links{margin:auto}.ed404__links a{font-size:14px;padding:12px 10px}}
+@media(prefers-reduced-motion:reduce){.ed404__links a{transition:none}.ed404__links a:hover{transform:none}}
+</style>
+<div class="ed404">
+  <div data-edabalans-site-header data-account-url="https://edabalans.ru/lk" data-nav='[{"href":"https://похудение-это-есть.рф/","label":"Главная"},{"href":"https://edabalans.ru/blog","label":"Блог"},{"href":"{{intensive_url}}","label":"Бесплатный интенсив"}]'></div>
+  <main class="ed404__main">
+    <div class="ed404__art" aria-hidden="true"><p class="ed404__number">404</p><img src="{{origin}}/public-site-errors/shrug-character-v1.svg" width="640" height="450" alt=""></div>
+    <div class="ed404__copy">
+      <h1>Страница не найдена</h1>
+      <p>Выберите, куда перейти. Если нужна помощь — напишите мне.</p>
+      <nav class="ed404__links" aria-label="Куда перейти">
+        <a href="https://похудение-это-есть.рф/">На главную</a>
+        <a href="https://edabalans.ru/lk">Личный кабинет</a>
+        <a href="{{intensive_url}}">Бесплатный интенсив</a>
+        <a href="#ed404-contacts">Написать мне</a>
+      </nav>
+    </div>
+  </main>
+  <div id="ed404-contacts" data-edabalans-site-footer></div>
+</div>

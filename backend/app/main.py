@@ -47,6 +47,8 @@ from app.brand_routes import router as brand_router
 from app.public_video_analytics_routes import router as public_video_analytics_router
 from app.public_homepage_analytics_routes import router as public_homepage_analytics_router
 from app.public_site_routes import router as public_site_router
+from app.public_not_found import router as public_not_found_router, public_http_exception
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.marketing_routes import router as marketing_router
 from app.personal_tracking_routes import router as personal_tracking_router
 from app.database import SessionLocal, get_db
@@ -83,6 +85,7 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, version=settings.app_version, lifespan=lifespan)
+app.add_exception_handler(StarletteHTTPException, public_http_exception)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins_list,
@@ -166,6 +169,7 @@ app.include_router(brand_router)
 app.include_router(public_video_analytics_router)
 app.include_router(public_homepage_analytics_router)
 app.include_router(public_site_router)
+app.include_router(public_not_found_router)
 app.mount("/mcp", knowledge_mcp_app)
 
 
