@@ -134,6 +134,30 @@ try {
   assert.equal(await legal.locator('#dqs-app h1').isVisible(), true)
   await legal.close()
 
+  // Shared fragments retain their maintenance layout after root.innerHTML mounting.
+  for(const app of ['calories-course','recipes','recipes-part-1','recipes-part-2']){
+    const fragment=process.env.MAINTENANCE_ORIGIN
+      ? await fetch(process.env.MAINTENANCE_ORIGIN+'/apps/'+app+'.html').then(response=>{assert.equal(response.status,200);return response.text()})
+      : '<link rel="stylesheet" href="/assets/app-shell.css"><section id="'+app+'-app"><div class="ed-app-maintenance"><h1>На ремонте</h1><a class="ed-app-account-link ed-app-maintenance-account" href="/lk">Личный кабинет</a></div></section>'
+    const paused=await browser.newPage({viewport:{width:360,height:1000}})
+    await paused.route(origin+'/**',async route=>{
+      const path=new URL(route.request().url()).pathname
+      if(path==='/')return route.fulfill({contentType:'text/html; charset=utf-8',body:'<meta charset="utf-8"><div data-edabalans-app="'+app+'"></div><script src="/embed.js"></script>'})
+      if(path==='/embed.js')return route.fulfill({contentType:'application/javascript',body:embed})
+      if(path==='/api/account-auth/session')return route.fulfill({json:{authenticated:true,email:'reader@example.test'}})
+      if(path==='/apps/'+app+'.html')return route.fulfill({contentType:'text/html; charset=utf-8',body:fragment})
+      if(path==='/assets/app-shell.css')return route.fulfill({contentType:'text/css',body:appShellCss})
+      return route.fulfill({contentType:'application/javascript',body:''})
+    })
+    await paused.goto(origin,{waitUntil:'domcontentloaded'})
+    await paused.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('.ed-app-maintenance'))
+    assert.equal(await paused.locator('.ed-app-maintenance').evaluate(el=>getComputedStyle(el).display),'grid')
+    assert.equal(await paused.getByRole('heading',{name:'На ремонте'}).evaluate(el=>getComputedStyle(el).fontSize),'28px')
+    assert.equal(await paused.getByRole('link',{name:'Личный кабинет'}).isVisible(),true)
+    if(app==='calories-course')await capture(paused,'maintenance-mounted')
+    await paused.close()
+  }
+
   // The real native portal and account app must propagate readiness, not just our fixture.
   const account = {email:'reader@example.test',state:'ready',courses:[{app:'masterclass-course',code:'masterclass',product_code:'masterclass',owned:true,ready:true,title:'Мастер-класс'},{code:'calories',product_code:'calories',owned:false,ready:true,title:'Калорийный курс'}],applications:[]}
   const progress = {current_day:2,server_now:new Date().toISOString(),days:manifest.days.map(d=>({number:d.number,opened:d.number<=5,can_open:d.number<=5,completed:false,completed_steps:d.steps.map((_,i)=>i),checkmarks:{},first_opened_at:new Date().toISOString()}))}
@@ -217,7 +241,7 @@ try {
   await dashboard.native.close()
 
   const maintenanceAccount={...account,courses:[account.courses[0],
-    {code:'calories',product_code:'calories',title:'Калорийный курс',owned:true,ready:false,maintenance:true},
+    {code:'calories',product_code:'calories',title:'Калорийный курс',owned:false,ready:false,maintenance:true},
     {code:'recipes',product_code:'recipes',title:'Система рецептов',owned:true,ready:false,maintenance:true},
     {code:'strength',product_code:'training',title:'Курс по тренировкам',owned:false,ready:false}],
     applications:[{code:'recipes',title:'Калькулятор и каталог рецептов',owned:true,ready:false,maintenance:true}]}

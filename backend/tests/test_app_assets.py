@@ -511,6 +511,8 @@ def test_maintenance_blocks_direct_product_interfaces_without_running_the_app(mo
         response = client.get(f"/apps/{app_code}.html")
         assert response.status_code == 200
         assert f'id="{app_code}-app"' in response.text
+        # embed.js copies root.innerHTML, not the root's class attribute.
+        assert f'<section id="{app_code}-app"><div class="ed-app-maintenance">' in response.text
         assert "На ремонте" in response.text
         assert 'href="/lk"' in response.text
         assert "<script" not in response.text

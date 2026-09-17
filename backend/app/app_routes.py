@@ -542,10 +542,10 @@ def app_fragment(app_code: str) -> Response:
     if PRODUCT_CONNECTIONS.get(product_code, {}).get("maintenance"):
         return HTMLResponse(
             '<link rel="stylesheet" href="/assets/app-shell.css?v=20260917-maintenance1">'
-            f'<section id="{escape(app_code)}-app" class="ed-app-maintenance">'
+            f'<section id="{escape(app_code)}-app"><div class="ed-app-maintenance">'
             '<h1>На ремонте</h1>'
             '<a class="ed-app-account-link ed-app-maintenance-account" href="/lk">Личный кабинет</a>'
-            '</section>',
+            '</div></section>',
             headers={"Access-Control-Allow-Origin": "*", "Cache-Control": "no-cache"},
         )
     if app_code == "masterclass-course":
