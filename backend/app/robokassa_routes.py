@@ -108,6 +108,7 @@ class RobokassaCheckoutIn(BaseModel):
     price_code: str = Field(min_length=3, max_length=120)
     email: str = Field(min_length=3, max_length=320)
     intensive_offer: str | None = Field(default=None, max_length=1024)
+    source_context: str | None = Field(default=None, max_length=160)
 
 
 class NativeOfferCheckoutIn(BaseModel):
@@ -428,6 +429,7 @@ def robokassa_checkout(
             body.price_code,
             body.email,
             offer_user_id=discount_user_id,
+            source_context=body.source_context,
         )
     except RobokassaError as exc:
         db.rollback()

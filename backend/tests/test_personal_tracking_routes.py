@@ -1,5 +1,6 @@
 import os
 from datetime import datetime, timezone
+from urllib.parse import parse_qs, urlsplit
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 
@@ -10,7 +11,10 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
-from app.intensive_web_access import issue_access_token  # noqa: E402
+from app.intensive_web_access import (  # noqa: E402
+    checkout_source_context_row,
+    issue_access_token,
+)
 from app.main import app  # noqa: E402
 from app.models import AttributionEvent, User  # noqa: E402
 
@@ -32,7 +36,10 @@ def make_client() -> tuple[TestClient, sessionmaker[Session]]:
     app.dependency_overrides[get_settings] = lambda: Settings(
         database_url="sqlite+pysqlite:///:memory:",
         app_auth_secret="test-secret",
-        personal_masterclass_target_url="https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+        personal_masterclass_target_url=(
+            "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+            "?campaign=masterclass#pricing"
+        ),
         telegram_channel_post_base_url="https://t.me/Fitness_Talks",
     )
     return TestClient(app), factory
@@ -58,7 +65,19 @@ def test_personal_masterclass_link_records_trusted_platform() -> None:
     )
 
     assert response.status_code == 307
-    assert response.headers["location"] == "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    target = urlsplit(response.headers["location"])
+    assert target.scheme == "https"
+    assert target.netloc == "xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
+    assert target.path == ""
+    assert target.fragment == "pricing"
+    target_query = parse_qs(target.query)
+    assert target_query["campaign"] == ["masterclass"]
+    assert target_query["source_context"] != [token]
+    with factory() as db:
+        source_row = checkout_source_context_row(
+            db, "test-secret", target_query["source_context"][0]
+        )
+        assert source_row is not None
     assert response.headers["cache-control"] == "no-store"
     with factory() as db:
         event = db.scalar(select(AttributionEvent))

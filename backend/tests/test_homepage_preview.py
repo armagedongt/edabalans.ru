@@ -809,6 +809,14 @@ def test_release_candidate_keeps_a_valid_intensive_offer_for_catalog_and_checkou
     assert "personalPrice.textContent.replace(/^Для вас ещё дешевле:" in response.text
 
 
+def test_release_candidate_keeps_source_context_separate_from_intensive_offer() -> None:
+    response = client.get("/preview/homepage-release-candidate?embed=tilda")
+
+    assert "const sourceContextStorageKey = 'edabalans_checkout_source_v1'" in response.text
+    assert "function readSourceContext()" in response.text
+    assert "source_context: activeSourceContext || null" in response.text
+
+
 def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers() -> None:
     response = client.get("/preview/homepage-release-candidate?embed=tilda")
 

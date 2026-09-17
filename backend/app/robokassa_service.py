@@ -18,8 +18,22 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.config import Settings
-from app.intensive_web_access import OFFER_CODE, OFFER_DISCOUNT, offer_for_user
-from app.models import OfferCheckout, Payment, PriceEntry, PricingVersion, Product, User
+from app.intensive_web_access import (
+    OFFER_CODE,
+    OFFER_DISCOUNT,
+    checkout_source_context_row,
+    offer_for_user,
+)
+from app.models import (
+    OfferCheckout,
+    Payment,
+    PriceEntry,
+    PricingVersion,
+    Product,
+    TelegramTrackingEvent,
+    User,
+    UserEmail,
+)
 from app.pricing_service import amount_value, pricing_entry_map, site_tariff_amount
 from app.product_catalog_service import tariff_public
 from app.tilda_service import (
@@ -27,6 +41,7 @@ from app.tilda_service import (
     bind_user_contacts,
     find_or_create_user,
     grant_payment_access,
+    record_paid_tracking_event,
     validate_user_email_binding,
 )
 from app.account_onboarding_service import ensure_paid_account_onboarding
@@ -46,6 +61,16 @@ MANUAL_SERVICE_TITLE = "Свободная оплата"
 MOSCOW = ZoneInfo("Europe/Moscow")
 EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 HASH_ALGORITHMS = {"md5", "sha1", "sha256", "sha384", "sha512"}
+ACQUISITION_EVENT_TYPES = ("start_first", "start_repeat", "start_maintenance")
+ACQUISITION_QUERY_KEYS = (
+    "utm_source",
+    "utm_medium",
+    "utm_campaign",
+    "utm_content",
+    "utm_term",
+    "yclid",
+    "alias",
+)
 
 
 class RobokassaError(ValueError):
@@ -69,6 +94,110 @@ def _amount_text(value: Decimal) -> str:
 
 def _invoice_id(payment_id: uuid.UUID) -> int:
     return (payment_id.int & ((1 << 63) - 1)) or 1
+
+
+def _unknown_source_snapshot() -> dict[str, str]:
+    return {"status": "unknown"}
+
+
+def _stored_acquisition_snapshot(
+    db: Session, user_id: uuid.UUID
+) -> dict[str, object] | None:
+    """Copy only previously persisted acquisition facts, never checkout query data."""
+    event = db.scalar(
+        select(TelegramTrackingEvent)
+        .where(
+            TelegramTrackingEvent.user_id == user_id,
+            TelegramTrackingEvent.event_type.in_(ACQUISITION_EVENT_TYPES),
+        )
+        .order_by(TelegramTrackingEvent.occurred_at.asc())
+    )
+    if event is None:
+        return None
+    metadata = event.metadata_json if isinstance(event.metadata_json, dict) else {}
+    raw_query = metadata.get("raw_query")
+    safe_query = {
+        key: str(raw_query[key]).strip()
+        for key in ACQUISITION_QUERY_KEYS
+        if isinstance(raw_query, dict) and raw_query.get(key) is not None
+        and str(raw_query[key]).strip()
+    }
+    snapshot: dict[str, object] = {
+        "event_type": event.event_type,
+        "raw_query": safe_query,
+    }
+    if event.tracking_link_id:
+        snapshot["tracking_link_id"] = event.tracking_link_id
+    if metadata.get("journey_id"):
+        snapshot["journey_id"] = str(metadata["journey_id"])
+    return snapshot
+
+
+def trusted_source_snapshot(
+    db: Session, settings: Settings, source_context: str | None, payer_email: str
+) -> dict[str, object] | None:
+    """Validate a personal-link context without turning it into buyer identity.
+
+    A matching, already known email is required before the token's owner may be
+    used for attribution. The confirmation path resolves the purchaser from the
+    payment email in its normal way.
+    """
+    if not source_context:
+        return None
+    token_row = checkout_source_context_row(db, settings.app_auth_secret, source_context)
+    if token_row is None:
+        return _unknown_source_snapshot()
+    source_user = db.get(User, token_row.user_id)
+    if source_user is None:
+        return _unknown_source_snapshot()
+    has_email = db.scalar(
+        select(UserEmail.id).where(UserEmail.user_id == source_user.id)
+    )
+    if has_email is None:
+        return _unknown_source_snapshot()
+    try:
+        validate_user_email_binding(db, source_user, payer_email)
+    except TildaPayloadError:
+        return _unknown_source_snapshot()
+    return {
+        "status": "verified",
+        "original_acquisition": _stored_acquisition_snapshot(db, source_user.id),
+        # The source token proves the personal-link route and its messenger
+        # platform, but has no mailing identifier. Do not invent one.
+        "current_mailing_touch": {
+            "kind": "personal_masterclass_link",
+            "platform": token_row.platform,
+        },
+    }
+
+
+def _is_initial_direct_product_payment(
+    checkout: OfferCheckout | None, payment: Payment
+) -> bool:
+    return (
+        checkout is not None
+        and checkout.checkout_kind == "public_site_robokassa"
+        and not bool((payment.raw_payload or {}).get("account_purchase"))
+    )
+
+
+def _record_initial_direct_payment(
+    db: Session,
+    payment: Payment,
+    checkout: OfferCheckout | None,
+    occurred_at: datetime,
+) -> None:
+    if not _is_initial_direct_product_payment(checkout, payment):
+        return
+    metadata = payment.raw_payload or {}
+    source_snapshot = metadata.get("trusted_source_snapshot")
+    record_paid_tracking_event(
+        db,
+        payment,
+        None,
+        occurred_at,
+        trusted_source_snapshot=source_snapshot if isinstance(source_snapshot, dict) else None,
+    )
 
 
 def _require_checkout_settings(settings: Settings) -> tuple[str, str]:
@@ -180,6 +309,7 @@ def create_payment(
     *,
     offer_user_id: uuid.UUID | None = None,
     account_user: User | None = None,
+    source_context: str | None = None,
 ) -> dict:
     _require_checkout_settings(settings)
     email = normalize_checkout_email(email_original)
@@ -196,6 +326,7 @@ def create_payment(
             validate_user_email_binding(db, offer_user, email)
         except TildaPayloadError as exc:
             raise RobokassaError(str(exc)) from exc
+    source_snapshot = trusted_source_snapshot(db, settings, source_context, email)
     entry = pricing_entry_map(db, version).get(price_code)
     if entry is None or entry.section != "site_tariffs" or not entry.enabled:
         raise RobokassaError("Тариф недоступен")
@@ -263,6 +394,8 @@ def create_payment(
         "offer_code": OFFER_CODE if offer else None,
         "account_purchase": account_user is not None,
     }
+    if source_snapshot is not None:
+        payment.raw_payload["trusted_source_snapshot"] = source_snapshot
     fields = _payment_fields(settings, payment, title, email, expires_at)
     db.commit()
     return {
@@ -539,6 +672,11 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     )
     if payment is None:
         raise RobokassaError("Счёт Robokassa не найден")
+    timestamp = payload.get("header", {}).get("timestamp")
+    try:
+        occurred_at = datetime.fromtimestamp(int(timestamp), tz=timezone.utc)
+    except (TypeError, ValueError, OSError):
+        occurred_at = datetime.now(timezone.utc)
     if payment.payment_status in {"paid", "test_paid"}:
         if payment.external_payment_id not in {None, operation_id}:
             raise RobokassaError("Операция Robokassa не совпадает со счётом")
@@ -551,9 +689,14 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
                 **dict(payment.raw_payload or {}),
                 "notification": payload,
             }
-            db.commit()
-        else:
-            db.rollback()
+        checkout = db.scalar(
+            select(OfferCheckout).where(OfferCheckout.payment_id == payment.id)
+        )
+        if payment.payment_status == "paid":
+            # A repeated ResultUrl2 is the safe repair path when a prior
+            # confirmation did not yet produce its deduplicated tracking event.
+            _record_initial_direct_payment(db, payment, checkout, occurred_at)
+        db.commit()
         return invoice_id
     try:
         paid_amount = Decimal(str(data.get("incSum")))
@@ -566,11 +709,6 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
     )
     if checkout is None:
         raise RobokassaError("Checkout Robokassa не найден")
-    timestamp = payload.get("header", {}).get("timestamp")
-    try:
-        occurred_at = datetime.fromtimestamp(int(timestamp), tz=timezone.utc)
-    except (TypeError, ValueError, OSError):
-        occurred_at = datetime.now(timezone.utc)
     if checkout.checkout_kind == LIVE_PROBE_CHECKOUT_KIND:
         payment.external_payment_id = operation_id
         payment.payment_status = "paid"
@@ -657,6 +795,9 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
         "integration": {"test_mode": is_test_payment},
         "notification": payload,
     }
+    trusted_snapshot = checkout_metadata.get("trusted_source_snapshot")
+    if isinstance(trusted_snapshot, dict):
+        payment.raw_payload["trusted_source_snapshot"] = trusted_snapshot
     checkout.user_id = user.id
     checkout.status = payment.payment_status
     if not is_test_payment:
@@ -673,6 +814,7 @@ def confirm_payment(db: Session, settings: Settings, compact_jws: str) -> str:
             )
         else:
             grant_payment_access(db, payment, checkout, occurred_at)
+            _record_initial_direct_payment(db, payment, checkout, occurred_at)
         if settings.account_onboarding_enabled and not account_purchase:
             ensure_paid_account_onboarding(db, payment, settings)
     elif checkout.checkout_kind == "recurring_subscription":

@@ -1281,6 +1281,8 @@ def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     assert "/preview/homepage-release-candidate?embed=tilda" in response.text
     assert "DOMParser" in response.text
     assert "edabalans_intensive_offer_v1" in response.text
+    assert "edabalans_checkout_source_v1" in response.text
+    assert "EdabalansCheckoutSourceContext" in response.text
     assert "window.localStorage" in response.text
     assert "history.replaceState" in response.text
     assert "data-production-src" in response.text

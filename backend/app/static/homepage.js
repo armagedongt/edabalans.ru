@@ -7,6 +7,7 @@
     : 'https://edabalans.ru';
   var mount = document.querySelector('[data-edabalans-homepage]');
   var offerStorageKey = 'edabalans_intensive_offer_v1';
+  var sourceContextStorageKey = 'edabalans_checkout_source_v1';
 
   if (!mount || mount.dataset.edabalansLoaded === 'true') return;
   mount.dataset.edabalansLoaded = 'true';
@@ -239,7 +240,24 @@
     });
   }
 
+  function restoreSourceContext() {
+    var queryToken = new URLSearchParams(window.location.search).get('source_context') || '';
+    var token = queryToken;
+    if (!token) {
+      try { token = window.sessionStorage.getItem(sourceContextStorageKey) || ''; } catch (_error) {}
+    }
+    if (!token || token.length > 160) return '';
+    try { window.sessionStorage.setItem(sourceContextStorageKey, token); } catch (_error) {}
+    if (queryToken) {
+      var url = new URL(window.location.href);
+      url.searchParams.delete('source_context');
+      window.history.replaceState(window.history.state, '', url.href);
+    }
+    return token;
+  }
+
   prepareTildaShell();
+  window.EdabalansCheckoutSourceContext = restoreSourceContext();
   restoreOffer().then(function () { return fetch(appHost + '/preview/homepage-release-candidate?embed=tilda', {
     credentials: 'omit',
     mode: 'cors',

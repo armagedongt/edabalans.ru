@@ -3260,10 +3260,12 @@
       // This is also the key used by homepage.js in the Tilda mount. Keeping one
       // browser record makes the offer survive ordinary revisits for its full window.
       const offerStorageKey = 'edabalans_intensive_offer_v1';
+      const sourceContextStorageKey = 'edabalans_checkout_source_v1';
       let selectedPlan = null;
       let checkoutTrigger = null;
       let intensiveOfferTimerId = null;
       let activeOfferToken = '';
+      let activeSourceContext = '';
       const formatPrice = (amount) => {
         const numericAmount = Number(amount);
         const hasKopecks = !Number.isInteger(numericAmount);
@@ -3303,6 +3305,20 @@
             expiresAt: offer.expires_at
           }));
         } catch (_error) {}
+      }
+
+      function readSourceContext() {
+        const queryToken = new URLSearchParams(window.location.search).get('source_context') || '';
+        const inheritedToken = typeof window.EdabalansCheckoutSourceContext === 'string'
+          ? window.EdabalansCheckoutSourceContext
+          : '';
+        let token = queryToken || inheritedToken;
+        if (!token) {
+          try { token = window.sessionStorage.getItem(sourceContextStorageKey) || ''; } catch (_error) {}
+        }
+        if (!token || token.length > 160) return '';
+        try { window.sessionStorage.setItem(sourceContextStorageKey, token); } catch (_error) {}
+        return token;
       }
 
       function clearActiveOfferToken() {
@@ -3411,6 +3427,7 @@
         root.dataset.pricingSource = 'loading';
         try {
           activeOfferToken = readActiveOfferToken();
+          activeSourceContext = readSourceContext();
           const pricingUrl = new URL(root.dataset.pricingEndpoint, window.location.origin);
           if (activeOfferToken) {
             pricingUrl.searchParams.set('intensive_offer', activeOfferToken);
@@ -3663,7 +3680,8 @@
             body: JSON.stringify({
               price_code: selectedPlan.dataset.priceCode,
               email: checkoutEmail.value,
-              intensive_offer: activeOfferToken || null
+              intensive_offer: activeOfferToken || null,
+              source_context: activeSourceContext || null
             })
           });
           const result = await response.json().catch(() => ({}));

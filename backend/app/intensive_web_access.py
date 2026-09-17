@@ -31,6 +31,7 @@ ACCESS_PURPOSE = "intensive_access"
 SESSION_COOKIE = "edabalans_intensive_session"
 SESSION_MAX_AGE = 2 * 365 * 24 * 60 * 60
 ACCESS_TOKEN_TTL = timedelta(days=100 * 365)
+CHECKOUT_SOURCE_CONTEXT_TTL = timedelta(hours=2)
 DAY_DELAY = timedelta(hours=23)
 OFFER_DURATION = timedelta(hours=72)
 OFFER_STAGE_CODE = "intensive_day4_discount"
@@ -145,6 +146,48 @@ def access_token_row(
         )
     )
     if row is None or row.platform not in PLATFORMS:
+        return None
+    current = aware_utc(now or datetime.now(timezone.utc))
+    return row if aware_utc(row.expires_at) > current else None
+
+
+def issue_checkout_source_context(
+    secret: str,
+    token_row: MessengerLinkToken,
+    *,
+    now: datetime | None = None,
+) -> str:
+    """Create a short-lived, attribution-only carrier for a verified access link.
+
+    Unlike the original intensive token, this value cannot establish a web
+    session. Its signed payload names only the existing database row.
+    """
+    current = aware_utc(now or datetime.now(timezone.utc))
+    expires_at = min(aware_utc(token_row.expires_at), current + CHECKOUT_SOURCE_CONTEXT_TTL)
+    row_id = base64.urlsafe_b64encode(token_row.id.bytes).decode().rstrip("=")
+    return _signed_value(secret, {"i": row_id, "exp": int(expires_at.timestamp())})
+
+
+def checkout_source_context_row(
+    db: Session,
+    secret: str,
+    value: str | None,
+    *,
+    now: datetime | None = None,
+) -> MessengerLinkToken | None:
+    """Resolve only a short-lived checkout attribution context, never a session."""
+    payload = _verified_payload(secret, value)
+    if payload is None:
+        return None
+    row_id = str(payload.get("i") or "")
+    try:
+        token_id = uuid.UUID(
+            bytes=base64.urlsafe_b64decode(row_id + "=" * (-len(row_id) % 4))
+        )
+    except (ValueError, TypeError):
+        return None
+    row = db.get(MessengerLinkToken, token_id)
+    if row is None or row.purpose != ACCESS_PURPOSE or row.platform not in PLATFORMS:
         return None
     current = aware_utc(now or datetime.now(timezone.utc))
     return row if aware_utc(row.expires_at) > current else None

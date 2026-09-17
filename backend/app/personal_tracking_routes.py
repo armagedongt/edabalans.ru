@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import RedirectResponse
@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.config import Settings, get_settings
 from app.database import get_db
-from app.intensive_web_access import access_token_row
+from app.intensive_web_access import access_token_row, issue_checkout_source_context
 from app.models import AttributionEvent
 
 
@@ -63,6 +63,22 @@ def _redirect(target: str) -> RedirectResponse:
     return response
 
 
+def _with_source_context(target: str, source_context: str) -> str:
+    """Carry a short-lived attribution-only context to the checkout surface.
+
+    The context cannot establish a logged-in session. The checkout endpoint
+    validates it again and refuses to use it as identity.
+    """
+    parts = urlsplit(target)
+    query = [
+        (key, value)
+        for key, value in parse_qsl(parts.query, keep_blank_values=True)
+        if key != "source_context"
+    ]
+    query.append(("source_context", source_context))
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
 @router.get("/m/{token}", include_in_schema=False)
 def personal_masterclass_link(
     token: str,
@@ -71,7 +87,10 @@ def personal_masterclass_link(
     settings: Settings = Depends(get_settings),
 ) -> RedirectResponse:
     token_row = _resolve_token(db, token)
-    target = _https_target(settings.personal_masterclass_target_url)
+    target = _with_source_context(
+        _https_target(settings.personal_masterclass_target_url),
+        issue_checkout_source_context(settings.app_auth_secret, token_row),
+    )
     _record(
         db,
         request,

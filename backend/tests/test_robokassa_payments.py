@@ -20,7 +20,11 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
-from app.intensive_web_access import create_offer_token  # noqa: E402
+from app.intensive_web_access import (  # noqa: E402
+    create_offer_token,
+    issue_access_token,
+    issue_checkout_source_context,
+)
 from app.account_security import token_hash  # noqa: E402
 from app.account_auth_routes import COOKIE_NAME  # noqa: E402
 from app.main import app  # noqa: E402
@@ -41,6 +45,7 @@ from app.models import (  # noqa: E402
     UserEmail,
     UserOffer,
     RecurringSubscription,
+    TelegramTrackingEvent,
 )
 from app.robokassa_service import _result_public_key  # noqa: E402
 import app.robokassa_subscription_service as subscription_service  # noqa: E402
@@ -241,14 +246,81 @@ def signed_result(
     return f"{signing_input}.{base64.urlsafe_b64encode(signature).decode().rstrip('=')}"
 
 
-def create_checkout(client: TestClient, *, email: str = "buyer@example.test") -> dict:
+def create_checkout(
+    client: TestClient,
+    *,
+    email: str = "buyer@example.test",
+    source_context: str | None = None,
+) -> dict:
+    body: dict[str, str] = {
+        "price_code": "site.masterclass.basic",
+        "email": email,
+    }
+    if source_context:
+        body["source_context"] = source_context
     response = client.post(
         "/api/payments/robokassa/checkout",
-        json={"price_code": "site.masterclass.basic", "email": email},
+        json=body,
         headers={"Origin": "https://app.edabalans.ru"},
     )
     assert response.status_code == 200, response.text
     return response.json()
+
+
+def seed_personal_link_source(
+    factory: sessionmaker[Session], *, email: str, yclid: str
+) -> tuple[uuid.UUID, str]:
+    with factory() as db:
+        user = User(data_origin="native", first_seen_at=datetime.now(timezone.utc))
+        db.add(user)
+        db.flush()
+        db.add(
+            UserEmail(
+                user_id=user.id,
+                email_original=email,
+                email_normalized=email,
+                source="test",
+                verification_status="verified",
+            )
+        )
+        db.add(
+            TelegramTrackingEvent(
+                id=str(uuid.uuid4()),
+                user_id=user.id,
+                telegram_user_id="100",
+                event_type="start_first",
+                metadata_json={
+                    "raw_query": {
+                        "utm_source": "yandex",
+                        "utm_campaign": "masterclass",
+                        "yclid": yclid,
+                    },
+                    "journey_id": "journey-1",
+                },
+                occurred_at=datetime.now(timezone.utc) - timedelta(minutes=5),
+            )
+        )
+        db.add(
+            TelegramTrackingEvent(
+                id=str(uuid.uuid4()),
+                user_id=user.id,
+                telegram_user_id="100",
+                event_type="start_repeat",
+                metadata_json={
+                    "raw_query": {
+                        "utm_source": "other-source",
+                        "utm_campaign": "later-campaign",
+                        "yclid": "later-yclid",
+                    },
+                    "journey_id": "journey-later",
+                },
+                occurred_at=datetime.now(timezone.utc) - timedelta(minutes=1),
+            )
+        )
+        _, token_row = issue_access_token(db, user.id, "telegram")
+        source_context = issue_checkout_source_context("robokassa-tests", token_row)
+        db.commit()
+        return user.id, source_context
 
 
 def test_checkout_uses_database_price_and_does_not_create_user() -> None:
@@ -574,6 +646,11 @@ def test_live_probe_result_records_payment_without_user_access_or_onboarding() -
         assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
         assert db.scalar(select(func.count(AccountCredential.user_id))) == 0
         assert db.scalar(select(func.count(MessengerLinkToken.id))) == 0
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 0
     app.dependency_overrides.clear()
 
 
@@ -664,6 +741,11 @@ def test_signed_test_result_creates_user_without_production_access_and_is_idempo
         assert payment.user_id == email.user_id == checkout.user_id
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 0
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 0
     app.dependency_overrides.clear()
 
 
@@ -686,6 +768,205 @@ def test_signed_production_result_grants_access() -> None:
         assert payment.raw_payload["success_kind"] == "public_masterclass"
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        paid_event = db.scalar(
+            select(TelegramTrackingEvent).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        )
+        assert paid_event is not None
+        assert paid_event.metadata_json["attribution_source"] == "unattributed"
+    app.dependency_overrides.clear()
+
+
+def test_repeated_live_callback_repairs_missing_direct_purchase_tracking_event() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    checkout = create_checkout(client, email="repair@example.test")
+    notification = signed_result(key, checkout["invoice_id"], "5900.00")
+
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+    with factory() as db:
+        event = db.scalar(
+            select(TelegramTrackingEvent).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        )
+        assert event is not None
+        db.delete(event)
+        db.commit()
+
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+    with factory() as db:
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 1
+    app.dependency_overrides.clear()
+
+
+def test_account_purchase_is_not_exported_as_initial_public_purchase() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    with factory() as db:
+        user = User(data_origin="native", first_seen_at=datetime.now(timezone.utc))
+        db.add(user)
+        db.flush()
+        db.add(
+            UserEmail(
+                user_id=user.id,
+                email_original="account@example.test",
+                email_normalized="account@example.test",
+                source="test",
+                verification_status="verified",
+            )
+        )
+        db.add(
+            AccountCredential(
+                user_id=user.id,
+                password_hash="not-used-in-account-checkout-test",
+                password_version=1,
+                issued_via="test",
+            )
+        )
+        raw_session = "account-checkout-session"
+        db.add(
+            AccountSession(
+                user_id=user.id,
+                token_hash=token_hash(raw_session),
+                password_version=1,
+                expires_at=datetime.now(timezone.utc) + timedelta(days=1),
+            )
+        )
+        db.commit()
+    client.cookies.set(COOKIE_NAME, raw_session)
+
+    checkout = client.post(
+        "/api/payments/robokassa/account-tariffs/checkout",
+        json={"price_code": "site.masterclass.basic"},
+        headers={"Origin": "https://app.edabalans.ru"},
+    )
+    assert checkout.status_code == 200, checkout.text
+    assert client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout.json()["invoice_id"], "5900.00"),
+    ).status_code == 200
+
+    with factory() as db:
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 0
+    app.dependency_overrides.clear()
+
+
+def test_personal_source_context_is_frozen_and_creates_one_paid_tracking_event() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    source_user_id, source_context = seed_personal_link_source(
+        factory, email="buyer@example.test", yclid="trusted-yclid"
+    )
+    checkout = create_checkout(
+        client, email="buyer@example.test", source_context=source_context
+    )
+
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        assert payment is not None
+        snapshot = payment.raw_payload["trusted_source_snapshot"]
+        assert snapshot == {
+            "status": "verified",
+            "original_acquisition": {
+                "event_type": "start_first",
+                "raw_query": {
+                    "utm_source": "yandex",
+                    "utm_campaign": "masterclass",
+                    "yclid": "trusted-yclid",
+                },
+                "journey_id": "journey-1",
+            },
+            "current_mailing_touch": {
+                "kind": "personal_masterclass_link",
+                "platform": "telegram",
+            },
+        }
+        assert source_context not in json.dumps(payment.raw_payload)
+
+    notification = signed_result(key, checkout["invoice_id"], "5900.00")
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+    assert client.post("/integrations/robokassa/result2", content=notification).status_code == 200
+
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        paid_events = db.scalars(
+            select(TelegramTrackingEvent).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ).all()
+        assert payment is not None and payment.user_id == source_user_id
+        assert payment.raw_payload["trusted_source_snapshot"] == snapshot
+        assert len(paid_events) == 1
+        assert paid_events[0].metadata_json["raw_query"] == {"yclid": "trusted-yclid"}
+        assert paid_events[0].metadata_json["attribution_source"] == "trusted_source_snapshot"
+        assert paid_events[0].deduplication_key == f"metrika:purchase:{payment.id}"
+    app.dependency_overrides.clear()
+
+
+def test_mismatched_personal_source_context_is_not_used_for_payer_or_attribution() -> None:
+    client, factory, key = make_client(test_mode=False)
+    seed_catalog(factory)
+    source_user_id, source_context = seed_personal_link_source(
+        factory, email="owner@example.test", yclid="owner-yclid"
+    )
+    checkout = create_checkout(
+        client, email="other@example.test", source_context=source_context
+    )
+
+    assert client.post(
+        "/integrations/robokassa/result2",
+        content=signed_result(key, checkout["invoice_id"], "5900.00"),
+    ).status_code == 200
+
+    with factory() as db:
+        payment = db.scalar(select(Payment))
+        paid_event = db.scalar(
+            select(TelegramTrackingEvent).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        )
+        assert payment is not None and payment.user_id != source_user_id
+        assert payment.raw_payload["trusted_source_snapshot"] == {"status": "unknown"}
+        assert paid_event is not None
+        assert paid_event.metadata_json["raw_query"] == {}
+        assert paid_event.metadata_json["attribution_source"] == "unattributed"
+    app.dependency_overrides.clear()
+
+
+def test_tampered_or_expired_source_context_is_stored_as_unknown() -> None:
+    client, factory, _ = make_client(test_mode=False)
+    seed_catalog(factory)
+    _, source_context = seed_personal_link_source(
+        factory, email="buyer@example.test", yclid="trusted-yclid"
+    )
+    tampered = source_context[:-1] + ("x" if source_context[-1] != "x" else "y")
+    with factory() as db:
+        token_row = db.scalar(select(MessengerLinkToken))
+        assert token_row is not None
+        expired = issue_checkout_source_context(
+            "robokassa-tests", token_row, now=datetime.now(timezone.utc) - timedelta(hours=3)
+        )
+
+    for source_context in (tampered, expired):
+        checkout = create_checkout(
+            client, email="buyer@example.test", source_context=source_context
+        )
+        with factory() as db:
+            payment = db.scalar(
+                select(Payment).where(Payment.external_order_id == checkout["invoice_id"])
+            )
+            assert payment is not None
+            assert payment.raw_payload["trusted_source_snapshot"] == {"status": "unknown"}
     app.dependency_overrides.clear()
 
 
@@ -836,6 +1117,11 @@ def test_manual_payment_keeps_comment_without_creating_access_or_account() -> No
         assert checkout_row is not None and checkout_row.checkout_kind == "manual_service"
         assert db.scalar(select(func.count(User.id))) == 0
         assert db.scalar(select(func.count(UserAccess.id))) == 0
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 0
     app.dependency_overrides.clear()
 
 
@@ -979,6 +1265,11 @@ def test_subscription_result_activates_month_without_account_onboarding() -> Non
         assert row.next_charge_at == row.current_period_end
         assert db.scalar(select(func.count(User.id))) == 1
         assert db.scalar(select(func.count(AccountOnboarding.id))) == 0
+        assert db.scalar(
+            select(func.count(TelegramTrackingEvent.id)).where(
+                TelegramTrackingEvent.event_type == "purchase_paid"
+            )
+        ) == 0
     app.dependency_overrides.clear()
 
 

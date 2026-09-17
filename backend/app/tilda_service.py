@@ -73,6 +73,8 @@ def record_paid_tracking_event(
     payment: Payment,
     referer: str | None,
     occurred_at: datetime,
+    *,
+    trusted_source_snapshot: dict | None = None,
 ) -> None:
     if payment.payment_status != "paid" or payment.user_id is None:
         return
@@ -84,6 +86,22 @@ def record_paid_tracking_event(
 
     yclid = _yclid_from_url(referer)
     source_event: TelegramTrackingEvent | None = None
+    source_tracking_link_id: str | None = None
+    snapshot_acquisition = (
+        trusted_source_snapshot.get("original_acquisition")
+        if isinstance(trusted_source_snapshot, dict)
+        and trusted_source_snapshot.get("status") == "verified"
+        else None
+    )
+    if not yclid and isinstance(snapshot_acquisition, dict):
+        snapshot_query = snapshot_acquisition.get("raw_query")
+        if isinstance(snapshot_query, dict):
+            candidate_yclid = str(snapshot_query.get("yclid") or "").strip()
+            if candidate_yclid:
+                yclid = candidate_yclid
+        tracking_link_id = snapshot_acquisition.get("tracking_link_id")
+        if isinstance(tracking_link_id, str) and tracking_link_id:
+            source_tracking_link_id = tracking_link_id
     if not yclid:
         candidates = db.scalars(
             select(TelegramTrackingEvent)
@@ -107,7 +125,9 @@ def record_paid_tracking_event(
     raw_query = {"yclid": yclid} if yclid else {}
     db.add(TelegramTrackingEvent(
         id=str(uuid.uuid4()),
-        tracking_link_id=source_event.tracking_link_id if source_event else None,
+        tracking_link_id=(
+            source_event.tracking_link_id if source_event else source_tracking_link_id
+        ),
         user_id=payment.user_id,
         event_type="purchase_paid",
         metadata_json={
@@ -116,7 +136,9 @@ def record_paid_tracking_event(
             "price": str(payment.amount),
             "currency": payment.currency,
             "attribution_source": "payment_referer" if _yclid_from_url(referer) else (
-                "messenger_start" if yclid else "unattributed"
+                "trusted_source_snapshot" if isinstance(snapshot_acquisition, dict) and yclid else (
+                    "messenger_start" if yclid else "unattributed"
+                )
             ),
         },
         deduplication_key=deduplication_key,
