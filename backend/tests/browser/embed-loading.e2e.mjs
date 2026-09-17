@@ -344,6 +344,7 @@ try {
     const entry={width,progress:{...progress,current_day:3}};
     const deep=await nativePage('?course_day=3&theme='+theme,entry);
     await deep.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'));
+    await waitForReveal(deep.native);
     const expected=await courseSkin(deep.native);
     assert(expected['.sidebar']&&expected['.hero h1']&&expected['.topic'],'Compare rendered course blocks, not missing nodes');
     assert.equal(expected['.content'].fontWeight,'400','Course body text must not inherit dashboard font weight');
@@ -356,6 +357,7 @@ try {
     await fromDashboard.native.locator('[data-app="masterclass-course"]').click();
     await fromDashboard.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'));
     await fromDashboard.native.waitForFunction(()=>document.querySelector('#days .day-button[data-day="3"]')?.classList.contains('active'));
+    await waitForReveal(fromDashboard.native);
     assert.deepEqual(await courseSkin(fromDashboard.native),expected,'Direct and dashboard course skin must match at '+theme+' '+width);
     assert.equal(await deep.native.locator('link[href*="/assets/course-visual.css"]').count(),1,'Course has one canonical stylesheet');
     assert.deepEqual(deep.faults,[]);assert.deepEqual(fromDashboard.faults,[]);
