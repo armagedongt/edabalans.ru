@@ -160,6 +160,30 @@ def test_max_client_can_reply_edit_and_delete_a_practice_message():
     assert requests[2].url.path == "/messages/max-practice-1"
 
 
+def test_max_client_registers_webhook_subscription_with_secret_header_contract():
+    captured = {}
+
+    def handler(request):
+        captured["request"] = request
+        return httpx.Response(200, json={"success": True})
+
+    MaxClient("max-secret", httpx.MockTransport(handler)).set_webhook_subscription(
+        "https://edabalans.ru/api/messaging/cross-messenger/max/webhook",
+        "relay-secret",
+        ["message_created", "message_edited", "message_removed"],
+    )
+
+    request = captured["request"]
+    assert request.method == "POST"
+    assert request.url.path == "/subscriptions"
+    assert request.headers["Authorization"] == "max-secret"
+    assert json.loads(request.content) == {
+        "url": "https://edabalans.ru/api/messaging/cross-messenger/max/webhook",
+        "secret": "relay-secret",
+        "update_types": ["message_created", "message_edited", "message_removed"],
+    }
+
+
 def test_max_client_sends_sequence_photo_and_link_button():
     captured = {}
 

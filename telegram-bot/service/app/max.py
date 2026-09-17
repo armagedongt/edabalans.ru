@@ -406,6 +406,19 @@ class MaxClient:
             )
         response.raise_for_status()
 
+    def set_webhook_subscription(self, url: str, secret: str, update_types: list[str]) -> None:
+        """Register the MAX webhook without putting its token or secret in the URL."""
+        with self._client() as client:
+            response = client.post(
+                f"{MAX_API_BASE}/subscriptions",
+                headers={"Authorization": self.token},
+                json={"url": url, "secret": secret, "update_types": update_types},
+            )
+        response.raise_for_status()
+        payload = response.json()
+        if payload.get("success") is not True:
+            raise RuntimeError("MAX did not accept the webhook subscription")
+
     def subscription_status(self, _user_id: str) -> None:
         # MAX has no Telegram-channel membership to check. Returning unknown
         # selects the full in-bot material without creating subscription tags.
