@@ -16,6 +16,10 @@ const dqsHtml = await readFile(new URL('../../app/static/apps/dqs.html', import.
 const strengthHtml = await readFile(new URL('../../app/static/apps/strength.html', import.meta.url), 'utf8')
 const dqsRules = await readFile(new URL('../../app/static/apps/dqs-category-rules.js', import.meta.url), 'utf8')
 const accountVisual = await readFile(new URL('../../app/static/account-visual.css', import.meta.url), 'utf8')
+const accountTheme = await readFile(new URL('../../app/static/account-theme.css', import.meta.url), 'utf8')
+const accountThemeJs = await readFile(new URL('../../app/static/account-theme.js', import.meta.url), 'utf8')
+const articleTypography = await readFile(new URL('../../../content/article-components/typography.css', import.meta.url), 'utf8')
+const articleNote = await readFile(new URL('../../../content/article-components/note.css', import.meta.url), 'utf8')
 const appShellCss = await readFile(new URL('../../app/static/app-shell.css', import.meta.url), 'utf8')
 async function capture(page, name) {
   if (!process.env.QA_OUT) return
@@ -53,7 +57,7 @@ function barrier() {
 try {
   // The boundary is the real embed + browser DOM/CSS lifecycle, not a mocked loader.
   const page = await browser.newPage()
-  const css = barrier(), data = barrier()
+  const css = barrier(), data = barrier(), dataStarted = barrier()
   const counts = {session: 0, html: 0, css: 0}
   const errors = []
   page.on('pageerror', error => errors.push(String(error)))
@@ -64,17 +68,19 @@ try {
     if (path === '/api/account-auth/session') { counts.session++; return route.fulfill({json:{authenticated:true,email:'reader@example.test'}}) }
     if (path === '/apps/account.html') { counts.html++; return route.fulfill({contentType:'text/html',body:html}) }
     if (path === '/visual.css') { counts.css++; await css.promise; return route.fulfill({contentType:'text/css',body:'#account-app h1{color:rgb(17,142,216)}'}) }
-    if (path === '/api/test-data') { await data.promise; return route.fulfill({json:{ok:true}}) }
+    if (path === '/api/test-data') { dataStarted.release(); await data.promise; return route.fulfill({json:{ok:true}}) }
     if (path === '/slow-video') return route.abort()
     return route.fulfill({contentType:'application/javascript',body:''})
   })
   await page.goto(origin, {waitUntil:'domcontentloaded'})
-  await page.waitForFunction(() => document.querySelector('.ed-loading-stage')?.textContent === 'Загрузка оформления')
+  await page.locator('#account-app h1').waitFor({state:'attached'})
+  assert.equal(await page.locator('.ed-loading-stage').textContent(), 'Загрузка страницы')
   assert.equal(await page.locator('#account-app h1').isVisible(), false)
   const before = await page.locator('.ed-loading-stage').boundingBox()
   await capture(page, 'loader-styles')
   css.release()
-  await page.waitForFunction(() => document.querySelector('.ed-loading-stage')?.textContent === 'Загрузка материалов')
+  await dataStarted.promise
+  assert.equal(await page.locator('.ed-loading-stage').textContent(), 'Загрузка страницы', 'Cosmetic sub-stages must not cycle through extra captions')
   assert.equal(await page.locator('#account-app h1').isVisible(), false)
   const after = await page.locator('.ed-loading-stage').boundingBox()
   assert.equal(before.y, after.y, 'Changing the stage must not move the loader')
@@ -162,7 +168,7 @@ try {
   const account = {email:'reader@example.test',state:'ready',courses:[{app:'masterclass-course',code:'masterclass',product_code:'masterclass',owned:true,ready:true,title:'Мастер-класс'},{code:'calories',product_code:'calories',owned:false,ready:true,title:'Калорийный курс'}],applications:[]}
   const progress = {current_day:2,server_now:new Date().toISOString(),days:manifest.days.map(d=>({number:d.number,opened:d.number<=5,can_open:d.number<=5,completed:false,completed_steps:d.steps.map((_,i)=>i),checkmarks:{},first_opened_at:new Date().toISOString()}))}
   async function nativePage(query, delays) {
-    const native = await browser.newPage({viewport:{width:1440,height:1000}})
+    const native = await browser.newPage({viewport:{width:delays.width||1440,height:1000},reducedMotion:'reduce'})
     const requests = {account:0,session:0,step:0,corpus:0}
     const faults = []
     await native.addInitScript(()=>{
@@ -182,6 +188,10 @@ try {
       if(path==='/apps/dqs-category-rules.js')return route.fulfill({contentType:'application/javascript; charset=utf-8',body:dqsRules})
       if(path==='/apps/masterclass-offers.html'){if(delays.special)await delays.special.promise;return route.fulfill({contentType:'text/html; charset=utf-8',body:'<div id="masterclass-offers-app">Готовые предложения</div>'})}
       if(path==='/assets/course-visual.css')return route.fulfill({contentType:'text/css',body:visualCss})
+      if(path==='/assets/account-theme.css')return route.fulfill({contentType:'text/css',body:accountTheme})
+      if(path==='/assets/account-theme.js')return route.fulfill({contentType:'application/javascript',body:accountThemeJs})
+      if(path==='/assets/article-typography.css')return route.fulfill({contentType:'text/css',body:articleTypography})
+      if(path==='/assets/article-note.css')return route.fulfill({contentType:'text/css',body:articleNote})
       if(url.hostname==='fonts.googleapis.com'){if(delays.fontCss)await delays.fontCss.promise;return route.fulfill({contentType:'text/css',body:''})}
       if(path==='/assets/account-visual.css'&&delays.fontFile)return route.fulfill({contentType:'text/css',body:'@font-face{font-family:Manrope;src:url(/slow-font.woff2)} .account-shell{font-family:Manrope,Arial}'})
       if(path==='/assets/account-visual.css')return route.fulfill({contentType:'text/css',body:accountVisual})
@@ -199,7 +209,7 @@ try {
       if(path==='/api/apps/strength')return route.fulfill({json:{ok:true,user:{user_id:'preview',email:account.email,display_name:'Предпросмотр'},workout:{workout_types:[],exercise_catalog:[],sessions:[],session_exercises:[],sets:[]}}})
       if(path==='/api/masterclass/account-offers'){if(delays.offers)await delays.offers.promise;return route.fulfill({json:{focusable_product_codes:['calories']}})}
       if(path==='/api/masterclass/course/manifest')return route.fulfill({json:manifest})
-      if(path==='/api/masterclass/course')return route.fulfill({json:progress})
+      if(path==='/api/masterclass/course')return route.fulfill({json:delays.progress||progress})
       if(/\/steps\/\d+\/complete$/.test(path))return route.fulfill({json:progress})
       if(path==='/api/masterclass/course/materials'){
         const id=url.searchParams.get('step_id')
@@ -285,13 +295,54 @@ try {
   assert.deepEqual(navigation.faults,[])
   await navigation.native.close()
 
+  // A deep link prefetches the course before mounting it; dashboard entry mounts it
+  // before the first course fetch. Both must expose exactly the same visual system.
+  const courseSkin = native => native.evaluate(() => {
+    const selectors=['.sidebar','.sidebar-account','.course-name','.content','.hero h1','.hero .day-label',
+      '.day-button[data-day="2"] .day-number','.day-button[data-day="3"] .day-number',
+      '.topic','.topic-index','.assignment','.next-day'];
+    const properties=['backgroundColor','backgroundImage','color','fontFamily','fontSize','fontWeight',
+      'borderColor','borderRadius','padding','width','maxWidth'];
+    return Object.fromEntries(selectors.map(selector=>{
+      const element=document.querySelector(selector);
+      if(!element) return [selector,null];
+      const css=getComputedStyle(element);
+      return [selector,Object.fromEntries(properties.map(property=>[property,css[property]]))];
+    }));
+  });
+  for(const theme of ['light','dark'])for(const width of [360,430,619,620,621,768,900,901,1440,1920]){
+    const entry={width,progress:{...progress,current_day:3}};
+    const deep=await nativePage('?course_day=3&theme='+theme,entry);
+    await deep.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'));
+    const expected=await courseSkin(deep.native);
+    assert(expected['.sidebar']&&expected['.hero h1']&&expected['.topic'],'Compare rendered course blocks, not missing nodes');
+    assert.equal(expected['.content'].fontWeight,'400','Course body text must not inherit dashboard font weight');
+    assert(expected['.hero .day-label'],'The day designation must be rendered');
+    assert.match(expected['.hero .day-label'].backgroundImage,/linear-gradient\(/,'Transparent day text must retain its visible gold gradient');
+    assert.match(expected['.hero .day-label'].backgroundImage,/rgb\(255, 194, 90\)/,'Preserve the agreed gold start color');
+    assert.match(expected['.hero .day-label'].backgroundImage,/rgb\(243, 154, 47\)/,'Preserve the agreed gold end color');
+    const fromDashboard=await nativePage('?theme='+theme,entry);
+    await fromDashboard.native.locator('[data-app="masterclass-course"]').waitFor({state:'visible'});
+    await fromDashboard.native.locator('[data-app="masterclass-course"]').click();
+    await fromDashboard.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen')&&document.querySelector('#day .hero h1'));
+    await fromDashboard.native.waitForFunction(()=>document.querySelector('#days .day-button[data-day="3"]')?.classList.contains('active'));
+    assert.deepEqual(await courseSkin(fromDashboard.native),expected,'Direct and dashboard course skin must match at '+theme+' '+width);
+    assert.equal(await deep.native.locator('link[href*="/assets/course-visual.css"]').count(),1,'Course has one canonical stylesheet');
+    assert.deepEqual(deep.faults,[]);assert.deepEqual(fromDashboard.faults,[]);
+    if(process.env.QA_OUT&&[360,430,768,901,1440,1920].includes(width)){
+      await deep.native.screenshot({path:process.env.QA_OUT+'/parity-direct-'+theme+'-'+width+'.png'});
+      await fromDashboard.native.screenshot({path:process.env.QA_OUT+'/parity-dashboard-'+theme+'-'+width+'.png'});
+    }
+    await deep.native.close();await fromDashboard.native.close();
+  }
+
   const article=barrier(), corpus=barrier()
   const direct=await nativePage('?course_day=2&course_material=day-02-article-01',{article,corpus})
   await direct.native.waitForFunction(()=>document.querySelector('#article p')?.textContent.includes('Загрузка материала'))
   assert.equal(await direct.native.locator('#masterclass-course-app').isVisible(),false)
   assert.equal(await direct.native.locator('.ed-loading-screen').count(),1,'Portal, account and course must share one loader')
   assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').count(),1)
-  assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').textContent(),'Загрузка материалов','Nested material loading must replace the completed authorization stage')
+  assert.equal(await direct.native.locator('.ed-loading-screen .ed-loading-stage').textContent(),'Загрузка страницы','Nested loading must replace authorization without cycling cosmetic captions')
   article.release()
   await direct.native.waitForFunction(()=>!document.querySelector('.ed-loading-screen'))
   assert.equal(await direct.native.locator('#article').isVisible(),true)
@@ -307,8 +358,10 @@ try {
   }
   for(const width of [360,430]) {
     await direct.native.setViewportSize({width,height:1000})
+    await direct.native.waitForFunction(expectedWidth=>innerWidth===expectedWidth&&matchMedia('(max-width:620px)').matches,width)
+    await direct.native.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
     const box=await direct.native.locator('.article-inline-image').boundingBox()
-    assert(box.x>=-1&&box.x+box.width<=width+1,'Ordinary image preserves mobile edge-to-edge bounds')
+    assert(box.x>=-1&&box.x+box.width<=width+1,'Ordinary image preserves mobile edge-to-edge bounds: '+JSON.stringify({width,box}))
   }
   corpus.release()
   await direct.native.close()
@@ -414,7 +467,7 @@ try {
       return route.fulfill({contentType:'text/css',body:''})
     })
     await app.goto(origin,{waitUntil:'domcontentloaded'})
-    await app.waitForFunction(()=>document.querySelector('.ed-loading-stage')?.textContent==='Загрузка материалов').catch(async error=>{
+    await app.waitForFunction(()=>document.querySelector('.ed-loading-stage')?.textContent==='Загрузка страницы').catch(async error=>{
       console.error(code,await app.locator('body').innerHTML())
       throw error
     })

@@ -511,9 +511,7 @@
           ensureLegalFooter(mount);
         }
         // App-owned shared styles must also be mounted when HTML is embedded in /lk.
-        beginLoading(mount, 'Загрузка оформления');
         return prepareAppAssets(doc).then(function () { return executeScripts(doc); }).then(function () {
-          beginLoading(mount, 'Загрузка материалов');
           return readyRequests.get(mount);
         }).then(function () { finishLoading(mount); });
       })

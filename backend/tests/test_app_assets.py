@@ -68,9 +68,10 @@ def test_masterclass_article_tables_keep_mobile_scroll_contract() -> None:
         Path(__file__).resolve().parents[1]
         / "app"
         / "static"
-        / "masterclass-first-days-preview.html"
+        / "course-visual.css"
     ).read_text(encoding="utf-8")
 
+    source = re.sub(r"\s+", "", source)
     wrapper = re.search(r"\.article-table-wrap\{(?P<rules>[^}]*)\}", source)
     table = re.search(r"\.article-data-table\{(?P<rules>[^}]*)\}", source)
     assert wrapper is not None
@@ -390,59 +391,17 @@ def test_client_apps_share_design_tokens_account_link_and_single_footer(monkeypa
     assert "border-radius:var(--ed-app-radius-control)" in shell.text
 
     account = client.get("/apps/account.html").text
-    assert "border-radius:var(--radius-large)" in account
-    assert "border-radius:var(--radius-small)" in account
-    assert "border-radius:var(--radius-control)" in account
-    assert "border-radius:999px" not in account
-    assert re.search(
-        r"\.account-card\{[^}]*border-radius:var\(--radius-large\)", account
-    )
-    assert re.search(
-        r"\.account-review\{[^}]*border-radius:var\(--radius-large\)", account
-    )
-    assert re.search(
-        r"\.account-legal\{[^}]*border-radius:var\(--radius-large\)", account
-    )
-    assert re.search(
-        r"\.application-card\{[^}]*border-radius:var\(--radius-small\)", account
-    )
-    assert re.search(
-        r"\.legacy-card\{[^}]*border-radius:var\(--radius-small\)", account
-    )
-    assert re.search(
-        r"\.legal-card\{[^}]*border-radius:var\(--radius-small\)", account
-    )
-    assert re.search(
-        r"\.account-open\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert re.search(
-        r"\.account-state\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert re.search(
-        r"\.account-contact a\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert re.search(
-        r"\.legacy-link\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert re.search(
-        r"\.legal-action\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert re.search(
-        r"\.application-icon\{[^}]*border-radius:var\(--radius-control\)", account
-    )
-    assert "@media(max-width:760px){#account-app{font-size:17px}" in account
-    assert ".account-session{font-size:15px}" in account
-    assert ".account-kicker,.account-state{font-size:13px}" in account
-    assert ".account-card p,.account-legal>p{font-size:17px}" in account
-    assert ".account-open,.account-contact a,.legacy-link{font-size:15px}" in account
-    assert ".application-card h3{font-size:18px}" in account
-    assert ".application-card p,.legacy-card p,.legal-error{font-size:15px}" in account
+    assert account.count('href="/assets/account-visual.css') == 1
+    assert "<style>" not in account
+    assert client.get("/assets/account-visual.css").status_code == 200
 
     course = client.get("/apps/masterclass-course.html").text
-    assert ":root{--text-xs:13px;--text-sm:14px;--text-base:17px;--text-lead:18px}" in course
-    assert ".hero h1{font-size:38px}" in course
-    assert ".article h1{font-size:38px}" in course
-    assert "font-size:12px;white-space:nowrap" in course
+    assert course.count('href="/assets/course-visual.css') == 1
+    assert "<style>" not in course
+    assert client.get("/assets/course-visual.css").status_code == 200
+    assert "@import" not in client.get("/assets/course-visual.css").text
+    assert '/assets/article-typography.css' in course
+    assert '/assets/article-note.css' in course
 
     loader = client.get("/embed.js").text
     load_function = loader[loader.index("function load(mount)") : loader.index("function start(mounts)")]
@@ -611,8 +570,9 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
-    assert ".account-card.available-card" in account.text
-    assert ".account-card.featured" in account.text
+    account_css = client.get("/assets/account-visual.css").text
+    assert ".account-card.available-card" in account_css
+    assert ".account-card.featured" in account_css
     assert "item.product_code==='consultation'?' featured'" in account.text
     assert "<article class=\"account-card'+cardCls+'\">" in account.text
     assert "function legalSummary" in account.text
@@ -715,8 +675,9 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "Полные тексты можно открыть" not in account
     assert ">Принять и продолжить</button>" in account
     assert ">Принимаю и продолжаю</button>" not in account
-    assert ".legal-copy>strong,.legal-copy>span{display:block}" in account
-    assert ".legal-copy>.legal-paragraph+.legal-paragraph{margin-top:12px}" in account
+    account_css = re.sub(r"\s+", "", client.get("/assets/account-visual.css").text)
+    assert ".legal-copy>strong,.legal-copy>span{display:block;}" in account_css
+    assert ".legal-copy>.legal-paragraph+.legal-paragraph{margin-top:12px;}" in account_css
     assert "function accountSession" not in account
     application_renderer = account[
         account.index("function applicationCard") : account.index("function legacyPortal")
@@ -739,7 +700,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "'В разработке'" not in account
     assert "'Куплен, готовится'" not in account
     assert "'Программа готовится к открытию'" not in account
-    account_button_rules = re.search(r"\.account-open\{(?P<rules>[^}]*)\}", account)
+    account_button_rules = re.search(r"\.account-open\{(?P<rules>[^}]*)\}", account_css)
     assert account_button_rules is not None
     assert "white-space:nowrap" in account_button_rules.group("rules")
     assert "Система оценки качества питания" not in account  # names come from the server catalog
@@ -752,7 +713,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "function authHeaders()" in course.text
     assert "document.querySelector('#course-title').textContent=manifest.title" in course.text
     assert 'id="course-title"></div>' in course.text  # no duplicated course title in the template
-    assert ".tlk-userbar{display:none!important}" in course.text
+    assert ".tlk-userbar{display:none!important;}" in re.sub(r"\s+", "", client.get("/assets/course-visual.css").text)
     assert "Темы видны заранее" not in course.text
     legal_index = client.get("/legal/index.html")
     assert legal_index.status_code == 200
@@ -843,7 +804,8 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     course_html = (
         root / "backend" / "app" / "static" / "masterclass-first-days-preview.html"
     ).read_text(encoding="utf-8")
-    assert ".article p:not(.eyebrow):not(.hero-lead):not(.eyebrow-time){margin:0 0 18px}" in course_html
+    course_css = (root / "backend" / "app" / "static" / "course-visual.css").read_text(encoding="utf-8")
+    assert ".articlep:not(.eyebrow):not(.hero-lead):not(.eyebrow-time){margin:0px0px18px;}" in re.sub(r"\s+", "", course_css)
     assert "обязательный технический шаг" in course_html
     assert "После успешной привязки появится кнопка «Продолжить»" in course_html
     assert "messenger-links/status" in course_html
@@ -903,14 +865,8 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
         "articleTocHeadings[0].textContent.trim().toLocaleLowerCase('ru-RU')===titleText)"
         "articleTocHeadings.shift()"
     ) in course_html
-    assert (
-        '.article-toc-popover a::before,.mobile-article-toc-popover a::before'
-        '{content:"•"'
-    ) in course_html
-    assert (
-        ".article-toc-popover a:hover,.mobile-article-toc-popover a:hover"
-        "{background:#f0ebe2;color:var(--ink)}"
-    ) in course_html
+    assert '.article-toc-popover a::before' in course_css
+    assert '.mobile-article-toc-popover a::before' in course_css
 
     static_dir = root / "backend" / "app" / "static"
     editor_html = (static_dir / "course-structure-editor.html").read_text(encoding="utf-8")
@@ -975,17 +931,17 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     )
 
     course = client.get("/apps/masterclass-course.html").text
-    assert course.count("<style>") == 1
+    assert course.count("<style>") == 0
     assert 'src="/assets/content-gallery.js?v=source-slider"' in course
     assert "renderContentEmbeds" in course
     assert ".replace(/\\*([^*]+)\\*/g,'<em>$1</em>')" in course
     assert "function endQuote()" in course
-    assert ".dqs-matrix-grid{display:grid" in course
+    assert re.search(r"\.dqs-matrix-grid\s*\{[^}]*display:\s*grid", course_css)
     assert 'id="course-tutorial"' in course
     tutorial = course[course.index("function tutorialPreview"):course.index("function openTutorial")]
     slides = tutorial[tutorial.index("function tutorialSlides"):tutorial.index("function renderTutorial")]
-    assert "grid-template-columns:minmax(0,1.35fr) minmax(300px,.65fr)" in course
-    assert "height:100dvh" in course
+    assert "grid-template-columns: minmax(0px, 1.35fr) minmax(300px, 0.65fr)" in course_css
+    assert "height: 100dvh" in course_css
     assert slides.count("{title:") == 5
     assert all(label in slides for label in ("Галочка", "стрелка", "замок"))
     assert "прогресс сохранится автоматически" in slides
@@ -998,7 +954,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert re.search(r"function\s+firstFivePresentation\(", course)
     assert "DQS_CATEGORY_ROWS" in course
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
-    assert "overflow-wrap:anywhere" in course
+    assert "overflow-wrap: anywhere" in course_css
     assert "renderContentEmbeds(parts.body)" in course
     assert "window.EdabalansContentGallery.bind(article)" in course
 

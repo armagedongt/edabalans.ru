@@ -1,4 +1,5 @@
 import os
+import re
 from pathlib import Path
 
 os.environ.setdefault(
@@ -19,13 +20,13 @@ def test_course_structure_keeps_plain_newlines_and_renders_them() -> None:
 
     static = ROOT / "backend" / "app" / "static"
     editor = (static / "course-structure-editor.js").read_text(encoding="utf-8")
-    course = (static / "masterclass-first-days-preview.html").read_text(
+    course_css = (static / "course-visual.css").read_text(
         encoding="utf-8"
     )
 
     assert '<textarea class="grow check-text" rows="3" data-check-text=' in editor
-    assert ".hero-lead,.intro,.assignment-intro p" in course
-    assert ".checkline span{white-space:pre-line}" in course
+    assert ".hero-lead, .intro, .assignment-intro { white-space: pre-line; }" in course_css
+    assert re.search(r"\.checkline span\s*\{[^}]*white-space:\s*pre-line", course_css)
 
 
 def test_chat_managed_seed_addition_preserves_existing_copy_and_marks_new_step() -> None:
