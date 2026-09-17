@@ -37,6 +37,9 @@
 
 ## Тематические канонические документы
 
+Генерация изображений всех потоков: [единый центр «Художник»](../content/design-workflow/image-generation-protocol.md)
+(`platform.web_design`): handoff, шаблоны и маршрут к существующим каталогам.
+
 | Тема | Документ |
 |---|---|
 | CRM, единый клиент и импорт | `CRM_CORE_DESIGN.md`, `CRM_DATA_MODEL.md` |

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Telegram и MAX — библиотека кнопок</title>
+  <style>
+    @font-face{font-family:Manrope;src:url('manrope-800.ttf') format('truetype');font-style:normal;font-weight:800;font-display:swap}
+    *{box-sizing:border-box}
+    body{margin:0;padding:32px 16px;background:#eef8ff;color:#172033;font-family:Manrope,Arial,sans-serif}
+    .library{display:grid;width:min(100%,820px);margin:auto;gap:18px}
+    .sample{padding:24px;border-radius:24px}
+    .sample--light{background:#fff}
+    .sample--blue{background:linear-gradient(145deg,#26afff,#118ed8)}
+    .sample__label{margin:0 0 14px;font-size:13px;font-weight:800}
+    .sample--blue .sample__label{color:#fff}
+
+    /* Reusable component. Keep the hover motion identical in both themes. */
+    .eb-social-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .eb-social-link{display:flex;min-width:0;height:82px;align-items:center;justify-content:center;gap:13px;border:0;border-radius:18px;font-size:20px;font-weight:800;line-height:1;text-decoration:none;box-shadow:0 10px 18px -11px rgba(0,46,78,.78);transition:transform .18s ease,box-shadow .18s ease}
+    .eb-social-link:hover,.eb-social-link:focus-visible{box-shadow:0 13px 21px -10px rgba(0,46,78,.88);transform:translateY(-2px) rotate(-1deg);outline:none}
+
+    /* Brand/dark pair for a white or very light page surface. */
+    .eb-social-links--brand .eb-social-link--telegram{color:#fff;background:linear-gradient(180deg,#2aabee,#229ed9)}
+    .eb-social-links--brand .eb-social-link--max{background:#0d001a}
+    .telegram-plane{width:43px;height:43px;flex:none}
+    .max-logo--light{display:block;width:116px;height:44px;object-fit:contain}
+
+    /* Light pair for a saturated blue or other dark surface. */
+    .eb-social-links--light .eb-social-link{background:#fff}
+    .eb-social-links--light .eb-social-link--telegram{color:#0f75aa}
+    .telegram-plane--blue{width:43px;height:43px;flex:none;color:#229ed9}
+    .max-logo--dark{display:block;width:116px;height:44px;object-fit:contain}
+
+    @media(max-width:560px){
+      body{padding:16px 10px}
+      .sample{padding:14px;border-radius:20px}
+      .eb-social-links{grid-template-columns:1fr;gap:10px}
+      .eb-social-link{height:72px;border-radius:16px;font-size:18px}
+      .max-logo--light,.max-logo--dark{width:104px}
+    }
+    @media(prefers-reduced-motion:reduce){.eb-social-link{transition:none}}
+  </style>
+</head>
+<body>
+  <main class="library">
+    <section class="sample sample--light" aria-labelledby="brand-label">
+      <p class="sample__label" id="brand-label">Тёмный / брендовый вариант</p>
+      <div class="eb-social-links eb-social-links--brand">
+        <a class="eb-social-link eb-social-link--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer" aria-label="Написать в Telegram">
+          <svg class="telegram-plane" viewBox="190 270 580 510" aria-hidden="true"><path fill="#fff" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>
+          <span>Telegram</span>
+        </a>
+        <a class="eb-social-link eb-social-link--max" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noreferrer" aria-label="Написать в MAX">
+          <img class="max-logo--light" src="max-full-colored-official.png" alt="MAX">
+        </a>
+      </div>
+    </section>
+
+    <section class="sample sample--blue" aria-labelledby="light-label">
+      <p class="sample__label" id="light-label">Светлый вариант</p>
+      <div class="eb-social-links eb-social-links--light">
+        <a class="eb-social-link eb-social-link--telegram" href="https://t.me/FitnessSergey" target="_blank" rel="noreferrer" aria-label="Написать в Telegram">
+          <svg class="telegram-plane--blue" viewBox="190 270 580 510" aria-hidden="true"><path fill="currentColor" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>
+          <span>Telegram</span>
+        </a>
+        <a class="eb-social-link eb-social-link--max" href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw" target="_blank" rel="noreferrer" aria-label="Написать в MAX">
+          <img class="max-logo--dark" src="max-full-colored-dark-official.png" alt="MAX">
+        </a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
