@@ -167,6 +167,7 @@ def public_site_asset(asset_path: str) -> FileResponse:
 
 
 WEATHER_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-weather"
+GAME_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-game"
 
 
 @router.get("/weather", include_in_schema=False)
@@ -184,6 +185,19 @@ def private_weather_asset(asset_name: str) -> FileResponse:
     if asset_name not in {"styles.css", "app.js"}:
         raise HTTPException(status_code=404, detail="asset not found")
     return FileResponse(WEATHER_DIR / asset_name, headers={"Cache-Control": "no-cache"})
+
+
+@router.get("/game", include_in_schema=False)
+@router.get("/game/", include_in_schema=False)
+def personal_couple_game() -> FileResponse:
+    """Serve the existing personal game without a Tilda wrapper."""
+    return FileResponse(
+        GAME_DIR / "index.html",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Robots-Tag": "noindex, nofollow, noarchive",
+        },
+    )
 
 
 def homepage_library_fragment(source: str, name: str) -> str:

@@ -1,0 +1,1563 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow, noarchive">
+  <title>Игра для двоих</title>
+  <style>html,body{margin:0;min-height:100%}</style>
+</head>
+<body>
+ <div id="couple-drawing-game"> <div class="cdg-app"> <!-- СТАРТ --> <section class="cdg-screen" id="cdg-start"> <div class="cdg-start-content"> <div class="cdg-small-title">💗 Игра для двоих</div> <h1>Насколько хорошо мы<br>знаем друг друга?</h1> <div class="cdg-rules"> <div class="cdg-rule"> <span>🎨</span> <p>Оба рисуют ответ на один вопрос.</p> </div> <div class="cdg-rule"> <span>👀</span> <p>Один — про себя, второй — как представляет ответ партнёра.</p> </div> <div class="cdg-rule"> <span>⏱️</span> <p><strong>60 секунд.</strong> Не подглядывать и не подсказывать.</p> </div> <div class="cdg-rule"> <span>💬</span> <p>Потом показываете рисунки и сравниваете.</p> </div> </div> </div> <div class="cdg-start-choice"> <h2>Кто первый?</h2> <div class="cdg-person-buttons"> <button class="cdg-person-btn pink" onclick="cdgStart('sergey')">
+            Серёжа 💙
+          </button> <button class="cdg-person-btn blue" onclick="cdgStart('sonya')">
+            Сонечка 💗
+          </button> </div> <button class="cdg-random-start" onclick="cdgStartRandom()">
+          🎲 Выбрать случайно
+        </button> </div> </section> <!-- ИГРА --> <section class="cdg-screen cdg-hidden" id="cdg-game"> <div class="cdg-top"> <div id="cdg-round">Раунд 1</div> <button class="cdg-reset-top" onclick="cdgConfirmReset()">
+          ↺ заново
+        </button> </div> <div class="cdg-game-main"> <div class="cdg-turn" id="cdg-turn">
+          Про Серёжу
+        </div> <div class="cdg-question-card"> <div class="cdg-question-emoji" id="cdg-question-emoji">
+            💗
+          </div> <div class="cdg-question" id="cdg-question"></div> </div> <div id="cdg-before-timer" class="cdg-action-area"> <button class="cdg-main-btn" onclick="cdgStartTimer()">
+            Начать рисовать · 60 сек
+          </button> </div> <div id="cdg-timer-area" class="cdg-hidden cdg-timer-area"> <div class="cdg-timer-label">Рисуем ✏️</div> <div class="cdg-timer" id="cdg-timer">
+            60
+          </div> <div class="cdg-progress"> <div class="cdg-progress-inner" id="cdg-progress-inner"></div> </div> </div> <div id="cdg-finished" class="cdg-hidden cdg-finished"> <div class="cdg-finished-icon">💞</div> <div class="cdg-finished-text">
+            Время вышло!
+          </div> <p>
+            Покажите рисунки друг другу.
+          </p> <button class="cdg-main-btn" onclick="cdgNextQuestion()">
+            Следующий вопрос →
+          </button> </div> </div> <div class="cdg-counter" id="cdg-counter"></div> </section> <!-- ФИНАЛ --> <section class="cdg-screen cdg-hidden cdg-end-screen" id="cdg-end"> <div class="cdg-end-icon">💗</div> <h1>Вы прошли всю игру</h1> <p class="cdg-end-text">
+        Все вопросы закончились.
+      </p> <button class="cdg-main-btn" onclick="cdgReset()">
+        Сыграть ещё раз
+      </button> </section> </div> </div> <style>
+
+#couple-drawing-game,
+#couple-drawing-game * {
+  box-sizing: border-box;
+}
+
+#couple-drawing-game {
+  --pink: #f6b9cc;
+  --pink-light: #fff0f5;
+  --pink-dark: #d77f9c;
+
+  --blue: #b9dff5;
+  --blue-light: #edf8ff;
+  --blue-dark: #6da7c7;
+
+  --purple: #d7c9f3;
+  --text: #453d48;
+
+  width: 100%;
+  background:
+    radial-gradient(circle at 8% 8%, #ffe9f1 0, transparent 28%),
+    radial-gradient(circle at 92% 90%, #e4f5ff 0, transparent 32%),
+    #fffafd;
+
+  color: var(--text);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+}
+
+
+.cdg-app {
+  width: 100%;
+  max-width: 720px;
+
+  height: 100svh;
+  min-height: 560px;
+
+  margin: 0 auto;
+
+  padding:
+    max(22px, env(safe-area-inset-top))
+    22px
+    max(20px, env(safe-area-inset-bottom));
+
+  overflow: hidden;
+}
+
+
+.cdg-screen {
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 0;
+}
+
+
+.cdg-hidden {
+  display: none !important;
+}
+
+
+/* START */
+
+.cdg-start-content {
+  flex: 1;
+  min-height: 0;
+}
+
+
+.cdg-small-title {
+  display: inline-block;
+
+  padding: 7px 12px;
+
+  border-radius: 50px;
+
+  background: var(--pink-light);
+
+  color: var(--pink-dark);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  margin-bottom: 18px;
+}
+
+
+#couple-drawing-game h1 {
+  margin: 0 0 27px;
+
+  font-size: clamp(34px, 6vw, 48px);
+  line-height: 1.03;
+
+  letter-spacing: -0.045em;
+
+  font-weight: 750;
+
+  color: #3f3942;
+}
+
+
+.cdg-rules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+}
+
+
+.cdg-rule {
+  min-height: 82px;
+
+  padding: 14px;
+
+  background: rgba(255,255,255,.72);
+
+  border: 1px solid rgba(215, 201, 243, .45);
+  border-radius: 17px;
+
+  box-shadow:
+    0 5px 18px rgba(106, 78, 100, .04);
+}
+
+
+.cdg-rule span {
+  display: block;
+
+  font-size: 20px;
+
+  margin-bottom: 5px;
+}
+
+
+.cdg-rule p {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.32;
+
+  color: #605765;
+}
+
+
+.cdg-start-choice {
+  flex-shrink: 0;
+
+  margin-top: 20px;
+}
+
+
+.cdg-start-choice h2 {
+  margin: 0 0 12px;
+
+  font-size: 19px;
+  line-height: 1.2;
+
+  text-align: center;
+}
+
+
+.cdg-person-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+}
+
+
+.cdg-person-btn,
+.cdg-main-btn {
+  appearance: none;
+
+  border: 0;
+  border-radius: 17px;
+
+  cursor: pointer;
+
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 700;
+
+  padding: 18px 15px;
+
+  transition:
+    transform .1s ease,
+    opacity .15s ease;
+}
+
+
+.cdg-person-btn:active,
+.cdg-main-btn:active {
+  transform: scale(.98);
+}
+
+
+.cdg-person-btn.pink {
+  background: linear-gradient(135deg, #fac5d5, #f5b7cf);
+  color: #664552;
+}
+
+
+.cdg-person-btn.blue {
+  background: linear-gradient(135deg, #c7e9fa, #b8ddf5);
+  color: #385b6f;
+}
+
+
+.cdg-random-start {
+  appearance: none;
+
+  border: 0;
+  background: transparent;
+
+  display: block;
+
+  margin: 12px auto 0;
+
+  padding: 5px;
+
+  cursor: pointer;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: #817584;
+}
+
+
+/* GAME */
+
+.cdg-top {
+  flex-shrink: 0;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #988d9b;
+
+  min-height: 28px;
+}
+
+
+.cdg-reset-top {
+  appearance: none;
+
+  border: 0;
+  background: transparent;
+
+  color: #a499a7;
+
+  cursor: pointer;
+
+  font-size: 13px;
+}
+
+
+.cdg-game-main {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  min-height: 0;
+
+  justify-content: center;
+}
+
+
+.cdg-turn {
+  align-self: center;
+
+  display: inline-flex;
+
+  padding: 8px 14px;
+
+  border-radius: 50px;
+
+  background: linear-gradient(
+    135deg,
+    var(--pink-light),
+    var(--blue-light)
+  );
+
+  border: 1px solid rgba(215, 201, 243, .55);
+
+  font-size: 13px;
+  font-weight: 700;
+
+  color: #716576;
+
+  margin-bottom: 15px;
+}
+
+
+.cdg-question-card {
+  width: 100%;
+
+  text-align: center;
+
+  background: rgba(255,255,255,.75);
+
+  border: 1px solid rgba(215, 201, 243, .55);
+
+  border-radius: 26px;
+
+  padding: clamp(19px, 4vh, 34px) 20px;
+
+  box-shadow:
+    0 14px 40px rgba(119, 91, 113, .07);
+}
+
+
+.cdg-question-emoji {
+  font-size: clamp(38px, 7vh, 58px);
+  line-height: 1;
+
+  margin-bottom: 15px;
+}
+
+
+.cdg-question {
+  max-width: 590px;
+
+  margin: 0 auto;
+
+  font-size: clamp(23px, 4.5vw, 35px);
+  line-height: 1.13;
+
+  font-weight: 750;
+
+  letter-spacing: -0.035em;
+}
+
+
+.cdg-action-area {
+  flex-shrink: 0;
+
+  margin-top: 18px;
+}
+
+
+.cdg-main-btn {
+  width: 100%;
+
+  background: linear-gradient(
+    110deg,
+    #f3b4ca,
+    #c6dff7
+  );
+
+  color: #4d4350;
+
+  box-shadow:
+    0 8px 24px rgba(189, 144, 173, .18);
+}
+
+
+.cdg-timer-area {
+  flex-shrink: 0;
+
+  margin-top: 14px;
+
+  text-align: center;
+}
+
+
+.cdg-timer-label {
+  font-size: 13px;
+  font-weight: 600;
+
+  color: #8b7f8e;
+
+  margin-bottom: 3px;
+}
+
+
+.cdg-timer {
+  font-size: clamp(65px, 13vh, 96px);
+  line-height: .95;
+
+  font-weight: 750;
+
+  letter-spacing: -.055em;
+
+  font-variant-numeric: tabular-nums;
+
+  color: #514652;
+
+  margin: 4px 0 13px;
+}
+
+
+.cdg-progress {
+  width: 100%;
+
+  height: 7px;
+
+  overflow: hidden;
+
+  border-radius: 20px;
+
+  background: #f1eaf0;
+}
+
+
+.cdg-progress-inner {
+  width: 100%;
+  height: 100%;
+
+  border-radius: 20px;
+
+  background: linear-gradient(
+    90deg,
+    var(--pink),
+    var(--blue)
+  );
+
+  transition: width 1s linear;
+}
+
+
+.cdg-finished {
+  margin-top: 14px;
+
+  text-align: center;
+}
+
+
+.cdg-finished-icon {
+  font-size: 27px;
+
+  margin-bottom: 4px;
+}
+
+
+.cdg-finished-text {
+  font-size: 24px;
+  font-weight: 750;
+
+  letter-spacing: -.025em;
+}
+
+
+.cdg-finished p {
+  margin: 4px 0 10px;
+
+  color: #786c7b;
+
+  font-size: 14px;
+}
+
+
+.cdg-finished .cdg-main-btn {
+  padding: 15px;
+}
+
+
+.cdg-counter {
+  flex-shrink: 0;
+
+  text-align: center;
+
+  min-height: 20px;
+
+  margin-top: 8px;
+
+  color: #aaa0ac;
+
+  font-size: 12px;
+}
+
+
+/* END */
+
+.cdg-end-screen {
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
+
+.cdg-end-icon {
+  width: 75px;
+  height: 75px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: linear-gradient(
+    135deg,
+    var(--pink-light),
+    var(--blue-light)
+  );
+
+  font-size: 36px;
+
+  margin-bottom: 22px;
+}
+
+
+.cdg-end-screen h1 {
+  margin-bottom: 8px !important;
+}
+
+
+.cdg-end-text {
+  color: #776c79;
+
+  font-size: 16px;
+
+  margin: 0 0 25px;
+}
+
+
+.cdg-end-screen .cdg-main-btn {
+  max-width: 400px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 640px) {
+
+  .cdg-app {
+    padding:
+      max(15px, env(safe-area-inset-top))
+      15px
+      max(14px, env(safe-area-inset-bottom));
+  }
+
+
+  #couple-drawing-game h1 {
+    font-size: clamp(30px, 9.5vw, 39px);
+
+    margin-bottom: 17px;
+  }
+
+
+  .cdg-small-title {
+    margin-bottom: 12px;
+
+    padding: 6px 10px;
+
+    font-size: 12px;
+  }
+
+
+  .cdg-rules {
+    gap: 7px;
+  }
+
+
+  .cdg-rule {
+    min-height: 70px;
+
+    padding: 10px;
+  }
+
+
+  .cdg-rule span {
+    display: inline;
+
+    font-size: 16px;
+
+    margin: 0 4px 0 0;
+  }
+
+
+  .cdg-rule p {
+    display: inline;
+
+    font-size: 12px;
+    line-height: 1.25;
+  }
+
+
+  .cdg-start-choice {
+    margin-top: 12px;
+  }
+
+
+  .cdg-start-choice h2 {
+    margin-bottom: 8px;
+
+    font-size: 16px;
+  }
+
+
+  .cdg-person-btn {
+    padding: 14px 8px;
+
+    font-size: 15px;
+
+    border-radius: 14px;
+  }
+
+
+  .cdg-random-start {
+    margin-top: 7px;
+
+    font-size: 12px;
+  }
+
+
+  .cdg-question-card {
+    padding: 18px 14px;
+
+    border-radius: 21px;
+  }
+
+
+  .cdg-question-emoji {
+    font-size: 39px;
+
+    margin-bottom: 10px;
+  }
+
+
+  .cdg-question {
+    font-size: clamp(21px, 6.1vw, 28px);
+  }
+
+
+  .cdg-action-area {
+    margin-top: 12px;
+  }
+
+
+  .cdg-main-btn {
+    padding: 15px 12px;
+
+    font-size: 15px;
+
+    border-radius: 14px;
+  }
+
+
+  .cdg-turn {
+    margin-bottom: 10px;
+
+    padding: 6px 11px;
+
+    font-size: 12px;
+  }
+
+
+  .cdg-timer-area {
+    margin-top: 9px;
+  }
+
+
+  .cdg-timer {
+    margin: 2px 0 8px;
+  }
+
+
+  .cdg-counter {
+    font-size: 11px;
+  }
+
+}
+
+
+/* ОЧЕНЬ НИЗКИЕ ЭКРАНЫ */
+
+@media (max-height: 700px) and (max-width: 640px) {
+
+  #couple-drawing-game h1 {
+    font-size: 29px;
+
+    margin-bottom: 11px;
+  }
+
+
+  .cdg-small-title {
+    margin-bottom: 8px;
+  }
+
+
+  .cdg-rule {
+    min-height: 57px;
+
+    padding: 7px 9px;
+  }
+
+
+  .cdg-rule p {
+    font-size: 11px;
+  }
+
+
+  .cdg-rule span {
+    font-size: 14px;
+  }
+
+
+  .cdg-start-choice {
+    margin-top: 8px;
+  }
+
+
+  .cdg-person-btn {
+    padding: 11px 7px;
+  }
+
+
+  .cdg-random-start {
+    margin-top: 4px;
+  }
+
+
+  .cdg-question-card {
+    padding: 13px 12px;
+  }
+
+
+  .cdg-question-emoji {
+    font-size: 31px;
+
+    margin-bottom: 7px;
+  }
+
+
+  .cdg-question {
+    font-size: 21px;
+  }
+
+
+  .cdg-action-area {
+    margin-top: 8px;
+  }
+
+
+  .cdg-main-btn {
+    padding: 12px;
+  }
+
+
+  .cdg-timer {
+    font-size: 58px;
+  }
+
+
+  .cdg-finished-icon {
+    display: none;
+  }
+
+}
+
+</style> <script>
+(function () {
+
+  const STORAGE_KEY = 'sergey_sonechka_drawing_game_v2';
+
+
+  const QUESTIONS = [
+
+    {
+      emoji: '🏡',
+      type: 'person',
+      sergey: 'Нарисуйте идеальное место для жизни Серёжи.',
+      sonya: 'Нарисуйте идеальное место для жизни Сонечки.'
+    },
+
+    {
+      emoji: '☀️',
+      type: 'person',
+      sergey: 'Нарисуйте идеальный день Серёжи.',
+      sonya: 'Нарисуйте идеальный день Сонечки.'
+    },
+
+    {
+      emoji: '🥰',
+      type: 'person',
+      sergey: 'Нарисуйте то, что делает Серёжу счастливым.',
+      sonya: 'Нарисуйте то, что делает Сонечку счастливой.'
+    },
+
+    {
+      emoji: '😤',
+      type: 'person',
+      sergey: 'Нарисуйте то, что сильнее всего раздражает Серёжу.',
+      sonya: 'Нарисуйте то, что сильнее всего раздражает Сонечку.'
+    },
+
+    {
+      emoji: '💪',
+      type: 'person',
+      sergey: 'Нарисуйте главную сильную сторону Серёжи.',
+      sonya: 'Нарисуйте главную сильную сторону Сонечки.'
+    },
+
+    {
+      emoji: '💎',
+      type: 'person',
+      sergey: 'Нарисуйте то, что Серёжа больше всего ценит в жизни.',
+      sonya: 'Нарисуйте то, что Сонечка больше всего ценит в жизни.'
+    },
+
+    {
+      emoji: '📸',
+      type: 'shared',
+      text: 'Нарисуйте ваше самое запоминающееся совместное событие.'
+    },
+
+    {
+      emoji: '😂',
+      type: 'shared',
+      text: 'Нарисуйте момент, когда вам вместе было максимально весело.'
+    },
+
+    {
+      emoji: '🫂',
+      type: 'shared',
+      text: 'Нарисуйте момент, когда вы вместе пережили что-то сложное или напряжённое.'
+    },
+
+    {
+      emoji: '🔁',
+      type: 'shared',
+      text: 'Нарисуйте совместный момент, который вам хотелось бы повторить.'
+    },
+
+    {
+      emoji: '😲',
+      type: 'surprise',
+      sergey: 'Нарисуйте момент, когда Серёжа особенно удивил Сонечку.',
+      sonya: 'Нарисуйте момент, когда Сонечка особенно удивила Серёжу.'
+    },
+
+    {
+      emoji: '💭',
+      type: 'person',
+      sergey: 'Нарисуйте место или ситуацию, которые особенно ассоциируются у Сонечки с Серёжей.',
+      sonya: 'Нарисуйте место или ситуацию, которые особенно ассоциируются у Серёжи с Сонечкой.'
+    },
+
+    {
+      emoji: '💞',
+      type: 'shared',
+      text: 'Нарисуйте ваши отношения в виде чего угодно.'
+    },
+
+    {
+      emoji: '✈️',
+      type: 'shared',
+      text: 'Нарисуйте место, куда вам хотелось бы поехать вместе.'
+    },
+
+    {
+      emoji: '🛏️',
+      type: 'person',
+      sergey: 'Нарисуйте Серёжу в постели: каким Сонечка его там воспринимает и что ей особенно в нём нравится.',
+      sonya: 'Нарисуйте Сонечку в постели: какой Серёжа её там воспринимает и что ему особенно в ней нравится.'
+    },
+
+    {
+      emoji: '🔥',
+      type: 'shared',
+      text: 'Нарисуйте то, что вам больше всего нравится в вашей сексуальной близости.'
+    }
+
+  ];
+
+
+  let state = {
+    started: false,
+    firstPerson: null,
+    currentPerson: null,
+    round: 0,
+    used: [],
+    currentQuestion: null
+  };
+
+
+  let timerInterval = null;
+  let secondsLeft = 60;
+
+
+  /* AUDIO */
+
+  function playFinishSound() {
+
+    try {
+
+      const AudioContext =
+        window.AudioContext ||
+        window.webkitAudioContext;
+
+      const audio = new AudioContext();
+
+      const oscillator = audio.createOscillator();
+      const gain = audio.createGain();
+
+      oscillator.connect(gain);
+      gain.connect(audio.destination);
+
+      oscillator.type = 'sine';
+
+      oscillator.frequency.setValueAtTime(
+        660,
+        audio.currentTime
+      );
+
+      oscillator.frequency.setValueAtTime(
+        880,
+        audio.currentTime + 0.15
+      );
+
+      gain.gain.setValueAtTime(
+        0.18,
+        audio.currentTime
+      );
+
+      gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        audio.currentTime + 0.55
+      );
+
+      oscillator.start(audio.currentTime);
+
+      oscillator.stop(
+        audio.currentTime + 0.55
+      );
+
+    } catch (e) {
+      console.log('Sound unavailable');
+    }
+
+  }
+
+
+  /* STORAGE */
+
+  function saveState() {
+    localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify(state)
+    );
+  }
+
+
+  function loadState() {
+
+    try {
+
+      const saved =
+        localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) return false;
+
+      const parsed =
+        JSON.parse(saved);
+
+      if (!parsed.started) return false;
+
+      state = parsed;
+
+      return true;
+
+    } catch (e) {
+
+      return false;
+
+    }
+
+  }
+
+
+  /* START */
+
+  window.cdgStart = function(person) {
+
+    state = {
+      started: true,
+      firstPerson: person,
+      currentPerson: person,
+      round: 1,
+      used: [],
+      currentQuestion: null
+    };
+
+    saveState();
+
+    showGame();
+
+    generateQuestion();
+
+  };
+
+
+  window.cdgStartRandom = function() {
+
+    const person =
+      Math.random() < 0.5
+        ? 'sergey'
+        : 'sonya';
+
+    cdgStart(person);
+
+  };
+
+
+  /* QUESTION */
+
+  function generateQuestion() {
+
+    if (
+      state.used.length >=
+      QUESTIONS.length
+    ) {
+
+      showEnd();
+
+      return;
+
+    }
+
+
+    const available =
+      QUESTIONS
+        .map((question, index) => index)
+        .filter(
+          index =>
+            !state.used.includes(index)
+        );
+
+
+    const randomIndex =
+      available[
+        Math.floor(
+          Math.random() *
+          available.length
+        )
+      ];
+
+
+    state.currentQuestion =
+      randomIndex;
+
+    state.used.push(
+      randomIndex
+    );
+
+
+    saveState();
+
+    renderQuestion();
+
+  }
+
+
+  function getQuestionText(question) {
+
+    if (
+      question.type === 'shared'
+    ) {
+
+      return question.text;
+
+    }
+
+    return question[
+      state.currentPerson
+    ];
+
+  }
+
+
+  function renderQuestion() {
+
+    const question =
+      QUESTIONS[
+        state.currentQuestion
+      ];
+
+
+    document
+      .getElementById('cdg-round')
+      .textContent =
+      'Раунд ' + state.round;
+
+
+    document
+      .getElementById('cdg-turn')
+      .textContent =
+      state.currentPerson === 'sergey'
+        ? 'Про Серёжу 💙'
+        : 'Про Сонечку 💗';
+
+
+    document
+      .getElementById(
+        'cdg-question-emoji'
+      )
+      .textContent =
+      question.emoji;
+
+
+    document
+      .getElementById(
+        'cdg-question'
+      )
+      .textContent =
+      getQuestionText(question);
+
+
+    document
+      .getElementById(
+        'cdg-counter'
+      )
+      .textContent =
+      state.used.length +
+      ' / ' +
+      QUESTIONS.length;
+
+
+    resetTimerUI();
+
+  }
+
+
+  /* TIMER */
+
+  window.cdgStartTimer = function() {
+
+    clearInterval(
+      timerInterval
+    );
+
+
+    secondsLeft = 60;
+
+
+    document
+      .getElementById(
+        'cdg-before-timer'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-finished'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-timer-area'
+      )
+      .classList
+      .remove('cdg-hidden');
+
+
+    updateTimer();
+
+
+    timerInterval =
+      setInterval(function () {
+
+        secondsLeft--;
+
+        updateTimer();
+
+
+        if (
+          secondsLeft <= 0
+        ) {
+
+          clearInterval(
+            timerInterval
+          );
+
+
+          playFinishSound();
+
+
+          document
+            .getElementById(
+              'cdg-timer-area'
+            )
+            .classList
+            .add('cdg-hidden');
+
+
+          document
+            .getElementById(
+              'cdg-finished'
+            )
+            .classList
+            .remove('cdg-hidden');
+
+        }
+
+      }, 1000);
+
+  };
+
+
+  function updateTimer() {
+
+    document
+      .getElementById(
+        'cdg-timer'
+      )
+      .textContent =
+      secondsLeft;
+
+
+    const percentage =
+      (secondsLeft / 60) * 100;
+
+
+    document
+      .getElementById(
+        'cdg-progress-inner'
+      )
+      .style.width =
+      percentage + '%';
+
+  }
+
+
+  function resetTimerUI() {
+
+    clearInterval(
+      timerInterval
+    );
+
+
+    secondsLeft = 60;
+
+
+    document
+      .getElementById(
+        'cdg-timer'
+      )
+      .textContent =
+      '60';
+
+
+    document
+      .getElementById(
+        'cdg-progress-inner'
+      )
+      .style.width =
+      '100%';
+
+
+    document
+      .getElementById(
+        'cdg-before-timer'
+      )
+      .classList
+      .remove('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-timer-area'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-finished'
+      )
+      .classList
+      .add('cdg-hidden');
+
+  }
+
+
+  /* NEXT */
+
+  window.cdgNextQuestion =
+    function () {
+
+      if (
+        state.used.length >=
+        QUESTIONS.length
+      ) {
+
+        showEnd();
+
+        return;
+
+      }
+
+
+      state.currentPerson =
+        state.currentPerson ===
+        'sergey'
+          ? 'sonya'
+          : 'sergey';
+
+
+      state.round++;
+
+      state.currentQuestion =
+        null;
+
+
+      saveState();
+
+      generateQuestion();
+
+    };
+
+
+  /* SCREENS */
+
+  function showGame() {
+
+    document
+      .getElementById(
+        'cdg-start'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-end'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-game'
+      )
+      .classList
+      .remove('cdg-hidden');
+
+  }
+
+
+  function showEnd() {
+
+    clearInterval(
+      timerInterval
+    );
+
+
+    document
+      .getElementById(
+        'cdg-start'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-game'
+      )
+      .classList
+      .add('cdg-hidden');
+
+
+    document
+      .getElementById(
+        'cdg-end'
+      )
+      .classList
+      .remove('cdg-hidden');
+
+  }
+
+
+  /* RESET */
+
+  window.cdgConfirmReset =
+    function () {
+
+      if (
+        confirm(
+          'Начать игру заново? Все вопросы снова станут доступны.'
+        )
+      ) {
+
+        cdgReset();
+
+      }
+
+    };
+
+
+  window.cdgReset =
+    function () {
+
+      clearInterval(
+        timerInterval
+      );
+
+
+      localStorage.removeItem(
+        STORAGE_KEY
+      );
+
+
+      state = {
+        started: false,
+        firstPerson: null,
+        currentPerson: null,
+        round: 0,
+        used: [],
+        currentQuestion: null
+      };
+
+
+      document
+        .getElementById(
+          'cdg-game'
+        )
+        .classList
+        .add('cdg-hidden');
+
+
+      document
+        .getElementById(
+          'cdg-end'
+        )
+        .classList
+        .add('cdg-hidden');
+
+
+      document
+        .getElementById(
+          'cdg-start'
+        )
+        .classList
+        .remove('cdg-hidden');
+
+    };
+
+
+  /* RESTORE */
+
+  function initGame() {
+
+    if (
+      loadState()
+    ) {
+
+      if (
+        state.used.length >=
+        QUESTIONS.length
+      ) {
+
+        showEnd();
+
+        return;
+
+      }
+
+
+      showGame();
+
+
+      if (
+        state.currentQuestion !==
+          null &&
+        QUESTIONS[
+          state.currentQuestion
+        ]
+      ) {
+
+        renderQuestion();
+
+      } else {
+
+        generateQuestion();
+
+      }
+
+    }
+
+  }
+
+
+  if (
+    document.readyState ===
+    'loading'
+  ) {
+
+    document.addEventListener(
+      'DOMContentLoaded',
+      initGame
+    );
+
+  } else {
+
+    initGame();
+
+  }
+
+})();
+</script> 
+
+</body>
+</html>

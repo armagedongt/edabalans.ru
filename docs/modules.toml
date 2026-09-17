@@ -774,9 +774,10 @@ owns_files = [
   "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js",
   "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
   "backend/app/static/max-logo.png", "prototypes/private-weather/**", "backend/tests/test_weather_page.py",
+  "prototypes/private-game/**", "backend/tests/test_game_page.py",
 ]
 owns_routes = [
-  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/weather*", "*/admin/api/crm*", "*/admin/api/users*",
+  "*/control", "*/admin", "*/admin/*", "*/crm*", "*/weather*", "*/game*", "*/admin/api/crm*", "*/admin/api/users*",
   "*/admin/api/summary", "*/admin/api/tags*", "*/admin/api/audit/*",
 ]
 depends_on = ["platform.auth", "platform.crm"]
@@ -809,7 +810,7 @@ implementation_note = "Existing technical tool; development is outside this feat
 [[modules]]
 id = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.md"
-owns_files = [".dockerignore", ".env.example", ".gitignore", "compose.yaml"]
+owns_files = [".dockerignore", ".env.example", ".gitattributes", ".gitignore", "compose.yaml"]
 
 [[modules]]
 id = "operations.database"
