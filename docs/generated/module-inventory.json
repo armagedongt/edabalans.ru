@@ -56273,7 +56273,7 @@
         {
           "file": "backend/tests/browser/metabolism.e2e.mjs",
           "kind": "function",
-          "line": 10,
+          "line": 11,
           "module_id": "products.metabolism",
           "name": "reset",
           "qualname": "reset"
@@ -56281,7 +56281,7 @@
         {
           "file": "backend/tests/browser/metabolism.e2e.mjs",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "module_id": "products.metabolism",
           "name": "load",
           "qualname": "load"
@@ -56289,7 +56289,7 @@
         {
           "file": "backend/tests/browser/metabolism.e2e.mjs",
           "kind": "function",
-          "line": 34,
+          "line": 35,
           "module_id": "products.metabolism",
           "name": "saved",
           "qualname": "saved"
@@ -56297,7 +56297,7 @@
         {
           "file": "backend/tests/browser/metabolism.e2e.mjs",
           "kind": "function",
-          "line": 35,
+          "line": 36,
           "module_id": "products.metabolism",
           "name": "capture",
           "qualname": "capture"
@@ -77578,7 +77578,7 @@
     {
       "file": "backend/tests/browser/metabolism.e2e.mjs",
       "kind": "function",
-      "line": 10,
+      "line": 11,
       "module_id": "products.metabolism",
       "name": "reset",
       "qualname": "reset"
@@ -77586,7 +77586,7 @@
     {
       "file": "backend/tests/browser/metabolism.e2e.mjs",
       "kind": "function",
-      "line": 33,
+      "line": 34,
       "module_id": "products.metabolism",
       "name": "load",
       "qualname": "load"
@@ -77594,7 +77594,7 @@
     {
       "file": "backend/tests/browser/metabolism.e2e.mjs",
       "kind": "function",
-      "line": 34,
+      "line": 35,
       "module_id": "products.metabolism",
       "name": "saved",
       "qualname": "saved"
@@ -77602,7 +77602,7 @@
     {
       "file": "backend/tests/browser/metabolism.e2e.mjs",
       "kind": "function",
-      "line": 35,
+      "line": 36,
       "module_id": "products.metabolism",
       "name": "capture",
       "qualname": "capture"

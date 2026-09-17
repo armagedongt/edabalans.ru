@@ -1717,6 +1717,11 @@ window.META={
       ? ''
       : Number(value);
 
+    if(key==='deficit'){
+      variants[activeVariant]._unit='kcal';
+      variants[activeVariant]._percent=0;
+    }
+
     saveStorage();
 
     render();

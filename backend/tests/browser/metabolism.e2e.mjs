@@ -4,6 +4,7 @@ import { readFile, mkdir } from 'node:fs/promises'
 
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE_URL || 'playwright')
 const html = await readFile(new URL('../../app/static/apps/metabolism.html', import.meta.url), 'utf8')
+const oldHtml = await readFile(new URL('../../app/static/apps/metabolism-old.html', import.meta.url), 'utf8')
 const personJs = await readFile(new URL('../../app/static/questionnaire-person.js', import.meta.url), 'utf8')
 const seed = {gender:'Женщина',age:35,height:170,weight:80,fat_percent:30,protein:100,steps:6000,active_steps_percent:50,train_week:0,deficit:300,time:30}
 let state, puts, conflict = false, putDelay = 0
@@ -20,10 +21,10 @@ const server = http.createServer(async (req,res) => {
     const body = JSON.parse(raw); puts.push(body)
     await new Promise(resolve => setTimeout(resolve, putDelay))
     if(conflict || body.version !== state.version) {res.statusCode=409;return res.end(JSON.stringify({ok:false,error:'Конфликт версий'}))}
-    state = {...state,...body,version:state.version+1}
+    state = {...state,...body,variants:{...state.variants,...body.variants},version:state.version+1}
     return res.end(JSON.stringify(state))
   }
-  res.setHeader('Content-Type','text/html; charset=utf-8'); res.end(html)
+  res.setHeader('Content-Type','text/html; charset=utf-8'); res.end(req.url==='/metabolism-old'?oldHtml:html)
 })
 await new Promise(resolve => server.listen(0,'127.0.0.1',resolve))
 const url = `http://127.0.0.1:${server.address().port}/metabolism`
@@ -57,6 +58,28 @@ try {
   assert.equal(await page.locator('[data-unit]').inputValue(),'percent')
   assert.equal(await page.locator('#mw-deficit').inputValue(),'10')
   assert.match(await page.locator('[data-hero]').innerText(),/1\s*650/)
+  await page.locator('#mw-steps').fill('12000'); await saved()
+  assert.ok(Math.abs(state.variants['1'].deficit-207.026805)<0.001,'percentage saves current equivalent kcal after expenditure changes')
+  const archived=await browser.newPage()
+  await archived.addInitScript(()=>{window.EdabalansIdentity={source:'native',email:'client@example.test'}})
+  await archived.route('https://edabalans.ru/api/apps/metabolism',async route=>{
+    const response=await route.fetch({url:url.replace('/metabolism','/api/apps/metabolism')})
+    await route.fulfill({response})
+  })
+  await archived.goto(url+'-old')
+  await archived.waitForFunction(()=>document.querySelector('#metabolism-old-app input')!==null)
+  await archived.evaluate(()=>window.META.setNumber('deficit','500'))
+  const deadline=Date.now()+10000
+  while(state.variants['1'].deficit!==500){if(Date.now()>deadline)throw Error('Archived save did not arrive');await page.waitForTimeout(30)}
+  assert.equal(state.variants['1']._unit,'kcal','actual archived editor resets saved percentage metadata')
+  assert.ok(state.variants['3'],'archived save preserves third variant')
+  await archived.close();await load()
+  assert.equal(await page.locator('[data-unit]').inputValue(),'kcal')
+  assert.equal(await page.locator('#mw-deficit').inputValue(),'500')
+  await page.locator('.mw-person').evaluate(node=>node.open=true)
+  await page.locator('#mw-weight').fill('81');await saved()
+  assert.ok(Object.values(state.variants).every(v=>v.weight===81),'personal edit propagates to all three persisted variants')
+  await page.locator('.mw-person').evaluate(node=>node.open=false)
   await page.locator('[data-unit]').selectOption('kcal');await saved()
 
   await page.locator('[data-edit-variant="2"]').click()

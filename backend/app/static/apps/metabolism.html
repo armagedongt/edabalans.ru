@@ -427,7 +427,7 @@
         return data;
       }
       function snapshot(){
-        return Object.fromEntries(variants.map((v,i)=>[String(i+1),{...v,_name:names[i],_unit:units[i],_percent:percents[i],_food:{...foodSettings[i]}}]));
+        return Object.fromEntries(variants.map((v,i)=>{const result=calc(v);return[String(i+1),{...v,deficit:result?result.deficit:v.deficit,_name:names[i],_unit:units[i],_percent:percents[i],_food:{...foodSettings[i]}}]}));
       }
       async function saveNow(){
         clearTimeout(saveTimer);

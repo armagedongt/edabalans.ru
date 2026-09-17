@@ -28,11 +28,11 @@ const articleTypography = await readFile(new URL('../../../content/article-compo
 const articleNote = await readFile(new URL('../../../content/article-components/note.css', import.meta.url), 'utf8')
 const appShellCss = await readFile(new URL('../../app/static/app-shell.css', import.meta.url), 'utf8')
 async function waitUntil(predicate){const deadline=Date.now()+15000;while(!predicate()){if(Date.now()>deadline)throw Error('Timed out waiting for background request');await new Promise(resolve=>setTimeout(resolve,20))}}
-async function capture(page, name) {
+async function capture(page, name, currentViewportOnly=false) {
   if (!process.env.QA_OUT) return
   await mkdir(process.env.QA_OUT, {recursive:true})
   const previous=page.viewportSize()
-  for(const width of [360,430,768,1440]) {
+  for(const width of currentViewportOnly?[previous.width]:[360,430,768,1440]) {
     await page.setViewportSize({width,height:1000})
     await page.screenshot({path:process.env.QA_OUT+'/'+name+'-'+width+'.png'})
   }
@@ -418,7 +418,7 @@ try {
   assert.equal(await mdForm.native.locator('#q-fields strong').textContent(),'Подсказка из MD')
   assert.equal(await mdForm.native.locator('#q-fields textarea').inputValue(),'Прежний ответ')
   assert.equal(await mdForm.native.locator('#q-note').textContent(),'После формы из MD')
-  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await mdForm.native.setViewportSize({width,height:900});await capture(mdForm.native,'questionnaire-person-course-'+width)}
+  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await mdForm.native.setViewportSize({width,height:900});await capture(mdForm.native,'questionnaire-person-course-'+width,true)}
   await mdForm.native.close()
   mdStep.editorialHtml=''
   const emptyMdForm=await nativePage('?course_day=1&course_material=day-01-questionnaire',{manifest:mdManifest,questions:mdQuestions,questionnaireCopy:{...mdCopy,leadHtml:''}})
@@ -443,7 +443,7 @@ try {
   assert.equal(await standalone.locator('#mc-submit').textContent(),mdCopy.button)
   assert.equal(await standalone.locator('.mc-question strong').textContent(),'Подсказка из MD')
   assert.equal(await standalone.locator('textarea').inputValue(),'Прежний ответ')
-  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await standalone.setViewportSize({width,height:900});await capture(standalone,'questionnaire-person-standalone-'+width)}
+  for(const width of [360,430,720,721,768,999,1000,1440,1920]){await standalone.setViewportSize({width,height:900});await capture(standalone,'questionnaire-person-standalone-'+width,true)}
   standaloneCopy={...mdCopy,leadHtml:''}
   await standalone.reload({waitUntil:'domcontentloaded'})
   await standalone.locator('#mc-submit').waitFor()
