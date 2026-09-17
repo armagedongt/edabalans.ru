@@ -51,6 +51,7 @@
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
+| Приём и локальная расшифровка любых голосовых, аудио и видео | [Голосовой диспетчер](knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md), модуль `platform.content` |
 | Блог: статьи, SEO, аналитика и публикация | `knowledge-base/modules/blog/README.md`, модуль `platform.blog` |
 | Писарь: единый вход, правила, источники, прошлые разборы и маршруты публикации | [Писарь](../content/author-voice/README.md); рабочая инструкция — `../content/author-voice/skill/edabalans-writer/SKILL.md` |
 | Использование нашего видеоплеера: возможности, настройки и места подключения | [Использование нашего видеоплеера](../backend/app/static/video-player-development/README.md) |

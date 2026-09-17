@@ -133,6 +133,7 @@ owns_files = [
   "docs/knowledge-base/ARTICLE_STANDARD.md",
   "docs/knowledge-base/MARKDOWN_MATERIAL_TRANSFER.md",
   "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
+  "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md",
   "content/author-voice/**",
   "content/author-voice/CALIBRATION_V1.md",
   "content/author-voice/correction-nutritionists-law-v1.json",
@@ -200,6 +201,9 @@ owns_tables = [
   "content_families", "content_family_memberships", "content_family_candidates",
 ]
 owns_routes = ["*/admin/api/content*"]
+sources = [
+  { path = "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md", role = "rule", shared = true, consumers = ["platform.knowledge", "operations.imports"] },
+]
 
 [[modules]]
 id = "platform.blog"
@@ -894,6 +898,7 @@ owns_files = [
 id = "operations.imports"
 parent = "operations"
 card = "docs/knowledge-base/modules/catalog/operations.imports.md"
+reads_from = ["platform.content"]
 depends_on = ["operations.database", "operations.backup", "platform.crm"]
 owns_files = [
   "backend/app/importers/**", "backend/requirements-collector.txt", "leadteh-export/**",
