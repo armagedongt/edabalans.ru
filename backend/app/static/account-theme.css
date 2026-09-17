@@ -1,0 +1,142 @@
+/* Shared cabinet skin. Account/course visual CSS owns the underlying layout. */
+.account-shell,.content{position:relative}
+.account-theme-toggle{display:grid;place-items:center;width:44px;height:44px;margin:0 0 18px auto;padding:10px;border:1px solid #a8d7ef;border-radius:12px;background:#eaf8ff;color:#118ed8;cursor:pointer}
+.account-theme-toggle svg{display:block;width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.account-theme-toggle:hover{background:#d6efff}
+.account-theme-toggle:focus-visible{outline:3px solid #f39a2f;outline-offset:3px}
+@media(min-width:901px){
+  .account-theme-toggle{position:fixed;top:20px;right:20px;margin:0;z-index:60}
+  #masterclass-course-app .content{padding-top:40px!important}
+  #masterclass-course-app .content>.account-theme-toggle{top:38px}
+  #masterclass-course-app .main{padding-right:64px!important}
+}
+@media(min-width:901px) and (max-width:1200px){#account-app .account-shell{padding-right:88px!important}}
+@media(max-width:900px){
+  #masterclass-course-app .topbar{grid-template-columns:1fr auto!important}
+  #masterclass-course-app .topbar .mobile-account{display:none!important}
+  #masterclass-course-app .topbar .mobile-content{min-height:36px;padding:7px 12px!important;border:1px solid rgba(39,175,245,.65)!important;border-radius:10px;background:#fff!important;color:#118ed8!important}
+  #masterclass-course-app .topbar .mobile-content:hover{background:#eaf8ff!important;color:#0c76b5!important}
+  #masterclass-course-app .topbar .mobile-content:focus-visible{outline:3px solid #f39a2f;outline-offset:3px}
+  #masterclass-course-app .preview-sidebar-header{display:grid!important;grid-template-columns:minmax(0,1fr) 32px 32px;gap:6px;align-items:center!important}
+  #masterclass-course-app .preview-sidebar-header .account-theme-toggle{width:32px;height:32px;padding:7px;border-radius:9px;margin:0;box-sizing:border-box}
+  #masterclass-course-app .preview-sidebar-header .account-theme-toggle svg{width:16px;height:16px}
+  #masterclass-course-app .preview-sidebar-header .close-menu{position:relative!important;inset:auto!important;width:32px!important;height:32px!important;min-height:32px!important;border-radius:9px;font-size:0!important;box-sizing:border-box}
+  #masterclass-course-app .preview-sidebar-header .close-menu::before,
+  #masterclass-course-app .preview-sidebar-header .close-menu::after{position:absolute;top:50%;left:50%;width:20px;height:1.6px;border-radius:2px;background:currentColor;content:'';transform:translate(-50%,-50%) rotate(45deg)}
+  #masterclass-course-app .preview-sidebar-header .close-menu::after{transform:translate(-50%,-50%) rotate(-45deg)}
+  #masterclass-course-app .preview-sidebar-brand{gap:3px!important;font-size:clamp(6.8px,calc(4.5vw - 7.5px),11px)!important}
+  #masterclass-course-app .preview-sidebar-brand img{width:28px;height:28px;flex-basis:28px}
+}
+html[data-account-theme="dark"]{color-scheme:dark;--account-theme-bg:#171a20;--account-theme-card:#222831;--account-theme-hover:#283846;--account-theme-border:#3d5366;--account-theme-ink:#edf1f5;--account-theme-muted:#bdc7d1;--account-theme-blue:#69c9ff;--account-theme-side:#202329}
+html[data-account-theme="dark"],html[data-account-theme="dark"] body{background:var(--account-theme-bg)!important;color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] body:has(#account-app):not(:has(#masterclass-course-app)),
+html[data-account-theme="dark"] body:has(#masterclass-course-app){background:var(--account-theme-bg)!important;color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] #account-app,
+html[data-account-theme="dark"] #masterclass-course-app{--ink:var(--account-theme-ink);--muted:var(--account-theme-muted);--paper:var(--account-theme-bg);--card:var(--account-theme-card);--line:var(--account-theme-border);--violet:var(--account-theme-blue);--article-link:var(--account-theme-blue);--article-note-bg:#51472b;--shadow:0 12px 28px -18px #0009;color:var(--account-theme-ink)!important;background:transparent!important}
+html[data-account-theme="dark"] .account-theme-toggle{background:#263442;color:var(--account-theme-blue);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] .account-theme-toggle:hover{background:#324859}
+
+/* Personal cabinet */
+html[data-account-theme="dark"] #account-app .account-head{border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #account-app :is(.account-head h1,.account-section h2,.account-session-email,.account-logout,.application-card h3,.legacy-card h3){color:var(--account-theme-ink)}
+html[data-account-theme="dark"] #account-app :is(.account-session,.account-card p,.application-card p,.account-review p,.account-legal>p,.legacy-card p){color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #account-app .account-kicker::after{color:var(--account-theme-blue)}
+html[data-account-theme="dark"] #account-app :is(.account-card,.application-card,.legal-card,.legacy-card){border-color:var(--account-theme-border);background:var(--account-theme-card);box-shadow:none}
+html[data-account-theme="dark"] #account-app .account-card.available-card{background:linear-gradient(135deg,#222831 65%,#253b48);border-color:#3979a0}
+html[data-account-theme="dark"] #account-app .account-card.featured{background:linear-gradient(135deg,#222831 65%,#413124);border-color:#815f3e}
+html[data-account-theme="dark"] #account-app .account-state{background:#482e32;color:#ffb7b0}
+html[data-account-theme="dark"] #account-app .account-state.owned{background:#214d38;color:#9ce8b4}
+html[data-account-theme="dark"] #account-app .account-state.preparing{background:#51452b;color:#ffe1a0}
+html[data-account-theme="dark"] #account-app .account-open:disabled{background:#482e32;border-color:#755058;color:#ffb7b0}
+html[data-account-theme="dark"] #account-app .account-card:has(.account-state.preparing) .account-open:disabled,
+html[data-account-theme="dark"] #account-app .application-card .account-open:disabled{background:#51452b;border-color:#7c6943;color:#ffe1a0}
+html[data-account-theme="dark"] #account-app .application-icon{background:#263e50;color:var(--account-theme-blue)}
+html[data-account-theme="dark"] #account-app :is(.account-review,.account-legal){background:#372d28;border-color:#815f3e}
+html[data-account-theme="dark"] #account-app :is(.legal-card a,.account-contact a:last-child){color:var(--account-theme-blue)}
+html[data-account-theme="dark"] #account-app .account-contact a:last-child{background:var(--account-theme-card);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #account-app .legal-action{background:#263442;color:var(--account-theme-blue)}
+html[data-account-theme="dark"] #account-app .legal-action:hover:not(:disabled){background:#324b5e}
+html[data-account-theme="dark"] #account-app .legal-action:disabled{background:#252b32;color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #account-app .legal-error{color:#ffb7b0!important}
+
+/* Outline: identical row behavior, only the surface changes. */
+html[data-account-theme="dark"] #masterclass-course-app .sidebar{background:linear-gradient(160deg,#282c33,#202329 55%,#1b1e24)!important;box-shadow:8px 0 30px -20px #000}
+html[data-account-theme="dark"] #masterclass-course-app #days .day-button{background:#ffffff05!important;border-color:#ffffff18!important}
+html[data-account-theme="dark"] #masterclass-course-app #days .day-button.active{background:#304050!important;border-color:#65829a!important}
+html[data-account-theme="dark"] #masterclass-course-app #days .day-button:hover{background:#ffffff13!important;border-color:#ffffff45!important}
+html[data-account-theme="dark"] #masterclass-course-app .day-number{background:#ffffff18!important}
+html[data-account-theme="dark"] #masterclass-course-app .active .day-number{background:linear-gradient(135deg,#ffc25a,#f39a2f)!important}
+html[data-account-theme="dark"] #masterclass-course-app .sidebar-account{background:#edf1f5!important;color:#237fb3!important;border-color:transparent!important}
+html[data-account-theme="dark"] #masterclass-course-app .sidebar-account:hover{background:#cdeaff!important}
+html[data-account-theme="dark"] #masterclass-course-app .close-menu{background:#ffffff0c!important;border-color:#ffffff50!important}
+html[data-account-theme="dark"] #masterclass-course-app .topbar{background:#171a20f5!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .mobile-account{background:#263442!important;color:var(--account-theme-blue)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .mobile-content{color:var(--account-theme-blue)!important}
+html[data-account-theme="dark"] #masterclass-course-app .topbar .mobile-content{background:#263442!important;color:var(--account-theme-blue)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .topbar .mobile-content:hover{background:#324859!important}
+
+/* Day and material states */
+html[data-account-theme="dark"] #masterclass-course-app :is(.hero .eyebrow-time,.material-meta-time,.hero-lead,.intro,.after-materials p,.moral p,.sequence-note,.sales-context){color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] #masterclass-course-app .intro strong{color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic{background:linear-gradient(112deg,#222831,#243541)!important;border-color:#416985!important;color:var(--account-theme-ink)!important;box-shadow:none!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic:not(.locked):not(:disabled):hover{background:linear-gradient(112deg,#293e4e,#2d4b61)!important;border-color:#69c9ff!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.locked{background:#252b32!important;border-color:#414b57!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.locked:hover{background:#2d343e!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic-copy strong{color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.locked .topic-copy strong{color:#bcc5cf!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.topic-meta,.topic-copy>span:not(.topic-meta)){color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.locked .topic-index{background:#334352!important;color:#a5c9df!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.step-done .topic-index{background:#62ce80!important;color:#122d1c!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic.offer{background:linear-gradient(135deg,#302c27,#46372b)!important;border-color:#b48143!important}
+html[data-account-theme="dark"] #masterclass-course-app .topic-copy>.topic-badge{background:#51452b;color:#ffe1a0!important}
+html[data-account-theme="dark"] #masterclass-course-app .assignment{background:linear-gradient(135deg,#236442,#185134)!important;color:#f2fff5!important}
+html[data-account-theme="dark"] #masterclass-course-app .assignment.locked{background:linear-gradient(135deg,#294b39,#253e31)!important}
+html[data-account-theme="dark"] #masterclass-course-app .next-day{background:linear-gradient(118deg,#222831,#243541)!important;border-color:#416985!important;border-left-color:transparent!important;box-shadow:none}
+html[data-account-theme="dark"] #masterclass-course-app :is(.next-copy strong,.next-heading){color:var(--account-theme-ink)!important}
+html[data-account-theme="dark"] #masterclass-course-app .next-copy span{color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] #masterclass-course-app .unlock{border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .timer{background:#263442!important;border-color:var(--account-theme-border)!important;color:#ffb9ae!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.media,.video-timings){background:#242e39!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .timing-row{border-color:var(--account-theme-border)}
+
+/* Reading: no separate white sheet and no inversion of photographs or video. */
+html[data-account-theme="dark"] #masterclass-course-app #article{background:transparent!important;color:var(--account-theme-ink)!important;--article-link:var(--account-theme-blue);--article-note-bg:#51472b}
+html[data-account-theme="dark"] #masterclass-course-app #article :is(h1,h2,h3,p,li,strong){color:inherit!important}
+html[data-account-theme="dark"] #masterclass-course-app #article a{color:var(--account-theme-blue)}
+html[data-account-theme="dark"] #masterclass-course-app #article figcaption{color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #masterclass-course-app #article :is(.article-note-accent,.editorial-note){background:#51472b!important;color:#fff3ca!important}
+html[data-account-theme="dark"] #masterclass-course-app #article :is(.article-spoiler,.article-copy-block){background:var(--account-theme-card);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #masterclass-course-app #article :is(.article-spoiler summary,.article-copy-button){color:var(--account-theme-ink);background:var(--account-theme-card)}
+html[data-account-theme="dark"] #masterclass-course-app :is(.article-head .back,.article-nav button,.bottom-nav button,.bottom-nav .outline,#article-toc-button){background:#263442!important;color:var(--account-theme-blue)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.article-head .back,.article-nav button,.bottom-nav button,#article-toc-button):hover:not(:disabled){background:#324b5e!important}
+html[data-account-theme="dark"] #masterclass-course-app .article-nav button:last-child:not(.outline):not(:disabled){background:linear-gradient(135deg,#ffc25a,#f39a2f)!important;color:#242019!important;border-color:transparent!important}
+html[data-account-theme="dark"] #masterclass-course-app .article-nav button:disabled{background:#252b32!important;color:#a3adb7!important;border-color:#414b57!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(#article-toc-popover,.article-toc-popover,.mobile-article-toc-popover){background:var(--account-theme-card)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.article-toc-popover a,.mobile-article-toc-popover a){color:var(--account-theme-blue)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.article-toc-popover a:hover,.mobile-article-toc-popover a:hover,.article-toc-popover a[aria-current],.mobile-article-toc-popover a[aria-current]){background:#324b5e!important;color:var(--account-theme-blue)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.gallery-window,.dqs-example-gallery-window,.dqs-image-slider){background:#222831}
+html[data-account-theme="dark"] #masterclass-course-app .gallery-slide{background:#222831}
+html[data-account-theme="dark"] #masterclass-course-app .gallery-slide figcaption{background:#222831;color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #masterclass-course-app :is(.gallery-arrow,.dqs-example-gallery-button){background:#263442;color:var(--account-theme-ink)}
+html[data-account-theme="dark"] #masterclass-course-app :is(.gallery-footer,.dqs-example-gallery-footer){color:var(--account-theme-muted)}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table{color:var(--account-theme-ink);background:var(--account-theme-card)}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table :is(th,td){background:var(--account-theme-card);color:var(--account-theme-ink);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table th{background:#2e3b48}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table :is(.score-2,.score-1){background:#294b37;color:#c5f2d3}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table .score-0{background:#51472b;color:#fff3ca}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table .score--1{background:#5a402a;color:#ffe2bf}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table .score--2{background:#543039;color:#ffccd3}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-score-table-wrap{background:var(--account-theme-card);border-color:var(--account-theme-border)}
+html[data-account-theme="dark"] :is(.eb-footer,.course-legal){color:var(--account-theme-muted)!important;border-color:var(--account-theme-border)!important;background:transparent!important}
+html[data-account-theme="dark"] :is(.eb-footer,.course-legal) a{color:var(--account-theme-blue)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.questionnaire,.q-card,.q-grid,.messenger-popup-card,.sales-popup-card){background:var(--account-theme-card)!important;color:var(--account-theme-ink)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.q-card input,.q-card select,.q-card textarea){background:#19212a!important;color:var(--account-theme-ink)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app :is(.q-help,.q-card p,.messenger-note,.messenger-link-note){color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] #masterclass-course-app .messenger-popup-actions :is(a,button){background:#263442!important;color:var(--account-theme-blue)!important;border-color:var(--account-theme-border)!important}
+html[data-account-theme="dark"] #masterclass-course-app .messenger-popup-actions :is(a,button):hover:not(:disabled):not(.disabled){background:#324b5e!important}
+html[data-account-theme="dark"] #masterclass-course-app .messenger-popup-actions .disabled{background:#252b32!important;color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] #masterclass-course-app .messenger-note{background:#243f30!important;color:#c5f2d3!important}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-material-buttons :is(a,button){background:#263442!important;color:var(--account-theme-blue)!important}
+html[data-account-theme="dark"] #masterclass-course-app .dqs-material-buttons :is(a,button):hover:not(:disabled){background:#324b5e!important}
+html[data-account-theme="dark"] .ed-loading{background:var(--account-theme-bg)!important;color:var(--account-theme-muted)!important}
+html[data-account-theme="dark"] body:has(>.ed-loading-screen){background:var(--account-theme-bg)!important}

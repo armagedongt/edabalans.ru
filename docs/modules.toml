@@ -266,6 +266,8 @@ owns_files = [
   "backend/app/static/eda-finance.html", "docs/FINANCE_MODEL.md",
   "backend/app/static/embed.js", "backend/app/static/site-footer.js", "backend/app/static/content-gallery.js",
   "backend/app/static/app-shell.css",
+  "backend/app/static/account-theme.css", "backend/app/static/account-theme.js",
+  "backend/tests/browser/account-theme.e2e.mjs",
   "backend/tests/browser/embed-loading.e2e.mjs",
   "work/lk-loading-polish-20260917/**",
   "backend/app/importers/google_apps.py", "backend/tests/test_google_apps_import.py",

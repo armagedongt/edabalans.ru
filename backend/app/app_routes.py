@@ -658,6 +658,7 @@ def app_asset(asset_name: str) -> FileResponse:
         "masterclass.js", "masterclass.css", "app-shell.css", "max-logo.png",
         "content-gallery.js", "public-program-card.css", "public-program-card.js",
         "account-visual.css", "course-visual.css",
+        "account-theme.css", "account-theme.js",
     }:
         raise HTTPException(status_code=404, detail="asset not found")
     return public_asset(STATIC_DIR / asset_name)
