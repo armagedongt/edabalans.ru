@@ -18,7 +18,7 @@
     <span>Содержание</span>
   </button>
 
-  <aside class="mvp__drawer" aria-label="Содержание видео">
+  <aside class="mvp__drawer" aria-label="Содержание видео" aria-hidden="true" inert>
     <div class="mvp__drawer-head">
       <div>
         <div class="mvp__drawer-title">Содержание</div>
@@ -156,6 +156,8 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
 #modular-video-player .mvp__drawer-head{
   display:flex;align-items:center;justify-content:space-between;padding:17px 16px;border-bottom:1px solid #ece8f3;
 }
+#modular-video-player .mvp__contents-btn[hidden],
+#modular-video-player .mvp__drawer[hidden]{display:none}
 #modular-video-player .mvp__eyebrow{color:var(--accent);font-size:10px;font-weight:800;letter-spacing:.12em}
 #modular-video-player .mvp__drawer-title{margin-top:3px;font-size:18px;font-weight:800}
 #modular-video-player .mvp__close{
@@ -363,28 +365,16 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
     });
   } catch (error) {}
 
-  /* РЕЖИМ ПЛЕЕРА — меняется одной строкой:
-     'engagement' = автостарт без звука + аналитика + ускоренная шкала + только текущее время
-     'standard'   = обычный запуск + обычная шкала + полное время + без аналитики */
+  // Учебный профиль. Публичные presets принадлежат homepage-preview/vsl-player.html.
   const PLAYER_MODE = 'standard';
 
   /* Содержание независимо от режима. */
   const CONTENTS_ENABLED = !runtimeParams.has('src') || runtimeChapters.length > 0;
 
   const MODE_PRESETS = {
-    engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
     standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
   const MODULES = { ...(MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard), contents:CONTENTS_ENABLED };
-
-  /*
-    Настройки опережающего прогресса.
-    speedMultiplier = визуальная скорость заполнения шкалы.
-    1 = обычная шкала; 1.5 = умеренное ускорение; 2 = заметное ускорение.
-  */
-  const PROGRESS_CONFIG = {
-    speedMultiplier: 1.8
-  };
 
   /* Варианты качества. Для каждого дополнительного качества укажи прямую ссылку.
      Строки без url автоматически не показываются. */
@@ -393,18 +383,6 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
     // { id:'1080', label:'1080p', url:'https://site.ru/video-1080.mp4' },
     // { id:'720',  label:'720p',  url:'https://site.ru/video-720.mp4' }
   ];
-
-  /*
-    Настройки аналитики.
-    Для реальной отправки на сервер укажи endpoint.
-  */
-  const ANALYTICS_CONFIG = {
-    endpoint: '',
-    videoId: 'main-video-001',
-    bucketSizeSec: 5,
-    completionThreshold: 0.95,
-    heartbeatSec: 15
-  };
 
   const chapters = runtimeChapters.length ? runtimeChapters : [
     { at: 0, title: 'Введение' },
@@ -460,10 +438,13 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
     return h ? `${h}:${String(m).padStart(2,'0')}:${sec}` : `${m}:${sec}`;
   }
 
+  const escapeText = value => String(value).replace(/[&<>"']/g, character => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  })[character]);
   chaptersBox.innerHTML = chapters.map((ch,i)=>`
     <button class="mvp__chapter" type="button" data-index="${i}">
       <span class="mvp__chapter-time">${formatTime(ch.at)}</span>
-      <span class="mvp__chapter-title">${ch.title}</span>
+      <span class="mvp__chapter-title">${escapeText(ch.title)}</span>
     </button>
   `).join('');
 
@@ -500,18 +481,12 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
       bigPlay.hidden = false;
     }
 
-    if (MODULES.analytics) {
-      initAnalytics();
-    }
   }
 
   function visualProgress(realRatio){
     const x = Math.max(0, Math.min(1, realRatio));
 
-    if (!MODULES.acceleratedProgress) return x;
-
-    const multiplier = Math.max(1, Number(PROGRESS_CONFIG.speedMultiplier) || 1);
-    return 1 - Math.pow(1 - x, multiplier);
+    return x;
   }
 
   function updatePlayUI(){
@@ -715,12 +690,21 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
     else root.requestFullscreen?.();
   });
 
+  function setDrawerOpen(open){
+    root.classList.toggle('mvp--drawer-open', open);
+    contentsBtn.setAttribute('aria-expanded', String(open));
+    drawer.setAttribute('aria-hidden', String(!open));
+    drawer.inert = !open;
+    if (open) closeBtn.focus();
+    else if (drawer.contains(document.activeElement)) contentsBtn.focus();
+  }
+
   contentsBtn.addEventListener('click', ()=>{
     if (!MODULES.contents) return;
     closeSettingsPanels();
-    root.classList.toggle('mvp--drawer-open');
+    setDrawerOpen(!root.classList.contains('mvp--drawer-open'));
   });
-  closeBtn.addEventListener('click', ()=>root.classList.remove('mvp--drawer-open'));
+  closeBtn.addEventListener('click', ()=>setDrawerOpen(false));
 
   document.addEventListener('click', event=>{
     if (!root.contains(event.target)) closeSettingsPanels();
@@ -728,7 +712,7 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
   document.addEventListener('keydown', event=>{
     if (event.key === 'Escape') {
       closeSettingsPanels();
-      root.classList.remove('mvp--drawer-open');
+      setDrawerOpen(false);
     }
   });
 
@@ -736,104 +720,9 @@ html.mvp-standalone-document body{width:100%;min-height:100%;margin:0;background
     btn.addEventListener('click', ()=>{
       video.currentTime = chapters[i].at;
       video.play().catch(()=>{});
-      root.classList.remove('mvp--drawer-open');
+      setDrawerOpen(false);
     });
   });
-
-  function initAnalytics(){
-    const STORAGE_PREFIX = 'mvp_analytics_v1';
-    const viewerKey = `${STORAGE_PREFIX}:viewer_id`;
-    const stateKey = `${STORAGE_PREFIX}:${ANALYTICS_CONFIG.videoId}`;
-
-    let viewerId = localStorage.getItem(viewerKey);
-    if (!viewerId) {
-      viewerId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random();
-      localStorage.setItem(viewerKey, viewerId);
-    }
-
-    let state = {};
-    try { state = JSON.parse(localStorage.getItem(stateKey) || '{}'); } catch(e) {}
-
-    const watched = new Set(Array.isArray(state.watchedBuckets) ? state.watchedBuckets : []);
-    let engaged = false;
-    let lastT = null;
-    let heartbeat = 0;
-
-    function persist(){
-      state.lastPosition = Math.floor((video.currentTime || 0)/5)*5;
-      state.maxPosition = Math.max(state.maxPosition || 0, state.lastPosition);
-      state.watchedBuckets = [...watched].sort((a,b)=>a-b);
-      localStorage.setItem(stateKey, JSON.stringify(state));
-    }
-
-    function send(event, extra={}){
-      persist();
-      const payload = {
-        event,
-        viewer_id: viewerId,
-        video_id: ANALYTICS_CONFIG.videoId,
-        ts: new Date().toISOString(),
-        last_position_sec: state.lastPosition || 0,
-        max_position_sec: state.maxPosition || 0,
-        watched_buckets_5s: state.watchedBuckets || [],
-        ...extra
-      };
-
-      root.dispatchEvent(new CustomEvent('mvp:analytics', {detail:payload}));
-      if (ANALYTICS_CONFIG.endpoint) {
-        fetch(ANALYTICS_CONFIG.endpoint, {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify(payload),
-          keepalive:true
-        }).catch(()=>{});
-      }
-    }
-
-    root.addEventListener('click', e=>{
-      if (!engaged && (
-        e.target === video ||
-        e.target.closest('.mvp__big-play') ||
-        e.target.closest('.mvp__play') ||
-        e.target.closest('.mvp__sound-card')
-      )) {
-        engaged = true;
-        send('video_engaged');
-      }
-    }, true);
-
-    video.addEventListener('timeupdate', ()=>{
-      const t = video.currentTime || 0;
-
-      if (!video.paused && lastT !== null) {
-        const delta = t - lastT;
-        if (delta > 0 && delta <= 2) {
-          const from = Math.floor(lastT / ANALYTICS_CONFIG.bucketSizeSec);
-          const to = Math.floor(t / ANALYTICS_CONFIG.bucketSizeSec);
-          for(let b=from;b<=to;b++) watched.add(b*ANALYTICS_CONFIG.bucketSizeSec);
-        }
-      }
-
-      lastT = t;
-      persist();
-
-      if (engaged && Date.now() - heartbeat >= ANALYTICS_CONFIG.heartbeatSec * 1000) {
-        heartbeat = Date.now();
-        send('video_progress');
-      }
-
-      if (Number.isFinite(video.duration) && video.duration > 0) {
-        if (!state.completed && t / video.duration >= ANALYTICS_CONFIG.completionThreshold) {
-          state.completed = true;
-          send('video_complete');
-        }
-      }
-    });
-
-    window.addEventListener('pagehide', ()=>{
-      send('video_exit');
-    });
-  }
 
   applyModules();
   updatePlayUI();

@@ -132,6 +132,7 @@ jobs:
           npm --prefix backend/tests/browser run test:intensive-offer
           npm --prefix backend/tests/browser run test:homepage-checkout
           npm --prefix backend/tests/browser run test:embed-loading
+          npm --prefix backend/tests/browser run test:video-player
 
       - name: Stop browser-test backend
         if: always() && steps.impact.outputs.backend == 'true'

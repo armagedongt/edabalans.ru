@@ -19,6 +19,8 @@ implementation_status: implemented
   `app_revealed_dqs`, `app_revealed_strength`, `app_revealed_metabolism` и
   `app_revealed_recipes`;
 - отображать редакторские переносы строк в текстах курса;
+- поставлять единый учебный MP4-плеер `standard` с обложкой, перемоткой,
+  скоростями и кликабельными главами из данных дня, без публичной аналитики;
 
 ## Граница
 

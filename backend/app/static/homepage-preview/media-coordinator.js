@@ -24,15 +24,17 @@
     });
   };
 
-  document.addEventListener('play', (event) => {
+  const claimLocalSound = (event) => {
     const media = event.target;
     if (!(media instanceof HTMLMediaElement)) return;
     // Muted decorative loops must not interrupt the primary VSL autoplay.
-    if (media.muted || media.volume === 0) return;
+    if (media.paused || media.muted || media.volume === 0) return;
     activeFrame = null;
     pauseLocalMedia(media);
     pauseOtherFrames();
-  }, true);
+  };
+  document.addEventListener('play', claimLocalSound, true);
+  document.addEventListener('volumechange', claimLocalSound, true);
 
   window.addEventListener('message', (event) => {
     const frame = frames().find((candidate) => event.source === candidate.contentWindow) || null;
@@ -50,7 +52,7 @@
   document.addEventListener('load', (event) => {
     const frame = event.target;
     if (!(frame instanceof HTMLIFrameElement) || !frame.matches(frameSelector)) return;
-    const audibleLocalMedia = localMedia().some((media) => !media.paused && !media.muted);
+    const audibleLocalMedia = localMedia().some((media) => !media.paused && !media.muted && media.volume > 0);
     if (audibleLocalMedia) {
       pauseFrame(frame);
       return;

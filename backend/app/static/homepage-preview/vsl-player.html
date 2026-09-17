@@ -348,16 +348,13 @@
   if (!root || root.dataset.ready) return;
   root.dataset.ready = '1';
 
-  /* РЕЖИМ ПЛЕЕРА — меняется одной строкой:
-     'engagement' = автостарт без звука + аналитика + ускоренная шкала + только текущее время
-     'standard'   = обычный запуск + обычная шкала + полное время + без аналитики */
+  // Публичные варианты выбираются зарегистрированным context, не копией движка.
   const PLAYER_MODE = 'engagement';
 
   const MODE_PRESETS = {
     engagement: { autoplay:true,  analytics:true,  acceleratedProgress:true },
-    standard:   { autoplay:false, analytics:false, acceleratedProgress:false }
   };
-  const modePreset = MODE_PRESETS[PLAYER_MODE] || MODE_PRESETS.standard;
+  const modePreset = MODE_PRESETS[PLAYER_MODE];
   const playerQuery = new URLSearchParams(location.search);
   const PLAYER_CONTEXT = playerQuery.get('context') || 'homepage-vsl';
   const TRUSTED_PARENT_ORIGINS = new Set([
@@ -401,7 +398,12 @@
       acceleratedProgress: false
     }
   };
-  const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];
+  if (!Object.hasOwn(MEDIA_PRESETS, PLAYER_CONTEXT)) {
+    root.textContent = 'Неизвестный профиль видео';
+    root.setAttribute('role', 'alert');
+    return;
+  }
+  const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT];
   const seekEnabled = mediaPreset.allowSeek ?? (PLAYER_MODE !== 'engagement');
   const MODULES = {
     ...modePreset,
@@ -1006,12 +1008,19 @@
     const sessionId = randomUuid();
     const stateKey = `${STORAGE_PREFIX}:${ANALYTICS_CONFIG.videoId}`;
 
-    let viewerId = localStorage.getItem(viewerKey);
+    let viewerId = null;
+    try { viewerId = localStorage.getItem(viewerKey); } catch (_error) {}
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(viewerId || '')) viewerId = null;
+
+    const store = (key, value) => {
+      // Storage restrictions must not interrupt playback or the in-memory session.
+      try { localStorage.setItem(key, value); } catch (_error) {}
+    };
 
     function ensureViewerId(){
       if (!viewerId) {
         viewerId = randomUuid();
-        localStorage.setItem(viewerKey, viewerId);
+        store(viewerKey, viewerId);
       }
       return viewerId;
     }
@@ -1026,7 +1035,7 @@
       state.lastPosition = Math.floor((video.currentTime || 0)/5)*5;
       state.maxPosition = Math.max(state.maxPosition || 0, state.lastPosition);
       state.watchedBuckets = [...watched].sort((a,b)=>a-b);
-      localStorage.setItem(stateKey, JSON.stringify(state));
+      store(stateKey, JSON.stringify(state));
     }
 
     function send(event, extra={}){
@@ -1052,10 +1061,7 @@
 
       root.dispatchEvent(new CustomEvent('mvp:analytics', {detail:payload}));
       if (parent !== window) {
-        parent.postMessage(
-          {type:'edabalans:video-analytics', context:PLAYER_CONTEXT, payload},
-          location.origin
-        );
+        postToParent({type:'edabalans:video-analytics', context:PLAYER_CONTEXT, payload});
       }
       if (ANALYTICS_CONFIG.endpoint) {
         fetch(ANALYTICS_CONFIG.endpoint, {

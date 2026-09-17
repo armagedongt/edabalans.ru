@@ -1226,7 +1226,8 @@ def test_public_player_supports_intensive_single_source_seekable_mode() -> None:
     assert "https://cdn-g.boomstream.com/balancer/SBDlvNgl-9WmCBBoU.mp4" in response.text
     assert "videoId: 'intensive-day-1-2026-09-03'" in response.text
     assert "const PLAYER_CONTEXT = playerQuery.get('context')" in response.text
-    assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT] || MEDIA_PRESETS['homepage-vsl'];" in response.text
+    assert "const mediaPreset = MEDIA_PRESETS[PLAYER_CONTEXT];" in response.text
+    assert "Object.hasOwn(MEDIA_PRESETS, PLAYER_CONTEXT)" in response.text
     assert "singleSource: true" in response.text
     assert "allowSeek: true" in response.text
     assert "acceleratedProgress: false" in response.text
