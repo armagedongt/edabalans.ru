@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 security = HTTPBasic(auto_error=False)
 STATIC_ROOT = Path(__file__).resolve().parent.parent / "static"
 ADMIN_COOKIE = "edabalans_admin"
-ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 7
+ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 30
 MEDIA_TYPES = {
     "image/jpeg": ("photo", ".jpg"),
     "image/png": ("photo", ".png"),
@@ -152,6 +152,11 @@ def max_client() -> MaxClient:
         channel_url=settings.max_channel_url,
         contact_url=settings.max_contact_url,
     )
+
+
+def _admin_cookie_domain(request: Request) -> str | None:
+    host = (request.url.hostname or "").lower()
+    return ".edabalans.ru" if host == "edabalans.ru" or host.endswith(".edabalans.ru") else None
 
 
 def _session_token(username: str, expires_at: int) -> str:
@@ -853,7 +858,7 @@ def bot_admin_asset(asset_name: str) -> FileResponse:
 
 
 @app.post("/bot-api/login")
-def bot_login(body: dict, response: Response) -> dict:
+def bot_login(body: dict, request: Request, response: Response) -> dict:
     username = str(body.get("username", "")).strip().lower()
     password = str(body.get("password", ""))
     valid = (
@@ -865,6 +870,8 @@ def bot_login(body: dict, response: Response) -> dict:
     if not valid:
         raise HTTPException(401, "Неверная почта или пароль")
     expires_at = int(time.time()) + ADMIN_SESSION_SECONDS
+    if _admin_cookie_domain(request):
+        response.delete_cookie(ADMIN_COOKIE, path="/")
     response.set_cookie(
         ADMIN_COOKIE,
         _session_token(settings.admin_username, expires_at),
@@ -873,13 +880,16 @@ def bot_login(body: dict, response: Response) -> dict:
         secure=True,
         samesite="strict",
         path="/",
+        domain=_admin_cookie_domain(request),
     )
     return {"ok": True}
 
 
 @app.post("/bot-api/logout")
-def bot_logout(response: Response) -> dict:
+def bot_logout(request: Request, response: Response) -> dict:
     response.delete_cookie(ADMIN_COOKIE, path="/")
+    if _admin_cookie_domain(request):
+        response.delete_cookie(ADMIN_COOKIE, path="/", domain=_admin_cookie_domain(request))
     return {"ok": True}
 
 

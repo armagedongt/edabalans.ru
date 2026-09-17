@@ -172,3 +172,58 @@ def test_login_rejects_wrong_password() -> None:
 def test_login_assets_are_public() -> None:
     response = make_client().get("/admin/static/admin-login.js")
     assert response.status_code == 200
+
+
+def test_admin_session_last_30_days_and_password_rotation_revokes_it(monkeypatch) -> None:
+    import app.auth as auth
+
+    client = make_client()
+    start = 2_000_000_000
+    monkeypatch.setattr(auth.time, "time", lambda: start)
+    login = client.post("/admin/api/login", json={
+        "username": "admin@example.com", "password": "test-admin-password",
+    })
+    assert login.status_code == 200
+    assert any("Max-Age=2592000" in value for value in login.headers.get_list("set-cookie"))
+    token = client.cookies.get("edabalans_admin")
+    monkeypatch.setattr(auth.time, "time", lambda: start + 29 * 86400)
+    assert 'id="admin-content"' in client.get("/admin").text
+    monkeypatch.setattr(auth.time, "time", lambda: start + 31 * 86400)
+    assert 'id="login-form"' in client.get(
+        "/admin", headers={"Cookie": f"edabalans_admin={token}"},
+    ).text
+    monkeypatch.setattr(auth.time, "time", lambda: start)
+    client.cookies.set("edabalans_admin", token, domain=".edabalans.ru", path="/")
+    assert 'id="admin-content"' in client.get("/admin").text
+    monkeypatch.setattr(get_settings(), "admin_password", "rotated-test-password")
+    assert 'id="login-form"' in client.get("/admin").text
+    assert client.post("/admin/api/login", json={
+        "username": "admin@example.com", "password": "test-admin-password",
+    }).status_code == 401
+
+
+def test_admin_cookie_cross_subdomain_and_logout() -> None:
+    client = TestClient(app, base_url="https://edabalans.ru")
+    client.cookies.set("edabalans_admin", "legacy-host-cookie", domain="edabalans.ru", path="/")
+    assert client.post("/admin/api/login", json={
+        "username": "admin@example.com", "password": "test-admin-password",
+    }).status_code == 200
+    assert len([c for c in client.cookies.jar if c.name == "edabalans_admin"]) == 1
+    assert 'id="admin-content"' in client.get("https://app.edabalans.ru/admin").text
+    assert 'id="login-form"' in client.get("https://unrelated.example/admin").text
+    client.cookies.set("edabalans_admin", "legacy-host-cookie", domain="edabalans.ru", path="/")
+    assert client.post("/admin/api/logout").status_code == 200
+    assert not any(c.name == "edabalans_admin" for c in client.cookies.jar)
+    assert 'id="login-form"' in client.get("https://app.edabalans.ru/admin").text
+
+
+def test_independent_host_login_does_not_expand_cookie_trust() -> None:
+    client = TestClient(app, base_url="https://independent.example")
+    response = client.post("/admin/api/login", json={
+        "username": "admin@example.com", "password": "test-admin-password",
+    })
+    assert response.status_code == 200
+    assert "Domain=" not in response.headers["set-cookie"]
+    assert 'id="admin-content"' in client.get("/admin").text
+    assert client.post("/admin/api/logout").status_code == 200
+    assert 'id="login-form"' in client.get("/admin").text

@@ -11,7 +11,12 @@ from app.config import get_settings
 
 security = HTTPBasic(auto_error=False)
 ADMIN_COOKIE = "edabalans_admin"
-ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 7
+ADMIN_SESSION_SECONDS = 60 * 60 * 24 * 30
+
+
+def admin_cookie_domain(request: Request) -> str | None:
+    host = (request.url.hostname or "").lower()
+    return ".edabalans.ru" if host == "edabalans.ru" or host.endswith(".edabalans.ru") else None
 
 
 def admin_session_token(username: str, expires_at: int) -> str:

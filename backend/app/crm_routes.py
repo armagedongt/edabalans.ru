@@ -15,6 +15,7 @@ from sqlalchemy.orm import Session
 from app.auth import (
     ADMIN_COOKIE,
     ADMIN_SESSION_SECONDS,
+    admin_cookie_domain,
     admin_identity,
     admin_session_token,
     require_admin,
@@ -229,11 +230,14 @@ def admin_section(
 
 
 @router.post("/admin/api/login")
-def admin_login(body: AdminLogin, response: Response) -> dict[str, bool]:
+def admin_login(body: AdminLogin, request: Request, response: Response) -> dict[str, bool]:
     if not valid_admin_credentials(body.username, body.password):
         raise HTTPException(status_code=401, detail="Неверный логин или пароль")
     settings = get_settings()
     expires_at = int(time.time()) + ADMIN_SESSION_SECONDS
+    # Retire the legacy host-only bot cookie before issuing the shared cookie.
+    if admin_cookie_domain(request):
+        response.delete_cookie(ADMIN_COOKIE, path="/")
     response.set_cookie(
         ADMIN_COOKIE,
         admin_session_token(settings.admin_username, expires_at),
@@ -242,14 +246,16 @@ def admin_login(body: AdminLogin, response: Response) -> dict[str, bool]:
         secure=True,
         samesite="strict",
         path="/",
-        domain=".edabalans.ru",
+        domain=admin_cookie_domain(request),
     )
     return {"ok": True}
 
 
 @router.post("/admin/api/logout")
-def admin_logout(response: Response) -> dict[str, bool]:
-    response.delete_cookie(ADMIN_COOKIE, path="/", domain=".edabalans.ru")
+def admin_logout(request: Request, response: Response) -> dict[str, bool]:
+    response.delete_cookie(ADMIN_COOKIE, path="/")
+    if admin_cookie_domain(request):
+        response.delete_cookie(ADMIN_COOKIE, path="/", domain=admin_cookie_domain(request))
     return {"ok": True}
 
 
