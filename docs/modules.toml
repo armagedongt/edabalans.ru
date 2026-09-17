@@ -586,6 +586,7 @@ owns_files = [
   "docs/knowledge-base/modules/telegram/MODULE_REGISTRY.md",
   ]
 owns_tables = ["tg_owner_payment_alert_deliveries"]
+owns_routes = ["*/internal/owner-payment-alert"]
 
 [[modules]]
 id = "messaging.max"
