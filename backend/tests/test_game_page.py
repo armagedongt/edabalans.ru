@@ -28,9 +28,9 @@ def test_personal_game_is_public_and_not_indexable() -> None:
 def test_personal_game_keeps_the_original_play_and_local_progress_flow() -> None:
     page = TestClient(app).get("/game/").text
 
-    source_match = re.search(r"<body>\r?\n(.*)\r?\n</body>", page, re.DOTALL)
+    source_match = re.search(r"<body>\r?\n(.*?)\r?\n</body>", page, re.DOTALL)
     assert source_match is not None
-    source = source_match.group(1)
+    source = source_match.group(1).replace("\r\n", "\n")
     assert sha256(source.encode("utf-8")).hexdigest() == (
         "c56a6c57041519e2b5e675844c9ded841e78ca302c3711ff8f83e4ae6b9fde6a"
     )
