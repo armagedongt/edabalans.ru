@@ -781,6 +781,18 @@ def test_release_candidate_has_navigable_education_originals_gallery() -> None:
         assert interaction in response.text
 
 
+def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outline() -> None:
+    response = client.get("/preview/homepage-release-candidate")
+
+    assert response.status_code == 200
+    assert 'class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a>' in response.text
+    assert "Или читайте подробнее о моём подходе ниже" in response.text
+    assert "Ответы на часто задаваемые вопросы" in response.text
+    assert "Больше отзывов читайте ниже" in response.text
+    assert "if (reviewsEnd && finalChoice) reviewsEnd.after(finalChoice);" in response.text
+    assert "if (open) {\n          setTocOpen(true);" in response.text
+
+
 def test_tilda_embed_mode_uses_production_pricing_and_checkout() -> None:
     response = client.get("/preview/homepage-mobile?embed=tilda")
 
