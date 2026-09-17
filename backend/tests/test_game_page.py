@@ -1,4 +1,5 @@
 import os
+import re
 from hashlib import sha256
 
 os.environ.setdefault("DATABASE_URL", "postgresql+psycopg://test:test@127.0.0.1:5432/test")
@@ -27,7 +28,9 @@ def test_personal_game_is_public_and_not_indexable() -> None:
 def test_personal_game_keeps_the_original_play_and_local_progress_flow() -> None:
     page = TestClient(app).get("/game/").text
 
-    source = page.split("<body>\n", 1)[1].rsplit("\n</body>", 1)[0]
+    source_match = re.search(r"<body>\r?\n(.*)\r?\n</body>", page, re.DOTALL)
+    assert source_match is not None
+    source = source_match.group(1)
     assert sha256(source.encode("utf-8")).hexdigest() == (
         "c56a6c57041519e2b5e675844c9ded841e78ca302c3711ff8f83e4ae6b9fde6a"
     )
