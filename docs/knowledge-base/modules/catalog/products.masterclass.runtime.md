@@ -27,6 +27,10 @@ implementation_status: implemented
 
 ## Источники истины
 
+[Видео: главный вход, размещения и настройки](../../../../backend/app/static/video-player-development/README.md).
+Учебный MP4-плеер принадлежит этому модулю; публичные плееры/аналитика остаются
+у `products.public-site`, данные курса — у `products.masterclass.course`.
+
 PostgreSQL progress/events tables и `docs/knowledge-base/modules/masterclass/COURSE_RUNTIME.md`.
 
 Технические файлы, routes, таблицы, migrations и программные символы не

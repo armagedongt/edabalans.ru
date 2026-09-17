@@ -116,6 +116,9 @@ checkout, `platform.content` — Markdown-диалект и версиониро
 
 ## Источники истины
 
+[Видео: главный вход, размещения и настройки](../../../../backend/app/static/video-player-development/README.md).
+Публичный VSL, отдельные видеоотзывы и статистика остаются в границе этого модуля.
+
 `docs/knowledge-base/PUBLIC_SITE.md`,
 `docs/knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md`, `content/public-site/homepage/`, активные
 редакции `public-site-content` в `managed_document_versions` и runtime-компоненты

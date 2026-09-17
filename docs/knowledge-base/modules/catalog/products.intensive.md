@@ -57,6 +57,10 @@ implementation_status: implemented
 
 ## Источники истины
 
+[Видео: главный вход, размещения и настройки](../../../../backend/app/static/video-player-development/README.md).
+Первый день использует публичный плеер с preset `intensive-day-1`;
+это не учебный preset МК.
+
 `docs/INTENSIVE_PAGES.md`, intensive routes/static, content runtime и
 `backend/app/intensive_public_cta.py` для публичного CTA.
 
