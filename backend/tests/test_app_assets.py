@@ -721,7 +721,8 @@ def test_masterclass_fragments_and_shared_assets_are_public() -> None:
     assert "/members/login?exit=y" not in account
     assert "identity.source==='native'" in course.text
     assert "function authHeaders()" in course.text
-    assert "Мастер-класс по изменению питания и пищевых привычек" in course.text
+    assert "document.querySelector('#course-title').textContent=manifest.title" in course.text
+    assert 'id="course-title"></div>' in course.text  # no duplicated course title in the template
     assert ".tlk-userbar{display:none!important}" in course.text
     assert "Темы видны заранее" not in course.text
     legal_index = client.get("/legal/index.html")
@@ -960,7 +961,8 @@ def test_masterclass_first_day_article_and_image_layout_contract() -> None:
     assert "card.scrollTop=0" in tutorial
     assert "tutorialStep++;renderTutorial()" in course
     assert "tutorialStep--;renderTutorial()" in course
-    assert "splitArticleHtml(t.rich_html,t.imagePresentation==='gallery')" in course
+    assert "splitArticleHtml(firstFivePresentation(t),!pages['step:'+t.stepId]&&t.imagePresentation==='gallery')" in course
+    assert "function firstFivePresentation(t)" in course
     assert "DQS_CATEGORY_ROWS" in course
     assert "COURSE_CONTENT_CACHE_VERSION='20260826-dqs-article'" in course
     assert "overflow-wrap:anywhere" in course
