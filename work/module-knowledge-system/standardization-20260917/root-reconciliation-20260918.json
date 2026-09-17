@@ -1,0 +1,691 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-18",
+  "kind": "bounded-read-only-snapshot",
+  "root": "C:/Users/Segey/Documents/ChatGPT/edabalans.ru",
+  "branch": "codex/markiting",
+  "head": "e2047628c0325ecbdb20197f68ca533a5e46c18e",
+  "compared_main": "0784833f32f5e60c1f1a4b3f0a0d0b547cee341b",
+  "exclusions": [
+    "private data and media",
+    "nested worktrees",
+    "ignored files",
+    "unselected untracked directories"
+  ],
+  "tracked_changes": [
+    {
+      "path": ".gitignore",
+      "state": "different_from_main"
+    },
+    {
+      "path": "AGENTS.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "PROJECT_CONTEXT.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/access_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/app_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/app_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/course_material_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/course_structure_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/crm_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/crm_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/main.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/masterclass_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/models.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/product_catalog_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/admin.html",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/admin.js",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/apps/account.html",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/course-editors.html",
+      "state": "matches_main"
+    },
+    {
+      "path": "backend/app/static/course-structure-editor.html",
+      "state": "matches_main"
+    },
+    {
+      "path": "backend/app/static/course-structure-editor.js",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/crm.html",
+      "state": "matches_main"
+    },
+    {
+      "path": "backend/app/static/crm.js",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/embed.js",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/masterclass.js",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/video-player-development/README.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "backend/app/tilda_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/tests/test_app_assets.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/tests/test_tilda_payments.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/author-voice/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/author-voice/editorial-linking-v1.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/author-voice/skill/edabalans-writer/SKILL.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/author-voice/voice-rules-v1.json",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/author-voice/writer-contract-v1.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/design-workflow/skill/sergey-web-design/references/design-corrections.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/design-workflow/skill/sergey-web-design/references/design-preferences.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/design-workflow/skill/sergey-web-design/references/workflow-corrections.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/external-references/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/library/OPERATING_RULES.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/masterclass/reference/stream-masterclass-structured-transcript.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/ADMIN_ARCHITECTURE.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/APPLICATION_PLATFORM.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/CONTENT_CATALOG.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/OPERATIONS.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/TAG_RULES.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "docs/TILDA_MASTERCLASS_EMBEDS.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/TILDA_PAYMENTS.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/ARTICLE_STANDARD.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/CONTENT_COLLABORATION_STANDARD.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/OWNER_PROJECT_GUIDE.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/PRICING_CATALOG.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/PRODUCTS.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/admin.control.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/messaging.telegram.intensive.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/messaging.telegram.prepurchase.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/platform.content.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/platform.crm.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/products.dqs.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/products.masterclass.course.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/products.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/catalog/products.metabolism.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/masterclass/COURSE_DESIGN_SYSTEM.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/masterclass/COURSE_RUNTIME.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/masterclass/COURSE_VISUAL_SYSTEM.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/masterclass/OFFERS_MODULE.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/masterclass/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/telegram/LINKS_AND_ATTRIBUTION.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/telegram/PREPURCHASE_NURTURE.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/telegram/START_WELCOME_ROUTING.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/knowledge-base/modules/telegram/WELCOME_INTENSIVE.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/modules.toml",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/plans/MASTERCLASS_OFFER_PRESENTATIONS_CONTENT.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/plans/MASTERCLASS_POSTPURCHASE_COPYWRITER_BRIEF.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/plans/MASTERCLASS_WEB_APP_SPEC.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/plans/QUICK_NOTES.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "telegram-bot/service/app/seed.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "tools/module_inventory.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "tools/pikabu_collect.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "tools/tests/test_author_voice.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/content-authoring-system/decisions.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-message-catalog-v3.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-day1-reminder.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-day2.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-day3.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-day4.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-entry-continue.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-entry-default.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-entry-delivered.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-entry-legacy-update.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-entry-yandex.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-masterclass-circle.md",
+      "state": "deleted_locally_present_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-masterclass-pin.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid1-subscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid1-unsubscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid2-subscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid2-unsubscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid3-subscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/free-intensive-rebuild/bot-messages/intensive-mid3-unsubscribed.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/photo-archive-integration-handoff.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/public-homepage-redesign/assets/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/public-homepage-redesign/block-registry.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/public-homepage-redesign/code-research.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/public-homepage-redesign/decisions.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "work/public-homepage-redesign/design-pattern-library.md",
+      "state": "different_from_main"
+    }
+  ],
+  "selected_untracked": [
+    {
+      "path": "backend/app/calorie_course_material_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/calorie_course_routes.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/calorie_course_service.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "backend/app/static/apps/sprints.html",
+      "state": "only_local_path"
+    },
+    {
+      "path": "backend/app/static/apps/studio-landing-preview.html",
+      "state": "only_local_path"
+    },
+    {
+      "path": "backend/app/static/course-illustrations/weight-loss-before-after-masterclass.svg",
+      "state": "only_local_path"
+    },
+    {
+      "path": "backend/migrations/versions/20260828_0027_calorie_course_runtime.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "backend/tests/test_calorie_course_journey.py",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/article-components/DESIGN_HANDOFF.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/article-components/OBSIDIAN_CHEATSHEET.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/article-components/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/article-components/actions.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "content/article-components/copy.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "content/article-components/formatting.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "content/article-components/note.css",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/article-components/obsidian-templates/Кнопки в строку.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/article-components/obsidian-templates/Кнопки по центру.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/article-components/obsidian-templates/Кнопки слева.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/article-components/status-list.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "content/article-components/table.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "content/article-components/typography.css",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/author-voice/skill/edabalans-neuroslop-auditor/SKILL.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/author-voice/skill/edabalans-pikabu/SKILL.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "content/calories/course/README.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "content/calories/course/course.json",
+      "state": "matches_main"
+    },
+    {
+      "path": "docs/knowledge-base/VOICE_TRANSCRIPTION_WORKFLOW.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "docs/knowledge-base/modules/calories/COURSE_RUNTIME.md",
+      "state": "different_from_main"
+    },
+    {
+      "path": "docs/runtime-health/README.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "tools/build_local_content_catalog.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/build_telegram_post_viewer.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/import_calorizator_products.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/install_edabalans_neuroslop_auditor_skill.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/install_edabalans_pikabu_skill.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/serve_local_content_catalog.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/tests/test_build_local_content_catalog.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/tests/test_build_telegram_post_viewer.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/tests/test_import_calorizator_products.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "tools/tests/test_serve_local_content_catalog.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/checkpoint.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/code-research.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/decisions.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/01-99 — Тест переноса Markdown.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/README.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/VERIFICATION.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/demo.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/lk-bootstrap.js",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/lk-preview.css",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/md-copy.js",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/serve_demo.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/smoke.mjs",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/test_demo.py",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/Возможности Obsidian — лаборатория.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/Карта переноса.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/demo/Шпаргалка Markdown.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/logs/userspec/interview.yml",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/source-confirmation.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/masterclass-obsidian-publishing/user-spec.md",
+      "state": "only_local_path"
+    },
+    {
+      "path": "work/module-knowledge-system/video-qr-handoff-20260917/CLEANUP_RECEIPT.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "work/module-knowledge-system/video-qr-handoff-20260917/QR_HANDOFF.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "work/module-knowledge-system/video-qr-handoff-20260917/README.md",
+      "state": "matches_main"
+    },
+    {
+      "path": "work/module-knowledge-system/video-qr-handoff-20260917/VIDEO_HANDOFF.md",
+      "state": "matches_main"
+    }
+  ]
+}
