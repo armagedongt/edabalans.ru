@@ -82,9 +82,9 @@ def _message_for_payment(
     checkout = _checkout(db, payment)
     source = _source_label(payment, checkout)
     if event_kind == EVENT_PAID:
-        lines = ["Оплата прошла", f"Сумма: {_amount(payment)}"]
+        lines = ["Новая оплата", f"Сумма: {_amount(payment)}"]
     else:
-        lines = ["Оплата не прошла", f"Сумма: {_amount(payment)}"]
+        lines = ["Ошибка оплаты", f"Сумма: {_amount(payment)}"]
     lines.extend((f"Что: {payment.product_name_raw}", f"Источник: {source}"))
     if payment.email_at_purchase:
         lines.append(f"Email: {payment.email_at_purchase}")
