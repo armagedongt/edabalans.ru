@@ -183,3 +183,8 @@
 #masterclass-course-app .media{margin-block:var(--course-media-gap);background:#eaf8ff}
 #masterclass-course-app .day-media-image,#masterclass-course-app .article-hero-image,#masterclass-course-app .article-inline-image{display:block;margin-block:var(--course-media-gap);height:auto}
 html:has(#masterclass-course-app){background:#fff}
+/* Day introductions are one text block, not separate before/after-video leads. */
+#masterclass-course-app .day-view .intro{white-space:normal;margin:24px 0 32px}
+#masterclass-course-app .day-view .intro .hero-lead{max-width:none;white-space:normal;margin:0 0 18px}
+#masterclass-course-app .day-view .intro .hero-lead:last-child{margin-bottom:0}
+#masterclass-course-app .day-view .intro .assignment-intro{white-space:normal;margin-top:24px}
