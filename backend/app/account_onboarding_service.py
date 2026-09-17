@@ -8,7 +8,7 @@ import logging
 import secrets
 import smtplib
 import ssl
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, timezone
 from email.message import EmailMessage
 
 from cryptography.fernet import Fernet, InvalidToken
@@ -23,7 +23,7 @@ from app.models import AccountCredential, AccountOnboarding, MessengerLinkToken,
 
 
 logger = logging.getLogger(__name__)
-CLAIM_TTL = timedelta(hours=24)
+CLAIM_TTL = timedelta(days=10)
 MAX_EMAIL_ATTEMPTS = 8
 
 
@@ -226,6 +226,10 @@ def account_access_email(
     if settings.smtp_reply_to:
         message["Reply-To"] = settings.smtp_reply_to
     intro = "Оплата прошла успешно." if payment_completed else "Регистрация почти готова."
+    # Stored SQLite datetimes may be naive; PostgreSQL stores this deadline in UTC.
+    deadline = expires_at if expires_at.tzinfo else expires_at.replace(tzinfo=UTC)
+    deadline_msk = deadline.astimezone(timezone(timedelta(hours=3)))
+    expiry_notice = f"Ссылки действуют до {deadline_msk:%d.%m.%Y %H:%M} (мск)."
     lines = [
         intro,
         "",
@@ -239,7 +243,7 @@ def account_access_email(
     lines.extend(
         (
             "",
-            "Ссылки действуют 24 часа.",
+            expiry_notice,
             "",
             "Это техническое письмо, я не увижу ответ.",
             "Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения:",
@@ -259,7 +263,7 @@ def account_access_email(
         <p>{intro}</p>
         <p>Чтобы получить логин и пароль от личного кабинета на моём сайте, откройте любой удобный для вас мессенджер:</p>
         <table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr>{buttons}</tr></table>
-        <p>Ссылки действуют 24 часа.</p>
+        <p>{expiry_notice}</p>
         <p style="color:#5b6472;font-size:14px">Это техническое письмо, я не увижу ответ. Если ссылка перестала действовать или что-то не получилось, напишите мне в личные сообщения: <a href="https://t.me/FitnessSergey">Telegram</a> или <a href="https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw">MAX</a>.</p>
         </div></body></html>""",
         subtype="html",

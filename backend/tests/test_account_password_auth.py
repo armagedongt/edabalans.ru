@@ -2,7 +2,7 @@ import hashlib
 import hmac
 import json
 import os
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse
 
@@ -338,7 +338,15 @@ def test_native_user_can_accept_current_legal_documents_after_login():
     app.dependency_overrides.clear()
 
 
-def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links():
+def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links(monkeypatch):
+    fixed_now = datetime(2026, 9, 17, 12, tzinfo=UTC)
+
+    class FrozenDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return fixed_now if tz else fixed_now.replace(tzinfo=None)
+
+    monkeypatch.setattr(onboarding_service, "datetime", FrozenDatetime)
     _, factory = setup()
     with factory() as db:
         user = User(display_name="Клиент", status="active")
@@ -369,6 +377,23 @@ def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links(
         db.commit()
 
         assert first.id == second.id
+        expected_expiry = fixed_now + timedelta(days=10)
+        assert first.expires_at == expected_expiry
+        tokens = list(db.scalars(select(MessengerLinkToken).where(
+            MessengerLinkToken.account_onboarding_id == first.id
+        )))
+        assert {token.platform for token in tokens} == {"telegram", "max"}
+        assert all(token.expires_at.replace(tzinfo=UTC) == expected_expiry for token in tokens)
+        # Repeated payment processing must not extend previously issued links.
+        old_expiry = fixed_now + timedelta(hours=24)
+        first.expires_at = old_expiry
+        for token in tokens:
+            token.expires_at = old_expiry
+        db.commit()
+        reused = ensure_paid_account_onboarding(db, payment, settings())
+        assert reused.id == first.id
+        assert reused.expires_at == old_expiry
+        assert all(token.expires_at == old_expiry for token in tokens)
         assert db.scalar(select(AccountOnboarding).where(AccountOnboarding.payment_id == payment.id))
         links = onboarding_links(first, settings())
         assert links["telegram"].startswith("https://t.me/test_tg_bot?start=M")
@@ -376,7 +401,15 @@ def test_paid_payment_creates_one_idempotent_onboarding_with_two_platform_links(
     app.dependency_overrides.clear()
 
 
-def test_email_registration_creates_no_access_user_and_one_reusable_onboarding():
+def test_email_registration_creates_no_access_user_and_one_reusable_onboarding(monkeypatch):
+    fixed_now = datetime(2026, 9, 17, 12, tzinfo=UTC)
+
+    class FrozenDatetime(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return fixed_now if tz else fixed_now.replace(tzinfo=None)
+
+    monkeypatch.setattr(onboarding_service, "datetime", FrozenDatetime)
     client, factory = setup()
 
     response = client.post(
@@ -422,6 +455,8 @@ def test_email_registration_creates_no_access_user_and_one_reusable_onboarding()
             )
         }
         assert set(tokens) == {"telegram", "max"}
+        assert onboarding.expires_at.replace(tzinfo=UTC) == fixed_now + timedelta(days=10)
+        assert all(token.expires_at == onboarding.expires_at for token in tokens.values())
         for platform, link in links.items():
             raw_token = parse_qs(urlparse(link).query)["start"][0]
             assert tokens[platform].token_hash == token_hash(raw_token)
@@ -600,7 +635,7 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
             "telegram": "https://t.me/test_tg_bot?start=Mtelegram",
             "max": "https://max.ru/test_max_bot?start=Mmax",
         },
-        expires_at=datetime.now(UTC),
+        expires_at=datetime(2026, 9, 27, 12, tzinfo=UTC),
         settings=Settings(
             database_url="sqlite+pysqlite:///:memory:",
             app_auth_secret="test-account-secret",
@@ -618,11 +653,30 @@ def test_account_access_email_contains_claim_links_but_not_a_password():
     assert "Mtelegram" in html and "Mmax" in html
     assert message["From"] == "Похудение — это есть! · Сергей Воронцов <cabinet@example.test>"
     assert "Оплата прошла успешно." in plain
-    assert "Ссылки действуют 24 часа." in plain
+    assert "Ссылки действуют до 27.09.2026 15:00 (мск)." in plain
+    assert "Ссылки действуют до 27.09.2026 15:00 (мск)." in html
     assert "Это техническое письмо, я не увижу ответ." in plain
     assert "Напишите Сергею" not in plain
     assert "<h1" not in html
     assert 'role="presentation"' in html
+
+
+def test_legacy_queued_email_uses_stored_deadline_not_new_ttl():
+    for expiry in (
+        datetime(2026, 9, 18, 12, tzinfo=UTC),
+        datetime(2026, 9, 18, 12),
+    ):
+        message = account_access_email(
+            email="member@example.test",
+            links={"telegram": "https://t.me/test_tg_bot?start=Mlegacy", "max": ""},
+            expires_at=expiry,
+            settings=settings(),
+            payment_completed=True,
+        )
+        for content_type in ("plain", "html"):
+            content = message.get_body(preferencelist=(content_type,)).get_content()
+            assert "Ссылки действуют до 18.09.2026 15:00 (мск)." in content
+            assert "10 дней" not in content
 
 
 def test_registration_email_does_not_claim_a_payment_or_product_access():
