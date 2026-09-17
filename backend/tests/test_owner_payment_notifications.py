@@ -76,7 +76,7 @@ def test_paid_owner_alert_is_durable_idempotent_and_delivered(monkeypatch) -> No
     )
 
     assert notification_service.send_one_owner_payment_notification(settings) is True
-    assert "Оплата прошла" in delivered[0]
+    assert delivered[0].startswith("Новая оплата\n")
     assert "Сопровождение" in delivered[0]
     with factory() as db:
         rows = db.scalars(select(OwnerPaymentNotification)).all()
@@ -97,6 +97,23 @@ def test_test_and_live_probe_payments_do_not_enqueue_owner_alerts() -> None:
         assert notification_service.enqueue_paid_payment_notification(db, probe_payment) is None
         db.commit()
         assert db.scalars(select(OwnerPaymentNotification)).all() == []
+
+
+def test_failed_owner_alert_starts_with_payment_error() -> None:
+    factory = _factory()
+    with factory() as db:
+        payment = _paid_payment()
+        payment.payment_status = "failed"
+        db.add(payment)
+        db.flush()
+
+        notification = notification_service.enqueue_failed_payment_notification(
+            db, payment, "Недостаточно средств"
+        )
+
+        assert notification is not None
+        assert notification.message_text.startswith("Ошибка оплаты\n")
+        assert "Статус Robokassa: Недостаточно средств" in notification.message_text
 
 
 def test_delivery_failure_stays_in_durable_retry_queue(monkeypatch) -> None:
