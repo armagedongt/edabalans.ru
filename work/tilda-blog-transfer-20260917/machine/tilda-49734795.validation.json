@@ -1,0 +1,38 @@
+{
+  "schema_version": "author-validation-v1",
+  "status": "pass",
+  "pack_sha256": "9afacf6a8330965ce5bff9713aa4d874284f9ccbd03a9d3a57d6a340ae116e16",
+  "draft_sha256": "6cd3d0e3d08abe69360a018b425dbceeca81732b5b158cd980128a9d27b98565",
+  "review_sha256": "e48a17769776239f646663d56cd609b3d993258507cd9b5476818ae9d5ac762c",
+  "validated_at": "2026-09-17T17:06:24.234743+00:00",
+  "missing_verbatim": [],
+  "unresolved_placeholders": [],
+  "protected_layer_errors": [],
+  "inline_binding_review_required_once": null,
+  "proofread_change_review_required_once": null,
+  "rewrite_continuity_review_required_once": null,
+  "semantic_fact_review_required_once": [],
+  "forbidden_claims_to_check_once": [
+    "Авторский текст переписан с Pikabu вместо текущей Tilda версии.",
+    "Изменены глобальные header/footer/navigation."
+  ],
+  "preservation_metrics": {
+    "source_significant_tokens": 1072,
+    "token_coverage": 1.0,
+    "source_visible_characters": 7508,
+    "draft_visible_characters": 7508,
+    "visible_length_ratio": 1.0
+  },
+  "pending_manual_reviews": [
+    {
+      "id": "forbidden_claims",
+      "instruction": "Confirm that none of the forbidden claims is present.",
+      "items": [
+        "Авторский текст переписан с Pikabu вместо текущей Tilda версии.",
+        "Изменены глобальные header/footer/navigation."
+      ]
+    }
+  ],
+  "manual_review_errors": [],
+  "fact_review_expires_at": null
+}

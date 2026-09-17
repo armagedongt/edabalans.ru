@@ -1,0 +1,464 @@
+{
+  "checked_at": "2026-09-17T17:06:25.532873+00:00",
+  "status": "pass",
+  "published_count": 9,
+  "sitemap_urls": 10,
+  "robots": "Allow /",
+  "articles": [
+    {
+      "source_id": "11401696",
+      "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+      "http_status": 200,
+      "h1_count": 1,
+      "title": "Похудение начинается не с похудения",
+      "description": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
+      "canonical": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pohudenie-nachinaetsya-ne-s-pohudeniya",
+      "json_ld": "pass",
+      "robots": "indexable",
+      "hero_duplicate": "none",
+      "writer_validation": "pass",
+      "media": [
+        {
+          "file": "11401696/tilda-01.jpg",
+          "sha256": "03e710808bd44f809b8832d29f848e366cc8d268c6876eeecbbae0b4fe89436f",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg",
+          "alt": "Мем о цикле похудения и обвинении обмена веществ"
+        },
+        {
+          "file": "11401696/tilda-02.png",
+          "sha256": "a1610ca70d922076865127cb20728c7cf88e26f3a59ecf686cb8d703f0328e71",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3630-3230-4665-a631-663261643137/image.png",
+          "alt": "Сергей Воронцов: похудеть быстро или навсегда"
+        },
+        {
+          "file": "11401696/tilda-03.jpg",
+          "sha256": "9b0e17d75d897220a1d643b8fd4a05d5323cc31245852efb0a9b4a536f560a83",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6237-3136-4333-a639-333962663437/Frame_492445019.jpg",
+          "alt": "Мем о ненадёжном плане похудения"
+        },
+        {
+          "file": "11401696/tilda-04.png",
+          "sha256": "6b3788ae4e381ab6e25ea9eba304ff3605457442c18d7cb423a857d17e62e42d",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3538-3730-4566-a330-643639353838/image.png",
+          "alt": "Схемы жёсткой диеты и постепенного изменения питания"
+        },
+        {
+          "file": "11401696/tilda-05.png",
+          "sha256": "1a575182150a281f4b0e40540da839fe8c335479474ebc03e24f84c30fa24f85",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3536-3763-4064-b739-333335313931/image.png",
+          "alt": "Кот перед тарелками с овощами"
+        },
+        {
+          "file": "11401696/tilda-06.png",
+          "sha256": "ef74b58d012b9b00017ec76d772c89a8b1e6e30f345ac2365452604c1f5951f3",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3535-3033-4636-a465-383139353837/image.png",
+          "alt": "Мем «Совпадение? Не думаю»"
+        },
+        {
+          "file": "11401696/tilda-07.jpg",
+          "sha256": "674ccdc86308827dfc4718feec34a7fcc7b19ca0266abe169f8b6eba5d8d1690",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6332-3131-4632-a661-343462626563/Frame_492445044.jpg",
+          "alt": "Отзыв участницы о качестве питания и ощущении сытости"
+        },
+        {
+          "file": "11401696/tilda-08.png",
+          "sha256": "0276c837a983c07f16522747fe3b751f15f9d260f452a9576a5511530fff1de6",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6334-3562-4438-b937-363031363965/image.png",
+          "alt": "Комикс об отказе от углеводов"
+        },
+        {
+          "file": "11401696/tilda-09.png",
+          "sha256": "a3ef2333137b1f04917eec0411a3f361ba46b75cd58c6e279d7a683f02600a23",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png",
+          "alt": "Сначала изменения в питании, потом дефицит калорий"
+        },
+        {
+          "file": "11401696/tilda-10.png",
+          "sha256": "cbe53332e617d7b8056d4f85d22f3efbcde72c89b73d6e6aa1ff59dd5f98beee",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3239-3437-4863-b034-306430306332/image.png",
+          "alt": "Мем о нереалистичной норме шагов"
+        },
+        {
+          "file": "11401696/tilda-11.png",
+          "sha256": "dc8a24a674a62377c041deda3abffb033a9afd0ae6f00a26b7f84c8eb0580d4b",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6538-3938-4330-a537-383334376463/image.png",
+          "alt": "Спанч Боб: мотивация"
+        },
+        {
+          "file": "11401696/tilda-12.png",
+          "sha256": "f8239d729fcb56c7bbe7c536f10ef2cf0bd7cd7fb25b5268e884a219e1f6fd81",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3538-3138-4035-a136-373462656565/image.png",
+          "alt": "Схема повторяющихся диет и срывов"
+        },
+        {
+          "file": "11401696/tilda-13.png",
+          "sha256": "df007347433df8d560eeeafce67ebe2ae3726d96950eb5c39b4a6e22590107bb",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6465-3461-4363-b163-336535353463/noroot.png",
+          "alt": "Тест о комфорте похудения в меню бота"
+        },
+        {
+          "file": "11401696/tilda-14.jpg",
+          "sha256": "a666b472ff44ae2476f2f67b619f1d2af4589beac55504dc9f5c722bb4131992",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3934-6363-4530-b238-633461393261/Frame_492445024.jpg",
+          "alt": "Мем «Худеть будем?»"
+        }
+      ],
+      "editorial_stage": "structured",
+      "owner_review": "not_reviewed",
+      "source_review": "conflicts_reported",
+      "delivery_status": "validated"
+    },
+    {
+      "source_id": "11927800",
+      "slug": "pochemu-yapontsy-hudye-a-ty-net",
+      "http_status": 200,
+      "h1_count": 1,
+      "title": "Почему японцы худые, а ты нет?",
+      "description": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
+      "canonical": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pochemu-yapontsy-hudye-a-ty-net",
+      "json_ld": "pass",
+      "robots": "indexable",
+      "hero_duplicate": "none",
+      "writer_validation": "pass",
+      "media": [
+        {
+          "file": "11927800/tilda-01.jpg",
+          "sha256": "b3779eb1114b1d15aca5d2e7d6d94e6da5e4bb40ae07a00ed29a397a16511cd7",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg",
+          "alt": "Сергей Воронцов за столом"
+        },
+        {
+          "file": "11927800/tilda-02.png",
+          "sha256": "4b1272674c03d95d41b678532649c154cf97121f71965c679a2a2eaae6865160",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3336-6262-4661-b530-353362613532/image.png",
+          "alt": "Распределение россиян по индексу массы тела в 2023 году"
+        },
+        {
+          "file": "11927800/tilda-03.png",
+          "sha256": "82ceee5ee5aa6684f77f72eb5ec9725c5769bff964b38eaf7387759cca4fa063",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6465-3061-4431-b232-376533373062/image.png",
+          "alt": "Сравнение лишнего веса и ожирения в США, России и Японии"
+        },
+        {
+          "file": "11927800/tilda-04.png",
+          "sha256": "5a67fccc8ea8787934cf32743423f8a3d5b402611683cdaf566859c033aa65c0",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3463-6131-4034-a265-333864373434/image.png",
+          "alt": "Сумоист в воде"
+        },
+        {
+          "file": "11927800/tilda-05.png",
+          "sha256": "02be7a88dd4688ccc8820cc6e90fd37a030f059a1e13ccbb1db930999666c5eb",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6335-3739-4163-b665-663931376532/image.png",
+          "alt": "Японский школьный обед"
+        },
+        {
+          "file": "11927800/tilda-06.jpg",
+          "sha256": "811e7955a610ad1adf0f94b8487bf257342edae41a9268dc5600ef86cae1b499",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3038-3437-4666-a166-366631303438/13331.jpg",
+          "alt": "Мем о требовании доедать всё"
+        },
+        {
+          "file": "11927800/tilda-07.png",
+          "sha256": "6ee8a9402019bda5e087544e2d8ab9300e58907810dbd19113dc8f66858c3aa1",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3737-3366-4161-b563-663438323435/image.png",
+          "alt": "Несколько блюд школьного обеда"
+        },
+        {
+          "file": "11927800/tilda-08.jpg",
+          "sha256": "fb93d09f260a2dbe3a5be2eec11be46c0e6b751fc8860773b279bd0aaebd9d8e",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3032-3334-4832-b037-396532633263/Frame_492445176.jpg",
+          "alt": "Фрукты на комоде Сергея и сладости на кухне подруги"
+        },
+        {
+          "file": "11927800/tilda-09.gif",
+          "sha256": "c464c91a0ff9f2fbcd8129c3599de388eda13255dc719f2ebeec21331ddb10a3",
+          "content_type": "image/gif",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3636-3737-4466-a530-646431303261/0101-ezgifcom-video-.gif",
+          "alt": "Нарезка сыра тонкими слайсами"
+        },
+        {
+          "file": "11927800/tilda-10.gif",
+          "sha256": "678b511dfac6c69acc20e7615fb8ff3f4e82dffae0e14f814edd360ef3a32d1b",
+          "content_type": "image/gif",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3939-6661-4739-b931-313938623130/giphy_4.gif",
+          "alt": "Мистер Бин поспешно ест"
+        },
+        {
+          "file": "11927800/tilda-11.png",
+          "sha256": "bfbf4e5056905e0a9c708863a0aaf9c698f3dec7455a3409b859131ce6980bf8",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3232-3165-4534-b837-646263343131/image.png",
+          "alt": "Японские школьники обедают вместе"
+        },
+        {
+          "file": "11927800/tilda-12.jpg",
+          "sha256": "e0fd2551fbb87bd4e0b8022d7067df7ea399ca8f1e6e1d1b2bcdd8ad8a7b0216",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6136-3266-4335-b838-373734303137/Screenshot_2025-01-0.jpg",
+          "alt": "Отзыв читательницы о снижении веса"
+        },
+        {
+          "file": "11927800/tilda-13.jpg",
+          "sha256": "61a15aba6e9cac727a4bec0ea20e83f4d27eede5dced8bac8b375133d22a2f30",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3737-3164-4732-a238-303639383861/Screenshot_2025-01-0.jpg",
+          "alt": "Отзыв читательницы об изменении привычек"
+        },
+        {
+          "file": "11927800/tilda-14.jpg",
+          "sha256": "b3bb7afdb804631f93ab5a548024bd32af69bbbd308003be63966ee38530e7f5",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3065-3930-4637-b763-643461376163/Screenshot_2025-01-0.jpg",
+          "alt": "Отзыв читательницы о питании и сохранении результата"
+        },
+        {
+          "file": "11927800/tilda-15.jpg",
+          "sha256": "6761543d1f34dbc12cf484b87aba9985620f1de461cd83e4d2e33e72dd78725a",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3331-3935-4634-a137-313536653631/Frame_492445173.jpg",
+          "alt": "Видео к статье о пищевых привычках"
+        }
+      ],
+      "editorial_stage": "structured",
+      "owner_review": "not_reviewed",
+      "source_review": "conflicts_reported",
+      "delivery_status": "validated"
+    },
+    {
+      "source_id": "tilda-49734795",
+      "slug": "15-sovetov-tem-kto-hudeet",
+      "http_status": 200,
+      "h1_count": 1,
+      "title": "15 советов тем, кто худеет — по одному на килограмм лишнего веса",
+      "description": "Лучшее время для похудения — ВЧЕРА! Второе лучшее время — СЕГОДНЯ!! Не похудели к лету — тогда похудейте просто так. Почему нет?",
+      "canonical": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/15-sovetov-tem-kto-hudeet",
+      "json_ld": "pass",
+      "robots": "indexable",
+      "hero_duplicate": "none",
+      "writer_validation": "pass",
+      "media": [
+        {
+          "file": "tilda-49734795/tilda-01.png",
+          "sha256": "25fa0f6898daa6484d6e9b2c451eac37a1c687876bbe0b7365bb7ffda7f89ae3",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3562-6361-4337-a534-363064646437/image.png",
+          "alt": "Кот и календарь: когда начинать похудение"
+        },
+        {
+          "file": "tilda-49734795/tilda-02.png",
+          "sha256": "8fc80dec299457411d5aecc4247cffb52844251ecbb47308324befc3fe357f24",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3934-3037-4266-a134-373138366465/image.png",
+          "alt": "Добавить здоровую еду вместо запрета сладкого"
+        },
+        {
+          "file": "tilda-49734795/tilda-03.png",
+          "sha256": "a8220d5d2c4a86bb689f23c7086440ba6ebea1905d57b1ee55ebf9c76741f5f4",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6163-6531-4138-b639-396432393132/image.png",
+          "alt": "Взвешиваться каждый день, анализировать раз в неделю"
+        },
+        {
+          "file": "tilda-49734795/tilda-04.png",
+          "sha256": "1275d4fca487547a7556a72dc709a93a3522b29164e9cf85c85ccdb9db25eff5",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3833-3339-4138-b863-306638323563/image.png",
+          "alt": "Мем: есть после 18 часов можно"
+        },
+        {
+          "file": "tilda-49734795/tilda-05.png",
+          "sha256": "712c2a33aa9510c455469c9c6e56b197daf570a71644c1e692d5a400b99bc53e",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6662-3831-4338-a466-343335643832/image.png",
+          "alt": "Белок: игра слов о питании"
+        },
+        {
+          "file": "tilda-49734795/tilda-06.png",
+          "sha256": "c6ec16bba940406c171931696699dc2e48420fdb215b9973fcfaa39fbea195a3",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3736-3861-4534-b031-303862356638/image.png",
+          "alt": "Мем об учёте расхода калорий"
+        },
+        {
+          "file": "tilda-49734795/tilda-07.png",
+          "sha256": "05c338db4c8c2fcdd91b0bf8733ff4928c6baa926809c673a12502d622c2ea2f",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3736-3930-4039-a433-663264646166/image.png",
+          "alt": "Поваренная соль с рекламными надписями на упаковке"
+        },
+        {
+          "file": "tilda-49734795/tilda-08.png",
+          "sha256": "51595584b56bcc1ea863ed8fa134c449a12ca81595e2457ff9acc0d5fe97395b",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3532-6336-4561-b737-646265633939/image.png",
+          "alt": "Мем «Записывайте»"
+        },
+        {
+          "file": "tilda-49734795/tilda-09.png",
+          "sha256": "a5b8aa4776ce1d39d3ccd8193f1a7217f9b235fab65bf015a0842fabf8b8cdea",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild6361-3566-4762-a631-623034656139/image.png",
+          "alt": "Сергей Воронцов: похудеть быстро или навсегда"
+        }
+      ],
+      "editorial_stage": "structured",
+      "owner_review": "not_reviewed",
+      "source_review": "conflicts_reported",
+      "delivery_status": "validated"
+    },
+    {
+      "source_id": "tilda-49745867",
+      "slug": "pravilo-30-rasteniy",
+      "http_status": 200,
+      "h1_count": 1,
+      "title": "Правило 30-ти растений",
+      "description": "Микробиом важен для нашего здоровья, а разнообразие растений в питании — важно для здоровья микробиома. Поэтому желательно набирать 30 разных растений в неделю.",
+      "canonical": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/pravilo-30-rasteniy",
+      "json_ld": "pass",
+      "robots": "indexable",
+      "hero_duplicate": "none",
+      "writer_validation": "pass",
+      "media": [
+        {
+          "file": "tilda-49745867/tilda-01.png",
+          "sha256": "4a60a8437ab129eea7e346fbe76de0b7fa137a332ff2d1615fb6be88ec9d6e22",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png",
+          "alt": "Кот перед овощами: правило 30 растений"
+        },
+        {
+          "file": "tilda-49745867/tilda-02.jpg",
+          "sha256": "ca0e577dc9eee5ce0e7110d90460aaa6e375dd42b20d82d634e247fd9fba8aa6",
+          "content_type": "image/jpeg",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3565-3334-4433-a530-336534646564/image_649.jpg",
+          "alt": "Шутливая переписка о калориях болгарского перца"
+        },
+        {
+          "file": "tilda-49745867/tilda-03.png",
+          "sha256": "6ba0585ce47d4da7a43753a15d970ead8c0002618e9b8c202c0fcb4a7bbcef6e",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3466-3334-4666-b138-343030343431/image.png",
+          "alt": "Покупатель с разноцветными перцами"
+        },
+        {
+          "file": "tilda-49745867/tilda-04.png",
+          "sha256": "752a2ae91e97967fa4727b81350c786536e4cbf5823bf3a537e1de88abcb7f83",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png",
+          "alt": "Разноцветные овощи на прилавке"
+        },
+        {
+          "file": "tilda-49745867/tilda-05.png",
+          "sha256": "a1610ca70d922076865127cb20728c7cf88e26f3a59ecf686cb8d703f0328e71",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3630-3230-4665-a631-663261643137/image.png",
+          "alt": "Сергей Воронцов: похудеть быстро или навсегда"
+        }
+      ],
+      "editorial_stage": "structured",
+      "owner_review": "not_reviewed",
+      "source_review": "conflicts_reported",
+      "delivery_status": "validated"
+    },
+    {
+      "source_id": "tilda-67280331",
+      "slug": "vesy-instrukciya-po-primeneniyu",
+      "http_status": 200,
+      "h1_count": 1,
+      "title": "Весы — инструкция по применению",
+      "description": "Можно взвешиваться для того чтобы расстраиваться, а можно взвешиваться для того, чтобы делать выводы.",
+      "canonical": "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai/articles/vesy-instrukciya-po-primeneniyu",
+      "json_ld": "pass",
+      "robots": "indexable",
+      "hero_duplicate": "none",
+      "writer_validation": "pass",
+      "media": [
+        {
+          "file": "tilda-67280331/tilda-01.png",
+          "sha256": "8209c1e2c30e5a3c0a9ad86ed1f1534bb2362e6c7444e3b537d0bf373a860ce5",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png",
+          "alt": "Мем: стрелка весов и скорость похудения"
+        },
+        {
+          "file": "tilda-67280331/tilda-02.png",
+          "sha256": "cb0667617296c45d87702fe858f9b087de47d627f54acb5802eb2cf87acffbde",
+          "content_type": "image/png",
+          "http_status": 200,
+          "source_url": "https://static.tildacdn.com/tild3361-3365-4563-a435-393539646438/image.png",
+          "alt": "Схемы измерения биоимпеданса между точками тела"
+        }
+      ],
+      "editorial_stage": "developed",
+      "owner_review": "not_reviewed",
+      "source_review": "conflicts_reported",
+      "delivery_status": "validated"
+    }
+  ]
+}

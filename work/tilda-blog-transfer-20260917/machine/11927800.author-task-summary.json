@@ -1,0 +1,21 @@
+{
+  "note": "Механическая пересборка полного Tilda HTML page 61175321; текст и порядок сохранены, разрешено удалить только платформенные/служебные хвосты и локализовать медиа. Не писать заново.",
+  "work_profile": "structure",
+  "edit_mode": "structure_only",
+  "source_basis": "full_source",
+  "surface_context": "site_article",
+  "format_profile": "article",
+  "structural_labels": [],
+  "forbidden_claims": [
+    "Авторский текст переписан с Pikabu вместо текущей Tilda версии.",
+    "Изменены глобальные header/footer/navigation."
+  ],
+  "fact_sources": [
+    {
+      "name": "Tilda page 61175321",
+      "fingerprint": "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd"
+    }
+  ],
+  "source_text_sha256": "448e5fdaf2f6b51b2f50ab6e65773f61c8a1348bfe157a41cc1fd735a0df6c88",
+  "private_artifact_note": "Executable full-source task/pack retained outside Git; this is the safe machine handoff summary."
+}

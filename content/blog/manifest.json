@@ -33,68 +33,102 @@
       "source_id": "11401696",
       "slug": "pohudenie-nachinaetsya-ne-s-pohudeniya",
       "title": "Похудение начинается не с похудения",
-      "excerpt": "Надо сбросить 2, 5 или 25 килограммов? Неважно. Если это не получается легко и играючи, нужно менять подход.",
+      "excerpt": "Для начала у похудения должен быть план! Особенно если есть желание сделать его действительно последним, а не лишь ещё одним.",
       "category": "Похудение",
       "body_file": "11401696.md",
       "hero": {
-        "file": "11401696/01.jpg",
-        "alt": "Схема привычного плана похудения: мотивация, диета, неизвестный этап и успех",
-        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/05/10/7/171533641124377381.jpg"
+        "file": "11401696/tilda-01.jpg",
+        "alt": "Мем о цикле похудения и обвинении обмена веществ",
+        "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg"
       },
       "card": {
-        "file": "11401696/02.png",
-        "alt": "Схема цикличного плана похудения и более устойчивого подхода",
-        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/02/10/9/1707579970191190328.png"
+        "file": "11401696/tilda-09.png",
+        "alt": "Сначала изменения в питании, потом дефицит калорий",
+        "provenance": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png"
       },
       "related_source_ids": [
         "13277231",
         "11927800",
-        "12237133"
+        "tilda-49734795"
       ],
       "cta": "intensive",
       "status": "published",
       "media": [
-        "11401696/02.png",
-        "11401696/03.jpg",
-        "11401696/04.png",
-        "11401696/05.jpg",
-        "11401696/06.jpg",
-        "11401696/07.jpg",
-        "11401696/08.jpg"
-      ]
+        "11401696/tilda-01.jpg",
+        "11401696/tilda-02.png",
+        "11401696/tilda-03.jpg",
+        "11401696/tilda-04.png",
+        "11401696/tilda-05.png",
+        "11401696/tilda-06.png",
+        "11401696/tilda-07.jpg",
+        "11401696/tilda-08.png",
+        "11401696/tilda-09.png",
+        "11401696/tilda-10.png",
+        "11401696/tilda-11.png",
+        "11401696/tilda-12.png",
+        "11401696/tilda-13.png",
+        "11401696/tilda-14.jpg"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "49216621",
+        "url": "https://похудение-это-есть.рф/starts",
+        "html_sha256": "90e6b203468c60c76d8f850b579505fe4a22ab50780791b7e0598ee28b818a89",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      }
     },
     {
       "source_id": "11927800",
       "slug": "pochemu-yapontsy-hudye-a-ty-net",
       "title": "Почему японцы худые, а ты нет?",
-      "excerpt": "Когда заходит разговор о стройности японцев, первым делом вспоминают генетику. Удобное объяснение: им просто повезло, а нам — нет.",
+      "excerpt": "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
       "category": "Качество питания",
       "body_file": "11927800.md",
       "hero": {
-        "file": "11927800/01.jpg",
-        "alt": "Иллюстрация к сравнению пищевых привычек в Японии и России",
-        "provenance": "https://cs15.pikabu.ru/post_img/2024/10/19/6/1729327497125418882.jpg"
+        "file": "11927800/tilda-01.jpg",
+        "alt": "Сергей Воронцов за столом",
+        "provenance": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg"
       },
       "card": {
-        "file": "11927800/07.jpg",
-        "alt": "Японские школьники идут на обед",
-        "provenance": "https://cs17.pikabu.ru/s/2025/11/17/14/uuhvlylf_s0f0d72m0_1280x720p.jpg"
+        "file": "11927800/tilda-04.png",
+        "alt": "Сумоист в воде",
+        "provenance": "https://static.tildacdn.com/tild3463-6131-4034-a265-333864373434/image.png"
       },
       "related_source_ids": [
         "11401696",
-        "11875492",
-        "12237133"
+        "tilda-49745867",
+        "11875492"
       ],
       "cta": "masterclass",
       "status": "published",
       "media": [
-        "11927800/02.png",
-        "11927800/03.png",
-        "11927800/04.jpg",
-        "11927800/05.png",
-        "11927800/06.jpg",
-        "11927800/07.jpg"
-      ]
+        "11927800/tilda-01.jpg",
+        "11927800/tilda-02.png",
+        "11927800/tilda-03.png",
+        "11927800/tilda-04.png",
+        "11927800/tilda-05.png",
+        "11927800/tilda-06.jpg",
+        "11927800/tilda-07.png",
+        "11927800/tilda-08.jpg",
+        "11927800/tilda-09.gif",
+        "11927800/tilda-10.gif",
+        "11927800/tilda-11.png",
+        "11927800/tilda-12.jpg",
+        "11927800/tilda-13.jpg",
+        "11927800/tilda-14.jpg",
+        "11927800/tilda-15.jpg"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "61175321",
+        "url": "https://похудение-это-есть.рф/jpn",
+        "html_sha256": "0e080acdf6dadda56f34f71e20bf2ed8a963a891fd6664f5eb98af31a9f2bccd",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      }
     },
     {
       "source_id": "11269472",
@@ -201,6 +235,130 @@
         "11875492/06.jpg",
         "11875492/07.jpg"
       ]
+    },
+    {
+      "source_id": "tilda-49734795",
+      "slug": "15-sovetov-tem-kto-hudeet",
+      "title": "15 советов тем, кто худеет — по одному на килограмм лишнего веса",
+      "excerpt": "Лучшее время для похудения — ВЧЕРА! Второе лучшее время — СЕГОДНЯ!! Не похудели к лету — тогда похудейте просто так. Почему нет?",
+      "category": "Похудение",
+      "body_file": "tilda-49734795.md",
+      "hero": {
+        "file": "tilda-49734795/tilda-01.png",
+        "alt": "Кот и календарь: когда начинать похудение",
+        "provenance": "https://static.tildacdn.com/tild3562-6361-4337-a534-363064646437/image.png"
+      },
+      "card": {
+        "file": "tilda-49734795/tilda-06.png",
+        "alt": "Мем об учёте расхода калорий",
+        "provenance": "https://static.tildacdn.com/tild3736-3861-4534-b031-303862356638/image.png"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "tilda-49734795/tilda-01.png",
+        "tilda-49734795/tilda-02.png",
+        "tilda-49734795/tilda-03.png",
+        "tilda-49734795/tilda-04.png",
+        "tilda-49734795/tilda-05.png",
+        "tilda-49734795/tilda-06.png",
+        "tilda-49734795/tilda-07.png",
+        "tilda-49734795/tilda-08.png",
+        "tilda-49734795/tilda-09.png"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "49734795",
+        "url": "https://похудение-это-есть.рф/blits",
+        "html_sha256": "ec551a5fd092b5d29a603aae51c542a95299393ac96b5bda4700fea4880bc740",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      }
+    },
+    {
+      "source_id": "tilda-49745867",
+      "slug": "pravilo-30-rasteniy",
+      "title": "Правило 30-ти растений",
+      "excerpt": "Микробиом важен для нашего здоровья, а разнообразие растений в питании — важно для здоровья микробиома. Поэтому желательно набирать 30 разных растений в неделю.",
+      "category": "Качество питания",
+      "body_file": "tilda-49745867.md",
+      "hero": {
+        "file": "tilda-49745867/tilda-01.png",
+        "alt": "Кот перед овощами: правило 30 растений",
+        "provenance": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png"
+      },
+      "card": {
+        "file": "tilda-49745867/tilda-04.png",
+        "alt": "Разноцветные овощи на прилавке",
+        "provenance": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "tilda-49745867/tilda-01.png",
+        "tilda-49745867/tilda-02.jpg",
+        "tilda-49745867/tilda-03.png",
+        "tilda-49745867/tilda-04.png",
+        "tilda-49745867/tilda-05.png"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "49745867",
+        "url": "https://похудение-это-есть.рф/30-rastenij",
+        "html_sha256": "e76801cbf0f7bd1767d55cf87b32617755de45261818c0fdb3420aa56bd8c93a",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      }
+    },
+    {
+      "source_id": "tilda-67280331",
+      "slug": "vesy-instrukciya-po-primeneniyu",
+      "title": "Весы — инструкция по применению",
+      "excerpt": "Можно взвешиваться для того чтобы расстраиваться, а можно взвешиваться для того, чтобы делать выводы.",
+      "category": "Похудение",
+      "body_file": "tilda-67280331.md",
+      "hero": {
+        "file": "tilda-67280331/tilda-01.png",
+        "alt": "Мем: стрелка весов и скорость похудения",
+        "provenance": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png"
+      },
+      "card": {
+        "file": "tilda-67280331/tilda-02.png",
+        "alt": "Схемы измерения биоимпеданса между точками тела",
+        "provenance": "https://static.tildacdn.com/tild3361-3365-4563-a435-393539646438/image.png"
+      },
+      "related_source_ids": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "tilda-67280331/tilda-01.png",
+        "tilda-67280331/tilda-02.png"
+      ],
+      "source_provenance": {
+        "platform": "tilda",
+        "project_id": "9532923",
+        "page_id": "67280331",
+        "url": "https://похудение-это-есть.рф/vzveshivania",
+        "html_sha256": "cdea3b9bddb8624af0c44df3e0904e818052a90f138217ddd4efaff30638c4d0",
+        "retrieved_at": "2026-09-17",
+        "source_basis": "full_source"
+      }
     }
   ]
 }
