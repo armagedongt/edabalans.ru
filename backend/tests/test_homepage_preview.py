@@ -787,8 +787,8 @@ def test_release_candidate_gives_a_hero_route_to_pricing_and_opens_mobile_outlin
     assert response.status_code == 200
     assert 'class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a>' in response.text
     assert "Или читайте подробнее о моём подходе ниже" in response.text
-    assert "Ответы на часто задаваемые вопросы" in response.text
-    assert "Больше отзывов читайте ниже" in response.text
+    assert "<h1 id=\"faq-title\">Важные вопросы</h1>" in response.text
+    assert "А ниже — ещё больше отзывов." in response.text
     assert "if (reviewsEnd && finalChoice) reviewsEnd.after(finalChoice);" in response.text
     assert "if (open) {\n          setTocOpen(true);" in response.text
 
