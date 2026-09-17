@@ -45,6 +45,8 @@ Active `managed_document_versions` — runtime truth; `content/masterclass/cours
 `backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active
 revision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в
 программу прежние шаги не удаляются, а остаются скрытыми.
+Для согласованного частичного выпуска `--through-day 5` ограничивает изменения
+днями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.
 
 `content/masterclass/source-current/` хранит миграционные исходники прежней
 редакции и после первичного переноса не является местом новой редактуры. Для DQS

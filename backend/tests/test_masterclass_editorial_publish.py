@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from types import SimpleNamespace
 from pathlib import Path
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
@@ -124,8 +125,59 @@ def test_day_markdown_supplies_runtime_day_copy_and_checks() -> None:
     assert "<p>" in day["intro"]
 
     first = compiled["days"][0]
-    assert first["intro"].startswith("<p><strong>И сразу признаюсь")
-    assert first["afterText"].count("<p>") == 2
+    assert first["intro"] == ""
+    assert "достаточно одной галочки" in first["afterText"]
+
+
+def test_first_five_release_preserves_later_days_and_adds_practice() -> None:
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    manifest["days"][5]["intro"] = "Редакция другого потока"
+    compiled, _ = compile_manifest(manifest, next_version=12, through_day=5)
+    days, _ = parse_program()
+    apply_day_copy(compiled, days, through_day=5)
+    assert compiled["days"][5:] == manifest["days"][5:]
+    practice = next(step for step in compiled["days"][2]["steps"]
+                    if step["id"] == "day-03-practice")
+    assert practice["hidden"] is False
+    assert practice["contentKind"] == "text"
+    assert practice["requiredForAllAfterRevision"] == 12
+
+
+def test_partial_publish_writes_only_selected_day_articles(monkeypatch) -> None:
+    from scripts import publish_masterclass_editorial as publisher
+    manifest = json.loads(
+        (ROOT / "content" / "masterclass" / "course" / "course.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    writes = []
+    class Database:
+        def __enter__(self):
+            return self
+        def __exit__(self, *args):
+            pass
+        def commit(self):
+            pass
+    monkeypatch.setattr(publisher, "SessionLocal", Database)
+    monkeypatch.setattr(publisher, "active_course_version", lambda db:
+                        SimpleNamespace(payload=manifest, version_no=11))
+    monkeypatch.setattr(publisher, "publish_document", lambda *a, **kw:
+                        SimpleNamespace(version_no=12))
+    monkeypatch.setattr(publisher, "migrate_step_progress", lambda *a: 0)
+    monkeypatch.setattr(publisher, "get_material", lambda *a: {"version": 0})
+    monkeypatch.setattr(publisher, "publish_material", lambda *a, **kw:
+                        writes.append(kw["step_id"]))
+    monkeypatch.setattr("sys.argv", ["publisher", "--through-day", "5", "--publish"])
+    publisher.main()
+    _, materials = parse_program()
+    expected = {item["step_id"] for item in materials.values()
+                if item["day"] <= 5 and item["type"] == "article"}
+    assert set(writes) == expected
+    assert len(writes) == len(expected)
 
 
 def test_special_material_prelude_uses_markdown_before_embed_only() -> None:
@@ -200,3 +252,11 @@ def test_editorial_body_rewrites_local_article_images_to_public_media_route() ->
     assert "](/course-assets/masterclass/media/55-store-food-without-cooking/" in body
     assert not body.startswith("# ")
     assert "> Тип:" not in body
+
+
+def test_tutorial_body_omits_working_status_metadata() -> None:
+    body = editorial_body(
+        ROOT / "content/masterclass/editorial/materials/01-01-как-устроен-мастер-класс.md"
+    )
+    assert "draft_for_editing" not in body
+    assert "хотя бы одна галочка" in body

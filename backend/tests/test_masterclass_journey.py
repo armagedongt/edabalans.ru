@@ -2139,17 +2139,29 @@ def test_course_progress_is_server_side_and_steps_are_strictly_sequential():
     )
     assert offer.status_code == 200
     assert offer.json()["days"][0]["task_unlocked"] is True
-    assert client.post(
+    opened_task = client.post(
         "/api/masterclass/course/days/1/task/open",
         json={"email": "member@example.test"},
-    ).status_code == 200
+    )
+    assert opened_task.status_code == 200
+    assert opened_task.json()["days"][0]["completed"] is False
 
-    for index in range(offer.json()["days"][0]["check_count"]):
+    check_count = offer.json()["days"][0]["check_count"]
+    for position, index in enumerate(reversed(range(check_count))):
         checked = client.put(
             f"/api/masterclass/course/days/1/checks/{index}",
             json={"email": "member@example.test", "checked": True},
         )
         assert checked.status_code == 200
+        assert checked.json()["days"][0]["completed"] is True
+        assert checked.json()["days"][0]["checkmarks"][str(index)] is True
+        if position == 0:
+            assert index != 0
+            assert checked.json()["days"][0]["checkmarks"].get("0") is not True
+    reloaded = client.get("/api/masterclass/course?email=member@example.test")
+    assert reloaded.status_code == 200
+    assert all(reloaded.json()["days"][0]["checkmarks"][str(index)] is True
+               for index in range(check_count))
     assert checked.json()["days"][0]["completed"] is True
 
     unchecked = client.put(

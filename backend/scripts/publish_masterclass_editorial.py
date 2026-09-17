@@ -60,7 +60,9 @@ def new_placeholder_step(item: dict, *, next_version: int) -> dict:
     }
 
 
-def compile_manifest(current: dict, *, next_version: int) -> tuple[dict, list[str]]:
+def compile_manifest(
+    current: dict, *, next_version: int, through_day: int = 20
+) -> tuple[dict, list[str]]:
     days, materials = parse_program()
     result = deepcopy(current)
     current_steps = {
@@ -74,6 +76,8 @@ def compile_manifest(current: dict, *, next_version: int) -> tuple[dict, list[st
     }
     changes: list[str] = []
     for editorial_day, day in zip(days, result["days"], strict=True):
+        if editorial_day["number"] > through_day:
+            continue
         day["title"] = editorial_day["title"]
         day["tocSummary"] = ""
         wanted = [item["step_id"] for item in editorial_day["materials"]]
@@ -83,7 +87,7 @@ def compile_manifest(current: dict, *, next_version: int) -> tuple[dict, list[st
         for item in editorial_day["materials"]:
             step = current_steps.get(item["step_id"])
             if step is None:
-                if item["step_id"] == "day-07-store-food":
+                if item["step_id"] in {"day-07-store-food", "day-03-practice"}:
                     step = new_article_step(item, next_version=next_version)
                 elif item["step_id"] == "day-17-article-04":
                     step = new_placeholder_step(item, next_version=next_version)
@@ -121,6 +125,7 @@ def editorial_body(path) -> str:
     text = path.read_text(encoding="utf-8").replace("\r", "")
     text = re.sub(r"\A\ufeff?# [^\n]+\n+", "", text, count=1)
     text = re.sub(r"\A> Тип:.*?\n+", "", text, count=1)
+    text = text.replace("Статус: `draft_for_editing`\n\n", "")
     return re.sub(
         r"(!\[[^]]*]\()assets/",
         rf"\1{MEDIA_PREFIX}",
@@ -153,7 +158,7 @@ def render_day_section(value: str) -> str:
     return render_material(markdown, "markdown")
 
 
-def apply_day_copy(manifest: dict, days: list[dict]) -> None:
+def apply_day_copy(manifest: dict, days: list[dict], *, through_day: int = 20) -> None:
     day_files = {
         int(match.group(1)): path
         for path in (EDITORIAL / "days").glob("*.md")
@@ -161,6 +166,8 @@ def apply_day_copy(manifest: dict, days: list[dict]) -> None:
         if match
     }
     for editorial_day, day in zip(days, manifest["days"], strict=True):
+        if editorial_day["number"] > through_day:
+            continue
         sections = day_sections(day_files[editorial_day["number"]])
         lead = sections.get("Перед вводным медиа", "")
         day["lead"] = article_plain_text(render_day_section(lead)) if lead else ""
@@ -240,14 +247,22 @@ def migrate_step_progress(db, before: dict, after: dict) -> int:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--publish", action="store_true")
+    parser.add_argument("--through-day", type=int, choices=range(1, 21), default=20)
     args = parser.parse_args()
     days, materials = parse_program()
+    materials = {
+        key: item for key, item in materials.items()
+        if item["day"] <= args.through_day
+    }
     with SessionLocal() as db:
         current = active_course_version(db)
         manifest, changes = compile_manifest(
-            current.payload, next_version=current.version_no + 1
+            current.payload, next_version=current.version_no + 1,
+            through_day=args.through_day,
         )
-        apply_day_copy(manifest, days)
+        apply_day_copy(manifest, days, through_day=args.through_day)
+        if manifest["days"][args.through_day:] != current.payload["days"][args.through_day:]:
+            raise ValueError("Изменены дни за пределами выбранного выпуска")
         rendered_articles = {
             item["step_id"]: editorial_body(item["path"])
             for item in materials.values()

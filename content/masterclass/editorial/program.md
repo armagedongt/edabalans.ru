@@ -37,6 +37,8 @@
    <!-- step_id: day-03-article-02; type: article -->
 3. [Что интересного можно узнать из этикеток](materials/03-03-этикетки.md) · ≈ 15 мин
    <!-- step_id: day-03-article-03; type: article -->
+4. [Что из «вредного» ограничить, а что оставить](materials/03-04-практика-ограничений.md) · ≈ 2 мин
+   <!-- step_id: day-03-practice; type: article; new_step: true -->
 
 ## 4. DQS — Система оценки качества питания
 <!-- day_id: day-04 -->

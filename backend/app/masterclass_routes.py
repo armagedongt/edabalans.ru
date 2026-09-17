@@ -58,7 +58,6 @@ from app.public_site_content_service import (
 from app.course_structure_service import (
     CourseContext,
     course_context,
-    effective_required_check_ids,
     effective_required_step_ids,
 )
 
@@ -557,9 +556,10 @@ def reconcile_course_progress(
         ):
             continue
         checkmarks = dict(progress.checkmarks or {})
-        if all(
-            checkmarks.get(check_id) is True
-            for check_id in effective_required_check_ids(context, progress, day)
+        if any(
+            checkmarks.get(item["id"]) is True
+            for item in context.checks.get(day, [])
+            if not item.get("hidden", False)
         ):
             finalize_course_day(db, user, progress, day, context, now)
 
@@ -938,11 +938,12 @@ def course_update_check(
     checkmarks = dict(progress.checkmarks or {})
     checkmarks[check_id] = body.checked
     progress.checkmarks = checkmarks
-    all_checked = all(
-        checkmarks.get(item_id) is True
-        for item_id in effective_required_check_ids(context, progress, day)
+    has_checked = any(
+        checkmarks.get(item["id"]) is True
+        for item in checks
+        if not item.get("hidden", False)
     )
-    if all_checked and not progress.completed_at:
+    if has_checked and not progress.completed_at:
         finalize_course_day(db, user, progress, day, context, now)
     db.commit()
     return course_payload(db, user, settings, now, context)
