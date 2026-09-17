@@ -1,7 +1,8 @@
 # Калькулятор метаболизма
 
-Статус: `current`  
-Состояние реализации: `in_development`  
+Статус: `current`
+
+Состояние реализации: `in_development`
 Модуль: `products.metabolism`
 
 ## Вход и доступ
