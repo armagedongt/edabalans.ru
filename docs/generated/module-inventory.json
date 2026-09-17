@@ -933,6 +933,10 @@
       "path": "backend/app/static/max-logo.png"
     },
     {
+      "module_id": "admin.control",
+      "path": "backend/app/static/private-game/index.html"
+    },
+    {
       "module_id": "products.catalog",
       "path": "backend/app/static/product-catalog-editor.html"
     },
@@ -3847,10 +3851,6 @@
     {
       "module_id": "products.strength",
       "path": "legacy/google/strength/tilda/client-t123.html"
-    },
-    {
-      "module_id": "admin.control",
-      "path": "prototypes/private-game/index.html"
     },
     {
       "module_id": "admin.control",
@@ -7809,6 +7809,10 @@
         },
         {
           "module_id": "admin.control",
+          "path": "backend/app/static/private-game/index.html"
+        },
+        {
+          "module_id": "admin.control",
           "path": "backend/tests/test_game_page.py"
         },
         {
@@ -7818,10 +7822,6 @@
         {
           "module_id": "admin.control",
           "path": "docs/knowledge-base/modules/catalog/admin.control.md"
-        },
-        {
-          "module_id": "admin.control",
-          "path": "prototypes/private-game/index.html"
         },
         {
           "module_id": "admin.control",

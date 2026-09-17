@@ -167,7 +167,7 @@ def public_site_asset(asset_path: str) -> FileResponse:
 
 
 WEATHER_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-weather"
-GAME_DIR = Path(__file__).resolve().parents[2] / "prototypes" / "private-game"
+GAME_DIR = STATIC_DIR / "private-game"
 
 
 @router.get("/weather", include_in_schema=False)
