@@ -582,6 +582,10 @@
     .site-outro { width:var(--content-frame);max-width:100%;margin:22px auto 0;color:var(--site-text);font-size:var(--type-body);font-weight:500;line-height:1.6;text-align:left }
     .site-outro p{margin:0}
     .site-outro p+p{margin-top:14px}
+    .hero-pricing-cta{display:flex;width:max-content;max-width:100%;min-height:52px;align-items:center;justify-content:center;margin:28px auto 0;padding:12px 20px;border-radius:14px;background:linear-gradient(135deg,#f09a31,#e66b2f);box-shadow:0 12px 23px -13px rgba(173,77,19,.62);color:#fff;font:800 15px/1.2 Manrope,sans-serif;text-align:center;text-decoration:none;transition:transform .18s ease,box-shadow .18s ease}
+    .hero-pricing-cta:hover,.hero-pricing-cta:focus-visible{box-shadow:0 16px 28px -13px rgba(173,77,19,.72);transform:translateY(-2px)}
+    .hero-pricing-note{margin:10px 0 0;color:#63717a;font-size:13px;font-weight:650;line-height:1.4;text-align:center}
+    .hero-pricing-note span{display:block;margin-top:1px;color:var(--site-orange);font-size:18px;line-height:1}
 
     .argument-intro { padding: 42px var(--page-gutter) 46px; background: #fff; }
     .argument-intro__inner, .method-transition__inner { width: min(100%,var(--content-frame)); margin: 0 auto; }
@@ -1296,7 +1300,7 @@
             <a href="#pricing-program-title">06. Подробная программа по дням</a>
             <a href="#anya-story-title">07. Что случилось с Аней</a>
             <a href="#author-title">08. Обо мне</a>
-            <a href="#faq">09. Важные вопросы</a>
+            <a href="#faq">09. Ответы на часто задаваемые вопросы</a>
             <a href="#reviews-more-title">10. Больше отзывов</a>
           </div>
         </div>
@@ -1339,7 +1343,7 @@
           <a href="#pricing-program-title">06. Подробная программа по дням</a>
           <a href="#anya-story-title">07. Что случилось с Аней</a>
           <a href="#author-title">08. Обо мне</a>
-          <a href="#faq">09. Важные вопросы</a>
+          <a href="#faq">09. Ответы на часто задаваемые вопросы</a>
           <a href="#reviews-more-title">10. Больше отзывов</a>
         </div>
       </div>
@@ -1367,7 +1371,7 @@
         <h1 class="site-title" data-homepage-block="hero-title" data-block-width="hero"><span class="site-title__plain" data-homepage-field="line-1">По изменению</span><span class="site-title__plain" data-homepage-field="line-2">Питания <small>и</small></span><span class="site-title__accent" data-homepage-field="accent">Пищевых привычек</span></h1>
         <p class="site-lead" data-homepage-block="hero-intro" data-homepage-field="text" data-block-width="content">За три недели вы научитесь делать похудение проще, а пользоваться этим потом будете — всю жизнь!</p>
       <div class="floating-vsl-slot"><aside class="floating-vsl" data-floating-vsl aria-label="Видео о Мастер-классе"><button class="floating-vsl__close" type="button" data-floating-vsl-close aria-label="Скрыть видео">×</button><div class="site-player" id="hero-video" data-homepage-block="hero-video" data-block-width="video-main"><div class="site-player__mask"><iframe src="/preview/homepage-mobile/vsl-player.html?v=8" loading="eager" data-media-player data-media-context="homepage-vsl" title="Видео о Мастер-классе" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe></div></div></aside></div>
-        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">Вместо очередной голодовки — я покажу вам со стороны ваше привычное питание и пищевые привычки.</p><p data-homepage-field="paragraph-2">Вы научитесь лучше насыщаться за те же калории и соберёте свою систему питания, в которой не нужно будет так много силы воли ради простого похудения.</p><p data-homepage-field="paragraph-3">Я расскажу, что это за навыки, научу, как их освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p></div>
+        <div class="site-outro" data-homepage-block="hero-outro" data-block-width="content"><p data-homepage-field="paragraph-1">Вместо очередной голодовки — я покажу вам со стороны ваше привычное питание и пищевые привычки.</p><p data-homepage-field="paragraph-2">Вы научитесь лучше насыщаться за те же калории и соберёте свою систему питания, в которой не нужно будет так много силы воли ради простого похудения.</p><p data-homepage-field="paragraph-3">Я расскажу, что это за навыки, научу, как их освоить, покажу, как применять, и создам вокруг вас обстановку, чтобы эти навыки закрепились!</p><a class="hero-pricing-cta" href="#pricing">Выбрать тариф — начать прямо сейчас</a><p class="hero-pricing-note">Или читайте подробнее о моём подходе ниже<span aria-hidden="true">👇</span></p></div>
       </div>
     </section>
 
@@ -3843,12 +3847,12 @@
         <p data-homepage-field="paragraph-1">Топовый автор сообщества "Мы Худеем" на Pikabu.ru, велосипедист, триатлет (железный человек), путешественник, любитель тефтелей с чесноком и пюрешкой.</p>
         <figure class="author-section__image" data-homepage-field="media"><img src="/blog/assets/sergey-author.png" alt="Сергей Воронцов: изменение веса и занятия спортом" loading="lazy"></figure>
         <p data-homepage-field="paragraph-2">Разок меня тоже бес попутал — набрал до 95 кг. Потом одумался, поменял образ жизни и похудел до 70 кг, ни дня не сидя на диете и даже не зная, что существует приложение по учёту калорий.</p>
-        <p data-homepage-field="paragraph-3">С того времени 10 лет спокойно живу в новом весе и радуюсь жизни, чего и вам желаю.</p>
+        <p data-homepage-field="paragraph-3">С того времени уже почти 10 лет живу в новом весе и радуюсь жизни. Тому же и учу своих клиентов.</p>
       </div>
     </section>
-    <section class="chain-block chain-block--faq" id="faq" aria-label="Важные вопросы" data-homepage-block="faq" data-homepage-field="items" data-block-width="content"><div class="faq-section">
+    <section class="chain-block chain-block--faq" id="faq" aria-label="Ответы на часто задаваемые вопросы" data-homepage-block="faq" data-homepage-field="items" data-block-width="content"><div class="faq-section">
     <section class="faq-shell" aria-labelledby="faq-title">
-      <h1 id="faq-title">Важные вопросы</h1>
+      <h1 id="faq-title">Ответы на часто задаваемые вопросы</h1>
       <div class="faq-list" data-public-faq aria-live="polite">Загружаю вопросы…</div>
       <!-- local FAQ snapshot: source = faq-owner-edit.md; production keeps the content API -->
       <template data-local-faq-template>
@@ -3870,6 +3874,7 @@
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-16"><span class="faq-question-text">А что, если мне не понравится?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-16" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Если до начала четвёртого дня вы поймёте, что мой подход к похудению вам не близок, просто не открывайте четвёртый день и напишите мне в личные сообщения запрос на возврат. Я сделаю полный возврат без лишних вопросов.</p></div></div></div></article>
         <article class="faq-item" data-open="false"><button class="faq-question" type="button" aria-expanded="false" aria-controls="faq-answer-17"><span class="faq-question-text">Сколько действует доступ к материалам?</span><span class="faq-sign" aria-hidden="true">+</span></button><div class="faq-answer" id="faq-answer-17" hidden><div class="faq-answer-inner"><div class="faq-answer-copy"><p>Доступ к приобретённым материалам остаётся у вас навсегда. Если я добавлю новые материалы, перепишу старые или обновлю рецепты, эти обновления тоже появятся у вас без дополнительной оплаты.</p></div></div></div></article>
       </template>
+      <p class="hero-pricing-note">Больше отзывов читайте ниже<span aria-hidden="true">👇</span></p>
     </section>
   </div>
   </section>
@@ -4074,6 +4079,12 @@
     })();
 
     (() => {
+      const reviewsEnd = document.querySelector('.reviews-wall-cta');
+      const finalChoice = document.querySelector('.chain-block--final');
+      if (reviewsEnd && finalChoice) reviewsEnd.after(finalChoice);
+    })();
+
+    (() => {
       const toggle = document.querySelector('.mobile-toggle');
       const sheet = document.querySelector('.mobile-sheet');
       if (!toggle || !sheet) return;
@@ -4102,7 +4113,9 @@
         sheet.setAttribute('aria-hidden', String(!open));
         sheet.inert = !open;
         document.body.classList.toggle('menu-open', open);
-        if (!open) {
+        if (open) {
+          setTocOpen(true);
+        } else {
           setContactOpen(false);
           setTocOpen(false);
           setAccountOpen(false);
