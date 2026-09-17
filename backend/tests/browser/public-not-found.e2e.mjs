@@ -41,7 +41,7 @@ try {
     const headerNav = page.locator(width === 360 ? '.eb-site-header__mobile-links' : '.eb-site-header__nav')
     if (width === 360) await page.getByRole('button', { name: 'Открыть меню' }).click()
     assert.equal(await headerNav.locator('a').filter({ hasText: /^Главная$/ }).getAttribute('href'), 'https://похудение-это-есть.рф/')
-    assert.equal(await headerNav.locator('a').filter({ hasText: /^Блог$/ }).getAttribute('href'), 'https://edabalans.ru/blog')
+    assert.equal(await headerNav.locator('a').filter({ hasText: /^Блог$/ }).getAttribute('href'), 'https://похудение-это-есть.рф/blog')
     assert.equal(await headerNav.locator('a').filter({ hasText: /^Бесплатный интенсив$/ }).isVisible(), true)
     await context.close()
   }

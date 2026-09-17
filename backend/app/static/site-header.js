@@ -10,10 +10,10 @@
     ['https://max.ru/id230409966750_biz', 'Канал в MAX']
   ];
   var DEFAULT_NAV = [
-    ['/', 'Главная'],
-    ['/blog', 'Блог'],
-    ['/#intensive', 'Бесплатный интенсив'],
-    ['/#masterclass', 'Мастер-класс']
+    ['https://похудение-это-есть.рф/', 'Главная'],
+    ['https://похудение-это-есть.рф/blog', 'Блог'],
+    ['https://похудение-это-есть.рф/#intensive', 'Бесплатный интенсив'],
+    ['https://похудение-это-есть.рф/#masterclass', 'Мастер-класс']
   ];
 
   var CSS = [
@@ -116,7 +116,7 @@
     ensureStyle();
     var uid = 'eb-site-header-' + Math.random().toString(36).slice(2, 8);
     var nav = parseNav(root);
-    var accountUrl = root.getAttribute('data-account-url') || 'https://go.похудение-это-есть.рф/lk';
+    var accountUrl = root.getAttribute('data-account-url') || 'https://похудение-это-есть.рф/lk';
     var registrationUrl = root.getAttribute('data-registration-url') || accountUrl + (accountUrl.indexOf('?') >= 0 ? '&' : '?') + 'mode=register';
     var accountEnabled = root.getAttribute('data-account') !== 'none';
     var wordmark = root.getAttribute('data-wordmark') || 'ПОХУДЕНИЕ — ЭТО ЕСТЬ.РФ';

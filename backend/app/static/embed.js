@@ -403,13 +403,13 @@
           var documents = legal.documents || [];
           var cards = documents.map(function (item) {
             var policy = item.code === 'personal_data_consent'
-              ? ' · <a href="' + escapeHtml(APP_HOST + '/legal/privacy.html') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
+              ? ' · <a href="' + escapeHtml('https://похудение-это-есть.рф/legal/privacy') + '" target="_blank" rel="noopener">Политика обработки данных ↗</a>'
               : '';
             return '<label class="edabalans-dqs-legal-card">' +
               '<input type="checkbox" data-edabalans-dqs-legal="' + escapeHtml(item.code) + '"' + (item.accepted ? ' checked disabled' : '') + '>' +
               '<span><strong>' + escapeHtml(item.title) + '</strong>' +
               '<span>' + escapeHtml(item.summary) + '</span>' +
-              '<a href="' + escapeHtml(APP_HOST + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
+              '<a href="' + escapeHtml('https://похудение-это-есть.рф' + item.url) + '" target="_blank" rel="noopener">Читать полностью ↗</a>' + policy + '</span></label>';
           }).join('');
           mount.innerHTML = '<style>' +
             '.edabalans-dqs-legal-shell{box-sizing:border-box;min-height:70vh;display:grid;place-items:center;padding:32px 18px;background:#f5f0e7;color:#25241f;font:16px/1.5 Inter,Arial,sans-serif}' +

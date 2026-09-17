@@ -318,7 +318,7 @@ def test_homepage_mobile_preview_contains_only_one_page_shell_and_accepted_block
     assert ".meme-card img{display:block;width:100%;height:auto;margin:0 auto}" in response.text
     assert "aspect-ratio:800/776" not in response.text
     assert INTENSIVE_PUBLIC_CTA["destination"] in response.text
-    assert INTENSIVE_PUBLIC_CTA["destination"] == "https://go.похудение-это-есть.рф/intensiv"
+    assert INTENSIVE_PUBLIC_CTA["destination"] == "https://похудение-это-есть.рф/intensive"
     assert "Открыть бесплатный интенсив" in response.text
     assert "{{INTENSIVE_PUBLIC_CTA_" not in response.text
     assert '<body data-page-theme="blue-mist">' in response.text
@@ -825,7 +825,7 @@ def test_release_candidate_mounts_the_existing_account_offers_module_for_buyers(
     assert 'data-edabalans-app="masterclass-offers"' in response.text
     assert 'data-edabalans-account-offer="true"' in response.text
     assert 'data-edabalans-manual="true"' in response.text
-    assert 'data-production-href="/lk"' in response.text
+    assert 'data-production-href="https://похудение-это-есть.рф/lk"' in response.text
     assert "У вас уже есть доступ к мастер-классу" in response.text
     assert 'напишите мне: <a href="https://t.me/FitnessSergey"' in response.text
     assert 'https://max.ru/u/f9LHodD0cOJjmbADdxMaO0UzEfR_55NRvOSwSuS3C6mWE5T27DPcpczbvEw' in response.text
@@ -1445,7 +1445,7 @@ def test_direct_intensive_preview_is_a_t123_ready_noindex_landing() -> None:
     assert "Не медицинская услуга" in response.text
     assert "business:'ИП Воронцов'" in response.text
     assert "Политика ПД" in response.text
-    assert "privacyUrl:'https://edabalans.ru/legal/privacy'" in response.text
+    assert "privacyUrl:'https://похудение-это-есть.рф/legal/privacy'" in response.text
     assert "telegramNote:'Только с VPN'" in response.text
     assert 'class="edb-di-legal-line"' in response.text
     assert "edb-di-mobile-vpn-note" not in response.text

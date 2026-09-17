@@ -174,7 +174,7 @@ def test_blog_component_is_closed_and_preserves_tracking_key() -> None:
 
     assert 'data-component="blog-cta"' in rendered
     assert 'data-tracking-key="blog_intensive"' in rendered
-    assert 'href="https://go.похудение-это-есть.рф/intensiv"' in rendered
+    assert 'href="https://похудение-это-есть.рф/intensive"' in rendered
     assert "Читать бесплатно" in rendered
 
     with pytest.raises(HTTPException):

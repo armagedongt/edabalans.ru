@@ -7,6 +7,6 @@ INTENSIVE_PUBLIC_CTA = {
     "title": "Как сделать похудение проще",
     "copy": "Разберите свой подход к похудению и наметьте изменения без резких запретов.",
     "button_label": "Читать бесплатно",
-    "destination": "https://go.похудение-это-есть.рф/intensiv",
+    "destination": "https://похудение-это-есть.рф/intensive",
     "tracking_key": "blog_intensive",
 }

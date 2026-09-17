@@ -13,7 +13,7 @@ LEGAL_DOCUMENTS = (
         "code": "educational_disclaimer",
         "version": "2026-08-24-v2",
         "title": "Образовательный дисклеймер",
-        "url": "/legal/disclaimer.html",
+        "url": "/legal/disclaimer",
         "summary": (
             "Все материалы личного кабинета и мои консультации носят "
             "информационно-образовательный характер. Они не являются медицинской "
@@ -26,7 +26,7 @@ LEGAL_DOCUMENTS = (
         "code": "personal_data_consent",
         "version": "2026-08-24-v1",
         "title": "Согласие на обработку персональных данных",
-        "url": "/legal/consent.html",
+        "url": "/legal/consent",
         "summary": (
             "В личном кабинете хранятся данные вашего аккаунта — история "
             "покупок, прогресс обучения, анкета, дневник питания и любые другие "

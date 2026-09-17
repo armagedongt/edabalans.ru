@@ -271,9 +271,9 @@ def test_stable_site_footer_loader_is_public() -> None:
     assert "https://t.me/Fitness_Talks" in response.text
     assert "https://t.me/FitnessSergey" in response.text
     assert "https://max.ru/u/" in response.text
-    assert "https://edabalans.ru/legal/offer" in response.text
-    assert "https://edabalans.ru/legal/privacy" in response.text
-    assert "https://edabalans.ru/legal/disclaimer" in response.text
+    assert "https://похудение-это-есть.рф/legal/offer" in response.text
+    assert "https://похудение-это-есть.рф/legal/privacy" in response.text
+    assert "https://похудение-это-есть.рф/legal/disclaimer" in response.text
     assert "link(LINKS.offer, 'Оферта')" in response.text
     assert "link(LINKS.privacy, 'Политика обработки персональных данных')" in response.text
     assert "link(LINKS.disclaimer, 'Образовательный дисклеймер')" in response.text
@@ -757,7 +757,7 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert "№ 273-ФЗ" in disclaimer
     assert "Пользователь отвечает за достоверность" not in disclaimer
     footer_renderer = client.get("/site-footer.js").text
-    assert "https://edabalans.ru/legal/disclaimer" in footer_renderer
+    assert "https://похудение-это-есть.рф/legal/disclaimer" in footer_renderer
     masterclass = client.get("/assets/masterclass.js").text
     assert "Authorization='Bearer '" in masterclass
     assert "placement_token" in masterclass
@@ -1146,6 +1146,41 @@ def test_legal_friendly_routes_are_public() -> None:
         assert "data-year" not in page
 
 
+def test_legal_navigation_uses_permanent_public_domain() -> None:
+    for document in ("", "disclaimer", "privacy", "consent", "messages", "offer"):
+        response = client.get("/legal" + ("/" + document if document else ""))
+        assert response.status_code == 200
+        links = re.findall(r'<a\b[^>]*\bhref="([^"]+)"', response.text)
+        documents = [url for url in links if "/legal/" in url]
+        assert len(documents) >= 4
+        assert all(url.startswith("https://похудение-это-есть.рф/legal/") for url in documents)
+        assert 'href="/legal/legal.css"' in response.text
+        assert '<script src="/site-footer.js" defer></script>' in response.text
+
+
+def test_checkout_and_cookie_legal_links_use_permanent_public_domain() -> None:
+    from app.legal_service import LEGAL_DOCUMENTS
+
+    checkout = client.get("/assets/masterclass.js").text
+    for document in ("offer", "consent"):
+        assert f'href="https://похудение-это-есть.рф/legal/{document}"' in checkout
+        assert f'href="/legal/{document}"' not in checkout
+    for path in ("/embed.js", "/cookie-notice.js"):
+        response = client.get(path)
+        assert response.status_code == 200
+        assert "https://похудение-это-есть.рф/legal/privacy" in response.text
+        assert "APP_HOST + '/legal/privacy.html'" not in response.text
+    embed = client.get("/embed.js").text
+    account = (Path(__file__).parents[1] / "app/static/apps/account.html").read_text(encoding="utf-8")
+    assert "escapeHtml('https://похудение-это-есть.рф' + item.url)" in embed
+    assert "esc('https://похудение-это-есть.рф'+item.url)" in account
+    assert "APP_HOST + item.url" not in embed
+    assert "host+item.url" not in account
+    for document in LEGAL_DOCUMENTS:
+        assert document["url"] in {"/legal/disclaimer", "/legal/consent"}
+        assert client.get(document["url"]).status_code == 200
+
+
 def test_intensive_concept_pages_are_public() -> None:
     client.cookies.clear()
     menu = client.get("/intensive")
@@ -1223,7 +1258,7 @@ def test_intensive_concept_pages_are_public() -> None:
     assert client.get("/intensive/max-full-colored-official.png").status_code == 200
     header_script = client.get("/site-header.js").text
     assert "EdabalansSiteHeader" in header_script
-    assert "https://go.похудение-это-есть.рф/lk" in header_script
+    assert "https://похудение-это-есть.рф/lk" in header_script
     assert "Зарегистрироваться" in header_script
     assert client.get("/intensive/assets/intensive-day-2/intro-cat.png").status_code == 200
     assert client.get("/intensive/assets/intensive-day-2/not-found.png").status_code == 404
