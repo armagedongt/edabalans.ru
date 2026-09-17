@@ -13,6 +13,7 @@
   var loadingScreens = new WeakMap();
   var roots = {
     account: 'account-app',
+    sprints: 'sprints-app',
     'masterclass-course': 'masterclass-course-app',
     'calories-course': 'calories-course-app',
     'masterclass-sales': 'masterclass-sales-app',

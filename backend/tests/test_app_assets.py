@@ -1266,6 +1266,25 @@ def test_masterclass_sales_fragment_uses_server_price_codes() -> None:
     assert "'masterclass-sales': 'masterclass-sales-app'" in loader
 
 
+def test_sprints_fragment_uses_current_account_design_and_catalog() -> None:
+    response = client.get("/apps/sprints.html")
+
+    assert response.status_code == 200
+    assert 'id="sprints-app"' in response.text
+    assert "ACTIVE SPRINT" in response.text
+    assert "Доступные спринты" in response.text
+    assert "Как сделать привычные тарелки на 1% лучше" in response.text
+    assert "Как выполнить правило 30 растений" in response.text
+    assert "Как добавить движение в обычный день" in response.text
+
+    account = client.get("/apps/account.html")
+    assert 'data-app="sprints"' in account.text
+    assert "sprint-library-card" in account.text
+
+    loader = client.get("/embed.js").text
+    assert "sprints: 'sprints-app'" in loader
+
+
 def test_tilda_homepage_loader_is_public_and_uses_server_owned_page() -> None:
     response = client.get("/homepage.js")
 

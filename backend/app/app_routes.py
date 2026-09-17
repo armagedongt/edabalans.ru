@@ -518,7 +518,7 @@ def homepage_mobile_preview_asset(asset_name: str) -> FileResponse:
 
 @router.get("/apps/{app_code}.html", include_in_schema=False)
 def app_fragment(app_code: str) -> Response:
-    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player"}:
+    if app_code not in {"account", "dqs", "strength", "metabolism", "recipes", "masterclass-course", "calories-course", "masterclass-sales", "onboarding-questionnaire", "masterclass-offers", "recipes-part-1", "recipes-part-2", "closing-review", "personal-access", "video-player", "sprints"}:
         raise HTTPException(status_code=404, detail="app not found")
     if app_code == "masterclass-course":
         return public_asset(STATIC_DIR / "masterclass-first-days-preview.html")
