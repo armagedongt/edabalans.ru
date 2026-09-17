@@ -24,11 +24,10 @@ API, ресурсы, внутренние auth-действия и внешни�
 Legal versions/acceptances не меняются; friendly paths документов в metadata
 и фиксированный публичный origin renderer заменяют прежние server-host anchors.
 
-## Блокер публикации
+## Постоянные входы опубликованы
 
-Tilda project `9532923` разлогинен, открытая вкладка показывает `/login/`.
-Проверка HTTP: следующие четыре постоянных входа действительно отвечают 404.
-Не отправлять пакет в main/production до создания и проверки переходов:
+17.09.2026 вход восстановлен. Все четыре перехода созданы и опубликованы,
+публичная HTTP-проверка подтверждает код сохранения query/fragment и ответ 200.
 
 | Новый адрес Tilda | Фиксированная цель |
 |---|---|
@@ -36,6 +35,15 @@ Tilda project `9532923` разлогинен, открытая вкладка п
 | `/legal/messages` | `https://edabalans.ru/legal/messages` |
 | `/legal/disclaimer` | `https://edabalans.ru/legal/disclaimer` |
 | `/blog` | `https://blog.похудение-это-есть.рф/` |
+
+Tilda page IDs: legal `250341509`, messages `250367809`, disclaimer `250369109`,
+blog `250371209`. Наследованы noheader/nofooter/nosearch; папка «Главные входы».
+В шапке `49187165` исправлена чужая cookie-ссылка на постоянный `/legal/privacy`.
+В 404 `61927151` исправлен fallback `/lk`; обе страницы опубликованы.
+Старый `/docs` и `/docs/` на app-host исправлены в Caddy на общий `/legal`
+с query. Caddy adapt --validate прошёл в действующем production image без загрузки
+нового конфига; узкий infrastructure review clean.
+Пакет сведен поверх `39e1c04`, повторно прошли 114 backend-тестов.
 
 Блог использует существующий серверный blog-host: его статьи имеют пути
 `/articles/*`; не направлять `/blog` на edabalans.ru/blog без изменения их маршрутизации.

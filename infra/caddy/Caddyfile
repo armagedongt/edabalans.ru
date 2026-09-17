@@ -169,8 +169,9 @@ www.{$PUBLIC_DOMAIN} {
 		file_server
 	}
 
-	handle /docs {
-		redir https://go.похудение-это-есть.рф/legal/privacy 302
+	@legacy_docs path /docs /docs/
+	handle @legacy_docs {
+		redir https://похудение-это-есть.рф/legal?{query} 302
 	}
 
 	handle {
