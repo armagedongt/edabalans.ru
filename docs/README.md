@@ -48,7 +48,7 @@
 | Telegram — фактическая логика | `TELEGRAM_BOT_CURRENT_LOGIC.md` |
 | Telegram — дополнительные правила модулей | `knowledge-base/modules/telegram/MODULE_DEVELOPMENT_STANDARD.md` |
 | Каталог материалов | `CONTENT_CATALOG.md` |
-| Видеоплееры: главный вход, размещения, профили и настройки | [Каталог видео-контура](../backend/app/static/video-player-development/README.md) |
+| Использование нашего видеоплеера: возможности, настройки и места подключения | [Использование нашего видеоплеера](../backend/app/static/video-player-development/README.md) |
 | Единая библиотека, Библиотекарь и MCP | `KNOWLEDGE_LIBRARY.md` |
 | Редакционная и продуктовая система | `knowledge-base/EDITORIAL_PRODUCT_SYSTEM.md` |
 | Дизайн, адаптив и компоненты главной | `knowledge-base/HOMEPAGE_DESIGN_PASSPORT.md` |
