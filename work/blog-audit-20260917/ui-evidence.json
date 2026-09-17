@@ -1,0 +1,22 @@
+{
+  "capture_method": "CUA screenshots inspected inline by root; DOM computed styles read-only",
+  "screenshot_files_available_to_independent_reviewer": false,
+  "masterclass_source": "ARTICLE_STANDARD.md; COURSE_VISUAL_SYSTEM 7.1/7.2; actual shared CSS bytes",
+  "article": "pohudenie-nachinaetsya-ne-s-pohudeniya",
+  "measured_widths": [360,430,620,621,640,641,768,900,901,920,921,1440],
+  "horizontal_overflow": false,
+  "reading_column_max_px": 760,
+  "body_font": "Manrope",
+  "body_px": {"at_or_below_620":17,"above_620":18},
+  "h2_px": {"at_or_below_620":25,"above_620":29},
+  "h1_at_360_430_620_px": 32,
+  "h1_at_1440_px": 44,
+  "toc_breakpoint_px": 900,
+  "desktop_toc_open_verified": true,
+  "mobile_toc_open_verified": true,
+  "mobile_escape_close_verified": true,
+  "inline_screenshots_viewed": ["desktop closed","desktop open","430 closed","430 open"],
+  "synthetic_pagination": {"fixture_cards":18,"first_page_visible":15,"second_page_visible":3,"desktop_grid_columns":3},
+  "automated_pagination": "backend/tests/blog-pagination.test.cjs: 22 cards; 15+7, filters including 18-card category, empty category, deep links, invalid-page clamp",
+  "limitations": ["Independent reviewer cannot access emitted inline CUA screenshots through its fork", "No full pixel comparison with authenticated masterclass page", "Node regression executes locally; backend-only Docker test image may skip it when Node is absent"]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex targeted source-preservation review",
+  "reviewed_at": "2026-09-17T18:17:28.598637+00:00",
+  "pack_sha256": "07953d1679e694723143030a1bf6f5c65bb7319646697bdaba2ae46bfd51ca53",
+  "draft_sha256": "a3c6b80bdb2e0fdabbad46aa37156f15c010eb7030633bc07c3c770c80ac0072",
+  "fact_sources": [
+    {
+      "name": "Accepted blog article at base revision",
+      "fingerprint": "64f5c4b0a662f9e7a41d6b3e8d7eb6e199def7321b4fd0baead0bb1932e38129"
+    }
+  ],
+  "checks": []
+}

@@ -29,7 +29,7 @@
   var categoryButtons = Array.prototype.slice.call(document.querySelectorAll('[data-category-filter]'));
   var pagination = document.querySelector('.pagination');
   var emptyState = document.querySelector('.empty-state');
-  var pageSize = 3;
+  var pageSize = 15;
   var activeCategory = 'all';
   var activePage = 1;
 
@@ -114,19 +114,28 @@
     tocPopover.hidden = true;
   }
   if (tocButton && tocPopover) {
+    var openedByHover = false;
     tocButton.addEventListener('click', function () {
+      if (openedByHover) { openedByHover = false; return; }
       var open = tocButton.getAttribute('aria-expanded') === 'true';
       tocButton.setAttribute('aria-expanded', String(!open));
       tocPopover.hidden = open;
     });
     tocPopover.addEventListener('click', function (event) { if (event.target.closest('a')) closeToc(); });
+    var tocDock = document.querySelector('.toc-dock');
+    tocDock.addEventListener('mouseenter', function () { openedByHover = true; tocButton.setAttribute('aria-expanded', 'true'); tocPopover.hidden = false; });
+    tocDock.addEventListener('mouseleave', function () { openedByHover = false; if (!tocDock.contains(document.activeElement)) closeToc(); });
     document.addEventListener('click', function (event) { if (!tocPopover.hidden && !event.target.closest('.toc-dock')) closeToc(); });
-    document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeToc(); tocButton.focus(); } });
+    document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && !tocPopover.hidden) { closeToc(); tocButton.focus(); } });
   }
 
   var tocLinks = Array.prototype.slice.call(document.querySelectorAll('.toc-popover a, .toc-mobile a'));
   var mobileToc = document.querySelector('.toc-mobile');
-  if (mobileToc) mobileToc.addEventListener('click', function (event) { if (event.target.closest('a')) mobileToc.open = false; });
+  if (mobileToc) {
+    mobileToc.addEventListener('click', function (event) { if (event.target.closest('a')) mobileToc.open = false; });
+    document.addEventListener('click', function (event) { if (!mobileToc.contains(event.target)) mobileToc.open = false; });
+    document.addEventListener('keydown', function (event) { if (event.key === 'Escape' && mobileToc.open) { mobileToc.open = false; mobileToc.querySelector('summary').focus(); } });
+  }
   var tocHeadings = tocLinks.map(function (link) {
     return document.getElementById(decodeURIComponent(link.getAttribute('href').slice(1)));
   }).filter(Boolean);

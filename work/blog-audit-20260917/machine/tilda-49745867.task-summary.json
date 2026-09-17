@@ -1,0 +1,22 @@
+{
+  "note": "Точечное изменение медиа без рерайта принятого текста. Удалить только скриншот старого теста о комфорте похудения в боте. Остальные изменения — адреса локальных оптимизированных изображений.",
+  "work_profile": "develop_existing",
+  "edit_mode": "targeted_edit",
+  "source_basis": "full_source",
+  "surface_context": "site_article",
+  "format_profile": "article",
+  "fact_sources": [
+    {
+      "name": "Accepted blog article at base revision",
+      "fingerprint": "0014459f31fbeecd4f09e9ac5459a071a7cf3e1025ff794d37e74ef53f04b445"
+    }
+  ],
+  "preservation_anchors": [
+    "Итак, напомню — микробиом важен для нашего здоровья, а разнообразие растений в питании — важно для здоровья микробиома. Поэтому желательно набирать 30 разных растений в неделю.",
+    "В 2018-м году проводили исследование, где изучали, как разнообразие в питании влияет на микробиом.",
+    "**Микробиом** — это примерно 50 триллионов бактерий, которые дружно живут в кишечнике и очень заметно влияют на наше здоровье"
+  ],
+  "source_sha256": "0014459f31fbeecd4f09e9ac5459a071a7cf3e1025ff794d37e74ef53f04b445",
+  "editable_image_count": 4,
+  "private_artifact_note": "Executable full source/task/pack outside Git"
+}

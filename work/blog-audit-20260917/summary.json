@@ -1,0 +1,17 @@
+{
+  "core_documents": 232,
+  "reserve_documents": 50,
+  "core_by_source": {
+    "pikabu": 70,
+    "telegraph": 152,
+    "vc.ru": 10
+  },
+  "excluded_core_documents": 63,
+  "eligible_documents_before_semantic_review": 169,
+  "provisional_groups": 142,
+  "provisional_not_publish_ready": true,
+  "active_media_before_bytes": 43236079,
+  "active_media_after_bytes": 24814429,
+  "provisional_groups_with_existing_blog_version": 6,
+  "provisional_new_groups": 136
+}

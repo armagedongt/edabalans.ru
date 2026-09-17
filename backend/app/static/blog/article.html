@@ -13,7 +13,9 @@
   <meta property="og:url" content="{{CANONICAL}}">
   <meta property="og:image" content="{{HERO_ABSOLUTE}}">
   <link rel="canonical" href="{{CANONICAL}}">
-  <link rel="stylesheet" href="/blog/assets/blog.css?v=20260831g">
+  <link rel="stylesheet" href="/blog/assets/article-typography.css?v=20260917a">
+  <link rel="stylesheet" href="/blog/assets/article-note.css?v=20260917a">
+  <link rel="stylesheet" href="/blog/assets/blog.css?v=20260917b">
   <title>{{TITLE}} · Похудение — это есть</title>
   <script type="application/ld+json">{{STRUCTURED_DATA}}</script>
 </head>
@@ -40,14 +42,16 @@
   <main>
     <article class="article-shell">
       <header class="article-hero">
-        <a class="back-link" href="https://похудение-это-есть.рф/blog">← Все статьи</a>
+        <div class="article-tools">
+          <a class="back-link" href="https://похудение-это-есть.рф/blog">← Все статьи</a>
+          {{TOC_MOBILE}}
+        </div>
         <span class="article-category">{{CATEGORY}}</span>
         <h1>{{TITLE}}</h1>
         <figure><img src="{{HERO_SRC}}" alt="{{HERO_ALT}}" loading="eager" decoding="async" fetchpriority="high"></figure>
       </header>
-      {{TOC_MOBILE}}
       <div class="article-layout">
-        <div class="article-body">{{ARTICLE_BODY}}</div>
+        <div class="article-body" id="article">{{ARTICLE_BODY}}</div>
         {{TOC_DESKTOP}}
       </div>
     </article>
@@ -61,6 +65,6 @@
   <div id="contacts" data-edabalans-site-footer></div>
   <script src="https://edabalans.ru/site-footer.js" defer></script>
   <script src="https://edabalans.ru/cookie-notice.js" defer></script>
-  <script src="/blog/assets/blog.js?v=20260831d" defer></script>
+  <script src="/blog/assets/blog.js?v=20260917c" defer></script>
 </body>
 </html>

@@ -9,12 +9,12 @@
       "category": "Похудение",
       "body_file": "13277231.md",
       "hero": {
-        "file": "13277231/01.png",
+        "file": "13277231/01-v2-body.webp",
         "alt": "Таблица для примерного расчёта сроков похудения при разном дефиците калорий",
         "provenance": "https://cs17.pikabu.ru/s/2025/10/11/11/mjwvk2e5_lg.png"
       },
       "card": {
-        "file": "13277231/02.png",
+        "file": "13277231/02-v2-card.webp",
         "alt": "Мем «Пу-пу-пууу» о попытке быстро рассчитать сроки похудения",
         "provenance": "https://cs19.pikabu.ru/s/2025/10/11/13/aqaew6iq_lg.png"
       },
@@ -26,6 +26,10 @@
       "cta": "intensive",
       "status": "published",
       "media": [
+        "13277231/01-v2-body.webp",
+        "13277231/01.png",
+        "13277231/02-v2-body.webp",
+        "13277231/02-v2-card.webp",
         "13277231/02.png"
       ]
     },
@@ -42,7 +46,7 @@
         "provenance": "https://static.tildacdn.com/tild3131-3165-4165-b238-353862333766/Frame_492445251.jpg"
       },
       "card": {
-        "file": "11401696/tilda-09.png",
+        "file": "11401696/tilda-09-v2-card.webp",
         "alt": "Сначала изменения в питании, потом дефицит калорий",
         "provenance": "https://static.tildacdn.com/tild6131-6162-4739-b265-623138646634/image.png"
       },
@@ -55,17 +59,29 @@
       "status": "published",
       "media": [
         "11401696/tilda-01.jpg",
+        "11401696/tilda-02-v2-body.webp",
         "11401696/tilda-02.png",
         "11401696/tilda-03.jpg",
+        "11401696/tilda-04-v2-body.webp",
         "11401696/tilda-04.png",
+        "11401696/tilda-05-v2-body.webp",
         "11401696/tilda-05.png",
+        "11401696/tilda-06-v2-body.webp",
         "11401696/tilda-06.png",
+        "11401696/tilda-07-v2-body.webp",
         "11401696/tilda-07.jpg",
+        "11401696/tilda-08-v2-body.webp",
         "11401696/tilda-08.png",
+        "11401696/tilda-09-v2-body.webp",
+        "11401696/tilda-09-v2-card.webp",
         "11401696/tilda-09.png",
+        "11401696/tilda-10-v2-body.webp",
         "11401696/tilda-10.png",
+        "11401696/tilda-11-v2-body.webp",
         "11401696/tilda-11.png",
+        "11401696/tilda-12-v2-body.webp",
         "11401696/tilda-12.png",
+        "11401696/tilda-13-v2-body.webp",
         "11401696/tilda-13.png",
         "11401696/tilda-14.jpg"
       ],
@@ -87,12 +103,12 @@
       "category": "Качество питания",
       "body_file": "11927800.md",
       "hero": {
-        "file": "11927800/tilda-01.jpg",
+        "file": "11927800/tilda-01-v3-photo.webp",
         "alt": "Сергей Воронцов за столом",
         "provenance": "https://static.tildacdn.com/tild6332-3565-4530-a430-313862393165/_.jpg"
       },
       "card": {
-        "file": "11927800/tilda-04.png",
+        "file": "11927800/tilda-04-v2-card.webp",
         "alt": "Сумоист в воде",
         "provenance": "https://static.tildacdn.com/tild3463-6131-4034-a265-333864373434/image.png"
       },
@@ -104,19 +120,34 @@
       "cta": "masterclass",
       "status": "published",
       "media": [
+        "11927800/tilda-01-v3-photo.webp",
         "11927800/tilda-01.jpg",
+        "11927800/tilda-02-v2-body.webp",
         "11927800/tilda-02.png",
+        "11927800/tilda-03-v2-body.webp",
         "11927800/tilda-03.png",
+        "11927800/tilda-04-v2-body.webp",
+        "11927800/tilda-04-v2-card.webp",
         "11927800/tilda-04.png",
+        "11927800/tilda-05-v2-body.webp",
+        "11927800/tilda-05-v3-photo.webp",
         "11927800/tilda-05.png",
         "11927800/tilda-06.jpg",
+        "11927800/tilda-07-v2-body.webp",
+        "11927800/tilda-07-v3-photo.webp",
         "11927800/tilda-07.png",
+        "11927800/tilda-08-v3-photo.webp",
         "11927800/tilda-08.jpg",
+        "11927800/tilda-09-v2-body.webp",
         "11927800/tilda-09.gif",
         "11927800/tilda-10.gif",
+        "11927800/tilda-11-v2-body.webp",
         "11927800/tilda-11.png",
+        "11927800/tilda-12-v2-body.webp",
         "11927800/tilda-12.jpg",
+        "11927800/tilda-13-v2-body.webp",
         "11927800/tilda-13.jpg",
+        "11927800/tilda-14-v2-body.webp",
         "11927800/tilda-14.jpg",
         "11927800/tilda-15.jpg"
       ],
@@ -138,7 +169,7 @@
       "category": "Ну, типа... ЗОЖ",
       "body_file": "11269472.md",
       "hero": {
-        "file": "11269472/01.jpg",
+        "file": "11269472/01-v3-photo.webp",
         "alt": "Два способа пить горячий напиток: торопясь и после остывания",
         "provenance": "https://cs13.pikabu.ru/post_img/2024/03/28/8/1711632147188097065.jpg"
       },
@@ -155,6 +186,9 @@
       "cta": "telegram",
       "status": "published",
       "media": [
+        "11269472/01-v3-photo.webp",
+        "11269472/01.jpg",
+        "11269472/02-v2-body.webp",
         "11269472/02.jpg",
         "11269472/03.jpg"
       ]
@@ -167,12 +201,12 @@
       "category": "Ну, типа... ЗОЖ",
       "body_file": "12237133.md",
       "hero": {
-        "file": "12237133/01.jpg",
+        "file": "12237133/01-v3-photo.webp",
         "alt": "Брайан Джонсон и его проект Blueprint",
         "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/10/10/1736528540151438721.jpg"
       },
       "card": {
-        "file": "12237133/08.jpg",
+        "file": "12237133/08-v3-card.webp",
         "alt": "Брайан Джонсон рядом с камерой для оздоровительных процедур",
         "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/10/9/17365219991769072.jpg"
       },
@@ -184,22 +218,44 @@
       "cta": "telegram",
       "status": "published",
       "media": [
+        "12237133/01-v3-photo.webp",
+        "12237133/01.jpg",
         "12237133/02.jpg",
+        "12237133/03-v3-photo.webp",
         "12237133/03.jpg",
+        "12237133/04-v2-body.webp",
+        "12237133/04-v3-photo.webp",
         "12237133/04.jpg",
+        "12237133/05-v3-photo.webp",
         "12237133/05.jpg",
+        "12237133/06-v3-photo.webp",
         "12237133/06.jpg",
+        "12237133/07-v3-photo.webp",
         "12237133/07.jpg",
+        "12237133/08-v2-card.webp",
+        "12237133/08-v3-card.webp",
+        "12237133/08-v3-photo.webp",
         "12237133/08.jpg",
+        "12237133/09-v3-photo.webp",
         "12237133/09.jpg",
+        "12237133/10-v2-body.webp",
+        "12237133/10-v3-photo.webp",
         "12237133/10.png",
         "12237133/11.jpg",
+        "12237133/12-v3-photo.webp",
         "12237133/12.jpg",
+        "12237133/13-v3-photo.webp",
         "12237133/13.jpg",
+        "12237133/14-v3-photo.webp",
         "12237133/14.jpg",
+        "12237133/15-v2-body.webp",
         "12237133/15.png",
+        "12237133/16-v3-photo.webp",
         "12237133/16.jpg",
+        "12237133/17-v3-photo.webp",
         "12237133/17.jpg",
+        "12237133/18-v2-body.webp",
+        "12237133/18-v3-photo.webp",
         "12237133/18.png"
       ]
     },
@@ -211,7 +267,7 @@
       "category": "Качество питания",
       "body_file": "11875492.md",
       "hero": {
-        "file": "11875492/01.png",
+        "file": "11875492/01-v2-body.webp",
         "alt": "Спор о пользе мёда и умеренном употреблении",
         "provenance": "https://cs15.pikabu.ru/post_img/big/2024/10/04/9/1728050423119293034.png"
       },
@@ -228,10 +284,16 @@
       "cta": "masterclass",
       "status": "published",
       "media": [
+        "11875492/01-v2-body.webp",
+        "11875492/01.png",
+        "11875492/02-v2-body.webp",
         "11875492/02.jpg",
+        "11875492/03-v2-body.webp",
         "11875492/03.jpg",
         "11875492/04.jpg",
+        "11875492/05-v2-body.webp",
         "11875492/05.jpg",
+        "11875492/06-v2-body.webp",
         "11875492/06.jpg",
         "11875492/07.jpg"
       ]
@@ -244,12 +306,12 @@
       "category": "Похудение",
       "body_file": "tilda-49734795.md",
       "hero": {
-        "file": "tilda-49734795/tilda-01.png",
+        "file": "tilda-49734795/tilda-01-v2-body.webp",
         "alt": "Кот и календарь: когда начинать похудение",
         "provenance": "https://static.tildacdn.com/tild3562-6361-4337-a534-363064646437/image.png"
       },
       "card": {
-        "file": "tilda-49734795/tilda-06.png",
+        "file": "tilda-49734795/tilda-06-v2-card.webp",
         "alt": "Мем об учёте расхода калорий",
         "provenance": "https://static.tildacdn.com/tild3736-3861-4534-b031-303862356638/image.png"
       },
@@ -261,14 +323,24 @@
       "cta": "masterclass",
       "status": "published",
       "media": [
+        "tilda-49734795/tilda-01-v2-body.webp",
         "tilda-49734795/tilda-01.png",
+        "tilda-49734795/tilda-02-v2-body.webp",
         "tilda-49734795/tilda-02.png",
+        "tilda-49734795/tilda-03-v2-body.webp",
         "tilda-49734795/tilda-03.png",
+        "tilda-49734795/tilda-04-v2-body.webp",
         "tilda-49734795/tilda-04.png",
+        "tilda-49734795/tilda-05-v2-body.webp",
         "tilda-49734795/tilda-05.png",
+        "tilda-49734795/tilda-06-v2-body.webp",
+        "tilda-49734795/tilda-06-v2-card.webp",
         "tilda-49734795/tilda-06.png",
+        "tilda-49734795/tilda-07-v2-body.webp",
         "tilda-49734795/tilda-07.png",
+        "tilda-49734795/tilda-08-v2-body.webp",
         "tilda-49734795/tilda-08.png",
+        "tilda-49734795/tilda-09-v2-body.webp",
         "tilda-49734795/tilda-09.png"
       ],
       "source_provenance": {
@@ -289,12 +361,12 @@
       "category": "Качество питания",
       "body_file": "tilda-49745867.md",
       "hero": {
-        "file": "tilda-49745867/tilda-01.png",
+        "file": "tilda-49745867/tilda-01-v2-body.webp",
         "alt": "Кот перед овощами: правило 30 растений",
         "provenance": "https://static.tildacdn.com/tild3363-3631-4565-b831-373036323431/image.png"
       },
       "card": {
-        "file": "tilda-49745867/tilda-04.png",
+        "file": "tilda-49745867/tilda-04-v2-card.webp",
         "alt": "Разноцветные овощи на прилавке",
         "provenance": "https://static.tildacdn.com/tild3466-3036-4631-b237-636161656438/image.png"
       },
@@ -306,10 +378,16 @@
       "cta": "masterclass",
       "status": "published",
       "media": [
+        "tilda-49745867/tilda-01-v2-body.webp",
         "tilda-49745867/tilda-01.png",
+        "tilda-49745867/tilda-02-v2-body.webp",
         "tilda-49745867/tilda-02.jpg",
+        "tilda-49745867/tilda-03-v2-body.webp",
         "tilda-49745867/tilda-03.png",
+        "tilda-49745867/tilda-04-v2-body.webp",
+        "tilda-49745867/tilda-04-v2-card.webp",
         "tilda-49745867/tilda-04.png",
+        "tilda-49745867/tilda-05-v2-body.webp",
         "tilda-49745867/tilda-05.png"
       ],
       "source_provenance": {
@@ -330,7 +408,7 @@
       "category": "Похудение",
       "body_file": "tilda-67280331.md",
       "hero": {
-        "file": "tilda-67280331/tilda-01.png",
+        "file": "tilda-67280331/tilda-01-v2-body.webp",
         "alt": "Мем: стрелка весов и скорость похудения",
         "provenance": "https://static.tildacdn.com/tild3634-3962-4366-a131-313064316563/image.png"
       },
@@ -347,6 +425,7 @@
       "cta": "masterclass",
       "status": "published",
       "media": [
+        "tilda-67280331/tilda-01-v2-body.webp",
         "tilda-67280331/tilda-01.png",
         "tilda-67280331/tilda-02.png"
       ],

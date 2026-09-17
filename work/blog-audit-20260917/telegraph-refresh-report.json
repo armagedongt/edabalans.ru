@@ -1,0 +1,14 @@
+{
+  "checked_at": "2026-09-17T18:01:32.419622+00:00",
+  "known_account_snapshot_urls": 211,
+  "current_full_pages": 211,
+  "changed_since_20260825": 0,
+  "errors": [],
+  "account_list_fresh": false,
+  "scope_note": "Known 211 account URLs revalidated. Account token not available to this runtime; getPageList not called. No claim that no new account pages exist.",
+  "read_only_methods": [
+    "getPage",
+    "getViews",
+    "public HTML date"
+  ]
+}

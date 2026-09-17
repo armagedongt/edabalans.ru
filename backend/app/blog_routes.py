@@ -21,7 +21,8 @@ from app.blog_content import (
 
 router = APIRouter()
 BLOG_DIR = Path(__file__).resolve().parent / "static" / "blog"
-BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2"}
+BLOG_FONT_FILES = {"inter-cyrillic.woff2", "inter-latin.woff2", "manrope-cyrillic.woff2", "manrope-latin.woff2"}
+BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note.css": "note.css"}
 BLOG_ASSET_FILES = {
     "blog.css",
     "blog.js",
@@ -29,6 +30,7 @@ BLOG_ASSET_FILES = {
     "favicon-test-blue.svg",
     "favicon-test-face.png",
     "sergey-author.png",
+    "sergey-author-v2.webp",
 }
 FAVICON_TEST_PAGES = {
     "black": ("Блог — чёрная П.", "favicon-test-black.svg"),
@@ -162,9 +164,14 @@ def blog_font(font_name: str) -> FileResponse:
 
 @router.get("/blog/assets/{asset_name}", include_in_schema=False)
 def blog_asset(asset_name: str) -> FileResponse:
+    if asset_name in BLOG_ARTICLE_STYLES:
+        path = Path(__file__).resolve().parents[2] / "content" / "article-components" / BLOG_ARTICLE_STYLES[asset_name]
+        response = FileResponse(path, media_type="text/css")
+        response.headers["Cache-Control"] = "public, max-age=86400"
+        return response
     if asset_name not in BLOG_ASSET_FILES:
         raise HTTPException(status_code=404, detail="asset not found")
-    media_type = mimetypes.guess_type(asset_name)[0] or "application/octet-stream"
+    media_type = "image/webp" if asset_name.endswith(".webp") else mimetypes.guess_type(asset_name)[0] or "application/octet-stream"
     response = FileResponse(BLOG_DIR / "assets" / asset_name, media_type=media_type)
     response.headers["Cache-Control"] = "public, max-age=86400"
     return response
@@ -176,6 +183,7 @@ def blog_media(media_name: str) -> FileResponse:
     if media_name not in catalog.allowed_media:
         raise HTTPException(status_code=404, detail="media not found")
     media_path = catalog.content_dir / "media" / media_name
-    response = FileResponse(media_path, media_type=mimetypes.guess_type(media_name)[0])
+    media_type = "image/webp" if media_path.suffix.lower() == ".webp" else mimetypes.guess_type(media_name)[0]
+    response = FileResponse(media_path, media_type=media_type)
     response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     return response

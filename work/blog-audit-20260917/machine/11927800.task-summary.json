@@ -1,0 +1,22 @@
+{
+  "note": "Точечное изменение медиа без рерайта принятого текста. Удалить только скриншот старого теста о комфорте похудения в боте. Остальные изменения — адреса локальных оптимизированных изображений.",
+  "work_profile": "develop_existing",
+  "edit_mode": "targeted_edit",
+  "source_basis": "full_source",
+  "surface_context": "site_article",
+  "format_profile": "article",
+  "fact_sources": [
+    {
+      "name": "Accepted blog article at base revision",
+      "fingerprint": "c16c9dc310d12035771d457f37cd5476cf8e289f013fff8e973c3c31cf111ca3"
+    }
+  ],
+  "preservation_anchors": [
+    "Давайте узнаем, а в чем причина-то? Они выиграли в генетическую лотерею или просто делают что-то, что мы не делаем? А вдруг мы тоже можем?",
+    "*Привет, меня зовут Сергей, я тренер по питанию, нутрициолог, похудатель человеческих тел.*",
+    "**Когда я узнал, как организована система питания в японских школах, у меня просто отвалилась челюсть!**"
+  ],
+  "source_sha256": "c16c9dc310d12035771d457f37cd5476cf8e289f013fff8e973c3c31cf111ca3",
+  "editable_image_count": 11,
+  "private_artifact_note": "Executable full source/task/pack outside Git"
+}

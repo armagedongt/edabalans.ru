@@ -209,6 +209,7 @@ owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
   "backend/tests/test_blog.py", "backend/tests/test_blog_content.py",
+  "backend/tests/blog-pagination.test.cjs", "work/blog-audit-20260917/**",
   "content/blog/**", "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md",
 ]
 owns_routes = ["*/blog", "*/blog/*"]

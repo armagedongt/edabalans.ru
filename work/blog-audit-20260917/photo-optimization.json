@@ -1,0 +1,222 @@
+[
+  {
+    "original": "12237133/01.jpg",
+    "derivative": "12237133/01-v3-photo.webp",
+    "before_bytes": 1103260,
+    "after_bytes": 262192,
+    "width": 1519,
+    "height": 776,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/03.jpg",
+    "derivative": "12237133/03-v3-photo.webp",
+    "before_bytes": 581899,
+    "after_bytes": 59640,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/04.jpg",
+    "derivative": "12237133/04-v3-photo.webp",
+    "before_bytes": 1013890,
+    "after_bytes": 67790,
+    "width": 1520,
+    "height": 591,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/05.jpg",
+    "derivative": "12237133/05-v3-photo.webp",
+    "before_bytes": 937627,
+    "after_bytes": 132912,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/06.jpg",
+    "derivative": "12237133/06-v3-photo.webp",
+    "before_bytes": 349971,
+    "after_bytes": 29926,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/07.jpg",
+    "derivative": "12237133/07-v3-photo.webp",
+    "before_bytes": 1124456,
+    "after_bytes": 114822,
+    "width": 1442,
+    "height": 1945,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/08.jpg",
+    "derivative": "12237133/08-v3-photo.webp",
+    "before_bytes": 403883,
+    "after_bytes": 41302,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/09.jpg",
+    "derivative": "12237133/09-v3-photo.webp",
+    "before_bytes": 778152,
+    "after_bytes": 101290,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/10.png",
+    "derivative": "12237133/10-v3-photo.webp",
+    "before_bytes": 1210461,
+    "after_bytes": 70330,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/12.jpg",
+    "derivative": "12237133/12-v3-photo.webp",
+    "before_bytes": 762724,
+    "after_bytes": 97580,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/13.jpg",
+    "derivative": "12237133/13-v3-photo.webp",
+    "before_bytes": 554658,
+    "after_bytes": 55778,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/14.jpg",
+    "derivative": "12237133/14-v3-photo.webp",
+    "before_bytes": 309366,
+    "after_bytes": 26278,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/16.jpg",
+    "derivative": "12237133/16-v3-photo.webp",
+    "before_bytes": 771944,
+    "after_bytes": 83274,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/17.jpg",
+    "derivative": "12237133/17-v3-photo.webp",
+    "before_bytes": 429663,
+    "after_bytes": 37316,
+    "width": 1520,
+    "height": 855,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "12237133/18.png",
+    "derivative": "12237133/18-v3-photo.webp",
+    "before_bytes": 988630,
+    "after_bytes": 108904,
+    "width": 1080,
+    "height": 1049,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "11927800/tilda-01.jpg",
+    "derivative": "11927800/tilda-01-v3-photo.webp",
+    "before_bytes": 215952,
+    "after_bytes": 189370,
+    "width": 896,
+    "height": 1200,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "11927800/tilda-05.png",
+    "derivative": "11927800/tilda-05-v3-photo.webp",
+    "before_bytes": 457114,
+    "after_bytes": 49548,
+    "width": 700,
+    "height": 461,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "11927800/tilda-07.png",
+    "derivative": "11927800/tilda-07-v3-photo.webp",
+    "before_bytes": 439527,
+    "after_bytes": 46738,
+    "width": 700,
+    "height": 463,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "11927800/tilda-08.jpg",
+    "derivative": "11927800/tilda-08-v3-photo.webp",
+    "before_bytes": 276239,
+    "after_bytes": 213662,
+    "width": 1520,
+    "height": 702,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  },
+  {
+    "original": "11269472/01.jpg",
+    "derivative": "11269472/01-v3-photo.webp",
+    "before_bytes": 179703,
+    "after_bytes": 49712,
+    "width": 446,
+    "height": 425,
+    "quality": 88,
+    "visual_classification": "photo inspected in contact sheet",
+    "crop": "none"
+  }
+]

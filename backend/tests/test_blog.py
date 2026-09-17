@@ -1,4 +1,8 @@
 import re
+from pathlib import Path
+import shutil
+import subprocess
+import pytest
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
@@ -10,6 +14,19 @@ from app.blog_routes import router
 app = FastAPI()
 app.include_router(router)
 client = TestClient(app)
+
+
+def test_blog_pagination_selection_in_javascript() -> None:
+    node = shutil.which("node")
+    if node is None:
+        pytest.skip("Node.js is required for the isolated JavaScript pagination test")
+    result = subprocess.run(
+        [node, "--test", str(Path(__file__).with_name("blog-pagination.test.cjs"))],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_blog_home_is_public_and_uses_manifest_cards() -> None:
@@ -48,7 +65,7 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert response.text.count('data-category="Ну, типа... ЗОЖ"') == 2
     assert 'id="articles-title"' not in response.text
     assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
-    assert '/blog/media/13277231/02.png' in response.text
+    assert f'/blog/media/{load_blog_catalog().published[0].card.file}' in response.text
     assert 'loading="eager" decoding="async" fetchpriority="high"' in hero
     assert response.text.count('loading="lazy" decoding="async"') >= 6
     assert "site-footer.js" in response.text
@@ -140,11 +157,11 @@ def test_blog_assets_and_fonts_are_whitelisted() -> None:
     assert re.search(r"\.card-tag \{[^}]*border-radius: 7px;[^}]*background: var\(--cloud\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.card-copy \{[^}]*overflow: hidden;[^}]*-webkit-line-clamp: 4;[^}]*\}", stylesheet.text)
     assert re.search(r"\.theme-toggle:hover \{[^}]*border-color: var\(--blue\);[^}]*color: var\(--blue\);[^}]*\}", stylesheet.text)
-    assert re.search(r"\.article-layout \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)
-    assert re.search(r"\.article-hero \{[^}]*width: min\(720px, 100%\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.article-layout \{[^}]*width: min\(760px, 100%\);[^}]*\}", stylesheet.text)
+    assert re.search(r"\.article-hero \{[^}]*width: min\(760px, 100%\);[^}]*\}", stylesheet.text)
     assert re.search(r"\.toc-dock \{[^}]*position: fixed;[^}]*\}", stylesheet.text)
-    assert re.search(r"\.toc-button \{[^}]*writing-mode: vertical-rl;[^}]*\}", stylesheet.text)
-    mobile_rules = re.search(r"@media \(max-width: 920px\) \{(.*?)\n\}", stylesheet.text, re.DOTALL)
+    assert 'writing-mode: vertical-rl' not in stylesheet.text
+    mobile_rules = re.search(r"@media \(max-width: 900px\) \{(.*?)\n\}", stylesheet.text, re.DOTALL)
     assert mobile_rules is not None
     assert re.search(r"\.toc-dock \{[^}]*display: none;[^}]*\}", mobile_rules.group(1))
     assert re.search(r"\.toc-mobile \{[^}]*display: block;[^}]*\}", mobile_rules.group(1))
@@ -173,6 +190,32 @@ def test_blog_media_is_manifest_whitelisted() -> None:
     assert media.headers["content-type"] == "image/png"
     assert media.headers["cache-control"] == "public, max-age=31536000, immutable"
     assert client.get("/blog/media/not-declared.svg").status_code == 404
+
+
+def test_shared_article_styles_and_local_manrope_are_served() -> None:
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[2]
+    for public_name, source_name in (
+        ("article-typography.css", "typography.css"),
+        ("article-note.css", "note.css"),
+    ):
+        response = client.get(f"/blog/assets/{public_name}")
+        assert response.status_code == 200
+        assert response.content == (root / "content/article-components" / source_name).read_bytes()
+    for name in ("manrope-cyrillic.woff2", "manrope-latin.woff2"):
+        response = client.get(f"/blog/fonts/{name}")
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "font/woff2"
+    image = client.get("/blog/assets/sergey-author-v2.webp")
+    assert image.status_code == 200
+    assert image.headers["content-type"] == "image/webp"
+
+
+def test_obsolete_bot_test_removed_but_author_banner_preserved() -> None:
+    page = client.get("/blog/articles/pohudenie-nachinaetsya-ne-s-pohudeniya")
+    assert "Тест о комфорте похудения в меню бота" not in page.text
+    assert "Сергей Воронцов: похудеть быстро или навсегда" in page.text
 
 
 def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:

@@ -1,0 +1,22 @@
+{
+  "note": "Точечное изменение медиа без рерайта принятого текста. Удалить только скриншот старого теста о комфорте похудения в боте. Остальные изменения — адреса локальных оптимизированных изображений.",
+  "work_profile": "develop_existing",
+  "edit_mode": "targeted_edit",
+  "source_basis": "full_source",
+  "surface_context": "site_article",
+  "format_profile": "article",
+  "fact_sources": [
+    {
+      "name": "Accepted blog article at base revision",
+      "fingerprint": "68c52bcbbaf573ca05a29fb81ebc7a49a396f099c662f590da2dcdc87484a997"
+    }
+  ],
+  "preservation_anchors": [
+    "## Главные ошибки в похудении! Что нужно знать перед тем как испытывать голод?",
+    "Для начала у похудения должен быть план! И желательно не вот такой 👇 😅",
+    "Особенно если есть желание сделать его действительно последним, а не лишь ещё одним. Потому что есть вещи, с которыми нужно разобраться до того, как вы начнете испытывать голод на очередной диете."
+  ],
+  "source_sha256": "68c52bcbbaf573ca05a29fb81ebc7a49a396f099c662f590da2dcdc87484a997",
+  "editable_image_count": 11,
+  "private_artifact_note": "Executable full source/task/pack outside Git"
+}

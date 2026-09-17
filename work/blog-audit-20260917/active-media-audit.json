@@ -1,0 +1,224 @@
+{
+  "before_bytes": 43236079,
+  "after_bytes": 24814429,
+  "articles": [
+    {
+      "source_id": "13277231",
+      "title": "Сколько времени нужно на похудение?",
+      "cta": "intensive",
+      "related": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "before_bytes": 752698,
+      "after_bytes": 659902,
+      "active_media": [
+        "13277231/01-v2-body.webp",
+        "13277231/02-v2-body.webp",
+        "13277231/02-v2-card.webp"
+      ],
+      "body_sha256": "1af2d6b64148895c9206a81e758a5bc261bddf76797dc82a27dcc7cbb1c08718"
+    },
+    {
+      "source_id": "11401696",
+      "title": "Похудение начинается не с похудения",
+      "cta": "intensive",
+      "related": [
+        "13277231",
+        "11927800",
+        "tilda-49734795"
+      ],
+      "before_bytes": 8288022,
+      "after_bytes": 6096883,
+      "active_media": [
+        "11401696/tilda-01.jpg",
+        "11401696/tilda-02-v2-body.webp",
+        "11401696/tilda-03.jpg",
+        "11401696/tilda-04-v2-body.webp",
+        "11401696/tilda-05-v2-body.webp",
+        "11401696/tilda-06-v2-body.webp",
+        "11401696/tilda-07-v2-body.webp",
+        "11401696/tilda-08-v2-body.webp",
+        "11401696/tilda-09-v2-body.webp",
+        "11401696/tilda-09-v2-card.webp",
+        "11401696/tilda-10-v2-body.webp",
+        "11401696/tilda-11-v2-body.webp",
+        "11401696/tilda-12-v2-body.webp",
+        "11401696/tilda-14.jpg"
+      ],
+      "body_sha256": "506f37c53d0f4405633cdcd21178030ae49eaa18973eef89f17c68c469fe60fc"
+    },
+    {
+      "source_id": "11927800",
+      "title": "Почему японцы худые, а ты нет?",
+      "cta": "masterclass",
+      "related": [
+        "11401696",
+        "tilda-49745867",
+        "11875492"
+      ],
+      "before_bytes": 7846198,
+      "after_bytes": 5899207,
+      "active_media": [
+        "11927800/tilda-01-v3-photo.webp",
+        "11927800/tilda-02-v2-body.webp",
+        "11927800/tilda-03-v2-body.webp",
+        "11927800/tilda-04-v2-body.webp",
+        "11927800/tilda-04-v2-card.webp",
+        "11927800/tilda-05-v3-photo.webp",
+        "11927800/tilda-06.jpg",
+        "11927800/tilda-07-v3-photo.webp",
+        "11927800/tilda-08-v3-photo.webp",
+        "11927800/tilda-09-v2-body.webp",
+        "11927800/tilda-10.gif",
+        "11927800/tilda-11-v2-body.webp",
+        "11927800/tilda-12-v2-body.webp",
+        "11927800/tilda-13-v2-body.webp",
+        "11927800/tilda-14-v2-body.webp",
+        "11927800/tilda-15.jpg"
+      ],
+      "body_sha256": "7cb5592e0a869bcbd1910a622e94daaac47522b113b5eeb0168e0739923414b4"
+    },
+    {
+      "source_id": "11269472",
+      "title": "Температура воды для приёма внутрь",
+      "cta": "telegram",
+      "related": [
+        "12237133",
+        "11875492",
+        "11927800"
+      ],
+      "before_bytes": 432322,
+      "after_bytes": 259262,
+      "active_media": [
+        "11269472/01-v3-photo.webp",
+        "11269472/02-v2-body.webp",
+        "11269472/03.jpg"
+      ],
+      "body_sha256": "4b2151aafed51a6676eb8ab2431ab6ca5610b5989b05e851763032c8657b855f"
+    },
+    {
+      "source_id": "12237133",
+      "title": "Самый здоровый человек на планете",
+      "cta": "telegram",
+      "related": [
+        "11269472",
+        "11927800",
+        "11401696"
+      ],
+      "before_bytes": 12959372,
+      "after_bytes": 2509856,
+      "active_media": [
+        "12237133/01-v3-photo.webp",
+        "12237133/02.jpg",
+        "12237133/03-v3-photo.webp",
+        "12237133/04-v3-photo.webp",
+        "12237133/05-v3-photo.webp",
+        "12237133/06-v3-photo.webp",
+        "12237133/07-v3-photo.webp",
+        "12237133/08-v3-card.webp",
+        "12237133/08-v3-photo.webp",
+        "12237133/09-v3-photo.webp",
+        "12237133/10-v3-photo.webp",
+        "12237133/11.jpg",
+        "12237133/12-v3-photo.webp",
+        "12237133/13-v3-photo.webp",
+        "12237133/14-v3-photo.webp",
+        "12237133/15-v2-body.webp",
+        "12237133/16-v3-photo.webp",
+        "12237133/17-v3-photo.webp",
+        "12237133/18-v3-photo.webp"
+      ],
+      "body_sha256": "ece61bf916c611a4795c57055a3fe859814976324d82b8459ce087a3a29b206d"
+    },
+    {
+      "source_id": "11875492",
+      "title": "Неприятная правда про мёд",
+      "cta": "masterclass",
+      "related": [
+        "11927800",
+        "11269472",
+        "13277231"
+      ],
+      "before_bytes": 1210464,
+      "after_bytes": 876483,
+      "active_media": [
+        "11875492/01-v2-body.webp",
+        "11875492/02-v2-body.webp",
+        "11875492/03-v2-body.webp",
+        "11875492/04.jpg",
+        "11875492/05-v2-body.webp",
+        "11875492/06-v2-body.webp",
+        "11875492/07.jpg"
+      ],
+      "body_sha256": "5532d253ae4b5fd69ffc0bea8c0e277ac1ad5f6eeffbb2f85d740baa7fc4e7df"
+    },
+    {
+      "source_id": "tilda-49734795",
+      "title": "15 советов тем, кто худеет — по одному на килограмм лишнего веса",
+      "cta": "masterclass",
+      "related": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "before_bytes": 6930000,
+      "after_bytes": 4790506,
+      "active_media": [
+        "tilda-49734795/tilda-01-v2-body.webp",
+        "tilda-49734795/tilda-02-v2-body.webp",
+        "tilda-49734795/tilda-03-v2-body.webp",
+        "tilda-49734795/tilda-04-v2-body.webp",
+        "tilda-49734795/tilda-05-v2-body.webp",
+        "tilda-49734795/tilda-06-v2-body.webp",
+        "tilda-49734795/tilda-06-v2-card.webp",
+        "tilda-49734795/tilda-07-v2-body.webp",
+        "tilda-49734795/tilda-08-v2-body.webp",
+        "tilda-49734795/tilda-09-v2-body.webp"
+      ],
+      "body_sha256": "f84e0cebdbe4ea368d6e4983e91d363ff4a22ca7a492c1bf6cd3535449293085"
+    },
+    {
+      "source_id": "tilda-49745867",
+      "title": "Правило 30-ти растений",
+      "cta": "masterclass",
+      "related": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "before_bytes": 4444330,
+      "after_bytes": 3494412,
+      "active_media": [
+        "tilda-49745867/tilda-01-v2-body.webp",
+        "tilda-49745867/tilda-02-v2-body.webp",
+        "tilda-49745867/tilda-03-v2-body.webp",
+        "tilda-49745867/tilda-04-v2-body.webp",
+        "tilda-49745867/tilda-04-v2-card.webp",
+        "tilda-49745867/tilda-05-v2-body.webp"
+      ],
+      "body_sha256": "87317aa2d833cdfdbac2b3254eacbb184e5c853048f56f0f656a301bec19f749"
+    },
+    {
+      "source_id": "tilda-67280331",
+      "title": "Весы — инструкция по применению",
+      "cta": "masterclass",
+      "related": [
+        "11401696",
+        "11927800",
+        "11875492"
+      ],
+      "before_bytes": 372673,
+      "after_bytes": 227918,
+      "active_media": [
+        "tilda-67280331/tilda-01-v2-body.webp",
+        "tilda-67280331/tilda-02.png"
+      ],
+      "body_sha256": "b9baeb1252d3272d9585c7f2e1da7d10a1399736a977eff959edbe562daaf055"
+    }
+  ],
+  "unchanged_original_urls": true,
+  "tilda_image_hotlinks": 0,
+  "external_video": "Dropbox link remains in Japanese article; not downloaded or changed"
+}
