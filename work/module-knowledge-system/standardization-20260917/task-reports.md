@@ -18,6 +18,10 @@
 | Собрать и распознать отзывы / `01a06015-34eb-70c2-be94-dd7a42834d2c` | `platform.content`; корень `codex/markiting`; приватный `work/review-catalog-batch/private/unified-review-archive-2026-09-12`; порядок стены `work/public-homepage-redesign/reviews-wall-exact-sequence-2026-09-11.md` | Исходники/транскрипты намеренно вне Git. Сохранять `D:/CodexWorktrees/edabalans-reviews-assets-20260911` и исходные Telegram-выгрузки. Задача main не проверяла; слово «принятые» в её ответе не делает локальный регламент принятым в main |
 | Публикация в Блоге / `01a05492-5878-7312-b4ea-15b5fb4daee4` | `platform.blog`; `C:/Users/Segey/.codex/visualizations/2026/08/30/01a05492-5878-7312-b4ea-15b5fb4daee4/blog-audit-catalog`, `codex/blog-seo-analytics-20260917`; вход `docs/knowledge-base/modules/blog/README.md`; handoff `work/blog-seo-analytics/current-decisions.md` | `645fc01` в main; CI/deploy и девять URL подтверждены владельцем задачи. API/import, popup, analytics events, auto-related и author/date UI пока не реализованы; черновики ждут решения Сергея |
 | Интегрировать Robokassa без Tilda / `01a06e1e-a8b2-7d72-b501-974f08da559b` | `platform.commerce`; маршрут `docs/ROBOKASSA_PAYMENTS.md` | Завершён `C:/Users/Segey/.codex-worktrees/commerce-owner-alerts`, HEAD `c29c7fe` в main. Копия с тестовыми файлами сохранена, не удалялась. Это ответ о конкретном проходе, не полный аудит платежей |
+| МК: полный прогон материалов / `01a05a0a-ddf3-7b81-9d4e-21a39834a7ef` | `products.masterclass.course`, `platform.content`; `C:/Users/Segey/.codex/worktrees/46d8/edabalans.ru`, `codex/course-md-authoring-20260917`, HEAD `130c976`; вход `content/masterclass/editorial/README.md`, handoff `work/masterclass-endurance-comparison-2026-09-17/README.md` | 221 кандидат задания в локальном `program.md`, анализ книги и семейные черновики не приняты/не опубликованы. Предложение семейного материала после дня 6 пока только в переписке. Сохранять весь анализ и программу; старый checkout не использовать для переустановки Писаря |
+| Предложеня МК / `01a0497b-1519-7092-8211-2fa4f560334f` | `platform.content` / `products.masterclass.course`; корень `codex/markiting`; книги `content/external-references/the-endurance-diet{,-integration-map}.md`, скрипт `content/masterclass/source-current/51-how-we-will-lose-weight-video-script.txt` | Справочные идеи не являются принятыми вставками в курс. Исторический handoff брать из commit `947be5b`, `work/integration-handoff.md`, ветка `codex/masterclass-first-video-handoff-20260829`; текущий одноимённый файл другой задачи не использовать. Сохранять исходную книгу и связанный прогон 46d8 |
+| Каталог Постов / `01a048a1-bcc5-7693-a82d-cc4859ebba79` | `platform.content`; корень `codex/markiting`; старые ветка `codex/content-catalog-server` и папка `C:/Users/Segey/Documents/ChatGPT/edabalans.ru/.codex-worktrees/content-catalog-server`; канон `docs/CONTENT_CATALOG.md` | Старые реализация `70c84d6` и handoff `46a89aa` не доказаны эквивалентными текущему remote/main. Папка существует, но не зарегистрирована как отдельный worktree: сохранять, не объявлять мусором. Сохранять `work/content-authoring-system`; корневой одноимённый integration-handoff принадлежит другой работе |
+| Реализовать Telegram AI Agent / `01a0551d-7806-7c80-b3bc-f10087950e6c` | Корень `codex/markiting`; два отдельных исследования `work/telegram-ai-agent-control/` и `work/telegram-voice-idea-assistant/`, включая `logs/userspec/` | Только untracked-исследования, реализации/приёма в main нет. Предложенный `platform.knowledge.telegram-intake` не зарегистрирован; это не готовый дополнительный голосовой маршрут. Control-plane и voice intake не дубли: обе папки сохранять |
 
 Пути внутри строки относительны к её рабочей копии, если не начинаются с диска.
 Источники содержания не читались для копирования в отчёт. Личный архив не входит
@@ -33,9 +37,16 @@
   не стирать как дубль и не вливать смешанный корень ради одного документа.
 - Отзывы и голос не теряют приватные исходники ради «сохранения памяти» в Git.
   Здесь хранятся маршруты/границы, не медицинские сведения или клиентские тексты.
+- В main проверено наличие книги `the-endurance-diet.md` и скрипта первого видео,
+  но старые `63951f8` / `947be5b` не входят в ancestry текущего main. Наличие файла
+  не доказывает полную эквивалентность старой ветки; её также сохранять.
+- Повторно использованные старые `work/integration-handoff.md` читать только
+  из названного исторического commit/сохранённой копии, не по текущему пути в корне.
 
 ## Полнота
 
-Запрошен короткий отчёт у 11 задач. Это не все задачи Codex и не полный дамп их
-контекста. Дополнительные ответы ещё собираются; таблица содержит только уже
-полученные сведения. Неизвестные зависимости сохраняются до проверки.
+Получены адресные ответы всех 11 задач первой группы, плюс прежний ответ
+Robokassa о завершённой копии. Это не все задачи Codex и не полный дамп их
+контекста. Следующий отдельно согласованный контур художника пока оформляется
+его владельцем; новые источники не объявляются принятыми до проверки main.
+Неизвестные зависимости и все старые версии сохраняются до отдельного решения.
