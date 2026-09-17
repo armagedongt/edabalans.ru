@@ -365,6 +365,47 @@ class MaxClient:
         data = response.json()
         return str(data.get("message", {}).get("body", {}).get("mid", ""))
 
+    def send_chat_html(
+        self,
+        chat_id: str,
+        text: str,
+        *,
+        reply_to_message_id: str | None = None,
+    ) -> str:
+        body: dict[str, Any] = {
+            "text": self._compact_html(text),
+            "format": "html",
+            "disable_link_preview": True,
+        }
+        if reply_to_message_id:
+            body["link"] = {"type": "reply", "mid": reply_to_message_id}
+        with self._client() as client:
+            response = client.post(
+                f"{MAX_API_BASE}/messages",
+                params={"chat_id": chat_id},
+                headers={"Authorization": self.token},
+                json=body,
+            )
+        response.raise_for_status()
+        return str(response.json().get("message", {}).get("body", {}).get("mid", ""))
+
+    def edit_chat_html(self, message_id: str, text: str) -> None:
+        with self._client() as client:
+            response = client.put(
+                f"{MAX_API_BASE}/messages/{message_id}",
+                headers={"Authorization": self.token},
+                json={"text": self._compact_html(text), "format": "html", "disable_link_preview": True},
+            )
+        response.raise_for_status()
+
+    def delete_message(self, message_id: str) -> None:
+        with self._client() as client:
+            response = client.delete(
+                f"{MAX_API_BASE}/messages/{message_id}",
+                headers={"Authorization": self.token},
+            )
+        response.raise_for_status()
+
     def subscription_status(self, _user_id: str) -> None:
         # MAX has no Telegram-channel membership to check. Returning unknown
         # selects the full in-bot material without creating subscription tags.

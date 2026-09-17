@@ -148,6 +148,33 @@ class TelegramClient:
             if "message is not modified" not in str(exc).casefold():
                 raise
 
+    def send_html_message(self, chat_id: str, text: str, *, reply_to_message_id: str | None = None) -> str:
+        payload: dict[str, Any] = {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML",
+            "disable_web_page_preview": True,
+        }
+        if reply_to_message_id:
+            payload["reply_parameters"] = {"message_id": int(reply_to_message_id)}
+        result = self.call("sendMessage", payload)
+        return str(result["message_id"])
+
+    def edit_html_message(self, chat_id: str, message_id: str, text: str) -> None:
+        self.call(
+            "editMessageText",
+            {
+                "chat_id": chat_id,
+                "message_id": int(message_id),
+                "text": text,
+                "parse_mode": "HTML",
+                "disable_web_page_preview": True,
+            },
+        )
+
+    def delete_message(self, chat_id: str, message_id: str) -> None:
+        self.call("deleteMessage", {"chat_id": chat_id, "message_id": int(message_id)})
+
     def answer_callback(self, callback_query_id: str, text: str = "") -> None:
         self.call("answerCallbackQuery", {"callback_query_id": callback_query_id, "text": text})
 
@@ -180,7 +207,7 @@ class TelegramClient:
         self.call("deleteWebhook", {"drop_pending_updates": False})
 
     def get_updates(self, offset: int | None = None, timeout: int = 25) -> list[dict[str, Any]]:
-        payload: dict[str, Any] = {"timeout": timeout, "allowed_updates": ["message", "callback_query", "my_chat_member", "chat_member", "chat_join_request"]}
+        payload: dict[str, Any] = {"timeout": timeout, "allowed_updates": ["message", "edited_message", "channel_post", "edited_channel_post", "callback_query", "my_chat_member", "chat_member", "chat_join_request"]}
         if offset is not None:
             payload["offset"] = offset
         return self.call("getUpdates", payload, timeout=timeout + 10)

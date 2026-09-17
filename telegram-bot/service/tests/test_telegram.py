@@ -239,6 +239,39 @@ def test_long_polling_sends_offset_and_returns_updates():
     assert b'"timeout":1' in seen[0].content
 
 
+def test_practice_chat_message_can_be_sent_as_reply_edited_and_deleted():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": {"message_id": 77}})
+
+    client = TelegramClient("secret", httpx.MockTransport(handler))
+    assert client.send_html_message("-1001", "<b>Из MAX · Павел</b>\nТекст", reply_to_message_id="55") == "77"
+    client.edit_html_message("-1001", "77", "<b>Из MAX · Павел</b>\nИсправленный текст")
+    client.delete_message("-1001", "77")
+
+    assert [request.url.path.rsplit("/", 1)[-1] for request in seen] == [
+        "sendMessage", "editMessageText", "deleteMessage",
+    ]
+    sent = json.loads(seen[0].content)
+    assert sent["reply_parameters"] == {"message_id": 55}
+    assert sent["disable_web_page_preview"] is True
+
+
+def test_long_polling_requests_channel_and_edited_practice_updates():
+    seen = []
+
+    def handler(request):
+        seen.append(request)
+        return httpx.Response(200, json={"ok": True, "result": []})
+
+    TelegramClient("secret", httpx.MockTransport(handler)).get_updates(timeout=1)
+
+    payload = json.loads(seen[0].content)
+    assert {"channel_post", "edited_channel_post", "edited_message"} <= set(payload["allowed_updates"])
+
+
 @pytest.mark.parametrize(
     ("result", "expected"),
     [

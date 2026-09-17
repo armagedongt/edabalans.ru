@@ -393,6 +393,63 @@ class ManualMessage(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 
+class MessagingBridgePair(TimestampMixin, Base):
+    __tablename__ = "messaging_bridge_pairs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    key: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="draft", nullable=False)
+    telegram_channel_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    max_channel_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    telegram_practice_chat_id: Mapped[str] = mapped_column(String(64), nullable=False)
+    max_practice_chat_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    sync_edits: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    sync_deletions: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class MessagingBridgeMessage(TimestampMixin, Base):
+    __tablename__ = "messaging_bridge_messages"
+    __table_args__ = (
+        UniqueConstraint("pair_id", "telegram_message_id", name="uq_bridge_pair_telegram_message"),
+        UniqueConstraint("pair_id", "max_message_id", name="uq_bridge_pair_max_message"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    pair_id: Mapped[str] = mapped_column(ForeignKey("messaging_bridge_pairs.id", ondelete="CASCADE"), nullable=False, index=True)
+    kind: Mapped[str] = mapped_column(String(16), nullable=False)
+    telegram_message_id: Mapped[str | None] = mapped_column(String(128))
+    max_message_id: Mapped[str | None] = mapped_column(String(128))
+    source_platform: Mapped[str] = mapped_column(String(16), nullable=False)
+    source_author_name: Mapped[str | None] = mapped_column(String(255))
+    parent_message_id: Mapped[str | None] = mapped_column(ForeignKey("messaging_bridge_messages.id", ondelete="SET NULL"), index=True)
+
+
+class MessagingBridgeReceipt(Base):
+    __tablename__ = "messaging_bridge_receipts"
+    __table_args__ = (UniqueConstraint("platform", "event_key", name="uq_bridge_platform_event"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    platform: Mapped[str] = mapped_column(String(16), nullable=False)
+    event_key: Mapped[str] = mapped_column(String(255), nullable=False)
+    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+
+
+class MessagingBridgeDelivery(TimestampMixin, Base):
+    __tablename__ = "messaging_bridge_deliveries"
+    __table_args__ = (UniqueConstraint("message_id", "target_platform", name="uq_bridge_delivery_target"),)
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=uuid_text)
+    message_id: Mapped[str] = mapped_column(ForeignKey("messaging_bridge_messages.id", ondelete="CASCADE"), nullable=False, index=True)
+    target_platform: Mapped[str] = mapped_column(String(16), nullable=False)
+    status: Mapped[str] = mapped_column(String(16), default="pending", nullable=False)
+    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    payload: Mapped[dict] = mapped_column(JSON, default=dict, nullable=False)
+    error_message: Mapped[str | None] = mapped_column(Text)
+    retry_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), index=True)
+    delivered_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
 class MasterclassNotification(Base):
     __tablename__ = "masterclass_notifications"
 

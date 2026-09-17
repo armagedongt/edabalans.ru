@@ -137,6 +137,29 @@ def test_max_client_sends_callback_button_and_can_remove_it():
     assert answered["message"]["text"] == "<b>Тест</b>"
 
 
+def test_max_client_can_reply_edit_and_delete_a_practice_message():
+    requests = []
+
+    def handler(request):
+        requests.append(request)
+        if request.method == "POST":
+            return httpx.Response(200, json={"message": {"body": {"mid": "max-practice-1"}}})
+        return httpx.Response(200, json={})
+
+    client = MaxClient("max-secret", httpx.MockTransport(handler))
+    assert client.send_chat_html("700", "<b>Из Telegram · Вика</b>\nТекст", reply_to_message_id="max-parent") == "max-practice-1"
+    client.edit_chat_html("max-practice-1", "<b>Из Telegram · Вика</b>\nИсправлено")
+    client.delete_message("max-practice-1")
+
+    sent = json.loads(requests[0].content)
+    assert requests[0].url.params["chat_id"] == "700"
+    assert sent["link"] == {"type": "reply", "mid": "max-parent"}
+    assert requests[1].method == "PUT"
+    assert requests[1].url.path == "/messages/max-practice-1"
+    assert requests[2].method == "DELETE"
+    assert requests[2].url.path == "/messages/max-practice-1"
+
+
 def test_max_client_sends_sequence_photo_and_link_button():
     captured = {}
 
