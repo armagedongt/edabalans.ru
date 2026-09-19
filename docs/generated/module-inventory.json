@@ -10012,7 +10012,7 @@
       "boundary": "Не хранит бизнес-правила и не редактирует module registry.",
       "capabilities": [
         "открывать личный экран погоды по прямому маршруту `/weather` без отдельного",
-        "показывать 12-дневный прогноз, 24 часа выбранного дня и дневник фактической",
+        "показывать 12-дневный прогноз, 24 часа выбранного дня, карту прогнозных",
         "отдавать личную игру для Серёжи и Сонечки по `/game/` как отдельную страницу без",
         "показывать CRM, самостоятельные приложения, инструменты, проектные и сервисные ссылки;",
         "собирать видимые карточки из `admin_catalog` в module registry;",
@@ -11437,7 +11437,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 30,
+          "line": 36,
           "module_id": "admin.control",
           "name": "formatNumber",
           "qualname": "formatNumber"
@@ -11445,7 +11445,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 34,
+          "line": 40,
           "module_id": "admin.control",
           "name": "signedTemperature",
           "qualname": "signedTemperature"
@@ -11453,7 +11453,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 38,
+          "line": 44,
           "module_id": "admin.control",
           "name": "precipitationText",
           "qualname": "precipitationText"
@@ -11461,7 +11461,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 42,
+          "line": 48,
           "module_id": "admin.control",
           "name": "weatherIcon",
           "qualname": "weatherIcon"
@@ -11469,7 +11469,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 49,
+          "line": 55,
           "module_id": "admin.control",
           "name": "iconMarkup",
           "qualname": "iconMarkup"
@@ -11477,7 +11477,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 54,
+          "line": 60,
           "module_id": "admin.control",
           "name": "localDate",
           "qualname": "localDate"
@@ -11485,7 +11485,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 58,
+          "line": 64,
           "module_id": "admin.control",
           "name": "dayParts",
           "qualname": "dayParts"
@@ -11493,7 +11493,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 69,
+          "line": 75,
           "module_id": "admin.control",
           "name": "hoursFor",
           "qualname": "hoursFor"
@@ -11501,7 +11501,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 73,
+          "line": 79,
           "module_id": "admin.control",
           "name": "setPanel",
           "qualname": "setPanel"
@@ -11509,7 +11509,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 79,
+          "line": 85,
           "module_id": "admin.control",
           "name": "renderDaily",
           "qualname": "renderDaily"
@@ -11517,7 +11517,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 107,
+          "line": 113,
           "module_id": "admin.control",
           "name": "windArrow",
           "qualname": "windArrow"
@@ -11525,7 +11525,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 111,
+          "line": 117,
           "module_id": "admin.control",
           "name": "createLabel",
           "qualname": "createLabel"
@@ -11533,7 +11533,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 119,
+          "line": 125,
           "module_id": "admin.control",
           "name": "temperatureCells",
           "qualname": "temperatureCells"
@@ -11541,7 +11541,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 137,
+          "line": 143,
           "module_id": "admin.control",
           "name": "createCells",
           "qualname": "createCells"
@@ -11549,7 +11549,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 147,
+          "line": 153,
           "module_id": "admin.control",
           "name": "renderHourly",
           "qualname": "renderHourly"
@@ -11557,7 +11557,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 166,
+          "line": 175,
           "module_id": "admin.control",
           "name": "selectDay",
           "qualname": "selectDay"
@@ -11565,7 +11565,55 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 172,
+          "line": 183,
+          "module_id": "admin.control",
+          "name": "selectHour",
+          "qualname": "selectHour"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 189,
+          "module_id": "admin.control",
+          "name": "mapPoints",
+          "qualname": "mapPoints"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 206,
+          "module_id": "admin.control",
+          "name": "mapDayKey",
+          "qualname": "mapDayKey"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 210,
+          "module_id": "admin.control",
+          "name": "mapForecastForSelectedDay",
+          "qualname": "mapForecastForSelectedDay"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 247,
+          "module_id": "admin.control",
+          "name": "mapCellMarkup",
+          "qualname": "mapCellMarkup"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 268,
+          "module_id": "admin.control",
+          "name": "renderWeatherMap",
+          "qualname": "renderWeatherMap"
+        },
+        {
+          "file": "prototypes/private-weather/app.js",
+          "kind": "function",
+          "line": 296,
           "module_id": "admin.control",
           "name": "updateVisibility",
           "qualname": "updateVisibility"
@@ -11573,7 +11621,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 178,
+          "line": 302,
           "module_id": "admin.control",
           "name": "updateHeader",
           "qualname": "updateHeader"
@@ -11581,7 +11629,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 183,
+          "line": 307,
           "module_id": "admin.control",
           "name": "renderCities",
           "qualname": "renderCities"
@@ -11589,7 +11637,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 201,
+          "line": 325,
           "module_id": "admin.control",
           "name": "switchView",
           "qualname": "switchView"
@@ -11597,7 +11645,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 210,
+          "line": 334,
           "module_id": "admin.control",
           "name": "isoDate",
           "qualname": "isoDate"
@@ -11605,7 +11653,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 214,
+          "line": 338,
           "module_id": "admin.control",
           "name": "loadHistory",
           "qualname": "loadHistory"
@@ -11613,7 +11661,7 @@
         {
           "file": "prototypes/private-weather/app.js",
           "kind": "function",
-          "line": 251,
+          "line": 376,
           "module_id": "admin.control",
           "name": "loadForecast",
           "qualname": "loadForecast"
@@ -84838,7 +84886,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 30,
+      "line": 36,
       "module_id": "admin.control",
       "name": "formatNumber",
       "qualname": "formatNumber"
@@ -84846,7 +84894,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 34,
+      "line": 40,
       "module_id": "admin.control",
       "name": "signedTemperature",
       "qualname": "signedTemperature"
@@ -84854,7 +84902,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 38,
+      "line": 44,
       "module_id": "admin.control",
       "name": "precipitationText",
       "qualname": "precipitationText"
@@ -84862,7 +84910,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 42,
+      "line": 48,
       "module_id": "admin.control",
       "name": "weatherIcon",
       "qualname": "weatherIcon"
@@ -84870,7 +84918,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 49,
+      "line": 55,
       "module_id": "admin.control",
       "name": "iconMarkup",
       "qualname": "iconMarkup"
@@ -84878,7 +84926,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 54,
+      "line": 60,
       "module_id": "admin.control",
       "name": "localDate",
       "qualname": "localDate"
@@ -84886,7 +84934,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 58,
+      "line": 64,
       "module_id": "admin.control",
       "name": "dayParts",
       "qualname": "dayParts"
@@ -84894,7 +84942,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 69,
+      "line": 75,
       "module_id": "admin.control",
       "name": "hoursFor",
       "qualname": "hoursFor"
@@ -84902,7 +84950,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 73,
+      "line": 79,
       "module_id": "admin.control",
       "name": "setPanel",
       "qualname": "setPanel"
@@ -84910,7 +84958,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 79,
+      "line": 85,
       "module_id": "admin.control",
       "name": "renderDaily",
       "qualname": "renderDaily"
@@ -84918,7 +84966,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 107,
+      "line": 113,
       "module_id": "admin.control",
       "name": "windArrow",
       "qualname": "windArrow"
@@ -84926,7 +84974,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 111,
+      "line": 117,
       "module_id": "admin.control",
       "name": "createLabel",
       "qualname": "createLabel"
@@ -84934,7 +84982,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 119,
+      "line": 125,
       "module_id": "admin.control",
       "name": "temperatureCells",
       "qualname": "temperatureCells"
@@ -84942,7 +84990,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 137,
+      "line": 143,
       "module_id": "admin.control",
       "name": "createCells",
       "qualname": "createCells"
@@ -84950,7 +84998,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 147,
+      "line": 153,
       "module_id": "admin.control",
       "name": "renderHourly",
       "qualname": "renderHourly"
@@ -84958,7 +85006,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 166,
+      "line": 175,
       "module_id": "admin.control",
       "name": "selectDay",
       "qualname": "selectDay"
@@ -84966,7 +85014,55 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 172,
+      "line": 183,
+      "module_id": "admin.control",
+      "name": "selectHour",
+      "qualname": "selectHour"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 189,
+      "module_id": "admin.control",
+      "name": "mapPoints",
+      "qualname": "mapPoints"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 206,
+      "module_id": "admin.control",
+      "name": "mapDayKey",
+      "qualname": "mapDayKey"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 210,
+      "module_id": "admin.control",
+      "name": "mapForecastForSelectedDay",
+      "qualname": "mapForecastForSelectedDay"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 247,
+      "module_id": "admin.control",
+      "name": "mapCellMarkup",
+      "qualname": "mapCellMarkup"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 268,
+      "module_id": "admin.control",
+      "name": "renderWeatherMap",
+      "qualname": "renderWeatherMap"
+    },
+    {
+      "file": "prototypes/private-weather/app.js",
+      "kind": "function",
+      "line": 296,
       "module_id": "admin.control",
       "name": "updateVisibility",
       "qualname": "updateVisibility"
@@ -84974,7 +85070,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 178,
+      "line": 302,
       "module_id": "admin.control",
       "name": "updateHeader",
       "qualname": "updateHeader"
@@ -84982,7 +85078,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 183,
+      "line": 307,
       "module_id": "admin.control",
       "name": "renderCities",
       "qualname": "renderCities"
@@ -84990,7 +85086,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 201,
+      "line": 325,
       "module_id": "admin.control",
       "name": "switchView",
       "qualname": "switchView"
@@ -84998,7 +85094,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 210,
+      "line": 334,
       "module_id": "admin.control",
       "name": "isoDate",
       "qualname": "isoDate"
@@ -85006,7 +85102,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 214,
+      "line": 338,
       "module_id": "admin.control",
       "name": "loadHistory",
       "qualname": "loadHistory"
@@ -85014,7 +85110,7 @@
     {
       "file": "prototypes/private-weather/app.js",
       "kind": "function",
-      "line": 251,
+      "line": 376,
       "module_id": "admin.control",
       "name": "loadForecast",
       "qualname": "loadForecast"

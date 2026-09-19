@@ -52,7 +52,9 @@ button { cursor: pointer; }
 
 .hourly-card { min-height: 0; }
 .hourly-grid { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); column-gap: 2px; row-gap: 2px; background: #f4f6f7; }
-.hour { min-width: 0; min-height: 49px; padding-top: 1px; text-align: center; }
+.hour { min-width: 0; min-height: 49px; padding-top: 1px; border: 0; background: #fff; color: inherit; text-align: center; }
+.hour:hover, .hour:focus-visible { background: #f2f8fc; outline: none; }
+.hour[aria-pressed="true"] { background: #e2f3ff; box-shadow: inset 0 3px #0788f8; }
 .hour-time { display: block; font-size: 12px; font-variant-numeric: tabular-nums; }
 .hour .weather-icon { height: 31px; font-size: 24px; }
 .field-label { grid-column: 1 / -1; padding: 5px 10px 3px; font-size: 12px; color: #59636b; background: #fff; }
@@ -61,11 +63,23 @@ button { cursor: pointer; }
 .temperature-cell span, .feels-cell span { display: block; width: 100%; transform: translateY(var(--temp-offset)); text-align: center; }
 .temperature-cell { border-bottom: 1px solid #c4d400; }.feels-cell { border-bottom: 1px solid #d2d481; }
 .wind-cell { min-height: 43px; grid-template-rows: auto auto; border-right: 1px solid #e8eaeb; border-bottom: 1px solid #e8eaeb; }
-.wind-pair { font-weight: 600; font-size: 12px; }.gust { display: grid; min-height: 16px; place-items: center; }.wind-arrow { display: block; color: #365b72; font-size: 18px; font-weight: 900; line-height: 1; transform: rotate(var(--wind-turn)); text-shadow: 0 0 .25px currentColor; }
+.wind-pair { font-weight: 600; font-size: 12px; }.gust { display: grid; min-height: 16px; place-items: center; }.wind-arrow { position: relative; display: block; width: 24px; height: 16px; transform: rotate(var(--wind-turn)); }.wind-arrow::before { position: absolute; top: 6px; left: 0; width: 15px; height: 4px; border-radius: 99px; content: ""; background: #0d5279; }.wind-arrow::after { position: absolute; top: 1px; right: 0; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 11px solid #0d5279; content: ""; }
 .precipitation-cell { position: relative; min-height: 44px; align-items: end; padding-bottom: 3px; color: #008af1; overflow: hidden; font-size: 12px; }
 .rain-fill { position: absolute; right: 0; bottom: 0; left: 0; z-index: 0; height: var(--rain-height); background: #9bd1f4; }.precipitation-cell span { position: relative; z-index: 1; }
 .snow-cell { min-height: 26px; border-bottom: 1px solid #eee; color: #73777a; font-size: 12px; }
 .hidden-field { display: none; }
+
+.map-card { min-height: 0; padding: 12px; }
+.map-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.map-header h2, .map-time { margin: 0; }.map-header h2 { font-size: 16px; font-weight: 600; }.map-time { margin-bottom: 2px; color: #6d7378; font-size: 12px; }
+.map-tabs { display: flex; gap: 4px; border-radius: 8px; background: #edf2f5; padding: 3px; }.map-tab { border: 0; border-radius: 6px; padding: 5px 8px; background: transparent; color: #55707f; font-size: 12px; }.map-tab[aria-pressed="true"] { background: #fff; color: #087eea; box-shadow: 0 1px 3px #15233b14; }
+.weather-map { position: relative; min-height: clamp(300px, 38vw, 510px); overflow: hidden; border-radius: 10px; background: #e9f3f5; }
+.weather-map::before { position: absolute; inset: 0; content: ""; opacity: .7; background: linear-gradient(135deg, #e3f1ed 0 28%, transparent 28% 46%, #e4edf3 46% 75%, #dfece8 75%); }
+.weather-map::after { position: absolute; inset: 0; content: ""; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 calc(20% - 1px), #ffffff77 calc(20% - 1px) 20%), repeating-linear-gradient(90deg, transparent 0 calc(20% - 1px), #ffffff77 calc(20% - 1px) 20%); }
+.map-grid { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
+.map-cell { z-index: 1; display: grid; min-width: 0; min-height: 0; place-content: center; gap: 2px; background: color-mix(in srgb, var(--map-color) 83%, transparent); color: #106eaa; text-align: center; transition: background .15s ease; }
+.map-cell.precipitation strong { font-size: clamp(11px, 1.4vw, 16px); font-weight: 600; }.map-cell.wind { background: #f3f9fbdd; color: #365b72; }.map-cell.wind strong { font-size: clamp(11px, 1.4vw, 16px); }.map-cell.wind span { font-size: clamp(9px, 1.1vw, 13px); }.map-cell.wind small { color: #627886; font-size: clamp(8px, .95vw, 11px); }
+.map-cell .wind-arrow { justify-self: center; }.map-city-marker { position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 4px 7px; border: 2px solid #087eea; border-radius: 999px; background: #fff; color: #087eea; font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 2px 8px #15233b24; }.map-status { position: absolute; z-index: 3; right: 0; bottom: 0; left: 0; margin: 0; padding: 8px 10px; background: #ffffffd9; color: #58656d; font-size: 12px; text-align: center; }
 
 .history-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 12px 0; font-size: 13px; }
 .history-controls label { display: flex; align-items: center; gap: 5px; }.history-controls input { border: 1px solid #dce4ea; border-radius: 7px; padding: 5px; }.history-controls button { border: 1px solid #dce4ea; border-radius: 7px; padding: 6px 9px; }
@@ -96,6 +110,7 @@ button { cursor: pointer; }
   .hourly-grid { min-width: 912px; grid-template-columns: repeat(24, 38px); }
   .hour { min-height: 38px; }.hour-time { font-size: 10px; }.hour .weather-icon { height: 25px; font-size: 20px; }.field-label { padding: 3px 5px 2px; font-size: 10px; }.cell { min-height: 23px; font-size: 11px; }.temperature-cell span, .feels-cell span { transform: translateY(calc(var(--temp-offset) * .6)); }.wind-cell { min-height: 35px; }.wind-pair, .precipitation-cell, .snow-cell { font-size: 10px; }.gust { font-size: 13px; }.precipitation-cell { min-height: 35px; }.snow-cell { min-height: 20px; }
   .history-controls { margin: 8px 10px; }.history-day { grid-template-columns: 88px 23px 80px 1fr; gap: 4px; font-size: 11px; }.history-grid { padding-inline: 8px; }
+  .map-card { padding: 7px 8px 8px; }.map-header { margin-bottom: 6px; }.map-header h2 { font-size: 13px; }.map-time { font-size: 10px; }.map-tab { padding: 4px 7px; font-size: 11px; }.weather-map { min-height: 250px; border-radius: 7px; }.map-cell.precipitation strong, .map-cell.wind strong { font-size: 10px; }.map-cell.wind span { font-size: 9px; }.map-cell.wind small { display: none; }.map-city-marker { padding: 3px 5px; font-size: 10px; }
   .source-note { margin: 7px 10px 10px; }
 }
 
