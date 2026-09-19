@@ -253,6 +253,10 @@
       "path": "backend/app/importers/pikabu_catalog.py"
     },
     {
+      "module_id": "operations.imports",
+      "path": "backend/app/importers/strength_global_history.py"
+    },
+    {
       "module_id": "products.strength",
       "path": "backend/app/importers/strength_matrix.py"
     },
@@ -1369,6 +1373,10 @@
       "path": "backend/scripts/import_recipe_catalog.py"
     },
     {
+      "module_id": "products.strength",
+      "path": "backend/scripts/migrate_strength_global_history.py"
+    },
+    {
       "module_id": "products.masterclass.course",
       "path": "backend/scripts/publish_course_structure_seed.py"
     },
@@ -1439,6 +1447,10 @@
     {
       "module_id": "products.public-site",
       "path": "backend/tests/browser/strength-editor.e2e.mjs"
+    },
+    {
+      "module_id": "products.public-site",
+      "path": "backend/tests/browser/strength-local-preview.html"
     },
     {
       "module_id": "products.public-site",
@@ -1639,6 +1651,10 @@
     {
       "module_id": "platform.commerce",
       "path": "backend/tests/test_robokassa_payments.py"
+    },
+    {
+      "module_id": "products.strength",
+      "path": "backend/tests/test_strength_global_history.py"
     },
     {
       "module_id": "products.strength",
@@ -10282,7 +10298,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1745,
+          "line": 1803,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/users",
@@ -10290,7 +10306,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1922,
+          "line": 1980,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -10298,7 +10314,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1975,
+          "line": 2033,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -10306,7 +10322,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1888,
+          "line": 1946,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/modules",
@@ -10656,7 +10672,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1745,
+          "line": 1803,
           "module_id": "admin.control",
           "name": "admin_app_users",
           "qualname": "admin_app_users"
@@ -10664,7 +10680,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1888,
+          "line": 1946,
           "module_id": "admin.control",
           "name": "admin_user_modules",
           "qualname": "admin_user_modules"
@@ -10672,7 +10688,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1922,
+          "line": 1980,
           "module_id": "admin.control",
           "name": "admin_app_user",
           "qualname": "admin_app_user"
@@ -10680,7 +10696,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1975,
+          "line": 2033,
           "module_id": "admin.control",
           "name": "admin_open_app_user",
           "qualname": "admin_open_app_user"
@@ -26127,6 +26143,10 @@
         },
         {
           "module_id": "operations.imports",
+          "path": "backend/app/importers/strength_global_history.py"
+        },
+        {
+          "module_id": "operations.imports",
           "path": "backend/app/importers/sync_app_accesses.py"
         },
         {
@@ -26932,6 +26952,54 @@
           "module_id": "operations.imports",
           "name": "main",
           "qualname": "main"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 19,
+          "module_id": "operations.imports",
+          "name": "_integer",
+          "qualname": "_integer"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 26,
+          "module_id": "operations.imports",
+          "name": "_legacy_column",
+          "qualname": "_legacy_column"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 31,
+          "module_id": "operations.imports",
+          "name": "_valid_date",
+          "qualname": "_valid_date"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 38,
+          "module_id": "operations.imports",
+          "name": "workout_sort_key",
+          "qualname": "workout_sort_key"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 57,
+          "module_id": "operations.imports",
+          "name": "migrate_workouts",
+          "qualname": "migrate_workouts"
+        },
+        {
+          "file": "backend/app/importers/strength_global_history.py",
+          "kind": "function",
+          "line": 94,
+          "module_id": "operations.imports",
+          "name": "migrate_state_workouts",
+          "qualname": "migrate_state_workouts"
         },
         {
           "file": "backend/app/importers/sync_app_accesses.py",
@@ -47321,7 +47389,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1667,
+          "line": 1725,
           "module_id": "products",
           "name": "apply_metabolism_update",
           "qualname": "apply_metabolism_update"
@@ -47329,7 +47397,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1837,
+          "line": 1895,
           "module_id": "products",
           "name": "admin_state_has_records",
           "qualname": "admin_state_has_records"
@@ -47337,7 +47405,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1845,
+          "line": 1903,
           "module_id": "products",
           "name": "admin_state_summary",
           "qualname": "admin_state_summary"
@@ -47345,7 +47413,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1870,
+          "line": 1928,
           "module_id": "products",
           "name": "active_resource_codes",
           "qualname": "active_resource_codes"
@@ -47353,7 +47421,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1958,
+          "line": 2016,
           "module_id": "products",
           "name": "admin_state_data",
           "qualname": "admin_state_data"
@@ -47425,7 +47493,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 27,
+          "line": 28,
           "module_id": "products",
           "name": "records",
           "qualname": "records"
@@ -47433,7 +47501,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 39,
+          "line": 40,
           "module_id": "products",
           "name": "as_int",
           "qualname": "as_int"
@@ -47441,7 +47509,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 46,
+          "line": 47,
           "module_id": "products",
           "name": "as_bool",
           "qualname": "as_bool"
@@ -47449,7 +47517,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 57,
+          "line": 58,
           "module_id": "products",
           "name": "json_value",
           "qualname": "json_value"
@@ -47457,7 +47525,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 68,
+          "line": 69,
           "module_id": "products",
           "name": "sheet_date",
           "qualname": "sheet_date"
@@ -47465,7 +47533,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 80,
+          "line": 81,
           "module_id": "products",
           "name": "json_timestamp",
           "qualname": "json_timestamp"
@@ -47473,7 +47541,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 90,
+          "line": 91,
           "module_id": "products",
           "name": "merge_dqs_days",
           "qualname": "merge_dqs_days"
@@ -47481,7 +47549,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 108,
+          "line": 109,
           "module_id": "products",
           "name": "user_for_email",
           "qualname": "user_for_email"
@@ -47489,7 +47557,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 124,
+          "line": 125,
           "module_id": "products",
           "name": "user_for_legacy_identity",
           "qualname": "user_for_legacy_identity"
@@ -47497,7 +47565,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 145,
+          "line": 146,
           "module_id": "products",
           "name": "grant",
           "qualname": "grant"
@@ -47505,7 +47573,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 161,
+          "line": 162,
           "module_id": "products",
           "name": "import_dqs",
           "qualname": "import_dqs"
@@ -47513,7 +47581,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 200,
+          "line": 201,
           "module_id": "products",
           "name": "import_strength",
           "qualname": "import_strength"
@@ -47521,7 +47589,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 304,
+          "line": 306,
           "module_id": "products",
           "name": "run",
           "qualname": "run"
@@ -47529,7 +47597,7 @@
         {
           "file": "backend/app/importers/google_apps.py",
           "kind": "function",
-          "line": 326,
+          "line": 328,
           "module_id": "products",
           "name": "main",
           "qualname": "main"
@@ -48057,7 +48125,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 33,
+          "line": 37,
           "module_id": "products",
           "name": "make_client",
           "qualname": "make_client"
@@ -48065,7 +48133,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 42,
+          "line": 46,
           "module_id": "products",
           "name": "override_db",
           "qualname": "make_client.override_db"
@@ -48073,7 +48141,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 51,
+          "line": 55,
           "module_id": "products",
           "name": "add_user",
           "qualname": "add_user"
@@ -48081,7 +48149,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 65,
+          "line": 69,
           "module_id": "products",
           "name": "login",
           "qualname": "login"
@@ -48089,7 +48157,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 73,
+          "line": 77,
           "module_id": "products",
           "name": "test_admin_app_list_includes_access_without_state_and_state_without_access",
           "qualname": "test_admin_app_list_includes_access_without_state_and_state_without_access"
@@ -48097,7 +48165,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 141,
+          "line": 145,
           "module_id": "products",
           "name": "test_admin_can_open_metabolism_with_calories_course_access",
           "qualname": "test_admin_can_open_metabolism_with_calories_course_access"
@@ -48105,7 +48173,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 172,
+          "line": 176,
           "module_id": "products",
           "name": "test_admin_cannot_open_app_with_inactive_resource",
           "qualname": "test_admin_cannot_open_app_with_inactive_resource"
@@ -48113,7 +48181,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 199,
+          "line": 203,
           "module_id": "products",
           "name": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records",
           "qualname": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records"
@@ -48121,7 +48189,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 242,
+          "line": 246,
           "module_id": "products",
           "name": "test_strength_managed_runtime_uses_admin_session_and_writes_audit",
           "qualname": "test_strength_managed_runtime_uses_admin_session_and_writes_audit"
@@ -48129,7 +48197,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 272,
+          "line": 276,
           "module_id": "products",
           "name": "test_strength_completed_set_round_trips_for_the_selected_user",
           "qualname": "test_strength_completed_set_round_trips_for_the_selected_user"
@@ -48137,23 +48205,63 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 322,
+          "line": 327,
           "module_id": "products",
-          "name": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template",
-          "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template"
+          "name": "test_strength_server_assigns_globally_unique_numbers_and_ids",
+          "qualname": "test_strength_server_assigns_globally_unique_numbers_and_ids"
         },
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 337,
+          "line": 344,
           "module_id": "products",
           "name": "create",
-          "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template.create"
+          "qualname": "test_strength_server_assigns_globally_unique_numbers_and_ids.create"
         },
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 365,
+          "line": 375,
+          "module_id": "products",
+          "name": "test_strength_payload_and_stats_include_exercise_history_from_every_template",
+          "qualname": "test_strength_payload_and_stats_include_exercise_history_from_every_template"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 425,
+          "module_id": "products",
+          "name": "test_strength_rejects_stale_state_version_without_overwriting_session",
+          "qualname": "test_strength_rejects_stale_state_version_without_overwriting_session"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 449,
+          "module_id": "products",
+          "name": "test_strength_undo_can_delete_a_newly_created_session",
+          "qualname": "test_strength_undo_can_delete_a_newly_created_session"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 475,
+          "module_id": "products",
+          "name": "test_strength_every_write_requires_an_expected_version",
+          "qualname": "test_strength_every_write_requires_an_expected_version"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 495,
+          "module_id": "products",
+          "name": "test_strength_import_refuses_any_existing_profile_state",
+          "qualname": "test_strength_import_refuses_any_existing_profile_state"
+        },
+        {
+          "file": "backend/tests/test_admin_apps.py",
+          "kind": "function",
+          "line": 520,
           "module_id": "products",
           "name": "test_strength_catalog_is_account_wide_and_template_membership_is_separate",
           "qualname": "test_strength_catalog_is_account_wide_and_template_membership_is_separate"
@@ -48161,7 +48269,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 561,
+          "line": 719,
           "module_id": "products",
           "name": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit",
           "qualname": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit"
@@ -48169,7 +48277,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 613,
+          "line": 771,
           "module_id": "products",
           "name": "test_metabolism_managed_runtime_updates_only_target_and_writes_audit",
           "qualname": "test_metabolism_managed_runtime_updates_only_target_and_writes_audit"
@@ -48177,7 +48285,7 @@
         {
           "file": "backend/tests/test_admin_apps.py",
           "kind": "function",
-          "line": 659,
+          "line": 817,
           "module_id": "products",
           "name": "test_managed_app_runtime_on_public_host_still_requires_admin_session",
           "qualname": "test_managed_app_runtime_on_public_host_still_requires_admin_session"
@@ -58240,7 +58348,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1693,
+          "line": 1751,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -58248,7 +58356,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1710,
+          "line": 1768,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -58256,7 +58364,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1635,
+          "line": 1693,
           "method": "GET",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -58264,7 +58372,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1650,
+          "line": 1708,
           "method": "PUT",
           "module_id": "products.metabolism",
           "path": "/api/apps/metabolism",
@@ -58326,7 +58434,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1635,
+          "line": 1693,
           "module_id": "products.metabolism",
           "name": "metabolism_get",
           "qualname": "metabolism_get"
@@ -58334,7 +58442,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1650,
+          "line": 1708,
           "module_id": "products.metabolism",
           "name": "metabolism_put",
           "qualname": "metabolism_put"
@@ -58342,7 +58450,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1693,
+          "line": 1751,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_get",
           "qualname": "admin_metabolism_get"
@@ -58350,7 +58458,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1710,
+          "line": 1768,
           "module_id": "products.metabolism",
           "name": "admin_metabolism_put",
           "qualname": "admin_metabolism_put"
@@ -58803,6 +58911,10 @@
         {
           "module_id": "products.public-site",
           "path": "backend/tests/browser/strength-editor.e2e.mjs"
+        },
+        {
+          "module_id": "products.public-site",
+          "path": "backend/tests/browser/strength-local-preview.html"
         },
         {
           "module_id": "products.public-site",
@@ -60212,7 +60324,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 14,
+          "line": 17,
           "module_id": "products.public-site",
           "name": "workout",
           "qualname": "workout"
@@ -60220,7 +60332,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 71,
+          "line": 74,
           "module_id": "products.public-site",
           "name": "adminWorkout",
           "qualname": "adminWorkout"
@@ -60228,7 +60340,23 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 120,
+          "line": 116,
+          "module_id": "products.public-site",
+          "name": "globalWorkoutForType",
+          "qualname": "globalWorkoutForType"
+        },
+        {
+          "file": "backend/tests/browser/strength-editor.e2e.mjs",
+          "kind": "function",
+          "line": 128,
+          "module_id": "products.public-site",
+          "name": "addSameNamedCustomHistory",
+          "qualname": "addSameNamedCustomHistory"
+        },
+        {
+          "file": "backend/tests/browser/strength-editor.e2e.mjs",
+          "kind": "function",
+          "line": 156,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -60236,7 +60364,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 256,
+          "line": 292,
           "module_id": "products.public-site",
           "name": "pad",
           "qualname": "pad"
@@ -60244,7 +60372,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 304,
+          "line": 356,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -61558,14 +61686,15 @@
       "capabilities": [
         "вести plan/fact тренировок и упражнения;",
         "хранить три повторно используемых «Шаблона 1/2/3» с общей историей каждого упражнения;",
-        "нумеровать конкретные тренировки отдельно внутри каждого шаблона и явной кнопкой",
+        "после однократного преобразования состояния нумеровать тренировки сквозным номером",
         "давать каждому аккаунту единый каталог упражнений: 25 базовых названий плюс",
-        "редактировать состав шаблона в одном мобильном окне с внутренней прокруткой,",
+        "редактировать состав будущего шаблона в одном мобильном окне с внутренней",
+        "отменять и повторять редактируемые действия до обновления страницы через",
         "показывать постоянную ссылку «Как пользоваться» и краткую справку по базовому",
         "готовить план и выполнять тренировку в раздельных мобильных режимах;",
         "отмечать подход выполненным по плану с возможностью снять отметку без удаления факта;",
         "открывать тот же интерфейс из защищённой админки с выбором клиента и аудитом изменений;",
-        "в управляемом режиме редактирования показывать последние три тренировки одного",
+        "на телефоне показывать один выбранный день с листанием по сквозной истории, а в",
         "считать согласованные показатели нагрузки;",
         "открываться внутри курса и напрямую по `/training` (совместимый адрес `/strength`)",
         "открываться тем же экраном как Telegram Mini App после серверной проверки",
@@ -61573,7 +61702,7 @@
         "открываться из CRM сразу в тренировках выбранного человека; смена профиля и",
         "давать владельцу отдельный мобильный административный вход в тот же интерфейс:",
         "разделять подготовку плана и выполнение тренировки: в режиме выполнения план",
-        "хранить общую историю по упражнению независимо от номера тренировки, показывать",
+        "хранить общую историю по `exercise_id` независимо от шаблона; копировать только",
         "показывать комментарий к упражнению полностью: поле растёт при переносе строк;",
         "показывать пользователю переход из приложения обратно в общий ЛК;"
       ],
@@ -61587,6 +61716,14 @@
         {
           "module_id": "products.strength",
           "path": "backend/app/static/apps/strength.html"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "backend/scripts/migrate_strength_global_history.py"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "backend/tests/test_strength_global_history.py"
         },
         {
           "module_id": "products.strength",
@@ -61626,7 +61763,7 @@
         }
       ],
       "id": "products.strength",
-      "implementation_status": "implemented",
+      "implementation_status": "in_development",
       "parent": "products",
       "plans": [],
       "public_urls": [],
@@ -61643,7 +61780,7 @@
       "routes": [
         {
           "file": "backend/app/app_routes.py",
-          "line": 1438,
+          "line": 1452,
           "method": "GET",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -61651,7 +61788,7 @@
         },
         {
           "file": "backend/app/app_routes.py",
-          "line": 1438,
+          "line": 1452,
           "method": "POST",
           "module_id": "products.strength",
           "path": "/api/apps/strength",
@@ -61705,7 +61842,7 @@
         {
           "file": "backend/app/app_routes.py",
           "kind": "function",
-          "line": 1438,
+          "line": 1452,
           "module_id": "products.strength",
           "name": "strength_legacy",
           "qualname": "strength_legacy"
@@ -61797,6 +61934,54 @@
           "module_id": "products.strength",
           "name": "main",
           "qualname": "main"
+        },
+        {
+          "file": "backend/scripts/migrate_strength_global_history.py",
+          "kind": "function",
+          "line": 21,
+          "module_id": "products.strength",
+          "name": "run",
+          "qualname": "run"
+        },
+        {
+          "file": "backend/tests/test_strength_global_history.py",
+          "kind": "function",
+          "line": 6,
+          "module_id": "products.strength",
+          "name": "test_migrate_workouts_preserves_ids_sets_and_uses_legacy_column_order",
+          "qualname": "test_migrate_workouts_preserves_ids_sets_and_uses_legacy_column_order"
+        },
+        {
+          "file": "backend/tests/test_strength_global_history.py",
+          "kind": "function",
+          "line": 25,
+          "module_id": "products.strength",
+          "name": "test_migrate_workouts_is_idempotent",
+          "qualname": "test_migrate_workouts_is_idempotent"
+        },
+        {
+          "file": "backend/tests/test_strength_global_history.py",
+          "kind": "function",
+          "line": 30,
+          "module_id": "products.strength",
+          "name": "test_migrate_app_created_history_uses_timestamps_then_id_without_losing_provenance",
+          "qualname": "test_migrate_app_created_history_uses_timestamps_then_id_without_losing_provenance"
+        },
+        {
+          "file": "backend/tests/test_strength_global_history.py",
+          "kind": "function",
+          "line": 46,
+          "module_id": "products.strength",
+          "name": "test_existing_state_conversion_is_dry_run_safe_before_apply",
+          "qualname": "test_existing_state_conversion_is_dry_run_safe_before_apply"
+        },
+        {
+          "file": "backend/tests/test_strength_global_history.py",
+          "kind": "class",
+          "line": 47,
+          "module_id": "products.strength",
+          "name": "State",
+          "qualname": "test_existing_state_conversion_is_dry_run_safe_before_apply.State"
         },
         {
           "file": "backend/tests/test_strength_matrix_import.py",
@@ -62034,7 +62219,8 @@
       "telegram": null,
       "title": "Силовые тренировки",
       "truths": [
-        "`docs/APPLICATION_PLATFORM.md`, backend runtime и `legacy/google/strength/` при переносе.\nДля Валентины фактическим источником является актуальная вертикальная вкладка её\nперсональной Google-таблицы; нормализованная таблица служит старым снимком и не\nопределяет последние тренировки.\nИмпорт различает смену упражнения внутри сохранённой строки таблицы: точное известное\nназвание начинает новую историю упражнения с этой тренировки, обычные комментарии остаются\nзаметками."
+        "`docs/APPLICATION_PLATFORM.md`, backend runtime и `legacy/google/strength/` при переносе.\nДля Валентины фактическим источником является актуальная вертикальная вкладка её\nперсональной Google-таблицы; нормализованная таблица служит старым снимком и не\nопределяет последние тренировки.\nИмпорт различает смену упражнения внутри сохранённой строки таблицы: точное известное\nназвание начинает новую историю упражнения с этой тренировки, обычные комментарии остаются\nзаметками.",
+        "Для legacy-истории порядок определяется не отображаемой датой: сначала номер исходной\n`legacy_group`-колонки, затем исходный шаблон, старый номер и `session_id`; для уже созданных\nв приложении сессий без этой метки — `created_at`, `updated_at`, `session_id`. Старый номер\nсохраняется как `legacy_session_number`, а подходы, упражнения и их идентификаторы не меняются.\nЕсли дата отсутствует, между соседними опорными датами ставится середина, иначе берётся\nпредыдущая; только такая выведенная дата получает `date_inferred`. Без опорной даты остаётся\nпустое значение с `date_unknown`. Эти метки служат только отображению и никогда не меняют порядок. Новый Google-импорт\nотказывается заменять уже созданное состояние профиля. Преобразование существующих профилей\nещё не выполнено: до него нельзя считать их историю сквозной.\nИсполняемый маршрут — `backend/scripts/migrate_strength_global_history.py`: без\n`--apply` он делает только dry-run, а `--apply` допустим лишь после backup,\nпроверки восстановления и явного подтверждения владельца."
       ]
     }
   ],
@@ -62964,7 +63150,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1693,
+      "line": 1751,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -62972,7 +63158,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1710,
+      "line": 1768,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/admin/api/apps/metabolism/users/{user_id}/runtime",
@@ -62980,7 +63166,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1745,
+      "line": 1803,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/users",
@@ -62988,7 +63174,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1922,
+      "line": 1980,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}",
@@ -62996,7 +63182,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1975,
+      "line": 2033,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/apps/{app_code}/users/{user_id}/open",
@@ -63596,7 +63782,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1888,
+      "line": 1946,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/modules",
@@ -63892,7 +64078,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1635,
+      "line": 1693,
       "method": "GET",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -63900,7 +64086,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1650,
+      "line": 1708,
       "method": "PUT",
       "module_id": "products.metabolism",
       "path": "/api/apps/metabolism",
@@ -63988,7 +64174,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1438,
+      "line": 1452,
       "method": "GET",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -63996,7 +64182,7 @@
     },
     {
       "file": "backend/app/app_routes.py",
-      "line": 1438,
+      "line": 1452,
       "method": "POST",
       "module_id": "products.strength",
       "path": "/api/apps/strength",
@@ -67352,7 +67538,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1438,
+      "line": 1452,
       "module_id": "products.strength",
       "name": "strength_legacy",
       "qualname": "strength_legacy"
@@ -67360,7 +67546,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1635,
+      "line": 1693,
       "module_id": "products.metabolism",
       "name": "metabolism_get",
       "qualname": "metabolism_get"
@@ -67368,7 +67554,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1650,
+      "line": 1708,
       "module_id": "products.metabolism",
       "name": "metabolism_put",
       "qualname": "metabolism_put"
@@ -67376,7 +67562,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1667,
+      "line": 1725,
       "module_id": "products",
       "name": "apply_metabolism_update",
       "qualname": "apply_metabolism_update"
@@ -67384,7 +67570,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1693,
+      "line": 1751,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_get",
       "qualname": "admin_metabolism_get"
@@ -67392,7 +67578,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1710,
+      "line": 1768,
       "module_id": "products.metabolism",
       "name": "admin_metabolism_put",
       "qualname": "admin_metabolism_put"
@@ -67400,7 +67586,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1745,
+      "line": 1803,
       "module_id": "admin.control",
       "name": "admin_app_users",
       "qualname": "admin_app_users"
@@ -67408,7 +67594,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1837,
+      "line": 1895,
       "module_id": "products",
       "name": "admin_state_has_records",
       "qualname": "admin_state_has_records"
@@ -67416,7 +67602,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1845,
+      "line": 1903,
       "module_id": "products",
       "name": "admin_state_summary",
       "qualname": "admin_state_summary"
@@ -67424,7 +67610,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1870,
+      "line": 1928,
       "module_id": "products",
       "name": "active_resource_codes",
       "qualname": "active_resource_codes"
@@ -67432,7 +67618,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1888,
+      "line": 1946,
       "module_id": "admin.control",
       "name": "admin_user_modules",
       "qualname": "admin_user_modules"
@@ -67440,7 +67626,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1922,
+      "line": 1980,
       "module_id": "admin.control",
       "name": "admin_app_user",
       "qualname": "admin_app_user"
@@ -67448,7 +67634,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1958,
+      "line": 2016,
       "module_id": "products",
       "name": "admin_state_data",
       "qualname": "admin_state_data"
@@ -67456,7 +67642,7 @@
     {
       "file": "backend/app/app_routes.py",
       "kind": "function",
-      "line": 1975,
+      "line": 2033,
       "module_id": "admin.control",
       "name": "admin_open_app_user",
       "qualname": "admin_open_app_user"
@@ -70232,7 +70418,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 27,
+      "line": 28,
       "module_id": "products",
       "name": "records",
       "qualname": "records"
@@ -70240,7 +70426,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 39,
+      "line": 40,
       "module_id": "products",
       "name": "as_int",
       "qualname": "as_int"
@@ -70248,7 +70434,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 46,
+      "line": 47,
       "module_id": "products",
       "name": "as_bool",
       "qualname": "as_bool"
@@ -70256,7 +70442,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 57,
+      "line": 58,
       "module_id": "products",
       "name": "json_value",
       "qualname": "json_value"
@@ -70264,7 +70450,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 68,
+      "line": 69,
       "module_id": "products",
       "name": "sheet_date",
       "qualname": "sheet_date"
@@ -70272,7 +70458,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 80,
+      "line": 81,
       "module_id": "products",
       "name": "json_timestamp",
       "qualname": "json_timestamp"
@@ -70280,7 +70466,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 90,
+      "line": 91,
       "module_id": "products",
       "name": "merge_dqs_days",
       "qualname": "merge_dqs_days"
@@ -70288,7 +70474,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 108,
+      "line": 109,
       "module_id": "products",
       "name": "user_for_email",
       "qualname": "user_for_email"
@@ -70296,7 +70482,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 124,
+      "line": 125,
       "module_id": "products",
       "name": "user_for_legacy_identity",
       "qualname": "user_for_legacy_identity"
@@ -70304,7 +70490,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 145,
+      "line": 146,
       "module_id": "products",
       "name": "grant",
       "qualname": "grant"
@@ -70312,7 +70498,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 161,
+      "line": 162,
       "module_id": "products",
       "name": "import_dqs",
       "qualname": "import_dqs"
@@ -70320,7 +70506,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 200,
+      "line": 201,
       "module_id": "products",
       "name": "import_strength",
       "qualname": "import_strength"
@@ -70328,7 +70514,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 304,
+      "line": 306,
       "module_id": "products",
       "name": "run",
       "qualname": "run"
@@ -70336,7 +70522,7 @@
     {
       "file": "backend/app/importers/google_apps.py",
       "kind": "function",
-      "line": 326,
+      "line": 328,
       "module_id": "products",
       "name": "main",
       "qualname": "main"
@@ -70828,6 +71014,54 @@
       "module_id": "operations.imports",
       "name": "main",
       "qualname": "main"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 19,
+      "module_id": "operations.imports",
+      "name": "_integer",
+      "qualname": "_integer"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 26,
+      "module_id": "operations.imports",
+      "name": "_legacy_column",
+      "qualname": "_legacy_column"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 31,
+      "module_id": "operations.imports",
+      "name": "_valid_date",
+      "qualname": "_valid_date"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 38,
+      "module_id": "operations.imports",
+      "name": "workout_sort_key",
+      "qualname": "workout_sort_key"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 57,
+      "module_id": "operations.imports",
+      "name": "migrate_workouts",
+      "qualname": "migrate_workouts"
+    },
+    {
+      "file": "backend/app/importers/strength_global_history.py",
+      "kind": "function",
+      "line": 94,
+      "module_id": "operations.imports",
+      "name": "migrate_state_workouts",
+      "qualname": "migrate_state_workouts"
     },
     {
       "file": "backend/app/importers/strength_matrix.py",
@@ -80326,6 +80560,14 @@
       "qualname": "main"
     },
     {
+      "file": "backend/scripts/migrate_strength_global_history.py",
+      "kind": "function",
+      "line": 21,
+      "module_id": "products.strength",
+      "name": "run",
+      "qualname": "run"
+    },
+    {
       "file": "backend/scripts/publish_course_structure_seed.py",
       "kind": "function",
       "line": 9,
@@ -80640,7 +80882,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 14,
+      "line": 17,
       "module_id": "products.public-site",
       "name": "workout",
       "qualname": "workout"
@@ -80648,7 +80890,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 71,
+      "line": 74,
       "module_id": "products.public-site",
       "name": "adminWorkout",
       "qualname": "adminWorkout"
@@ -80656,7 +80898,23 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 120,
+      "line": 116,
+      "module_id": "products.public-site",
+      "name": "globalWorkoutForType",
+      "qualname": "globalWorkoutForType"
+    },
+    {
+      "file": "backend/tests/browser/strength-editor.e2e.mjs",
+      "kind": "function",
+      "line": 128,
+      "module_id": "products.public-site",
+      "name": "addSameNamedCustomHistory",
+      "qualname": "addSameNamedCustomHistory"
+    },
+    {
+      "file": "backend/tests/browser/strength-editor.e2e.mjs",
+      "kind": "function",
+      "line": 156,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"
@@ -80664,7 +80922,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 256,
+      "line": 292,
       "module_id": "products.public-site",
       "name": "pad",
       "qualname": "pad"
@@ -80672,7 +80930,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 304,
+      "line": 356,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"
@@ -80960,7 +81218,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 33,
+      "line": 37,
       "module_id": "products",
       "name": "make_client",
       "qualname": "make_client"
@@ -80968,7 +81226,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 42,
+      "line": 46,
       "module_id": "products",
       "name": "override_db",
       "qualname": "make_client.override_db"
@@ -80976,7 +81234,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 51,
+      "line": 55,
       "module_id": "products",
       "name": "add_user",
       "qualname": "add_user"
@@ -80984,7 +81242,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 65,
+      "line": 69,
       "module_id": "products",
       "name": "login",
       "qualname": "login"
@@ -80992,7 +81250,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 73,
+      "line": 77,
       "module_id": "products",
       "name": "test_admin_app_list_includes_access_without_state_and_state_without_access",
       "qualname": "test_admin_app_list_includes_access_without_state_and_state_without_access"
@@ -81000,7 +81258,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 141,
+      "line": 145,
       "module_id": "products",
       "name": "test_admin_can_open_metabolism_with_calories_course_access",
       "qualname": "test_admin_can_open_metabolism_with_calories_course_access"
@@ -81008,7 +81266,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 172,
+      "line": 176,
       "module_id": "products",
       "name": "test_admin_cannot_open_app_with_inactive_resource",
       "qualname": "test_admin_cannot_open_app_with_inactive_resource"
@@ -81016,7 +81274,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 199,
+      "line": 203,
       "module_id": "products",
       "name": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records",
       "qualname": "test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records"
@@ -81024,7 +81282,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 242,
+      "line": 246,
       "module_id": "products",
       "name": "test_strength_managed_runtime_uses_admin_session_and_writes_audit",
       "qualname": "test_strength_managed_runtime_uses_admin_session_and_writes_audit"
@@ -81032,7 +81290,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 272,
+      "line": 276,
       "module_id": "products",
       "name": "test_strength_completed_set_round_trips_for_the_selected_user",
       "qualname": "test_strength_completed_set_round_trips_for_the_selected_user"
@@ -81040,23 +81298,63 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 322,
+      "line": 327,
       "module_id": "products",
-      "name": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template",
-      "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template"
+      "name": "test_strength_server_assigns_globally_unique_numbers_and_ids",
+      "qualname": "test_strength_server_assigns_globally_unique_numbers_and_ids"
     },
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 337,
+      "line": 344,
       "module_id": "products",
       "name": "create",
-      "qualname": "test_strength_server_assigns_unique_numbers_and_ids_inside_each_template.create"
+      "qualname": "test_strength_server_assigns_globally_unique_numbers_and_ids.create"
     },
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 365,
+      "line": 375,
+      "module_id": "products",
+      "name": "test_strength_payload_and_stats_include_exercise_history_from_every_template",
+      "qualname": "test_strength_payload_and_stats_include_exercise_history_from_every_template"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 425,
+      "module_id": "products",
+      "name": "test_strength_rejects_stale_state_version_without_overwriting_session",
+      "qualname": "test_strength_rejects_stale_state_version_without_overwriting_session"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 449,
+      "module_id": "products",
+      "name": "test_strength_undo_can_delete_a_newly_created_session",
+      "qualname": "test_strength_undo_can_delete_a_newly_created_session"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 475,
+      "module_id": "products",
+      "name": "test_strength_every_write_requires_an_expected_version",
+      "qualname": "test_strength_every_write_requires_an_expected_version"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 495,
+      "module_id": "products",
+      "name": "test_strength_import_refuses_any_existing_profile_state",
+      "qualname": "test_strength_import_refuses_any_existing_profile_state"
+    },
+    {
+      "file": "backend/tests/test_admin_apps.py",
+      "kind": "function",
+      "line": 520,
       "module_id": "products",
       "name": "test_strength_catalog_is_account_wide_and_template_membership_is_separate",
       "qualname": "test_strength_catalog_is_account_wide_and_template_membership_is_separate"
@@ -81064,7 +81362,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 561,
+      "line": 719,
       "module_id": "products",
       "name": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit",
       "qualname": "test_dqs_managed_runtime_uses_admin_session_and_writes_audit"
@@ -81072,7 +81370,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 613,
+      "line": 771,
       "module_id": "products",
       "name": "test_metabolism_managed_runtime_updates_only_target_and_writes_audit",
       "qualname": "test_metabolism_managed_runtime_updates_only_target_and_writes_audit"
@@ -81080,7 +81378,7 @@
     {
       "file": "backend/tests/test_admin_apps.py",
       "kind": "function",
-      "line": 659,
+      "line": 817,
       "module_id": "products",
       "name": "test_managed_app_runtime_on_public_host_still_requires_admin_session",
       "qualname": "test_managed_app_runtime_on_public_host_still_requires_admin_session"
@@ -86012,6 +86310,46 @@
       "module_id": "platform.commerce",
       "name": "test_operation_state_recovers_success_when_result2_is_delayed",
       "qualname": "test_operation_state_recovers_success_when_result2_is_delayed"
+    },
+    {
+      "file": "backend/tests/test_strength_global_history.py",
+      "kind": "function",
+      "line": 6,
+      "module_id": "products.strength",
+      "name": "test_migrate_workouts_preserves_ids_sets_and_uses_legacy_column_order",
+      "qualname": "test_migrate_workouts_preserves_ids_sets_and_uses_legacy_column_order"
+    },
+    {
+      "file": "backend/tests/test_strength_global_history.py",
+      "kind": "function",
+      "line": 25,
+      "module_id": "products.strength",
+      "name": "test_migrate_workouts_is_idempotent",
+      "qualname": "test_migrate_workouts_is_idempotent"
+    },
+    {
+      "file": "backend/tests/test_strength_global_history.py",
+      "kind": "function",
+      "line": 30,
+      "module_id": "products.strength",
+      "name": "test_migrate_app_created_history_uses_timestamps_then_id_without_losing_provenance",
+      "qualname": "test_migrate_app_created_history_uses_timestamps_then_id_without_losing_provenance"
+    },
+    {
+      "file": "backend/tests/test_strength_global_history.py",
+      "kind": "function",
+      "line": 46,
+      "module_id": "products.strength",
+      "name": "test_existing_state_conversion_is_dry_run_safe_before_apply",
+      "qualname": "test_existing_state_conversion_is_dry_run_safe_before_apply"
+    },
+    {
+      "file": "backend/tests/test_strength_global_history.py",
+      "kind": "class",
+      "line": 47,
+      "module_id": "products.strength",
+      "name": "State",
+      "qualname": "test_existing_state_conversion_is_dry_run_safe_before_apply.State"
     },
     {
       "file": "backend/tests/test_strength_matrix_import.py",
