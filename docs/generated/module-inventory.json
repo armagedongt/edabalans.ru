@@ -58844,7 +58844,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 303,
+          "line": 304,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -78751,7 +78751,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 303,
+      "line": 304,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"

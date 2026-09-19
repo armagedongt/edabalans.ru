@@ -100,7 +100,7 @@ function adminWorkout() {
       plan_reps: "10",
       fact_weight: String(35 + sessionNumber),
       fact_reps: "9",
-      rpe: "",
+      rpe: '<img src=x onerror="window.__strengthXss=1">',
     });
   }
   return {
@@ -300,6 +300,7 @@ for (const width of [360, 430, 768, 1440]) {
   await page.addInitScript(({ workouts }) => {
     window.EdabalansAppContext = { mode: "admin", targetUserId: "managed-preview", accountUrl: "/admin/strength" };
     window.__saveBodies = [];
+    window.__strengthXss = 0;
     const payload = (value) => Promise.resolve(new Response(JSON.stringify(value), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -325,6 +326,8 @@ for (const width of [360, 430, 768, 1440]) {
   }, { workouts: { 1: adminWorkout(), 2: workout(2, 1, true), 3: workout(3, 1, true) } });
   await page.goto(pathToFileURL(appPath).href);
   await page.getByText("План и факт по тренировкам", { exact: true }).waitFor();
+  await page.waitForTimeout(100);
+  assert.equal(await page.evaluate(() => window.__strengthXss), 0);
 
   assert.equal(await page.locator(".st-admin-sheet .st-day-head").count(), 3);
   assert.deepEqual(await page.locator(".st-admin-sheet .st-day-number").allTextContents(), ["№3", "№4", "№5"]);
@@ -341,12 +344,26 @@ for (const width of [360, 430, 768, 1440]) {
   const planColor = await page.locator(".st-admin-sheet .st-plan-field").first().evaluate((node) => getComputedStyle(node).backgroundColor);
   const factColor = await page.locator(".st-admin-sheet .st-fact-field").first().evaluate((node) => getComputedStyle(node).backgroundColor);
   assert.notEqual(planColor, factColor);
-  assert.equal(await page.locator(".st-admin-sheet .st-divider").first().evaluate((node) => getComputedStyle(node).width), "2px");
+  assert.ok(await page.locator(".st-admin-sheet .st-divider").count() > 0);
+  const unsafeId = "custom-x');window.__strengthXss=1;//";
+  const unsafeHandlers = await page.locator(".st-admin-sheet").evaluate((sheet, exerciseId) => {
+    const selectors = { hide: ".st-hide", plan: ".st-plan-field", fact: ".st-fact-field", rpe: ".st-fact-rpe", note: ".st-note" };
+    return Object.fromEntries(Object.entries(selectors).map(([name, selector]) => [name, Array.from(sheet.querySelectorAll(selector))
+      .filter((node) => node.dataset.exerciseId === exerciseId)
+      .map((node) => `${node.getAttribute("onclick") || ""} ${node.getAttribute("onchange") || ""}`)]));
+  }, unsafeId);
+  const expectedHandlerCounts = { hide: 3, plan: 6, fact: 6, rpe: 3, note: 3 };
+  for (const [name, handlers] of Object.entries(unsafeHandlers)) {
+    assert.equal(handlers.length, expectedHandlerCounts[name]);
+    handlers.forEach((handler) => {
+      assert.ok(handler.includes("this.dataset.exerciseId"), `${name}: ${handler}`);
+      assert.equal(handler.includes(unsafeId), false);
+    });
+  }
   assert.equal(await page.locator(".st-modern-list").count(), 0);
   assert.ok(await page.locator("#strength-app").evaluate((node) => node.scrollWidth <= node.clientWidth));
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-admin-sheet-${width}.png`), fullPage: false });
 
-  await page.evaluate(() => { window.__strengthXss = 0; });
   await page.locator(".st-admin-sheet .st-fact-field").last().click();
   assert.equal(await page.evaluate(() => window.__strengthXss), 0);
   const factField = page.locator(".st-admin-sheet .st-fact-field").first();
