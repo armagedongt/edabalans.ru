@@ -529,6 +529,11 @@
 
 .st-group-plan{
   grid-column:1 / 4;
+  margin-right:2px;
+  border:1px solid rgba(79,137,211,.22);
+  border-radius:6px;
+  background:#eaf3ff;
+  color:#386494;
   text-align:center;
   font-size:9px;
   font-weight:800;
@@ -536,6 +541,11 @@
 
 .st-group-fact{
   grid-column:5 / 8;
+  margin-left:2px;
+  border:1px solid rgba(222,120,72,.2);
+  border-radius:6px;
+  background:#fff0e8;
+  color:#a8502a;
   text-align:center;
   font-size:9px;
   font-weight:800;
@@ -553,10 +563,10 @@
 }
 
 .st-divider{
-  width:1px;
+  width:2px;
   height:22px;
   margin:auto;
-  background:rgba(70,70,90,.25);
+  background:rgba(91,82,125,.42);
 }
 
 .st-set{
@@ -592,6 +602,9 @@
 .st-input:focus{
   border-color:#a88cea;
 }
+
+.st-plan-field{background:#f7fbff;border-color:#cbdff3}
+.st-fact-field,.st-fact-rpe{background:#fff8f4;border-color:#f0cfbd}
 
 .plan-up{
   background:var(--st-plan-up)!important;
@@ -1314,9 +1327,15 @@
 .st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.8fr) 30px minmax(0,1.2fr) 50px}
 .st-modern-labels{padding:0 2px 5px;color:#777b89;font-size:11px;font-weight:900;text-align:center}
 .st-modern-labels small{font-size:9px;font-weight:700}
+.st-plan-label,.st-fact-label{padding:5px 3px;border:1px solid;border-radius:8px}
+.st-plan-label{border-color:#cbdff3;background:#eaf3ff;color:#386494}
+.st-fact-label{border-color:#f0cfbd;background:#fff0e8;color:#a8502a}
 .st-modern-set{min-height:43px;padding:5px 0;border-top:1px solid rgba(70,70,90,.07)}
 .st-modern-number{text-align:center;color:#838692;font-size:10px;font-weight:900}
 .st-input-pair,.st-readonly-pair{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.st-plan-inputs,.st-fact-inputs{padding:3px;border:1px solid;border-radius:9px}
+.st-plan-inputs{border-color:#cbdff3;background:#edf6ff}
+.st-fact-inputs{border-color:#f0cfbd;background:#fff2eb}
 .st-input-pair input{width:100%;min-width:0;height:32px;padding:0 2px;border:1px solid #d6d7df;border-radius:7px;background:#fff;text-align:center;font-size:12px;font-weight:800}
 .st-readonly-pair span{min-width:0;padding:7px 2px;border-radius:7px;background:rgba(255,255,255,.55);text-align:center;font-size:11px;font-weight:800}
 .st-set-done{width:29px;height:29px;padding:0;border:1px solid #cfd2dc;border-radius:50%;background:#fff;color:transparent;font-size:16px;font-weight:900}
@@ -1330,7 +1349,18 @@
 .st-history-modal{max-width:720px}
 .st-history-modal-strip{padding:4px 0 8px}
 .st-history-modal-card{flex:0 0 180px;padding:12px;border:1px solid #e1dcf2;border-radius:12px;background:#faf8ff;scroll-snap-align:start}
+.st-admin-sheet{margin-top:12px;padding:12px;border:1px solid rgba(91,82,125,.15);border-radius:16px;background:#fff;box-shadow:0 7px 20px rgba(30,30,55,.07)}
+.st-admin-sheet-title{margin:0 0 3px;font-size:15px;font-weight:900}
+.st-admin-sheet-sub{color:var(--st-muted);font-size:11px;line-height:1.4}
+.st-admin-sheet-scroll{margin-top:12px;overflow-x:auto;padding-bottom:5px}
+.st-admin-sheet-grid{min-width:810px}
+.st-admin-history{margin-top:10px;border-top:1px solid var(--st-line);padding-top:10px}
+.st-admin-history summary{cursor:pointer;color:#5c5f6b;font-size:12px;font-weight:800}
+.st-admin-history-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.st-admin-history-item{min-height:33px;padding:0 9px;border:1px solid var(--st-line);border-radius:8px;background:#f7f7fa;color:#595c68;font-size:11px;font-weight:800}
+.st-admin-history-item:hover,.st-admin-history-item:focus-visible{border-color:var(--st-purple);color:var(--st-purple)}
 @media(max-width:700px){.st-title{font-size:22px}.st-nav{grid-template-columns:34px 1fr 34px}.st-arrow{height:36px}.st-nav-title{font-size:18px}.st-nav-sub{font-size:13px}.st-main-tab,.st-stat-tab,.st-type{font-size:15px}.st-entry-modes button{font-size:14px}.st-modern-list{gap:12px}.st-modern-head{padding:12px 11px 9px}.st-modern-title strong{font-size:21px}.st-previous,.st-modern-editor{padding-left:9px;padding-right:9px}.st-history-card{flex-basis:158px}.st-modern-labels,.st-modern-set{gap:4px}.st-modern-labels{font-size:12px}.st-modern-labels.edit,.st-modern-set.edit{grid-template-columns:16px minmax(0,1fr) minmax(0,1fr) 44px}.st-modern-labels.train,.st-modern-set.train{grid-template-columns:minmax(0,.78fr) 28px minmax(0,1.22fr) 44px}.st-rpe-button{font-size:10px}.st-modern-comment{grid-template-columns:1fr;font-size:14px}.st-modern-comment>span{padding-top:0}.st-actions.st-template-actions{display:grid;grid-template-columns:1fr;gap:9px}.st-template-actions .st-action{min-height:44px;font-size:14px}.st-modal{max-height:calc(100dvh - 20px);padding:14px}.st-manager-name{font-size:14px}.st-mini{font-size:12px}.st-modal-title{font-size:19px}.st-modal-sub{font-size:13px}.st-modal-btn{font-size:13px}.st-custom-add-row{grid-template-columns:1fr}}
+@media(max-width:700px){.st-admin-sheet{padding:10px}.st-admin-sheet .st-days{display:grid}.st-admin-sheet .st-day-head{display:block}.st-admin-sheet .st-ex-row{display:grid}.st-admin-sheet .st-ex-day{display:flex}}
 </style>
 
 <script>
@@ -3317,8 +3347,40 @@ function renderJournal(){
     return '';
   }
 
-  return renderCurrentExercises();
+  return MANAGED_TARGET && app.entryMode === 'edit'
+    ? renderAdminSheet()
+    : renderCurrentExercises();
 
+}
+
+
+function adminSheetSessions(){
+  var sessions = currentWorkout().sessions;
+  var end = Math.max(0,Math.min(app.selectedIndex,sessions.length-1));
+  var start = Math.max(0,end-2);
+  var visible = [];
+  for(var index=start;index<=end;index++){
+    visible.push({index:index,session:sessions[index],current:index===app.selectedIndex});
+  }
+  return {start:start,visible:visible};
+}
+
+
+function renderAdminHistory(start){
+  if(start <= 0){ return ''; }
+  var sessions = currentWorkout().sessions;
+  var html = '<details class="st-admin-history"><summary>Прошлые тренировки · '+start+'</summary><div class="st-admin-history-list">';
+  for(var index=0;index<start;index++){
+    var session = sessions[index];
+    html += '<button class="st-admin-history-item" onclick="ST.selectSession('+index+')">№ '+esc(session.number)+' · '+esc(formatDate(session.date)||'без даты')+'</button>';
+  }
+  return html+'</div></details>';
+}
+
+
+function renderAdminSheet(){
+  var sheet = adminSheetSessions();
+  return '<section class="st-admin-sheet"><div class="st-admin-sheet-title">План и факт по тренировкам</div><div class="st-admin-sheet-sub">Три последние тренировки показаны рядом. Более ранние скрыты ниже, но их можно открыть.</div><div class="st-admin-sheet-scroll"><div class="st-admin-sheet-grid">'+renderDayHeads(sheet.visible)+renderExerciseRows(sheet.visible)+'</div></div>'+renderAdminHistory(sheet.start)+'</section>';
 }
 
 
@@ -3394,17 +3456,17 @@ function renderModernSet(sessionIndex,exercise,setIndex,set){
     var complete = set.completed === true;
     var canComplete = !blank(set.planWeight) && !blank(set.planReps);
     return '<div class="st-modern-set train">'+
-      '<div class="st-readonly-pair"><span>'+(planWeight||'—')+'</span><span>'+(planReps||'—')+'</span></div>'+
+      '<div class="st-readonly-pair st-plan-inputs"><span>'+(planWeight||'—')+'</span><span>'+(planReps||'—')+'</span></div>'+
       '<button class="st-set-done '+(complete?'checked':'')+'"'+dataExercise+' onclick="ST.completeSet('+args+')" '+(canComplete?'':'disabled')+' aria-pressed="'+(complete?'true':'false')+'" aria-label="'+(complete?'Снять отметку выполнения':canComplete?'Выполнено по плану':'Сначала заполните план подхода')+'">✓</button>'+
-      '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+      '<div class="st-input-pair st-fact-inputs"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
       '<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+dataExercise+' onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
     '</div>';
   }
 
   return '<div class="st-modern-set edit">'+
     '<span class="st-modern-number">'+(setIndex+1)+'</span>'+
-    '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+planWeight+'" onchange="ST.changeField('+args+',\'planWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+planReps+'" onchange="ST.changeField('+args+',\'planReps\',this.value)"></div>'+
-    '<div class="st-input-pair"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
+    '<div class="st-input-pair st-plan-inputs"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+planWeight+'" onchange="ST.changeField('+args+',\'planWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+planReps+'" onchange="ST.changeField('+args+',\'planReps\',this.value)"></div>'+
+    '<div class="st-input-pair st-fact-inputs"><input'+dataExercise+' inputmode="decimal" placeholder="кг" value="'+factWeight+'" onchange="ST.changeField('+args+',\'factWeight\',this.value)"><input'+dataExercise+' inputmode="numeric" placeholder="раз" value="'+factReps+'" onchange="ST.changeField('+args+',\'factReps\',this.value)"></div>'+
     '<button class="st-rpe-button '+rpeClass(set.rpe)+'"'+dataExercise+' onclick="ST.openRpe(event,'+args+')">'+(blank(set.rpe)?'RPE':esc(set.rpe))+'</button>'+
   '</div>';
 }
@@ -3433,8 +3495,8 @@ function renderCurrentExercises(){
       (app.entryMode === 'edit' ? renderPreviousExecutions(exercise) : '')+
       '<section class="st-modern-editor">'+
         '<div class="st-modern-labels '+app.entryMode+'">'+
-          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span>План<br><small>вес · разы</small></span>'+
-          (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span>Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
+          (app.entryMode === 'edit' ? '<span></span>' : '')+'<span class="st-plan-label">План<br><small>вес · разы</small></span>'+
+          (app.entryMode === 'train' ? '<span>✓</span>' : '')+'<span class="st-fact-label">Факт<br><small>вес · разы</small></span><span>Усилие</span>'+
         '</div>';
     for(var setIndex=0;setIndex<exercise.sets.length;setIndex++){
       html += renderModernSet(app.selectedIndex,exercise,setIndex,exercise.sets[setIndex]);
@@ -3787,7 +3849,7 @@ function renderSet(
       '<div class="st-set-num">'+
         (setIndex+1)+
       '</div>'+
-      '<input class="st-input '+
+      '<input class="st-input st-plan-field '+
         planClass(
           set.planWeight,
           previous
@@ -3797,7 +3859,7 @@ function renderSet(
           ''
         )+
       '" type="number" step="0.1" value="'+esc(set.planWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planWeight\',this.value)">'+
-      '<input class="st-input '+
+      '<input class="st-input st-plan-field '+
         planClass(
           set.planReps,
           previous
@@ -3808,9 +3870,9 @@ function renderSet(
         )+
       '" type="number" step="1" value="'+esc(set.planReps)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planReps\',this.value)">'+
       '<div class="st-divider"></div>'+
-      '<input class="st-input" type="number" step="0.1" value="'+esc(set.factWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'factWeight\',this.value)">'+
-      '<input class="st-input" type="number" step="1" value="'+esc(set.factReps)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'factReps\',this.value)">'+
-      '<button class="st-rpe-button '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+sessionIndex+',\''+id+'\','+setIndex+')">'+
+      '<input class="st-input st-fact-field" type="number" step="0.1" value="'+esc(set.factWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+',\''+id+'\','+setIndex+',\'factWeight\',this.value)">'+
+      '<input class="st-input st-fact-field" type="number" step="1" value="'+esc(set.factReps)+'" onclick="ST.numberClick(event,'+sessionIndex+',\''+id+'\','+setIndex+',\'factReps\',this.value)">'+
+      '<button class="st-rpe-button st-fact-rpe '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+sessionIndex+',\''+id+'\','+setIndex+')">'+
         (
           blank(set.rpe)
           ?
@@ -5720,6 +5782,19 @@ window.ST = {
       render();
 
     }
+
+  },
+
+
+  selectSession:function(index){
+
+    if(index < 0 || index >= currentWorkout().sessions.length){
+      return;
+    }
+
+    app.selectedIndex = index;
+    app.entryMode = 'edit';
+    render();
 
   },
 

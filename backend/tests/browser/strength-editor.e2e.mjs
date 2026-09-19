@@ -69,6 +69,29 @@ function workout(type, sessionNumber = 1, empty = false) {
   };
 }
 
+function adminWorkout() {
+  const base = workout(1, 1);
+  const sessions = [];
+  const sessionExercises = [];
+  const sets = [];
+  for (let sessionNumber = 1; sessionNumber <= 5; sessionNumber += 1) {
+    const sessionId = `admin-session-${sessionNumber}`;
+    sessions.push({ session_id: sessionId, session_number: sessionNumber, date: `2026-09-${String(sessionNumber).padStart(2, "0")}` });
+    for (const exercise of base.session_exercises) {
+      sessionExercises.push({ ...exercise, session_id: sessionId });
+      for (const set of base.sets.filter((item) => item.exercise_id === exercise.exercise_id)) {
+        sets.push({ ...set, session_id: sessionId, plan_weight: String(40 + sessionNumber), fact_weight: String(35 + sessionNumber) });
+      }
+    }
+  }
+  return {
+    ...base,
+    sessions,
+    session_exercises: sessionExercises,
+    sets,
+  };
+}
+
 for (const width of [360, 430, 768, 1440]) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.addInitScript(({ workouts }) => {
@@ -248,6 +271,54 @@ for (const width of [360, 430, 768, 1440]) {
   await page.getByText("Тренировка №1", { exact: true }).waitFor();
   const firstSession = await page.evaluate(() => window.__saveBodies.find((body) => body?.action === "saveSession" && body.workout_type === 3));
   assert.equal(firstSession.session.session_number, 1);
+  await page.close();
+}
+
+for (const width of [360, 430, 768, 1440]) {
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
+  await page.addInitScript(({ workouts }) => {
+    window.EdabalansAppContext = { mode: "admin", targetUserId: "managed-preview", accountUrl: "/admin/strength" };
+    window.__saveBodies = [];
+    const payload = (value) => Promise.resolve(new Response(JSON.stringify(value), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    window.fetch = (url, options = {}) => {
+      const parsed = new URL(String(url), "https://edabalans.ru");
+      const body = options.body ? JSON.parse(options.body) : null;
+      const action = body?.action || parsed.searchParams.get("action");
+      if (action === "openUser") return payload({ ok: true, user: { user_id: "managed-preview", email: "preview@example.test", display_name: "Администраторский предпросмотр" } });
+      if (action === "getWorkout") {
+        const type = Number(body?.type || parsed.searchParams.get("type") || 1);
+        return payload({ ok: true, workout: type === 1 ? workouts : workout(type, 1, true) });
+      }
+      window.__saveBodies.push(body ? structuredClone(body) : null);
+      return payload({
+        ok: true,
+        version: 2,
+        session: action === "saveSession"
+          ? { ...body.session, session_id: body.session.session_id || `server-${body.session.session_number}` }
+          : undefined,
+      });
+    };
+  }, { workouts: adminWorkout() });
+  await page.goto(pathToFileURL(appPath).href);
+  await page.getByText("План и факт по тренировкам", { exact: true }).waitFor();
+
+  assert.equal(await page.locator(".st-admin-sheet .st-day-head").count(), 3);
+  assert.equal(await page.locator(".st-admin-history").count(), 1);
+  assert.match(await page.locator(".st-admin-history summary").textContent(), /2/);
+  assert.ok(await page.locator(".st-admin-sheet .st-plan-field").count() > 0);
+  assert.ok(await page.locator(".st-admin-sheet .st-fact-field").count() > 0);
+  assert.equal(await page.locator(".st-modern-list").count(), 0);
+  assert.ok(await page.locator("#strength-app").evaluate((node) => node.scrollWidth <= node.clientWidth));
+  if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-admin-sheet-${width}.png`), fullPage: false });
+
+  await page.getByText("Новая тренировка", { exact: false }).click();
+  await page.getByText("Тренировка №6", { exact: true }).waitFor();
+  assert.equal(await page.locator(".st-admin-sheet .st-day-head").count(), 3);
+  assert.match(await page.locator(".st-admin-history summary").textContent(), /3/);
+  assert.ok(await page.evaluate(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 6)));
   await page.close();
 }
 
