@@ -321,13 +321,14 @@ def admin_users(
     first_seen_from: date | None = Query(default=None),
     first_seen_to: date | None = Query(default=None),
     masterclass_access: bool | None = Query(default=None),
+    accompaniment_status: str = Query(default="all", pattern="^(all|active|former)$"),
     tag_id: uuid.UUID | None = Query(default=None),
     limit: int = Query(default=100, ge=1, le=250),
     offset: int = Query(default=0, ge=0),
     _: str = Depends(require_admin),
     db: Session = Depends(get_db),
 ) -> list[dict]:
-    return list_users(db, query=q, buyers_only=buyers_only, buyer_kind=buyer_kind, product_code=product_code, first_seen_from=first_seen_from, first_seen_to=first_seen_to, masterclass_access=masterclass_access, tag_id=tag_id, limit=limit, offset=offset)
+    return list_users(db, query=q, buyers_only=buyers_only, buyer_kind=buyer_kind, product_code=product_code, first_seen_from=first_seen_from, first_seen_to=first_seen_to, masterclass_access=masterclass_access, accompaniment_status=accompaniment_status, tag_id=tag_id, limit=limit, offset=offset)
 
 
 @router.get("/admin/api/users/{user_id}")

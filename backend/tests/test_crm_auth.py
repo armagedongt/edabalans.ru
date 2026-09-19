@@ -64,6 +64,28 @@ def test_payments_api_passes_pagination_offset(monkeypatch) -> None:
     assert captured["offset"] == 200
 
 
+def test_people_api_passes_accompaniment_filter(monkeypatch) -> None:
+    import app.crm_routes as crm_routes
+
+    captured = {}
+
+    def fake_list_users(_db, **kwargs):
+        captured.update(kwargs)
+        return []
+
+    monkeypatch.setattr(crm_routes, "list_users", fake_list_users)
+    client = make_client()
+    assert client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    ).status_code == 200
+
+    response = client.get("/admin/api/users?accompaniment_status=active")
+
+    assert response.status_code == 200
+    assert captured["accompaniment_status"] == "active"
+
+
 def test_payments_query_applies_offset_and_stable_order() -> None:
     from datetime import datetime, timezone
 

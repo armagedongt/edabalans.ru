@@ -6,7 +6,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Uuid, bindparam, distinct, exists, func, or_, select, text, update
+from sqlalchemy import Uuid, bindparam, case, distinct, exists, func, or_, select, text, update
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -27,6 +27,7 @@ from app.models import (
     MasterclassEvent,
     QuestionnaireAnswer,
     QuestionnaireRun,
+    RecurringSubscription,
     UserOffer,
     AccountCredential,
     AccountSession,
@@ -158,11 +159,27 @@ def list_users(
     query: str = "",
     buyers_only: bool = False,
     buyer_kind: str = "all", product_code: str = "", first_seen_from: date | None = None,
-    first_seen_to: date | None = None, masterclass_access: bool | None = None, tag_id: uuid.UUID | None = None,
+    first_seen_to: date | None = None, masterclass_access: bool | None = None,
+    accompaniment_status: str = "all", tag_id: uuid.UUID | None = None,
     limit: int = 100,
     offset: int = 0,
 ) -> list[dict]:
     email, telegram, purchases, actual_ltv, estimated_ltv, last_purchase = _user_scalar_subqueries()
+    active_accompaniment = exists(
+        select(RecurringSubscription.id).where(
+            RecurringSubscription.user_id == User.id,
+            RecurringSubscription.product_code == "COACHING",
+            RecurringSubscription.status.in_(("active", "charging")),
+        )
+    )
+    paid_accompaniment = exists(
+        select(RecurringSubscription.id).where(
+            RecurringSubscription.user_id == User.id,
+            RecurringSubscription.product_code == "COACHING",
+            RecurringSubscription.successful_payments > 0,
+            RecurringSubscription.status != "test_paid",
+        )
+    )
     stmt = (
         select(
             User.id,
@@ -178,6 +195,11 @@ def list_users(
             actual_ltv.label("ltv_rub"),
             estimated_ltv.label("estimated_ltv_rub"),
             last_purchase.label("last_purchase_at"),
+            case(
+                (active_accompaniment, "active"),
+                (paid_accompaniment, "former"),
+                else_="none",
+            ).label("accompaniment_status"),
         )
         .where(User.merged_into_user_id.is_(None))
         .order_by(last_purchase.desc().nullslast(), User.created_at.desc())
@@ -193,6 +215,10 @@ def list_users(
     if masterclass_access is not None:
         access_exists = exists(select(UserAccess.id).join(Resource, Resource.id == UserAccess.resource_id).where(UserAccess.user_id == User.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None), UserAccess.paused_at.is_(None), or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > func.now())))
         stmt = stmt.where(access_exists if masterclass_access else ~access_exists)
+    if accompaniment_status == "active":
+        stmt = stmt.where(active_accompaniment)
+    elif accompaniment_status == "former":
+        stmt = stmt.where(paid_accompaniment, ~active_accompaniment)
     if tag_id: stmt = stmt.where(exists(select(UserTag.user_id).where(UserTag.user_id == User.id, UserTag.tag_id == tag_id)))
     if query.strip():
         pattern = f"%{query.strip()}%"
@@ -234,6 +260,7 @@ def list_users(
             "estimated_ltv_rub": money(row["estimated_ltv_rub"]),
             "total_ltv_rub": money(row["ltv_rub"]) + money(row["estimated_ltv_rub"]),
             "last_purchase_at": row["last_purchase_at"],
+            "accompaniment_status": row["accompaniment_status"],
             "first_seen_at": row["first_seen_at"],
             "access_review_status": row["access_review_status"],
             "tilda_access_status": row["tilda_access_status"],

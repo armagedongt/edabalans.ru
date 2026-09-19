@@ -26,11 +26,12 @@ const projectMap = { modules: modulesToml.split(/\r?\n(?=\[\[modules\]\])/).map(
 }).filter((module) => module.id && module.admin_catalog.length) };
 const userQueries = [];
 const userAccessFilters = [];
+const userAccompanimentFilters = [];
 const paymentOffsets = [];
 const paymentSnapshots = [];
 let errorAttempts = 0;
 let libraryErrorAttempts = 0;
-const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accesses:["MASTERCLASS"] };
+const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accompaniment_status:"active", accesses:["MASTERCLASS"] };
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -106,6 +107,7 @@ const server = createServer((request, response) => {
     const q = url.searchParams.get("q") || "";
     userQueries.push(q);
     userAccessFilters.push(url.searchParams.get("masterclass_access"));
+    userAccompanimentFilters.push(url.searchParams.get("accompaniment_status"));
     if (q === "error" && errorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test error"})); }
     const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
     return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
@@ -228,7 +230,7 @@ const integratedPages = {
   products: "/admin/products",
 };
 for (const [name, route] of Object.entries(integratedPages)) {
-  for (const width of [360, 1440]) {
+  for (const width of [360, 430, 768, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "CRM" }).waitFor();
@@ -255,6 +257,9 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByRole("button", { name:"Есть МК" }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userAccessFilters.at(-1), "true");
+      await page.getByRole("button", { name:"Сопровождение", exact:true }).click();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      assert.equal(userAccompanimentFilters.at(-1), "active");
       await page.locator(".crm-filters summary").click();
       assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
       assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);

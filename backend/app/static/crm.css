@@ -76,6 +76,8 @@ button { cursor: pointer; }
 .origin-native { color: #34733a; background: var(--green); }
 .st-lead { color: #7a6412; background: var(--yellow); }
 .st-buyer { color: #4d617b; background: var(--blue); }
+.st-support { color: #245a3a; background: #dff6e8; margin-left: 4px; }
+.st-former { color: #665f72; background: #eeeaf2; margin-left: 4px; }
 .st-processing { color: #8b5532; background: var(--peach); }
 .st-paid { color: #34733a; background: var(--green); }
 
