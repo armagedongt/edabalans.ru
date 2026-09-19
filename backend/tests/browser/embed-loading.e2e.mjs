@@ -544,6 +544,10 @@ try {
   assert.equal(await offer.native.locator('#masterclass-course-app').isVisible(),false)
   special.release()
   await waitForReveal(offer.native)
+  // Route restoration resolves before the nested offer mount has painted on
+  // some Chromium runs. Wait for the user-visible app, not only its parent
+  // loader, before checking the final state.
+  await offer.native.locator('#masterclass-offers-app').waitFor({state:'visible'})
   assert.equal(await offer.native.locator('#masterclass-offers-app').isVisible(),true)
   assert.deepEqual(offer.faults,[])
   await offer.native.close()
