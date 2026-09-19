@@ -6,6 +6,7 @@
     <meta name="color-scheme" content="light" />
     <title>Погода в Петербурге</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   </head>
   <body>
     <main class="weather-page" id="weather-app" aria-busy="true">
@@ -55,8 +56,15 @@
               <button class="map-tab" type="button" data-map-mode="wind" aria-pressed="false">Ветер</button>
             </div>
           </header>
+          <div class="map-controls" aria-label="Управление временем карты">
+            <button class="map-step" id="map-previous" type="button" aria-label="Предыдущий час" disabled>‹</button>
+            <button class="map-play" id="map-play" type="button" aria-pressed="false" aria-label="Воспроизвести изменения по часам" disabled>▶</button>
+            <button class="map-step" id="map-next" type="button" aria-label="Следующий час" disabled>›</button>
+            <input id="map-hour-range" type="range" min="0" max="23" value="0" step="1" aria-label="Час для карты" disabled />
+            <output id="map-hour-output" for="map-hour-range">00:00</output>
+          </div>
           <div class="weather-map" id="weather-map" aria-live="polite">
-            <div class="map-grid" id="map-grid"></div>
+            <div class="leaflet-map" id="leaflet-map"></div>
             <p class="map-status" id="map-status">Загружаю карту…</p>
           </div>
         </section>
@@ -74,6 +82,7 @@
       <p class="source-note">Прогноз и прошлые данные: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a>, CC BY 4.0.</p>
     </main>
     <template id="message-template"><p class="message"></p></template>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="app.js"></script>
   </body>
 </html>
