@@ -84,6 +84,7 @@ owns_files = [
   "backend/migrations/versions/20260906_0037_account_registration.py",
   "backend/migrations/versions/20260912_0041_server_recurring_subscriptions.py",
   "backend/migrations/versions/20260917_0042_owner_payment_notifications.py",
+  "backend/migrations/versions/20260919_0045_access_pause.py",
 ]
 owns_tables = [
   "products", "product_aliases", "resources", "product_access_rules",
@@ -107,6 +108,7 @@ owns_files = [
   "backend/app/static/admin-session.css", "backend/tests/test_app_auth.py",
   "backend/tests/test_account_password_auth.py", "backend/tests/test_crm_auth.py",
   "backend/migrations/versions/20260905_0035_account_credentials.py",
+  "backend/migrations/versions/20260919_0044_admin_password_ciphertext.py",
 ]
 owns_tables = ["account_credentials", "account_sessions"]
 owns_routes = ["*/account-auth/*", "*/app-auth/*", "*/lk", "*/admin/api/login", "*/admin/api/logout", "*/admin/api/session"]

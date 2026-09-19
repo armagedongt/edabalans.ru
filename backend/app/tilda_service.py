@@ -207,6 +207,7 @@ def record_masterclass_purchase_event(
             UserAccess.user_id == payment.user_id,
             Resource.code == "ACCESS_MASTERCLASS",
             UserAccess.revoked_at.is_(None),
+            UserAccess.paused_at.is_(None),
             or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > occurred_at),
         )
         .limit(1)

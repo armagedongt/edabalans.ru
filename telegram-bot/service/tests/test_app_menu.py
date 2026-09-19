@@ -31,7 +31,8 @@ def prepared(tmp_path):
             user_id TEXT NOT NULL,
             resource_id TEXT NOT NULL,
             expires_at TIMESTAMP NULL,
-            revoked_at TIMESTAMP NULL
+            revoked_at TIMESTAMP NULL,
+            paused_at TIMESTAMP NULL
         )
     """))
     session.execute(text("""
@@ -64,21 +65,22 @@ def prepared(tmp_path):
     return session, user, contact
 
 
-def grant(session, user, code, *, revoked=False, expired=False):
+def grant(session, user, code, *, revoked=False, expired=False, paused=False):
     resource_id = str(uuid4())
     session.execute(
         text("INSERT INTO resources (id, code, status) VALUES (:id, :code, 'active')"),
         {"id": resource_id, "code": code},
     )
     session.execute(text("""
-        INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
-        VALUES (:id, :user_id, :resource_id, :expires_at, :revoked_at)
+        INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at, paused_at)
+        VALUES (:id, :user_id, :resource_id, :expires_at, :revoked_at, :paused_at)
     """), {
         "id": str(uuid4()),
         "user_id": user.id,
         "resource_id": resource_id,
         "expires_at": datetime.now(UTC) - timedelta(minutes=1) if expired else None,
         "revoked_at": datetime.now(UTC) if revoked else None,
+        "paused_at": datetime.now(UTC) if paused else None,
     })
 
 
@@ -225,5 +227,19 @@ def test_paid_entitlement_stays_hidden_until_course_reveal(tmp_path):
         assert [item.code for item in available_applications(session, user.id)] == ["dqs"]
         _, configuration = menu_presentation(session, contact)
         assert configuration["buttons"][0]["max_app_payload"] == "dqs"
+    finally:
+        session.close()
+
+
+def test_paused_entitlement_is_hidden_from_application_menu(tmp_path):
+    session, user, contact = prepared(tmp_path)
+    try:
+        grant(session, user, "dqs", paused=True)
+        reveal(session, user, "app_revealed_dqs")
+        session.commit()
+        assert available_applications(session, user.id) == []
+        content, configuration = menu_presentation(session, contact)
+        assert "пока нет доступных приложений" in content.body_source
+        assert all(button.get("max_app_payload") != "dqs" for button in configuration["buttons"])
     finally:
         session.close()

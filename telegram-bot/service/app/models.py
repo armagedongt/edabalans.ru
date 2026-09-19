@@ -433,6 +433,7 @@ class AccountCredential(Base):
         Uuid(as_uuid=False), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
     )
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    password_ciphertext: Mapped[str | None] = mapped_column(Text)
     password_version: Mapped[int] = mapped_column(Integer, default=1, nullable=False)
     issued_via: Mapped[str] = mapped_column(String(32), nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), nullable=False)

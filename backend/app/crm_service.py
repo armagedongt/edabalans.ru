@@ -6,7 +6,7 @@ from datetime import date, datetime, time, timedelta, timezone
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
-from sqlalchemy import Uuid, bindparam, distinct, exists, func, or_, select, text
+from sqlalchemy import Uuid, bindparam, distinct, exists, func, or_, select, text, update
 from sqlalchemy.orm import Session
 
 from app.models import (
@@ -28,7 +28,11 @@ from app.models import (
     QuestionnaireAnswer,
     QuestionnaireRun,
     UserOffer,
+    AccountCredential,
+    AccountSession,
 )
+from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash
+from app.config import Settings
 from app.masterclass_routes import (
     questions,
 )
@@ -187,7 +191,7 @@ def list_users(
     if first_seen_from: stmt = stmt.where(User.first_seen_at >= datetime.combine(first_seen_from, time.min, tzinfo=MOSCOW_TZ).astimezone(timezone.utc))
     if first_seen_to: stmt = stmt.where(User.first_seen_at < datetime.combine(first_seen_to + timedelta(days=1), time.min, tzinfo=MOSCOW_TZ).astimezone(timezone.utc))
     if masterclass_access is not None:
-        access_exists = exists(select(UserAccess.id).join(Resource, Resource.id == UserAccess.resource_id).where(UserAccess.user_id == User.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None), or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > func.now())))
+        access_exists = exists(select(UserAccess.id).join(Resource, Resource.id == UserAccess.resource_id).where(UserAccess.user_id == User.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None), UserAccess.paused_at.is_(None), or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > func.now())))
         stmt = stmt.where(access_exists if masterclass_access else ~access_exists)
     if tag_id: stmt = stmt.where(exists(select(UserTag.user_id).where(UserTag.user_id == User.id, UserTag.tag_id == tag_id)))
     if query.strip():
@@ -209,6 +213,7 @@ def list_users(
             .where(
                 UserAccess.user_id.in_(user_ids),
                 UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
                 or_(UserAccess.expires_at.is_(None), UserAccess.expires_at > func.now()),
             )
             .distinct()
@@ -422,6 +427,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             .limit(10)
         )
     )
+    credential = db.get(AccountCredential, user_id)
     question_titles = {
         kind: {code: title for code, title, _ in rows}
         for kind, rows in {
@@ -457,6 +463,13 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
             }
             for item in emails
         ],
+        "credential": {
+            "exists": credential is not None,
+            "password_available": bool(credential and credential.password_ciphertext),
+            "password_version": credential.password_version if credential else None,
+            "issued_via": credential.issued_via if credential else None,
+            "updated_at": credential.updated_at if credential else None,
+        },
         "messengers": [
             {
                 "platform": item.platform,
@@ -501,6 +514,7 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "granted_at": access.granted_at,
                 "expires_at": access.expires_at,
                 "revoked_at": access.revoked_at,
+                "paused_at": access.paused_at,
             }
             for access, code, name in accesses
         ],
@@ -801,6 +815,8 @@ def grant_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, adm
     if active is None:
         db.add(UserAccess(user_id=user_id, resource_id=resource.id, source_payment_id=None,
                           source="manual_admin", granted_at=datetime.now(timezone.utc)))
+    else:
+        active.paused_at = None
     db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
                         action="grant_access", details={"resource_code": resource_code}))
     db.commit()
@@ -808,12 +824,98 @@ def grant_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, adm
 
 
 def revoke_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:
-    access = db.scalar(select(UserAccess).join(Resource).where(UserAccess.user_id == user_id,
-        Resource.code == resource_code, UserAccess.revoked_at.is_(None)).order_by(UserAccess.granted_at.desc()))
-    if access is None:
+    accesses = list(db.scalars(select(UserAccess).join(Resource).where(UserAccess.user_id == user_id,
+        Resource.code == resource_code, UserAccess.revoked_at.is_(None))))
+    if not accesses:
         return False
-    access.revoked_at = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc)
+    for access in accesses:
+        access.revoked_at = now
+        access.paused_at = None
     db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
                         action="revoke_access", details={"resource_code": resource_code}))
     db.commit()
     return True
+
+
+def pause_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:
+    accesses = list(db.scalars(select(UserAccess).join(Resource).where(
+        UserAccess.user_id == user_id,
+        Resource.code == resource_code,
+        UserAccess.revoked_at.is_(None),
+    )))
+    if not accesses:
+        return False
+    now = datetime.now(timezone.utc)
+    for access in accesses:
+        access.paused_at = now
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="pause_access", details={"resource_code": resource_code}))
+    db.commit()
+    return True
+
+
+def resume_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:
+    accesses = list(db.scalars(select(UserAccess).join(Resource).where(
+        UserAccess.user_id == user_id,
+        Resource.code == resource_code,
+        UserAccess.revoked_at.is_(None),
+        UserAccess.paused_at.is_not(None),
+    )))
+    if not accesses:
+        return False
+    for access in accesses:
+        access.paused_at = None
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="resume_access", details={"resource_code": resource_code}))
+    db.commit()
+    return True
+
+
+def reveal_account_password(
+    db: Session, user_id: uuid.UUID, settings: Settings, admin: str
+) -> str | None:
+    user = db.get(User, user_id)
+    credential = db.get(AccountCredential, user_id)
+    if user is None or user.merged_into_user_id is not None or credential is None:
+        return None
+    if not credential.password_ciphertext:
+        raise ValueError("legacy_password")
+    password = decrypt_password(credential.password_ciphertext, settings.app_auth_secret)
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="reveal_account_password", details={"password_version": credential.password_version}))
+    db.commit()
+    return password
+
+
+def reset_account_password(
+    db: Session, user_id: uuid.UUID, settings: Settings, admin: str
+) -> str | None:
+    user = db.get(User, user_id)
+    if user is None or user.merged_into_user_id is not None:
+        return None
+    password = generate_password()
+    credential = db.get(AccountCredential, user_id)
+    if credential is None:
+        credential = AccountCredential(
+            user_id=user_id,
+            password_hash=password_hash(password, settings.app_auth_secret),
+            password_ciphertext=encrypt_password(password, settings.app_auth_secret),
+            password_version=1,
+            issued_via="admin",
+        )
+        db.add(credential)
+    else:
+        credential.password_hash = password_hash(password, settings.app_auth_secret)
+        credential.password_ciphertext = encrypt_password(password, settings.app_auth_secret)
+        credential.password_version += 1
+        credential.issued_via = "admin"
+    now = datetime.now(timezone.utc)
+    db.execute(update(AccountSession).where(
+        AccountSession.user_id == user_id,
+        AccountSession.revoked_at.is_(None),
+    ).values(revoked_at=now))
+    db.add(AdminAppEdit(admin_username=admin, target_user_id=user_id, app_code="crm",
+                        action="reset_account_password", details={"password_version": credential.password_version}))
+    db.commit()
+    return password

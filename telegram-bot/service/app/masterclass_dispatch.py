@@ -104,6 +104,7 @@ def crm_access_codes(session: Session, user_id: str) -> set[str]:
             "SELECT r.code FROM user_accesses ua "
             "JOIN resources r ON r.id = ua.resource_id "
             "WHERE ua.user_id = :user_id AND ua.revoked_at IS NULL "
+            "AND ua.paused_at IS NULL "
             "AND (ua.expires_at IS NULL OR ua.expires_at > CURRENT_TIMESTAMP)"
         ),
         {"user_id": user_id},
@@ -444,6 +445,7 @@ def client_values(
             "LEFT JOIN products pr ON pr.id=p.product_id "
             "WHERE ua.user_id=:user_id AND r.code='ACCESS_MASTERCLASS' "
             "AND ua.revoked_at IS NULL "
+            "AND ua.paused_at IS NULL "
             "AND (ua.expires_at IS NULL OR ua.expires_at > CURRENT_TIMESTAMP) "
             "ORDER BY COALESCE(p.paid_at, p.source_event_at, p.created_at) DESC LIMIT 1"
         ),

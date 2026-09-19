@@ -473,7 +473,7 @@ def robokassa_account_tariff_checkout(
     already_owned = db.scalar(
         select(UserAccess.id)
         .join(Resource, Resource.id == UserAccess.resource_id)
-        .where(UserAccess.user_id == user.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None))
+        .where(UserAccess.user_id == user.id, Resource.code == "ACCESS_MASTERCLASS", UserAccess.revoked_at.is_(None), UserAccess.paused_at.is_(None))
     )
     if already_owned is not None:
         raise HTTPException(409, "Мастер-класс уже доступен в личном кабинете")

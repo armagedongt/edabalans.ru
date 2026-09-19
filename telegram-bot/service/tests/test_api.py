@@ -369,7 +369,8 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
                 user_id TEXT NOT NULL,
                 resource_id TEXT NOT NULL,
                 expires_at TIMESTAMP NULL,
-                revoked_at TIMESTAMP NULL
+                revoked_at TIMESTAMP NULL,
+                paused_at TIMESTAMP NULL
             )
         """))
         session.execute(text("""
@@ -400,8 +401,8 @@ def test_app_deep_link_and_refresh_work_during_maintenance(tmp_path, monkeypatch
             )
         )
         session.execute(text("""
-            INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
-            VALUES (:id, :user_id, :resource_id, NULL, NULL)
+            INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at, paused_at)
+            VALUES (:id, :user_id, :resource_id, NULL, NULL, NULL)
         """), {"id": str(uuid4()), "user_id": user.id, "resource_id": resource_id})
         session.execute(
             text("""

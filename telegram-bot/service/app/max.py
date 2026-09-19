@@ -17,7 +17,7 @@ import httpx
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
 
-from app.account_credentials import generate_password, password_hash
+from app.account_credentials import encrypt_password, generate_password, password_hash
 from app.app_menu import APPS_PAYLOAD, app_request, send_menu
 from app.content_formatting import content_body_for_telegram, replace_template_values
 from app.customer_lifecycle import stop_presale_runs_for_user, stop_runs_for_contact
@@ -818,6 +818,7 @@ def _consume_account_link(
             AccountCredential(
                 user_id=token.user_id,
                 password_hash=password_hash(raw_password, app_auth_secret),
+                password_ciphertext=encrypt_password(raw_password, app_auth_secret),
                 password_version=1,
                 issued_via="max",
             )

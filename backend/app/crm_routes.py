@@ -7,7 +7,7 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi import APIRouter, Depends, HTTPException, Path as ApiPath, Query, Request, Response
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.security import HTTPBasicCredentials
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -22,7 +22,7 @@ from app.auth import (
     security,
     valid_admin_credentials,
 )
-from app.config import get_settings
+from app.config import Settings, get_settings
 from app.crm_service import (
     add_note,
     add_tag,
@@ -40,6 +40,10 @@ from app.crm_service import (
     set_access_review,
     grant_manual_access,
     revoke_manual_access,
+    pause_manual_access,
+    resume_manual_access,
+    reveal_account_password,
+    reset_account_password,
     list_resources,
 )
 from app.database import get_db
@@ -405,6 +409,53 @@ def admin_revoke_access(user_id: uuid.UUID, resource_code: str,
     if not revoke_manual_access(db, user_id, resource_code, admin):
         raise HTTPException(status_code=404, detail="active access not found")
     return {"status": "revoked"}
+
+
+@router.post("/admin/api/users/{user_id}/accesses/{resource_code}/pause")
+def admin_pause_access(user_id: uuid.UUID, resource_code: str,
+                       admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    if not pause_manual_access(db, user_id, resource_code, admin):
+        raise HTTPException(status_code=404, detail="active access not found")
+    return {"status": "paused"}
+
+
+@router.post("/admin/api/users/{user_id}/accesses/{resource_code}/resume")
+def admin_resume_access(user_id: uuid.UUID, resource_code: str,
+                        admin: str = Depends(require_admin), db: Session = Depends(get_db)) -> dict[str, str]:
+    if not resume_manual_access(db, user_id, resource_code, admin):
+        raise HTTPException(status_code=404, detail="paused access not found")
+    return {"status": "active"}
+
+
+@router.post("/admin/api/users/{user_id}/credential/reveal")
+def admin_reveal_credential(
+    user_id: uuid.UUID,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> JSONResponse:
+    try:
+        password = reveal_account_password(db, user_id, settings, admin)
+    except ValueError as exc:
+        if str(exc) == "legacy_password":
+            raise HTTPException(409, "Старый пароль нельзя восстановить. Задайте новый пароль один раз.") from exc
+        raise
+    if password is None:
+        raise HTTPException(404, "credential not found")
+    return JSONResponse({"password": password}, headers={"Cache-Control": "no-store"})
+
+
+@router.post("/admin/api/users/{user_id}/credential/reset")
+def admin_reset_credential(
+    user_id: uuid.UUID,
+    admin: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+    settings: Settings = Depends(get_settings),
+) -> JSONResponse:
+    password = reset_account_password(db, user_id, settings, admin)
+    if password is None:
+        raise HTTPException(404, "user not found")
+    return JSONResponse({"password": password}, headers={"Cache-Control": "no-store"})
 
 
 @router.get("/admin/api/payments")

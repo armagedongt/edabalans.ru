@@ -27,6 +27,7 @@ from app.models import (  # noqa: E402
     UserCoursePolicy,
     UserEmail,
     UserLegalAcceptance, AccountCredential,
+    MasterclassEvent,
 )
 
 def setup():
@@ -379,6 +380,12 @@ def test_product_maintenance_preserves_entitlements_and_reopens_owned_products(m
         for resource in resources:
             db.add(UserAccess(user_id=user_id, resource_id=resource.id, source="test",
                               granted_at=datetime.now(timezone.utc)))
+        db.add(MasterclassEvent(
+            user_id=user_id,
+            event_key="course:completed",
+            event_type="masterclass_completed",
+            details={},
+        ))
         db.commit()
         before = [(row.id, row.resource_id, row.revoked_at, row.expires_at)
                   for row in db.scalars(select(UserAccess).order_by(UserAccess.id))]

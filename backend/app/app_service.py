@@ -83,6 +83,7 @@ def require_user_resource(
         resource_filter,
         Resource.status == "active",
         UserAccess.revoked_at.is_(None),
+        UserAccess.paused_at.is_(None),
         (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
     )
     access = db.scalar(

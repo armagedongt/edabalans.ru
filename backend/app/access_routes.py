@@ -39,7 +39,7 @@ from app.models import (
 )
 from app.product_identity import purchased_products
 from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
-from app.metabolism_service import metabolism_stage_complete
+from app.metabolism_service import metabolism_is_unlocked
 
 
 router = APIRouter(tags=["access-links"])
@@ -215,8 +215,8 @@ def account_applications(owned: set[str], legal_required: bool, *, metabolism_un
     metabolism = next(item for item in result if item["code"] == "metabolism")
     metabolism["title"] = "Калькулятор метаболизма"
     metabolism["owned"] = "ACCESS_CALORIES" in owned
-    metabolism["unlock_after_stage"] = 2
-    metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "stage_locked" if metabolism["owned"] else "not_owned"
+    metabolism["unlock_after_masterclass"] = True
+    metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "masterclass_locked" if metabolism["owned"] else "not_owned"
     metabolism["app"] = "metabolism" if metabolism["owned"] and metabolism_unlocked and not legal_required else None
     return result
 
@@ -248,6 +248,7 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
             .where(
                 UserAccess.user_id == user.id,
                 UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
                 UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now),
                 Resource.status == "active",
             )
@@ -262,11 +263,16 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         (item for item in purchases if str(item.get("product_code") or "").startswith("MASTERCLASS_")),
         None,
     )
+    calories_unlocked = progress_user_id == user.id and metabolism_is_unlocked(db, user.id)
     courses = account_courses(definitions, owned, legal["required"])
     for item in courses:
         code = item["code"]
         if code == "masterclass" and masterclass_purchase:
             item["tariff"] = masterclass_purchase["tariff"]
+        if code == "calories" and item["owned"] and not calories_unlocked and not item["maintenance"]:
+            item["state"] = "masterclass_locked"
+            item["app"] = None
+            item["unlock_after_masterclass"] = True
     return {
         "ok": True,
         "state": "ready",
@@ -275,7 +281,7 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         "legal": legal,
         "purchased_products": purchases,
         "courses": courses,
-        "applications": account_applications(owned, legal["required"], metabolism_unlocked=progress_user_id == user.id and metabolism_stage_complete(db, user.id)),
+        "applications": account_applications(owned, legal["required"], metabolism_unlocked=calories_unlocked),
         "legacy_portal": {
             "available": bool({"ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"} & owned),
             "url": "/members/",

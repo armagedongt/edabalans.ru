@@ -1,8 +1,11 @@
+import base64
 import hashlib
+import re
 from datetime import UTC, datetime, timedelta
 
 from sqlalchemy import select, text
 from sqlalchemy.orm import Session
+from cryptography.fernet import Fernet
 
 from app.database import Base, make_engine
 from app.masterclass_link import _existing_password_hint, consume_masterclass_link
@@ -163,6 +166,11 @@ def test_account_claim_creates_password_once_without_premature_questionnaire(tmp
         assert queued == []
         credential = session.get(AccountCredential, target.id)
         assert credential is not None
+        assert credential.password_ciphertext
+        assert credential.password_ciphertext not in reply
+        raw_password = re.search(r"Пароль: <code>([A-Za-z0-9]+)</code>", reply).group(1)
+        key = base64.urlsafe_b64encode(hashlib.sha256(b"account-password-v1\0test-secret").digest())
+        assert Fernet(key).decrypt(credential.password_ciphertext.encode()).decode() == raw_password
         credential.created_at = datetime(2026, 9, 5, 21, 30, tzinfo=UTC)
         repeat_payload = "Maccount-repeat-token"
         repeat_onboarding = AccountOnboarding(

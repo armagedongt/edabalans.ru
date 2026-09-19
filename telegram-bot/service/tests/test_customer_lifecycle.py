@@ -16,7 +16,7 @@ def test_masterclass_access_stops_presale_without_per_message_purchase_checks(tm
         session.execute(text(
             "CREATE TABLE user_accesses ("
             "id TEXT PRIMARY KEY, user_id TEXT NOT NULL, resource_id TEXT NOT NULL, "
-            "revoked_at DATETIME, expires_at DATETIME)"
+            "revoked_at DATETIME, paused_at DATETIME, expires_at DATETIME)"
         ))
         session.execute(text(
             "CREATE TABLE masterclass_events (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, event_type TEXT NOT NULL)"

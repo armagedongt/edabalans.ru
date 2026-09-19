@@ -9,7 +9,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.orm import Session
 
 from app.customer_lifecycle import stop_presale_runs_for_user
-from app.account_credentials import generate_password, password_hash
+from app.account_credentials import encrypt_password, generate_password, password_hash
 from app.models import (
     AccountCredential,
     AccountOnboarding,
@@ -179,6 +179,7 @@ def consume_masterclass_link(
             credential = AccountCredential(
                 user_id=token.user_id,
                 password_hash=password_hash(raw_password, app_auth_secret),
+                password_ciphertext=encrypt_password(raw_password, app_auth_secret),
                 password_version=1,
                 issued_via="telegram",
             )

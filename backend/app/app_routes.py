@@ -1757,6 +1757,7 @@ def admin_app_users(
                 User.status == "active",
                 User.merged_into_user_id.is_(None),
                 UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
                 (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
             )
         ).all()
@@ -1846,6 +1847,7 @@ def active_resource_codes(db: Session, user_id: uuid.UUID) -> set[str]:
             .where(
                 UserAccess.user_id == user_id,
                 UserAccess.revoked_at.is_(None),
+                UserAccess.paused_at.is_(None),
                 (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
             )
         ).all()

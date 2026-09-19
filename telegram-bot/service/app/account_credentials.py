@@ -4,6 +4,8 @@ import base64
 import hashlib
 import secrets
 
+from cryptography.fernet import Fernet
+
 
 PASSWORD_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
 
@@ -25,3 +27,10 @@ def password_hash(password: str, pepper: str) -> str:
             base64.urlsafe_b64encode(derived).decode("ascii").rstrip("="),
         )
     )
+
+
+def encrypt_password(password: str, secret: str) -> str:
+    if not secret:
+        raise RuntimeError("APP_AUTH_SECRET is required")
+    digest = hashlib.sha256(("account-password-v1\0" + secret).encode("utf-8")).digest()
+    return Fernet(base64.urlsafe_b64encode(digest)).encrypt(password.encode("utf-8")).decode("ascii")

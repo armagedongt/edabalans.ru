@@ -73,6 +73,7 @@ def entitled_applications(session: Session, user_id: str | None) -> list[Applica
         WHERE ua.user_id = :user_id
           AND r.status = 'active'
           AND ua.revoked_at IS NULL
+          AND ua.paused_at IS NULL
           AND (ua.expires_at IS NULL OR ua.expires_at > :now)
     """), {"user_id": user_id, "now": now}).scalars().all())
     return [item for item in APPLICATIONS if codes.intersection(item.resource_codes)]

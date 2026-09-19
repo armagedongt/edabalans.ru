@@ -26,6 +26,7 @@ from app.models import (  # noqa: E402
     CourseEvent,
     CourseStageProgress,
     CourseStepProgress,
+    MasterclassEvent,
     Resource,
     User,
     UserAccess,
@@ -34,7 +35,7 @@ from app.models import (  # noqa: E402
 )
 
 
-def setup(*, course_ready: bool = True):
+def setup(*, course_ready: bool = True, masterclass_completed: bool = True):
     engine = create_engine(
         "sqlite+pysqlite:///:memory:",
         connect_args={"check_same_thread": False},
@@ -96,6 +97,13 @@ def setup(*, course_ready: bool = True):
                 granted_at=datetime.now(timezone.utc),
             )
         )
+        if masterclass_completed:
+            db.add(MasterclassEvent(
+                user_id=user.id,
+                event_key="masterclass:completed",
+                event_type="masterclass_completed",
+                details={},
+            ))
         for target in (user, denied):
             db.add_all(
                 [
@@ -178,15 +186,6 @@ def test_calorie_course_requires_access_and_exposes_five_stage_manifest():
 
     metabolism = client.get("/api/apps/metabolism?email=calories@example.test")
     assert metabolism.status_code == 200
-    assert metabolism.json()["ok"] is False
-    premature = client.put("/api/apps/metabolism", json={"variants": {"1": {"steps": 9000}}, "activeVariant": 1})
-    assert premature.status_code == 400
-    assert premature.json()["ok"] is False
-    with factory() as db:
-        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "calories@example.test"))
-        db.add(CourseStageProgress(user_id=user_id, course_code="calories", stage_number=2, completed_at=datetime.now(timezone.utc)))
-        db.commit()
-    metabolism = client.get("/api/apps/metabolism")
     assert metabolism.json()["ok"] is True
     saved_metabolism = client.put(
         "/api/apps/metabolism",
@@ -289,7 +288,7 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
     )
     assert second.status_code == 200
     assert second.json()["stages"][1]["opened"] is True
-    assert client.get("/api/apps/metabolism").json()["ok"] is False
+    assert client.get("/api/apps/metabolism").json()["ok"] is True
 
     with factory() as db:
         assert db.scalar(select(func.count(CourseStageProgress.id))) == 2
@@ -311,6 +310,22 @@ def test_calorie_course_completes_stage_in_order_and_opens_next_immediately():
     assert client.get("/api/apps/metabolism").json()["ok"] is True
     application = next(row for row in client.get("/api/account-auth/account").json()["applications"] if row["code"] == "metabolism")
     assert application["app"] == "metabolism"
+
+
+def test_calorie_course_and_calculator_are_blocked_until_masterclass_completion(monkeypatch):
+    client, _ = setup(masterclass_completed=False)
+    course = client.get("/api/calories/course?email=calories@example.test")
+    assert course.status_code == 403
+    assert "после завершения Мастер-класса" in course.json()["detail"]
+    calculator = client.get("/api/apps/metabolism")
+    assert calculator.status_code == 200
+    assert calculator.json()["ok"] is False
+    from app.product_catalog_service import PRODUCT_CONNECTIONS
+    monkeypatch.setitem(PRODUCT_CONNECTIONS["calories"], "maintenance", False)
+    account = client.get("/api/account-auth/account").json()
+    calories = next(item for item in account["courses"] if item["code"] == "calories")
+    assert calories["state"] == "masterclass_locked"
+    assert calories["app"] is None
 
 
 def test_calorie_material_can_be_published_without_structure_deploy():

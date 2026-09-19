@@ -5,6 +5,8 @@ import hashlib
 import hmac
 import secrets
 
+from cryptography.fernet import Fernet, InvalidToken
+
 
 PASSWORD_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"
 SCRYPT_N = 2**14
@@ -39,6 +41,24 @@ def password_hash(password: str, pepper: str) -> str:
             base64.urlsafe_b64encode(derived).decode("ascii").rstrip("="),
         )
     )
+
+
+def _password_fernet(secret: str) -> Fernet:
+    if not secret:
+        raise RuntimeError("APP_AUTH_SECRET is required")
+    digest = hashlib.sha256(("account-password-v1\0" + secret).encode("utf-8")).digest()
+    return Fernet(base64.urlsafe_b64encode(digest))
+
+
+def encrypt_password(password: str, secret: str) -> str:
+    return _password_fernet(secret).encrypt(password.encode("utf-8")).decode("ascii")
+
+
+def decrypt_password(ciphertext: str, secret: str) -> str:
+    try:
+        return _password_fernet(secret).decrypt(ciphertext.encode("ascii")).decode("utf-8")
+    except (InvalidToken, UnicodeDecodeError, ValueError) as exc:
+        raise ValueError("password ciphertext is invalid") from exc
 
 
 def verify_password(password: str, encoded: str, pepper: str) -> bool:

@@ -609,6 +609,31 @@ def test_processing_catalog_product_is_promoted_to_paid_once() -> None:
     assert duplicate.json()["status"] == "duplicate"
     with session_factory() as db:
         assert db.scalar(select(func.count(UserAccess.id))) == 1
+        access = db.scalar(select(UserAccess))
+        access.paused_at = datetime.now(timezone.utc)
+        db.commit()
+
+    replay = client.post(
+        "/integrations/tilda/payments", data=payload, headers=HEADERS
+    )
+    assert replay.json()["status"] == "duplicate"
+    with session_factory() as db:
+        assert db.scalar(select(func.count(UserAccess.id))) == 1
+        assert db.scalar(select(UserAccess.paused_at)) is not None
+
+    second_payload = dict(payload)
+    second_payload["orderid"] = "catalog-order-second"
+    second_payload["paymentid"] = "catalog-payment-second"
+    second = client.post(
+        "/integrations/tilda/payments", data=second_payload, headers=HEADERS
+    )
+    assert second.status_code == 200
+    assert second.json()["access"] == "granted"
+    with session_factory() as db:
+        accesses = list(db.scalars(select(UserAccess).order_by(UserAccess.granted_at)))
+        assert len(accesses) == 2
+        assert accesses[0].paused_at is not None
+        assert accesses[1].paused_at is None
     app.dependency_overrides.clear()
 
 

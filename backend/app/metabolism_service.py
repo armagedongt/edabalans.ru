@@ -6,20 +6,26 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, require_user_resource
-from app.models import CourseStageProgress, User
+from app.models import MasterclassEvent, Resource, User, UserCoursePolicy
 
 
-def metabolism_stage_complete(db: Session, user_id: uuid.UUID) -> bool:
-    return db.scalar(select(CourseStageProgress.id).where(
-        CourseStageProgress.user_id == user_id,
-        CourseStageProgress.course_code == "calories",
-        CourseStageProgress.stage_number == 2,
-        CourseStageProgress.completed_at.is_not(None),
+def metabolism_is_unlocked(db: Session, user_id: uuid.UUID) -> bool:
+    if db.scalar(select(MasterclassEvent.id).where(
+        MasterclassEvent.user_id == user_id,
+        MasterclassEvent.event_type == "masterclass_completed",
+    )) is not None:
+        return True
+    return db.scalar(select(UserCoursePolicy.id).join(
+        Resource, Resource.id == UserCoursePolicy.resource_id,
+    ).where(
+        UserCoursePolicy.user_id == user_id,
+        Resource.code == "ACCESS_CALORIES",
+        UserCoursePolicy.unlock_mode == "fully_unlocked",
     )) is not None
 
 
 def require_metabolism_user(db: Session, user: User) -> User:
     require_user_resource(db, user, "ACCESS_CALORIES")
-    if not metabolism_stage_complete(db, user.id):
-        raise AppAccessError("Калькулятор откроется после второго этапа Калорийного курса")
+    if not metabolism_is_unlocked(db, user.id):
+        raise AppAccessError("Калькулятор откроется после завершения Мастер-класса")
     return user

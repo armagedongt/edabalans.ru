@@ -1,13 +1,18 @@
 import hashlib
 import hmac
+import importlib.util
 import json
 import os
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from urllib.parse import parse_qs, urlencode, urlparse
 
+import pytest
+
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("APP_AUTH_SECRET", "test-account-secret")
+os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
+os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlalchemy import create_engine, select  # noqa: E402
@@ -24,18 +29,22 @@ from app.account_onboarding_service import (  # noqa: E402
     onboarding_links,
 )
 from app.account_security import (  # noqa: E402
+    decrypt_password,
+    encrypt_password,
     generate_password,
     password_hash,
     token_hash,
     verify_password,
 )
 from app.access_routes import account_courses  # noqa: E402
+from app.app_service import AppAccessError, require_user_resource  # noqa: E402
 from app.config import Settings, get_settings  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
 import app.main as main_module  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     AccountCredential,
+    AccountSession,
     AccountOnboarding,
     MessengerAccount,
     MessengerLinkToken,
@@ -45,6 +54,7 @@ from app.models import (  # noqa: E402
     UserAccess,
     UserEmail,
     UserLegalAcceptance,
+    AdminAppEdit,
 )
 
 
@@ -62,6 +72,8 @@ def settings() -> Settings:
         smtp_from_email="cabinet@example.test",
         telegram_test_bot_token="telegram-test-token",
         max_bot_token="max-test-token",
+        admin_username="admin@example.com",
+        admin_password="test-admin-password",
     )
 
 
@@ -109,6 +121,133 @@ def seed_credential(factory: sessionmaker[Session]) -> None:
             ]
         )
         db.commit()
+
+
+def test_password_encryption_round_trip_uses_secret_and_rejects_wrong_secret() -> None:
+    encrypted = encrypt_password("Visible-Password-7", "test-account-secret")
+    assert encrypted != "Visible-Password-7"
+    assert decrypt_password(encrypted, "test-account-secret") == "Visible-Password-7"
+    with pytest.raises(ValueError):
+        decrypt_password(encrypted, "wrong-secret")
+
+
+def test_bot_ciphertext_is_decryptable_by_backend_contract() -> None:
+    module_path = Path(__file__).parents[2] / "telegram-bot" / "service" / "app" / "account_credentials.py"
+    spec = importlib.util.spec_from_file_location("telegram_account_credentials_contract", module_path)
+    module = importlib.util.module_from_spec(spec)
+    assert spec.loader is not None
+    spec.loader.exec_module(module)
+    ciphertext = module.encrypt_password("Bot-Password-8", "test-account-secret")
+    assert decrypt_password(ciphertext, "test-account-secret") == "Bot-Password-8"
+
+
+def test_admin_can_reset_and_reveal_password_with_audit_log() -> None:
+    client, factory = setup()
+    seed_credential(factory)
+    with factory() as db:
+        user_id = db.scalar(select(UserEmail.user_id).where(UserEmail.email_normalized == "member@example.test"))
+        db.add(AccountSession(
+            user_id=user_id,
+            token_hash="active-session-token",
+            password_version=1,
+            expires_at=datetime.now(UTC) + timedelta(days=1),
+        ))
+        db.commit()
+    unauthenticated_legacy = client.post(f"/admin/api/users/{user_id}/credential/reveal")
+    assert unauthenticated_legacy.status_code == 401
+    unauthenticated_reset = client.post(f"/admin/api/users/{user_id}/credential/reset")
+    assert unauthenticated_reset.status_code == 401
+    assert client.post("/admin/api/login", json={"username": "admin@example.com", "password": "test-admin-password"}).status_code == 200
+    detail = client.get(f"/admin/api/users/{user_id}").json()
+    assert detail["credential"]["exists"] is True
+    assert detail["credential"]["password_available"] is False
+    legacy = client.post(f"/admin/api/users/{user_id}/credential/reveal")
+    assert legacy.status_code == 409
+    reset = client.post(f"/admin/api/users/{user_id}/credential/reset")
+    assert reset.status_code == 200
+    assert reset.headers["cache-control"] == "no-store"
+    password = reset.json()["password"]
+    revealed = client.post(f"/admin/api/users/{user_id}/credential/reveal")
+    assert revealed.status_code == 200
+    assert revealed.headers["cache-control"] == "no-store"
+    assert revealed.json() == {"password": password}
+    assert client.get(f"/admin/api/users/{user_id}").json()["credential"]["password_available"] is True
+    with factory() as db:
+        credential = db.get(AccountCredential, user_id)
+        assert credential.password_ciphertext != password
+        assert decrypt_password(credential.password_ciphertext, "test-account-secret") == password
+        assert verify_password(password, credential.password_hash, "test-account-secret")
+        assert db.scalar(select(AccountSession.revoked_at).where(AccountSession.token_hash == "active-session-token")) is not None
+        actions = list(db.scalars(select(AdminAppEdit.action).where(AdminAppEdit.target_user_id == user_id)))
+        assert actions == ["reset_account_password", "reveal_account_password"]
+
+
+def test_admin_pause_survives_manual_grant_until_explicit_resume() -> None:
+    client, factory = setup()
+    seed_credential(factory)
+    with factory() as db:
+        user = db.scalar(select(User).join(UserEmail).where(UserEmail.email_normalized == "member@example.test"))
+        resource = Resource(code="strength", name="Силовые", status="active")
+        db.add(resource)
+        db.flush()
+        db.add(UserAccess(user_id=user.id, resource_id=resource.id, source="paid_product_rule", granted_at=datetime.now(UTC)))
+        db.commit()
+        user_id = user.id
+    assert client.post("/admin/api/login", json={"username": "admin@example.com", "password": "test-admin-password"}).status_code == 200
+    assert client.post(f"/admin/api/users/{user_id}/accesses/strength/pause").json() == {"status": "paused"}
+    with factory() as db:
+        user = db.get(User, user_id)
+        with pytest.raises(AppAccessError):
+            require_user_resource(db, user, "strength", require_legal_acceptance=False)
+    assert client.post(f"/admin/api/users/{user_id}/accesses", json={"resource_code": "strength"}).json() == {"status": "granted"}
+    with factory() as db:
+        require_user_resource(db, db.get(User, user_id), "strength", require_legal_acceptance=False)
+    assert client.post(f"/admin/api/users/{user_id}/accesses/strength/pause").status_code == 200
+    assert client.post(f"/admin/api/users/{user_id}/accesses/strength/resume").json() == {"status": "active"}
+    with factory() as db:
+        require_user_resource(db, db.get(User, user_id), "strength", require_legal_acceptance=False)
+    assert client.delete(f"/admin/api/users/{user_id}/accesses/strength").json() == {"status": "revoked"}
+    with factory() as db:
+        with pytest.raises(AppAccessError):
+            require_user_resource(db, db.get(User, user_id), "strength", require_legal_acceptance=False)
+
+
+def test_payment_replay_keeps_pause_new_payment_restores_access_and_revoke_closes_all() -> None:
+    from app.access_service import grant_resources
+    from app.crm_service import revoke_manual_access
+
+    _, factory = setup()
+    with factory() as db:
+        user = User(display_name="Покупатель", status="active")
+        resource = Resource(code="strength", name="Силовые", status="active")
+        db.add_all([user, resource])
+        db.flush()
+        old_payment = Payment(source="test", external_order_id="old", product_name_raw="Силовые", payment_status="paid")
+        new_payment = Payment(source="test", external_order_id="new", product_name_raw="Силовые", payment_status="paid")
+        db.add_all([old_payment, new_payment])
+        db.flush()
+        original = UserAccess(
+            user_id=user.id,
+            resource_id=resource.id,
+            source_payment_id=old_payment.id,
+            source="paid_product_rule",
+            granted_at=datetime.now(UTC),
+            paused_at=datetime.now(UTC),
+        )
+        db.add(original)
+        db.flush()
+
+        assert grant_resources(db, user, ["strength"], source="paid_product_rule", source_payment_id=old_payment.id) == []
+        db.flush()
+        assert len(list(db.scalars(select(UserAccess)))) == 1
+        with pytest.raises(AppAccessError):
+            require_user_resource(db, user, "strength", require_legal_acceptance=False)
+
+        assert grant_resources(db, user, ["strength"], source="paid_product_rule", source_payment_id=new_payment.id) == ["strength"]
+        db.flush()
+        require_user_resource(db, user, "strength", require_legal_acceptance=False)
+        assert revoke_manual_access(db, user.id, "strength", "test-admin") is True
+        assert all(item.revoked_at is not None for item in db.scalars(select(UserAccess)))
 
 
 def telegram_init_data(user_id: int, auth_date: int | None = None) -> str:

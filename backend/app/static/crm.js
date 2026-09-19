@@ -394,6 +394,11 @@
     const purchaseTags = user.tags.filter((item) => item.category === "purchase");
     const otherTags = user.tags.filter((item) => item.category !== "purchase");
     const masterclass = user.masterclass || { questionnaires: [], events: [], offers: [] };
+    const accessByCode = Array.from(user.accesses.filter((item) => !item.revoked_at).reduce((groups, item) => {
+      const current = groups.get(item.code);
+      if (!current || (current.paused_at && !item.paused_at)) groups.set(item.code, item);
+      return groups;
+    }, new Map()).values());
     const questionnaireName = (kind) => kind === "onboarding" ? "Анкета перед началом" : kind === "closing-review" ? "Саморевью" : kind;
     root.innerHTML = `
       <div class="crm-profile-head">
@@ -408,7 +413,7 @@
       <div class="crm-kpis">
         <div class="crm-stat"><div class="crm-k">ОПЛАЧЕНО ПО ФАКТУ</div><div class="crm-v">${money(user.ltv_rub)}</div>${user.estimated_ltv_rub ? `<div class="crm-s">Оценка отдельно: ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</div>
         <div class="crm-stat"><div class="crm-k">ПОКУПОК</div><div class="crm-v">${user.purchase_count}</div></div>
-        <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${user.accesses.filter((item) => !item.revoked_at).length}</div></div>
+        <div class="crm-stat"><div class="crm-k">ДОСТУПОВ</div><div class="crm-v">${accessByCode.filter((item) => !item.paused_at).length}</div></div>
         <div class="crm-stat"><div class="crm-k">ПЕРВОЕ ПОЯВЛЕНИЕ</div><div class="crm-v" style="font-size:15px">${date(user.first_seen_at, false)}</div></div>
       </div>
       <section class="crm-card"><div class="crm-card-title">Покупки <span class="crm-card-sub">простые ярлыки для вас и бота</span></div>
@@ -431,11 +436,12 @@
             ${user.emails.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.email)}</span><span>${item.primary ? "основной" : ""}</span></div></div>`).join("") || `<form class="crm-two" id="email-form"><input class="crm-input" id="link-email" type="email" placeholder="Email после регистрации в ЛК"><button class="crm-btn small">Связать</button></form>`}
             ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             ${user.messengers.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.platform)}</span><strong>${esc(item.username ? `@${item.username}` : item.platform_user_id || "без ID")}</strong></div></div>`).join("")}
+            <div class="crm-row"><div class="crm-k">ВХОД В ЛИЧНЫЙ КАБИНЕТ</div><div class="crm-row-main"><span>${user.credential.exists ? `Версия пароля ${esc(user.credential.password_version)}` : "Пароль ещё не создан"}</span><code id="account-password-value">••••••••</code></div><div class="crm-row-meta">Просмотр и смена записываются в журнал админки.</div><div class="crm-two" style="margin-top:10px"><button class="crm-btn small" id="reveal-account-password" type="button" ${user.credential.password_available ? "" : "disabled"}>Показать пароль</button><button class="crm-btn small" id="reset-account-password" type="button">${user.credential.exists ? "Задать новый" : "Создать пароль"}</button></div>${user.credential.exists && !user.credential.password_available ? '<div class="crm-row-meta" style="margin-top:8px">Старый пароль создан до включения просмотра. Чтобы он появился здесь, один раз задайте новый.</div>' : ""}</div>
           </section>
           <section class="crm-card"><div class="crm-card-title">Купленные продукты и тарифы</div>${(user.purchased_products || []).map(purchasedProductRow).join("") || '<div class="crm-empty">Подтверждённых продуктов пока нет</div>'}</section>
           <section class="crm-card"><div class="crm-card-title">История покупок</div>${user.payments.map(paymentRow).join("") || '<div class="crm-empty">Покупок пока нет</div>'}</section>
           <section class="crm-card"><div class="crm-card-title">Ручная проверка доступов <span class="crm-card-sub">${esc(user.access_review_status)}</span></div>
-            <div class="crm-tags">${user.accesses.filter((item)=>!item.revoked_at).map((item)=>`<button class="crm-tag revoke-access" data-code="${esc(item.code)}">${esc(item.name)} ×</button>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>
+            <div class="crm-tags">${accessByCode.map((item)=>`<span class="crm-tag ${item.paused_at ? "empty" : ""}">${esc(item.name)}${item.paused_at ? " · на паузе" : ""} <button class="${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "вернуть" : "пауза"}</button> <button class="revoke-access" data-code="${esc(item.code)}" type="button">×</button></span>`).join("") || '<span class="crm-tag empty">доступов нет</span>'}</div>
             <form class="crm-two" id="grant-form" style="margin-top:10px"><select class="crm-input" id="resource-code">${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
             <form class="crm-form" id="review-form" style="margin-top:10px"><select class="crm-input" id="review-status"><option value="waiting_registration">Ждём регистрацию</option><option value="pending">Проверить</option><option value="completed">Проверено</option><option value="conflict">Конфликт</option><option value="not_required">Не требуется</option></select><select class="crm-input" id="tilda-status"><option value="not_checked">Tilda не проверена</option><option value="pending">Tilda проверить</option><option value="granted">Tilda доступ открыт</option><option value="not_required">Tilda не требуется</option></select><textarea class="crm-textarea" id="review-note" placeholder="Что проверить">${esc(user.access_review_note || "")}</textarea><button class="crm-btn small">Сохранить проверку</button></form>
           </section>
@@ -490,6 +496,15 @@
     document.getElementById("review-status").value = user.access_review_status;
     document.getElementById("tilda-status").value = user.tilda_access_status;
     document.getElementById("review-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/access-review`, {method:"PATCH", body:JSON.stringify({status:document.getElementById("review-status").value,tilda_status:document.getElementById("tilda-status").value,note:document.getElementById("review-note").value})}); await openUser(id); });
+    document.getElementById("reveal-account-password").addEventListener("click", async () => {
+      const result = await api(`/admin/api/users/${id}/credential/reveal`, {method:"POST"});
+      document.getElementById("account-password-value").textContent = result.password;
+    });
+    document.getElementById("reset-account-password").addEventListener("click", async () => {
+      if (user.credential.exists && !window.confirm("Текущий пароль перестанет работать, а все активные входы клиента завершатся. Продолжить?")) return;
+      const result = await api(`/admin/api/users/${id}/credential/reset`, {method:"POST"});
+      document.getElementById("account-password-value").textContent = result.password;
+    });
     document.getElementById("grant-form").addEventListener("submit", async (event) => { event.preventDefault(); await api(`/admin/api/users/${id}/accesses`, {method:"POST", body:JSON.stringify({resource_code:document.getElementById("resource-code").value})}); await openUser(id); });
     document.getElementById("personal-link-form").addEventListener("submit", async (event) => {
       event.preventDefault();
@@ -501,6 +516,8 @@
       document.getElementById("copy-personal-text").onclick = async () => { await navigator.clipboard.writeText(result.telegram_text); document.getElementById("copy-personal-text").textContent = "Скопировано"; };
     });
     root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await openUser(id); }));
+    root.querySelectorAll(".pause-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/pause`, {method:"POST"}); await openUser(id); }));
+    root.querySelectorAll(".resume-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/resume`, {method:"POST"}); await openUser(id); }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("tag-name").value.trim();

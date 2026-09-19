@@ -636,7 +636,8 @@ def test_max_apps_start_lists_only_entitled_and_course_revealed_apps(tmp_path, m
                 user_id TEXT NOT NULL,
                 resource_id TEXT NOT NULL,
                 expires_at TIMESTAMP NULL,
-                revoked_at TIMESTAMP NULL
+                revoked_at TIMESTAMP NULL,
+                paused_at TIMESTAMP NULL
             )
         """))
         session.execute(text("""
@@ -653,8 +654,8 @@ def test_max_apps_start_lists_only_entitled_and_course_revealed_apps(tmp_path, m
                 {"id": resource_id, "code": code},
             )
             session.execute(text("""
-                INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at)
-                VALUES (:id, :user_id, :resource_id, NULL, NULL)
+                INSERT INTO user_accesses (id, user_id, resource_id, expires_at, revoked_at, paused_at)
+                VALUES (:id, :user_id, :resource_id, NULL, NULL, NULL)
             """), {
                 "id": str(uuid.uuid4()),
                 "user_id": str(account.user_id),
@@ -736,6 +737,8 @@ def test_max_account_link_issues_short_password(tmp_path, monkeypatch):
         credential = session.get(AccountCredential, target_user_id)
         assert credential is not None
         assert credential.issued_via == "max"
+        assert credential.password_ciphertext
+        assert credential.password_ciphertext != match.group(1)
         account = session.scalar(select(CrmMessengerAccount).where(
             CrmMessengerAccount.platform == "max",
             CrmMessengerAccount.platform_user_id == "901",

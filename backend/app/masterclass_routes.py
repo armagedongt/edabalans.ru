@@ -1415,7 +1415,7 @@ def reveal_course_application(
 
 def access_codes(db: Session, user_id: uuid.UUID) -> set[str]:
     now = datetime.now(timezone.utc)
-    return set(db.scalars(select(Resource.code).join(UserAccess, UserAccess.resource_id == Resource.id).where(UserAccess.user_id == user_id, UserAccess.revoked_at.is_(None), (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)))).all())
+    return set(db.scalars(select(Resource.code).join(UserAccess, UserAccess.resource_id == Resource.id).where(UserAccess.user_id == user_id, UserAccess.revoked_at.is_(None), UserAccess.paused_at.is_(None), (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)))).all())
 
 
 def configured_offer_stage(db: Session, code: str) -> OfferStage:
@@ -2263,6 +2263,7 @@ def admin_masterclass_users(_: str = Depends(require_admin), db: Session = Depen
             UserEmail.is_primary.is_(True),
             Resource.code == "ACCESS_MASTERCLASS",
             UserAccess.revoked_at.is_(None),
+            UserAccess.paused_at.is_(None),
             (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
         )
         .distinct()
@@ -2344,6 +2345,7 @@ def admin_client_progress(_: str = Depends(require_admin), db: Session = Depends
         .where(
             Resource.code == "ACCESS_MASTERCLASS",
             UserAccess.revoked_at.is_(None),
+            UserAccess.paused_at.is_(None),
             (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
         )
         .distinct()

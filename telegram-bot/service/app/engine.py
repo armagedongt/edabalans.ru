@@ -371,6 +371,7 @@ def has_paid_product(session: Session, contact: Contact, product_codes: list[str
                     JOIN resources r ON r.id = ua.resource_id
                     WHERE ua.user_id = :user_id
                       AND ua.revoked_at IS NULL
+                      AND ua.paused_at IS NULL
                       AND (ua.expires_at IS NULL OR ua.expires_at > now())
                       AND r.code = 'ACCESS_MASTERCLASS'
                 )

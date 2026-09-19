@@ -184,7 +184,7 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
         for ddl in (
             "CREATE TABLE user_emails (user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
             "CREATE TABLE resources (id TEXT PRIMARY KEY, code TEXT)",
-            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, expires_at DATETIME)",
+            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, paused_at DATETIME, expires_at DATETIME)",
             "CREATE TABLE products (id TEXT PRIMARY KEY, code TEXT, name TEXT)",
             "CREATE TABLE payments (id TEXT PRIMARY KEY, product_id TEXT, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
             "CREATE TABLE questionnaire_runs (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT)",
@@ -204,7 +204,7 @@ def test_client_summary_uses_masterclass_payment_and_human_question_titles(tmp_p
             "INSERT INTO payments VALUES ('later-payment', NULL, 'Рецепты', CURRENT_TIMESTAMP, NULL, CURRENT_TIMESTAMP)"
         ))
         session.execute(text(
-            "INSERT INTO user_accesses VALUES (:user_id, 'mc', 'mc-payment', NULL, NULL)"
+            "INSERT INTO user_accesses VALUES (:user_id, 'mc', 'mc-payment', NULL, NULL, NULL)"
         ), {"user_id": user_id})
         session.execute(text(
             "INSERT INTO questionnaire_runs VALUES ('run', :user_id, 'onboarding')"
@@ -290,7 +290,7 @@ def test_dispatch_sends_closing_review_copy_to_participant(tmp_path):
         for ddl in (
             "CREATE TABLE user_emails (user_id TEXT, email_original TEXT, is_primary BOOLEAN, created_at DATETIME)",
             "CREATE TABLE resources (id TEXT PRIMARY KEY, code TEXT)",
-            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, expires_at DATETIME)",
+            "CREATE TABLE user_accesses (user_id TEXT, resource_id TEXT, source_payment_id TEXT, revoked_at DATETIME, paused_at DATETIME, expires_at DATETIME)",
             "CREATE TABLE products (id TEXT PRIMARY KEY, code TEXT, name TEXT)",
             "CREATE TABLE payments (id TEXT PRIMARY KEY, product_id TEXT, product_name_raw TEXT, paid_at DATETIME, source_event_at DATETIME, created_at DATETIME)",
             "CREATE TABLE questionnaire_runs (id TEXT PRIMARY KEY, user_id TEXT, kind TEXT)",

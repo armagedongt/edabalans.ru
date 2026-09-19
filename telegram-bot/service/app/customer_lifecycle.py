@@ -112,6 +112,7 @@ def reconcile_masterclass_presale_runs(session: Session) -> int:
                 "WHERE CAST(ua.user_id AS TEXT) = CAST(tg_contacts.user_id AS TEXT) "
                 "AND r.code = 'ACCESS_MASTERCLASS' "
                 "AND ua.revoked_at IS NULL "
+                "AND ua.paused_at IS NULL "
                 "AND (ua.expires_at IS NULL OR ua.expires_at > CURRENT_TIMESTAMP))"
             ),
         )

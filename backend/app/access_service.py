@@ -103,15 +103,20 @@ def grant_resources(
     now = datetime.now(timezone.utc)
     granted: list[str] = []
     for code, resource in resources.items():
-        current = db.scalar(
+        current_rows = list(db.scalars(
             select(UserAccess).where(
                 UserAccess.user_id == user.id,
                 UserAccess.resource_id == resource.id,
                 UserAccess.revoked_at.is_(None),
                 (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
             )
+        ))
+        usable = any(item.paused_at is None for item in current_rows)
+        same_payment = bool(
+            source_payment_id
+            and any(item.source_payment_id == source_payment_id for item in current_rows)
         )
-        if current is None:
+        if not usable and not same_payment and (not current_rows or source_payment_id is not None):
             db.add(
                 UserAccess(
                     user_id=user.id,
