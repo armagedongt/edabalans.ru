@@ -1,11 +1,16 @@
 ---
-document_status: planned
+document_status: archived
 date: 2026-09-17
 module_id: admin.control
 origin: owner-explicit
 ---
 
 # Следующий этап: единый вид административных экранов
+
+Статус: `archived`
+Причина архивации: первый общий shell реализован, а оставшиеся требования уточнены
+в активном `work/admin-console-redesign/user-spec.md`. Этот документ сохраняется
+как предыстория и не является параллельным ТЗ.
 
 ## Состояние на 19.09.2026
 

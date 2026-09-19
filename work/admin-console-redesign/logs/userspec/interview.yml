@@ -1,0 +1,159 @@
+# User-spec planning interview
+
+interview_metadata:
+  started: "2026-09-19"
+  last_updated: "2026-09-19"
+  status: "in_progress"
+  can_resume: true
+
+conversation_history:
+  - asked_at: "2026-09-19"
+    topic_keys: ["feature_description", "user_problem", "ui_ux_requirements", "integration_points"]
+    agent_questions: |
+      Владелец самостоятельно провёл полный проход текущей админки и попросил не
+      задавать повторных вопросов до фиксации ТЗ.
+    user_answer: |
+      Сначала выдать 2–3 эмодзи на выбор для каждого пункта свёрнутой панели вместо
+      CRM/DQ/CI/ME/OD. Реализацию пока не начинать. CRM должна стать главной, пустую
+      главную и дубли убрать. Люди — плотная таблица; покупатели, сопровождение и
+      доступ к МК — быстрые фильтры. Оплаты — отдельная быстрая лента. Объяснить
+      первое появление, теги и доступы, разобраться с медленной загрузкой и прыгающим
+      поиском. Из карточки человека сразу открывать настоящее приложение, оставив
+      только компактный административный переключатель человека и приложения.
+      Каталог материалов перенести в маркетинг, контент переименовать в курсы и
+      показывать конкретные курсы. Определитель допродаж перенести в коммерцию.
+      Продукты/описания и цены/тарифы пока оставить раздельно. Финансовую модель
+      адаптировать под desktop и позже связать с фактическими метриками. Telegram
+      оставить служебным и неактивным. Разъяснить карту/инструкцию/планы/документы/
+      Библиотекаря. Подготовить архитектуру онлайн-редактора канонических Markdown
+      курсов с API, preview, версиями и безопасной публикацией. Унифицировать
+      визуальный стиль всех внутренних экранов, но фирменная основа не договорена:
+      последняя фраза оборвалась после «возьмём, наверное, мой фирменный…».
+
+general_understanding:
+  feature_name:
+    score: 2
+    value: "Следующий этап единой админки edabalans"
+    gaps: []
+    required: true
+  feature_description:
+    score: 2
+    value: "Компактная CRM-first админка, прямой контекст приложений, понятные разделы и будущий Git-backed Markdown-редактор курсов."
+    gaps: []
+    required: true
+  work_type:
+    score: 2
+    value: "Поэтапный feature/refactoring существующей реализации без переписывания с нуля."
+    gaps: []
+    required: true
+  user_problem:
+    score: 2
+    value: "Оболочка существует, но навигация дублируется, экраны слишком разрежены и разностильны, некоторые операции медленные/неясные, а тексты курса неудобно редактировать."
+    gaps: []
+    required: true
+  target_users:
+    score: 2
+    value: "Сергей как основной администратор; архитектура не исключает будущего уполномоченного сотрудника."
+    gaps: []
+    required: false
+  success_criteria:
+    score: 2
+    value: "CRM открывается первой; плотные люди и оплаты; прямые приложения; однозначное меню; безопасная редактура Markdown; общий визуальный язык."
+    gaps: []
+    required: true
+  constraints:
+    score: 2
+    value: "Не удалять данные/старые API, не менять Telegram/платежи/host, не создавать второй источник истины, не начинать UI до визуального выбора."
+    gaps: []
+    required: true
+  testing_strategy:
+    score: 2
+    value: "Unit/API/integration/E2E и responsive проверки; до оптимизации production timing и SQL plan."
+    gaps: []
+    required: true
+
+user_experience:
+  user_stories:
+    score: 2
+    value: "Подробные потоки CRM, оплат, приложений, курсов, знаний и коммерции записаны в user-spec."
+    gaps: []
+    required: true
+  acceptance_criteria:
+    score: 2
+    value: "Набор наблюдаемых критериев записан в user-spec."
+    gaps: []
+    required: true
+  edge_cases:
+    score: 2
+    value: "Нет состояния при наличии доступа, непривязанная оплата, пустой поиск Library, параллельная версия Markdown, мобильная таблица."
+    gaps: []
+    required: true
+  error_scenarios:
+    score: 2
+    value: "Локальная ошибка запроса, устаревший search response, conflict SHA/version, ошибка preview/publish, сбой предметного экрана."
+    gaps: []
+    required: true
+  verification_strategy:
+    score: 2
+    value: "Agent verification и короткая ручная приёмка владельцем записаны."
+    gaps: []
+    required: true
+  ui_ux_requirements:
+    score: 1
+    value: "Структура и плотность определены; эмодзи и фирменная визуальная основа ожидают выбора."
+    gaps:
+      - "Выбрать эмодзи из предложенных вариантов"
+      - "Закончить фразу о фирменной визуальной основе"
+    required: false
+  risks:
+    score: 2
+    value: "Source-of-truth, прогресс курса, concurrency, performance, случайная публикация и CSS scope описаны."
+    gaps: []
+    required: true
+  technical_decisions:
+    score: 1
+    value: "Рекомендован Git-backed Markdown с explicit publish; окончательно подтвердить перед реализацией первого курса."
+    gaps:
+      - "Подтвердить Git-backed write path после готовности канонических MD Мастер-класса"
+    required: false
+  deploy_approach:
+    score: 2
+    value: "UI остаётся на текущем host; работа выпускается этапами, перенос на admin.edabalans.ru отдельно."
+    gaps: []
+    required: false
+  manual_user_actions:
+    score: 1
+    value: "Нужны только выбор эмодзи, визуальной основы и приёмка первого реального курса."
+    gaps: ["Получить два визуальных выбора владельца"]
+    required: false
+
+integration:
+  integration_points:
+    score: 2
+    value: "admin_catalog, CRM APIs, managed app context, course structure/material APIs, article renderer, content/library/knowledge, pricing/finance."
+    gaps: []
+    required: true
+  dependencies:
+    score: 2
+    value: "FastAPI, PostgreSQL, shared admin cookie, project Markdown renderer; возможный CodeMirror/GitHub Contents API."
+    gaps: []
+    required: false
+  technical_constraints:
+    score: 2
+    value: "Optimistic versioning, no direct ephemeral server edits, stable course IDs, no public DB, shared auth."
+    gaps: []
+    required: false
+  data_requirements:
+    score: 2
+    value: "CRM/commerce/attribution facts separated from finance assumptions; Markdown in Git separated from published runtime versions."
+    gaps: []
+    required: false
+  migration_needs:
+    score: 1
+    value: "Existing JSON manifest and DB material versions must remain compatible; exact Markdown migration waits for final MK files."
+    gaps: ["Inventory final canonical Masterclass Markdown before implementation"]
+    required: false
+
+notes: |
+  Draft is complete enough for owner review but cannot be approved until emoji and
+  visual baseline choices are captured. No UI implementation was authorized.
