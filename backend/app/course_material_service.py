@@ -21,6 +21,7 @@ from app.course_structure_service import (
 )
 from app.models import ContentItem, ContentItemVersion, ContentSource
 from app.masterclass_article_components import render_masterclass_component
+from app.masterclass_editorial import EDITABLE_MATERIALS, editorial_body, local_editable_material
 
 
 SOURCE_PLATFORM = "internal"
@@ -147,13 +148,22 @@ def get_material(db: Session, step_id: str) -> dict:
     context = course_context(db)
     day_number, step = article_step(context, step_id)
     version = latest_version(db, material_item(db, step_id))
-    return version_payload(
+    payload = version_payload(
         step_id,
         day_number,
         step,
         version,
         fallback_html=legacy_material_html(step) if version is None else "",
     )
+    if step_id in EDITABLE_MATERIALS:
+        html = render_material(editorial_body(local_editable_material(step_id)), "markdown")
+        payload.update(
+            html=html,
+            word_count=word_count(html),
+            published=True,
+            source="git_markdown",
+        )
+    return payload
 
 
 def list_materials(db: Session) -> dict:
@@ -362,14 +372,16 @@ def published_materials(
         and (step_id is None or step["id"] == step_id)
     }
     source = material_source(db)
-    if source is None or not allowed:
+    if not allowed:
         return {"ok": True, "materials": {}}
-    rows = db.execute(
-        select(ContentItem, ContentItemVersion)
-        .join(ContentItemVersion, ContentItemVersion.id == ContentItem.latest_version_id)
-        .where(ContentItem.source_id == source.id)
-        .where(ContentItem.external_id.in_(allowed))
-    ).all()
+    rows = []
+    if source is not None:
+        rows = db.execute(
+            select(ContentItem, ContentItemVersion)
+            .join(ContentItemVersion, ContentItemVersion.id == ContentItem.latest_version_id)
+            .where(ContentItem.source_id == source.id)
+            .where(ContentItem.external_id.in_(allowed))
+        ).all()
     materials = {}
     for item, version in rows:
         target = allowed.get(item.external_id)
@@ -379,4 +391,24 @@ def published_materials(
         materials[item.external_id] = version_payload(
             item.external_id, day_number, step, version
         )
+    for editable_step_id in EDITABLE_MATERIALS.keys() & allowed.keys():
+        day_number, step = allowed[editable_step_id]
+        current_version = latest_version(db, material_item(db, editable_step_id))
+        html = render_material(
+            editorial_body(local_editable_material(editable_step_id)), "markdown"
+        )
+        payload = version_payload(
+            editable_step_id,
+            day_number,
+            step,
+            current_version,
+            fallback_html=html,
+        )
+        payload.update(
+            html=html,
+            word_count=word_count(html),
+            published=True,
+            source="git_markdown",
+        )
+        materials[editable_step_id] = payload
     return {"ok": True, "materials": materials}

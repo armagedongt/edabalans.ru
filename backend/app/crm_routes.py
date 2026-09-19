@@ -125,7 +125,7 @@ def control_portal(
 @router.get("/admin/static/{asset_name}", include_in_schema=False)
 def admin_asset(
     request: Request,
-    asset_name: str = ApiPath(pattern="^(admin-favicon\\.svg|admin\\.css|admin\\.js|admin-shell\\.css|admin-shell\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|marketing\\.css|knowledge-base\\.css|knowledge-base\\.js|knowledge-library\\.css|knowledge-library\\.js|course-structure-editor\\.css|course-structure-editor\\.js|product-catalog-editor\\.css|product-catalog-editor\\.js|content-catalog\\.css|content-catalog\\.js)$"),
+    asset_name: str = ApiPath(pattern="^(admin-favicon\\.svg|admin\\.css|admin\\.js|admin-shell\\.css|admin-shell\\.js|admin-session\\.css|admin-login\\.css|admin-login\\.js|marketing\\.css|knowledge-base\\.css|knowledge-base\\.js|knowledge-library\\.css|knowledge-library\\.js|course-structure-editor\\.css|course-structure-editor\\.js|course-material-editor\\.css|course-material-editor\\.js|product-catalog-editor\\.css|product-catalog-editor\\.js|content-catalog\\.css|content-catalog\\.js)$"),
     credentials: HTTPBasicCredentials | None = Depends(security),
 ) -> FileResponse:
     is_public_asset = asset_name.startswith("admin-login") or asset_name == "admin-favicon.svg"
@@ -202,6 +202,23 @@ def course_structure_editor_page(
     if course_code not in {"masterclass-21", "calories"}:
         raise HTTPException(404, "Курс не найден")
     return protected_file("course-structure-editor.html")
+
+
+@router.get(
+    "/admin/courses/masterclass-21/materials/{step_id}/editor",
+    include_in_schema=False,
+)
+def course_material_editor_page(
+    request: Request,
+    step_id: str,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
+    if not admin_identity(request, credentials):
+        target = f"/admin/courses/masterclass-21/materials/{step_id}/editor"
+        return RedirectResponse(f"/admin?{urlencode({'next': target})}", status_code=303)
+    if step_id != "day-01-article-02":
+        raise HTTPException(404, "Материал пока не подключён к Markdown-редактору")
+    return protected_file("course-material-editor.html")
 
 
 @router.get("/admin/products", include_in_schema=False)

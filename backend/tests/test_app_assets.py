@@ -882,6 +882,16 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "Системный шаг" not in editor_js
     assert "Добавление, удаление и перестановка" not in editor_js
     assert "ID: " in editor_js
+    assert "Редактировать текст" in editor_js
+    material_editor_html = (static_dir / "course-material-editor.html").read_text(encoding="utf-8")
+    material_editor_js = (static_dir / "course-material-editor.js").read_text(encoding="utf-8")
+    assert "Сохранить черновик" in material_editor_html
+    assert "Опубликовать" in material_editor_html
+    assert "Что изменилось" in material_editor_html
+    assert "/preview" in material_editor_js
+    assert "/draft" in material_editor_js
+    assert "/publish" in material_editor_js
+    assert "/rollback" in material_editor_js
 
     fourth_day = manifest["days"][3]
     dqs_step = next(step for step in fourth_day["steps"] if step["kind"] == "dqs")

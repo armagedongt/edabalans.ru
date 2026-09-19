@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import difflib
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -10,12 +11,21 @@ from sqlalchemy.orm import Session
 
 from app.auth import require_admin
 from app.course_material_service import (
+    article_step,
     checked_course,
     get_material,
     list_materials,
     material_versions,
     publish_material,
     restore_material,
+    render_material,
+)
+from app.course_structure_service import course_context
+from app.github_content_editor import GitHubContentEditor
+from app.masterclass_editorial import (
+    EDITABLE_MATERIALS,
+    editorial_body_text,
+    validate_editorial_source,
 )
 from app import calorie_course_material_service
 from app.calorie_course_service import DOCUMENT_KEY as CALORIE_COURSE_CODE
@@ -84,6 +94,144 @@ class CourseMaterialRestore(BaseModel):
     expected_version: int = Field(ge=1)
 
 
+class EditorialPreview(BaseModel):
+    content: str = Field(min_length=1, max_length=500_000)
+
+
+class EditorialDraftSave(EditorialPreview):
+    expected_main_sha: str = Field(min_length=7, max_length=128)
+    expected_draft_sha: str | None = Field(default=None, min_length=7, max_length=128)
+
+
+class EditorialPublish(BaseModel):
+    expected_main_sha: str = Field(min_length=7, max_length=128)
+    expected_draft_sha: str = Field(min_length=7, max_length=128)
+
+
+class EditorialRollback(BaseModel):
+    commit_sha: str = Field(min_length=7, max_length=128)
+    expected_main_sha: str = Field(min_length=7, max_length=128)
+
+
+def editorial_editor() -> GitHubContentEditor:
+    return GitHubContentEditor()
+
+
+def editorial_title(db: Session, step_id: str) -> tuple[int, str]:
+    try:
+        day, step = article_step(course_context(db), step_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    return day, str(step.get("title") or step.get("label") or step_id)
+
+
+@router.get("/admin/api/editorial/masterclass/materials/{step_id}")
+def admin_editorial_material(
+    step_id: str,
+    _: str = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> dict:
+    day, title = editorial_title(db, step_id)
+    try:
+        payload = editorial_editor().load(step_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    return {**payload, "day": day, "title": title}
+
+
+@router.post("/admin/api/editorial/masterclass/materials/{step_id}/preview")
+def admin_editorial_preview(
+    step_id: str,
+    body: EditorialPreview,
+    _: str = Depends(require_admin),
+) -> dict:
+    try:
+        current = editorial_editor().load(step_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+    try:
+        warnings = validate_editorial_source(step_id, body.content)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    html = render_material(editorial_body_text(body.content), "markdown")
+    diff = "\n".join(
+        difflib.unified_diff(
+            current["main"]["content"].splitlines(),
+            body.content.splitlines(),
+            fromfile="опубликовано",
+            tofile="редактор",
+            lineterm="",
+        )
+    )
+    return {"ok": True, "html": html, "diff": diff, "warnings": warnings}
+
+
+@router.put("/admin/api/editorial/masterclass/materials/{step_id}/draft")
+def admin_editorial_save_draft(
+    step_id: str,
+    body: EditorialDraftSave,
+    admin: str = Depends(require_admin),
+) -> dict:
+    try:
+        validate_editorial_source(step_id, body.content)
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    try:
+        return editorial_editor().save_draft(
+            step_id,
+            content=body.content,
+            expected_main_sha=body.expected_main_sha,
+            expected_draft_sha=body.expected_draft_sha,
+            admin=admin,
+        )
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
+@router.post("/admin/api/editorial/masterclass/materials/{step_id}/publish")
+def admin_editorial_publish(
+    step_id: str,
+    body: EditorialPublish,
+    admin: str = Depends(require_admin),
+) -> dict:
+    try:
+        return editorial_editor().publish(
+            step_id,
+            expected_main_sha=body.expected_main_sha,
+            expected_draft_sha=body.expected_draft_sha,
+            admin=admin,
+        )
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
+@router.get("/admin/api/editorial/masterclass/materials/{step_id}/history")
+def admin_editorial_history(
+    step_id: str, _: str = Depends(require_admin)
+) -> dict:
+    try:
+        return editorial_editor().history(step_id)
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
+@router.post("/admin/api/editorial/masterclass/materials/{step_id}/rollback")
+def admin_editorial_rollback(
+    step_id: str,
+    body: EditorialRollback,
+    admin: str = Depends(require_admin),
+) -> dict:
+    try:
+        return editorial_editor().rollback(
+            step_id,
+            commit_sha=body.commit_sha,
+            expected_main_sha=body.expected_main_sha,
+            admin=admin,
+        )
+    except KeyError as exc:
+        raise HTTPException(404, str(exc)) from exc
+
+
 @router.get("/admin/api/courses/{course_code}/materials")
 def admin_course_materials(
     course_code: str,
@@ -114,6 +262,11 @@ def admin_publish_course_material(
     db: Session = Depends(get_db),
 ) -> dict:
     service = material_service(course_code)
+    if service is None and step_id in EDITABLE_MATERIALS:
+        raise HTTPException(
+            409,
+            "Этот материал управляется каноническим Markdown-файлом. Используйте новый редактор материала",
+        )
     publisher = publish_material if service is None else service.publish_material
     return publisher(
         db,
@@ -150,6 +303,11 @@ def admin_restore_course_material(
     db: Session = Depends(get_db),
 ) -> dict:
     service = material_service(course_code)
+    if service is None and step_id in EDITABLE_MATERIALS:
+        raise HTTPException(
+            409,
+            "Этот материал управляется каноническим Markdown-файлом. Используйте историю нового редактора",
+        )
     restorer = restore_material if service is None else service.restore_material
     return restorer(
         db,

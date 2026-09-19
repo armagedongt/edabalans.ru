@@ -79,6 +79,10 @@ class Settings(BaseSettings):
     intensive_day_3_max_post_url: str = "https://max.ru/id230409966750_bot?start=iz3"
     personal_masterclass_target_url: str = "https://xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai"
     telegram_channel_post_base_url: str = "https://t.me/Fitness_Talks"
+    github_contents_token: str = ""
+    github_repository: str = "armagedongt/edabalans.ru"
+    github_content_main_branch: str = "main"
+    github_content_draft_branch: str = "content-drafts"
 
     @property
     def allowed_origins_list(self) -> list[str]:

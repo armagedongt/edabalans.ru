@@ -205,6 +205,10 @@
       "path": "backend/app/database.py"
     },
     {
+      "module_id": "products.masterclass.course",
+      "path": "backend/app/github_content_editor.py"
+    },
+    {
       "module_id": "operations.imports",
       "path": "backend/app/importers/__init__.py"
     },
@@ -335,6 +339,10 @@
     {
       "module_id": "products.masterclass.course",
       "path": "backend/app/masterclass_article_components.py"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "backend/app/masterclass_editorial.py"
     },
     {
       "module_id": "products.masterclass.offers",
@@ -671,6 +679,18 @@
     {
       "module_id": "products.masterclass.course",
       "path": "backend/app/static/course-editors.html"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "backend/app/static/course-material-editor.css"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "backend/app/static/course-material-editor.html"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "backend/app/static/course-material-editor.js"
     },
     {
       "module_id": "products.masterclass.course",
@@ -1487,6 +1507,10 @@
     {
       "module_id": "admin.control",
       "path": "backend/tests/test_game_page.py"
+    },
+    {
+      "module_id": "products.masterclass.course",
+      "path": "backend/tests/test_github_content_editor.py"
     },
     {
       "module_id": "products",
@@ -10306,7 +10330,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 384,
+          "line": 401,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/access-reviews",
@@ -10314,7 +10338,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 299,
+          "line": 316,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/tags",
@@ -10322,7 +10346,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 304,
+          "line": 321,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/audit/variables",
@@ -10330,7 +10354,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 309,
+          "line": 326,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/summary",
@@ -10338,7 +10362,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 509,
+          "line": 526,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/tags",
@@ -10346,7 +10370,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 520,
+          "line": 537,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}",
@@ -10354,7 +10378,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 532,
+          "line": 549,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/tags/{tag_id}/merge",
@@ -10362,7 +10386,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 316,
+          "line": 333,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users",
@@ -10370,7 +10394,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 335,
+          "line": 352,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -10378,7 +10402,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 347,
+          "line": 364,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}",
@@ -10386,7 +10410,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 404,
+          "line": 421,
           "method": "PATCH",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/access-review",
@@ -10394,7 +10418,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 412,
+          "line": 429,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses",
@@ -10402,7 +10426,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 420,
+          "line": 437,
           "method": "DELETE",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -10410,7 +10434,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 428,
+          "line": 445,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses/{resource_code}/pause",
@@ -10418,7 +10442,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 436,
+          "line": 453,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/accesses/{resource_code}/resume",
@@ -10426,7 +10450,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 462,
+          "line": 479,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/credential/reset",
@@ -10434,7 +10458,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 444,
+          "line": 461,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/credential/reveal",
@@ -10442,7 +10466,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 395,
+          "line": 412,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/email",
@@ -10450,7 +10474,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 359,
+          "line": 376,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/notes",
@@ -10458,7 +10482,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 372,
+          "line": 389,
           "method": "POST",
           "module_id": "admin.control",
           "path": "/admin/api/users/{user_id}/tags",
@@ -10466,7 +10490,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 218,
+          "line": 235,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/content",
@@ -10482,7 +10506,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 227,
+          "line": 244,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/users",
@@ -10490,7 +10514,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 236,
+          "line": 253,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/admin/{section}",
@@ -10514,7 +10538,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 279,
+          "line": 296,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm",
@@ -10522,7 +10546,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 289,
+          "line": 306,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.css",
@@ -10530,7 +10554,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 294,
+          "line": 311,
           "method": "GET",
           "module_id": "admin.control",
           "path": "/crm/crm.js",
@@ -10728,7 +10752,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 218,
+          "line": 235,
           "module_id": "admin.control",
           "name": "content_catalog_page",
           "qualname": "content_catalog_page"
@@ -10736,7 +10760,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 227,
+          "line": 244,
           "module_id": "admin.control",
           "name": "legacy_admin_users",
           "qualname": "legacy_admin_users"
@@ -10744,7 +10768,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 236,
+          "line": 253,
           "module_id": "admin.control",
           "name": "admin_section",
           "qualname": "admin_section"
@@ -10752,7 +10776,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 279,
+          "line": 296,
           "module_id": "admin.control",
           "name": "crm_index",
           "qualname": "crm_index"
@@ -10760,7 +10784,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 289,
+          "line": 306,
           "module_id": "admin.control",
           "name": "crm_css",
           "qualname": "crm_css"
@@ -10768,7 +10792,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 294,
+          "line": 311,
           "module_id": "admin.control",
           "name": "crm_js",
           "qualname": "crm_js"
@@ -10776,7 +10800,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 299,
+          "line": 316,
           "module_id": "admin.control",
           "name": "admin_tag_audit",
           "qualname": "admin_tag_audit"
@@ -10784,7 +10808,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 304,
+          "line": 321,
           "module_id": "admin.control",
           "name": "admin_variable_audit",
           "qualname": "admin_variable_audit"
@@ -10792,7 +10816,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 309,
+          "line": 326,
           "module_id": "admin.control",
           "name": "admin_summary",
           "qualname": "admin_summary"
@@ -10800,7 +10824,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 316,
+          "line": 333,
           "module_id": "admin.control",
           "name": "admin_users",
           "qualname": "admin_users"
@@ -10808,7 +10832,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 335,
+          "line": 352,
           "module_id": "admin.control",
           "name": "admin_user",
           "qualname": "admin_user"
@@ -10816,7 +10840,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 347,
+          "line": 364,
           "module_id": "admin.control",
           "name": "admin_update_user",
           "qualname": "admin_update_user"
@@ -10824,7 +10848,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 359,
+          "line": 376,
           "module_id": "admin.control",
           "name": "admin_add_note",
           "qualname": "admin_add_note"
@@ -10832,7 +10856,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 372,
+          "line": 389,
           "module_id": "admin.control",
           "name": "admin_add_tag",
           "qualname": "admin_add_tag"
@@ -10840,7 +10864,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 384,
+          "line": 401,
           "module_id": "admin.control",
           "name": "admin_access_reviews",
           "qualname": "admin_access_reviews"
@@ -10848,7 +10872,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 395,
+          "line": 412,
           "module_id": "admin.control",
           "name": "admin_link_email",
           "qualname": "admin_link_email"
@@ -10856,7 +10880,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 404,
+          "line": 421,
           "module_id": "admin.control",
           "name": "admin_set_access_review",
           "qualname": "admin_set_access_review"
@@ -10864,7 +10888,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 412,
+          "line": 429,
           "module_id": "admin.control",
           "name": "admin_grant_access",
           "qualname": "admin_grant_access"
@@ -10872,7 +10896,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 420,
+          "line": 437,
           "module_id": "admin.control",
           "name": "admin_revoke_access",
           "qualname": "admin_revoke_access"
@@ -10880,7 +10904,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 428,
+          "line": 445,
           "module_id": "admin.control",
           "name": "admin_pause_access",
           "qualname": "admin_pause_access"
@@ -10888,7 +10912,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 436,
+          "line": 453,
           "module_id": "admin.control",
           "name": "admin_resume_access",
           "qualname": "admin_resume_access"
@@ -10896,7 +10920,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 444,
+          "line": 461,
           "module_id": "admin.control",
           "name": "admin_reveal_credential",
           "qualname": "admin_reveal_credential"
@@ -10904,7 +10928,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 462,
+          "line": 479,
           "module_id": "admin.control",
           "name": "admin_reset_credential",
           "qualname": "admin_reset_credential"
@@ -10912,7 +10936,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 509,
+          "line": 526,
           "module_id": "admin.control",
           "name": "admin_tags",
           "qualname": "admin_tags"
@@ -10920,7 +10944,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 520,
+          "line": 537,
           "module_id": "admin.control",
           "name": "admin_update_tag",
           "qualname": "admin_update_tag"
@@ -10928,7 +10952,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 532,
+          "line": 549,
           "module_id": "admin.control",
           "name": "admin_merge_tag",
           "qualname": "admin_merge_tag"
@@ -24143,7 +24167,7 @@
         {
           "file": "backend/app/config.py",
           "kind": "method",
-          "line": 84,
+          "line": 88,
           "module_id": "operations.delivery",
           "name": "allowed_origins_list",
           "qualname": "Settings.allowed_origins_list"
@@ -24151,7 +24175,7 @@
         {
           "file": "backend/app/config.py",
           "kind": "function",
-          "line": 100,
+          "line": 104,
           "module_id": "operations.delivery",
           "name": "get_settings",
           "qualname": "get_settings"
@@ -24241,13 +24265,21 @@
           "kind": "method",
           "line": 35,
           "module_id": "operations.delivery",
+          "name": "test_backend_build_context_includes_masterclass_editorial_content",
+          "qualname": "DeployPolicyTests.test_backend_build_context_includes_masterclass_editorial_content"
+        },
+        {
+          "file": "tools/tests/test_deploy_policy.py",
+          "kind": "method",
+          "line": 41,
+          "module_id": "operations.delivery",
           "name": "test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts",
           "qualname": "DeployPolicyTests.test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts"
         },
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 51,
+          "line": 57,
           "module_id": "operations.delivery",
           "name": "test_server_git_fetches_use_reliable_http11_transport",
           "qualname": "DeployPolicyTests.test_server_git_fetches_use_reliable_http11_transport"
@@ -24255,7 +24287,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 61,
+          "line": 67,
           "module_id": "operations.delivery",
           "name": "test_routine_deploy_reuses_cached_base_images",
           "qualname": "DeployPolicyTests.test_routine_deploy_reuses_cached_base_images"
@@ -24263,7 +24295,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 75,
+          "line": 81,
           "module_id": "operations.delivery",
           "name": "test_deploy_smoke_checks_the_public_blog_boundary",
           "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
@@ -24271,7 +24303,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 85,
+          "line": 91,
           "module_id": "operations.delivery",
           "name": "test_caddy_exposes_only_the_three_temporary_favicon_pages",
           "qualname": "DeployPolicyTests.test_caddy_exposes_only_the_three_temporary_favicon_pages"
@@ -24279,7 +24311,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 105,
+          "line": 111,
           "module_id": "operations.delivery",
           "name": "test_favicon_is_served_and_smoke_checked_on_every_managed_domain",
           "qualname": "DeployPolicyTests.test_favicon_is_served_and_smoke_checked_on_every_managed_domain"
@@ -24287,7 +24319,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 125,
+          "line": 131,
           "module_id": "operations.delivery",
           "name": "test_go_robokassa_probe_does_not_publish_general_checkout",
           "qualname": "DeployPolicyTests.test_go_robokassa_probe_does_not_publish_general_checkout"
@@ -24295,7 +24327,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 163,
+          "line": 169,
           "module_id": "operations.delivery",
           "name": "test_go_public_intensive_redirect_preserves_attribution",
           "qualname": "DeployPolicyTests.test_go_public_intensive_redirect_preserves_attribution"
@@ -24303,7 +24335,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 189,
+          "line": 195,
           "module_id": "operations.delivery",
           "name": "test_ci_builds_and_tests_only_changed_application_services",
           "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
@@ -24311,7 +24343,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 199,
+          "line": 205,
           "module_id": "operations.delivery",
           "name": "test_backup_impact_classification_uses_real_git_diffs",
           "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -24319,7 +24351,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 277,
+          "line": 292,
           "module_id": "operations.delivery",
           "name": "classify",
           "qualname": "DeployPolicyTests.classify"
@@ -24327,7 +24359,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 287,
+          "line": 302,
           "module_id": "operations.delivery",
           "name": "commit",
           "qualname": "DeployPolicyTests.commit"
@@ -24335,7 +24367,7 @@
         {
           "file": "tools/tests/test_deploy_policy.py",
           "kind": "method",
-          "line": 293,
+          "line": 308,
           "module_id": "operations.delivery",
           "name": "git",
           "qualname": "DeployPolicyTests.git"
@@ -32318,7 +32350,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 249,
+          "line": 266,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/login",
@@ -32326,7 +32358,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 271,
+          "line": 288,
           "method": "POST",
           "module_id": "platform.auth",
           "path": "/admin/api/logout",
@@ -32804,7 +32836,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 249,
+          "line": 266,
           "module_id": "platform.auth",
           "name": "admin_login",
           "qualname": "admin_login"
@@ -32812,7 +32844,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 271,
+          "line": 288,
           "module_id": "platform.auth",
           "name": "admin_logout",
           "qualname": "admin_logout"
@@ -33348,7 +33380,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 138,
+          "line": 151,
           "module_id": "platform.auth",
           "name": "test_unified_admin_requires_authentication",
           "qualname": "test_unified_admin_requires_authentication"
@@ -33356,7 +33388,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 144,
+          "line": 157,
           "module_id": "platform.auth",
           "name": "test_admin_surfaces_use_the_lightning_favicon",
           "qualname": "test_admin_surfaces_use_the_lightning_favicon"
@@ -33364,7 +33396,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 182,
+          "line": 196,
           "module_id": "platform.auth",
           "name": "test_content_catalog_uses_unified_admin_shell",
           "qualname": "test_content_catalog_uses_unified_admin_shell"
@@ -33372,7 +33404,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 188,
+          "line": 202,
           "module_id": "platform.auth",
           "name": "test_retired_masterclass_admin_surfaces_are_not_available",
           "qualname": "test_retired_masterclass_admin_surfaces_are_not_available"
@@ -33380,7 +33412,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 207,
+          "line": 221,
           "module_id": "platform.auth",
           "name": "test_masterclass_offers_preview_requires_authentication",
           "qualname": "test_masterclass_offers_preview_requires_authentication"
@@ -33388,7 +33420,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 217,
+          "line": 231,
           "module_id": "platform.auth",
           "name": "test_masterclass_offers_preview_uses_canonical_course_sources",
           "qualname": "test_masterclass_offers_preview_uses_canonical_course_sources"
@@ -33396,7 +33428,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 250,
+          "line": 264,
           "module_id": "platform.auth",
           "name": "test_unified_admin_assets_require_authentication",
           "qualname": "test_unified_admin_assets_require_authentication"
@@ -33404,7 +33436,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 256,
+          "line": 270,
           "module_id": "platform.auth",
           "name": "test_unified_shell_is_loaded_by_main_admin_surfaces",
           "qualname": "test_unified_shell_is_loaded_by_main_admin_surfaces"
@@ -33412,7 +33444,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 270,
+          "line": 284,
           "module_id": "platform.auth",
           "name": "test_cross_module_user_summary_requires_authentication",
           "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -33420,7 +33452,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 275,
+          "line": 289,
           "module_id": "platform.auth",
           "name": "test_login_creates_shared_admin_session",
           "qualname": "test_login_creates_shared_admin_session"
@@ -33428,7 +33460,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 295,
+          "line": 309,
           "module_id": "platform.auth",
           "name": "test_login_rejects_wrong_password",
           "qualname": "test_login_rejects_wrong_password"
@@ -33436,7 +33468,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 303,
+          "line": 317,
           "module_id": "platform.auth",
           "name": "test_login_assets_are_public",
           "qualname": "test_login_assets_are_public"
@@ -33444,7 +33476,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 308,
+          "line": 322,
           "module_id": "platform.auth",
           "name": "test_admin_session_last_30_days_and_password_rotation_revokes_it",
           "qualname": "test_admin_session_last_30_days_and_password_rotation_revokes_it"
@@ -33452,7 +33484,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 336,
+          "line": 350,
           "module_id": "platform.auth",
           "name": "test_admin_cookie_cross_subdomain_and_logout",
           "qualname": "test_admin_cookie_cross_subdomain_and_logout"
@@ -33460,7 +33492,7 @@
         {
           "file": "backend/tests/test_crm_auth.py",
           "kind": "function",
-          "line": 351,
+          "line": 365,
           "module_id": "platform.auth",
           "name": "test_independent_host_login_does_not_expand_cookie_trust",
           "qualname": "test_independent_host_login_does_not_expand_cookie_trust"
@@ -36800,7 +36832,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 501,
+          "line": 518,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payment-products",
@@ -36808,7 +36840,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 475,
+          "line": 492,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/payments",
@@ -36816,7 +36848,7 @@
         },
         {
           "file": "backend/app/crm_routes.py",
-          "line": 390,
+          "line": 407,
           "method": "GET",
           "module_id": "platform.commerce",
           "path": "/admin/api/resources",
@@ -37486,7 +37518,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 390,
+          "line": 407,
           "module_id": "platform.commerce",
           "name": "admin_resources",
           "qualname": "admin_resources"
@@ -37494,7 +37526,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 475,
+          "line": 492,
           "module_id": "platform.commerce",
           "name": "admin_payments",
           "qualname": "admin_payments"
@@ -37502,7 +37534,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 501,
+          "line": 518,
           "module_id": "platform.commerce",
           "name": "admin_payment_products",
           "qualname": "admin_payment_products"
@@ -44783,7 +44815,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 271,
+          "line": 273,
           "module_id": "platform.crm",
           "name": "list_payment_products",
           "qualname": "list_payment_products"
@@ -44791,7 +44823,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 281,
+          "line": 283,
           "module_id": "platform.crm",
           "name": "list_payments",
           "qualname": "list_payments"
@@ -44799,7 +44831,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 349,
+          "line": 351,
           "module_id": "platform.crm",
           "name": "user_detail",
           "qualname": "user_detail"
@@ -44807,7 +44839,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 612,
+          "line": 614,
           "module_id": "platform.crm",
           "name": "update_user",
           "qualname": "update_user"
@@ -44815,7 +44847,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 622,
+          "line": 624,
           "module_id": "platform.crm",
           "name": "add_note",
           "qualname": "add_note"
@@ -44823,7 +44855,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 633,
+          "line": 635,
           "module_id": "platform.crm",
           "name": "tag_code",
           "qualname": "tag_code"
@@ -44831,7 +44863,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 638,
+          "line": 640,
           "module_id": "platform.crm",
           "name": "add_tag",
           "qualname": "add_tag"
@@ -44839,7 +44871,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 686,
+          "line": 688,
           "module_id": "platform.crm",
           "name": "list_tags",
           "qualname": "list_tags"
@@ -44847,7 +44879,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 742,
+          "line": 744,
           "module_id": "platform.crm",
           "name": "update_tag",
           "qualname": "update_tag"
@@ -44855,7 +44887,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 763,
+          "line": 765,
           "module_id": "platform.crm",
           "name": "merge_tag",
           "qualname": "merge_tag"
@@ -44863,7 +44895,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 777,
+          "line": 779,
           "module_id": "platform.crm",
           "name": "list_access_reviews",
           "qualname": "list_access_reviews"
@@ -44871,7 +44903,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 792,
+          "line": 794,
           "module_id": "platform.crm",
           "name": "list_resources",
           "qualname": "list_resources"
@@ -44879,7 +44911,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 798,
+          "line": 800,
           "module_id": "platform.crm",
           "name": "link_user_email",
           "qualname": "link_user_email"
@@ -44887,7 +44919,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 822,
+          "line": 824,
           "module_id": "platform.crm",
           "name": "set_access_review",
           "qualname": "set_access_review"
@@ -44895,7 +44927,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 841,
+          "line": 843,
           "module_id": "platform.crm",
           "name": "grant_manual_access",
           "qualname": "grant_manual_access"
@@ -44903,7 +44935,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 859,
+          "line": 861,
           "module_id": "platform.crm",
           "name": "revoke_manual_access",
           "qualname": "revoke_manual_access"
@@ -44911,7 +44943,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 874,
+          "line": 876,
           "module_id": "platform.crm",
           "name": "pause_manual_access",
           "qualname": "pause_manual_access"
@@ -44919,7 +44951,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 891,
+          "line": 893,
           "module_id": "platform.crm",
           "name": "resume_manual_access",
           "qualname": "resume_manual_access"
@@ -44927,7 +44959,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 908,
+          "line": 910,
           "module_id": "platform.crm",
           "name": "reveal_account_password",
           "qualname": "reveal_account_password"
@@ -44935,7 +44967,7 @@
         {
           "file": "backend/app/crm_service.py",
           "kind": "function",
-          "line": 924,
+          "line": 926,
           "module_id": "platform.crm",
           "name": "reset_account_password",
           "qualname": "reset_account_password"
@@ -47590,7 +47622,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 965,
+          "line": 975,
           "module_id": "products",
           "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
           "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -47598,7 +47630,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 983,
+          "line": 993,
           "module_id": "products",
           "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
           "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -47606,7 +47638,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1010,
+          "line": 1020,
           "module_id": "products",
           "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
           "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -47614,7 +47646,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1035,
+          "line": 1045,
           "module_id": "products",
           "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
           "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -47622,7 +47654,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1049,
+          "line": 1059,
           "module_id": "products",
           "name": "test_masterclass_manifest_is_the_complete_canonical_program",
           "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -47630,7 +47662,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1116,
+          "line": 1126,
           "module_id": "products",
           "name": "test_masterclass_media_uses_present_links_and_player_route",
           "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -47638,7 +47670,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1132,
+          "line": 1142,
           "module_id": "products",
           "name": "test_legal_friendly_routes_are_public",
           "qualname": "test_legal_friendly_routes_are_public"
@@ -47646,7 +47678,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1151,
+          "line": 1161,
           "module_id": "products",
           "name": "test_legal_navigation_uses_permanent_public_domain",
           "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -47654,7 +47686,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1163,
+          "line": 1173,
           "module_id": "products",
           "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
           "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -47662,7 +47694,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1186,
+          "line": 1196,
           "module_id": "products",
           "name": "test_intensive_concept_pages_are_public",
           "qualname": "test_intensive_concept_pages_are_public"
@@ -47670,7 +47702,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1276,
+          "line": 1286,
           "module_id": "products",
           "name": "test_removed_video_player_preview_routes_are_unavailable",
           "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -47678,7 +47710,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1282,
+          "line": 1292,
           "module_id": "products",
           "name": "test_masterclass_sales_fragment_uses_server_price_codes",
           "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -47686,7 +47718,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1295,
+          "line": 1305,
           "module_id": "products",
           "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
           "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -47694,7 +47726,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1331,
+          "line": 1341,
           "module_id": "products",
           "name": "test_dqs_notifies_course_only_after_server_save",
           "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -47702,7 +47734,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1342,
+          "line": 1352,
           "module_id": "products",
           "name": "test_tilda_origin_is_allowed_for_api_preflight",
           "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -47710,7 +47742,7 @@
         {
           "file": "backend/tests/test_app_assets.py",
           "kind": "function",
-          "line": 1356,
+          "line": 1366,
           "module_id": "products",
           "name": "test_strength_new_user_can_start_and_manage_own_workouts",
           "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -48541,7 +48573,7 @@
       "routes": [
         {
           "file": "backend/app/crm_routes.py",
-          "line": 208,
+          "line": 225,
           "method": "GET",
           "module_id": "products.catalog",
           "path": "/admin/products",
@@ -48579,7 +48611,7 @@
         {
           "file": "backend/app/crm_routes.py",
           "kind": "function",
-          "line": 208,
+          "line": 225,
           "module_id": "products.catalog",
           "name": "product_catalog_page",
           "qualname": "product_catalog_page"
@@ -51248,6 +51280,7 @@
         "сохранять введённые через Enter переносы строк без HTML-кода в редакторе;",
         "задавать каноническую структуру страницы статьи и её компактного оглавления без",
         "готовить и публиковать редакцию напрямую из `content/masterclass/editorial/`, где",
+        "редактировать первый пилотный материал через защищённый Git-backed экран:",
         "публиковать обычный текстовый материал отдельной версией по стабильному",
         "восстанавливать предыдущую редакцию одного материала без отката курса;",
         "безопасно рендерить продуктовые вставки `slider(...)` и",
@@ -51276,6 +51309,10 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "backend/app/github_content_editor.py"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "backend/app/managed_documents.py"
         },
         {
@@ -51284,7 +51321,23 @@
         },
         {
           "module_id": "products.masterclass.course",
+          "path": "backend/app/masterclass_editorial.py"
+        },
+        {
+          "module_id": "products.masterclass.course",
           "path": "backend/app/static/course-editors.html"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/app/static/course-material-editor.css"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/app/static/course-material-editor.html"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/app/static/course-material-editor.js"
         },
         {
           "module_id": "products.masterclass.course",
@@ -51333,6 +51386,10 @@
         {
           "module_id": "products.masterclass.course",
           "path": "backend/tests/test_course_structure_multiline.py"
+        },
+        {
+          "module_id": "products.masterclass.course",
+          "path": "backend/tests/test_github_content_editor.py"
         },
         {
           "module_id": "products.masterclass.course",
@@ -52383,7 +52440,7 @@
       "routes": [
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 88,
+          "line": 236,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials",
@@ -52391,7 +52448,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 98,
+          "line": 246,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -52399,7 +52456,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 109,
+          "line": 257,
           "method": "PUT",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -52407,7 +52464,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 127,
+          "line": 280,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -52415,7 +52472,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 144,
+          "line": 297,
           "method": "POST",
           "module_id": "products.masterclass.course",
           "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -52423,7 +52480,55 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 55,
+          "line": 129,
+          "method": "GET",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}",
+          "symbol": "admin_editorial_material"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 170,
+          "method": "PUT",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}/draft",
+          "symbol": "admin_editorial_save_draft"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 209,
+          "method": "GET",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}/history",
+          "symbol": "admin_editorial_history"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 143,
+          "method": "POST",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}/preview",
+          "symbol": "admin_editorial_preview"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 192,
+          "method": "POST",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}/publish",
+          "symbol": "admin_editorial_publish"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 219,
+          "method": "POST",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/api/editorial/masterclass/materials/{step_id}/rollback",
+          "symbol": "admin_editorial_rollback"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "line": 65,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/article-components.css",
@@ -52431,7 +52536,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 69,
+          "line": 79,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/article-components.js",
@@ -52439,7 +52544,7 @@
         },
         {
           "file": "backend/app/course_material_routes.py",
-          "line": 43,
+          "line": 53,
           "method": "GET",
           "module_id": "products.masterclass.course",
           "path": "/course-assets/masterclass/media/{asset_path:path}",
@@ -52487,6 +52592,14 @@
         },
         {
           "file": "backend/app/crm_routes.py",
+          "line": 211,
+          "method": "GET",
+          "module_id": "products.masterclass.course",
+          "path": "/admin/courses/masterclass-21/materials/{step_id}/editor",
+          "symbol": "course_material_editor_page"
+        },
+        {
+          "file": "backend/app/crm_routes.py",
           "line": 193,
           "method": "GET",
           "module_id": "products.masterclass.course",
@@ -52518,7 +52631,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 26,
+          "line": 36,
           "module_id": "products.masterclass.course",
           "name": "material_service",
           "qualname": "material_service"
@@ -52526,7 +52639,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 38,
+          "line": 48,
           "module_id": "products.masterclass.course",
           "name": "component_asset",
           "qualname": "component_asset"
@@ -52534,7 +52647,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 43,
+          "line": 53,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_media",
           "qualname": "masterclass_article_media"
@@ -52542,7 +52655,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 55,
+          "line": 65,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_component_styles",
           "qualname": "masterclass_article_component_styles"
@@ -52550,7 +52663,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 69,
+          "line": 79,
           "module_id": "products.masterclass.course",
           "name": "masterclass_article_component_script",
           "qualname": "masterclass_article_component_script"
@@ -52558,7 +52671,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 77,
+          "line": 87,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialUpdate",
           "qualname": "CourseMaterialUpdate"
@@ -52566,15 +52679,111 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "class",
-          "line": 83,
+          "line": 93,
           "module_id": "products.masterclass.course",
           "name": "CourseMaterialRestore",
           "qualname": "CourseMaterialRestore"
         },
         {
           "file": "backend/app/course_material_routes.py",
+          "kind": "class",
+          "line": 97,
+          "module_id": "products.masterclass.course",
+          "name": "EditorialPreview",
+          "qualname": "EditorialPreview"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "class",
+          "line": 101,
+          "module_id": "products.masterclass.course",
+          "name": "EditorialDraftSave",
+          "qualname": "EditorialDraftSave"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "class",
+          "line": 106,
+          "module_id": "products.masterclass.course",
+          "name": "EditorialPublish",
+          "qualname": "EditorialPublish"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "class",
+          "line": 111,
+          "module_id": "products.masterclass.course",
+          "name": "EditorialRollback",
+          "qualname": "EditorialRollback"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 88,
+          "line": 116,
+          "module_id": "products.masterclass.course",
+          "name": "editorial_editor",
+          "qualname": "editorial_editor"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 120,
+          "module_id": "products.masterclass.course",
+          "name": "editorial_title",
+          "qualname": "editorial_title"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 129,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_material",
+          "qualname": "admin_editorial_material"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 143,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_preview",
+          "qualname": "admin_editorial_preview"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 170,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_save_draft",
+          "qualname": "admin_editorial_save_draft"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 192,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_publish",
+          "qualname": "admin_editorial_publish"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 209,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_history",
+          "qualname": "admin_editorial_history"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 219,
+          "module_id": "products.masterclass.course",
+          "name": "admin_editorial_rollback",
+          "qualname": "admin_editorial_rollback"
+        },
+        {
+          "file": "backend/app/course_material_routes.py",
+          "kind": "function",
+          "line": 236,
           "module_id": "products.masterclass.course",
           "name": "admin_course_materials",
           "qualname": "admin_course_materials"
@@ -52582,7 +52791,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 98,
+          "line": 246,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material",
           "qualname": "admin_course_material"
@@ -52590,7 +52799,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 109,
+          "line": 257,
           "module_id": "products.masterclass.course",
           "name": "admin_publish_course_material",
           "qualname": "admin_publish_course_material"
@@ -52598,7 +52807,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 127,
+          "line": 280,
           "module_id": "products.masterclass.course",
           "name": "admin_course_material_versions",
           "qualname": "admin_course_material_versions"
@@ -52606,7 +52815,7 @@
         {
           "file": "backend/app/course_material_routes.py",
           "kind": "function",
-          "line": 144,
+          "line": 297,
           "module_id": "products.masterclass.course",
           "name": "admin_restore_course_material",
           "qualname": "admin_restore_course_material"
@@ -52614,7 +52823,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 32,
+          "line": 33,
           "module_id": "products.masterclass.course",
           "name": "checked_course",
           "qualname": "checked_course"
@@ -52622,7 +52831,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 38,
+          "line": 39,
           "module_id": "products.masterclass.course",
           "name": "article_step",
           "qualname": "article_step"
@@ -52630,7 +52839,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 52,
+          "line": 53,
           "module_id": "products.masterclass.course",
           "name": "material_source",
           "qualname": "material_source"
@@ -52638,7 +52847,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 71,
+          "line": 72,
           "module_id": "products.masterclass.course",
           "name": "material_item",
           "qualname": "material_item"
@@ -52646,7 +52855,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 86,
+          "line": 87,
           "module_id": "products.masterclass.course",
           "name": "latest_version",
           "qualname": "latest_version"
@@ -52654,7 +52863,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 92,
+          "line": 93,
           "module_id": "products.masterclass.course",
           "name": "word_count",
           "qualname": "word_count"
@@ -52662,7 +52871,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 96,
+          "line": 97,
           "module_id": "products.masterclass.course",
           "name": "version_payload",
           "qualname": "version_payload"
@@ -52670,7 +52879,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 121,
+          "line": 122,
           "module_id": "products.masterclass.course",
           "name": "legacy_material_html",
           "qualname": "legacy_material_html"
@@ -52678,7 +52887,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 146,
+          "line": 147,
           "module_id": "products.masterclass.course",
           "name": "get_material",
           "qualname": "get_material"
@@ -52686,7 +52895,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 159,
+          "line": 169,
           "module_id": "products.masterclass.course",
           "name": "list_materials",
           "qualname": "list_materials"
@@ -52694,7 +52903,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 189,
+          "line": 199,
           "module_id": "products.masterclass.course",
           "name": "render_material",
           "qualname": "render_material"
@@ -52702,7 +52911,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 210,
+          "line": 220,
           "module_id": "products.masterclass.course",
           "name": "material_hash",
           "qualname": "material_hash"
@@ -52710,7 +52919,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 214,
+          "line": 224,
           "module_id": "products.masterclass.course",
           "name": "publish_material",
           "qualname": "publish_material"
@@ -52718,7 +52927,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 291,
+          "line": 301,
           "module_id": "products.masterclass.course",
           "name": "material_versions",
           "qualname": "material_versions"
@@ -52726,7 +52935,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 320,
+          "line": 330,
           "module_id": "products.masterclass.course",
           "name": "restore_material",
           "qualname": "restore_material"
@@ -52734,7 +52943,7 @@
         {
           "file": "backend/app/course_material_service.py",
           "kind": "function",
-          "line": 349,
+          "line": 359,
           "module_id": "products.masterclass.course",
           "name": "published_materials",
           "qualname": "published_materials"
@@ -53012,6 +53221,166 @@
           "qualname": "course_structure_editor_page"
         },
         {
+          "file": "backend/app/crm_routes.py",
+          "kind": "function",
+          "line": 211,
+          "module_id": "products.masterclass.course",
+          "name": "course_material_editor_page",
+          "qualname": "course_material_editor_page"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "function",
+          "line": 21,
+          "module_id": "products.masterclass.course",
+          "name": "audit_actor",
+          "qualname": "audit_actor"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "class",
+          "line": 25,
+          "module_id": "products.masterclass.course",
+          "name": "GitHubContentEditor",
+          "qualname": "GitHubContentEditor"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 26,
+          "module_id": "products.masterclass.course",
+          "name": "__init__",
+          "qualname": "GitHubContentEditor.__init__"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 30,
+          "module_id": "products.masterclass.course",
+          "name": "repository",
+          "qualname": "GitHubContentEditor.repository"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 34,
+          "module_id": "products.masterclass.course",
+          "name": "main_branch",
+          "qualname": "GitHubContentEditor.main_branch"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 38,
+          "module_id": "products.masterclass.course",
+          "name": "draft_branch",
+          "qualname": "GitHubContentEditor.draft_branch"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 42,
+          "module_id": "products.masterclass.course",
+          "name": "connected",
+          "qualname": "GitHubContentEditor.connected"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 45,
+          "module_id": "products.masterclass.course",
+          "name": "_url",
+          "qualname": "GitHubContentEditor._url"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 49,
+          "module_id": "products.masterclass.course",
+          "name": "_request",
+          "qualname": "GitHubContentEditor._request"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 104,
+          "module_id": "products.masterclass.course",
+          "name": "_decoded",
+          "qualname": "GitHubContentEditor._decoded"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 110,
+          "module_id": "products.masterclass.course",
+          "name": "_file",
+          "qualname": "GitHubContentEditor._file"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 127,
+          "module_id": "products.masterclass.course",
+          "name": "_latest_path_commit",
+          "qualname": "GitHubContentEditor._latest_path_commit"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 136,
+          "module_id": "products.masterclass.course",
+          "name": "_ensure_draft_branch",
+          "qualname": "GitHubContentEditor._ensure_draft_branch"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 157,
+          "module_id": "products.masterclass.course",
+          "name": "load",
+          "qualname": "GitHubContentEditor.load"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 179,
+          "module_id": "products.masterclass.course",
+          "name": "_put",
+          "qualname": "GitHubContentEditor._put"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 200,
+          "module_id": "products.masterclass.course",
+          "name": "save_draft",
+          "qualname": "GitHubContentEditor.save_draft"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 245,
+          "module_id": "products.masterclass.course",
+          "name": "publish",
+          "qualname": "GitHubContentEditor.publish"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 283,
+          "module_id": "products.masterclass.course",
+          "name": "history",
+          "qualname": "GitHubContentEditor.history"
+        },
+        {
+          "file": "backend/app/github_content_editor.py",
+          "kind": "method",
+          "line": 308,
+          "module_id": "products.masterclass.course",
+          "name": "rollback",
+          "qualname": "GitHubContentEditor.rollback"
+        },
+        {
           "file": "backend/app/managed_documents.py",
           "kind": "function",
           "line": 18,
@@ -53090,6 +53459,166 @@
           "module_id": "products.masterclass.course",
           "name": "render_masterclass_component",
           "qualname": "render_masterclass_component"
+        },
+        {
+          "file": "backend/app/masterclass_editorial.py",
+          "kind": "function",
+          "line": 20,
+          "module_id": "products.masterclass.course",
+          "name": "editable_material_path",
+          "qualname": "editable_material_path"
+        },
+        {
+          "file": "backend/app/masterclass_editorial.py",
+          "kind": "function",
+          "line": 27,
+          "module_id": "products.masterclass.course",
+          "name": "local_editable_material",
+          "qualname": "local_editable_material"
+        },
+        {
+          "file": "backend/app/masterclass_editorial.py",
+          "kind": "function",
+          "line": 31,
+          "module_id": "products.masterclass.course",
+          "name": "editorial_body_text",
+          "qualname": "editorial_body_text"
+        },
+        {
+          "file": "backend/app/masterclass_editorial.py",
+          "kind": "function",
+          "line": 48,
+          "module_id": "products.masterclass.course",
+          "name": "editorial_body",
+          "qualname": "editorial_body"
+        },
+        {
+          "file": "backend/app/masterclass_editorial.py",
+          "kind": "function",
+          "line": 52,
+          "module_id": "products.masterclass.course",
+          "name": "validate_editorial_source",
+          "qualname": "validate_editorial_source"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 5,
+          "module_id": "products.masterclass.course",
+          "name": "esc",
+          "qualname": "esc"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 6,
+          "module_id": "products.masterclass.course",
+          "name": "api",
+          "qualname": "api"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 7,
+          "module_id": "products.masterclass.course",
+          "name": "showError",
+          "qualname": "showError"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 8,
+          "module_id": "products.masterclass.course",
+          "name": "clearMessages",
+          "qualname": "clearMessages"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 9,
+          "module_id": "products.masterclass.course",
+          "name": "announce",
+          "qualname": "announce"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 10,
+          "module_id": "products.masterclass.course",
+          "name": "requestBody",
+          "qualname": "requestBody"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 11,
+          "module_id": "products.masterclass.course",
+          "name": "endpoint",
+          "qualname": "endpoint"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 12,
+          "module_id": "products.masterclass.course",
+          "name": "setDirty",
+          "qualname": "setDirty"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 13,
+          "module_id": "products.masterclass.course",
+          "name": "syncButtons",
+          "qualname": "syncButtons"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 14,
+          "module_id": "products.masterclass.course",
+          "name": "adopt",
+          "qualname": "adopt"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 15,
+          "module_id": "products.masterclass.course",
+          "name": "load",
+          "qualname": "load"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 16,
+          "module_id": "products.masterclass.course",
+          "name": "preview",
+          "qualname": "preview"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 17,
+          "module_id": "products.masterclass.course",
+          "name": "saveDraft",
+          "qualname": "saveDraft"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 18,
+          "module_id": "products.masterclass.course",
+          "name": "publish",
+          "qualname": "publish"
+        },
+        {
+          "file": "backend/app/static/course-material-editor.js",
+          "kind": "function",
+          "line": 19,
+          "module_id": "products.masterclass.course",
+          "name": "loadHistory",
+          "qualname": "loadHistory"
         },
         {
           "file": "backend/app/static/course-structure-editor.js",
@@ -53474,6 +54003,94 @@
           "module_id": "products.masterclass.course",
           "name": "test_chat_managed_seed_addition_preserves_existing_copy_and_marks_new_step",
           "qualname": "test_chat_managed_seed_addition_preserves_existing_copy_and_marks_new_step"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 13,
+          "module_id": "products.masterclass.course",
+          "name": "settings",
+          "qualname": "settings"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 23,
+          "module_id": "products.masterclass.course",
+          "name": "encoded",
+          "qualname": "encoded"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "class",
+          "line": 30,
+          "module_id": "products.masterclass.course",
+          "name": "FakeEditor",
+          "qualname": "FakeEditor"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "method",
+          "line": 31,
+          "module_id": "products.masterclass.course",
+          "name": "__init__",
+          "qualname": "FakeEditor.__init__"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "method",
+          "line": 47,
+          "module_id": "products.masterclass.course",
+          "name": "_request",
+          "qualname": "FakeEditor._request"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 77,
+          "module_id": "products.masterclass.course",
+          "name": "test_editorial_body_removes_only_service_wrapper",
+          "qualname": "test_editorial_body_removes_only_service_wrapper"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 87,
+          "module_id": "products.masterclass.course",
+          "name": "test_editorial_source_rejects_changed_identity_and_unsafe_link",
+          "qualname": "test_editorial_source_rejects_changed_identity_and_unsafe_link"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 101,
+          "module_id": "products.masterclass.course",
+          "name": "test_github_editor_saves_draft_then_publishes_same_content",
+          "qualname": "test_github_editor_saves_draft_then_publishes_same_content"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 131,
+          "module_id": "products.masterclass.course",
+          "name": "test_github_editor_does_not_create_empty_draft",
+          "qualname": "test_github_editor_does_not_create_empty_draft"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 145,
+          "module_id": "products.masterclass.course",
+          "name": "test_github_editor_rejects_stale_main_before_draft_write",
+          "qualname": "test_github_editor_rejects_stale_main_before_draft_write"
+        },
+        {
+          "file": "backend/tests/test_github_content_editor.py",
+          "kind": "function",
+          "line": 162,
+          "module_id": "products.masterclass.course",
+          "name": "test_github_write_requires_token_before_network",
+          "qualname": "test_github_write_requires_token_before_network"
         },
         {
           "file": "backend/tests/test_masterclass_editorial_publish.py",
@@ -54191,8 +54808,9 @@
       "telegram": null,
       "title": "Структура и материалы мастер-класса",
       "truths": [
-        "Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; смысловой контракт — `COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета — `COURSE_VISUAL_SYSTEM.md`.",
+        "Active `managed_document_versions` — runtime truth структуры;\n`content/masterclass/course/course.json` — seed; смысловой контракт —\n`COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета —\n`COURSE_VISUAL_SYSTEM.md`.",
         "`content/masterclass/editorial/` — authoring truth редакции. Команда\n`backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active\nrevision структуры и отдельные versioned-редакции обычных статей. Не вошедшие в\nпрограмму прежние шаги не удаляются, а остаются скрытыми.\nДля согласованного частичного выпуска `--through-day 5` ограничивает изменения\nднями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.",
+        "Для `day-01-article-02` Markdown из `content/masterclass/editorial/materials/` уже\nявляется одновременно authoring и runtime truth после deploy. Экран\n`/admin/courses/masterclass-21/materials/day-01-article-02/editor` читает и пишет\nтот же файл через GitHub Contents API. Ветка `content-drafts` не развёртывается;\n`main` публикуется обычным CI/deploy. GitHub token хранится только в серверном `.env`.\nЭто пилот: другие статьи не переводятся на этот маршрут автоматически.",
         "`content/masterclass/source-current/` хранит миграционные исходники прежней\nредакции и после первичного переноса не является местом новой редактуры. Для DQS\nпрежний полный исходник — `13-dqs-system.md`; `.txt` сохранён как неизменяемый\nlegacy-источник. Повторно используемые авторские вставки и код\nнаходятся в `content/masterclass/components/`: код слайдера отделён от ссылок на\nизображения, а таблицы получают данные из одного продуктового allowlist. Локальные\nизображения авторских материалов выдаются только из `source-current/assets/` через\nограниченный маршрут `/course-assets/masterclass/media/*`; Markdown-публикатор\nзаменяет относительный префикс `assets/` на этот маршрут. Страница\nкурса загружает CSS и JavaScript напрямую из этого каталога через\n`/course-assets/masterclass/article-components.*`; копии runtime-кода в HTML нет.\nСырой HTML статьи не получает доверенные component-классы и `data-*` атрибуты:\nих может добавить только закрытый Markdown renderer продукта."
       ]
     },
@@ -56135,7 +56753,39 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 488,
+          "line": 496,
+          "module_id": "products.masterclass.runtime",
+          "name": "test_git_markdown_editor_uses_same_renderer_and_separate_draft",
+          "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft"
+        },
+        {
+          "file": "backend/tests/test_masterclass_journey.py",
+          "kind": "class",
+          "line": 505,
+          "module_id": "products.masterclass.runtime",
+          "name": "Editor",
+          "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor"
+        },
+        {
+          "file": "backend/tests/test_masterclass_journey.py",
+          "kind": "method",
+          "line": 506,
+          "module_id": "products.masterclass.runtime",
+          "name": "load",
+          "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor.load"
+        },
+        {
+          "file": "backend/tests/test_masterclass_journey.py",
+          "kind": "method",
+          "line": 518,
+          "module_id": "products.masterclass.runtime",
+          "name": "save_draft",
+          "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor.save_draft"
+        },
+        {
+          "file": "backend/tests/test_masterclass_journey.py",
+          "kind": "function",
+          "line": 555,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps",
           "qualname": "test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps"
@@ -56143,7 +56793,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 572,
+          "line": 639,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_material_markdown_blocks_notes_and_dqs_components",
           "qualname": "test_course_material_markdown_blocks_notes_and_dqs_components"
@@ -56151,7 +56801,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 677,
+          "line": 744,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds",
           "qualname": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds"
@@ -56159,7 +56809,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 715,
+          "line": 782,
           "module_id": "products.masterclass.runtime",
           "name": "placement_token",
           "qualname": "placement_token"
@@ -56167,7 +56817,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 719,
+          "line": 786,
           "module_id": "products.masterclass.runtime",
           "name": "placement_query",
           "qualname": "placement_query"
@@ -56175,7 +56825,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 723,
+          "line": 790,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals",
           "qualname": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals"
@@ -56183,7 +56833,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 734,
+          "line": 801,
           "module_id": "products.masterclass.runtime",
           "name": "test_messenger_link_migration_stores_only_token_hash",
           "qualname": "test_messenger_link_migration_stores_only_token_hash"
@@ -56191,7 +56841,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 745,
+          "line": 812,
           "module_id": "products.masterclass.runtime",
           "name": "test_legacy_first_day_messenger_step_is_hidden_by_production_migration",
           "qualname": "test_legacy_first_day_messenger_step_is_hidden_by_production_migration"
@@ -56199,7 +56849,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 758,
+          "line": 825,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_window_migration_changes_only_future_early_duration",
           "qualname": "test_offer_window_migration_changes_only_future_early_duration"
@@ -56207,7 +56857,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 770,
+          "line": 837,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_migration_sets_each_approved_consultation_addon",
           "qualname": "test_site_short_migration_sets_each_approved_consultation_addon"
@@ -56215,7 +56865,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 788,
+          "line": 855,
           "module_id": "products.masterclass.runtime",
           "name": "setup",
           "qualname": "setup"
@@ -56223,7 +56873,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 792,
+          "line": 859,
           "module_id": "products.masterclass.runtime",
           "name": "override",
           "qualname": "setup.override"
@@ -56231,7 +56881,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 845,
+          "line": 912,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_personal_data_uses_tilda_email_and_server_access",
           "qualname": "test_masterclass_personal_data_uses_tilda_email_and_server_access"
@@ -56239,7 +56889,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 857,
+          "line": 924,
           "module_id": "products.masterclass.runtime",
           "name": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent",
           "qualname": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent"
@@ -56247,7 +56897,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 903,
+          "line": 970,
           "module_id": "products.masterclass.runtime",
           "name": "test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_messenger",
           "qualname": "test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_messenger"
@@ -56255,7 +56905,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 916,
+          "line": 983,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result",
           "qualname": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result"
@@ -56263,7 +56913,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 964,
+          "line": 1031,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes",
           "qualname": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes"
@@ -56271,7 +56921,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1003,
+          "line": 1070,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly",
           "qualname": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly"
@@ -56279,7 +56929,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1072,
+          "line": 1139,
           "module_id": "products.masterclass.runtime",
           "name": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link",
           "qualname": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link"
@@ -56287,7 +56937,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1127,
+          "line": 1194,
           "module_id": "products.masterclass.runtime",
           "name": "test_dqs_material_queues_a_link_only_for_linked_telegram",
           "qualname": "test_dqs_material_queues_a_link_only_for_linked_telegram"
@@ -56295,7 +56945,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1173,
+          "line": 1240,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_app_trigger_reveals_only_an_owned_application_once",
           "qualname": "test_course_app_trigger_reveals_only_an_owned_application_once"
@@ -56303,7 +56953,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1258,
+          "line": 1325,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price",
           "qualname": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price"
@@ -56311,7 +56961,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1284,
+          "line": 1351,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_one_offer_shows_early_price_without_starting_countdown",
           "qualname": "test_day_one_offer_shows_early_price_without_starting_countdown"
@@ -56319,7 +56969,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1325,
+          "line": 1392,
           "module_id": "products.masterclass.runtime",
           "name": "test_single_offers_stay_concise_and_bundles_list_their_products",
           "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products"
@@ -56327,7 +56977,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1326,
+          "line": 1393,
           "module_id": "products.masterclass.runtime",
           "name": "assert_composition",
           "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products.assert_composition"
@@ -56335,7 +56985,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1392,
+          "line": 1459,
           "module_id": "products.masterclass.runtime",
           "name": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards",
           "qualname": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards"
@@ -56343,7 +56993,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1442,
+          "line": 1509,
           "module_id": "products.masterclass.runtime",
           "name": "test_partial_bundle_keeps_the_temporary_full_program_name",
           "qualname": "test_partial_bundle_keeps_the_temporary_full_program_name"
@@ -56351,7 +57001,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1462,
+          "line": 1529,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_product_catalog_has_one_complete_card_contract",
           "qualname": "test_offer_product_catalog_has_one_complete_card_contract"
@@ -56359,7 +57009,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1499,
+          "line": 1566,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
           "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -56367,7 +57017,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1531,
+          "line": 1598,
           "module_id": "products.masterclass.runtime",
           "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
           "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -56375,7 +57025,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1603,
+          "line": 1670,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
           "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -56383,7 +57033,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1631,
+          "line": 1698,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
           "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -56391,7 +57041,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1679,
+          "line": 1746,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_preview_uses_production_offer_builder",
           "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -56399,7 +57049,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1701,
+          "line": 1768,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -56407,7 +57057,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1755,
+          "line": 1822,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
           "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -56415,7 +57065,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1775,
+          "line": 1842,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
           "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -56423,7 +57073,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1800,
+          "line": 1867,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
           "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -56431,7 +57081,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1823,
+          "line": 1890,
           "module_id": "products.masterclass.runtime",
           "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
           "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -56439,7 +57089,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1840,
+          "line": 1907,
           "module_id": "products.masterclass.runtime",
           "name": "test_checkout_rejects_token_from_another_offer_stage",
           "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -56447,7 +57097,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1853,
+          "line": 1920,
           "module_id": "products.masterclass.runtime",
           "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
           "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -56455,7 +57105,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1887,
+          "line": 1954,
           "module_id": "products.masterclass.runtime",
           "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
           "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -56463,7 +57113,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1922,
+          "line": 1989,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
           "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -56471,7 +57121,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1972,
+          "line": 2039,
           "module_id": "products.masterclass.runtime",
           "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
           "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -56479,7 +57129,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 1998,
+          "line": 2065,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
           "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -56487,7 +57137,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2018,
+          "line": 2085,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
           "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -56495,7 +57145,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2050,
+          "line": 2117,
           "module_id": "products.masterclass.runtime",
           "name": "test_current_21_day_offer_placements_select_expected_stages",
           "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -56503,7 +57153,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2068,
+          "line": 2135,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
           "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -56511,7 +57161,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2230,
+          "line": 2297,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
           "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -56519,7 +57169,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2264,
+          "line": 2331,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_can_enable_isolated_accelerated_course_profile",
           "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -56527,7 +57177,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2285,
+          "line": 2352,
           "module_id": "products.masterclass.runtime",
           "name": "test_closing_review_sends_one_copy_only_after_submit",
           "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -56535,7 +57185,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2331,
+          "line": 2398,
           "module_id": "products.masterclass.runtime",
           "name": "test_course_content_uses_the_same_member_session",
           "qualname": "test_course_content_uses_the_same_member_session"
@@ -56543,7 +57193,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2351,
+          "line": 2418,
           "module_id": "products.masterclass.runtime",
           "name": "test_recipe_gate_uses_access_and_records_open_once",
           "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -56551,7 +57201,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2413,
+          "line": 2480,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
           "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -56559,7 +57209,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2424,
+          "line": 2491,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
           "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -56567,7 +57217,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2449,
+          "line": 2516,
           "module_id": "products.masterclass.runtime",
           "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
           "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -56575,7 +57225,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2501,
+          "line": 2568,
           "module_id": "products.masterclass.runtime",
           "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
           "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -56583,7 +57233,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2531,
+          "line": 2598,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_19_fixes_review_and_last_week_timeline_once",
           "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -56591,7 +57241,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2556,
+          "line": 2623,
           "module_id": "products.masterclass.runtime",
           "name": "test_day_21_during_review_only_shows_its_existing_remainder",
           "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -56599,7 +57249,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2582,
+          "line": 2649,
           "module_id": "products.masterclass.runtime",
           "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
           "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -56607,7 +57257,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2619,
+          "line": 2686,
           "module_id": "products.masterclass.runtime",
           "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
           "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -56615,7 +57265,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2641,
+          "line": 2708,
           "module_id": "products.masterclass.runtime",
           "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
           "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -56623,7 +57273,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2665,
+          "line": 2732,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_article_media_route_serves_only_registered_image_tree",
           "qualname": "test_masterclass_article_media_route_serves_only_registered_image_tree"
@@ -56631,7 +57281,7 @@
         {
           "file": "backend/tests/test_masterclass_journey.py",
           "kind": "function",
-          "line": 2681,
+          "line": 2748,
           "module_id": "products.masterclass.runtime",
           "name": "test_masterclass_outline_and_material_cards_do_not_render_summaries",
           "qualname": "test_masterclass_outline_and_material_cards_do_not_render_summaries"
@@ -61542,7 +62192,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 384,
+      "line": 401,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/access-reviews",
@@ -61598,7 +62248,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 299,
+      "line": 316,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/tags",
@@ -61606,7 +62256,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 304,
+      "line": 321,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/audit/variables",
@@ -61702,7 +62352,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 88,
+      "line": 236,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials",
@@ -61710,7 +62360,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 98,
+      "line": 246,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -61718,7 +62368,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 109,
+      "line": 257,
       "method": "PUT",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}",
@@ -61726,7 +62376,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 127,
+      "line": 280,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions",
@@ -61734,7 +62384,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 144,
+      "line": 297,
       "method": "POST",
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/materials/{step_id}/versions/{version_no}/restore",
@@ -61763,6 +62413,54 @@
       "module_id": "products.masterclass.course",
       "path": "/admin/api/courses/{course_code}/structure/versions/{version_no}/restore",
       "symbol": "admin_restore_course_structure"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 129,
+      "method": "GET",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}",
+      "symbol": "admin_editorial_material"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 170,
+      "method": "PUT",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}/draft",
+      "symbol": "admin_editorial_save_draft"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 209,
+      "method": "GET",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}/history",
+      "symbol": "admin_editorial_history"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 143,
+      "method": "POST",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}/preview",
+      "symbol": "admin_editorial_preview"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 192,
+      "method": "POST",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}/publish",
+      "symbol": "admin_editorial_publish"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "line": 219,
+      "method": "POST",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/api/editorial/masterclass/materials/{step_id}/rollback",
+      "symbol": "admin_editorial_rollback"
     },
     {
       "file": "backend/app/intensive_routes.py",
@@ -61878,7 +62576,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 249,
+      "line": 266,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/login",
@@ -61886,7 +62584,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 271,
+      "line": 288,
       "method": "POST",
       "module_id": "platform.auth",
       "path": "/admin/api/logout",
@@ -61910,7 +62608,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 501,
+      "line": 518,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payment-products",
@@ -61918,7 +62616,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 475,
+      "line": 492,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/payments",
@@ -62014,7 +62712,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 390,
+      "line": 407,
       "method": "GET",
       "module_id": "platform.commerce",
       "path": "/admin/api/resources",
@@ -62022,7 +62720,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 309,
+      "line": 326,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/summary",
@@ -62030,7 +62728,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 509,
+      "line": 526,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/tags",
@@ -62038,7 +62736,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 520,
+      "line": 537,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}",
@@ -62046,7 +62744,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 532,
+      "line": 549,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/tags/{tag_id}/merge",
@@ -62054,7 +62752,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 316,
+      "line": 333,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users",
@@ -62062,7 +62760,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 335,
+      "line": 352,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -62070,7 +62768,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 347,
+      "line": 364,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}",
@@ -62078,7 +62776,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 404,
+      "line": 421,
       "method": "PATCH",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/access-review",
@@ -62086,7 +62784,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 412,
+      "line": 429,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses",
@@ -62094,7 +62792,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 420,
+      "line": 437,
       "method": "DELETE",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses/{resource_code}",
@@ -62102,7 +62800,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 428,
+      "line": 445,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses/{resource_code}/pause",
@@ -62110,7 +62808,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 436,
+      "line": 453,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/accesses/{resource_code}/resume",
@@ -62118,7 +62816,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 462,
+      "line": 479,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/credential/reset",
@@ -62126,7 +62824,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 444,
+      "line": 461,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/credential/reveal",
@@ -62134,7 +62832,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 395,
+      "line": 412,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/email",
@@ -62150,7 +62848,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 359,
+      "line": 376,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/notes",
@@ -62174,7 +62872,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 372,
+      "line": 389,
       "method": "POST",
       "module_id": "admin.control",
       "path": "/admin/api/users/{user_id}/tags",
@@ -62182,7 +62880,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 218,
+      "line": 235,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/content",
@@ -62195,6 +62893,14 @@
       "module_id": "products.masterclass.course",
       "path": "/admin/courses",
       "symbol": "course_editors_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
+      "line": 211,
+      "method": "GET",
+      "module_id": "products.masterclass.course",
+      "path": "/admin/courses/masterclass-21/materials/{step_id}/editor",
+      "symbol": "course_material_editor_page"
     },
     {
       "file": "backend/app/crm_routes.py",
@@ -62238,7 +62944,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 208,
+      "line": 225,
       "method": "GET",
       "module_id": "products.catalog",
       "path": "/admin/products",
@@ -62254,7 +62960,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 227,
+      "line": 244,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/users",
@@ -62262,7 +62968,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 236,
+      "line": 253,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/admin/{section}",
@@ -63678,7 +64384,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 55,
+      "line": 65,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/article-components.css",
@@ -63686,7 +64392,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 69,
+      "line": 79,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/article-components.js",
@@ -63694,7 +64400,7 @@
     },
     {
       "file": "backend/app/course_material_routes.py",
-      "line": 43,
+      "line": 53,
       "method": "GET",
       "module_id": "products.masterclass.course",
       "path": "/course-assets/masterclass/media/{asset_path:path}",
@@ -63702,7 +64408,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 279,
+      "line": 296,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm",
@@ -63710,7 +64416,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 289,
+      "line": 306,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.css",
@@ -63718,7 +64424,7 @@
     },
     {
       "file": "backend/app/crm_routes.py",
-      "line": 294,
+      "line": 311,
       "method": "GET",
       "module_id": "admin.control",
       "path": "/crm/crm.js",
@@ -66954,7 +67660,7 @@
     {
       "file": "backend/app/config.py",
       "kind": "method",
-      "line": 84,
+      "line": 88,
       "module_id": "operations.delivery",
       "name": "allowed_origins_list",
       "qualname": "Settings.allowed_origins_list"
@@ -66962,7 +67668,7 @@
     {
       "file": "backend/app/config.py",
       "kind": "function",
-      "line": 100,
+      "line": 104,
       "module_id": "operations.delivery",
       "name": "get_settings",
       "qualname": "get_settings"
@@ -67298,7 +68004,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 26,
+      "line": 36,
       "module_id": "products.masterclass.course",
       "name": "material_service",
       "qualname": "material_service"
@@ -67306,7 +68012,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 38,
+      "line": 48,
       "module_id": "products.masterclass.course",
       "name": "component_asset",
       "qualname": "component_asset"
@@ -67314,7 +68020,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 43,
+      "line": 53,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_media",
       "qualname": "masterclass_article_media"
@@ -67322,7 +68028,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 55,
+      "line": 65,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_component_styles",
       "qualname": "masterclass_article_component_styles"
@@ -67330,7 +68036,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 69,
+      "line": 79,
       "module_id": "products.masterclass.course",
       "name": "masterclass_article_component_script",
       "qualname": "masterclass_article_component_script"
@@ -67338,7 +68044,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 77,
+      "line": 87,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialUpdate",
       "qualname": "CourseMaterialUpdate"
@@ -67346,15 +68052,111 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "class",
-      "line": 83,
+      "line": 93,
       "module_id": "products.masterclass.course",
       "name": "CourseMaterialRestore",
       "qualname": "CourseMaterialRestore"
     },
     {
       "file": "backend/app/course_material_routes.py",
+      "kind": "class",
+      "line": 97,
+      "module_id": "products.masterclass.course",
+      "name": "EditorialPreview",
+      "qualname": "EditorialPreview"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "class",
+      "line": 101,
+      "module_id": "products.masterclass.course",
+      "name": "EditorialDraftSave",
+      "qualname": "EditorialDraftSave"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "class",
+      "line": 106,
+      "module_id": "products.masterclass.course",
+      "name": "EditorialPublish",
+      "qualname": "EditorialPublish"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "class",
+      "line": 111,
+      "module_id": "products.masterclass.course",
+      "name": "EditorialRollback",
+      "qualname": "EditorialRollback"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 88,
+      "line": 116,
+      "module_id": "products.masterclass.course",
+      "name": "editorial_editor",
+      "qualname": "editorial_editor"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 120,
+      "module_id": "products.masterclass.course",
+      "name": "editorial_title",
+      "qualname": "editorial_title"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 129,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_material",
+      "qualname": "admin_editorial_material"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 143,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_preview",
+      "qualname": "admin_editorial_preview"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 170,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_save_draft",
+      "qualname": "admin_editorial_save_draft"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 192,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_publish",
+      "qualname": "admin_editorial_publish"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 209,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_history",
+      "qualname": "admin_editorial_history"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 219,
+      "module_id": "products.masterclass.course",
+      "name": "admin_editorial_rollback",
+      "qualname": "admin_editorial_rollback"
+    },
+    {
+      "file": "backend/app/course_material_routes.py",
+      "kind": "function",
+      "line": 236,
       "module_id": "products.masterclass.course",
       "name": "admin_course_materials",
       "qualname": "admin_course_materials"
@@ -67362,7 +68164,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 98,
+      "line": 246,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material",
       "qualname": "admin_course_material"
@@ -67370,7 +68172,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 109,
+      "line": 257,
       "module_id": "products.masterclass.course",
       "name": "admin_publish_course_material",
       "qualname": "admin_publish_course_material"
@@ -67378,7 +68180,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 127,
+      "line": 280,
       "module_id": "products.masterclass.course",
       "name": "admin_course_material_versions",
       "qualname": "admin_course_material_versions"
@@ -67386,7 +68188,7 @@
     {
       "file": "backend/app/course_material_routes.py",
       "kind": "function",
-      "line": 144,
+      "line": 297,
       "module_id": "products.masterclass.course",
       "name": "admin_restore_course_material",
       "qualname": "admin_restore_course_material"
@@ -67394,7 +68196,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 32,
+      "line": 33,
       "module_id": "products.masterclass.course",
       "name": "checked_course",
       "qualname": "checked_course"
@@ -67402,7 +68204,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 38,
+      "line": 39,
       "module_id": "products.masterclass.course",
       "name": "article_step",
       "qualname": "article_step"
@@ -67410,7 +68212,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 52,
+      "line": 53,
       "module_id": "products.masterclass.course",
       "name": "material_source",
       "qualname": "material_source"
@@ -67418,7 +68220,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 71,
+      "line": 72,
       "module_id": "products.masterclass.course",
       "name": "material_item",
       "qualname": "material_item"
@@ -67426,7 +68228,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 86,
+      "line": 87,
       "module_id": "products.masterclass.course",
       "name": "latest_version",
       "qualname": "latest_version"
@@ -67434,7 +68236,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 92,
+      "line": 93,
       "module_id": "products.masterclass.course",
       "name": "word_count",
       "qualname": "word_count"
@@ -67442,7 +68244,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 96,
+      "line": 97,
       "module_id": "products.masterclass.course",
       "name": "version_payload",
       "qualname": "version_payload"
@@ -67450,7 +68252,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 121,
+      "line": 122,
       "module_id": "products.masterclass.course",
       "name": "legacy_material_html",
       "qualname": "legacy_material_html"
@@ -67458,7 +68260,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 146,
+      "line": 147,
       "module_id": "products.masterclass.course",
       "name": "get_material",
       "qualname": "get_material"
@@ -67466,7 +68268,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 159,
+      "line": 169,
       "module_id": "products.masterclass.course",
       "name": "list_materials",
       "qualname": "list_materials"
@@ -67474,7 +68276,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 189,
+      "line": 199,
       "module_id": "products.masterclass.course",
       "name": "render_material",
       "qualname": "render_material"
@@ -67482,7 +68284,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 210,
+      "line": 220,
       "module_id": "products.masterclass.course",
       "name": "material_hash",
       "qualname": "material_hash"
@@ -67490,7 +68292,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 214,
+      "line": 224,
       "module_id": "products.masterclass.course",
       "name": "publish_material",
       "qualname": "publish_material"
@@ -67498,7 +68300,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 291,
+      "line": 301,
       "module_id": "products.masterclass.course",
       "name": "material_versions",
       "qualname": "material_versions"
@@ -67506,7 +68308,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 320,
+      "line": 330,
       "module_id": "products.masterclass.course",
       "name": "restore_material",
       "qualname": "restore_material"
@@ -67514,7 +68316,7 @@
     {
       "file": "backend/app/course_material_service.py",
       "kind": "function",
-      "line": 349,
+      "line": 359,
       "module_id": "products.masterclass.course",
       "name": "published_materials",
       "qualname": "published_materials"
@@ -67922,7 +68724,15 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 208,
+      "line": 211,
+      "module_id": "products.masterclass.course",
+      "name": "course_material_editor_page",
+      "qualname": "course_material_editor_page"
+    },
+    {
+      "file": "backend/app/crm_routes.py",
+      "kind": "function",
+      "line": 225,
       "module_id": "products.catalog",
       "name": "product_catalog_page",
       "qualname": "product_catalog_page"
@@ -67930,7 +68740,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 218,
+      "line": 235,
       "module_id": "admin.control",
       "name": "content_catalog_page",
       "qualname": "content_catalog_page"
@@ -67938,7 +68748,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 227,
+      "line": 244,
       "module_id": "admin.control",
       "name": "legacy_admin_users",
       "qualname": "legacy_admin_users"
@@ -67946,7 +68756,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 236,
+      "line": 253,
       "module_id": "admin.control",
       "name": "admin_section",
       "qualname": "admin_section"
@@ -67954,7 +68764,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 249,
+      "line": 266,
       "module_id": "platform.auth",
       "name": "admin_login",
       "qualname": "admin_login"
@@ -67962,7 +68772,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 271,
+      "line": 288,
       "module_id": "platform.auth",
       "name": "admin_logout",
       "qualname": "admin_logout"
@@ -67970,7 +68780,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 279,
+      "line": 296,
       "module_id": "admin.control",
       "name": "crm_index",
       "qualname": "crm_index"
@@ -67978,7 +68788,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 289,
+      "line": 306,
       "module_id": "admin.control",
       "name": "crm_css",
       "qualname": "crm_css"
@@ -67986,7 +68796,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 294,
+      "line": 311,
       "module_id": "admin.control",
       "name": "crm_js",
       "qualname": "crm_js"
@@ -67994,7 +68804,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 299,
+      "line": 316,
       "module_id": "admin.control",
       "name": "admin_tag_audit",
       "qualname": "admin_tag_audit"
@@ -68002,7 +68812,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 304,
+      "line": 321,
       "module_id": "admin.control",
       "name": "admin_variable_audit",
       "qualname": "admin_variable_audit"
@@ -68010,7 +68820,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 309,
+      "line": 326,
       "module_id": "admin.control",
       "name": "admin_summary",
       "qualname": "admin_summary"
@@ -68018,7 +68828,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 316,
+      "line": 333,
       "module_id": "admin.control",
       "name": "admin_users",
       "qualname": "admin_users"
@@ -68026,7 +68836,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 335,
+      "line": 352,
       "module_id": "admin.control",
       "name": "admin_user",
       "qualname": "admin_user"
@@ -68034,7 +68844,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 347,
+      "line": 364,
       "module_id": "admin.control",
       "name": "admin_update_user",
       "qualname": "admin_update_user"
@@ -68042,7 +68852,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 359,
+      "line": 376,
       "module_id": "admin.control",
       "name": "admin_add_note",
       "qualname": "admin_add_note"
@@ -68050,7 +68860,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 372,
+      "line": 389,
       "module_id": "admin.control",
       "name": "admin_add_tag",
       "qualname": "admin_add_tag"
@@ -68058,7 +68868,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 384,
+      "line": 401,
       "module_id": "admin.control",
       "name": "admin_access_reviews",
       "qualname": "admin_access_reviews"
@@ -68066,7 +68876,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 390,
+      "line": 407,
       "module_id": "platform.commerce",
       "name": "admin_resources",
       "qualname": "admin_resources"
@@ -68074,7 +68884,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 395,
+      "line": 412,
       "module_id": "admin.control",
       "name": "admin_link_email",
       "qualname": "admin_link_email"
@@ -68082,7 +68892,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 404,
+      "line": 421,
       "module_id": "admin.control",
       "name": "admin_set_access_review",
       "qualname": "admin_set_access_review"
@@ -68090,7 +68900,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 412,
+      "line": 429,
       "module_id": "admin.control",
       "name": "admin_grant_access",
       "qualname": "admin_grant_access"
@@ -68098,7 +68908,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 420,
+      "line": 437,
       "module_id": "admin.control",
       "name": "admin_revoke_access",
       "qualname": "admin_revoke_access"
@@ -68106,7 +68916,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 428,
+      "line": 445,
       "module_id": "admin.control",
       "name": "admin_pause_access",
       "qualname": "admin_pause_access"
@@ -68114,7 +68924,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 436,
+      "line": 453,
       "module_id": "admin.control",
       "name": "admin_resume_access",
       "qualname": "admin_resume_access"
@@ -68122,7 +68932,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 444,
+      "line": 461,
       "module_id": "admin.control",
       "name": "admin_reveal_credential",
       "qualname": "admin_reveal_credential"
@@ -68130,7 +68940,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 462,
+      "line": 479,
       "module_id": "admin.control",
       "name": "admin_reset_credential",
       "qualname": "admin_reset_credential"
@@ -68138,7 +68948,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 475,
+      "line": 492,
       "module_id": "platform.commerce",
       "name": "admin_payments",
       "qualname": "admin_payments"
@@ -68146,7 +68956,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 501,
+      "line": 518,
       "module_id": "platform.commerce",
       "name": "admin_payment_products",
       "qualname": "admin_payment_products"
@@ -68154,7 +68964,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 509,
+      "line": 526,
       "module_id": "admin.control",
       "name": "admin_tags",
       "qualname": "admin_tags"
@@ -68162,7 +68972,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 520,
+      "line": 537,
       "module_id": "admin.control",
       "name": "admin_update_tag",
       "qualname": "admin_update_tag"
@@ -68170,7 +68980,7 @@
     {
       "file": "backend/app/crm_routes.py",
       "kind": "function",
-      "line": 532,
+      "line": 549,
       "module_id": "admin.control",
       "name": "admin_merge_tag",
       "qualname": "admin_merge_tag"
@@ -68210,7 +69020,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 271,
+      "line": 273,
       "module_id": "platform.crm",
       "name": "list_payment_products",
       "qualname": "list_payment_products"
@@ -68218,7 +69028,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 281,
+      "line": 283,
       "module_id": "platform.crm",
       "name": "list_payments",
       "qualname": "list_payments"
@@ -68226,7 +69036,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 349,
+      "line": 351,
       "module_id": "platform.crm",
       "name": "user_detail",
       "qualname": "user_detail"
@@ -68234,7 +69044,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 612,
+      "line": 614,
       "module_id": "platform.crm",
       "name": "update_user",
       "qualname": "update_user"
@@ -68242,7 +69052,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 622,
+      "line": 624,
       "module_id": "platform.crm",
       "name": "add_note",
       "qualname": "add_note"
@@ -68250,7 +69060,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 633,
+      "line": 635,
       "module_id": "platform.crm",
       "name": "tag_code",
       "qualname": "tag_code"
@@ -68258,7 +69068,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 638,
+      "line": 640,
       "module_id": "platform.crm",
       "name": "add_tag",
       "qualname": "add_tag"
@@ -68266,7 +69076,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 686,
+      "line": 688,
       "module_id": "platform.crm",
       "name": "list_tags",
       "qualname": "list_tags"
@@ -68274,7 +69084,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 742,
+      "line": 744,
       "module_id": "platform.crm",
       "name": "update_tag",
       "qualname": "update_tag"
@@ -68282,7 +69092,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 763,
+      "line": 765,
       "module_id": "platform.crm",
       "name": "merge_tag",
       "qualname": "merge_tag"
@@ -68290,7 +69100,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 777,
+      "line": 779,
       "module_id": "platform.crm",
       "name": "list_access_reviews",
       "qualname": "list_access_reviews"
@@ -68298,7 +69108,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 792,
+      "line": 794,
       "module_id": "platform.crm",
       "name": "list_resources",
       "qualname": "list_resources"
@@ -68306,7 +69116,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 798,
+      "line": 800,
       "module_id": "platform.crm",
       "name": "link_user_email",
       "qualname": "link_user_email"
@@ -68314,7 +69124,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 822,
+      "line": 824,
       "module_id": "platform.crm",
       "name": "set_access_review",
       "qualname": "set_access_review"
@@ -68322,7 +69132,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 841,
+      "line": 843,
       "module_id": "platform.crm",
       "name": "grant_manual_access",
       "qualname": "grant_manual_access"
@@ -68330,7 +69140,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 859,
+      "line": 861,
       "module_id": "platform.crm",
       "name": "revoke_manual_access",
       "qualname": "revoke_manual_access"
@@ -68338,7 +69148,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 874,
+      "line": 876,
       "module_id": "platform.crm",
       "name": "pause_manual_access",
       "qualname": "pause_manual_access"
@@ -68346,7 +69156,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 891,
+      "line": 893,
       "module_id": "platform.crm",
       "name": "resume_manual_access",
       "qualname": "resume_manual_access"
@@ -68354,7 +69164,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 908,
+      "line": 910,
       "module_id": "platform.crm",
       "name": "reveal_account_password",
       "qualname": "reveal_account_password"
@@ -68362,7 +69172,7 @@
     {
       "file": "backend/app/crm_service.py",
       "kind": "function",
-      "line": 924,
+      "line": 926,
       "module_id": "platform.crm",
       "name": "reset_account_password",
       "qualname": "reset_account_password"
@@ -68382,6 +69192,158 @@
       "module_id": "operations.database",
       "name": "get_db",
       "qualname": "get_db"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "function",
+      "line": 21,
+      "module_id": "products.masterclass.course",
+      "name": "audit_actor",
+      "qualname": "audit_actor"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "class",
+      "line": 25,
+      "module_id": "products.masterclass.course",
+      "name": "GitHubContentEditor",
+      "qualname": "GitHubContentEditor"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 26,
+      "module_id": "products.masterclass.course",
+      "name": "__init__",
+      "qualname": "GitHubContentEditor.__init__"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 30,
+      "module_id": "products.masterclass.course",
+      "name": "repository",
+      "qualname": "GitHubContentEditor.repository"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 34,
+      "module_id": "products.masterclass.course",
+      "name": "main_branch",
+      "qualname": "GitHubContentEditor.main_branch"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 38,
+      "module_id": "products.masterclass.course",
+      "name": "draft_branch",
+      "qualname": "GitHubContentEditor.draft_branch"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 42,
+      "module_id": "products.masterclass.course",
+      "name": "connected",
+      "qualname": "GitHubContentEditor.connected"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 45,
+      "module_id": "products.masterclass.course",
+      "name": "_url",
+      "qualname": "GitHubContentEditor._url"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 49,
+      "module_id": "products.masterclass.course",
+      "name": "_request",
+      "qualname": "GitHubContentEditor._request"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 104,
+      "module_id": "products.masterclass.course",
+      "name": "_decoded",
+      "qualname": "GitHubContentEditor._decoded"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 110,
+      "module_id": "products.masterclass.course",
+      "name": "_file",
+      "qualname": "GitHubContentEditor._file"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 127,
+      "module_id": "products.masterclass.course",
+      "name": "_latest_path_commit",
+      "qualname": "GitHubContentEditor._latest_path_commit"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 136,
+      "module_id": "products.masterclass.course",
+      "name": "_ensure_draft_branch",
+      "qualname": "GitHubContentEditor._ensure_draft_branch"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 157,
+      "module_id": "products.masterclass.course",
+      "name": "load",
+      "qualname": "GitHubContentEditor.load"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 179,
+      "module_id": "products.masterclass.course",
+      "name": "_put",
+      "qualname": "GitHubContentEditor._put"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 200,
+      "module_id": "products.masterclass.course",
+      "name": "save_draft",
+      "qualname": "GitHubContentEditor.save_draft"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 245,
+      "module_id": "products.masterclass.course",
+      "name": "publish",
+      "qualname": "GitHubContentEditor.publish"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 283,
+      "module_id": "products.masterclass.course",
+      "name": "history",
+      "qualname": "GitHubContentEditor.history"
+    },
+    {
+      "file": "backend/app/github_content_editor.py",
+      "kind": "method",
+      "line": 308,
+      "module_id": "products.masterclass.course",
+      "name": "rollback",
+      "qualname": "GitHubContentEditor.rollback"
     },
     {
       "file": "backend/app/importers/apply_access_review_policy.py",
@@ -71190,6 +72152,46 @@
       "module_id": "products.masterclass.course",
       "name": "render_masterclass_component",
       "qualname": "render_masterclass_component"
+    },
+    {
+      "file": "backend/app/masterclass_editorial.py",
+      "kind": "function",
+      "line": 20,
+      "module_id": "products.masterclass.course",
+      "name": "editable_material_path",
+      "qualname": "editable_material_path"
+    },
+    {
+      "file": "backend/app/masterclass_editorial.py",
+      "kind": "function",
+      "line": 27,
+      "module_id": "products.masterclass.course",
+      "name": "local_editable_material",
+      "qualname": "local_editable_material"
+    },
+    {
+      "file": "backend/app/masterclass_editorial.py",
+      "kind": "function",
+      "line": 31,
+      "module_id": "products.masterclass.course",
+      "name": "editorial_body_text",
+      "qualname": "editorial_body_text"
+    },
+    {
+      "file": "backend/app/masterclass_editorial.py",
+      "kind": "function",
+      "line": 48,
+      "module_id": "products.masterclass.course",
+      "name": "editorial_body",
+      "qualname": "editorial_body"
+    },
+    {
+      "file": "backend/app/masterclass_editorial.py",
+      "kind": "function",
+      "line": 52,
+      "module_id": "products.masterclass.course",
+      "name": "validate_editorial_source",
+      "qualname": "validate_editorial_source"
     },
     {
       "file": "backend/app/masterclass_offer_catalog.py",
@@ -75110,6 +76112,126 @@
       "module_id": "products",
       "name": "addStyles",
       "qualname": "addStyles"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 5,
+      "module_id": "products.masterclass.course",
+      "name": "esc",
+      "qualname": "esc"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 6,
+      "module_id": "products.masterclass.course",
+      "name": "api",
+      "qualname": "api"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 7,
+      "module_id": "products.masterclass.course",
+      "name": "showError",
+      "qualname": "showError"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 8,
+      "module_id": "products.masterclass.course",
+      "name": "clearMessages",
+      "qualname": "clearMessages"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 9,
+      "module_id": "products.masterclass.course",
+      "name": "announce",
+      "qualname": "announce"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 10,
+      "module_id": "products.masterclass.course",
+      "name": "requestBody",
+      "qualname": "requestBody"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 11,
+      "module_id": "products.masterclass.course",
+      "name": "endpoint",
+      "qualname": "endpoint"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 12,
+      "module_id": "products.masterclass.course",
+      "name": "setDirty",
+      "qualname": "setDirty"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 13,
+      "module_id": "products.masterclass.course",
+      "name": "syncButtons",
+      "qualname": "syncButtons"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 14,
+      "module_id": "products.masterclass.course",
+      "name": "adopt",
+      "qualname": "adopt"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 15,
+      "module_id": "products.masterclass.course",
+      "name": "load",
+      "qualname": "load"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 16,
+      "module_id": "products.masterclass.course",
+      "name": "preview",
+      "qualname": "preview"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 17,
+      "module_id": "products.masterclass.course",
+      "name": "saveDraft",
+      "qualname": "saveDraft"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 18,
+      "module_id": "products.masterclass.course",
+      "name": "publish",
+      "qualname": "publish"
+    },
+    {
+      "file": "backend/app/static/course-material-editor.js",
+      "kind": "function",
+      "line": 19,
+      "module_id": "products.masterclass.course",
+      "name": "loadHistory",
+      "qualname": "loadHistory"
     },
     {
       "file": "backend/app/static/course-structure-editor.js",
@@ -79354,7 +80476,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 965,
+      "line": 975,
       "module_id": "products",
       "name": "test_masterclass_second_day_contains_current_diet_questionnaire",
       "qualname": "test_masterclass_second_day_contains_current_diet_questionnaire"
@@ -79362,7 +80484,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 983,
+      "line": 993,
       "module_id": "products",
       "name": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers",
       "qualname": "test_masterclass_day_three_order_and_cards_have_no_editorial_markers"
@@ -79370,7 +80492,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1010,
+      "line": 1020,
       "module_id": "products",
       "name": "test_emotional_hunger_guide_is_visible_but_temporarily_locked",
       "qualname": "test_emotional_hunger_guide_is_visible_but_temporarily_locked"
@@ -79378,7 +80500,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1035,
+      "line": 1045,
       "module_id": "products",
       "name": "test_masterclass_plain_images_have_no_caption_or_decorative_container",
       "qualname": "test_masterclass_plain_images_have_no_caption_or_decorative_container"
@@ -79386,7 +80508,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1049,
+      "line": 1059,
       "module_id": "products",
       "name": "test_masterclass_manifest_is_the_complete_canonical_program",
       "qualname": "test_masterclass_manifest_is_the_complete_canonical_program"
@@ -79394,7 +80516,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1116,
+      "line": 1126,
       "module_id": "products",
       "name": "test_masterclass_media_uses_present_links_and_player_route",
       "qualname": "test_masterclass_media_uses_present_links_and_player_route"
@@ -79402,7 +80524,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1132,
+      "line": 1142,
       "module_id": "products",
       "name": "test_legal_friendly_routes_are_public",
       "qualname": "test_legal_friendly_routes_are_public"
@@ -79410,7 +80532,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1151,
+      "line": 1161,
       "module_id": "products",
       "name": "test_legal_navigation_uses_permanent_public_domain",
       "qualname": "test_legal_navigation_uses_permanent_public_domain"
@@ -79418,7 +80540,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1163,
+      "line": 1173,
       "module_id": "products",
       "name": "test_checkout_and_cookie_legal_links_use_permanent_public_domain",
       "qualname": "test_checkout_and_cookie_legal_links_use_permanent_public_domain"
@@ -79426,7 +80548,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1186,
+      "line": 1196,
       "module_id": "products",
       "name": "test_intensive_concept_pages_are_public",
       "qualname": "test_intensive_concept_pages_are_public"
@@ -79434,7 +80556,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1276,
+      "line": 1286,
       "module_id": "products",
       "name": "test_removed_video_player_preview_routes_are_unavailable",
       "qualname": "test_removed_video_player_preview_routes_are_unavailable"
@@ -79442,7 +80564,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1282,
+      "line": 1292,
       "module_id": "products",
       "name": "test_masterclass_sales_fragment_uses_server_price_codes",
       "qualname": "test_masterclass_sales_fragment_uses_server_price_codes"
@@ -79450,7 +80572,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1295,
+      "line": 1305,
       "module_id": "products",
       "name": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page",
       "qualname": "test_tilda_homepage_loader_is_public_and_uses_server_owned_page"
@@ -79458,7 +80580,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1331,
+      "line": 1341,
       "module_id": "products",
       "name": "test_dqs_notifies_course_only_after_server_save",
       "qualname": "test_dqs_notifies_course_only_after_server_save"
@@ -79466,7 +80588,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1342,
+      "line": 1352,
       "module_id": "products",
       "name": "test_tilda_origin_is_allowed_for_api_preflight",
       "qualname": "test_tilda_origin_is_allowed_for_api_preflight"
@@ -79474,7 +80596,7 @@
     {
       "file": "backend/tests/test_app_assets.py",
       "kind": "function",
-      "line": 1356,
+      "line": 1366,
       "module_id": "products",
       "name": "test_strength_new_user_can_start_and_manage_own_workouts",
       "qualname": "test_strength_new_user_can_start_and_manage_own_workouts"
@@ -80346,7 +81468,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 138,
+      "line": 151,
       "module_id": "platform.auth",
       "name": "test_unified_admin_requires_authentication",
       "qualname": "test_unified_admin_requires_authentication"
@@ -80354,7 +81476,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 144,
+      "line": 157,
       "module_id": "platform.auth",
       "name": "test_admin_surfaces_use_the_lightning_favicon",
       "qualname": "test_admin_surfaces_use_the_lightning_favicon"
@@ -80362,7 +81484,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 182,
+      "line": 196,
       "module_id": "platform.auth",
       "name": "test_content_catalog_uses_unified_admin_shell",
       "qualname": "test_content_catalog_uses_unified_admin_shell"
@@ -80370,7 +81492,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 188,
+      "line": 202,
       "module_id": "platform.auth",
       "name": "test_retired_masterclass_admin_surfaces_are_not_available",
       "qualname": "test_retired_masterclass_admin_surfaces_are_not_available"
@@ -80378,7 +81500,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 207,
+      "line": 221,
       "module_id": "platform.auth",
       "name": "test_masterclass_offers_preview_requires_authentication",
       "qualname": "test_masterclass_offers_preview_requires_authentication"
@@ -80386,7 +81508,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 217,
+      "line": 231,
       "module_id": "platform.auth",
       "name": "test_masterclass_offers_preview_uses_canonical_course_sources",
       "qualname": "test_masterclass_offers_preview_uses_canonical_course_sources"
@@ -80394,7 +81516,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 250,
+      "line": 264,
       "module_id": "platform.auth",
       "name": "test_unified_admin_assets_require_authentication",
       "qualname": "test_unified_admin_assets_require_authentication"
@@ -80402,7 +81524,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 256,
+      "line": 270,
       "module_id": "platform.auth",
       "name": "test_unified_shell_is_loaded_by_main_admin_surfaces",
       "qualname": "test_unified_shell_is_loaded_by_main_admin_surfaces"
@@ -80410,7 +81532,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 270,
+      "line": 284,
       "module_id": "platform.auth",
       "name": "test_cross_module_user_summary_requires_authentication",
       "qualname": "test_cross_module_user_summary_requires_authentication"
@@ -80418,7 +81540,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 275,
+      "line": 289,
       "module_id": "platform.auth",
       "name": "test_login_creates_shared_admin_session",
       "qualname": "test_login_creates_shared_admin_session"
@@ -80426,7 +81548,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 295,
+      "line": 309,
       "module_id": "platform.auth",
       "name": "test_login_rejects_wrong_password",
       "qualname": "test_login_rejects_wrong_password"
@@ -80434,7 +81556,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 303,
+      "line": 317,
       "module_id": "platform.auth",
       "name": "test_login_assets_are_public",
       "qualname": "test_login_assets_are_public"
@@ -80442,7 +81564,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 308,
+      "line": 322,
       "module_id": "platform.auth",
       "name": "test_admin_session_last_30_days_and_password_rotation_revokes_it",
       "qualname": "test_admin_session_last_30_days_and_password_rotation_revokes_it"
@@ -80450,7 +81572,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 336,
+      "line": 350,
       "module_id": "platform.auth",
       "name": "test_admin_cookie_cross_subdomain_and_logout",
       "qualname": "test_admin_cookie_cross_subdomain_and_logout"
@@ -80458,7 +81580,7 @@
     {
       "file": "backend/tests/test_crm_auth.py",
       "kind": "function",
-      "line": 351,
+      "line": 365,
       "module_id": "platform.auth",
       "name": "test_independent_host_login_does_not_expand_cookie_trust",
       "qualname": "test_independent_host_login_does_not_expand_cookie_trust"
@@ -80502,6 +81624,94 @@
       "module_id": "admin.control",
       "name": "test_personal_game_keeps_the_original_play_and_local_progress_flow",
       "qualname": "test_personal_game_keeps_the_original_play_and_local_progress_flow"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 13,
+      "module_id": "products.masterclass.course",
+      "name": "settings",
+      "qualname": "settings"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 23,
+      "module_id": "products.masterclass.course",
+      "name": "encoded",
+      "qualname": "encoded"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "class",
+      "line": 30,
+      "module_id": "products.masterclass.course",
+      "name": "FakeEditor",
+      "qualname": "FakeEditor"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "method",
+      "line": 31,
+      "module_id": "products.masterclass.course",
+      "name": "__init__",
+      "qualname": "FakeEditor.__init__"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "method",
+      "line": 47,
+      "module_id": "products.masterclass.course",
+      "name": "_request",
+      "qualname": "FakeEditor._request"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 77,
+      "module_id": "products.masterclass.course",
+      "name": "test_editorial_body_removes_only_service_wrapper",
+      "qualname": "test_editorial_body_removes_only_service_wrapper"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 87,
+      "module_id": "products.masterclass.course",
+      "name": "test_editorial_source_rejects_changed_identity_and_unsafe_link",
+      "qualname": "test_editorial_source_rejects_changed_identity_and_unsafe_link"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 101,
+      "module_id": "products.masterclass.course",
+      "name": "test_github_editor_saves_draft_then_publishes_same_content",
+      "qualname": "test_github_editor_saves_draft_then_publishes_same_content"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 131,
+      "module_id": "products.masterclass.course",
+      "name": "test_github_editor_does_not_create_empty_draft",
+      "qualname": "test_github_editor_does_not_create_empty_draft"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 145,
+      "module_id": "products.masterclass.course",
+      "name": "test_github_editor_rejects_stale_main_before_draft_write",
+      "qualname": "test_github_editor_rejects_stale_main_before_draft_write"
+    },
+    {
+      "file": "backend/tests/test_github_content_editor.py",
+      "kind": "function",
+      "line": 162,
+      "module_id": "products.masterclass.course",
+      "name": "test_github_write_requires_token_before_network",
+      "qualname": "test_github_write_requires_token_before_network"
     },
     {
       "file": "backend/tests/test_google_apps_import.py",
@@ -82210,7 +83420,39 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 488,
+      "line": 496,
+      "module_id": "products.masterclass.runtime",
+      "name": "test_git_markdown_editor_uses_same_renderer_and_separate_draft",
+      "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft"
+    },
+    {
+      "file": "backend/tests/test_masterclass_journey.py",
+      "kind": "class",
+      "line": 505,
+      "module_id": "products.masterclass.runtime",
+      "name": "Editor",
+      "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor"
+    },
+    {
+      "file": "backend/tests/test_masterclass_journey.py",
+      "kind": "method",
+      "line": 506,
+      "module_id": "products.masterclass.runtime",
+      "name": "load",
+      "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor.load"
+    },
+    {
+      "file": "backend/tests/test_masterclass_journey.py",
+      "kind": "method",
+      "line": 518,
+      "module_id": "products.masterclass.runtime",
+      "name": "save_draft",
+      "qualname": "test_git_markdown_editor_uses_same_renderer_and_separate_draft.Editor.save_draft"
+    },
+    {
+      "file": "backend/tests/test_masterclass_journey.py",
+      "kind": "function",
+      "line": 555,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps",
       "qualname": "test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps"
@@ -82218,7 +83460,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 572,
+      "line": 639,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_material_markdown_blocks_notes_and_dqs_components",
       "qualname": "test_course_material_markdown_blocks_notes_and_dqs_components"
@@ -82226,7 +83468,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 677,
+      "line": 744,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds",
       "qualname": "test_masterclass_component_registry_enforces_all_variants_and_slider_bounds"
@@ -82234,7 +83476,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 715,
+      "line": 782,
       "module_id": "products.masterclass.runtime",
       "name": "placement_token",
       "qualname": "placement_token"
@@ -82242,7 +83484,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 719,
+      "line": 786,
       "module_id": "products.masterclass.runtime",
       "name": "placement_query",
       "qualname": "placement_query"
@@ -82250,7 +83492,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 723,
+      "line": 790,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals",
       "qualname": "test_masterclass_migration_avoids_sqlalchemy_bind_like_json_literals"
@@ -82258,7 +83500,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 734,
+      "line": 801,
       "module_id": "products.masterclass.runtime",
       "name": "test_messenger_link_migration_stores_only_token_hash",
       "qualname": "test_messenger_link_migration_stores_only_token_hash"
@@ -82266,7 +83508,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 745,
+      "line": 812,
       "module_id": "products.masterclass.runtime",
       "name": "test_legacy_first_day_messenger_step_is_hidden_by_production_migration",
       "qualname": "test_legacy_first_day_messenger_step_is_hidden_by_production_migration"
@@ -82274,7 +83516,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 758,
+      "line": 825,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_window_migration_changes_only_future_early_duration",
       "qualname": "test_offer_window_migration_changes_only_future_early_duration"
@@ -82282,7 +83524,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 770,
+      "line": 837,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_migration_sets_each_approved_consultation_addon",
       "qualname": "test_site_short_migration_sets_each_approved_consultation_addon"
@@ -82290,7 +83532,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 788,
+      "line": 855,
       "module_id": "products.masterclass.runtime",
       "name": "setup",
       "qualname": "setup"
@@ -82298,7 +83540,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 792,
+      "line": 859,
       "module_id": "products.masterclass.runtime",
       "name": "override",
       "qualname": "setup.override"
@@ -82306,7 +83548,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 845,
+      "line": 912,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_personal_data_uses_tilda_email_and_server_access",
       "qualname": "test_masterclass_personal_data_uses_tilda_email_and_server_access"
@@ -82314,7 +83556,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 857,
+      "line": 924,
       "module_id": "products.masterclass.runtime",
       "name": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent",
       "qualname": "test_questionnaire_autosaves_each_answer_and_submit_is_idempotent"
@@ -82322,7 +83564,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 903,
+      "line": 970,
       "module_id": "products.masterclass.runtime",
       "name": "test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_messenger",
       "qualname": "test_onboarding_questionnaire_does_not_queue_personal_data_without_linked_messenger"
@@ -82330,7 +83572,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 916,
+      "line": 983,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result",
       "qualname": "test_current_diet_questionnaire_saves_categories_and_queues_one_telegram_result"
@@ -82338,7 +83580,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 964,
+      "line": 1031,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes",
       "qualname": "test_admin_offer_client_preview_searches_by_email_then_reads_by_user_id_without_writes"
@@ -82346,7 +83588,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1003,
+      "line": 1070,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly",
       "qualname": "test_admin_offer_client_preview_keeps_review_to_last_week_transition_readonly"
@@ -82354,7 +83596,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1072,
+      "line": 1139,
       "module_id": "products.masterclass.runtime",
       "name": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link",
       "qualname": "test_onboarding_can_generate_only_one_active_short_lived_telegram_link"
@@ -82362,7 +83604,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1127,
+      "line": 1194,
       "module_id": "products.masterclass.runtime",
       "name": "test_dqs_material_queues_a_link_only_for_linked_telegram",
       "qualname": "test_dqs_material_queues_a_link_only_for_linked_telegram"
@@ -82370,7 +83612,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1173,
+      "line": 1240,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_app_trigger_reveals_only_an_owned_application_once",
       "qualname": "test_course_app_trigger_reveals_only_an_owned_application_once"
@@ -82378,7 +83620,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1258,
+      "line": 1325,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price",
       "qualname": "test_offer_excludes_owned_product_and_checkout_rechecks_server_price"
@@ -82386,7 +83628,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1284,
+      "line": 1351,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_one_offer_shows_early_price_without_starting_countdown",
       "qualname": "test_day_one_offer_shows_early_price_without_starting_countdown"
@@ -82394,7 +83636,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1325,
+      "line": 1392,
       "module_id": "products.masterclass.runtime",
       "name": "test_single_offers_stay_concise_and_bundles_list_their_products",
       "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products"
@@ -82402,7 +83644,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1326,
+      "line": 1393,
       "module_id": "products.masterclass.runtime",
       "name": "assert_composition",
       "qualname": "test_single_offers_stay_concise_and_bundles_list_their_products.assert_composition"
@@ -82410,7 +83652,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1392,
+      "line": 1459,
       "module_id": "products.masterclass.runtime",
       "name": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards",
       "qualname": "test_bundle_rows_use_the_same_catalog_fields_as_single_cards"
@@ -82418,7 +83660,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1442,
+      "line": 1509,
       "module_id": "products.masterclass.runtime",
       "name": "test_partial_bundle_keeps_the_temporary_full_program_name",
       "qualname": "test_partial_bundle_keeps_the_temporary_full_program_name"
@@ -82426,7 +83668,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1462,
+      "line": 1529,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_product_catalog_has_one_complete_card_contract",
       "qualname": "test_offer_product_catalog_has_one_complete_card_contract"
@@ -82434,7 +83676,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1499,
+      "line": 1566,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_payload_links_product_presentations_to_current_checkout_cards",
       "qualname": "test_offer_payload_links_product_presentations_to_current_checkout_cards"
@@ -82442,7 +83684,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1531,
+      "line": 1598,
       "module_id": "products.masterclass.runtime",
       "name": "test_account_offer_entry_prioritises_selected_product_without_resetting_window",
       "qualname": "test_account_offer_entry_prioritises_selected_product_without_resetting_window"
@@ -82450,7 +83692,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1603,
+      "line": 1670,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog",
       "qualname": "test_offer_simulator_is_generated_from_runtime_css_and_product_catalog"
@@ -82458,7 +83700,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1631,
+      "line": 1698,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_simulator_lists_every_current_course_checkpoint_in_order",
       "qualname": "test_offer_simulator_lists_every_current_course_checkpoint_in_order"
@@ -82466,7 +83708,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1679,
+      "line": 1746,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_preview_uses_production_offer_builder",
       "qualname": "test_admin_offer_preview_uses_production_offer_builder"
@@ -82474,7 +83716,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1701,
+      "line": 1768,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_offer_presentation_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_offer_presentation_has_the_approved_six_stage_grid"
@@ -82482,7 +83724,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1755,
+      "line": 1822,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner",
       "qualname": "test_site_short_presentation_recalculates_the_third_tariff_for_recipes_owner"
@@ -82490,7 +83732,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1775,
+      "line": 1842,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid",
       "qualname": "test_site_short_recipes_tariff_has_the_approved_six_stage_grid"
@@ -82498,7 +83740,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1800,
+      "line": 1867,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout",
       "qualname": "test_site_short_combined_tariff_is_rechecked_and_saved_by_checkout"
@@ -82506,7 +83748,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1823,
+      "line": 1890,
       "module_id": "products.masterclass.runtime",
       "name": "test_offer_placement_cannot_be_forged_by_tilda_client",
       "qualname": "test_offer_placement_cannot_be_forged_by_tilda_client"
@@ -82514,7 +83756,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1840,
+      "line": 1907,
       "module_id": "products.masterclass.runtime",
       "name": "test_checkout_rejects_token_from_another_offer_stage",
       "qualname": "test_checkout_rejects_token_from_another_offer_stage"
@@ -82522,7 +83764,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1853,
+      "line": 1920,
       "module_id": "products.masterclass.runtime",
       "name": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage",
       "qualname": "test_old_tilda_lecture_never_returns_an_earlier_discount_stage"
@@ -82530,7 +83772,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1887,
+      "line": 1954,
       "module_id": "products.masterclass.runtime",
       "name": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint",
       "qualname": "test_expired_price_advances_but_next_timer_waits_for_real_checkpoint"
@@ -82538,7 +83780,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1922,
+      "line": 1989,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_windows_start_once_and_repeat_without_moving_due_time",
       "qualname": "test_recipe_windows_start_once_and_repeat_without_moving_due_time"
@@ -82546,7 +83788,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1972,
+      "line": 2039,
       "module_id": "products.masterclass.runtime",
       "name": "test_late_repeat_uses_the_original_course_checkpoint_time",
       "qualname": "test_late_repeat_uses_the_original_course_checkpoint_time"
@@ -82554,7 +83796,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 1998,
+      "line": 2065,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_generate_signed_tokens_for_tilda_placements",
       "qualname": "test_admin_can_generate_signed_tokens_for_tilda_placements"
@@ -82562,7 +83804,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2018,
+      "line": 2085,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_offer_stages_explain_the_runtime_window_rules",
       "qualname": "test_admin_offer_stages_explain_the_runtime_window_rules"
@@ -82570,7 +83812,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2050,
+      "line": 2117,
       "module_id": "products.masterclass.runtime",
       "name": "test_current_21_day_offer_placements_select_expected_stages",
       "qualname": "test_current_21_day_offer_placements_select_expected_stages"
@@ -82578,7 +83820,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2068,
+      "line": 2135,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_progress_is_server_side_and_steps_are_strictly_sequential",
       "qualname": "test_course_progress_is_server_side_and_steps_are_strictly_sequential"
@@ -82586,7 +83828,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2230,
+      "line": 2297,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_api_uses_tilda_email_but_still_requires_server_access",
       "qualname": "test_course_api_uses_tilda_email_but_still_requires_server_access"
@@ -82594,7 +83836,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2264,
+      "line": 2331,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_can_enable_isolated_accelerated_course_profile",
       "qualname": "test_admin_can_enable_isolated_accelerated_course_profile"
@@ -82602,7 +83844,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2285,
+      "line": 2352,
       "module_id": "products.masterclass.runtime",
       "name": "test_closing_review_sends_one_copy_only_after_submit",
       "qualname": "test_closing_review_sends_one_copy_only_after_submit"
@@ -82610,7 +83852,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2331,
+      "line": 2398,
       "module_id": "products.masterclass.runtime",
       "name": "test_course_content_uses_the_same_member_session",
       "qualname": "test_course_content_uses_the_same_member_session"
@@ -82618,7 +83860,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2351,
+      "line": 2418,
       "module_id": "products.masterclass.runtime",
       "name": "test_recipe_gate_uses_access_and_records_open_once",
       "qualname": "test_recipe_gate_uses_access_and_records_open_once"
@@ -82626,7 +83868,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2413,
+      "line": 2480,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_preview_lists_only_masterclass_users_with_primary_email",
       "qualname": "test_admin_preview_lists_only_masterclass_users_with_primary_email"
@@ -82634,7 +83876,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2424,
+      "line": 2491,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices",
       "qualname": "test_site_short_consultation_is_separate_only_on_day_19_or_standard_prices"
@@ -82642,7 +83884,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2449,
+      "line": 2516,
       "module_id": "products.masterclass.runtime",
       "name": "test_review_expiry_automatically_starts_final_week_before_day_21",
       "qualname": "test_review_expiry_automatically_starts_final_week_before_day_21"
@@ -82650,7 +83892,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2501,
+      "line": 2568,
       "module_id": "products.masterclass.runtime",
       "name": "test_site_short_day_21_shows_standard_consultation_after_final_week",
       "qualname": "test_site_short_day_21_shows_standard_consultation_after_final_week"
@@ -82658,7 +83900,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2531,
+      "line": 2598,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_19_fixes_review_and_last_week_timeline_once",
       "qualname": "test_day_19_fixes_review_and_last_week_timeline_once"
@@ -82666,7 +83908,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2556,
+      "line": 2623,
       "module_id": "products.masterclass.runtime",
       "name": "test_day_21_during_review_only_shows_its_existing_remainder",
       "qualname": "test_day_21_during_review_only_shows_its_existing_remainder"
@@ -82674,7 +83916,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2582,
+      "line": 2649,
       "module_id": "products.masterclass.runtime",
       "name": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed",
       "qualname": "test_offers_hub_does_not_resurrect_final_discount_after_week_has_elapsed"
@@ -82682,7 +83924,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2619,
+      "line": 2686,
       "module_id": "products.masterclass.runtime",
       "name": "test_admin_lists_personal_offer_window_with_effective_expired_status",
       "qualname": "test_admin_lists_personal_offer_window_with_effective_expired_status"
@@ -82690,7 +83932,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2641,
+      "line": 2708,
       "module_id": "products.masterclass.runtime",
       "name": "test_crm_card_contains_masterclass_answers_events_and_offer_windows",
       "qualname": "test_crm_card_contains_masterclass_answers_events_and_offer_windows"
@@ -82698,7 +83940,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2665,
+      "line": 2732,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_article_media_route_serves_only_registered_image_tree",
       "qualname": "test_masterclass_article_media_route_serves_only_registered_image_tree"
@@ -82706,7 +83948,7 @@
     {
       "file": "backend/tests/test_masterclass_journey.py",
       "kind": "function",
-      "line": 2681,
+      "line": 2748,
       "module_id": "products.masterclass.runtime",
       "name": "test_masterclass_outline_and_material_cards_do_not_render_summaries",
       "qualname": "test_masterclass_outline_and_material_cards_do_not_render_summaries"
@@ -97148,13 +98390,21 @@
       "kind": "method",
       "line": 35,
       "module_id": "operations.delivery",
+      "name": "test_backend_build_context_includes_masterclass_editorial_content",
+      "qualname": "DeployPolicyTests.test_backend_build_context_includes_masterclass_editorial_content"
+    },
+    {
+      "file": "tools/tests/test_deploy_policy.py",
+      "kind": "method",
+      "line": 41,
+      "module_id": "operations.delivery",
       "name": "test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts",
       "qualname": "DeployPolicyTests.test_deploy_bootstraps_target_policy_and_refreshes_installed_scripts"
     },
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 51,
+      "line": 57,
       "module_id": "operations.delivery",
       "name": "test_server_git_fetches_use_reliable_http11_transport",
       "qualname": "DeployPolicyTests.test_server_git_fetches_use_reliable_http11_transport"
@@ -97162,7 +98412,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 61,
+      "line": 67,
       "module_id": "operations.delivery",
       "name": "test_routine_deploy_reuses_cached_base_images",
       "qualname": "DeployPolicyTests.test_routine_deploy_reuses_cached_base_images"
@@ -97170,7 +98420,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 75,
+      "line": 81,
       "module_id": "operations.delivery",
       "name": "test_deploy_smoke_checks_the_public_blog_boundary",
       "qualname": "DeployPolicyTests.test_deploy_smoke_checks_the_public_blog_boundary"
@@ -97178,7 +98428,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 85,
+      "line": 91,
       "module_id": "operations.delivery",
       "name": "test_caddy_exposes_only_the_three_temporary_favicon_pages",
       "qualname": "DeployPolicyTests.test_caddy_exposes_only_the_three_temporary_favicon_pages"
@@ -97186,7 +98436,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 105,
+      "line": 111,
       "module_id": "operations.delivery",
       "name": "test_favicon_is_served_and_smoke_checked_on_every_managed_domain",
       "qualname": "DeployPolicyTests.test_favicon_is_served_and_smoke_checked_on_every_managed_domain"
@@ -97194,7 +98444,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 125,
+      "line": 131,
       "module_id": "operations.delivery",
       "name": "test_go_robokassa_probe_does_not_publish_general_checkout",
       "qualname": "DeployPolicyTests.test_go_robokassa_probe_does_not_publish_general_checkout"
@@ -97202,7 +98452,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 163,
+      "line": 169,
       "module_id": "operations.delivery",
       "name": "test_go_public_intensive_redirect_preserves_attribution",
       "qualname": "DeployPolicyTests.test_go_public_intensive_redirect_preserves_attribution"
@@ -97210,7 +98460,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 189,
+      "line": 195,
       "module_id": "operations.delivery",
       "name": "test_ci_builds_and_tests_only_changed_application_services",
       "qualname": "DeployPolicyTests.test_ci_builds_and_tests_only_changed_application_services"
@@ -97218,7 +98468,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 199,
+      "line": 205,
       "module_id": "operations.delivery",
       "name": "test_backup_impact_classification_uses_real_git_diffs",
       "qualname": "DeployPolicyTests.test_backup_impact_classification_uses_real_git_diffs"
@@ -97226,7 +98476,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 277,
+      "line": 292,
       "module_id": "operations.delivery",
       "name": "classify",
       "qualname": "DeployPolicyTests.classify"
@@ -97234,7 +98484,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 287,
+      "line": 302,
       "module_id": "operations.delivery",
       "name": "commit",
       "qualname": "DeployPolicyTests.commit"
@@ -97242,7 +98492,7 @@
     {
       "file": "tools/tests/test_deploy_policy.py",
       "kind": "method",
-      "line": 293,
+      "line": 308,
       "module_id": "operations.delivery",
       "name": "git",
       "qualname": "DeployPolicyTests.git"

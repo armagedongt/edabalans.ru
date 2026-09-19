@@ -23,6 +23,9 @@ implementation_status: implemented
 - готовить и публиковать редакцию напрямую из `content/masterclass/editorial/`, где
   `program.md` владеет названиями, порядком, вводными и заданиями всех дней,
   а отдельные Markdown-файлы — текстами материалов; прежние `days/` — архив;
+- редактировать первый пилотный материал через защищённый Git-backed экран:
+  отдельный draft, точный preview, diff, явная публикация, Git history, rollback и
+  SHA-защита от перезаписи;
 - публиковать обычный текстовый материал отдельной версией по стабильному
   `step.id`, не меняя структуру и не выполняя code deploy;
 - восстанавливать предыдущую редакцию одного материала без отката курса;
@@ -41,7 +44,10 @@ implementation_status: implemented
 
 ## Источники истины
 
-Active `managed_document_versions` — runtime truth; `content/masterclass/course/course.json` — seed; смысловой контракт — `COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета — `COURSE_VISUAL_SYSTEM.md`.
+Active `managed_document_versions` — runtime truth структуры;
+`content/masterclass/course/course.json` — seed; смысловой контракт —
+`COURSE_STRUCTURE_CONTRACT.md`; изменяемые размеры, отступы и цвета —
+`COURSE_VISUAL_SYSTEM.md`.
 
 `content/masterclass/editorial/` — authoring truth редакции. Команда
 `backend/scripts/publish_masterclass_editorial.py --publish` создаёт новую active
@@ -49,6 +55,13 @@ revision структуры и отдельные versioned-редакции о�
 программу прежние шаги не удаляются, а остаются скрытыми.
 Для согласованного частичного выпуска `--through-day 5` ограничивает изменения
 днями 1–5; структура, тексты и редакторские поля более поздних дней сохраняются.
+
+Для `day-01-article-02` Markdown из `content/masterclass/editorial/materials/` уже
+является одновременно authoring и runtime truth после deploy. Экран
+`/admin/courses/masterclass-21/materials/day-01-article-02/editor` читает и пишет
+тот же файл через GitHub Contents API. Ветка `content-drafts` не развёртывается;
+`main` публикуется обычным CI/deploy. GitHub token хранится только в серверном `.env`.
+Это пилот: другие статьи не переводятся на этот маршрут автоматически.
 
 `content/masterclass/source-current/` хранит миграционные исходники прежней
 редакции и после первичного переноса не является местом новой редактуры. Для DQS

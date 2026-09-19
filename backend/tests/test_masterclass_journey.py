@@ -135,7 +135,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     client, _ = setup()
     editor = client.get("/admin/api/courses/masterclass-21/structure").json()
     manifest = editor["active"]["manifest"]
-    step = manifest["days"][0]["steps"][1]
+    step = manifest["days"][0]["steps"][2]
     step_id = step["id"]
 
     published = client.put(
@@ -151,7 +151,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
         json={"expected_version": editor["active"]["version"], "manifest": manifest},
     )
     assert locked.status_code == 200
-    assert locked.json()["active"]["manifest"]["days"][0]["steps"][1]["locked"] is True
+    assert locked.json()["active"]["manifest"]["days"][0]["steps"][2]["locked"] is True
 
     materials = client.get(
         "/api/masterclass/course/materials?email=member@example.test"
@@ -170,7 +170,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     )
     assert first.status_code == 200
     rejected = client.post(
-        "/api/masterclass/course/days/1/steps/1/complete",
+        "/api/masterclass/course/days/1/steps/2/complete",
         json={"email": "member@example.test"},
     )
     assert rejected.status_code == 409
@@ -178,7 +178,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
 
     current = locked.json()
     unlocked_manifest = current["active"]["manifest"]
-    unlocked_step = unlocked_manifest["days"][0]["steps"][1]
+    unlocked_step = unlocked_manifest["days"][0]["steps"][2]
     unlocked_step["locked"] = False
     unlocked = client.put(
         "/admin/api/courses/masterclass-21/structure",
@@ -189,7 +189,7 @@ def test_locked_course_step_is_not_delivered_or_completable_and_rejoins_after_un
     )
     assert unlocked.status_code == 200
     active = unlocked.json()["active"]
-    reopened_step = active["manifest"]["days"][0]["steps"][1]
+    reopened_step = active["manifest"]["days"][0]["steps"][2]
     assert reopened_step["requiredForAllAfterRevision"] == active["version"]
     after_unlock = client.get(
         "/api/masterclass/course?email=member@example.test"
@@ -406,8 +406,16 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
     )
     assert current.status_code == 200
     assert current.json()["version"] == 0
-    assert current.json()["published"] is False
+    assert current.json()["published"] is True
+    assert current.json()["source"] == "git_markdown"
     assert current.json()["html"]
+
+    blocked_legacy_publish = client.put(
+        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        json={"expected_version": 0, "content": "Дубль", "format": "markdown"},
+    )
+    assert blocked_legacy_publish.status_code == 409
+    assert "каноническим Markdown" in blocked_legacy_publish.json()["detail"]
 
     source = (
         '<h2>Что важно</h2><p>Абзац <strong>с акцентом</strong> и '
@@ -423,7 +431,7 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         '<script>alert(1)</script>'
     )
     published = client.put(
-        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        "/admin/api/courses/masterclass-21/materials/day-01-article-03",
         json={"expected_version": 0, "content": source, "format": "html"},
     )
     assert published.status_code == 200
@@ -449,18 +457,18 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         "/api/masterclass/course/materials?email=member@example.test"
     )
     assert runtime.status_code == 200
-    assert runtime.json()["materials"]["day-01-article-02"]["html"] == body["html"]
+    assert runtime.json()["materials"]["day-01-article-03"]["html"] == body["html"]
     selected = client.get(
         "/api/masterclass/course/materials?email=member@example.test"
-        "&step_id=day-01-article-02"
+        "&step_id=day-01-article-03"
     )
     assert selected.status_code == 200
     assert selected.json()["materials"] == {
-        "day-01-article-02": runtime.json()["materials"]["day-01-article-02"]
+        "day-01-article-03": runtime.json()["materials"]["day-01-article-03"]
     }
     assert client.get(
         "/api/masterclass/course/materials?email=other@example.test"
-        "&step_id=day-01-article-02"
+        "&step_id=day-01-article-03"
     ).status_code == 403
     for absent_id in ("day-03-article-02", "day-01-questionnaire", "unknown"):
         assert client.get(
@@ -473,16 +481,75 @@ def test_course_material_publisher_preserves_article_semantics_and_runtime_overr
         ))
         item = db.scalar(select(ContentItem).where(
             ContentItem.source_id == source_row.id,
-            ContentItem.external_id == "day-01-article-02",
+            ContentItem.external_id == "day-01-article-03",
         ))
         version = db.get(ContentItemVersion, item.latest_version_id)
         assert version.blocks == [{"type": "article_html", "html": body["html"]}]
 
     stale = client.put(
-        "/admin/api/courses/masterclass-21/materials/day-01-article-02",
+        "/admin/api/courses/masterclass-21/materials/day-01-article-03",
         json={"expected_version": 0, "content": "Новая версия", "format": "markdown"},
     )
     assert stale.status_code == 409
+
+
+def test_git_markdown_editor_uses_same_renderer_and_separate_draft(monkeypatch):
+    import app.course_material_routes as routes
+
+    source = (
+        "# Как вести дневник питания\n\n> Тип: **статья**\n\n"
+        "<!-- step_id: day-01-article-02; day: 1 -->\n\nСтарый текст.\n"
+    )
+    calls = {}
+
+    class Editor:
+        def load(self, step_id):
+            assert step_id == "day-01-article-02"
+            return {
+                "ok": True,
+                "step_id": step_id,
+                "path": "content/masterclass/editorial/materials/01-02.md",
+                "connected": True,
+                "main": {"sha": "a" * 40, "content": source},
+                "draft": None,
+                "draft_base_main_sha": None,
+            }
+
+        def save_draft(self, step_id, **kwargs):
+            calls["draft"] = (step_id, kwargs)
+            return {"ok": True, "sha": "b" * 40, "main_sha": "a" * 40}
+
+    monkeypatch.setattr(routes, "editorial_editor", lambda: Editor())
+    client, _ = setup()
+
+    loaded = client.get(
+        "/admin/api/editorial/masterclass/materials/day-01-article-02"
+    )
+    assert loaded.status_code == 200
+    assert loaded.json()["title"] == "Как вести дневник питания"
+    assert loaded.json()["main"]["content"] == source
+
+    changed = source.replace("Старый текст.", "## Раздел\n\nНовый **текст**.")
+    preview = client.post(
+        "/admin/api/editorial/masterclass/materials/day-01-article-02/preview",
+        json={"content": changed},
+    )
+    assert preview.status_code == 200
+    assert "<h2>Раздел</h2>" in preview.json()["html"]
+    assert "<strong>текст</strong>" in preview.json()["html"]
+    assert "+## Раздел" in preview.json()["diff"]
+
+    draft = client.put(
+        "/admin/api/editorial/masterclass/materials/day-01-article-02/draft",
+        json={
+            "content": changed,
+            "expected_main_sha": "a" * 40,
+            "expected_draft_sha": None,
+        },
+    )
+    assert draft.status_code == 200
+    assert calls["draft"][1]["content"] == changed
+    assert calls["draft"][1]["admin"] == "test-admin"
 
 
 def test_course_material_publisher_supports_markdown_history_restore_and_blocks_special_steps():

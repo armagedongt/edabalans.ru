@@ -129,6 +129,19 @@ def test_course_structure_api_requires_authentication() -> None:
         "/admin/api/courses/masterclass-21/structure",
         json={"expected_version": 1, "manifest": {}},
     ).status_code == 401
+    assert client.get(
+        "/admin/api/editorial/masterclass/materials/day-01-article-02"
+    ).status_code == 401
+    assert client.post(
+        "/admin/api/editorial/masterclass/materials/day-01-article-02/preview",
+        json={"content": "Текст"},
+    ).status_code == 401
+    editor_page = client.get(
+        "/admin/courses/masterclass-21/materials/day-01-article-02/editor",
+        follow_redirects=False,
+    )
+    assert editor_page.status_code == 303
+    assert editor_page.headers["location"].startswith("/admin?next=")
     assert client.post(
         "/admin/api/courses/masterclass-21/structure/versions/1/restore",
         json={"expected_version": 1},
@@ -164,6 +177,7 @@ def test_admin_surfaces_use_the_lightning_favicon() -> None:
         "/admin/library",
         "/admin/courses",
         "/admin/courses/masterclass-21/structure",
+        "/admin/courses/masterclass-21/materials/day-01-article-02/editor",
         "/admin/products",
         "/admin/content",
         "/admin/marketing",

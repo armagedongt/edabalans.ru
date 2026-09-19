@@ -469,6 +469,12 @@ Telegram, Caddy, Compose, migration, `seed.py` и изменения точно�
 impact; чистые правила агента и deploy-control без runtime-зависимости не требуют
 пересборки приложения.
 
+`content/masterclass/editorial/**` входит в backend Docker image и всегда считается
+backend impact. Поэтому публикация материала из Git-backed админ-редактора создаёт
+content-only commit в `main`, после которого CI собирает и проверяет backend, а VM
+разворачивает ровно этот commit. Ветка `content-drafts` production workflow не
+запускает и ученикам не видна.
+
 GitHub не получает SSH-ключ или иной доступ к VM. Сервер сам проверяет `main` раз в
 две минуты и разворачивает только коммит с успешно завершённой проверкой `Test`.
 Оба серверных deploy-скрипта явно выполняют GitHub smart-HTTP fetch через

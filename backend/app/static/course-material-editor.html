@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Редактор материала</title>
+  <link rel="icon" type="image/svg+xml" href="/admin/static/admin-favicon.svg">
+  <link rel="stylesheet" href="/admin/static/admin-shell.css">
+  <link rel="stylesheet" href="/admin/static/course-material-editor.css">
+  <link rel="stylesheet" href="/assets/article-typography.css">
+  <link rel="stylesheet" href="/assets/article-note.css">
+  <link rel="stylesheet" href="/assets/course-visual.css">
+  <link rel="stylesheet" href="/course-assets/masterclass/article-components.css">
+</head>
+<body>
+  <main class="editor-shell">
+    <header class="editor-head">
+      <div>
+        <a href="/admin/courses/masterclass-21/structure">← Структура Мастер-класса</a>
+        <p class="eyebrow" id="material-meta">Материал Мастер-класса</p>
+        <h1 id="material-title">Загрузка…</h1>
+        <p id="file-path" class="file-path"></p>
+      </div>
+      <div class="connection" id="connection">Проверяю GitHub…</div>
+    </header>
+    <div id="notice" class="notice" hidden></div>
+    <div id="error" class="error" hidden></div>
+    <section class="toolbar" aria-label="Действия с материалом">
+      <button id="preview" class="secondary">Предпросмотр и изменения</button>
+      <button id="save-draft">Сохранить черновик</button>
+      <button id="publish" class="publish" disabled>Опубликовать</button>
+      <span id="status">Загрузка…</span>
+    </section>
+    <div class="workspace">
+      <section class="source-pane">
+        <h2>Markdown</h2>
+        <textarea id="source" spellcheck="true" aria-label="Markdown материала"></textarea>
+      </section>
+      <section class="result-pane">
+        <div class="tabs" role="tablist">
+          <button class="tab active" data-tab="preview-pane" role="tab">Как на сайте</button>
+          <button class="tab" data-tab="diff-pane" role="tab">Что изменилось</button>
+        </div>
+        <div id="preview-pane" class="tab-pane">
+          <div id="masterclass-course-app" class="preview-course"><article class="article" id="article"></article></div>
+        </div>
+        <div id="diff-pane" class="tab-pane" hidden><pre id="diff"></pre></div>
+      </section>
+    </div>
+    <details class="history-box">
+      <summary>История опубликованных версий</summary>
+      <div id="history"><p>Загрузка…</p></div>
+    </details>
+  </main>
+  <script src="/course-assets/masterclass/article-components.js"></script>
+  <script src="/admin/static/admin-shell.js"></script>
+  <script src="/admin/static/course-material-editor.js"></script>
+</body>
+</html>

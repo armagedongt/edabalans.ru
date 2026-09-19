@@ -65,6 +65,7 @@ const server = createServer((request, response) => {
     "/admin/knowledge-base": "knowledge-base.html",
     "/admin/courses": "course-editors.html",
     "/admin/courses/masterclass-21/structure": "course-structure-editor.html",
+    "/admin/courses/masterclass-21/materials/day-01-article-02/editor": "course-material-editor.html",
     "/admin/products": "product-catalog-editor.html",
   };
   if (pages[url.pathname]) {
@@ -86,6 +87,8 @@ const server = createServer((request, response) => {
     "/admin/static/knowledge-base.js": "knowledge-base.js",
     "/admin/static/course-structure-editor.css": "course-structure-editor.css",
     "/admin/static/course-structure-editor.js": "course-structure-editor.js",
+    "/admin/static/course-material-editor.css": "course-material-editor.css",
+    "/admin/static/course-material-editor.js": "course-material-editor.js",
     "/admin/static/product-catalog-editor.js": "product-catalog-editor.js",
     "/admin/static/product-catalog-editor.css": "product-catalog-editor.css",
     "/crm/crm.css": "crm.css",
@@ -95,6 +98,14 @@ const server = createServer((request, response) => {
     const name = assets[url.pathname];
     response.writeHead(200, { "Content-Type": name.endsWith(".css") ? "text/css" : "text/javascript" });
     return response.end(readFileSync(path.join(staticRoot, name)));
+  }
+  if (["/assets/article-typography.css", "/assets/article-note.css", "/assets/course-visual.css", "/course-assets/masterclass/article-components.css"].includes(url.pathname)) {
+    response.writeHead(200, { "Content-Type": "text/css" });
+    return response.end("");
+  }
+  if (url.pathname === "/course-assets/masterclass/article-components.js") {
+    response.writeHead(200, { "Content-Type": "text/javascript" });
+    return response.end("");
   }
   if (url.pathname === "/embed.js") {
     response.writeHead(200, { "Content-Type": "text/javascript" });
@@ -130,6 +141,9 @@ const server = createServer((request, response) => {
   }
   if (url.pathname === "/admin/api/courses") return json(response, { courses: [{ name: "Мастер-класс", units: 21, unit_name: "день", version: 7, materials_total: 42, materials_published: 42, ready: true, editor_url: "/admin/courses/masterclass-21/structure" }] });
   if (url.pathname === "/admin/api/courses/masterclass-21/structure") return json(response, { course: { name: "Мастер-класс", unit_name: "день" }, active: { version: 7, created_at: "2026-09-19T12:00:00Z", manifest: { days: [{ number: 1, title: "Начало работы", tocSummary: "Первый день", lead: "", videoId: "", image: "", timings: [], intro: "", afterLead: "", afterTitle: "", afterText: "", steps: [], checks: [] }] } }, history: [] });
+  if (url.pathname === "/admin/api/editorial/masterclass/materials/day-01-article-02" && request.method === "GET") return json(response, { ok:true, step_id:"day-01-article-02", day:1, title:"Как вести дневник питания", path:"content/masterclass/editorial/materials/01-02.md", connected:true, main:{sha:"a".repeat(40),content:"# Как вести дневник питания\n\n## Зачем нужен дневник?\n\nТекст материала.\n"}, draft:null, draft_base_main_sha:null });
+  if (url.pathname === "/admin/api/editorial/masterclass/materials/day-01-article-02/preview") return json(response, { ok:true, html:"<h2>Зачем нужен дневник?</h2><p>Текст материала.</p>", diff:"Изменений нет" });
+  if (url.pathname === "/admin/api/editorial/masterclass/materials/day-01-article-02/history") return json(response, { ok:true, history:[{sha:"a".repeat(40),message:"content: source",author:"Admin",date:"2026-09-19T12:00:00Z",active:true}] });
   if (url.pathname === "/admin/api/product-catalog") return json(response, { active: { version: 3, manifest: { products: [{ shortName: "Мастер-класс", fullName: "Мастер-класс по похудению", descriptor: "Как выстроить питание", status: "active", marketing: "" }], tariffs: [] } }, history: [] });
   if (url.pathname === "/admin/api/logout") return json(response, { ok: true });
   response.writeHead(404);
@@ -227,6 +241,7 @@ const integratedPages = {
   knowledge: "/admin/knowledge-base",
   courses: "/admin/courses",
   course: "/admin/courses/masterclass-21/structure",
+  materialEditor: "/admin/courses/masterclass-21/materials/day-01-article-02/editor",
   products: "/admin/products",
 };
 for (const [name, route] of Object.entries(integratedPages)) {

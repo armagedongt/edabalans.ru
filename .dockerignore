@@ -13,6 +13,8 @@
 !content/masterclass/course/course.json
 !content/masterclass/source-current/
 !content/masterclass/source-current/**
+!content/masterclass/editorial/
+!content/masterclass/editorial/**
 !content/calories/
 !content/calories/course/
 !content/calories/course/course.json
