@@ -14,6 +14,7 @@ from xml.sax.saxutils import escape
 import qrcode
 import qrcode.image.svg
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.security import HTTPBasicCredentials
 from fastapi.responses import (
     FileResponse,
     HTMLResponse,
@@ -33,7 +34,7 @@ from app.app_service import (
     resolve_user_for_resource,
     utc_iso,
 )
-from app.auth import require_admin, session_admin
+from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
 from app.legal_service import legal_status_payload
 from app.intensive_public_cta import INTENSIVE_PUBLIC_CTA
@@ -238,8 +239,13 @@ def site_footer_loader() -> FileResponse:
 
 @router.get("/finance", include_in_schema=False)
 @router.get("/finance/", include_in_schema=False)
-def finance_model() -> FileResponse:
+def finance_model(
+    request: Request,
+    credentials: HTTPBasicCredentials | None = Depends(security),
+) -> Response:
     """Owner-facing EDA Balance financial model. Settings stay in the browser."""
+    if not admin_identity(request, credentials):
+        return RedirectResponse("/admin?next=/finance", status_code=303)
     return FileResponse(
         STATIC_DIR / "eda-finance.html",
         headers={"Cache-Control": "no-cache"},

@@ -6,14 +6,25 @@ os.environ.setdefault(
     "DATABASE_URL",
     "postgresql+psycopg://test:test@127.0.0.1:5432/test",
 )
+os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
+os.environ.setdefault("ADMIN_PASSWORD", "test-admin-password")
 
 from fastapi.testclient import TestClient
 
 from app.main import app
 
 
-def test_finance_model_is_public_and_contains_browser_persistence() -> None:
-    response = TestClient(app).get("/finance")
+def test_finance_model_uses_admin_session_and_contains_browser_persistence() -> None:
+    client = TestClient(app, base_url="https://app.edabalans.ru")
+    anonymous = client.get("/finance", follow_redirects=False)
+    assert anonymous.status_code == 303
+    assert anonymous.headers["location"] == "/admin?next=/finance"
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    response = client.get("/finance")
 
     assert response.status_code == 200
     assert 'id="save"' in response.text
@@ -35,3 +46,5 @@ def test_finance_model_is_public_and_contains_browser_persistence() -> None:
     assert "reallocatedByCap=excessConsultDemand*.90" in response.text
     assert "finance-tooltip" in response.text
     assert "edabalans-finance-model-v2" in response.text
+    assert "/admin/static/admin-shell.css" in response.text
+    assert "/admin/static/admin-shell.js" in response.text

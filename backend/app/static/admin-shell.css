@@ -1,0 +1,81 @@
+:root{--admin-shell-width:252px;--admin-shell-compact:72px;--admin-shell-dark:#203229;--admin-shell-green:#c9dfb7;--admin-shell-line:#ffffff18}
+body.ed-admin-shell{display:block!important;padding-left:var(--admin-shell-width);transition:padding-left .18s ease}
+body.ed-admin-shell.admin-shell-collapsed{padding-left:var(--admin-shell-compact)}
+body.ed-admin-shell.admin-shell-hidden{padding-left:0}
+.ed-admin-shell .admin-sidebar{position:fixed;inset:0 auto 0 0;z-index:100;width:var(--admin-shell-width);height:100dvh;padding:18px 12px 12px;display:flex;flex-direction:column;background:var(--admin-shell-dark);color:#fff;overflow:hidden;transition:width .18s ease,transform .18s ease}
+.ed-admin-shell .admin-sidebar a{color:inherit;text-decoration:none}
+.ed-admin-shell .admin-brand{display:flex;align-items:center;gap:11px;min-width:0;color:#fff}
+.ed-admin-shell .admin-brand b{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;background:var(--admin-shell-green);color:var(--admin-shell-dark);font:25px Georgia,serif}
+.ed-admin-shell .admin-brand span,.ed-admin-shell .admin-brand small{display:block}
+.ed-admin-shell .admin-brand span{font:700 14px/1.25 Inter,Arial,sans-serif}
+.ed-admin-shell .admin-brand small{color:#aebdb3;font-size:10px;font-weight:400}
+.ed-admin-shell.admin-shell-collapsed .admin-sidebar{width:var(--admin-shell-compact)}
+.ed-admin-shell.admin-shell-hidden .admin-sidebar{transform:translateX(-100%)}
+.admin-shell-brand-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.admin-shell-brand-row .admin-brand{min-width:0;flex:1;margin:0;padding:6px}
+.admin-shell-brand-row .admin-brand b{flex:0 0 40px}
+.admin-shell-brand-row .admin-brand span{white-space:nowrap}
+.admin-shell-controls{display:flex;gap:4px}
+.admin-shell-control,.admin-shell-open,.admin-shell-mobile-open,.admin-shell-logout{border:0;cursor:pointer}
+.admin-shell-control{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:#ffffff12;color:#dbe5de}
+.admin-shell-control:hover{background:#ffffff22;color:#fff}
+.admin-shell-nav{min-height:0;display:block!important;flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#ffffff2b transparent}
+.admin-shell-nav>span{display:block;margin:16px 10px 4px!important;color:#91a197!important;font-size:9px!important;font-weight:800;letter-spacing:.13em}
+.admin-shell-nav>a,.admin-shell-nav>.admin-nav-disabled{display:flex;align-items:center;gap:10px;min-height:39px;padding:9px 10px;border-radius:10px;color:#bdcbc1}
+.admin-shell-nav>a:hover,.admin-shell-nav>a.active{color:#fff;background:#ffffff18}
+.admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:7px;background:#ffffff0d;font-size:12px;font-weight:800}
+.admin-shell-nav .admin-nav-copy{min-width:0;display:grid;gap:1px}
+.admin-shell-nav .admin-nav-copy b{overflow:hidden;text-overflow:ellipsis;font-size:12px;white-space:nowrap}
+.admin-shell-nav .admin-nav-copy small{overflow:hidden;color:#8fa097;font-size:9px;line-height:1.2;text-overflow:ellipsis;white-space:nowrap}
+.admin-shell-nav>.admin-nav-disabled{opacity:.55;cursor:not-allowed}
+.admin-shell-nav>.admin-nav-disabled .admin-nav-copy small{white-space:normal}
+.admin-shell-footer{display:grid;gap:6px;padding-top:10px;border-top:1px solid var(--admin-shell-line)}
+.admin-shell-logout{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border-radius:10px;background:transparent;color:#bdcbc1;text-align:left}
+.admin-shell-logout:hover{background:#ffffff18;color:#fff}
+.admin-shell-open,.admin-shell-mobile-open{position:fixed;z-index:102;display:none;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--admin-shell-dark);color:#fff;box-shadow:0 8px 24px #17251d38}
+.admin-shell-open{left:12px;bottom:12px}
+.admin-shell-mobile-open{left:12px;top:12px}
+.admin-shell-hidden .admin-shell-open{display:grid}
+.admin-shell-backdrop{position:fixed;inset:0;z-index:99;background:#14251d80;opacity:0;pointer-events:none;transition:opacity .18s ease}
+.admin-shell-collapsed .admin-brand span,.admin-shell-collapsed .admin-shell-nav>span,.admin-shell-collapsed .admin-nav-copy,.admin-shell-collapsed .admin-shell-logout>span:last-child{display:none!important}
+.admin-shell-collapsed .admin-brand{display:none}
+.admin-shell-collapsed .admin-shell-brand-row{justify-content:center}
+.admin-shell-collapsed .admin-shell-control[data-action="hide"]{display:none}
+.admin-shell-collapsed .admin-brand{justify-content:center;padding:6px 0}
+.admin-shell-collapsed .admin-shell-nav>a,.admin-shell-collapsed .admin-shell-nav>.admin-nav-disabled,.admin-shell-collapsed .admin-shell-logout{justify-content:center;padding-left:0;padding-right:0}
+.admin-shell-collapsed .admin-shell-footer{padding-top:8px}
+.admin-shell-collapsed .admin-sidebar{padding-left:10px;padding-right:10px}
+.ed-admin-shell .admin-main{min-width:0}
+.ed-admin-shell .admin-header{display:none!important}
+.ed-admin-shell .wiki-topbar,.ed-admin-shell .wiki-sidebar{left:var(--admin-shell-width)}
+.ed-admin-shell.admin-shell-collapsed .wiki-topbar,.ed-admin-shell.admin-shell-collapsed .wiki-sidebar{left:var(--admin-shell-compact)}
+.ed-admin-shell.admin-shell-hidden .wiki-topbar,.ed-admin-shell.admin-shell-hidden .wiki-sidebar{left:0}
+.admin-home-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:18px}
+.admin-home-head h1{margin:2px 0 0;font:500 30px Georgia,serif}
+.admin-home-head small{color:#2e6845;font-size:10px;font-weight:800;letter-spacing:.12em}
+.admin-home-actions{display:flex;align-items:center;gap:8px;width:min(570px,56vw)}
+.admin-home-actions form{display:flex;gap:7px;flex:1}
+.admin-home-actions input{width:100%;height:42px;padding:0 13px;border:1px solid #dfe4dc;border-radius:10px;background:#fff;outline:none}
+.admin-home-actions button{border:0;border-radius:9px;padding:10px 14px;background:#2e6845;color:#fff;cursor:pointer}
+.admin-home-note{margin-top:14px;padding:12px 14px;border:1px solid #dfe4dc;border-radius:12px;background:#fff;color:#737b71}
+@media(max-width:760px){
+  body.ed-admin-shell,body.ed-admin-shell.admin-shell-collapsed,body.ed-admin-shell.admin-shell-hidden{padding:60px 0 0}
+  .ed-admin-shell .admin-sidebar,.ed-admin-shell.admin-shell-collapsed .admin-sidebar,.ed-admin-shell.admin-shell-hidden .admin-sidebar{width:min(310px,86vw);transform:translateX(-105%);padding:18px 12px 12px}
+  .ed-admin-shell.admin-shell-mobile-opened .admin-sidebar{transform:translateX(0)}
+  .ed-admin-shell.admin-shell-mobile-opened .admin-shell-backdrop{opacity:1;pointer-events:auto}
+  .admin-shell-mobile-open{display:grid}
+  .admin-shell-open{display:none!important}
+  .admin-shell-collapsed .admin-brand span,.admin-shell-collapsed .admin-shell-nav>span,.admin-shell-collapsed .admin-nav-copy,.admin-shell-collapsed .admin-shell-logout>span:last-child{display:block!important}
+  .ed-admin-shell.admin-shell-collapsed .admin-brand{display:flex;justify-content:flex-start;padding:6px}
+  .admin-shell-collapsed .admin-shell-nav>a,.admin-shell-collapsed .admin-shell-nav>.admin-nav-disabled,.admin-shell-collapsed .admin-shell-logout{justify-content:flex-start;padding:9px 10px}
+  .admin-shell-control[data-action="collapse"],.admin-shell-control[data-action="hide"]{display:none}
+  .admin-shell-mobile-opened .admin-shell-mobile-open{left:min(calc(86vw - 54px),256px)}
+  .admin-shell-brand-row{padding-right:36px}
+  .admin-home-head{align-items:stretch;flex-direction:column;padding-top:0}
+  .admin-home-actions{width:100%}
+  body.ed-admin-shell:has(.wiki-topbar){padding-top:0}
+  .ed-admin-shell .wiki-topbar,.ed-admin-shell .wiki-sidebar,.ed-admin-shell.admin-shell-collapsed .wiki-topbar,.ed-admin-shell.admin-shell-collapsed .wiki-sidebar,.ed-admin-shell.admin-shell-hidden .wiki-topbar,.ed-admin-shell.admin-shell-hidden .wiki-sidebar{left:0}
+  .ed-admin-shell .wiki-topbar{padding-left:68px}
+}
+@media(min-width:761px) and (max-width:1500px){body.ed-admin-shell main>.grid{grid-template-columns:1fr}}
+@media(max-width:480px){.admin-home-actions form{display:grid;grid-template-columns:minmax(0,1fr) auto}.admin-home-head h1{font-size:27px}}

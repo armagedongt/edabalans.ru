@@ -132,11 +132,29 @@ def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
     assert "То, что увидит клиент" not in client_mode.text
     assert "Можно добавить к мастер-классу" in client_mode.text
     assert "EdabalansMasterclassOfferView.headerMarkup()" in client_mode.text
+    for page in (response, client_mode):
+        assert "/admin/static/admin-shell.css" in page.text
+        assert "/admin/static/admin-shell.js" in page.text
 
 
 def test_unified_admin_assets_require_authentication() -> None:
-    response = make_client().get("/admin/static/admin.js")
-    assert response.status_code == 401
+    for asset in ("admin.js", "admin-shell.js", "admin-shell.css"):
+        response = make_client().get(f"/admin/static/{asset}")
+        assert response.status_code == 401
+
+
+def test_unified_shell_is_loaded_by_main_admin_surfaces() -> None:
+    client = make_client()
+    login = client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    )
+    assert login.status_code == 200
+    for path in ("/admin", "/crm", "/admin/content", "/admin/library", "/admin/knowledge-base", "/admin/courses", "/admin/products"):
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert "/admin/static/admin-shell.css" in response.text, path
+        assert "/admin/static/admin-shell.js" in response.text, path
 
 
 def test_cross_module_user_summary_requires_authentication() -> None:

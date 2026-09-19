@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Редактор структуры курсов</title>
   <link rel="stylesheet" href="/admin/static/course-structure-editor.css">
+  <link rel="stylesheet" href="/admin/static/admin-shell.css">
 </head>
 <body>
   <main class="shell">
@@ -12,6 +13,7 @@
     <h1>Редактор структуры курсов</h1>
     <section id="course-list"><p>Загрузка…</p></section>
   </main>
+  <script src="/admin/static/admin-shell.js" defer></script>
   <script>
     fetch('/admin/api/courses').then(function(response){return response.json().then(function(data){if(!response.ok)throw new Error(data.detail||'Не удалось загрузить курсы');return data})}).then(function(data){document.querySelector('#course-list').innerHTML=data.courses.map(function(course){var publication=course.materials_total==null?'':(' · опубликовано '+course.materials_published+' из '+course.materials_total+' · '+(course.ready?'курс открыт':course.launch_ready?'ждёт все материалы':'запуск выключен'));return '<section class="course-card"><div><strong>'+course.name+'</strong><small>'+course.units+' '+course.unit_name+' · редакция '+course.version+publication+'</small></div><a class="button" href="'+course.editor_url+'">Открыть редактор</a></section>'}).join('')}).catch(function(error){document.querySelector('#course-list').innerHTML='<p class="error">'+error.message+'</p>'})
   </script>

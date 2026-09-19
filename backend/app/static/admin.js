@@ -74,22 +74,24 @@
   async function dashboard() {
     setHeading("Главное", "ЕДИНАЯ АДМИНКА");
     loading();
-    const [summary, projectMap] = await Promise.all([
-      api("/admin/api/summary"),
-      api("/admin/api/project-map")
-    ]);
-    const names = { clients: "Клиенты", applications: "Приложения", tools: "Инструменты", project: "Проект", services: "Сервисы" };
-    const items = (projectMap.modules || []).flatMap((module) => (module.admin_catalog || []).map((item) => ({ ...item, module_id: module.id })));
-    const catalog = ["clients", "applications", "tools", "project", "services"].map((category) => ({ category, items: items.filter((item) => item.category === category).sort((a, b) => a.order - b.order) })).filter((group) => group.items.length);
-    const cards = (group) => `<div class="admin-section-head"><div><h2>${names[group.category]}</h2></div></div><div class="admin-module-grid">${group.items.map((item) => `<article class="admin-module"><h3>${esc(item.label)}</h3><p>${esc(item.description)}</p><footer><span class="admin-badge off">${esc(item.module_id)}</span><a class="admin-action alt" href="${esc(item.url)}"${item.url.startsWith("https://") ? ' target="_blank" rel="noopener"' : ""}>Открыть${item.url.startsWith("https://") ? " ↗" : ""}</a></footer></article>`).join("")}</div>`;
+    const summary = await api("/admin/api/summary");
     root.innerHTML = `
+      <div class="admin-home-head">
+        <div><small>ЕДИНАЯ АДМИНКА</small><h1>Главное</h1></div>
+        <div class="admin-home-actions"><form id="admin-home-search"><input name="q" placeholder="Найти человека по имени, email или Telegram"><button>Найти</button></form></div>
+      </div>
       <div class="admin-grid">
         <article class="admin-stat"><small>ЛЮДЕЙ В CRM</small><b>${summary.users}</b><span>единый user_id</span></article>
         <article class="admin-stat"><small>ПОКУПАТЕЛЕЙ</small><b>${summary.buyers}</b><span>подтверждённые покупки</span></article>
         <article class="admin-stat"><small>ОПЛАТ В ИСТОРИИ</small><b>${summary.paid_payments}</b><span>${money(summary.revenue_rub)}</span></article>
         <article class="admin-stat"><small>ПРОВЕРИТЬ ДОСТУПЫ</small><b>${summary.access_reviews}</b><span>очередь CRM</span></article>
       </div>
-      ${catalog.map(cards).join("")}`;
+      <div class="admin-home-note">Все рабочие разделы находятся в меню слева. На телефоне оно открывается кнопкой ☰.</div>`;
+    document.getElementById("admin-home-search").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const q = new FormData(event.currentTarget).get("q").trim();
+      location.href = `/admin/users${q ? `?q=${encodeURIComponent(q)}` : ""}`;
+    });
   }
 
   function appCard(code, count) {

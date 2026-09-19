@@ -20,7 +20,15 @@ SCHEMA_VERSION = 1
 DOCUMENT_STATUSES = {"current", "draft", "planned", "archived"}
 IMPLEMENTATION_STATUSES = {"implemented", "in_development", "planned", "archived"}
 SOURCE_ROLES = {"runtime", "seed", "rule", "copy", "config", "consumer"}
-ADMIN_CATALOG_CATEGORIES = {"clients", "applications", "tools", "project", "services"}
+ADMIN_CATALOG_CATEGORIES = {
+    "clients",
+    "applications",
+    "marketing",
+    "content",
+    "commerce",
+    "service",
+    "knowledge",
+}
 RELATION_TYPES = ("reads_from", "writes_to", "depends_on", "events_in", "events_out")
 HTTP_METHODS = {"get", "post", "put", "patch", "delete", "options", "head", "api_route"}
 JS_FUNCTION_RE = re.compile(

@@ -68,7 +68,7 @@
       <div class="crm-top">
         <div class="crm-head">
           <div><div class="crm-title">CRM клиентов</div><div class="crm-subtitle">Единая база Edabalans</div></div>
-          <div class="crm-head-actions"><a class="crm-admin-home" href="/admin">⌂ Главное</a><div class="crm-live">● РАБОТАЕТ</div></div>
+          <div class="crm-head-actions"><div class="crm-live">● РАБОТАЕТ</div></div>
         </div>
         <div class="crm-tabs">
           <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
