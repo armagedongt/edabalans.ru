@@ -21,7 +21,13 @@ def test_weather_page_and_assets_are_public() -> None:
     page = client.get("/weather/")
     assert page.status_code == 200
     assert 'id="weather-app"' in page.text
+    assert 'id="weather-map"' in page.text
+    assert 'data-map-mode="precipitation"' in page.text
+    assert 'data-map-mode="wind"' in page.text
     assert 'href="styles.css"' in page.text
     assert 'src="app.js"' in page.text
     assert client.get("/weather/styles.css").status_code == 200
-    assert client.get("/weather/app.js").status_code == 200
+    script = client.get("/weather/app.js")
+    assert script.status_code == 200
+    assert "mapForecastForSelectedDay" in script.text
+    assert "wind_speed_unit: 'ms'" in script.text

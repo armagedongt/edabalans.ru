@@ -30,7 +30,6 @@
         <div class="topbar-panel settings-panel" id="settings-panel" hidden aria-label="Отображаемые поля">
           <label><input type="checkbox" data-field="air" checked /> Температура воздуха</label>
           <label><input type="checkbox" data-field="feels" checked /> По ощущению</label>
-          <label><input type="checkbox" data-field="wind" checked /> Ветер и порывы</label>
           <label><input type="checkbox" data-field="precipitation" checked /> Осадки</label>
           <label><input type="checkbox" data-field="snow" checked /> Снег</label>
           <form class="city-search" id="city-search">
@@ -44,6 +43,22 @@
         <section class="forecast-card daily-card" aria-label="Прогноз на 12 дней"><div class="daily-scroll"><div class="daily-grid" id="daily-grid"></div></div></section>
         <section class="forecast-card hourly-card" aria-label="Почасовой прогноз на выбранный день">
           <div class="hourly-grid" id="hourly-grid"></div>
+        </section>
+        <section class="forecast-card map-card" aria-labelledby="weather-map-heading">
+          <header class="map-header">
+            <div>
+              <p class="map-time" id="map-time">Выберите час</p>
+              <h2 id="weather-map-heading">Карта прогноза</h2>
+            </div>
+            <div class="map-tabs" aria-label="Слой карты">
+              <button class="map-tab" type="button" data-map-mode="precipitation" aria-pressed="true">Осадки</button>
+              <button class="map-tab" type="button" data-map-mode="wind" aria-pressed="false">Ветер</button>
+            </div>
+          </header>
+          <div class="weather-map" id="weather-map" aria-live="polite">
+            <div class="map-grid" id="map-grid"></div>
+            <p class="map-status" id="map-status">Загружаю карту…</p>
+          </div>
         </section>
       </section>
 
