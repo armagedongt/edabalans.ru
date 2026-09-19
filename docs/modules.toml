@@ -635,6 +635,25 @@ owns_routes = ["*/bot/max/webhook"]
 reads_from = ["platform.auth", "platform.crm", "messaging.telegram.attribution", "messaging.telegram.engine", "messaging.telegram.apps"]
 
 [[modules]]
+id = "messaging.cross-messenger"
+parent = "messaging"
+card = "docs/knowledge-base/modules/catalog/messaging.cross-messenger.md"
+depends_on = ["messaging.telegram.engine", "messaging.max", "operations.proxy"]
+reads_from = ["messaging.telegram.engine", "messaging.max"]
+owns_files = [
+  "telegram-bot/service/app/cross_messenger_bridge.py",
+  "telegram-bot/service/configure_cross_messenger_pair.py",
+  "telegram-bot/service/set_cross_messenger_max_webhook.py",
+  "backend/migrations/versions/20260920_0046_cross_messenger_bridge.py",
+  "backend/tests/test_cross_messenger_migration.py",
+  "work/cross-messenger-bridge/**",
+]
+owns_tables = [
+  "messaging_bridge_pairs", "messaging_bridge_messages",
+  "messaging_bridge_receipts", "messaging_bridge_deliveries",
+]
+
+[[modules]]
 id = "messaging.telegram.attribution"
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.attribution.md"

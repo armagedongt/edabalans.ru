@@ -36,6 +36,11 @@ from app.masterclass_link import consume_masterclass_link
 from app.intensive_access import get_or_create_intensive_access_link
 from app.web_login import consume_web_login
 from app.max import MaxClient, process_max_update
+from app.cross_messenger_bridge import (
+    is_telegram_pair_update,
+    process_max_update as process_cross_messenger_max_update,
+    process_telegram_update as process_cross_messenger_telegram_update,
+)
 from app.max_health import MAX_CHECK_INTERVAL_SECONDS, MaxHealth, check_max_dependencies
 from app.schemas import AcceleratedRunIn, AliasCreateIn, AliasStatusIn, BroadcastConfirmIn, BroadcastIn, BroadcastScheduleIn, BroadcastTestIn, ContentPublishIn, ContentUpdateIn, ContentValidateIn, LinkRuleIn, LinkRuleUpdate, ManualMessageIn, PublicMessengerStartLinkIn, PublicMessengerTouchIn, StepPresentationIn, StepUpdateIn, TagCreateIn, TrackingLinkIn, UtmParseIn, UtmRuleIn
 from app.content_authoring import allowed_variables, audit_content, authoring_payload, content_usages, template_variables, variable_is_allowed
@@ -157,6 +162,12 @@ def max_client() -> MaxClient:
 def _admin_cookie_domain(request: Request) -> str | None:
     host = (request.url.hostname or "").lower()
     return ".edabalans.ru" if host == "edabalans.ru" or host.endswith(".edabalans.ru") else None
+
+
+def bridge_max_client() -> MaxClient:
+    if not settings.bridge_max_bot_token:
+        raise HTTPException(503, "MAX token for cross-messenger relay is not configured")
+    return MaxClient(settings.bridge_max_bot_token)
 
 
 def _session_token(username: str, expires_at: int) -> str:
@@ -990,11 +1001,19 @@ def tracking_redirect(token: str, request: Request, session: Session = Depends(g
     return _go_response(token, request, session)
 
 
-def process_update(update: dict, session: Session) -> dict:
-    bot = _bot(session)
+def process_update(update: dict, session: Session, *, telegram_source_trusted: bool = True) -> dict:
     update_id = str(update.get("update_id", ""))
     if not update_id:
         raise HTTPException(400, "update_id is required")
+    if telegram_source_trusted:
+        cross_messenger_result = process_cross_messenger_telegram_update(session, update, bridge_max_client)
+        if cross_messenger_result is not None:
+            return cross_messenger_result
+    elif is_telegram_pair_update(session, update):
+        # A pair can trigger delivery into another messenger, so it must never
+        # accept an unauthenticated public webhook even in local/dev settings.
+        return {"ok": True, "bridge": "unauthenticated"}
+    bot = _bot(session)
     receipt_id = f"{bot.id}:{update_id}"
     if session.get(UpdateReceipt, receipt_id):
         return {"ok": True, "duplicate": True}
@@ -1260,9 +1279,12 @@ def process_update(update: dict, session: Session) -> dict:
 
 @app.post("/telegram/webhook")
 def telegram_webhook(update: dict, x_telegram_bot_api_secret_token: str | None = Header(default=None), session: Session = Depends(get_db)) -> dict:
-    if settings.telegram_webhook_secret and not secrets.compare_digest(x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret):
+    authenticated = bool(settings.telegram_webhook_secret) and secrets.compare_digest(
+        x_telegram_bot_api_secret_token or "", settings.telegram_webhook_secret
+    )
+    if settings.telegram_webhook_secret and not authenticated:
         raise HTTPException(403, "Invalid webhook secret")
-    return process_update(update, session)
+    return process_update(update, session, telegram_source_trusted=authenticated)
 
 
 @app.post("/internal/owner-payment-alert", include_in_schema=False)
@@ -1363,6 +1385,20 @@ def max_webhook(
         app_auth_secret=settings.app_auth_secret,
         account_url=settings.masterclass_account_url,
     )
+
+
+@app.post("/bot/cross-messenger/max/webhook")
+def cross_messenger_max_webhook(
+    update: dict,
+    x_max_bot_api_secret: str | None = Header(default=None),
+    session: Session = Depends(get_db),
+) -> dict:
+    if not settings.bridge_max_webhook_secret:
+        raise HTTPException(503, "MAX relay webhook secret is not configured")
+    if not secrets.compare_digest(x_max_bot_api_secret or "", settings.bridge_max_webhook_secret):
+        raise HTTPException(403, "Invalid MAX relay webhook secret")
+    result = process_cross_messenger_max_update(session, update, client)
+    return result if result is not None else {"ok": True, "ignored": True}
 
 
 @app.get("/bot-api/sequences", dependencies=[Depends(require_admin)])

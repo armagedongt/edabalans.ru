@@ -24,6 +24,11 @@
 		reverse_proxy telegram-bot:8001
 	}
 
+	handle /api/messaging/cross-messenger/max/webhook {
+		rewrite * /bot/cross-messenger/max/webhook
+		reverse_proxy telegram-bot:8001
+	}
+
 	handle /api/messaging/start-link/click {
 		rewrite * /bot/public/start-link/click
 		reverse_proxy telegram-bot:8001
