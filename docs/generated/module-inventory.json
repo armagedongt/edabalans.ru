@@ -1393,10 +1393,6 @@
       "path": "backend/tests/browser/video-player.e2e.mjs"
     },
     {
-      "module_id": "products.public-site",
-      "path": "backend/tests/browser/weather.e2e.mjs"
-    },
-    {
       "module_id": "platform.content",
       "path": "backend/tests/fixtures/telegram_channel_export.json"
     },
@@ -56768,10 +56764,6 @@
         },
         {
           "module_id": "products.public-site",
-          "path": "backend/tests/browser/weather.e2e.mjs"
-        },
-        {
-          "module_id": "products.public-site",
           "path": "backend/tests/test_homepage_preview.py"
         },
         {
@@ -58202,14 +58194,6 @@
           "module_id": "products.public-site",
           "name": "state",
           "qualname": "state"
-        },
-        {
-          "file": "backend/tests/browser/weather.e2e.mjs",
-          "kind": "function",
-          "line": 8,
-          "module_id": "products.public-site",
-          "name": "forecast",
-          "qualname": "forecast"
         },
         {
           "file": "backend/tests/test_homepage_preview.py",
@@ -77778,14 +77762,6 @@
       "module_id": "products.public-site",
       "name": "state",
       "qualname": "state"
-    },
-    {
-      "file": "backend/tests/browser/weather.e2e.mjs",
-      "kind": "function",
-      "line": 8,
-      "module_id": "products.public-site",
-      "name": "forecast",
-      "qualname": "forecast"
     },
     {
       "file": "backend/tests/test_account_password_auth.py",
