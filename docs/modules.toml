@@ -375,6 +375,7 @@ depends_on = ["platform.auth", "platform.commerce"]
 owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
+  "docs/knowledge-base/modules/strength/**",
   "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",
   "content/training/reference/**",
 ]

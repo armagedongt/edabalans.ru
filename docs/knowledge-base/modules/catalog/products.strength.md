@@ -61,6 +61,10 @@ Plan/fact, история упражнений и импорт принадле�
 При импорте читать фактический legacy-источник ниже и безопасный маршрут
 `docs/OPERATIONS.md` от корня проекта.
 
+Повторяемая схема разбора неполных файлов, правила plan/fact/RPE, дат,
+неизвестных упражнений и проверка перед production-записью зафиксированы в
+[протоколе импорта](../strength/IMPORT_PROTOCOL.md).
+
 ## Источники истины
 
 `docs/APPLICATION_PLATFORM.md`, backend runtime и `legacy/google/strength/` при переносе.

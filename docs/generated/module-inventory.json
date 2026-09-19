@@ -3993,6 +3993,10 @@
       "path": "docs/knowledge-base/modules/catalog/products.strength.md"
     },
     {
+      "module_id": "products.dqs",
+      "path": "docs/knowledge-base/modules/dqs/README.md"
+    },
+    {
       "module_id": "products.masterclass.course",
       "path": "docs/knowledge-base/modules/masterclass/COURSE_DESIGN_SYSTEM.md"
     },
@@ -4023,6 +4027,10 @@
     {
       "module_id": "products.metabolism",
       "path": "docs/knowledge-base/modules/metabolism/APP_RUNTIME.md"
+    },
+    {
+      "module_id": "products.strength",
+      "path": "docs/knowledge-base/modules/strength/IMPORT_PROTOCOL.md"
     },
     {
       "module_id": "messaging.telegram.engine",
@@ -8503,6 +8511,22 @@
     {
       "module_id": "products.masterclass.course",
       "path": "work/course-structure-editor/user-spec.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/dqs-day4-activation/code-research.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/dqs-day4-activation/decisions.md"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/dqs-day4-activation/logs/userspec/interview.yml"
+    },
+    {
+      "module_id": "operations.project-work",
+      "path": "work/dqs-day4-activation/user-spec.md"
     },
     {
       "module_id": "operations.project-work",
@@ -30051,6 +30075,22 @@
         },
         {
           "module_id": "operations.project-work",
+          "path": "work/dqs-day4-activation/code-research.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/dqs-day4-activation/decisions.md"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/dqs-day4-activation/logs/userspec/interview.yml"
+        },
+        {
+          "module_id": "operations.project-work",
+          "path": "work/dqs-day4-activation/user-spec.md"
+        },
+        {
+          "module_id": "operations.project-work",
           "path": "work/free-intensive-rebuild/README.md"
         },
         {
@@ -48685,6 +48725,10 @@
         },
         {
           "module_id": "products.dqs",
+          "path": "docs/knowledge-base/modules/dqs/README.md"
+        },
+        {
+          "module_id": "products.dqs",
           "path": "legacy/google/dqs/CONTEXT.md"
         },
         {
@@ -49137,7 +49181,7 @@
       "telegram": null,
       "title": "Баланс продуктовых категорий (DQS)",
       "truths": [
-        "`docs/APPLICATION_PLATFORM.md`, фактический backend и `legacy/google/dqs/` при переносе.",
+        "`docs/knowledge-base/modules/dqs/README.md`, `docs/APPLICATION_PLATFORM.md`,\nфактический backend и `legacy/google/dqs/` при переносе.",
         "### Три уровня содержания",
         "Содержание DQS движется только в одном направлении:",
         "1. `legacy/google/dqs/PRODUCT_CATEGORIES.md` — расширенный внутренний норматив:\n   классификация, порции, шкалы, исключения и пограничные случаи. На его основе\n   позже формируются ответы бота на вопросы пользователей.\n2. `content/masterclass/source-current/13-dqs-system.txt` — каноническая публичная\n   версия «как на сайте» и фактический материал Мастер-класса. Она может быть\n   короче внутреннего норматива, но не может ему противоречить. Не создавать\n   отдельную копию публичной статьи в базе или соседнем Markdown-файле.\n3. Короткие подсказки в существующих карточках\n   `backend/app/static/apps/dqs.html` — производная от утверждённых блоков статьи.\n   Они не владеют методикой и не могут вводить собственные правила. Структура\n   карточек приложения фиксирована и из-за правки текста статьи не меняется.",
@@ -59970,6 +60014,10 @@
         {
           "module_id": "products.strength",
           "path": "docs/knowledge-base/modules/catalog/products.strength.md"
+        },
+        {
+          "module_id": "products.strength",
+          "path": "docs/knowledge-base/modules/strength/IMPORT_PROTOCOL.md"
         },
         {
           "module_id": "products.strength",
