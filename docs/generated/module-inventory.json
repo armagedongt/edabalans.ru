@@ -1505,6 +1505,10 @@
       "path": "backend/tests/test_crm_cleanup_catalogs.py"
     },
     {
+      "module_id": "messaging.cross-messenger",
+      "path": "backend/tests/test_cross_messenger_migration.py"
+    },
+    {
       "module_id": "products",
       "path": "backend/tests/test_eda_finance.py"
     },
@@ -14676,6 +14680,10 @@
         },
         {
           "module_id": "messaging.cross-messenger",
+          "path": "backend/tests/test_cross_messenger_migration.py"
+        },
+        {
+          "module_id": "messaging.cross-messenger",
           "path": "docs/knowledge-base/modules/catalog/messaging.cross-messenger.md"
         },
         {
@@ -14742,6 +14750,14 @@
           "module_id": "messaging.cross-messenger",
           "name": "downgrade",
           "qualname": "downgrade"
+        },
+        {
+          "file": "backend/tests/test_cross_messenger_migration.py",
+          "kind": "function",
+          "line": 4,
+          "module_id": "messaging.cross-messenger",
+          "name": "test_cross_messenger_migration_continues_the_current_alembic_chain",
+          "qualname": "test_cross_messenger_migration_continues_the_current_alembic_chain"
         },
         {
           "file": "telegram-bot/service/app/cross_messenger_bridge.py",
@@ -21911,7 +21927,15 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 265,
+          "line": 269,
+          "module_id": "messaging.telegram.engine",
+          "name": "test_telegram_redelivery_stops_after_three_failed_delivery_attempts",
+          "qualname": "test_telegram_redelivery_stops_after_three_failed_delivery_attempts"
+        },
+        {
+          "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
+          "kind": "function",
+          "line": 304,
           "module_id": "messaging.telegram.engine",
           "name": "test_max_practice_message_is_mirrored_to_telegram_with_reply_parent",
           "qualname": "test_max_practice_message_is_mirrored_to_telegram_with_reply_parent"
@@ -21919,7 +21943,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 308,
+          "line": 347,
           "module_id": "messaging.telegram.engine",
           "name": "test_max_redelivery_retries_a_persisted_failed_telegram_delivery",
           "qualname": "test_max_redelivery_retries_a_persisted_failed_telegram_delivery"
@@ -21927,7 +21951,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 351,
+          "line": 390,
           "module_id": "messaging.telegram.engine",
           "name": "test_max_channel_update_is_never_injected_into_the_telegram_practice_chat",
           "qualname": "test_max_channel_update_is_never_injected_into_the_telegram_practice_chat"
@@ -21935,7 +21959,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 382,
+          "line": 421,
           "module_id": "messaging.telegram.engine",
           "name": "test_max_edit_and_remove_update_the_telegram_copy_only_for_max_source",
           "qualname": "test_max_edit_and_remove_update_the_telegram_copy_only_for_max_source"
@@ -21943,7 +21967,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 433,
+          "line": 472,
           "module_id": "messaging.telegram.engine",
           "name": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message",
           "qualname": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message"
@@ -21951,7 +21975,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 449,
+          "line": 488,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message.db_override"
@@ -21959,7 +21983,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 480,
+          "line": 519,
           "module_id": "messaging.telegram.engine",
           "name": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver",
           "qualname": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver"
@@ -21967,7 +21991,7 @@
         {
           "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
           "kind": "function",
-          "line": 496,
+          "line": 535,
           "module_id": "messaging.telegram.engine",
           "name": "db_override",
           "qualname": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver.db_override"
@@ -82358,6 +82382,14 @@
       "qualname": "test_variable_catalog_is_aggregate_only"
     },
     {
+      "file": "backend/tests/test_cross_messenger_migration.py",
+      "kind": "function",
+      "line": 4,
+      "module_id": "messaging.cross-messenger",
+      "name": "test_cross_messenger_migration_continues_the_current_alembic_chain",
+      "qualname": "test_cross_messenger_migration_continues_the_current_alembic_chain"
+    },
+    {
       "file": "backend/tests/test_eda_finance.py",
       "kind": "function",
       "line": 17,
@@ -93216,7 +93248,15 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 265,
+      "line": 269,
+      "module_id": "messaging.telegram.engine",
+      "name": "test_telegram_redelivery_stops_after_three_failed_delivery_attempts",
+      "qualname": "test_telegram_redelivery_stops_after_three_failed_delivery_attempts"
+    },
+    {
+      "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
+      "kind": "function",
+      "line": 304,
       "module_id": "messaging.telegram.engine",
       "name": "test_max_practice_message_is_mirrored_to_telegram_with_reply_parent",
       "qualname": "test_max_practice_message_is_mirrored_to_telegram_with_reply_parent"
@@ -93224,7 +93264,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 308,
+      "line": 347,
       "module_id": "messaging.telegram.engine",
       "name": "test_max_redelivery_retries_a_persisted_failed_telegram_delivery",
       "qualname": "test_max_redelivery_retries_a_persisted_failed_telegram_delivery"
@@ -93232,7 +93272,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 351,
+      "line": 390,
       "module_id": "messaging.telegram.engine",
       "name": "test_max_channel_update_is_never_injected_into_the_telegram_practice_chat",
       "qualname": "test_max_channel_update_is_never_injected_into_the_telegram_practice_chat"
@@ -93240,7 +93280,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 382,
+      "line": 421,
       "module_id": "messaging.telegram.engine",
       "name": "test_max_edit_and_remove_update_the_telegram_copy_only_for_max_source",
       "qualname": "test_max_edit_and_remove_update_the_telegram_copy_only_for_max_source"
@@ -93248,7 +93288,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 433,
+      "line": 472,
       "module_id": "messaging.telegram.engine",
       "name": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message",
       "qualname": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message"
@@ -93256,7 +93296,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 449,
+      "line": 488,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message.db_override"
@@ -93264,7 +93304,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 480,
+      "line": 519,
       "module_id": "messaging.telegram.engine",
       "name": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver",
       "qualname": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver"
@@ -93272,7 +93312,7 @@
     {
       "file": "telegram-bot/service/tests/test_cross_messenger_bridge.py",
       "kind": "function",
-      "line": 496,
+      "line": 535,
       "module_id": "messaging.telegram.engine",
       "name": "db_override",
       "qualname": "test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver.db_override"
