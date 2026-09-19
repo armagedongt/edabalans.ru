@@ -1,0 +1,25 @@
+{
+  "artifact": "blog-canonical-library-validation-v1",
+  "date": "2026-09-20",
+  "status": "pass",
+  "public_source_switched": false,
+  "production_deployed": false,
+  "database_migration_added": false,
+  "real_fixture": {
+    "slug": "vse-znayut-nikto-ne-delaet",
+    "source_id": "10123213",
+    "markdown_bytes": 8577,
+    "media": ["01.webp", "02.webp", "03.webp"],
+    "round_trip": "pass"
+  },
+  "checks": {
+    "targeted_pytest": {"status": "pass", "count": 62},
+    "browser_e2e": {
+      "status": "pass",
+      "widths": [360, 430, 768, 1440],
+      "covers": ["filters", "focus", "preview", "save", "409", "network_failure", "beforeunload", "overflow"]
+    },
+    "cli_localhost_put": "pass",
+    "git_diff_check": "pass"
+  }
+}

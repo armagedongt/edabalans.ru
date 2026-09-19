@@ -6,7 +6,7 @@ import mimetypes
 import os
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Response
 
 from app.blog_content import (
@@ -17,6 +17,9 @@ from app.blog_content import (
     render_article_body,
     toc_html,
 )
+from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
+from app.database import get_db
+from sqlalchemy.orm import Session
 
 
 router = APIRouter()
@@ -26,6 +29,8 @@ BLOG_ARTICLE_STYLES = {"article-typography.css": "typography.css", "article-note
 BLOG_ASSET_FILES = {
     "blog.css",
     "blog.js",
+    "draft-editor.css",
+    "draft-editor.js",
     "favicon-test-black.svg",
     "favicon-test-blue.svg",
     "favicon-test-face.png",
@@ -56,7 +61,10 @@ def _html_response(value: str) -> HTMLResponse:
 
 @router.get("/blog", include_in_schema=False)
 @router.get("/blog/", include_in_schema=False)
-def blog_home() -> HTMLResponse:
+def blog_home(
+    identity: str | None = Depends(optional_blog_admin),
+    db: Session = Depends(get_db),
+) -> HTMLResponse:
     catalog = load_blog_catalog()
     categories = "".join(
         f'<li><button type="button" data-category-filter="{escape(category, quote=True)}">{escape(category)}</button></li>'
@@ -66,8 +74,12 @@ def blog_home() -> HTMLResponse:
         _template("index.html")
         .replace("<!-- BLOG_CATEGORIES -->", categories)
         .replace("<!-- BLOG_CARDS -->", "".join(card_html(article) for article in catalog.published))
+        .replace("<!-- BLOG_OWNER_PANEL -->", owner_cards_html(db) if identity else "")
     )
-    return _html_response(rendered)
+    response = _html_response(rendered)
+    if identity:
+        response.headers.update(PRIVATE_HEADERS)
+    return response
 
 
 @router.get("/blog/favicon-tests/{variant}", include_in_schema=False)

@@ -106,6 +106,27 @@
     showSelection(false);
   }
 
+  var ownerCards = Array.prototype.slice.call(document.querySelectorAll('.owner-card'));
+  var ownerButtons = Array.prototype.slice.call(document.querySelectorAll('[data-owner-filter]'));
+  var ownerEmpty = document.querySelector('.owner-empty');
+  ownerButtons.forEach(function (button) {
+    button.addEventListener('click', function () {
+      var filter = button.dataset.ownerFilter;
+      var visible = 0;
+      ownerButtons.forEach(function (candidate) {
+        var selected = candidate === button;
+        candidate.classList.toggle('active', selected);
+        candidate.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+      ownerCards.forEach(function (card) {
+        var show = filter === 'all' || card.dataset.ownerVisibility === filter || card.dataset.ownerStatus === filter;
+        card.hidden = !show;
+        if (show) visible += 1;
+      });
+      if (ownerEmpty) ownerEmpty.hidden = visible !== 0;
+    });
+  });
+
   var tocButton = document.querySelector('.toc-button');
   var tocPopover = document.querySelector('.toc-popover');
   function closeToc() {
