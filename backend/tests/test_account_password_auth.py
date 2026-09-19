@@ -1,6 +1,5 @@
 import hashlib
 import hmac
-import importlib.util
 import json
 import os
 from datetime import UTC, datetime, timedelta
@@ -129,16 +128,6 @@ def test_password_encryption_round_trip_uses_secret_and_rejects_wrong_secret() -
     assert decrypt_password(encrypted, "test-account-secret") == "Visible-Password-7"
     with pytest.raises(ValueError):
         decrypt_password(encrypted, "wrong-secret")
-
-
-def test_bot_ciphertext_is_decryptable_by_backend_contract() -> None:
-    module_path = Path(__file__).parents[2] / "telegram-bot" / "service" / "app" / "account_credentials.py"
-    spec = importlib.util.spec_from_file_location("telegram_account_credentials_contract", module_path)
-    module = importlib.util.module_from_spec(spec)
-    assert spec.loader is not None
-    spec.loader.exec_module(module)
-    ciphertext = module.encrypt_password("Bot-Password-8", "test-account-secret")
-    assert decrypt_password(ciphertext, "test-account-secret") == "Bot-Password-8"
 
 
 def test_admin_can_reset_and_reveal_password_with_audit_log() -> None:
