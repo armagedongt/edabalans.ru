@@ -1,6 +1,6 @@
 # Checkpoint
 
-СТАТУС: test-contour-passed
+СТАТУС: test-contour-passed-production-blocked
 
 СДЕЛАНО: реализованы закрытый versioned API, owner-каталог, Markdown-редактор,
 preview/media routes, CLI паковки и тестовый реальный пакет. Публичный Git-каталог
@@ -21,10 +21,18 @@ Findings code/security/test/layout устранены; финальные securi
 clean, оставшиеся code/test findings закрыты тестами границ, concurrency,
 adapter и безопасного slug.
 
+ПЕРЕД PRODUCTION: infrastructure review подтвердил изоляцию теста и выявил две
+границы. Browser E2E пока не включён в обязательный GitHub release gate. Кроме
+того, media bytes сейчас повторяются внутри каждой полной JSON-версии; для одного
+пилота это допустимо, но до массовой библиотеки примерно из 130 статей нужны
+дедупликация изображений и отдельное правило их retention/backup.
+
 КОММИТЫ: `b307d4f`, `3e07157` и merge актуального `origin/main` в feature-ветке
 `codex/blog-canonical-editor-20260920`. Ветка отправляется в origin без deploy.
 
-СЛЕДУЮЩИЙ ШАГ: отдельная приёмка владельца и только затем merge в `main`.
+СЛЕДУЮЩИЙ ШАГ: добавить browser release gate и спроектировать дедуплицированное
+хранение media; после повторной проверки — отдельная приёмка владельца и только
+затем merge в `main`.
 Отдельного server staging в проекте нет; push в `main` автоматически ведёт в
 production, поэтому test-only проверка выполнена локально и публичный источник
 статей не переключён.
