@@ -58820,7 +58820,15 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 78,
+          "line": 71,
+          "module_id": "products.public-site",
+          "name": "adminWorkout",
+          "qualname": "adminWorkout"
+        },
+        {
+          "file": "backend/tests/browser/strength-editor.e2e.mjs",
+          "kind": "function",
+          "line": 101,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -58828,10 +58836,18 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 213,
+          "line": 236,
           "module_id": "products.public-site",
           "name": "pad",
           "qualname": "pad"
+        },
+        {
+          "file": "backend/tests/browser/strength-editor.e2e.mjs",
+          "kind": "function",
+          "line": 282,
+          "module_id": "products.public-site",
+          "name": "payload",
+          "qualname": "payload"
         },
         {
           "file": "backend/tests/browser/video-player.e2e.mjs",
@@ -60149,6 +60165,7 @@
         "готовить план и выполнять тренировку в раздельных мобильных режимах;",
         "отмечать подход выполненным по плану с возможностью снять отметку без удаления факта;",
         "открывать тот же интерфейс из защищённой админки с выбором клиента и аудитом изменений;",
+        "в управляемом режиме редактирования показывать последние три тренировки одного",
         "считать согласованные показатели нагрузки;",
         "открываться внутри курса и напрямую по `/training` (совместимый адрес `/strength`)",
         "открываться тем же экраном как Telegram Mini App после серверной проверки",
@@ -78710,7 +78727,15 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 78,
+      "line": 71,
+      "module_id": "products.public-site",
+      "name": "adminWorkout",
+      "qualname": "adminWorkout"
+    },
+    {
+      "file": "backend/tests/browser/strength-editor.e2e.mjs",
+      "kind": "function",
+      "line": 101,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"
@@ -78718,10 +78743,18 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 213,
+      "line": 236,
       "module_id": "products.public-site",
       "name": "pad",
       "qualname": "pad"
+    },
+    {
+      "file": "backend/tests/browser/strength-editor.e2e.mjs",
+      "kind": "function",
+      "line": 282,
+      "module_id": "products.public-site",
+      "name": "payload",
+      "qualname": "payload"
     },
     {
       "file": "backend/tests/browser/video-player.e2e.mjs",

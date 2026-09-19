@@ -290,7 +290,7 @@ for (const width of [360, 430, 768, 1440]) {
       if (action === "openUser") return payload({ ok: true, user: { user_id: "managed-preview", email: "preview@example.test", display_name: "Администраторский предпросмотр" } });
       if (action === "getWorkout") {
         const type = Number(body?.type || parsed.searchParams.get("type") || 1);
-        return payload({ ok: true, workout: type === 1 ? workouts : workout(type, 1, true) });
+        return payload({ ok: true, workout: workouts[type] });
       }
       window.__saveBodies.push(body ? structuredClone(body) : null);
       return payload({
@@ -301,7 +301,7 @@ for (const width of [360, 430, 768, 1440]) {
           : undefined,
       });
     };
-  }, { workouts: adminWorkout() });
+  }, { workouts: { 1: adminWorkout(), 2: workout(2, 1, true), 3: workout(3, 1, true) } });
   await page.goto(pathToFileURL(appPath).href);
   await page.getByText("План и факт по тренировкам", { exact: true }).waitFor();
 
