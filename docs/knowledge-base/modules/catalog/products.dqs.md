@@ -43,9 +43,15 @@ implementation_status: implemented
 или доступа согласуется с `platform.auth` / `platform.commerce`, а не копируется
 в новый локальный вход DQS.
 
+Полный маршрут отдельного рабочего чата, текущие функции, админка, данные,
+события, границы с Мастер-классом и Telegram, а также принятый следующий контракт
+открытия находятся в [каноне DQS](../dqs/README.md). Новая работа по DQS начинается
+там; `APPLICATION_PLATFORM.md` остаётся только общим договором всех приложений.
+
 ## Источники истины
 
-`docs/APPLICATION_PLATFORM.md`, фактический backend и `legacy/google/dqs/` при переносе.
+`docs/knowledge-base/modules/dqs/README.md`, `docs/APPLICATION_PLATFORM.md`,
+фактический backend и `legacy/google/dqs/` при переносе.
 
 ### Три уровня содержания
 
