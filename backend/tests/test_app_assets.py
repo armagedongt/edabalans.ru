@@ -196,16 +196,18 @@ def test_admin_apps_use_same_managed_frontend_and_highlight_started_profiles() -
     page = (
         Path(__file__).resolve().parents[1] / "app" / "static" / "admin.html"
     ).read_text(encoding="utf-8")
+    styles = (
+        Path(__file__).resolve().parents[1] / "app" / "static" / "admin.css"
+    ).read_text(encoding="utf-8")
 
-    assert '["dqs", "strength", "metabolism"].includes(code)' in source
-    assert '["dqs", "strength", "metabolism"].includes(context)' in source
     assert 'data-edabalans-admin-user="${esc(detail.user.id)}"' in source
-    assert 'data-edabalans-account-url="/admin/${code}"' in source
-    assert 'user.has_state ? "app-started"' in source
-    assert "приложение открывалось" in source
-    assert "Административный режим" in source
-    assert "Сменить профиль" in source
-    assert ".admin-mode-banner" in page
+    assert "managedApplicationPerson(selected, code)" in source
+    assert "СМЕНИТЬ ПРОФИЛЬ" in source
+    assert "Сначала показаны люди с данными, затем с доступом" in source
+    assert 'id="admin-managed-app"' in source
+    assert "Начальное состояние появится только после явного открытия" in source
+    assert "/admin/static/admin.css" in page
+    assert ".admin-managed-toolbar" in styles
 
 
 def test_account_portal_uses_one_request_for_login_check_and_account_data() -> None:

@@ -23,7 +23,7 @@ from fastapi.responses import (
     RedirectResponse,
     Response,
 )
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
 from app.app_service import (
@@ -62,6 +62,7 @@ from app.product_catalog_service import PRODUCT_CONNECTIONS
 from app.models import (
     AdminAppEdit,
     DqsState,
+    MasterclassEvent,
     MessengerAccount,
     MetabolismState,
     Resource,
@@ -69,7 +70,7 @@ from app.models import (
     StrengthState,
     User,
     UserAccess,
-    MasterclassEvent,
+    UserEmail,
 )
 
 
@@ -1776,6 +1777,23 @@ def admin_app_users(
         }
         access_user_ids = set()
     user_ids = set(state_by_user) | access_user_ids
+    normalized_query = q.strip()
+    matching_user_ids: set[uuid.UUID] = set()
+    if normalized_query:
+        matching_user_ids = set(db.scalars(
+            select(User.id)
+            .outerjoin(UserEmail, UserEmail.user_id == User.id)
+            .where(
+                User.status == "active",
+                User.merged_into_user_id.is_(None),
+                or_(
+                    User.display_name.ilike(f"%{normalized_query}%"),
+                    UserEmail.email_normalized.ilike(f"%{normalized_query.casefold()}%"),
+                ),
+            )
+            .distinct()
+        ).all())
+        user_ids.update(matching_user_ids)
     users = {
         item.id: item
         for item in db.scalars(
@@ -1797,14 +1815,19 @@ def admin_app_users(
         }
         for user_id in users
     ]
-    normalized_query = q.strip().casefold()
     if normalized_query:
         rows = [
             row
             for row in rows
-            if normalized_query in str(row["email"] or "").casefold()
-            or normalized_query in str(row["display_name"] or "").casefold()
+            if uuid.UUID(row["user_id"]) in matching_user_ids
         ]
+    rows.sort(
+        key=lambda row: (
+            not row["has_state"],
+            not row["has_access"],
+            str(row["display_name"] or row["email"] or "").casefold(),
+        )
+    )
     return {
         "ok": True,
         "users": rows,
@@ -1852,6 +1875,7 @@ def active_resource_codes(db: Session, user_id: uuid.UUID) -> set[str]:
             .join(UserAccess, UserAccess.resource_id == Resource.id)
             .where(
                 UserAccess.user_id == user_id,
+                Resource.status == "active",
                 UserAccess.revoked_at.is_(None),
                 UserAccess.paused_at.is_(None),
                 (UserAccess.expires_at.is_(None) | (UserAccess.expires_at > now)),
@@ -1960,7 +1984,7 @@ def admin_open_app_user(
     user = db.get(User, user_id)
     if user is None or user.merged_into_user_id is not None:
         raise HTTPException(status_code=404, detail="user not found")
-    if app_code not in active_resource_codes(db, user_id):
+    if not active_resource_codes(db, user_id).intersection(app_resource_codes(app_code)):
         raise HTTPException(status_code=403, detail="user has no active access")
     state = db.scalar(select(model).where(model.user_id == user_id))
     created = state is None

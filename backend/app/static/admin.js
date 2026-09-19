@@ -201,20 +201,149 @@
     document.getElementById("people-filter").addEventListener("keydown", (event) => { if (event.key === "Enter") search(); });
   }
 
+  function applicationUserHref(code, userId) {
+    const params = new URLSearchParams({ user: userId });
+    if (code === "strength" && strengthMobileMode) params.set("mobile", "1");
+    return `/admin/${code}?${params}`;
+  }
+
+  function applicationUserStatus(code, user) {
+    if (user.has_state) return summaryText(code, user.summary || {});
+    if (user.has_access) return "доступ есть, приложение ещё не открывалось";
+    return "нет доступа и данных";
+  }
+
+  function applicationUserRows(code, users, compact = false) {
+    return users.map((user) => `
+      <button class="admin-app-person ${user.has_state ? "started" : ""}" type="button" data-user-id="${esc(user.user_id)}">
+        <span class="admin-app-person-copy"><strong>${esc(user.display_name || user.email || "Без имени")}</strong><small>${esc(user.email || "email не указан")}</small></span>
+        <span class="admin-app-person-state">${esc(applicationUserStatus(code, user))}</span>
+        ${compact ? "" : `<span class="admin-app-person-open">Открыть →</span>`}
+      </button>`).join("") || '<div class="admin-empty compact">Ничего не найдено</div>';
+  }
+
+  function bindApplicationUserRows(container, code) {
+    container.querySelectorAll("[data-user-id]").forEach((button) => button.addEventListener("click", () => {
+      location.href = applicationUserHref(code, button.dataset.userId);
+    }));
+  }
+
+  async function openApplicationUserPicker(code) {
+    document.getElementById("admin-app-picker")?.remove();
+    const overlay = document.createElement("div");
+    overlay.id = "admin-app-picker";
+    overlay.className = "admin-app-picker";
+    overlay.innerHTML = `
+      <section class="admin-app-picker-card" role="dialog" aria-modal="true" aria-labelledby="admin-app-picker-title">
+        <header><div><small>${esc(labels[code])}</small><h2 id="admin-app-picker-title">Сменить профиль</h2></div><button type="button" class="admin-app-picker-close" aria-label="Закрыть">×</button></header>
+        <label class="admin-app-picker-search"><span>Имя или email</span><input type="search" autocomplete="off" placeholder="Начните вводить имя или email"></label>
+        <p class="admin-app-picker-hint">Сначала показаны люди с данными, затем с доступом. Остальных можно найти поиском.</p>
+        <div class="admin-app-picker-list"><div class="admin-empty compact">Загружаю…</div></div>
+      </section>`;
+    document.body.appendChild(overlay);
+    document.body.classList.add("admin-app-picker-open");
+    const input = overlay.querySelector("input");
+    const list = overlay.querySelector(".admin-app-picker-list");
+    let requestNumber = 0;
+    let timer = null;
+    const close = () => {
+      overlay.remove();
+      document.body.classList.remove("admin-app-picker-open");
+    };
+    const draw = async () => {
+      const currentRequest = ++requestNumber;
+      const q = input.value.trim();
+      list.innerHTML = '<div class="admin-empty compact">Загружаю…</div>';
+      try {
+        const result = await api(`/admin/api/apps/users?app_code=${code}${q ? `&q=${encodeURIComponent(q)}` : ""}`);
+        if (currentRequest !== requestNumber) return;
+        list.innerHTML = applicationUserRows(code, result.users || [], true);
+        bindApplicationUserRows(list, code);
+      } catch (error) {
+        if (currentRequest === requestNumber) list.innerHTML = `<div class="admin-error">${esc(error.message)}</div>`;
+      }
+    };
+    overlay.addEventListener("click", (event) => { if (event.target === overlay) close(); });
+    overlay.querySelector(".admin-app-picker-close").addEventListener("click", close);
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(draw, 220);
+    });
+    await draw();
+    input.focus({ preventScroll: true });
+  }
+
+  function managedApplicationToolbar(code, detail) {
+    const user = detail.user;
+    const email = user.email || "email не указан";
+    return `
+      <section class="admin-managed-toolbar" aria-label="Административный режим">
+        <button class="admin-managed-person" id="admin-managed-person" type="button" aria-haspopup="dialog">
+          <span><small>АДМИНИСТРАТИВНЫЙ РЕЖИМ · СМЕНИТЬ ПРОФИЛЬ</small><strong>${esc(user.display_name || email || "Без имени")}</strong></span>
+          <em>${esc(email)}</em>
+        </button>
+        <label class="admin-managed-app-select"><span>Сменить приложение</span><select id="admin-managed-app">${["dqs", "strength", "metabolism"].map((item) => `<option value="${item}" ${item === code ? "selected" : ""}>${esc(labels[item])}</option>`).join("")}</select></label>
+      </section>`;
+  }
+
+  async function managedApplicationPerson(id, code) {
+    setHeading(labels[code], "АДМИНИСТРАТИВНЫЙ РЕЖИМ");
+    loading();
+    const detail = await api(`/admin/api/apps/${code}/users/${id}`);
+    const stage = detail.has_state
+      ? `<div class="admin-managed-app" data-edabalans-app="${code}" data-edabalans-admin-user="${esc(detail.user.id)}" data-edabalans-account-url="${esc(applicationUserHref(code, detail.user.id))}"><div class="admin-empty">Загружаю приложение…</div></div>`
+      : `<section class="admin-managed-empty"><strong>${esc(labels[code])} ещё не открывался</strong><p>${detail.has_access ? "Доступ у человека есть. Начальное состояние появится только после явного открытия." : "У человека нет действующего доступа к этому приложению."}</p>${detail.has_access ? '<button class="admin-action" id="admin-open-app" type="button">Открыть приложение</button>' : ""}</section>`;
+    root.innerHTML = `${managedApplicationToolbar(code, detail)}${stage}`;
+    document.getElementById("admin-managed-person").addEventListener("click", () => openApplicationUserPicker(code));
+    document.getElementById("admin-managed-app").addEventListener("change", (event) => {
+      location.href = applicationUserHref(event.target.value, detail.user.id);
+    });
+    const openButton = document.getElementById("admin-open-app");
+    if (openButton) openButton.addEventListener("click", async () => {
+      openButton.disabled = true;
+      openButton.textContent = "Открываю…";
+      try {
+        await api(`/admin/api/apps/${code}/users/${id}/open`, { method: "POST" });
+        await managedApplicationPerson(id, code);
+      } catch (error) {
+        openButton.disabled = false;
+        openButton.textContent = "Открыть приложение";
+        failure(error);
+      }
+    });
+    const mount = document.querySelector("[data-edabalans-admin-user]");
+    if (mount && window.EdabalansEmbed) window.EdabalansEmbed.load(mount);
+  }
+
   async function application(code) {
     const selected = new URLSearchParams(location.search).get("user");
-    if (selected) return person(selected, code);
-    if (code === "strength" && strengthMobileMode) {
-      loading();
-      await openStrengthMobilePicker({ required: true });
-      root.innerHTML = '<div class="strength-mobile-empty standalone">Выберите клиента, чтобы открыть его тренировки.</div>';
-      return;
-    }
+    if (selected) return managedApplicationPerson(selected, code);
     setHeading(labels[code], "ПРИЛОЖЕНИЕ");
     loading();
     const result = await api(`/admin/api/apps/users?app_code=${code}`);
-    root.innerHTML = `<div class="admin-section-head"><div><h2>${labels[code]}</h2><p>${descriptions[code]} · ${result.users.length} пользователей с доступом или данными</p></div></div><div class="admin-list">${result.users.map((user) => `<button class="admin-person ${user.has_state ? "app-started" : ""}" data-href="/admin/${code}?user=${user.user_id}"><div><h3>${esc(user.display_name || user.email || "Без имени")}</h3><p>${esc(user.email || "email не указан")} · ${user.has_state ? summaryText(code, user.summary) : "приложение ещё не открывалось"}</p></div><div class="admin-actions">${user.has_state ? '<span class="admin-badge started">приложение открывалось</span>' : ''}<span class="admin-badge ${user.has_access ? "" : "warn"}">${user.has_access ? "доступ есть" : "только исторические данные"}</span>${user.has_state ? `<span class="admin-badge">v${user.version}</span><span class="admin-badge off">${date(user.updated_at)}</span>` : '<span class="admin-badge off">нет состояния</span>'}</div></button>`).join("") || '<div class="admin-empty">В этом приложении пока нет пользователей</div>'}</div>`;
-    bindPersonButtons();
+    root.innerHTML = `
+      <div class="admin-app-directory-head"><div><h1>${esc(labels[code])}</h1><p>${esc(descriptions[code])}. Сначала люди с данными, затем с доступом.</p></div><label><span>Найти любого человека</span><input id="admin-app-directory-search" type="search" placeholder="Имя или email"></label></div>
+      <div class="admin-app-directory-list">${applicationUserRows(code, result.users || [])}</div>`;
+    const list = root.querySelector(".admin-app-directory-list");
+    const input = document.getElementById("admin-app-directory-search");
+    let requestNumber = 0;
+    let timer = null;
+    bindApplicationUserRows(list, code);
+    input.addEventListener("input", () => {
+      clearTimeout(timer);
+      timer = setTimeout(async () => {
+        const currentRequest = ++requestNumber;
+        const q = input.value.trim();
+        try {
+          const next = await api(`/admin/api/apps/users?app_code=${code}${q ? `&q=${encodeURIComponent(q)}` : ""}`);
+          if (currentRequest !== requestNumber) return;
+          list.innerHTML = applicationUserRows(code, next.users || []);
+          bindApplicationUserRows(list, code);
+        } catch (error) {
+          if (currentRequest === requestNumber) list.innerHTML = `<div class="admin-error">${esc(error.message)}</div>`;
+        }
+      }, 220);
+    });
   }
 
   function switcher(user, modules, context) {

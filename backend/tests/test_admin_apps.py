@@ -18,6 +18,7 @@ from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     AdminAppEdit,
     DqsState,
+    MetabolismState,
     Resource,
     StrengthState,
     User,
@@ -75,6 +76,14 @@ def test_admin_app_list_includes_access_without_state_and_state_without_access()
         resource = Resource(code="dqs", name="DQS", status="active")
         access_only = add_user(db, "access@example.test", "Есть доступ")
         state_only = add_user(db, "state@example.test", "Есть история")
+        search_only = add_user(db, "search@example.test", "Только поиск")
+        db.add(UserEmail(
+            user_id=search_only.id,
+            email_original="legacy-search@example.test",
+            email_normalized="legacy-search@example.test",
+            is_primary=False,
+            source="test",
+        ))
         db.add(resource)
         db.flush()
         db.add(UserAccess(
@@ -86,6 +95,7 @@ def test_admin_app_list_includes_access_without_state_and_state_without_access()
         db.add(DqsState(user_id=state_only.id, days={"1": {"p": [0] * 17, "d": [None] * 17}}))
         db.commit()
         access_id = access_only.id
+        search_id = search_only.id
 
     login(client)
     response = client.get("/admin/api/apps/users?app_code=dqs")
@@ -95,6 +105,24 @@ def test_admin_app_list_includes_access_without_state_and_state_without_access()
     assert rows["access@example.test"]["has_state"] is False
     assert rows["state@example.test"]["has_access"] is False
     assert rows["state@example.test"]["has_state"] is True
+    assert "search@example.test" not in rows
+    assert response.json()["users"][0]["email"] == "state@example.test"
+
+    searched = client.get(
+        "/admin/api/apps/users",
+        params={"app_code": "dqs", "q": "legacy-search@example"},
+    )
+    assert searched.status_code == 200
+    assert searched.json()["users"] == [{
+        "user_id": str(search_id),
+        "display_name": "Только поиск",
+        "email": "search@example.test",
+        "has_access": False,
+        "has_state": False,
+        "version": None,
+        "updated_at": "",
+        "summary": {},
+    }]
 
     detail = client.get(f"/admin/api/apps/dqs/users/{access_id}").json()
     assert detail["has_access"] is True
@@ -108,6 +136,64 @@ def test_admin_app_list_includes_access_without_state_and_state_without_access()
         assert db.scalar(select(func.count(DqsState.id))) == 2
         edit = db.scalar(select(AdminAppEdit).where(AdminAppEdit.target_user_id == access_id))
         assert edit.action == "open_empty_state"
+
+
+def test_admin_can_open_metabolism_with_calories_course_access():
+    client, factory = make_client()
+    with factory() as db:
+        resource = Resource(code="ACCESS_CALORIES", name="Курс о калориях", status="active")
+        user = add_user(db, "calories@example.test", "Участник курса")
+        db.add(resource)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user.id,
+            resource_id=resource.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    detail = client.get(f"/admin/api/apps/metabolism/users/{user_id}")
+    assert detail.status_code == 200
+    assert detail.json()["has_access"] is True
+    assert detail.json()["has_state"] is False
+
+    opened = client.post(f"/admin/api/apps/metabolism/users/{user_id}/open")
+    assert opened.status_code == 200
+    assert opened.json()["created"] is True
+    with factory() as db:
+        edit = db.scalar(select(AdminAppEdit).where(AdminAppEdit.target_user_id == user_id))
+        assert edit.app_code == "metabolism"
+        assert edit.action == "open_empty_state"
+
+
+def test_admin_cannot_open_app_with_inactive_resource():
+    client, factory = make_client()
+    with factory() as db:
+        resource = Resource(code="dqs", name="DQS", status="inactive")
+        user = add_user(db, "inactive@example.test", "Отключённый доступ")
+        db.add(resource)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user.id,
+            resource_id=resource.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    detail = client.get(f"/admin/api/apps/dqs/users/{user_id}")
+    assert detail.status_code == 200
+    assert detail.json()["has_access"] is False
+
+    opened = client.post(f"/admin/api/apps/dqs/users/{user_id}/open")
+    assert opened.status_code == 403
+    with factory() as db:
+        assert db.scalar(select(DqsState).where(DqsState.user_id == user_id)) is None
 
 
 def test_strength_admin_mobile_list_requires_admin_and_returns_only_profiles_with_records():
@@ -476,13 +562,20 @@ def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
     client, factory = make_client()
     with factory() as db:
         user = add_user(db, "dqs@example.test", "Дневник DQS")
+        other = add_user(db, "other-dqs@example.test", "Другой дневник")
         db.add(DqsState(
             user_id=user.id,
             start_date="2026-09-01",
             days={},
         ))
+        db.add(DqsState(
+            user_id=other.id,
+            start_date="2026-09-02",
+            days={"1": {"p": [1] * 17, "d": [True] * 17}},
+        ))
         db.commit()
         user_id = user.id
+        other_id = other.id
 
     login(client)
     opened = client.post(
@@ -503,6 +596,10 @@ def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
     assert saved.status_code == 200
     assert saved.json()["ok"] is True
     with factory() as db:
+        target_state = db.scalar(select(DqsState).where(DqsState.user_id == user_id))
+        other_state = db.scalar(select(DqsState).where(DqsState.user_id == other_id))
+        assert target_state.days["1"]["p"] == [0] * 17
+        assert other_state.days["1"]["p"] == [1] * 17
         edit = db.scalar(
             select(AdminAppEdit).where(
                 AdminAppEdit.target_user_id == user_id,
@@ -511,6 +608,52 @@ def test_dqs_managed_runtime_uses_admin_session_and_writes_audit():
         )
         assert edit is not None
         assert edit.action == "saveDay"
+
+
+def test_metabolism_managed_runtime_updates_only_target_and_writes_audit():
+    client, factory = make_client()
+    with factory() as db:
+        target = add_user(db, "metabolism-target@example.test", "Целевой профиль")
+        other = add_user(db, "metabolism-other@example.test", "Другой профиль")
+        db.add(MetabolismState(
+            user_id=target.id,
+            variants={"1": {"weight": 80}},
+            active_variant=1,
+            version=1,
+        ))
+        db.add(MetabolismState(
+            user_id=other.id,
+            variants={"1": {"weight": 65}},
+            active_variant=1,
+            version=1,
+        ))
+        db.commit()
+        target_id = target.id
+        other_id = other.id
+
+    login(client)
+    loaded = client.get(f"/admin/api/apps/metabolism/users/{target_id}/runtime")
+    assert loaded.status_code == 200
+    assert loaded.json()["variants"]["1"]["weight"] == 80
+
+    saved = client.put(
+        f"/admin/api/apps/metabolism/users/{target_id}/runtime",
+        json={"variants": {"1": {"weight": 79}}, "activeVariant": 1, "version": 1},
+    )
+    assert saved.status_code == 200
+    assert saved.json()["version"] == 2
+
+    with factory() as db:
+        target_state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == target_id))
+        other_state = db.scalar(select(MetabolismState).where(MetabolismState.user_id == other_id))
+        assert target_state.variants["1"]["weight"] == 79
+        assert other_state.variants["1"]["weight"] == 65
+        edit = db.scalar(select(AdminAppEdit).where(
+            AdminAppEdit.target_user_id == target_id,
+            AdminAppEdit.app_code == "metabolism",
+        ))
+        assert edit is not None
+        assert edit.action == "save_state"
 
 
 def test_managed_app_runtime_on_public_host_still_requires_admin_session():
