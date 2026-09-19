@@ -108,7 +108,7 @@ function renderDaily() {
 }
 
 function windArrow(degrees) {
-  return `<span class="wind-arrow" aria-hidden="true" style="--wind-turn:${Math.round(degrees) - 90}deg"></span>`
+  return `<span class="wind-arrow" aria-hidden="true" style="--wind-turn:${Math.round(degrees) + 90}deg"></span>`
 }
 
 function windDirection(degrees) {
