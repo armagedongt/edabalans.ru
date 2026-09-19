@@ -6,7 +6,6 @@
     <meta name="color-scheme" content="light" />
     <title>Погода в Петербурге</title>
     <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   </head>
   <body>
     <main class="weather-page" id="weather-app" aria-busy="true">
@@ -31,6 +30,7 @@
         <div class="topbar-panel settings-panel" id="settings-panel" hidden aria-label="Отображаемые поля">
           <label><input type="checkbox" data-field="air" checked /> Температура воздуха</label>
           <label><input type="checkbox" data-field="feels" checked /> По ощущению</label>
+          <label><input type="checkbox" data-field="wind" checked /> Ветер</label>
           <label><input type="checkbox" data-field="precipitation" checked /> Осадки</label>
           <label><input type="checkbox" data-field="snow" checked /> Снег</label>
           <form class="city-search" id="city-search">
@@ -48,24 +48,12 @@
         <section class="forecast-card map-card" aria-labelledby="weather-map-heading">
           <header class="map-header">
             <div>
-              <p class="map-time" id="map-time">Выберите час</p>
-              <h2 id="weather-map-heading">Карта прогноза</h2>
-            </div>
-            <div class="map-tabs" aria-label="Слой карты">
-              <button class="map-tab" type="button" data-map-mode="precipitation" aria-pressed="true">Осадки</button>
-              <button class="map-tab" type="button" data-map-mode="wind" aria-pressed="false">Ветер</button>
+              <p class="map-time">Windy</p>
+              <h2 id="weather-map-heading">Осадки и ветер</h2>
             </div>
           </header>
-          <div class="map-controls" aria-label="Управление временем карты">
-            <button class="map-step" id="map-previous" type="button" aria-label="Предыдущий час" disabled>‹</button>
-            <button class="map-play" id="map-play" type="button" aria-pressed="false" aria-label="Воспроизвести изменения по часам" disabled>▶</button>
-            <button class="map-step" id="map-next" type="button" aria-label="Следующий час" disabled>›</button>
-            <input id="map-hour-range" type="range" min="0" max="23" value="0" step="1" aria-label="Час для карты" disabled />
-            <output id="map-hour-output" for="map-hour-range">00:00</output>
-          </div>
-          <div class="weather-map" id="weather-map" aria-live="polite">
-            <div class="leaflet-map" id="leaflet-map"></div>
-            <p class="map-status" id="map-status">Загружаю карту…</p>
+          <div class="windy-map">
+            <iframe id="windy-embed" title="Карта осадков и ветра Windy" src="https://embed.windy.com/embed2.html?lat=59.9343&amp;lon=30.3351&amp;zoom=8&amp;level=surface&amp;overlay=rain&amp;menu=&amp;message=false&amp;marker=false&amp;calendar=now&amp;pressure=false&amp;type=map&amp;location=coordinates&amp;detail=false&amp;metricWind=m%2Fs&amp;metricRain=mm&amp;width=1200&amp;height=640" allow="fullscreen"></iframe>
           </div>
         </section>
       </section>
@@ -82,7 +70,6 @@
       <p class="source-note">Прогноз и прошлые данные: <a href="https://open-meteo.com/" target="_blank" rel="noreferrer">Open‑Meteo</a>, CC BY 4.0.</p>
     </main>
     <template id="message-template"><p class="message"></p></template>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="app.js"></script>
   </body>
 </html>

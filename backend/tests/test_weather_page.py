@@ -21,20 +21,14 @@ def test_weather_page_and_assets_are_public() -> None:
     page = client.get("/weather/")
     assert page.status_code == 200
     assert 'id="weather-app"' in page.text
-    assert 'id="leaflet-map"' in page.text
-    assert 'id="map-hour-range"' in page.text
-    assert 'id="map-play"' in page.text
-    assert 'id="map-previous"' in page.text
-    assert 'id="map-next"' in page.text
-    assert 'data-map-mode="precipitation"' in page.text
-    assert 'data-map-mode="wind"' in page.text
+    assert 'id="windy-embed"' in page.text
     assert 'href="styles.css"' in page.text
     assert 'src="app.js"' in page.text
     assert client.get("/weather/styles.css").status_code == 200
     script = client.get("/weather/app.js")
     assert script.status_code == 200
-    assert "mapForecastForSelectedDay" in script.text
-    assert "renderPrecipitationField" in script.text
-    assert "tile.openstreetmap.org" in script.text
-    assert "toggleMapPlayback" in script.text
+    assert "windyMapUrl" in script.text
+    assert "embed.windy.com/embed2.html" in script.text
+    assert "renderWindyMap" in script.text
+    assert "wind_direction_10m" in script.text
     assert "wind_speed_unit: 'ms'" in script.text
