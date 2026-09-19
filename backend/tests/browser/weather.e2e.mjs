@@ -39,6 +39,7 @@ try {
     if (isMapRequest) mapRequestUnits.push(request.searchParams.get('wind_speed_unit'))
     await route.fulfill({
       contentType: 'application/json',
+      headers: { 'access-control-allow-origin': '*' },
       body: JSON.stringify(isMapRequest ? Array.from({ length: 25 }, (_, index) => forecast(index / 10)) : forecast()),
     })
   })
