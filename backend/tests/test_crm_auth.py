@@ -41,6 +41,56 @@ def test_admin_api_requires_authentication() -> None:
     assert response.status_code == 401
 
 
+def test_payments_api_passes_pagination_offset(monkeypatch) -> None:
+    import app.crm_routes as crm_routes
+
+    captured = {}
+
+    def fake_list_payments(_db, **kwargs):
+        captured.update(kwargs)
+        return []
+
+    monkeypatch.setattr(crm_routes, "list_payments", fake_list_payments)
+    client = make_client()
+    assert client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    ).status_code == 200
+
+    response = client.get("/admin/api/payments?limit=100&offset=200")
+
+    assert response.status_code == 200
+    assert captured["limit"] == 100
+    assert captured["offset"] == 200
+
+
+def test_payments_query_applies_offset_and_stable_order() -> None:
+    from datetime import datetime, timezone
+
+    from app.crm_service import list_payments
+
+    captured = {}
+
+    class Result:
+        @staticmethod
+        def all():
+            return []
+
+    class Database:
+        @staticmethod
+        def execute(statement):
+            captured["statement"] = statement
+            return Result()
+
+    snapshot = datetime(2026, 9, 19, 12, tzinfo=timezone.utc)
+    assert list_payments(Database(), limit=100, offset=200, snapshot_at=snapshot) == []
+    statement = captured["statement"]
+    assert statement._offset_clause.value == 200
+    assert statement._limit_clause.value == 100
+    assert "payments.id DESC" in " ".join(map(str, statement._order_by_clauses))
+    assert "payments.created_at <=" in str(statement)
+
+
 def test_masterclass_offer_client_context_api_requires_authentication() -> None:
     client = make_client()
     assert client.get("/api/masterclass/admin/offer-preview/clients?q=test").status_code == 401
@@ -212,9 +262,12 @@ def test_login_creates_shared_admin_session() -> None:
     assert "Secure" in response.headers["set-cookie"]
     assert "Domain=.edabalans.ru" in response.headers["set-cookie"]
     assert "SameSite=strict" in response.headers["set-cookie"]
+    page = client.get("/admin", follow_redirects=False)
+    assert page.status_code == 303
+    assert page.headers["location"] == "/crm"
     page = client.get("/admin")
     assert page.status_code == 200
-    assert 'id="admin-content"' in page.text
+    assert 'id="crm-app"' in page.text
 
 
 def test_login_rejects_wrong_password() -> None:
@@ -243,14 +296,14 @@ def test_admin_session_last_30_days_and_password_rotation_revokes_it(monkeypatch
     assert any("Max-Age=2592000" in value for value in login.headers.get_list("set-cookie"))
     token = client.cookies.get("edabalans_admin")
     monkeypatch.setattr(auth.time, "time", lambda: start + 29 * 86400)
-    assert 'id="admin-content"' in client.get("/admin").text
+    assert 'id="crm-app"' in client.get("/admin").text
     monkeypatch.setattr(auth.time, "time", lambda: start + 31 * 86400)
     assert 'id="login-form"' in client.get(
         "/admin", headers={"Cookie": f"edabalans_admin={token}"},
     ).text
     monkeypatch.setattr(auth.time, "time", lambda: start)
     client.cookies.set("edabalans_admin", token, domain=".edabalans.ru", path="/")
-    assert 'id="admin-content"' in client.get("/admin").text
+    assert 'id="crm-app"' in client.get("/admin").text
     monkeypatch.setattr(get_settings(), "admin_password", "rotated-test-password")
     assert 'id="login-form"' in client.get("/admin").text
     assert client.post("/admin/api/login", json={
@@ -265,7 +318,7 @@ def test_admin_cookie_cross_subdomain_and_logout() -> None:
         "username": "admin@example.com", "password": "test-admin-password",
     }).status_code == 200
     assert len([c for c in client.cookies.jar if c.name == "edabalans_admin"]) == 1
-    assert 'id="admin-content"' in client.get("https://app.edabalans.ru/admin").text
+    assert 'id="crm-app"' in client.get("https://app.edabalans.ru/admin").text
     assert 'id="login-form"' in client.get("https://unrelated.example/admin").text
     client.cookies.set("edabalans_admin", "legacy-host-cookie", domain="edabalans.ru", path="/")
     assert client.post("/admin/api/logout").status_code == 200
@@ -280,6 +333,6 @@ def test_independent_host_login_does_not_expand_cookie_trust() -> None:
     })
     assert response.status_code == 200
     assert "Domain=" not in response.headers["set-cookie"]
-    assert 'id="admin-content"' in client.get("/admin").text
+    assert 'id="crm-app"' in client.get("/admin").text
     assert client.post("/admin/api/logout").status_code == 200
     assert 'id="login-form"' in client.get("/admin").text

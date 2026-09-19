@@ -17,13 +17,18 @@ const projectMap = { modules: modulesToml.split(/\r?\n(?=\[\[modules\]\])/).map(
   const catalog = block.match(/^admin_catalog\s*=\s*\[(.*)\]$/m)?.[1] || "";
   const admin_catalog = [...catalog.matchAll(/\{([^{}]+)\}/g)].map((entry) => {
     const item = {};
-    for (const field of entry[1].matchAll(/(category|order|url|label|description)\s*=\s*(?:"((?:\\.|[^"])*)"|(\d+))/g)) {
+    for (const field of entry[1].matchAll(/(category|order|url|label|description|icon)\s*=\s*(?:"((?:\\.|[^"])*)"|(\d+))/g)) {
       item[field[1]] = field[3] == null ? JSON.parse(`"${field[2]}"`) : Number(field[3]);
     }
     return item;
   });
   return { id, admin_catalog };
 }).filter((module) => module.id && module.admin_catalog.length) };
+const userQueries = [];
+const paymentOffsets = [];
+const paymentSnapshots = [];
+let errorAttempts = 0;
+const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accesses:["MASTERCLASS"] };
 
 function json(response, payload) {
   response.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
@@ -44,7 +49,7 @@ const server = createServer((request, response) => {
   const url = new URL(request.url, "http://127.0.0.1");
   if (url.pathname === "/admin") {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
-    return response.end(readFileSync(path.join(staticRoot, "admin.html")));
+    return response.end(readFileSync(path.join(staticRoot, "crm.html")));
   }
   if (url.pathname === "/finance") {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -94,7 +99,21 @@ const server = createServer((request, response) => {
   if (url.pathname === "/admin/api/project-map") return json(response, projectMap);
   if (url.pathname === "/admin/api/summary") return json(response, { users: 321, buyers: 87, paid_payments: 112, revenue_rub: 950000, access_reviews: 4 });
   if (url.pathname === "/admin/api/payment-products" || url.pathname === "/admin/api/tags") return json(response, []);
-  if (url.pathname === "/admin/api/users") return json(response, []);
+  if (url.pathname === "/admin/api/users") {
+    const q = url.searchParams.get("q") || "";
+    userQueries.push(q);
+    if (q === "error" && errorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test error"})); }
+    const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
+    return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
+  }
+  if (url.pathname === "/admin/api/payments") {
+    const offset = Number(url.searchParams.get("offset") || 0);
+    paymentOffsets.push(offset);
+    paymentSnapshots.push(url.searchParams.get("snapshot_at"));
+    const count = offset === 0 ? 100 : 1;
+    return json(response, Array.from({length:count}, (_, index) => ({ id:`p${offset + index}`, user_id:"u1", display_name:offset === 0 ? `Первая оплата ${index + 1}` : "Оплата 101", email:"anna@example.com", product_name:"Мастер-класс", status:"paid", amount:12000, amount_is_estimated:false, paid_at:"2026-09-18T12:00:00Z", snapshot_at:"2026-09-19T12:00:00Z" })));
+  }
+  if (url.pathname === "/admin/api/access-reviews") return json(response, []);
   if (url.pathname === "/admin/api/content/authoring/summary") return json(response, { manifestations: 24, families: 18, candidate_groups: 2 });
   if (url.pathname === "/admin/api/content/authoring/groups") return json(response, { total: 0, groups: [] });
   if (url.pathname === "/admin/api/library/summary") return json(response, { library_resources: 42, published_manifestations: 17, repo_documents: 63, pending_reviews: 0 });
@@ -118,12 +137,21 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   assert.equal(await page.getByText("Служебное", { exact: true }).count(), 1);
   assert.equal(await page.getByText("База знаний", { exact: true }).count(), 1);
-  for (const category of ["Клиенты", "Приложения", "Маркетинг", "Контент", "Коммерция", "Служебное", "База знаний"]) {
+  for (const category of ["Клиенты", "Приложения", "Маркетинг", "Курсы", "Коммерция", "Служебное", "База знаний"]) {
     assert.equal(await page.getByText(category, { exact: true }).count(), 1, category);
   }
   assert.equal(await page.locator('.admin-nav-disabled:has-text("Telegram-бот")').count(), 1);
   assert.equal(await page.locator('.admin-nav-disabled:has-text("Telegram-бот")').getAttribute("href"), null);
   assert.ok(await page.locator("body").evaluate((node) => node.scrollWidth <= node.clientWidth));
+  assert.equal(await page.getByRole("link", { name: "CRM" }).locator(".admin-nav-icon").textContent(), "👥");
+  assert.equal(await page.getByRole("link", { name: "DQS" }).locator(".admin-nav-icon").textContent(), "🥑");
+  assert.equal(await page.getByRole("link", { name: "Силовые" }).locator(".admin-nav-icon").textContent(), "💪");
+  assert.equal(await page.getByRole("link", { name: "Метаболизм" }).locator(".admin-nav-icon").textContent(), "🔥");
+  assert.equal(await page.getByRole("link", { name: "Определитель допродаж" }).locator(".admin-nav-icon").textContent(), "🎯");
+  const offerCategory = await page.getByRole("link", { name: "Определитель допродаж" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
+  const contentCategory = await page.getByRole("link", { name: "Каталог материалов" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
+  assert.equal(offerCategory, "Коммерция");
+  assert.equal(contentCategory, "Маркетинг");
 
   if (width <= 760) {
     const burger = page.getByRole("button", { name: "Открыть меню" });
@@ -192,7 +220,40 @@ for (const [name, route] of Object.entries(integratedPages)) {
   for (const width of [360, 1440]) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(`http://127.0.0.1:${port}${route}`);
-    await page.getByRole("link", { name: "Главное" }).waitFor();
+    await page.getByRole("link", { name: "CRM" }).waitFor();
+    if (name === "crm" && width === 1440) {
+      const search = page.locator("#crm-search");
+      await search.click();
+      await search.fill("a");
+      await page.waitForTimeout(330);
+      await search.fill("anna");
+      await page.waitForTimeout(380);
+      assert.equal(await search.evaluate((node) => document.activeElement === node), true);
+      assert.match(await page.locator("#crm-user-results").textContent(), /Анна/);
+      assert.doesNotMatch(await page.locator("#crm-user-results").textContent(), /Устаревший ответ/);
+      assert.ok(userQueries.includes("a") && userQueries.includes("anna"));
+      await search.fill("error");
+      await page.waitForTimeout(380);
+      assert.equal(await page.getByText("CRM", { exact:true }).count(), 2);
+      assert.match(await page.locator("#crm-user-results").textContent(), /Люди не загрузились/);
+      assert.equal(await search.inputValue(), "error");
+      assert.equal(await search.evaluate((node) => document.activeElement === node), true);
+      await page.getByRole("button", { name:"Повторить" }).click();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      assert.equal(userQueries.filter((query) => query === "error").length, 2);
+      await page.getByRole("button", { name:"Оплаты" }).click();
+      await page.locator("#payment-next:not([disabled])").waitFor();
+      assert.match(await page.locator(".crm-table tbody").textContent(), /Первая оплата 1/);
+      await page.locator("#payment-next").click();
+      await page.waitForTimeout(80);
+      assert.deepEqual(paymentOffsets.slice(-2), [0, 100]);
+      assert.deepEqual(paymentSnapshots.slice(-2), [null, "2026-09-19T12:00:00Z"]);
+      assert.match(await page.locator(".crm-table tbody").textContent(), /Оплата 101/);
+      assert.doesNotMatch(await page.locator(".crm-table tbody").textContent(), /Первая оплата/);
+      await page.getByRole("button", { name:"Люди" }).click();
+      await page.locator("#crm-search").fill("");
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+    }
     if (width > 760) {
       await page.waitForTimeout(220);
       await assertDesktopGeometry(page, 252);

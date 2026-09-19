@@ -24,7 +24,7 @@ ADMIN_CATALOG_CATEGORIES = {
     "clients",
     "applications",
     "marketing",
-    "content",
+    "courses",
     "commerce",
     "service",
     "knowledge",
@@ -571,11 +571,11 @@ def validate_registry(repo: Path, registry: dict[str, Any]) -> tuple[list[dict[s
             if not isinstance(item, dict):
                 errors.append(f"{module_id}: admin_catalog entries must be tables")
                 continue
-            category, url, label, description, order = str(item.get("category", "")), str(item.get("url", "")), str(item.get("label", "")), str(item.get("description", "")), item.get("order")
+            category, url, label, description, icon, order = str(item.get("category", "")), str(item.get("url", "")), str(item.get("label", "")), str(item.get("description", "")), str(item.get("icon", "")), item.get("order")
             if category not in ADMIN_CATALOG_CATEGORIES: errors.append(f"{module_id}: admin_catalog has invalid category {category!r}")
             if not url.startswith(("/", "https://")): errors.append(f"{module_id}: admin_catalog url must be an absolute path or https URL")
-            if not label or not description or not isinstance(order, int): errors.append(f"{module_id}: admin_catalog needs label, description and integer order")
-            admin_catalog.append({"category": category, "url": url, "label": label, "description": description, "order": order})
+            if not label or not description or not icon or not isinstance(order, int): errors.append(f"{module_id}: admin_catalog needs label, description, icon and integer order")
+            admin_catalog.append({"category": category, "url": url, "label": label, "description": description, "icon": icon, "order": order})
         telegram_fields = (
             module.get("telegram_code"),
             module.get("telegram_name"),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 import time
-from datetime import date
+from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -105,8 +105,10 @@ def protected_file(name: str) -> FileResponse:
 def admin_index(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
-) -> FileResponse:
-    return protected_file("admin.html" if admin_identity(request, credentials) else "admin-login.html")
+) -> Response:
+    if admin_identity(request, credentials):
+        return RedirectResponse("/crm", status_code=303)
+    return protected_file("admin-login.html")
 
 
 @router.get("/control", include_in_schema=False)
@@ -471,6 +473,8 @@ def admin_reset_credential(
 @router.get("/admin/api/payments")
 def admin_payments(
     limit: int = Query(default=200, ge=1, le=500),
+    offset: int = Query(default=0, ge=0),
+    snapshot_at: datetime | None = Query(default=None),
     q: str = Query(default="", max_length=255),
     product_code: str = Query(default="", max_length=80),
     date_from: date | None = Query(default=None),
@@ -482,6 +486,8 @@ def admin_payments(
     return list_payments(
         db,
         limit=limit,
+        offset=offset,
+        snapshot_at=snapshot_at,
         query=q,
         product_code=product_code,
         date_from=date_from,

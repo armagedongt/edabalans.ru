@@ -26,7 +26,7 @@ sources = [
 
 [[modules]]
 id = "platform.crm"
-admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", description = "Люди, покупки, доступы, теги и заметки." }]
+admin_catalog = [{ category = "clients", order = 10, url = "/crm", label = "CRM", icon = "👥", description = "Люди, покупки, доступы, теги и заметки." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.crm.md"
 owns_files = [
@@ -46,7 +46,7 @@ owns_tables = [
 
 [[modules]]
 id = "platform.commerce"
-admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
+admin_catalog = [{ category = "commerce", order = 20, url = "/admin/pricing", label = "Цены и тарифы", icon = "🏷️", description = "Цены продуктов, тарифы и дополнительные предложения." }, { category = "commerce", order = 40, url = "/finance", label = "Финансовая модель", icon = "📊", description = "Расчёт потока, выручки, рекламы, нагрузки и маржи." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.commerce.md"
 depends_on = ["platform.crm", "messaging.telegram"]
@@ -117,7 +117,7 @@ reads_from = ["platform.commerce"]
 
 [[modules]]
 id = "platform.content"
-admin_catalog = [{ category = "content", order = 10, url = "/admin/content", label = "Каталог материалов", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
+admin_catalog = [{ category = "marketing", order = 20, url = "/admin/content", label = "Каталог материалов", icon = "🗂️", description = "Материалы Telegram, Pikabu и рабочий каталог контента." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.content.md"
 owns_files = [
@@ -228,7 +228,7 @@ owns_routes = ["*/blog", "*/blog/*"]
 
 [[modules]]
 id = "platform.knowledge"
-admin_catalog = [{ category = "knowledge", order = 50, url = "/admin/library", label = "Библиотекарь", description = "Единый поиск по источникам, продуктам, публикациям и документам; очередь смысловых решений." }]
+admin_catalog = [{ category = "knowledge", order = 50, url = "/admin/library", label = "Библиотекарь", icon = "🔎", description = "Единый поиск по источникам, продуктам, публикациям и документам; очередь смысловых решений." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.knowledge.md"
 depends_on = ["platform.content", "admin.project-knowledge"]
@@ -339,7 +339,7 @@ owns_tables = ["public_video_views", "public_homepage_events"]
 
 [[modules]]
 id = "products.catalog"
-admin_catalog = [{ category = "commerce", order = 10, url = "/admin/products", label = "Продукты и тарифы", description = "Названия продуктов, краткие описания и рабочий контекст." }]
+admin_catalog = [{ category = "commerce", order = 10, url = "/admin/products", label = "Продукты и описания", icon = "📦", description = "Названия продуктов, краткие описания и рабочий контекст." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.catalog.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -353,7 +353,7 @@ owns_routes = ["*/admin/products", "*/admin/api/product-catalog*"]
 
 [[modules]]
 id = "products.dqs"
-admin_catalog = [{ category = "applications", order = 10, url = "/admin/dqs", label = "DQS", description = "Дневник качества рациона и аналитика клиентов." }]
+admin_catalog = [{ category = "applications", order = 10, url = "/admin/dqs", label = "DQS", icon = "🥑", description = "Дневник качества рациона и аналитика клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.dqs.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -368,7 +368,7 @@ owns_routes = ["*/apps/dqs*", "*/api/apps/dqs*", "*/dqs"]
 
 [[modules]]
 id = "products.strength"
-admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", description = "Приложение силовых тренировок клиентов." }]
+admin_catalog = [{ category = "applications", order = 20, url = "/admin/strength", label = "Силовые", icon = "💪", description = "Приложение силовых тренировок клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.strength.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -383,7 +383,7 @@ owns_routes = ["*/apps/strength*", "*/api/apps/strength*", "*/training", "*/stre
 
 [[modules]]
 id = "products.metabolism"
-admin_catalog = [{ category = "applications", order = 30, url = "/admin/metabolism", label = "Метаболизм", description = "Расчёты калорий и метаболизма клиентов." }]
+admin_catalog = [{ category = "applications", order = 30, url = "/admin/metabolism", label = "Метаболизм", icon = "🔥", description = "Расчёты калорий и метаболизма клиентов." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.metabolism.md"
 depends_on = ["platform.auth", "platform.commerce"]
@@ -403,7 +403,7 @@ reads_from = ["products.calories", "products.masterclass.questionnaires"]
 
 [[modules]]
 id = "products.calories"
-admin_catalog = [{ category = "content", order = 30, url = "/admin/courses/calories/structure", label = "Калорийный курс", description = "Этапы, материалы, задания и готовность запуска курса." }]
+admin_catalog = [{ category = "courses", order = 20, url = "/admin/courses/calories/structure", label = "Калорийный курс", icon = "🍎", description = "Этапы, материалы, задания и готовность запуска курса." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.calories.md"
 depends_on = [
@@ -436,7 +436,7 @@ depends_on = ["platform.auth", "platform.commerce", "operations.imports"]
 
 [[modules]]
 id = "products.intensive"
-admin_catalog = [{ category = "content", order = 40, url = "https://edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", description = "Страницы и редактура четырёх дней интенсива." }]
+admin_catalog = [{ category = "courses", order = 30, url = "https://edabalans.ru/intensive/day-1", label = "Бесплатный интенсив", icon = "⚡", description = "Страницы и редактура четырёх дней интенсива." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.intensive.md"
 owns_files = [
@@ -469,7 +469,7 @@ owns_routes = ["*/telegram-login*", "*/api/intensive/telegram-login*"]
 
 [[modules]]
 id = "products.masterclass"
-admin_catalog = [{ category = "content", order = 20, url = "/admin/courses", label = "Редактор структуры курсов", description = "Структура и материалы Мастер-класса." }]
+admin_catalog = [{ category = "courses", order = 10, url = "/admin/courses/masterclass-21/structure", label = "Мастер-класс", icon = "🎓", description = "Структура и материалы Мастер-класса." }]
 parent = "products"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.md"
 depends_on = ["platform.commerce"]
@@ -562,7 +562,7 @@ events_out = ["messaging.telegram.postpurchase"]
 
 [[modules]]
 id = "products.masterclass.offers"
-admin_catalog = [{ category = "applications", order = 40, url = "/admin/masterclass-offers-preview", label = "Определитель допродаж", description = "Сценарий и персональный просмотр дополнительных предложений." }]
+admin_catalog = [{ category = "commerce", order = 30, url = "/admin/masterclass-offers-preview", label = "Определитель допродаж", icon = "🎯", description = "Сценарий и персональный просмотр дополнительных предложений." }]
 parent = "products.masterclass"
 card = "docs/knowledge-base/modules/catalog/products.masterclass.offers.md"
 owns_files = [
@@ -751,7 +751,7 @@ owns_routes = ["*/bot-api/*broadcast*", "*/bot-api/*manual-message*"]
 
 [[modules]]
 id = "messaging.telegram.engine"
-admin_catalog = [{ category = "service", order = 10, url = "https://edabalans.ru/admin/messaging", label = "Telegram-бот", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
+admin_catalog = [{ category = "service", order = 10, url = "https://edabalans.ru/admin/messaging", label = "Telegram-бот", icon = "💬", description = "Пока не редактируется в админке: канонические тексты и правила меняются через Codex." }]
 parent = "messaging.telegram"
 card = "docs/knowledge-base/modules/catalog/messaging.telegram.engine.md"
 owns_files = [
@@ -817,7 +817,7 @@ depends_on = ["platform.auth", "platform.crm"]
 
 [[modules]]
 id = "admin.project-knowledge"
-admin_catalog = [{ category = "knowledge", order = 10, url = "/admin/knowledge-base?view=map", label = "Карта системы", description = "Дерево продуктов, модулей и связей." }, { category = "knowledge", order = 20, url = "/admin/knowledge-base?view=guide", label = "Как работать с проектом", description = "Короткая памятка для владельца." }, { category = "knowledge", order = 30, url = "/admin/knowledge-base?view=plans", label = "Планы", description = "Только явно отложенные идеи." }, { category = "knowledge", order = 40, url = "/admin/knowledge-base?view=documents", label = "Документы проекта", description = "Человекочитаемая база знаний." }]
+admin_catalog = [{ category = "knowledge", order = 10, url = "/admin/knowledge-base?view=map", label = "Карта системы", icon = "🗺️", description = "Дерево продуктов, модулей и связей." }, { category = "knowledge", order = 20, url = "/admin/knowledge-base?view=guide", label = "Как работать с проектом", icon = "📘", description = "Короткая памятка для владельца." }, { category = "knowledge", order = 30, url = "/admin/knowledge-base?view=plans", label = "Планы", icon = "📌", description = "Только явно отложенные идеи." }, { category = "knowledge", order = 40, url = "/admin/knowledge-base?view=documents", label = "Документы проекта", icon = "📄", description = "Человекочитаемая база знаний." }]
 parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.project-knowledge.md"
 depends_on = ["platform.auth"]
@@ -955,7 +955,7 @@ card = "docs/knowledge-base/modules/catalog/marketing.md"
 
 [[modules]]
 id = "marketing.analytics"
-admin_catalog = [{ category = "marketing", order = 10, url = "/admin/marketing", label = "Путь лида", description = "Таблица пользователей, источников, действий и конверсий бесплатного интенсива." }]
+admin_catalog = [{ category = "marketing", order = 10, url = "/admin/marketing", label = "Путь лида", icon = "📈", description = "Таблица пользователей, источников, действий и конверсий бесплатного интенсива." }]
 parent = "marketing"
 card = "docs/knowledge-base/modules/catalog/marketing.analytics.md"
 owns_files = [

@@ -4,9 +4,11 @@
   const root = document.getElementById("crm-app");
   const state = {
     view: "users", query: "", summary: null, users: [], payments: [], tags: [], offset: 0,
+    paymentOffset: 0, paymentSnapshotAt: null, userProducts: null, userTags: null, userRequest: null,
     paymentFilters: { q: "", product_code: "", date_from: "", date_to: "", amount_kind: "all" }, userFilters: { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", tag_id: "" }
   };
-  const pageSize = 250;
+  const pageSize = 100;
+  const paymentPageSize = 100;
   const tagCategories = {
     manual: "Ручные",
     subscription: "Подписка",
@@ -67,16 +69,12 @@
     return `
       <div class="crm-top">
         <div class="crm-head">
-          <div><div class="crm-title">CRM клиентов</div><div class="crm-subtitle">Единая база Edabalans</div></div>
-          <div class="crm-head-actions"><div class="crm-live">● РАБОТАЕТ</div></div>
+          <div class="crm-title">CRM</div>
         </div>
         <div class="crm-tabs">
-          <button class="crm-tab ${active === "users" ? "active" : ""}" data-view="users">Все люди</button>
-          <button class="crm-tab ${active === "buyers" ? "active" : ""}" data-view="buyers">Покупатели</button>
+          <button class="crm-tab ${active === "users" || active === "buyers" ? "active" : ""}" data-view="users">Люди</button>
           <button class="crm-tab ${active === "payments" ? "active" : ""}" data-view="payments">Оплаты</button>
-          <button class="crm-tab ${active === "access" ? "active" : ""}" data-view="access">Доступы</button>
           <button class="crm-tab ${active === "tags" ? "active" : ""}" data-view="tags">Теги</button>
-          <button class="crm-tab ${active === "structure" ? "active" : ""}" data-view="structure">Как устроено</button>
         </div>
       </div>`;
   }
@@ -105,75 +103,101 @@
     return accesses.map((code) => `<span class="crm-tag">${esc(code.replace("ACCESS_", ""))}</span>`).join("");
   }
 
-  function userCard(user) {
+  function userRow(user) {
     const buyer = user.purchase_count > 0;
-    const origin = user.data_origin === "native" ? "Новая система" : "История";
     return `
-      <article class="crm-client">
-        <button class="crm-client-button" data-user-id="${esc(user.id)}">
-          <div class="crm-client-top">
-            <div><div class="crm-name">${esc(user.display_name || user.email || user.telegram || "Без имени")}</div>
-            <div class="crm-email">${esc(user.email || "email не указан")}${user.telegram ? ` · @${esc(user.telegram)}` : ""}</div></div>
-            <div class="crm-badges"><span class="crm-origin ${user.data_origin === "native" ? "origin-native" : "origin-legacy"}">${origin}</span><span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span></div>
-          </div>
-          <div class="crm-client-grid">
-            <div class="crm-mini"><div class="crm-k">ОПЛАЧЕНО</div><div class="crm-v">${money(user.ltv_rub)}</div>${user.estimated_ltv_rub ? `<div class="crm-s">+ ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</div>
-            <div class="crm-mini"><div class="crm-k">ПОКУПОК</div><div class="crm-v">${user.purchase_count}</div></div>
-            <div class="crm-mini"><div class="crm-k">ПОСЛЕДНЯЯ</div><div class="crm-v">${date(user.last_purchase_at, false)}</div></div>
-          </div>
-          <div class="crm-tags">${accessTags(user.accesses)}</div>
-        </button>
-      </article>`;
+      <tr data-user-id="${esc(user.id)}" tabindex="0" role="link" aria-label="Открыть карточку: ${esc(user.display_name || user.email || user.telegram || "Без имени")}">
+        <td><strong>${esc(user.display_name || user.email || user.telegram || "Без имени")}</strong><div class="crm-email">${esc(user.email || "email не указан")}${user.telegram ? ` · @${esc(user.telegram)}` : ""}</div></td>
+        <td><span class="crm-status ${buyer ? "st-buyer" : "st-lead"}">${buyer ? "Покупатель" : "Лид"}</span></td>
+        <td class="crm-money">${money(user.ltv_rub)}${user.estimated_ltv_rub ? `<div class="crm-row-meta">+ ≈ ${money(user.estimated_ltv_rub)}</div>` : ""}</td>
+        <td>${user.purchase_count}</td>
+        <td>${date(user.last_purchase_at, false)}</td>
+        <td><div class="crm-tags compact">${accessTags(user.accesses)}</div></td>
+      </tr>`;
   }
 
   function bindUserCards() {
     root.querySelectorAll("[data-user-id]").forEach((item) => {
       item.addEventListener("click", () => openUser(item.dataset.userId));
+      item.addEventListener("keydown", (event) => {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        openUser(item.dataset.userId);
+      });
     });
   }
 
-  async function renderUsers(buyersOnly) {
-    root.innerHTML = top(buyersOnly ? "buyers" : "users") + '<div class="crm-loading">Загружаю клиентов…</div>';
-    bindTop();
-    const [products, tags] = await Promise.all([api("/admin/api/payment-products"), api("/admin/api/tags?status=active")]);
-    const filters = { ...state.userFilters, buyer_kind: buyersOnly ? "buyers" : state.userFilters.buyer_kind };
-    const params = new URLSearchParams({ q: state.query, buyers_only: String(buyersOnly), limit: String(pageSize), offset: String(state.offset) });
+  async function loadUserRows() {
+    if (state.userRequest) state.userRequest.abort();
+    state.userRequest = new AbortController();
+    const result = document.getElementById("crm-user-results");
+    if (result) result.classList.add("is-loading");
+    const filters = state.userFilters;
+    const params = new URLSearchParams({ q: state.query, buyers_only: "false", limit: String(pageSize), offset: String(state.offset) });
     Object.entries(filters).forEach(([key, value]) => { if (value !== "") params.set(key, value); });
-    state.users = await api(`/admin/api/users?${params}`);
-    root.innerHTML = top(buyersOnly ? "buyers" : "users") + `
+    try {
+      state.users = await api(`/admin/api/users?${params}`, { signal: state.userRequest.signal });
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      const current = document.getElementById("crm-user-results");
+      if (current) {
+        current.classList.remove("is-loading");
+        current.innerHTML = `<div class="crm-error inline"><strong>Люди не загрузились</strong><div>${esc(error.message)}</div><button class="crm-btn small" id="crm-results-retry">Повторить</button></div>`;
+        document.getElementById("crm-results-retry").addEventListener("click", () => loadUserRows());
+      }
+      return;
+    }
+    const current = document.getElementById("crm-user-results");
+    if (!current) return;
+    current.classList.remove("is-loading");
+    current.innerHTML = `<div class="crm-table-wrap"><table class="crm-table crm-people-table"><thead><tr><th>Человек</th><th>Сегмент</th><th>Оплачено</th><th>Покупок</th><th>Последняя</th><th>Доступы</th></tr></thead><tbody>${state.users.map(userRow).join("") || '<tr><td colspan="6" class="crm-empty">Ничего не найдено</td></tr>'}</tbody></table></div>
+      <div class="crm-pager"><button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span><button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button></div>`;
+    bindUserCards();
+    document.getElementById("crm-prev").addEventListener("click", () => { state.offset = Math.max(0, state.offset - pageSize); loadUserRows().catch(showError); });
+    document.getElementById("crm-next").addEventListener("click", () => { state.offset += pageSize; loadUserRows().catch(showError); });
+  }
+
+  async function renderUsers(buyersOnly) {
+    root.innerHTML = top("users") + '<div class="crm-loading">Загружаю клиентов…</div>';
+    bindTop();
+    if (buyersOnly) state.userFilters.buyer_kind = "buyers";
+    const referenceRequest = state.userProducts && state.userTags ? null : Promise.all([api("/admin/api/payment-products"), api("/admin/api/tags?status=active")]).catch(() => null);
+    const products = state.userProducts || [];
+    const tags = state.userTags || [];
+    const filters = state.userFilters;
+    root.innerHTML = top("users") + `
       <div class="crm-toolbar">
         <input class="crm-search" id="crm-search" placeholder="Поиск по имени, email или Telegram" value="${esc(state.query)}">
         <button class="crm-btn alt" id="crm-refresh">Обновить</button>
       </div>
-      <details class="crm-card crm-filters"><summary>Фильтры</summary><form class="crm-payment-toolbar" id="crm-user-filters"><label><span>Первое появление с</span><input class="crm-input" name="first_seen_from" type="date" value="${esc(filters.first_seen_from)}"></label><label><span>по</span><input class="crm-input" name="first_seen_to" type="date" value="${esc(filters.first_seen_to)}"></label><select class="crm-input" name="buyer_kind"><option value="all">Все</option><option value="buyers" ${filters.buyer_kind === "buyers" ? "selected" : ""}>Покупатели</option><option value="non_buyers" ${filters.buyer_kind === "non_buyers" ? "selected" : ""}>Без покупок</option></select><select class="crm-input" name="product_code"><option value="">Любой продукт</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><select class="crm-input" name="masterclass_access"><option value="">Доступ к МК: любой</option><option value="true" ${filters.masterclass_access === "true" ? "selected" : ""}>Доступ к МК есть</option><option value="false" ${filters.masterclass_access === "false" ? "selected" : ""}>Нет доступа к МК</option></select><select class="crm-input" name="tag_id"><option value="">Любой тег</option>${tags.map((item) => `<option value="${esc(item.id)}" ${filters.tag_id === item.id ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><button class="crm-btn small">Применить</button><button class="crm-btn alt small" type="button" id="crm-reset-filters">Сбросить</button></form></details>
-      ${stats()}
-      <div class="crm-list">${state.users.map(userCard).join("") || '<div class="crm-card crm-empty">Ничего не найдено</div>'}</div>
-      <div class="crm-pager">
-        <button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button>
-        <span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span>
-        <button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button>
-      </div>
+      <div class="crm-quick-filters"><button class="crm-chip ${filters.buyer_kind === "all" ? "active" : ""}" data-buyer-kind="all">Все</button><button class="crm-chip ${filters.buyer_kind === "buyers" ? "active" : ""}" data-buyer-kind="buyers">Покупатели</button><button class="crm-chip ${filters.buyer_kind === "non_buyers" ? "active" : ""}" data-buyer-kind="non_buyers">Без покупок</button><button class="crm-chip" data-view="access">На проверку</button></div>
+      <details class="crm-card crm-filters"><summary>Другие фильтры</summary><form class="crm-payment-toolbar" id="crm-user-filters"><label><span>Первое появление с</span><input class="crm-input" name="first_seen_from" type="date" value="${esc(filters.first_seen_from)}"></label><label><span>по</span><input class="crm-input" name="first_seen_to" type="date" value="${esc(filters.first_seen_to)}"></label><select class="crm-input" id="crm-product-filter" name="product_code"><option value="">Любой продукт</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><select class="crm-input" name="masterclass_access"><option value="">Доступ к МК: любой</option><option value="true" ${filters.masterclass_access === "true" ? "selected" : ""}>Доступ к МК есть</option><option value="false" ${filters.masterclass_access === "false" ? "selected" : ""}>Нет доступа к МК</option></select><select class="crm-input" id="crm-tag-filter" name="tag_id"><option value="">Любой тег</option>${tags.map((item) => `<option value="${esc(item.id)}" ${filters.tag_id === item.id ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select><button class="crm-btn small">Применить</button><button class="crm-btn alt small" type="button" id="crm-reset-filters">Сбросить</button></form></details>
+      <div id="crm-user-results" class="crm-results"><div class="crm-loading inline">Загружаю людей…</div></div>
       <div class="crm-foot">PostgreSQL — единый источник данных этой админки</div>`;
     bindTop();
-    bindUserCards();
     const search = document.getElementById("crm-search");
     let timer;
     search.addEventListener("input", () => {
       clearTimeout(timer);
       state.query = search.value;
       state.offset = 0;
-      timer = setTimeout(() => renderUsers(buyersOnly).catch(showError), 300);
+      timer = setTimeout(() => loadUserRows().catch(showError), 300);
     });
-    document.getElementById("crm-user-filters").addEventListener("submit", (event) => { event.preventDefault(); state.userFilters = Object.fromEntries(new FormData(event.currentTarget).entries()); state.offset = 0; renderUsers(buyersOnly).catch(showError); });
-    document.getElementById("crm-reset-filters").addEventListener("click", () => { state.userFilters = { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", tag_id: "" }; state.offset = 0; renderUsers(buyersOnly).catch(showError); });
-    document.getElementById("crm-refresh").addEventListener("click", () => loadHome(buyersOnly ? "buyers" : "users"));
-    document.getElementById("crm-prev").addEventListener("click", () => {
-      state.offset = Math.max(0, state.offset - pageSize);
-      renderUsers(buyersOnly).catch(showError);
-    });
-    document.getElementById("crm-next").addEventListener("click", () => {
-      state.offset += pageSize;
-      renderUsers(buyersOnly).catch(showError);
+    document.getElementById("crm-user-filters").addEventListener("submit", (event) => { event.preventDefault(); state.userFilters = { ...state.userFilters, ...Object.fromEntries(new FormData(event.currentTarget).entries()) }; state.offset = 0; loadUserRows().catch(showError); });
+    document.getElementById("crm-reset-filters").addEventListener("click", () => { state.userFilters = { buyer_kind: "all", product_code: "", first_seen_from: "", first_seen_to: "", masterclass_access: "", tag_id: "" }; state.offset = 0; renderUsers(false).catch(showError); });
+    document.getElementById("crm-refresh").addEventListener("click", () => loadUserRows().catch(showError));
+    root.querySelectorAll("[data-buyer-kind]").forEach((button) => button.addEventListener("click", () => { state.userFilters.buyer_kind = button.dataset.buyerKind; state.offset = 0; renderUsers(false).catch(showError); }));
+    await loadUserRows();
+    if (referenceRequest) referenceRequest.then((loadedReferences) => {
+      if (!loadedReferences) return;
+      const [loadedProducts, loadedTags] = loadedReferences;
+      state.userProducts = loadedProducts; state.userTags = loadedTags;
+      const productSelect = document.getElementById("crm-product-filter");
+      const tagSelect = document.getElementById("crm-tag-filter");
+      if (productSelect) productSelect.innerHTML = `<option value="">Любой продукт</option>${loadedProducts.map((item) => `<option value="${esc(item.code)}">${esc(item.name)}</option>`).join("")}`;
+      if (tagSelect) tagSelect.innerHTML = `<option value="">Любой тег</option>${loadedTags.map((item) => `<option value="${esc(item.id)}">${esc(item.name)}</option>`).join("")}`;
+      if (productSelect) productSelect.value = filters.product_code;
+      if (tagSelect) tagSelect.value = filters.tag_id;
     });
   }
 
@@ -234,6 +258,7 @@
           category: card.querySelector(".tag-category").value,
           status: card.querySelector(".tag-status").value
         }) });
+        state.userTags = null;
         await renderTags();
       });
       const merge = card.querySelector(".tag-merge");
@@ -241,6 +266,7 @@
         const targetName = window.prompt("Введите точное название основного тега, в который объединяем:");
         if (!targetName) return;
         await api(`/admin/api/tags/${id}/merge`, { method: "POST", body: JSON.stringify({ target_name: targetName }) });
+        state.userTags = null;
         await renderTags();
       });
     });
@@ -293,12 +319,13 @@
     root.innerHTML = top("payments") + '<div class="crm-loading">Загружаю оплаты…</div>';
     bindTop();
     const filters = state.paymentFilters;
-    const params = new URLSearchParams({ limit: "500", ...filters });
-    const [payments, products] = await Promise.all([
-      api(`/admin/api/payments?${params}`),
-      api("/admin/api/payment-products")
-    ]);
+    const params = new URLSearchParams({ limit: String(paymentPageSize), offset: String(state.paymentOffset), ...filters });
+    if (state.paymentSnapshotAt) params.set("snapshot_at", state.paymentSnapshotAt);
+    const productRequest = state.userProducts ? Promise.resolve(state.userProducts) : api("/admin/api/payment-products").catch(() => null);
+    const payments = await api(`/admin/api/payments?${params}`);
+    const products = state.userProducts || [];
     state.payments = payments;
+    if (!state.paymentSnapshotAt && payments[0] && payments[0].snapshot_at) state.paymentSnapshotAt = payments[0].snapshot_at;
     const rows = state.payments.map((payment) => `
       <tr ${payment.user_id ? `data-user-id="${esc(payment.user_id)}"` : ""}>
         <td>${date(payment.paid_at || payment.source_event_at, true)}</td>
@@ -307,8 +334,7 @@
         <td><span class="crm-status ${["paid","confirmed"].includes(payment.status) ? "st-paid" : "st-processing"}">${esc(payment.status)}</span>${payment.review_status === "pending" ? '<div class="crm-row-meta">нужна проверка</div>' : ""}</td>
         <td class="crm-money">${payment.amount_is_estimated ? "≈ " : ""}${money(payment.amount)}<div class="crm-row-meta">${payment.amount_is_estimated ? "оценка" : "факт"}</div></td>
       </tr>`).join("");
-    root.innerHTML = top("payments") + `${stats()}
-      <form class="crm-payment-toolbar" id="payment-filters">
+    root.innerHTML = top("payments") + `<form class="crm-payment-toolbar" id="payment-filters">
         <input class="crm-input" id="payment-q" placeholder="Человек, email или продукт" value="${esc(filters.q)}">
         <select class="crm-input" id="payment-product"><option value="">Все продукты</option>${products.map((item) => `<option value="${esc(item.code)}" ${filters.product_code === item.code ? "selected" : ""}>${esc(item.name)}</option>`).join("")}</select>
         <label><span>С</span><input class="crm-input" id="payment-from" type="date" value="${esc(filters.date_from)}"></label>
@@ -319,7 +345,9 @@
       <div class="crm-table-wrap"><table class="crm-table">
         <thead><tr><th>Дата</th><th>Человек</th><th>Продукт</th><th>Статус</th><th>Сумма</th></tr></thead>
         <tbody>${rows || '<tr><td colspan="5" class="crm-empty">Оплат пока нет</td></tr>'}</tbody>
-      </table></div><div class="crm-foot">Лента оплат неизменяема · повторный webhook не создаёт дубль</div>`;
+      </table></div>
+      <div class="crm-pager"><button class="crm-btn alt small" id="payment-prev" ${state.paymentOffset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.payments.length ? `${state.paymentOffset + 1}–${state.paymentOffset + state.payments.length}` : "0"}</span><button class="crm-btn alt small" id="payment-next" ${state.payments.length < paymentPageSize ? "disabled" : ""}>Следующие →</button></div>
+      <div class="crm-foot">Лента оплат неизменяема · повторный webhook не создаёт дубль</div>`;
     bindTop();
     bindUserCards();
     document.getElementById("payment-filters").addEventListener("submit", (event) => {
@@ -331,7 +359,19 @@
         date_to: document.getElementById("payment-to").value,
         amount_kind: document.getElementById("payment-kind").value
       };
+      state.paymentOffset = 0;
+      state.paymentSnapshotAt = null;
       renderPayments().catch(showError);
+    });
+    document.getElementById("payment-prev").addEventListener("click", () => { state.paymentOffset = Math.max(0, state.paymentOffset - paymentPageSize); renderPayments().catch(showError); });
+    document.getElementById("payment-next").addEventListener("click", () => { state.paymentOffset += paymentPageSize; renderPayments().catch(showError); });
+    productRequest.then((loadedProducts) => {
+      if (!loadedProducts) return;
+      state.userProducts = loadedProducts;
+      const select = document.getElementById("payment-product");
+      if (!select) return;
+      select.innerHTML = `<option value="">Все продукты</option>${loadedProducts.map((item) => `<option value="${esc(item.code)}">${esc(item.name)}</option>`).join("")}`;
+      select.value = filters.product_code;
     });
   }
 
@@ -550,6 +590,7 @@
 
   async function showView(view) {
     if (view !== state.view && (view === "users" || view === "buyers")) state.offset = 0;
+    if (view !== state.view && view === "payments") { state.paymentOffset = 0; state.paymentSnapshotAt = null; }
     state.view = view;
     if (view === "payments") return renderPayments();
     if (view === "access") return renderAccessReviews();

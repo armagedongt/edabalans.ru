@@ -23,7 +23,8 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
 .admin-shell-nav>span{display:block;margin:16px 10px 4px!important;color:#91a197!important;font-size:9px!important;font-weight:800;letter-spacing:.13em}
 .admin-shell-nav>a,.admin-shell-nav>.admin-nav-disabled{display:flex;align-items:center;gap:10px;min-height:39px;padding:9px 10px;border-radius:10px;color:#bdcbc1}
 .admin-shell-nav>a:hover,.admin-shell-nav>a.active{color:#fff;background:#ffffff18}
-.admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:7px;background:#ffffff0d;font-size:12px;font-weight:800}
+.admin-shell-nav .admin-nav-icon{display:grid;place-items:center;flex:0 0 24px;width:24px;height:24px;border-radius:7px;background:#ffffff0d;font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:13px;font-weight:400}
+.admin-shell-nav .admin-nav-icon-crm{background:#68aef0}
 .admin-shell-nav .admin-nav-copy{min-width:0;display:grid;gap:1px}
 .admin-shell-nav .admin-nav-copy b{overflow:hidden;text-overflow:ellipsis;font-size:12px;white-space:nowrap}
 .admin-shell-nav .admin-nav-copy small{overflow:hidden;color:#8fa097;font-size:9px;line-height:1.2;text-overflow:ellipsis;white-space:nowrap}

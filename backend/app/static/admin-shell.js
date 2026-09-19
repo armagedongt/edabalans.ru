@@ -4,12 +4,13 @@
   if (location.pathname === "/admin/strength" && new URLSearchParams(location.search).get("mobile") === "1") return;
 
   const body = document.body;
-  const categoryOrder = ["clients", "applications", "marketing", "content", "commerce", "service", "knowledge"];
+  body.classList.add("ed-admin-shell");
+  const categoryOrder = ["clients", "applications", "marketing", "courses", "commerce", "service", "knowledge"];
   const categoryNames = {
     clients: "Клиенты",
     applications: "Приложения",
     marketing: "Маркетинг",
-    content: "Контент",
+    courses: "Курсы",
     commerce: "Коммерция",
     service: "Служебное",
     knowledge: "База знаний"
@@ -38,16 +39,17 @@
 
   function itemMarkup(item, moduleId, icon) {
     const disabled = moduleId === "messaging.telegram.engine";
-    const copy = `<span class="admin-nav-icon">${esc(icon)}</span><span class="admin-nav-copy"><b>${esc(item.label)}</b>${disabled ? '<small>редактируется через Codex</small>' : ""}</span>`;
-    if (disabled) return `<span class="admin-nav-disabled" title="${esc(item.description)}" aria-disabled="true">${copy}</span>`;
+    const iconClass = moduleId === "platform.crm" ? " admin-nav-icon-crm" : "";
+    const copy = `<span class="admin-nav-icon${iconClass}">${esc(icon)}</span><span class="admin-nav-copy"><b>${esc(item.label)}</b>${disabled ? '<small>редактируется через Codex</small>' : ""}</span>`;
+    if (disabled) return `<span class="admin-nav-disabled" title="${esc(item.description)}" aria-label="${esc(item.label)}" aria-disabled="true">${copy}</span>`;
     const external = /^https:\/\//.test(item.url) && new URL(item.url).origin !== location.origin;
-    return `<a href="${esc(item.url)}" title="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
+    return `<a href="${esc(item.url)}" title="${esc(item.label)}" aria-label="${esc(item.label)}"${selected(item) ? ' class="active" aria-current="page"' : ""}${external ? ' target="_blank" rel="noopener"' : ""}>${copy}</a>`;
   }
 
   function render(modules) {
-    const usedIcons = new Set(["⌂"]);
-    function uniqueIcon(label) {
-      const base = compactIcon(label);
+    const usedIcons = new Set();
+    function uniqueIcon(item) {
+      const base = item.icon || compactIcon(item.label);
       if (!usedIcons.has(base)) {
         usedIcons.add(base);
         return base;
@@ -68,8 +70,8 @@
       return {category: category, items: items.filter(function (item) { return item.category === category; }).sort(function (a,b) { return a.order - b.order; })};
     }).filter(function (group) { return group.items.length; });
     const nav = document.querySelector(".admin-shell-nav");
-    nav.innerHTML = `<a href="/admin"${location.pathname === "/admin" ? ' class="active" aria-current="page"' : ""}><span class="admin-nav-icon">⌂</span><span class="admin-nav-copy"><b>Главное</b></span></a>` + groups.map(function (group) {
-      return `<span>${categoryNames[group.category]}</span>` + group.items.map(function (item) { return itemMarkup(item, item.module_id, uniqueIcon(item.label)); }).join("");
+    nav.innerHTML = groups.map(function (group) {
+      return `<span>${categoryNames[group.category]}</span>` + group.items.map(function (item) { return itemMarkup(item, item.module_id, uniqueIcon(item)); }).join("");
     }).join("");
   }
 
@@ -87,10 +89,9 @@
         <button class="admin-shell-control" data-action="hide" type="button" title="Скрыть меню" aria-label="Скрыть меню">×</button>
       </div>
     </div>
-    <nav class="admin-nav admin-shell-nav" aria-label="Разделы админки"><a href="/admin"><span class="admin-nav-icon">⌂</span><span class="admin-nav-copy"><b>Главное</b></span></a></nav>
+    <nav class="admin-nav admin-shell-nav" aria-label="Разделы админки"><a href="/crm"><span class="admin-nav-icon">👥</span><span class="admin-nav-copy"><b>CRM</b></span></a></nav>
     <div class="admin-shell-footer"><button class="admin-shell-logout" type="button"><span class="admin-nav-icon">↪</span><span>Выйти</span></button></div>`;
 
-  body.classList.add("ed-admin-shell");
   const backdrop = document.createElement("div");
   backdrop.className = "admin-shell-backdrop";
   const open = document.createElement("button");
@@ -139,6 +140,6 @@
     if (!response.ok) throw new Error("catalog unavailable");
     return response.json();
   }).then(function (data) { render(data.modules); }).catch(function () {
-    render([{id:"platform.crm",admin_catalog:[{category:"clients",order:10,url:"/crm",label:"CRM",description:"Клиенты"}]}]);
+    render([{id:"platform.crm",admin_catalog:[{category:"clients",order:10,url:"/crm",label:"CRM",description:"Клиенты",icon:"👥"}]}]);
   });
 }());

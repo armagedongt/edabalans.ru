@@ -256,18 +256,25 @@ def list_payment_products(db: Session) -> list[dict]:
 def list_payments(
     db: Session,
     limit: int = 200,
+    offset: int = 0,
+    snapshot_at: datetime | None = None,
     query: str = "",
     product_code: str = "",
     date_from: date | None = None,
     date_to: date | None = None,
     amount_kind: str = "all",
 ) -> list[dict]:
+    snapshot = snapshot_at or datetime.now(timezone.utc)
+    if snapshot.tzinfo is None:
+        snapshot = snapshot.replace(tzinfo=timezone.utc)
     stmt = (
         select(Payment, User.display_name, Product.code, Product.name)
         .outerjoin(User, User.id == Payment.user_id)
         .outerjoin(Product, Product.id == Payment.product_id)
-        .order_by(Payment.source_event_at.desc().nullslast(), Payment.created_at.desc())
+        .order_by(Payment.source_event_at.desc().nullslast(), Payment.created_at.desc(), Payment.id.desc())
+        .offset(max(offset, 0))
         .limit(min(max(limit, 1), 500))
+        .where(Payment.created_at <= snapshot)
     )
     if query.strip():
         pattern = f"%{query.strip()}%"
@@ -308,6 +315,7 @@ def list_payments(
             "review_status": payment.review_status,
             "paid_at": payment.paid_at,
             "source_event_at": payment.source_event_at,
+            "snapshot_at": snapshot,
         }
         for payment, display_name, product_code, product_name in rows
     ]
