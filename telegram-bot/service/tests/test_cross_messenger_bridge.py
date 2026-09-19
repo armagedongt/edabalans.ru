@@ -253,6 +253,10 @@ def test_telegram_redelivery_retries_a_persisted_failed_delivery_without_second_
         else:
             raise AssertionError("outbound failure must reach the webhook caller")
 
+        failed_delivery = session.scalar(select(MessagingBridgeDelivery))
+        assert failed_delivery.status == "failed"
+        assert failed_delivery.attempts == 1
+        assert failed_delivery.error_message == "temporary MAX failure"
         assert process_telegram_update(session, update, sender) == {
             "ok": True,
             "bridge": "retried",
@@ -260,6 +264,41 @@ def test_telegram_redelivery_retries_a_persisted_failed_delivery_without_second_
         }
         assert sender.sent == [("101", "Не терять", None)]
         assert session.scalar(select(MessagingBridgeDelivery)).attempts == 2
+
+
+def test_telegram_redelivery_stops_after_three_failed_delivery_attempts():
+    with make_session() as session:
+        session.add(
+            MessagingBridgePair(
+                key="retry-limit",
+                status="active",
+                telegram_channel_id="-10001",
+                max_channel_id="101",
+                telegram_practice_chat_id="-10002",
+                max_practice_chat_id="102",
+            )
+        )
+        session.commit()
+        sender = FakeMaxSender()
+        sender.fail_sends = 3
+        update = {
+            "update_id": 104,
+            "channel_post": {"message_id": 22, "chat": {"id": -10001}, "text": "Не дублировать"},
+        }
+
+        for _ in range(3):
+            try:
+                process_telegram_update(session, update, sender)
+            except RuntimeError:
+                pass
+            else:
+                raise AssertionError("each of the three bounded attempts must expose the failure")
+
+        assert process_telegram_update(session, update, sender) == {"ok": True, "bridge": "duplicate"}
+        delivery = session.scalar(select(MessagingBridgeDelivery))
+        assert delivery.status == "failed"
+        assert delivery.attempts == 3
+        assert delivery.error_message == "temporary MAX failure"
 
 
 def test_max_practice_message_is_mirrored_to_telegram_with_reply_parent():
