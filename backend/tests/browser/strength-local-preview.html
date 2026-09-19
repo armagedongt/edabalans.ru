@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Силовые тренировки · локальный предпросмотр</title>
+  <style>html,body{margin:0;min-height:100%;background:#f4f4f6}</style>
+</head>
+<body>
+  <div id="preview-root"></div>
+  <script>
+  (function () {
+    var exerciseCatalog = [
+      {exercise_id:'bench-press',exercise_name:'Жим штанги лёжа',active:true,catalog_active:true,sort_order:1,source:'base',muscles:'Грудь, трицепс',tips:['Лопатки сведены','Контролируй траекторию']},
+      {exercise_id:'romanian-deadlift',exercise_name:'Румынская тяга',active:true,catalog_active:true,sort_order:2,source:'base',muscles:'Задняя поверхность бедра',tips:['Держи спину нейтральной']},
+      {exercise_id:'lat-pulldown',exercise_name:'Тяга верхнего блока',active:false,catalog_active:true,sort_order:3,source:'base',muscles:'Широчайшие',tips:[]}
+    ];
+    var sessions = [26,27,28,29,30].map(function (number) {
+      return {session_id:'preview-session-'+number,workout_type:number === 28 ? 2 : 1,session_number:number,date:'2026-09-'+String(number - 20).padStart(2,'0')};
+    });
+    var sessionExercises = [];
+    var sets = [];
+    sessions.forEach(function (session) {
+      exerciseCatalog.slice(0,2).forEach(function (exercise,index) {
+        sessionExercises.push({session_id:session.session_id,exercise_id:exercise.exercise_id,exercise_name:exercise.exercise_name,sort_order:index+1,note:session.session_number === 28 && index === 1 ? 'Бок болит' : ''});
+        [1,2,3].forEach(function (setNumber) {
+          sets.push({
+            session_id:session.session_id, exercise_id:exercise.exercise_id, set_number:setNumber,
+            plan_weight:exercise.exercise_id === 'bench-press' ? String(55 + session.session_number - 26) : String(45 + session.session_number - 26),
+            plan_reps:'10',
+            fact_weight:session.session_number < 30 ? (exercise.exercise_id === 'bench-press' ? String(52 + session.session_number - 26) : String(42 + session.session_number - 26)) : '',
+            fact_reps:session.session_number < 30 ? '10' : '',
+            rpe:session.session_number < 30 ? '8' : ''
+          });
+        });
+      });
+    });
+    var workout = {workout_types:[],exercise_catalog:exerciseCatalog,sessions:sessions,session_exercises:sessionExercises,sets:sets,version:1};
+    window.EdabalansIdentity = {source:'native',email:'preview@example.test'};
+    window.EdabalansAppContext = {mode:'admin',targetUserId:'preview'};
+    window.__strengthPreview = true;
+    var nativeFetch = window.fetch.bind(window);
+    function response(value) {
+      return Promise.resolve(new Response(JSON.stringify(value), {status:200,headers:{'Content-Type':'application/json'}}));
+    }
+    window.fetch = function (url, options) {
+      var path = new URL(String(url), window.location.href).pathname;
+      if (path === '/app/static/apps/strength.html') return nativeFetch(url, options);
+      if (path !== '/api/apps/strength') return nativeFetch(url, options);
+      var body = options && options.body ? JSON.parse(options.body) : null;
+      var query = new URL(String(url), window.location.href).searchParams;
+      var action = (body && body.action) || query.get('action');
+      if (action === 'openUser') return response({ok:true,user:{user_id:'preview',email:'preview@example.test',display_name:'Локальный предпросмотр'}});
+      if (action === 'getWorkout') return response({ok:true,workout:workout});
+      return response({ok:true,version:2,session:(body && body.session) || {}});
+    };
+    nativeFetch('/app/static/apps/strength.html?preview='+Date.now())
+      .then(function (result) { return result.text(); })
+      .then(function (source) {
+        var script = source.match(/<script>([\s\S]*)<\/script>/);
+        document.getElementById('preview-root').innerHTML = source.replace(/<script>[\s\S]*<\/script>/, '');
+        (0,eval)(script[1]);
+      })
+      .catch(function () {
+        document.getElementById('preview-root').textContent = 'Не удалось загрузить локальный предпросмотр.';
+      });
+  }());
+  </script>
+</body>
+</html>

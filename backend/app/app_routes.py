@@ -1400,20 +1400,27 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
     catalog.sort(key=lambda item: int(item.get("sort_order") or 0))
 
     sessions, session_exercises, sets = [], [], []
-    own_workouts = [w for w in (state.workouts or []) if int(w.get("workout_type", 0)) == workout_type]
+    # Sessions belong to the person, not to a template. `workout_type` remains
+    # provenance (and selects the future-plan catalogue above), but never
+    # filters the exercise history returned to the client.
+    own_workouts = [w for w in (state.workouts or []) if isinstance(w, dict)]
     own_workouts.sort(key=lambda item: int(item.get("session_number") or 0))
     for workout in own_workouts:
         session_id = str(workout.get("session_id") or workout.get("id"))
         number = int(workout.get("session_number") or 0)
+        session_workout_type = int(workout.get("workout_type") or workout_type)
         sessions.append({
-            "session_id": session_id, "user_id": str(user_id), "workout_type": workout_type,
+            "session_id": session_id, "user_id": str(user_id), "workout_type": session_workout_type,
             "session_number": number, "date": workout.get("date", ""), "status": workout.get("status", "planned"),
             "legacy_group": workout.get("legacy_group", ""), "source": workout.get("source", "app"),
             "created_at": workout.get("created_at", ""), "updated_at": workout.get("updated_at", ""),
+            "legacy_session_number": workout.get("legacy_session_number", ""),
+            "date_inferred": workout.get("date_inferred") is True,
+            "date_unknown": workout.get("date_unknown") is True,
         })
         for ex_index, exercise in enumerate(workout.get("exercises", []), 1):
             session_exercises.append({
-                "session_id": session_id, "user_id": str(user_id), "workout_type": workout_type,
+                "session_id": session_id, "user_id": str(user_id), "workout_type": session_workout_type,
                 "session_number": number, "exercise_id": exercise.get("exercise_id"),
                 "exercise_name": exercise.get("exercise_name", ""),
                 "sort_order": exercise.get("sort_order", ex_index), "note": exercise.get("note", ""),
@@ -1421,7 +1428,7 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
             })
             for set_index, item in enumerate(exercise.get("sets", []), 1):
                 sets.append({
-                    "session_id": session_id, "user_id": str(user_id), "workout_type": workout_type,
+                    "session_id": session_id, "user_id": str(user_id), "workout_type": session_workout_type,
                     "session_number": number, "exercise_id": exercise.get("exercise_id"),
                     "exercise_name": exercise.get("exercise_name", ""), "set_number": item.get("set_number", set_index),
                     **{key: item.get(key, "") for key in (
@@ -1431,7 +1438,14 @@ def strength_payload(db: Session, state: StrengthState, user_id: uuid.UUID, work
                     "source": item.get("source", "app"),
                 })
     types = [{"user_id": str(user_id), **item} for item in (state.workout_types or [])]
-    return {"workout_types": types, "exercise_catalog": catalog, "sessions": sessions, "session_exercises": session_exercises, "sets": sets}
+    return {
+        "workout_types": types,
+        "exercise_catalog": catalog,
+        "sessions": sessions,
+        "session_exercises": session_exercises,
+        "sets": sets,
+        "version": state.version,
+    }
 
 
 @router.api_route("/api/apps/strength", methods=["GET", "POST"])
@@ -1478,32 +1492,64 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             )
             if state is None:
                 raise ValueError("STRENGTH_STATE_NOT_FOUND")
+            expected_version = body.get("version")
+            if expected_version in (None, ""):
+                raise ValueError("STRENGTH_STATE_VERSION_REQUIRED")
+            if int(expected_version) != int(state.version or 0):
+                raise ValueError("STRENGTH_STATE_CONFLICT")
             workouts = list(state.workouts or [])
-            own_numbers = [int(w.get("session_number") or 0) for w in workouts if int(w.get("workout_type") or 0) == workout_type]
             requested_session_id = str(session.get("session_id") or "")
-            if requested_session_id:
-                existing = next(
-                    (item for item in workouts if str(item.get("session_id")) == requested_session_id),
-                    None,
-                )
-                number = int((existing or {}).get("session_number") or session.get("session_number") or 0)
-                session_id = requested_session_id
+            if session.get("deleted") is True:
+                if not requested_session_id:
+                    raise ValueError("INVALID_SESSION")
+                if not any(str(item.get("session_id")) == requested_session_id for item in workouts):
+                    raise ValueError("STRENGTH_SESSION_NOT_FOUND")
+                state.workouts = [
+                    item for item in workouts
+                    if str(item.get("session_id")) != requested_session_id
+                ]
+                state.version += 1
+                payload = {"ok": True, "session": {"session_id": requested_session_id, "deleted": True}, "version": state.version}
             else:
-                number = max(own_numbers, default=0) + 1
-                session_id = str(uuid.uuid4())
-            now = datetime.now(timezone.utc).isoformat()
-            item = {**session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": session.get("created_at") or now, "source": "app"}
-            item["status"] = "filled" if any(
-                set_item.get("rpe") not in (None, "")
-                for exercise in item.get("exercises", []) for set_item in exercise.get("sets", [])
-            ) else "planned"
-            workouts = [w for w in workouts if str(w.get("session_id")) != session_id]
-            workouts.append(item)
-            state.workouts = workouts
-            state.version += 1
-            payload = {"ok": True, "session": item, "version": state.version}
+                all_numbers = [int(w.get("session_number") or 0) for w in workouts if isinstance(w, dict)]
+                existing = None
+                if requested_session_id:
+                    existing = next(
+                        (item for item in workouts if str(item.get("session_id")) == requested_session_id),
+                        None,
+                    )
+                    number = int((existing or {}).get("session_number") or 0)
+                    session_id = requested_session_id
+                else:
+                    session_id = str(uuid.uuid4())
+                if existing is None:
+                    number = max(all_numbers, default=0) + 1
+                now = datetime.now(timezone.utc).isoformat()
+                item = {**session, "session_id": session_id, "workout_type": workout_type, "session_number": number, "updated_at": now, "created_at": session.get("created_at") or now, "source": "app"}
+                item["status"] = "filled" if any(
+                    set_item.get("rpe") not in (None, "")
+                    for exercise in item.get("exercises", []) for set_item in exercise.get("sets", [])
+                ) else "planned"
+                workouts = [w for w in workouts if str(w.get("session_id")) != session_id]
+                workouts.append(item)
+                state.workouts = workouts
+                state.version += 1
+                payload = {"ok": True, "session": item, "version": state.version}
         elif action == "saveExerciseSettings":
             workout_type = int(body.get("workout_type") or 0)
+            state = db.scalar(
+                select(StrengthState)
+                .where(StrengthState.id == state.id)
+                .execution_options(populate_existing=True)
+                .with_for_update()
+            )
+            if state is None:
+                raise ValueError("STRENGTH_STATE_NOT_FOUND")
+            expected_version = body.get("version")
+            if expected_version in (None, ""):
+                raise ValueError("STRENGTH_STATE_VERSION_REQUIRED")
+            if int(expected_version) != int(state.version or 0):
+                raise ValueError("STRENGTH_STATE_CONFLICT")
             settings = [item for item in (state.hidden_exercises or []) if int(item.get("workout_type", 0)) != workout_type]
             settings.extend({**item, "workout_type": workout_type} for item in (body.get("exercises") or []))
             state.hidden_exercises = settings
@@ -1513,6 +1559,19 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             workout_type = int(body.get("workout_type") or 0)
             if workout_type not in (1, 2, 3):
                 raise ValueError("INVALID_WORKOUT_TEMPLATE")
+            state = db.scalar(
+                select(StrengthState)
+                .where(StrengthState.id == state.id)
+                .execution_options(populate_existing=True)
+                .with_for_update()
+            )
+            if state is None:
+                raise ValueError("STRENGTH_STATE_NOT_FOUND")
+            expected_version = body.get("version")
+            if expected_version in (None, ""):
+                raise ValueError("STRENGTH_STATE_VERSION_REQUIRED")
+            if int(expected_version) != int(state.version or 0):
+                raise ValueError("STRENGTH_STATE_CONFLICT")
             incoming = body.get("exercises") or []
             if not isinstance(incoming, list) or len(incoming) > 250:
                 raise ValueError("INVALID_EXERCISE_CATALOG")
@@ -1595,11 +1654,10 @@ async def strength_legacy(request: Request, db: Session = Depends(get_db)) -> JS
             state.version += 1
             payload = {"ok": True, "version": state.version}
         elif action == "getStats":
-            workout_type = int(body.get("type") or 1)
             exercise_id = str(body.get("exercise_id") or "")
             history = []
-            for workout in sorted(state.workouts or [], key=lambda w: str(w.get("date") or "")):
-                if int(workout.get("workout_type") or 0) != workout_type or not workout.get("date"):
+            for workout in sorted(state.workouts or [], key=lambda w: int(w.get("session_number") or 0)):
+                if not workout.get("date"):
                     continue
                 exercise = next((x for x in workout.get("exercises", []) if str(x.get("exercise_id")) == exercise_id), None)
                 candidates = []

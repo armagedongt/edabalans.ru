@@ -1,6 +1,9 @@
 import os
 import uuid
+from collections import defaultdict
 from datetime import datetime, timezone
+
+import pytest
 
 os.environ.setdefault("DATABASE_URL", "sqlite+pysqlite:///:memory:")
 os.environ.setdefault("ADMIN_USERNAME", "admin@example.com")
@@ -14,6 +17,7 @@ from sqlalchemy.pool import StaticPool  # noqa: E402
 from app.config import get_settings  # noqa: E402
 from app.app_routes import BASE_STRENGTH_EXERCISES  # noqa: E402
 from app.database import Base, get_db  # noqa: E402
+from app.importers.google_apps import import_strength  # noqa: E402
 from app.main import app  # noqa: E402
 from app.models import (  # noqa: E402
     AdminAppEdit,
@@ -259,7 +263,7 @@ def test_strength_managed_runtime_uses_admin_session_and_writes_audit():
 
     saved = client.post("/api/apps/strength", content=(
         '{"action":"saveExerciseSettings","target_user_id":"%s",'
-        '"workout_type":1,"exercises":[]}' % user_id
+        '"workout_type":1,"version":1,"exercises":[]}' % user_id
     ))
     assert saved.status_code == 200
     assert saved.json()["ok"] is True
@@ -289,6 +293,7 @@ def test_strength_completed_set_round_trips_for_the_selected_user():
             "action": "saveSession",
             "target_user_id": str(user_id),
             "workout_type": 1,
+            "version": 1,
             "session": {
                 "session_number": 1,
                 "date": "2026-09-09",
@@ -319,7 +324,7 @@ def test_strength_completed_set_round_trips_for_the_selected_user():
     assert loaded.json()["workout"]["sets"][0]["completed"] is True
 
 
-def test_strength_server_assigns_unique_numbers_and_ids_inside_each_template():
+def test_strength_server_assigns_globally_unique_numbers_and_ids():
     client, factory = make_client()
     with factory() as db:
         user = add_user(db, "strength-numbering@example.test", "Нумерация")
@@ -334,18 +339,23 @@ def test_strength_server_assigns_unique_numbers_and_ids_inside_each_template():
 
     login(client)
 
+    version = 1
+
     def create(workout_type: int) -> dict:
+        nonlocal version
         response = client.post(
             "/api/apps/strength",
             json={
                 "action": "saveSession",
                 "target_user_id": str(user_id),
                 "workout_type": workout_type,
+                "version": version,
                 "session": {"session_number": 99, "date": "2026-09-10", "exercises": []},
             },
         )
         assert response.status_code == 200
         assert response.json()["ok"] is True
+        version = response.json()["version"]
         return response.json()["session"]
 
     first = create(1)
@@ -354,12 +364,157 @@ def test_strength_server_assigns_unique_numbers_and_ids_inside_each_template():
 
     assert first["session_number"] == 1
     assert second["session_number"] == 2
-    assert other_template["session_number"] == 1
+    assert other_template["session_number"] == 3
     assert uuid.UUID(first["session_id"])
     assert uuid.UUID(second["session_id"])
     assert uuid.UUID(other_template["session_id"])
     assert first["session_id"] != second["session_id"]
     assert other_template["session_id"] not in {first["session_id"], second["session_id"]}
+
+
+def test_strength_payload_and_stats_include_exercise_history_from_every_template():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-global-history@example.test", "История")
+        db.add(StrengthState(
+            user_id=user.id,
+            workout_types=[],
+            hidden_exercises=[],
+            workouts=[
+                {
+                    "session_id": "t1-1", "workout_type": 1, "session_number": 1,
+                    "date": "2026-09-01", "exercises": [{
+                        "exercise_id": "romanian-deadlift", "exercise_name": "Румынская тяга", "sets": [
+                            {"set_number": 1, "fact_weight": "50", "fact_reps": "8", "rpe": "8"},
+                            {"set_number": 2, "fact_weight": "50", "fact_reps": "8", "rpe": "8"},
+                        ],
+                    }],
+                },
+                {
+                    "session_id": "t3-2", "workout_type": 3, "session_number": 2,
+                    "date": "2026-09-03", "exercises": [{
+                        "exercise_id": "romanian-deadlift", "exercise_name": "Румынская тяга", "sets": [
+                            {"set_number": 1, "fact_weight": "55", "fact_reps": "8", "rpe": "8"},
+                            {"set_number": 2, "fact_weight": "55", "fact_reps": "8", "rpe": "8"},
+                        ],
+                    }],
+                },
+            ],
+        ))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    workout = client.get(
+        "/api/apps/strength",
+        params={"action": "getWorkout", "target_user_id": str(user_id), "type": 3},
+    ).json()["workout"]
+    assert [item["session_number"] for item in workout["sessions"]] == [1, 2]
+    assert [item["workout_type"] for item in workout["sessions"]] == [1, 3]
+
+    stats = client.get(
+        "/api/apps/strength",
+        params={
+            "action": "getStats", "target_user_id": str(user_id), "type": 3,
+            "exercise_id": "romanian-deadlift",
+        },
+    ).json()["stats"]
+    assert [item["session_number"] for item in stats] == [1, 2]
+
+
+def test_strength_rejects_stale_state_version_without_overwriting_session():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-version@example.test", "Версия")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=[]))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    first = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": str(user_id), "workout_type": 1,
+        "version": 1, "session": {"date": "2026-09-10", "exercises": []},
+    }).json()
+    assert first["ok"] is True
+    stale = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": str(user_id), "workout_type": 2,
+        "version": 1, "session": {"date": "2026-09-11", "exercises": []},
+    }).json()
+    assert stale == {"ok": False, "error": "STRENGTH_STATE_CONFLICT"}
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == user_id))
+        assert [workout["session_number"] for workout in state.workouts] == [1]
+
+
+def test_strength_undo_can_delete_a_newly_created_session():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-delete@example.test", "Отмена")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=[]))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    session_id = "browser-created-session"
+    created = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": str(user_id), "workout_type": 1,
+        "version": 1, "session": {"session_id": session_id, "session_number": 99, "date": "2026-09-10", "exercises": []},
+    }).json()
+    assert created["ok"] is True
+    assert created["session"]["session_number"] == 1
+    deleted = client.post("/api/apps/strength", json={
+        "action": "saveSession", "target_user_id": str(user_id), "workout_type": 1,
+        "version": created["version"], "session": {"session_id": session_id, "deleted": True},
+    }).json()
+    assert deleted == {"ok": True, "session": {"session_id": session_id, "deleted": True}, "version": 3}
+    with factory() as db:
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == user_id))
+        assert state.workouts == []
+
+
+def test_strength_every_write_requires_an_expected_version():
+    client, factory = make_client()
+    with factory() as db:
+        user = add_user(db, "strength-version-required@example.test", "Версия")
+        db.add(StrengthState(user_id=user.id, workout_types=[], hidden_exercises=[], workouts=[]))
+        db.commit()
+        user_id = user.id
+
+    login(client)
+    requests = [
+        {"action": "saveSession", "target_user_id": str(user_id), "workout_type": 1, "session": {"exercises": []}},
+        {"action": "saveExerciseSettings", "target_user_id": str(user_id), "workout_type": 1, "exercises": []},
+        {"action": "saveExerciseCatalog", "target_user_id": str(user_id), "workout_type": 1, "exercises": []},
+    ]
+    for body in requests:
+        response = client.post("/api/apps/strength", json=body)
+        assert response.status_code == 200
+        assert response.json() == {"ok": False, "error": "STRENGTH_STATE_VERSION_REQUIRED"}
+
+
+def test_strength_import_refuses_any_existing_profile_state():
+    _, factory = make_client()
+    with factory() as db:
+        user = User(display_name="Уже есть", status="active", data_origin="legacy_import")
+        db.add(user)
+        db.flush()
+        db.add(StrengthState(
+            user_id=user.id,
+            workout_types=[{"workout_type": 1, "title": "Нельзя заменить"}],
+            hidden_exercises=[],
+            workouts=[],
+        ))
+        db.commit()
+
+        payload = {
+            "strength_users": [["user_id", "display_name", "email", "status"], ["legacy-existing", "Уже есть", "", "active"]],
+            "strength_types": [], "strength_catalog": [], "strength_sessions": [],
+            "strength_session_exercises": [], "strength_sets": [],
+        }
+        with pytest.raises(ValueError, match="STRENGTH_IMPORT_REQUIRES_EXPLICIT_REPLACE"):
+            import_strength(db, payload, defaultdict(int))
+        state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
+        assert state.workout_types == [{"workout_type": 1, "title": "Нельзя заменить"}]
 
 
 def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
@@ -461,6 +616,7 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
             "action": "saveExerciseCatalog",
             "target_user_id": str(user_id),
             "workout_type": 2,
+            "version": 1,
             "exercises": [
                 {
                     "exercise_id": "bench-press",
@@ -490,6 +646,7 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
     )
     assert saved.status_code == 200
     assert saved.json()["ok"] is True
+    version = saved.json()["version"]
 
     loaded = client.get(
         "/api/apps/strength",
@@ -512,6 +669,7 @@ def test_strength_catalog_is_account_wide_and_template_membership_is_separate():
             "action": "saveExerciseCatalog",
             "target_user_id": str(user_id),
             "workout_type": 1,
+            "version": version,
             "exercises": [
                 {
                     "exercise_id": "legacy-cable-row",

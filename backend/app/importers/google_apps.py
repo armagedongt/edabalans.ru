@@ -12,6 +12,7 @@ from sqlalchemy import select
 
 from app.app_service import normalize_email
 from app.database import SessionLocal
+from app.importers.strength_global_history import migrate_workouts
 from app.models import (
     DqsState,
     ImportBatch,
@@ -286,11 +287,12 @@ def import_strength(db, payload: dict[str, Any], summary: dict[str, int]) -> Non
                 "updated_at": str(row.get("updated_at") or ""),
                 "exercises": exercises_by_session.get(session_id, []),
             })
-        workouts.sort(key=lambda item: (item["workout_type"], item["session_number"]))
+        workouts = migrate_workouts(workouts)
         state = db.scalar(select(StrengthState).where(StrengthState.user_id == user.id))
-        if not state:
-            state = StrengthState(user_id=user.id, source="google_strength")
-            db.add(state)
+        if state is not None:
+            raise ValueError("STRENGTH_IMPORT_REQUIRES_EXPLICIT_REPLACE")
+        state = StrengthState(user_id=user.id, source="google_strength")
+        db.add(state)
         state.workout_types = workout_types
         state.hidden_exercises = settings
         state.workouts = workouts
