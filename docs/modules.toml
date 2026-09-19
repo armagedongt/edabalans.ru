@@ -376,6 +376,7 @@ owns_files = [
   "backend/app/static/apps/strength.html", "legacy/google/strength/**",
   "legacy/google/sheets/STRENGTH_SCHEMA.md",
   "backend/app/importers/strength_matrix.py", "backend/tests/test_strength_matrix_import.py",
+  "backend/scripts/migrate_strength_global_history.py", "backend/tests/test_strength_global_history.py",
   "content/training/reference/**",
 ]
 owns_tables = ["strength_states", "strength_exercises"]
