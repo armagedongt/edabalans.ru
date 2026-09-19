@@ -28,6 +28,7 @@ const userQueries = [];
 const paymentOffsets = [];
 const paymentSnapshots = [];
 let errorAttempts = 0;
+let libraryErrorAttempts = 0;
 const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, last_purchase_at:"2026-09-18T12:00:00Z", accesses:["MASTERCLASS"] };
 
 function json(response, payload) {
@@ -84,6 +85,7 @@ const server = createServer((request, response) => {
     "/admin/static/course-structure-editor.css": "course-structure-editor.css",
     "/admin/static/course-structure-editor.js": "course-structure-editor.js",
     "/admin/static/product-catalog-editor.js": "product-catalog-editor.js",
+    "/admin/static/product-catalog-editor.css": "product-catalog-editor.css",
     "/crm/crm.css": "crm.css",
     "/crm/crm.js": "crm.js",
   };
@@ -118,6 +120,10 @@ const server = createServer((request, response) => {
   if (url.pathname === "/admin/api/content/authoring/groups") return json(response, { total: 0, groups: [] });
   if (url.pathname === "/admin/api/library/summary") return json(response, { library_resources: 42, published_manifestations: 17, repo_documents: 63, pending_reviews: 0 });
   if (url.pathname === "/admin/api/library/reviews") return json(response, []);
+  if (url.pathname === "/admin/api/library/search") {
+    if (url.searchParams.get("q") === "error" && libraryErrorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test library error"})); }
+    return json(response, { results: [] });
+  }
   if (url.pathname === "/admin/api/courses") return json(response, { courses: [{ name: "Мастер-класс", units: 21, unit_name: "день", version: 7, materials_total: 42, materials_published: 42, ready: true, editor_url: "/admin/courses/masterclass-21/structure" }] });
   if (url.pathname === "/admin/api/courses/masterclass-21/structure") return json(response, { course: { name: "Мастер-класс", unit_name: "день" }, active: { version: 7, created_at: "2026-09-19T12:00:00Z", manifest: { days: [{ number: 1, title: "Начало работы", tocSummary: "Первый день", lead: "", videoId: "", image: "", timings: [], intro: "", afterLead: "", afterTitle: "", afterText: "", steps: [], checks: [] }] } }, history: [] });
   if (url.pathname === "/admin/api/product-catalog") return json(response, { active: { version: 3, manifest: { products: [{ shortName: "Мастер-класс", fullName: "Мастер-класс по похудению", descriptor: "Как выстроить питание", status: "active", marketing: "" }], tariffs: [] } }, history: [] });
@@ -196,12 +202,15 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   await page.close();
 }
 
-for (const width of [360, 1440]) {
+for (const width of [360, 430, 768, 1440]) {
   const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   await page.getByRole("heading", { name: "Параметры" }).waitFor();
   const dimensions = await page.locator("body").evaluate((node) => ({scrollWidth:node.scrollWidth,clientWidth:node.clientWidth}));
+  const columns = await page.locator("main > .grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
+  assert.equal(columns, width >= 1280 ? 2 : 1, JSON.stringify({width,columns}));
+  assert.match(await page.locator(".finance-mode-note").textContent(), /Сценарная модель/);
   if (evidence) await page.screenshot({ path: path.join(evidence, `admin-finance-${width}.png`), fullPage: true });
   assert.ok(dimensions.scrollWidth <= dimensions.clientWidth, JSON.stringify({width,dimensions}));
   await page.close();
@@ -253,6 +262,24 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByRole("button", { name:"Люди" }).click();
       await page.locator("#crm-search").fill("");
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+    }
+    if (name === "library" && width === 1440) {
+      assert.match(await page.locator("#results").textContent(), /Счётчик сверху показывает объём карты/);
+      assert.match(await page.locator("#reviews").textContent(), /Очередь решений пуста/);
+      await page.locator("#query").fill("ничего");
+      await page.getByRole("button", { name:"Найти" }).click();
+      await page.getByText("Ничего не найдено", { exact:true }).waitFor();
+      await page.locator("#query").fill("error");
+      await page.getByRole("button", { name:"Найти" }).click();
+      await page.getByText("Поиск не загрузился", { exact:true }).waitFor();
+      await page.getByRole("button", { name:"Повторить" }).click();
+      await page.getByText("Ничего не найдено", { exact:true }).waitFor();
+    }
+    if (name === "products" && width === 1440) {
+      await page.getByRole("heading", { name:"Продукты и описания" }).waitFor();
+      assert.equal(await page.locator('[data-product="0"][data-field="shortName"]').evaluate((node) => node.tagName), "INPUT");
+      assert.equal(await page.locator('[data-product="0"][data-field="marketing"]').evaluate((node) => node.tagName), "TEXTAREA");
+      assert.match(await page.locator(".product-editor-item summary").first().textContent(), /Мастер-класс · active/);
     }
     if (width > 760) {
       await page.waitForTimeout(220);

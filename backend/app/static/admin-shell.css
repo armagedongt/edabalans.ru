@@ -79,4 +79,5 @@ body.ed-admin-shell.admin-shell-hidden{padding-left:0}
   .ed-admin-shell .wiki-topbar{padding-left:68px}
 }
 @media(min-width:761px) and (max-width:1500px){body.ed-admin-shell main>.grid{grid-template-columns:1fr}}
+@media(min-width:1280px){body.ed-admin-shell.finance-admin-page main>.grid{grid-template-columns:370px minmax(0,1fr)}}
 @media(max-width:480px){.admin-home-actions form{display:grid;grid-template-columns:minmax(0,1fr) auto}.admin-home-head h1{font-size:27px}}

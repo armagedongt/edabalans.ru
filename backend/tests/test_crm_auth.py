@@ -226,7 +226,7 @@ def test_masterclass_offers_preview_uses_canonical_course_sources() -> None:
 
 
 def test_unified_admin_assets_require_authentication() -> None:
-    for asset in ("admin.js", "admin-shell.js", "admin-shell.css"):
+    for asset in ("admin.js", "admin-shell.js", "admin-shell.css", "product-catalog-editor.css"):
         response = make_client().get(f"/admin/static/{asset}")
         assert response.status_code == 401
 

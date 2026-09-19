@@ -3,9 +3,9 @@
   var data, payload, dirty = false;
   function e(value) { return String(value || "").replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[c]; }); }
   function api(url, options) { return fetch(url, options).then(function (response) { return response.json().then(function (body) { if (!response.ok) throw Error(typeof body.detail === "string" ? body.detail : "Ошибка сервера"); return body; }); }); }
-  function field(kind, index, key, label, value, full) { return '<label class="field ' + (full ? "full" : "") + '"><span>' + label + '</span><textarea data-' + kind + '="' + index + '" data-field="' + key + '">' + e(value) + "</textarea></label>"; }
+  function field(kind, index, key, label, value, full) { var control = full ? '<textarea data-' + kind + '="' + index + '" data-field="' + key + '">' + e(value) + '</textarea>' : '<input data-' + kind + '="' + index + '" data-field="' + key + '" value="' + e(value) + '">'; return '<label class="field ' + (full ? "full" : "") + '"><span>' + label + '</span>' + control + '</label>'; }
   function product(item, index) {
-    return '<details class="day" ' + (index === 0 ? "open" : "") + "><summary>" + e(item.fullName) + '</summary><div class="day-body">' +
+    return '<details class="day product-editor-item" ' + (index === 0 ? "open" : "") + "><summary><span>" + e(item.fullName) + '</span><small>' + e(item.shortName) + ' · ' + e(item.status) + '</small></summary><div class="day-body">' +
       '<section class="group"><h3>Показывается пользователю</h3><div class="grid">' +
       field("product", index, "shortName", "Короткое название", item.shortName) +
       field("product", index, "fullName", "Полное название", item.fullName) +
@@ -15,7 +15,7 @@
       field("product", index, "marketing", "Полный маркетинговый контекст", item.marketing, true) +
       "</section></div></details>";
   }
-  function tariff(item, index) { return '<details class="day"><summary>Тариф · ' + e(item.name) + '</summary><div class="day-body"><section class="group"><div class="grid">' + field("tariff", index, "name", "Название тарифа", item.name) + field("tariff", index, "status", "Статус: active / planned / archived", item.status) + field("tariff", index, "descriptor", "Короткое описание", item.descriptor, true) + "</div></section></div></details>"; }
+  function tariff(item, index) { return '<details class="day product-editor-item"><summary><span>Тариф · ' + e(item.name) + '</span><small>' + e(item.status) + '</small></summary><div class="day-body"><section class="group"><div class="grid">' + field("tariff", index, "name", "Название тарифа", item.name) + field("tariff", index, "status", "Статус: active / planned / archived", item.status) + field("tariff", index, "descriptor", "Короткое описание", item.descriptor, true) + "</div></section></div></details>"; }
   function render() { document.querySelector("#catalog").innerHTML = "<h2>Продукты</h2>" + payload.products.map(product).join("") + "<h2>Входные тарифы Мастер-класса</h2>" + payload.tariffs.map(tariff).join(""); document.querySelector("#history").innerHTML = data.history.map(function (version) { return '<div class="history-row"><span>Редакция ' + version.version + " · " + new Date(version.created_at).toLocaleString("ru-RU") + "</span>" + (version.active ? "<b>активна</b>" : '<button class="secondary" data-restore="' + version.version + '">Вернуть</button>') + "</div>"; }).join(""); }
   function state() { document.querySelector("#save").disabled = !dirty; document.querySelector("#status").textContent = dirty ? "Есть несохранённые изменения" : "Редакция " + data.active.version; }
   function fail(error) { var box = document.querySelector("#error"); box.hidden = false; box.textContent = error.message; }

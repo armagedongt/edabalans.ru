@@ -21,11 +21,11 @@
         <select id="contour"><option value="all">Вся карта</option><option value="editorial">Контент</option><option value="technical">Техническое</option></select>
         <button type="submit">Найти</button>
       </form>
-      <div id="results" class="results"><p class="muted">Введите запрос или откройте очередь решений.</p></div>
+      <div id="results" class="results"><div class="library-state"><b>Начните с запроса</b><p>Библиотекарь ищет по источникам, публикациям и документам. Счётчик сверху показывает объём карты, но не выводит все источники без запроса.</p></div></div>
     </section>
     <aside>
       <div class="aside-head"><h2>Нужны решения</h2><button id="refresh-reviews" type="button">Обновить</button></div>
-      <div id="reviews" class="reviews"></div>
+      <div id="reviews" class="reviews"><p class="muted">Загружаю очередь…</p></div>
     </aside>
     <section id="reader" class="reader" hidden>
       <button id="close-reader" type="button">← К результатам</button>

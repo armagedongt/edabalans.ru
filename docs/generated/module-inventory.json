@@ -998,6 +998,10 @@
     },
     {
       "module_id": "products.catalog",
+      "path": "backend/app/static/product-catalog-editor.css"
+    },
+    {
+      "module_id": "products.catalog",
       "path": "backend/app/static/product-catalog-editor.html"
     },
     {
@@ -11692,7 +11696,7 @@
         {
           "file": "backend/tests/browser/admin-shell.e2e.mjs",
           "kind": "function",
-          "line": 32,
+          "line": 33,
           "module_id": "admin.control",
           "name": "json",
           "qualname": "json"
@@ -11700,7 +11704,7 @@
         {
           "file": "backend/tests/browser/admin-shell.e2e.mjs",
           "kind": "function",
-          "line": 37,
+          "line": 38,
           "module_id": "admin.control",
           "name": "assertDesktopGeometry",
           "qualname": "assertDesktopGeometry"
@@ -45110,7 +45114,9 @@
         "предоставлять карту и адресные ресурсы через MCP/API;",
         "направлять исполнителя сначала выбрать ближайшую принятую авторскую основу, а",
         "вести очередь решений Библиотекаря и события фактического использования;",
-        "связывать редакционный прогон с исходниками, принятой версией и публикацией;"
+        "связывать редакционный прогон с исходниками, принятой версией и публикацией;",
+        "явно объяснять пустую стартовую выдачу: число источников в сводке не означает,",
+        "различать пустой результат, пустую очередь решений и ошибку загрузки с повтором."
       ],
       "card": "docs/knowledge-base/modules/catalog/platform.knowledge.md",
       "document_status": "current",
@@ -45745,13 +45751,29 @@
           "kind": "function",
           "line": 5,
           "module_id": "platform.knowledge",
+          "name": "state",
+          "qualname": "state"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 6,
+          "module_id": "platform.knowledge",
+          "name": "bindRetry",
+          "qualname": "bindRetry"
+        },
+        {
+          "file": "backend/app/static/knowledge-library.js",
+          "kind": "function",
+          "line": 7,
+          "module_id": "platform.knowledge",
           "name": "loadSummary",
           "qualname": "loadSummary"
         },
         {
           "file": "backend/app/static/knowledge-library.js",
           "kind": "function",
-          "line": 6,
+          "line": 8,
           "module_id": "platform.knowledge",
           "name": "renderResults",
           "qualname": "renderResults"
@@ -45759,7 +45781,7 @@
         {
           "file": "backend/app/static/knowledge-library.js",
           "kind": "function",
-          "line": 7,
+          "line": 9,
           "module_id": "platform.knowledge",
           "name": "search",
           "qualname": "search"
@@ -45767,7 +45789,7 @@
         {
           "file": "backend/app/static/knowledge-library.js",
           "kind": "function",
-          "line": 8,
+          "line": 10,
           "module_id": "platform.knowledge",
           "name": "openResource",
           "qualname": "openResource"
@@ -45775,7 +45797,7 @@
         {
           "file": "backend/app/static/knowledge-library.js",
           "kind": "function",
-          "line": 9,
+          "line": 11,
           "module_id": "platform.knowledge",
           "name": "decide",
           "qualname": "decide"
@@ -45783,7 +45805,7 @@
         {
           "file": "backend/app/static/knowledge-library.js",
           "kind": "function",
-          "line": 10,
+          "line": 12,
           "module_id": "platform.knowledge",
           "name": "loadReviews",
           "qualname": "loadReviews"
@@ -48439,7 +48461,8 @@
       "capabilities": [
         "хранить утверждённые владельцем названия и дескрипшны версиями;",
         "разрешать утверждённый дескрипшн без обязательного начала со слова «Как»;",
-        "не допускать локальной переформулировки одного продукта на разных поверхностях."
+        "не допускать локальной переформулировки одного продукта на разных поверхностях;",
+        "показывать в редакторе компактный список продуктов и входных тарифов, отделяя"
       ],
       "card": "docs/knowledge-base/modules/catalog/products.catalog.md",
       "document_status": "current",
@@ -48451,6 +48474,10 @@
         {
           "module_id": "products.catalog",
           "path": "backend/app/product_catalog_service.py"
+        },
+        {
+          "module_id": "products.catalog",
+          "path": "backend/app/static/product-catalog-editor.css"
         },
         {
           "module_id": "products.catalog",
@@ -48805,7 +48832,7 @@
       ],
       "tables": [],
       "telegram": null,
-      "title": "Каталог продуктов и тарифов",
+      "title": "Каталог продуктов и описаний",
       "truths": []
     },
     {
@@ -76557,13 +76584,29 @@
       "kind": "function",
       "line": 5,
       "module_id": "platform.knowledge",
+      "name": "state",
+      "qualname": "state"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 6,
+      "module_id": "platform.knowledge",
+      "name": "bindRetry",
+      "qualname": "bindRetry"
+    },
+    {
+      "file": "backend/app/static/knowledge-library.js",
+      "kind": "function",
+      "line": 7,
+      "module_id": "platform.knowledge",
       "name": "loadSummary",
       "qualname": "loadSummary"
     },
     {
       "file": "backend/app/static/knowledge-library.js",
       "kind": "function",
-      "line": 6,
+      "line": 8,
       "module_id": "platform.knowledge",
       "name": "renderResults",
       "qualname": "renderResults"
@@ -76571,7 +76614,7 @@
     {
       "file": "backend/app/static/knowledge-library.js",
       "kind": "function",
-      "line": 7,
+      "line": 9,
       "module_id": "platform.knowledge",
       "name": "search",
       "qualname": "search"
@@ -76579,7 +76622,7 @@
     {
       "file": "backend/app/static/knowledge-library.js",
       "kind": "function",
-      "line": 8,
+      "line": 10,
       "module_id": "platform.knowledge",
       "name": "openResource",
       "qualname": "openResource"
@@ -76587,7 +76630,7 @@
     {
       "file": "backend/app/static/knowledge-library.js",
       "kind": "function",
-      "line": 9,
+      "line": 11,
       "module_id": "platform.knowledge",
       "name": "decide",
       "qualname": "decide"
@@ -76595,7 +76638,7 @@
     {
       "file": "backend/app/static/knowledge-library.js",
       "kind": "function",
-      "line": 10,
+      "line": 12,
       "module_id": "platform.knowledge",
       "name": "loadReviews",
       "qualname": "loadReviews"
@@ -78507,7 +78550,7 @@
     {
       "file": "backend/tests/browser/admin-shell.e2e.mjs",
       "kind": "function",
-      "line": 32,
+      "line": 33,
       "module_id": "admin.control",
       "name": "json",
       "qualname": "json"
@@ -78515,7 +78558,7 @@
     {
       "file": "backend/tests/browser/admin-shell.e2e.mjs",
       "kind": "function",
-      "line": 37,
+      "line": 38,
       "module_id": "admin.control",
       "name": "assertDesktopGeometry",
       "qualname": "assertDesktopGeometry"
