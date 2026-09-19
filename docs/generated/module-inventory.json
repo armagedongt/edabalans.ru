@@ -47171,7 +47171,7 @@
         {
           "file": "backend/tests/browser/embed-loading.e2e.mjs",
           "kind": "function",
-          "line": 338,
+          "line": 355,
           "module_id": "products",
           "name": "courseSkin",
           "qualname": "courseSkin"
@@ -78414,7 +78414,7 @@
     {
       "file": "backend/tests/browser/embed-loading.e2e.mjs",
       "kind": "function",
-      "line": 338,
+      "line": 355,
       "module_id": "products",
       "name": "courseSkin",
       "qualname": "courseSkin"
