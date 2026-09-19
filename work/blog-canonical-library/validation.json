@@ -1,7 +1,7 @@
 {
   "artifact": "blog-canonical-library-validation-v1",
   "date": "2026-09-20",
-  "status": "pass",
+  "status": "test_pass_production_blocked",
   "public_source_switched": false,
   "production_deployed": false,
   "main_merged": false,
@@ -28,5 +28,17 @@
     "anonymous_denial": "pass",
     "draft_absent_from_public_sitemap": "pass",
     "git_diff_check": "pass"
-  }
+  },
+  "production_blockers": [
+    {
+      "id": "deduplicate-versioned-media",
+      "severity": "major",
+      "reason": "text-only versions currently duplicate unchanged base64 media in every retained JSON payload"
+    },
+    {
+      "id": "browser-release-gate",
+      "severity": "minor",
+      "reason": "blog draft authoring E2E is not yet invoked by the production GitHub workflow"
+    }
+  ]
 }
