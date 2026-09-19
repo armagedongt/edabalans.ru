@@ -4,6 +4,8 @@
   "status": "pass",
   "public_source_switched": false,
   "production_deployed": false,
+  "main_merged": false,
+  "test_contour": "isolated-localhost",
   "database_migration_added": false,
   "real_fixture": {
     "slug": "vse-znayut-nikto-ne-delaet",
@@ -13,13 +15,18 @@
     "round_trip": "pass"
   },
   "checks": {
-    "targeted_pytest": {"status": "pass", "count": 62},
+    "targeted_pytest_after_main_sync": {"status": "pass", "count": 51},
+    "backend_pytest_after_main_sync": {"status": "pass", "count": 612, "skipped": 3, "subtests": 6},
+    "tools_unittest_after_main_sync": {"status": "pass", "count": 134, "skipped": 8},
     "browser_e2e": {
       "status": "pass",
       "widths": [360, 430, 768, 1440],
       "covers": ["filters", "focus", "preview", "save", "409", "network_failure", "beforeunload", "overflow"]
     },
     "cli_localhost_put": "pass",
+    "private_headers": "pass",
+    "anonymous_denial": "pass",
+    "draft_absent_from_public_sitemap": "pass",
     "git_diff_check": "pass"
   }
 }
