@@ -852,7 +852,7 @@ def bot_admin(request: Request, credentials: HTTPBasicCredentials | None = Depen
 
 @app.get("/bot/{asset_name}", include_in_schema=False)
 def bot_admin_asset(asset_name: str) -> FileResponse:
-    if asset_name not in {"app.js", "login.js", "styles.css", "module-map.css"}:
+    if asset_name not in {"admin-favicon.svg", "app.js", "login.js", "styles.css", "module-map.css"}:
         raise HTTPException(404)
     headers = {"Cache-Control": "no-store"} if asset_name == "login.js" else None
     return FileResponse(STATIC_ROOT / asset_name, headers=headers)

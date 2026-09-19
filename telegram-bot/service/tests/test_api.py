@@ -49,6 +49,12 @@ def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
     login_page = client.get("/bot")
     assert login_page.status_code == 200
     assert "Вход в админку" in login_page.text
+    assert '<link rel="icon" type="image/svg+xml" href="/bot/admin-favicon.svg">' in login_page.text
+
+    favicon = client.get("/bot/admin-favicon.svg")
+    assert favicon.status_code == 200
+    assert favicon.headers["content-type"].startswith("image/svg+xml")
+    assert "⚡" in favicon.text
 
     unauthorized = client.get("/bot-api/sequences")
     assert unauthorized.status_code == 401
@@ -60,6 +66,7 @@ def test_admin_login_uses_cookie_without_browser_basic_prompt(monkeypatch):
     admin_page = client.get("/bot")
     assert admin_page.status_code == 200
     assert 'data-view="modules"' in admin_page.text
+    assert '<link rel="icon" type="image/svg+xml" href="/bot/admin-favicon.svg">' in admin_page.text
     assert "Карта бота" not in admin_page.text
     admin_script = client.get("/bot/app.js")
     assert admin_script.status_code == 200

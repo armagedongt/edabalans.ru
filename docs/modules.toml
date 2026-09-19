@@ -801,7 +801,7 @@ parent = "admin"
 card = "docs/knowledge-base/modules/catalog/admin.control.md"
 owns_files = [
   "backend/app/crm_routes.py",
-  "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js",
+  "backend/app/static/admin.css", "backend/app/static/admin.html", "backend/app/static/admin.js", "backend/app/static/admin-favicon.svg",
   "backend/app/static/admin-shell.css", "backend/app/static/admin-shell.js",
   "backend/app/static/crm.css", "backend/app/static/crm.html", "backend/app/static/crm.js",
   "backend/tests/browser/admin-shell.e2e.mjs",

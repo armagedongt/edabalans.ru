@@ -69,6 +69,44 @@ def test_unified_admin_requires_authentication() -> None:
     assert 'id="login-form"' in response.text
 
 
+def test_admin_surfaces_use_the_lightning_favicon() -> None:
+    client = make_client()
+    favicon_link = '<link rel="icon" type="image/svg+xml" href="/admin/static/admin-favicon.svg">'
+
+    login_page = client.get("/admin")
+    assert favicon_link in login_page.text
+
+    favicon = client.get("/admin/static/admin-favicon.svg")
+    assert favicon.status_code == 200
+    assert favicon.headers["content-type"].startswith("image/svg+xml")
+    assert "⚡" in favicon.text
+
+    assert client.post(
+        "/admin/api/login",
+        json={"username": "admin@example.com", "password": "test-admin-password"},
+    ).status_code == 200
+    for path in (
+        "/admin",
+        "/crm",
+        "/admin/knowledge-base",
+        "/admin/library",
+        "/admin/courses",
+        "/admin/courses/masterclass-21/structure",
+        "/admin/products",
+        "/admin/content",
+        "/admin/marketing",
+        "/admin/masterclass-offers-preview",
+        "/admin/dqs",
+        "/admin/strength",
+        "/admin/metabolism",
+        "/admin/messaging",
+        "/admin/pricing",
+    ):
+        response = client.get(path)
+        assert response.status_code == 200, path
+        assert favicon_link in response.text, path
+
+
 def test_content_catalog_uses_unified_admin_shell() -> None:
     response = make_client().get("/admin/content")
     assert response.status_code == 200
