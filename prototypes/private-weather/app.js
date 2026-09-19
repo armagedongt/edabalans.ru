@@ -312,35 +312,71 @@ async function mapForecastForSelectedDay() {
   }
 }
 
-function addWeatherPoint(point, data, hourIndex, maximumPrecipitation) {
+function addWeatherPoint(point, data, hourIndex) {
   const hourly = data.hourly
-  const precipitation = hourly.precipitation[hourIndex]
   const wind = hourly.wind_speed_10m[hourIndex]
   const gust = hourly.wind_gusts_10m[hourIndex]
   const direction = hourly.wind_direction_10m[hourIndex]
-  if (mapMode === 'wind') {
-    const icon = window.L.divIcon({
-      className: 'weather-wind-icon',
-      iconSize: [62, 44],
-      iconAnchor: [31, 22],
-      html: `<span class="wind-arrow" aria-hidden="true" style="--wind-turn:${Math.round(direction) - 90}deg"></span><b>${formatNumber(wind, 1)} м/с</b><small>${formatNumber(wind * 3.6)} км/ч · порывы ${formatNumber(gust, 1)}</small>`,
-    })
-    window.L.marker([point.latitude, point.longitude], { icon, interactive: false }).addTo(weatherLayer)
-    return
+  const icon = window.L.divIcon({
+    className: 'weather-wind-icon',
+    iconSize: [62, 44],
+    iconAnchor: [31, 22],
+    html: `<span class="wind-arrow" aria-hidden="true" style="--wind-turn:${Math.round(direction) - 90}deg"></span><b>${formatNumber(wind, 1)} м/с</b><small>${formatNumber(wind * 3.6)} км/ч · порывы ${formatNumber(gust, 1)}</small>`,
+  })
+  window.L.marker([point.latitude, point.longitude], { icon, interactive: false }).addTo(weatherLayer)
+}
+
+function mixColor(from, to, fraction) {
+  return from.map((value, index) => Math.round(value + (to[index] - value) * fraction))
+}
+
+function renderPrecipitationField(points, data, hourIndex) {
+  const samples = points.map((point, index) => ({
+    ...point,
+    value: data[index].hourly.precipitation[hourIndex],
+  }))
+  const maximum = Math.max(...samples.map((sample) => sample.value), 0)
+  if (maximum <= 0) return
+
+  const width = 512
+  const height = 512
+  const canvas = document.createElement('canvas')
+  canvas.width = width
+  canvas.height = height
+  const image = canvas.getContext('2d').createImageData(width, height)
+  const north = Math.max(...points.map((point) => point.latitude))
+  const south = Math.min(...points.map((point) => point.latitude))
+  const west = Math.min(...points.map((point) => point.longitude))
+  const east = Math.max(...points.map((point) => point.longitude))
+
+  for (let y = 0; y < height; y += 1) {
+    const latitude = north - (north - south) * y / (height - 1)
+    for (let x = 0; x < width; x += 1) {
+      const longitude = west + (east - west) * x / (width - 1)
+      let weightedValue = 0
+      let totalWeight = 0
+      samples.forEach((sample) => {
+        const latitudeDistance = (latitude - sample.latitude) / (north - south)
+        const longitudeDistance = (longitude - sample.longitude) / (east - west)
+        const weight = Math.exp(-(latitudeDistance ** 2 + longitudeDistance ** 2) * 22)
+        weightedValue += sample.value * weight
+        totalWeight += weight
+      })
+      const intensity = totalWeight ? weightedValue / totalWeight / maximum : 0
+      if (intensity < 0.035) continue
+      const color = mixColor([123, 197, 237], [28, 119, 191], Math.min(1, intensity ** .7))
+      const offset = (y * width + x) * 4
+      image.data[offset] = color[0]
+      image.data[offset + 1] = color[1]
+      image.data[offset + 2] = color[2]
+      image.data[offset + 3] = Math.round(Math.min(.64, .16 + intensity ** .72 * .48) * 255)
+    }
   }
-  if (precipitation <= 0) return
-  const intensity = Math.min(1, precipitation / maximumPrecipitation)
-  window.L.circleMarker([point.latitude, point.longitude], {
-    radius: 7 + intensity * 15,
-    color: '#157dbb',
-    weight: 1,
-    fillColor: '#37a5e6',
-    fillOpacity: .24 + intensity * .46,
+
+  canvas.getContext('2d').putImageData(image, 0, 0)
+  window.L.imageOverlay(canvas.toDataURL('image/png'), [[south, west], [north, east]], {
+    className: 'weather-precipitation-field',
     interactive: false,
-  }).bindTooltip(`${precipitationText(precipitation)} мм`, {
-    permanent: true,
-    direction: 'center',
-    className: 'weather-rain-label',
   }).addTo(weatherLayer)
 }
 
@@ -365,8 +401,8 @@ async function renderWeatherMap() {
     }
     weatherLayer.clearLayers()
     const points = mapPoints()
-    const maximumPrecipitation = Math.max(...data.map((item) => item.hourly.precipitation[hourIndex]), 0.1)
-    points.forEach((point, index) => addWeatherPoint(point, data[index], hourIndex, maximumPrecipitation))
+    if (mapMode === 'precipitation') renderPrecipitationField(points, data, hourIndex)
+    else points.forEach((point, index) => addWeatherPoint(point, data[index], hourIndex))
     window.L.circleMarker([LOCATION.latitude, LOCATION.longitude], {
       radius: 7,
       color: '#087eea',

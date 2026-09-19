@@ -34,6 +34,7 @@ def test_weather_page_and_assets_are_public() -> None:
     script = client.get("/weather/app.js")
     assert script.status_code == 200
     assert "mapForecastForSelectedDay" in script.text
+    assert "renderPrecipitationField" in script.text
     assert "tile.openstreetmap.org" in script.text
     assert "toggleMapPlayback" in script.text
     assert "wind_speed_unit: 'ms'" in script.text
