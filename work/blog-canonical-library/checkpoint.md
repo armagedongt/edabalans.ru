@@ -1,6 +1,6 @@
 # Checkpoint
 
-СТАТУС: implemented-and-reviewed
+СТАТУС: committed-and-reviewed
 
 СДЕЛАНО: реализованы закрытый versioned API, owner-каталог, Markdown-редактор,
 preview/media routes, CLI паковки и тестовый реальный пакет. Публичный Git-каталог
@@ -17,6 +17,10 @@ CLI dry-run и реальный localhost PUT pass. Findings code/security/test/
 устранены; финальные security и layout review clean, оставшиеся code/test
 findings закрыты тестами границ, concurrency, adapter и безопасного slug.
 
-СЛЕДУЮЩИЙ ШАГ: commit и push feature-ветки без deploy.
+КОММИТ: `b307d4f` в feature-ветке
+`codex/blog-canonical-editor-20260920`, отправленной в origin без deploy.
+
+СЛЕДУЮЩИЙ ШАГ: отдельное решение о merge и тестовом серверном выпуске; публичный
+источник статей этим коммитом не переключается.
 
 MAIN/PRODUCTION: local.
