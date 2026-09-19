@@ -38,6 +38,13 @@ implementation_status: implemented
 контент принадлежат дочернему `products.public-site`; этот родитель задаёт только
 общие продуктовые границы.
 
+## Следующее изменение
+
+Целевой общий контракт в `docs/APPLICATION_PLATFORM.md` должен показывать одно
+объяснение доступности в ЛК, прямом gate, курсе и мессенджерах из серверного
+application-access resolver-а. Первый ещё не реализованный slice подключает DQS;
+остальные приложения подключаются только после фиксации своей policy entry.
+
 ## Источники истины
 
 Дочерние карточки, `docs/APPLICATION_PLATFORM.md`, `docs/knowledge-base/PRODUCTS.md`.

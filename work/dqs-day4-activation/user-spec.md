@@ -60,6 +60,28 @@ Web App-кнопкой.
     `dqs_states` не участвует в решении о доступности.
 11. Управляемое открытие `/admin/dqs` не создаёт пользовательский reveal, не
     ставит сообщение в очередь и продолжает писать аудит изменений.
+12. ЛК, прямой `/dqs`, материал курса и Telegram/MAX получают состояние и
+    пояснение из одного серверного application-access resolver-а. До reveal DQS
+    имеет `entitled_locked` / `course_step_pending`, статус «Куплено, откроется
+    позже» и пояснение о материале четвёртого дня.
+13. Клиенты не хранят собственные копии access-copy. Resolver собирает entitlement,
+    прогресс курса и reveal из их настоящих источников, а готовые тексты — из
+    одного серверного каталога по `reason_code`.
+14. Существующий `GET /api/account-auth/account` возвращает полный access payload
+    внутри `applications`; direct/embed и межсервисный Telegram/MAX-адаптер
+    используют тот же resolver. Межсервисный запрос не принимает непроверенный
+    email или `user_id` от клиента.
+15. Шаг `day-04-dqs` получает в manifest поле `access_condition_label` со
+    значением `DQS четвёртого дня Мастер-класса`; именно из него resolver формирует
+    конкретное условие, а DQS, ЛК и bot его не дублируют.
+16. `action` имеет форму `null | {code, label, url}`. До reveal DQS возвращает
+    `continue_course`, после reveal — `open_app` и `app_url`.
+17. Telegram/MAX вызывают resolver через закрытую service-auth границу backend.
+    Worker передаёт проверенную messenger identity; backend сам разрешает её в
+    `user_id`. Публичный запрос с выбранным email/user_id запрещён.
+18. Этот slice мигрирует только DQS. Для strength, recipes и metabolism общий
+    resolver не меняет production-поведение, пока у каждого модуля не появится
+    проверенная policy entry.
 
 ## Acceptance Criteria
 
@@ -86,6 +108,25 @@ Web App-кнопкой.
       существующего DQS-туториала.
 - [ ] Admin runtime продолжает открывать профиль по admin session + target user,
       не создаёт reveal/notification и пишет `admin_app_edits`.
+- [ ] До reveal карточка ЛК и прямой `/dqs` показывают «Куплено, откроется позже»
+      и точное условие четвёртого дня; они не используют «Доступ закрыт» или
+      «Скоро».
+- [ ] Telegram/MAX объясняют состояние купленного DQS до reveal и предлагают
+      продолжить Мастер-класс; приложение не исчезает из пользовательского
+      объяснения и не получает открывающую кнопку раньше времени.
+- [ ] ЛК, direct gate, курс и мессенджеры используют один resolver и один набор
+      `reason_code`/access-copy; тест меняет серверную формулировку и видит её во
+      всех адаптерах без правки frontend-констант.
+- [ ] `GET /api/account-auth/account` возвращает для DQS `state`, `owned`,
+      `available`, `reason_code`, `status_label`, `explanation`,
+      `condition_label`, `action` и `app_url`; до reveal `app_url` отсутствует.
+- [ ] `course_step_pending` использует `access_condition_label` шага
+      `day-04-dqs`; изменение этого поля меняет пояснение во всех адаптерах без
+      изменения DQS/ЛК/bot-констант.
+- [ ] Межсервисный resolver endpoint отклоняет запрос без service auth и не
+      принимает произвольный клиентский email/user_id как identity.
+- [ ] Регрессионные тесты подтверждают, что доступность strength, recipes и
+      metabolism не изменилась после DQS cutover.
 - [ ] Финальный Telegram content slot отредактирован через `edabalans-writer` и
       явно подтверждён владельцем до production deploy trigger-а.
 
@@ -95,6 +136,8 @@ Web App-кнопкой.
   `dqs` остаются единственными источниками identity/entitlement.
 - Reveal — единственный runtime-источник фактической доступности после cutover.
 - Manifest курса владеет местом шага; DQS не копирует порядок курса.
+- Пользовательский access payload и тексты состояний принадлежат общему resolver-у;
+  отдельные приложения передают ему только код ресурса и своё точное условие.
 - Telegram consumer не выдаёт право и не раскрывает приложение.
 - Переиспользуются `tpl_postpurchase_dqs_app_link` и `pp_dqs_app_link`; второй
   slot/trigger не создаётся.
@@ -161,4 +204,3 @@ account payload, Telegram/MAX Mini App, bot menu, outbox и admin runtime.
 - На одном тестовом аккаунте дойти до DQS дня 4, нажать одну кнопку и проверить
   открытие дневника и одно Telegram-сообщение. Ручная проверка нужна только для
   реальной доставки/рендера Telegram и утверждения текста.
-
