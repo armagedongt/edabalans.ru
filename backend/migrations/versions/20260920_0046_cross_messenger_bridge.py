@@ -1,15 +1,15 @@
 """Add the cross-messenger practice-chat bridge tables.
 
-Revision ID: 20260917_0042
-Revises: 20260912_0041
+Revision ID: 20260920_0046
+Revises: 20260919_0045
 Create Date: 2026-09-17
 """
 
 from alembic import op
 
 
-revision = "20260917_0042"
-down_revision = "20260912_0041"
+revision = "20260920_0046"
+down_revision = "20260919_0045"
 branch_labels = None
 depends_on = None
 

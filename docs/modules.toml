@@ -637,7 +637,7 @@ owns_files = [
   "telegram-bot/service/app/cross_messenger_bridge.py",
   "telegram-bot/service/configure_cross_messenger_pair.py",
   "telegram-bot/service/set_cross_messenger_max_webhook.py",
-  "backend/migrations/versions/20260917_0042_cross_messenger_bridge.py",
+  "backend/migrations/versions/20260920_0046_cross_messenger_bridge.py",
   "work/cross-messenger-bridge/**",
 ]
 owns_tables = [

@@ -50,8 +50,12 @@ class FakeTelegramSender:
         self.sent = []
         self.edited = []
         self.deleted = []
+        self.fail_sends = 0
 
     def send_html_message(self, chat_id, text, reply_to_message_id=None):
+        if self.fail_sends:
+            self.fail_sends -= 1
+            raise RuntimeError("temporary Telegram failure")
         self.sent.append((chat_id, text, reply_to_message_id))
         return str(700 + len(self.sent))
 
@@ -301,6 +305,49 @@ def test_max_practice_message_is_mirrored_to_telegram_with_reply_parent():
         assert len(sender.sent) == 1
 
 
+def test_max_redelivery_retries_a_persisted_failed_telegram_delivery():
+    with make_session() as session:
+        session.add(
+            MessagingBridgePair(
+                key="max-retry",
+                status="active",
+                telegram_channel_id="-10001",
+                max_channel_id="101",
+                telegram_practice_chat_id="-10002",
+                max_practice_chat_id="102",
+            )
+        )
+        session.commit()
+        sender = FakeTelegramSender()
+        sender.fail_sends = 1
+        update = {
+            "update_type": "message_created",
+            "timestamp": 1,
+            "message": {
+                "recipient": {"chat_id": "102"},
+                "sender": {"name": "Павел"},
+                "body": {"mid": "max-retry-1", "text": "Не терять"},
+            },
+        }
+
+        try:
+            process_max_update(session, update, sender)
+        except RuntimeError as exc:
+            assert "temporary Telegram failure" in str(exc)
+        else:
+            raise AssertionError("outbound failure must reach the webhook caller")
+
+        assert process_max_update(session, update, sender) == {
+            "ok": True,
+            "bridge": "retried",
+            "target": "telegram",
+        }
+        delivery = session.scalar(select(MessagingBridgeDelivery))
+        assert delivery.status == "delivered"
+        assert delivery.attempts == 2
+        assert sender.sent == [("-10002", "<b>Из MAX · Павел</b>\nНе терять", None)]
+
+
 def test_max_channel_update_is_never_injected_into_the_telegram_practice_chat():
     with make_session() as session:
         session.add(
@@ -426,5 +473,52 @@ def test_cross_messenger_max_webhook_requires_its_own_secret_and_mirrors_message
         )
         assert response.json()["bridge"] == "mirrored"
         assert sender.sent == [("-10002", "<b>Из MAX · Павел</b>\nПроверка", None)]
+    finally:
+        app.dependency_overrides.clear()
+
+
+def test_telegram_webhook_requires_its_secret_before_a_pair_can_deliver(tmp_path, monkeypatch):
+    engine = create_engine(f"sqlite:///{tmp_path / 'telegram-webhook.sqlite'}")
+    Base.metadata.create_all(engine)
+    with Session(engine) as session:
+        session.add(
+            MessagingBridgePair(
+                key="telegram-webhook-pair",
+                status="test",
+                telegram_channel_id="-10001",
+                max_channel_id="101",
+                telegram_practice_chat_id="-10002",
+                max_practice_chat_id="102",
+            )
+        )
+        session.commit()
+
+    def db_override():
+        with Session(engine) as session:
+            yield session
+
+    sender = FakeMaxSender()
+    app.dependency_overrides[get_db] = db_override
+    monkeypatch.setattr(main_module, "bridge_max_client", lambda: sender)
+    monkeypatch.setattr(main_module.settings, "telegram_webhook_secret", "telegram-secret")
+    client = TestClient(app)
+    update = {
+        "update_id": 501,
+        "channel_post": {"message_id": 1, "chat": {"id": -10001}, "text": "Проверка"},
+    }
+    try:
+        assert client.post("/telegram/webhook", json=update).status_code == 403
+        assert client.post(
+            "/telegram/webhook",
+            json=update,
+            headers={"X-Telegram-Bot-Api-Secret-Token": "wrong"},
+        ).status_code == 403
+        response = client.post(
+            "/telegram/webhook",
+            json=update,
+            headers={"X-Telegram-Bot-Api-Secret-Token": "telegram-secret"},
+        )
+        assert response.json()["bridge"] == "mirrored"
+        assert sender.sent == [("101", "Проверка", None)]
     finally:
         app.dependency_overrides.clear()

@@ -7,14 +7,14 @@
 - Зафиксирована новая схема: посты Telegram → MAX-канал, а разговор — между
   двумя обычными чатами практики.
 - Добавлены будущие таблицы пары, карты сообщений, receipt входящих событий и
-  delivery-попыток; миграция `20260917_0042`.
+  delivery-попыток; миграция `20260920_0046`.
 - Добавлены отдельные методы Telegram/MAX для reply, правки и удаления.
 - Telegram polling запросит `channel_post`, `edited_channel_post` и
   `edited_message`, не ломая текущие update-типы.
 
 ## Проверено
 
-- `python -m compileall telegram-bot/service/app backend/migrations/versions/20260917_0042_cross_messenger_bridge.py`
+- `python -m compileall telegram-bot/service/app backend/migrations/versions/20260920_0046_cross_messenger_bridge.py`
 - `python -m pytest tests/test_cross_messenger_bridge.py tests/test_telegram.py tests/test_max.py -q --basetemp .pytest-bridge`
   — 68 passed.
 - По официальной документации MAX подтверждено: обычные групповые чаты принимают

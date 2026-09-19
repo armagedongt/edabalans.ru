@@ -79,12 +79,12 @@ def mapped_max_message(
 
 def _telegram_author(message: dict) -> str:
     author = message.get("from") or {}
-    return str(author.get("first_name") or author.get("username") or "Участник")
+    return str(author.get("first_name") or "Участник")
 
 
 def _max_author(message: dict) -> str:
     author = message.get("sender") or {}
-    return str(author.get("name") or author.get("first_name") or author.get("username") or "Участник")
+    return str(author.get("name") or author.get("first_name") or "Участник")
 
 
 def _telegram_text(message: dict) -> str:
