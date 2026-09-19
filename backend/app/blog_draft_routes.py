@@ -296,10 +296,16 @@ def draft_page(
     payload = article.payload
     body, toc = render_article(slug, payload)
     hero = ""
-    if payload.get("hero"):
+    hero_url = (
+        f"/blog/drafts/{escape(slug, quote=True)}/media/"
+        f"{escape(payload['hero'], quote=True)}"
+        if payload.get("hero")
+        else ""
+    )
+    if payload.get("hero") and f'<img src="{hero_url}"' not in body:
         hero_name = escape(payload["hero"], quote=True)
         hero = (
-            f'<figure><img src="/blog/drafts/{escape(slug, quote=True)}/media/{hero_name}" '
+            f'<figure><img src="{hero_url}" '
             f'alt="" loading="eager" decoding="async"></figure>'
         )
     replacements = {
