@@ -30,6 +30,16 @@ function json(response, payload) {
   response.end(JSON.stringify(payload));
 }
 
+async function assertDesktopGeometry(page, expectedOffset) {
+  const padding = await page.locator("body").evaluate((node) => Number.parseFloat(getComputedStyle(node).paddingLeft));
+  assert.ok(Math.abs(padding - expectedOffset) <= 1, JSON.stringify({ padding, expectedOffset }));
+  const main = page.locator("main:visible").first();
+  if (await main.count()) {
+    const box = await main.boundingBox();
+    if (box) assert.ok(box.x >= expectedOffset - 1, JSON.stringify({ box, expectedOffset }));
+  }
+}
+
 const server = createServer((request, response) => {
   const url = new URL(request.url, "http://127.0.0.1");
   if (url.pathname === "/admin") {
@@ -130,9 +140,12 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     const sidebarBox = await page.locator(".admin-sidebar").boundingBox();
     assert.ok(sidebarBox.x + sidebarBox.width <= 1, JSON.stringify(sidebarBox));
   } else {
+    await page.waitForTimeout(220);
+    await assertDesktopGeometry(page, 252);
     await page.getByRole("button", { name: "Свернуть меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-collapsed")), true);
     await page.waitForTimeout(220);
+    await assertDesktopGeometry(page, 72);
     const compactLabels = await page.locator(".admin-shell-nav .admin-nav-icon").allTextContents();
     assert.equal(new Set(compactLabels).size, compactLabels.length);
     assert.equal(await page.locator(".admin-shell-logout .admin-nav-icon").isVisible(), true);
@@ -142,10 +155,12 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     await page.locator('[data-action="hide"]').click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-hidden")), true);
     await page.waitForTimeout(220);
+    await assertDesktopGeometry(page, 0);
     if (evidence && [768, 1440].includes(width)) await page.screenshot({ path: path.join(evidence, `admin-shell-hidden-${width}.png`), fullPage: false });
     await page.getByRole("button", { name: "Показать меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-hidden")), false);
     await page.waitForTimeout(220);
+    await assertDesktopGeometry(page, 252);
   }
   if (evidence && [360, 430, 768, 1440].includes(width)) {
     await page.screenshot({ path: path.join(evidence, `admin-shell-${width}.png`), fullPage: true });
@@ -178,6 +193,10 @@ for (const [name, route] of Object.entries(integratedPages)) {
     const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "Главное" }).waitFor();
+    if (width > 760) {
+      await page.waitForTimeout(220);
+      await assertDesktopGeometry(page, 252);
+    }
     if (width <= 760) {
       const burgerBox = await page.getByRole("button", { name: "Открыть меню" }).boundingBox();
       const protectedContent = name === "knowledge"
