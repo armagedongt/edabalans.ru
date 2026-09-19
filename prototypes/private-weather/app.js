@@ -13,6 +13,10 @@ let selectedHour
 let forecastRequest = 0
 let historyRequest = 0
 let mapMode = 'precipitation'
+let mapPlaybackTimer
+let weatherMap
+let weatherLayer
+let mapLocationKey
 const mapForecasts = new Map()
 const fields = new Set(['air', 'feels', 'precipitation', 'snow'])
 
@@ -30,9 +34,14 @@ const historyGrid = document.querySelector('#history-grid')
 const historyStatus = document.querySelector('#history-status')
 const historyStart = document.querySelector('#history-start')
 const historyEnd = document.querySelector('#history-end')
-const mapGrid = document.querySelector('#map-grid')
+const mapElement = document.querySelector('#leaflet-map')
 const mapStatus = document.querySelector('#map-status')
 const mapTime = document.querySelector('#map-time')
+const mapPrevious = document.querySelector('#map-previous')
+const mapPlay = document.querySelector('#map-play')
+const mapNext = document.querySelector('#map-next')
+const mapHourRange = document.querySelector('#map-hour-range')
+const mapHourOutput = document.querySelector('#map-hour-output')
 
 function formatNumber(value, digits = 0) {
   return new Intl.NumberFormat('ru-RU', { maximumFractionDigits: digits }).format(value)
@@ -171,9 +180,11 @@ function renderHourly() {
     ...createCells('precipitation', 'precipitation-cell', hours, ({ index }) => `<i class="rain-fill" style="--rain-height:${Math.max(2, forecast.hourly.precipitation[index] / maxRain * 84)}%"></i><span>${precipitationText(forecast.hourly.precipitation[index])}</span>`),
     ...createCells('snow', 'snow-cell', hours, ({ index }) => formatNumber(forecast.hourly.snowfall[index], 1)),
   )
+  updateMapControls()
 }
 
 function selectDay(date) {
+  pauseMapPlayback()
   selectedDate = date
   selectedHour = hoursFor(selectedDate)[0]?.time
   renderDaily()
@@ -185,6 +196,51 @@ function selectHour(time) {
   selectedHour = time
   renderHourly()
   renderWeatherMap()
+}
+
+function updateMapControls() {
+  const hours = selectedDate ? hoursFor(selectedDate) : []
+  const hourIndex = Math.max(0, hours.findIndex(({ time }) => time === selectedHour))
+  const isSingleHour = hours.length <= 1
+  mapHourRange.max = String(Math.max(0, hours.length - 1))
+  mapHourRange.value = String(hourIndex)
+  mapHourRange.disabled = isSingleHour
+  mapPlay.disabled = isSingleHour
+  mapHourOutput.textContent = hours[hourIndex]?.time.slice(11) || '—'
+  mapPrevious.disabled = isSingleHour || hourIndex === 0
+  mapNext.disabled = isSingleHour || hourIndex === hours.length - 1
+}
+
+function pauseMapPlayback() {
+  if (mapPlaybackTimer) window.clearInterval(mapPlaybackTimer)
+  mapPlaybackTimer = undefined
+  mapPlay.textContent = '▶'
+  mapPlay.setAttribute('aria-pressed', 'false')
+  mapPlay.setAttribute('aria-label', 'Воспроизвести изменения по часам')
+}
+
+function stepMapHour(direction) {
+  if (!forecast || !selectedDate) return true
+  const hours = hoursFor(selectedDate)
+  const currentIndex = hours.findIndex(({ time }) => time === selectedHour)
+  const nextIndex = Math.min(hours.length - 1, Math.max(0, currentIndex + direction))
+  if (nextIndex !== currentIndex) selectHour(hours[nextIndex].time)
+  return nextIndex === hours.length - 1
+}
+
+function toggleMapPlayback() {
+  if (mapPlay.disabled) return
+  if (mapPlaybackTimer) {
+    pauseMapPlayback()
+    return
+  }
+  if (stepMapHour(0)) selectHour(hoursFor(selectedDate)[0].time)
+  mapPlaybackTimer = window.setInterval(() => {
+    if (stepMapHour(1)) pauseMapPlayback()
+  }, 850)
+  mapPlay.textContent = '❚❚'
+  mapPlay.setAttribute('aria-pressed', 'true')
+  mapPlay.setAttribute('aria-label', 'Остановить воспроизведение')
 }
 
 function mapPoints() {
@@ -202,6 +258,17 @@ function mapPoints() {
     }
   }
   return points
+}
+
+function ensureWeatherMap() {
+  if (weatherMap) return
+  if (!window.L) throw new Error('не загрузилась географическая подложка')
+  weatherMap = window.L.map(mapElement, { zoomControl: true, attributionControl: true, preferCanvas: true })
+  window.L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(weatherMap)
+  weatherLayer = window.L.layerGroup().addTo(weatherMap)
 }
 
 function mapDayKey() {
@@ -245,25 +312,36 @@ async function mapForecastForSelectedDay() {
   }
 }
 
-function mapCellMarkup(point, data, hourIndex, maximumPrecipitation) {
+function addWeatherPoint(point, data, hourIndex, maximumPrecipitation) {
   const hourly = data.hourly
   const precipitation = hourly.precipitation[hourIndex]
   const wind = hourly.wind_speed_10m[hourIndex]
   const gust = hourly.wind_gusts_10m[hourIndex]
   const direction = hourly.wind_direction_10m[hourIndex]
-  const intensity = Math.min(1, precipitation / maximumPrecipitation)
-  const color = precipitation > 0 ? `hsl(204 ${62 + Math.round(intensity * 20)}% ${94 - Math.round(intensity * 34)}%)` : '#f3f7f7'
-  const cell = document.createElement('div')
-  cell.className = `map-cell ${mapMode}`
-  cell.style.gridColumn = point.column + 1
-  cell.style.gridRow = point.row + 1
-  cell.style.setProperty('--map-color', color)
   if (mapMode === 'wind') {
-    cell.innerHTML = `${windArrow(direction)}<strong>${formatNumber(wind, 1)} м/с</strong><span>${formatNumber(wind * 3.6)} км/ч</span><small>порывы ${formatNumber(gust, 1)} · ${formatNumber(gust * 3.6)}</small>`
-  } else {
-    cell.innerHTML = `<strong>${precipitationText(precipitation)} мм</strong>`
+    const icon = window.L.divIcon({
+      className: 'weather-wind-icon',
+      iconSize: [62, 44],
+      iconAnchor: [31, 22],
+      html: `<span class="wind-arrow" aria-hidden="true" style="--wind-turn:${Math.round(direction) - 90}deg"></span><b>${formatNumber(wind, 1)} м/с</b><small>${formatNumber(wind * 3.6)} км/ч · порывы ${formatNumber(gust, 1)}</small>`,
+    })
+    window.L.marker([point.latitude, point.longitude], { icon, interactive: false }).addTo(weatherLayer)
+    return
   }
-  return cell
+  if (precipitation <= 0) return
+  const intensity = Math.min(1, precipitation / maximumPrecipitation)
+  window.L.circleMarker([point.latitude, point.longitude], {
+    radius: 7 + intensity * 15,
+    color: '#157dbb',
+    weight: 1,
+    fillColor: '#37a5e6',
+    fillOpacity: .24 + intensity * .46,
+    interactive: false,
+  }).bindTooltip(`${precipitationText(precipitation)} мм`, {
+    permanent: true,
+    direction: 'center',
+    className: 'weather-rain-label',
+  }).addTo(weatherLayer)
 }
 
 async function renderWeatherMap() {
@@ -279,17 +357,29 @@ async function renderWeatherMap() {
     if (requestHour !== selectedHour || requestLocation !== `${LOCATION.latitude}:${LOCATION.longitude}`) return
     const hourIndex = data[0]?.hourly.time.indexOf(selectedHour)
     if (hourIndex === undefined || hourIndex < 0) throw new Error('не найден выбранный час')
+    ensureWeatherMap()
+    const locationKey = `${LOCATION.latitude}:${LOCATION.longitude}`
+    if (mapLocationKey !== locationKey) {
+      weatherMap.setView([LOCATION.latitude, LOCATION.longitude], 9, { animate: false })
+      mapLocationKey = locationKey
+    }
+    weatherLayer.clearLayers()
     const points = mapPoints()
     const maximumPrecipitation = Math.max(...data.map((item) => item.hourly.precipitation[hourIndex]), 0.1)
-    mapGrid.replaceChildren(...points.map((point, index) => mapCellMarkup(point, data[index], hourIndex, maximumPrecipitation)))
-    const marker = document.createElement('span')
-    marker.className = 'map-city-marker'
-    marker.textContent = LOCATION.name
-    mapGrid.append(marker)
+    points.forEach((point, index) => addWeatherPoint(point, data[index], hourIndex, maximumPrecipitation))
+    window.L.circleMarker([LOCATION.latitude, LOCATION.longitude], {
+      radius: 7,
+      color: '#087eea',
+      weight: 2,
+      fillColor: '#fff',
+      fillOpacity: 1,
+      interactive: false,
+    }).bindTooltip(LOCATION.name, { permanent: true, direction: 'bottom', className: 'weather-city-label' }).addTo(weatherLayer)
+    window.requestAnimationFrame(() => weatherMap.invalidateSize())
     mapStatus.hidden = true
   } catch (error) {
     if (requestHour !== selectedHour || requestLocation !== `${LOCATION.latitude}:${LOCATION.longitude}`) return
-    mapGrid.replaceChildren()
+    if (weatherLayer) weatherLayer.clearLayers()
     mapStatus.textContent = `Не удалось загрузить карту: ${error.message}`
   }
 }
@@ -312,6 +402,7 @@ function renderCities() {
     button.textContent = city.name
     button.setAttribute('aria-current', String(city.name === LOCATION.name))
     button.addEventListener('click', () => {
+      pauseMapPlayback()
       LOCATION = city
       updateHeader()
       renderCities()
@@ -427,6 +518,20 @@ document.querySelectorAll('.map-tab').forEach((button) => button.addEventListene
   document.querySelectorAll('.map-tab').forEach((tab) => tab.setAttribute('aria-pressed', String(tab === button)))
   renderWeatherMap()
 }))
+mapPrevious.addEventListener('click', () => {
+  pauseMapPlayback()
+  stepMapHour(-1)
+})
+mapNext.addEventListener('click', () => {
+  pauseMapPlayback()
+  stepMapHour(1)
+})
+mapPlay.addEventListener('click', toggleMapPlayback)
+mapHourRange.addEventListener('input', () => {
+  pauseMapPlayback()
+  const hour = hoursFor(selectedDate)[Number(mapHourRange.value)]
+  if (hour) selectHour(hour.time)
+})
 document.querySelector('#history-controls').addEventListener('submit', (event) => {
   event.preventDefault()
   loadHistory()
