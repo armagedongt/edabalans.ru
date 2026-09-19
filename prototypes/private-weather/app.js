@@ -348,21 +348,28 @@ function renderPrecipitationField(points, data, hourIndex) {
   const south = Math.min(...points.map((point) => point.latitude))
   const west = Math.min(...points.map((point) => point.longitude))
   const east = Math.max(...points.map((point) => point.longitude))
+  const latitudePadding = (north - south) * .55
+  const longitudePadding = (east - west) * .55
+  const fieldNorth = north + latitudePadding
+  const fieldSouth = south - latitudePadding
+  const fieldWest = west - longitudePadding
+  const fieldEast = east + longitudePadding
 
   for (let y = 0; y < height; y += 1) {
-    const latitude = north - (north - south) * y / (height - 1)
+    const latitude = fieldNorth - (fieldNorth - fieldSouth) * y / (height - 1)
     for (let x = 0; x < width; x += 1) {
-      const longitude = west + (east - west) * x / (width - 1)
+      const longitude = fieldWest + (fieldEast - fieldWest) * x / (width - 1)
       let weightedValue = 0
       let totalWeight = 0
       samples.forEach((sample) => {
         const latitudeDistance = (latitude - sample.latitude) / (north - south)
         const longitudeDistance = (longitude - sample.longitude) / (east - west)
-        const weight = Math.exp(-(latitudeDistance ** 2 + longitudeDistance ** 2) * 22)
+        const weight = Math.exp(-(latitudeDistance ** 2 + longitudeDistance ** 2) * 8)
         weightedValue += sample.value * weight
         totalWeight += weight
       })
-      const intensity = totalWeight ? weightedValue / totalWeight / maximum : 0
+      const coverage = Math.min(1, totalWeight / .72)
+      const intensity = totalWeight ? weightedValue / totalWeight / maximum * coverage : 0
       if (intensity < 0.035) continue
       const color = mixColor([123, 197, 237], [28, 119, 191], Math.min(1, intensity ** .7))
       const offset = (y * width + x) * 4
@@ -374,7 +381,7 @@ function renderPrecipitationField(points, data, hourIndex) {
   }
 
   canvas.getContext('2d').putImageData(image, 0, 0)
-  window.L.imageOverlay(canvas.toDataURL('image/png'), [[south, west], [north, east]], {
+  window.L.imageOverlay(canvas.toDataURL('image/png'), [[fieldSouth, fieldWest], [fieldNorth, fieldEast]], {
     className: 'weather-precipitation-field',
     interactive: false,
   }).addTo(weatherLayer)
