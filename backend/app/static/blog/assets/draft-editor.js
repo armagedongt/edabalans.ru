@@ -80,7 +80,14 @@
   }
 
   source.addEventListener('input', function () { setDirty(true); });
-  document.querySelector('#draft-preview').addEventListener('click', function () { preview().catch(function () {}); });
+  document.querySelector('#draft-preview').addEventListener('click', function () {
+    preview().then(function () {
+      notice.hidden = false;
+      notice.textContent = dirty
+        ? 'Предпросмотр обновлён. Изменения пока не сохранены.'
+        : 'Предпросмотр обновлён по сохранённой версии.';
+    }).catch(function () {});
+  });
   save.addEventListener('click', saveText);
   window.addEventListener('beforeunload', function (event) { if (dirty) { event.preventDefault(); event.returnValue = ''; } });
   load();

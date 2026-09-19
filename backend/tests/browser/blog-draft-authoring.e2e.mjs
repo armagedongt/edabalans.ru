@@ -81,13 +81,23 @@ try {
     await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'networkidle' });
     await page.locator('#draft-markdown').waitFor();
     assert.match(await page.locator('#draft-meta').innerText(), /На модерации/);
+    if (width > 900) {
+      const columns = await page.evaluate(() => {
+        const result = document.querySelector('.draft-result').getBoundingClientRect();
+        const source = document.querySelector('.draft-source').getBoundingClientRect();
+        return { resultLeft: result.left, sourceLeft: source.left };
+      });
+      assert.ok(columns.resultLeft < columns.sourceLeft, `preview must be left of Markdown at ${width}px`);
+    }
     const editorOverflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth);
     assert.equal(editorOverflow, false, `draft editor overflows at ${width}px`);
     if (output) await page.screenshot({ path: path.join(output, `draft-editor-${width}.png`), fullPage: true });
+    await page.locator('#draft-preview').click();
+    await page.locator('#draft-notice').getByText('Предпросмотр обновлён по сохранённой версии.', { exact: true }).waitFor();
+    if (output) await page.screenshot({ path: path.join(output, `draft-editor-feedback-${width}.png`), fullPage: true });
   }
 
-  await page.locator('#draft-preview').focus();
-  await page.keyboard.press('Tab');
+  await page.locator('#draft-markdown').focus();
   assert.equal(await page.evaluate(() => document.activeElement?.id), 'draft-markdown');
   assert.notEqual(await page.locator('#draft-markdown').evaluate(element => getComputedStyle(element).outlineStyle), 'none');
 
@@ -97,6 +107,7 @@ try {
   await textarea.fill(successfulEdit);
   await page.locator('#draft-preview').click();
   await page.locator('#article').getByText(successfulMarker, { exact: true }).waitFor();
+  await page.locator('#draft-notice').getByText('Предпросмотр обновлён. Изменения пока не сохранены.', { exact: true }).waitFor();
   await page.locator('#draft-save').click();
   await page.locator('#draft-notice').waitFor();
   await page.waitForFunction(() => /Версия \d+ сохранена/.test(document.querySelector('#draft-status')?.textContent || ''));

@@ -191,7 +191,7 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
     page = client.get(f"/blog/drafts/{SLUG}")
     assert page.status_code == 200
     assert original["title"] in page.text
-    assert "/blog/drafts/vse-znayut-nikto-ne-delaet/media/01.webp" in page.text
+    assert page.text.count(f'<img src="/blog/drafts/{SLUG}/media/01.webp"') == 1
     assert "На модерации" in page.text
     editor = client.get(f"/blog/drafts/{SLUG}/edit")
     preview = client.post(
@@ -206,6 +206,25 @@ def test_real_markdown_package_round_trip_and_owner_preview(authoring) -> None:
         assert response.headers["cache-control"] == "private, no-store"
         assert response.headers["x-robots-tag"] == "noindex, nofollow"
         assert response.headers["x-content-type-options"] == "nosniff"
+
+
+@pytest.mark.parametrize(
+    "first_media",
+    [
+        '![Кадр из телесюжета](/media/01.webp "Подпись")',
+        '[Скачать изображение](/media/01.webp)',
+    ],
+)
+def test_draft_page_renders_hero_exactly_once_for_supported_markdown_forms(authoring, first_media) -> None:
+    client, _ = authoring
+    package = _real_package()
+    package["markdown"] = package["markdown"].replace(
+        "![Кадр из телесюжета](/media/01.webp)", first_media, 1
+    )
+    assert _put(client, package).status_code == 200
+    page = client.get(f"/blog/drafts/{SLUG}")
+    assert page.status_code == 200
+    assert page.text.count(f'<img src="/blog/drafts/{SLUG}/media/01.webp"') == 1
 
 
 def test_text_update_preserves_package_and_conflict_preserves_active_version(authoring) -> None:
@@ -573,5 +592,8 @@ def test_editor_contract_keeps_unsaved_text_on_failure() -> None:
     assert "setDirty(true)" in script
     assert "Конфликт версий — текст сохранён в поле" in script
     assert "Публичный блог не изменился" in script
+    assert "Предпросмотр обновлён. Изменения пока не сохранены." in script
+    editor = (Path(__file__).parents[1] / "app" / "static" / "blog" / "draft-editor.html").read_text(encoding="utf-8")
+    assert editor.index('class="draft-result"') < editor.index('class="draft-source"')
     catalog_script = (Path(__file__).parents[1] / "app" / "static" / "blog" / "assets" / "blog.js").read_text(encoding="utf-8")
     assert "aria-pressed" in catalog_script
