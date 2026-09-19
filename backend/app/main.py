@@ -47,6 +47,9 @@ from app.product_catalog_routes import router as product_catalog_router
 from app.recipe_routes import router as recipe_router
 from app.calorie_course_routes import router as calorie_course_router
 from app.blog_routes import router as blog_router
+from app.blog_draft_routes import PRIVATE_HEADERS as BLOG_DRAFT_PRIVATE_HEADERS
+from app.blog_draft_routes import BlogDraftBodyLimitMiddleware
+from app.blog_draft_routes import router as blog_draft_router
 from app.brand_routes import router as brand_router
 from app.public_video_analytics_routes import router as public_video_analytics_router
 from app.public_homepage_analytics_routes import router as public_homepage_analytics_router
@@ -108,6 +111,16 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+app.add_middleware(BlogDraftBodyLimitMiddleware)
+
+
+@app.middleware("http")
+async def protect_blog_draft_responses(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith(("/admin/api/blog/articles", "/blog/drafts/")):
+        for name, value in BLOG_DRAFT_PRIVATE_HEADERS.items():
+            response.headers[name] = value
+    return response
 
 
 @app.middleware("http")
@@ -179,6 +192,7 @@ app.include_router(course_material_router)
 app.include_router(product_catalog_router)
 app.include_router(recipe_router)
 app.include_router(calorie_course_router)
+app.include_router(blog_draft_router)
 app.include_router(blog_router)
 app.include_router(brand_router)
 app.include_router(public_video_analytics_router)

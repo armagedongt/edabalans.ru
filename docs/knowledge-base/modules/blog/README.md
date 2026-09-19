@@ -20,6 +20,8 @@ module_id: platform.blog
 | Голос, разрешения правки, writer pass | [Писарь](../../../../content/author-voice/README.md), `platform.content` |
 | Размеры и оформление материалов | [ARTICLE_STANDARD](../../ARTICLE_STANDARD.md) |
 | Публичные metadata, robots, sitemap | `backend/app/blog_routes.py` |
+| Закрытые версии Markdown на модерации | `backend/app/blog_draft_service.py`, `managed_document_versions` |
+| API и owner-only редактор | [BLOG_API_AUTHORING](../../BLOG_API_AUTHORING.md) |
 | Происхождение, версии и дубли исходников | [Библиотека](../../../KNOWLEDGE_LIBRARY.md) |
 | Источники переходов, Start, покупка | [LINKS_AND_ATTRIBUTION](../telegram/LINKS_AND_ATTRIBUTION.md) |
 | Метрика, рекламные цели и отчёты | [Канон Директа](../../YANDEX_DIRECT_OPERATIONS.md), `marketing.analytics` |
@@ -51,10 +53,13 @@ module_id: platform.blog
 
 Работают Git-backed Markdown-публикации, серверный renderer, локальные медиа,
 Article/Person, canonical/Open Graph, robots/sitemap, 15 карточек на страницу,
-общие footer/cookie и ручные related.
+общие footer/cookie и ручные related. Для подготовки следующей волны работает
+закрытый контур: загрузка полного Markdown-пакета через API, версионное хранение,
+статусы «Служебная»/«На модерации», предпросмотр и точечная правка Markdown.
+Он не меняет публичный manifest и не выпускает статью сам.
 
 Пока **не запущены** blog-specific аналитика/цели Метрики, popup,
-автоматический related и API-публикатор блога. Наличие схемы Article или
+автоматический related и автоматический публичный выпуск из API. Наличие схемы Article или
 `data-tracking-key` не является подключённой аналитикой.
 
 Подготовка этих изменений ведётся в `work/blog-seo-analytics/`; это временные

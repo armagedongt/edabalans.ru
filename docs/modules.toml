@@ -209,6 +209,7 @@ sources = [
 
 [[modules]]
 id = "platform.blog"
+admin_catalog = [{ category = "marketing", order = 30, url = "/blog", label = "Блог", icon = "✍️", description = "Публичные статьи и закрытая редакция материалов на модерации." }]
 parent = "platform"
 card = "docs/knowledge-base/modules/catalog/platform.blog.md"
 depends_on = [
@@ -218,13 +219,19 @@ depends_on = [
 reads_from = ["platform", "products.intensive", "products.masterclass", "messaging.telegram.attribution", "marketing.analytics", "operations.proxy"]
 owns_files = [
   "backend/app/blog_routes.py", "backend/app/blog_content.py",
+  "backend/app/blog_draft_routes.py", "backend/app/blog_draft_service.py",
   "backend/app/public_cta_catalog.py", "backend/app/static/blog/**",
+  "backend/scripts/publish_blog_draft.py",
   "backend/tests/test_blog.py", "backend/tests/test_blog_content.py",
-  "backend/tests/blog-pagination.test.cjs", "work/blog-audit-20260917/**",
+  "backend/tests/test_blog_draft_authoring.py", "backend/tests/fixtures/blog-draft-real/**",
+  "backend/tests/blog-pagination.test.cjs", "backend/tests/browser/blog-draft-authoring.e2e.mjs",
+  "work/blog-audit-20260917/**",
   "content/blog/**", "docs/knowledge-base/BLOG_EDITORIAL_WORKFLOW.md",
+  "docs/knowledge-base/BLOG_API_AUTHORING.md",
   "docs/knowledge-base/modules/blog/**", "work/blog-seo-analytics/**",
+  "work/blog-canonical-library/**",
 ]
-owns_routes = ["*/blog", "*/blog/*"]
+owns_routes = ["*/blog", "*/blog/*", "*/admin/api/blog/articles*"]
 
 [[modules]]
 id = "platform.knowledge"

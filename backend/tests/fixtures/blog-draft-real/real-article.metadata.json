@@ -1,0 +1,20 @@
+{
+  "title": "Все знают, никто не делает",
+  "slug": "vse-znayut-nikto-ne-delaet",
+  "source_id": "10123213",
+  "category": "Тренировки",
+  "visibility": "public",
+  "editorial_status": "moderation",
+  "cta": "masterclass",
+  "sources": ["content://item/b871a971-6389-41d4-92ca-cc761d1be56b", "https://pikabu.ru/story/vse_znayut_nikto_ne_delaet_10123213"],
+  "source_revision": 1,
+  "source_sha256": "b47661efb2f9d8b895f2097b4f8e3663b50df229366ff4415d41283172000ea9",
+  "source_date": "2023-04-08T21:18:52+03:00",
+  "version_evidence": "One revision in inspected library; no match in inspected corpus. Not proof that unknown external copies do not exist.",
+  "hero": "01.webp",
+  "media": [
+    {"name": "01.webp", "provenance": "https://cs13.pikabu.ru/post_img/big/2023/04/08/10/1680970929192046544.jpg"},
+    {"name": "02.webp", "provenance": "https://cs13.pikabu.ru/post_img/2023/04/08/11/168097692626304490.jpg"},
+    {"name": "03.webp", "provenance": "https://cs14.pikabu.ru/post_img/2023/04/08/10/1680975208176954410.jpg"}
+  ]
+}
