@@ -217,7 +217,13 @@ try {
       if(path==='/course-assets/masterclass/article-components.js')return route.fulfill({contentType:'application/javascript',body:sliderJs})
       if(path.endsWith('.css'))return route.fulfill({contentType:'text/css',body:''})
       if(path==='/api/account-auth/session'){requests.session++;return route.fulfill({json:{authenticated:true,email:account.email}})}
-      if(path==='/api/account-auth/account'){requests.account++;if(delays.auth)await delays.auth.promise;return route.fulfill({json:delays.account||account})}
+      if(path==='/api/account-auth/account'){
+        requests.account++
+        if(delays.auth)await delays.auth.promise
+        if(delays.loginRequired&&requests.account===1)return route.fulfill({status:401,json:{detail:'Требуется вход'}})
+        return route.fulfill({json:delays.account||account})
+      }
+      if(path==='/api/account-auth/login')return route.fulfill({json:{ok:true,email:account.email,expires_at:'2026-10-19T00:00:00Z'}})
       if(path==='/api/apps/dqs'){
         const payload={ok:true,email:account.email,startDate:'2026-09-01',needsStartDate:false,days:[]},callback=url.searchParams.get('callback')
         return callback?route.fulfill({contentType:'application/javascript; charset=utf-8',body:callback+'('+JSON.stringify(payload)+')'}):route.fulfill({json:payload})
@@ -263,6 +269,17 @@ try {
     await native.goto(origin+'/lk'+query,{waitUntil:'domcontentloaded'})
     return {native,requests,faults}
   }
+  const loginFlow=await nativePage('',{loginRequired:true})
+  await loginFlow.native.locator('#login-form').waitFor({state:'visible'})
+  await loginFlow.native.locator('[name="email"]').fill(account.email)
+  await loginFlow.native.locator('[name="password"]').fill('correct-horse-battery-staple')
+  await loginFlow.native.getByRole('button',{name:'Войти'}).click()
+  await loginFlow.native.locator('.account-card').first().waitFor({state:'visible'})
+  assert.equal(loginFlow.requests.account,2,'Login must reload the complete account payload before rendering the dashboard')
+  assert.equal(await loginFlow.native.getByRole('heading',{name:'Мастер-класс',exact:true}).isVisible(),true)
+  assert.deepEqual(loginFlow.faults,[])
+  await loginFlow.native.close()
+
   const auth=barrier(), offers=barrier(), prefetched=barrier(), fontCss=barrier(), fontFile=barrier()
   const dashboard=await nativePage('',{auth,offers,html:prefetched,fontCss,fontFile})
   await dashboard.native.locator('.ed-loading-screen').waitFor()
