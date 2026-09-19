@@ -58828,7 +58828,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 101,
+          "line": 120,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -58836,7 +58836,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 236,
+          "line": 256,
           "module_id": "products.public-site",
           "name": "pad",
           "qualname": "pad"
@@ -58844,7 +58844,7 @@
         {
           "file": "backend/tests/browser/strength-editor.e2e.mjs",
           "kind": "function",
-          "line": 282,
+          "line": 303,
           "module_id": "products.public-site",
           "name": "payload",
           "qualname": "payload"
@@ -78735,7 +78735,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 101,
+      "line": 120,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"
@@ -78743,7 +78743,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 236,
+      "line": 256,
       "module_id": "products.public-site",
       "name": "pad",
       "qualname": "pad"
@@ -78751,7 +78751,7 @@
     {
       "file": "backend/tests/browser/strength-editor.e2e.mjs",
       "kind": "function",
-      "line": 282,
+      "line": 303,
       "module_id": "products.public-site",
       "name": "payload",
       "qualname": "payload"

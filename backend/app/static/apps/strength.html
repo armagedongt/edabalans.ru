@@ -480,13 +480,16 @@
 }
 
 .st-hide{
-  padding:0;
-  border:0;
-  background:transparent;
+  min-height:29px;
+  padding:0 8px;
+  border:1px solid rgba(70,70,90,.14);
+  border-radius:7px;
+  background:rgba(255,255,255,.5);
   color:#858995;
-  font-size:9px;
+  font-size:10px;
   font-weight:700;
 }
+.st-hide:hover,.st-hide:focus-visible{border-color:var(--st-purple);color:var(--st-purple)}
 
 .st-ex-head{
   min-height:43px;
@@ -3734,7 +3737,7 @@ function renderExerciseDay(
   html +=
     '<div class="st-ex-tools">'+
     (
-      '<button class="st-hide" onclick="ST.hideExercise(\''+id+'\')">Скрыть упражнение</button>'
+      '<button class="st-hide" data-exercise-id="'+esc(id)+'" onclick="ST.hideExercise(this.dataset.exerciseId)">Скрыть упражнение</button>'
     )+
     '</div>'+
     '<div class="st-ex-head">'+
@@ -3858,7 +3861,7 @@ function renderSet(
           :
           ''
         )+
-      '" type="number" step="0.1" value="'+esc(set.planWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planWeight\',this.value)">'+
+      '" type="number" step="0.1" value="'+esc(set.planWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planWeight\',this.value)">'+
       '<input class="st-input st-plan-field '+
         planClass(
           set.planReps,
@@ -3868,11 +3871,11 @@ function renderSet(
           :
           ''
         )+
-      '" type="number" step="1" value="'+esc(set.planReps)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',\''+id+'\','+setIndex+',\'planReps\',this.value)">'+
+      '" type="number" step="1" value="'+esc(set.planReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'planReps\',this.value)">'+
       '<div class="st-divider"></div>'+
-      '<input class="st-input st-fact-field" type="number" step="0.1" value="'+esc(set.factWeight)+'" onclick="ST.numberClick(event,'+sessionIndex+',\''+id+'\','+setIndex+',\'factWeight\',this.value)">'+
-      '<input class="st-input st-fact-field" type="number" step="1" value="'+esc(set.factReps)+'" onclick="ST.numberClick(event,'+sessionIndex+',\''+id+'\','+setIndex+',\'factReps\',this.value)">'+
-      '<button class="st-rpe-button st-fact-rpe '+rpeClass(set.rpe)+'" onclick="ST.openRpe(event,'+sessionIndex+',\''+id+'\','+setIndex+')">'+
+      '<input class="st-input st-fact-field" type="number" step="0.1" value="'+esc(set.factWeight)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factWeight\',this.value)">'+
+      '<input class="st-input st-fact-field" type="number" step="1" value="'+esc(set.factReps)+'" data-exercise-id="'+esc(id)+'" onclick="ST.numberClick(event,'+sessionIndex+')" onchange="ST.changeField('+sessionIndex+',this.dataset.exerciseId,'+setIndex+',\'factReps\',this.value)">'+
+      '<button class="st-rpe-button st-fact-rpe '+rpeClass(set.rpe)+'" data-exercise-id="'+esc(id)+'" onclick="ST.openRpe(event,'+sessionIndex+',this.dataset.exerciseId,'+setIndex+')">'+
         (
           blank(set.rpe)
           ?
@@ -3906,7 +3909,7 @@ function renderNote(
       :
       ''
     )+
-    '" onclick="ST.openNote('+index+',\''+id+'\')">'+
+    '" data-exercise-id="'+esc(id)+'" onclick="ST.openNote('+index+',this.dataset.exerciseId)">'+
       '<div class="st-note-symbol">'+
         (
           has

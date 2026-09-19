@@ -71,6 +71,8 @@ function workout(type, sessionNumber = 1, empty = false) {
 
 function adminWorkout() {
   const base = workout(1, 1);
+  const unsafeCustom = base.exercise_catalog.find((item) => item.exercise_id.startsWith("custom-"));
+  unsafeCustom.active = true;
   const sessions = [];
   const sessionExercises = [];
   const sets = [];
@@ -83,6 +85,23 @@ function adminWorkout() {
         sets.push({ ...set, session_id: sessionId, plan_weight: String(40 + sessionNumber), fact_weight: String(35 + sessionNumber) });
       }
     }
+    sessionExercises.push({
+      session_id: sessionId,
+      exercise_id: unsafeCustom.exercise_id,
+      exercise_name: unsafeCustom.exercise_name,
+      sort_order: sessionExercises.length + 1,
+      note: "",
+    });
+    sets.push({
+      session_id: sessionId,
+      exercise_id: unsafeCustom.exercise_id,
+      set_number: 1,
+      plan_weight: String(40 + sessionNumber),
+      plan_reps: "10",
+      fact_weight: String(35 + sessionNumber),
+      fact_reps: "9",
+      rpe: "",
+    });
   }
   return {
     ...base,
@@ -212,17 +231,18 @@ for (const width of [360, 430, 768, 1440]) {
 
   await page.getByText("Шаблон 2", { exact: true }).click();
   await page.getByText("Редактировать", { exact: true }).click();
+  await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   const customRow = page.locator(".st-manager-row", { has: page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }) });
   assert.equal(await customRow.count(), 1);
   assert.equal(await customRow.getByText("Добавить", { exact: true }).count(), 1);
   await page.evaluate(() => { window.__failNextSave = true; });
-  await page.getByText("Добавить", { exact: true }).first().click();
+  await customRow.getByText("Добавить", { exact: true }).click();
   await page.getByText("Не удалось сохранить", { exact: true }).waitFor();
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-error-${width}.png`), fullPage: false });
   await page.locator("#st-manager-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   assert.ok((await page.evaluate(() => window.__saveActions.filter((action) => action === "saveExerciseCatalog").length)) >= 4);
   const retriedCatalogs = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveExerciseCatalog"));
-  assert.ok(retriedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Жим гантелей на наклонной скамье" && item.active));
+  assert.ok(retriedCatalogs.at(-1).exercises.some((item) => item.exercise_name === "Моё переименованное упражнение" && item.active));
   page.once("dialog", (dialog) => dialog.accept());
   await customRow.getByText("Удалить", { exact: true }).click();
   assert.equal(await page.locator(".st-manager-name", { hasText: "Моё переименованное упражнение" }).count(), 0);
@@ -254,6 +274,7 @@ for (const width of [360, 430, 768, 1440]) {
   await firstPlanInput.fill("55");
   await firstPlanInput.blur();
   await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_id === "server-2-5"));
+  await page.locator("#st-save-state").getByText("Сохранено", { exact: true }).waitFor({ timeout: 5000 });
   const savesBeforeNavigation = await page.evaluate(() => window.__saveBodies.filter((body) => body?.action === "saveSession").length);
   await page.getByRole("button", { name: "Предыдущая тренировка" }).click();
   await page.getByText("Тренировка №4", { exact: true }).waitFor();
@@ -306,17 +327,38 @@ for (const width of [360, 430, 768, 1440]) {
   await page.getByText("План и факт по тренировкам", { exact: true }).waitFor();
 
   assert.equal(await page.locator(".st-admin-sheet .st-day-head").count(), 3);
+  assert.deepEqual(await page.locator(".st-admin-sheet .st-day-number").allTextContents(), ["№3", "№4", "№5"]);
   assert.equal(await page.locator(".st-admin-history").count(), 1);
   assert.match(await page.locator(".st-admin-history summary").textContent(), /2/);
   assert.ok(await page.locator(".st-admin-sheet .st-plan-field").count() > 0);
   assert.ok(await page.locator(".st-admin-sheet .st-fact-field").count() > 0);
+  assert.equal(await page.locator(".st-admin-history").evaluate((node) => node.open), false);
+  await page.locator(".st-admin-history summary").click();
+  assert.equal(await page.locator(".st-admin-history").evaluate((node) => node.open), true);
+  assert.equal(await page.locator(".st-admin-history-item").count(), 2);
+  await page.locator(".st-admin-history summary").click();
+  assert.equal(await page.locator(".st-admin-history").evaluate((node) => node.open), false);
+  const planColor = await page.locator(".st-admin-sheet .st-plan-field").first().evaluate((node) => getComputedStyle(node).backgroundColor);
+  const factColor = await page.locator(".st-admin-sheet .st-fact-field").first().evaluate((node) => getComputedStyle(node).backgroundColor);
+  assert.notEqual(planColor, factColor);
+  assert.equal(await page.locator(".st-admin-sheet .st-divider").first().evaluate((node) => getComputedStyle(node).width), "2px");
   assert.equal(await page.locator(".st-modern-list").count(), 0);
   assert.ok(await page.locator("#strength-app").evaluate((node) => node.scrollWidth <= node.clientWidth));
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `strength-admin-sheet-${width}.png`), fullPage: false });
 
+  await page.evaluate(() => { window.__strengthXss = 0; });
+  await page.locator(".st-admin-sheet .st-fact-field").last().click();
+  assert.equal(await page.evaluate(() => window.__strengthXss), 0);
+  const factField = page.locator(".st-admin-sheet .st-fact-field").first();
+  await factField.fill("37");
+  await factField.blur();
+  await page.waitForFunction(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 3 && body.session.exercises.some((exercise) => exercise.sets.some((set) => set.fact_weight === 37))));
+
   await page.getByText("Новая тренировка", { exact: false }).click();
   await page.getByText("Тренировка №6", { exact: true }).waitFor();
+  await page.locator(".st-admin-sheet .st-day-head").nth(2).waitFor();
   assert.equal(await page.locator(".st-admin-sheet .st-day-head").count(), 3);
+  assert.deepEqual(await page.locator(".st-admin-sheet .st-day-number").allTextContents(), ["№4", "№5", "№6"]);
   assert.match(await page.locator(".st-admin-history summary").textContent(), /3/);
   assert.ok(await page.evaluate(() => window.__saveBodies.some((body) => body?.action === "saveSession" && body.session?.session_number === 6)));
   await page.close();
