@@ -11592,7 +11592,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 203,
+          "line": 205,
           "module_id": "admin.control",
           "name": "renderTags",
           "qualname": "renderTags"
@@ -11600,7 +11600,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 274,
+          "line": 276,
           "module_id": "admin.control",
           "name": "renderTagAudit",
           "qualname": "renderTagAudit"
@@ -11608,7 +11608,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 307,
+          "line": 309,
           "module_id": "admin.control",
           "name": "renderAccessReviews",
           "qualname": "renderAccessReviews"
@@ -11616,7 +11616,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 317,
+          "line": 319,
           "module_id": "admin.control",
           "name": "renderPayments",
           "qualname": "renderPayments"
@@ -11624,7 +11624,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 377,
+          "line": 379,
           "module_id": "admin.control",
           "name": "renderStructure",
           "qualname": "renderStructure"
@@ -11632,7 +11632,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 407,
+          "line": 409,
           "module_id": "admin.control",
           "name": "paymentRow",
           "qualname": "paymentRow"
@@ -11640,7 +11640,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 412,
+          "line": 414,
           "module_id": "admin.control",
           "name": "purchasedProductRow",
           "qualname": "purchasedProductRow"
@@ -11648,7 +11648,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 416,
+          "line": 418,
           "module_id": "admin.control",
           "name": "openUser",
           "qualname": "openUser"
@@ -11656,7 +11656,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 442,
+          "line": 444,
           "module_id": "admin.control",
           "name": "questionnaireName",
           "qualname": "questionnaireName"
@@ -11664,7 +11664,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 585,
+          "line": 587,
           "module_id": "admin.control",
           "name": "loadHome",
           "qualname": "loadHome"
@@ -11672,7 +11672,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 590,
+          "line": 592,
           "module_id": "admin.control",
           "name": "showView",
           "qualname": "showView"
@@ -11680,7 +11680,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 601,
+          "line": 603,
           "module_id": "admin.control",
           "name": "showError",
           "qualname": "showError"
@@ -11688,7 +11688,7 @@
         {
           "file": "backend/app/static/crm.js",
           "kind": "function",
-          "line": 607,
+          "line": 609,
           "module_id": "admin.control",
           "name": "initialise",
           "qualname": "initialise"
@@ -11696,7 +11696,7 @@
         {
           "file": "backend/tests/browser/admin-shell.e2e.mjs",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "module_id": "admin.control",
           "name": "json",
           "qualname": "json"
@@ -11704,7 +11704,7 @@
         {
           "file": "backend/tests/browser/admin-shell.e2e.mjs",
           "kind": "function",
-          "line": 38,
+          "line": 39,
           "module_id": "admin.control",
           "name": "assertDesktopGeometry",
           "qualname": "assertDesktopGeometry"
@@ -44670,6 +44670,7 @@
         "вручную выдавать, приостанавливать, возвращать и отзывать отдельные продуктовые права;",
         "фильтровать список по первому появлению, покупке, продукту, доступу Мастер-класса и тегу;",
         "показывать людей плотной таблицей с быстрыми фильтрами без потери фокуса поиска;",
+        "отдельно объяснять, что первое появление — ранняя известная запись CRM, тег —",
         "показывать ленту оплат порциями по 100 записей вместо ожидания полной выгрузки и"
       ],
       "card": "docs/knowledge-base/modules/catalog/platform.crm.md",
@@ -75343,7 +75344,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 203,
+      "line": 205,
       "module_id": "admin.control",
       "name": "renderTags",
       "qualname": "renderTags"
@@ -75351,7 +75352,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 274,
+      "line": 276,
       "module_id": "admin.control",
       "name": "renderTagAudit",
       "qualname": "renderTagAudit"
@@ -75359,7 +75360,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 307,
+      "line": 309,
       "module_id": "admin.control",
       "name": "renderAccessReviews",
       "qualname": "renderAccessReviews"
@@ -75367,7 +75368,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 317,
+      "line": 319,
       "module_id": "admin.control",
       "name": "renderPayments",
       "qualname": "renderPayments"
@@ -75375,7 +75376,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 377,
+      "line": 379,
       "module_id": "admin.control",
       "name": "renderStructure",
       "qualname": "renderStructure"
@@ -75383,7 +75384,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 407,
+      "line": 409,
       "module_id": "admin.control",
       "name": "paymentRow",
       "qualname": "paymentRow"
@@ -75391,7 +75392,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 412,
+      "line": 414,
       "module_id": "admin.control",
       "name": "purchasedProductRow",
       "qualname": "purchasedProductRow"
@@ -75399,7 +75400,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 416,
+      "line": 418,
       "module_id": "admin.control",
       "name": "openUser",
       "qualname": "openUser"
@@ -75407,7 +75408,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 442,
+      "line": 444,
       "module_id": "admin.control",
       "name": "questionnaireName",
       "qualname": "questionnaireName"
@@ -75415,7 +75416,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 585,
+      "line": 587,
       "module_id": "admin.control",
       "name": "loadHome",
       "qualname": "loadHome"
@@ -75423,7 +75424,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 590,
+      "line": 592,
       "module_id": "admin.control",
       "name": "showView",
       "qualname": "showView"
@@ -75431,7 +75432,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 601,
+      "line": 603,
       "module_id": "admin.control",
       "name": "showError",
       "qualname": "showError"
@@ -75439,7 +75440,7 @@
     {
       "file": "backend/app/static/crm.js",
       "kind": "function",
-      "line": 607,
+      "line": 609,
       "module_id": "admin.control",
       "name": "initialise",
       "qualname": "initialise"
@@ -78567,7 +78568,7 @@
     {
       "file": "backend/tests/browser/admin-shell.e2e.mjs",
       "kind": "function",
-      "line": 33,
+      "line": 34,
       "module_id": "admin.control",
       "name": "json",
       "qualname": "json"
@@ -78575,7 +78576,7 @@
     {
       "file": "backend/tests/browser/admin-shell.e2e.mjs",
       "kind": "function",
-      "line": 38,
+      "line": 39,
       "module_id": "admin.control",
       "name": "assertDesktopGeometry",
       "qualname": "assertDesktopGeometry"

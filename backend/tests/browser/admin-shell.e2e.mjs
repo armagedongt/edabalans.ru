@@ -25,6 +25,7 @@ const projectMap = { modules: modulesToml.split(/\r?\n(?=\[\[modules\]\])/).map(
   return { id, admin_catalog };
 }).filter((module) => module.id && module.admin_catalog.length) };
 const userQueries = [];
+const userAccessFilters = [];
 const paymentOffsets = [];
 const paymentSnapshots = [];
 let errorAttempts = 0;
@@ -104,6 +105,7 @@ const server = createServer((request, response) => {
   if (url.pathname === "/admin/api/users") {
     const q = url.searchParams.get("q") || "";
     userQueries.push(q);
+    userAccessFilters.push(url.searchParams.get("masterclass_access"));
     if (q === "error" && errorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test error"})); }
     const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
     return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
@@ -250,6 +252,12 @@ for (const [name, route] of Object.entries(integratedPages)) {
       await page.getByRole("button", { name:"Повторить" }).click();
       await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userQueries.filter((query) => query === "error").length, 2);
+      await page.getByRole("button", { name:"Есть МК" }).click();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      assert.equal(userAccessFilters.at(-1), "true");
+      await page.locator(".crm-filters summary").click();
+      assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
+      assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);
       await page.getByRole("button", { name:"Оплаты" }).click();
       await page.locator("#payment-next:not([disabled])").waitFor();
       assert.match(await page.locator(".crm-table tbody").textContent(), /Первая оплата 1/);
