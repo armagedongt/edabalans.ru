@@ -1,10 +1,10 @@
 {
   "schema_version": "author-validation-v1",
-  "status": "manual_review_required",
+  "status": "pass",
   "pack_sha256": "ae31f7af982e38e1a0787b88b29428371ff1699b3c5e5f01b2c0c5fe9f807d58",
   "draft_sha256": "529090fc3ff4ca16043c3bf3f21b9268b2059d7e867c1fd976c54385a9d21274",
-  "review_sha256": null,
-  "validated_at": "2026-09-20T02:49:00.206735+00:00",
+  "review_sha256": "824a99ce450a4d6a5caf574b0e565ebef49a420e99c5f9e31847d9d77c9ff1a5",
+  "validated_at": "2026-09-20T03:05:47.862528+00:00",
   "missing_verbatim": [],
   "unresolved_placeholders": [],
   "protected_layer_errors": [],
@@ -57,8 +57,6 @@
       ]
     }
   ],
-  "manual_review_errors": [
-    "manual review artifact is required"
-  ],
+  "manual_review_errors": [],
   "fact_review_expires_at": null
 }

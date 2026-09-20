@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import json
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
-HOLD_SLUG = "hochesh-hudet-esh-kartoshku"
 RELATED = {
     "skrytye-zapory-i-banalnyy-syuzhet": ["mozhno-li-pit-vo-vremya-edy", "pravila-bezopasnosti-za-shvedskim-stolom", "glikemicheskiy-indeks-eto-lishnee"],
     "dieta-sryv-i-matematika": ["tri-oshibki-v-nachale-pohudeniya", "sdelat-pohudenie-proshche", "net-vremeni-obyasnyat-prosto-hudey"],
@@ -35,6 +35,10 @@ def read_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def file_sha256(path: Path) -> str:
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 manifest_path = ROOT / "manifest.json"
 manifest = read_json(manifest_path)
 
@@ -42,16 +46,21 @@ for item in manifest["items"]:
     slug = item["slug"]
     validation = read_json(ROOT / "machine" / f"{slug}.validation.json")
     review_path = ROOT / "machine" / f"{slug}.review.json"
+    review = read_json(review_path) if review_path.exists() else {}
+    review_checks = review.get("checks") or []
+    review_valid = (
+        review.get("schema_version") == "author-review-v1"
+        and bool(review_checks)
+        and all(check.get("result") == "pass" for check in review_checks)
+        and validation.get("review_sha256") == file_sha256(review_path)
+    ) if review_path.exists() else False
     item["validation_status"] = validation["status"]
-    item["review_status"] = "pass" if review_path.exists() and validation["status"] == "pass" else "hold"
+    item["review_status"] = "pass" if review_valid and validation["status"] == "pass" else "hold"
     item["publish_ready"] = item["validation_status"] == "pass" and item["review_status"] == "pass"
     item["suggested_cta"] = item["cta"]
     item["related_candidates"] = RELATED[slug]
-    if slug == HOLD_SLUG:
-        item["editorial_status"] = "factcheck_hold"
-        item["hold_reason"] = "Универсальный совет для людей с диабетом требует решения владельца."
-    else:
-        item["editorial_status"] = "ready"
+    item["editorial_status"] = "ready" if item["publish_ready"] else "review_hold"
+    item.pop("hold_reason", None)
 
 manifest["finalized_at"] = datetime.now(timezone.utc).isoformat()
 manifest["summary"] = {
@@ -59,7 +68,7 @@ manifest["summary"] = {
     "public_candidates": sum(item["visibility"] == "public" for item in manifest["items"]),
     "internal": sum(item["visibility"] == "internal" for item in manifest["items"]),
     "publish_ready": sum(item["publish_ready"] for item in manifest["items"]),
-    "factcheck_hold": sum(item["editorial_status"] == "factcheck_hold" for item in manifest["items"]),
+    "factcheck_hold": sum(not item["publish_ready"] for item in manifest["items"]),
 }
 manifest_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -70,6 +79,7 @@ handoff = [
     "",
     f'- Собрано {manifest["summary"]["total"]} Markdown-материалов: {manifest["summary"]["public_candidates"]} публичных кандидатов и {manifest["summary"]["internal"]} служебный.',
     f'- Writer validation/review pass: {manifest["summary"]["publish_ready"]}. На фактчек-модерации: {manifest["summary"]["factcheck_hold"]}.',
+    "- Сергей подтвердил сохранение исходной формулировки про гликемический индекс и диабет; решение записано в machine artifact, текст не менялся.",
     "- Все исходные изображения скачаны из exact source, преобразованы в WebP и привязаны локальными путями; внешних hotlink-картинок в статьях нет.",
     "- Площадочные CTA, просьбы о плюсах/подписке/комментариях, старые Telegram- и рекламные хвосты удалены. Упоминание Pikabu сохранено только там, где площадка является фактом самой истории.",
     "- «Как начать тренировки и не бросить» собрано из двух частей истории/челленджа и отдельного материала с восемью советами; все три provenance сохранены.",
@@ -97,16 +107,17 @@ for item in manifest["items"]:
 
 (ROOT / "editorial-handoff.md").write_text("\n".join(handoff), encoding="utf-8")
 
-hold = {
-    "schema_version": "author-factcheck-hold-v1",
-    "slug": HOLD_SLUG,
-    "status": "hold",
+decision = {
+    "schema_version": "author-factcheck-decision-v1",
+    "slug": "hochesh-hudet-esh-kartoshku",
+    "status": "owner_accepted_as_written",
     "blocking_excerpt": "Если вы едите адекватную порцию картофеля в составе сбалансированного приема пищи, то его гликемическим индексом можно пренебречь даже диабетикам",
     "classification": "level_2_with_safety_risk",
-    "decision_needed": "Удалить слова «даже диабетикам» либо добавить согласованную медицинскую оговорку.",
+    "owner_decision": "Оставить формулировку без изменений.",
+    "decided_at": "2026-09-20",
     "body_changed": False,
     "details": "factcheck-notes.md",
 }
-(ROOT / "machine" / f"{HOLD_SLUG}.factcheck-hold.json").write_text(
-    json.dumps(hold, ensure_ascii=False, indent=2), encoding="utf-8"
+(ROOT / "machine" / "hochesh-hudet-esh-kartoshku.factcheck-decision.json").write_text(
+    json.dumps(decision, ensure_ascii=False, indent=2), encoding="utf-8"
 )

