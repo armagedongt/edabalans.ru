@@ -475,14 +475,15 @@ def test_largest_existing_article_seeds_without_inline_media(authoring) -> None:
 
 def test_existing_seed_is_idempotent(authoring) -> None:
     client, factory = authoring
-    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == 9
-    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == 9
+    expected_count = len(load_blog_catalog().articles)
+    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == expected_count
+    assert len(client.get("/admin/api/blog/articles").json()["articles"]) == expected_count
     with factory() as db:
         assert db.scalar(
             select(func.count()).select_from(ManagedDocumentVersion).where(
                 ManagedDocumentVersion.document_type == DOCUMENT_TYPE
             )
-        ) == 9
+        ) == expected_count
 
 
 @pytest.mark.parametrize(

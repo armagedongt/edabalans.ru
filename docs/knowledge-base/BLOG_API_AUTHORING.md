@@ -6,8 +6,8 @@ module_id: platform.blog
 
 # Блог: редактирование и выпуск существующих статей
 
-Контур позволяет править и выпускать без deploy девять статей, уже
-зарегистрированных в `content/blog/manifest.json`. Manifest остаётся владельцем
+Контур позволяет править и выпускать без deploy все статьи, зарегистрированные
+в `content/blog/manifest.json`. Manifest остаётся владельцем
 slug, SEO, рубрики, hero/card, CTA, related и разрешённых media. PostgreSQL
 хранит отдельно черновую и опубликованную версии чистого Markdown.
 
@@ -113,7 +113,7 @@ python backend/scripts/publish_blog_draft.py `
 
 ## Проверка
 
-Интеграционные тесты проверяют seed всех девяти manifest slug, статью с 39 media
+Интеграционные тесты проверяют seed всех manifest slug, статью с 39 media
 без base64-копий, неизвестный slug, точечную правку, конфликт версий, retention,
 анонимный отказ, Git fallback и цепочку save → explicit publish → новая draft
 правка без утечки в public. Browser test проверяет редактор и выпуск на

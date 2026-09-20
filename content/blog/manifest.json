@@ -2,6 +2,901 @@
   "version": 1,
   "articles": [
     {
+      "source_id": "11277666",
+      "slug": "skrytye-zapory-i-banalnyy-syuzhet",
+      "title": "Скрытые запоры и банальный сюжет",
+      "excerpt": "Почему попытка просто добавить побольше клетчатки иногда делает ситуацию только неприятнее — и что полезно проверить в питании сначала.",
+      "category": "Ну, типа... ЗОЖ",
+      "body_file": "11277666.md",
+      "hero": {
+        "file": "11277666/01.webp",
+        "alt": "Обложка материала «Скрытые запоры и банальный сюжет»",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/27/11/1711569015154859201.jpg"
+      },
+      "card": {
+        "file": "11277666/card.webp",
+        "alt": "Обложка карточки «Скрытые запоры и банальный сюжет»",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2024/03/28/1/1711578277161170.jpg"
+      },
+      "related_source_ids": [
+        "693339",
+        "12857458",
+        "11207593"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11277666/01.webp",
+        "11277666/02.webp",
+        "11277666/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/skryityie_zaporyi_i_banalnyiy_syuzhet_vozmozhno_u_vas_tozhe_11277666"
+        ],
+        "external_ids": [
+          "11277666"
+        ],
+        "sha256": [
+          "9bbf1c9374b9c7a9a5f5f9ceaeb7d8d55985fb2f6dfdaa26d94654704a5863dd"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "11494317",
+      "slug": "dieta-sryv-i-matematika",
+      "title": "Диета. Срыв. И математика",
+      "excerpt": "Почему один незапланированный продукт не отменяет похудение — и как обычная математика помогает не превращать отклонение от плана в недельный срыв.",
+      "category": "Похудение",
+      "body_file": "11494317.md",
+      "hero": {
+        "file": "11494317/hero.webp",
+        "alt": "Обложка материала «Диета. Срыв. И математика»",
+        "provenance": "Редакционная обложка из утверждённого заголовка; в exact source изображений нет."
+      },
+      "card": {
+        "file": "11494317/card.webp",
+        "alt": "Обложка карточки «Диета. Срыв. И математика»",
+        "provenance": "Редакционная обложка из утверждённого заголовка; в exact source изображений нет."
+      },
+      "related_source_ids": [
+        "13785403",
+        "14021584",
+        "12296286"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11494317/hero.webp",
+        "11494317/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/dieta_sryiv_i_matematika_11494317"
+        ],
+        "external_ids": [
+          "11494317"
+        ],
+        "sha256": [
+          "09ad28646f33c4e34f15ce4566c4bdd092adc1ddd78348cedeee841c3a8fd658"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "11522121",
+      "slug": "eti-dolbannye-10000-shagov",
+      "title": "Эти долбанные 10 000 шагов",
+      "excerpt": "Откуда взялись 10 000 шагов, почему это не магическая норма и как подобрать полезный объём ходьбы под себя.",
+      "category": "Тренировки",
+      "body_file": "11522121.md",
+      "hero": {
+        "file": "11522121/01.webp",
+        "alt": "Обложка материала «Эти долбанные 10 000 шагов»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/06/17/7/171862006713147721.png"
+      },
+      "card": {
+        "file": "11522121/card.webp",
+        "alt": "Обложка карточки «Эти долбанные 10 000 шагов»",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/06/17/7/1718623598168550705.png"
+      },
+      "related_source_ids": [
+        "14102926",
+        "training-combined-2023",
+        "13277231"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "11522121/01.webp",
+        "11522121/02.webp",
+        "11522121/03.webp",
+        "11522121/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121"
+        ],
+        "external_ids": [
+          "11522121"
+        ],
+        "sha256": [
+          "9b9b7a865b5a677cb2e4fd704430e8f12a69f38f0e06aa97377707f0472756dc"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "11762932",
+      "slug": "professionalnyy-edok",
+      "title": "Профессиональный едок",
+      "excerpt": "Как участники соревнований по скоростному поеданию умудряются поглощать десятки тысяч килокалорий — и почему это совсем не инструкция для обычной жизни.",
+      "category": "Ну, типа... ЗОЖ",
+      "body_file": "11762932.md",
+      "hero": {
+        "file": "11762932/01.webp",
+        "alt": "Обложка материала «Профессиональный едок»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725043008284128702.png"
+      },
+      "card": {
+        "file": "11762932/card.webp",
+        "alt": "Обложка карточки «Профессиональный едок»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2024/08/30/11/1725042827194494724.png"
+      },
+      "related_source_ids": [
+        "12857458",
+        "10999474",
+        "11494317"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11762932/01.webp",
+        "11762932/02.webp",
+        "11762932/03.webp",
+        "11762932/04.webp",
+        "11762932/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/professionalnyiy_edok_11762932"
+        ],
+        "external_ids": [
+          "11762932"
+        ],
+        "sha256": [
+          "8b625d7d786701ad63e81ca099c4073d8033357ba77a0d7ed111b5ec1a37990b"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "12296286",
+      "slug": "net-vremeni-obyasnyat-prosto-hudey",
+      "title": "Нет времени объяснять. Просто худей!",
+      "excerpt": "Четыре сферы жизни, которые определяют, будет похудение посильным процессом или очередной короткой диетой на силе воли.",
+      "category": "Похудение",
+      "body_file": "12296286.md",
+      "hero": {
+        "file": "12296286/01.webp",
+        "alt": "Обложка материала «Нет времени объяснять. Просто худей!»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/6/1737798565157363834.png"
+      },
+      "card": {
+        "file": "12296286/card.webp",
+        "alt": "Обложка карточки «Нет времени объяснять. Просто худей!»",
+        "provenance": "https://cs15.pikabu.ru/post_img/big/2025/01/25/7/1737799735155257443.png"
+      },
+      "related_source_ids": [
+        "14021584",
+        "13785403",
+        "13436070"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12296286/01.webp",
+        "12296286/02.webp",
+        "12296286/03.webp",
+        "12296286/04.webp",
+        "12296286/05.webp",
+        "12296286/06.webp",
+        "12296286/07.webp",
+        "12296286/08.webp",
+        "12296286/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"
+        ],
+        "external_ids": [
+          "12296286"
+        ],
+        "sha256": [
+          "823dc29029a91e77d5381a555032e07705e96655836f0ae6f2274c029e0ea472"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "13436070",
+      "slug": "poterya-myshc-pri-pohudenii",
+      "title": "Потеря мышц при похудении",
+      "excerpt": "Правда ли, что при дефиците организм первым делом уничтожает мышцы, и что действительно помогает сохранить мышечную массу.",
+      "category": "Похудение",
+      "body_file": "13436070.md",
+      "hero": {
+        "file": "13436070/01.webp",
+        "alt": "Обложка материала «Потеря мышц при похудении»",
+        "provenance": "https://cs18.pikabu.ru/s/2025/10/01/17/aiabd74m.webp"
+      },
+      "card": {
+        "file": "13436070/card.webp",
+        "alt": "Обложка карточки «Потеря мышц при похудении»",
+        "provenance": "https://cs12.pikabu.ru/post_img/big/2022/09/27/7/1664277409167491570.jpg"
+      },
+      "related_source_ids": [
+        "training-combined-2023",
+        "14021584",
+        "14102926"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "13436070/01.webp",
+        "13436070/02.webp",
+        "13436070/03.webp",
+        "13436070/04.webp",
+        "13436070/05.webp",
+        "13436070/06.webp",
+        "13436070/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070"
+        ],
+        "external_ids": [
+          "13436070"
+        ],
+        "sha256": [
+          "4e3814f7cee4e83dc55a057c792abc7dd474097e4614714ffe1466b50459e17a"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "13785403",
+      "slug": "tri-oshibki-v-nachale-pohudeniya",
+      "title": "Три ошибки в начале похудения",
+      "excerpt": "Три решения, которые выглядят логично в первый день похудения, но заметно повышают шанс быстро всё бросить.",
+      "category": "Похудение",
+      "body_file": "13785403.md",
+      "hero": {
+        "file": "13785403/01.webp",
+        "alt": "Обложка материала «Три ошибки в начале похудения»",
+        "provenance": "https://cs18.pikabu.ru/s/2026/03/15/09/xkebdmiw.webp"
+      },
+      "card": {
+        "file": "13785403/card.webp",
+        "alt": "Обложка карточки «Три ошибки в начале похудения»",
+        "provenance": "https://cs20.pikabu.ru/s/2026/03/19/16/iqp2wgot_lg.jpg"
+      },
+      "related_source_ids": [
+        "12296286",
+        "14021584",
+        "14102926"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "13785403/01.webp",
+        "13785403/02.webp",
+        "13785403/03.webp",
+        "13785403/04.webp",
+        "13785403/05.webp",
+        "13785403/06.webp",
+        "13785403/07.webp",
+        "13785403/08.webp",
+        "13785403/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403"
+        ],
+        "external_ids": [
+          "13785403"
+        ],
+        "sha256": [
+          "457f4c8a48924fd3109cd16966d0579e45d8e615052efd03b62f1a0f87a0ce2e"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "14021584",
+      "slug": "sdelat-pohudenie-proshche",
+      "title": "Сделать похудение проще",
+      "excerpt": "Похудение не обязано состоять из бесконечного списка запретов. Разбираемся, какие действия действительно дают основную часть результата.",
+      "category": "Похудение",
+      "body_file": "14021584.md",
+      "hero": {
+        "file": "14021584/01.webp",
+        "alt": "Обложка материала «Сделать похудение проще»",
+        "provenance": "https://cs16.pikabu.ru/s/2026/05/30/19/zgxx2564.webp"
+      },
+      "card": {
+        "file": "14021584/card.webp",
+        "alt": "Обложка карточки «Сделать похудение проще»",
+        "provenance": "https://cs20.pikabu.ru/s/2026/05/31/12/vppcogku.jpg"
+      },
+      "related_source_ids": [
+        "13785403",
+        "12296286",
+        "14102926"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "14021584/01.webp",
+        "14021584/02.webp",
+        "14021584/03.webp",
+        "14021584/04.webp",
+        "14021584/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/sdelat_pokhudenie_proshche_14021584"
+        ],
+        "external_ids": [
+          "14021584"
+        ],
+        "sha256": [
+          "6319472e05580b33dc89c50c6424331cda81f7613f4df777112f3ba2935bf3f0"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "14102926",
+      "slug": "hodit-chtoby-hudet",
+      "title": "Ходить, чтобы худеть",
+      "excerpt": "Почему ходьба помогает похудению, сколько энергии она действительно расходует и где заканчивается польза идеи «просто больше ходить».",
+      "category": "Тренировки",
+      "body_file": "14102926.md",
+      "hero": {
+        "file": "14102926/01.webp",
+        "alt": "Обложка материала «Ходить, чтобы худеть»",
+        "provenance": "https://cs18.pikabu.ru/s/2026/06/28/15/ytnbeolo.webp"
+      },
+      "card": {
+        "file": "14102926/card.webp",
+        "alt": "Обложка карточки «Ходить, чтобы худеть»",
+        "provenance": "https://cs18.pikabu.ru/s/2026/06/28/16/linrehoc.jpg"
+      },
+      "related_source_ids": [
+        "11522121",
+        "13436070",
+        "training-combined-2023"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "14102926/01.webp",
+        "14102926/02.webp",
+        "14102926/03.webp",
+        "14102926/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/khodit_chtobyi_khudet_14102926"
+        ],
+        "external_ids": [
+          "14102926"
+        ],
+        "sha256": [
+          "ca7d25a7f226b91cc7e9bbec93a6de91ac5bc6880432678a237c7d4be5f463e5"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "14183275",
+      "slug": "hochesh-hudet-esh-kartoshku",
+      "title": "Хочешь худеть? Заткнись и ешь картошку!",
+      "excerpt": "Почему обычная картошка может оказаться удобным продуктом для похудения, если не путать её с фритюром и тазиком масла.",
+      "category": "Качество питания",
+      "body_file": "14183275.md",
+      "hero": {
+        "file": "14183275/01.webp",
+        "alt": "Обложка материала «Хочешь худеть? Заткнись и ешь картошку!»",
+        "provenance": "https://cs20.pikabu.ru/s/2026/07/23/13/yhncpzvk.webp"
+      },
+      "card": {
+        "file": "14183275/card.webp",
+        "alt": "Обложка карточки «Хочешь худеть? Заткнись и ешь картошку!»",
+        "provenance": "https://cs20.pikabu.ru/s/2026/07/23/14/5qbsol67.jpg"
+      },
+      "related_source_ids": [
+        "11207593",
+        "10999474",
+        "12857458"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "14183275/01.webp",
+        "14183275/02.webp",
+        "14183275/03.webp",
+        "14183275/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275"
+        ],
+        "external_ids": [
+          "14183275"
+        ],
+        "sha256": [
+          "38d590cc78fd16c4d05346ae858f8fbf24dcdc89e4f723c1a4d5560cfcf5f6dd"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "CHernovik-08-18-3",
+      "slug": "kak-sdelat-celnozernovoy-ris-sedobnym",
+      "title": "Как сделать цельнозерновой рис съедобным",
+      "excerpt": "Простой способ приготовить цельнозерновой рис так, чтобы его хотелось есть не из чувства долга, а потому что получилось вкусно.",
+      "category": "Качество питания",
+      "body_file": "CHernovik-08-18-3.md",
+      "hero": {
+        "file": "CHernovik-08-18-3/01.webp",
+        "alt": "Обложка материала «Как сделать цельнозерновой рис съедобным»",
+        "provenance": "https://telegra.ph/file/7fd08bc1db5557fe5718a.jpg"
+      },
+      "card": {
+        "file": "CHernovik-08-18-3/card.webp",
+        "alt": "Обложка карточки «Как сделать цельнозерновой рис съедобным»",
+        "provenance": "https://telegra.ph/file/598e2b77a1c421133c267.jpg"
+      },
+      "related_source_ids": [
+        "Dva-sousa-Krasnoe-i-beloe-03-18",
+        "10999474",
+        "14183275"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "CHernovik-08-18-3/01.webp",
+        "CHernovik-08-18-3/02.webp",
+        "CHernovik-08-18-3/03.webp",
+        "CHernovik-08-18-3/04.webp",
+        "CHernovik-08-18-3/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/CHernovik-08-18-3"
+        ],
+        "external_ids": [
+          "CHernovik-08-18-3"
+        ],
+        "sha256": [
+          "16d2cd491aab0e6c6ebb754a0734e1df57d2734f3218f906b070f5093bc06183"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "Dva-sousa-Krasnoe-i-beloe-03-18",
+      "slug": "dva-sousa-krasnoe-i-beloe",
+      "title": "Два соуса. Красное и белое",
+      "excerpt": "Два быстрых домашних соуса: красный томатный и белый йогуртовый. Без сложной готовки и с понятным составом.",
+      "category": "Качество питания",
+      "body_file": "Dva-sousa-Krasnoe-i-beloe-03-18.md",
+      "hero": {
+        "file": "Dva-sousa-Krasnoe-i-beloe-03-18/01.webp",
+        "alt": "Обложка материала «Два соуса. Красное и белое»",
+        "provenance": "https://principled-cuticle-21b.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F5eb568ce-19be-43b8-90eb-3a00ab9af308%2F1b37f56e-93e9-482f-9cce-518ec093ced1%2FFrame_3323.jpg?table=block&id=13f58521-3bab-8065-98d8-c93bef2e0a27&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1410&userId=&cache=v2"
+      },
+      "card": {
+        "file": "Dva-sousa-Krasnoe-i-beloe-03-18/card.webp",
+        "alt": "Обложка карточки «Два соуса. Красное и белое»",
+        "provenance": "https://principled-cuticle-21b.notion.site/image/attachment%3A668c31df-0be0-4854-a377-2b5293274793%3Aimage.png?table=block&id=18a58521-3bab-8027-85bb-d0b790035d7f&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=990&userId=&cache=v2"
+      },
+      "related_source_ids": [
+        "CHernovik-08-18-3",
+        "10999474",
+        "12857458"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "Dva-sousa-Krasnoe-i-beloe-03-18/01.webp",
+        "Dva-sousa-Krasnoe-i-beloe-03-18/02.webp",
+        "Dva-sousa-Krasnoe-i-beloe-03-18/03.webp",
+        "Dva-sousa-Krasnoe-i-beloe-03-18/04.webp",
+        "Dva-sousa-Krasnoe-i-beloe-03-18/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Dva-sousa-Krasnoe-i-beloe-03-18"
+        ],
+        "external_ids": [
+          "Dva-sousa-Krasnoe-i-beloe-03-18"
+        ],
+        "sha256": [
+          "4f15c567332764664350977c9b654f9c94e5c23d9994cd9c5f8692a52b5e9bce"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "12857458",
+      "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
+      "title": "Правила безопасности за шведским столом",
+      "excerpt": "Как отдохнуть в отеле со шведским столом, не превращая каждый приём пищи в соревнование и не привозя домой лишние килограммы.",
+      "category": "Качество питания",
+      "body_file": "12857458.md",
+      "hero": {
+        "file": "12857458/01.webp",
+        "alt": "Обложка материала «Правила безопасности за шведским столом»",
+        "provenance": "https://cs19.pikabu.ru/s/2025/06/18/19/igon4lnw.webp"
+      },
+      "card": {
+        "file": "12857458/card.webp",
+        "alt": "Обложка карточки «Правила безопасности за шведским столом»",
+        "provenance": "https://cs17.pikabu.ru/s/2025/06/19/02/xifvl6h3_lg.jpg"
+      },
+      "related_source_ids": [
+        "10999474",
+        "Dva-sousa-Krasnoe-i-beloe-03-18",
+        "693339"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12857458/01.webp",
+        "12857458/02.webp",
+        "12857458/03.webp",
+        "12857458/04.webp",
+        "12857458/05.webp",
+        "12857458/06.webp",
+        "12857458/07.webp",
+        "12857458/08.webp",
+        "12857458/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458"
+        ],
+        "external_ids": [
+          "12857458"
+        ],
+        "sha256": [
+          "3d32d1cfe629a3a3be89644ea93475560261bafe4099d43c5926f53b2186984f"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "693339",
+      "slug": "mozhno-li-pit-vo-vremya-edy",
+      "title": "Можно ли пить во время еды?",
+      "excerpt": "Разбавляет ли вода желудочный сок, вредно ли есть всухомятку и когда напитки во время еды действительно могут иметь значение.",
+      "category": "Ну, типа... ЗОЖ",
+      "body_file": "693339.md",
+      "hero": {
+        "file": "693339/01.webp",
+        "alt": "Обложка материала «Можно ли пить во время еды?»",
+        "provenance": "https://leonardo.osnova.io/ad4cd058-ba2d-5fae-8ff4-917b3782fe0e/-/scale_crop/592x/"
+      },
+      "card": {
+        "file": "693339/card.webp",
+        "alt": "Обложка карточки «Можно ли пить во время еды?»",
+        "provenance": "https://leonardo.osnova.io/ad4cd058-ba2d-5fae-8ff4-917b3782fe0e/-/scale_crop/592x/"
+      },
+      "related_source_ids": [
+        "11277666",
+        "12857458",
+        "Sahar-09-18"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "693339/01.webp",
+        "693339/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno"
+        ],
+        "external_ids": [
+          "693339"
+        ],
+        "sha256": [
+          "05c62f3079c14cfd5f2e4514c047fe17e736a777f650aed805dfb506bcca4959"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "Sahar-09-18",
+      "slug": "saharozamenitel-vyzyvaet-rak-net",
+      "title": "Сахарозаменитель в диетических напитках вызывает рак? Нет",
+      "excerpt": "Что на самом деле означала классификация аспартама как возможного канцерогена и почему слово «возможно» нельзя читать отдельно от дозы.",
+      "category": "Качество питания",
+      "body_file": "Sahar-09-18.md",
+      "hero": {
+        "file": "Sahar-09-18/01.webp",
+        "alt": "Обложка материала «Сахарозаменитель в диетических напитках вызывает рак? Нет»",
+        "provenance": "https://telegra.ph/file/3c8a5e3e47b3b61448be2.jpg"
+      },
+      "card": {
+        "file": "Sahar-09-18/card.webp",
+        "alt": "Обложка карточки «Сахарозаменитель в диетических напитках вызывает рак? Нет»",
+        "provenance": "https://cs13.pikabu.ru/post_img/2023/06/30/10/1688147664283326713.jpg"
+      },
+      "related_source_ids": [
+        "11207593",
+        "10999474",
+        "693339"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "Sahar-09-18/01.webp",
+        "Sahar-09-18/02.webp",
+        "Sahar-09-18/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://telegra.ph/Sahar-09-18"
+        ],
+        "external_ids": [
+          "Sahar-09-18"
+        ],
+        "sha256": [
+          "67375ce6b528b13aa57d1b355ef9f8bf41d158e494dafa469287d7410c30f9b0"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "11207593",
+      "slug": "glikemicheskiy-indeks-eto-lishnee",
+      "title": "Гликемический индекс — это лишнее!",
+      "excerpt": "Почему гликемический индекс отдельного продукта редко помогает принимать решения о реальном приёме пищи и похудении.",
+      "category": "Качество питания",
+      "body_file": "11207593.md",
+      "hero": {
+        "file": "11207593/01.webp",
+        "alt": "Обложка материала «Гликемический индекс — это лишнее!»",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/03/09/7/1709978441127581699.jpg"
+      },
+      "card": {
+        "file": "11207593/card.webp",
+        "alt": "Обложка карточки «Гликемический индекс — это лишнее!»",
+        "provenance": "https://cs13.pikabu.ru/post_img/2024/03/09/7/170998029211986878.jpg"
+      },
+      "related_source_ids": [
+        "14183275",
+        "Sahar-09-18",
+        "10999474"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "11207593/01.webp",
+        "11207593/02.webp",
+        "11207593/03.webp",
+        "11207593/04.webp",
+        "11207593/05.webp",
+        "11207593/06.webp",
+        "11207593/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/glikemicheskiy_indeks__yeto_lishnee_11207593"
+        ],
+        "external_ids": [
+          "11207593"
+        ],
+        "sha256": [
+          "4c59de85bd33069c63f2685397519e4206c92af98989542098af2fee21d0daa7"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "10999474",
+      "slug": "pp-recepty-eto-ploho",
+      "title": "ПП-рецепты — это плохо. И вот почему",
+      "excerpt": "Как ярлык «ПП» заставляет переоценивать полезность блюда и почему рецепт лучше оценивать по задаче, составу и порции.",
+      "category": "Качество питания",
+      "body_file": "10999474.md",
+      "hero": {
+        "file": "10999474/01.webp",
+        "alt": "Обложка материала «ПП-рецепты — это плохо. И вот почему»",
+        "provenance": "https://cs13.pikabu.ru/post_img/2024/01/07/6/1704615738221844529.webp"
+      },
+      "card": {
+        "file": "10999474/card.webp",
+        "alt": "Обложка карточки «ПП-рецепты — это плохо. И вот почему»",
+        "provenance": "https://cs13.pikabu.ru/post_img/big/2024/01/07/6/1704616059158811358.png"
+      },
+      "related_source_ids": [
+        "11207593",
+        "14183275",
+        "Dva-sousa-Krasnoe-i-beloe-03-18"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "10999474/01.webp",
+        "10999474/02.webp",
+        "10999474/03.webp",
+        "10999474/04.webp",
+        "10999474/05.webp",
+        "10999474/06.webp",
+        "10999474/07.webp",
+        "10999474/08.webp",
+        "10999474/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"
+        ],
+        "external_ids": [
+          "10999474"
+        ],
+        "sha256": [
+          "6ca7aba7ecfec08012fba0f6c0122ce4ad4b4236f2d06905a91856c82f615796"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "training-combined-2023",
+      "slug": "kak-nachat-trenirovki-i-ne-brosit",
+      "title": "Как начать тренировки и не бросить",
+      "excerpt": "История короткого бегового челленджа с Pikabu и практическая инструкция: как начать тренироваться, не перегореть и превратить активность в устойчивую привычку.",
+      "category": "Тренировки",
+      "body_file": "training-combined-2023.md",
+      "hero": {
+        "file": "training-combined-2023/01.webp",
+        "alt": "Обложка материала «Как начать тренировки и не бросить»",
+        "provenance": "https://cs14.pikabu.ru/post_img/big/2023/05/28/5/1685257975125871560.jpg"
+      },
+      "card": {
+        "file": "training-combined-2023/card.webp",
+        "alt": "Обложка карточки «Как начать тренировки и не бросить»",
+        "provenance": "https://cs14.pikabu.ru/post_img/2023/10/28/11/169852051321490725.jpg"
+      },
+      "related_source_ids": [
+        "14102926",
+        "11522121",
+        "13436070"
+      ],
+      "cta": "intensive",
+      "status": "published",
+      "media": [
+        "training-combined-2023/01.webp",
+        "training-combined-2023/02.webp",
+        "training-combined-2023/03.webp",
+        "training-combined-2023/04.webp",
+        "training-combined-2023/05.webp",
+        "training-combined-2023/06.webp",
+        "training-combined-2023/07.webp",
+        "training-combined-2023/08.webp",
+        "training-combined-2023/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/otvet_na_post_chellendzh_30_dney_bega_2_den_10276321",
+          "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442",
+          "https://vc.ru/flood/752179-8-sovetov-tem-kto-hochet-nachat-begat"
+        ],
+        "external_ids": [
+          "10276321",
+          "10779442",
+          "752179"
+        ],
+        "sha256": [
+          "d87212723d4f9bf04cb92867d4749d22341101c514f639f864604b5da0935d83",
+          "da4d597d0b51a33ef928c9e795bb7bf948dfcacbb96efe06adbac03fdb3415e9",
+          "0461943da5f9f65ea7081e79bee747167e762f53a4dbb560a58aae56b47ab148"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
+      "source_id": "12922345",
+      "slug": "a-mne-trener-posovetoval",
+      "title": "А мне тренер посоветовал…",
+      "excerpt": "Почему уверенный совет тренера по питанию ещё не становится правильным — и по каким признакам отличать опыт от компетентности.",
+      "category": "Тренировки",
+      "body_file": "12922345.md",
+      "hero": {
+        "file": "12922345/01.webp",
+        "alt": "Обложка материала «А мне тренер посоветовал…»",
+        "provenance": "https://cs17.pikabu.ru/s/2025/07/04/18/zizfkebg.webp"
+      },
+      "card": {
+        "file": "12922345/card.webp",
+        "alt": "Обложка карточки «А мне тренер посоветовал…»",
+        "provenance": "https://cs20.pikabu.ru/s/2025/07/04/20/xif2wzkp.jpg"
+      },
+      "related_source_ids": [
+        "training-combined-2023",
+        "13436070",
+        "14021584"
+      ],
+      "cta": "masterclass",
+      "status": "published",
+      "media": [
+        "12922345/01.webp",
+        "12922345/02.webp",
+        "12922345/03.webp",
+        "12922345/04.webp",
+        "12922345/05.webp",
+        "12922345/06.webp",
+        "12922345/07.webp",
+        "12922345/08.webp",
+        "12922345/card.webp"
+      ],
+      "source_provenance": {
+        "urls": [
+          "https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"
+        ],
+        "external_ids": [
+          "12922345"
+        ],
+        "sha256": [
+          "eb757031d04c7e9c8b3f8d0bd51a8acc869fe3ce2a4173259880c9b785be0c9c"
+        ],
+        "source_basis": "full_source",
+        "validation_status": "pass",
+        "review_status": "pass"
+      }
+    },
+    {
       "source_id": "13277231",
       "slug": "skolko-vremeni-nuzhno-na-pohudenie",
       "title": "Сколько времени нужно на похудение?",

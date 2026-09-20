@@ -1,3 +1,4 @@
+import json
 import re
 from pathlib import Path
 import shutil
@@ -6,6 +7,7 @@ import pytest
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+from PIL import Image
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -81,7 +83,10 @@ def test_blog_home_is_public_and_uses_manifest_cards() -> None:
     assert 'data-category-filter="Личное"' in response.text
     assert 'data-category-filter="Ну, типа... ЗОЖ"' in response.text
     assert 'data-category-filter="ЗОЖ"' not in response.text
-    assert response.text.count('data-category="Ну, типа... ЗОЖ"') == 2
+    expected_health_count = sum(
+        article.category == "Ну, типа... ЗОЖ" for article in load_blog_catalog().published
+    )
+    assert response.text.count('data-category="Ну, типа... ЗОЖ"') == expected_health_count
     assert 'id="articles-title"' not in response.text
     assert "/articles/skolko-vremeni-nuzhno-na-pohudenie" in response.text
     assert f'/blog/media/{load_blog_catalog().published[0].card.file}' in response.text
@@ -258,6 +263,7 @@ def test_blog_is_indexable_and_sitemap_lists_all_articles() -> None:
 
 def test_every_published_article_and_declared_image_is_served() -> None:
     catalog = load_blog_catalog()
+    media_root = Path(__file__).resolve().parents[2] / "content" / "blog" / "media"
 
     assert {
         "tilda-49734795", "tilda-49745867", "tilda-67280331"
@@ -273,3 +279,105 @@ def test_every_published_article_and_declared_image_is_served() -> None:
             media = client.get(f"/blog/media/{media_name}")
             assert media.status_code == 200
             assert media.headers["content-type"].startswith("image/")
+            with Image.open(media_root / media_name) as image:
+                image.load()
+
+
+def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() -> None:
+    catalog = load_blog_catalog()
+    slugs = {article.slug for article in catalog.published}
+    batch_sources = {
+        "skrytye-zapory-i-banalnyy-syuzhet": "11277666",
+        "dieta-sryv-i-matematika": "11494317",
+        "eti-dolbannye-10000-shagov": "11522121",
+        "professionalnyy-edok": "11762932",
+        "net-vremeni-obyasnyat-prosto-hudey": "12296286",
+        "poterya-myshc-pri-pohudenii": "13436070",
+        "tri-oshibki-v-nachale-pohudeniya": "13785403",
+        "sdelat-pohudenie-proshche": "14021584",
+        "hodit-chtoby-hudet": "14102926",
+        "hochesh-hudet-esh-kartoshku": "14183275",
+        "kak-sdelat-celnozernovoy-ris-sedobnym": "CHernovik-08-18-3",
+        "dva-sousa-krasnoe-i-beloe": "Dva-sousa-Krasnoe-i-beloe-03-18",
+        "pravila-bezopasnosti-za-shvedskim-stolom": "12857458",
+        "mozhno-li-pit-vo-vremya-edy": "693339",
+        "saharozamenitel-vyzyvaet-rak-net": "Sahar-09-18",
+        "glikemicheskiy-indeks-eto-lishnee": "11207593",
+        "pp-recepty-eto-ploho": "10999474",
+        "kak-nachat-trenirovki-i-ne-brosit": "training-combined-2023",
+        "a-mne-trener-posovetoval": "12922345",
+    }
+    expected_hashes = {
+        "skrytye-zapory-i-banalnyy-syuzhet": ["9bbf1c9374b9c7a9a5f5f9ceaeb7d8d55985fb2f6dfdaa26d94654704a5863dd"],
+        "dieta-sryv-i-matematika": ["09ad28646f33c4e34f15ce4566c4bdd092adc1ddd78348cedeee841c3a8fd658"],
+        "eti-dolbannye-10000-shagov": ["9b9b7a865b5a677cb2e4fd704430e8f12a69f38f0e06aa97377707f0472756dc"],
+        "professionalnyy-edok": ["8b625d7d786701ad63e81ca099c4073d8033357ba77a0d7ed111b5ec1a37990b"],
+        "net-vremeni-obyasnyat-prosto-hudey": ["823dc29029a91e77d5381a555032e07705e96655836f0ae6f2274c029e0ea472"],
+        "poterya-myshc-pri-pohudenii": ["4e3814f7cee4e83dc55a057c792abc7dd474097e4614714ffe1466b50459e17a"],
+        "tri-oshibki-v-nachale-pohudeniya": ["457f4c8a48924fd3109cd16966d0579e45d8e615052efd03b62f1a0f87a0ce2e"],
+        "sdelat-pohudenie-proshche": ["6319472e05580b33dc89c50c6424331cda81f7613f4df777112f3ba2935bf3f0"],
+        "hodit-chtoby-hudet": ["ca7d25a7f226b91cc7e9bbec93a6de91ac5bc6880432678a237c7d4be5f463e5"],
+        "hochesh-hudet-esh-kartoshku": ["38d590cc78fd16c4d05346ae858f8fbf24dcdc89e4f723c1a4d5560cfcf5f6dd"],
+        "kak-sdelat-celnozernovoy-ris-sedobnym": ["16d2cd491aab0e6c6ebb754a0734e1df57d2734f3218f906b070f5093bc06183"],
+        "dva-sousa-krasnoe-i-beloe": ["4f15c567332764664350977c9b654f9c94e5c23d9994cd9c5f8692a52b5e9bce"],
+        "pravila-bezopasnosti-za-shvedskim-stolom": ["3d32d1cfe629a3a3be89644ea93475560261bafe4099d43c5926f53b2186984f"],
+        "mozhno-li-pit-vo-vremya-edy": ["05c62f3079c14cfd5f2e4514c047fe17e736a777f650aed805dfb506bcca4959"],
+        "saharozamenitel-vyzyvaet-rak-net": ["67375ce6b528b13aa57d1b355ef9f8bf41d158e494dafa469287d7410c30f9b0"],
+        "glikemicheskiy-indeks-eto-lishnee": ["4c59de85bd33069c63f2685397519e4206c92af98989542098af2fee21d0daa7"],
+        "pp-recepty-eto-ploho": ["6ca7aba7ecfec08012fba0f6c0122ce4ad4b4236f2d06905a91856c82f615796"],
+        "kak-nachat-trenirovki-i-ne-brosit": [
+            "d87212723d4f9bf04cb92867d4749d22341101c514f639f864604b5da0935d83",
+            "da4d597d0b51a33ef928c9e795bb7bf948dfcacbb96efe06adbac03fdb3415e9",
+            "0461943da5f9f65ea7081e79bee747167e762f53a4dbb560a58aae56b47ab148",
+        ],
+        "a-mne-trener-posovetoval": ["eb757031d04c7e9c8b3f8d0bd51a8acc869fe3ce2a4173259880c9b785be0c9c"],
+    }
+    expected_urls = {
+        "skrytye-zapory-i-banalnyy-syuzhet": ["https://pikabu.ru/story/skryityie_zaporyi_i_banalnyiy_syuzhet_vozmozhno_u_vas_tozhe_11277666"],
+        "dieta-sryv-i-matematika": ["https://pikabu.ru/story/dieta_sryiv_i_matematika_11494317"],
+        "eti-dolbannye-10000-shagov": ["https://pikabu.ru/story/yeti_dolbannyie_10_000_shagov_11522121"],
+        "professionalnyy-edok": ["https://pikabu.ru/story/professionalnyiy_edok_11762932"],
+        "net-vremeni-obyasnyat-prosto-hudey": ["https://pikabu.ru/story/net_vremeni_obyasnyat_prosto_khudey_12296286"],
+        "poterya-myshc-pri-pohudenii": ["https://pikabu.ru/story/poterya_myishts_pri_pokhudenii_13436070"],
+        "tri-oshibki-v-nachale-pohudeniya": ["https://pikabu.ru/story/tri_oshibki_v_nachale_pokhudeniya_13785403"],
+        "sdelat-pohudenie-proshche": ["https://pikabu.ru/story/sdelat_pokhudenie_proshche_14021584"],
+        "hodit-chtoby-hudet": ["https://pikabu.ru/story/khodit_chtobyi_khudet_14102926"],
+        "hochesh-hudet-esh-kartoshku": ["https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275"],
+        "kak-sdelat-celnozernovoy-ris-sedobnym": ["https://telegra.ph/CHernovik-08-18-3"],
+        "dva-sousa-krasnoe-i-beloe": ["https://telegra.ph/Dva-sousa-Krasnoe-i-beloe-03-18"],
+        "pravila-bezopasnosti-za-shvedskim-stolom": ["https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458"],
+        "mozhno-li-pit-vo-vremya-edy": ["https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno"],
+        "saharozamenitel-vyzyvaet-rak-net": ["https://telegra.ph/Sahar-09-18"],
+        "glikemicheskiy-indeks-eto-lishnee": ["https://pikabu.ru/story/glikemicheskiy_indeks__yeto_lishnee_11207593"],
+        "pp-recepty-eto-ploho": ["https://pikabu.ru/story/pp_retseptyi__yeto_plokho_i_vot_pochemu_10999474"],
+        "kak-nachat-trenirovki-i-ne-brosit": [
+            "https://pikabu.ru/story/otvet_na_post_chellendzh_30_dney_bega_2_den_10276321",
+            "https://pikabu.ru/story/kak_nachat_trenirovki_i_ne_brosit_chellendzhinstruktsiya_10779442",
+            "https://vc.ru/flood/752179-8-sovetov-tem-kto-hochet-nachat-begat",
+        ],
+        "a-mne-trener-posovetoval": ["https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"],
+    }
+
+    assert len(catalog.published) == 28
+    assert batch_sources.keys() <= slugs
+    assert "kak-ya-100000-shagov-reshil-proyti" not in slugs
+    manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
+    for slug, source_id in batch_sources.items():
+        article = manifest_by_slug[slug]
+        assert article["source_id"] == source_id
+        provenance = article["source_provenance"]
+        if slug == "kak-nachat-trenirovki-i-ne-brosit":
+            assert provenance["external_ids"] == ["10276321", "10779442", "752179"]
+        else:
+            assert provenance["external_ids"] == [source_id]
+        assert provenance["urls"] == expected_urls[slug]
+        assert provenance["sha256"] == expected_hashes[slug]
+        assert provenance["source_basis"] == "full_source"
+        assert provenance["validation_status"] == "pass"
+        assert provenance["review_status"] == "pass"
+    diet = catalog.by_slug("dieta-sryv-i-matematika")
+    assert diet is not None
+    assert diet.hero.file != diet.card.file
+    assert "exact source" in diet.hero.provenance
