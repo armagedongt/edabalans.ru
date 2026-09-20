@@ -3,7 +3,7 @@
 
 interview_metadata:
   started: "2026-09-20 20:40:02+03:00"
-  last_updated: "2026-09-20 22:23:00+03:00"
+  last_updated: "2026-09-20 22:49:00+03:00"
   status: "in_progress"  # in_progress | completed
   can_resume: true
 
@@ -74,6 +74,18 @@ conversation_history:
       3. Если человек нажал «Отправить в MAX/Telegram», но этот мессенджер ещё не подключён, сначала происходит привязка, а после неё исходный материал автоматически отправляется туда ровно один раз. Повторно нажимать не нужно.
     user_answer: |
       Да, да, да, да, да. Первый пункт — да-да-да-да-да. Только текст делится. Это для таких технических отправки, там анкеты пересылать и так далее. А вот для того, где посты мы пишем, да, надо планировать, чтобы пост вообще не делился изначально. У кого что подключено, всегда оставляем у них уже у всех что-то подключено. Основной оставляем тот, который уже подключен. Да, третий топ пункт тоже да.
+  - asked_at: "2026-09-20 22:42:00+03:00"
+    topic_keys: ["technical_decisions", "error_scenarios", "ui_ux_requirements"]
+    agent_questions: |
+      1. У каждого исходящего материала в едином реестре указывается тип: `авторский пост` или `техническое сообщение`. Авторский пост не делится; анкеты и технические данные можно делить. Реактивные ответы самого бота — `/stop`, ошибки, подтверждения действий — остаются только в том мессенджере, где произошло действие.
+
+      2. Если основной бот остановлен, заблокирован или точный аккаунт неоднозначен, в другой мессенджер ничего молча не отправляем. `/stop` окончательно отменяет отправку. Временная техническая ошибка повторяется до срока актуальности конкретного сообщения, затем видна в админке как недоставленная.
+
+      3. Запрос «Отправить в Telegram/MAX» ждёт привязки 60 минут, включая повторно созданную ссылку. Если за это время связь не завершена либо возник конфликт аккаунта, запрос отменяется — неожиданной поздней отправки не будет. Пользователь сможет нажать заново.
+
+      4. При административном пропуске панель честно показывает: «Мессенджер не подключён, продолжение разрешено вручную», но больше не блокирует курс. На странице оплаты ждём подтверждение автоматически 90 секунд, затем показываем кнопку «Проверить оплату ещё раз»; часовой автовход продолжает действовать от момента подтверждения оплаты.
+    user_answer: |
+      А что ты начинаешь за ерунду уже тут писать? Запроты уже начинаешь спрашивать, блять, ради вопросов. Тебе не кажется? Ты можешь это всё сам решить, сам это всё продумать. Ты зачем ты думал, блять, 14 минут думал, чтобы спросить мне эти вопросы или что? И получается запрос отправить в Telegram Max ждёт привязки 60 минут. Что это вообще значит? Он ничего не ждёт. Ну то есть что это вообще значит, я не понимаю. Включая повторно созданную ссылку. Какую ссылку? То есть ты просто нажимаешь, чтобы человек перешёл в... То есть там просто обычная ссылка в бота. Стандартная. Человек нажимает эту стандартную ссылку в бот, появляется в боте, и бот получает какое-то сообщение от человека с каким-то кодом, да? Там старт или что-нибудь, старт с параметрами. Ты это считываешь просто и привязываешь человека. Ты что там сейчас усложняешь, блять?
 # Entry format:
 # - asked_at: "YYYY-MM-DD HH:MM:SS"
 #   topic_keys: ["user_problem", "success_criteria"]
@@ -127,7 +139,7 @@ general_understanding:
 
   testing_strategy:
     score: 85
-    value: "Unit/integration: browser grant pending/paid/expired/wrong-browser/retry с одной AccountSession; idempotent credential+email; 45-day session; обе messenger-связи и preferred; миграция single/dual-linked users; реальный completion guard курса; остановка presale и соблюдение /stop; весь producer matrix и platform renderers для preferred Telegram/MAX; однократная отложенная отправка после привязки. Проверка публикации не допускает Telegram-only клиентский автоматический контент. Browser E2E: direct Robokassa success → ЛК, четыре состояния панели, возврат из Telegram/MAX, explicit send через ещё не подключённую платформу, expired/no-Start/unavailable/conflict, mobile/desktop. Production-like smoke выполняется только на тестовой оплате и тестовых контактах."
+    value: "Unit/integration: browser grant pending/paid/expired/wrong-browser/retry с одной AccountSession; idempotent credential+email; 45-day session; exact preferred identity; миграция single/dual-linked users; user-scoped sequence и per-delivery Contact; completion guard курса; /stop; proactive producer registry и platform renderers; идемпотентный consume link token с intent. Browser E2E использует test doubles на реальных HTTP/application boundaries; фактический Telegram/MAX deep-link → Start → webhook → return проверяется отдельно production-like smoke только тестовыми оплатой и контактами."
     gaps: []
     required: true
 
@@ -152,7 +164,7 @@ user_experience:
 
   error_scenarios:
     score: 88
-    value: "Success page ждёт только подписанное подтверждение оплаты; при задержке продолжает проверку. Истёкший/чужой browser grant не открывает аккаунт и направляет к письму/поддержке. Retry в пределах часа переиздаёт ту же детерминированную session cookie и не создаёт новую AccountSession; потеря grant cookie не восстанавливается по InvId. SMTP retry не блокирует ЛК; отдельной пользовательской resend-кнопки нет. Messenger UI различает expired, bot unavailable, no Start, return unlinked, identity conflict, network check failure и uncertain confirmation; linked state в БД авторитетен. После 30–60 секунд bounded polling остаётся ручная проверка. Публичного skip нет; при длительном сбое обоих ботов возможен только audit-logged owner override."
+    value: "Success page ждёт только подписанное подтверждение оплаты и продолжает существующий двухсекундный polling, пока открыта; без paid доступ не появляется. Истёкший/чужой browser grant не открывает аккаунт. Retry в пределах часа возвращает ту же логическую session; потеря cookie не восстанавливается по InvId. SMTP retry не блокирует ЛК; публичной resend-кнопки нет. Messenger UI различает expired, unavailable, no Start, return unlinked, identity conflict, network failure и uncertain confirmation; linked state в БД авторитетен. Обычный deep-link token действует 15 минут: consume связывает account и выполняет intent ровно один раз; без Start/при expiry ничего не отправляется, новое нажатие создаёт новый token. Публичного skip и нового admin override нет."
     gaps: []
     required: true
 
@@ -176,7 +188,7 @@ user_experience:
 
   technical_decisions:
     score: 98
-    value: "Не требовать messenger до входа в ЛК. Только direct Robokassa: для первой покупки T123-hosted JS переводит браузер top-level через edabalans.ru для browser binding, затем в Robokassa; success action 60 минут создаёт 45-day session без пароля в форме/URL. Stable grant retry возвращает ту же session. Повторная покупка с существующим AccountCredential не получает новый browser grant, onboarding, credential email или ротацию; success page только подтверждает добавление покупки в существующий кабинет. Если credential отсутствует, он создаётся и отправляется один раз. Требовать минимум один messenger в материале после дневника; связь завершается bot consume, бот возвращает в точный материал; второй optional. Первая успешно committed связь становится preferred; вторая не меняет её без явного выбора. Один shared resolver направляет все клиентские automatic marketing/service/course сообщения в preferred exact Contact; named Telegram/MAX action переопределяет одну отправку. Если named platform ещё не связана, persisted pending action связывается с link attempt и после успешной привязки доставляет исходный материал идемпотентно ровно один раз. При смене preferred уже отправленное и находящееся во внешнем вызове не трогается, все pending до отправки и будущие шаги используют новый preferred без дублей. Reactive replies остаются на платформе входящего действия; owner alerts и cross-messenger bridge вне preferred. Все клиентские автоматические сообщения до выпуска обязаны иметь полноценный MAX-совместимый renderer: platform-specific формы заменяются ближайшим нативным аналогом с сохранением смысла и данных; технические payloads/анкеты могут делиться по лимиту, а авторские посты создаются в общем лимите и отправляются одним сообщением. Telegram-only клиентский контент в принятом контуре не допускается и не перенаправляется молча. Self-service unlink/relink identity отсутствует: пользователь может только подключить ещё не связанную платформу и выбрать preferred; смена аккаунта/удаление связи выполняется через Сергея. `/stop` остаётся безусловным отказом от отправок. Новый обязательный шаг действует только для покупок после release cutoff; старые участники не меняются."
+    value: "Не требовать messenger до входа в ЛК. Только direct Robokassa: для первой покупки T123-hosted JS создаёт first-party browser binding, success action 60 минут от paid_at выдаёт 45-day session без пароля в URL/форме; повторная покупка существующего credential не получает grant/onboarding/email/ротацию. Messenger — обычный материал после дневника; consume стандартного `/start <token>` связывает account и выполняет закодированный intent ровно один раз, без отдельной ожидающей сущности. Preferred ссылается на exact deliverable MessengerAccount. Proactive user-level marketing/service/course producers зарегистрированы в каноническом реестре с content_kind и Telegram/MAX renderers; platform-local reactive replies, owner alerts и bridge исключены явно. Automatic sequence state принадлежит user_id, exact Contact фиксируется per delivery; при смене preferred sent/in-flight остаются, следующие unsent steps идут в новый Contact. Нет silent fallback; stop/consent suppressed, временная ошибка retry только до message expiry, окончательная/identity ambiguity видна в admin. Self-service unlink/relink отсутствует. Новая course-policy version действует только при первой выдаче доступа после cutoff; старые участники не меняются."
     gaps: []
     required: false
 
@@ -219,7 +231,7 @@ integration:
 
   migration_needs:
     score: 98
-    value: "Сохранить существующие аккаунты, credentials и messenger_accounts; при User без credential создать credential один раз; не запускать новый onboarding при credential. Единственная существующая связь становится preferred. Если у старого пользователя связаны обе платформы, Telegram назначается preferred как прежний рабочий маршрут; пользователь позже может выбрать MAX. Уже отправленные старые credential links продолжают действовать до expiry для ранее начатого onboarding, но новый flow их не выпускает. Release cutoff определяется подтверждённой покупкой/выдачей доступа: только новые покупатели после выпуска получают новый обязательный material; все более ранние участники сохраняют прежний маршрут независимо от того, открывали ли они день 1."
+    value: "Сохранить существующие credentials/sessions/messenger history. При User без credential создать его один раз; при credential не запускать onboarding. Preferred хранит exact MessengerAccount: single link сохраняется, dual legacy получает Telegram, duplicate same-platform identities детерминированно оставляют последнюю активную deliverable, остальные historical. Existing contact-scoped automatic runs мигрируют к user-scoped state с per-delivery Contact, сохраняя callbacks уже отправленных steps. Старые credential links доживают до expiry, новый flow их не выпускает. Новая messenger requirement version фиксируется в UserCoursePolicy только при первой выдаче Masterclass access после cutoff; имевшие доступ раньше не меняются при позднем первом открытии или повторной покупке."
     gaps: []
     required: false
 
