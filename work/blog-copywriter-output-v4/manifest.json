@@ -436,7 +436,7 @@
       ],
       "validation": "pass",
       "review": "pass",
-      "factcheck": "owner-review-required"
+      "factcheck": "owner-approved-unchanged"
     },
     {
       "external_id": "13355824",

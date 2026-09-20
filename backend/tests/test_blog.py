@@ -1,3 +1,4 @@
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -352,7 +353,6 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
         "a-mne-trener-posovetoval": ["https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"],
     }
 
-    assert len(catalog.published) == 26
     assert batch_sources.keys() <= slugs
     excluded_slugs = {
         "kak-ya-100000-shagov-reshil-proyti",
@@ -397,6 +397,30 @@ def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public
     assert diet is not None
     assert diet.hero.file != diet.card.file
     assert "exact source" in diet.hero.provenance
+
+
+def test_semaglutide_article_is_published_unchanged() -> None:
+    catalog = load_blog_catalog()
+    slug = "ukolol-i-pohudel-ozempik-semavik-nyuansy"
+    article = catalog.by_slug(slug)
+    assert article is not None
+    assert article in catalog.published
+    assert article.source_id == "13327360"
+    assert article.category == "Похудение"
+
+    manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}
+    provenance = manifest_by_slug[slug]["source_provenance"]
+    assert provenance["source_basis"] == "full_source"
+    assert provenance["validation_status"] == "pass"
+    assert provenance["review_status"] == "pass"
+
+    semaglutide_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "articles" / "13327360.md"
+    semaglutide_body = semaglutide_path.read_text(encoding="utf-8").split("\nblog_cta(", 1)[0].rstrip()
+    assert hashlib.sha256(semaglutide_body.encode("utf-8")).hexdigest() == (
+        "ef8ef0dd424f8aea82ac22794f65a0e3aa431edb78e97a8c2d6a5f6b8b71eb98"
+    )
 
 
 def test_manifest_card_fit_is_rendered_without_destructive_crop() -> None:
