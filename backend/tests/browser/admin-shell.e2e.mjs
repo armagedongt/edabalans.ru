@@ -34,6 +34,14 @@ let failNextPaymentRequest = false;
 let errorAttempts = 0;
 let libraryErrorAttempts = 0;
 const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, first_seen_at:"2026-08-01T12:00:00Z", first_purchase_at:"2026-08-02T12:00:00Z", last_purchase_at:"2026-09-18T12:00:00Z", first_source:"telegram", accompaniment_status:"active", initial_tariff:"Стандарт", accesses:["ACCESS_MASTERCLASS", "ACCESS_DQS"], note_count:1, messengers:[{platform:"telegram",platform_user_id:"101",username:"anna",first_seen_at:"2026-08-01T12:00:00Z",main_scenario_seen_at:"2026-08-01T12:00:00Z",subscription_status:"subscribed"},{platform:"max",platform_user_id:"max-202",username:"maxanna",first_seen_at:"2026-08-04T12:00:00Z",main_scenario_seen_at:"2026-08-04T12:00:00Z",subscription_status:"active"}] };
+const sampleUsers = [
+  sampleUser,
+  { id:"u2", display_name:"Ирина Лебедева", email:"irina.lebedeva@example.org", purchase_count:1, ltv_rub:8900, estimated_ltv_rub:0, first_seen_at:"2026-08-11T12:00:00Z", first_purchase_at:"2026-08-14T12:00:00Z", first_source:"pikabu", initial_tariff:"Минимальный", accesses:["ACCESS_MASTERCLASS"], note_count:0, messengers:[{platform:"telegram",platform_user_id:"102",username:"irina_example",first_seen_at:"2026-08-11T12:00:00Z",main_scenario_seen_at:"2026-08-11T12:00:00Z",subscription_status:"subscribed"}] },
+  { id:"u3", display_name:"Дмитрий", email:"dmitry.sokolov.long-mailbox@example.net", purchase_count:0, ltv_rub:0, estimated_ltv_rub:0, first_seen_at:"2026-09-02T12:00:00Z", first_source:"yandex_direct", initial_tariff:null, accesses:[], note_count:2, messengers:[{platform:"max",platform_user_id:"max-303",username:"",first_seen_at:"2026-09-02T12:00:00Z",main_scenario_seen_at:null,subscription_status:"unknown"}] },
+  { id:"u4", display_name:"Николай Сергеевич Петров", email:"nikolay@example.ru", purchase_count:1, ltv_rub:19900, estimated_ltv_rub:0, first_seen_at:"2026-07-03T12:00:00Z", first_purchase_at:"2026-07-20T12:00:00Z", first_source:"website", accompaniment_status:"active", initial_tariff:"Основной", accesses:["ACCESS_COACHING"], note_count:4, messengers:[{platform:"telegram",platform_user_id:"104",username:"nikolay_example",first_seen_at:"2026-07-03T12:00:00Z",main_scenario_seen_at:"2026-07-04T12:00:00Z",subscription_status:"active"},{platform:"max",platform_user_id:"max-404",username:"",first_seen_at:"2026-07-05T12:00:00Z",main_scenario_seen_at:"2026-07-05T12:00:00Z",subscription_status:"active"}] },
+  { id:"u5", display_name:"", email:"maria@example.com", purchase_count:0, ltv_rub:0, estimated_ltv_rub:0, first_seen_at:"2026-09-10T12:00:00Z", first_source:"telegram", initial_tariff:null, accesses:[], note_count:0, messengers:[] },
+  { id:"u6", display_name:"Ольга В.", email:"olga.v@example.com", purchase_count:1, ltv_rub:3000, estimated_ltv_rub:0, first_seen_at:"2026-06-01T12:00:00Z", first_purchase_at:"2026-06-04T12:00:00Z", first_source:"tilda", initial_tariff:"Дополнение", accesses:["ACCESS_DQS"], note_count:1, messengers:[{platform:"telegram",platform_user_id:"106",username:"olga_example",first_seen_at:"2026-06-01T12:00:00Z",main_scenario_seen_at:null,subscription_status:"unsubscribed"}] }
+];
 const sampleUserDetail = {
   id:"u1", display_name:"Анна", status:"active", data_origin:"native", accompaniment_status:"active", first_seen_at:"2026-08-01T12:00:00Z",
   access_review_status:"not_required", access_review_note:"", tilda_access_status:"not_required", tilda_membership:null,
@@ -155,7 +163,10 @@ const server = createServer((request, response) => {
     userAccompanimentFilters.push(url.searchParams.get("accompaniment_status"));
     if (q === "error" && errorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test error"})); }
     const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
-    return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
+    const users = q === "a"
+      ? [{...sampleUser, display_name:"Устаревший ответ"}]
+      : q === "anna" ? [sampleUser] : sampleUsers;
+    return setTimeout(() => json(response, users), delay);
   }
   if (url.pathname === "/admin/api/users/u1") return json(response, sampleUserDetail);
   if (url.pathname === "/admin/api/resources") return json(response, [
@@ -314,6 +325,10 @@ for (const [name, route] of Object.entries(integratedPages)) {
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "CRM" }).waitFor();
     if (name === "crm" && width === 1440) {
+      await page.locator(".crm-people-table tbody tr[data-user-id='u3']").waitFor();
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u3'] .crm-table-messenger-slot--telegram .crm-contact-button").count(), 0);
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u3'] .crm-table-messenger-slot--max .crm-contact-button--max").count(), 1);
+      assert.match(await page.locator(".crm-people-table tbody tr[data-user-id='u5'] .crm-person-name").textContent(), /maria@example\.com/);
       const search = page.locator("#crm-search");
       await search.click();
       await search.fill("a");
@@ -324,11 +339,17 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.match(await page.locator("#crm-user-results").textContent(), /Анна/);
       assert.doesNotMatch(await page.locator("#crm-user-results").textContent(), /Устаревший ответ/);
       assert.equal(await page.locator(".crm-head > .crm-tabs").count(), 1);
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"]);
-      await page.getByRole("button", { name:"Показать мессенджеры: Анна" }).hover();
-      await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Мессенджеры" }).waitFor();
-      assert.match(await page.locator(".crm-popover:visible").textContent(), /Telegram.*подписан/s);
-      assert.ok(await page.locator(".crm-people-table tbody tr[data-user-id] .crm-contact-cell .crm-messenger-icon").count() >= 2);
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"]);
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-contact-cell .crm-contact-button").count(), 2);
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-table-messenger-slot").count(), 2);
+      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-preview-trigger.email").hover();
+      await page.getByText("Нажмите значок копирования справа от имени, чтобы скопировать адрес.").waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /anna@example\.com/);
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").count(), 1);
+      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").click();
+      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").getAttribute("aria-label"), "Email скопирован");
+      assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
+      assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
       await page.getByRole("button", { name:"Показать тариф и доступы: Анна" }).hover();
       await page.getByText("Доступно", { exact:true }).waitFor();
@@ -349,26 +370,26 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await search.inputValue(), "error");
       assert.equal(await search.evaluate((node) => document.activeElement === node), true);
       await page.getByRole("button", { name:"Повторить" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
       assert.equal(userQueries.filter((query) => query === "error").length, 2);
       await page.getByRole("button", { name:"Лиды", exact:true }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]);
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /Подписан/);
       await page.getByRole("button", { name:"Есть МК" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
       assert.equal(userAccessFilters.at(-1), "true");
       await page.getByRole("button", { name:"Сопровождение", exact:true }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
       assert.equal(userAccompanimentFilters.at(-1), "active");
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]);
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]);
       await page.locator(".crm-filters summary").click();
       assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
       assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);
       await page.getByRole("button", { name:"Показать оплаты: Анна" }).hover();
       await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Оплаты" }).waitFor();
       assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс/);
-      await page.locator(".crm-person-email").click();
+      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-person-name").click();
       await page.locator(".crm-profile-head").waitFor();
       assert.match(await page.locator(".crm-profile-head").textContent(), /Анна/);
       assert.equal(await page.getByText("Покупки и тарифы", { exact:true }).count(), 1);
@@ -401,7 +422,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс.*12 из 20/s);
       if (evidence) await page.screenshot({ path: path.join(evidence, "admin-crm-profile-1440.png"), fullPage:true });
       await page.getByRole("button", { name:"← Назад" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
       failNextPaymentRequest = true;
       await page.getByRole("button", { name:"Оплаты", exact:true }).click();
       await page.getByText("CRM не загрузилась", { exact:true }).waitFor();
@@ -423,7 +444,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.doesNotMatch(await page.locator(".crm-table tbody").textContent(), /Первая оплата/);
       await page.getByRole("button", { name:"Люди" }).click();
       await page.locator("#crm-search").fill("");
-      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
     }
     if (name === "library" && width === 1440) {
       assert.match(await page.locator("#results").textContent(), /Счётчик сверху показывает объём карты/);
