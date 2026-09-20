@@ -153,6 +153,21 @@ native-сессию ЛК. Но текущая последовательност
   `effective_required_step_ids(...)` фиксирует набор обязательных шагов и revision
   при первом открытии дня. Простое изменение JSON не обязательно задним числом
   добавит новый required step уже начавшим день пользователям.
+- `backend/app/models.py` — `MasterclassDayProgress` уже хранит stable
+  `required_step_ids`, но `MasterclassStepProgress` сохраняет только
+  `(user_id, day_number, step_index)` и не хранит `step_id`; unique constraint
+  также позиционный.
+- `backend/app/masterclass_routes.py` — `completed_step_indexes(...)`, проверка
+  prerequisite, `next_step` и запись completion используют текущие индексы
+  активного manifest. Поэтому физический перенос скрытого messenger step с
+  позиции 5 на позицию 3 без migration способен заставить старый index означать
+  другой материал.
+- `backend/app/course_structure_service.py::runtime_manifest(...)` сохраняет
+  скрытые элементы на старых позициях именно ради legacy positional progress,
+  но этого недостаточно для требуемой перестановки карточки. Совместимое решение:
+  policy-filtered активный manifest плюс authoritative progress по stable
+  `step_id`; старые индексы однократно backfill-ятся по точному предрелизному
+  manifest, включая hidden entries.
 - `backend/app/masterclass_routes.py` — общий complete endpoint проверяет порядок,
   но сам по себе не доказывает факт привязки messenger account. Существующий
   `completion: link_requested` означает лишь действие в UI, не успешную связь.
@@ -323,8 +338,9 @@ HTML success page. Одноразовый grant только создаёт nati
 
 ### Файлы, которые затронет будущая реализация
 
-- `backend/app/models.py` + новая Alembic migration — browser grant и preferred
-  messenger contract.
+- `backend/app/models.py` + новые Alembic migrations — browser grant, preferred
+  messenger contract, `UserCoursePolicy.course_policy_version` и stable
+  `MasterclassStepProgress.step_id` с проверяемым backfill старых индексов.
 - `backend/app/robokassa_routes.py`, `robokassa_service.py` и checkout JS —
   first-party binding, безопасный success consume, кнопка входа.
 - `backend/app/tilda_service.py`/Tilda checkout integration — только если владелец
@@ -337,8 +353,10 @@ HTML success page. Одноразовый grant только создаёт nati
   Telegram/MAX, preferred и управление.
 - `content/masterclass/course/course.json` — переставить и открыть messenger step
   сразу после дневника и до анкеты; обновить check/summary.
-- `backend/app/course_structure_service.py`, `masterclass_routes.py` — реальный
-  completion guard «linked хотя бы один messenger» и revision policy.
+- `backend/app/course_structure_service.py`, `masterclass_routes.py` —
+  policy-filtered порядок, чтение/запись progress по stable ID, совместимый
+  перевод legacy index и реальный completion guard «linked хотя бы один
+  messenger».
 - `backend/app/static/masterclass.js` /
   `masterclass-first-days-preview.html` — обе кнопки, polling обоих статусов,
   выбор preferred, понятные states.

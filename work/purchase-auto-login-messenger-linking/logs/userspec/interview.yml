@@ -3,9 +3,9 @@
 
 interview_metadata:
   started: "2026-09-20 20:40:02+03:00"
-  last_updated: "2026-09-20 22:49:00+03:00"
-  status: "in_progress"  # in_progress | completed
-  can_resume: true
+  last_updated: "2026-09-21 00:37:23+03:00"
+  status: "completed"  # in_progress | completed
+  can_resume: false
 
 conversation_history:
   - asked_at: "2026-09-20 20:40:02+03:00"
@@ -225,13 +225,13 @@ integration:
 
   data_requirements:
     score: 95
-    value: "Нужны AccountCredential с hash+encrypted copy; browser grant с hash, checkout/payment, expiry и binding; AccountSession 45 дней; существующие отдельные MessengerAccount; один user-level preferred platform; независимые link tokens; consent/contact status; MasterclassStepProgress отдельно от текущего состояния связи."
+    value: "Нужны AccountCredential с hash+encrypted copy; browser grant с hash, checkout/payment, expiry и binding; AccountSession 45 дней; существующие отдельные MessengerAccount; один user-level preferred exact account; независимые link tokens; consent/contact status; UserCoursePolicy.course_policy_version; MasterclassStepProgress со stable step_id вместо авторитетного позиционного индекса."
     gaps: []
     required: false
 
   migration_needs:
     score: 98
-    value: "Сохранить существующие credentials/sessions/messenger history. При User без credential создать его один раз; при credential не запускать onboarding. Preferred хранит exact MessengerAccount: single link сохраняется, dual legacy получает Telegram, duplicate same-platform identities детерминированно оставляют последнюю активную deliverable, остальные historical. Existing contact-scoped automatic runs мигрируют к user-scoped state с per-delivery Contact, сохраняя callbacks уже отправленных steps. Старые credential links доживают до expiry, новый flow их не выпускает. Новая messenger requirement version фиксируется в UserCoursePolicy только при первой выдаче Masterclass access после cutoff; имевшие доступ раньше не меняются при позднем первом открытии или повторной покупке."
+    value: "Сохранить существующие credentials/sessions/messenger history. При User без credential создать его один раз; при credential не запускать onboarding. Preferred хранит exact MessengerAccount: single link сохраняется, dual legacy получает Telegram, duplicate same-platform identities детерминированно оставляют последнюю активную deliverable, остальные historical. Existing contact-scoped automatic runs мигрируют к user-scoped state с per-delivery Contact, сохраняя callbacks уже отправленных steps. Старые credential links доживают до expiry, новый flow их не выпускает. Новая messenger requirement version фиксируется в UserCoursePolicy только при первой выдаче Masterclass access после cutoff; имевшие доступ раньше не меняются при позднем первом открытии или повторной покупке. До перестановки Day 1 все старые MasterclassStepProgress backfill-ятся из точного предрелизного manifest с step_index на stable step_id; неизвестная позиция, duplicate ID или конфликт строк останавливают транзакцию и выпуск."
     gaps: []
     required: false
 
