@@ -3,7 +3,6 @@ from __future__ import annotations
 from html import escape
 import json
 import mimetypes
-import os
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -11,6 +10,7 @@ from fastapi.responses import FileResponse, HTMLResponse, PlainTextResponse, Res
 
 from app.blog_content import (
     BLOG_CATEGORIES,
+    BLOG_PUBLIC_ORIGIN,
     card_html,
     load_blog_catalog,
     related_cards_html,
@@ -18,6 +18,7 @@ from app.blog_content import (
     toc_html,
 )
 from app.blog_draft_routes import optional_blog_admin, owner_cards_html, PRIVATE_HEADERS
+from app.blog_draft_service import public_payload, render_article
 from app.database import get_db
 from sqlalchemy.orm import Session
 
@@ -43,12 +44,6 @@ FAVICON_TEST_PAGES = {
     "face": ("Главная — фотография", "favicon-test-face.png"),
 }
 FAVICON_TEST_VERSION = "20260831a"
-BLOG_PUBLIC_ORIGIN = os.getenv(
-    "BLOG_PUBLIC_ORIGIN",
-    "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
-).rstrip("/")
-
-
 def _template(name: str) -> str:
     return (BLOG_DIR / name).read_text(encoding="utf-8")
 
@@ -105,12 +100,17 @@ def favicon_test_page(variant: str) -> HTMLResponse:
 
 
 @router.get("/blog/articles/{slug}", include_in_schema=False)
-def blog_article(slug: str) -> HTMLResponse:
+def blog_article(slug: str, db: Session = Depends(get_db)) -> HTMLResponse:
     catalog = load_blog_catalog()
     article = catalog.by_slug(slug)
     if article is None:
         raise HTTPException(status_code=404, detail="article not found")
-    body, toc = render_article_body(catalog, article)
+    published = public_payload(db, slug)
+    body, toc = (
+        render_article(slug, published, public=True)
+        if published is not None
+        else render_article_body(catalog, article)
+    )
     canonical = f"{BLOG_PUBLIC_ORIGIN}/articles/{article.slug}"
     structured_data = json.dumps(
         {

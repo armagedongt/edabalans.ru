@@ -20,7 +20,7 @@ module_id: platform.blog
 | Голос, разрешения правки, writer pass | [Писарь](../../../../content/author-voice/README.md), `platform.content` |
 | Размеры и оформление материалов | [ARTICLE_STANDARD](../../ARTICLE_STANDARD.md) |
 | Публичные metadata, robots, sitemap | `backend/app/blog_routes.py` |
-| Закрытые версии Markdown на модерации | `backend/app/blog_draft_service.py`, `managed_document_versions` |
+| Черновые и опубликованные версии Markdown существующих статей | `backend/app/blog_draft_service.py`, `managed_document_versions` |
 | API и owner-only редактор | [BLOG_API_AUTHORING](../../BLOG_API_AUTHORING.md) |
 | Происхождение, версии и дубли исходников | [Библиотека](../../../KNOWLEDGE_LIBRARY.md) |
 | Источники переходов, Start, покупка | [LINKS_AND_ATTRIBUTION](../telegram/LINKS_AND_ATTRIBUTION.md) |
@@ -51,15 +51,19 @@ module_id: platform.blog
 
 ## Что существует и что ещё не запущено
 
-Работают Git-backed Markdown-публикации, серверный renderer, локальные медиа,
+Работают manifest-backed идентичности и SEO, серверный renderer, локальные медиа,
 Article/Person, canonical/Open Graph, robots/sitemap, 15 карточек на страницу,
-общие footer/cookie и ручные related. Для подготовки следующей волны работает
-закрытый контур: загрузка полного Markdown-пакета через API, версионное хранение,
-статусы «Служебная»/«На модерации», предпросмотр и точечная правка Markdown.
-Он не меняет публичный manifest и не выпускает статью сам.
+общие footer/cookie и ручные related. Девять существующих статей автоматически
+доступны в закрытом Markdown-редакторе. Сохранение создаёт draft на модерации,
+а отдельное подтверждённое действие выпускает сохранённую версию без deploy.
+Редактор открывается через существующий вход администратора на
+`https://edabalans.ru/blog`; публичный домен блога остаётся только читательской
+поверхностью и не принимает закрытые editor/API-маршруты.
+Неизвестный slug создать нельзя; будущий create-контур описан в
+`docs/plans/BLOG_NEW_ARTICLE_API.md`.
 
 Пока **не запущены** blog-specific аналитика/цели Метрики, popup,
-автоматический related и автоматический публичный выпуск из API. Наличие схемы Article или
+автоматический related и создание новых статей через API. Наличие схемы Article или
 `data-tracking-key` не является подключённой аналитикой.
 
 Подготовка этих изменений ведётся в `work/blog-seo-analytics/`; это временные

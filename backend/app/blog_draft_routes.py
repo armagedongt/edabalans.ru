@@ -12,12 +12,15 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy.orm import Session
 
 from app.auth import admin_identity, security
-from app.blog_content import toc_html
+from app.blog_content import BLOG_PUBLIC_ORIGIN, toc_html
 from app.blog_draft_service import (
     active_article,
     active_articles,
     article_versions,
+    effective_article_payload,
     media_bytes,
+    publication_status,
+    publish_article,
     render_article,
     save_package,
     serialize_article,
@@ -153,6 +156,12 @@ class DraftPreview(BaseModel):
     markdown: str | None = Field(default=None, min_length=1, max_length=250_000)
 
 
+class DraftPublish(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    expected_version: int = Field(ge=1)
+    confirm: Literal[True]
+
+
 def optional_blog_admin(
     request: Request,
     credentials: HTTPBasicCredentials | None = Depends(security),
@@ -199,7 +208,7 @@ def draft_index(
 ) -> dict:
     return {
         "ok": True,
-        "articles": [serialize_article(item, source=False) for item in active_articles(db)],
+        "articles": [serialize_article(item, source=False, db=db) for item in active_articles(db)],
     }
 
 
@@ -210,7 +219,7 @@ def draft_source(
     article = active_article(db, slug)
     return {
         "ok": True,
-        "article": serialize_article(article, source=True),
+        "article": serialize_article(article, source=True, db=db),
         "history": [
             {
                 "version": item.version_no,
@@ -238,7 +247,7 @@ def put_draft(
         expected_version=body.expected_version,
         admin=admin,
     )
-    return {"ok": True, "article": serialize_article(article, source=False)}
+    return {"ok": True, "article": serialize_article(article, source=False, db=db)}
 
 
 @router.patch("/admin/api/blog/articles/{slug}/text")
@@ -255,7 +264,29 @@ def patch_draft_text(
         expected_version=body.expected_version,
         admin=admin,
     )
-    return {"ok": True, "article": serialize_article(article, source=True)}
+    return {"ok": True, "article": serialize_article(article, source=True, db=db)}
+
+
+@router.post("/admin/api/blog/articles/{slug}/publish")
+def publish_draft(
+    slug: str,
+    body: DraftPublish,
+    admin: str = Depends(require_blog_mutation),
+    db: Session = Depends(get_db),
+) -> dict:
+    published = publish_article(
+        db,
+        slug=slug,
+        expected_version=body.expected_version,
+        admin=admin,
+    )
+    draft = active_article(db, slug)
+    return {
+        "ok": True,
+        "article": serialize_article(draft, source=True, db=db),
+        "published_version": published.version_no,
+        "public_url": f"{BLOG_PUBLIC_ORIGIN}/articles/{slug}",
+    }
 
 
 @router.post("/admin/api/blog/articles/{slug}/preview")
@@ -266,7 +297,7 @@ def preview_draft(
     db: Session = Depends(get_db),
 ) -> dict:
     article = active_article(db, slug)
-    html, toc = render_article(slug, article.payload, body.markdown)
+    html, toc = render_article(slug, effective_article_payload(article), body.markdown)
     return {
         "ok": True,
         "html": html,
@@ -293,15 +324,21 @@ def draft_page(
     db: Session = Depends(get_db),
 ) -> HTMLResponse:
     article = _owner_article(slug, identity, db)
-    payload = article.payload
+    payload = effective_article_payload(article)
+    editorial_status, _ = publication_status(db, article)
     body, toc = render_article(slug, payload)
     hero = ""
-    hero_url = (
-        f"/blog/drafts/{escape(slug, quote=True)}/media/"
-        f"{escape(payload['hero'], quote=True)}"
-        if payload.get("hero")
-        else ""
+    hero_item = next(
+        (item for item in payload["media"] if item["name"] == payload.get("hero")),
+        None,
     )
+    hero_url = ""
+    if hero_item is not None:
+        hero_url = (
+            f"/blog/media/{escape(hero_item['name'], quote=True)}"
+            if hero_item.get("storage") == "git"
+            else f"/blog/drafts/{escape(slug, quote=True)}/media/{escape(hero_item['name'], quote=True)}"
+        )
     if payload.get("hero") and f'<img src="{hero_url}"' not in body:
         hero_name = escape(payload["hero"], quote=True)
         hero = (
@@ -313,7 +350,7 @@ def draft_page(
         "{{CATEGORY}}": escape(payload["category"]),
         "{{VERSION}}": str(article.version_no),
         "{{VISIBILITY}}": "Служебная" if payload["visibility"] == "internal" else "Публичная",
-        "{{STATUS}}": "На модерации",
+        "{{STATUS}}": "Опубликована" if editorial_status == "published" else "На модерации",
         "{{HERO}}": hero,
         "{{ARTICLE_BODY}}": body,
         "{{TOC_DESKTOP}}": toc_html(toc, mobile=False),
@@ -336,7 +373,7 @@ def draft_editor(
     return FileResponse(BLOG_DIR / "draft-editor.html", headers=PRIVATE_HEADERS)
 
 
-@router.get("/blog/drafts/{slug}/media/{name}", include_in_schema=False)
+@router.get("/blog/drafts/{slug}/media/{name:path}", include_in_schema=False)
 def draft_media(
     slug: str,
     name: str,
@@ -355,9 +392,9 @@ def draft_media(
 def owner_cards_html(db: Session) -> str:
     cards = []
     for article in active_articles(db):
-        item = article.payload
+        item = effective_article_payload(article)
         visibility = item["visibility"]
-        status = item["editorial_status"]
+        status, _ = publication_status(db, article)
         cards.append(
             '<article class="owner-card" '
             f'data-owner-visibility="{escape(visibility, quote=True)}" '
@@ -365,7 +402,7 @@ def owner_cards_html(db: Session) -> str:
             f'<span class="card-tag">{escape(item["category"])}</span>'
             f'<h3>{escape(item["title"])}</h3>'
             f'<p>{"Служебная" if visibility == "internal" else "Публичная"} · '
-            f'На модерации · версия {article.version_no}</p>'
+            f'{"Опубликована" if status == "published" else "На модерации"} · версия {article.version_no}</p>'
             '<div class="owner-card-actions">'
             f'<a href="/blog/drafts/{escape(article.document_key, quote=True)}">Открыть</a>'
             f'<a href="/blog/drafts/{escape(article.document_key, quote=True)}/edit">Редактировать</a>'

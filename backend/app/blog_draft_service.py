@@ -22,11 +22,14 @@ from app.blog_content import (
     BLOG_CATEGORIES,
     SLUG_RE,
     add_heading_anchors,
+    default_content_dir,
+    load_blog_catalog,
     render_blog_component,
 )
 from app.managed_documents import (
     active_document,
     document_hash,
+    ensure_seed_document,
     publish_document,
     version_history,
 )
@@ -35,6 +38,7 @@ from app.public_cta_catalog import public_cta
 
 
 DOCUMENT_TYPE = "blog-article-draft"
+PUBLISHED_DOCUMENT_TYPE = "blog-article-published"
 SCHEMA_VERSION = 1
 MAX_MARKDOWN_BYTES = 250 * 1024
 MAX_MEDIA_COUNT = 8
@@ -46,6 +50,10 @@ MAX_IMAGE_PIXELS = 25_000_000
 MEDIA_NAME_RE = re.compile(r"[a-z0-9][a-z0-9_-]{0,91}\.(?:png|jpg|webp)")
 MEDIA_MIME = {"png": "image/png", "jpg": "image/jpeg", "webp": "image/webp"}
 PIL_FORMAT = {"png": "PNG", "jpg": "JPEG", "webp": "WEBP"}
+BLOG_CTA_RE = re.compile(
+    r"\n*blog_cta\(\s*\n\s*[a-z0-9_-]+\s*\n\)",
+    re.MULTILINE,
+)
 
 
 def _invalid(detail: str) -> HTTPException:
@@ -59,7 +67,13 @@ def _valid_source(value: str) -> bool:
     return parsed.scheme in {"http", "https"} and bool(parsed.netloc)
 
 
-def _validate_markdown(markdown: str, media_names: set[str]) -> str:
+def _media_source(item: dict) -> str:
+    if item.get("storage") == "git":
+        return f"/blog/media/{item['name']}"
+    return f"/media/{item['name']}"
+
+
+def _validate_markdown(markdown: str, media: list[dict]) -> str:
     if not markdown.strip():
         raise _invalid("Markdown статьи не может быть пустым")
     if len(markdown.encode("utf-8")) > MAX_MARKDOWN_BYTES:
@@ -76,7 +90,7 @@ def _validate_markdown(markdown: str, media_names: set[str]) -> str:
         raise _invalid("Компоненты и CTA не хранятся в Markdown статьи")
 
     image_sources = re.findall(r"!\[[^\]]*\]\(([^\s)]+)", markdown)
-    allowed = {f"/media/{name}" for name in media_names}
+    allowed = {_media_source(item) for item in media}
     if any(source not in allowed for source in image_sources):
         raise _invalid("Изображение должно ссылаться на media из того же пакета")
     markdown_to_article_html(markdown)
@@ -196,7 +210,7 @@ def prepare_package(slug: str, source: dict) -> dict:
     if hero is not None and hero not in seen:
         raise _invalid("Hero должен ссылаться на изображение из пакета")
     markdown = str(source.get("markdown") or "")
-    markdown_sha256 = _validate_markdown(markdown, seen)
+    markdown_sha256 = _validate_markdown(markdown, media)
     source_id = source.get("source_id")
     if source_id is not None and (not str(source_id).strip() or len(str(source_id)) > 160):
         raise _invalid("source_id превышает 160 символов")
@@ -218,16 +232,157 @@ def prepare_package(slug: str, source: dict) -> dict:
     }
 
 
+def _existing_catalog_article(slug: str):
+    catalog = load_blog_catalog()
+    article = catalog.by_slug(slug)
+    if article is None:
+        raise HTTPException(404, "Материал не найден")
+    return catalog, article
+
+
+def _git_seed_payload(slug: str) -> dict:
+    catalog, article = _existing_catalog_article(slug)
+    markdown = (catalog.content_dir / "articles" / article.body_file).read_text(encoding="utf-8")
+    markdown, cta_count = BLOG_CTA_RE.subn("", markdown)
+    if cta_count != 1:
+        raise ValueError(f"blog article {article.source_id} must contain exactly one CTA directive")
+    markdown = markdown.rstrip() + "\n"
+    names = tuple(dict.fromkeys((article.hero.file, article.card.file, *article.media)))
+    media = []
+    for name in names:
+        path = catalog.content_dir / "media" / name
+        raw = path.read_bytes()
+        mime = "image/webp" if path.suffix.casefold() == ".webp" else (
+            "image/gif" if path.suffix.casefold() == ".gif" else f"image/{path.suffix.lstrip('.').casefold().replace('jpg', 'jpeg')}"
+        )
+        width = height = 0
+        try:
+            with Image.open(BytesIO(raw)) as image:
+                width, height = image.size
+        except (UnidentifiedImageError, OSError):
+            pass
+        media.append({
+            "name": name,
+            "storage": "git",
+            "sha256": hashlib.sha256(raw).hexdigest(),
+            "mime": mime,
+            "provenance": (
+                article.hero.provenance if name == article.hero.file else
+                article.card.provenance if name == article.card.file else
+                f"content://blog/media/{name}"
+            ),
+            "alt": (
+                article.hero.alt if name == article.hero.file else
+                article.card.alt if name == article.card.file else ""
+            ),
+            "width": width,
+            "height": height,
+        })
+    return {
+        "title": article.title,
+        "excerpt": article.excerpt,
+        "category": article.category,
+        "markdown": markdown,
+        "markdown_sha256": _validate_markdown(markdown, media),
+        "visibility": "public",
+        "editorial_status": "moderation",
+        "cta": article.cta,
+        "sources": [f"content://blog/{article.source_id}"],
+        "source_id": article.source_id,
+        "hero": article.hero.file,
+        "media": media,
+        "metadata": {
+            "body_file": article.body_file,
+            "related_source_ids": list(article.related_source_ids),
+            "seed_source": "content/blog/manifest.json",
+        },
+    }
+
+
+def ensure_existing_article(db: Session, slug: str) -> ManagedDocumentVersion:
+    _existing_catalog_article(slug)
+    return ensure_seed_document(
+        db,
+        document_type=DOCUMENT_TYPE,
+        document_key=slug,
+        schema_version=SCHEMA_VERSION,
+        payload=_git_seed_payload(slug),
+    )
+
+
+def _published_article(db: Session, slug: str) -> ManagedDocumentVersion | None:
+    return active_document(db, PUBLISHED_DOCUMENT_TYPE, slug)
+
+
+def _matches_manifest_contract(payload: dict, seed: dict) -> bool:
+    controlled = (
+        "title",
+        "excerpt",
+        "category",
+        "visibility",
+        "cta",
+        "source_id",
+        "hero",
+    )
+    if any(payload.get(key) != seed.get(key) for key in controlled):
+        return False
+    payload_media = [
+        (item.get("name"), item.get("storage"))
+        for item in payload.get("media", [])
+    ]
+    seed_media = [(item["name"], item.get("storage")) for item in seed["media"]]
+    return payload_media == seed_media
+
+
+def _manifest_managed(payload: dict) -> bool:
+    return payload.get("metadata", {}).get("seed_source") == "content/blog/manifest.json"
+
+
+def effective_article_payload(version: ManagedDocumentVersion) -> dict:
+    """Refresh manifest-owned fields without discarding a saved body revision."""
+    if not _manifest_managed(version.payload):
+        return version.payload
+    seed = _git_seed_payload(version.document_key)
+    if version.version_no == 1 and version.created_by == "system-seed":
+        return seed
+    seed["markdown"] = version.payload["markdown"]
+    seed["markdown_sha256"] = version.payload["markdown_sha256"]
+    seed["visibility"] = version.payload.get("visibility", "public")
+    return seed
+
+
+def publication_status(db: Session, version: ManagedDocumentVersion) -> tuple[str, int | None]:
+    published = _published_article(db, version.document_key)
+    if published is not None:
+        payload = effective_article_payload(version)
+        return (
+            "published"
+            if published.payload.get("markdown_sha256")
+            == payload.get("markdown_sha256")
+            else "moderation",
+            published.version_no,
+        )
+    return (
+        "published"
+        if version.version_no == 1 and version.created_by == "system-seed"
+        else "moderation",
+        0,
+    )
+
+
 def active_article(db: Session, slug: str) -> ManagedDocumentVersion:
     article = active_document(db, DOCUMENT_TYPE, slug)
     if article is None:
-        raise HTTPException(404, "Материал не найден")
+        article = ensure_existing_article(db, slug)
+    else:
+        _existing_catalog_article(slug)
     return article
 
 
 def save_package(
     db: Session, *, slug: str, source: dict, expected_version: int, admin: str
 ) -> ManagedDocumentVersion:
+    _existing_catalog_article(slug)
     payload = prepare_package(slug, source)
     current = active_document(db, DOCUMENT_TYPE, slug)
     if current is None:
@@ -266,10 +421,8 @@ def update_text(
     db: Session, *, slug: str, markdown: str, expected_version: int, admin: str
 ) -> ManagedDocumentVersion:
     current = active_article(db, slug)
-    payload = deepcopy(current.payload)
-    payload["markdown_sha256"] = _validate_markdown(
-        markdown, {item["name"] for item in payload["media"]}
-    )
+    payload = deepcopy(effective_article_payload(current))
+    payload["markdown_sha256"] = _validate_markdown(markdown, payload["media"])
     payload["markdown"] = markdown
     payload["editorial_status"] = "moderation"
     return publish_document(
@@ -288,24 +441,32 @@ def article_versions(db: Session, slug: str) -> list[ManagedDocumentVersion]:
 
 
 def active_articles(db: Session) -> list[ManagedDocumentVersion]:
+    catalog = load_blog_catalog()
+    for article in catalog.published:
+        ensure_existing_article(db, article.slug)
+    allowed = [article.slug for article in catalog.published]
     return list(
         db.scalars(
             select(ManagedDocumentVersion)
             .where(
                 ManagedDocumentVersion.document_type == DOCUMENT_TYPE,
                 ManagedDocumentVersion.is_active.is_(True),
+                ManagedDocumentVersion.document_key.in_(allowed),
             )
             .order_by(ManagedDocumentVersion.created_at.desc())
         )
     )
 
 
-def serialize_article(version: ManagedDocumentVersion, *, source: bool) -> dict:
-    payload = version.payload
+def serialize_article(version: ManagedDocumentVersion, *, source: bool, db: Session | None = None) -> dict:
+    payload = effective_article_payload(version)
     media = [
         {
             **{key: item[key] for key in ("name", "sha256", "mime", "provenance", "alt", "width", "height")},
-            "url": f"/blog/drafts/{version.document_key}/media/{item['name']}",
+            "url": (
+                f"/blog/media/{item['name']}" if item.get("storage") == "git" else
+                f"/blog/drafts/{version.document_key}/media/{item['name']}"
+            ),
         }
         for item in payload["media"]
     ]
@@ -327,30 +488,113 @@ def serialize_article(version: ManagedDocumentVersion, *, source: bool) -> dict:
         "updated_at": version.created_at.isoformat(),
         "updated_by": version.created_by,
     }
+    if db is not None:
+        status, published_version = publication_status(db, version)
+        result["editorial_status"] = status
+        result["published_version"] = published_version
     if source:
         result["markdown"] = payload["markdown"]
     return result
 
 
 def media_bytes(version: ManagedDocumentVersion, name: str) -> tuple[bytes, str, str]:
-    item = next((value for value in version.payload["media"] if value["name"] == name), None)
+    payload = effective_article_payload(version)
+    item = next((value for value in payload["media"] if value["name"] == name), None)
     if item is None:
         raise HTTPException(404, "Изображение не найдено")
-    raw = base64.b64decode(item["content_base64"], validate=True)
+    if item.get("storage") == "git":
+        raw = (default_content_dir() / "media" / item["name"]).read_bytes()
+    else:
+        raw = base64.b64decode(item["content_base64"], validate=True)
     if hashlib.sha256(raw).hexdigest() != item["sha256"]:
         raise HTTPException(503, "Нарушена целостность изображения")
     return raw, item["mime"], item["sha256"]
 
 
-def render_article(slug: str, payload: dict, markdown: str | None = None) -> tuple[str, tuple]:
+def render_article(
+    slug: str,
+    payload: dict,
+    markdown: str | None = None,
+    *,
+    public: bool = False,
+) -> tuple[str, tuple]:
     value = payload["markdown"] if markdown is None else markdown
-    _validate_markdown(value, {item["name"] for item in payload["media"]})
+    _validate_markdown(value, payload["media"])
     for item in payload["media"]:
+        if item.get("storage") == "git":
+            continue
         value = re.sub(
             r"(?<=\]\()" + re.escape(f"/media/{item['name']}") + r"(?=[\s)])",
-            f"/blog/drafts/{slug}/media/{item['name']}",
+            (
+                f"/articles/{slug}/media/{item['name']}"
+                if public
+                else f"/blog/drafts/{slug}/media/{item['name']}"
+            ),
             value,
         )
     body = markdown_to_article_html(value)
     body += render_blog_component("blog_cta", [payload["cta"]])
     return add_heading_anchors(body)
+
+
+def publish_article(
+    db: Session, *, slug: str, expected_version: int, admin: str
+) -> ManagedDocumentVersion:
+    draft = active_article(db, slug)
+    if draft.version_no != expected_version:
+        raise HTTPException(409, "Материал уже изменён в другой вкладке")
+    draft_payload = effective_article_payload(draft)
+    if draft_payload.get("visibility") != "public":
+        raise _invalid("Служебный материал нельзя опубликовать")
+    public_payload = _git_seed_payload(slug)
+    if not _manifest_managed(draft.payload) and not _matches_manifest_contract(
+        draft.payload, public_payload
+    ):
+        raise _invalid(
+            "На текущем этапе публично меняется только Markdown; metadata и media берутся из manifest"
+        )
+    public_payload["markdown"] = draft_payload["markdown"]
+    public_payload["markdown_sha256"] = _validate_markdown(
+        draft_payload["markdown"], public_payload["media"]
+    )
+    current = _published_article(db, slug)
+    if current is None:
+        version = ManagedDocumentVersion(
+            document_type=PUBLISHED_DOCUMENT_TYPE,
+            document_key=slug,
+            schema_version=SCHEMA_VERSION,
+            version_no=1,
+            payload=public_payload,
+            content_hash=document_hash(public_payload),
+            created_by=admin,
+            is_active=True,
+        )
+        db.add(version)
+        try:
+            db.commit()
+        except IntegrityError as exc:
+            db.rollback()
+            raise HTTPException(409, "Публикация уже изменилась в другой вкладке") from exc
+        db.refresh(version)
+        return version
+    return publish_document(
+        db,
+        document_type=PUBLISHED_DOCUMENT_TYPE,
+        document_key=slug,
+        schema_version=SCHEMA_VERSION,
+        payload=public_payload,
+        expected_version=current.version_no,
+        admin=admin,
+    )
+
+
+def public_payload(db: Session, slug: str) -> dict | None:
+    """Overlay the published body on the current manifest-owned contract."""
+    published = _published_article(db, slug)
+    if published is None:
+        _existing_catalog_article(slug)
+        return None
+    payload = _git_seed_payload(slug)
+    payload["markdown"] = published.payload["markdown"]
+    payload["markdown_sha256"] = published.payload["markdown_sha256"]
+    return payload

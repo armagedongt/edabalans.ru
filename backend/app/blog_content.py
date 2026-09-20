@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from html import escape
 import json
+import os
 from pathlib import Path
 import re
 import unicodedata
@@ -24,6 +25,10 @@ BLOG_CATEGORIES = (
     "Ну, типа... ЗОЖ",
 )
 SLUG_RE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
+BLOG_PUBLIC_ORIGIN = os.getenv(
+    "BLOG_PUBLIC_ORIGIN",
+    "https://blog.xn-----jlceacr3bggd8ajed5a6kl.xn--p1ai",
+).rstrip("/")
 
 
 @dataclass(frozen=True)

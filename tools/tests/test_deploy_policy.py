@@ -108,6 +108,14 @@ class DeployPolicyTests(unittest.TestCase):
         )
         self.assertIn("/blog/assets/${favicon_asset}", deploy)
 
+    def test_blog_host_does_not_expose_the_owner_editor_surface(self) -> None:
+        source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
+        blog_block = source.split("{$BLOG_DOMAIN} {", 1)[1]
+
+        self.assertNotIn("handle /blog/drafts/*", blog_block)
+        self.assertNotIn("handle /admin/api/blog/articles*", blog_block)
+        self.assertNotIn("handle /admin/*", blog_block)
+
     def test_favicon_is_served_and_smoke_checked_on_every_managed_domain(self) -> None:
         source = (REPOSITORY_ROOT / "infra/caddy/Caddyfile").read_text(encoding="utf-8")
         deploy = (REPOSITORY_ROOT / "infra/deploy/edabalans-deploy").read_text(encoding="utf-8")
@@ -200,6 +208,8 @@ class DeployPolicyTests(unittest.TestCase):
         self.assertEqual(source.count("if: steps.impact.outputs.backend == 'true'"), 3)
         self.assertEqual(source.count("if: steps.impact.outputs.telegram == 'true'"), 2)
         self.assertIn("if: steps.impact.outputs.migration == 'true'", source)
+        self.assertIn("run test:blog-draft-authoring", source)
+        self.assertIn("Base.metadata.create_all(engine)", source)
 
     @unittest.skipUnless(shutil.which("bash"), "deploy classifier requires bash")
     def test_backup_impact_classification_uses_real_git_diffs(self) -> None:

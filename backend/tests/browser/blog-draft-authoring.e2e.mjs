@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdir, readFile } from 'node:fs/promises';
+import { mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 
@@ -8,8 +8,7 @@ const modulesRoot = process.env.CODEX_NODE_MODULES;
 const { chromium } = modulesRoot ? require(path.join(modulesRoot, 'playwright')) : await import('playwright');
 const baseURL = process.env.BLOG_QA_BASE_URL || 'http://127.0.0.1:8765';
 const output = process.env.QA_OUT;
-const slug = 'vse-znayut-nikto-ne-delaet';
-const internalSlug = 'vse-znayut-nikto-ne-delaet-internal';
+const slug = 'skolko-vremeni-nuzhno-na-pohudenie';
 
 const browser = await chromium.launch({ headless: true });
 const username = process.env.BLOG_QA_USER || 'qa-owner';
@@ -23,38 +22,12 @@ const page = await context.newPage();
 
 try {
   if (output) await mkdir(output, { recursive: true });
-  const fixtureRoot = new URL('../fixtures/blog-draft-real/', import.meta.url);
-  const metadata = JSON.parse(await readFile(new URL('real-article.metadata.json', fixtureRoot), 'utf8'));
-  const markdown = await readFile(new URL('real-article.md', fixtureRoot), 'utf8');
-  const media = await Promise.all(metadata.media.map(async item => ({
-    ...item,
-    alt: '',
-    content_base64: (await readFile(new URL(`media/${item.name}`, fixtureRoot))).toString('base64'),
-  })));
-  const internalResponse = await context.request.put(`${baseURL}/admin/api/blog/articles/${internalSlug}`, {
-    data: {
-      expected_version: 0,
-      title: `${metadata.title} · служебная копия`,
-      excerpt: '',
-      category: metadata.category,
-      markdown,
-      visibility: 'internal',
-      editorial_status: 'moderation',
-      cta: metadata.cta,
-      sources: metadata.sources,
-      source_id: metadata.source_id,
-      hero: metadata.hero,
-      media,
-      metadata: { e2e_fixture: true },
-    },
-  });
-  assert.ok([200, 409].includes(internalResponse.status()), `internal fixture HTTP ${internalResponse.status()}`);
   for (const width of [360, 430, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
     await page.locator('#owner-title').waitFor();
-    assert.equal(await page.locator('.owner-card').count(), 2);
-    for (const [filter, expected] of Object.entries({ all: 2, public: 1, internal: 1, moderation: 2 })) {
+    assert.equal(await page.locator('.owner-card').count(), 9);
+    for (const [filter, expected] of Object.entries({ all: 9, public: 9, internal: 0, moderation: 0 })) {
       const button = page.locator(`[data-owner-filter="${filter}"]`);
       await button.click();
       assert.equal(await button.getAttribute('aria-pressed'), 'true');
@@ -80,7 +53,7 @@ try {
 
     await page.goto(`${baseURL}/blog/drafts/${slug}/edit`, { waitUntil: 'networkidle' });
     await page.locator('#draft-markdown').waitFor();
-    assert.match(await page.locator('#draft-meta').innerText(), /На модерации/);
+    assert.match(await page.locator('#draft-meta').innerText(), /Опубликована/);
     if (width > 900) {
       const columns = await page.evaluate(() => {
         const result = document.querySelector('.draft-result').getBoundingClientRect();
@@ -112,6 +85,21 @@ try {
   await page.locator('#draft-notice').waitFor();
   await page.waitForFunction(() => /Версия \d+ сохранена/.test(document.querySelector('#draft-status')?.textContent || ''));
   assert.equal(await textarea.inputValue(), successfulEdit);
+  assert.match(await page.locator('#draft-meta').innerText(), /На модерации/);
+
+  page.once('dialog', dialog => dialog.dismiss());
+  await page.locator('#draft-publish').click();
+  assert.match(await page.locator('#draft-meta').innerText(), /На модерации/);
+  const beforeConfirmation = await context.request.get(`${baseURL}/blog/articles/${slug}`);
+  assert.doesNotMatch(await beforeConfirmation.text(), new RegExp(successfulMarker));
+
+  page.once('dialog', dialog => dialog.accept());
+  await page.locator('#draft-publish').click();
+  await page.locator('#draft-notice').getByText('Статья опубликована. Публичная страница обновлена без deploy.', { exact: true }).waitFor();
+  assert.match(await page.locator('#draft-meta').innerText(), /Опубликована/);
+  const publicResponse = await context.request.get(`${baseURL}/blog/articles/${slug}`);
+  assert.equal(publicResponse.status(), 200);
+  assert.match(await publicResponse.text(), new RegExp(successfulMarker));
 
   await page.route(`**/admin/api/blog/articles/${slug}/text`, route => route.fulfill({
     status: 409,
@@ -120,6 +108,7 @@ try {
   }));
   const edited = `${await textarea.inputValue()}\n\nЛокальная несохранённая правка.`;
   await textarea.fill(edited);
+  assert.equal(await page.locator('#draft-publish').isDisabled(), true);
   await page.locator('#draft-save').click();
   await page.locator('#draft-error').waitFor();
   assert.equal(await textarea.inputValue(), edited);
