@@ -674,7 +674,7 @@
       "title": "Как я решил пройти 100 000 шагов за один день",
       "slug": "kak-ya-reshil-proyti-100000-shagov",
       "category": "Личное",
-      "visibility": "internal",
+      "visibility": "public",
       "excerpt": "Семьдесят пять километров, ночь в лесу, отсутствие воды и очень наглядная цена идеи пройти сто тысяч шагов за сутки.",
       "source_url": "https://telegra.ph/100-000-06-28",
       "source_published_at": null,
@@ -1008,7 +1008,7 @@
           "preview_url": null
         }
       ],
-      "suggested_cta": "Не добавлять продуктовый CTA; это служебный личный материал.",
+      "suggested_cta": "Не добавлять продуктовый CTA; это личная статья.",
       "related_candidates": [
         "Эти долбаные 10 000 шагов",
         "Один небольшой прыжок — большие перемены в жизни",
@@ -1025,7 +1025,7 @@
       "title": "Один небольшой прыжок — большие перемены в жизни",
       "slug": "odin-nebolshoy-pryzhok-bolshie-peremeny",
       "category": "Личное",
-      "visibility": "internal",
+      "visibility": "public",
       "excerpt": "Один неудачный прыжок на велосипеде, травма колена и жизнь, которая после этого пошла совсем по другой дороге.",
       "source_url": "https://telegra.ph/story-09-01-3",
       "source_published_at": null,
@@ -1105,7 +1105,7 @@
           "preview_url": null
         }
       ],
-      "suggested_cta": "Не добавлять продуктовый CTA; это служебный личный материал.",
+      "suggested_cta": "Не добавлять продуктовый CTA; это личная статья.",
       "related_candidates": [
         "Как я решил пройти 100 000 шагов",
         "Как начать тренироваться и не бросить",
