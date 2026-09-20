@@ -1,0 +1,30 @@
+{
+  "schema_version": "author-review-v1",
+  "reviewer": "Codex full-source editorial review",
+  "reviewed_at": "2026-09-20T22:44:47.543122+00:00",
+  "pack_sha256": "a334ca293d19631c97b85ea8e25d47bfded04f7e11d65d67f2f4107dc83265be",
+  "draft_sha256": "cb3dd5900f822d124e7911414317f995c96959b24fc1f306903c497cb45acfbb",
+  "fact_sources": [
+    {
+      "name": "Exact selected source",
+      "fingerprint": "57a351d30b5c450745530870b9d0833708b9ff8342bc0a65580bde49d9790cc4"
+    }
+  ],
+  "checks": [
+    {
+      "id": "rewrite_continuity",
+      "result": "pass",
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+    },
+    {
+      "id": "semantic_facts",
+      "result": "pass",
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+    },
+    {
+      "id": "forbidden_claims",
+      "result": "pass",
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+    }
+  ]
+}
