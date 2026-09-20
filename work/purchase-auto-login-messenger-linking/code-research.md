@@ -138,8 +138,13 @@ native-сессию ЛК. Но текущая последовательност
 
 ### День 1 мастер-класса
 
-- `content/masterclass/course/course.json` — канонический порядок материалов.
-  Сейчас в дне 1:
+- `content/masterclass/editorial/program.md` — authoring truth порядка;
+  штатная публикация создаёт active `course-structure/masterclass-21` revision в
+  `managed_document_versions`, которая является runtime truth.
+  `content/masterclass/course/course.json` используется только как seed, если DB
+  revision ещё нет. Исследованный seed дня 1 имеет следующий порядок; migration
+  обязана отдельно прочитать фактически активную production revision, а не
+  считать seed её копией:
   1. `day-01-article-tutorial`;
   2. `day-01-article-02` — дневник питания;
   3. `day-01-article-03` — взвешивание;
@@ -159,15 +164,17 @@ native-сессию ЛК. Но текущая последовательност
   также позиционный.
 - `backend/app/masterclass_routes.py` — `completed_step_indexes(...)`, проверка
   prerequisite, `next_step` и запись completion используют текущие индексы
-  активного manifest. Поэтому физический перенос скрытого messenger step с
+  активной runtime revision. Поэтому физический перенос скрытого messenger step с
   позиции 5 на позицию 3 без migration способен заставить старый index означать
   другой материал.
 - `backend/app/course_structure_service.py::runtime_manifest(...)` сохраняет
   скрытые элементы на старых позициях именно ради legacy positional progress,
   но этого недостаточно для требуемой перестановки карточки. Совместимое решение:
-  policy-filtered активный manifest плюс authoritative progress по stable
-  `step_id`; старые индексы однократно backfill-ятся по точному предрелизному
-  manifest, включая hidden entries.
+  policy-filtered active runtime revision плюс authoritative progress по stable
+  `step_id`; старые индексы однократно backfill-ятся по snapshot фактически
+  активной предрелизной DB revision, включая hidden entries. Порядок меняется
+  через `content/masterclass/editorial/program.md` и штатную публикацию, не
+  правкой seed-файла как production source.
 - `backend/app/masterclass_routes.py` — общий complete endpoint проверяет порядок,
   но сам по себе не доказывает факт привязки messenger account. Существующий
   `completion: link_requested` означает лишь действие в UI, не успешную связь.
@@ -351,8 +358,11 @@ HTML success page. Одноразовый grant только создаёт nati
   grant endpoint; формат основной session не менять.
 - `backend/app/access_routes.py`, `backend/app/static/apps/account.html` — статус
   Telegram/MAX, preferred и управление.
-- `content/masterclass/course/course.json` — переставить и открыть messenger step
-  сразу после дневника и до анкеты; обновить check/summary.
+- `content/masterclass/editorial/program.md` и штатный publication pipeline —
+  переставить messenger step сразу после дневника и до анкеты; системные поля
+  stable ID/policy applicability должны попасть в создаваемую active runtime
+  revision. `course.json` синхронизируется только как seed, но не подменяет
+  production publication.
 - `backend/app/course_structure_service.py`, `masterclass_routes.py` —
   policy-filtered порядок, чтение/запись progress по stable ID, совместимый
   перевод legacy index и реальный completion guard «linked хотя бы один

@@ -199,17 +199,23 @@ type: feature
    присваивается версия 1; только первая выдача доступа после release cutoff
    получает версию 2. Повторная покупка, позднее первое открытие курса и изменение
    активной редакции структуры не меняют версию существующего пользователя.
-2. Активный канонический manifest остаётся единственным авторским источником
-   порядка и данных материалов. Он хранит устойчивый `step.id` и минимальные
-   правила применимости к версии курса. Для версии 1 messenger step исключён из
+2. Порядок меняется в каноническом authoring source
+   `content/masterclass/editorial/program.md` и штатно публикуется в новую
+   активную `course-structure/masterclass-21` revision в
+   `managed_document_versions`. Именно активная DB revision является runtime
+   truth; `content/masterclass/course/course.json` остаётся только seed для БД без
+   ревизий и не редактируется как способ изменить production. Опубликованная
+   структура хранит устойчивый `step.id` и минимальные правила применимости к
+   версии курса. Для версии 1 messenger step исключён из
    видимого/обязательного порядка; для версии 2 тот же
    `day-01-messenger-link` показывается после `day-01-article-02` и до
-   `day-01-article-03`. API сначала строит policy-filtered manifest, а уже из
+   `day-01-article-03`. API сначала строит policy-filtered runtime manifest, а уже из
    него — совместимые позиционные поля для клиента; отдельная вручную
    редактируемая копия порядка не создаётся.
 3. `MasterclassStepProgress` переводится с позиционного ключа на устойчивый
    `step_id`. До публикации новой структуры migration снимает точный snapshot
-   предрелизного manifest, включая скрытые элементы, и по нему транзакционно
+   фактически активной предрелизной DB revision, включая скрытые элементы, и по
+   нему транзакционно
    backfill-ит каждый существующий `(day_number, step_index)` в соответствующий
    `step_id`. Выпуск блокируется при любой ненайденной позиции, повторяющемся ID
    или конфликте нескольких строк одного пользователя на один `step_id`.
@@ -266,15 +272,16 @@ type: feature
       после дневника и до взвешивания/анкеты; старые участники и их progress не
       меняются.
 - [ ] До смены порядка все существующие строки `MasterclassStepProgress`
-      backfill-нуты из предрелизного manifest в stable `step_id`; ноль строк
-      осталось без соответствия, с неоднозначным соответствием или конфликтующим
-      дублем.
+      backfill-нуты из snapshot фактически активной предрелизной DB revision в
+      stable `step_id`; ноль строк осталось без соответствия, с неоднозначным
+      соответствием или конфликтующим дублем.
 - [ ] Пройденность, prerequisite, следующий материал и завершение дня считаются
       по stable `step_id`, а индекс старого клиента переводится через manifest
       версии конкретного пользователя и не хранится как авторитетный прогресс.
-- [ ] Один и тот же активный manifest даёт старому policy порядок без messenger
-      material, а новому policy — порядок с `day-01-messenger-link` после дневника;
-      повторная покупка не меняет policy version.
+- [ ] Одна активная runtime revision, опубликованная штатным editorial pipeline,
+      даёт старому policy порядок без messenger material, а новому policy —
+      порядок с `day-01-messenger-link` после дневника; повторная покупка не
+      меняет policy version, а `course.json` не используется для обхода DB truth.
 - [ ] Анкета и следующие обязательные материалы не открываются новому участнику,
       пока сервер не видит хотя бы один linked `MessengerAccount`; отдельного
       публичного или нового административного обхода эта функция не добавляет.
@@ -343,10 +350,12 @@ type: feature
   webhook/retry.
 - Нельзя добавлять второй источник course order, messenger status, preferred,
   copy или delivery rules. UI читает серверный контракт, а документация ссылается
-  на владельца факта. Policy-filtered порядок строится из активного канонического
-  manifest и его stable IDs; migration snapshot используется только для
-  однократного backfill старых позиционных строк и не становится редактируемым
-  manifest.
+  на владельца факта. Authoring-порядок принадлежит
+  `content/masterclass/editorial/program.md`, а policy-filtered runtime-порядок
+  строится из активной `managed_document_versions` revision и её stable IDs.
+  Migration snapshot снимается с фактически активной production revision только
+  для однократного backfill старых позиционных строк и не становится новым
+  редактируемым manifest.
 - Новые объекты имеют одного module owner: payment browser grant —
   `platform.commerce`; native session — `platform.auth`; messenger identities и
   exact preferred account — `platform.crm`; course placement —
