@@ -1,9 +1,9 @@
 {
   "schema_version": "author-review-v1",
-  "reviewer": "Codex full-source editorial review",
-  "reviewed_at": "2026-09-20T22:44:42.071222+00:00",
+  "reviewer": "Codex metadata correction review",
+  "reviewed_at": "2026-09-20T22:48:15.867550+00:00",
   "pack_sha256": "1ea2de860b3b3cc9a9b9a02b84f3dd1886a503821f3143d78febe84e1bf6687b",
-  "draft_sha256": "4555600371e553087c53bad5f4734a9a3d9623824114c186cfe714a9ca63d4e4",
+  "draft_sha256": "3de23cdeddd83d3fa117b4cd59f9ea7004f8d74024682ac78520731019c23b67",
   "fact_sources": [
     {
       "name": "Exact selected source",
@@ -14,17 +14,17 @@
     {
       "id": "rewrite_continuity",
       "result": "pass",
-      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; изменена только видимость личной статьи с internal на public по прямому решению владельца."
     },
     {
       "id": "semantic_facts",
       "result": "pass",
-      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; изменена только видимость личной статьи с internal на public по прямому решению владельца."
     },
     {
       "id": "forbidden_claims",
       "result": "pass",
-      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; удалены только площадочная навигация, промо и служебные хвосты. Научные риски вынесены отдельно."
+      "notes": "Exact full source сопоставлен с Markdown. Смысл, голос, примеры и фактура сохранены; изменена только видимость личной статьи с internal на public по прямому решению владельца."
     }
   ]
 }

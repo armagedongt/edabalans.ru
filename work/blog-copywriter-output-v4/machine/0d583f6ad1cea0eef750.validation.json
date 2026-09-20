@@ -2,9 +2,9 @@
   "schema_version": "author-validation-v1",
   "status": "pass",
   "pack_sha256": "a334ca293d19631c97b85ea8e25d47bfded04f7e11d65d67f2f4107dc83265be",
-  "draft_sha256": "cb3dd5900f822d124e7911414317f995c96959b24fc1f306903c497cb45acfbb",
-  "review_sha256": "6f5d67b317ba06fed9e57357c7512a0621e47c6ec6672a99933027386c923f5e",
-  "validated_at": "2026-09-20T22:44:47.575797+00:00",
+  "draft_sha256": "f7382c3e86f5aea4dee72491d549ed938e05d7942ac21d1d955e6d45ded22f35",
+  "review_sha256": "ffeaee05ac1fc510cc0cbf545d14860777e04a698c76338d9f8500eb824ef80a",
+  "validated_at": "2026-09-20T22:48:16.513626+00:00",
   "missing_verbatim": [],
   "unresolved_placeholders": [],
   "protected_layer_errors": [],
@@ -21,7 +21,7 @@
     ],
     "comparison_texts": [],
     "source_characters": 7788,
-    "draft_characters": 9215
+    "draft_characters": 9201
   },
   "semantic_fact_review_required_once": [
     "Центральный тезис и авторские примеры сохранены.",
@@ -35,8 +35,8 @@
     "source_significant_tokens": 1114,
     "token_coverage": 1.0,
     "source_visible_characters": 7582,
-    "draft_visible_characters": 9147,
-    "visible_length_ratio": 1.2064099182273806
+    "draft_visible_characters": 9133,
+    "visible_length_ratio": 1.2045634397256662
   },
   "pending_manual_reviews": [
     {
@@ -62,5 +62,5 @@
     }
   ],
   "manual_review_errors": [],
-  "fact_review_expires_at": "2026-09-21T22:44:47.543122+00:00"
+  "fact_review_expires_at": "2026-09-21T22:48:16.346362+00:00"
 }

@@ -7,14 +7,14 @@ external_id: "0d583f6ad1cea0eef750"
 source_url: "https://telegra.ph/story-09-01-3"
 source_published_at: ""
 adaptation_mode: "full_source"
-visibility: "internal"
+visibility: "public"
 status: "editorial-review"
 hero:
   type: "image"
   source_url: "/blog/media/0d583f6ad1cea0eef750/01.webp"
   alt: "Обложка материала «Один небольшой прыжок — большие перемены в жизни»"
 editorial_notes:
-  suggested_cta: "Не добавлять продуктовый CTA; это служебный личный материал."
+  suggested_cta: "Не добавлять продуктовый CTA; это личная статья."
   related_candidates:
     - "Как я решил пройти 100 000 шагов"
     - "Как начать тренироваться и не бросить"

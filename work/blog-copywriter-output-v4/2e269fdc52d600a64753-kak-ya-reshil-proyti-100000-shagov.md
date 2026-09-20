@@ -7,14 +7,14 @@ external_id: "2e269fdc52d600a64753"
 source_url: "https://telegra.ph/100-000-06-28"
 source_published_at: ""
 adaptation_mode: "full_source"
-visibility: "internal"
+visibility: "public"
 status: "editorial-review"
 hero:
   type: "image"
   source_url: "/blog/media/2e269fdc52d600a64753/01.webp"
   alt: "Обложка материала «Как я решил пройти 100 000 шагов за один день»"
 editorial_notes:
-  suggested_cta: "Не добавлять продуктовый CTA; это служебный личный материал."
+  suggested_cta: "Не добавлять продуктовый CTA; это личная статья."
   related_candidates:
     - "Эти долбаные 10 000 шагов"
     - "Один небольшой прыжок — большие перемены в жизни"
