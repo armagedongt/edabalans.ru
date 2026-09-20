@@ -283,7 +283,7 @@ def test_every_published_article_and_declared_image_is_served() -> None:
                 image.load()
 
 
-def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() -> None:
+def test_confirmed_static_batch_is_published_and_excluded_stories_are_not_public() -> None:
     catalog = load_blog_catalog()
     slugs = {article.slug for article in catalog.published}
     batch_sources = {
@@ -297,8 +297,6 @@ def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() 
         "sdelat-pohudenie-proshche": "14021584",
         "hodit-chtoby-hudet": "14102926",
         "hochesh-hudet-esh-kartoshku": "14183275",
-        "kak-sdelat-celnozernovoy-ris-sedobnym": "CHernovik-08-18-3",
-        "dva-sousa-krasnoe-i-beloe": "Dva-sousa-Krasnoe-i-beloe-03-18",
         "pravila-bezopasnosti-za-shvedskim-stolom": "12857458",
         "mozhno-li-pit-vo-vremya-edy": "693339",
         "saharozamenitel-vyzyvaet-rak-net": "Sahar-09-18",
@@ -318,8 +316,6 @@ def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() 
         "sdelat-pohudenie-proshche": ["6319472e05580b33dc89c50c6424331cda81f7613f4df777112f3ba2935bf3f0"],
         "hodit-chtoby-hudet": ["ca7d25a7f226b91cc7e9bbec93a6de91ac5bc6880432678a237c7d4be5f463e5"],
         "hochesh-hudet-esh-kartoshku": ["38d590cc78fd16c4d05346ae858f8fbf24dcdc89e4f723c1a4d5560cfcf5f6dd"],
-        "kak-sdelat-celnozernovoy-ris-sedobnym": ["16d2cd491aab0e6c6ebb754a0734e1df57d2734f3218f906b070f5093bc06183"],
-        "dva-sousa-krasnoe-i-beloe": ["4f15c567332764664350977c9b654f9c94e5c23d9994cd9c5f8692a52b5e9bce"],
         "pravila-bezopasnosti-za-shvedskim-stolom": ["3d32d1cfe629a3a3be89644ea93475560261bafe4099d43c5926f53b2186984f"],
         "mozhno-li-pit-vo-vremya-edy": ["05c62f3079c14cfd5f2e4514c047fe17e736a777f650aed805dfb506bcca4959"],
         "saharozamenitel-vyzyvaet-rak-net": ["67375ce6b528b13aa57d1b355ef9f8bf41d158e494dafa469287d7410c30f9b0"],
@@ -343,8 +339,6 @@ def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() 
         "sdelat-pohudenie-proshche": ["https://pikabu.ru/story/sdelat_pokhudenie_proshche_14021584"],
         "hodit-chtoby-hudet": ["https://pikabu.ru/story/khodit_chtobyi_khudet_14102926"],
         "hochesh-hudet-esh-kartoshku": ["https://pikabu.ru/story/khochesh_khudet_zatknis_i_esh_kartoshku_14183275"],
-        "kak-sdelat-celnozernovoy-ris-sedobnym": ["https://telegra.ph/CHernovik-08-18-3"],
-        "dva-sousa-krasnoe-i-beloe": ["https://telegra.ph/Dva-sousa-Krasnoe-i-beloe-03-18"],
         "pravila-bezopasnosti-za-shvedskim-stolom": ["https://pikabu.ru/story/pravila_bezopasnosti_za_shvedskim_stolom_12857458"],
         "mozhno-li-pit-vo-vremya-edy": ["https://vc.ru/flood/693339-tak-mozhno-pit-vo-vremya-edy-ili-net-a-vsuhomyatku-tochno-vredno"],
         "saharozamenitel-vyzyvaet-rak-net": ["https://telegra.ph/Sahar-09-18"],
@@ -358,9 +352,16 @@ def test_confirmed_static_batch_is_published_and_internal_story_is_not_public() 
         "a-mne-trener-posovetoval": ["https://pikabu.ru/story/a_mne_trener_posovetoval_12922345"],
     }
 
-    assert len(catalog.published) == 28
+    assert len(catalog.published) == 26
     assert batch_sources.keys() <= slugs
-    assert "kak-ya-100000-shagov-reshil-proyti" not in slugs
+    excluded_slugs = {
+        "kak-ya-100000-shagov-reshil-proyti",
+        "kak-sdelat-celnozernovoy-ris-sedobnym",
+        "dva-sousa-krasnoe-i-beloe",
+    }
+    assert excluded_slugs.isdisjoint(slugs)
+    for slug in excluded_slugs:
+        assert client.get(f"/blog/articles/{slug}").status_code == 404
     manifest_path = Path(__file__).resolve().parents[2] / "content" / "blog" / "manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest_by_slug = {article["slug"]: article for article in manifest["articles"]}

@@ -464,98 +464,6 @@
       }
     },
     {
-      "source_id": "CHernovik-08-18-3",
-      "slug": "kak-sdelat-celnozernovoy-ris-sedobnym",
-      "title": "Как сделать цельнозерновой рис съедобным",
-      "excerpt": "Простой способ приготовить цельнозерновой рис так, чтобы его хотелось есть не из чувства долга, а потому что получилось вкусно.",
-      "category": "Качество питания",
-      "body_file": "CHernovik-08-18-3.md",
-      "hero": {
-        "file": "CHernovik-08-18-3/01.webp",
-        "alt": "Обложка материала «Как сделать цельнозерновой рис съедобным»",
-        "provenance": "https://telegra.ph/file/7fd08bc1db5557fe5718a.jpg"
-      },
-      "card": {
-        "file": "CHernovik-08-18-3/card.webp",
-        "alt": "Обложка карточки «Как сделать цельнозерновой рис съедобным»",
-        "provenance": "https://telegra.ph/file/598e2b77a1c421133c267.jpg"
-      },
-      "related_source_ids": [
-        "Dva-sousa-Krasnoe-i-beloe-03-18",
-        "10999474",
-        "14183275"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "CHernovik-08-18-3/01.webp",
-        "CHernovik-08-18-3/02.webp",
-        "CHernovik-08-18-3/03.webp",
-        "CHernovik-08-18-3/04.webp",
-        "CHernovik-08-18-3/card.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://telegra.ph/CHernovik-08-18-3"
-        ],
-        "external_ids": [
-          "CHernovik-08-18-3"
-        ],
-        "sha256": [
-          "16d2cd491aab0e6c6ebb754a0734e1df57d2734f3218f906b070f5093bc06183"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass"
-      }
-    },
-    {
-      "source_id": "Dva-sousa-Krasnoe-i-beloe-03-18",
-      "slug": "dva-sousa-krasnoe-i-beloe",
-      "title": "Два соуса. Красное и белое",
-      "excerpt": "Два быстрых домашних соуса: красный томатный и белый йогуртовый. Без сложной готовки и с понятным составом.",
-      "category": "Качество питания",
-      "body_file": "Dva-sousa-Krasnoe-i-beloe-03-18.md",
-      "hero": {
-        "file": "Dva-sousa-Krasnoe-i-beloe-03-18/01.webp",
-        "alt": "Обложка материала «Два соуса. Красное и белое»",
-        "provenance": "https://principled-cuticle-21b.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F5eb568ce-19be-43b8-90eb-3a00ab9af308%2F1b37f56e-93e9-482f-9cce-518ec093ced1%2FFrame_3323.jpg?table=block&id=13f58521-3bab-8065-98d8-c93bef2e0a27&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=1410&userId=&cache=v2"
-      },
-      "card": {
-        "file": "Dva-sousa-Krasnoe-i-beloe-03-18/card.webp",
-        "alt": "Обложка карточки «Два соуса. Красное и белое»",
-        "provenance": "https://principled-cuticle-21b.notion.site/image/attachment%3A668c31df-0be0-4854-a377-2b5293274793%3Aimage.png?table=block&id=18a58521-3bab-8027-85bb-d0b790035d7f&spaceId=5eb568ce-19be-43b8-90eb-3a00ab9af308&width=990&userId=&cache=v2"
-      },
-      "related_source_ids": [
-        "CHernovik-08-18-3",
-        "10999474",
-        "12857458"
-      ],
-      "cta": "masterclass",
-      "status": "published",
-      "media": [
-        "Dva-sousa-Krasnoe-i-beloe-03-18/01.webp",
-        "Dva-sousa-Krasnoe-i-beloe-03-18/02.webp",
-        "Dva-sousa-Krasnoe-i-beloe-03-18/03.webp",
-        "Dva-sousa-Krasnoe-i-beloe-03-18/04.webp",
-        "Dva-sousa-Krasnoe-i-beloe-03-18/card.webp"
-      ],
-      "source_provenance": {
-        "urls": [
-          "https://telegra.ph/Dva-sousa-Krasnoe-i-beloe-03-18"
-        ],
-        "external_ids": [
-          "Dva-sousa-Krasnoe-i-beloe-03-18"
-        ],
-        "sha256": [
-          "4f15c567332764664350977c9b654f9c94e5c23d9994cd9c5f8692a52b5e9bce"
-        ],
-        "source_basis": "full_source",
-        "validation_status": "pass",
-        "review_status": "pass"
-      }
-    },
-    {
       "source_id": "12857458",
       "slug": "pravila-bezopasnosti-za-shvedskim-stolom",
       "title": "Правила безопасности за шведским столом",
@@ -574,7 +482,7 @@
       },
       "related_source_ids": [
         "10999474",
-        "Dva-sousa-Krasnoe-i-beloe-03-18",
+        "14183275",
         "693339"
       ],
       "cta": "masterclass",
@@ -760,7 +668,7 @@
       "related_source_ids": [
         "11207593",
         "14183275",
-        "Dva-sousa-Krasnoe-i-beloe-03-18"
+        "12857458"
       ],
       "cta": "masterclass",
       "status": "published",
