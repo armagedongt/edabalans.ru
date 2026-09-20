@@ -12,7 +12,9 @@
     "test:intensive-menu-progress": "node intensive-menu-progress.e2e.mjs",
     "test:strength-editor": "node strength-editor.e2e.mjs",
     "test:admin-shell": "node admin-shell.e2e.mjs",
-    "test:blog-draft-authoring": "node blog-draft-authoring.e2e.mjs"
+    "test:blog-draft-authoring": "node blog-draft-authoring.e2e.mjs",
+    "test:account-theme": "node account-theme.e2e.mjs",
+    "test:dqs-access": "node dqs-access.e2e.mjs"
   },
   "devDependencies": {
     "playwright": "1.62.1"

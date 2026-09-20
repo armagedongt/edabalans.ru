@@ -133,8 +133,11 @@ def add_contact_and_content(session):
                 "<a href=\"{{consultation_description_url}}\">Как проходит консультация</a>"
             )
         elif code == "tpl_postpurchase_dqs_app_link":
-            body = ('Ваша система оценки качества питания — '
-                    '<a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.')
+            body = (
+                "Ваш DQS открыт. Здесь вы будете отмечать питание каждый день.\n\n"
+                "Закрепите это сообщение, чтобы дневник всегда был под рукой.\n\n"
+                '<a href="https://edabalans.ru/dqs">Открыть DQS</a>'
+            )
         else:
             body = "Откройте {{offers_url}}"
         session.add(ContentItem(
@@ -169,8 +172,8 @@ def add_contact_and_content(session):
         content_item_id=dqs_content.id,
         configuration={
             "buttons": [{
-                "text": "Открыть приложение",
-                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                "text": "Открыть DQS",
+                "url": "https://edabalans.ru/dqs",
             }]
         },
     ))
@@ -540,7 +543,7 @@ def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tm
             session,
             sender,
             "",
-            lambda *_: {"ACCESS_MASTERCLASS"},
+            lambda *_: {"dqs"},
             notification_kinds={"dqs_app_link"},
         )
 
@@ -548,17 +551,19 @@ def test_dispatch_sends_only_requested_dqs_link_when_postpurchase_is_disabled(tm
         assert sender.sent == [(
             "42",
             "tpl_postpurchase_dqs_app_link",
-            'Ваша система оценки качества питания — <a href="https://похудение-это-есть.рф/dqs">открыть приложение</a>.',
+            "Ваш DQS открыт. Здесь вы будете отмечать питание каждый день.\n\n"
+            "Закрепите это сообщение, чтобы дневник всегда был под рукой.\n\n"
+            '<a href="https://edabalans.ru/dqs">Открыть DQS</a>',
         )]
         assert sender.configurations == [{
             "buttons": [{
-                "text": "Открыть приложение",
-                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                "text": "Открыть DQS",
+                "url": "https://edabalans.ru/dqs",
             }]
         }]
 
 
-def test_dqs_retry_preserves_web_app_button(tmp_path):
+def test_dqs_retry_preserves_browser_link_button(tmp_path):
     class FailOnceSender(FakeSender):
         def __init__(self):
             super().__init__()
@@ -588,10 +593,10 @@ def test_dqs_retry_preserves_web_app_button(tmp_path):
         sender = FailOnceSender()
 
         first = dispatch_due_masterclass_notifications(
-            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+            session, sender, "", lambda *_: {"dqs"}
         )
         second = dispatch_due_masterclass_notifications(
-            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+            session, sender, "", lambda *_: {"dqs"}
         )
 
         assert first["failed"] == 1
@@ -599,14 +604,14 @@ def test_dqs_retry_preserves_web_app_button(tmp_path):
         assert sender.configurations == [
             {
                 "buttons": [{
-                    "text": "Открыть приложение",
-                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                    "text": "Открыть DQS",
+                    "url": "https://edabalans.ru/dqs",
                 }]
             },
             {
                 "buttons": [{
-                    "text": "Открыть приложение",
-                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                    "text": "Открыть DQS",
+                    "url": "https://edabalans.ru/dqs",
                 }]
             },
         ]
@@ -620,8 +625,8 @@ def test_dqs_dispatch_fails_when_text_and_graph_destinations_differ(tmp_path):
         )
         step.configuration = {
             "buttons": [{
-                "text": "Открыть приложение",
-                "web_app": {"url": "https://example.test/other-dqs"},
+                "text": "Открыть DQS",
+                "url": "https://example.test/other-dqs",
             }]
         }
         notification = MasterclassNotification(
@@ -639,13 +644,13 @@ def test_dqs_dispatch_fails_when_text_and_graph_destinations_differ(tmp_path):
 
         sender = FakeSender()
         result = dispatch_due_masterclass_notifications(
-            session, sender, "", lambda *_: {"ACCESS_MASTERCLASS"}
+            session, sender, "", lambda *_: {"dqs"}
         )
 
         assert result["failed"] == 1
         assert sender.sent == []
         assert notification.error_message == (
-            "DQS text link and Web App button destinations differ"
+            "DQS text link and button destinations differ"
         )
 
 

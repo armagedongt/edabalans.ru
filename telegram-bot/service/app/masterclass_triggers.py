@@ -33,10 +33,10 @@ TRIGGERS = [
         "step_key": "pp_dqs_app_link",
         "content_code": "tpl_postpurchase_dqs_app_link",
         "title": "DQS — ссылка на приложение",
-        "trigger": "dqs_app_link_requested",
-        "condition": "Участник сам нажал кнопку в материале DQS; Telegram привязан и доступ к мастер-классу действует",
+        "trigger": "app_revealed_dqs",
+        "condition": "DQS впервые раскрыт в четвёртом дне; Telegram привязан и доступ к мастер-классу действует",
         "recipient": "Тот же участник",
-        "purpose": "Отправить ссылку и кнопку открытия существующего DQS как Telegram Web App; MAX и автоматическая рассылка не используются.",
+        "purpose": "Отправить постоянную браузерную ссылку DQS; MAX и Mini App не используются. Повтор возможен только из ЛК.",
     },
     {
         "step_key": "pp_day_unopened_18h",

@@ -119,6 +119,10 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .application-card { border-color: rgba(17, 142, 216, 0.16); border-radius: 14px; background: rgb(255, 255, 255); box-shadow: rgba(12, 91, 136, 0.42) 0px 12px 28px -27px; }
 #account-app .application-icon { border-radius: 12px; background: rgb(238, 249, 255); color: rgb(17, 142, 216); }
 #account-app .application-card .account-open { width: 124px; min-height: 42px; margin: 0px; background: rgb(39, 175, 245); }
+#account-app .application-actions { display: grid; justify-items: end; gap: 7px; }
+#account-app .application-resend { padding: 0; border: 0; background: transparent; color: rgb(17, 142, 216); font: 700 12px / 1.35 Manrope, Arial, sans-serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+#account-app .application-resend:disabled { color: rgb(123, 128, 148); cursor: default; }
+#account-app .application-resend-status { max-width: 190px; color: rgb(63, 75, 85); font-size: 12px; line-height: 1.35; text-align: right; }
 #account-app .account-review, #account-app .account-legal { border-color: rgba(244, 106, 53, 0.34); border-radius: 18px; background: rgb(255, 247, 243); box-shadow: none; }
 #account-app .account-review p, #account-app .account-legal > p { color: rgb(79, 85, 94); }
 #account-app .account-contact a { border-radius: 12px; background: rgb(17, 142, 216); font-family: Manrope, Arial, sans-serif; }
@@ -141,3 +145,8 @@ html:has(#account-app):not(:has(#masterclass-course-app)), body:has(#account-app
 #account-app .account-open:disabled { border-color: rgb(241, 185, 180); background: rgb(255, 240, 239); color: rgb(184, 67, 58); }
 #account-app .account-card:has(.account-state.preparing) .account-open:disabled, #account-app .application-card .account-open:disabled { border-color: rgb(240, 209, 141); background: rgb(255, 248, 232); color: rgb(154, 99, 17); }
 #account-app .account-card h3 .account-tariff-inline { font: 500 0.72em / 1.15 Manrope, Arial, sans-serif; letter-spacing: -0.02em; white-space: nowrap; }
+@media (max-width: 480px) {
+#account-app .application-actions { grid-column: 1 / -1; width: 100%; justify-items: stretch; }
+#account-app .application-actions .account-open { width: 100%; }
+#account-app .application-resend, #account-app .application-resend-status { max-width: none; text-align: center; }
+}

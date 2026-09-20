@@ -538,10 +538,10 @@ def notification_configuration(
     ) or {}
     buttons = configuration.get("buttons") or []
     if not buttons:
-        raise RuntimeError("DQS Web App button is missing from the runtime graph")
-    web_app_url = ((buttons[0].get("web_app") or {}).get("url"))
-    if not web_app_url or web_app_url not in telegram_html_links(body_source):
-        raise RuntimeError("DQS text link and Web App button destinations differ")
+        raise RuntimeError("DQS link button is missing from the runtime graph")
+    link_url = buttons[0].get("url")
+    if not link_url or link_url not in telegram_html_links(body_source):
+        raise RuntimeError("DQS text link and button destinations differ")
     return {"buttons": buttons}
 
 
@@ -635,9 +635,18 @@ def dispatch_due_masterclass_notifications(
             counters["maintenance_filtered"] += 1
             continue
         access = access_resolver(session, notification.user_id)
-        if "ACCESS_MASTERCLASS" not in access:
+        required_resource = (
+            "dqs"
+            if notification.notification_kind == "dqs_app_link"
+            else "ACCESS_MASTERCLASS"
+        )
+        if required_resource not in access:
             notification.status = "skipped"
-            notification.error_message = "masterclass access is no longer active"
+            notification.error_message = (
+                "DQS access is no longer active"
+                if required_resource == "dqs"
+                else "masterclass access is no longer active"
+            )
             counters["skipped"] += 1
             continue
         if not course_stall_is_current(session, notification):

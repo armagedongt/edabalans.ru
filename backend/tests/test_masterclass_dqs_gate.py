@@ -8,7 +8,9 @@ os.environ.setdefault("APP_AUTH_SECRET", "test-client-session-secret")
 from sqlalchemy import select
 
 from app.models import (
+    DqsState,
     MasterclassDayProgress,
+    MasterclassEvent,
     MasterclassStepProgress,
     Resource,
     UserAccess,
@@ -52,9 +54,21 @@ def test_day_four_dqs_step_waits_for_completed_tutorial():
                 day_number=4,
                 step_index=0,
                 step_kind="article",
+                completed_at=datetime.now(timezone.utc),
             )
         )
         db.commit()
+
+    revealed = client.post(
+        "/api/masterclass/apps/dqs/reveal",
+        json={
+            "email": email,
+            "day": 4,
+            "step_index": 1,
+            "placement": "day-04-dqs",
+        },
+    )
+    assert revealed.status_code == 200
 
     opened = client.get(
         "/api/apps/dqs", params={"action": "openUser", "email": email}
@@ -106,6 +120,13 @@ def test_dqs_access_holder_accepts_current_legal_documents_before_entry():
                 granted_at=datetime.now(timezone.utc),
             )
         )
+        db.add(MasterclassEvent(
+            user_id=user_id,
+            event_key="app:dqs:revealed",
+            event_type="app_revealed_dqs",
+            placement="day-04-dqs",
+            details={},
+        ))
         db.query(UserLegalAcceptance).delete()
         db.add_all(
             [
@@ -183,3 +204,70 @@ def test_dqs_legal_status_is_not_exposed_without_dqs_access():
     assert direct.json()["ok"] is False
     assert "нет доступа" in direct.json()["error"].lower()
     assert "дисклеймер" not in direct.json()["error"].lower()
+
+
+def test_existing_imported_dqs_state_keeps_access_but_empty_admin_state_does_not():
+    client, factory = setup()
+    email = "member@example.test"
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(UserEmail.email_normalized == email)
+        )
+        dqs_resource = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs_resource)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user_id,
+            resource_id=dqs_resource.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.add(DqsState(
+            user_id=user_id,
+            start_date="2026-08-01",
+            days={},
+            source="legacy_import",
+        ))
+        db.commit()
+
+    assert client.get("/api/apps/dqs/access").status_code == 200
+
+    with factory() as db:
+        state = db.scalar(select(DqsState))
+        state.days = {"1": {"p": [0] * 17, "d": [None] * 17}}
+        state.start_date = "2026-08-01"
+        state.source = "admin_open"
+        db.commit()
+
+    assert client.get("/api/apps/dqs/access").status_code == 403
+
+
+def test_client_dqs_open_event_cannot_bypass_day_four_reveal():
+    client, factory = setup()
+    email = "member@example.test"
+    with factory() as db:
+        user_id = db.scalar(
+            select(UserEmail.user_id).where(UserEmail.email_normalized == email)
+        )
+        dqs_resource = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs_resource)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user_id,
+            resource_id=dqs_resource.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+
+    forged = client.post(
+        "/api/masterclass/events",
+        json={
+            "email": email,
+            "event_key": "client:dqs-opened",
+            "event_type": "dqs_opened",
+            "placement": "forged",
+        },
+    )
+    assert forged.status_code == 200
+    assert client.get("/api/apps/dqs/access").status_code == 403

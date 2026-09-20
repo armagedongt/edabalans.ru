@@ -503,7 +503,9 @@ def _postpurchase_messages() -> list[dict]:
         (
             "postpurchase_dqs_app_link",
             "DQS — ссылка на приложение",
-            "Ваша система оценки качества питания — <a href=\"https://похудение-это-есть.рф/dqs\">открыть приложение</a>.",
+            "Ваш DQS открыт. Здесь вы будете отмечать питание каждый день.\n\n"
+            "Закрепите это сообщение, чтобы дневник всегда был под рукой.\n\n"
+            "<a href=\"https://edabalans.ru/dqs\">Открыть DQS</a>",
             None,
             ["после покупки", "DQS", "ссылка на приложение"],
         ),
@@ -687,6 +689,9 @@ def seed_defaults(
                 row["code"] == "postpurchase_questionnaire" and item.body_source == previous_questionnaire
             ) or (
                 row["code"] == "postpurchase_tempo_late" and "Вы остановились в Мастер-классе" in (item.body_source or "")
+            ) or (
+                row["code"] == "postpurchase_dqs_app_link"
+                and "Ваша система оценки качества питания" in (item.body_source or "")
             )
             if (item.body_source or "").lstrip().startswith("[Добавьте ") or "Поменять почту" in (item.body_source or "") or known_old_postpurchase:
                 item.body_source = row["body"]
@@ -1015,7 +1020,7 @@ def seed_defaults(
             ("pp_identity", "MESSAGE", "postpurchase_identity", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
             ("pp_questionnaire", "MESSAGE", "postpurchase_questionnaire", None, {"trigger": "onboarding_questionnaire_completed", "state": "service_delivery"}),
             ("pp_current_diet_questionnaire", "MESSAGE", "postpurchase_current_diet", None, {"trigger": "current_diet_questionnaire_completed", "condition": "telegram_linked=true", "state": "editorial_slot"}),
-            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "dqs_app_link_requested", "condition": "telegram_linked=true AND masterclass_access=true", "state": "manual_request", "buttons": [{"text": "Открыть приложение", "web_app": {"url": "https://похудение-это-есть.рф/dqs"}}]}),
+            ("pp_dqs_app_link", "MESSAGE", "postpurchase_dqs_app_link", None, {"trigger": "app_revealed_dqs", "condition": "telegram_linked=true AND masterclass_access=true", "state": "service_delivery", "buttons": [{"text": "Открыть DQS", "url": "https://edabalans.ru/dqs"}]}),
             ("pp_day_unopened_18h", "MESSAGE", "postpurchase_day_unopened", None, {"trigger": "course_day_unopened_18h", "condition": "local_time=18:00 AND day_available=true AND day_opened=false", "state": "editorial_slot"}),
             ("pp_course_stalled_72h", "MESSAGE", "postpurchase_tempo_late", None, {"trigger": "course_stalled_72h", "condition": "masterclass_access=true AND later_course_activity=false AND course_completed=false", "state": "editorial_slot"}),
             ("pp_sales_early_missing", "MESSAGE", "postpurchase_recipes_missing", None, {"trigger": "sales_last_chance_due", "condition": "stage IN (early,second) AND recipes_access=false", "state": "editorial_slot"}),
@@ -1053,15 +1058,19 @@ def seed_defaults(
         if step.step_key == "pp_dqs_app_link":
             existing_buttons = (step.configuration or {}).get("buttons") or []
             button_text = (
-                str(existing_buttons[0].get("text") or "Открыть приложение")
+                str(existing_buttons[0].get("text") or "Открыть DQS")
                 if existing_buttons
-                else "Открыть приложение"
+                else "Открыть DQS"
             )
+            if button_text == "Открыть приложение":
+                button_text = "Открыть DQS"
             step.configuration = {
                 **(step.configuration or {}),
+                "trigger": "app_revealed_dqs",
+                "state": "service_delivery",
                 "buttons": [{
                     "text": button_text,
-                    "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                    "url": "https://edabalans.ru/dqs",
                 }],
             }
 

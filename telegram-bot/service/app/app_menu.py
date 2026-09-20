@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
+import json
 from types import SimpleNamespace
 
 from sqlalchemy import select, text
@@ -88,10 +89,26 @@ def available_applications(session: Session, user_id: str | None) -> list[Applic
         FROM masterclass_events
         WHERE user_id = :user_id
     """), {"user_id": user_id}).scalars().all())
+    legacy_dqs_state = session.execute(text("""
+        SELECT start_date, days, source
+        FROM dqs_states
+        WHERE user_id = :user_id
+        LIMIT 1
+    """), {"user_id": user_id}).mappings().first()
+    legacy_dqs_revealed = False
+    if legacy_dqs_state and legacy_dqs_state["source"] != "admin_open":
+        days = legacy_dqs_state["days"]
+        if isinstance(days, str):
+            try:
+                days = json.loads(days)
+            except json.JSONDecodeError:
+                days = None
+        legacy_dqs_revealed = bool(legacy_dqs_state["start_date"] or days)
     return [
         item
         for item in entitled
         if reveal_types.intersection(REVEAL_EVENTS[item.code])
+        or (item.code == "dqs" and legacy_dqs_revealed)
     ]
 
 
@@ -117,11 +134,15 @@ def _editable_content(session: Session, code: str) -> ContentItem:
 
 
 def _app_button(item: Application) -> dict:
-    return {
+    button = {
         "text": item.title,
-        "web_app": {"url": item.url},
         "max_app_payload": item.payload,
     }
+    if item.code == "dqs":
+        button["url"] = item.url
+    else:
+        button["web_app"] = {"url": item.url}
+    return button
 
 
 def menu_presentation(
@@ -149,10 +170,16 @@ def menu_presentation(
     available = available_applications(session, contact.user_id)
     if isinstance(requested, Application):
         if requested in available:
+            available_copy = (
+                "Приложение доступно. Нажмите кнопку ниже. Если вход в личный кабинет "
+                "в браузере истёк, войдите обычным способом — после этого откроется DQS."
+                if requested.code == "dqs"
+                else "Приложение доступно. Нажмите кнопку ниже — оно откроется без "
+                "повторного ввода логина и пароля."
+            )
             return (
                 _content(
-                    f"<b>{requested.title}</b>\n\n"
-                    "Приложение доступно. Нажмите кнопку ниже — оно откроется без повторного ввода логина и пароля."
+                    f"<b>{requested.title}</b>\n\n{available_copy}"
                 ),
                 {"buttons": [_app_button(requested)]},
             )

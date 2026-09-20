@@ -264,7 +264,9 @@ def test_universal_account_blocks_review_and_uses_server_resources_for_catalog()
     )
     assert masterclass_card["app"] == "masterclass-course"
     dqs_card = next(item for item in accepted.json()["applications"] if item["code"] == "dqs")
-    assert dqs_card["app"] == "dqs"
+    assert dqs_card["state"] == "entitled_locked"
+    assert dqs_card["app"] is None
+    assert dqs_card["action_app"] == "masterclass-course"
     repeated = client.post(
         "/api/account/legal-acceptances",
         json={

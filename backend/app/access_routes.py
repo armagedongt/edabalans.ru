@@ -40,6 +40,7 @@ from app.models import (
 from app.product_identity import purchased_products
 from app.product_catalog_service import PRODUCT_CONNECTIONS, product_public
 from app.metabolism_service import metabolism_is_unlocked
+from app.dqs_access_service import dqs_is_revealed
 
 
 router = APIRouter(tags=["access-links"])
@@ -190,7 +191,13 @@ def account_courses(definitions: list[dict], owned: set[str], legal_required: bo
 APPLICATION_PREVIEW_RESOURCE = "ACCESS_APPLICATION_PREVIEW"
 
 
-def account_applications(owned: set[str], legal_required: bool, *, metabolism_unlocked: bool = False) -> list[dict]:
+def account_applications(
+    owned: set[str],
+    legal_required: bool,
+    *,
+    metabolism_unlocked: bool = False,
+    dqs_revealed: bool = False,
+) -> list[dict]:
     preview_enabled = APPLICATION_PREVIEW_RESOURCE in owned
     definitions = (
         ("dqs", "Система оценки качества питания", "Оценивайте рацион по продуктовым категориям и наблюдайте изменения.", "dqs", "dqs", True),
@@ -218,6 +225,22 @@ def account_applications(owned: set[str], legal_required: bool, *, metabolism_un
     metabolism["unlock_after_masterclass"] = True
     metabolism["state"] = "available" if metabolism["owned"] and metabolism_unlocked else "masterclass_locked" if metabolism["owned"] else "not_owned"
     metabolism["app"] = "metabolism" if metabolism["owned"] and metabolism_unlocked and not legal_required else None
+    dqs = next(item for item in result if item["code"] == "dqs")
+    if dqs["owned"] and not dqs_revealed:
+        dqs.update({
+            "state": "entitled_locked",
+            "app": None,
+            "summary": "Куплено. Откроется в четвёртом дне Мастер-класса.",
+            "action_app": "masterclass-course",
+            "action_label": "Продолжить Мастер-класс",
+            "can_resend_link": False,
+        })
+    elif dqs["owned"]:
+        dqs.update({
+            "summary": "Ваш дневник качества питания.",
+            "action_label": "Открыть DQS",
+            "can_resend_link": not legal_required,
+        })
     return result
 
 
@@ -281,7 +304,12 @@ def account_payload(email: str, db: Session, *, progress_user_id: uuid.UUID | No
         "legal": legal,
         "purchased_products": purchases,
         "courses": courses,
-        "applications": account_applications(owned, legal["required"], metabolism_unlocked=calories_unlocked),
+        "applications": account_applications(
+            owned,
+            legal["required"],
+            metabolism_unlocked=calories_unlocked,
+            dqs_revealed=dqs_is_revealed(db, user.id),
+        ),
         "legacy_portal": {
             "available": bool({"ACCESS_MASTERCLASS_LEGACY", "ACCESS_CALORIES_LEGACY"} & owned),
             "url": "/members/",

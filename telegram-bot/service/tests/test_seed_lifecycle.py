@@ -53,8 +53,8 @@ def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disable
             )
         )
         expected_button = [{
-            "text": "Открыть приложение",
-            "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+            "text": "Открыть DQS",
+            "url": "https://edabalans.ru/dqs",
         }]
         assert dqs_step.configuration["buttons"] == expected_button
 
@@ -72,7 +72,7 @@ def test_postpurchase_has_one_closing_review_copy_and_postmasterclass_is_disable
             **dqs_step.configuration,
             "buttons": [{
                 "text": "Открыть DQS",
-                "web_app": {"url": "https://похудение-это-есть.рф/dqs"},
+                "url": "https://edabalans.ru/dqs",
             }],
         }
         session.commit()

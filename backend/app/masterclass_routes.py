@@ -16,6 +16,7 @@ from sqlalchemy import delete, func, select, text, update
 from sqlalchemy.orm import Session
 
 from app.app_service import AppAccessError, primary_email, require_user_resource, resolve_user_for_resource
+from app.dqs_access_service import DQS_REVEAL_EVENT_KEY, require_dqs_revealed
 from app.account_auth_routes import require_native_user
 from app.app_auth import create_placement_token, require_placement
 from app.auth import require_admin
@@ -1276,7 +1277,10 @@ def record_event(
     settings: Settings = Depends(get_settings),
 ) -> dict:
     user = resolve_masterclass_user(request, db, body.email, settings)
-    if body.event_type.startswith("app_revealed_") or body.event_key.startswith("app:"):
+    if (
+        body.event_type.startswith("app_revealed_")
+        or body.event_key.startswith("app:")
+    ):
         raise HTTPException(400, "application reveal must use the course application route")
     event = db.scalar(select(MasterclassEvent).where(MasterclassEvent.user_id == user.id, MasterclassEvent.event_key == body.event_key))
     created = event is None
@@ -1365,9 +1369,13 @@ def send_dqs_link_to_telegram(
     body: RunActionIn,
     request: Request,
     db: Session = Depends(get_db),
-    settings: Settings = Depends(get_settings),
 ) -> dict:
-    user = resolve_masterclass_user(request, db, body.email, settings)
+    user = require_native_user(request, db)
+    try:
+        require_user_resource(db, user, "dqs")
+        require_dqs_revealed(db, user.id)
+    except AppAccessError as exc:
+        raise HTTPException(403, str(exc)) from exc
     account = db.scalar(
         select(MessengerAccount.id)
         .where(
@@ -1387,12 +1395,29 @@ def send_dqs_link_to_telegram(
     if not account or not contact:
         raise HTTPException(409, detail={"reason": "telegram_not_linked"})
     now = datetime.now(timezone.utc)
+    # Serialize resend checks per user so concurrent requests cannot both pass
+    # the cooldown before either event becomes visible.
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
+    recent_request = db.scalar(
+        select(MasterclassEvent.id)
+        .where(
+            MasterclassEvent.user_id == user.id,
+            MasterclassEvent.event_type == "dqs_app_link_requested",
+            MasterclassEvent.occurred_at >= now - timedelta(minutes=1),
+        )
+        .limit(1)
+    )
+    if recent_request is not None:
+        raise HTTPException(
+            429,
+            detail={"reason": "retry_later", "retry_after_seconds": 60},
+        )
     event = course_event(
         db,
         user.id,
         f"dqs:app-link:{uuid.uuid4().hex}",
         "dqs_app_link_requested",
-        placement="dqs-material",
+        placement="account-applications",
         details={},
     )
     queue_notification(
@@ -1434,6 +1459,7 @@ def reveal_course_application(
     if resource_codes is None:
         raise HTTPException(404, "application not found")
     user = resolve_masterclass_user(request, db, body.email, settings)
+    db.execute(select(User.id).where(User.id == user.id).with_for_update())
     context = course_context(db)
     progress = day_progress(db, user.id, body.day)
     steps = context.days.get(body.day, {}).get("steps", [])
@@ -1464,24 +1490,20 @@ def reveal_course_application(
     if any(index not in completed for index in required_before):
         raise HTTPException(409, detail={"reason": "previous_step_not_completed"})
     try:
-        require_user_resource(
-            db,
-            user,
-            resource_codes,
-            require_legal_acceptance=False,
-        )
+        require_user_resource(db, user, resource_codes)
     except AppAccessError as exc:
         raise HTTPException(403, str(exc)) from exc
     created = db.scalar(
         select(MasterclassEvent.id).where(
             MasterclassEvent.user_id == user.id,
-            MasterclassEvent.event_key == f"app:{app_code}:revealed",
+            MasterclassEvent.event_key
+            == (DQS_REVEAL_EVENT_KEY if app_code == "dqs" else f"app:{app_code}:revealed"),
         )
     ) is None
     event = course_event(
         db,
         user.id,
-        f"app:{app_code}:revealed",
+        DQS_REVEAL_EVENT_KEY if app_code == "dqs" else f"app:{app_code}:revealed",
         f"app_revealed_{app_code}",
         placement=body.placement or "course-app-trigger",
         details={
@@ -1491,6 +1513,48 @@ def reveal_course_application(
             "step_id": step["id"],
         },
     )
+    telegram_link_status = "not_applicable"
+    if app_code == "dqs":
+        account = db.scalar(
+            select(MessengerAccount.id)
+            .where(
+                MessengerAccount.user_id == user.id,
+                MessengerAccount.platform == "telegram",
+                MessengerAccount.linked_at.is_not(None),
+            )
+            .order_by(MessengerAccount.linked_at.desc())
+        )
+        contact = None
+        if account:
+            contact = db.execute(
+                text(
+                    "SELECT 1 FROM tg_contacts "
+                    "WHERE user_id = :user_id AND status = 'active' LIMIT 1"
+                ),
+                {"user_id": str(user.id)},
+            ).first()
+        if account and contact and created:
+            queue_notification(
+                db,
+                user.id,
+                event,
+                "dqs_app_link",
+                datetime.now(timezone.utc),
+                content_code="tpl_postpurchase_dqs_app_link",
+                payload={"source": "day-4-reveal"},
+            )
+            telegram_link_status = "queued"
+        elif account and contact:
+            already_queued = db.scalar(
+                select(MasterclassNotification.id).where(
+                    MasterclassNotification.user_id == user.id,
+                    MasterclassNotification.deduplication_key
+                    == f"{DQS_REVEAL_EVENT_KEY}:dqs_app_link",
+                )
+            )
+            telegram_link_status = "already_queued" if already_queued else "not_sent"
+        else:
+            telegram_link_status = "not_linked"
     db.commit()
     payload = APP_REVEAL_PAYLOADS[app_code]
     telegram_username = settings.telegram_test_bot_username.strip().lstrip("@")
@@ -1499,6 +1563,8 @@ def reveal_course_application(
         "ok": True,
         "created": created,
         "app_code": app_code,
+        "app_url": "https://edabalans.ru/dqs" if app_code == "dqs" else "",
+        "telegram_link_status": telegram_link_status,
         "telegram_url": f"https://t.me/{telegram_username}?start={payload}" if telegram_username else "",
         "max_url": f"https://max.ru/{max_username}?start={payload}" if max_username else "",
     }

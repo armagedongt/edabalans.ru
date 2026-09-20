@@ -572,6 +572,8 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
     assert 'data-edabalans-app="' in account.text
     assert "data-offer-product" in account.text
     assert "/api/masterclass/account-offers" in account.text
+    assert "/api/masterclass/dqs/link-to-telegram" in account.text
+    assert "Не нашли ссылку? Отправить ещё раз" in account.text
     account_css = client.get("/assets/account-visual.css").text
     assert ".account-card.available-card" in account_css
     assert ".account-card.featured" in account_css
@@ -692,11 +694,10 @@ def test_masterclass_fragments_and_shared_assets_are_public(monkeypatch) -> None
         account.index("function applicationCard") : account.index("function legacyPortal")
     ]
     assert "account-state" not in application_renderer
-    assert (
-        "action=canOpen?'<button class=\"account-open available\" data-app=\"'+esc(item.app)"
-        "+'\">Открыть</button>':'<button class=\"account-open\" disabled>'+esc(label)+'</button>'"
-        in application_renderer
-    )
+    assert "canContinue=item.state==='entitled_locked'" in application_renderer
+    assert "item.action_label||'Открыть'" in application_renderer
+    assert "item.action_label||'Продолжить Мастер-класс'" in application_renderer
+    assert "data-dqs-resend" in application_renderer
     assert "applicationIcon(item.code)" in application_renderer
     assert "application-icon-" in account
     icons = dict(re.findall(r"(dqs|strength|recipes|metabolism):'([^']+)'", account))
@@ -853,9 +854,12 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "if(step.kind==='dqs'&&step.contentAsset){openDqsMaterial(d,stepIndex);return}" in course_html
     assert "pending=openDqsMaterial(d,stepIndex)" in course_html
     assert "dqsTutorialRequested=true;openDqsApplication(d,stepIndex);return" in course_html
-    assert "dqs/link-to-telegram" in course_html
+    assert "dqs/link-to-telegram" not in course_html
+    assert "Открыть мой DQS" in course_html
+    assert "function dqsDirectUrl(){return'https://edabalans.ru/dqs'}" in course_html
+    assert "https://похудение-это-есть.рф/dqs" not in course_html
     assert "/api/masterclass/apps/" in course_html
-    assert "revealCourseApplication('dqs',d,stepIndex,'dqs-material')" in course_html
+    assert "revealCourseApplication('dqs',d,stepIndex,'dqs-material',true)" in course_html
     assert "if(!SERVER_MODE||!COURSE_APP_REVEALS" in course_html
     calories_html = client.get("/apps/calories-course.html").text
     assert "COURSE_APP_REVEALS=false" in calories_html

@@ -34,6 +34,7 @@ from app.app_service import (
     resolve_user_for_resource,
     utc_iso,
 )
+from app.dqs_access_service import require_dqs_revealed
 from app.auth import admin_identity, require_admin, security, session_admin
 from app.database import get_db
 from app.legal_service import legal_status_payload
@@ -1186,6 +1187,7 @@ def dqs_legacy_get(
         if action == "ping":
             return jsonp({"ok": True, "service": "DQS", "dayCount": 30, "categoryCount": 17}, callback)
         user = require_user_resource(db, require_native_user(request, db), "dqs")
+        require_dqs_revealed(db, user.id)
         payload = apply_dqs_action(db, user, action, startDate, day, data)
         db.commit()
         return jsonp(payload, callback)
@@ -1352,6 +1354,7 @@ def dqs_access_status(request: Request, db: Session = Depends(get_db)) -> dict[s
         user = require_user_resource(
             db, require_native_user(request, db), "dqs", require_legal_acceptance=False
         )
+        require_dqs_revealed(db, user.id)
     except AppAccessError as exc:
         raise HTTPException(status_code=403, detail=str(exc)) from exc
     return {

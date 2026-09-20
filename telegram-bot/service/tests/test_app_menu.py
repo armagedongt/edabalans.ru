@@ -42,6 +42,14 @@ def prepared(tmp_path):
             event_type TEXT NOT NULL
         )
     """))
+    session.execute(text("""
+        CREATE TABLE dqs_states (
+            user_id TEXT PRIMARY KEY,
+            start_date TEXT NULL,
+            days TEXT NOT NULL DEFAULT '{}',
+            source TEXT NOT NULL
+        )
+    """))
     user = CrmUser(display_name="Участник", status="active", data_origin="native")
     session.add(user)
     session.flush()
@@ -214,19 +222,38 @@ def test_inactive_user_never_gets_app_buttons(tmp_path):
         session.close()
 
 
-def test_paid_entitlement_stays_hidden_until_course_reveal(tmp_path):
+def test_client_dqs_open_event_does_not_reveal_application(tmp_path):
     session, user, contact = prepared(tmp_path)
     try:
         grant(session, user, "dqs")
         reveal(session, user, "dqs_opened")
         session.commit()
         assert available_applications(session, user.id) == []
-
-        reveal(session, user, "app_revealed_dqs")
+        session.execute(text("""
+            INSERT INTO dqs_states (user_id, start_date, days, source)
+            VALUES (:user_id, NULL, :days, 'legacy_import')
+        """), {"user_id": user.id, "days": '{"1": {"p": [1]}}'})
+        session.commit()
+        assert [item.code for item in available_applications(session, user.id)] == ["dqs"]
+        session.execute(text("""
+            UPDATE dqs_states
+            SET source = 'admin_open', start_date = '2026-08-01'
+            WHERE user_id = :user_id
+        """), {"user_id": user.id})
+        session.commit()
+        assert available_applications(session, user.id) == []
+        session.execute(text("""
+            UPDATE dqs_states
+            SET source = 'legacy_import', start_date = '2026-08-01', days = '{}'
+            WHERE user_id = :user_id
+        """), {"user_id": user.id})
         session.commit()
         assert [item.code for item in available_applications(session, user.id)] == ["dqs"]
         _, configuration = menu_presentation(session, contact)
-        assert configuration["buttons"][0]["max_app_payload"] == "dqs"
+        assert configuration["buttons"][0]["url"] == "https://edabalans.ru/dqs"
+        content, _ = menu_presentation(session, contact, app_request("/start dqs"))
+        assert "Если вход в личный кабинет в браузере истёк" in content.body_source
+        assert "без повторного ввода" not in content.body_source
     finally:
         session.close()
 

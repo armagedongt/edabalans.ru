@@ -42,7 +42,7 @@ implementation_status: implemented
 
 Целевой общий контракт в `docs/APPLICATION_PLATFORM.md` должен показывать одно
 объяснение доступности в ЛК, прямом gate, курсе и мессенджерах из серверного
-application-access resolver-а. Первый ещё не реализованный slice подключает DQS;
+application-access resolver-а. DQS уже подключён к отдельному серверному gate;
 остальные приложения подключаются только после фиксации своей policy entry.
 
 ## Источники истины

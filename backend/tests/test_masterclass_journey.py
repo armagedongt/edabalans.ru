@@ -33,7 +33,7 @@ from app.course_structure_service import (  # noqa: E402
 )
 from app.masterclass_article_components import render_masterclass_component  # noqa: E402
 from app.models import (  # noqa: E402
-    ContentItem, ContentItemVersion, ContentSource,
+    ContentItem, ContentItemVersion, ContentSource, DqsState,
     MasterclassDayProgress, MasterclassEvent, MasterclassNotification,
     MasterclassStepProgress,
     MessengerAccount, MessengerLinkToken, OfferCheckout, OfferStage, Payment, Product,
@@ -1448,6 +1448,33 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
         db.execute(text(
             "CREATE TABLE tg_contacts (user_id VARCHAR(36), status VARCHAR(32))"
         ))
+        user_id = db.scalar(select(User.id))
+        dqs = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs)
+        db.flush()
+        db.add(UserAccess(
+            user_id=user_id,
+            resource_id=dqs.id,
+            source="test",
+            granted_at=datetime.now(timezone.utc),
+        ))
+        db.commit()
+
+    blocked_before_reveal = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert blocked_before_reveal.status_code == 403
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.add(MasterclassEvent(
+            user_id=user_id,
+            event_key="app:dqs:revealed",
+            event_type="app_revealed_dqs",
+            placement="day-04-dqs",
+            details={},
+        ))
         db.commit()
     missing = client.post(
         "/api/masterclass/dqs/link-to-telegram",
@@ -1477,6 +1504,15 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
     )
     assert queued.status_code == 200
     assert queued.json() == {"ok": True, "status": "queued"}
+    repeated = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert repeated.status_code == 429
+    assert repeated.json()["detail"] == {
+        "reason": "retry_later",
+        "retry_after_seconds": 60,
+    }
     with factory() as db:
         notification = db.scalar(select(MasterclassNotification).where(
             MasterclassNotification.notification_kind == "dqs_app_link"
@@ -1486,6 +1522,77 @@ def test_dqs_material_queues_a_link_only_for_linked_telegram():
         assert db.scalar(select(MasterclassEvent).where(
             MasterclassEvent.event_type == "dqs_app_link_requested"
         )) is not None
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "dqs_app_link_requested"
+        )) == 1
+        request_event = db.scalar(select(MasterclassEvent).where(
+            MasterclassEvent.event_type == "dqs_app_link_requested"
+        ))
+        request_event.occurred_at = datetime.now(timezone.utc) - timedelta(minutes=2)
+        db.commit()
+
+    after_cooldown = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert after_cooldown.status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassEvent.id)).where(
+            MasterclassEvent.event_type == "dqs_app_link_requested"
+        )) == 2
+
+
+def test_legacy_dqs_owner_can_resend_without_masterclass_entitlement():
+    client, factory = setup()
+    with factory() as db:
+        db.execute(text(
+            "CREATE TABLE tg_contacts (user_id VARCHAR(36), status VARCHAR(32))"
+        ))
+        user_id = db.scalar(select(User.id))
+        dqs = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs)
+        db.flush()
+        masterclass_resource_id = db.scalar(
+            select(Resource.id).where(Resource.code == "ACCESS_MASTERCLASS")
+        )
+        masterclass_access = db.scalar(select(UserAccess).where(
+            UserAccess.user_id == user_id,
+            UserAccess.resource_id == masterclass_resource_id,
+        ))
+        db.delete(masterclass_access)
+        db.add_all([
+            UserAccess(
+                user_id=user_id,
+                resource_id=dqs.id,
+                source="legacy-test",
+                granted_at=datetime.now(timezone.utc),
+            ),
+            DqsState(
+                user_id=user_id,
+                days={"1": {"p": [0] * 17, "d": [None] * 17}},
+                source="legacy_import",
+            ),
+            MessengerAccount(
+                user_id=user_id,
+                platform="telegram",
+                platform_user_id="42",
+                username="legacy-member",
+                linked_at=datetime.now(timezone.utc),
+                source="test",
+            ),
+        ])
+        db.execute(
+            text("INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"),
+            {"user_id": str(user_id)},
+        )
+        db.commit()
+
+    response = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert response.status_code == 200
+    assert response.json() == {"ok": True, "status": "queued"}
 
 
 def test_course_app_trigger_reveals_only_an_owned_application_once():
@@ -1502,6 +1609,16 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
             granted_at=datetime.now(timezone.utc),
         ))
         db.commit()
+
+    locked_card = next(
+        item for item in client.get("/api/account-auth/account").json()["applications"]
+        if item["code"] == "dqs"
+    )
+    assert locked_card["state"] == "entitled_locked"
+    assert locked_card["summary"] == "Куплено. Откроется в четвёртом дне Мастер-класса."
+    assert locked_card["action_label"] == "Продолжить Мастер-класс"
+    assert locked_card["app"] is None
+    assert client.get("/api/apps/dqs/access").status_code == 403
 
     payload = {
         "email": "member@example.test",
@@ -1539,12 +1656,57 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
     first = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
     assert first.status_code == 200
     assert first.json()["created"] is True
+    assert first.json()["app_url"] == "https://edabalans.ru/dqs"
+    assert first.json()["telegram_link_status"] == "not_linked"
     assert first.json()["telegram_url"].endswith("?start=dqs")
     assert first.json()["max_url"].endswith("?start=dqs")
 
     repeated = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
     assert repeated.status_code == 200
     assert repeated.json()["created"] is False
+    assert client.get("/api/apps/dqs/access").status_code == 200
+    open_card = next(
+        item for item in client.get("/api/account-auth/account").json()["applications"]
+        if item["code"] == "dqs"
+    )
+    assert open_card["state"] == "available"
+    assert open_card["summary"] == "Ваш дневник качества питания."
+    assert open_card["action_label"] == "Открыть DQS"
+    assert open_card["can_resend_link"] is True
+
+    with factory() as db:
+        user_id = db.scalar(select(User.id))
+        db.execute(text(
+            "CREATE TABLE tg_contacts (user_id VARCHAR(36), status VARCHAR(32))"
+        ))
+        db.add(MessengerAccount(
+            user_id=user_id,
+            platform="telegram",
+            platform_user_id="42",
+            username="member",
+            linked_at=datetime.now(timezone.utc),
+            source="test",
+        ))
+        db.execute(
+            text("INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"),
+            {"user_id": str(user_id)},
+        )
+        db.commit()
+    after_late_link = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    assert after_late_link.json()["telegram_link_status"] == "not_sent"
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassNotification.id)).where(
+            MasterclassNotification.notification_kind == "dqs_app_link"
+        )) == 0
+    resent = client.post(
+        "/api/masterclass/dqs/link-to-telegram",
+        json={"email": "member@example.test"},
+    )
+    assert resent.status_code == 200
+    with factory() as db:
+        assert db.scalar(select(func.count(MasterclassNotification.id)).where(
+            MasterclassNotification.notification_kind == "dqs_app_link"
+        )) == 1
 
     denied = client.post(
         "/api/masterclass/apps/strength/reveal",
@@ -1567,10 +1729,85 @@ def test_course_app_trigger_reveals_only_an_owned_application_once():
         },
     )
     assert forged.status_code == 400
+    client_telemetry = client.post(
+        "/api/masterclass/events",
+        json={
+            "email": "member@example.test",
+            "event_key": "client:dqs-opened",
+            "event_type": "dqs_opened",
+            "placement": "forged",
+        },
+    )
+    assert client_telemetry.status_code == 200
     with factory() as db:
         assert db.scalar(select(func.count(MasterclassEvent.id)).where(
             MasterclassEvent.event_type == "app_revealed_dqs"
         )) == 1
+
+
+def test_first_dqs_reveal_queues_one_permanent_telegram_link():
+    client, factory = setup()
+    with factory() as db:
+        db.execute(text(
+            "CREATE TABLE tg_contacts (user_id VARCHAR(36), status VARCHAR(32))"
+        ))
+        user_id = db.scalar(select(User.id))
+        dqs = Resource(code="dqs", name="DQS", status="active")
+        db.add(dqs)
+        db.flush()
+        db.add_all([
+            UserAccess(
+                user_id=user_id,
+                resource_id=dqs.id,
+                source="test",
+                granted_at=datetime.now(timezone.utc),
+            ),
+            MessengerAccount(
+                user_id=user_id,
+                platform="telegram",
+                platform_user_id="42",
+                username="member",
+                linked_at=datetime.now(timezone.utc),
+                source="test",
+            ),
+            MasterclassDayProgress(
+                user_id=user_id,
+                day_number=4,
+                required_step_ids=["day-04-article-01", "day-04-dqs"],
+            ),
+            MasterclassStepProgress(
+                user_id=user_id,
+                day_number=4,
+                step_index=0,
+                step_kind="article",
+                completed_at=datetime.now(timezone.utc),
+            ),
+        ])
+        db.execute(
+            text("INSERT INTO tg_contacts (user_id, status) VALUES (:user_id, 'active')"),
+            {"user_id": str(user_id)},
+        )
+        db.commit()
+
+    payload = {
+        "email": "member@example.test",
+        "day": 4,
+        "step_index": 1,
+        "placement": "day-04-dqs",
+    }
+    first = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+    repeated = client.post("/api/masterclass/apps/dqs/reveal", json=payload)
+
+    assert first.status_code == repeated.status_code == 200
+    assert first.json()["telegram_link_status"] == "queued"
+    assert repeated.json()["telegram_link_status"] == "already_queued"
+    with factory() as db:
+        rows = list(db.scalars(select(MasterclassNotification).where(
+            MasterclassNotification.notification_kind == "dqs_app_link"
+        )))
+        assert len(rows) == 1
+        assert rows[0].content_code == "tpl_postpurchase_dqs_app_link"
+        assert rows[0].deduplication_key == "app:dqs:revealed:dqs_app_link"
 
 
 def test_offer_excludes_owned_product_and_checkout_rechecks_server_price():
