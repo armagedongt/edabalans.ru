@@ -34,7 +34,6 @@ from app.models import (
     CourseStageProgress,
     DqsState,
     MasterclassDayProgress,
-    UserCoursePolicy,
 )
 from app.account_security import decrypt_password, encrypt_password, generate_password, password_hash
 from app.config import Settings
@@ -42,7 +41,6 @@ from app.masterclass_routes import (
     questions,
 )
 from app.product_identity import purchased_products, tariff_name
-from app.course_access_service import COURSE_RESOURCE_CODES, set_course_unlock_mode
 
 CONFIRMED_PAYMENT_STATUSES = ("paid", "confirmed")
 MOSCOW_TZ = ZoneInfo("Europe/Moscow")
@@ -477,12 +475,6 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
         .where(UserAccess.user_id == user_id)
         .order_by(UserAccess.granted_at.desc())
     ).all()
-    course_policies = {
-        row.resource_id: row.unlock_mode
-        for row in db.scalars(
-            select(UserCoursePolicy).where(UserCoursePolicy.user_id == user_id)
-        )
-    }
     attribution = list(
         db.scalars(
             select(AttributionEvent)
@@ -745,8 +737,6 @@ def user_detail(db: Session, user_id: uuid.UUID) -> dict | None:
                 "expires_at": access.expires_at,
                 "revoked_at": access.revoked_at,
                 "paused_at": access.paused_at,
-                "course_policy_supported": code in COURSE_RESOURCE_CODES,
-                "unlock_mode": course_policies.get(access.resource_id, "paced"),
             }
             for access, code, name in accesses
         ],
@@ -1053,47 +1043,6 @@ def grant_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, adm
                         action="grant_access", details={"resource_code": resource_code}))
     db.commit()
     return True
-
-
-def set_manual_course_policy(
-    db: Session,
-    user_id: uuid.UUID,
-    resource_code: str,
-    unlock_mode: str,
-    admin: str,
-) -> tuple[bool, str]:
-    before = db.scalar(
-        select(UserCoursePolicy.unlock_mode)
-        .join(Resource, Resource.id == UserCoursePolicy.resource_id)
-        .where(
-            UserCoursePolicy.user_id == user_id,
-            Resource.code == resource_code,
-        )
-    ) or "paced"
-    ok, result = set_course_unlock_mode(
-        db,
-        user_id,
-        resource_code,
-        unlock_mode,
-        source="manual_admin",
-    )
-    if not ok:
-        return False, result
-    db.add(
-        AdminAppEdit(
-            admin_username=admin,
-            target_user_id=user_id,
-            app_code="crm",
-            action="set_course_unlock_mode",
-            details={
-                "resource_code": resource_code,
-                "before": before,
-                "after": unlock_mode,
-            },
-        )
-    )
-    db.commit()
-    return True, result
 
 
 def revoke_manual_access(db: Session, user_id: uuid.UUID, resource_code: str, admin: str) -> bool:

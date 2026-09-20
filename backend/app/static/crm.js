@@ -79,29 +79,6 @@
       </div>`;
   }
 
-  function userEmail(user) {
-    const emails = user.emails || [];
-    const primary = emails.find((item) => item.primary) || emails[0];
-    return user.email || (primary && primary.email) || "";
-  }
-
-  async function copyText(value) {
-    try {
-      await navigator.clipboard.writeText(value);
-      return true;
-    } catch (_) {
-      const field = document.createElement("textarea");
-      field.value = value;
-      field.setAttribute("readonly", "");
-      field.style.cssText = "position:fixed;opacity:0;pointer-events:none";
-      document.body.append(field);
-      field.select();
-      const copied = document.execCommand("copy");
-      field.remove();
-      return copied;
-    }
-  }
-
   function bindTop() {
     root.querySelectorAll("[data-view]").forEach((button) => {
       button.addEventListener("click", () => showView(button.dataset.view).catch(showError));
@@ -142,10 +119,6 @@
 
   function telegramPlaneIcon() {
     return `<svg viewBox="190 270 580 510" aria-hidden="true"><path fill="currentColor" d="M226.328 494.722c145.761-63.505 242.957-105.372 291.589-125.6 138.855-57.755 167.708-67.787 186.514-68.119 4.137-.072 13.385.953 19.375 5.814 5.059 4.105 6.451 9.65 7.117 13.541.666 3.892 1.495 12.757.836 19.683-7.525 79.062-40.084 270.924-56.648 359.475-7.009 37.469-20.81 50.032-34.17 51.261-29.036 2.672-51.085-19.189-79.208-37.624-44.006-28.847-68.867-46.804-111.583-74.953-49.366-32.531-17.364-50.411 10.769-79.631 7.363-7.647 135.296-124.012 137.772-134.568.31-1.32.597-6.241-2.326-8.84-2.924-2.599-7.239-1.71-10.353-1.003-4.413 1.002-74.714 47.468-210.902 139.399-19.954 13.703-38.029 20.379-54.223 20.029-17.853-.386-52.194-10.094-77.723-18.393-31.313-10.178-56.2-15.56-54.032-32.846 1.128-9.004 13.527-18.212 37.196-27.624Z"/></svg>`;
-  }
-
-  function copyIcon() {
-    return `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9" d="M9 8.25h8.25A1.75 1.75 0 0 1 19 10v8.25A1.75 1.75 0 0 1 17.25 20H9a1.75 1.75 0 0 1-1.75-1.75V10A1.75 1.75 0 0 1 9 8.25Zm-2.25-4.5H15A1.75 1.75 0 0 1 16.75 5.5v.75"/></svg>`;
   }
 
   function messengerIcon(platform) {
@@ -196,7 +169,7 @@
     return `<span class="crm-contact-plain">${esc(value)}</span>`;
   }
 
-  function profileMessengerButton(user, platform, compact = false) {
+  function profileMessengerButton(user, platform) {
     const account = (user.messengers || []).find((item) => item.platform === platform);
     if (!account) return "";
     const username = account.username || "";
@@ -206,12 +179,9 @@
     const href = platform === "telegram" && telegramHandle
       ? ` href="https://t.me/${encodeURIComponent(telegramHandle)}" target="_blank" rel="noopener"`
       : platform === "max" && isPublicMax ? ` href="${esc(username)}" target="_blank" rel="noopener"` : "";
-    const platformName = platform === "telegram" ? "Telegram" : "MAX";
-    const title = platform === "max" && account.platform_user_id ? ` title="MAX: ${esc(account.platform_user_id)}"` : ` title="${platformName}"`;
-    const body = platform === "telegram"
-      ? `${telegramPlaneIcon()}${compact ? "" : "<span>Telegram</span>"}`
-      : `<img src="/assets/max-logo.png" alt="">${compact ? "" : "<span>MAX</span>"}`;
-    return `<${tag} class="crm-contact-button crm-contact-button--${platform}${compact ? " crm-contact-button--icon" : ""}"${href}${title} aria-label="${platformName}">${body}</${tag}>`;
+    const title = platform === "max" && account.platform_user_id ? ` title="MAX: ${esc(account.platform_user_id)}"` : "";
+    const body = platform === "telegram" ? `${telegramPlaneIcon()}<span>Telegram</span>` : `<img src="/assets/max-logo.png" alt=""><span>MAX</span>`;
+    return `<${tag} class="crm-contact-button crm-contact-button--${platform}"${href}${title}>${body}</${tag}>`;
   }
 
   function courseProgressPreview(user) {
@@ -231,24 +201,17 @@
   }
 
   function previewTrigger(kind, user, label) {
-    const descriptions = { email: "email", tariff: "тариф и доступы", payments: "оплаты", accesses: "доступы", messengers: "мессенджеры", notes: "заметки", progress: "статус и прогресс" };
-    const popoverRole = kind === "email" ? "dialog" : "tooltip";
-    return `<div class="crm-preview ${kind}" data-preview-kind="${kind}" data-preview-user="${esc(user.id)}">
+    const descriptions = { tariff: "тариф и доступы", payments: "оплаты", accesses: "доступы", messengers: "мессенджеры", notes: "заметки", progress: "статус и прогресс" };
+    return `<div class="crm-preview" data-preview-kind="${kind}" data-preview-user="${esc(user.id)}">
       <button class="crm-preview-trigger ${kind}" type="button" aria-expanded="false" aria-label="Показать ${descriptions[kind]}: ${esc(user.display_name || user.email || "человек")}">${label}</button>
-      <div class="crm-popover" role="${popoverRole}"><div class="crm-popover-loading">Загружаю…</div></div>
+      <div class="crm-popover" role="tooltip"><div class="crm-popover-loading">Загружаю…</div></div>
     </div>`;
   }
 
   function previewContent(kind, user) {
-    if (kind === "email") {
-      const email = userEmail(user);
-      return email
-        ? `<div class="crm-popover-title">Email</div><div class="crm-popover-item"><strong>${esc(email)}</strong><span>Нажмите значок копирования справа от имени, чтобы скопировать адрес.</span></div>`
-        : '<div class="crm-popover-empty">Email не указан</div>';
-    }
     if (kind === "messengers") {
       const messengers = user.messengers || [];
-      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не подключён</div>';
+      if (!messengers.length) return '<div class="crm-popover-empty">Мессенджер не привязан</div>';
       return `<div class="crm-popover-title">Мессенджеры</div>${messengers.map((item) => `<div class="crm-popover-item"><strong>${messengerIcon(item.platform)} ${esc(item.platform === "telegram" ? "Telegram" : item.platform === "max" ? "MAX" : item.platform)}</strong><span>${item.username ? `@${esc(item.username)} · ` : ""}в боте ${botAge(item.main_scenario_seen_at || item.first_seen_at)} · ${channelState({ messengers: [item] }).label.toLowerCase()}</span></div>`).join("")}`;
     }
     if (kind === "notes") {
@@ -321,11 +284,7 @@
       preview.addEventListener("focusin", load);
       preview.addEventListener("pointerleave", () => trigger.setAttribute("aria-expanded", "false"));
       preview.addEventListener("focusout", (event) => { if (!preview.contains(event.relatedTarget)) trigger.setAttribute("aria-expanded", "false"); });
-      trigger.addEventListener("click", (event) => {
-        if (preview.dataset.previewKind === "email") return;
-        event.stopPropagation();
-        load();
-      });
+      trigger.addEventListener("click", (event) => { event.stopPropagation(); load(); });
     });
   }
 
@@ -336,23 +295,22 @@
     return "all";
   }
 
+  function messengerCell(user) {
+    const messengers = user.messengers || [];
+    const label = messengers.length
+      ? `<span class="crm-messenger-icons">${messengers.map((item) => messengerIcon(item.platform)).join("")}</span>`
+      : '<span class="crm-no-messenger">—</span>';
+    return previewTrigger("messengers", user, label);
+  }
+
   function userRow(user, mode) {
     const stage = clientStage(user);
     const source = esc(user.first_source || "—");
-    const messengerButton = (platform) => profileMessengerButton(user, platform, true);
-    const messengers = `<span class="crm-table-messengers" aria-label="Мессенджеры">
-      <span class="crm-table-messenger-slot crm-table-messenger-slot--telegram">${messengerButton("telegram")}</span>
-      <span class="crm-table-messenger-slot crm-table-messenger-slot--max">${messengerButton("max")}</span>
-    </span>`;
-    const email = userEmail(user);
-    const displayName = user.display_name || email || user.telegram || "Без имени";
-    const copyEmail = email
-      ? `<button class="crm-copy-email" type="button" data-copy-email="${esc(email)}" aria-label="Скопировать email: ${esc(email)}" title="Скопировать email">${copyIcon()}</button>`
-      : "";
     const commonStart = `
-      <tr data-user-id="${esc(user.id)}" tabindex="0" role="link" aria-label="Открыть карточку: ${esc(displayName)}">
-        <td class="crm-person-name">${previewTrigger("email", user, `<strong>${esc(displayName)}</strong>`)}${copyEmail}</td>
-        <td class="crm-contact-cell">${messengers}</td>
+      <tr data-user-id="${esc(user.id)}" tabindex="0" role="link" aria-label="Открыть карточку: ${esc(user.display_name || user.email || user.telegram || "Без имени")}">
+        <td class="crm-person-name"><strong>${esc(user.display_name || user.email || user.telegram || "Без имени")}</strong></td>
+        <td class="crm-person-email">${esc(user.email || "—")}</td>
+        <td class="crm-contact-cell">${messengerCell(user)}</td>
         <td class="crm-source-cell">${source}</td>`;
     const startedAt = botStart(user);
     const bot = `<td class="crm-bot-age"><strong>${startedAt ? `с ${date(startedAt, false)} · ${botAge(startedAt)}` : "не запускал"}</strong><span>${user.first_purchase_at ? `первая покупка ${date(user.first_purchase_at, false)}` : "покупки ещё нет"}</span></td>`;
@@ -370,29 +328,12 @@
 
   function bindUserCards() {
     root.querySelectorAll("[data-user-id]").forEach((item) => {
-      item.addEventListener("click", (event) => { if (!event.target.closest(".crm-preview:not(.email), .crm-copy-email, a")) openUser(item.dataset.userId); });
+      item.addEventListener("click", (event) => { if (!event.target.closest(".crm-preview, a")) openUser(item.dataset.userId); });
       item.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== " ") return;
-        if (event.target.closest(".crm-preview:not(.email), .crm-copy-email, a")) return;
+        if (event.target.closest(".crm-preview, a")) return;
         event.preventDefault();
         openUser(item.dataset.userId);
-      });
-    });
-  }
-
-  function bindEmailCopyButtons() {
-    root.querySelectorAll(".crm-copy-email").forEach((button) => {
-      button.addEventListener("click", async (event) => {
-        event.stopPropagation();
-        try {
-          const copied = await copyText(button.dataset.copyEmail || "");
-          if (!copied) throw new Error("clipboard unavailable");
-          button.setAttribute("aria-label", "Email скопирован");
-          button.title = "Скопировано";
-        } catch (_) {
-          button.setAttribute("aria-label", "Не удалось скопировать email");
-          button.title = "Не удалось скопировать";
-        }
       });
     });
   }
@@ -422,17 +363,15 @@
     current.classList.remove("is-loading");
     const mode = peopleMode();
     const headings = mode === "leads"
-      ? ["Имя", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]
+      ? ["Имя", "Email", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]
       : mode === "support"
-        ? ["Имя", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]
-        : ["Имя", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"];
+        ? ["Имя", "Email", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]
+        : ["Имя", "Email", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"];
     const columnClass = (heading) => `crm-col-${({"Имя":"name","Email":"email","Мессенджеры":"messengers","Источник":"source","Тариф":"tariff","Итого":"total","Статус":"status","В боте":"bot","Подписка":"channel","Заметки":"notes"})[heading] || "default"}`;
-    current.innerHTML = `<div class="crm-table-area"><div class="crm-table-scrollbar" aria-label="Горизонтальная прокрутка таблицы"><i></i></div><div class="crm-table-wrap"><table class="crm-table crm-people-table crm-people-${mode}"><colgroup>${headings.map((heading) => `<col class="${columnClass(heading)}">`).join("")}</colgroup><thead><tr>${headings.map((heading) => `<th>${heading}</th>`).join("")}</tr></thead><tbody>${state.users.map((user) => userRow(user, mode)).join("") || `<tr><td colspan="${headings.length}" class="crm-empty">Ничего не найдено</td></tr>`}</tbody></table></div></div>
+    current.innerHTML = `<div class="crm-table-wrap"><table class="crm-table crm-people-table crm-people-${mode}"><colgroup>${headings.map((heading) => `<col class="${columnClass(heading)}">`).join("")}</colgroup><thead><tr>${headings.map((heading) => `<th>${heading}</th>`).join("")}</tr></thead><tbody>${state.users.map((user) => userRow(user, mode)).join("") || `<tr><td colspan="${headings.length}" class="crm-empty">Ничего не найдено</td></tr>`}</tbody></table></div>
       <div class="crm-pager"><button class="crm-btn alt small" id="crm-prev" ${state.offset === 0 ? "disabled" : ""}>← Предыдущие</button><span>${state.users.length ? `${state.offset + 1}–${state.offset + state.users.length}` : "0"}</span><button class="crm-btn alt small" id="crm-next" ${state.users.length < pageSize ? "disabled" : ""}>Следующие →</button></div>`;
     bindUserCards();
     bindUserPreviews();
-    bindEmailCopyButtons();
-    bindTableScroll();
     document.getElementById("crm-prev").addEventListener("click", () => { state.offset = Math.max(0, state.offset - pageSize); loadUserRows().catch(showError); });
     document.getElementById("crm-next").addEventListener("click", () => { state.offset += pageSize; loadUserRows().catch(showError); });
   }
@@ -699,24 +638,6 @@
     return `<div class="crm-preview crm-purchase-preview" data-preview-kind="progress" data-preview-user="${esc(user.id)}"><button class="crm-preview-trigger crm-purchase-item ${tone}" type="button" aria-expanded="false" aria-label="Показать прогресс: ${esc(item.product_name || "продукт")}"><span class="crm-purchase-main"><span><strong>${esc(item.product_name || "Продукт не определён")}</strong>${item.tariff ? `<span class="crm-purchase-tariff">${esc(item.tariff)}</span>` : ""}</span>${amount}</span>${details && details !== "—" ? `<span class="crm-row-meta">${esc(details)}</span>` : ""}</button><div class="crm-popover" role="tooltip"><div class="crm-popover-loading">Загружаю…</div></div></div>`;
   }
 
-  function bindTableScroll() {
-    const tableWrap = root.querySelector(".crm-table-wrap");
-    const scrollbar = root.querySelector(".crm-table-scrollbar");
-    const spacer = scrollbar && scrollbar.querySelector("i");
-    if (!tableWrap || !scrollbar || !spacer) return;
-    const table = tableWrap.querySelector("table");
-    let syncing = false;
-    const sync = (from, to) => {
-      if (syncing) return;
-      syncing = true;
-      to.scrollLeft = from.scrollLeft;
-      syncing = false;
-    };
-    requestAnimationFrame(() => { spacer.style.width = `${table.scrollWidth}px`; });
-    scrollbar.addEventListener("scroll", () => sync(scrollbar, tableWrap), {passive:true});
-    tableWrap.addEventListener("scroll", () => sync(tableWrap, scrollbar), {passive:true});
-  }
-
   async function openUser(id) {
     root.innerHTML = top("") + '<div class="crm-loading">Открываю карточку…</div>';
     const user = await loadUserDetail(id);
@@ -770,12 +691,11 @@
         <div class="crm-note-history">${user.notes.slice(0, 3).map((item) => `<div class="crm-row"><div>${esc(item.body)}</div><div class="crm-row-meta">${date(item.created_at, true)} · ${esc(item.author)}</div></div>`).join("") || '<div class="crm-empty">Заметок пока нет</div>'}${user.notes.length > 3 ? `<div class="crm-row-meta">Ещё ${user.notes.length - 3} заметок</div>` : ""}</div></div>
       </section>
       <div class="crm-profile-main-grid">
-        <div class="crm-profile-stack">
         <section class="crm-card crm-purchases-card"><div class="crm-card-title">Покупки и тарифы</div>
           <div class="crm-purchase-grid">${purchaseHistory.map((item) => purchaseCard(item, user)).join("") || '<div class="crm-empty">Подтверждённых покупок пока нет</div>'}</div>
           <details class="crm-inline-access" open><summary><strong>Управление доступами</strong><span>${accessByCode.filter((item)=>!item.paused_at).length} активных</span></summary>
             <div class="crm-access-heading">Текущие доступы</div>
-            <div class="crm-access-list">${accessByCode.map((item)=>`<div class="crm-access-row"><div><strong>${esc(item.name)}</strong><span>${item.paused_at ? "Приостановлен" : "Действует"}</span>${item.course_policy_supported ? `<label class="crm-check"><input class="course-unlock-policy" data-code="${esc(item.code)}" type="checkbox" ${item.unlock_mode === "fully_unlocked" ? "checked" : ""} ${item.paused_at ? "disabled" : ""}><span>Открыть весь курс сразу</span></label>` : ""}</div><div><button class="crm-btn alt small ${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "Возобновить" : "Приостановить"}</button><button class="crm-btn alt small revoke-access" data-code="${esc(item.code)}" type="button">Отозвать</button></div></div>`).join("") || '<div class="crm-empty">Доступов нет</div>'}</div>
+            <div class="crm-access-list">${accessByCode.map((item)=>`<div class="crm-access-row"><div><strong>${esc(item.name)}</strong><span>${item.paused_at ? "Приостановлен" : "Действует"}</span></div><div><button class="crm-btn alt small ${item.paused_at ? "resume-access" : "pause-access"}" data-code="${esc(item.code)}" type="button">${item.paused_at ? "Возобновить" : "Приостановить"}</button><button class="crm-btn alt small revoke-access" data-code="${esc(item.code)}" type="button">Отозвать</button></div></div>`).join("") || '<div class="crm-empty">Доступов нет</div>'}</div>
             <div class="crm-access-heading">Выдать доступ</div>
             <form class="crm-two" id="grant-form"><select class="crm-input" id="resource-code"><option value="" selected disabled>Выберите доступ</option>${resources.map((r)=>`<option value="${esc(r.code)}">${esc(r.name)}</option>`).join("")}</select><button class="crm-btn small">Выдать</button></form>
             <div class="crm-access-explainer">Приостановить — временно закрыть, сохранив запись. Возобновить — вернуть её. Отозвать — окончательно закрыть текущую выдачу.</div>
@@ -791,14 +711,7 @@
             ${personalLinks.length ? `<div class="crm-card-sub" style="margin-top:14px">Последние ссылки</div>${personalLinks.slice(0,5).map((item)=>`<div class="crm-row"><div class="crm-row-main"><span>${item.mode==='free'?'Бесплатно':money(item.final_amount)}</span><strong>${esc(item.status)}</strong></div><div class="crm-row-meta">${esc(item.resources.join(', '))} · до ${date(item.expires_at,true)}</div></div>`).join("")}` : ""}
           </details>
         </section>
-        <section class="crm-card"><div class="crm-card-title">Этапы рассылки <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключена"}</span></div>
-            ${botState ? `<div class="crm-row-meta">Шаг: ${esc(botState.current_step || "—")} · отправлено ${botState.sent} из ${botState.total}</div>
-              <div style="height:8px;background:#edf1ea;border-radius:8px;overflow:hidden;margin:10px 0"><div style="height:100%;width:${botState.total ? Math.min(100, botState.sent / botState.total * 100) : 0}%;background:#2f6b47"></div></div>
-              ${botState.error ? `<div class="crm-row-meta" style="color:#a83d16">${esc(botState.error)}</div>` : ""}
-              <form class="crm-form" id="telegram-message-form"><textarea class="crm-textarea" id="telegram-message" placeholder="Написать этому клиенту в Telegram"></textarea><button class="crm-btn small" type="submit">Отправить сообщение</button></form>` : '<div class="crm-row-meta">У клиента пока нет связанного аккаунта тестового Telegram-бота.</div>'}
-        </section>
-        </div>
-        <div class="crm-profile-stack">
+        <div>
           <section class="crm-card"><div class="crm-card-title">Контакты</div>
             <form class="crm-form" id="name-form"><label><div class="crm-k">ИМЯ</div><input class="crm-input" id="display-name" value="${esc(user.display_name || "")}"></label>
               <button class="crm-btn small" type="submit">Сохранить имя</button></form>
@@ -806,10 +719,18 @@
             ${user.phones.map((item) => `<div class="crm-row"><div class="crm-row-main"><span>${esc(item.phone)}</span><span>телефон</span></div></div>`).join("")}
             <div class="crm-row"><div class="crm-k">ВХОД В ЛИЧНЫЙ КАБИНЕТ</div><div class="crm-row-main"><span>${user.credential.exists ? "Пароль создан" : "Пароль ещё не создан"}</span><code id="account-password-value">••••••••</code></div><div class="crm-two" style="margin-top:10px"><button class="crm-btn small" id="reveal-account-password" type="button" ${user.credential.password_available ? "" : "disabled"}>Показать пароль</button><button class="crm-btn small" id="reset-account-password" type="button">${user.credential.exists ? "Задать новый" : "Создать пароль"}</button></div></div>
           </section>
+        </div>
+      </div>
+      <div class="crm-grid">
+        <section class="crm-card"><div class="crm-card-title">Этапы рассылки <span class="crm-card-sub">${botState ? esc(botState.run_status || "без цепочки") : "не подключена"}</span></div>
+            ${botState ? `<div class="crm-row-meta">Шаг: ${esc(botState.current_step || "—")} · отправлено ${botState.sent} из ${botState.total}</div>
+              <div style="height:8px;background:#edf1ea;border-radius:8px;overflow:hidden;margin:10px 0"><div style="height:100%;width:${botState.total ? Math.min(100, botState.sent / botState.total * 100) : 0}%;background:#2f6b47"></div></div>
+              ${botState.error ? `<div class="crm-row-meta" style="color:#a24b38">${esc(botState.error)}</div>` : ""}
+              <form class="crm-form" id="telegram-message-form"><textarea class="crm-textarea" id="telegram-message" placeholder="Написать этому клиенту в Telegram"></textarea><button class="crm-btn small" type="submit">Отправить сообщение</button></form>` : '<div class="crm-row-meta">У клиента пока нет связанного аккаунта тестового Telegram-бота.</div>'}
+        </section>
         <section class="crm-card"><div class="crm-card-title">Теги</div><div class="crm-tags">${otherTags.map((item) => `<span class="crm-tag">${esc(item.name)}</span>`).join("") || '<span class="crm-tag empty">тегов нет</span>'}</div>
             <form class="crm-two" id="tag-form" style="margin-top:10px"><input class="crm-input" id="tag-name" placeholder="Например: рассылка 100"><button class="crm-btn small" type="submit">Добавить</button></form>
         </section>
-        </div>
       </div>`;
 
     bindTop();
@@ -844,7 +765,6 @@
     root.querySelectorAll(".revoke-access").forEach((button)=>button.addEventListener("click", async()=>{ if (!window.confirm("Закрыть этот доступ?")) return; await api(`/admin/api/users/${id}/accesses/${button.dataset.code}`, {method:"DELETE"}); await refreshUser(id); }));
     root.querySelectorAll(".pause-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/pause`, {method:"POST"}); await refreshUser(id); }));
     root.querySelectorAll(".resume-access").forEach((button)=>button.addEventListener("click", async()=>{ await api(`/admin/api/users/${id}/accesses/${button.dataset.code}/resume`, {method:"POST"}); await refreshUser(id); }));
-    root.querySelectorAll(".course-unlock-policy").forEach((input)=>input.addEventListener("change", async()=>{ input.disabled=true; try { await api(`/admin/api/users/${id}/course-policies/${input.dataset.code}`, {method:"PUT", body:JSON.stringify({unlock_mode:input.checked?"fully_unlocked":"paced"})}); await refreshUser(id); } catch (error) { input.checked=!input.checked; input.disabled=false; throw error; } }));
     document.getElementById("tag-form").addEventListener("submit", async (event) => {
       event.preventDefault();
       const name = document.getElementById("tag-name").value.trim();

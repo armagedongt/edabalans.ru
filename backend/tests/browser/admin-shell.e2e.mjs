@@ -34,14 +34,6 @@ let failNextPaymentRequest = false;
 let errorAttempts = 0;
 let libraryErrorAttempts = 0;
 const sampleUser = { id:"u1", display_name:"Анна", email:"anna@example.com", telegram:"anna", purchase_count:2, ltv_rub:12000, estimated_ltv_rub:0, first_seen_at:"2026-08-01T12:00:00Z", first_purchase_at:"2026-08-02T12:00:00Z", last_purchase_at:"2026-09-18T12:00:00Z", first_source:"telegram", accompaniment_status:"active", initial_tariff:"Стандарт", accesses:["ACCESS_MASTERCLASS", "ACCESS_DQS"], note_count:1, messengers:[{platform:"telegram",platform_user_id:"101",username:"anna",first_seen_at:"2026-08-01T12:00:00Z",main_scenario_seen_at:"2026-08-01T12:00:00Z",subscription_status:"subscribed"},{platform:"max",platform_user_id:"max-202",username:"maxanna",first_seen_at:"2026-08-04T12:00:00Z",main_scenario_seen_at:"2026-08-04T12:00:00Z",subscription_status:"active"}] };
-const sampleUsers = [
-  sampleUser,
-  { id:"u2", display_name:"Ирина Лебедева", email:"irina.lebedeva@example.org", purchase_count:1, ltv_rub:8900, estimated_ltv_rub:0, first_seen_at:"2026-08-11T12:00:00Z", first_purchase_at:"2026-08-14T12:00:00Z", first_source:"pikabu", initial_tariff:"Минимальный", accesses:["ACCESS_MASTERCLASS"], note_count:0, messengers:[{platform:"telegram",platform_user_id:"102",username:"irina_example",first_seen_at:"2026-08-11T12:00:00Z",main_scenario_seen_at:"2026-08-11T12:00:00Z",subscription_status:"subscribed"}] },
-  { id:"u3", display_name:"Дмитрий", email:"dmitry.sokolov.long-mailbox@example.net", purchase_count:0, ltv_rub:0, estimated_ltv_rub:0, first_seen_at:"2026-09-02T12:00:00Z", first_source:"yandex_direct", initial_tariff:null, accesses:[], note_count:2, messengers:[{platform:"max",platform_user_id:"max-303",username:"",first_seen_at:"2026-09-02T12:00:00Z",main_scenario_seen_at:null,subscription_status:"unknown"}] },
-  { id:"u4", display_name:"Николай Сергеевич Петров", email:"nikolay@example.ru", purchase_count:1, ltv_rub:19900, estimated_ltv_rub:0, first_seen_at:"2026-07-03T12:00:00Z", first_purchase_at:"2026-07-20T12:00:00Z", first_source:"website", accompaniment_status:"active", initial_tariff:"Основной", accesses:["ACCESS_COACHING"], note_count:4, messengers:[{platform:"telegram",platform_user_id:"104",username:"nikolay_example",first_seen_at:"2026-07-03T12:00:00Z",main_scenario_seen_at:"2026-07-04T12:00:00Z",subscription_status:"active"},{platform:"max",platform_user_id:"max-404",username:"",first_seen_at:"2026-07-05T12:00:00Z",main_scenario_seen_at:"2026-07-05T12:00:00Z",subscription_status:"active"}] },
-  { id:"u5", display_name:"", email:"maria@example.com", purchase_count:0, ltv_rub:0, estimated_ltv_rub:0, first_seen_at:"2026-09-10T12:00:00Z", first_source:"telegram", initial_tariff:null, accesses:[], note_count:0, messengers:[] },
-  { id:"u6", display_name:"Ольга В.", email:"olga.v@example.com", purchase_count:1, ltv_rub:3000, estimated_ltv_rub:0, first_seen_at:"2026-06-01T12:00:00Z", first_purchase_at:"2026-06-04T12:00:00Z", first_source:"tilda", initial_tariff:"Дополнение", accesses:["ACCESS_DQS"], note_count:1, messengers:[{platform:"telegram",platform_user_id:"106",username:"olga_example",first_seen_at:"2026-06-01T12:00:00Z",main_scenario_seen_at:null,subscription_status:"unsubscribed"}] }
-];
 const sampleUserDetail = {
   id:"u1", display_name:"Анна", status:"active", data_origin:"native", accompaniment_status:"active", first_seen_at:"2026-08-01T12:00:00Z",
   access_review_status:"not_required", access_review_note:"", tilda_access_status:"not_required", tilda_membership:null,
@@ -68,15 +60,6 @@ const sampleUserDetail = {
   ],
   tags:[{id:"t1",name:"Мастер-класс",category:"purchase"}], notes:[{body:"Обсудить следующий этап",author:"Сергей",created_at:"2026-09-19T12:00:00Z"}],
   masterclass:{questionnaires:[],events:[],offers:[]}
-};
-const sampleMarketing = {
-  period:{from:"2026-09-01",to:"2026-09-21",timezone:"Europe/Moscow"},
-  filters:{sources:["Яндекс","Пикабу"],campaigns:["Интенсив"],creatives:["Объявление 1"],selected:{source:"",campaign:"",creative:"",user:""}},
-  collection:{day_one:true,site_home:true,later_days:true},
-  totals:{rows:1,matching_rows:1,events_truncated:false,clicks_ignore_user_filter:false},
-  rows:[{user_id:"u1",display_name:"Анна",usernames:["@anna"],source:"Яндекс",placement:"Поиск",campaign:"Интенсив",link_name:"Поиск · сентябрь",creative:"Объявление 1",term:"похудение",messenger:"telegram",status:"active",is_new_lead:true,landing_entry:{at:"2026-09-01T08:58:00Z",label:"Нажал кнопку на посадке",method:"button",messenger:"telegram"},start:{at:"2026-09-01T09:00:00Z",label:"Первый старт бота"},check_before_day_one:[{at:"2026-09-01T09:05:00Z",detail:"уже подписан"}],day_one:{at:"2026-09-01T09:10:00Z"},subscription:{at:"2026-09-01T09:05:00Z",detail:"уже подписан"},check_after_day_one:[],site_home:{at:"2026-09-01T09:08:00Z"},later_days:{at:"2026-09-03T09:00:00Z",max_day:3},other_actions:[{at:"2026-09-01T09:20:00Z",label:"Начал смотреть видео",detail:"день 1"}],last_action:{at:"2026-09-03T09:00:00Z",label:"Открыл день 3"}}],
-  analytics:[{code:"web_click",label:"Перешли с посадки в мессенджер",count:10,conversion_from_previous:null,lost_from_previous:null,conversion_from_start:null,collection:"collecting"},{code:"bot_start",label:"Запустили бота",count:8,conversion_from_previous:80,lost_from_previous:2,conversion_from_start:null,collection:"collecting"}],
-  entry_breakdown:[{source:"Яндекс",campaign:"Интенсив",creative:"Объявление 1",messenger:"telegram",entry:"button",entries:10,starts:8,lost:2,conversion:80}]
 };
 
 function json(response, payload) {
@@ -117,7 +100,6 @@ const server = createServer((request, response) => {
     "/admin/courses/masterclass-21/structure": "course-structure-editor.html",
     "/admin/courses/masterclass-21/materials/day-01-article-02/editor": "course-material-editor.html",
     "/admin/products": "product-catalog-editor.html",
-    "/admin/marketing": "admin.html",
   };
   if (pages[url.pathname]) {
     response.writeHead(200, { "Content-Type": "text/html; charset=utf-8" });
@@ -165,7 +147,6 @@ const server = createServer((request, response) => {
   }
   if (url.pathname === "/admin/api/project-map") return json(response, projectMap);
   if (url.pathname === "/admin/api/summary") return json(response, { users: 321, buyers: 87, paid_payments: 112, revenue_rub: 950000, access_reviews: 4 });
-  if (url.pathname === "/admin/api/marketing/overview") return json(response, sampleMarketing);
   if (url.pathname === "/admin/api/payment-products" || url.pathname === "/admin/api/tags") return json(response, []);
   if (url.pathname === "/admin/api/users") {
     const q = url.searchParams.get("q") || "";
@@ -174,10 +155,7 @@ const server = createServer((request, response) => {
     userAccompanimentFilters.push(url.searchParams.get("accompaniment_status"));
     if (q === "error" && errorAttempts++ === 0) { response.writeHead(500, { "Content-Type": "application/json" }); return response.end(JSON.stringify({detail:"test error"})); }
     const delay = q === "a" ? 600 : q === "anna" ? 20 : 0;
-    const users = q === "a"
-      ? [{...sampleUser, display_name:"Устаревший ответ"}]
-      : q === "anna" ? [sampleUser] : sampleUsers;
-    return setTimeout(() => json(response, users), delay);
+    return setTimeout(() => json(response, [q === "a" ? {...sampleUser, display_name:"Устаревший ответ"} : sampleUser]), delay);
   }
   if (url.pathname === "/admin/api/users/u1") return json(response, sampleUserDetail);
   if (url.pathname === "/admin/api/resources") return json(response, [
@@ -235,19 +213,14 @@ if (process.env.ADMIN_SHELL_PREVIEW_ONLY === "1") {
 }
 const browser = await chromium.launch({ headless: true });
 const evidence = process.env.ADMIN_SHELL_EVIDENCE_DIR;
-const pageOptions = (viewport) => ({
-  viewport,
-  permissions: ["clipboard-read", "clipboard-write"],
-});
 
 for (const width of [360, 430, 759, 761, 768, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/admin`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   assert.ok(await page.locator(".admin-brand img").evaluate((node) => node.complete && node.naturalWidth > 0));
   assert.equal(await page.getByText("Служебное", { exact: true }).count(), 1);
   assert.equal(await page.getByText("База знаний", { exact: true }).count(), 1);
-  assert.equal(await page.getByText("Сторонние проекты", { exact: true }).count(), 1);
   for (const category of ["Клиенты", "Приложения", "Маркетинг", "Курсы", "Коммерция", "Служебное", "База знаний"]) {
     assert.equal(await page.getByText(category, { exact: true }).count(), 1, category);
   }
@@ -259,16 +232,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   assert.equal(await page.getByRole("link", { name: "Силовые" }).locator(".admin-nav-icon").textContent(), "💪");
   assert.equal(await page.getByRole("link", { name: "Метаболизм" }).locator(".admin-nav-icon").textContent(), "🔥");
   assert.equal(await page.getByRole("link", { name: "Определитель допродаж" }).locator(".admin-nav-icon").textContent(), "🎯");
-  assert.equal(await page.getByRole("link", { name: "Аналитика" }).count(), 1);
-  async function openExternalProjects() {
-    const externalProjects = page.locator(".admin-nav-external");
-    assert.equal(await externalProjects.getAttribute("open"), null);
-    await externalProjects.locator("summary").click();
-    await page.getByRole("link", { name: "Погода" }).waitFor();
-    assert.equal(await page.getByRole("link", { name: "Погода" }).isVisible(), true);
-    assert.equal(await page.getByRole("link", { name: "Игра для Серёжи и Сонечки" }).getAttribute("href"), "/game/");
-    assert.equal(await page.getByRole("link", { name: "Сайт Щербаковой" }).getAttribute("href"), "https://app.edabalans.ru/sherbakova/");
-  }
   const offerCategory = await page.getByRole("link", { name: "Определитель допродаж" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   const contentCategory = await page.getByRole("link", { name: "Каталог материалов" }).evaluate((node) => { let current = node.previousElementSibling; while (current && current.tagName !== "SPAN") current = current.previousElementSibling; return current?.textContent.trim(); });
   assert.equal(offerCategory, "Коммерция");
@@ -278,7 +241,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
     const burger = page.getByRole("button", { name: "Открыть меню" });
     await burger.click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-mobile-opened")), true);
-    await openExternalProjects();
     await page.waitForTimeout(220);
     const openBurgerBox = await burger.boundingBox();
     const brandBox = await page.locator(".admin-brand").boundingBox();
@@ -292,7 +254,6 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
   } else {
     await page.waitForTimeout(220);
     await assertDesktopGeometry(page, 270);
-    await openExternalProjects();
     await page.getByRole("button", { name: "Свернуть меню" }).click();
     assert.equal(await page.locator("body").evaluate((node) => node.classList.contains("admin-shell-collapsed")), true);
     await page.waitForTimeout(220);
@@ -320,7 +281,7 @@ for (const width of [360, 430, 759, 761, 768, 1440]) {
 }
 
 for (const width of [360, 430, 768, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
+  const page = await browser.newPage({ viewport: { width, height: 900 } });
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   await page.getByRole("heading", { name: "Параметры" }).waitFor();
@@ -337,35 +298,6 @@ for (const width of [360, 430, 768, 1440]) {
   await page.close();
 }
 
-for (const width of [360, 1440]) {
-  const page = await browser.newPage(pageOptions({ width, height: 900 }));
-  await page.goto(`http://127.0.0.1:${port}/admin/marketing`);
-  await page.locator(".marketing-leads tbody tr").waitFor();
-  assert.equal(await page.locator(".marketing-sticky-head").evaluate((node) => getComputedStyle(node).position), "sticky");
-  assert.equal(await page.locator('.marketing-quick-nav a[href="#marketing-conversions"]').count(), 1);
-  assert.deepEqual(await page.locator(".marketing-leads th").allTextContents(), ["Пользователь", "Источник", "Вход", "Старт", "Статус", "Интенсив", "Последнее"]);
-  assert.ok(await page.locator(".marketing-leads tbody tr").first().evaluate((node) => node.getBoundingClientRect().height < 64));
-  const rail = page.locator(".marketing-horizontal-scroll").first();
-  const hasJourneyOverflow = await page.locator("#marketing-journeys").evaluate((node) => node.scrollWidth > node.clientWidth);
-  assert.equal(await rail.evaluate((node) => !node.hidden), hasJourneyOverflow);
-  if (hasJourneyOverflow) assert.equal(await rail.evaluate((node) => getComputedStyle(node).position), "fixed");
-  if (evidence) await page.screenshot({ path: path.join(evidence, `admin-marketing-${width}.png`), fullPage: true });
-  if (hasJourneyOverflow) {
-    await rail.evaluate((node) => { node.scrollLeft = 180; node.dispatchEvent(new Event("scroll")); });
-    assert.equal(await page.locator("#marketing-journeys").evaluate((node) => node.scrollLeft), 180);
-  }
-  await page.locator(".marketing-person").first().hover();
-  await page.locator(".marketing-timeline-popover").waitFor({state:"visible"});
-  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Первый старт бота.*Начал смотреть видео/s);
-  await page.locator(".marketing-leads .marketing-popover-trigger").first().hover();
-  assert.match(await page.locator(".marketing-timeline-popover").textContent(), /Кампания: Интенсив/);
-  if (width >= 1000) {
-    const positions = await page.locator('.marketing-date-range input').evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().top));
-    assert.ok(positions[0] < positions[1], JSON.stringify(positions));
-  }
-  await page.close();
-}
-
 const integratedPages = {
   crm: "/crm",
   content: "/admin/content",
@@ -378,14 +310,10 @@ const integratedPages = {
 };
 for (const [name, route] of Object.entries(integratedPages)) {
   for (const width of [360, 430, 768, 1440]) {
-    const page = await browser.newPage(pageOptions({ width, height: 900 }));
+    const page = await browser.newPage({ viewport: { width, height: 900 } });
     await page.goto(`http://127.0.0.1:${port}${route}`);
     await page.getByRole("link", { name: "CRM" }).waitFor();
     if (name === "crm" && width === 1440) {
-      await page.locator(".crm-people-table tbody tr[data-user-id='u3']").waitFor();
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u3'] .crm-table-messenger-slot--telegram .crm-contact-button").count(), 0);
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u3'] .crm-table-messenger-slot--max .crm-contact-button--max").count(), 1);
-      assert.match(await page.locator(".crm-people-table tbody tr[data-user-id='u5'] .crm-person-name").textContent(), /maria@example\.com/);
       const search = page.locator("#crm-search");
       await search.click();
       await search.fill("a");
@@ -396,21 +324,11 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.match(await page.locator("#crm-user-results").textContent(), /Анна/);
       assert.doesNotMatch(await page.locator("#crm-user-results").textContent(), /Устаревший ответ/);
       assert.equal(await page.locator(".crm-head > .crm-tabs").count(), 1);
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"]);
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-contact-cell .crm-contact-button").count(), 2);
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-table-messenger-slot").count(), 2);
-      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-preview-trigger.email").hover();
-      await page.getByText("Нажмите значок копирования справа от имени, чтобы скопировать адрес.").waitFor();
-      assert.match(await page.locator(".crm-popover:visible").textContent(), /anna@example\.com/);
-      assert.equal(await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email").count(), 1);
-      const copyEmailButton = page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email");
-      await copyEmailButton.click();
-      await page.waitForFunction(
-        () => document.querySelector(".crm-people-table tbody tr[data-user-id='u1'] .crm-copy-email")?.getAttribute("aria-label") === "Email скопирован",
-      );
-      assert.equal(await copyEmailButton.getAttribute("aria-label"), "Email скопирован");
-      assert.equal(await page.locator(".crm-table-wrap").evaluate((node) => node.scrollWidth > node.clientWidth), true);
-      assert.equal(await page.locator(".crm-table-scrollbar").evaluate((node) => node.scrollWidth > node.clientWidth), true);
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Тариф", "Итого", "Статус", "В боте", "Подписка"]);
+      await page.getByRole("button", { name:"Показать мессенджеры: Анна" }).hover();
+      await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Мессенджеры" }).waitFor();
+      assert.match(await page.locator(".crm-popover:visible").textContent(), /Telegram.*подписан/s);
+      assert.ok(await page.locator(".crm-people-table tbody tr[data-user-id] .crm-contact-cell .crm-messenger-icon").count() >= 2);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /с 01\.08\.2026.*первая покупка 02\.08\.2026.*Подписан/s);
       await page.getByRole("button", { name:"Показать тариф и доступы: Анна" }).hover();
       await page.getByText("Доступно", { exact:true }).waitFor();
@@ -431,26 +349,26 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.equal(await search.inputValue(), "error");
       assert.equal(await search.evaluate((node) => document.activeElement === node), true);
       await page.getByRole("button", { name:"Повторить" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userQueries.filter((query) => query === "error").length, 2);
       await page.getByRole("button", { name:"Лиды", exact:true }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]);
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "В боте", "Подписка", "Статус", "Заметки"]);
       assert.match(await page.locator(".crm-people-table tbody").textContent(), /Подписан/);
       await page.getByRole("button", { name:"Есть МК" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userAccessFilters.at(-1), "true");
       await page.getByRole("button", { name:"Сопровождение", exact:true }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       assert.equal(userAccompanimentFilters.at(-1), "active");
-      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]);
+      assert.deepEqual(await page.locator(".crm-people-table th").allTextContents(), ["Имя", "Email", "Мессенджеры", "Источник", "Итого", "Подписка", "Статус", "Заметки"]);
       await page.locator(".crm-filters summary").click();
       assert.match(await page.locator(".crm-filter-help").textContent(), /Тег.*не подтверждает оплату/s);
       assert.match(await page.locator(".crm-filter-help").textContent(), /Проблемы доступа.*очередь/s);
       await page.getByRole("button", { name:"Показать оплаты: Анна" }).hover();
       await page.locator(".crm-popover:visible .crm-popover-title", { hasText:"Оплаты" }).waitFor();
       assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс/);
-      await page.locator(".crm-people-table tbody tr[data-user-id='u1'] .crm-person-name").click();
+      await page.locator(".crm-person-email").click();
       await page.locator(".crm-profile-head").waitFor();
       assert.match(await page.locator(".crm-profile-head").textContent(), /Анна/);
       assert.equal(await page.getByText("Покупки и тарифы", { exact:true }).count(), 1);
@@ -483,7 +401,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.match(await page.locator(".crm-popover:visible").textContent(), /Мастер-класс.*12 из 20/s);
       if (evidence) await page.screenshot({ path: path.join(evidence, "admin-crm-profile-1440.png"), fullPage:true });
       await page.getByRole("button", { name:"← Назад" }).click();
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
       failNextPaymentRequest = true;
       await page.getByRole("button", { name:"Оплаты", exact:true }).click();
       await page.getByText("CRM не загрузилась", { exact:true }).waitFor();
@@ -505,7 +423,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
       assert.doesNotMatch(await page.locator(".crm-table tbody").textContent(), /Первая оплата/);
       await page.getByRole("button", { name:"Люди" }).click();
       await page.locator("#crm-search").fill("");
-      await page.locator("#crm-user-results tbody tr[data-user-id]").first().waitFor();
+      await page.locator("#crm-user-results tbody tr[data-user-id]").waitFor();
     }
     if (name === "library" && width === 1440) {
       assert.match(await page.locator("#results").textContent(), /Счётчик сверху показывает объём карты/);
@@ -552,7 +470,7 @@ for (const [name, route] of Object.entries(integratedPages)) {
 }
 
 {
-  const page = await browser.newPage(pageOptions({ width: 1440, height: 560 }));
+  const page = await browser.newPage({ viewport: { width: 1440, height: 560 } });
   await page.goto(`http://127.0.0.1:${port}/crm`);
   await page.getByRole("link", { name: "Продукты и описания" }).waitFor();
   await page.locator(".admin-shell-nav").evaluate((node) => { node.scrollTop = 220; });
