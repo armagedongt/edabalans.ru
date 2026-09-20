@@ -823,7 +823,7 @@ def test_masterclass_first_day_article_and_image_layout_contract(monkeypatch) ->
     assert "pendingQuestionnaireSaves[key]=request.then" in course_html
     assert "document.querySelector('#questionnaire-continue').disabled=false" in course_html
     assert "advanceCourseStep(d,currentStep,false)" in course_html
-    assert "state.steps[key]=true" not in course_html
+    assert "if(result.course_step_completed){state.steps[key]=true;save();renderMenu();return result}" in course_html
     assert "if(!step.hidden&&step.contentAsset)" in course_html
     assert "loadPublishedMaterials" not in course_html
     assert "'&step_id='+encodeURIComponent(step.id)" in course_html
