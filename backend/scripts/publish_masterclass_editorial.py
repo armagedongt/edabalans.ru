@@ -327,9 +327,10 @@ def main() -> None:
             if item["step_id"] == "day-04-dqs":
                 button_text = editorial_body(item["path"]).split("## Кнопки", 1)[1]
                 labels = re.findall(r"^[0-9]+\. (.+)$", button_text, flags=re.MULTILINE)
-                if len(labels) != 4:
-                    raise ValueError("У DQS должны быть четыре подписанные кнопки")
-                step["applicationButtons"] = dict(zip(["open", "copy-link", "print", "send-telegram"], labels, strict=True))
+                actions = ["open", "copy-link", "print"]
+                if len(labels) != len(actions):
+                    raise ValueError("У DQS должны быть три подписанные кнопки: открыть, скопировать ссылку и распечатать")
+                step["applicationButtons"] = dict(zip(actions, labels, strict=True))
         for editorial_day, day in zip(days, manifest["days"], strict=True):
             if day["number"] in {7, 15} and day["number"] <= args.through_day:
                 gate = editorial_day["access_gate"]
