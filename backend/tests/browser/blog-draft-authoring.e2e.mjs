@@ -21,18 +21,28 @@ const context = await browser.newContext({
 const page = await context.newPage();
 
 try {
+  const inventoryResponse = await context.request.get(`${baseURL}/admin/api/blog/articles`);
+  assert.equal(inventoryResponse.status(), 200);
+  const inventory = (await inventoryResponse.json()).articles;
+  const expectedCounts = {
+    all: inventory.length,
+    public: inventory.filter(article => article.visibility === 'public').length,
+    internal: inventory.filter(article => article.visibility === 'internal').length,
+    moderation: inventory.filter(article => article.editorial_status === 'moderation').length,
+  };
   if (output) await mkdir(output, { recursive: true });
   for (const width of [360, 430, 768, 1440]) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto(`${baseURL}/blog`, { waitUntil: 'networkidle' });
     await page.locator('#owner-title').waitFor();
-    assert.equal(await page.locator('.owner-card').count(), 9);
-    for (const [filter, expected] of Object.entries({ all: 9, public: 9, internal: 0, moderation: 0 })) {
+    assert.equal(await page.locator('.owner-card').count(), expectedCounts.all);
+    for (const [filter, expected] of Object.entries(expectedCounts)) {
       const button = page.locator(`[data-owner-filter="${filter}"]`);
       await button.click();
       assert.equal(await button.getAttribute('aria-pressed'), 'true');
       assert.equal(await page.locator('.owner-card:not([hidden])').count(), expected, `${filter} at ${width}px`);
     }
+    await page.locator('[data-owner-filter="all"]').click();
     await page.evaluate(async () => {
       const images = Array.from(document.querySelectorAll('img'));
       images.forEach(image => { image.loading = 'eager'; });
@@ -41,7 +51,7 @@ try {
         image.addEventListener('error', resolve, { once: true });
       })));
     });
-    const catalogImages = page.locator('img');
+    const catalogImages = page.locator('img:visible');
     for (let index = 0; index < await catalogImages.count(); index += 1) {
       await catalogImages.nth(index).scrollIntoViewIfNeeded();
       await catalogImages.nth(index).evaluate(image => image.decode().catch(() => {}));
