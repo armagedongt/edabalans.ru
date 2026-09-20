@@ -233,6 +233,10 @@ for (const width of [360, 430, 768, 1440]) {
   await page.goto(`http://127.0.0.1:${port}/finance`);
   await page.getByRole("link", { name: "Финансовая модель" }).waitFor();
   await page.getByRole("heading", { name: "Параметры" }).waitFor();
+  // The shared shell animates its desktop offset for 180 ms. Measure the
+  // settled layout, not an intermediate frame where body padding can add a
+  // few transient pixels to scrollWidth.
+  await page.waitForTimeout(220);
   const dimensions = await page.locator("body").evaluate((node) => ({scrollWidth:node.scrollWidth,clientWidth:node.clientWidth}));
   const columns = await page.locator("main > .grid").evaluate((node) => getComputedStyle(node).gridTemplateColumns.split(" ").filter(Boolean).length);
   assert.equal(columns, width >= 1280 ? 2 : 1, JSON.stringify({width,columns}));
